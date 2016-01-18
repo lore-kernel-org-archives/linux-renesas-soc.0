@@ -2,21 +2,17 @@ Return-Path: <SRS0+ku8b=NS=gmail.com=magnus.damm@vergenet.net>
 From: Magnus Damm <magnus.damm@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: horms+renesas@verge.net.au,Magnus Damm <magnus.damm@gmail.com>,laurent.pinchart+renesas@ideasonboard.com,geert+renesas@glider.be
-Date: Mon, 18 Jan 2016 14:08:57 +0900
-Message-Id: <20160118050857.20358.50375.sendpatchset@little-apple>
+Date: Mon, 18 Jan 2016 14:08:40 +0900
+Message-Id: <20160118050840.20358.16627.sendpatchset@little-apple>
 In-Reply-To: <20160118050831.20358.83393.sendpatchset@little-apple>
 References: <20160118050831.20358.83393.sendpatchset@little-apple>
-Subject: [PATCH/RFC v2 03/03] ARM: shmobile: r8a7795: Tie in IPMMU with SYS-DMAC0
+Subject: [PATCH/RFC v2 01/03] ARM: shmobile: External Salvator-X SCIF3/HSCIF3 loop
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Magnus Damm <damm+renesas@opensource.se>
 
-Hook up IPMMU-MM and IPMMU-DS0 to the r8a7795 DTS and
-make sure the SYS-DMAC0 is connected to IPMMU-DS0.
-
-The DT binding for the IPMMU will change.
-
-Not for upstream merge.
+Add SCIF3 and HSCIF3 as two new serial ports to the r8a7795
+Salvator-X DT file. 
 
 Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
@@ -24,46 +20,57 @@ Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
  Changes since V1:
  - None
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |   28 ++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
---- 0023/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2015-12-15 15:13:00.300513000 +0900
-@@ -312,6 +312,22 @@
- 			reg = <0 0xe6060000 0 0x50c>;
- 		};
+--- 0001/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ work/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts	2015-11-06 14:21:56.640513000 +0900
+@@ -41,6 +41,8 @@
+ 	aliases {
+ 		serial0 = &scif2;
+ 		serial1 = &scif1;
++		serial2 = &scif3;
++		serial3 = &hscif3;
+ 		ethernet0 = &avb;
+ 	};
  
-+		ipmmu_mm: mmu@e67b0000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xe67b0000 0 0x1000>; /* IPMMU-MM */
-+			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+			#iommu-cells = <1>;
-+			status = "okay";
-+		};
+@@ -135,6 +137,16 @@
+ 		renesas,groups = "scif2_data_a";
+ 		renesas,function = "scif2";
+ 	};
++	
++	scif3_pins: scif3 { /* TX: 1_11, RX: 1_8 */
++		renesas,groups = "scif3_data_b";
++		renesas,function = "scif3";
++	};
 +
-+		ipmmu_ds0: mmu@e6740000 {
-+			compatible = "renesas,ipmmu-r8a7795";
-+			reg = <0 0xe6740000 0 0x1000>; /* IPMMU-DS0 */
-+			#iommu-cells = <1>;
-+			status = "okay";
-+		};
-+
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,rcar-dmac";
- 			reg = <0 0xe6700000 0 0x10000>;
-@@ -342,6 +358,14 @@
- 			power-domains = <&cpg>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds0 0>, <&ipmmu_ds0 1>,
-+			       <&ipmmu_ds0 2>, <&ipmmu_ds0 3>,
-+			       <&ipmmu_ds0 4>, <&ipmmu_ds0 5>,
-+			       <&ipmmu_ds0 6>, <&ipmmu_ds0 7>,
-+			       <&ipmmu_ds0 8>, <&ipmmu_ds0 9>,
-+			       <&ipmmu_ds0 10>, <&ipmmu_ds0 11>,
-+			       <&ipmmu_ds0 12>, <&ipmmu_ds0 13>,
-+			       <&ipmmu_ds0 14>, <&ipmmu_ds0 15>;
- 		};
++	hscif3_pins: hscif3 { /* TX: 2_8, RX: 2_7 */
++		renesas,groups = "hscif3_data_d";
++		renesas,function = "hscif3";
++	};
  
- 		dmac1: dma-controller@e7300000 {
+ 	i2c2_pins: i2c2 {
+ 		renesas,groups = "i2c2_a";
+@@ -169,6 +181,22 @@
+ 	pinctrl-names = "default";
+ 
+ 	status = "okay";
++};
++
++&scif3 {
++	pinctrl-0 = <&scif3_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++/* SCIF3 TX -> HSCIF3 RX, HSCIF3 TX -> SCIF3 RX */
++
++&hscif3 {
++	pinctrl-0 = <&hscif3_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
+ };
+ 
+ &i2c2 {
