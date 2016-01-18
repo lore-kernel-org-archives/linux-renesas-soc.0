@@ -1,161 +1,39 @@
-Return-Path: <horms@vergenet.net>
-From: Simon Horman <horms+renesas@verge.net.au>
+Return-Path: <SRS0+ku8b=NS=gmail.com=magnus.damm@vergenet.net>
+From: Magnus Damm <magnus.damm@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] ARM: dts: emev2:use GIC_* defines
-Date: Thu, 28 Jan 2016 10:29:54 +0900
-Message-Id: <1453944594-24757-1-git-send-email-horms+renesas@verge.net.au>
+Cc: horms+renesas@verge.net.au,Magnus Damm <magnus.damm@gmail.com>,laurent.pinchart+renesas@ideasonboard.com,geert+renesas@glider.be
+Date: Mon, 18 Jan 2016 14:48:26 +0900
+Message-Id: <20160118054826.22156.70507.sendpatchset@little-apple>
+In-Reply-To: <20160118054817.22156.6531.sendpatchset@little-apple>
+References: <20160118054817.22156.6531.sendpatchset@little-apple>
+Subject: [PATCH/RFC 01/02] iommu/ipmmu-vmsa: Use 64-bit masks
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use GIC_* defines for GIC interrupt cells in emev2 device tree.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-Based on renesas-devel-20160127-v4.5-rc1
----
- arch/arm/boot/dts/emev2.dtsi | 37 +++++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
+The IPMMU hardware is able to use page tables from anywhere
+in the memory, so set masks to 64-bits. Required to be able
+to use the IPMMU driver with 4 GiB of memory. Without this
+patch with 4 GiB enabled the following error message is spit
+out on the console during boot:
 
-diff --git a/arch/arm/boot/dts/emev2.dtsi b/arch/arm/boot/dts/emev2.dtsi
-index 57795da616cb..366e822367c7 100644
---- a/arch/arm/boot/dts/emev2.dtsi
-+++ b/arch/arm/boot/dts/emev2.dtsi
-@@ -9,6 +9,7 @@
-  */
+ipmmu-vmsa e67b0000.mmu: Cannot accommodate DMA translation
+                         for IOMMU page tables
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
+
+ drivers/iommu/ipmmu-vmsa.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- 0001/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-01-18 14:22:22.730513000 +0900
+@@ -1043,6 +1043,8 @@ static int ipmmu_probe(struct platform_d
+ 		return -ENOMEM;
+ 	}
  
- #include "skeleton.dtsi"
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- 
- / {
-@@ -53,7 +54,7 @@
- 
- 	pmu {
- 		compatible = "arm,cortex-a9-pmu";
--		interrupts = <0 120 IRQ_TYPE_LEVEL_HIGH>,
-+		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
- 			     <0 121 IRQ_TYPE_LEVEL_HIGH>;
- 	};
- 
-@@ -158,7 +159,7 @@
- 	timer@e0180000 {
- 		compatible = "renesas,em-sti";
- 		reg = <0xe0180000 0x54>;
--		interrupts = <0 125 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&sti_sclk>;
- 		clock-names = "sclk";
- 	};
-@@ -166,7 +167,7 @@
- 	uart0: serial@e1020000 {
- 		compatible = "renesas,em-uart";
- 		reg = <0xe1020000 0x38>;
--		interrupts = <0 8 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&usia_u0_sclk>;
- 		clock-names = "sclk";
- 	};
-@@ -174,7 +175,7 @@
- 	uart1: serial@e1030000 {
- 		compatible = "renesas,em-uart";
- 		reg = <0xe1030000 0x38>;
--		interrupts = <0 9 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&usib_u1_sclk>;
- 		clock-names = "sclk";
- 	};
-@@ -182,7 +183,7 @@
- 	uart2: serial@e1040000 {
- 		compatible = "renesas,em-uart";
- 		reg = <0xe1040000 0x38>;
--		interrupts = <0 10 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&usib_u2_sclk>;
- 		clock-names = "sclk";
- 	};
-@@ -190,7 +191,7 @@
- 	uart3: serial@e1050000 {
- 		compatible = "renesas,em-uart";
- 		reg = <0xe1050000 0x38>;
--		interrupts = <0 11 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&usib_u3_sclk>;
- 		clock-names = "sclk";
- 	};
-@@ -203,8 +204,8 @@
- 	gpio0: gpio@e0050000 {
- 		compatible = "renesas,em-gio";
- 		reg = <0xe0050000 0x2c>, <0xe0050040 0x20>;
--		interrupts = <0 67 IRQ_TYPE_LEVEL_HIGH>,
--			     <0 68 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
- 		gpio-controller;
- 		gpio-ranges = <&pfc 0 0 32>;
- 		#gpio-cells = <2>;
-@@ -215,8 +216,8 @@
- 	gpio1: gpio@e0050080 {
- 		compatible = "renesas,em-gio";
- 		reg = <0xe0050080 0x2c>, <0xe00500c0 0x20>;
--		interrupts = <0 69 IRQ_TYPE_LEVEL_HIGH>,
--			     <0 70 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
- 		gpio-controller;
- 		gpio-ranges = <&pfc 0 32 32>;
- 		#gpio-cells = <2>;
-@@ -227,8 +228,8 @@
- 	gpio2: gpio@e0050100 {
- 		compatible = "renesas,em-gio";
- 		reg = <0xe0050100 0x2c>, <0xe0050140 0x20>;
--		interrupts = <0 71 IRQ_TYPE_LEVEL_HIGH>,
--			     <0 72 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
- 		gpio-controller;
- 		gpio-ranges = <&pfc 0 64 32>;
- 		#gpio-cells = <2>;
-@@ -239,8 +240,8 @@
- 	gpio3: gpio@e0050180 {
- 		compatible = "renesas,em-gio";
- 		reg = <0xe0050180 0x2c>, <0xe00501c0 0x20>;
--		interrupts = <0 73 IRQ_TYPE_LEVEL_HIGH>,
--			     <0 74 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
- 		gpio-controller;
- 		gpio-ranges = <&pfc 0 96 32>;
- 		#gpio-cells = <2>;
-@@ -251,8 +252,8 @@
- 	gpio4: gpio@e0050200 {
- 		compatible = "renesas,em-gio";
- 		reg = <0xe0050200 0x2c>, <0xe0050240 0x20>;
--		interrupts = <0 75 IRQ_TYPE_LEVEL_HIGH>,
--			     <0 76 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
- 		gpio-controller;
- 		gpio-ranges = <&pfc 0 128 31>;
- 		#gpio-cells = <2>;
-@@ -266,7 +267,7 @@
- 		#size-cells = <0>;
- 		compatible = "renesas,iic-emev2";
- 		reg = <0xe0070000 0x28>;
--		interrupts = <0 32 IRQ_TYPE_EDGE_RISING>;
-+		interrupts = <GIC_SPI 32 IRQ_TYPE_EDGE_RISING>;
- 		clocks = <&iic0_sclk>;
- 		clock-names = "sclk";
- 		status = "disabled";
-@@ -277,7 +278,7 @@
- 		#size-cells = <0>;
- 		compatible = "renesas,iic-emev2";
- 		reg = <0xe10a0000 0x28>;
--		interrupts = <0 33 IRQ_TYPE_EDGE_RISING>;
-+		interrupts = <GIC_SPI 33 IRQ_TYPE_EDGE_RISING>;
- 		clocks = <&iic1_sclk>;
- 		clock-names = "sclk";
- 		status = "disabled";
--- 
-2.1.4
++	dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
++	
+ 	mmu->dev = &pdev->dev;
+ 	mmu->num_utlbs = 32;
+ 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
