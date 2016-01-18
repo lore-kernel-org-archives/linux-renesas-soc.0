@@ -1,213 +1,76 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 4/7] ARM: dts: r8a7791: Add SCIF fallback compatibility strings
-Date: Fri, 29 Jan 2016 10:32:05 +0100
-Message-Id: <1454059928-975-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1454059928-975-1-git-send-email-geert+renesas@glider.be>
-References: <1454059928-975-1-git-send-email-geert+renesas@glider.be>
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 3/4] PCI: rcar: add gen2 fallback compatibility string
+Date: Mon, 18 Jan 2016 14:09:44 +0900
+Message-Id: <1453093785-21067-4-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1453093785-21067-1-git-send-email-horms+renesas@verge.net.au>
+References: <1453093785-21067-1-git-send-email-horms+renesas@verge.net.au>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - Change one-line summary prefix to match current arm-soc practices,
+Add fallback compatibility string for R-Car Gen 2 family.
+This is in keeping with the fallback scheme being adopted wherever
+appropriate for drivers for Renesas SoCs.
 
-v3:
-  - New.
----
- arch/arm/boot/dts/r8a7791.dtsi | 54 ++++++++++++++++++++++++++++--------------
- 1 file changed, 36 insertions(+), 18 deletions(-)
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 6b3b02c0c58a8301..e7537ba68b5edae7 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -564,7 +564,8 @@
- 	};
+---
+v2
+* Include "rcar-" in new compatibility string
+---
+ Documentation/devicetree/bindings/pci/rcar-pci.txt | 13 ++++++++++---
+ drivers/pci/host/pcie-rcar.c                       |  1 +
+ 2 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+index 29d3b989d3b0..6b4d2f798386 100644
+--- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
++++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+@@ -1,8 +1,15 @@
+ * Renesas RCar PCIe interface
  
- 	scifa0: serial@e6c40000 {
--		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7791",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c40000 0 64>;
- 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA0>;
-@@ -576,7 +577,8 @@
- 	};
+ Required properties:
+-- compatible: should contain one of the following
+-	"renesas,pcie-r8a7779", "renesas,pcie-r8a7790", "renesas,pcie-r8a7791"
++compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
++	    "renesas,pcie-r8a7790" for the R8A7790 SoC;
++	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
++	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 compatible device.
++
++	    When compatible with the generic version, nodes must list the
++	    SoC-specific version corresponding to the platform first
++	    followed by the generic version.
++
+ - reg: base address and length of the pcie controller registers.
+ - #address-cells: set to <3>
+ - #size-cells: set to <2>
+@@ -25,7 +32,7 @@ Example:
+ SoC specific DT Entry:
  
- 	scifa1: serial@e6c50000 {
--		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7791",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c50000 0 64>;
- 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA1>;
-@@ -588,7 +590,8 @@
- 	};
+ 	pcie: pcie@fe000000 {
+-		compatible = "renesas,pcie-r8a7791";
++		compatible = "renesas,pcie-r8a7791", "renesas,pcie-rcar-gen2";
+ 		reg = <0 0xfe000000 0 0x80000>;
+ 		#address-cells = <3>;
+ 		#size-cells = <2>;
+diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+index 414c33686621..c16f93fe604a 100644
+--- a/drivers/pci/host/pcie-rcar.c
++++ b/drivers/pci/host/pcie-rcar.c
+@@ -919,6 +919,7 @@ static int rcar_pcie_parse_map_dma_ranges(struct rcar_pcie *pcie,
  
- 	scifa2: serial@e6c60000 {
--		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7791",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c60000 0 64>;
- 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA2>;
-@@ -600,7 +603,8 @@
- 	};
- 
- 	scifa3: serial@e6c70000 {
--		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7791",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c70000 0 64>;
- 		interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA3>;
-@@ -612,7 +616,8 @@
- 	};
- 
- 	scifa4: serial@e6c78000 {
--		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7791",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c78000 0 64>;
- 		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA4>;
-@@ -624,7 +629,8 @@
- 	};
- 
- 	scifa5: serial@e6c80000 {
--		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7791",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c80000 0 64>;
- 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA5>;
-@@ -636,7 +642,8 @@
- 	};
- 
- 	scifb0: serial@e6c20000 {
--		compatible = "renesas,scifb-r8a7791", "renesas,scifb";
-+		compatible = "renesas,scifb-r8a7791",
-+			     "renesas,rcar-gen2-scifb", "renesas,scifb";
- 		reg = <0 0xe6c20000 0 64>;
- 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB0>;
-@@ -648,7 +655,8 @@
- 	};
- 
- 	scifb1: serial@e6c30000 {
--		compatible = "renesas,scifb-r8a7791", "renesas,scifb";
-+		compatible = "renesas,scifb-r8a7791",
-+			     "renesas,rcar-gen2-scifb", "renesas,scifb";
- 		reg = <0 0xe6c30000 0 64>;
- 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB1>;
-@@ -660,7 +668,8 @@
- 	};
- 
- 	scifb2: serial@e6ce0000 {
--		compatible = "renesas,scifb-r8a7791", "renesas,scifb";
-+		compatible = "renesas,scifb-r8a7791",
-+			     "renesas,rcar-gen2-scifb", "renesas,scifb";
- 		reg = <0 0xe6ce0000 0 64>;
- 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB2>;
-@@ -672,7 +681,8 @@
- 	};
- 
- 	scif0: serial@e6e60000 {
--		compatible = "renesas,scif-r8a7791", "renesas,scif";
-+		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6e60000 0 64>;
- 		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7791_CLK_SCIF0>;
-@@ -684,7 +694,8 @@
- 	};
- 
- 	scif1: serial@e6e68000 {
--		compatible = "renesas,scif-r8a7791", "renesas,scif";
-+		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6e68000 0 64>;
- 		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7791_CLK_SCIF1>;
-@@ -696,7 +707,8 @@
- 	};
- 
- 	scif2: serial@e6e58000 {
--		compatible = "renesas,scif-r8a7791", "renesas,scif";
-+		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6e58000 0 64>;
- 		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7791_CLK_SCIF2>;
-@@ -708,7 +720,8 @@
- 	};
- 
- 	scif3: serial@e6ea8000 {
--		compatible = "renesas,scif-r8a7791", "renesas,scif";
-+		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6ea8000 0 64>;
- 		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7791_CLK_SCIF3>;
-@@ -720,7 +733,8 @@
- 	};
- 
- 	scif4: serial@e6ee0000 {
--		compatible = "renesas,scif-r8a7791", "renesas,scif";
-+		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6ee0000 0 64>;
- 		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7791_CLK_SCIF4>;
-@@ -732,7 +746,8 @@
- 	};
- 
- 	scif5: serial@e6ee8000 {
--		compatible = "renesas,scif-r8a7791", "renesas,scif";
-+		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6ee8000 0 64>;
- 		interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7791_CLK_SCIF5>;
-@@ -744,7 +759,8 @@
- 	};
- 
- 	hscif0: serial@e62c0000 {
--		compatible = "renesas,hscif-r8a7791", "renesas,hscif";
-+		compatible = "renesas,hscif-r8a7791",
-+			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62c0000 0 96>;
- 		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF0>;
-@@ -756,7 +772,8 @@
- 	};
- 
- 	hscif1: serial@e62c8000 {
--		compatible = "renesas,hscif-r8a7791", "renesas,hscif";
-+		compatible = "renesas,hscif-r8a7791",
-+			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62c8000 0 96>;
- 		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF1>;
-@@ -768,7 +785,8 @@
- 	};
- 
- 	hscif2: serial@e62d0000 {
--		compatible = "renesas,hscif-r8a7791", "renesas,hscif";
-+		compatible = "renesas,hscif-r8a7791",
-+			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62d0000 0 96>;
- 		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF2>;
+ static const struct of_device_id rcar_pcie_of_match[] = {
+ 	{ .compatible = "renesas,pcie-r8a7779", .data = rcar_pcie_hw_init_h1 },
++	{ .compatible = "renesas,pcie-rcar-gen2", .data = rcar_pcie_hw_init },
+ 	{ .compatible = "renesas,pcie-r8a7790", .data = rcar_pcie_hw_init },
+ 	{ .compatible = "renesas,pcie-r8a7791", .data = rcar_pcie_hw_init },
+ 	{},
 -- 
-1.9.1
+2.1.4
 
