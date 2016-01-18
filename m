@@ -1,51 +1,74 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] SH Drivers Updates for v4.5
-Date: Thu, 21 Jan 2016 11:42:50 +0900
-Message-Id: <cover.1453343708.git.horms+renesas@verge.net.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH v3 1/4] PCI: rcar-gen2: add gen2 fallback compatibility string
+Date: Mon, 18 Jan 2016 14:09:42 +0900
+Message-Id: <1453093785-21067-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1453093785-21067-1-git-send-email-horms+renesas@verge.net.au>
+References: <1453093785-21067-1-git-send-email-horms+renesas@verge.net.au>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Linus,
+Add fallback compatibility string for R-Car Gen 2 family.
+This is in keeping with the fallback scheme being adopted wherever
+appropriate for drivers for Renesas SoCs.
 
-Please consider these SH drivers updates for v4.5.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-It is comprised of a cleanup from Geert Uytterhoeven for the clock API.
+---
+v2
+* Include "rcar-" in new compatibility string
+---
+ Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt | 11 +++++++++--
+ drivers/pci/host/pci-rcar-gen2.c                        |  1 +
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-This pull request is based on the previous round of such requests, which
-were for v4.4. I can rebase, e.g. on top of v4.4, if that would be better.
+diff --git a/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt b/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
+index 7fab84b33531..7f3d383e605f 100644
+--- a/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
++++ b/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
+@@ -8,7 +8,14 @@ OHCI and EHCI controllers.
+ Required properties:
+ - compatible: "renesas,pci-r8a7790" for the R8A7790 SoC;
+ 	      "renesas,pci-r8a7791" for the R8A7791 SoC;
+-	      "renesas,pci-r8a7794" for the R8A7794 SoC.
++	      "renesas,pci-r8a7794" for the R8A7794 SoC;
++	      "renesas,pci-rcar-gen2" for a generic R-Car Gen2 compatible device.
++
++
++	      When compatible with the generic version, nodes must list the
++	      SoC-specific version corresponding to the platform first
++	      followed by the generic version.
++
+ - reg:	A list of physical regions to access the device: the first is
+ 	the operational registers for the OHCI/EHCI controllers and the
+ 	second is for the bridge configuration and control registers.
+@@ -27,7 +34,7 @@ Required properties:
+ Example SoC configuration:
+ 
+ 	pci0: pci@ee090000  {
+-		compatible = "renesas,pci-r8a7790";
++		compatible = "renesas,pci-r8a7790", "renesas,pci-rcar-gen2";
+ 		clocks = <&mstp7_clks R8A7790_CLK_EHCI>;
+ 		reg = <0x0 0xee090000 0x0 0xc00>,
+ 		      <0x0 0xee080000 0x0 0x1100>;
+diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
+index c4f64bfee551..5683e7068b29 100644
+--- a/drivers/pci/host/pci-rcar-gen2.c
++++ b/drivers/pci/host/pci-rcar-gen2.c
+@@ -360,6 +360,7 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ }
+ 
+ static struct of_device_id rcar_pci_of_match[] = {
++	{ .compatible = "renesas,pci-rcar-gen2", },
+ 	{ .compatible = "renesas,pci-r8a7790", },
+ 	{ .compatible = "renesas,pci-r8a7791", },
+ 	{ .compatible = "renesas,pci-r8a7794", },
+-- 
+2.1.4
 
-
-The following changes since commit 0ba58de231066e47de87ccc4d61c5e396fe9bd27:
-
-  drivers: sh: Get rid of CONFIG_ARCH_SHMOBILE_MULTI (2015-11-17 02:12:46 +0900)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-sh-drivers-for-v4.5
-
-for you to fetch changes up to 6575a9c69a211ac1cf454f9c76be54f7a5fae9fe:
-
-  drivers: sh: clk: Avoid crashes when passing NULL clocks (2015-11-24 11:49:18 +0900)
-
-----------------------------------------------------------------
-SH Drivers Updates for v4.5
-
-Clean up the clock API on legacy SH to make it more similar to the Common
-Clock Framework.  This will avoid different behaviour in drivers shared
-between legacy and CCF-based platforms (e.g. SCIF).
-
-----------------------------------------------------------------
-Geert Uytterhoeven (2):
-      drivers: sh: clk: Remove obsolete and unused clk_round_parent()
-      drivers: sh: clk: Avoid crashes when passing NULL clocks
-
- drivers/sh/clk/core.c  | 100 ++++++-------------------------------------------
- include/linux/sh_clk.h |   4 --
- 2 files changed, 12 insertions(+), 92 deletions(-)
