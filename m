@@ -2,38 +2,31 @@ Return-Path: <SRS0+ku8b=NS=gmail.com=magnus.damm@vergenet.net>
 From: Magnus Damm <magnus.damm@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: horms+renesas@verge.net.au,Magnus Damm <magnus.damm@gmail.com>,laurent.pinchart+renesas@ideasonboard.com,geert+renesas@glider.be
-Date: Mon, 18 Jan 2016 14:48:26 +0900
-Message-Id: <20160118054826.22156.70507.sendpatchset@little-apple>
-In-Reply-To: <20160118054817.22156.6531.sendpatchset@little-apple>
-References: <20160118054817.22156.6531.sendpatchset@little-apple>
-Subject: [PATCH/RFC 01/02] iommu/ipmmu-vmsa: Use 64-bit masks
+Date: Mon, 18 Jan 2016 14:48:17 +0900
+Message-Id: <20160118054817.22156.6531.sendpatchset@little-apple>
+Subject: [PATCH/RFC 00/02] ARM: shmobile: r8a7795 Salvator-X IPMMU 4 GiB RAM test code
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+ARM: shmobile: r8a7795 Salvator-X IPMMU 4 GiB RAM test code
 
-The IPMMU hardware is able to use page tables from anywhere
-in the memory, so set masks to 64-bits. Required to be able
-to use the IPMMU driver with 4 GiB of memory. Without this
-patch with 4 GiB enabled the following error message is spit
-out on the console during boot:
+[PATCH/RFC 01/02] iommu/ipmmu-vmsa: Use 64-bit masks
+[PATCH/RFC 02/02] arm64: dts: Salvator-X: Enable 4 GiB of RAM
 
-ipmmu-vmsa e67b0000.mmu: Cannot accommodate DMA translation
-                         for IOMMU page tables
+This code simply enables 4 GiB of RAM on Salvator-X after
+adjusting the IPMMU driver to tell the Linux driver model
+that the device it is managing is able to do 64-bit bus
+mastering.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Not for upstream merge. Patch 1/2 will be rolled into a larger
+series for the IPMMU driver in the future. Patch 2/2 depends
+on firmware updates, so the integration needs to be correctly
+ordered to keep things smooth.
+
+Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
 
- drivers/iommu/ipmmu-vmsa.c |    2 ++
- 1 file changed, 2 insertions(+)
+ Developed on top of renesas-drivers-2016-01-13-v4.4.
 
---- 0001/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-01-18 14:22:22.730513000 +0900
-@@ -1043,6 +1043,8 @@ static int ipmmu_probe(struct platform_d
- 		return -ENOMEM;
- 	}
- 
-+	dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-+	
- 	mmu->dev = &pdev->dev;
- 	mmu->num_utlbs = 32;
- 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |   15 +++++++++++++++
+ drivers/iommu/ipmmu-vmsa.c                         |    2 ++
+ 2 files changed, 17 insertions(+)
