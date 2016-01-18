@@ -1,131 +1,55 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 1/7] ARM: dts: r8a7778: Add BRG support for SCIF
-Date: Fri, 29 Jan 2016 11:04:37 +0100
-Message-Id: <1454061883-4043-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1454061883-4043-1-git-send-email-geert+renesas@glider.be>
-References: <1454061883-4043-1-git-send-email-geert+renesas@glider.be>
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 4/4] PCI: rcar: add device tree support for r8a7793
+Date: Mon, 18 Jan 2016 14:09:45 +0900
+Message-Id: <1453093785-21067-5-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1453093785-21067-1-git-send-email-horms+renesas@verge.net.au>
+References: <1453093785-21067-1-git-send-email-horms+renesas@verge.net.au>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the device node for the external SCIF_CLK.
-The presence of the SCIF_CLK crystal and its clock frequency depends on
-the actual board.
+Simply document new compatibility string.
+As a previous patch adds a generic R-Car Gen2 compatibility string
+there appears to be no need for a driver updates.
 
-Add the two optional clock sources (S1 and SCIF_CLK for the internal
-resp. external clock) for the Baud Rate Generator for External Clock
-(BRG) to all SCIF device nodes.
+By documenting this compat sting it may be used in DTSs shipped, for
+example as part of ROMs. It must be used in conjunction with the Gen2
+fallback compat string. At this time there are no known differences between
+the r8a7793 IP block and that implemented by the driver for the Gen2
+fallback compat string. Thus there is no need to update the driver as the
+use of the Gen2 fallback compat string will activate the correct code in
+the current driver while leaving the option for r8a7793-specific driver
+code to be activated in an updated driver should the need arise.
 
-This increases the range and accuracy of supported baud rates on SCIF.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v4:
-  - Change one-line summary prefix to match current arm-soc practices,
+* The r8a7792 is omitted from this change as the hardware in question
+  does not appear to be present on that SoC.
 
-v3:
-  - New.
+v3
+* Enhance changelog to explain why this is useful
 ---
- arch/arm/boot/dts/r8a7778.dtsi | 39 +++++++++++++++++++++++++++------------
- 1 file changed, 27 insertions(+), 12 deletions(-)
+ Documentation/devicetree/bindings/pci/rcar-pci.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index 50784e2b632d2d41..f83a348fc07a49e3 100644
---- a/arch/arm/boot/dts/r8a7778.dtsi
-+++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -301,8 +301,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe40000 0x100>;
- 		interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7778_CLK_SCIF0>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7778_CLK_SCIF0>,
-+			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -312,8 +313,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe41000 0x100>;
- 		interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7778_CLK_SCIF1>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7778_CLK_SCIF1>,
-+			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -323,8 +325,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe42000 0x100>;
- 		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7778_CLK_SCIF2>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7778_CLK_SCIF2>,
-+			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -334,8 +337,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe43000 0x100>;
- 		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7778_CLK_SCIF3>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7778_CLK_SCIF3>,
-+			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -345,8 +349,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe44000 0x100>;
- 		interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7778_CLK_SCIF4>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7778_CLK_SCIF4>,
-+			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -356,8 +361,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe45000 0x100>;
- 		interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7778_CLK_SCIF5>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7778_CLK_SCIF5>,
-+			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -444,6 +450,15 @@
- 			clock-output-names = "extal";
- 		};
+diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+index 6b4d2f798386..d529530b27d2 100644
+--- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
++++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+@@ -4,6 +4,7 @@ Required properties:
+ compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
+ 	    "renesas,pcie-r8a7790" for the R8A7790 SoC;
+ 	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
++	    "renesas,pcie-r8a7793" for the R8A7793 SoC;
+ 	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 compatible device.
  
-+		/* External SCIF clock */
-+		scif_clk: scif {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			/* This value must be overridden by the board. */
-+			clock-frequency = <0>;
-+			status = "disabled";
-+		};
-+
- 		/* Special CPG clocks */
- 		cpg_clocks: cpg_clocks@ffc80000 {
- 			compatible = "renesas,r8a7778-cpg-clocks";
+ 	    When compatible with the generic version, nodes must list the
 -- 
-1.9.1
+2.1.4
 
