@@ -1,134 +1,55 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 07/11] ARM: dts: r8a7790: Rename the serial port clock to fck
-Date: Fri, 29 Jan 2016 10:47:37 +0100
-Message-Id: <1454060861-2375-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
-References: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 2/4] PCI: rcar-gen2: add device tree support for r8a7793
+Date: Mon, 18 Jan 2016 14:09:43 +0900
+Message-Id: <1453093785-21067-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1453093785-21067-1-git-send-email-horms+renesas@verge.net.au>
+References: <1453093785-21067-1-git-send-email-horms+renesas@verge.net.au>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Simply document new compatibility string.
+As a previous patch adds a generic R-Car Gen2 compatibility string
+there appears to be no need for a driver updates.
 
-The clock is really the device functional clock, not the interface
-clock. Rename it.
+By documenting this compat sting it may be used in DTSs shipped, for
+example as part of ROMs. It must be used in conjunction with the Gen2
+fallback compat string. At this time there are no known differences between
+the r8a7793 IP block and that implemented by the driver for the Gen2
+fallback compat string. Thus there is no need to update the driver as the
+use of the Gen2 fallback compat string will activate the correct code in
+the current driver while leaving the option for r8a7793-specific driver
+code to be activated in an updated driver should the need arise.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Rob Herring <robh@kernel.org>
+
 ---
-v4:
-  - Change one-line summary prefix to match current arm-soc practices,
+* The r8a7792 is omitted from this change as the hardware in question
+  does not appear to be present on that SoC.
 
-v3:
-  - No changes,
-
-v2:
-  - Add Acked-by.
+v3
+* Enhance changelog to explain why this is useful
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 1d94dfd531414073..c5672745a1e51939 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -590,7 +590,7 @@
- 		reg = <0 0xe6c40000 0 64>;
- 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFA0>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -603,7 +603,7 @@
- 		reg = <0 0xe6c50000 0 64>;
- 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFA1>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -616,7 +616,7 @@
- 		reg = <0 0xe6c60000 0 64>;
- 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFA2>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -629,7 +629,7 @@
- 		reg = <0 0xe6c20000 0 64>;
- 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFB0>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -642,7 +642,7 @@
- 		reg = <0 0xe6c30000 0 64>;
- 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFB1>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x19>, <&dmac0 0x1a>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -655,7 +655,7 @@
- 		reg = <0 0xe6ce0000 0 64>;
- 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFB2>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -668,7 +668,7 @@
- 		reg = <0 0xe6e60000 0 64>;
- 		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7790_CLK_SCIF0>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -681,7 +681,7 @@
- 		reg = <0 0xe6e68000 0 64>;
- 		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7790_CLK_SCIF1>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -694,7 +694,7 @@
- 		reg = <0 0xe62c0000 0 96>;
- 		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7790_CLK_HSCIF0>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -707,7 +707,7 @@
- 		reg = <0 0xe62c8000 0 96>;
- 		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7790_CLK_HSCIF1>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
+diff --git a/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt b/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
+index 7f3d383e605f..82e49cfa97a1 100644
+--- a/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
++++ b/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
+@@ -8,6 +8,7 @@ OHCI and EHCI controllers.
+ Required properties:
+ - compatible: "renesas,pci-r8a7790" for the R8A7790 SoC;
+ 	      "renesas,pci-r8a7791" for the R8A7791 SoC;
++	      "renesas,pci-r8a7793" for the R8A7793 SoC;
+ 	      "renesas,pci-r8a7794" for the R8A7794 SoC;
+ 	      "renesas,pci-rcar-gen2" for a generic R-Car Gen2 compatible device.
+ 
 -- 
-1.9.1
+2.1.4
 
