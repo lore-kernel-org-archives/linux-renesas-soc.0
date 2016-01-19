@@ -1,31 +1,53 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/2] arm64: dts: r8a7795: Add USB3.0 host
-Date: Fri, 22 Jan 2016 19:03:21 +0900
-Message-ID: <1453457003-7720-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <1453211112-3686-1-git-send-email-javier@osg.samsung.com>
+References: <1453211112-3686-1-git-send-email-javier@osg.samsung.com>
+Date: Tue, 19 Jan 2016 14:49:30 +0100
+Message-ID: <CAMuHMdUzkVoC+jjtXVsPf0e7eS31cHp4ZNP32+18wg2GsxMywA@mail.gmail.com>
+Subject: Re: [PATCH] [media] v4l: vsp1: Fix wrong entities links creation
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the latest renesas.git / renesas-devel-20160121-v4.4
-tag. (commit id = 3740ade0617955c76e1767b6d49347d5446eed74)
+Hi Javier,
 
-This patch needs r8a7795-cpg-mssr.c update for usb3.0 clocks.
+On Tue, Jan 19, 2016 at 2:45 PM, Javier Martinez Canillas
+<javier@osg.samsung.com> wrote:
+> The Media Control framework now requires entities to be registered with
+> the media device before creating links so commit c7621b3044f7 ("[media]
+> v4l: vsp1: separate links creation from entities init") separated link
+> creation from entities init.
+>
+> But unfortunately that patch introduced a regression since wrong links
+> were created causing a boot failure on Renesas boards.
+>
+> This patch fixes the boot issue and also the media graph was compared
+> by Geert Uytterhoeven to make sure that the driver changes required by
+> the Media Control framework next generation did not affect the graph.
 
-Yoshihiro Shimoda (2):
-  arm64: dts: r8a7795: Add USB3.0 host device nodes
-  arm64: dts: salvator-x: enable usb3.0 host channel 0
+Thank you!
 
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  4 ++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 18 ++++++++++++++++++
- 2 files changed, 22 insertions(+)
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
--- 
-1.9.1
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
