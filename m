@@ -1,75 +1,83 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: Update mailing list for Renesas SoC
+ Development
+To: Simon Horman <horms+renesas@verge.net.au>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+References: <1453079073-30937-1-git-send-email-horms+renesas@verge.net.au>
+Cc: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 3/9] ARM: dts: gose: Enable SCIF_CLK frequency and pins
-Date: Fri, 29 Jan 2016 11:17:20 +0100
-Message-Id: <1454062646-4826-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1454062646-4826-1-git-send-email-geert+renesas@glider.be>
-References: <1454062646-4826-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <569E19B5.1000206@cogentembedded.com>
+Date: Tue, 19 Jan 2016 14:10:45 +0300
+MIME-Version: 1.0
+In-Reply-To: <1453079073-30937-1-git-send-email-horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add and enable the external crystal for the SCIF_CLK and its pinctrl, to
-be used by the Baud Rate Generator for External Clock (BRG) on (H)SCIF.
+Hello.
 
-This increases the range and accuracy of supported baud rates.
+On 1/18/2016 4:04 AM, Simon Horman wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Untested, based on (non)differences in U-Boot sources between koelsch
-and gose.
+> Update the mailing list used for development of support for
+> Renesas SoCs and related drivers.
+>
+> Up until now the linux-sh mailing list has been used, however,
+> Renesas SoCs are now much wider than the SH architecture and there
+> is some desire from some for the linux-sh list to refocus on
+> discussion of the work on the SH architecture.
+>
+> Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+>
+> ---
+> * This patch applies on top of Linus's tree where currently the head commit
+>    is 984065055e6e ("Merge branch 'drm-next' of
+>    git://people.freedesktop.org/~airlied/linux")
+>
+>    This has been used as a base instead of v4.4 so that it is based on the
+>    following two commits which affect it:
+>    - 1a4ca6dd3dc8 ("MAINTAINERS: Add co-maintainer for Renesas Pin Controllers")
+>    - 3e46c3973cba ("MAINTAINERS: add Renesas usb2 phy driver")
+> ---
+>   MAINTAINERS | 16 ++++++++--------
+>   1 file changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 1d23f701489c..52a6ba79fa3f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+[...]
+> @@ -8413,7 +8413,7 @@ F:	drivers/pinctrl/intel/
+>   PIN CONTROLLER - RENESAS
+>   M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>   M:	Geert Uytterhoeven <geert+renesas@glider.be>
+> -L:	linux-sh@vger.kernel.org
+> +L:	linux-renesas-soc@vger.kernel.org
+>   S:	Maintained
+>   F:	drivers/pinctrl/sh-pfc/
+>
+> @@ -9019,13 +9019,13 @@ F:	include/linux/rpmsg.h
+>   RENESAS ETHERNET DRIVERS
+>   R:	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>   L:	netdev@vger.kernel.org
+> -L:	linux-sh@vger.kernel.org
+> +L:	linux-renesas-soc@vger.kernel.org
+>   F:	drivers/net/ethernet/renesas/
+>   F:	include/linux/sh_eth.h
 
-v4:
-  - Change one-line summary prefix to match current arm-soc practices,
+    If SH people are OK with these 2 chunks (these entries cover the drivers 
+used by SH as well):
 
-v3:
-  - New.
----
- arch/arm/boot/dts/r8a7793-gose.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 2fa052036dbc0040..cfe142c2ba389031 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -236,6 +236,9 @@
- };
- 
- &pfc {
-+	pinctrl-0 = <&scif_clk_pins>;
-+	pinctrl-names = "default";
-+
- 	i2c2_pins: i2c2 {
- 		renesas,groups = "i2c2";
- 		renesas,function = "i2c2";
-@@ -256,6 +259,11 @@
- 		renesas,function = "scif1";
- 	};
- 
-+	scif_clk_pins: scif_clk {
-+		renesas,groups = "scif_clk";
-+		renesas,function = "scif_clk";
-+	};
-+
- 	ether_pins: ether {
- 		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
- 		renesas,function = "eth";
-@@ -316,6 +324,11 @@
- 	status = "okay";
- };
- 
-+&scif_clk {
-+	clock-frequency = <14745600>;
-+	status = "okay";
-+};
-+
- &qspi {
- 	pinctrl-0 = <&qspi_pins>;
- 	pinctrl-names = "default";
--- 
-1.9.1
-
+MBR, Sergei
