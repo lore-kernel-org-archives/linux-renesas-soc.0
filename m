@@ -1,55 +1,80 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 2/4] PCI: rcar-gen2: add device tree support for r8a7793
-Date: Mon, 18 Jan 2016 14:09:43 +0900
-Message-Id: <1453093785-21067-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1453093785-21067-1-git-send-email-horms+renesas@verge.net.au>
-References: <1453093785-21067-1-git-send-email-horms+renesas@verge.net.au>
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH 2/2] drivers: sh: clk: Avoid crashes when passing NULL clocks
+Date: Thu, 21 Jan 2016 11:42:52 +0900
+Message-Id: <6575a9c69a211ac1cf454f9c76be54f7a5fae9fe.1453343708.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1453343708.git.horms+renesas@verge.net.au>
+References: <cover.1453343708.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1453343708.git.horms+renesas@verge.net.au>
+References: <cover.1453343708.git.horms+renesas@verge.net.au>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Simply document new compatibility string.
-As a previous patch adds a generic R-Car Gen2 compatibility string
-there appears to be no need for a driver updates.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-By documenting this compat sting it may be used in DTSs shipped, for
-example as part of ROMs. It must be used in conjunction with the Gen2
-fallback compat string. At this time there are no known differences between
-the r8a7793 IP block and that implemented by the driver for the Gen2
-fallback compat string. Thus there is no need to update the driver as the
-use of the Gen2 fallback compat string will activate the correct code in
-the current driver while leaving the option for r8a7793-specific driver
-code to be activated in an updated driver should the need arise.
+Several clock API functions handle NULL clocks when the Common Clock
+Framework is used, while their legacy SH counterparts don't, and would
+just crash when a NULL clock is passed.
 
+Add NULL checks to clk_get_rate(), clk_set_rate(), clk_get_parent(), and
+clk_round_rate(), to avoid different behavior in drivers shared between
+legacy and CCF-based platforms.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Rob Herring <robh@kernel.org>
-
 ---
-* The r8a7792 is omitted from this change as the hardware in question
-  does not appear to be present on that SoC.
+ drivers/sh/clk/core.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-v3
-* Enhance changelog to explain why this is useful
----
- Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt b/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
-index 7f3d383e605f..82e49cfa97a1 100644
---- a/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
-+++ b/Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt
-@@ -8,6 +8,7 @@ OHCI and EHCI controllers.
- Required properties:
- - compatible: "renesas,pci-r8a7790" for the R8A7790 SoC;
- 	      "renesas,pci-r8a7791" for the R8A7791 SoC;
-+	      "renesas,pci-r8a7793" for the R8A7793 SoC;
- 	      "renesas,pci-r8a7794" for the R8A7794 SoC;
- 	      "renesas,pci-rcar-gen2" for a generic R-Car Gen2 compatible device.
+diff --git a/drivers/sh/clk/core.c b/drivers/sh/clk/core.c
+index 6bf973bd9654..92863e3818e5 100644
+--- a/drivers/sh/clk/core.c
++++ b/drivers/sh/clk/core.c
+@@ -469,6 +469,9 @@ void clk_enable_init_clocks(void)
+ 
+ unsigned long clk_get_rate(struct clk *clk)
+ {
++	if (!clk)
++		return 0;
++
+ 	return clk->rate;
+ }
+ EXPORT_SYMBOL_GPL(clk_get_rate);
+@@ -478,6 +481,9 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
+ 	int ret = -EOPNOTSUPP;
+ 	unsigned long flags;
+ 
++	if (!clk)
++		return 0;
++
+ 	spin_lock_irqsave(&clock_lock, flags);
+ 
+ 	if (likely(clk->ops && clk->ops->set_rate)) {
+@@ -535,12 +541,18 @@ EXPORT_SYMBOL_GPL(clk_set_parent);
+ 
+ struct clk *clk_get_parent(struct clk *clk)
+ {
++	if (!clk)
++		return NULL;
++
+ 	return clk->parent;
+ }
+ EXPORT_SYMBOL_GPL(clk_get_parent);
+ 
+ long clk_round_rate(struct clk *clk, unsigned long rate)
+ {
++	if (!clk)
++		return 0;
++
+ 	if (likely(clk->ops && clk->ops->round_rate)) {
+ 		unsigned long flags, rounded;
  
 -- 
 2.1.4
-
