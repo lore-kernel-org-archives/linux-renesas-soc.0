@@ -1,213 +1,95 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 6/7] ARM: dts: r8a7794: Add SCIF fallback compatibility strings
-Date: Fri, 29 Jan 2016 10:32:07 +0100
-Message-Id: <1454059928-975-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1454059928-975-1-git-send-email-geert+renesas@glider.be>
-References: <1454059928-975-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 21 Jan 2016 14:31:50 +0530
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [GIT PULL for v4.5-rc1] media controller next gen patch series
+Message-ID: <20160121090150.GB10063@sudip-pc>
+References: <20160112084328.2194ec49@recife.lan>
+ <CAMuHMdX3ve8dy5B1PHkDHuzb-FbP4g6PC3=-o9F=z0aTWoST7Q@mail.gmail.com>
+ <20160119082052.3bd42e7f@recife.lan>
+ <569E3FC1.5060306@osg.samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <569E3FC1.5060306@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - Change one-line summary prefix to match current arm-soc practices,
+On Tue, Jan 19, 2016 at 10:53:05AM -0300, Javier Martinez Canillas wrote:
+> Hello,
+> 
+> On 01/19/2016 07:20 AM, Mauro Carvalho Chehab wrote:
+> >Em Tue, 19 Jan 2016 11:02:30 +0100
+> >Geert Uytterhoeven <geert@linux-m68k.org> escreveu:
+> >
+> >>Hi Mauro,
+> >>
+> >>On Tue, Jan 12, 2016 at 11:43 AM, Mauro Carvalho Chehab
+> >><mchehab@osg.samsung.com> wrote:
+> >>>That's the second part of the media patches. It contains the media controller
+> >>>next generation patches, with is the result of one year of discussions and
+> >>>development. It also contains patches to enable media controller support
+> >>>at the DVB subsystem.
+> >>>
+> >>>The goal is to improve the media controller to allow proper support for
+> >>>other types of Video4Linux devices (radio and TV ones) and to extend the
+> >>>media controller functionality to allow it to be used by other subsystems
+> >>>like DVB, ALSA and IIO.
+> >>>
+> >>>In order to use the new functionality, a new ioctl is needed
+> >>>(MEDIA_IOC_G_TOPOLOGY). As we're still discussing how to pack the struct
+> >>>fields of this ioctl in order to avoid compat32 issues, I decided to add
+> >>>a patch at the end of this series commenting out the new ioctl, in order
+> >>>to postpone the addition of the new ioctl to the next Kernel version (4.6).
+> >>>With that, no userspace visible changes should happen at the media
+> >>>controller API, as the existing ioctls are untouched. Yet, it helps
+> >>>DVB, ALSA and IIO developers to develop and test the patches adding media
+> >>>controller support there, as the core will contain all required internal
+> >>>changes to allow adding support for devices that belong to those
+> >>>subsystems.
+> >>>
+> >>>Regards,
+> >>>Mauro
+> >>>
+> >>>The following changes since commit 768acf46e1320d6c41ed1b7c4952bab41c1cde79:
+> >>>
+> >>>   [media] rc: sunxi-cir: Initialize the spinlock properly (2015-12-23 15:51:40 -0200)
+> >>>
+> >>>are available in the git repository at:
+> >>>
+> >>>   git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v4.5-2
+> >>>
+> >>>for you to fetch changes up to be0270ec89e6b9b49de7e533dd1f3a89ad34d205:
+> >>>
+> >>>   [media] Postpone the addition of MEDIA_IOC_G_TOPOLOGY (2016-01-11 12:35:17 -0200)
+> >>
+> >>After merging this into mainline, I get the BUG_ON() and crash I reported ca.
+> >>one month ago in "vsp1 BUG_ON() and crash (Re: [PATCH v9 03/12] media:
+> >>Entities, pads and links)" ( https://lkml.org/lkml/2015/12/14/373).
+> >
+> >Not sure what happened here, as this was supposed to have fixed already.
+> >I'll ask Javier to take a look into it and work with you for us to get it
+> >fixed ASAP.
+> >
+> 
+> There was a bug in my patch that split the entities registration and links
+> creation. I posted a fix that was already been tested by Geert:
+> 
+> https://patchwork.linuxtv.org/patch/32675/
 
-v3:
-  - New.
----
- arch/arm/boot/dts/r8a7794.dtsi | 54 ++++++++++++++++++++++++++++--------------
- 1 file changed, 36 insertions(+), 18 deletions(-)
+I will also request you to have a look at
+https://patchwork.linuxtv.org/patch/32425/
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 21be4bdc40019f31..a49bf303a02d0589 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -282,7 +282,8 @@
- 	};
- 
- 	scifa0: serial@e6c40000 {
--		compatible = "renesas,scifa-r8a7794", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7794",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c40000 0 64>;
- 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFA0>;
-@@ -294,7 +295,8 @@
- 	};
- 
- 	scifa1: serial@e6c50000 {
--		compatible = "renesas,scifa-r8a7794", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7794",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c50000 0 64>;
- 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFA1>;
-@@ -306,7 +308,8 @@
- 	};
- 
- 	scifa2: serial@e6c60000 {
--		compatible = "renesas,scifa-r8a7794", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7794",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c60000 0 64>;
- 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFA2>;
-@@ -318,7 +321,8 @@
- 	};
- 
- 	scifa3: serial@e6c70000 {
--		compatible = "renesas,scifa-r8a7794", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7794",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c70000 0 64>;
- 		interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7794_CLK_SCIFA3>;
-@@ -330,7 +334,8 @@
- 	};
- 
- 	scifa4: serial@e6c78000 {
--		compatible = "renesas,scifa-r8a7794", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7794",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c78000 0 64>;
- 		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7794_CLK_SCIFA4>;
-@@ -342,7 +347,8 @@
- 	};
- 
- 	scifa5: serial@e6c80000 {
--		compatible = "renesas,scifa-r8a7794", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7794",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c80000 0 64>;
- 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7794_CLK_SCIFA5>;
-@@ -354,7 +360,8 @@
- 	};
- 
- 	scifb0: serial@e6c20000 {
--		compatible = "renesas,scifb-r8a7794", "renesas,scifb";
-+		compatible = "renesas,scifb-r8a7794",
-+			     "renesas,rcar-gen2-scifb", "renesas,scifb";
- 		reg = <0 0xe6c20000 0 64>;
- 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFB0>;
-@@ -366,7 +373,8 @@
- 	};
- 
- 	scifb1: serial@e6c30000 {
--		compatible = "renesas,scifb-r8a7794", "renesas,scifb";
-+		compatible = "renesas,scifb-r8a7794",
-+			     "renesas,rcar-gen2-scifb", "renesas,scifb";
- 		reg = <0 0xe6c30000 0 64>;
- 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFB1>;
-@@ -378,7 +386,8 @@
- 	};
- 
- 	scifb2: serial@e6ce0000 {
--		compatible = "renesas,scifb-r8a7794", "renesas,scifb";
-+		compatible = "renesas,scifb-r8a7794",
-+			     "renesas,rcar-gen2-scifb", "renesas,scifb";
- 		reg = <0 0xe6ce0000 0 64>;
- 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFB2>;
-@@ -390,7 +399,8 @@
- 	};
- 
- 	scif0: serial@e6e60000 {
--		compatible = "renesas,scif-r8a7794", "renesas,scif";
-+		compatible = "renesas,scif-r8a7794", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6e60000 0 64>;
- 		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF0>;
-@@ -402,7 +412,8 @@
- 	};
- 
- 	scif1: serial@e6e68000 {
--		compatible = "renesas,scif-r8a7794", "renesas,scif";
-+		compatible = "renesas,scif-r8a7794", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6e68000 0 64>;
- 		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF1>;
-@@ -414,7 +425,8 @@
- 	};
- 
- 	scif2: serial@e6e58000 {
--		compatible = "renesas,scif-r8a7794", "renesas,scif";
-+		compatible = "renesas,scif-r8a7794", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6e58000 0 64>;
- 		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF2>;
-@@ -426,7 +438,8 @@
- 	};
- 
- 	scif3: serial@e6ea8000 {
--		compatible = "renesas,scif-r8a7794", "renesas,scif";
-+		compatible = "renesas,scif-r8a7794", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6ea8000 0 64>;
- 		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF3>;
-@@ -438,7 +451,8 @@
- 	};
- 
- 	scif4: serial@e6ee0000 {
--		compatible = "renesas,scif-r8a7794", "renesas,scif";
-+		compatible = "renesas,scif-r8a7794", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6ee0000 0 64>;
- 		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF4>;
-@@ -450,7 +464,8 @@
- 	};
- 
- 	scif5: serial@e6ee8000 {
--		compatible = "renesas,scif-r8a7794", "renesas,scif";
-+		compatible = "renesas,scif-r8a7794", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6ee8000 0 64>;
- 		interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF5>;
-@@ -462,7 +477,8 @@
- 	};
- 
- 	hscif0: serial@e62c0000 {
--		compatible = "renesas,hscif-r8a7794", "renesas,hscif";
-+		compatible = "renesas,hscif-r8a7794",
-+			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62c0000 0 96>;
- 		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_HSCIF0>;
-@@ -474,7 +490,8 @@
- 	};
- 
- 	hscif1: serial@e62c8000 {
--		compatible = "renesas,hscif-r8a7794", "renesas,hscif";
-+		compatible = "renesas,hscif-r8a7794",
-+			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62c8000 0 96>;
- 		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_HSCIF1>;
-@@ -486,7 +503,8 @@
- 	};
- 
- 	hscif2: serial@e62d0000 {
--		compatible = "renesas,hscif-r8a7794", "renesas,hscif";
-+		compatible = "renesas,hscif-r8a7794",
-+			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62d0000 0 96>;
- 		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_HSCIF2>;
--- 
-1.9.1
+without it m32r allmodconfig will be broken for rc1.
 
+regards
+sudip
