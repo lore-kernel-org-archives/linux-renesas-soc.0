@@ -1,37 +1,48 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/2] arm64: dts: salvator-x: enable usb3.0 host channel 0
-Date: Fri, 22 Jan 2016 19:03:23 +0900
-Message-ID: <1453457003-7720-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1453457003-7720-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1453457003-7720-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <1453357276-10148-1-git-send-email-horms+renesas@verge.net.au>
+References: <1453357276-10148-1-git-send-email-horms+renesas@verge.net.au>
+Date: Thu, 21 Jan 2016 09:25:19 +0100
+Message-ID: <CAMuHMdUJXQTGA+thVtm+i8=GoMPoTHaz=skMOUvKzhfH9MyBxg@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Update mailing list for Renesas ARM64 SoC Development
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-sh list <linux-sh@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+On Thu, Jan 21, 2016 at 7:21 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Update the mailing list used for development of support for
+> ARM64 Renesas SoCs.
+>
+> This is a follow-up for a similar change for other Renesas SoCs and
+> drivers uses by Renesas SoCs. The ARM64 SoC entry was not updated in
+> that patch as it was not yet present in mainline.
+>
+> The motivation for the mailing list update is that Renesas SoCs are now
+> much wider than the SH architecture and there is some desire from some for
+> the linux-sh list to refocus on discussion of the work on the SH
+> architecture.
+>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 265d12f..9af1e3f 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -249,3 +249,7 @@
- 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
- 	};
- };
-+
-+&xhci0 {
-+	status = "okay";
-+};
--- 
-1.9.1
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
