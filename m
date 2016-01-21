@@ -3,83 +3,43 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm@opensource.se>
-Subject: [PATCH/RFC] ARM: shmobile: r8a7794: Add thermal device to DT
-Date: Thu, 28 Jan 2016 13:32:55 +0900
-Message-Id: <1453955575-32008-1-git-send-email-horms+renesas@verge.net.au>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] ARM: dts: armadillo800eva Correct extal1 frequency to 24 MHz
+Date: Thu, 21 Jan 2016 11:41:19 +0900
+Message-Id: <c61f30a255550bbfc6b83c1ca720661489cac4c0.1453343917.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1453343917.git.horms+renesas@verge.net.au>
+References: <cover.1453343917.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-*** Currently does not work
-*** Not for upstream merge
-*** For informational purposes only
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Instantiate the thermal sensor in the r8a7794 device tree.
+On r8a7740/armadillo, actual clock rates are ca. 4% lower than reported
+by /sys/kernel/debug/clk/clk_summary. Correct the extal1 frequency from
+25 MHz to 24 MHz to fix this.
 
-Based on very similar work for the r8a7790 by Magnus Damm.
+This matches the Armadillo-800 EVA Product Manual, which claims the main
+crystal runs at 24 MHz, and the old legacy/reference board code.
 
-Cc: Magnus Damm <damm@opensource.se>
+Fixes: 25aa7ba3fdfb ("ARM: shmobile: armadillo800eva: Sync DTS")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-
 ---
+ arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi Morimoto-san,
-
-as discussed briefly last week I am having some trouble enabling thermal
-for the r8a7794/alt. With this patch applied on top of
-renesas-devel-20160127-v4.5-rc1 I see:
-
-# dmesg | grep thermal
-[    1.089897] rcar_thermal e61f0000.thermal: thermal sensor was broken
-[    1.101225] rcar_thermal: probe of e61f0000.thermal failed with error -22
-
-I also see this with "[PATCH] thermal: core: don't call unsupported trip on
-thermal_tripped_notify()" applied.
-
-Is this a kernel issue that you are aware of?
-Is there a possibility that there is a problem with my hardware?
-
-Any insight would be greatly appreciated.
-
-AFIK this is not urgent.
-
----
- arch/arm/boot/dts/r8a7794.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 5d5d8cb41191..3b84bf3c1124 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -187,6 +187,14 @@
- 		status = "disabled";
- 	};
+diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+index 105d9c95de4a..5c76dcc89df5 100644
+--- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
++++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+@@ -180,7 +180,7 @@
+ };
  
-+	thermal@e61f0000 {
-+		compatible = "renesas,thermal-r8a7794", "renesas,rcar-thermal";
-+		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
-+		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp5_clks R8A7794_CLK_THERMAL>;
-+		power-domains = <&cpg_clocks>;
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-@@ -1045,6 +1053,14 @@
- 			clock-indices = <R8A7794_CLK_IRQC>;
- 			clock-output-names = "irqc";
- 		};
-+		mstp5_clks: mstp5_clks@e6150144 {
-+			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
-+			clocks = <&extal_clk>;
-+			#clock-cells = <1>;
-+			clock-indices = <R8A7794_CLK_THERMAL>;
-+			clock-output-names = "thermal";
-+		};
- 		mstp7_clks: mstp7_clks@e615014c {
- 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
+ &extal1_clk {
+-	clock-frequency = <25000000>;
++	clock-frequency = <24000000>;
+ };
+ &extal2_clk {
+ 	clock-frequency = <48000000>;
 -- 
 2.1.4
