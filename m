@@ -4,51 +4,56 @@ To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH v4 12/14] ARM: dts: gose: enable sound DMA support via SRC in device tree
-Date: Mon, 18 Jan 2016 14:28:07 +0900
-Message-Id: <1453094889-25204-13-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1453094889-25204-1-git-send-email-horms+renesas@verge.net.au>
-References: <1453094889-25204-1-git-send-email-horms+renesas@verge.net.au>
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 2/2] ARM: dts: r8a7793: add CAN nodes to device tree
+Date: Thu, 21 Jan 2016 14:09:41 +0900
+Message-Id: <1453352981-16104-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1453352981-16104-1-git-send-email-horms+renesas@verge.net.au>
+References: <1453352981-16104-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable DMA transfer to/from SRC in r8a7793/gose device tree.
+Add CAN nodes to r8a7793 device tree.
 
-     DMA      DMApp
-[MEM] -> [SRC] -> [SSIU] -> [SSI]
+Based on work by Sergei Shtylyov for the r8a7791 SoC.
 
-     DMA      DMApp
-[MEM] <- [SRC] <- [SSIU] <- [SSI]
-
-Current sound driver is supporting
-SSI/SRC random connection.
-So, this patch is tring
-SSI0 -> SRC2
-SSI1 <- SRC3
-
-Based on similar work for the r8a7791/koeslch by Kuninori Morimoto.
-
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7793.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 4a7048d676c8..ad20ddc5203d 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -315,8 +315,8 @@
- 
- 	rcar_sound,dai {
- 		dai0 {
--			playback = <&ssi0>;
--			capture  = <&ssi1>;
-+			playback = <&ssi0 &src2>;
-+			capture  = <&ssi1 &src3>;
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 5d9375fa6759..a602233c314d 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -692,6 +692,28 @@
  		};
  	};
- };
+ 
++	can0: can@e6e80000 {
++		compatible = "renesas,can-r8a7793";
++		reg = <0 0xe6e80000 0 0x1000>;
++		interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp9_clks R8A7793_CLK_RCAN0>,
++			 <&cpg_clocks R8A7793_CLK_RCAN>, <&can_clk>;
++		clock-names = "clkp1", "clkp2", "can_clk";
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
++	can1: can@e6e88000 {
++		compatible = "renesas,can-r8a7793";
++		reg = <0 0xe6e88000 0 0x1000>;
++		interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp9_clks R8A7793_CLK_RCAN1>,
++			 <&cpg_clocks R8A7793_CLK_RCAN>, <&can_clk>;
++		clock-names = "clkp1", "clkp2", "can_clk";
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
+ 	clocks {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
 -- 
 2.1.4
