@@ -3,21 +3,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
 In-Reply-To: <1453357276-10148-1-git-send-email-horms+renesas@verge.net.au>
 References: <1453357276-10148-1-git-send-email-horms+renesas@verge.net.au>
-Date: Thu, 21 Jan 2016 09:25:19 +0100
-Message-ID: <CAMuHMdUJXQTGA+thVtm+i8=GoMPoTHaz=skMOUvKzhfH9MyBxg@mail.gmail.com>
+Date: Thu, 21 Jan 2016 16:29:21 +0900
+Message-ID: <CANqRtoTgX7nQ89x0vhMxigVzydDf1gSBwc876Shw=uZuDmKH5w@mail.gmail.com>
 Subject: Re: [PATCH] MAINTAINERS: Update mailing list for Renesas ARM64 SoC Development
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Magnus Damm <magnus.damm@gmail.com>
 To: Simon Horman <horms+renesas@verge.net.au>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
 	linux-renesas-soc@vger.kernel.org,
-	Linux-sh list <linux-sh@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+	SH-Linux <linux-sh@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jan 21, 2016 at 7:21 AM, Simon Horman
+Hi Simon, Linus, everyone,
+
+On Thu, Jan 21, 2016 at 3:21 PM, Simon Horman
 <horms+renesas@verge.net.au> wrote:
 > Update the mailing list used for development of support for
 > ARM64 Renesas SoCs.
@@ -33,16 +34,14 @@ On Thu, Jan 21, 2016 at 7:21 AM, Simon Horman
 >
 > Cc: Magnus Damm <magnus.damm@gmail.com>
 > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  MAINTAINERS | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks, looking good!
 
-Gr{oetje,eeting}s,
+Acked-by: Magnus Damm <damm@opensource.se>
 
-                        Geert
+Cheers,
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+/ magnus
