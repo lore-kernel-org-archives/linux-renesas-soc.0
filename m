@@ -1,53 +1,24 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] arm64: dts: r8a7795: Add USB3.0 host device nodes
-Date: Fri, 22 Jan 2016 19:03:22 +0900
-Message-ID: <1453457003-7720-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1453457003-7720-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1453457003-7720-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Date: Thu, 21 Jan 2016 12:35:52 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: r8a7795: Complete SYS-DMAC nodes
+Message-ID: <20160121033552.GA20911@verge.net.au>
+References: <1453194381-13974-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1453194381-13974-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+On Tue, Jan 19, 2016 at 10:06:21AM +0100, Geert Uytterhoeven wrote:
+> Complete the dma-controller nodes for SYS-DMAC 0 to 2.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 221a8f5..119549e 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -862,5 +862,23 @@
- 			clocks = <&cpg CPG_MOD 815>;
- 			status = "disabled";
- 		};
-+
-+		xhci0: usb@ee000000 {
-+			compatible = "renesas,xhci-r8a7795";
-+			reg = <0 0xee000000 0 0xc00>;
-+			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 328>;
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		xhci1: usb@ee0400000 {
-+			compatible = "renesas,xhci-r8a7795";
-+			reg = <0 0xee040000 0 0xc00>;
-+			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 327>;
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-1.9.1
-
+Thanks, I have queued this up.
