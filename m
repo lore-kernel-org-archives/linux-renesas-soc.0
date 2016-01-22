@@ -1,26 +1,31 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 25 Jan 2016 09:08:45 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: magnus.damm@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/2] arm64: dts: r8a7795: Add USB3.0 host
-Message-ID: <20160125000845.GC774@verge.net.au>
-References: <1453457003-7720-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/2] arm64: dts: r8a7795: Add USB3.0 host
+Date: Fri, 22 Jan 2016 19:03:21 +0900
+Message-ID: <1453457003-7720-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1453457003-7720-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jan 22, 2016 at 07:03:21PM +0900, Yoshihiro Shimoda wrote:
-> This patch set is based on the latest renesas.git / renesas-devel-20160121-v4.4
-> tag. (commit id = 3740ade0617955c76e1767b6d49347d5446eed74)
-> 
-> This patch needs r8a7795-cpg-mssr.c update for usb3.0 clocks.
+This patch set is based on the latest renesas.git / renesas-devel-20160121-v4.4
+tag. (commit id = 3740ade0617955c76e1767b6d49347d5446eed74)
 
-Thanks. Please let me know if I should wait for that change before
-queuing up these patches.
+This patch needs r8a7795-cpg-mssr.c update for usb3.0 clocks.
+
+Yoshihiro Shimoda (2):
+  arm64: dts: r8a7795: Add USB3.0 host device nodes
+  arm64: dts: salvator-x: enable usb3.0 host channel 0
+
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  4 ++++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 18 ++++++++++++++++++
+ 2 files changed, 22 insertions(+)
+
+-- 
+1.9.1
+
