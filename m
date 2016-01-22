@@ -1,98 +1,39 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 03/11] ARM: dts: r8a73a4: Rename the serial port clock to fck
-Date: Fri, 29 Jan 2016 10:47:33 +0100
-Message-Id: <1454060861-2375-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
-References: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+In-Reply-To: <1453457003-7720-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1453457003-7720-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+	<1453457003-7720-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Date: Fri, 22 Jan 2016 12:09:02 +0100
+Message-ID: <CAMuHMdU4=sVr4iqjKNaPFqxvaz1_QVh6hTgpjHbHCedypkZs8A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: salvator-x: enable usb3.0 host channel 0
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On Fri, Jan 22, 2016 at 11:03 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-The clock is really the device functional clock, not the interface
-clock. Rename it.
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - Change one-line summary prefix to match current arm-soc practices,
+Gr{oetje,eeting}s,
 
-v3:
-  - No changes,
+                        Geert
 
-v2:
-  - Add Acked-by.
----
- arch/arm/boot/dts/r8a73a4.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
-index 64f3efcd7ba5f4e2..138414a7d1703781 100644
---- a/arch/arm/boot/dts/r8a73a4.dtsi
-+++ b/arch/arm/boot/dts/r8a73a4.dtsi
-@@ -335,7 +335,7 @@
- 		reg = <0 0xe6c20000 0 0x100>;
- 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFB0>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		power-domains = <&pd_a3sp>;
- 		status = "disabled";
- 	};
-@@ -345,7 +345,7 @@
- 		reg = <0 0xe6c30000 0 0x100>;
- 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFB1>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		power-domains = <&pd_a3sp>;
- 		status = "disabled";
- 	};
-@@ -355,7 +355,7 @@
- 		reg = <0 0xe6c40000 0 0x100>;
- 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFA0>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		power-domains = <&pd_a3sp>;
- 		status = "disabled";
- 	};
-@@ -365,7 +365,7 @@
- 		reg = <0 0xe6c50000 0 0x100>;
- 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFA1>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		power-domains = <&pd_a3sp>;
- 		status = "disabled";
- 	};
-@@ -375,7 +375,7 @@
- 		reg = <0 0xe6ce0000 0 0x100>;
- 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFB2>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		power-domains = <&pd_a3sp>;
- 		status = "disabled";
- 	};
-@@ -385,7 +385,7 @@
- 		reg = <0 0xe6cf0000 0 0x100>;
- 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFB3>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		power-domains = <&pd_c4>;
- 		status = "disabled";
- 	};
--- 
-1.9.1
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
