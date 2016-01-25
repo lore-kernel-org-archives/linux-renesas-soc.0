@@ -1,58 +1,49 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Simon Horman <horms@verge.net.au>
-CC: Magnus Damm <magnus.damm@gmail.com>,
+MIME-Version: 1.0
+In-Reply-To: <20160125000845.GC774@verge.net.au>
+References: <1453457003-7720-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+	<20160125000845.GC774@verge.net.au>
+Date: Mon, 25 Jan 2016 09:25:01 +0100
+Message-ID: <CAMuHMdUor3YxMAjL=YWgmG+7p-6+=h=C5vZAr4NkgroermgshA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] arm64: dts: r8a7795: Add USB3.0 host
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Pawel Moll <pawel.moll@arm.com>,
 	Mark Rutland <mark.rutland@arm.com>,
-	"Ian Campbell" <ijc+devicetree@hellion.org.uk>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
 	Kumar Gala <galak@codeaurora.org>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 0/2] arm64: dts: r8a7795: Add USB3.0 host
-Date: Mon, 25 Jan 2016 08:41:54 +0000
-Message-ID: <SG2PR06MB0919CD279BBA09E9F4831663D8C70@SG2PR06MB0919.apcprd06.prod.outlook.com>
-References: <1453457003-7720-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-	<20160125000845.GC774@verge.net.au>
- <CAMuHMdUor3YxMAjL=YWgmG+7p-6+=h=C5vZAr4NkgroermgshA@mail.gmail.com>
-In-Reply-To: <CAMuHMdUor3YxMAjL=YWgmG+7p-6+=h=C5vZAr4NkgroermgshA@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLCBTaW1vbi1zYW4sDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0N
-Cj4gRnJvbTogZ2VlcnQudXl0dGVyaG9ldmVuQGdtYWlsLmNvbSBbbWFpbHRvOmdlZXJ0LnV5dHRl
-cmhvZXZlbkBnbWFpbC5jb21dIE9uIEJlaGFsZiBPZiBHZWVydCBVeXR0ZXJob2V2ZW4NCj4gU2Vu
-dDogTW9uZGF5LCBKYW51YXJ5IDI1LCAyMDE2IDU6MjUgUE0NCj4gVG86IFNpbW9uIEhvcm1hbiA8
-aG9ybXNAdmVyZ2UubmV0LmF1Pg0KPiBDYzogWW9zaGloaXJvIFNoaW1vZGEgPHlvc2hpaGlyby5z
-aGltb2RhLnVoQHJlbmVzYXMuY29tPjsgTWFnbnVzIERhbW0gPG1hZ251cy5kYW1tQGdtYWlsLmNv
-bT47IFJvYiBIZXJyaW5nDQo+IDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBQYXdlbCBNb2xsIDxwYXdl
-bC5tb2xsQGFybS5jb20+OyBNYXJrIFJ1dGxhbmQgPG1hcmsucnV0bGFuZEBhcm0uY29tPjsgSWFu
-IENhbXBiZWxsDQo+IDxpamMrZGV2aWNldHJlZUBoZWxsaW9uLm9yZy51az47IEt1bWFyIEdhbGEg
-PGdhbGFrQGNvZGVhdXJvcmEub3JnPjsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxp
-bnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDAv
-Ml0gYXJtNjQ6IGR0czogcjhhNzc5NTogQWRkIFVTQjMuMCBob3N0DQo+IA0KPiBIaSBTaW1vbiwN
-Cj4gDQo+IE9uIE1vbiwgSmFuIDI1LCAyMDE2IGF0IDE6MDggQU0sIFNpbW9uIEhvcm1hbiA8aG9y
-bXNAdmVyZ2UubmV0LmF1PiB3cm90ZToNCj4gPiBPbiBGcmksIEphbiAyMiwgMjAxNiBhdCAwNzow
-MzoyMVBNICswOTAwLCBZb3NoaWhpcm8gU2hpbW9kYSB3cm90ZToNCj4gPj4gVGhpcyBwYXRjaCBz
-ZXQgaXMgYmFzZWQgb24gdGhlIGxhdGVzdCByZW5lc2FzLmdpdCAvIHJlbmVzYXMtZGV2ZWwtMjAx
-NjAxMjEtdjQuNA0KPiA+PiB0YWcuIChjb21taXQgaWQgPSAzNzQwYWRlMDYxNzk1NWM3NmUxNzY3
-YjZkNDkzNDdkNTQ0NmVlZDc0KQ0KPiA+Pg0KPiA+PiBUaGlzIHBhdGNoIG5lZWRzIHI4YTc3OTUt
-Y3BnLW1zc3IuYyB1cGRhdGUgZm9yIHVzYjMuMCBjbG9ja3MuDQo+ID4NCj4gPiBUaGFua3MuIFBs
-ZWFzZSBsZXQgbWUga25vdyBpZiBJIHNob3VsZCB3YWl0IGZvciB0aGF0IGNoYW5nZSBiZWZvcmUN
-Cj4gPiBxdWV1aW5nIHVwIHRoZXNlIHBhdGNoZXMuDQo+IA0KPiBJIHRoaW5rIHlvdSBjYW4gcXVl
-dWUgaXQgdXAgZmluZS4gSXQgc2hvdWxkIHN0YXJ0IHdvcmtpbmcgaW4gbmV4dA0KPiByZW5lc2Fz
-LWRyaXZlcnMNCj4gcmVsZWFzZS4NCg0KVGhhbmsgeW91IGZvciB5b3VyIGNvbW1lbnQhDQpJIHRo
-aW5rIHNvLg0KDQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+IEdye29ldGpl
-LGVldGluZ31zLA0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0t
-DQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlh
-MzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlv
-bnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4g
-d2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBv
-ciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IC0tIExpbnVzIFRvcnZhbGRzDQo=
+Hi Simon,
+
+On Mon, Jan 25, 2016 at 1:08 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Fri, Jan 22, 2016 at 07:03:21PM +0900, Yoshihiro Shimoda wrote:
+>> This patch set is based on the latest renesas.git / renesas-devel-20160121-v4.4
+>> tag. (commit id = 3740ade0617955c76e1767b6d49347d5446eed74)
+>>
+>> This patch needs r8a7795-cpg-mssr.c update for usb3.0 clocks.
+>
+> Thanks. Please let me know if I should wait for that change before
+> queuing up these patches.
+
+I think you can queue it up fine. It should start working in next
+renesas-drivers
+release.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
