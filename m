@@ -1,53 +1,47 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH] ARM: dts: porter: add sound support
+Date: Tue, 26 Jan 2016 09:43:10 +0900
+From: Simon Horman <horms@verge.net.au>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-References: <1674850.BZpGW9kEud@wasted.cogentembedded.com>
- <1872468.4EonQLNEFn@wasted.cogentembedded.com>
- <87k2mya48g.wl%kuninori.morimoto.gx@renesas.com>
-Cc: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
 	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
 	devicetree@vger.kernel.org, magnus.damm@gmail.com,
 	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <56A78356.4030407@cogentembedded.com>
-Date: Tue, 26 Jan 2016 17:31:50 +0300
+Subject: Re: [PATCH] ARM: dts: porter: add sound support
+Message-ID: <20160126004310.GJ26945@verge.net.au>
+References: <1674850.BZpGW9kEud@wasted.cogentembedded.com>
+ <1872468.4EonQLNEFn@wasted.cogentembedded.com>
+ <87k2mya48g.wl%kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <87k2mya48g.wl%kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
-
-On 01/25/2016 03:35 AM, Kuninori Morimoto wrote:
-
->> Define the Porter board dependent part of the R8A7791 sound device node.
->> Add device node for Asahi Kasei AK4642 stereo codec  to the I2C2 bus.
->> Add the "simple-audio-card" device node to interconnect the SoC sound
->> device  and the codec.
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
+On Mon, Jan 25, 2016 at 12:35:57AM +0000, Kuninori Morimoto wrote:
+> 
+> Hi
+> 
+> > Define the Porter board dependent part of the R8A7791 sound device node.
+> > Add device node for Asahi Kasei AK4642 stereo codec  to the I2C2 bus.
+> > Add the "simple-audio-card" device node to interconnect the SoC sound
+> > device  and the codec.
+> > 
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
 > Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-    Thank you. I forgot to mention that the patch was based on your work... :-/
+Thanks, I have queued this up.
 
->> +/*
->> + * SSI-AK4642
->> + *
->> + * SW3: 1: AK4642
->> + *      3: ADV7511
->
+> > +/*
+> > + * SSI-AK4642
+> > + *
+> > + * SW3: 1: AK4642
+> > + *      3: ADV7511
+> 
 > This is no a big deal, but according to my schematic,
 > porter is using JP3, not SW3, but no one cares ;P
 
-    Indeed, sorry about that.
-
-> Best regards
-> ---
-> Kuninori Morimoto
-
-MBR, Sergei
-
+Sergei, please feel free to provide a follow-up patch to address this.
