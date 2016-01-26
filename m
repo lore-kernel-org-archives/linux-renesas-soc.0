@@ -1,61 +1,53 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 0/7] ARM: dts: R-Car: Add SCIF fallback compatibility strings
-Date: Fri, 29 Jan 2016 10:32:01 +0100
-Message-Id: <1454059928-975-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH] ARM: dts: porter: add sound support
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+References: <1674850.BZpGW9kEud@wasted.cogentembedded.com>
+ <1872468.4EonQLNEFn@wasted.cogentembedded.com>
+ <87k2mya48g.wl%kuninori.morimoto.gx@renesas.com>
+Cc: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org, magnus.damm@gmail.com,
+	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <56A78356.4030407@cogentembedded.com>
+Date: Tue, 26 Jan 2016 17:31:50 +0300
+MIME-Version: 1.0
+In-Reply-To: <87k2mya48g.wl%kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+Hello.
 
-This patch series adds fallback compatibility strings for SCIF, HSCIF,
-SCIFA, and SCIFB to the dtsi files for R-Car Gen1, Gen2, and Gen3 SoCs.
-These fallback compatibility strings have been accepted in the DT
-bindings in v4.5-rc1.
+On 01/25/2016 03:35 AM, Kuninori Morimoto wrote:
 
-This will allow the sh-sci driver to match on family-specific compatible
-values, to enable support for the Baud Rate Generator for External Clock
-(BRG) on (H)SCIF later.
+>> Define the Porter board dependent part of the R8A7791 sound device node.
+>> Add device node for Asahi Kasei AK4642 stereo codec  to the I2C2 bus.
+>> Add the "simple-audio-card" device node to interconnect the SoC sound
+>> device  and the codec.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Changes compared to v3:
-  - Changed one-line summary prefix to match current arm-soc practices,
-  - Rebased on top of renesas-devel-20160129-v4.5-rc1.
+    Thank you. I forgot to mention that the patch was based on your work... :-/
 
-Thanks for applying!
+>> +/*
+>> + * SSI-AK4642
+>> + *
+>> + * SW3: 1: AK4642
+>> + *      3: ADV7511
+>
+> This is no a big deal, but according to my schematic,
+> porter is using JP3, not SW3, but no one cares ;P
 
-Geert Uytterhoeven (7):
-  ARM: dts: r8a7778: Add SCIF fallback compatibility strings
-  ARM: dts: r8a7779: Add SCIF fallback compatibility strings
-  ARM: dts: r8a7790: Add SCIF fallback compatibility strings
-  ARM: dts: r8a7791: Add SCIF fallback compatibility strings
-  ARM: dts: r8a7793: Add SCIF fallback compatibility strings
-  ARM: dts: r8a7794: Add SCIF fallback compatibility strings
-  arm64: dts: r8a7795: Add SCIF fallback compatibility strings
+    Indeed, sorry about that.
 
- arch/arm/boot/dts/r8a7778.dtsi           | 18 +++++++----
- arch/arm/boot/dts/r8a7779.dtsi           | 18 +++++++----
- arch/arm/boot/dts/r8a7790.dtsi           | 30 ++++++++++++------
- arch/arm/boot/dts/r8a7791.dtsi           | 54 +++++++++++++++++++++-----------
- arch/arm/boot/dts/r8a7793.dtsi           | 54 +++++++++++++++++++++-----------
- arch/arm/boot/dts/r8a7794.dtsi           | 54 +++++++++++++++++++++-----------
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 38 +++++++++++++++-------
- 7 files changed, 179 insertions(+), 87 deletions(-)
+> Best regards
+> ---
+> Kuninori Morimoto
 
--- 
-1.9.1
+MBR, Sergei
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
