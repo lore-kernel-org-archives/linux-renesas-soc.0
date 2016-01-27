@@ -1,32 +1,49 @@
-Return-Path: <SRS0+ku8b=NS=gmail.com=magnus.damm@vergenet.net>
-From: Magnus Damm <magnus.damm@gmail.com>
+Return-Path: <SRS0+1xJ5=N3=lists.infradead.org=linux-arm-kernel-bounces+horms=verge.net.au@vergenet.net>
+Date: Wed, 27 Jan 2016 20:24:03 +0900
+From: Simon Horman <horms@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au,Magnus Damm <magnus.damm@gmail.com>,laurent.pinchart+renesas@ideasonboard.com,geert+renesas@glider.be
-Date: Mon, 18 Jan 2016 14:48:17 +0900
-Message-Id: <20160118054817.22156.6531.sendpatchset@little-apple>
-Subject: [PATCH/RFC 00/02] ARM: shmobile: r8a7795 Salvator-X IPMMU 4 GiB RAM test code
+Subject: Re: [PATCH v4 00/14] r8a7793, gose: Add audio support to device tree
+Message-ID: <20160127112403.GB26357@verge.net.au>
+References: <1453094889-25204-1-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <1453094889-25204-1-git-send-email-horms+renesas@verge.net.au>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+horms=verge.net.au@lists.infradead.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-ARM: shmobile: r8a7795 Salvator-X IPMMU 4 GiB RAM test code
+On Mon, Jan 18, 2016 at 02:27:55PM +0900, Simon Horman wrote:
+> Hi,
+> 
+> this series adds support to r8a7793 and gose device trees for
+> rcar sound: first in PIO mode then using DMA
+> 
+> I have been unable to test if audio works (in PIO mode) as I
+> do not have physical access to a gose board. I would appreciate
+> some assistance there.
 
-[PATCH/RFC 01/02] iommu/ipmmu-vmsa: Use 64-bit masks
-[PATCH/RFC 02/02] arm64: dts: Salvator-X: Enable 4 GiB of RAM
+I have been able to perform some basic testing and have queued up this
+series.
 
-This code simply enables 4 GiB of RAM on Salvator-X after
-adjusting the IPMMU driver to tell the Linux driver model
-that the device it is managing is able to do 64-bit bus
-mastering.
+> This work is based heavily on the work of others for the r8a7791 and
+> koelsch as noted in the changelogs of individual patches.
+> 
+> This series is based on renesas-devel-20160111-v4.4 and
+> has no other dependencies that I am aware of.
 
-Not for upstream merge. Patch 1/2 will be rolled into a larger
-series for the IPMMU driver in the future. Patch 2/2 depends
-on firmware updates, so the integration needs to be correctly
-ordered to keep things smooth.
+[snip]
 
-Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- Developed on top of renesas-drivers-2016-01-13-v4.4.
-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |   15 +++++++++++++++
- drivers/iommu/ipmmu-vmsa.c                         |    2 ++
- 2 files changed, 17 insertions(+)
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
