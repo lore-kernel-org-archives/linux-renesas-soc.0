@@ -1,65 +1,85 @@
-Return-Path: <SRS0+ku8b=NS=gmail.com=magnus.damm@vergenet.net>
-From: Magnus Damm <magnus.damm@gmail.com>
+Return-Path: <horms@vergenet.net>
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au,Magnus Damm <magnus.damm@gmail.com>,laurent.pinchart+renesas@ideasonboard.com,geert+renesas@glider.be
-Date: Mon, 18 Jan 2016 14:08:48 +0900
-Message-Id: <20160118050848.20358.62538.sendpatchset@little-apple>
-In-Reply-To: <20160118050831.20358.83393.sendpatchset@little-apple>
-References: <20160118050831.20358.83393.sendpatchset@little-apple>
-Subject: [PATCH/RFC v2 02/03] ARM: shmobile: r8a7795: Hack up SYS-DMAC0 support
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm@opensource.se>
+Subject: [PATCH/RFC] ARM: shmobile: r8a7794: Add thermal device to DT
+Date: Thu, 28 Jan 2016 13:32:55 +0900
+Message-Id: <1453955575-32008-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+*** Currently does not work
+*** Not for upstream merge
+*** For informational purposes only
 
-This hooks up SYS-DMAC0 as r8a7795 device node. Note that the
-generic compat string is used, this should be replaced by
-SoC-specific compat string. Not for upstream merge.
+Instantiate the thermal sensor in the r8a7794 device tree.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Based on very similar work for the r8a7790 by Magnus Damm.
+
+Cc: Magnus Damm <damm@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
 ---
 
- Changes since V1:
- - The SYS-DMAC error IRQ is updated to match the documentation.
+Hi Morimoto-san,
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |   30 +++++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
+as discussed briefly last week I am having some trouble enabling thermal
+for the r8a7794/alt. With this patch applied on top of
+renesas-devel-20160127-v4.5-rc1 I see:
 
---- 0001/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2016-01-15 17:29:01.860513000 +0900
-@@ -350,7 +350,35 @@
- 		};
+# dmesg | grep thermal
+[    1.089897] rcar_thermal e61f0000.thermal: thermal sensor was broken
+[    1.101225] rcar_thermal: probe of e61f0000.thermal failed with error -22
+
+I also see this with "[PATCH] thermal: core: don't call unsupported trip on
+thermal_tripped_notify()" applied.
+
+Is this a kernel issue that you are aware of?
+Is there a possibility that there is a problem with my hardware?
+
+Any insight would be greatly appreciated.
+
+AFIK this is not urgent.
+
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 5d5d8cb41191..3b84bf3c1124 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -187,6 +187,14 @@
+ 		status = "disabled";
+ 	};
  
- 		dmac0: dma-controller@e6700000 {
--			/* Empty node for now */
-+			compatible = "renesas,rcar-dmac";
-+			reg = <0 0xe6700000 0 0x10000>;
-+			interrupts =	<0 199 IRQ_TYPE_LEVEL_HIGH
-+					 0 200 IRQ_TYPE_LEVEL_HIGH
-+					 0 201 IRQ_TYPE_LEVEL_HIGH
-+					 0 202 IRQ_TYPE_LEVEL_HIGH
-+					 0 203 IRQ_TYPE_LEVEL_HIGH
-+					 0 204 IRQ_TYPE_LEVEL_HIGH
-+					 0 205 IRQ_TYPE_LEVEL_HIGH
-+					 0 206 IRQ_TYPE_LEVEL_HIGH
-+					 0 207 IRQ_TYPE_LEVEL_HIGH
-+					 0 208 IRQ_TYPE_LEVEL_HIGH
-+					 0 209 IRQ_TYPE_LEVEL_HIGH
-+					 0 210 IRQ_TYPE_LEVEL_HIGH
-+					 0 211 IRQ_TYPE_LEVEL_HIGH
-+					 0 212 IRQ_TYPE_LEVEL_HIGH
-+					 0 213 IRQ_TYPE_LEVEL_HIGH
-+					 0 214 IRQ_TYPE_LEVEL_HIGH
-+					 0 215 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 219>;
-+			clock-names = "fck";
-+			power-domains = <&cpg>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
++	thermal@e61f0000 {
++		compatible = "renesas,thermal-r8a7794", "renesas,rcar-thermal";
++		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
++		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp5_clks R8A7794_CLK_THERMAL>;
++		power-domains = <&cpg_clocks>;
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+@@ -1045,6 +1053,14 @@
+ 			clock-indices = <R8A7794_CLK_IRQC>;
+ 			clock-output-names = "irqc";
  		};
- 
- 		dmac1: dma-controller@e7300000 {
++		mstp5_clks: mstp5_clks@e6150144 {
++			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
++			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
++			clocks = <&extal_clk>;
++			#clock-cells = <1>;
++			clock-indices = <R8A7794_CLK_THERMAL>;
++			clock-output-names = "thermal";
++		};
+ 		mstp7_clks: mstp7_clks@e615014c {
+ 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
+-- 
+2.1.4
