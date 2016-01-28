@@ -4,311 +4,317 @@ To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/2] ARM: dts: r8a7779: use GIC_* defines
-Date: Thu, 21 Jan 2016 13:52:46 +0900
-Message-Id: <1453351966-10968-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1453351966-10968-1-git-send-email-horms+renesas@verge.net.au>
-References: <1453351966-10968-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH] ARM: dts: r7s72100: use GIC_* defines
+Date: Thu, 28 Jan 2016 10:29:35 +0900
+Message-Id: <1453944575-24667-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use GIC_* defines for GIC interrupt cells in r8a7779 device tree.
+Use GIC_* defines for GIC interrupt cells in r7s72100 device tree.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7779.dtsi | 78 +++++++++++++++++++++---------------------
- 1 file changed, 39 insertions(+), 39 deletions(-)
+Based on renesas-devel-20160127-v4.5-rc1
+---
+ arch/arm/boot/dts/r7s72100.dtsi | 161 ++++++++++++++++++++--------------------
+ 1 file changed, 81 insertions(+), 80 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index 6afa909865b5..93f3fdf95e31 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -74,7 +74,7 @@
- 	gpio0: gpio@ffc40000 {
- 		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
- 		reg = <0xffc40000 0x2c>;
--		interrupts = <0 141 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
- 		gpio-controller;
- 		gpio-ranges = <&pfc 0 0 32>;
-@@ -85,7 +85,7 @@
- 	gpio1: gpio@ffc41000 {
- 		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
- 		reg = <0xffc41000 0x2c>;
--		interrupts = <0 142 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
- 		gpio-controller;
- 		gpio-ranges = <&pfc 0 32 32>;
-@@ -96,7 +96,7 @@
- 	gpio2: gpio@ffc42000 {
- 		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
- 		reg = <0xffc42000 0x2c>;
--		interrupts = <0 143 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
- 		gpio-controller;
- 		gpio-ranges = <&pfc 0 64 32>;
-@@ -107,7 +107,7 @@
- 	gpio3: gpio@ffc43000 {
- 		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
- 		reg = <0xffc43000 0x2c>;
--		interrupts = <0 144 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
- 		gpio-controller;
- 		gpio-ranges = <&pfc 0 96 32>;
-@@ -118,7 +118,7 @@
- 	gpio4: gpio@ffc44000 {
- 		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
- 		reg = <0xffc44000 0x2c>;
--		interrupts = <0 145 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
- 		gpio-controller;
- 		gpio-ranges = <&pfc 0 128 32>;
-@@ -129,7 +129,7 @@
- 	gpio5: gpio@ffc45000 {
- 		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
- 		reg = <0xffc45000 0x2c>;
--		interrupts = <0 146 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
- 		gpio-controller;
- 		gpio-ranges = <&pfc 0 160 32>;
-@@ -140,7 +140,7 @@
- 	gpio6: gpio@ffc46000 {
- 		compatible = "renesas,gpio-r8a7779", "renesas,gpio-rcar";
- 		reg = <0xffc46000 0x2c>;
--		interrupts = <0 147 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
- 		#gpio-cells = <2>;
- 		gpio-controller;
- 		gpio-ranges = <&pfc 0 192 9>;
-@@ -159,10 +159,10 @@
- 			<0xfe780044 4>,
- 			<0xfe780064 4>,
- 			<0xfe780000 4>;
--		interrupts = <0 27 IRQ_TYPE_LEVEL_HIGH
--			      0 28 IRQ_TYPE_LEVEL_HIGH
--			      0 29 IRQ_TYPE_LEVEL_HIGH
--			      0 30 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
- 		sense-bitfield-width = <2>;
- 	};
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 4657d7fb5bce..a5938c72d5bd 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -10,6 +10,7 @@
+  */
  
-@@ -171,7 +171,7 @@
+ #include <dt-bindings/clock/r7s72100-clock.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ 
+ / {
+@@ -152,10 +153,10 @@
+ 	scif0: serial@e8007000 {
+ 		compatible = "renesas,scif-r7s72100", "renesas,scif";
+ 		reg = <0xe8007000 64>;
+-		interrupts = <0 190 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 191 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 192 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 189 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF0>;
+ 		clock-names = "sci_ick";
+ 		power-domains = <&cpg_clocks>;
+@@ -165,10 +166,10 @@
+ 	scif1: serial@e8007800 {
+ 		compatible = "renesas,scif-r7s72100", "renesas,scif";
+ 		reg = <0xe8007800 64>;
+-		interrupts = <0 194 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 195 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 196 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 193 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF1>;
+ 		clock-names = "sci_ick";
+ 		power-domains = <&cpg_clocks>;
+@@ -178,10 +179,10 @@
+ 	scif2: serial@e8008000 {
+ 		compatible = "renesas,scif-r7s72100", "renesas,scif";
+ 		reg = <0xe8008000 64>;
+-		interrupts = <0 198 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 199 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 200 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 197 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF2>;
+ 		clock-names = "sci_ick";
+ 		power-domains = <&cpg_clocks>;
+@@ -191,10 +192,10 @@
+ 	scif3: serial@e8008800 {
+ 		compatible = "renesas,scif-r7s72100", "renesas,scif";
+ 		reg = <0xe8008800 64>;
+-		interrupts = <0 202 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 203 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 204 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 201 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF3>;
+ 		clock-names = "sci_ick";
+ 		power-domains = <&cpg_clocks>;
+@@ -204,10 +205,10 @@
+ 	scif4: serial@e8009000 {
+ 		compatible = "renesas,scif-r7s72100", "renesas,scif";
+ 		reg = <0xe8009000 64>;
+-		interrupts = <0 206 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 207 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 208 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 205 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF4>;
+ 		clock-names = "sci_ick";
+ 		power-domains = <&cpg_clocks>;
+@@ -217,10 +218,10 @@
+ 	scif5: serial@e8009800 {
+ 		compatible = "renesas,scif-r7s72100", "renesas,scif";
+ 		reg = <0xe8009800 64>;
+-		interrupts = <0 210 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 211 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 212 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 209 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF5>;
+ 		clock-names = "sci_ick";
+ 		power-domains = <&cpg_clocks>;
+@@ -230,10 +231,10 @@
+ 	scif6: serial@e800a000 {
+ 		compatible = "renesas,scif-r7s72100", "renesas,scif";
+ 		reg = <0xe800a000 64>;
+-		interrupts = <0 214 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 215 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 216 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 213 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF6>;
+ 		clock-names = "sci_ick";
+ 		power-domains = <&cpg_clocks>;
+@@ -243,10 +244,10 @@
+ 	scif7: serial@e800a800 {
+ 		compatible = "renesas,scif-r7s72100", "renesas,scif";
+ 		reg = <0xe800a800 64>;
+-		interrupts = <0 218 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 219 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 220 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 217 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R7S72100_CLK_SCIF7>;
+ 		clock-names = "sci_ick";
+ 		power-domains = <&cpg_clocks>;
+@@ -256,9 +257,9 @@
+ 	spi0: spi@e800c800 {
+ 		compatible = "renesas,rspi-r7s72100", "renesas,rspi-rz";
+ 		reg = <0xe800c800 0x24>;
+-		interrupts = <0 238 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 239 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 240 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 238 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 239 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error", "rx", "tx";
+ 		clocks = <&mstp10_clks R7S72100_CLK_SPI0>;
+ 		power-domains = <&cpg_clocks>;
+@@ -271,9 +272,9 @@
+ 	spi1: spi@e800d000 {
+ 		compatible = "renesas,rspi-r7s72100", "renesas,rspi-rz";
+ 		reg = <0xe800d000 0x24>;
+-		interrupts = <0 241 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 242 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 243 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 241 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 242 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 243 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error", "rx", "tx";
+ 		clocks = <&mstp10_clks R7S72100_CLK_SPI1>;
+ 		power-domains = <&cpg_clocks>;
+@@ -286,9 +287,9 @@
+ 	spi2: spi@e800d800 {
+ 		compatible = "renesas,rspi-r7s72100", "renesas,rspi-rz";
+ 		reg = <0xe800d800 0x24>;
+-		interrupts = <0 244 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 245 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 246 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 244 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error", "rx", "tx";
+ 		clocks = <&mstp10_clks R7S72100_CLK_SPI2>;
+ 		power-domains = <&cpg_clocks>;
+@@ -301,9 +302,9 @@
+ 	spi3: spi@e800e000 {
+ 		compatible = "renesas,rspi-r7s72100", "renesas,rspi-rz";
+ 		reg = <0xe800e000 0x24>;
+-		interrupts = <0 247 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 248 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 249 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error", "rx", "tx";
+ 		clocks = <&mstp10_clks R7S72100_CLK_SPI3>;
+ 		power-domains = <&cpg_clocks>;
+@@ -316,9 +317,9 @@
+ 	spi4: spi@e800e800 {
+ 		compatible = "renesas,rspi-r7s72100", "renesas,rspi-rz";
+ 		reg = <0xe800e800 0x24>;
+-		interrupts = <0 250 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 251 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 252 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 250 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 252 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "error", "rx", "tx";
+ 		clocks = <&mstp10_clks R7S72100_CLK_SPI4>;
+ 		power-domains = <&cpg_clocks>;
+@@ -342,14 +343,14 @@
  		#size-cells = <0>;
- 		compatible = "renesas,i2c-r8a7779";
- 		reg = <0xffc70000 0x1000>;
--		interrupts = <0 79 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_I2C0>;
+ 		compatible = "renesas,riic-r7s72100", "renesas,riic-rz";
+ 		reg = <0xfcfee000 0x44>;
+-		interrupts = <0 157 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 158 IRQ_TYPE_EDGE_RISING>,
+-			     <0 159 IRQ_TYPE_EDGE_RISING>,
+-			     <0 160 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 161 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 162 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 163 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 164 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 158 IRQ_TYPE_EDGE_RISING>,
++			     <GIC_SPI 159 IRQ_TYPE_EDGE_RISING>,
++			     <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R7S72100_CLK_I2C0>;
+ 		clock-frequency = <100000>;
  		power-domains = <&cpg_clocks>;
- 		status = "disabled";
-@@ -182,7 +182,7 @@
+@@ -361,14 +362,14 @@
  		#size-cells = <0>;
- 		compatible = "renesas,i2c-r8a7779";
- 		reg = <0xffc71000 0x1000>;
--		interrupts = <0 82 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_I2C1>;
+ 		compatible = "renesas,riic-r7s72100", "renesas,riic-rz";
+ 		reg = <0xfcfee400 0x44>;
+-		interrupts = <0 165 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 166 IRQ_TYPE_EDGE_RISING>,
+-			     <0 167 IRQ_TYPE_EDGE_RISING>,
+-			     <0 168 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 169 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 170 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 171 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 172 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 166 IRQ_TYPE_EDGE_RISING>,
++			     <GIC_SPI 167 IRQ_TYPE_EDGE_RISING>,
++			     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 172 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R7S72100_CLK_I2C1>;
+ 		clock-frequency = <100000>;
  		power-domains = <&cpg_clocks>;
- 		status = "disabled";
-@@ -193,7 +193,7 @@
+@@ -380,14 +381,14 @@
  		#size-cells = <0>;
- 		compatible = "renesas,i2c-r8a7779";
- 		reg = <0xffc72000 0x1000>;
--		interrupts = <0 80 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_I2C2>;
+ 		compatible = "renesas,riic-r7s72100", "renesas,riic-rz";
+ 		reg = <0xfcfee800 0x44>;
+-		interrupts = <0 173 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 174 IRQ_TYPE_EDGE_RISING>,
+-			     <0 175 IRQ_TYPE_EDGE_RISING>,
+-			     <0 176 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 177 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 178 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 179 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 180 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 174 IRQ_TYPE_EDGE_RISING>,
++			     <GIC_SPI 175 IRQ_TYPE_EDGE_RISING>,
++			     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 180 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R7S72100_CLK_I2C2>;
+ 		clock-frequency = <100000>;
  		power-domains = <&cpg_clocks>;
- 		status = "disabled";
-@@ -204,7 +204,7 @@
+@@ -399,14 +400,14 @@
  		#size-cells = <0>;
- 		compatible = "renesas,i2c-r8a7779";
- 		reg = <0xffc73000 0x1000>;
--		interrupts = <0 81 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_I2C3>;
+ 		compatible = "renesas,riic-r7s72100", "renesas,riic-rz";
+ 		reg = <0xfcfeec00 0x44>;
+-		interrupts = <0 181 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 182 IRQ_TYPE_EDGE_RISING>,
+-			     <0 183 IRQ_TYPE_EDGE_RISING>,
+-			     <0 184 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 185 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 186 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 187 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 188 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 182 IRQ_TYPE_EDGE_RISING>,
++			     <GIC_SPI 183 IRQ_TYPE_EDGE_RISING>,
++			     <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R7S72100_CLK_I2C3>;
+ 		clock-frequency = <100000>;
  		power-domains = <&cpg_clocks>;
- 		status = "disabled";
-@@ -213,7 +213,7 @@
- 	scif0: serial@ffe40000 {
- 		compatible = "renesas,scif-r8a7779", "renesas,scif";
- 		reg = <0xffe40000 0x100>;
--		interrupts = <0 88 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF0>;
- 		clock-names = "sci_ick";
- 		power-domains = <&cpg_clocks>;
-@@ -223,7 +223,7 @@
- 	scif1: serial@ffe41000 {
- 		compatible = "renesas,scif-r8a7779", "renesas,scif";
- 		reg = <0xffe41000 0x100>;
--		interrupts = <0 89 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF1>;
- 		clock-names = "sci_ick";
- 		power-domains = <&cpg_clocks>;
-@@ -233,7 +233,7 @@
- 	scif2: serial@ffe42000 {
- 		compatible = "renesas,scif-r8a7779", "renesas,scif";
- 		reg = <0xffe42000 0x100>;
--		interrupts = <0 90 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF2>;
- 		clock-names = "sci_ick";
- 		power-domains = <&cpg_clocks>;
-@@ -243,7 +243,7 @@
- 	scif3: serial@ffe43000 {
- 		compatible = "renesas,scif-r8a7779", "renesas,scif";
- 		reg = <0xffe43000 0x100>;
--		interrupts = <0 91 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF3>;
- 		clock-names = "sci_ick";
- 		power-domains = <&cpg_clocks>;
-@@ -253,7 +253,7 @@
- 	scif4: serial@ffe44000 {
- 		compatible = "renesas,scif-r8a7779", "renesas,scif";
- 		reg = <0xffe44000 0x100>;
--		interrupts = <0 92 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF4>;
- 		clock-names = "sci_ick";
- 		power-domains = <&cpg_clocks>;
-@@ -263,7 +263,7 @@
- 	scif5: serial@ffe45000 {
- 		compatible = "renesas,scif-r8a7779", "renesas,scif";
- 		reg = <0xffe45000 0x100>;
--		interrupts = <0 93 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF5>;
- 		clock-names = "sci_ick";
- 		power-domains = <&cpg_clocks>;
-@@ -283,9 +283,9 @@
- 	tmu0: timer@ffd80000 {
- 		compatible = "renesas,tmu-r8a7779", "renesas,tmu";
- 		reg = <0xffd80000 0x30>;
--		interrupts = <0 32 IRQ_TYPE_LEVEL_HIGH>,
--			     <0 33 IRQ_TYPE_LEVEL_HIGH>,
--			     <0 34 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_TMU0>;
- 		clock-names = "fck";
- 		power-domains = <&cpg_clocks>;
-@@ -298,9 +298,9 @@
- 	tmu1: timer@ffd81000 {
- 		compatible = "renesas,tmu-r8a7779", "renesas,tmu";
- 		reg = <0xffd81000 0x30>;
--		interrupts = <0 36 IRQ_TYPE_LEVEL_HIGH>,
--			     <0 37 IRQ_TYPE_LEVEL_HIGH>,
--			     <0 38 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_TMU1>;
- 		clock-names = "fck";
- 		power-domains = <&cpg_clocks>;
-@@ -313,9 +313,9 @@
- 	tmu2: timer@ffd82000 {
- 		compatible = "renesas,tmu-r8a7779", "renesas,tmu";
- 		reg = <0xffd82000 0x30>;
--		interrupts = <0 40 IRQ_TYPE_LEVEL_HIGH>,
--			     <0 41 IRQ_TYPE_LEVEL_HIGH>,
--			     <0 42 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_TMU2>;
- 		clock-names = "fck";
- 		power-domains = <&cpg_clocks>;
-@@ -328,7 +328,7 @@
- 	sata: sata@fc600000 {
- 		compatible = "renesas,sata-r8a7779", "renesas,rcar-sata";
- 		reg = <0xfc600000 0x2000>;
--		interrupts = <0 100 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
- 		power-domains = <&cpg_clocks>;
- 	};
-@@ -336,7 +336,7 @@
- 	sdhi0: sd@ffe4c000 {
- 		compatible = "renesas,sdhi-r8a7779";
- 		reg = <0xffe4c000 0x100>;
--		interrupts = <0 104 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7779_CLK_SDHI0>;
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
-@@ -345,7 +345,7 @@
- 	sdhi1: sd@ffe4d000 {
- 		compatible = "renesas,sdhi-r8a7779";
- 		reg = <0xffe4d000 0x100>;
--		interrupts = <0 105 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7779_CLK_SDHI1>;
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
-@@ -354,7 +354,7 @@
- 	sdhi2: sd@ffe4e000 {
- 		compatible = "renesas,sdhi-r8a7779";
- 		reg = <0xffe4e000 0x100>;
+@@ -416,7 +417,7 @@
+ 	mtu2: timer@fcff0000 {
+ 		compatible = "renesas,mtu2-r7s72100", "renesas,mtu2";
+ 		reg = <0xfcff0000 0x400>;
 -		interrupts = <0 107 IRQ_TYPE_LEVEL_HIGH>;
 +		interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7779_CLK_SDHI2>;
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
-@@ -363,7 +363,7 @@
- 	sdhi3: sd@ffe4f000 {
- 		compatible = "renesas,sdhi-r8a7779";
- 		reg = <0xffe4f000 0x100>;
--		interrupts = <0 106 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7779_CLK_SDHI3>;
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
-@@ -372,7 +372,7 @@
- 	hspi0: spi@fffc7000 {
- 		compatible = "renesas,hspi-r8a7779", "renesas,hspi";
- 		reg = <0xfffc7000 0x18>;
--		interrupts = <0 73 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
-@@ -383,7 +383,7 @@
- 	hspi1: spi@fffc8000 {
- 		compatible = "renesas,hspi-r8a7779", "renesas,hspi";
- 		reg = <0xfffc8000 0x18>;
--		interrupts = <0 74 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
-@@ -394,7 +394,7 @@
- 	hspi2: spi@fffc6000 {
- 		compatible = "renesas,hspi-r8a7779", "renesas,hspi";
- 		reg = <0xfffc6000 0x18>;
--		interrupts = <0 75 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
-@@ -405,7 +405,7 @@
- 	du: display@fff80000 {
- 		compatible = "renesas,du-r8a7779";
- 		reg = <0 0xfff80000 0 0x40000>;
--		interrupts = <0 31 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7779_CLK_DU>;
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
+ 		interrupt-names = "tgi0a";
+ 		clocks = <&mstp3_clks R7S72100_CLK_MTU2>;
+ 		clock-names = "fck";
 -- 
 2.1.4
