@@ -1,141 +1,83 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Thu, 21 Jan 2016 14:36:01 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: dts: porter: add sound support
-Message-ID: <1872468.4EonQLNEFn@wasted.cogentembedded.com>
-In-Reply-To: <1674850.BZpGW9kEud@wasted.cogentembedded.com>
-References: <1674850.BZpGW9kEud@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 4/9] ARM: dts: koelsch: Enable SCIF_CLK frequency and pins
+Date: Fri, 29 Jan 2016 11:17:21 +0100
+Message-Id: <1454062646-4826-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1454062646-4826-1-git-send-email-geert+renesas@glider.be>
+References: <1454062646-4826-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the Porter board dependent part of the R8A7791 sound device node.
-Add device node for Asahi Kasei AK4642 stereo codec  to the I2C2 bus.
-Add the "simple-audio-card" device node to interconnect the SoC sound
-device  and the codec.
+Add and enable the external crystal for the SCIF_CLK and its pinctrl, to
+be used by the Baud Rate Generator for External Clock (BRG) on (H)SCIF.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This increases the range and accuracy of supported baud rates:
+  - SCIF:
+      - Supports now 50, 75, 110, 1152000, 1500000, 2000000, and
+        4000000 bps,
+      - Perfect match for standard 50-460800, and 9216000 bps.
+      - More accurate 576000 bps.
+  - HSCIF:
+      - Supports now 50, 75, 110, 134, 150, and 200 bps,
+      - Perfect match for standard 50-460800, and 9216000 bps.
+      - More accurate 576000, 1152000, 3000000, 3500000, and 4000000
+	bps.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-This patch is against 'renesas-devel-20160121-v4.4' tag of Simon Horman's
-'renesas.git' repo.
+v4:
+  - Change one-line summary prefix to match current arm-soc practices,
 
- arch/arm/boot/dts/r8a7791-porter.dts |   71 +++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+v3:
+  - Add Reviewed-by.
+---
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Index: renesas/arch/arm/boot/dts/r8a7791-porter.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7791-porter.dts
-+++ renesas/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -8,6 +8,17 @@
-  * kind, whether express or implied.
-  */
- 
-+/*
-+ * SSI-AK4642
-+ *
-+ * SW3: 1: AK4642
-+ *      3: ADV7511
-+ *
-+ * This command is required before playback/capture:
-+ *
-+ *	amixer set "LINEOUT Mixer DACL" on
-+ */
-+
- /dts-v1/;
- #include "r8a7791.dtsi"
- #include <dt-bindings/gpio/gpio.h>
-@@ -101,6 +112,30 @@
- 		#clock-cells = <0>;
- 		clock-frequency = <74250000>;
- 	};
-+
-+	x14_clk: x14-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <11289600>;
-+		clock-output-names = "audio_clock";
-+	};
-+
-+	sound {
-+		compatible = "simple-audio-card";
-+
-+		simple-audio-card,format = "left_j";
-+		simple-audio-card,bitclock-master = <&soundcodec>;
-+		simple-audio-card,frame-master = <&soundcodec>;
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&rcar_sound>;
-+		};
-+
-+		soundcodec: simple-audio-card,codec {
-+			sound-dai = <&ak4642>;
-+			clocks = <&x14_clk>;
-+		};
-+	};
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index 45256f3cc83560a8..0ad71b81d3a25f59 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -320,6 +320,9 @@
  };
  
- &extal_clk {
-@@ -167,6 +202,16 @@
- 		renesas,groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
- 		renesas,function = "du";
- 	};
-+
-+	ssi_pins: sound {
-+		renesas,groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data";
-+		renesas,function = "ssi";
-+	};
-+
-+	audio_clk_pins: audio_clk {
-+		renesas,groups = "audio_clk_a";
-+		renesas,function = "audio_clk";
-+	};
- };
- 
- &scif0 {
-@@ -257,6 +302,12 @@
- 	status = "okay";
- 	clock-frequency = <400000>;
- 
-+	ak4642: codec@12 {
-+		compatible = "asahi-kasei,ak4642";
-+		#sound-dai-cells = <0>;
-+		reg = <0x12>;
-+	};
-+
- 	composite-in@20 {
- 		compatible = "adi,adv7180";
- 		reg = <0x20>;
-@@ -385,3 +436,23 @@
- 		};
- 	};
- };
-+
-+&rcar_sound {
-+	pinctrl-0 = <&ssi_pins &audio_clk_pins>;
+ &pfc {
++	pinctrl-0 = <&scif_clk_pins>;
 +	pinctrl-names = "default";
-+	status = "okay";
 +
-+	/* Single DAI */
-+	#sound-dai-cells = <0>;
-+
-+	rcar_sound,dai {
-+		dai0 {
-+			playback = <&ssi0>;
-+			capture  = <&ssi1>;
-+		};
+ 	i2c2_pins: i2c2 {
+ 		renesas,groups = "i2c2";
+ 		renesas,function = "i2c2";
+@@ -340,6 +343,11 @@
+ 		renesas,function = "scif1";
+ 	};
+ 
++	scif_clk_pins: scif_clk {
++		renesas,groups = "scif_clk";
++		renesas,function = "scif_clk";
 +	};
++
+ 	ether_pins: ether {
+ 		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
+ 		renesas,function = "eth";
+@@ -440,6 +448,11 @@
+ 	status = "okay";
+ };
+ 
++&scif_clk {
++	clock-frequency = <14745600>;
++	status = "okay";
 +};
 +
-+&ssi1 {
-+	shared-pin;
-+};
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+ 	pinctrl-names = "default";
+-- 
+1.9.1
 
