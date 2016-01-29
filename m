@@ -5,135 +5,90 @@ To: Simon Horman <horms@verge.net.au>,
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 11/11] arm64: dts: r8a7795: Rename the serial port clock to fck
-Date: Fri, 29 Jan 2016 10:47:41 +0100
-Message-Id: <1454060861-2375-12-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
-References: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4 0/9] ARM/arm64: dts: rcar: Enable SCIF_CLK frequency and pins
+Date: Fri, 29 Jan 2016 11:17:17 +0100
+Message-Id: <1454062646-4826-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The clock is really the device functional clock, not the interface
-clock. Rename it.
+	Hi Simon, Magnus,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-v4:
+This patch series adds support for the external crystal feeding SCIF_CLK
+to (H)SCIF on the various Renesas R-Car Gen1, Gen2, and Gen3 development
+boards.  This increases the range and accuracy of supported baud rates.
+Support for this has been accepted in the driver in v4.5-rc1.
+
+Changes compared to v3:
   - Change one-line summary prefix to match current arm-soc practices,
+  - Tested on r8a7794/alt,
+  - Rebased,
 
-v3:
-  - Add Acked-by,
+Changes compared to v2:
+  - Add support for r8a7778/bockw, r8a7779/marzen, r8a7790/lager,
+    r8a7791/porter, r8a7793/gose, r8a7794/alt, and r8a7794/silk,
+  - Add Reviewed-by.
 
-v2:
-  - New.
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+Testing:
+  - This was tested locally on r8a7791/koelsch and r8a7795/salvator-x,
+  - This was tested remotely on r8a7778/bockw, r8a7779/marzen, and
+    r8a7794/alt,
+  - This has been in renesas-drivers for a while, so I assume it has
+    received basic testing on other boards,
+  - Hints for various levels of testing:
+      - Change the "dev_dbg" after "done:" in
+	drivers/tty/serial/sh-sci.c to "dev_info" to print clock and bit
+	rate,
+      - "yes U | tr -d '\n' > /dev/ttySCx" outputs a square wave with a
+        frequency of half the bit rate on TXD,
+      - Modifying the frequency of SCIF_CLK causes garbage on the serial
+        console, unless you compensate by changing the bit rate in
+        /chosen/stdout-path,
+      - If you disable the SCIF_CLK, the brg_int clock will be used. If
+        you change that clock, you'll get garbage again.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index e5c38d1a551df78a..185eb9b4a3f543d8 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -480,7 +480,7 @@
- 			reg = <0 0xe6540000 0 96>;
- 			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 520>;
--			clock-names = "sci_ick";
-+			clock-names = "fck";
- 			dmas = <&dmac1 0x31>, <&dmac1 0x30>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -494,7 +494,7 @@
- 			reg = <0 0xe6550000 0 96>;
- 			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 519>;
--			clock-names = "sci_ick";
-+			clock-names = "fck";
- 			dmas = <&dmac1 0x33>, <&dmac1 0x32>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -508,7 +508,7 @@
- 			reg = <0 0xe6560000 0 96>;
- 			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 518>;
--			clock-names = "sci_ick";
-+			clock-names = "fck";
- 			dmas = <&dmac1 0x35>, <&dmac1 0x34>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -522,7 +522,7 @@
- 			reg = <0 0xe66a0000 0 96>;
- 			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 517>;
--			clock-names = "sci_ick";
-+			clock-names = "fck";
- 			dmas = <&dmac0 0x37>, <&dmac0 0x36>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -536,7 +536,7 @@
- 			reg = <0 0xe66b0000 0 96>;
- 			interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 516>;
--			clock-names = "sci_ick";
-+			clock-names = "fck";
- 			dmas = <&dmac0 0x39>, <&dmac0 0x38>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -549,7 +549,7 @@
- 			reg = <0 0xe6e60000 0 64>;
- 			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 207>;
--			clock-names = "sci_ick";
-+			clock-names = "fck";
- 			dmas = <&dmac1 0x51>, <&dmac1 0x50>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -562,7 +562,7 @@
- 			reg = <0 0xe6e68000 0 64>;
- 			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 206>;
--			clock-names = "sci_ick";
-+			clock-names = "fck";
- 			dmas = <&dmac1 0x53>, <&dmac1 0x52>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -575,7 +575,7 @@
- 			reg = <0 0xe6e88000 0 64>;
- 			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 310>;
--			clock-names = "sci_ick";
-+			clock-names = "fck";
- 			dmas = <&dmac1 0x13>, <&dmac1 0x12>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -588,7 +588,7 @@
- 			reg = <0 0xe6c50000 0 64>;
- 			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 204>;
--			clock-names = "sci_ick";
-+			clock-names = "fck";
- 			dmas = <&dmac0 0x57>, <&dmac0 0x56>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -601,7 +601,7 @@
- 			reg = <0 0xe6c40000 0 64>;
- 			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 203>;
--			clock-names = "sci_ick";
-+			clock-names = "fck";
- 			dmas = <&dmac0 0x59>, <&dmac0 0x58>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -614,7 +614,7 @@
- 			reg = <0 0xe6f30000 0 64>;
- 			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 202>;
--			clock-names = "sci_ick";
-+			clock-names = "fck";
- 			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
+Dependencies:
+  - renesas-devel-20160129-v4.5-rc1,
+  - series "[PATCH v4 0/7] ARM: dts: R-Car: Add SCIF fallback
+    compatibility strings",
+  - series "[PATCH v4 00/11] ARM: dts: shmobile: Rename the serial port
+    clock to fck",
+  - series "[PATCH v4 0/7] ARM: dts: r-car: Add BRG support for
+    (H)SCIF".
+
+Thanks for applying!
+
+Geert Uytterhoeven (9):
+  ARM: dts: alt: Enable SCIF_CLK frequency and pins
+  ARM: dts: bockw: Enable SCIF_CLK frequency and pins
+  ARM: dts: gose: Enable SCIF_CLK frequency and pins
+  ARM: dts: koelsch: Enable SCIF_CLK frequency and pins
+  ARM: dts: lager: Enable SCIF_CLK frequency and pins
+  ARM: dts: marzen: Enable SCIF_CLK frequency and pins
+  ARM: dts: porter: Enable SCIF_CLK frequency and pins
+  ARM: dts: silk: Enable SCIF_CLK frequency and pins
+  arm64: dts: salvator-x: Enable SCIF_CLK frequency and pins
+
+ arch/arm/boot/dts/r8a7778-bockw.dts                | 13 +++++++++++++
+ arch/arm/boot/dts/r8a7779-marzen.dts               | 13 +++++++++++++
+ arch/arm/boot/dts/r8a7790-lager.dts                | 13 +++++++++++++
+ arch/arm/boot/dts/r8a7791-koelsch.dts              | 13 +++++++++++++
+ arch/arm/boot/dts/r8a7791-porter.dts               | 13 +++++++++++++
+ arch/arm/boot/dts/r8a7793-gose.dts                 | 13 +++++++++++++
+ arch/arm/boot/dts/r8a7794-alt.dts                  | 13 +++++++++++++
+ arch/arm/boot/dts/r8a7794-silk.dts                 | 13 +++++++++++++
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 12 ++++++++++++
+ 9 files changed, 116 insertions(+)
+
 -- 
 1.9.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
