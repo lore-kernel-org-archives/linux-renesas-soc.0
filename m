@@ -5,70 +5,135 @@ To: Simon Horman <horms@verge.net.au>,
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 5/9] ARM: dts: lager: Enable SCIF_CLK frequency and pins
-Date: Fri, 29 Jan 2016 11:17:22 +0100
-Message-Id: <1454062646-4826-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1454062646-4826-1-git-send-email-geert+renesas@glider.be>
-References: <1454062646-4826-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4 11/11] arm64: dts: r8a7795: Rename the serial port clock to fck
+Date: Fri, 29 Jan 2016 10:47:41 +0100
+Message-Id: <1454060861-2375-12-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
+References: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add and enable the external crystal for the SCIF_CLK and its pinctrl, to
-be used by the Baud Rate Generator for External Clock (BRG) on (H)SCIF.
-
-This increases the range and accuracy of supported baud rates.
+The clock is really the device functional clock, not the interface
+clock. Rename it.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-Untested, based on schematics.
-
 v4:
   - Change one-line summary prefix to match current arm-soc practices,
 
 v3:
+  - Add Acked-by,
+
+v2:
   - New.
 ---
- arch/arm/boot/dts/r8a7790-lager.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 052dcee4790dd298..cdc0414f5f0716dd 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -291,6 +291,9 @@
- };
- 
- &pfc {
-+	pinctrl-0 = <&scif_clk_pins>;
-+	pinctrl-names = "default";
-+
- 	du_pins: du {
- 		renesas,groups = "du_rgb666", "du_sync_1", "du_clk_out_0";
- 		renesas,function = "du";
-@@ -301,6 +304,11 @@
- 		renesas,function = "scif0";
- 	};
- 
-+	scif_clk_pins: scif_clk {
-+		renesas,groups = "scif_clk";
-+		renesas,function = "scif_clk";
-+	};
-+
- 	ether_pins: ether {
- 		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
- 		renesas,function = "eth";
-@@ -485,6 +493,11 @@
- 	status = "okay";
- };
- 
-+&scif_clk {
-+	clock-frequency = <14745600>;
-+	status = "okay";
-+};
-+
- &msiof1 {
- 	pinctrl-0 = <&msiof1_pins>;
- 	pinctrl-names = "default";
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index e5c38d1a551df78a..185eb9b4a3f543d8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -480,7 +480,7 @@
+ 			reg = <0 0xe6540000 0 96>;
+ 			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 520>;
+-			clock-names = "sci_ick";
++			clock-names = "fck";
+ 			dmas = <&dmac1 0x31>, <&dmac1 0x30>;
+ 			dma-names = "tx", "rx";
+ 			power-domains = <&cpg>;
+@@ -494,7 +494,7 @@
+ 			reg = <0 0xe6550000 0 96>;
+ 			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 519>;
+-			clock-names = "sci_ick";
++			clock-names = "fck";
+ 			dmas = <&dmac1 0x33>, <&dmac1 0x32>;
+ 			dma-names = "tx", "rx";
+ 			power-domains = <&cpg>;
+@@ -508,7 +508,7 @@
+ 			reg = <0 0xe6560000 0 96>;
+ 			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 518>;
+-			clock-names = "sci_ick";
++			clock-names = "fck";
+ 			dmas = <&dmac1 0x35>, <&dmac1 0x34>;
+ 			dma-names = "tx", "rx";
+ 			power-domains = <&cpg>;
+@@ -522,7 +522,7 @@
+ 			reg = <0 0xe66a0000 0 96>;
+ 			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 517>;
+-			clock-names = "sci_ick";
++			clock-names = "fck";
+ 			dmas = <&dmac0 0x37>, <&dmac0 0x36>;
+ 			dma-names = "tx", "rx";
+ 			power-domains = <&cpg>;
+@@ -536,7 +536,7 @@
+ 			reg = <0 0xe66b0000 0 96>;
+ 			interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 516>;
+-			clock-names = "sci_ick";
++			clock-names = "fck";
+ 			dmas = <&dmac0 0x39>, <&dmac0 0x38>;
+ 			dma-names = "tx", "rx";
+ 			power-domains = <&cpg>;
+@@ -549,7 +549,7 @@
+ 			reg = <0 0xe6e60000 0 64>;
+ 			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 207>;
+-			clock-names = "sci_ick";
++			clock-names = "fck";
+ 			dmas = <&dmac1 0x51>, <&dmac1 0x50>;
+ 			dma-names = "tx", "rx";
+ 			power-domains = <&cpg>;
+@@ -562,7 +562,7 @@
+ 			reg = <0 0xe6e68000 0 64>;
+ 			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 206>;
+-			clock-names = "sci_ick";
++			clock-names = "fck";
+ 			dmas = <&dmac1 0x53>, <&dmac1 0x52>;
+ 			dma-names = "tx", "rx";
+ 			power-domains = <&cpg>;
+@@ -575,7 +575,7 @@
+ 			reg = <0 0xe6e88000 0 64>;
+ 			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 310>;
+-			clock-names = "sci_ick";
++			clock-names = "fck";
+ 			dmas = <&dmac1 0x13>, <&dmac1 0x12>;
+ 			dma-names = "tx", "rx";
+ 			power-domains = <&cpg>;
+@@ -588,7 +588,7 @@
+ 			reg = <0 0xe6c50000 0 64>;
+ 			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 204>;
+-			clock-names = "sci_ick";
++			clock-names = "fck";
+ 			dmas = <&dmac0 0x57>, <&dmac0 0x56>;
+ 			dma-names = "tx", "rx";
+ 			power-domains = <&cpg>;
+@@ -601,7 +601,7 @@
+ 			reg = <0 0xe6c40000 0 64>;
+ 			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 203>;
+-			clock-names = "sci_ick";
++			clock-names = "fck";
+ 			dmas = <&dmac0 0x59>, <&dmac0 0x58>;
+ 			dma-names = "tx", "rx";
+ 			power-domains = <&cpg>;
+@@ -614,7 +614,7 @@
+ 			reg = <0 0xe6f30000 0 64>;
+ 			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 202>;
+-			clock-names = "sci_ick";
++			clock-names = "fck";
+ 			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>;
+ 			dma-names = "tx", "rx";
+ 			power-domains = <&cpg>;
 -- 
 1.9.1
 
