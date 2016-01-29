@@ -1,100 +1,133 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Cc: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	vinod.koul@intel.com, linus.walleij@linaro.org,
-	geert+renesas@glider.be, dan.j.williams@intel.com,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 1/5] dma-mapping: add dma_{map,unmap}_page_attrs
-Date: Sun, 24 Jan 2016 22:43:57 +0200
-Message-ID: <1989275.WS6Og0GPnT@avalon>
-In-Reply-To: <1453384895-20395-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1453384895-20395-1-git-send-email-niklas.soderlund+renesas@ragnatech.se> <1453384895-20395-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 3/7] ARM: dts: r8a7790: Add SCIF fallback compatibility strings
+Date: Fri, 29 Jan 2016 10:32:04 +0100
+Message-Id: <1454059928-975-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1454059928-975-1-git-send-email-geert+renesas@glider.be>
+References: <1454059928-975-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v4:
+  - Change one-line summary prefix to match current arm-soc practices,
 
-(CC'ing LKML, linux-arch and Arnd Bergmann)
+v3:
+  - New.
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
-Thank you for the patch.
-
-On Thursday 21 January 2016 15:01:31 Niklas S�derlund wrote:
-> Add a version of dmap_{map,unmap}_page that can pass on attributes to
-> the underlaying map_page. This already exists for dma_{map,unmap}_single
-> and dmap_{map,unmap}_sg versions.
-> 
-> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  include/asm-generic/dma-mapping-common.h | 20 +++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/asm-generic/dma-mapping-common.h
-> b/include/asm-generic/dma-mapping-common.h index b1bc954..bb08302 100644
-> --- a/include/asm-generic/dma-mapping-common.h
-> +++ b/include/asm-generic/dma-mapping-common.h
-> @@ -74,29 +74,33 @@ static inline void dma_unmap_sg_attrs(struct device
-> *dev, struct scatterlist *sg ops->unmap_sg(dev, sg, nents, dir, attrs);
->  }
-> 
-> -static inline dma_addr_t dma_map_page(struct device *dev, struct page
-> *page, -				      size_t offset, size_t size,
-> -				      enum dma_data_direction dir)
-> +static inline dma_addr_t dma_map_page_attrs(struct device *dev,
-> +					    struct page *page,
-> +					    size_t offset, size_t size,
-> +					    enum dma_data_direction dir,
-> +					    struct dma_attrs *attrs)
->  {
->  	struct dma_map_ops *ops = get_dma_ops(dev);
->  	dma_addr_t addr;
-> 
->  	kmemcheck_mark_initialized(page_address(page) + offset, size);
->  	BUG_ON(!valid_dma_direction(dir));
-> -	addr = ops->map_page(dev, page, offset, size, dir, NULL);
-> +	addr = ops->map_page(dev, page, offset, size, dir, attrs);
->  	debug_dma_map_page(dev, page, offset, size, dir, addr, false);
-> 
->  	return addr;
->  }
-> 
-> -static inline void dma_unmap_page(struct device *dev, dma_addr_t addr,
-> -				  size_t size, enum dma_data_direction dir)
-> +static inline void dma_unmap_page_attrs(struct device *dev, dma_addr_t
-> addr, +					size_t size,
-> +					enum dma_data_direction dir,
-> +					struct dma_attrs *attrs)
->  {
->  	struct dma_map_ops *ops = get_dma_ops(dev);
-> 
->  	BUG_ON(!valid_dma_direction(dir));
->  	if (ops->unmap_page)
-> -		ops->unmap_page(dev, addr, size, dir, NULL);
-> +		ops->unmap_page(dev, addr, size, dir, attrs);
->  	debug_dma_unmap_page(dev, addr, size, dir, false);
->  }
-> 
-> @@ -181,6 +185,8 @@ dma_sync_sg_for_device(struct device *dev, struct
-> scatterlist *sg, #define dma_unmap_single(d, a, s, r)
-> dma_unmap_single_attrs(d, a, s, r, NULL) #define dma_map_sg(d, s, n, r)
-> dma_map_sg_attrs(d, s, n, r, NULL) #define dma_unmap_sg(d, s, n, r)
-> dma_unmap_sg_attrs(d, s, n, r, NULL) +#define dma_map_page(d, p, o, s, r)
-> dma_map_page_attrs(d, p, o, s, r, NULL) +#define dma_unmap_page(d, a, s, r)
-> dma_unmap_page_attrs(d, a, s, r, NULL)
-> 
->  extern int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
->  			   void *cpu_addr, dma_addr_t dma_addr, size_t size);
-
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index cc7eccf0ada7aecb..1d94dfd531414073 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -585,7 +585,8 @@
+ 	};
+ 
+ 	scifa0: serial@e6c40000 {
+-		compatible = "renesas,scifa-r8a7790", "renesas,scifa";
++		compatible = "renesas,scifa-r8a7790",
++			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c40000 0 64>;
+ 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7790_CLK_SCIFA0>;
+@@ -597,7 +598,8 @@
+ 	};
+ 
+ 	scifa1: serial@e6c50000 {
+-		compatible = "renesas,scifa-r8a7790", "renesas,scifa";
++		compatible = "renesas,scifa-r8a7790",
++			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c50000 0 64>;
+ 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7790_CLK_SCIFA1>;
+@@ -609,7 +611,8 @@
+ 	};
+ 
+ 	scifa2: serial@e6c60000 {
+-		compatible = "renesas,scifa-r8a7790", "renesas,scifa";
++		compatible = "renesas,scifa-r8a7790",
++			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c60000 0 64>;
+ 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7790_CLK_SCIFA2>;
+@@ -621,7 +624,8 @@
+ 	};
+ 
+ 	scifb0: serial@e6c20000 {
+-		compatible = "renesas,scifb-r8a7790", "renesas,scifb";
++		compatible = "renesas,scifb-r8a7790",
++			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+ 		reg = <0 0xe6c20000 0 64>;
+ 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7790_CLK_SCIFB0>;
+@@ -633,7 +637,8 @@
+ 	};
+ 
+ 	scifb1: serial@e6c30000 {
+-		compatible = "renesas,scifb-r8a7790", "renesas,scifb";
++		compatible = "renesas,scifb-r8a7790",
++			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+ 		reg = <0 0xe6c30000 0 64>;
+ 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7790_CLK_SCIFB1>;
+@@ -645,7 +650,8 @@
+ 	};
+ 
+ 	scifb2: serial@e6ce0000 {
+-		compatible = "renesas,scifb-r8a7790", "renesas,scifb";
++		compatible = "renesas,scifb-r8a7790",
++			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+ 		reg = <0 0xe6ce0000 0 64>;
+ 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7790_CLK_SCIFB2>;
+@@ -657,7 +663,8 @@
+ 	};
+ 
+ 	scif0: serial@e6e60000 {
+-		compatible = "renesas,scif-r8a7790", "renesas,scif";
++		compatible = "renesas,scif-r8a7790", "renesas,rcar-gen2-scif",
++			     "renesas,scif";
+ 		reg = <0 0xe6e60000 0 64>;
+ 		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7790_CLK_SCIF0>;
+@@ -669,7 +676,8 @@
+ 	};
+ 
+ 	scif1: serial@e6e68000 {
+-		compatible = "renesas,scif-r8a7790", "renesas,scif";
++		compatible = "renesas,scif-r8a7790", "renesas,rcar-gen2-scif",
++			     "renesas,scif";
+ 		reg = <0 0xe6e68000 0 64>;
+ 		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7790_CLK_SCIF1>;
+@@ -681,7 +689,8 @@
+ 	};
+ 
+ 	hscif0: serial@e62c0000 {
+-		compatible = "renesas,hscif-r8a7790", "renesas,hscif";
++		compatible = "renesas,hscif-r8a7790",
++			     "renesas,rcar-gen2-hscif", "renesas,hscif";
+ 		reg = <0 0xe62c0000 0 96>;
+ 		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7790_CLK_HSCIF0>;
+@@ -693,7 +702,8 @@
+ 	};
+ 
+ 	hscif1: serial@e62c8000 {
+-		compatible = "renesas,hscif-r8a7790", "renesas,hscif";
++		compatible = "renesas,hscif-r8a7790",
++			     "renesas,rcar-gen2-hscif", "renesas,hscif";
+ 		reg = <0 0xe62c8000 0 96>;
+ 		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7790_CLK_HSCIF1>;
 -- 
-Regards,
+1.9.1
 
-Laurent Pinchart
