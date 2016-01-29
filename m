@@ -5,199 +5,57 @@ To: Simon Horman <horms@verge.net.au>,
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 7/7] arm64: dts: r8a7795: Add BRG support for (H)SCIF
-Date: Fri, 29 Jan 2016 11:04:43 +0100
-Message-Id: <1454061883-4043-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1454061883-4043-1-git-send-email-geert+renesas@glider.be>
-References: <1454061883-4043-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4 0/7] ARM: dts: R-Car: Add SCIF fallback compatibility strings
+Date: Fri, 29 Jan 2016 10:32:01 +0100
+Message-Id: <1454059928-975-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the device node for the external SCIF_CLK.
-The presence of the SCIF_CLK crystal and its clock frequency depend on
-the actual board.
+	Hi Simon, Magnus,
 
-Add the two optional clock sources (S3D1 and SCIF_CLK for the internal
-resp. external clock) for the Baud Rate Generator for External Clock
-(BRG) to all SCIF and HSCIF device nodes.
+This patch series adds fallback compatibility strings for SCIF, HSCIF,
+SCIFA, and SCIFB to the dtsi files for R-Car Gen1, Gen2, and Gen3 SoCs.
+These fallback compatibility strings have been accepted in the DT
+bindings in v4.5-rc1.
 
-This increases the range and accuracy of supported baud rates on
-(H)SCIF.
+This will allow the sh-sci driver to match on family-specific compatible
+values, to enable support for the Baud Rate Generator for External Clock
+(BRG) on (H)SCIF later.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - Change one-line summary prefix to match current arm-soc practices,
+Changes compared to v3:
+  - Changed one-line summary prefix to match current arm-soc practices,
+  - Rebased on top of renesas-devel-20160129-v4.5-rc1.
 
-v3:
-  - Correct internal clock source ZS_CLK to S3D1 in patch description,
-  - Rename "int_clk" to "brg_int".
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 74 ++++++++++++++++++++++----------
- 1 file changed, 52 insertions(+), 22 deletions(-)
+Thanks for applying!
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 185eb9b4a3f543d8..1de7a4df30d4eb3d 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -99,6 +99,14 @@
- 		clock-frequency = <0>;
- 	};
- 
-+	/* External SCIF clock - to be overridden by boards that provide it */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+		status = "disabled";
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
-@@ -479,8 +487,10 @@
- 				     "renesas,hscif";
- 			reg = <0 0xe6540000 0 96>;
- 			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 520>;
--			clock-names = "fck";
-+			clocks = <&cpg CPG_MOD 520>,
-+				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x31>, <&dmac1 0x30>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -493,8 +503,10 @@
- 				     "renesas,hscif";
- 			reg = <0 0xe6550000 0 96>;
- 			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 519>;
--			clock-names = "fck";
-+			clocks = <&cpg CPG_MOD 519>,
-+				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x33>, <&dmac1 0x32>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -507,8 +519,10 @@
- 				     "renesas,hscif";
- 			reg = <0 0xe6560000 0 96>;
- 			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 518>;
--			clock-names = "fck";
-+			clocks = <&cpg CPG_MOD 518>,
-+				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x35>, <&dmac1 0x34>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -521,8 +535,10 @@
- 				     "renesas,hscif";
- 			reg = <0 0xe66a0000 0 96>;
- 			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 517>;
--			clock-names = "fck";
-+			clocks = <&cpg CPG_MOD 517>,
-+				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x37>, <&dmac0 0x36>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -535,8 +551,10 @@
- 				     "renesas,hscif";
- 			reg = <0 0xe66b0000 0 96>;
- 			interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 516>;
--			clock-names = "fck";
-+			clocks = <&cpg CPG_MOD 516>,
-+				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x39>, <&dmac0 0x38>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -548,8 +566,10 @@
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
- 			reg = <0 0xe6e60000 0 64>;
- 			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 207>;
--			clock-names = "fck";
-+			clocks = <&cpg CPG_MOD 207>,
-+				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x51>, <&dmac1 0x50>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -561,8 +581,10 @@
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
- 			reg = <0 0xe6e68000 0 64>;
- 			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 206>;
--			clock-names = "fck";
-+			clocks = <&cpg CPG_MOD 206>,
-+				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x53>, <&dmac1 0x52>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -574,8 +596,10 @@
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
- 			reg = <0 0xe6e88000 0 64>;
- 			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 310>;
--			clock-names = "fck";
-+			clocks = <&cpg CPG_MOD 310>,
-+				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x13>, <&dmac1 0x12>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -587,8 +611,10 @@
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
- 			reg = <0 0xe6c50000 0 64>;
- 			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 204>;
--			clock-names = "fck";
-+			clocks = <&cpg CPG_MOD 204>,
-+				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x57>, <&dmac0 0x56>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -600,8 +626,10 @@
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
- 			reg = <0 0xe6c40000 0 64>;
- 			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 203>;
--			clock-names = "fck";
-+			clocks = <&cpg CPG_MOD 203>,
-+				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac0 0x59>, <&dmac0 0x58>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
-@@ -613,8 +641,10 @@
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
- 			reg = <0 0xe6f30000 0 64>;
- 			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 202>;
--			clock-names = "fck";
-+			clocks = <&cpg CPG_MOD 202>,
-+				 <&cpg CPG_CORE R8A7795_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>;
- 			dma-names = "tx", "rx";
- 			power-domains = <&cpg>;
+Geert Uytterhoeven (7):
+  ARM: dts: r8a7778: Add SCIF fallback compatibility strings
+  ARM: dts: r8a7779: Add SCIF fallback compatibility strings
+  ARM: dts: r8a7790: Add SCIF fallback compatibility strings
+  ARM: dts: r8a7791: Add SCIF fallback compatibility strings
+  ARM: dts: r8a7793: Add SCIF fallback compatibility strings
+  ARM: dts: r8a7794: Add SCIF fallback compatibility strings
+  arm64: dts: r8a7795: Add SCIF fallback compatibility strings
+
+ arch/arm/boot/dts/r8a7778.dtsi           | 18 +++++++----
+ arch/arm/boot/dts/r8a7779.dtsi           | 18 +++++++----
+ arch/arm/boot/dts/r8a7790.dtsi           | 30 ++++++++++++------
+ arch/arm/boot/dts/r8a7791.dtsi           | 54 +++++++++++++++++++++-----------
+ arch/arm/boot/dts/r8a7793.dtsi           | 54 +++++++++++++++++++++-----------
+ arch/arm/boot/dts/r8a7794.dtsi           | 54 +++++++++++++++++++++-----------
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 38 +++++++++++++++-------
+ 7 files changed, 179 insertions(+), 87 deletions(-)
+
 -- 
 1.9.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
