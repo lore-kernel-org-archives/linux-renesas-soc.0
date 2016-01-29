@@ -4,67 +4,95 @@ To: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 2/9] ARM: dts: bockw: Enable SCIF_CLK frequency and pins
-Date: Fri, 29 Jan 2016 11:17:19 +0100
-Message-Id: <1454062646-4826-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1454062646-4826-1-git-send-email-geert+renesas@glider.be>
-References: <1454062646-4826-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4 03/11] ARM: dts: r8a73a4: Rename the serial port clock to fck
+Date: Fri, 29 Jan 2016 10:47:33 +0100
+Message-Id: <1454060861-2375-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
+References: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add and enable the external crystal for the SCIF_CLK and its pinctrl, to
-be used by the Baud Rate Generator for External Clock (BRG) on (H)SCIF.
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-This increases the range and accuracy of supported baud rates.
+The clock is really the device functional clock, not the interface
+clock. Rename it.
 
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Based on schematics, tested with remote access.
-
 v4:
   - Change one-line summary prefix to match current arm-soc practices,
-  - Move scif_clk next to scif0, for consistency with other boards,
 
 v3:
-  - New.
----
- arch/arm/boot/dts/r8a7778-bockw.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+  - No changes,
 
-diff --git a/arch/arm/boot/dts/r8a7778-bockw.dts b/arch/arm/boot/dts/r8a7778-bockw.dts
-index a52b359e2ae24a30..21e3b9dda2dabf5e 100644
---- a/arch/arm/boot/dts/r8a7778-bockw.dts
-+++ b/arch/arm/boot/dts/r8a7778-bockw.dts
-@@ -126,11 +126,19 @@
- };
- 
- &pfc {
-+	pinctrl-0 = <&scif_clk_pins>;
-+	pinctrl-names = "default";
-+
- 	scif0_pins: serial0 {
- 		renesas,groups = "scif0_data_a", "scif0_ctrl";
- 		renesas,function = "scif0";
+v2:
+  - Add Acked-by.
+---
+ arch/arm/boot/dts/r8a73a4.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
+index 64f3efcd7ba5f4e2..138414a7d1703781 100644
+--- a/arch/arm/boot/dts/r8a73a4.dtsi
++++ b/arch/arm/boot/dts/r8a73a4.dtsi
+@@ -335,7 +335,7 @@
+ 		reg = <0 0xe6c20000 0 0x100>;
+ 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFB0>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
  	};
- 
-+	scif_clk_pins: scif_clk {
-+		renesas,groups = "scif_clk";
-+		renesas,function = "scif_clk";
-+	};
-+
- 	mmc_pins: mmc {
- 		renesas,groups = "mmc_data8", "mmc_ctrl";
- 		renesas,function = "mmc";
-@@ -217,3 +225,8 @@
- 
- 	status = "okay";
- };
-+
-+&scif_clk {
-+	clock-frequency = <14745600>;
-+	status = "okay";
-+};
+@@ -345,7 +345,7 @@
+ 		reg = <0 0xe6c30000 0 0x100>;
+ 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFB1>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -355,7 +355,7 @@
+ 		reg = <0 0xe6c40000 0 0x100>;
+ 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFA0>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -365,7 +365,7 @@
+ 		reg = <0 0xe6c50000 0 0x100>;
+ 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFA1>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -375,7 +375,7 @@
+ 		reg = <0 0xe6ce0000 0 0x100>;
+ 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFB2>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -385,7 +385,7 @@
+ 		reg = <0 0xe6cf0000 0 0x100>;
+ 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFB3>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_c4>;
+ 		status = "disabled";
+ 	};
 -- 
 1.9.1
 
