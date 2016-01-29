@@ -5,72 +5,209 @@ To: Simon Horman <horms@verge.net.au>,
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 00/11] ARM: dts: shmobile: Rename the serial port clock to fck
-Date: Fri, 29 Jan 2016 10:47:30 +0100
-Message-Id: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4 4/7] ARM: dts: r8a7791: Add SCIF fallback compatibility strings
+Date: Fri, 29 Jan 2016 10:32:05 +0100
+Message-Id: <1454059928-975-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1454059928-975-1-git-send-email-geert+renesas@glider.be>
+References: <1454059928-975-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v4:
+  - Change one-line summary prefix to match current arm-soc practices,
 
-This patch series renames the serial port clock to fck, as accepted in
-the DT bindings in v4.5-rc1.
+v3:
+  - New.
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 54 ++++++++++++++++++++++++++++--------------
+ 1 file changed, 36 insertions(+), 18 deletions(-)
 
-Changes compared to v4:
-  - Changed one-line summary prefix to match current arm-soc practices,
-  - Split off h8/300 patch,
-  - Rebased,
-
-Changes compared to v3:
-  - Add Acked-by,
-  - Update for "[PATCH 0/2] ARM: shmobile: r8a7793: Increase scif
-    support".
-
-Dependencies:
-  - This series was created on top of "[PATCH v4 0/7] ARM: dts: R-Car:
-    Add SCIF fallback compatibility strings", but I think it applies to
-    plain renesas-devel-20160129-v4.5-rc1, too.
-
-Thanks for applying!
-
-Geert Uytterhoeven (1):
-  arm64: dts: r8a7795: Rename the serial port clock to fck
-
-Laurent Pinchart (10):
-  ARM: dts: sh73a0: Rename the serial port clock to fck
-  ARM: dts: r7s72100: Rename the serial port clock to fck
-  ARM: dts: r8a73a4: Rename the serial port clock to fck
-  ARM: dts: r8a7740: Rename the serial port clock to fck
-  ARM: dts: r8a7778: Rename the serial port clock to fck
-  ARM: dts: r8a7779: Rename the serial port clock to fck
-  ARM: dts: r8a7790: Rename the serial port clock to fck
-  ARM: dts: r8a7791: Rename the serial port clock to fck
-  ARM: dts: r8a7793: Rename the serial port clock to fck
-  ARM: dts: r8a7794: Rename the serial port clock to fck
-
- arch/arm/boot/dts/r7s72100.dtsi          | 16 +++++++-------
- arch/arm/boot/dts/r8a73a4.dtsi           | 12 +++++------
- arch/arm/boot/dts/r8a7740.dtsi           | 18 ++++++++--------
- arch/arm/boot/dts/r8a7778.dtsi           | 12 +++++------
- arch/arm/boot/dts/r8a7779.dtsi           | 12 +++++------
- arch/arm/boot/dts/r8a7790.dtsi           | 20 +++++++++---------
- arch/arm/boot/dts/r8a7791.dtsi           | 36 ++++++++++++++++----------------
- arch/arm/boot/dts/r8a7793.dtsi           | 36 ++++++++++++++++----------------
- arch/arm/boot/dts/r8a7794.dtsi           | 36 ++++++++++++++++----------------
- arch/arm/boot/dts/sh73a0.dtsi            | 18 ++++++++--------
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 22 +++++++++----------
- 11 files changed, 119 insertions(+), 119 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 6b3b02c0c58a8301..e7537ba68b5edae7 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -564,7 +564,8 @@
+ 	};
+ 
+ 	scifa0: serial@e6c40000 {
+-		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
++		compatible = "renesas,scifa-r8a7791",
++			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c40000 0 64>;
+ 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA0>;
+@@ -576,7 +577,8 @@
+ 	};
+ 
+ 	scifa1: serial@e6c50000 {
+-		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
++		compatible = "renesas,scifa-r8a7791",
++			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c50000 0 64>;
+ 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA1>;
+@@ -588,7 +590,8 @@
+ 	};
+ 
+ 	scifa2: serial@e6c60000 {
+-		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
++		compatible = "renesas,scifa-r8a7791",
++			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c60000 0 64>;
+ 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA2>;
+@@ -600,7 +603,8 @@
+ 	};
+ 
+ 	scifa3: serial@e6c70000 {
+-		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
++		compatible = "renesas,scifa-r8a7791",
++			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c70000 0 64>;
+ 		interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA3>;
+@@ -612,7 +616,8 @@
+ 	};
+ 
+ 	scifa4: serial@e6c78000 {
+-		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
++		compatible = "renesas,scifa-r8a7791",
++			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c78000 0 64>;
+ 		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA4>;
+@@ -624,7 +629,8 @@
+ 	};
+ 
+ 	scifa5: serial@e6c80000 {
+-		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
++		compatible = "renesas,scifa-r8a7791",
++			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c80000 0 64>;
+ 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA5>;
+@@ -636,7 +642,8 @@
+ 	};
+ 
+ 	scifb0: serial@e6c20000 {
+-		compatible = "renesas,scifb-r8a7791", "renesas,scifb";
++		compatible = "renesas,scifb-r8a7791",
++			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+ 		reg = <0 0xe6c20000 0 64>;
+ 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB0>;
+@@ -648,7 +655,8 @@
+ 	};
+ 
+ 	scifb1: serial@e6c30000 {
+-		compatible = "renesas,scifb-r8a7791", "renesas,scifb";
++		compatible = "renesas,scifb-r8a7791",
++			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+ 		reg = <0 0xe6c30000 0 64>;
+ 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB1>;
+@@ -660,7 +668,8 @@
+ 	};
+ 
+ 	scifb2: serial@e6ce0000 {
+-		compatible = "renesas,scifb-r8a7791", "renesas,scifb";
++		compatible = "renesas,scifb-r8a7791",
++			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+ 		reg = <0 0xe6ce0000 0 64>;
+ 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB2>;
+@@ -672,7 +681,8 @@
+ 	};
+ 
+ 	scif0: serial@e6e60000 {
+-		compatible = "renesas,scif-r8a7791", "renesas,scif";
++		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
++			     "renesas,scif";
+ 		reg = <0 0xe6e60000 0 64>;
+ 		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF0>;
+@@ -684,7 +694,8 @@
+ 	};
+ 
+ 	scif1: serial@e6e68000 {
+-		compatible = "renesas,scif-r8a7791", "renesas,scif";
++		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
++			     "renesas,scif";
+ 		reg = <0 0xe6e68000 0 64>;
+ 		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF1>;
+@@ -696,7 +707,8 @@
+ 	};
+ 
+ 	scif2: serial@e6e58000 {
+-		compatible = "renesas,scif-r8a7791", "renesas,scif";
++		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
++			     "renesas,scif";
+ 		reg = <0 0xe6e58000 0 64>;
+ 		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF2>;
+@@ -708,7 +720,8 @@
+ 	};
+ 
+ 	scif3: serial@e6ea8000 {
+-		compatible = "renesas,scif-r8a7791", "renesas,scif";
++		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
++			     "renesas,scif";
+ 		reg = <0 0xe6ea8000 0 64>;
+ 		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF3>;
+@@ -720,7 +733,8 @@
+ 	};
+ 
+ 	scif4: serial@e6ee0000 {
+-		compatible = "renesas,scif-r8a7791", "renesas,scif";
++		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
++			     "renesas,scif";
+ 		reg = <0 0xe6ee0000 0 64>;
+ 		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF4>;
+@@ -732,7 +746,8 @@
+ 	};
+ 
+ 	scif5: serial@e6ee8000 {
+-		compatible = "renesas,scif-r8a7791", "renesas,scif";
++		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
++			     "renesas,scif";
+ 		reg = <0 0xe6ee8000 0 64>;
+ 		interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF5>;
+@@ -744,7 +759,8 @@
+ 	};
+ 
+ 	hscif0: serial@e62c0000 {
+-		compatible = "renesas,hscif-r8a7791", "renesas,hscif";
++		compatible = "renesas,hscif-r8a7791",
++			     "renesas,rcar-gen2-hscif", "renesas,hscif";
+ 		reg = <0 0xe62c0000 0 96>;
+ 		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF0>;
+@@ -756,7 +772,8 @@
+ 	};
+ 
+ 	hscif1: serial@e62c8000 {
+-		compatible = "renesas,hscif-r8a7791", "renesas,hscif";
++		compatible = "renesas,hscif-r8a7791",
++			     "renesas,rcar-gen2-hscif", "renesas,hscif";
+ 		reg = <0 0xe62c8000 0 96>;
+ 		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF1>;
+@@ -768,7 +785,8 @@
+ 	};
+ 
+ 	hscif2: serial@e62d0000 {
+-		compatible = "renesas,hscif-r8a7791", "renesas,hscif";
++		compatible = "renesas,hscif-r8a7791",
++			     "renesas,rcar-gen2-hscif", "renesas,hscif";
+ 		reg = <0 0xe62d0000 0 96>;
+ 		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF2>;
 -- 
 1.9.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
