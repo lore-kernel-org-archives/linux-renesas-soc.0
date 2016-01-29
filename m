@@ -1,45 +1,70 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 0/4] PCI: rcar, rcar-gen2: More Gen2 compatibility strings
-Date: Mon, 18 Jan 2016 14:09:41 +0900
-Message-Id: <1453093785-21067-1-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 2/9] ARM: dts: bockw: Enable SCIF_CLK frequency and pins
+Date: Fri, 29 Jan 2016 11:17:19 +0100
+Message-Id: <1454062646-4826-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1454062646-4826-1-git-send-email-geert+renesas@glider.be>
+References: <1454062646-4826-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Add and enable the external crystal for the SCIF_CLK and its pinctrl, to
+be used by the Baud Rate Generator for External Clock (BRG) on (H)SCIF.
 
-this short series adds fallback gen2 and SoC-specific r8a7793 compatibility
-strings to the rcar PCI and rcar-gen2 PCIE drivers. The intention is to
-provide a complete set of compatibility strings for known Gen2 SoCs.
+This increases the range and accuracy of supported baud rates.
 
-Bjorn, the intention of the revised changelogs for the r8a7793 is to
-address your concerns regarding providing an explanation of why there are
-no driver changes. Please consider taking this series through your tree.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Based on schematics, tested with remote access.
 
-Key Changes between v2 and v3:
-* Enhance changelog to describe why documenting the r8a7793 is necessary
-  and sufficient
-* Added acks.
+v4:
+  - Change one-line summary prefix to match current arm-soc practices,
+  - Move scif_clk next to scif0, for consistency with other boards,
 
-Key Changes between v1 and v2:
-* Include "rcar-" in generic bindings
+v3:
+  - New.
+---
+ arch/arm/boot/dts/r8a7778-bockw.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Simon Horman (4):
-  PCI: rcar-gen2: add gen2 fallback compatibility string
-  PCI: rcar-gen2: add device tree support for r8a7793
-  PCI: rcar: add gen2 fallback compatibility string
-  PCI: rcar: add device tree support for r8a7793
-
- Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt | 12 ++++++++++--
- Documentation/devicetree/bindings/pci/rcar-pci.txt      | 14 +++++++++++---
- drivers/pci/host/pci-rcar-gen2.c                        |  1 +
- drivers/pci/host/pcie-rcar.c                            |  1 +
- 4 files changed, 23 insertions(+), 5 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7778-bockw.dts b/arch/arm/boot/dts/r8a7778-bockw.dts
+index a52b359e2ae24a30..21e3b9dda2dabf5e 100644
+--- a/arch/arm/boot/dts/r8a7778-bockw.dts
++++ b/arch/arm/boot/dts/r8a7778-bockw.dts
+@@ -126,11 +126,19 @@
+ };
+ 
+ &pfc {
++	pinctrl-0 = <&scif_clk_pins>;
++	pinctrl-names = "default";
++
+ 	scif0_pins: serial0 {
+ 		renesas,groups = "scif0_data_a", "scif0_ctrl";
+ 		renesas,function = "scif0";
+ 	};
+ 
++	scif_clk_pins: scif_clk {
++		renesas,groups = "scif_clk";
++		renesas,function = "scif_clk";
++	};
++
+ 	mmc_pins: mmc {
+ 		renesas,groups = "mmc_data8", "mmc_ctrl";
+ 		renesas,function = "mmc";
+@@ -217,3 +225,8 @@
+ 
+ 	status = "okay";
+ };
++
++&scif_clk {
++	clock-frequency = <14745600>;
++	status = "okay";
++};
 -- 
-2.1.4
+1.9.1
 
