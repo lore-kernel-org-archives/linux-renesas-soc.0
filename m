@@ -1,94 +1,106 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: uclinux-h8-devel@lists.sourceforge.jp,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 0/9] ARM/arm64: dts: rcar: Enable SCIF_CLK frequency and pins
-Date: Fri, 29 Jan 2016 11:17:17 +0100
-Message-Id: <1454062646-4826-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4] h8300: dts: Rename the serial port clock to fck
+Date: Fri, 29 Jan 2016 10:36:25 +0100
+Message-Id: <1454060185-1352-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+The clock is really the device functional clock, not the interface
+clock. Rename it.
 
-This patch series adds support for the external crystal feeding SCIF_CLK
-to (H)SCIF on the various Renesas R-Car Gen1, Gen2, and Gen3 development
-boards.  This increases the range and accuracy of supported baud rates.
-Support for this has been accepted in the driver in v4.5-rc1.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+The new clock name has been accepted in the DT bindings in v4.5-rc1.
 
-Changes compared to v3:
-  - Change one-line summary prefix to match current arm-soc practices,
-  - Tested on r8a7794/alt,
-  - Rebased,
+v4:
+  - No changes,
 
-Changes compared to v2:
-  - Add support for r8a7778/bockw, r8a7779/marzen, r8a7790/lager,
-    r8a7791/porter, r8a7793/gose, r8a7794/alt, and r8a7794/silk,
-  - Add Reviewed-by.
+v3:
+  - Add Acked-by,
 
-Testing:
-  - This was tested locally on r8a7791/koelsch and r8a7795/salvator-x,
-  - This was tested remotely on r8a7778/bockw, r8a7779/marzen, and
-    r8a7794/alt,
-  - This has been in renesas-drivers for a while, so I assume it has
-    received basic testing on other boards,
-  - Hints for various levels of testing:
-      - Change the "dev_dbg" after "done:" in
-	drivers/tty/serial/sh-sci.c to "dev_info" to print clock and bit
-	rate,
-      - "yes U | tr -d '\n' > /dev/ttySCx" outputs a square wave with a
-        frequency of half the bit rate on TXD,
-      - Modifying the frequency of SCIF_CLK causes garbage on the serial
-        console, unless you compensate by changing the bit rate in
-        /chosen/stdout-path,
-      - If you disable the SCIF_CLK, the brg_int clock will be used. If
-        you change that clock, you'll get garbage again.
+v2:
+  - New.
+---
+ arch/h8300/boot/dts/edosk2674.dts  | 6 +++---
+ arch/h8300/boot/dts/h8300h_sim.dts | 4 ++--
+ arch/h8300/boot/dts/h8s_sim.dts    | 4 ++--
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-Dependencies:
-  - renesas-devel-20160129-v4.5-rc1,
-  - series "[PATCH v4 0/7] ARM: dts: R-Car: Add SCIF fallback
-    compatibility strings",
-  - series "[PATCH v4 00/11] ARM: dts: shmobile: Rename the serial port
-    clock to fck",
-  - series "[PATCH v4 0/7] ARM: dts: r-car: Add BRG support for
-    (H)SCIF".
-
-Thanks for applying!
-
-Geert Uytterhoeven (9):
-  ARM: dts: alt: Enable SCIF_CLK frequency and pins
-  ARM: dts: bockw: Enable SCIF_CLK frequency and pins
-  ARM: dts: gose: Enable SCIF_CLK frequency and pins
-  ARM: dts: koelsch: Enable SCIF_CLK frequency and pins
-  ARM: dts: lager: Enable SCIF_CLK frequency and pins
-  ARM: dts: marzen: Enable SCIF_CLK frequency and pins
-  ARM: dts: porter: Enable SCIF_CLK frequency and pins
-  ARM: dts: silk: Enable SCIF_CLK frequency and pins
-  arm64: dts: salvator-x: Enable SCIF_CLK frequency and pins
-
- arch/arm/boot/dts/r8a7778-bockw.dts                | 13 +++++++++++++
- arch/arm/boot/dts/r8a7779-marzen.dts               | 13 +++++++++++++
- arch/arm/boot/dts/r8a7790-lager.dts                | 13 +++++++++++++
- arch/arm/boot/dts/r8a7791-koelsch.dts              | 13 +++++++++++++
- arch/arm/boot/dts/r8a7791-porter.dts               | 13 +++++++++++++
- arch/arm/boot/dts/r8a7793-gose.dts                 | 13 +++++++++++++
- arch/arm/boot/dts/r8a7794-alt.dts                  | 13 +++++++++++++
- arch/arm/boot/dts/r8a7794-silk.dts                 | 13 +++++++++++++
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 12 ++++++++++++
- 9 files changed, 116 insertions(+)
-
+diff --git a/arch/h8300/boot/dts/edosk2674.dts b/arch/h8300/boot/dts/edosk2674.dts
+index 4ce9fa874a577e55..6ae884bf66a5268c 100644
+--- a/arch/h8300/boot/dts/edosk2674.dts
++++ b/arch/h8300/boot/dts/edosk2674.dts
+@@ -88,20 +88,20 @@
+ 		reg = <0xffff78 8>;
+ 		interrupts = <88 0>, <89 0>, <90 0>, <91 0>;
+ 		clocks = <&fclk>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 	};
+ 	sci1: serial@ffff80 {
+ 		compatible = "renesas,sci";
+ 		reg = <0xffff80 8>;
+ 		interrupts = <92 0>, <93 0>, <94 0>, <95 0>;
+ 		clocks = <&fclk>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 	};
+ 	sci2: serial@ffff88 {
+ 		compatible = "renesas,sci";
+ 		reg = <0xffff88 8>;
+ 		interrupts = <96 0>, <97 0>, <98 0>, <99 0>;
+ 		clocks = <&fclk>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 	};
+ };
+diff --git a/arch/h8300/boot/dts/h8300h_sim.dts b/arch/h8300/boot/dts/h8300h_sim.dts
+index 545bfb57af9a9f2e..9c733d920f1f0dc3 100644
+--- a/arch/h8300/boot/dts/h8300h_sim.dts
++++ b/arch/h8300/boot/dts/h8300h_sim.dts
+@@ -83,7 +83,7 @@
+ 		reg = <0xffffb0 8>;
+ 		interrupts = <52 0>, <53 0>, <54 0>, <55 0>;
+ 		clocks = <&fclk>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 	};
+ 
+ 	sci1: serial@ffffb8 {
+@@ -91,6 +91,6 @@
+ 		reg = <0xffffb8 8>;
+ 		interrupts = <56 0>, <57 0>, <58 0>, <59 0>;
+ 		clocks = <&fclk>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 	};
+ };
+diff --git a/arch/h8300/boot/dts/h8s_sim.dts b/arch/h8300/boot/dts/h8s_sim.dts
+index bcedba5a3ce7e8ae..97e1f4b17ef067d5 100644
+--- a/arch/h8300/boot/dts/h8s_sim.dts
++++ b/arch/h8300/boot/dts/h8s_sim.dts
+@@ -87,13 +87,13 @@
+ 		reg = <0xffff78 8>;
+ 		interrupts = <88 0>, <89 0>, <90 0>, <91 0>;
+ 		clocks = <&fclk>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 	};
+ 	sci1: serial@ffff80 {
+ 		compatible = "renesas,sci";
+ 		reg = <0xffff80 8>;
+ 		interrupts = <92 0>, <93 0>, <94 0>, <95 0>;
+ 		clocks = <&fclk>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 	};
+ };
 -- 
 1.9.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
