@@ -4,90 +4,95 @@ To: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 1/7] ARM: dts: r8a7778: Add SCIF fallback compatibility strings
-Date: Fri, 29 Jan 2016 10:32:02 +0100
-Message-Id: <1454059928-975-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1454059928-975-1-git-send-email-geert+renesas@glider.be>
-References: <1454059928-975-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4 05/11] ARM: dts: r8a7778: Rename the serial port clock to fck
+Date: Fri, 29 Jan 2016 10:47:35 +0100
+Message-Id: <1454060861-2375-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
+References: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+The clock is really the device functional clock, not the interface
+clock. Rename it.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v4:
   - Change one-line summary prefix to match current arm-soc practices,
 
 v3:
-  - New.
+  - No changes,
+
+v2:
+  - Add Acked-by.
 ---
- arch/arm/boot/dts/r8a7778.dtsi | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a7778.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index fc5e7243467abe3c..8ea1792c51460fc4 100644
+index 8ea1792c51460fc4..50784e2b632d2d41 100644
 --- a/arch/arm/boot/dts/r8a7778.dtsi
 +++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -297,7 +297,8 @@
- 	};
- 
- 	scif0: serial@ffe40000 {
--		compatible = "renesas,scif-r8a7778", "renesas,scif";
-+		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
-+			     "renesas,scif";
+@@ -302,7 +302,7 @@
  		reg = <0xffe40000 0x100>;
  		interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp0_clks R8A7778_CLK_SCIF0>;
-@@ -307,7 +308,8 @@
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
  	};
- 
- 	scif1: serial@ffe41000 {
--		compatible = "renesas,scif-r8a7778", "renesas,scif";
-+		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
-+			     "renesas,scif";
+@@ -313,7 +313,7 @@
  		reg = <0xffe41000 0x100>;
  		interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp0_clks R8A7778_CLK_SCIF1>;
-@@ -317,7 +319,8 @@
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
  	};
- 
- 	scif2: serial@ffe42000 {
--		compatible = "renesas,scif-r8a7778", "renesas,scif";
-+		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
-+			     "renesas,scif";
+@@ -324,7 +324,7 @@
  		reg = <0xffe42000 0x100>;
  		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp0_clks R8A7778_CLK_SCIF2>;
-@@ -327,7 +330,8 @@
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
  	};
- 
- 	scif3: serial@ffe43000 {
--		compatible = "renesas,scif-r8a7778", "renesas,scif";
-+		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
-+			     "renesas,scif";
+@@ -335,7 +335,7 @@
  		reg = <0xffe43000 0x100>;
  		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp0_clks R8A7778_CLK_SCIF3>;
-@@ -337,7 +341,8 @@
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
  	};
- 
- 	scif4: serial@ffe44000 {
--		compatible = "renesas,scif-r8a7778", "renesas,scif";
-+		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
-+			     "renesas,scif";
+@@ -346,7 +346,7 @@
  		reg = <0xffe44000 0x100>;
  		interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp0_clks R8A7778_CLK_SCIF4>;
-@@ -347,7 +352,8 @@
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
  	};
- 
- 	scif5: serial@ffe45000 {
--		compatible = "renesas,scif-r8a7778", "renesas,scif";
-+		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
-+			     "renesas,scif";
+@@ -357,7 +357,7 @@
  		reg = <0xffe45000 0x100>;
  		interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp0_clks R8A7778_CLK_SCIF5>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
 -- 
 1.9.1
 
