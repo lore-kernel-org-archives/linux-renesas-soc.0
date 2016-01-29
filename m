@@ -1,76 +1,125 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 3/4] PCI: rcar: add gen2 fallback compatibility string
-Date: Mon, 18 Jan 2016 14:09:44 +0900
-Message-Id: <1453093785-21067-4-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1453093785-21067-1-git-send-email-horms+renesas@verge.net.au>
-References: <1453093785-21067-1-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 04/11] ARM: dts: r8a7740: Rename the serial port clock to fck
+Date: Fri, 29 Jan 2016 10:47:34 +0100
+Message-Id: <1454060861-2375-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
+References: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add fallback compatibility string for R-Car Gen 2 family.
-This is in keeping with the fallback scheme being adopted wherever
-appropriate for drivers for Renesas SoCs.
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+The clock is really the device functional clock, not the interface
+clock. Rename it.
 
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v2
-* Include "rcar-" in new compatibility string
----
- Documentation/devicetree/bindings/pci/rcar-pci.txt | 13 ++++++++++---
- drivers/pci/host/pcie-rcar.c                       |  1 +
- 2 files changed, 11 insertions(+), 3 deletions(-)
+v4:
+  - Change one-line summary prefix to match current arm-soc practices,
 
-diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-index 29d3b989d3b0..6b4d2f798386 100644
---- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-+++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-@@ -1,8 +1,15 @@
- * Renesas RCar PCIe interface
- 
- Required properties:
--- compatible: should contain one of the following
--	"renesas,pcie-r8a7779", "renesas,pcie-r8a7790", "renesas,pcie-r8a7791"
-+compatible: "renesas,pcie-r8a7779" for the R8A7779 SoC;
-+	    "renesas,pcie-r8a7790" for the R8A7790 SoC;
-+	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
-+	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 compatible device.
-+
-+	    When compatible with the generic version, nodes must list the
-+	    SoC-specific version corresponding to the platform first
-+	    followed by the generic version.
-+
- - reg: base address and length of the pcie controller registers.
- - #address-cells: set to <3>
- - #size-cells: set to <2>
-@@ -25,7 +32,7 @@ Example:
- SoC specific DT Entry:
- 
- 	pcie: pcie@fe000000 {
--		compatible = "renesas,pcie-r8a7791";
-+		compatible = "renesas,pcie-r8a7791", "renesas,pcie-rcar-gen2";
- 		reg = <0 0xfe000000 0 0x80000>;
- 		#address-cells = <3>;
- 		#size-cells = <2>;
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 414c33686621..c16f93fe604a 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -919,6 +919,7 @@ static int rcar_pcie_parse_map_dma_ranges(struct rcar_pcie *pcie,
- 
- static const struct of_device_id rcar_pcie_of_match[] = {
- 	{ .compatible = "renesas,pcie-r8a7779", .data = rcar_pcie_hw_init_h1 },
-+	{ .compatible = "renesas,pcie-rcar-gen2", .data = rcar_pcie_hw_init },
- 	{ .compatible = "renesas,pcie-r8a7790", .data = rcar_pcie_hw_init },
- 	{ .compatible = "renesas,pcie-r8a7791", .data = rcar_pcie_hw_init },
- 	{},
+v3:
+  - No changes,
+
+v2:
+  - Add Acked-by.
+---
+ arch/arm/boot/dts/r8a7740.dtsi | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
+index 36bcb39cca03b8df..995fbda74b7a057e 100644
+--- a/arch/arm/boot/dts/r8a7740.dtsi
++++ b/arch/arm/boot/dts/r8a7740.dtsi
+@@ -214,7 +214,7 @@
+ 		reg = <0xe6c40000 0x100>;
+ 		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7740_CLK_SCIFA0>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -224,7 +224,7 @@
+ 		reg = <0xe6c50000 0x100>;
+ 		interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7740_CLK_SCIFA1>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -234,7 +234,7 @@
+ 		reg = <0xe6c60000 0x100>;
+ 		interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7740_CLK_SCIFA2>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -244,7 +244,7 @@
+ 		reg = <0xe6c70000 0x100>;
+ 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7740_CLK_SCIFA3>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -254,7 +254,7 @@
+ 		reg = <0xe6c80000 0x100>;
+ 		interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7740_CLK_SCIFA4>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -264,7 +264,7 @@
+ 		reg = <0xe6cb0000 0x100>;
+ 		interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7740_CLK_SCIFA5>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -274,7 +274,7 @@
+ 		reg = <0xe6cc0000 0x100>;
+ 		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7740_CLK_SCIFA6>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -284,7 +284,7 @@
+ 		reg = <0xe6cd0000 0x100>;
+ 		interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7740_CLK_SCIFA7>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -294,7 +294,7 @@
+ 		reg = <0xe6c30000 0x100>;
+ 		interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7740_CLK_SCIFB>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
 -- 
-2.1.4
+1.9.1
 
