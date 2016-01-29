@@ -4,203 +4,72 @@ To: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 10/11] ARM: dts: r8a7794: Rename the serial port clock to fck
-Date: Fri, 29 Jan 2016 10:47:40 +0100
-Message-Id: <1454060861-2375-11-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
-References: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4 7/9] ARM: dts: porter: Enable SCIF_CLK frequency and pins
+Date: Fri, 29 Jan 2016 11:17:24 +0100
+Message-Id: <1454062646-4826-8-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1454062646-4826-1-git-send-email-geert+renesas@glider.be>
+References: <1454062646-4826-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Add and enable the external crystal for the SCIF_CLK and its pinctrl, to
+be used by the Baud Rate Generator for External Clock (BRG) on (H)SCIF.
 
-The clock is really the device functional clock, not the interface
-clock. Rename it.
+This increases the range and accuracy of supported baud rates.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+Untested, based on hardware manual.
+
+Note that U-Boot doesn't use SCIF_CLK on porter, like salvator-x, but
+unlike all other supported R-Car Gen2 boards.
+
 v4:
   - Change one-line summary prefix to match current arm-soc practices,
 
 v3:
-  - No changes,
-
-v2:
-  - Add Acked-by.
+  - New.
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ arch/arm/boot/dts/r8a7791-porter.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index a49bf303a02d0589..b03a77b3d22f13d2 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -287,7 +287,7 @@
- 		reg = <0 0xe6c40000 0 64>;
- 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFA0>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -300,7 +300,7 @@
- 		reg = <0 0xe6c50000 0 64>;
- 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFA1>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -313,7 +313,7 @@
- 		reg = <0 0xe6c60000 0 64>;
- 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFA2>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -326,7 +326,7 @@
- 		reg = <0 0xe6c70000 0 64>;
- 		interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7794_CLK_SCIFA3>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -339,7 +339,7 @@
- 		reg = <0 0xe6c78000 0 64>;
- 		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7794_CLK_SCIFA4>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x1f>, <&dmac0 0x20>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -352,7 +352,7 @@
- 		reg = <0 0xe6c80000 0 64>;
- 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7794_CLK_SCIFA5>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x23>, <&dmac0 0x24>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -365,7 +365,7 @@
- 		reg = <0 0xe6c20000 0 64>;
- 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFB0>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -378,7 +378,7 @@
- 		reg = <0 0xe6c30000 0 64>;
- 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFB1>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x19>, <&dmac0 0x1a>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -391,7 +391,7 @@
- 		reg = <0 0xe6ce0000 0 64>;
- 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFB2>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -404,7 +404,7 @@
- 		reg = <0 0xe6e60000 0 64>;
- 		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF0>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -417,7 +417,7 @@
- 		reg = <0 0xe6e68000 0 64>;
- 		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF1>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -430,7 +430,7 @@
- 		reg = <0 0xe6e58000 0 64>;
- 		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF2>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -443,7 +443,7 @@
- 		reg = <0 0xe6ea8000 0 64>;
- 		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF3>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x2f>, <&dmac0 0x30>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -456,7 +456,7 @@
- 		reg = <0 0xe6ee0000 0 64>;
- 		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF4>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -469,7 +469,7 @@
- 		reg = <0 0xe6ee8000 0 64>;
- 		interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF5>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -482,7 +482,7 @@
- 		reg = <0 0xe62c0000 0 96>;
- 		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_HSCIF0>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -495,7 +495,7 @@
- 		reg = <0 0xe62c8000 0 96>;
- 		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_HSCIF1>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -508,7 +508,7 @@
- 		reg = <0 0xe62d0000 0 96>;
- 		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_HSCIF2>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index 5015eaa0ae50039e..ed1f6f884e2b2168 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -143,11 +143,19 @@
+ };
+ 
+ &pfc {
++	pinctrl-0 = <&scif_clk_pins>;
++	pinctrl-names = "default";
++
+ 	scif0_pins: serial0 {
+ 		renesas,groups = "scif0_data_d";
+ 		renesas,function = "scif0";
+ 	};
+ 
++	scif_clk_pins: scif_clk {
++		renesas,groups = "scif_clk";
++		renesas,function = "scif_clk";
++	};
++
+ 	ether_pins: ether {
+ 		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
+ 		renesas,function = "eth";
+@@ -221,6 +229,11 @@
+ 	status = "okay";
+ };
+ 
++&scif_clk {
++	clock-frequency = <14745600>;
++	status = "okay";
++};
++
+ &ether {
+ 	pinctrl-0 = <&ether_pins &phy1_pins>;
+ 	pinctrl-names = "default";
 -- 
 1.9.1
 
