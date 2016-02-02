@@ -1,57 +1,240 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+Return-Path: <horms@verge.net.au>
+Date: Tue, 2 Feb 2016 14:31:03 +0100
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/2] arm64: renesas: Enable PM and PM_GENERIC_DOMAINS for SoCs with PM Domains
-Date: Fri, 26 Feb 2016 08:52:56 +0900
-Message-Id: <2ee98234b88174f2bcafefb7918e2794a1fdbc98.1456442718.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1456442718.git.horms+renesas@verge.net.au>
-References: <cover.1456442718.git.horms+renesas@verge.net.au>
+Subject: [PATCH v2] arm64: dts: r8a7795: use GIC_* defines
+Message-ID: <20160202133103.GK15554@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Use GIC_* defines for GIC interrupt cells in r8a7795 device tree.
 
-All supported Renesas ARM64 SoCs have clock and power domains. To ensure
-proper operation of on-SoC modules, module clocks must be ungated, and
-power domains must be powered up when needed.
-
-Currently the user can choose to build a kernel with power management
-enabled or disabled:
-  - If CONFIG_PM=y, power domains and/or module clocks are handled
-    dynamically by Runtime PM and the generic power domain.
-  - If CONFIG_PM=n, power domains are assumed to be powered up by reset
-    state or by the boot loader, and module clocks are handled by the
-    legacy clock domain on driver (un)bind.
-    The latter is implemented using a platform bus notifier, which
-    applies not only to all on-SoC devices, but to all platform devices
-    present in the system.
-
-To remove the dependency on implicit assumptions, and to get rid of the
-peculiarities of the legacy clock domain, enable CONFIG_PM and
-CONFIG_PM_GENERIC_DOMAINS unconditionally.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/Kconfig.platforms | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+* Based on renesas-devel-20160129-v4.5-rc1
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 757220cb1b7f..e011ac0e17a3 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -76,7 +76,8 @@ config ARCH_RENESAS
- 	bool "Renesas SoC Platforms"
- 	select ARCH_SHMOBILE
- 	select PINCTRL
--	select PM_GENERIC_DOMAINS if PM
-+	select PM
-+	select PM_GENERIC_DOMAINS
- 	select RENESAS_IRQC
- 	help
- 	  This enables support for the ARMv8 based Renesas SoCs.
+v2
+* Updated prefix to arm64
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 108 +++++++++++++++----------------
+ 1 file changed, 54 insertions(+), 54 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 119549e6502d..d351f2c4b40e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -266,23 +266,23 @@
+ 		audma0: dma-controller@ec700000 {
+ 			compatible = "renesas,rcar-dmac";
+ 			reg = <0 0xec700000 0 0x10000>;
+-			interrupts =	<0 350 IRQ_TYPE_LEVEL_HIGH
+-					 0 320 IRQ_TYPE_LEVEL_HIGH
+-					 0 321 IRQ_TYPE_LEVEL_HIGH
+-					 0 322 IRQ_TYPE_LEVEL_HIGH
+-					 0 323 IRQ_TYPE_LEVEL_HIGH
+-					 0 324 IRQ_TYPE_LEVEL_HIGH
+-					 0 325 IRQ_TYPE_LEVEL_HIGH
+-					 0 326 IRQ_TYPE_LEVEL_HIGH
+-					 0 327 IRQ_TYPE_LEVEL_HIGH
+-					 0 328 IRQ_TYPE_LEVEL_HIGH
+-					 0 329 IRQ_TYPE_LEVEL_HIGH
+-					 0 330 IRQ_TYPE_LEVEL_HIGH
+-					 0 331 IRQ_TYPE_LEVEL_HIGH
+-					 0 332 IRQ_TYPE_LEVEL_HIGH
+-					 0 333 IRQ_TYPE_LEVEL_HIGH
+-					 0 334 IRQ_TYPE_LEVEL_HIGH
+-					 0 335 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 350 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "error",
+ 					"ch0", "ch1", "ch2", "ch3",
+ 					"ch4", "ch5", "ch6", "ch7",
+@@ -298,23 +298,23 @@
+ 		audma1: dma-controller@ec720000 {
+ 			compatible = "renesas,rcar-dmac";
+ 			reg = <0 0xec720000 0 0x10000>;
+-			interrupts =	<0 351 IRQ_TYPE_LEVEL_HIGH
+-					 0 336 IRQ_TYPE_LEVEL_HIGH
+-					 0 337 IRQ_TYPE_LEVEL_HIGH
+-					 0 338 IRQ_TYPE_LEVEL_HIGH
+-					 0 339 IRQ_TYPE_LEVEL_HIGH
+-					 0 340 IRQ_TYPE_LEVEL_HIGH
+-					 0 341 IRQ_TYPE_LEVEL_HIGH
+-					 0 342 IRQ_TYPE_LEVEL_HIGH
+-					 0 343 IRQ_TYPE_LEVEL_HIGH
+-					 0 344 IRQ_TYPE_LEVEL_HIGH
+-					 0 345 IRQ_TYPE_LEVEL_HIGH
+-					 0 346 IRQ_TYPE_LEVEL_HIGH
+-					 0 347 IRQ_TYPE_LEVEL_HIGH
+-					 0 348 IRQ_TYPE_LEVEL_HIGH
+-					 0 349 IRQ_TYPE_LEVEL_HIGH
+-					 0 382 IRQ_TYPE_LEVEL_HIGH
+-					 0 383 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 351 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 348 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 349 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 382 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 383 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "error",
+ 					"ch0", "ch1", "ch2", "ch3",
+ 					"ch4", "ch5", "ch6", "ch7",
+@@ -750,52 +750,52 @@
+ 
+ 			rcar_sound,src {
+ 				src0: src@0 {
+-					interrupts = <0 352 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x85>, <&audma1 0x9a>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src1: src@1 {
+-					interrupts = <0 353 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x87>, <&audma1 0x9c>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src2: src@2 {
+-					interrupts = <0 354 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x89>, <&audma1 0x9e>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src3: src@3 {
+-					interrupts = <0 355 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x8b>, <&audma1 0xa0>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src4: src@4 {
+-					interrupts = <0 356 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x8d>, <&audma1 0xb0>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src5: src@5 {
+-					interrupts = <0 357 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x8f>, <&audma1 0xb2>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src6: src@6 {
+-					interrupts = <0 358 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x91>, <&audma1 0xb4>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src7: src@7 {
+-					interrupts = <0 359 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 359 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x93>, <&audma1 0xb6>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src8: src@8 {
+-					interrupts = <0 360 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x95>, <&audma1 0xb8>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src9: src@9 {
+-					interrupts = <0 361 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 361 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x97>, <&audma1 0xba>;
+ 					dma-names = "rx", "tx";
+ 				};
+@@ -803,52 +803,52 @@
+ 
+ 			rcar_sound,ssi {
+ 				ssi0: ssi@0 {
+-					interrupts = <0 370 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x01>, <&audma1 0x02>, <&audma0 0x15>, <&audma1 0x16>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi1: ssi@1 {
+-					 interrupts = <0 371 IRQ_TYPE_LEVEL_HIGH>;
++					 interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi2: ssi@2 {
+-					interrupts = <0 372 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x05>, <&audma1 0x06>, <&audma0 0x63>, <&audma1 0x64>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi3: ssi@3 {
+-					interrupts = <0 373 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x07>, <&audma1 0x08>, <&audma0 0x6f>, <&audma1 0x70>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi4: ssi@4 {
+-					interrupts = <0 374 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x09>, <&audma1 0x0a>, <&audma0 0x71>, <&audma1 0x72>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi5: ssi@5 {
+-					interrupts = <0 375 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x0b>, <&audma1 0x0c>, <&audma0 0x73>, <&audma1 0x74>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi6: ssi@6 {
+-					interrupts = <0 376 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x0d>, <&audma1 0x0e>, <&audma0 0x75>, <&audma1 0x76>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi7: ssi@7 {
+-					interrupts = <0 377 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x0f>, <&audma1 0x10>, <&audma0 0x79>, <&audma1 0x7a>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi8: ssi@8 {
+-					interrupts = <0 378 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x11>, <&audma1 0x12>, <&audma0 0x7b>, <&audma1 0x7c>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi9: ssi@9 {
+-					interrupts = <0 379 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x13>, <&audma1 0x14>, <&audma0 0x7d>, <&audma1 0x7e>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
 -- 
 2.7.0.rc3.207.g0ac5344
