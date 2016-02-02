@@ -1,5 +1,5 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 2 Feb 2016 13:57:50 +0100
+Date: Tue, 2 Feb 2016 13:52:19 +0100
 From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -9,7 +9,7 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	<linux-arm-kernel@lists.infradead.org>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 Subject: Re: [PATCH v4 0/7] ARM: dts: r-car: Add BRG support for (H)SCIF
-Message-ID: <20160202125749.GI15554@verge.net.au>
+Message-ID: <20160202125213.GH15554@verge.net.au>
 References: <1454061883-4043-1-git-send-email-geert+renesas@glider.be>
  <20160202102031.GD15554@verge.net.au>
  <CAMuHMdWjEn6RSLPOYq=zhY_gk6Lx9xTD1x1G+1igoDr=3h1R5w@mail.gmail.com>
@@ -63,18 +63,7 @@ On Tue, Feb 02, 2016 at 11:38:05AM +0100, Geert Uytterhoeven wrote:
 > The dependency here (also for the other series) just means I rebased the
 > series on top of renesas-devel-20160129-v4.5-rc1 + the mentioned
 > series.
-
-Thanks, I have queued these up.
-
+> 
 > Do you have any DT changes there that are not queued for v4.6?
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+
+No, I don't think so.
