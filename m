@@ -5,66 +5,59 @@ To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
 	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
 CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 3/5] arm64: dts: salvator-x: enable usb2_phy of channel 1 and 2
-Date: Tue, 23 Feb 2016 21:28:34 +0900
-Message-ID: <1456230516-5112-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1456230516-5112-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1456230516-5112-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC 05/10] arm64: dts: r8a7795: add usb2_phy device nodes
+Date: Tue, 2 Feb 2016 19:18:53 +0900
+Message-ID: <1454408338-4612-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This board has a MAX3355 chip. However, we cannot use the extcon/max3355
-driver because the ID pin doesn't connect to a gpio pin (in other words,
-it connects to the SoC specific pin).
-And, the phy-rcar-gen3-usb2 driver cannot handle such a chip for now.
-So, this patch enables usb2_phy of channel 1 and 2.
-
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 1af6757..e415535 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -188,6 +188,16 @@
- 				 "audio_clkout_a", "audio_clkout3_a";
- 		renesas,function = "audio_clk";
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 119549e..f0f0c27 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -880,5 +880,33 @@
+ 			power-domains = <&cpg>;
+ 			status = "disabled";
+ 		};
++
++		usb2_phy0: usb-phy@ee080200 {
++			compatible = "renesas,usb2-phy-r8a7795";
++			reg = <0 0xee080200 0 0x700>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 703>;
++			power-domains = <&cpg>;
++			#phy-cells = <0>;
++			status = "disabled";
++		};
++
++		usb2_phy1: usb-phy@ee0a0200 {
++			compatible = "renesas,usb2-phy-r8a7795";
++			reg = <0 0xee0a0200 0 0x700>;
++			clocks = <&cpg CPG_MOD 702>;
++			power-domains = <&cpg>;
++			#phy-cells = <0>;
++			status = "disabled";
++		};
++
++		usb2_phy2: usb-phy@ee0c0200 {
++			compatible = "renesas,usb2-phy-r8a7795";
++			reg = <0 0xee0c0200 0 0x700>;
++			clocks = <&cpg CPG_MOD 701>;
++			power-domains = <&cpg>;
++			#phy-cells = <0>;
++			status = "disabled";
++		};
  	};
-+
-+	usb1_pins: usb1 {
-+		renesas,groups = "usb1";
-+		renesas,function = "usb1";
-+	};
-+
-+	usb2_pins: usb2 {
-+		renesas,groups = "usb2";
-+		renesas,function = "usb2";
-+	};
  };
- 
- &scif1 {
-@@ -348,3 +358,17 @@
- &xhci0 {
- 	status = "okay";
- };
-+
-+&usb2_phy1 {
-+	pinctrl-0 = <&usb1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&usb2_phy2 {
-+	pinctrl-0 = <&usb2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
 -- 
 1.9.1
 
