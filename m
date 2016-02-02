@@ -1,228 +1,37 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v2 11/11] arm64: dts: r8a7795: Add SYSC PM domains
-Date: Mon, 15 Feb 2016 22:17:00 +0100
-Message-Id: <1455571020-18968-12-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
-References: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC 10/10] arm64: dts: salvator-x: enable HS-USB
+Date: Tue, 2 Feb 2016 19:18:58 +0900
+Message-ID: <1454408338-4612-11-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the System Controller, with subnodes that
-represent the hardware power area hierarchy.
-Hook up the Cortex-A57 CPU cores and the Cortex-A57 and Cortex A53 L2
-caches/SCUs to their respective PM domains.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-The SH core was dropped in datasheet rev. 0.5E?
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-v2:
-  - New.
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 142 +++++++++++++++++++++++++++++++
- 1 file changed, 142 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index c572527afec3403a..69f400e0d478b285 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -39,6 +39,7 @@
- 			compatible = "arm,cortex-a57", "arm,armv8";
- 			reg = <0x0>;
- 			device_type = "cpu";
-+			power-domains = <&pd_ca57_cpu0>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -47,6 +48,7 @@
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x1>;
- 			device_type = "cpu";
-+			power-domains = <&pd_ca57_cpu1>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -54,6 +56,7 @@
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x2>;
- 			device_type = "cpu";
-+			power-domains = <&pd_ca57_cpu2>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -61,6 +64,7 @@
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x3>;
- 			device_type = "cpu";
-+			power-domains = <&pd_ca57_cpu3>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -68,12 +72,14 @@
- 
- 	L2_CA57: cache-controller@0 {
- 		compatible = "cache";
-+		power-domains = <&pd_ca57_scu>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
- 
- 	L2_CA53: cache-controller@1 {
- 		compatible = "cache";
-+		power-domains = <&pd_ca53_scu>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
-@@ -968,5 +974,141 @@
- 			#dma-cells = <1>;
- 			dma-channels = <2>;
- 		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a7795-sysc",
-+				     "renesas,rcar-gen3-sysc";
-+			reg = <0 0xe6180000 0 0x0400>;
-+
-+			pm-domains {
-+				#address-cells = <2>;
-+				#size-cells = <0>;
-+
-+				pd_ca57_scu: ca57_scu@12 {
-+					reg = <12 0x1c0>;
-+					#address-cells = <2>;
-+					#size-cells = <0>;
-+					#power-domain-cells = <0>;
-+
-+					pd_ca57_cpu0: ca57_cpu@0 {
-+						reg = <0 0x80>;
-+						#power-domain-cells = <0>;
-+					};
-+
-+					pd_ca57_cpu1: ca57_cpu@1 {
-+						reg = <1 0x81>;
-+						#power-domain-cells = <0>;
-+					};
-+
-+					pd_ca57_cpu2: ca57_cpu@2 {
-+						reg = <2 0x82>;
-+						#power-domain-cells = <0>;
-+					};
-+
-+					pd_ca57_cpu3: ca57_cpu@3 {
-+						reg = <3 0x83>;
-+						#power-domain-cells = <0>;
-+					};
-+				};
-+
-+				pd_ca53_scu: ca53_scu@21 {
-+					reg = <21 0x140>;
-+					#address-cells = <2>;
-+					#size-cells = <0>;
-+					#power-domain-cells = <0>;
-+
-+					pd_ca53_cpu0: ca53_cpu@5 {
-+						reg = <5 0x200>;
-+						#power-domain-cells = <0>;
-+					};
-+
-+					pd_ca53_cpu1: ca53_cpu@6 {
-+						reg = <6 0x201>;
-+						#power-domain-cells = <0>;
-+					};
-+
-+					pd_ca53_cpu2: ca53_cpu@7 {
-+						reg = <7 0x202>;
-+						#power-domain-cells = <0>;
-+					};
-+
-+					pd_ca53_cpu3: ca53_cpu@8 {
-+						reg = <8 0x203>;
-+						#power-domain-cells = <0>;
-+					};
-+				};
-+
-+				pd_a3vp: a3vp@9 {
-+					reg = <9 0x340>;
-+					#power-domain-cells = <0>;
-+				};
-+
-+
-+				pd_cr7: cr7@13 {
-+					reg = <13 0x240>;
-+					#power-domain-cells = <0>;
-+				};
-+
-+				pd_a3vc: a3vc@14 {
-+					reg = <14 0x380>;
-+					#address-cells = <2>;
-+					#size-cells = <0>;
-+					#power-domain-cells = <0>;
-+
-+					pd_a2vc0: a2vc@25 {
-+						reg = <25 0x3c0>;
-+						#power-domain-cells = <0>;
-+					};
-+
-+					pd_a2vc1: a2vc@26 {
-+						reg = <26 0x3c1>;
-+						#power-domain-cells = <0>;
-+					};
-+				};
-+
-+				pd_a3sh: a3sh@16 {
-+					reg = <16 0xc0>;
-+					#power-domain-cells = <0>;
-+				};
-+
-+				pd_3dg_a: 3dg@17 {
-+					reg = <17 0x100>;
-+					#address-cells = <2>;
-+					#size-cells = <0>;
-+					#power-domain-cells = <0>;
-+
-+					pd_3dg_b: 3dg@18 {
-+						reg = <18 0x101>;
-+						#address-cells = <2>;
-+						#size-cells = <0>;
-+						#power-domain-cells = <0>;
-+
-+						pd_3dg_c: 3dg@19 {
-+							reg = <19 0x102>;
-+							#address-cells = <2>;
-+							#size-cells = <0>;
-+							#power-domain-cells = <0>;
-+
-+							pd_3dg_d: 3dg@20 {
-+								reg = <20 0x103>;
-+								#address-cells = <2>;
-+								#size-cells = <0>;
-+								#power-domain-cells = <0>;
-+
-+								pd_3dg_e: 3dg@22 {
-+									reg = <22 0x104>;
-+									#power-domain-cells = <0>;
-+								};
-+							};
-+						};
-+					};
-+				};
-+
-+				pd_a3ir: a3ir@24 {
-+					reg = <24 0x180>;
-+					#power-domain-cells = <0>;
-+				};
-+			};
-+		};
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index c92ec89..6935aa0 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -320,3 +320,7 @@
+ &ohci2 {
+ 	status = "okay";
  };
++
++&hsusb {
++	status = "okay";
++};
 -- 
 1.9.1
 
