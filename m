@@ -4,33 +4,30 @@ To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/70] ARM: dts: r8a7791: use fallback usbhs compatibility string
-Date: Thu,  4 Feb 2016 15:29:01 +0100
-Message-Id: <8cf1d454b24961223fc3e8d26808d4f72b484a1b.1454595846.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
-References: <cover.1454595846.git.horms+renesas@verge.net.au>
+Subject: [PATCH 2/3] ARM: shmobile: enable XHCI_RCAR in defconfig
+Date: Tue,  2 Feb 2016 16:23:03 +0100
+Message-Id: <ae6b99bc6928d13856172f287ee21be2eac39673.1454409855.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454409855.git.horms+renesas@verge.net.au>
+References: <cover.1454409855.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added fallback compatibility string in r8a7791 device tree.
-
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/configs/shmobile_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 2a369ddcb6fd..829224d2a3ed 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -822,7 +822,7 @@
- 	};
- 
- 	hsusb: usb@e6590000 {
--		compatible = "renesas,usbhs-r8a7791";
-+		compatible = "renesas,usbhs-r8a7791", "renesas,rcar-gen2-usbhs";
- 		reg = <0 0xe6590000 0 0x100>;
- 		interrupts = <0 107 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7791_CLK_HSUSB>;
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 5208b5caacd1..b7b714c3958c 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -162,6 +162,8 @@ CONFIG_SND_SOC_RSRC_CARD=y
+ CONFIG_SND_SOC_AK4642=y
+ CONFIG_SND_SOC_WM8978=y
+ CONFIG_USB=y
++CONFIG_USB_XHCI_HCD=y
++CONFIG_USB_XHCI_RCAR=y
+ CONFIG_USB_EHCI_HCD=y
+ CONFIG_USB_OHCI_HCD=y
+ CONFIG_USB_R8A66597_HCD=y
 -- 
 2.7.0.rc3.207.g0ac5344
