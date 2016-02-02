@@ -1,41 +1,25 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC 02/10] phy: rcar-gen3-usb2: Add phy-supply description in device tree doc
-Date: Tue, 2 Feb 2016 19:18:50 +0900
-Message-ID: <1454408338-4612-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Date: Tue, 2 Feb 2016 11:12:35 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 00/11] ARM: dts: shmobile: Rename the serial port
+ clock to fck
+Message-ID: <20160202101234.GC15554@verge.net.au>
+References: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To handle the VBUS on/off by a regulator driver, this patch adds
-description about phy-supply in the rcar-gen3-phy-usb2.txt.
+On Fri, Jan 29, 2016 at 10:47:30AM +0100, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series renames the serial port clock to fck, as accepted in
+> the DT bindings in v4.5-rc1.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-index eaf7e9b..48b33a9 100644
---- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-+++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-@@ -15,6 +15,8 @@ To use a USB channel where USB 2.0 Host and HSUSB (USB 2.0 Peripheral) are
- combined, the device tree node should set interrupt properties to use the
- channel as USB OTG:
- - interrupts: interrupt specifier for the PHY.
-+- phy-supply: Phandle to a regulator that provides power to the VBUS. This
-+	      regulator will be managed during the PHY power on/off sequence.
- 
- Example (R-Car H3):
- 
--- 
-1.9.1
-
+Thanks, I have queued this up.
