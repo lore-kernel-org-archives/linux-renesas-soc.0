@@ -1,70 +1,117 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 4/5] ARM: dts: r8a7794: add Audio-DMAC support
-Date: Wed, 10 Feb 2016 00:56:34 +0300
-Message-ID: <5519679.0f6oS5evyW@wasted.cogentembedded.com>
-In-Reply-To: <12033353.rt0nolnBmD@wasted.cogentembedded.com>
-References: <12033353.rt0nolnBmD@wasted.cogentembedded.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC 04/10] phy: rcar-gen3-usb2: add extcon support
+Date: Tue, 2 Feb 2016 19:18:52 +0900
+Message-ID: <1454408338-4612-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe Audio-DMAC in the R8A7794 device tree.
+This patch adds extcon support for otg related channel.
 
-This patch is loosely based on the commit 8994fff67761 ("ARM: shmobile:
-r8a7791: Add Audio DMAC devices to DT").
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm/boot/dts/r8a7794.dtsi |   28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/phy/Kconfig              |  1 +
+ drivers/phy/phy-rcar-gen3-usb2.c | 26 ++++++++++++++++++++++++++
+ 2 files changed, 27 insertions(+)
 
-Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7794.dtsi
-@@ -281,6 +281,34 @@
- 		dma-channels = <15>;
- 	};
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index e7e117d..6d0e625 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -121,6 +121,7 @@ config PHY_RCAR_GEN2
+ config PHY_RCAR_GEN3_USB2
+ 	tristate "Renesas R-Car generation 3 USB 2.0 PHY driver"
+ 	depends on OF && ARCH_SHMOBILE
++	depends on EXTCON
+ 	select GENERIC_PHY
+ 	help
+ 	  Support for USB 2.0 PHY found on Renesas R-Car generation 3 SoCs.
+diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
+index 2da2148..5ff5653 100644
+--- a/drivers/phy/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/phy-rcar-gen3-usb2.c
+@@ -12,6 +12,7 @@
+  * published by the Free Software Foundation.
+  */
  
-+	audma0: dma-controller@ec700000 {
-+		compatible = "renesas,dmac-r8a7794", "renesas,rcar-dmac";
-+		reg = <0 0xec700000 0 0x10000>;
-+		interrupts =	<GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "error",
-+				  "ch0", "ch1", "ch2", "ch3", "ch4", "ch5",
-+				  "ch6", "ch7", "ch8", "ch9", "ch10", "ch11",
-+				  "ch12";
-+		clocks = <&mstp5_clks R8A7794_CLK_AUDIO_DMAC0>;
-+		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
-+		#dma-cells = <1>;
-+		dma-channels = <13>;
-+	};
++#include <linux/extcon.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+@@ -76,6 +77,7 @@
+ 
+ struct rcar_gen3_chan {
+ 	void __iomem *base;
++	struct extcon_dev *extcon;
+ 	struct phy *phy;
+ 	bool has_otg;
+ };
+@@ -125,6 +127,9 @@ static void rcar_gen3_init_for_host(struct rcar_gen3_chan *ch)
+ 	rcar_gen3_set_linectrl(ch, 1, 1);
+ 	rcar_gen3_set_host_mode(ch, 1);
+ 	rcar_gen3_enable_vbus_ctrl(ch, 1);
 +
- 	scifa0: serial@e6c40000 {
- 		compatible = "renesas,scifa-r8a7794",
- 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
++	extcon_set_cable_state_(ch->extcon, EXTCON_USB_HOST, true);
++	extcon_set_cable_state_(ch->extcon, EXTCON_USB, false);
+ }
+ 
+ static void rcar_gen3_init_for_peri(struct rcar_gen3_chan *ch)
+@@ -132,6 +137,9 @@ static void rcar_gen3_init_for_peri(struct rcar_gen3_chan *ch)
+ 	rcar_gen3_set_linectrl(ch, 0, 1);
+ 	rcar_gen3_set_host_mode(ch, 0);
+ 	rcar_gen3_enable_vbus_ctrl(ch, 0);
++
++	extcon_set_cable_state_(ch->extcon, EXTCON_USB_HOST, false);
++	extcon_set_cable_state_(ch->extcon, EXTCON_USB, true);
+ }
+ 
+ static bool rcar_gen3_check_vbus(struct rcar_gen3_chan *ch)
+@@ -250,6 +258,12 @@ static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
+ };
+ MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
+ 
++static const unsigned int rcar_gen3_phy_cable[] = {
++	EXTCON_USB,
++	EXTCON_USB_HOST,
++	EXTCON_NONE,
++};
++
+ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -275,11 +289,23 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 	/* call request_irq for OTG */
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq >= 0) {
++		int ret;
++
+ 		irq = devm_request_irq(dev, irq, rcar_gen3_phy_usb2_irq,
+ 				       IRQF_SHARED, dev_name(dev), channel);
+ 		if (irq < 0)
+ 			dev_err(dev, "No irq handler (%d)\n", irq);
+ 		channel->has_otg = true;
++		channel->extcon = devm_extcon_dev_allocate(dev,
++							rcar_gen3_phy_cable);
++		if (IS_ERR(channel->extcon))
++			return PTR_ERR(channel->extcon);
++
++		ret = devm_extcon_dev_register(dev, channel->extcon);
++		if (ret < 0) {
++			dev_err(dev, "Failed to register extcon\n");
++			return ret;
++		}
+ 	}
+ 
+ 	/* devm_phy_create() will call pm_runtime_enable(dev); */
+-- 
+1.9.1
 
