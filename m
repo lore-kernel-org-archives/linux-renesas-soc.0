@@ -1,70 +1,147 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 4/5] ARM: dts: r8a7794: add Audio-DMAC support
-Date: Tue, 09 Feb 2016 02:03:12 +0300
-Message-ID: <2262360.JfPBBBJWSV@wasted.cogentembedded.com>
-In-Reply-To: <4253511.vvGjIdOnb6@wasted.cogentembedded.com>
-References: <4253511.vvGjIdOnb6@wasted.cogentembedded.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC 03/10] phy: rcar-gen3-usb2: remove unnecesary struct rcar_gen3_data
+Date: Tue, 2 Feb 2016 19:18:51 +0900
+Message-ID: <1454408338-4612-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe Audio-DMAC in the R8A7794 device tree.
+Since this driver uses the struct rcar_gen3_data in struct rcar_gen3_chan
+only, we can remove the rcar_gen3_data.
 
-This patch is loosely based on the commit 8994fff67761 ("ARM: shmobile:
-r8a7791: Add Audio DMAC devices to DT").
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm/boot/dts/r8a7794.dtsi |   28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/phy/phy-rcar-gen3-usb2.c | 33 ++++++++++++++-------------------
+ 1 file changed, 14 insertions(+), 19 deletions(-)
 
-Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7794.dtsi
-@@ -281,6 +281,34 @@
- 		dma-channels = <15>;
- 	};
+diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
+index bc4f7dd..2da2148 100644
+--- a/drivers/phy/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/phy-rcar-gen3-usb2.c
+@@ -74,20 +74,15 @@
+ #define USB2_ADPCTRL_IDPULLUP		BIT(5)	/* 1 = ID sampling is enabled */
+ #define USB2_ADPCTRL_DRVVBUS		BIT(4)
  
-+	audma0: dma-controller@ec700000 {
-+		compatible = "renesas,dmac-r8a7794", "renesas,rcar-dmac";
-+		reg = <0 0xec700000 0 0x10000>;
-+		interrupts =	<GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "error",
-+				  "ch0", "ch1", "ch2", "ch3", "ch4", "ch5",
-+				  "ch6", "ch7", "ch8", "ch9", "ch10", "ch11",
-+				  "ch12";
-+		clocks = <&mstp5_clks R8A7794_CLK_AUDIO_DMAC0>;
-+		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
-+		#dma-cells = <1>;
-+		dma-channels = <13>;
-+	};
-+
- 	scifa0: serial@e6c40000 {
- 		compatible = "renesas,scifa-r8a7794",
- 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+-struct rcar_gen3_data {
+-	void __iomem *base;
+-	struct clk *clk;
+-};
+-
+ struct rcar_gen3_chan {
+-	struct rcar_gen3_data usb2;
++	void __iomem *base;
+ 	struct phy *phy;
+ 	bool has_otg;
+ };
+ 
+ static void rcar_gen3_set_host_mode(struct rcar_gen3_chan *ch, int host)
+ {
+-	void __iomem *usb2_base = ch->usb2.base;
++	void __iomem *usb2_base = ch->base;
+ 	u32 val = readl(usb2_base + USB2_COMMCTRL);
+ 
+ 	dev_vdbg(&ch->phy->dev, "%s: %08x, %d\n", __func__, val, host);
+@@ -100,7 +95,7 @@ static void rcar_gen3_set_host_mode(struct rcar_gen3_chan *ch, int host)
+ 
+ static void rcar_gen3_set_linectrl(struct rcar_gen3_chan *ch, int dp, int dm)
+ {
+-	void __iomem *usb2_base = ch->usb2.base;
++	void __iomem *usb2_base = ch->base;
+ 	u32 val = readl(usb2_base + USB2_LINECTRL1);
+ 
+ 	dev_vdbg(&ch->phy->dev, "%s: %08x, %d, %d\n", __func__, val, dp, dm);
+@@ -114,7 +109,7 @@ static void rcar_gen3_set_linectrl(struct rcar_gen3_chan *ch, int dp, int dm)
+ 
+ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
+ {
+-	void __iomem *usb2_base = ch->usb2.base;
++	void __iomem *usb2_base = ch->base;
+ 	u32 val = readl(usb2_base + USB2_ADPCTRL);
+ 
+ 	dev_vdbg(&ch->phy->dev, "%s: %08x, %d\n", __func__, val, vbus);
+@@ -141,13 +136,13 @@ static void rcar_gen3_init_for_peri(struct rcar_gen3_chan *ch)
+ 
+ static bool rcar_gen3_check_vbus(struct rcar_gen3_chan *ch)
+ {
+-	return !!(readl(ch->usb2.base + USB2_ADPCTRL) &
++	return !!(readl(ch->base + USB2_ADPCTRL) &
+ 		  USB2_ADPCTRL_OTGSESSVLD);
+ }
+ 
+ static bool rcar_gen3_check_id(struct rcar_gen3_chan *ch)
+ {
+-	return !!(readl(ch->usb2.base + USB2_ADPCTRL) & USB2_ADPCTRL_IDDIG);
++	return !!(readl(ch->base + USB2_ADPCTRL) & USB2_ADPCTRL_IDDIG);
+ }
+ 
+ static void rcar_gen3_device_recognition(struct rcar_gen3_chan *ch)
+@@ -166,7 +161,7 @@ static void rcar_gen3_device_recognition(struct rcar_gen3_chan *ch)
+ 
+ static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
+ {
+-	void __iomem *usb2_base = ch->usb2.base;
++	void __iomem *usb2_base = ch->base;
+ 	u32 val;
+ 
+ 	val = readl(usb2_base + USB2_VBCTRL);
+@@ -187,7 +182,7 @@ static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
+ static int rcar_gen3_phy_usb2_init(struct phy *p)
+ {
+ 	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
+-	void __iomem *usb2_base = channel->usb2.base;
++	void __iomem *usb2_base = channel->base;
+ 
+ 	/* Initialize USB2 part */
+ 	writel(USB2_INT_ENABLE_INIT, usb2_base + USB2_INT_ENABLE);
+@@ -205,7 +200,7 @@ static int rcar_gen3_phy_usb2_exit(struct phy *p)
+ {
+ 	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
+ 
+-	writel(0, channel->usb2.base + USB2_INT_ENABLE);
++	writel(0, channel->base + USB2_INT_ENABLE);
+ 
+ 	return 0;
+ }
+@@ -213,7 +208,7 @@ static int rcar_gen3_phy_usb2_exit(struct phy *p)
+ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
+ {
+ 	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
+-	void __iomem *usb2_base = channel->usb2.base;
++	void __iomem *usb2_base = channel->base;
+ 	u32 val;
+ 
+ 	val = readl(usb2_base + USB2_USBCTR);
+@@ -235,7 +230,7 @@ static struct phy_ops rcar_gen3_phy_usb2_ops = {
+ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
+ {
+ 	struct rcar_gen3_chan *ch = _ch;
+-	void __iomem *usb2_base = ch->usb2.base;
++	void __iomem *usb2_base = ch->base;
+ 	u32 status = readl(usb2_base + USB2_OBINTSTA);
+ 	irqreturn_t ret = IRQ_NONE;
+ 
+@@ -273,9 +268,9 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	channel->usb2.base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(channel->usb2.base))
+-		return PTR_ERR(channel->usb2.base);
++	channel->base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(channel->base))
++		return PTR_ERR(channel->base);
+ 
+ 	/* call request_irq for OTG */
+ 	irq = platform_get_irq(pdev, 0);
+-- 
+1.9.1
 
