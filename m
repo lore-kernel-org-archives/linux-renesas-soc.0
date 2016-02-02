@@ -1,95 +1,54 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 2 Feb 2016 11:30:00 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Simon Horman <horms@verge.net.au>
+CC: Magnus Damm <magnus.damm@gmail.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Pawel Moll <pawel.moll@arm.com>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	"Ian Campbell" <ijc+devicetree@hellion.org.uk>,
 	Kumar Gala <galak@codeaurora.org>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: r8a7795: Add USB-DMAC device nodes
-Message-ID: <20160202102959.GG15554@verge.net.au>
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] arm64: dts: r8a7795: Add USB-DMAC device nodes
+Date: Tue, 2 Feb 2016 10:22:21 +0000
+Message-ID: <TY1PR06MB0928E36208538E38E0F24846D8DF0@TY1PR06MB0928.apcprd06.prod.outlook.com>
 References: <1454322540-5608-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
  <CAMuHMdUEUDkB3=jHAwXDozpdgFCimGS=LXsrxSVWac5xW2bg+A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <CAMuHMdUEUDkB3=jHAwXDozpdgFCimGS=LXsrxSVWac5xW2bg+A@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Feb 02, 2016 at 11:10:00AM +0100, Geert Uytterhoeven wrote:
-> On Mon, Feb 1, 2016 at 11:29 AM, Yoshihiro Shimoda
-> <yoshihiro.shimoda.uh@renesas.com> wrote:
-> > --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> > @@ -880,5 +880,31 @@
-> >                         power-domains = <&cpg>;
-> >                         status = "disabled";
-> >                 };
-> > +
-> > +               usb_dmac0: dma-controller@e65a0000 {
-> > +                       compatible = "renesas,r8a7795-usb-dmac",
-> > +                                    "renesas,usb-dmac";
-> > +                       reg = <0 0xe65a0000 0 0x100>;
-> > +                       interrupts = <0 109 IRQ_TYPE_LEVEL_HIGH
-> > +                                     0 109 IRQ_TYPE_LEVEL_HIGH>;
-> 
-> Sorry, I missed you're not using the GIC_SPI defines.
-
-Thanks, I fixed that and queued up the following
-
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Date: Mon, 1 Feb 2016 19:29:00 +0900
-Subject: [PATCH] arm64: dts: r8a7795: Add USB-DMAC device nodes
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 119549e6502d..95967b72db35 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -880,5 +880,31 @@
- 			power-domains = <&cpg>;
- 			status = "disabled";
- 		};
-+
-+		usb_dmac0: dma-controller@e65a0000 {
-+			compatible = "renesas,r8a7795-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65a0000 0 0x100>;
-+			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 330>;
-+			power-domains = <&cpg>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
-+		usb_dmac1: dma-controller@e65b0000 {
-+			compatible = "renesas,r8a7795-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65b0000 0 0x100>;
-+			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 331>;
-+			power-domains = <&cpg>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
- 	};
- };
--- 
-2.7.0.rc3.207.g0ac5344
-
+SGkgR2VlcnQtc2FuLCBTaW1vbi1zYW4sDQoNCj4gRnJvbTogbGludXgtcmVuZXNhcy1zb2Mtb3du
+ZXJAdmdlci5rZXJuZWwub3JnIFttYWlsdG86bGludXgtcmVuZXNhcy1zb2Mtb3duZXJAdmdlci5r
+ZXJuZWwub3JnXSBPbiBCZWhhbGYgT2YgR2VlcnQNCj4gVXl0dGVyaG9ldmVuDQo+IFNlbnQ6IFR1
+ZXNkYXksIEZlYnJ1YXJ5IDAyLCAyMDE2IDc6MTAgUE0NCj4gDQo+IE9uIE1vbiwgRmViIDEsIDIw
+MTYgYXQgMTE6MjkgQU0sIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5b3NoaWhpcm8uc2hpbW9kYS51
+aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9yZW5l
+c2FzL3I4YTc3OTUuZHRzaQ0KPiA+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvcmVuZXNhcy9y
+OGE3Nzk1LmR0c2kNCj4gPiBAQCAtODgwLDUgKzg4MCwzMSBAQA0KPiA+ICAgICAgICAgICAgICAg
+ICAgICAgICAgIHBvd2VyLWRvbWFpbnMgPSA8JmNwZz47DQo+ID4gICAgICAgICAgICAgICAgICAg
+ICAgICAgc3RhdHVzID0gImRpc2FibGVkIjsNCj4gPiAgICAgICAgICAgICAgICAgfTsNCj4gPiAr
+DQo+ID4gKyAgICAgICAgICAgICAgIHVzYl9kbWFjMDogZG1hLWNvbnRyb2xsZXJAZTY1YTAwMDAg
+ew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAicmVuZXNhcyxyOGE3
+Nzk1LXVzYi1kbWFjIiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+InJlbmVzYXMsdXNiLWRtYWMiOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHJlZyA9IDww
+IDB4ZTY1YTAwMDAgMCAweDEwMD47DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgaW50ZXJy
+dXB0cyA9IDwwIDEwOSBJUlFfVFlQRV9MRVZFTF9ISUdIDQo+ID4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAwIDEwOSBJUlFfVFlQRV9MRVZFTF9ISUdIPjsNCj4gDQo+IFNv
+cnJ5LCBJIG1pc3NlZCB5b3UncmUgbm90IHVzaW5nIHRoZSBHSUNfU1BJIGRlZmluZXMuDQoNCk9v
+cHMhIFRoYW5rIHlvdSBmb3IgdGhlIHBvaW50Lg0KDQpTaW1vbi1zYW4sIA0KV291bGQgeW91IHJl
+dmVydCB0aGlzIHBhdGNoPyBJIHdpbGwgc3VibWl0IHYyIHBhdGNoIHNvb24uDQoNCkJlc3QgcmVn
+YXJkcywNCllvc2hpaGlybyBTaGltb2RhDQoNCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+IA0KPiAg
+ICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4gLS0NCj4gR2VlcnQgVXl0dGVyaG9l
+dmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBsaW51eC1t
+NjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBw
+ZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRv
+IGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRo
+YXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMN
+Cg==
