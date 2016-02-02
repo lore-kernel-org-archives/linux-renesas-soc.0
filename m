@@ -1,105 +1,62 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v2 08/11] ARM: dts: r8a7791: Add SYSC PM domains
-Date: Mon, 15 Feb 2016 22:16:57 +0100
-Message-Id: <1455571020-18968-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
-References: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC 00/10] Add support for USB2.0 host/peripheral on R-Car H3
+Date: Tue, 2 Feb 2016 19:18:48 +0900
+Message-ID: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the System Controller, with subnodes that
-represent the hardware power area hierarchy.
-Hook up the Cortex-A15 CPU cores and the Cortex-A15 L2 cache/SCU to
-their respective PM domains.
+This patch set is based on the renesas-drivers.git /
+renesas-drivers-2016-01-26-v4.5-rc1 tag
+(commit id = 106b6565bfb6e2f35339347f3cfd0858f08bfcaa),
+and the following patches:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Change one-line summary prefix to match current arm-soc practices,
-  - Update compatible values.
----
- arch/arm/boot/dts/r8a7791.dtsi | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+[ renesas_usbhs driver ]
+http://thread.gmane.org/gmane.linux.usb.general/135895
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index a65910ed5884edfd..a194273eb2b7951e 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -51,6 +51,7 @@
- 			voltage-tolerance = <1>; /* 1% */
- 			clocks = <&cpg_clocks R8A7791_CLK_Z>;
- 			clock-latency = <300000>; /* 300 us */
-+			power-domains = <&pd_ca15_cpu0>;
- 			next-level-cache = <&L2_CA15>;
- 
- 			/* kHz - uV - OPPs unknown yet */
-@@ -67,12 +68,14 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
- 			clock-frequency = <1500000000>;
-+			power-domains = <&pd_ca15_cpu1>;
- 			next-level-cache = <&L2_CA15>;
- 		};
- 	};
- 
- 	L2_CA15: cache-controller@0 {
- 		compatible = "cache";
-+		power-domains = <&pd_ca15_scu>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
-@@ -1473,6 +1476,43 @@
- 		};
- 	};
- 
-+	sysc: system-controller@e6180000 {
-+		compatible = "renesas,r8a7791-sysc", "renesas,rcar-gen2-sysc";
-+		reg = <0 0xe6180000 0 0x0200>;
-+
-+		pm-domains {
-+			#address-cells = <2>;
-+			#size-cells = <0>;
-+
-+			pd_ca15_scu: scu@12 {
-+				reg = <12 0x180>;
-+				#address-cells = <2>;
-+				#size-cells = <0>;
-+				#power-domain-cells = <0>;
-+
-+				pd_ca15_cpu0: cpu@0 {
-+					reg = <0 0x40>;
-+					#power-domain-cells = <0>;
-+				};
-+
-+				pd_ca15_cpu1: cpu@1 {
-+					reg = <1 0x41>;
-+					#power-domain-cells = <0>;
-+				};
-+			};
-+
-+			pd_sh: sh@16 {
-+				reg = <16 0x80>;
-+				#power-domain-cells = <0>;
-+			};
-+
-+			pd_sgx: sgx@20 {
-+				reg = <20 0xc0>;
-+				#power-domain-cells = <0>;
-+			};
-+		};
-+	};
-+
- 	qspi: spi@e6b10000 {
- 		compatible = "renesas,qspi-r8a7791", "renesas,qspi";
- 		reg = <0 0xe6b10000 0 0x2c>;
+[ generic phy driver for R-Car H3 ]
+http://thread.gmane.org/gmane.linux.kernel/2120685
+
+
+This patch set contains patches that are related to generic phy driver.
+As I wrote a comment in patch 8, to handle VBUS on/off for USB2.0 host
+channel 0, I use a regulator driver instead of extcon/max3355 driver.
+This is a reason that I marked this patch set is a RFC because I'm not
+sure that this way is acceptable or not.
+
+Also patch 6 should resolve checkpatch.pl warnings, and patch 7 should
+have dmas property to use USB-DMAC.
+
+
+Takeshi Kihara (1):
+  pinctrl: sh-pfc: r8a7795: Add USB2.0 host support
+
+Yoshihiro Shimoda (9):
+  phy: rcar-gen3-usb2: Add phy-supply description in device tree doc
+  phy: rcar-gen3-usb2: remove unnecesary struct rcar_gen3_data
+  phy: rcar-gen3-usb2: add extcon support
+  arm64: dts: r8a7795: add usb2_phy device nodes
+  arm64: dts: r8a7795: add USB2.0 Host (EHCI/OHCI) device nodes
+  arm64: dts: r8a7795: add HS-USB device node
+  arm64: dts: salvator-x: enable usb2_phy
+  arm64: dts: salvator-x: enable USB 2.0 Host channels
+  arm64: dts: salvator-x: enable HS-USB
+
+ .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |   2 +
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  73 +++++++++++++-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 107 +++++++++++++++++++++
+ drivers/phy/Kconfig                                |   1 +
+ drivers/phy/phy-rcar-gen3-usb2.c                   |  59 ++++++++----
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c               |  43 +++++++++
+ 6 files changed, 265 insertions(+), 20 deletions(-)
+
 -- 
 1.9.1
 
