@@ -1,37 +1,48 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 2 Feb 2016 10:58:37 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 0/7] ARM: dts: R-Car: Add SCIF fallback compatibility
- strings
-Message-ID: <20160202095836.GB15554@verge.net.au>
-References: <1454059928-975-1-git-send-email-geert+renesas@glider.be>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC 07/10] arm64: dts: r8a7795: add HS-USB device node
+Date: Tue, 2 Feb 2016 19:18:55 +0900
+Message-ID: <1454408338-4612-8-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1454059928-975-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jan 29, 2016 at 10:32:01AM +0100, Geert Uytterhoeven wrote:
-> 	Hi Simon, Magnus,
-> 
-> This patch series adds fallback compatibility strings for SCIF, HSCIF,
-> SCIFA, and SCIFB to the dtsi files for R-Car Gen1, Gen2, and Gen3 SoCs.
-> These fallback compatibility strings have been accepted in the DT
-> bindings in v4.5-rc1.
-> 
-> This will allow the sh-sci driver to match on family-specific compatible
-> values, to enable support for the Baud Rate Generator for External Clock
-> (BRG) on (H)SCIF later.
-> 
-> Changes compared to v3:
->   - Changed one-line summary prefix to match current arm-soc practices,
->   - Rebased on top of renesas-devel-20160129-v4.5-rc1.
-> 
-> Thanks for applying!
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Thanks, I have queue them up.
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 76800ba..1a47a06 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -974,5 +974,18 @@
+ 			power-domains = <&cpg>;
+ 			status = "disabled";
+ 		};
++
++		hsusb: usb@e6590000 {
++			compatible = "renesas,usbhs-r8a7795",
++				     "renesas,rcar-gen3-usbhs";
++			reg = <0 0xe6590000 0 0x100>;
++			interrupts = <0 107 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 704>;
++			renesas,buswait = <11>;
++			phys = <&usb2_phy0>;
++			phy-names = "usb";
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
+ 	};
+ };
+-- 
+1.9.1
+
