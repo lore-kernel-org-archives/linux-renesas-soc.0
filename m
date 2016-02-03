@@ -1,46 +1,58 @@
-Return-Path: <SRS0+w85p=OO=the-dreams.de=wsa@vergenet.net>
-From: Wolfram Sang <wsa@the-dreams.de>
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 0/2] ARM: shmobile: use Lager as reference for I2C slave and core switch
-Date: Mon, 15 Feb 2016 13:57:47 +0100
-Message-Id: <1455541069-9439-1-git-send-email-wsa@the-dreams.de>
+Cc: Vinod Koul <vinod.koul@intel.com>,
+	dmaengine@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH/RFC] dmaengine: sh: Use ARCH_RENESAS
+Date: Wed,  3 Feb 2016 11:55:34 +0100
+Message-Id: <1454496934-20672-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series provides the necessary preparation to use Lager for testing the
-above mentioned features. After this, the rest is done at runtime as described
-in the upstream documentation.
+Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
 
-This series depends on the i2c-demux-pinctrl driver which is in linux-next
-already. Because IIC0/I2C0 is unpopulated and even so, IIC0 is used as default
-like before, chances of a regression are extremly unlikely. The only regression
-I can think of is someone using:
-	a) IIC0 with an external board
-	b) the Lager DTS from upstream unmodified
-	c) a private .config and forgot to activate the i2c-demux-pinctrl driver
+This is part of an ongoing process to migrate from ARCH_SHMOBILE to
+ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
+appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
 
-We could point this person to the working shmobile_defconfig, though. However,
-I'd think that someone using IIC0 externally will also have a private Lager DTS
-and in that case will be made aware by the merge conflict.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+* Based on the next branch of Vinod's slave-dma tree
+---
+ drivers/dma/sh/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Another minor question for me is: Do we need to update multiv7_defconfig, too.
-My feeling is no, so I left it out, but may be convinced otherwise.
-
-Magnus: I hope this is what you had in mind for the reference platform idea.
-
-Kind regards,
-
-   Wolfram
-
-Wolfram Sang (2):
-  ARM: shmobile: defconfig: enable I2C demultiplexer and slave eeprom
-  ARM: shmobile: r8a7790: lager: use demuxer for IIC0/I2C0
-
- arch/arm/boot/dts/r8a7790-lager.dts | 32 ++++++++++++++++++++++++++++++--
- arch/arm/configs/shmobile_defconfig |  3 +++
- 2 files changed, 33 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/dma/sh/Kconfig b/drivers/dma/sh/Kconfig
+index f32c430eb16c..6e0685f1a838 100644
+--- a/drivers/dma/sh/Kconfig
++++ b/drivers/dma/sh/Kconfig
+@@ -12,7 +12,7 @@ config RENESAS_DMA
+ 
+ config SH_DMAE_BASE
+ 	bool "Renesas SuperH DMA Engine support"
+-	depends on SUPERH || ARCH_SHMOBILE || COMPILE_TEST
++	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
+ 	depends on !SUPERH || SH_DMA
+ 	depends on !SH_DMA_API
+ 	default y
+@@ -41,7 +41,7 @@ endif
+ 
+ config RCAR_DMAC
+ 	tristate "Renesas R-Car Gen2 DMA Controller"
+-	depends on ARCH_SHMOBILE || COMPILE_TEST
++	depends on ARCH_RENESAS || COMPILE_TEST
+ 	select RENESAS_DMA
+ 	help
+ 	  This driver supports the general purpose DMA controller found in the
+@@ -49,7 +49,7 @@ config RCAR_DMAC
+ 
+ config RENESAS_USB_DMAC
+ 	tristate "Renesas USB-DMA Controller"
+-	depends on ARCH_SHMOBILE || COMPILE_TEST
++	depends on ARCH_RENESAS || COMPILE_TEST
+ 	select RENESAS_DMA
+ 	select DMA_VIRTUAL_CHANNELS
+ 	help
 -- 
-2.1.4
+2.7.0.rc3.207.g0ac5344
