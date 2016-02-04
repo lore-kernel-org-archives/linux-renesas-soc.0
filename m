@@ -1,32 +1,67 @@
-Return-Path: <SRS0+SfpY=OQ=gmail.com=magnus.damm@vergenet.net>
-From: Magnus Damm <magnus.damm@gmail.com>
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au,Magnus Damm <magnus.damm@gmail.com>,laurent.pinchart+renesas@ideasonboard.com,geert+renesas@glider.be
-Date: Wed, 17 Feb 2016 17:22:09 +0900
-Message-Id: <20160217082209.18282.42215.sendpatchset@little-apple>
-Subject: [PATCH] ARM: shmobile: Kconfig: Get rid of old comment
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 68/70] ARM: dts: marzen: Enable SCIF_CLK frequency and pins
+Date: Thu,  4 Feb 2016 15:30:02 +0100
+Message-Id: <4603bc2b08134ad2257b1d968c9293bcc07a8bb9.1454595846.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
+References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Remove comment that used to be part of non-multiplatform
-kernel support. Now with multiplatform-only we have no
-Renesas-specific System Configuration entries.
+Add and enable the external crystal for the SCIF_CLK and its pinctrl, to
+be used by the Baud Rate Generator for External Clock (BRG) on (H)SCIF.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+This increases the range and accuracy of supported baud rates.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/r8a7779-marzen.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
- Written on top of renesas-drivers-2016-02-16-v4.5-rc4
-
- arch/arm/mach-shmobile/Kconfig |    2 --
- 1 file changed, 2 deletions(-)
-
---- 0001/arch/arm/mach-shmobile/Kconfig
-+++ work/arch/arm/mach-shmobile/Kconfig	2016-02-17 16:37:38.220513000 +0900
-@@ -95,6 +95,4 @@ config ARCH_SH73A0
- 	bool "SH-Mobile AG5 (R8A73A00)"
- 	select ARCH_RMOBILE
- 	select RENESAS_INTC_IRQPIN
--
--comment "Renesas ARM SoCs System Configuration"
- endif
+diff --git a/arch/arm/boot/dts/r8a7779-marzen.dts b/arch/arm/boot/dts/r8a7779-marzen.dts
+index fe396c8d58db..e111d35d02ae 100644
+--- a/arch/arm/boot/dts/r8a7779-marzen.dts
++++ b/arch/arm/boot/dts/r8a7779-marzen.dts
+@@ -165,6 +165,9 @@
+ };
+ 
+ &pfc {
++	pinctrl-0 = <&scif_clk_pins>;
++	pinctrl-names = "default";
++
+ 	du_pins: du {
+ 		du0 {
+ 			renesas,groups = "du0_rgb888", "du0_sync_1", "du0_clk_out_0";
+@@ -176,6 +179,11 @@
+ 		};
+ 	};
+ 
++	scif_clk_pins: scif_clk {
++		renesas,groups = "scif_clk_b";
++		renesas,function = "scif_clk";
++	};
++
+ 	ethernet_pins: ethernet {
+ 		intc {
+ 			renesas,groups = "intc_irq1_b";
+@@ -222,6 +230,11 @@
+ 	status = "okay";
+ };
+ 
++&scif_clk {
++	clock-frequency = <14745600>;
++	status = "okay";
++};
++
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+ 	pinctrl-names = "default";
+-- 
+2.7.0.rc3.207.g0ac5344
