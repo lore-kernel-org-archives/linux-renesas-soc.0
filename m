@@ -3,63 +3,41 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 67/68] ARM: dts: porter: Enable SCIF_CLK frequency and pins
-Date: Fri, 12 Feb 2016 20:05:57 +0100
-Message-Id: <19417bd9c5112f58ea63e97ba72edabd5e1cc0fe.1455303422.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
-References: <cover.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 29/70] ARM: dts: r8a7793: enable Audio DMAC peri peri via sound driver
+Date: Thu,  4 Feb 2016 15:29:23 +0100
+Message-Id: <3cf7452a5ae2a90448121feb29810bf437d72f02.1454595846.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
+References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Audio DMAC peri peri is no longer DMAEngine. it is supported by
+sound driver. this patch enable it.
 
-Add and enable the external crystal for the SCIF_CLK and its pinctrl, to
-be used by the Baud Rate Generator for External Clock (BRG) on (H)SCIF.
+Base on work for the r8a7791 by Kuninori Morimoto.
 
-This increases the range and accuracy of supported baud rates.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791-porter.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/boot/dts/r8a7793.dtsi | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index 5015eaa0ae50..ed1f6f884e2b 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -143,11 +143,19 @@
- };
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 2c9ab9f18b41..ddbda9d2c177 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -1172,8 +1172,9 @@
+ 		reg =	<0 0xec500000 0 0x1000>, /* SCU */
+ 			<0 0xec5a0000 0 0x100>,  /* ADG */
+ 			<0 0xec540000 0 0x1000>, /* SSIU */
+-			<0 0xec541000 0 0x280>;  /* SSI */
+-		reg-names = "scu", "adg", "ssiu", "ssi";
++			<0 0xec541000 0 0x280>,  /* SSI */
++			<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
++		reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
  
- &pfc {
-+	pinctrl-0 = <&scif_clk_pins>;
-+	pinctrl-names = "default";
-+
- 	scif0_pins: serial0 {
- 		renesas,groups = "scif0_data_d";
- 		renesas,function = "scif0";
- 	};
- 
-+	scif_clk_pins: scif_clk {
-+		renesas,groups = "scif_clk";
-+		renesas,function = "scif_clk";
-+	};
-+
- 	ether_pins: ether {
- 		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
- 		renesas,function = "eth";
-@@ -221,6 +229,11 @@
- 	status = "okay";
- };
- 
-+&scif_clk {
-+	clock-frequency = <14745600>;
-+	status = "okay";
-+};
-+
- &ether {
- 	pinctrl-0 = <&ether_pins &phy1_pins>;
- 	pinctrl-names = "default";
+ 		clocks = <&mstp10_clks R8A7793_CLK_SSI_ALL>,
+ 			<&mstp10_clks R8A7793_CLK_SSI9>, <&mstp10_clks R8A7793_CLK_SSI8>,
 -- 
 2.7.0.rc3.207.g0ac5344
