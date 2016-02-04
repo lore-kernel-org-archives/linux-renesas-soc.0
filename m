@@ -4,84 +4,58 @@ To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 05/70] ARM: dts: alt: Add QSPI device to DT
-Date: Thu,  4 Feb 2016 15:28:59 +0100
-Message-Id: <6b78e6ae688b09aa75376537bcfa990c9d4eff07.1454595846.git.horms+renesas@verge.net.au>
+Subject: [PATCH 23/70] ARM: dts: r8a7793: add audio clock to device tree
+Date: Thu,  4 Feb 2016 15:29:17 +0100
+Message-Id: <ad6472bf11464d498fefcea9ae30ddf9255e4f49.1454595846.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
 References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the QSPI controller in the alt device tree.
+Instantiate audio clock in r8a7793 device tree.
+audio_clk_a/b/c are required for R-Car sound.
 
-Based similar work for the silk board by by Vladimir Barinov and
-Sergei Shtylyov.
+Based on similar work for the r8a7791 by Kuninori Morimoto.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7794-alt.dts | 46 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ arch/arm/boot/dts/r8a7793.dtsi | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 2394e4883786..773f304d1142 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -138,6 +138,13 @@
- 	status = "okay";
- };
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index c4459f147330..530fa9488a4a 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -706,6 +706,29 @@
+ 			clock-output-names = "extal";
+ 		};
  
-+&pfc {
-+	qspi_pins: spi0 {
-+		renesas,groups = "qspi_ctrl", "qspi_data4";
-+		renesas,function = "qspi";
-+	};
-+};
-+
- &ether {
- 	pinctrl-0 = <&ether_pins &phy1_pins>;
- 	pinctrl-names = "default";
-@@ -197,3 +204,42 @@
- 
- 	status = "okay";
- };
-+
-+&qspi {
-+	pinctrl-0 = <&qspi_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	flash@0 {
-+		compatible = "spansion,s25fl512s", "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <30000000>;
-+		spi-tx-bus-width = <4>;
-+		spi-rx-bus-width = <4>;
-+		spi-cpol;
-+		spi-cpha;
-+		m25p,fast-read;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			partition@0 {
-+				label = "loader";
-+				reg = <0x00000000 0x00040000>;
-+				read-only;
-+			};
-+			partition@40000 {
-+				label = "system";
-+				reg = <0x00040000 0x00040000>;
-+				read-only;
-+			};
-+			partition@80000 {
-+				label = "user";
-+				reg = <0x00080000 0x03f80000>;
-+			};
++		/*
++		 * The external audio clocks are configured as 0 Hz fixed frequency clocks by
++		 * default. Boards that provide audio clocks should override them.
++		 */
++		audio_clk_a: audio_clk_a {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "audio_clk_a";
 +		};
-+	};
-+};
++		audio_clk_b: audio_clk_b {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "audio_clk_b";
++		};
++		audio_clk_c: audio_clk_c {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "audio_clk_c";
++		};
++
+ 		/* Special CPG clocks */
+ 		cpg_clocks: cpg_clocks@e6150000 {
+ 			compatible = "renesas,r8a7793-cpg-clocks",
 -- 
 2.7.0.rc3.207.g0ac5344
