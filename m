@@ -3,141 +3,65 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Magnus Damm <damm+renesas@opensource.se>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 16/70] ARM: dts: r8a7793: gose: Add HDMI video out support
-Date: Thu,  4 Feb 2016 15:29:10 +0100
-Message-Id: <8871eb07c0e77196f1f6cd2ccd659516e3e5d9aa.1454595846.git.horms+renesas@verge.net.au>
+Subject: [PATCH 63/70] ARM: dts: alt: Enable SCIF_CLK frequency and pins
+Date: Thu,  4 Feb 2016 15:29:57 +0100
+Message-Id: <4acffec170c09213f78c2fce201212516c447734.1454595846.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
 References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch adds r8a7793 GOSE HDMI video out support.
+Add and enable the external crystal for the SCIF_CLK and its pinctrl, to
+be used by the Baud Rate Generator for External Clock (BRG) on (H)SCIF.
 
-The r8a7793 GOSE board is similar to r8a7791 Koelsch. For those
-boards an on-board HDMI encoder chip provides HDMI video out
-and also a LVDS port is available for external LCD panels.
+This increases the range and accuracy of supported baud rates.
 
-Tested on r8a7793 Gose with HDMI hooked up to a Toshiba TV.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-[simon: rebased; reused existing i2c2 node]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 85 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
+ arch/arm/boot/dts/r8a7794-alt.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 987ed03b1e02..0b4cc8d99390 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -129,6 +129,54 @@
- 			label = "LED8";
- 		};
- 	};
-+
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
-+
-+	x2_clk: x2-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <74250000>;
-+	};
-+
-+	x13_clk: x13-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <148500000>;
-+	};
-+};
-+
-+&du {
-+	pinctrl-0 = <&du_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	clocks = <&mstp7_clks R8A7793_CLK_DU0>,
-+		 <&mstp7_clks R8A7793_CLK_DU1>,
-+		 <&mstp7_clks R8A7793_CLK_LVDS0>,
-+		 <&x13_clk>, <&x2_clk>;
-+	clock-names = "du.0", "du.1", "lvds.0",
-+		      "dclkin.0", "dclkin.1";
-+
-+	ports {
-+		port@0 {
-+			endpoint {
-+				remote-endpoint = <&adv7511_in>;
-+			};
-+		};
-+		port@1 {
-+			lvds_connector: endpoint {
-+			};
-+		};
-+	};
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index 773f304d1142..ca9bc4fff287 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -103,6 +103,9 @@
  };
  
- &extal_clk {
-@@ -141,6 +189,11 @@
- 		renesas,function = "i2c2";
+ &pfc {
++	pinctrl-0 = <&scif_clk_pins>;
++	pinctrl-names = "default";
++
+ 	du_pins: du {
+ 		renesas,groups = "du1_rgb666", "du1_sync", "du1_disp", "du1_dotclkout0";
+ 		renesas,function = "du";
+@@ -113,6 +116,11 @@
+ 		renesas,function = "scif2";
  	};
  
-+	du_pins: du {
-+		renesas,groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
-+		renesas,function = "du";
++	scif_clk_pins: scif_clk {
++		renesas,groups = "scif_clk";
++		renesas,function = "scif_clk";
 +	};
 +
- 	scif0_pins: serial0 {
- 		renesas,groups = "scif0_data_d";
- 		renesas,function = "scif0";
-@@ -247,6 +300,38 @@
+ 	ether_pins: ether {
+ 		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
+ 		renesas,function = "eth";
+@@ -205,6 +213,11 @@
  	status = "okay";
- 	clock-frequency = <100000>;
+ };
  
-+	hdmi@39 {
-+		compatible = "adi,adv7511w";
-+		reg = <0x39>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
++&scif_clk {
++	clock-frequency = <14745600>;
++	status = "okay";
++};
 +
-+		adi,input-depth = <8>;
-+		adi,input-colorspace = "rgb";
-+		adi,input-clock = "1x";
-+		adi,input-style = <1>;
-+		adi,input-justification = "evenly";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7511_in: endpoint {
-+					remote-endpoint = <&du_out_rgb>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				adv7511_out: endpoint {
-+					remote-endpoint = <&hdmi_con>;
-+				};
-+			};
-+		};
-+	};
-+
- 	eeprom@50 {
- 		compatible = "renesas,r1ex24002", "atmel,24c02";
- 		reg = <0x50>;
+ &qspi {
+ 	pinctrl-0 = <&qspi_pins>;
+ 	pinctrl-names = "default";
 -- 
 2.7.0.rc3.207.g0ac5344
