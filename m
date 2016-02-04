@@ -1,64 +1,166 @@
-Return-Path: <horms@vergenet.net>
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/6] ARM: shmobile: emev2: Remove legacy machine_desc.map_io() callback
-Date: Wed, 24 Feb 2016 10:21:29 +0900
-Message-Id: <247ac89b99102f79483f7e08b9a94911f9b482d9.1456275652.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1456275652.git.horms+renesas@verge.net.au>
-References: <cover.1456275652.git.horms+renesas@verge.net.au>
+Subject: [PATCH 35/70] ARM: dts: r8a7793: enable audio DMAC in device tree
+Date: Thu,  4 Feb 2016 15:29:29 +0100
+Message-Id: <f418cbb69a2f5a481bd5f210bb5c8c5cc9322224.1454595846.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
+References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Enable audio DMAC (= rcar-dmac) in r8a7793 device tree.
 
-Commit FIXME ("ARM: shmobile: Consolidate SCU mapping code") removed the
-last user of the static mapping on emev2-based systems.  Remove the
-mapping and the legacy machine_desc.map_io() callback.
+Based on similar work for the r8a7791 by Kuninori Morimoto.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/setup-emev2.c | 18 ------------------
- 1 file changed, 18 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/setup-emev2.c b/arch/arm/mach-shmobile/setup-emev2.c
-index 10b7cb5dcb3a..0829d0215c38 100644
---- a/arch/arm/mach-shmobile/setup-emev2.c
-+++ b/arch/arm/mach-shmobile/setup-emev2.c
-@@ -20,23 +20,6 @@
- #include <asm/mach/map.h>
- #include "common.h"
+---
+v4
+* Use GIC_SPI in interrupts properties
+---
+ arch/arm/boot/dts/r8a7793.dtsi | 91 ++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 79 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index ddbda9d2c177..6817f14314e2 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -1201,52 +1201,119 @@
+ 		status = "disabled";
  
--static struct map_desc emev2_io_desc[] __initdata = {
--#ifdef CONFIG_SMP
--	/* 2M mapping for SCU + L2 controller */
--	{
--		.virtual	= 0xf0000000,
--		.pfn		= __phys_to_pfn(0x1e000000),
--		.length		= SZ_2M,
--		.type		= MT_DEVICE
--	},
--#endif
--};
--
--static void __init emev2_map_io(void)
--{
--	iotable_init(emev2_io_desc, ARRAY_SIZE(emev2_io_desc));
--}
--
- static const char *const emev2_boards_compat_dt[] __initconst = {
- 	"renesas,emev2",
- 	NULL,
-@@ -46,7 +29,6 @@ extern const struct smp_operations emev2_smp_ops;
+ 		rcar_sound,dvc {
+-			dvc0: dvc@0 { };
+-			dvc1: dvc@1 { };
++			dvc0: dvc@0 {
++				dmas = <&audma0 0xbc>;
++				dma-names = "tx";
++			};
++			dvc1: dvc@1 {
++				dmas = <&audma0 0xbe>;
++				dma-names = "tx";
++			};
+ 		};
++
+ 		rcar_sound,src {
+-			src0: src@0 { };
+-			src1: src@1 { };
+-			src2: src@2 { };
+-			src3: src@3 { };
+-			src4: src@4 { };
+-			src5: src@5 { };
+-			src6: src@6 { };
+-			src7: src@7 { };
+-			src8: src@8 { };
+-			src9: src@9 { };
++			src0: src@0 {
++				interrupts = <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x85>, <&audma1 0x9a>;
++				dma-names = "rx", "tx";
++			};
++			src1: src@1 {
++				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x87>, <&audma1 0x9c>;
++				dma-names = "rx", "tx";
++			};
++			src2: src@2 {
++				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x89>, <&audma1 0x9e>;
++				dma-names = "rx", "tx";
++			};
++			src3: src@3 {
++				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x8b>, <&audma1 0xa0>;
++				dma-names = "rx", "tx";
++			};
++			src4: src@4 {
++				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x8d>, <&audma1 0xb0>;
++				dma-names = "rx", "tx";
++			};
++			src5: src@5 {
++				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x8f>, <&audma1 0xb2>;
++				dma-names = "rx", "tx";
++			};
++			src6: src@6 {
++				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x91>, <&audma1 0xb4>;
++				dma-names = "rx", "tx";
++			};
++			src7: src@7 {
++				interrupts = <GIC_SPI 359 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x93>, <&audma1 0xb6>;
++				dma-names = "rx", "tx";
++			};
++			src8: src@8 {
++				interrupts = <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x95>, <&audma1 0xb8>;
++				dma-names = "rx", "tx";
++			};
++			src9: src@9 {
++				interrupts = <GIC_SPI 361 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x97>, <&audma1 0xba>;
++				dma-names = "rx", "tx";
++			};
+ 		};
  
- DT_MACHINE_START(EMEV2_DT, "Generic Emma Mobile EV2 (Flattened Device Tree)")
- 	.smp		= smp_ops(emev2_smp_ops),
--	.map_io		= emev2_map_io,
- 	.init_early	= shmobile_init_delay,
- 	.init_late	= shmobile_init_late,
- 	.dt_compat	= emev2_boards_compat_dt,
+ 		rcar_sound,ssi {
+ 			ssi0: ssi@0 {
+ 				interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x01>, <&audma1 0x02>, <&audma0 0x15>, <&audma1 0x16>;
++				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+ 			ssi1: ssi@1 {
+ 				 interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
++				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+ 			ssi2: ssi@2 {
+ 				interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x05>, <&audma1 0x06>, <&audma0 0x63>, <&audma1 0x64>;
++				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+ 			ssi3: ssi@3 {
+ 				interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x07>, <&audma1 0x08>, <&audma0 0x6f>, <&audma1 0x70>;
++				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+ 			ssi4: ssi@4 {
+ 				interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x09>, <&audma1 0x0a>, <&audma0 0x71>, <&audma1 0x72>;
++				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+ 			ssi5: ssi@5 {
+ 				interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x0b>, <&audma1 0x0c>, <&audma0 0x73>, <&audma1 0x74>;
++				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+ 			ssi6: ssi@6 {
+ 				interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x0d>, <&audma1 0x0e>, <&audma0 0x75>, <&audma1 0x76>;
++				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+ 			ssi7: ssi@7 {
+ 				interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x0f>, <&audma1 0x10>, <&audma0 0x79>, <&audma1 0x7a>;
++				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+ 			ssi8: ssi@8 {
+ 				interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x11>, <&audma1 0x12>, <&audma0 0x7b>, <&audma1 0x7c>;
++				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+ 			ssi9: ssi@9 {
+ 				interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x13>, <&audma1 0x14>, <&audma0 0x7d>, <&audma1 0x7e>;
++				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+ 		};
+ 	};
 -- 
-2.1.4
+2.7.0.rc3.207.g0ac5344
