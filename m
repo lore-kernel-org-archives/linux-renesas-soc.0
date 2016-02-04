@@ -3,52 +3,194 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 26/68] ARM: dts: r8a7793: add DVC support to device tree
-Date: Fri, 12 Feb 2016 20:05:16 +0100
-Message-Id: <4dfc6f8bbf821850c7a4e7f1364a42b63375ad4e.1455303422.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
-References: <cover.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 04/70] ARM: dts: r8a7793: Add I2C master nodes to DT
+Date: Thu,  4 Feb 2016 15:28:58 +0100
+Message-Id: <7aed17f4450ba6863937797d88dab64088f38ccc.1454595846.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
+References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add DVC support to sound node in r8a7793 device tree.
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Based on similar work for the r8a7791 by Kuninori Morimoto.
+Instantiate all the 9 I2C controllers in the disabled state.
 
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/r8a7793.dtsi | 135 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 132 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 8b1ec47754ac..3531d30fe107 100644
+index aef9e69d6c26..f9d92de4f65b 100644
 --- a/arch/arm/boot/dts/r8a7793.dtsi
 +++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -1127,17 +1127,23 @@
- 			<&mstp10_clks R8A7793_CLK_SCU_SRC5>, <&mstp10_clks R8A7793_CLK_SCU_SRC4>,
- 			<&mstp10_clks R8A7793_CLK_SCU_SRC3>, <&mstp10_clks R8A7793_CLK_SCU_SRC2>,
- 			<&mstp10_clks R8A7793_CLK_SCU_SRC1>, <&mstp10_clks R8A7793_CLK_SCU_SRC0>,
-+			<&mstp10_clks R8A7793_CLK_SCU_DVC0>, <&mstp10_clks R8A7793_CLK_SCU_DVC1>,
- 			<&audio_clk_a>, <&audio_clk_b>, <&audio_clk_c>, <&m2_clk>;
- 		clock-names = "ssi-all",
- 				"ssi.9", "ssi.8", "ssi.7", "ssi.6", "ssi.5",
- 				"ssi.4", "ssi.3", "ssi.2", "ssi.1", "ssi.0",
- 				"src.9", "src.8", "src.7", "src.6", "src.5",
- 				"src.4", "src.3", "src.2", "src.1", "src.0",
-+				"dvc.0", "dvc.1",
- 				"clk_a", "clk_b", "clk_c", "clk_i";
+@@ -19,6 +19,15 @@
+ 	#size-cells = <2>;
+ 
+ 	aliases {
++		i2c0 = &i2c0;
++		i2c1 = &i2c1;
++		i2c2 = &i2c2;
++		i2c3 = &i2c3;
++		i2c4 = &i2c4;
++		i2c5 = &i2c5;
++		i2c6 = &i2c6;
++		i2c7 = &i2c7;
++		i2c8 = &i2c8;
+ 		spi0 = &qspi;
+ 	};
+ 
+@@ -230,6 +239,120 @@
  		power-domains = <&cpg_clocks>;
+ 	};
  
- 		status = "disabled";
- 
-+		rcar_sound,dvc {
-+			dvc0: dvc@0 { };
-+			dvc1: dvc@1 { };
-+		};
- 		rcar_sound,src {
- 			src0: src@0 { };
- 			src1: src@1 { };
++	/* The memory map in the User's Manual maps the cores to bus numbers */
++	i2c0: i2c@e6508000 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "renesas,i2c-r8a7793";
++		reg = <0 0xe6508000 0 0x40>;
++		interrupts = <0 287 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp9_clks R8A7793_CLK_I2C0>;
++		power-domains = <&cpg_clocks>;
++		i2c-scl-internal-delay-ns = <6>;
++		status = "disabled";
++	};
++
++	i2c1: i2c@e6518000 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "renesas,i2c-r8a7793";
++		reg = <0 0xe6518000 0 0x40>;
++		interrupts = <0 288 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp9_clks R8A7793_CLK_I2C1>;
++		power-domains = <&cpg_clocks>;
++		i2c-scl-internal-delay-ns = <6>;
++		status = "disabled";
++	};
++
++	i2c2: i2c@e6530000 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "renesas,i2c-r8a7793";
++		reg = <0 0xe6530000 0 0x40>;
++		interrupts = <0 286 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp9_clks R8A7793_CLK_I2C2>;
++		power-domains = <&cpg_clocks>;
++		i2c-scl-internal-delay-ns = <6>;
++		status = "disabled";
++	};
++
++	i2c3: i2c@e6540000 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "renesas,i2c-r8a7793";
++		reg = <0 0xe6540000 0 0x40>;
++		interrupts = <0 290 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp9_clks R8A7793_CLK_I2C3>;
++		power-domains = <&cpg_clocks>;
++		i2c-scl-internal-delay-ns = <6>;
++		status = "disabled";
++	};
++
++	i2c4: i2c@e6520000 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "renesas,i2c-r8a7793";
++		reg = <0 0xe6520000 0 0x40>;
++		interrupts = <0 19 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp9_clks R8A7793_CLK_I2C4>;
++		power-domains = <&cpg_clocks>;
++		i2c-scl-internal-delay-ns = <6>;
++		status = "disabled";
++	};
++
++	i2c5: i2c@e6528000 {
++		/* doesn't need pinmux */
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "renesas,i2c-r8a7793";
++		reg = <0 0xe6528000 0 0x40>;
++		interrupts = <0 20 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp9_clks R8A7793_CLK_I2C5>;
++		power-domains = <&cpg_clocks>;
++		i2c-scl-internal-delay-ns = <110>;
++		status = "disabled";
++	};
++
++	i2c6: i2c@e60b0000 {
++		/* doesn't need pinmux */
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "renesas,iic-r8a7793", "renesas,rmobile-iic";
++		reg = <0 0xe60b0000 0 0x425>;
++		interrupts = <0 173 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp9_clks R8A7793_CLK_IICDVFS>;
++		dmas = <&dmac0 0x77>, <&dmac0 0x78>;
++		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
++	i2c7: i2c@e6500000 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "renesas,iic-r8a7793", "renesas,rmobile-iic";
++		reg = <0 0xe6500000 0 0x425>;
++		interrupts = <0 174 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp3_clks R8A7793_CLK_IIC0>;
++		dmas = <&dmac0 0x61>, <&dmac0 0x62>;
++		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
++	i2c8: i2c@e6510000 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "renesas,iic-r8a7793", "renesas,rmobile-iic";
++		reg = <0 0xe6510000 0 0x425>;
++		interrupts = <0 175 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp3_clks R8A7793_CLK_IIC1>;
++		dmas = <&dmac0 0x65>, <&dmac0 0x66>;
++		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
+ 	pfc: pfc@e6060000 {
+ 		compatible = "renesas,pfc-r8a7793";
+ 		reg = <0 0xe6060000 0 0x250>;
+@@ -820,19 +943,25 @@
+ 			reg = <0 0xe6150994 0 4>, <0 0xe61509a4 0 4>;
+ 			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
+ 				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
+-				 <&cpg_clocks R8A7793_CLK_QSPI>;
++				 <&cpg_clocks R8A7793_CLK_QSPI>, <&hp_clk>,
++				 <&cp_clk>, <&hp_clk>, <&hp_clk>, <&hp_clk>,
++				 <&hp_clk>, <&hp_clk>;
+ 			#clock-cells = <1>;
+ 			clock-indices = <
+ 				R8A7793_CLK_GPIO7 R8A7793_CLK_GPIO6
+ 				R8A7793_CLK_GPIO5 R8A7793_CLK_GPIO4
+ 				R8A7793_CLK_GPIO3 R8A7793_CLK_GPIO2
+ 				R8A7793_CLK_GPIO1 R8A7793_CLK_GPIO0
+-				R8A7793_CLK_QSPI_MOD
++				R8A7793_CLK_QSPI_MOD R8A7793_CLK_I2C5
++				R8A7793_CLK_IICDVFS R8A7793_CLK_I2C4
++				R8A7793_CLK_I2C3 R8A7793_CLK_I2C2
++				R8A7793_CLK_I2C1 R8A7793_CLK_I2C0
+ 			>;
+ 			clock-output-names =
+ 				"gpio7", "gpio6", "gpio5", "gpio4",
+ 				"gpio3", "gpio2", "gpio1", "gpio0",
+-				"qspi_mod";
++				"qspi_mod", "i2c5", "i2c6", "i2c4",
++				"i2c3", "i2c2", "i2c1", "i2c0";
+ 		};
+ 		mstp11_clks: mstp11_clks@e615099c {
+ 			compatible = "renesas,r8a7793-mstp-clocks", "renesas,cpg-mstp-clocks";
 -- 
 2.7.0.rc3.207.g0ac5344
