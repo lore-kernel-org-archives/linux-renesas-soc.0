@@ -5,84 +5,35 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 39/68] ARM: dts: r8a7778: Add SCIF fallback compatibility strings
-Date: Fri, 12 Feb 2016 20:05:29 +0100
-Message-Id: <720e9096e3c205dd71f951a9ff295f988a45e207.1455303422.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
-References: <cover.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 3/4] ARM: shmobile: Typo s/MIPDR/MPIDR/
+Date: Thu,  4 Feb 2016 15:29:34 +0100
+Message-Id: <e24f317c859f2d904d1eb87cbb503c309e6dead7.1454595116.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454595116.git.horms+renesas@verge.net.au>
+References: <cover.1454595116.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
+The ARM Multiprocessor Affinity Register is called "MPIDR".
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7778.dtsi | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ arch/arm/mach-shmobile/headsmp-scu.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index fc5e7243467a..8ea1792c5146 100644
---- a/arch/arm/boot/dts/r8a7778.dtsi
-+++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -297,7 +297,8 @@
- 	};
- 
- 	scif0: serial@ffe40000 {
--		compatible = "renesas,scif-r8a7778", "renesas,scif";
-+		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
-+			     "renesas,scif";
- 		reg = <0xffe40000 0x100>;
- 		interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF0>;
-@@ -307,7 +308,8 @@
- 	};
- 
- 	scif1: serial@ffe41000 {
--		compatible = "renesas,scif-r8a7778", "renesas,scif";
-+		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
-+			     "renesas,scif";
- 		reg = <0xffe41000 0x100>;
- 		interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF1>;
-@@ -317,7 +319,8 @@
- 	};
- 
- 	scif2: serial@ffe42000 {
--		compatible = "renesas,scif-r8a7778", "renesas,scif";
-+		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
-+			     "renesas,scif";
- 		reg = <0xffe42000 0x100>;
- 		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF2>;
-@@ -327,7 +330,8 @@
- 	};
- 
- 	scif3: serial@ffe43000 {
--		compatible = "renesas,scif-r8a7778", "renesas,scif";
-+		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
-+			     "renesas,scif";
- 		reg = <0xffe43000 0x100>;
- 		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF3>;
-@@ -337,7 +341,8 @@
- 	};
- 
- 	scif4: serial@ffe44000 {
--		compatible = "renesas,scif-r8a7778", "renesas,scif";
-+		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
-+			     "renesas,scif";
- 		reg = <0xffe44000 0x100>;
- 		interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF4>;
-@@ -347,7 +352,8 @@
- 	};
- 
- 	scif5: serial@ffe45000 {
--		compatible = "renesas,scif-r8a7778", "renesas,scif";
-+		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
-+			     "renesas,scif";
- 		reg = <0xffe45000 0x100>;
- 		interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7778_CLK_SCIF5>;
+diff --git a/arch/arm/mach-shmobile/headsmp-scu.S b/arch/arm/mach-shmobile/headsmp-scu.S
+index fa5248c52399..c0008a5aa4ca 100644
+--- a/arch/arm/mach-shmobile/headsmp-scu.S
++++ b/arch/arm/mach-shmobile/headsmp-scu.S
+@@ -27,7 +27,7 @@
+  */
+ ENTRY(shmobile_boot_scu)
+ 					@ r0 = SCU base address
+-	mrc     p15, 0, r1, c0, c0, 5	@ read MIPDR
++	mrc     p15, 0, r1, c0, c0, 5	@ read MPIDR
+ 	and	r1, r1, #3		@ mask out cpu ID
+ 	lsl	r1, r1, #3		@ we will shift by cpu_id * 8 bits
+ 	ldr	r2, [r0, #8]		@ SCU Power Status Register
 -- 
 2.7.0.rc3.207.g0ac5344
