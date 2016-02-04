@@ -4,42 +4,57 @@ To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 27/70] ARM: dts: r8a7793: add audio DMAC clocks to device tree
-Date: Thu,  4 Feb 2016 15:29:21 +0100
-Message-Id: <8d2883bddf47e3d59a4f041c6bd338f0d18783fe.1454595846.git.horms+renesas@verge.net.au>
+Subject: [PATCH 10/70] ARM: dts: gose: add i2c2 bus to device tree
+Date: Thu,  4 Feb 2016 15:29:04 +0100
+Message-Id: <f6890af3ad2b6440d287c8ee97b3f38e18b0674e.1454595846.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
 References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Instantiate Audio DMA clocks in the r8a7791 device tree.
+Activate i2c2 bus in r8a7793/gose device tree.
 
-Based on similar work for the r8a7791 by Kuninori Morimoto.
+Based on similar work for the r8a7791/koelsch by Wolfram Sang.
 
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7793-gose.dts | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 3531d30fe107..cb6251e71ef9 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -924,10 +924,11 @@
- 		mstp5_clks: mstp5_clks@e6150144 {
- 			compatible = "renesas,r8a7793-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
--			clocks = <&extal_clk>;
-+			clocks = <&hp_clk>, <&hp_clk>, <&extal_clk>;
- 			#clock-cells = <1>;
--			clock-indices = <R8A7793_CLK_THERMAL>;
--			clock-output-names = "thermal";
-+			clock-indices = <R8A7793_CLK_AUDIO_DMAC0 R8A7793_CLK_AUDIO_DMAC1
-+					 R8A7793_CLK_THERMAL>;
-+			clock-output-names = "audmac0", "audmac1", "thermal";
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 90b587c3c736..987ed03b1e02 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -136,6 +136,11 @@
+ };
+ 
+ &pfc {
++	i2c2_pins: i2c2 {
++		renesas,groups = "i2c2";
++		renesas,function = "i2c2";
++	};
++
+ 	scif0_pins: serial0 {
+ 		renesas,groups = "scif0_data_d";
+ 		renesas,function = "scif0";
+@@ -234,3 +239,17 @@
  		};
- 		mstp7_clks: mstp7_clks@e615014c {
- 			compatible = "renesas,r8a7793-mstp-clocks",
+ 	};
+ };
++
++&i2c2 {
++	pinctrl-0 = <&i2c2_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <100000>;
++
++	eeprom@50 {
++		compatible = "renesas,r1ex24002", "atmel,24c02";
++		reg = <0x50>;
++		pagesize = <16>;
++	};
++};
 -- 
 2.7.0.rc3.207.g0ac5344
