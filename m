@@ -3,135 +3,60 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 19/68] ARM: dts: porter: add sound support
-Date: Fri, 12 Feb 2016 20:05:09 +0100
-Message-Id: <493b4da7c10ca647850627849bcf6031c0a80f13.1455303422.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
-References: <cover.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 64/70] ARM: dts: bockw: Enable SCIF_CLK frequency and pins
+Date: Thu,  4 Feb 2016 15:29:58 +0100
+Message-Id: <50f27ac4fc464c4b1f2a5f7ac84fa4d469ceafd8.1454595846.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
+References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Define the Porter board dependent part of the R8A7791 sound device node.
-Add device node for Asahi Kasei AK4642 stereo codec  to the I2C2 bus.
-Add the "simple-audio-card" device node to interconnect the SoC sound
-device  and the codec.
+Add and enable the external crystal for the SCIF_CLK and its pinctrl, to
+be used by the Baud Rate Generator for External Clock (BRG) on (H)SCIF.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+This increases the range and accuracy of supported baud rates.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791-porter.dts | 71 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+ arch/arm/boot/dts/r8a7778-bockw.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index fe81fa0e478c..5015eaa0ae50 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -8,6 +8,17 @@
-  * kind, whether express or implied.
-  */
- 
-+/*
-+ * SSI-AK4642
-+ *
-+ * SW3: 1: AK4642
-+ *      3: ADV7511
-+ *
-+ * This command is required before playback/capture:
-+ *
-+ *	amixer set "LINEOUT Mixer DACL" on
-+ */
-+
- /dts-v1/;
- #include "r8a7791.dtsi"
- #include <dt-bindings/gpio/gpio.h>
-@@ -101,6 +112,30 @@
- 		#clock-cells = <0>;
- 		clock-frequency = <74250000>;
- 	};
-+
-+	x14_clk: x14-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <11289600>;
-+		clock-output-names = "audio_clock";
-+	};
-+
-+	sound {
-+		compatible = "simple-audio-card";
-+
-+		simple-audio-card,format = "left_j";
-+		simple-audio-card,bitclock-master = <&soundcodec>;
-+		simple-audio-card,frame-master = <&soundcodec>;
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&rcar_sound>;
-+		};
-+
-+		soundcodec: simple-audio-card,codec {
-+			sound-dai = <&ak4642>;
-+			clocks = <&x14_clk>;
-+		};
-+	};
+diff --git a/arch/arm/boot/dts/r8a7778-bockw.dts b/arch/arm/boot/dts/r8a7778-bockw.dts
+index a52b359e2ae2..21e3b9dda2da 100644
+--- a/arch/arm/boot/dts/r8a7778-bockw.dts
++++ b/arch/arm/boot/dts/r8a7778-bockw.dts
+@@ -126,11 +126,19 @@
  };
  
- &extal_clk {
-@@ -167,6 +202,16 @@
- 		renesas,groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
- 		renesas,function = "du";
- 	};
-+
-+	ssi_pins: sound {
-+		renesas,groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data";
-+		renesas,function = "ssi";
-+	};
-+
-+	audio_clk_pins: audio_clk {
-+		renesas,groups = "audio_clk_a";
-+		renesas,function = "audio_clk";
-+	};
- };
- 
- &scif0 {
-@@ -257,6 +302,12 @@
- 	status = "okay";
- 	clock-frequency = <400000>;
- 
-+	ak4642: codec@12 {
-+		compatible = "asahi-kasei,ak4642";
-+		#sound-dai-cells = <0>;
-+		reg = <0x12>;
-+	};
-+
- 	composite-in@20 {
- 		compatible = "adi,adv7180";
- 		reg = <0x20>;
-@@ -385,3 +436,23 @@
- 		};
- 	};
- };
-+
-+&rcar_sound {
-+	pinctrl-0 = <&ssi_pins &audio_clk_pins>;
+ &pfc {
++	pinctrl-0 = <&scif_clk_pins>;
 +	pinctrl-names = "default";
-+	status = "okay";
 +
-+	/* Single DAI */
-+	#sound-dai-cells = <0>;
-+
-+	rcar_sound,dai {
-+		dai0 {
-+			playback = <&ssi0>;
-+			capture  = <&ssi1>;
-+		};
+ 	scif0_pins: serial0 {
+ 		renesas,groups = "scif0_data_a", "scif0_ctrl";
+ 		renesas,function = "scif0";
+ 	};
+ 
++	scif_clk_pins: scif_clk {
++		renesas,groups = "scif_clk";
++		renesas,function = "scif_clk";
 +	};
-+};
 +
-+&ssi1 {
-+	shared-pin;
+ 	mmc_pins: mmc {
+ 		renesas,groups = "mmc_data8", "mmc_ctrl";
+ 		renesas,function = "mmc";
+@@ -217,3 +225,8 @@
+ 
+ 	status = "okay";
+ };
++
++&scif_clk {
++	clock-frequency = <14745600>;
++	status = "okay";
 +};
 -- 
 2.7.0.rc3.207.g0ac5344
