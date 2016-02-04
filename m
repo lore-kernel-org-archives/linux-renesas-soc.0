@@ -5,11 +5,11 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Magnus Damm <damm+renesas@opensource.se>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 16/68] ARM: dts: r8a7793: gose: Add HDMI video out support
-Date: Fri, 12 Feb 2016 20:05:06 +0100
-Message-Id: <8871eb07c0e77196f1f6cd2ccd659516e3e5d9aa.1455303422.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
-References: <cover.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 16/70] ARM: dts: r8a7793: gose: Add HDMI video out support
+Date: Thu,  4 Feb 2016 15:29:10 +0100
+Message-Id: <8871eb07c0e77196f1f6cd2ccd659516e3e5d9aa.1454595846.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
+References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Magnus Damm <damm+renesas@opensource.se>
