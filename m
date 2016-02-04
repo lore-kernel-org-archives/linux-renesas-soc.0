@@ -3,99 +3,206 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 18/19] ARM: dts: r8a7790: lager: use demuxer for IIC0/I2C0
-Date: Fri, 26 Feb 2016 08:53:07 +0900
-Message-Id: <880cb5702471c4eb56b1af1c26e5273e48f50a32.1456443769.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1456443769.git.horms+renesas@verge.net.au>
-References: <cover.1456443769.git.horms+renesas@verge.net.au>
+Subject: [PATCH 44/70] ARM: dts: r8a7791: Add SCIF fallback compatibility strings
+Date: Thu,  4 Feb 2016 15:29:38 +0100
+Message-Id: <012e207e94f85ae891e5e1ff5dcff09f5a012f16.1454595846.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
+References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Make it possible to select which I2C IP core you want to run on the
-EXIO-A connector. This is the reference how to use this feature. Update
-the copyright while we are here.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790-lager.dts | 32 ++++++++++++++++++++++++++++++--
- 1 file changed, 30 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 54 ++++++++++++++++++++++++++++--------------
+ 1 file changed, 36 insertions(+), 18 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index cdc0414f5f07..aa6ca92a9485 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -3,6 +3,7 @@
-  *
-  * Copyright (C) 2013-2014 Renesas Solutions Corp.
-  * Copyright (C) 2014 Cogent Embedded, Inc.
-+ * Copyright (C) 2015-2016 Renesas Electronics Corporation
-  *
-  * This file is licensed under the terms of the GNU General Public License
-  * version 2.  This program is licensed "as is" without any warranty of any
-@@ -49,6 +50,7 @@
- 	aliases {
- 		serial0 = &scif0;
- 		serial1 = &scifa1;
-+		i2c8 = "i2cexio";
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 6b3b02c0c58a..e7537ba68b5e 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -564,7 +564,8 @@
  	};
  
- 	chosen {
-@@ -252,6 +254,23 @@
- 		#clock-cells = <0>;
- 		clock-frequency = <148500000>;
- 	};
-+
-+	/*
-+	 * IIC0/I2C0 is routed to EXIO connector A, pins 114 (SCL) + 116 (SDA) only.
-+	 * We use the I2C demuxer, so the desired IP core can be selected at runtime
-+	 * depending on the use case (e.g. DMA with IIC0 or slave support with I2C0).
-+	 * Note: For testing the I2C slave feature, it is convenient to connect this
-+	 * bus with IIC3 on pins 110 (SCL) + 112 (SDA), select I2C0 at runtime, and
-+	 * instantiate the slave device at runtime according to the documentation.
-+	 * You can then communicate with the slave via IIC3.
-+	 */
-+	i2cexio: i2c@8 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&iic0>, <&i2c0>;
-+		i2c-bus-name = "i2c-exio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
- };
- 
- &du {
-@@ -350,6 +369,11 @@
- 		renesas,function = "msiof1";
+ 	scifa0: serial@e6c40000 {
+-		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
++		compatible = "renesas,scifa-r8a7791",
++			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c40000 0 64>;
+ 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA0>;
+@@ -576,7 +577,8 @@
  	};
  
-+	i2c0_pins: i2c0 {
-+		renesas,groups = "i2c0";
-+		renesas,function = "i2c0";
-+	};
-+
- 	iic0_pins: iic0 {
- 		renesas,groups = "iic0";
- 		renesas,function = "iic0";
-@@ -537,10 +561,14 @@
- 	cpu0-supply = <&vdd_dvfs>;
- };
+ 	scifa1: serial@e6c50000 {
+-		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
++		compatible = "renesas,scifa-r8a7791",
++			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c50000 0 64>;
+ 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA1>;
+@@ -588,7 +590,8 @@
+ 	};
  
-+&i2c0	{
-+	pinctrl-0 = <&i2c0_pins>;
-+	pinctrl-names = "i2c-exio";
-+};
-+
- &iic0	{
--	status = "okay";
- 	pinctrl-0 = <&iic0_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-exio";
- };
+ 	scifa2: serial@e6c60000 {
+-		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
++		compatible = "renesas,scifa-r8a7791",
++			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c60000 0 64>;
+ 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA2>;
+@@ -600,7 +603,8 @@
+ 	};
  
- &iic1	{
+ 	scifa3: serial@e6c70000 {
+-		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
++		compatible = "renesas,scifa-r8a7791",
++			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c70000 0 64>;
+ 		interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA3>;
+@@ -612,7 +616,8 @@
+ 	};
+ 
+ 	scifa4: serial@e6c78000 {
+-		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
++		compatible = "renesas,scifa-r8a7791",
++			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c78000 0 64>;
+ 		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA4>;
+@@ -624,7 +629,8 @@
+ 	};
+ 
+ 	scifa5: serial@e6c80000 {
+-		compatible = "renesas,scifa-r8a7791", "renesas,scifa";
++		compatible = "renesas,scifa-r8a7791",
++			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		reg = <0 0xe6c80000 0 64>;
+ 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA5>;
+@@ -636,7 +642,8 @@
+ 	};
+ 
+ 	scifb0: serial@e6c20000 {
+-		compatible = "renesas,scifb-r8a7791", "renesas,scifb";
++		compatible = "renesas,scifb-r8a7791",
++			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+ 		reg = <0 0xe6c20000 0 64>;
+ 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB0>;
+@@ -648,7 +655,8 @@
+ 	};
+ 
+ 	scifb1: serial@e6c30000 {
+-		compatible = "renesas,scifb-r8a7791", "renesas,scifb";
++		compatible = "renesas,scifb-r8a7791",
++			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+ 		reg = <0 0xe6c30000 0 64>;
+ 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB1>;
+@@ -660,7 +668,8 @@
+ 	};
+ 
+ 	scifb2: serial@e6ce0000 {
+-		compatible = "renesas,scifb-r8a7791", "renesas,scifb";
++		compatible = "renesas,scifb-r8a7791",
++			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+ 		reg = <0 0xe6ce0000 0 64>;
+ 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB2>;
+@@ -672,7 +681,8 @@
+ 	};
+ 
+ 	scif0: serial@e6e60000 {
+-		compatible = "renesas,scif-r8a7791", "renesas,scif";
++		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
++			     "renesas,scif";
+ 		reg = <0 0xe6e60000 0 64>;
+ 		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF0>;
+@@ -684,7 +694,8 @@
+ 	};
+ 
+ 	scif1: serial@e6e68000 {
+-		compatible = "renesas,scif-r8a7791", "renesas,scif";
++		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
++			     "renesas,scif";
+ 		reg = <0 0xe6e68000 0 64>;
+ 		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF1>;
+@@ -696,7 +707,8 @@
+ 	};
+ 
+ 	scif2: serial@e6e58000 {
+-		compatible = "renesas,scif-r8a7791", "renesas,scif";
++		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
++			     "renesas,scif";
+ 		reg = <0 0xe6e58000 0 64>;
+ 		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF2>;
+@@ -708,7 +720,8 @@
+ 	};
+ 
+ 	scif3: serial@e6ea8000 {
+-		compatible = "renesas,scif-r8a7791", "renesas,scif";
++		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
++			     "renesas,scif";
+ 		reg = <0 0xe6ea8000 0 64>;
+ 		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF3>;
+@@ -720,7 +733,8 @@
+ 	};
+ 
+ 	scif4: serial@e6ee0000 {
+-		compatible = "renesas,scif-r8a7791", "renesas,scif";
++		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
++			     "renesas,scif";
+ 		reg = <0 0xe6ee0000 0 64>;
+ 		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF4>;
+@@ -732,7 +746,8 @@
+ 	};
+ 
+ 	scif5: serial@e6ee8000 {
+-		compatible = "renesas,scif-r8a7791", "renesas,scif";
++		compatible = "renesas,scif-r8a7791", "renesas,rcar-gen2-scif",
++			     "renesas,scif";
+ 		reg = <0 0xe6ee8000 0 64>;
+ 		interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF5>;
+@@ -744,7 +759,8 @@
+ 	};
+ 
+ 	hscif0: serial@e62c0000 {
+-		compatible = "renesas,hscif-r8a7791", "renesas,hscif";
++		compatible = "renesas,hscif-r8a7791",
++			     "renesas,rcar-gen2-hscif", "renesas,hscif";
+ 		reg = <0 0xe62c0000 0 96>;
+ 		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF0>;
+@@ -756,7 +772,8 @@
+ 	};
+ 
+ 	hscif1: serial@e62c8000 {
+-		compatible = "renesas,hscif-r8a7791", "renesas,hscif";
++		compatible = "renesas,hscif-r8a7791",
++			     "renesas,rcar-gen2-hscif", "renesas,hscif";
+ 		reg = <0 0xe62c8000 0 96>;
+ 		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF1>;
+@@ -768,7 +785,8 @@
+ 	};
+ 
+ 	hscif2: serial@e62d0000 {
+-		compatible = "renesas,hscif-r8a7791", "renesas,hscif";
++		compatible = "renesas,hscif-r8a7791",
++			     "renesas,rcar-gen2-hscif", "renesas,hscif";
+ 		reg = <0 0xe62d0000 0 96>;
+ 		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF2>;
 -- 
 2.7.0.rc3.207.g0ac5344
