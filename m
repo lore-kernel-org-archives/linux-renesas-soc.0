@@ -3,56 +3,46 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 14/19] ARM: dts: r8a7794: Add L2 cache-controller node
-Date: Fri, 26 Feb 2016 08:53:03 +0900
-Message-Id: <d12a384a1b264efd66a50cd5cb311c0d56aff681.1456443769.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1456443769.git.horms+renesas@verge.net.au>
-References: <cover.1456443769.git.horms+renesas@verge.net.au>
+Subject: [PATCH 32/70] ARM: dts: gose: enable sound DMA support via BUSIF in device tree
+Date: Thu,  4 Feb 2016 15:29:26 +0100
+Message-Id: <402586d0cce05317100356cfd73f0c044c60ccd7.1454595846.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
+References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Enable DMA transfer to/from SSIU in gose/r8a7791 device tree.
 
-Add a device node for the L2 cache, and link the CPU nodes to it.
+     DMA
+[MEM] -> [SSIU] -> [SSI]
 
-The L2 cache for the Cortex-A7 CPU cores is 512 KiB large (organized as
-64 KiB x 8 ways).
+     DMA
+[MEM] <- [SSIU] <- [SSI]
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Based on similar work for the r8a7791/koelsch by Kuninori Morimoto.
+
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/r8a7793-gose.dts | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index df0861e84a4b..21a02df3609b 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -40,6 +40,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0>;
- 			clock-frequency = <1000000000>;
-+			next-level-cache = <&L2_CA7>;
- 		};
- 
- 		cpu1: cpu@1 {
-@@ -47,9 +48,16 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <1>;
- 			clock-frequency = <1000000000>;
-+			next-level-cache = <&L2_CA7>;
- 		};
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index a4b2dcb8e73d..81bfe9484bbc 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -407,11 +407,6 @@
  	};
+ };
  
-+	L2_CA7: cache-controller@1 {
-+		compatible = "cache";
-+		cache-unified;
-+		cache-level = <2>;
-+	};
-+
- 	gic: interrupt-controller@f1001000 {
- 		compatible = "arm,gic-400";
- 		#interrupt-cells = <3>;
+-&ssi0 {
+-	no-busif;
+-};
+-
+ &ssi1 {
+-	no-busif;
+ 	shared-pin;
+ };
 -- 
 2.7.0.rc3.207.g0ac5344
