@@ -3,58 +3,112 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/70] ARM: dts: gose: add i2c2 bus to device tree
-Date: Thu,  4 Feb 2016 15:29:04 +0100
-Message-Id: <f6890af3ad2b6440d287c8ee97b3f38e18b0674e.1454595846.git.horms+renesas@verge.net.au>
+Subject: [PATCH 47/70] ARM: dts: sh73a0: Rename the serial port clock to fck
+Date: Thu,  4 Feb 2016 15:29:41 +0100
+Message-Id: <63ec4b72fa52fef9caf709000b53e0714453d912.1454595846.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
 References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Activate i2c2 bus in r8a7793/gose device tree.
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Based on similar work for the r8a7791/koelsch by Wolfram Sang.
+The clock is really the device functional clock, not the interface
+clock. Rename it.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm/boot/dts/sh73a0.dtsi | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 90b587c3c736..987ed03b1e02 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -136,6 +136,11 @@
- };
- 
- &pfc {
-+	i2c2_pins: i2c2 {
-+		renesas,groups = "i2c2";
-+		renesas,function = "i2c2";
-+	};
-+
- 	scif0_pins: serial0 {
- 		renesas,groups = "scif0_data_d";
- 		renesas,function = "scif0";
-@@ -234,3 +239,17 @@
- 		};
+diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
+index 453280c41d27..bf825ca4f6f7 100644
+--- a/arch/arm/boot/dts/sh73a0.dtsi
++++ b/arch/arm/boot/dts/sh73a0.dtsi
+@@ -359,7 +359,7 @@
+ 		reg = <0xe6c40000 0x100>;
+ 		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks SH73A0_CLK_SCIFA0>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
  	};
- };
-+
-+&i2c2 {
-+	pinctrl-0 = <&i2c2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <100000>;
-+
-+	eeprom@50 {
-+		compatible = "renesas,r1ex24002", "atmel,24c02";
-+		reg = <0x50>;
-+		pagesize = <16>;
-+	};
-+};
+@@ -369,7 +369,7 @@
+ 		reg = <0xe6c50000 0x100>;
+ 		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks SH73A0_CLK_SCIFA1>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -379,7 +379,7 @@
+ 		reg = <0xe6c60000 0x100>;
+ 		interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks SH73A0_CLK_SCIFA2>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -389,7 +389,7 @@
+ 		reg = <0xe6c70000 0x100>;
+ 		interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks SH73A0_CLK_SCIFA3>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -399,7 +399,7 @@
+ 		reg = <0xe6c80000 0x100>;
+ 		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks SH73A0_CLK_SCIFA4>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -409,7 +409,7 @@
+ 		reg = <0xe6cb0000 0x100>;
+ 		interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks SH73A0_CLK_SCIFA5>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -419,7 +419,7 @@
+ 		reg = <0xe6cc0000 0x100>;
+ 		interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks SH73A0_CLK_SCIFA6>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -429,7 +429,7 @@
+ 		reg = <0xe6cd0000 0x100>;
+ 		interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks SH73A0_CLK_SCIFA7>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -439,7 +439,7 @@
+ 		reg = <0xe6c30000 0x100>;
+ 		interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks SH73A0_CLK_SCIFB>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
 -- 
 2.7.0.rc3.207.g0ac5344
