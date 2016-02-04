@@ -3,51 +3,51 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/19] ARM: dts: r8a7790: use fallback pci compatibility string
-Date: Fri, 26 Feb 2016 08:52:52 +0900
-Message-Id: <2d82c14460575bdf7ea78146d988c10db94d8343.1456443769.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1456443769.git.horms+renesas@verge.net.au>
-References: <cover.1456443769.git.horms+renesas@verge.net.au>
+Subject: [PATCH 2/8] arm64: dts: r8a7795: Add USB3.0 host device nodes
+Date: Thu,  4 Feb 2016 15:29:39 +0100
+Message-Id: <171f2ef82284f61b763a620747806ec2724d1a84.1454595726.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454595726.git.horms+renesas@verge.net.au>
+References: <cover.1454595726.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added fallback compatibility string in r8a7790 device tree.
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index db019f2619c7..76ddf5c6cca7 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1499,7 +1499,7 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 221a8f5d24af..119549e6502d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -862,5 +862,23 @@
+ 			clocks = <&cpg CPG_MOD 815>;
+ 			status = "disabled";
+ 		};
++
++		xhci0: usb@ee000000 {
++			compatible = "renesas,xhci-r8a7795";
++			reg = <0 0xee000000 0 0xc00>;
++			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 328>;
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++
++		xhci1: usb@ee0400000 {
++			compatible = "renesas,xhci-r8a7795";
++			reg = <0 0xee040000 0 0xc00>;
++			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 327>;
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
  	};
- 
- 	pci0: pci@ee090000 {
--		compatible = "renesas,pci-r8a7790";
-+		compatible = "renesas,pci-r8a7790", "renesas,pci-rcar-gen2";
- 		device_type = "pci";
- 		reg = <0 0xee090000 0 0xc00>,
- 		      <0 0xee080000 0 0x1100>;
-@@ -1534,7 +1534,7 @@
- 	};
- 
- 	pci1: pci@ee0b0000 {
--		compatible = "renesas,pci-r8a7790";
-+		compatible = "renesas,pci-r8a7790", "renesas,pci-rcar-gen2";
- 		device_type = "pci";
- 		reg = <0 0xee0b0000 0 0xc00>,
- 		      <0 0xee0a0000 0 0x1100>;
-@@ -1555,7 +1555,7 @@
- 	};
- 
- 	pci2: pci@ee0d0000 {
--		compatible = "renesas,pci-r8a7790";
-+		compatible = "renesas,pci-r8a7790", "renesas,pci-rcar-gen2";
- 		device_type = "pci";
- 		clocks = <&mstp7_clks R8A7790_CLK_EHCI>;
- 		power-domains = <&cpg_clocks>;
+ };
 -- 
 2.7.0.rc3.207.g0ac5344
