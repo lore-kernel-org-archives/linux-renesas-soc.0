@@ -5,11 +5,11 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 65/68] ARM: dts: lager: Enable SCIF_CLK frequency and pins
-Date: Fri, 12 Feb 2016 20:05:55 +0100
-Message-Id: <1781460c9accb106b0887985754b63be1b4c63f8.1455303422.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
-References: <cover.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 67/70] ARM: dts: lager: Enable SCIF_CLK frequency and pins
+Date: Thu,  4 Feb 2016 15:30:01 +0100
+Message-Id: <c538d4ca3722cb0640d3f67724128ac635f3d785.1454595846.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
+References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
