@@ -3,93 +3,85 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 28/68] ARM: dts: r8a7793: add audio DMAC to device tree
-Date: Fri, 12 Feb 2016 20:05:18 +0100
-Message-Id: <6708eb73183e226ddd73dae128239e76b3807390.1455303422.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
-References: <cover.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 49/70] ARM: dts: r8a73a4: Rename the serial port clock to fck
+Date: Thu,  4 Feb 2016 15:29:43 +0100
+Message-Id: <55b2a2185f2e0ee4f66554a6744d520a85f72611.1454595846.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
+References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Instantiate the two Audio DMA controllers in the r8a7791 device tree.
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Based on similar work for the r8a7791 by Kuninori Morimoto.
+The clock is really the device functional clock, not the interface
+clock. Rename it.
 
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 58 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+ arch/arm/boot/dts/r8a73a4.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index cb6251e71ef9..2c9ab9f18b41 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -301,6 +301,64 @@
- 		dma-channels = <15>;
+diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
+index 64f3efcd7ba5..138414a7d170 100644
+--- a/arch/arm/boot/dts/r8a73a4.dtsi
++++ b/arch/arm/boot/dts/r8a73a4.dtsi
+@@ -335,7 +335,7 @@
+ 		reg = <0 0xe6c20000 0 0x100>;
+ 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFB0>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
  	};
- 
-+	audma0: dma-controller@ec700000 {
-+		compatible = "renesas,dmac-r8a7793", "renesas,rcar-dmac";
-+		reg = <0 0xec700000 0 0x10000>;
-+		interrupts = <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "error",
-+				"ch0", "ch1", "ch2", "ch3",
-+				"ch4", "ch5", "ch6", "ch7",
-+				"ch8", "ch9", "ch10", "ch11",
-+				"ch12";
-+		clocks = <&mstp5_clks R8A7793_CLK_AUDIO_DMAC0>;
+@@ -345,7 +345,7 @@
+ 		reg = <0 0xe6c30000 0 0x100>;
+ 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFB1>;
+-		clock-names = "sci_ick";
 +		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
-+		#dma-cells = <1>;
-+		dma-channels = <13>;
-+	};
-+
-+	audma1: dma-controller@ec720000 {
-+		compatible = "renesas,dmac-r8a7793", "renesas,rcar-dmac";
-+		reg = <0 0xec720000 0 0x10000>;
-+		interrupts = <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "error",
-+				"ch0", "ch1", "ch2", "ch3",
-+				"ch4", "ch5", "ch6", "ch7",
-+				"ch8", "ch9", "ch10", "ch11",
-+				"ch12";
-+		clocks = <&mstp5_clks R8A7793_CLK_AUDIO_DMAC1>;
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -355,7 +355,7 @@
+ 		reg = <0 0xe6c40000 0 0x100>;
+ 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFA0>;
+-		clock-names = "sci_ick";
 +		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
-+		#dma-cells = <1>;
-+		dma-channels = <13>;
-+	};
-+
- 	/* The memory map in the User's Manual maps the cores to bus numbers */
- 	i2c0: i2c@e6508000 {
- 		#address-cells = <1>;
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -365,7 +365,7 @@
+ 		reg = <0 0xe6c50000 0 0x100>;
+ 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFA1>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -375,7 +375,7 @@
+ 		reg = <0 0xe6ce0000 0 0x100>;
+ 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFB2>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_a3sp>;
+ 		status = "disabled";
+ 	};
+@@ -385,7 +385,7 @@
+ 		reg = <0 0xe6cf0000 0 0x100>;
+ 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A73A4_CLK_SCIFB3>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&pd_c4>;
+ 		status = "disabled";
+ 	};
 -- 
 2.7.0.rc3.207.g0ac5344
