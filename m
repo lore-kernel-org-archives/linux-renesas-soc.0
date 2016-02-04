@@ -3,124 +3,86 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/19] ARM: dts: r8a7794: replace gpio-key, wakeup with wakeup-source property
-Date: Fri, 26 Feb 2016 08:53:04 +0900
-Message-Id: <c816617e8b09c13b1b5a66de8a32db8e5e61dff1.1456443769.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1456443769.git.horms+renesas@verge.net.au>
-References: <cover.1456443769.git.horms+renesas@verge.net.au>
+Subject: [PATCH 41/70] ARM: dts: r8a7778: Add SCIF fallback compatibility strings
+Date: Thu,  4 Feb 2016 15:29:35 +0100
+Message-Id: <53149a68df5ef39cebce5dae7344b3f59f3df13c.1454595846.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
+References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Though the keyboard driver for GPIO buttons(gpio-keys) will continue to
-check for/support the legacy "gpio-key,wakeup" boolean property to
-enable gpio buttons as wakeup source, "wakeup-source" is the new
-standard binding.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch replaces the legacy "gpio-key,wakeup" with the unified
-"wakeup-source" property in order to avoid any further copy-paste
-duplication.
-
-Changelog text from a similar patch by Sudeep Holla.
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ arch/arm/boot/dts/r8a7778.dtsi | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index cfe142c2ba38..87e89ec9dd47 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -67,77 +67,77 @@
- 		        gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_1>;
- 		        label = "SW2-1";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-2 {
- 		        gpios = <&gpio5 1 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_2>;
- 		        label = "SW2-2";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-3 {
- 		        gpios = <&gpio5 2 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_3>;
- 		        label = "SW2-3";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-4 {
- 		        gpios = <&gpio5 3 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_4>;
- 		        label = "SW2-4";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-a {
- 		        gpios = <&gpio7 0 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_A>;
- 		        label = "SW30";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-b {
- 		        gpios = <&gpio7 1 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_B>;
- 		        label = "SW31";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-c {
- 		        gpios = <&gpio7 2 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_C>;
- 		        label = "SW32";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-d {
- 		        gpios = <&gpio7 3 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_D>;
- 		        label = "SW33";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-e {
- 		        gpios = <&gpio7 4 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_E>;
- 		        label = "SW34";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-f {
- 		        gpios = <&gpio7 5 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_F>;
- 		        label = "SW35";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-g {
- 		        gpios = <&gpio7 6 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_G>;
- 		        label = "SW36";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
+diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
+index fc5e7243467a..8ea1792c5146 100644
+--- a/arch/arm/boot/dts/r8a7778.dtsi
++++ b/arch/arm/boot/dts/r8a7778.dtsi
+@@ -297,7 +297,8 @@
  	};
+ 
+ 	scif0: serial@ffe40000 {
+-		compatible = "renesas,scif-r8a7778", "renesas,scif";
++		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
++			     "renesas,scif";
+ 		reg = <0xffe40000 0x100>;
+ 		interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_SCIF0>;
+@@ -307,7 +308,8 @@
+ 	};
+ 
+ 	scif1: serial@ffe41000 {
+-		compatible = "renesas,scif-r8a7778", "renesas,scif";
++		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
++			     "renesas,scif";
+ 		reg = <0xffe41000 0x100>;
+ 		interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_SCIF1>;
+@@ -317,7 +319,8 @@
+ 	};
+ 
+ 	scif2: serial@ffe42000 {
+-		compatible = "renesas,scif-r8a7778", "renesas,scif";
++		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
++			     "renesas,scif";
+ 		reg = <0xffe42000 0x100>;
+ 		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_SCIF2>;
+@@ -327,7 +330,8 @@
+ 	};
+ 
+ 	scif3: serial@ffe43000 {
+-		compatible = "renesas,scif-r8a7778", "renesas,scif";
++		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
++			     "renesas,scif";
+ 		reg = <0xffe43000 0x100>;
+ 		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_SCIF3>;
+@@ -337,7 +341,8 @@
+ 	};
+ 
+ 	scif4: serial@ffe44000 {
+-		compatible = "renesas,scif-r8a7778", "renesas,scif";
++		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
++			     "renesas,scif";
+ 		reg = <0xffe44000 0x100>;
+ 		interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_SCIF4>;
+@@ -347,7 +352,8 @@
+ 	};
+ 
+ 	scif5: serial@ffe45000 {
+-		compatible = "renesas,scif-r8a7778", "renesas,scif";
++		compatible = "renesas,scif-r8a7778", "renesas,rcar-gen1-scif",
++			     "renesas,scif";
+ 		reg = <0xffe45000 0x100>;
+ 		interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_SCIF5>;
 -- 
 2.7.0.rc3.207.g0ac5344
