@@ -3,62 +3,93 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 16/19] ARM: dts: r8a7794: add EtherAVB clock
-Date: Fri, 26 Feb 2016 08:53:05 +0900
-Message-Id: <255a40424e2618610a2ad8d39e12b843b723959a.1456443769.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1456443769.git.horms+renesas@verge.net.au>
-References: <cover.1456443769.git.horms+renesas@verge.net.au>
+Subject: [PATCH 28/70] ARM: dts: r8a7793: add audio DMAC to device tree
+Date: Thu,  4 Feb 2016 15:29:22 +0100
+Message-Id: <6708eb73183e226ddd73dae128239e76b3807390.1454595846.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
+References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Instantiate the two Audio DMA controllers in the r8a7791 device tree.
 
-Add the EtherAVB clock to the R8A7794 device tree.
+Based on similar work for the r8a7791 by Kuninori Morimoto.
 
-Based on the commit eaa870b30553 ("ARM: shmobile: r8a7791: add EtherAVB
-clock").
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7794.dtsi            | 7 ++++---
- include/dt-bindings/clock/r8a7794-clock.h | 1 +
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7793.dtsi | 58 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 21a02df3609b..042440b6dc8c 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1112,13 +1112,14 @@
- 		mstp8_clks: mstp8_clks@e6150990 {
- 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe6150990 0 4>, <0 0xe61509a0 0 4>;
--			clocks = <&zg_clk>, <&zg_clk>, <&p_clk>;
-+			clocks = <&zg_clk>, <&zg_clk>, <&hp_clk>, <&p_clk>;
- 			#clock-cells = <1>;
- 			clock-indices = <
--				R8A7794_CLK_VIN1 R8A7794_CLK_VIN0 R8A7794_CLK_ETHER
-+				R8A7794_CLK_VIN1 R8A7794_CLK_VIN0
-+				R8A7794_CLK_ETHERAVB R8A7794_CLK_ETHER
- 			>;
- 			clock-output-names =
--				"vin1", "vin0", "ether";
-+				"vin1", "vin0", "etheravb", "ether";
- 		};
- 		mstp9_clks: mstp9_clks@e6150994 {
- 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
-diff --git a/include/dt-bindings/clock/r8a7794-clock.h b/include/dt-bindings/clock/r8a7794-clock.h
-index a7a7e0370968..f843de6bf377 100644
---- a/include/dt-bindings/clock/r8a7794-clock.h
-+++ b/include/dt-bindings/clock/r8a7794-clock.h
-@@ -84,6 +84,7 @@
- /* MSTP8 */
- #define R8A7794_CLK_VIN1		10
- #define R8A7794_CLK_VIN0		11
-+#define R8A7794_CLK_ETHERAVB		12
- #define R8A7794_CLK_ETHER		13
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index cb6251e71ef9..2c9ab9f18b41 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -301,6 +301,64 @@
+ 		dma-channels = <15>;
+ 	};
  
- /* MSTP9 */
++	audma0: dma-controller@ec700000 {
++		compatible = "renesas,dmac-r8a7793", "renesas,rcar-dmac";
++		reg = <0 0xec700000 0 0x10000>;
++		interrupts = <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "error",
++				"ch0", "ch1", "ch2", "ch3",
++				"ch4", "ch5", "ch6", "ch7",
++				"ch8", "ch9", "ch10", "ch11",
++				"ch12";
++		clocks = <&mstp5_clks R8A7793_CLK_AUDIO_DMAC0>;
++		clock-names = "fck";
++		power-domains = <&cpg_clocks>;
++		#dma-cells = <1>;
++		dma-channels = <13>;
++	};
++
++	audma1: dma-controller@ec720000 {
++		compatible = "renesas,dmac-r8a7793", "renesas,rcar-dmac";
++		reg = <0 0xec720000 0 0x10000>;
++		interrupts = <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "error",
++				"ch0", "ch1", "ch2", "ch3",
++				"ch4", "ch5", "ch6", "ch7",
++				"ch8", "ch9", "ch10", "ch11",
++				"ch12";
++		clocks = <&mstp5_clks R8A7793_CLK_AUDIO_DMAC1>;
++		clock-names = "fck";
++		power-domains = <&cpg_clocks>;
++		#dma-cells = <1>;
++		dma-channels = <13>;
++	};
++
+ 	/* The memory map in the User's Manual maps the cores to bus numbers */
+ 	i2c0: i2c@e6508000 {
+ 		#address-cells = <1>;
 -- 
 2.7.0.rc3.207.g0ac5344
