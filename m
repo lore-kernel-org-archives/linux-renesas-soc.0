@@ -5,58 +5,40 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/19] ARM: dts: r8a7791: Add L2 cache-controller node
-Date: Fri, 26 Feb 2016 08:53:01 +0900
-Message-Id: <8ffe93a5b2cb55d4da9c285d9277699bdb828b47.1456443769.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1456443769.git.horms+renesas@verge.net.au>
-References: <cover.1456443769.git.horms+renesas@verge.net.au>
+Subject: [PATCH 4/4] ARM: shmobile: r8a7779: Remove remainings of removed SCU boot setup code
+Date: Thu,  4 Feb 2016 15:29:35 +0100
+Message-Id: <cdef6b0b6ff40da9a55c8175206c45635428d9fe.1454595116.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454595116.git.horms+renesas@verge.net.au>
+References: <cover.1454595116.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add a device node for the L2 cache, and link the CPU nodes to it.
+Commit 0ca2894b5a900709 ("ARM: shmobile: Use shared SCU SMP boot code on
+r8a7779") obsoleted the r8a7779-specific SCU boot code, but forgot to
+remove the setup of shmobile_boot_fn and shmobile_boot_arg, which is
+overwritten by shmobile_smp_scu_prepare_cpus().
 
-The L2 cache for the Cortex-A15 CPU cores is 1 MiB large (organized as
-64 KiB x 16 ways).
+Note that shmobile_scu_base wasn't initialized at that point yet anyway.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/mach-shmobile/smp-r8a7779.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index f1732dde114b..6439f0569fe2 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -51,6 +51,7 @@
- 			voltage-tolerance = <1>; /* 1% */
- 			clocks = <&cpg_clocks R8A7791_CLK_Z>;
- 			clock-latency = <300000>; /* 300 us */
-+			next-level-cache = <&L2_CA15>;
+diff --git a/arch/arm/mach-shmobile/smp-r8a7779.c b/arch/arm/mach-shmobile/smp-r8a7779.c
+index b854fe2095ad..0b024a9dbd43 100644
+--- a/arch/arm/mach-shmobile/smp-r8a7779.c
++++ b/arch/arm/mach-shmobile/smp-r8a7779.c
+@@ -92,8 +92,6 @@ static void __init r8a7779_smp_prepare_cpus(unsigned int max_cpus)
+ {
+ 	/* Map the reset vector (in headsmp-scu.S, headsmp.S) */
+ 	__raw_writel(__pa(shmobile_boot_vector), AVECR);
+-	shmobile_boot_fn = virt_to_phys(shmobile_boot_scu);
+-	shmobile_boot_arg = (unsigned long)shmobile_scu_base;
  
- 			/* kHz - uV - OPPs unknown yet */
- 			operating-points = <1500000 1000000>,
-@@ -66,6 +67,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
- 			clock-frequency = <1500000000>;
-+			next-level-cache = <&L2_CA15>;
- 		};
- 	};
- 
-@@ -88,6 +90,12 @@
- 		};
- 	};
- 
-+	L2_CA15: cache-controller@0 {
-+		compatible = "cache";
-+		cache-unified;
-+		cache-level = <2>;
-+	};
-+
- 	gic: interrupt-controller@f1001000 {
- 		compatible = "arm,gic-400";
- 		#interrupt-cells = <3>;
+ 	/* setup r8a7779 specific SCU bits */
+ 	shmobile_scu_base = IOMEM(R8A7779_SCU_BASE);
 -- 
 2.7.0.rc3.207.g0ac5344
