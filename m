@@ -4,45 +4,33 @@ To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 32/68] ARM: dts: gose: enable sound DMA support via BUSIF in device tree
-Date: Fri, 12 Feb 2016 20:05:22 +0100
-Message-Id: <402586d0cce05317100356cfd73f0c044c60ccd7.1455303422.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
-References: <cover.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 06/70] ARM: dts: r8a7790: use fallback usbhs compatibility string
+Date: Thu,  4 Feb 2016 15:29:00 +0100
+Message-Id: <d87ec94aee6dc62ed5db4cad7dba47006c0dd00e.1454595846.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
+References: <cover.1454595846.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable DMA transfer to/from SSIU in gose/r8a7791 device tree.
+Use recently added fallback compatibility string in r8a7790 device tree.
 
-     DMA
-[MEM] -> [SSIU] -> [SSI]
-
-     DMA
-[MEM] <- [SSIU] <- [SSI]
-
-Based on similar work for the r8a7791/koelsch by Kuninori Morimoto.
-
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 5 -----
- 1 file changed, 5 deletions(-)
+ arch/arm/boot/dts/r8a7790.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index a4b2dcb8e73d..81bfe9484bbc 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -407,11 +407,6 @@
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 7dfd393bfc7e..4d9af0f46fab 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -746,7 +746,7 @@
  	};
- };
  
--&ssi0 {
--	no-busif;
--};
--
- &ssi1 {
--	no-busif;
- 	shared-pin;
- };
+ 	hsusb: usb@e6590000 {
+-		compatible = "renesas,usbhs-r8a7790";
++		compatible = "renesas,usbhs-r8a7790", "renesas,rcar-gen2-usbhs";
+ 		reg = <0 0xe6590000 0 0x100>;
+ 		interrupts = <0 107 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7790_CLK_HSUSB>;
 -- 
 2.7.0.rc3.207.g0ac5344
