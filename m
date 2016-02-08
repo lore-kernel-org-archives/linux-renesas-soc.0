@@ -1,63 +1,45 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 4/7] ARM: dts: r8a7793: Add L2 cache-controller node
-Date: Mon, 15 Feb 2016 21:38:32 +0100
-Message-Id: <1455568715-20880-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
-References: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+In-Reply-To: <1454408338-4612-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+	<1454408338-4612-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Date: Mon, 8 Feb 2016 16:58:29 +0100
+Message-ID: <CAMuHMdWn+SVTRJXRAE2sxfaV=XwFU6F60Vi8mBZqBdMHJ=3miQ@mail.gmail.com>
+Subject: Re: [PATCH/RFC 01/10] pinctrl: sh-pfc: r8a7795: Add USB2.0 host support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the L2 cache, and link the CPU node to it.
+On Tue, Feb 2, 2016 at 11:18 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds USB[0-2] (USB2.0 host) pinmux support to r8a7795 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-The L2 cache for the Cortex-A15 CPU cores is 1 MiB large (organized as
-64 KiB x 16 ways).
+Thanks, will queue for next renesas-drivers and v4.6.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - Drop "arm,data-latency" and "arm,tag-latency" properties, as they
-    may not be valid when using virtualization,
-  - Change one-line summary prefix to match current arm-soc practices,
+Gr{oetje,eeting}s,
 
-v2:
-  - Drop (incorrect) optional cache-{size,sets,{block,line}-size}
-    properties, as this information is auto-detected,
-  - Integrate linking CPU to L2 cache into this patch,
-  - Extracted from series "[PATCH/RFC 00/15] ARM: shmobile: R-Car: Add
-    SYSC PM Domain DT Support".
----
- arch/arm/boot/dts/r8a7793.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+                        Geert
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 45dba1c79a43c287..9a30f650aa515b80 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -51,9 +51,16 @@
- 					   < 937500 1000000>,
- 					   < 750000 1000000>,
- 					   < 375000 1000000>;
-+			next-level-cache = <&L2_CA15>;
- 		};
- 	};
- 
-+	L2_CA15: cache-controller@0 {
-+		compatible = "cache";
-+		cache-unified;
-+		cache-level = <2>;
-+	};
-+
- 	gic: interrupt-controller@f1001000 {
- 		compatible = "arm,gic-400";
- 		#interrupt-cells = <3>;
--- 
-1.9.1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
