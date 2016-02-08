@@ -1,25 +1,31 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 2 Feb 2016 11:12:35 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 00/11] ARM: dts: shmobile: Rename the serial port
- clock to fck
-Message-ID: <20160202101234.GC15554@verge.net.au>
-References: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/5] Add R8A7794 sound DT support
+Date: Tue, 09 Feb 2016 01:55:58 +0300
+Message-ID: <4253511.vvGjIdOnb6@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1454060861-2375-1-git-send-email-geert+renesas@glider.be>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jan 29, 2016 at 10:47:30AM +0100, Geert Uytterhoeven wrote:
-> 	Hi Simon, Magnus,
-> 
-> This patch series renames the serial port clock to fck, as accepted in
-> the DT bindings in v4.5-rc1.
+Hello.
 
-Thanks, I have queued this up.
+   Here's the set of 5 patches against Simon Horman's 'renesas.git' repo,
+'renesas-devel-20160208-v4.5-rc3' tag. I'm adding the sound device tree support
+for the R8A7794 SoC. The sound patch for the SILK board will be posted RSN. :-)
+
+[1/5] ARM: dts: r8a7794: add audio clocks
+[2/5] ARM: dts: r8a7794: add MSTP5 clocks
+[3/5] ARM: dts: r8a7794: add MSTP10 clocks
+[4/5] ARM: dts: r8a7794: add Audio-DMAC support
+[5/5] ARM: dts: r8a7794 add sound support
+
+WBR, Sergei
+
