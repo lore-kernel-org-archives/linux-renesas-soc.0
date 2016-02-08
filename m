@@ -6,26 +6,65 @@ To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org
 Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 0/5] Add R8A7794 sound DT support
-Date: Wed, 10 Feb 2016 00:52:09 +0300
-Message-ID: <12033353.rt0nolnBmD@wasted.cogentembedded.com>
+Subject: [PATCH 4/5] ARM: dts: r8a7794: add Audio-DMAC support
+Date: Tue, 09 Feb 2016 02:03:12 +0300
+Message-ID: <2262360.JfPBBBJWSV@wasted.cogentembedded.com>
+In-Reply-To: <4253511.vvGjIdOnb6@wasted.cogentembedded.com>
+References: <4253511.vvGjIdOnb6@wasted.cogentembedded.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+Describe Audio-DMAC in the R8A7794 device tree.
 
-   Here's the set of 5 patches against Simon Horman's 'renesas.git' repo,
-'renesas-devel-20160208-v4.5-rc3' tag. I'm adding the sound device tree support
-for the R8A7794 SoC. The sound patch for the SILK board will be posted RSN. :-)
+This patch is loosely based on the commit 8994fff67761 ("ARM: shmobile:
+r8a7791: Add Audio DMAC devices to DT").
 
-[1/5] ARM: dts: r8a7794: add audio clocks
-[2/5] ARM: dts: r8a7794: add MSTP5 clocks
-[3/5] ARM: dts: r8a7794: add MSTP10 clocks
-[4/5] ARM: dts: r8a7794: add Audio-DMAC support
-[5/5] ARM: dts: r8a7794 add sound support
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-WBR, Sergei
+---
+ arch/arm/boot/dts/r8a7794.dtsi |   28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
++++ renesas/arch/arm/boot/dts/r8a7794.dtsi
+@@ -281,6 +281,34 @@
+ 		dma-channels = <15>;
+ 	};
+ 
++	audma0: dma-controller@ec700000 {
++		compatible = "renesas,dmac-r8a7794", "renesas,rcar-dmac";
++		reg = <0 0xec700000 0 0x10000>;
++		interrupts =	<GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
++				 GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
++				 GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
++				 GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
++				 GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
++				 GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
++				 GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
++				 GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
++				 GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
++				 GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
++				 GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
++				 GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
++				 GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
++				 GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "error",
++				  "ch0", "ch1", "ch2", "ch3", "ch4", "ch5",
++				  "ch6", "ch7", "ch8", "ch9", "ch10", "ch11",
++				  "ch12";
++		clocks = <&mstp5_clks R8A7794_CLK_AUDIO_DMAC0>;
++		clock-names = "fck";
++		power-domains = <&cpg_clocks>;
++		#dma-cells = <1>;
++		dma-channels = <13>;
++	};
++
+ 	scifa0: serial@e6c40000 {
+ 		compatible = "renesas,scifa-r8a7794",
+ 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
 
