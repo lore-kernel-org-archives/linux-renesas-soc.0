@@ -1,117 +1,61 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC v2 3/9] phy: rcar-gen3-usb2: add extcon support
-Date: Mon, 22 Feb 2016 18:58:02 +0900
-Message-ID: <1456135088-7976-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1456135088-7976-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1456135088-7976-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/5] ARM: dts: r8a7794: add MSTP5 clocks
+Date: Tue, 09 Feb 2016 01:58:20 +0300
+Message-ID: <5774819.Zu4cvUL4gZ@wasted.cogentembedded.com>
+In-Reply-To: <4253511.vvGjIdOnb6@wasted.cogentembedded.com>
+References: <4253511.vvGjIdOnb6@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds extcon support for otg related channel.
+Add some MSTP5 clocks to R8A7794 device tree.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- drivers/phy/Kconfig              |  1 +
- drivers/phy/phy-rcar-gen3-usb2.c | 26 ++++++++++++++++++++++++++
- 2 files changed, 27 insertions(+)
+ arch/arm/boot/dts/r8a7794.dtsi            |    9 +++++++++
+ include/dt-bindings/clock/r8a7794-clock.h |    1 +
+ 2 files changed, 10 insertions(+)
 
-diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-index 0124d17..32c7088 100644
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@ -121,6 +121,7 @@ config PHY_RCAR_GEN2
- config PHY_RCAR_GEN3_USB2
- 	tristate "Renesas R-Car generation 3 USB 2.0 PHY driver"
- 	depends on OF && ARCH_SHMOBILE
-+	depends on EXTCON
- 	select GENERIC_PHY
- 	help
- 	  Support for USB 2.0 PHY found on Renesas R-Car generation 3 SoCs.
-diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
-index c2bfde8..d4af4dc 100644
---- a/drivers/phy/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/phy-rcar-gen3-usb2.c
-@@ -12,6 +12,7 @@
-  * published by the Free Software Foundation.
-  */
+Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
++++ renesas/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1105,6 +1105,15 @@
+ 			clock-indices = <R8A7794_CLK_IRQC>;
+ 			clock-output-names = "irqc";
+ 		};
++		mstp5_clks: mstp5_clks@e6150144 {
++			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
++			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
++			clocks = <&hp_clk>, <&extal_clk>, <&p_clk>;
++			#clock-cells = <1>;
++			clock-indices = <R8A7794_CLK_AUDIO_DMAC0
++					 R8A7794_CLK_THERMAL R8A7794_CLK_PWM>;
++			clock-output-names = "audmac0", "thermal", "pwm";
++		};
+ 		mstp7_clks: mstp7_clks@e615014c {
+ 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
+Index: renesas/include/dt-bindings/clock/r8a7794-clock.h
+===================================================================
+--- renesas.orig/include/dt-bindings/clock/r8a7794-clock.h
++++ renesas/include/dt-bindings/clock/r8a7794-clock.h
+@@ -64,6 +64,7 @@
+ #define R8A7794_CLK_IRQC		7
  
-+#include <linux/extcon.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
-@@ -77,6 +78,7 @@
+ /* MSTP5 */
++#define R8A7794_CLK_AUDIO_DMAC0		2
+ #define R8A7794_CLK_THERMAL		22
+ #define R8A7794_CLK_PWM			23
  
- struct rcar_gen3_chan {
- 	void __iomem *base;
-+	struct extcon_dev *extcon;
- 	struct phy *phy;
- 	struct regulator *vbus;
- 	bool has_otg;
-@@ -127,6 +129,9 @@ static void rcar_gen3_init_for_host(struct rcar_gen3_chan *ch)
- 	rcar_gen3_set_linectrl(ch, 1, 1);
- 	rcar_gen3_set_host_mode(ch, 1);
- 	rcar_gen3_enable_vbus_ctrl(ch, 1);
-+
-+	extcon_set_cable_state_(ch->extcon, EXTCON_USB_HOST, true);
-+	extcon_set_cable_state_(ch->extcon, EXTCON_USB, false);
- }
- 
- static void rcar_gen3_init_for_peri(struct rcar_gen3_chan *ch)
-@@ -134,6 +139,9 @@ static void rcar_gen3_init_for_peri(struct rcar_gen3_chan *ch)
- 	rcar_gen3_set_linectrl(ch, 0, 1);
- 	rcar_gen3_set_host_mode(ch, 0);
- 	rcar_gen3_enable_vbus_ctrl(ch, 0);
-+
-+	extcon_set_cable_state_(ch->extcon, EXTCON_USB_HOST, false);
-+	extcon_set_cable_state_(ch->extcon, EXTCON_USB, true);
- }
- 
- static bool rcar_gen3_check_vbus(struct rcar_gen3_chan *ch)
-@@ -271,6 +279,12 @@ static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
- };
- MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
- 
-+static const unsigned int rcar_gen3_phy_cable[] = {
-+	EXTCON_USB,
-+	EXTCON_USB_HOST,
-+	EXTCON_NONE,
-+};
-+
- static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -296,11 +310,23 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	/* call request_irq for OTG */
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq >= 0) {
-+		int ret;
-+
- 		irq = devm_request_irq(dev, irq, rcar_gen3_phy_usb2_irq,
- 				       IRQF_SHARED, dev_name(dev), channel);
- 		if (irq < 0)
- 			dev_err(dev, "No irq handler (%d)\n", irq);
- 		channel->has_otg = true;
-+		channel->extcon = devm_extcon_dev_allocate(dev,
-+							rcar_gen3_phy_cable);
-+		if (IS_ERR(channel->extcon))
-+			return PTR_ERR(channel->extcon);
-+
-+		ret = devm_extcon_dev_register(dev, channel->extcon);
-+		if (ret < 0) {
-+			dev_err(dev, "Failed to register extcon\n");
-+			return ret;
-+		}
- 	}
- 
- 	/* devm_phy_create() will call pm_runtime_enable(dev); */
--- 
-1.9.1
 
