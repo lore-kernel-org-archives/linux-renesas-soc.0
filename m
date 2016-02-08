@@ -1,46 +1,68 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	David Airlie <airlied@linux.ie>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm: rcar-du: clarify vsp dependency
-Date: Fri, 26 Feb 2016 12:52:20 +0100
-Message-Id: <1456487546-3886345-1-git-send-email-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/5] ARM: dts: r8a7794: add audio clocks
+Date: Tue, 09 Feb 2016 01:57:22 +0300
+Message-ID: <1840385.PK7TPc1Pyy@wasted.cogentembedded.com>
+In-Reply-To: <4253511.vvGjIdOnb6@wasted.cogentembedded.com>
+References: <4253511.vvGjIdOnb6@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The VSP1 compositor code in DRM links against the respective V4L
-driver, but the dependency is not expressed correctly in Kconfig,
-which leads to a build error when the DRM driver is built-in
-and the V4L driver is a module:
+Describe the external audio clocks (signals AUDIO_CLK[ABC]) required by
+the sound driver. Boards that provide audio clocks need to override the
+clock frequencies.
 
-drivers/gpu/built-in.o: In function `rcar_du_vsp_plane_atomic_update':
-rcar-du/rcar_du_vsp.c:183: undefined reference to `vsp1_du_atomic_update'
+This patch is based on the commit 0d3dbde84a45 ("ARM: shmobile: r8a7791:
+add  audio clock on DTSI").
 
-This patch avoids the problem by ensuring that the DRM VSP code can
-only be enabled if the V4L driver is linked into the kernel, or
-both are loadable modules.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: 6d62ef3ac30b ("drm: rcar-du: Expose the VSP1 compositor through KMS planes")
 ---
- drivers/gpu/drm/rcar-du/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7794.dtsi |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
-index 1f10fa0928b4..eb1e6d5cfed9 100644
---- a/drivers/gpu/drm/rcar-du/Kconfig
-+++ b/drivers/gpu/drm/rcar-du/Kconfig
-@@ -27,6 +27,6 @@ config DRM_RCAR_LVDS
- config DRM_RCAR_VSP
- 	bool "R-Car DU VSP Compositor Support"
- 	depends on DRM_RCAR_DU
--	depends on VIDEO_RENESAS_VSP1
-+	depends on VIDEO_RENESAS_VSP1=y || (VIDEO_RENESAS_VSP1 && DRM_RCAR_DU=m)
- 	help
- 	  Enable support to expose the R-Car VSP Compositor as KMS planes.
--- 
-2.7.0
+Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
++++ renesas/arch/arm/boot/dts/r8a7794.dtsi
+@@ -833,6 +833,30 @@
+ 			status = "disabled";
+ 		};
+ 
++		/*
++		 * The external audio clocks are configured  as 0 Hz fixed
++		 * frequency clocks by default.  Boards that provide audio
++		 * clocks should override them.
++		 */
++		audio_clka: audio_clka {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "audio_clka";
++		};
++		audio_clkb: audio_clkb {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "audio_clkb";
++		};
++		audio_clkc: audio_clkc {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "audio_clkc";
++		};
++
+ 		/* Special CPG clocks */
+ 		cpg_clocks: cpg_clocks@e6150000 {
+ 			compatible = "renesas,r8a7794-cpg-clocks",
+
