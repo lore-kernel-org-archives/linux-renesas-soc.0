@@ -1,51 +1,68 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 7/7] arm64: dts: r8a7795: Add CA53 L2 cache-controller node
-Date: Mon, 15 Feb 2016 21:38:35 +0100
-Message-Id: <1455568715-20880-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
-References: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 1/5] ARM: dts: r8a7794: add audio clocks
+Date: Wed, 10 Feb 2016 00:53:18 +0300
+Message-ID: <2889404.8PU5kSFXZ7@wasted.cogentembedded.com>
+In-Reply-To: <12033353.rt0nolnBmD@wasted.cogentembedded.com>
+References: <12033353.rt0nolnBmD@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the Cortex-A53 L2 cache-controller.
+Describe the external audio clocks (signals AUDIO_CLK[ABC]) required by
+the sound driver. Boards that provide audio clocks need to override the
+clock frequencies.
 
-The L2 cache for the Cortex-A53 CPU cores is 512 KiB large (organized as
-32 KiB x 16 ways).
+This patch is based on the commit 0d3dbde84a45 ("ARM: shmobile: r8a7791:
+add  audio clock on DTSI").
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
-v3:
-  - Remaining part of "[PATCH v2 6/6] arm64: renesas: r8a7795: Add L2
-    cache-controller nodes".
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/r8a7794.dtsi |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index c07f4e83b988ba42..c572527afec3403a 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -72,6 +72,12 @@
- 		cache-level = <2>;
- 	};
+Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
++++ renesas/arch/arm/boot/dts/r8a7794.dtsi
+@@ -833,6 +833,30 @@
+ 			status = "disabled";
+ 		};
  
-+	L2_CA53: cache-controller@1 {
-+		compatible = "cache";
-+		cache-unified;
-+		cache-level = <2>;
-+	};
++		/*
++		 * The external audio clocks are configured  as 0 Hz fixed
++		 * frequency clocks by default.  Boards that provide audio
++		 * clocks should override them.
++		 */
++		audio_clka: audio_clka {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "audio_clka";
++		};
++		audio_clkb: audio_clkb {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "audio_clkb";
++		};
++		audio_clkc: audio_clkc {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <0>;
++			clock-output-names = "audio_clkc";
++		};
 +
- 	extal_clk: extal {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
--- 
-1.9.1
+ 		/* Special CPG clocks */
+ 		cpg_clocks: cpg_clocks@e6150000 {
+ 			compatible = "renesas,r8a7794-cpg-clocks",
 
