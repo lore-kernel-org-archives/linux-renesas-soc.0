@@ -1,37 +1,31 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC 10/10] arm64: dts: salvator-x: enable HS-USB
-Date: Tue, 2 Feb 2016 19:18:58 +0900
-Message-ID: <1454408338-4612-11-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/5] Add R8A7794 sound DT support
+Date: Wed, 10 Feb 2016 00:52:09 +0300
+Message-ID: <12033353.rt0nolnBmD@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+Hello.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index c92ec89..6935aa0 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -320,3 +320,7 @@
- &ohci2 {
- 	status = "okay";
- };
-+
-+&hsusb {
-+	status = "okay";
-+};
--- 
-1.9.1
+   Here's the set of 5 patches against Simon Horman's 'renesas.git' repo,
+'renesas-devel-20160208-v4.5-rc3' tag. I'm adding the sound device tree support
+for the R8A7794 SoC. The sound patch for the SILK board will be posted RSN. :-)
+
+[1/5] ARM: dts: r8a7794: add audio clocks
+[2/5] ARM: dts: r8a7794: add MSTP5 clocks
+[3/5] ARM: dts: r8a7794: add MSTP10 clocks
+[4/5] ARM: dts: r8a7794: add Audio-DMAC support
+[5/5] ARM: dts: r8a7794 add sound support
+
+WBR, Sergei
 
