@@ -1,6 +1,6 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 9 Feb 2016 14:06:57 -0800
+Date: Tue, 9 Feb 2016 14:05:33 -0800
 From: Eduardo Valentin <edubezval@gmail.com>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
@@ -9,64 +9,59 @@ Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
 	Magnus <magnus.damm@gmail.com>,
 	Linux-Kernel <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH 0/4][RESEND] thermal: rcar: use thermal-zone on DT
-Message-ID: <20160209220656.GB28102@localhost.localdomain>
+Message-ID: <20160209220532.GA28102@localhost.localdomain>
 References: <878u3a2zqt.wl%kuninori.morimoto.gx@renesas.com>
+ <87k2meodkd.wl%kuninori.morimoto.gx@renesas.com>
+ <20160209213315.GA27284@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gatW/ieO32f1wygP"
+	protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
 Content-Disposition: inline
-In-Reply-To: <878u3a2zqt.wl%kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <20160209213315.GA27284@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---gatW/ieO32f1wygP
+--LZvS9be/3tNcYl/X
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 28, 2016 at 02:43:55AM +0000, Kuninori Morimoto wrote:
-> Hi Zhang, Simon
+On Tue, Feb 09, 2016 at 01:33:17PM -0800, Eduardo Valentin wrote:
+> On Tue, Feb 09, 2016 at 01:56:19AM +0000, Kuninori Morimoto wrote:
+> >=20
+> > Hi Eduardo
+> >=20
+> > I'm sorry I didn't mention you.
+> > Can you please check these patches ?
 >=20
-> These are resend of thermal-zone support patch for R-Car thermal driver
+> Yes Morimoto, they are now on my todo list.
+
+
+Applied first one.
+
 >=20
-> Kuninori Morimoto (4):
->       thermal: rcar: enable to use thermal-zone on DT
->       ARM: shmobile: r8a7790: enable to use thermal-zone
->       ARM: shmobile: r8a7791: enable to use thermal-zone
->       ARM: shmobile: r8a7793: enable to use thermal-zone
+> Thanks.
+>=20
+> Eduardo Valentin
 >=20
 
-For the DT part:
 
-Acked-by: Eduardo Valentin <edubezval@gmail.com>
 
->  Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 37 ++++++++=
-+++++++++++++++++++++++++++--
->  arch/arm/boot/dts/r8a7790.dtsi                             | 26 ++++++++=
-++++++++++++++++--
->  arch/arm/boot/dts/r8a7791.dtsi                             | 26 ++++++++=
-++++++++++++++++--
->  arch/arm/boot/dts/r8a7793.dtsi                             | 26 ++++++++=
-++++++++++++++++--
->  drivers/thermal/rcar_thermal.c                             | 45 ++++++++=
-++++++++++++++++++++++++++++++++-----
->  5 files changed, 147 insertions(+), 13 deletions(-)
-
---gatW/ieO32f1wygP
+--LZvS9be/3tNcYl/X
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQEcBAEBAgAGBQJWumL+AAoJEMLUO4d9pOJWMmIH/jPQDi5wgPJnOeINW22fJKts
-/l9odAwxdCykDcNpUmZ+9Ov/dZak02CAtM/1dZcmcENd7SB0i2oeyWQHB6TyzfMr
-eN71s4S6zpTPEo1V7t9YQJAw4nQA1FcOgP1o8KTgC5VTFCrzKVuaBw8V/epmm/hZ
-pTt8tJ+jVLBHtf/VODqM16MBNalRvLFYWZAOki4MkVlxyXZxaZR/15/Z9Z+6GGbS
-hy/BeYHu8zurySONYou3lMMSZrTkCcZrJqrRs87aCCu08xfMYtScPVCpk9pEVFkH
-Zz/v9I5Z5PFWr+W25c8MVCBFXHIQkRuo+Gd0vlHw8RkfugJKDDc3JaBW/UeDyKI=
-=EVcc
+iQEcBAEBAgAGBQJWumKTAAoJEMLUO4d9pOJWsUsH/RCLeEVM6tGSADiEx9O1DfLl
+njjpKt574TnkyURjQ6x9U00jmVG9LSUyruNZk6UQ3NDkyNZS2wwcqfcxkslxdcYL
+Tw/0ooXcC3a0pOdtA2Z6VYzggralwvWa5hZmEMPVUF9d6V/C3I3hwNfNRYEQHTH5
+strFUOk48abKN2tIdBfEK8QACUPchZHoqAi/rnhfrm0DS3dOqhObPpe3sw5qgNjN
++1CHG2BLKfRNv+BMMNq/Qe4ai8iNnDTYUjFWhCP0QZQk+WUUg15KRN6tdh/dujpx
+33vbYTIbQJrTnmqSZtVIvRYNG/RzGg1lBIrW0hVcxt3UOh7NEweezuP2AqeEhlI=
+=KNct
 -----END PGP SIGNATURE-----
 
---gatW/ieO32f1wygP--
+--LZvS9be/3tNcYl/X--
