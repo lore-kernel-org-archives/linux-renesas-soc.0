@@ -1,106 +1,64 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC 01/10] pinctrl: sh-pfc: r8a7795: Add USB2.0 host support
-Date: Tue, 2 Feb 2016 19:18:49 +0900
-Message-ID: <1454408338-4612-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org, magnus.damm@gmail.com,
+	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 2/5] ARM: dts: r8a7794: add MSTP5 clocks
+Date: Wed, 10 Feb 2016 00:54:06 +0300
+Message-ID: <2534244.nKeMkkXfQ6@wasted.cogentembedded.com>
+In-Reply-To: <12033353.rt0nolnBmD@wasted.cogentembedded.com>
+References: <12033353.rt0nolnBmD@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Add some MSTP5 clocks to the R8A7794 device tree.
 
-This patch adds USB[0-2] (USB2.0 host) pinmux support to r8a7795 SoC.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 43 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+Changes in version 2:
+- added "the" article to the change log.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index ce4f5cd..19819ca 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -3090,6 +3090,31 @@ static const unsigned int ssi9_ctrl_b_mux[] = {
- 	SSI_SCK9_B_MARK, SSI_WS9_B_MARK,
- };
+ arch/arm/boot/dts/r8a7794.dtsi            |    9 +++++++++
+ include/dt-bindings/clock/r8a7794-clock.h |    1 +
+ 2 files changed, 10 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
++++ renesas/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1105,6 +1105,15 @@
+ 			clock-indices = <R8A7794_CLK_IRQC>;
+ 			clock-output-names = "irqc";
+ 		};
++		mstp5_clks: mstp5_clks@e6150144 {
++			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
++			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
++			clocks = <&hp_clk>, <&extal_clk>, <&p_clk>;
++			#clock-cells = <1>;
++			clock-indices = <R8A7794_CLK_AUDIO_DMAC0
++					 R8A7794_CLK_THERMAL R8A7794_CLK_PWM>;
++			clock-output-names = "audmac0", "thermal", "pwm";
++		};
+ 		mstp7_clks: mstp7_clks@e615014c {
+ 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
+Index: renesas/include/dt-bindings/clock/r8a7794-clock.h
+===================================================================
+--- renesas.orig/include/dt-bindings/clock/r8a7794-clock.h
++++ renesas/include/dt-bindings/clock/r8a7794-clock.h
+@@ -64,6 +64,7 @@
+ #define R8A7794_CLK_IRQC		7
  
-+/* - USB0 ------------------------------------------------------------------- */
-+static const unsigned int usb0_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25),
-+};
-+static const unsigned int usb0_mux[] = {
-+	USB0_PWEN_MARK, USB0_OVC_MARK,
-+};
-+/* - USB1 ------------------------------------------------------------------- */
-+static const unsigned int usb1_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 26), RCAR_GP_PIN(6, 27),
-+};
-+static const unsigned int usb1_mux[] = {
-+	USB1_PWEN_MARK, USB1_OVC_MARK,
-+};
-+/* - USB2 ------------------------------------------------------------------- */
-+static const unsigned int usb2_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 14), RCAR_GP_PIN(6, 15),
-+};
-+static const unsigned int usb2_mux[] = {
-+	USB2_PWEN_MARK, USB2_OVC_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(audio_clk_a_a),
- 	SH_PFC_PIN_GROUP(audio_clk_a_b),
-@@ -3322,6 +3347,9 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(ssi9_data_b),
- 	SH_PFC_PIN_GROUP(ssi9_ctrl_a),
- 	SH_PFC_PIN_GROUP(ssi9_ctrl_b),
-+	SH_PFC_PIN_GROUP(usb0),
-+	SH_PFC_PIN_GROUP(usb1),
-+	SH_PFC_PIN_GROUP(usb2),
- };
+ /* MSTP5 */
++#define R8A7794_CLK_AUDIO_DMAC0		2
+ #define R8A7794_CLK_THERMAL		22
+ #define R8A7794_CLK_PWM			23
  
- static const char * const audio_clk_groups[] = {
-@@ -3636,6 +3664,18 @@ static const char * const ssi_groups[] = {
- 	"ssi9_ctrl_b",
- };
- 
-+static const char * const usb0_groups[] = {
-+	"usb0",
-+};
-+
-+static const char * const usb1_groups[] = {
-+	"usb1",
-+};
-+
-+static const char * const usb2_groups[] = {
-+	"usb2",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(audio_clk),
- 	SH_PFC_FUNCTION(avb),
-@@ -3664,6 +3704,9 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(sdhi2),
- 	SH_PFC_FUNCTION(sdhi3),
- 	SH_PFC_FUNCTION(ssi),
-+	SH_PFC_FUNCTION(usb0),
-+	SH_PFC_FUNCTION(usb1),
-+	SH_PFC_FUNCTION(usb2),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
--- 
-1.9.1
 
