@@ -1,89 +1,78 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH v2 5/5] ARM: dts: r8a7794: add sound support
+Date: Wed, 10 Feb 2016 18:14:55 +0100
+From: Simon Horman <horms@verge.net.au>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-References: <12033353.rt0nolnBmD@wasted.cogentembedded.com>
- <2543047.yYrDdYb9v5@wasted.cogentembedded.com>
- <874mdhtn7d.wl%kuninori.morimoto.gx@renesas.com>
-Cc: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
 	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
 	devicetree@vger.kernel.org, magnus.damm@gmail.com,
 	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <56BB7CC2.1060706@cogentembedded.com>
-Date: Wed, 10 Feb 2016 21:09:06 +0300
+Subject: Re: [PATCH v2 5/5] ARM: dts: r8a7794: add sound support
+Message-ID: <20160210171455.GB17671@verge.net.au>
+References: <12033353.rt0nolnBmD@wasted.cogentembedded.com>
+ <2543047.yYrDdYb9v5@wasted.cogentembedded.com>
+ <874mdhtn7d.wl%kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <874mdhtn7d.wl%kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
-
-On 02/10/2016 03:41 AM, Kuninori Morimoto wrote:
-
+On Wed, Feb 10, 2016 at 12:41:30AM +0000, Kuninori Morimoto wrote:
+> 
+> Hi Sergei
+> 
 > Sorry for my un-ordered response
-
-    Not sure what you mean by that. :-)
-
->> Define the generic R8A7794 part of  the sound device node.
->> This sound device  is a complex one and comprises the Audio Clock Generator
->> (ADG), Sampling Rate Converter Unit (SCU), Serial Sound Interface [Unit]
->> (SSI[U]), and Audio DMAC-Peripheral-Peripheral.
->> It is up  to the board file to enable the device.
->>
->> This patch is based on the R8A7791 sound work by Kuninori Morimoto.
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> > Define the generic R8A7794 part of  the sound device node.
+> > This sound device  is a complex one and comprises the Audio Clock Generator
+> > (ADG), Sampling Rate Converter Unit (SCU), Serial Sound Interface [Unit]
+> > (SSI[U]), and Audio DMAC-Peripheral-Peripheral.
+> > It is up  to the board file to enable the device.
+> > 
+> > This patch is based on the R8A7791 sound work by Kuninori Morimoto.
+> > 
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 > (snip)
->> +		rcar_sound,src {
->> +			src1: src@1 {
->> +				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
->> +				dmas = <&audma0 0x87>, <&audma0 0x9c>;
->> +				dma-names = "rx", "tx";
->> +			};
->> +			src2: src@2 {
->> +				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
->> +				dmas = <&audma0 0x89>, <&audma0 0x9e>;
->> +				dma-names = "rx", "tx";
->> +			};
->> +			src3: src@3 {
->> +				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
->> +				dmas = <&audma0 0x8b>, <&audma0 0xa0>;
->> +				dma-names = "rx", "tx";
->> +			};
->> +			src4: src@4 {
->> +				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
->> +				dmas = <&audma0 0x8d>, <&audma0 0xb0>;
->> +				dma-names = "rx", "tx";
->> +			};
->> +			src5: src@5 {
->> +				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
->> +				dmas = <&audma0 0x8f>, <&audma0 0xb2>;
->> +				dma-names = "rx", "tx";
->> +			};
->> +			src6: src@6 {
->> +				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
->> +				dmas = <&audma0 0x91>, <&audma0 0xb4>;
->> +				dma-names = "rx", "tx";
->> +			};
->> +		};
->
+> > +		rcar_sound,src {
+> > +			src1: src@1 {
+> > +				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
+> > +				dmas = <&audma0 0x87>, <&audma0 0x9c>;
+> > +				dma-names = "rx", "tx";
+> > +			};
+> > +			src2: src@2 {
+> > +				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
+> > +				dmas = <&audma0 0x89>, <&audma0 0x9e>;
+> > +				dma-names = "rx", "tx";
+> > +			};
+> > +			src3: src@3 {
+> > +				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
+> > +				dmas = <&audma0 0x8b>, <&audma0 0xa0>;
+> > +				dma-names = "rx", "tx";
+> > +			};
+> > +			src4: src@4 {
+> > +				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
+> > +				dmas = <&audma0 0x8d>, <&audma0 0xb0>;
+> > +				dma-names = "rx", "tx";
+> > +			};
+> > +			src5: src@5 {
+> > +				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
+> > +				dmas = <&audma0 0x8f>, <&audma0 0xb2>;
+> > +				dma-names = "rx", "tx";
+> > +			};
+> > +			src6: src@6 {
+> > +				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
+> > +				dmas = <&audma0 0x91>, <&audma0 0xb4>;
+> > +				dma-names = "rx", "tx";
+> > +			};
+> > +		};
+> 
 > I think this can't work correctly, because driver is assuming
 > DT has all channles (from 0). (see linux/sound/soc/sh/rcar/src.c :: rsnd_src_probe)
+> Can you adds dummy src0 with some comments ? or fix src.c driver ?
 
-    At least it doesn't crash and burn. :-)
-    Playback and recording still work too.
-
-> Can you adds dummy src0 with some comments ?
-
-    Don't think that's an option. We are supposed to describe the hardware, 
-not the driver's behavior.
-
-> or fix src.c driver ?
-
-    Will try to look into it...
-
-MBR, Sergei
-
+I would prefer the driver to be fixed (I had a similar patchset locally
+and I found it doesn't work). The reason is that DT should describe
+the hardware rather than the current state of the software.
