@@ -1,87 +1,61 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Laxman Dewangan <ldewangan@nvidia.com>
-To: <linus.walleij@linaro.org>, <corbet@lwn.net>, <lee@kernel.org>
-CC: <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>,
-	<linux-rpi-kernel@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<bcm-kernel-feedback-list@broadcom.com>,
-	<linux-mediatek@lists.infradead.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	<linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH 25/50] pinctrl: ish-pfc: Use devm_pinctrl_register() for pinctrl registration
-Date: Wed, 24 Feb 2016 18:45:50 +0530
-Message-ID: <1456319775-3216-26-git-send-email-ldewangan@nvidia.com>
-In-Reply-To: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
-References: <1456319775-3216-1-git-send-email-ldewangan@nvidia.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 10 Feb 2016 18:22:29 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] PCI: rcar, rcar-gen2: More Gen2 compatibility
+ strings
+Message-ID: <20160210172229.GC17671@verge.net.au>
+References: <1453093785-21067-1-git-send-email-horms+renesas@verge.net.au>
+ <20160205202135.GA9594@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160205202135.GA9594@localhost>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use devm_pinctrl_register() for pin control registration.
+On Fri, Feb 05, 2016 at 02:21:35PM -0600, Bjorn Helgaas wrote:
+> Hi Simon,
+> 
+> On Mon, Jan 18, 2016 at 02:09:41PM +0900, Simon Horman wrote:
+> > this short series adds fallback gen2 and SoC-specific r8a7793 compatibility
+> > strings to the rcar PCI and rcar-gen2 PCIE drivers. The intention is to
+> > provide a complete set of compatibility strings for known Gen2 SoCs.
+> > 
+> > Bjorn, the intention of the revised changelogs for the r8a7793 is to
+> > address your concerns regarding providing an explanation of why there are
+> > no driver changes. Please consider taking this series through your tree.
+> > 
+> > Key Changes between v2 and v3:
+> > * Enhance changelog to describe why documenting the r8a7793 is necessary
+> >   and sufficient
+> > * Added acks.
+> > 
+> > Key Changes between v1 and v2:
+> > * Include "rcar-" in generic bindings
+> > 
+> > Simon Horman (4):
+> >   PCI: rcar-gen2: add gen2 fallback compatibility string
+> >   PCI: rcar-gen2: add device tree support for r8a7793
+> >   PCI: rcar: add gen2 fallback compatibility string
+> >   PCI: rcar: add device tree support for r8a7793
+> > 
+> >  Documentation/devicetree/bindings/pci/pci-rcar-gen2.txt | 12 ++++++++++--
+> >  Documentation/devicetree/bindings/pci/rcar-pci.txt      | 14 +++++++++++---
+> >  drivers/pci/host/pci-rcar-gen2.c                        |  1 +
+> >  drivers/pci/host/pcie-rcar.c                            |  1 +
+> >  4 files changed, 23 insertions(+), 5 deletions(-)
+> 
+> Whew, it took a long time to pound that through my thick skull :)
+> 
+> I think patches 1 and 3 are already in v4.5-rc1, and I applied patches 2
+> and 4 to my for-linus branch as below.  Please double-check and make sure
+> for-linus has everything you want.  I'll ask Linus to pull that before
+> v4.5.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/pinctrl/sh-pfc/core.c    |  1 -
- drivers/pinctrl/sh-pfc/core.h    |  1 -
- drivers/pinctrl/sh-pfc/pinctrl.c | 12 +-----------
- 3 files changed, 1 insertion(+), 13 deletions(-)
+Thanks,
 
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 181ea98..4b28fbb 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -587,7 +587,6 @@ static int sh_pfc_remove(struct platform_device *pdev)
- #ifdef CONFIG_GPIO_SH_PFC
- 	sh_pfc_unregister_gpiochip(pfc);
- #endif
--	sh_pfc_unregister_pinctrl(pfc);
- 
- 	return 0;
- }
-diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
-index 62f53b2..8272114 100644
---- a/drivers/pinctrl/sh-pfc/core.h
-+++ b/drivers/pinctrl/sh-pfc/core.h
-@@ -57,7 +57,6 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc);
- int sh_pfc_unregister_gpiochip(struct sh_pfc *pfc);
- 
- int sh_pfc_register_pinctrl(struct sh_pfc *pfc);
--int sh_pfc_unregister_pinctrl(struct sh_pfc *pfc);
- 
- u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned int reg_width);
- void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned int reg_width,
-diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
-index 87b0a59..f17b5fc 100644
---- a/drivers/pinctrl/sh-pfc/pinctrl.c
-+++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-@@ -692,19 +692,9 @@ int sh_pfc_register_pinctrl(struct sh_pfc *pfc)
- 	pmx->pctl_desc.pins = pmx->pins;
- 	pmx->pctl_desc.npins = pfc->info->nr_pins;
- 
--	pmx->pctl = pinctrl_register(&pmx->pctl_desc, pfc->dev, pmx);
-+	pmx->pctl = devm_pinctrl_register(pfc->dev, &pmx->pctl_desc, pmx);
- 	if (IS_ERR(pmx->pctl))
- 		return PTR_ERR(pmx->pctl);
- 
- 	return 0;
- }
--
--int sh_pfc_unregister_pinctrl(struct sh_pfc *pfc)
--{
--	struct sh_pfc_pinctrl *pmx = pfc->pinctrl;
--
--	pinctrl_unregister(pmx->pctl);
--
--	pfc->pinctrl = NULL;
--	return 0;
--}
--- 
-2.1.4
+I checked your for-linus branch and everything seems to be in order.
