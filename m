@@ -3,23 +3,29 @@ Subject: Re: [PATCH v2 5/5] ARM: dts: r8a7794: add sound support
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 References: <12033353.rt0nolnBmD@wasted.cogentembedded.com>
  <2543047.yYrDdYb9v5@wasted.cogentembedded.com>
- <87lh6ts1o0.wl%kuninori.morimoto.gx@renesas.com>
+ <874mdhtn7d.wl%kuninori.morimoto.gx@renesas.com>
 Cc: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
 	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
 	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
 	devicetree@vger.kernel.org, magnus.damm@gmail.com,
 	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <56BB7D23.3010005@cogentembedded.com>
-Date: Wed, 10 Feb 2016 21:10:43 +0300
+Message-ID: <56BB7CC2.1060706@cogentembedded.com>
+Date: Wed, 10 Feb 2016 21:09:06 +0300
 MIME-Version: 1.0
-In-Reply-To: <87lh6ts1o0.wl%kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <874mdhtn7d.wl%kuninori.morimoto.gx@renesas.com>
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 02/10/2016 06:12 AM, Kuninori Morimoto wrote:
+Hello.
+
+On 02/10/2016 03:41 AM, Kuninori Morimoto wrote:
+
+> Sorry for my un-ordered response
+
+    Not sure what you mean by that. :-)
 
 >> Define the generic R8A7794 part of  the sound device node.
 >> This sound device  is a complex one and comprises the Audio Clock Generator
@@ -31,51 +37,53 @@ On 02/10/2016 06:12 AM, Kuninori Morimoto wrote:
 >>
 >> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 > (snip)
->> +		clocks = <&mstp10_clks R8A7794_CLK_SSI_ALL>,
->> +			 <&mstp10_clks R8A7794_CLK_SSI9>,
->> +			 <&mstp10_clks R8A7794_CLK_SSI8>,
->> +			 <&mstp10_clks R8A7794_CLK_SSI7>,
->> +			 <&mstp10_clks R8A7794_CLK_SSI6>,
->> +			 <&mstp10_clks R8A7794_CLK_SSI5>,
->> +			 <&mstp10_clks R8A7794_CLK_SSI4>,
->> +			 <&mstp10_clks R8A7794_CLK_SSI3>,
->> +			 <&mstp10_clks R8A7794_CLK_SSI2>,
->> +			 <&mstp10_clks R8A7794_CLK_SSI1>,
->> +			 <&mstp10_clks R8A7794_CLK_SSI0>,
->> +			 <&mstp10_clks R8A7794_CLK_SCU_SRC9>,
->> +			 <&mstp10_clks R8A7794_CLK_SCU_SRC8>,
->> +			 <&mstp10_clks R8A7794_CLK_SCU_SRC7>,
->> +			 <&mstp10_clks R8A7794_CLK_SCU_SRC6>,
->> +			 <&mstp10_clks R8A7794_CLK_SCU_SRC5>,
->> +			 <&mstp10_clks R8A7794_CLK_SCU_SRC4>,
->> +			 <&mstp10_clks R8A7794_CLK_SCU_SRC3>,
->> +			 <&mstp10_clks R8A7794_CLK_SCU_SRC2>,
->> +			 <&mstp10_clks R8A7794_CLK_SCU_SRC1>,
->> +			 <&mstp10_clks R8A7794_CLK_SCU_SRC0>,
->> +			 <&mstp10_clks R8A7794_CLK_SCU_CTU0_MIX0>,
->> +			 <&mstp10_clks R8A7794_CLK_SCU_CTU1_MIX1>,
->> +			 <&mstp10_clks R8A7794_CLK_SCU_CTU0_MIX0>,
->> +			 <&mstp10_clks R8A7794_CLK_SCU_CTU1_MIX1>,
->> +			 <&mstp10_clks R8A7794_CLK_SCU_DVC0>,
->> +			 <&mstp10_clks R8A7794_CLK_SCU_DVC1>,
->> +			 <&audio_clka>, <&audio_clkb>, <&audio_clkc>,
->> +			 <&m2_clk>;
->> +		clock-names = "ssi-all",
->> +			      "ssi.9", "ssi.8", "ssi.7", "ssi.6", "ssi.5",
->> +			      "ssi.4", "ssi.3", "ssi.2", "ssi.1", "ssi.0",
->> +			      "src.9", "src.8", "src.7", "src.6", "src.5",
->> +			      "src.4", "src.3", "src.2", "src.1", "src.0",
->> +			      "ctu.0", "ctu.1",
->> +			      "mix.0", "mix.1",
->> +			      "dvc.0", "dvc.1",
->> +			      "clk_a", "clk_b", "clk_c", "clk_i";
+>> +		rcar_sound,src {
+>> +			src1: src@1 {
+>> +				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
+>> +				dmas = <&audma0 0x87>, <&audma0 0x9c>;
+>> +				dma-names = "rx", "tx";
+>> +			};
+>> +			src2: src@2 {
+>> +				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
+>> +				dmas = <&audma0 0x89>, <&audma0 0x9e>;
+>> +				dma-names = "rx", "tx";
+>> +			};
+>> +			src3: src@3 {
+>> +				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
+>> +				dmas = <&audma0 0x8b>, <&audma0 0xa0>;
+>> +				dma-names = "rx", "tx";
+>> +			};
+>> +			src4: src@4 {
+>> +				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
+>> +				dmas = <&audma0 0x8d>, <&audma0 0xb0>;
+>> +				dma-names = "rx", "tx";
+>> +			};
+>> +			src5: src@5 {
+>> +				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
+>> +				dmas = <&audma0 0x8f>, <&audma0 0xb2>;
+>> +				dma-names = "rx", "tx";
+>> +			};
+>> +			src6: src@6 {
+>> +				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
+>> +				dmas = <&audma0 0x91>, <&audma0 0xb4>;
+>> +				dma-names = "rx", "tx";
+>> +			};
+>> +		};
 >
-> I'm sorry about my previous email. I think I made you confuse.
-> I meant you can remove CTU/MIX field if your patch doesn't care these.
+> I think this can't work correctly, because driver is assuming
+> DT has all channles (from 0). (see linux/sound/soc/sh/rcar/src.c :: rsnd_src_probe)
 
-    No, I got your idea right.
-    But I decided to go for a more complete hardware representation, on par 
-with the other R-Car SoCs.
+    At least it doesn't crash and burn. :-)
+    Playback and recording still work too.
+
+> Can you adds dummy src0 with some comments ?
+
+    Don't think that's an option. We are supposed to describe the hardware, 
+not the driver's behavior.
+
+> or fix src.c driver ?
+
+    Will try to look into it...
 
 MBR, Sergei
 
