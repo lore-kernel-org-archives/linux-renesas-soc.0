@@ -1,45 +1,82 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC SH Drivers Fixes for v4.5
-Date: Fri, 26 Feb 2016 09:12:35 +0900
-Message-Id: <cover.1456445477.git.horms+renesas@verge.net.au>
+Subject: Re: [PATCH v3 3/8] dma-mapping: add dma_{map,unmap}_resource
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
+References: <1455065878-11906-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+ <1455065878-11906-4-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-arch@vger.kernel.org, arnd@arndb.de, geert+renesas@glider.be,
+	vinod.koul@intel.com, linus.walleij@linaro.org,
+	laurent.pinchart@ideasonboard.com, dan.j.williams@intel.com
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <56BB1003.8020409@arm.com>
+Date: Wed, 10 Feb 2016 10:25:07 +0000
+MIME-Version: 1.0
+In-Reply-To: <1455065878-11906-4-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Linus,
+Hi Niklas,
 
-Please consider this Renesas ARM based SoC SH drivers fix for v4.5.
+Thanks for doing this, it looks good. Just a couple of minor comments on 
+this and the next patch...
 
-This corrects a regression for some SuperH platforms which was
-introduced in v4.4. The regression may lead to driver failures due
-to clocks not being enabled when needed.
+On 10/02/16 00:57, Niklas Söderlund wrote:
+> Map/Unmap a device resource from a physical address. If no dma_map_ops
+> method is available the operation is a no-op.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>   include/linux/dma-mapping.h | 27 +++++++++++++++++++++++++++
+>   1 file changed, 27 insertions(+)
+>
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index e3aba4e..21bf986 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -216,6 +216,33 @@ static inline void dma_unmap_page(struct device *dev, dma_addr_t addr,
+>   	debug_dma_unmap_page(dev, addr, size, dir, false);
+>   }
+>
+> +static inline dma_addr_t dma_map_resource(struct device *dev,
+> +					  phys_addr_t phys_addr,
+> +					  size_t size,
+> +					  enum dma_data_direction dir,
+> +					  struct dma_attrs *attrs)
+> +{
+> +	struct dma_map_ops *ops = get_dma_ops(dev);
+> +
+> +	BUG_ON(!valid_dma_direction(dir));
 
+I think it would be worth also having the same inverse pfn_valid() check 
+as ioremap() here, to make sure this is similarly hard to misuse.
 
-The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
+Robin.
 
-  Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-sh-drivers-fixes-for-v4.5
-
-for you to fetch changes up to 0378ba4899d5fbd8494ed6580cbc81d7b44dbac6:
-
-  drivers: sh: Restore legacy clock domain on SuperH platforms (2016-02-25 09:05:19 +0900)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC SH Drivers Fixes for v4.5
-
-* Restore legacy clock domain on SuperH platforms
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      drivers: sh: Restore legacy clock domain on SuperH platforms
-
- drivers/sh/pm_runtime.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +	if (ops->map_resource)
+> +		return ops->map_resource(dev, phys_addr, size, dir, attrs);
+> +
+> +	return phys_addr;
+> +}
+> +
+> +static inline void dma_unmap_resource(struct device *dev, dma_addr_t addr,
+> +				      size_t size, enum dma_data_direction dir,
+> +				      struct dma_attrs *attrs)
+> +{
+> +	struct dma_map_ops *ops = get_dma_ops(dev);
+> +
+> +	BUG_ON(!valid_dma_direction(dir));
+> +	if (ops->unmap_resource)
+> +		ops->unmap_resource(dev, addr, size, dir, attrs);
+> +
+> +}
+> +
+>   static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
+>   					   size_t size,
+>   					   enum dma_data_direction dir)
+>
