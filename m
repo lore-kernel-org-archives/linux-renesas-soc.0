@@ -1,79 +1,63 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
 	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-renesas-soc@vger.kernel.org,
+Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: robin.murphy@arm.com, vinod.koul@intel.com,
-	laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-	linus.walleij@linaro.org, dan.j.williams@intel.com, arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 8/8] ARM: dts: r8a7791: add iommus to dmac0 and dmac1
-Date: Wed, 10 Feb 2016 01:57:58 +0100
-Message-Id: <1455065878-11906-9-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1455065878-11906-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1455065878-11906-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org,
+	robin.murphy@arm.com, vinod.koul@intel.com,
+	geert+renesas@glider.be, linus.walleij@linaro.org,
+	dan.j.williams@intel.com, arnd@arndb.de, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v3 2/8] dma-mapping: add {map,unmap}_resource to dma_map_ops
+Date: Thu, 11 Feb 2016 02:03:40 +0200
+Message-ID: <1751306.gvBkWbovht@avalon>
+In-Reply-To: <1455065878-11906-3-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1455065878-11906-1-git-send-email-niklas.soderlund+renesas@ragnatech.se> <1455065878-11906-3-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm/boot/dts/r8a7791.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+Hi Niklas,
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 2a369dd..6dff061 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -283,6 +283,21 @@
- 		power-domains = <&cpg_clocks>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
-+		iommus = <&ipmmu_ds 0>,
-+			 <&ipmmu_ds 1>,
-+			 <&ipmmu_ds 2>,
-+			 <&ipmmu_ds 3>,
-+			 <&ipmmu_ds 4>,
-+			 <&ipmmu_ds 5>,
-+			 <&ipmmu_ds 6>,
-+			 <&ipmmu_ds 7>,
-+			 <&ipmmu_ds 8>,
-+			 <&ipmmu_ds 9>,
-+			 <&ipmmu_ds 10>,
-+			 <&ipmmu_ds 11>,
-+			 <&ipmmu_ds 12>,
-+			 <&ipmmu_ds 13>,
-+			 <&ipmmu_ds 14>;
- 	};
- 
- 	dmac1: dma-controller@e6720000 {
-@@ -314,6 +329,21 @@
- 		power-domains = <&cpg_clocks>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
-+		iommus = <&ipmmu_ds 15>,
-+			 <&ipmmu_ds 16>,
-+			 <&ipmmu_ds 17>,
-+			 <&ipmmu_ds 18>,
-+			 <&ipmmu_ds 19>,
-+			 <&ipmmu_ds 20>,
-+			 <&ipmmu_ds 21>,
-+			 <&ipmmu_ds 22>,
-+			 <&ipmmu_ds 23>,
-+			 <&ipmmu_ds 24>,
-+			 <&ipmmu_ds 25>,
-+			 <&ipmmu_ds 26>,
-+			 <&ipmmu_ds 27>,
-+			 <&ipmmu_ds 28>,
-+			 <&ipmmu_ds 29>;
- 	};
- 
- 	audma0: dma-controller@ec700000 {
+Thank you for the patch.
+
+On Wednesday 10 February 2016 01:57:52 Niklas S�derlund wrote:
+> Add methods to handle mapping of device resources from a physical
+> address. This is needed for example to map be able to map MMIO FIFO
+> registers to a IOMMU.
+> 
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+Apart from the typo in the commit message that Sergei already pointed out,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  include/linux/dma-mapping.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index 75857cd..e3aba4e 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -49,6 +49,12 @@ struct dma_map_ops {
+>  			 struct scatterlist *sg, int nents,
+>  			 enum dma_data_direction dir,
+>  			 struct dma_attrs *attrs);
+> +	dma_addr_t (*map_resource)(struct device *dev, phys_addr_t phys_addr,
+> +			       size_t size, enum dma_data_direction dir,
+> +			       struct dma_attrs *attrs);
+> +	void (*unmap_resource)(struct device *dev, dma_addr_t dma_handle,
+> +			   size_t size, enum dma_data_direction dir,
+> +			   struct dma_attrs *attrs);
+>  	void (*sync_single_for_cpu)(struct device *dev,
+>  				    dma_addr_t dma_handle, size_t size,
+>  				    enum dma_data_direction dir);
+
 -- 
-2.7.1
+Regards,
+
+Laurent Pinchart
