@@ -1,52 +1,44 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 4/5] arm64: dts: salvator-x: enable USB 2.0 Host of channel 1 and 2
-Date: Tue, 23 Feb 2016 21:28:35 +0900
-Message-ID: <1456230516-5112-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1456230516-5112-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1456230516-5112-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Thu, 11 Feb 2016 01:50:52 +0100
+To: Simon Horman <horms@verge.net.au>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org,
+	linux-arch@vger.kernel.org, arnd@arndb.de, geert+renesas@glider.be,
+	vinod.koul@intel.com, linus.walleij@linaro.org,
+	laurent.pinchart@ideasonboard.com, dan.j.williams@intel.com,
+	robin.murphy@arm.com
+Subject: Re: [PATCH v3 7/8] ARM: dts: r8a7790: add iommus to dmac0 and dmac1
+Message-ID: <20160211005052.GD19813@bigcity.dyn.berto.se>
+References: <1455065878-11906-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+ <1455065878-11906-8-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+ <20160210175559.GD17671@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160210175559.GD17671@verge.net.au>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should set SW15 to pin 2-3 side on the board before we use CN9
-as USB host or peripheral.
+Hi Simon,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+* Simon Horman <horms@verge.net.au> [2016-02-10 18:55:59 +0100]:
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index e415535..b992b1a 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -372,3 +372,19 @@
- 
- 	status = "okay";
- };
-+
-+&ehci1 {
-+	status = "okay";
-+};
-+
-+&ehci2 {
-+	status = "okay";
-+};
-+
-+&ohci1 {
-+	status = "okay";
-+};
-+
-+&ohci2 {
-+	status = "okay";
-+};
--- 
-1.9.1
+> Hi Niklas,
+>
+> I am deferring accepting this and the similar patch for the r8a7791 pending
+> acceptance of the driver changes earlier in this series. Please let me know
+> if you prefer a different course of action.
 
+That sounds good, thanks.
+
+>
+> I notice that the devel branch of there renesas tree there are
+> dmac nodes for the r8a7793, r8a7794 and r8a7795. Is this change,
+> also suitable for those SoCs? If so, do you plan to update them?
+> If not I'll add it to my todo list.
+
+I planed to update all effected SoCs once the dependencies for this
+series where accepted. But if you want to keep track of this I'm happy.
