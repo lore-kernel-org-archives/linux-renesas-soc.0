@@ -5,122 +5,60 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 55/68] ARM: dts: r8a7778: Add BRG support for SCIF
-Date: Fri, 12 Feb 2016 20:05:45 +0100
-Message-Id: <5fb544da5f9a77ef723b685181d4e763f6a1b2eb.1455303422.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
-References: <cover.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 7/8] ARM: shmobile: emev2: Remove legacy machine_desc.map_io() callback
+Date: Fri, 12 Feb 2016 20:06:25 +0100
+Message-Id: <77621efa3544e5597892274de4fcff55294fffc8.1455303757.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1455303757.git.horms+renesas@verge.net.au>
+References: <cover.1455303757.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add the device node for the external SCIF_CLK.
-The presence of the SCIF_CLK crystal and its clock frequency depends on
-the actual board.
-
-Add the two optional clock sources (S1 and SCIF_CLK for the internal
-resp. external clock) for the Baud Rate Generator for External Clock
-(BRG) to all SCIF device nodes.
-
-This increases the range and accuracy of supported baud rates on SCIF.
+Commit FIXME ("ARM: shmobile: Consolidate SCU mapping code") removed the
+last user of the static mapping on emev2-based systems.  Remove the
+mapping and the legacy machine_desc.map_io() callback.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7778.dtsi | 39 +++++++++++++++++++++++++++------------
- 1 file changed, 27 insertions(+), 12 deletions(-)
+ arch/arm/mach-shmobile/setup-emev2.c | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index 50784e2b632d..f83a348fc07a 100644
---- a/arch/arm/boot/dts/r8a7778.dtsi
-+++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -301,8 +301,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe40000 0x100>;
- 		interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7778_CLK_SCIF0>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7778_CLK_SCIF0>,
-+			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -312,8 +313,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe41000 0x100>;
- 		interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7778_CLK_SCIF1>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7778_CLK_SCIF1>,
-+			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -323,8 +325,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe42000 0x100>;
- 		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7778_CLK_SCIF2>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7778_CLK_SCIF2>,
-+			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -334,8 +337,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe43000 0x100>;
- 		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7778_CLK_SCIF3>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7778_CLK_SCIF3>,
-+			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -345,8 +349,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe44000 0x100>;
- 		interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7778_CLK_SCIF4>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7778_CLK_SCIF4>,
-+			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -356,8 +361,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe45000 0x100>;
- 		interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7778_CLK_SCIF5>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7778_CLK_SCIF5>,
-+			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -444,6 +450,15 @@
- 			clock-output-names = "extal";
- 		};
+diff --git a/arch/arm/mach-shmobile/setup-emev2.c b/arch/arm/mach-shmobile/setup-emev2.c
+index 10b7cb5dcb3a..0829d0215c38 100644
+--- a/arch/arm/mach-shmobile/setup-emev2.c
++++ b/arch/arm/mach-shmobile/setup-emev2.c
+@@ -20,23 +20,6 @@
+ #include <asm/mach/map.h>
+ #include "common.h"
  
-+		/* External SCIF clock */
-+		scif_clk: scif {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			/* This value must be overridden by the board. */
-+			clock-frequency = <0>;
-+			status = "disabled";
-+		};
-+
- 		/* Special CPG clocks */
- 		cpg_clocks: cpg_clocks@ffc80000 {
- 			compatible = "renesas,r8a7778-cpg-clocks";
+-static struct map_desc emev2_io_desc[] __initdata = {
+-#ifdef CONFIG_SMP
+-	/* 2M mapping for SCU + L2 controller */
+-	{
+-		.virtual	= 0xf0000000,
+-		.pfn		= __phys_to_pfn(0x1e000000),
+-		.length		= SZ_2M,
+-		.type		= MT_DEVICE
+-	},
+-#endif
+-};
+-
+-static void __init emev2_map_io(void)
+-{
+-	iotable_init(emev2_io_desc, ARRAY_SIZE(emev2_io_desc));
+-}
+-
+ static const char *const emev2_boards_compat_dt[] __initconst = {
+ 	"renesas,emev2",
+ 	NULL,
+@@ -46,7 +29,6 @@ extern const struct smp_operations emev2_smp_ops;
+ 
+ DT_MACHINE_START(EMEV2_DT, "Generic Emma Mobile EV2 (Flattened Device Tree)")
+ 	.smp		= smp_ops(emev2_smp_ops),
+-	.map_io		= emev2_map_io,
+ 	.init_early	= shmobile_init_delay,
+ 	.init_late	= shmobile_init_late,
+ 	.dt_compat	= emev2_boards_compat_dt,
 -- 
 2.7.0.rc3.207.g0ac5344
