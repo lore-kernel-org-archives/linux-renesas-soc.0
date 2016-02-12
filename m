@@ -3,52 +3,51 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 13/19] ARM: dts: r8a7793: Add L2 cache-controller node
-Date: Fri, 26 Feb 2016 08:53:02 +0900
-Message-Id: <fdd0dbd8a28612195dfbfb08c404ef5bcfa48e43.1456443769.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1456443769.git.horms+renesas@verge.net.au>
-References: <cover.1456443769.git.horms+renesas@verge.net.au>
+Subject: [PATCH 33/68] ARM: dts: gose: enable sound DMA support via SRC in device tree
+Date: Fri, 12 Feb 2016 20:05:23 +0100
+Message-Id: <d2cde3b6103678a4f3d2079af744937dfc9c4104.1455303422.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
+References: <cover.1455303422.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Enable DMA transfer to/from SRC in r8a7793/gose device tree.
 
-Add a device node for the L2 cache, and link the CPU node to it.
+     DMA      DMApp
+[MEM] -> [SRC] -> [SSIU] -> [SSI]
 
-The L2 cache for the Cortex-A15 CPU cores is 1 MiB large (organized as
-64 KiB x 16 ways).
+     DMA      DMApp
+[MEM] <- [SRC] <- [SSIU] <- [SSI]
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Current sound driver is supporting
+SSI/SRC random connection.
+So, this patch is tring
+SSI0 -> SRC2
+SSI1 <- SRC3
+
+Based on similar work for the r8a7791/koeslch by Kuninori Morimoto.
+
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/r8a7793-gose.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 9837f90f1718..b48215945241 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -51,6 +51,7 @@
- 					   < 937500 1000000>,
- 					   < 750000 1000000>,
- 					   < 375000 1000000>;
-+			next-level-cache = <&L2_CA15>;
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 81bfe9484bbc..17c87fe0944f 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -401,8 +401,8 @@
+ 
+ 	rcar_sound,dai {
+ 		dai0 {
+-			playback = <&ssi0>;
+-			capture  = <&ssi1>;
++			playback = <&ssi0 &src2>;
++			capture  = <&ssi1 &src3>;
  		};
  	};
- 
-@@ -73,6 +74,12 @@
- 		};
- 	};
- 
-+	L2_CA15: cache-controller@0 {
-+		compatible = "cache";
-+		cache-unified;
-+		cache-level = <2>;
-+	};
-+
- 	gic: interrupt-controller@f1001000 {
- 		compatible = "arm,gic-400";
- 		#interrupt-cells = <3>;
+ };
 -- 
 2.7.0.rc3.207.g0ac5344
