@@ -5,159 +5,148 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 62/70] ARM: dts: r8a7794: Add BRG support for (H)SCIF
-Date: Thu,  4 Feb 2016 15:29:56 +0100
-Message-Id: <2a814aa1dcdc50916c8d7854175a7934e18bb29e.1454595846.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
-References: <cover.1454595846.git.horms+renesas@verge.net.au>
+Subject: [PATCH 5/8] ARM: shmobile: Consolidate SCU mapping code
+Date: Fri, 12 Feb 2016 20:06:23 +0100
+Message-Id: <4a7680695f5d9d219cfb16123d71013be92da75f.1455303757.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1455303757.git.horms+renesas@verge.net.au>
+References: <cover.1455303757.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add the device node for the external SCIF_CLK.
-The presence of the SCIF_CLK crystal and its clock frequency depends on
-the actual board.
+Currently the SCU registers are mapped in SoC-specific code, using
+different methods, all involving the static mapping set up from
+machine_desc.map_io():
+  - On emev2, a static (non-identity) mapping is used, with ioremap().
+    As the static mapping uses the MT_DEVICE type, ioremap() reuses it,
+    and the returned virtual address is suitable for passing to
+    shmobile_smp_hook(),
+  - On sh73a0 and r8a7779, a static identity mapping is used, with the
+    legacy IOMEM() macro.
+    As the static mapping uses the MT_DEVICE_NONSHARED type, replacing
+    IOMEM() by ioremap() would create a new mapping, whose virtual
+    address cannot be passed to shmobile_smp_hook().
 
-Add the two optional clock sources (ZS_CLK and SCIF_CLK for the internal
-resp. external clock) for the Baud Rate Generator for External Clock
-(BRG) to all SCIF and HSCIF device nodes.
-
-This increases the range and accuracy of supported baud rates on
-(H)SCIF.
+Move the mapping of the SCU registers from SoC-specific code to common
+code, always using ioremap(). To work in the absence of a static
+mapping, this requires passing the physical SCU base address to
+shmobile_smp_hook().
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 54 ++++++++++++++++++++++++++++--------------
- 1 file changed, 36 insertions(+), 18 deletions(-)
+ arch/arm/mach-shmobile/common.h      |  5 ++---
+ arch/arm/mach-shmobile/platsmp-scu.c | 10 +++++++---
+ arch/arm/mach-shmobile/smp-emev2.c   |  3 +--
+ arch/arm/mach-shmobile/smp-r8a7779.c |  3 +--
+ arch/arm/mach-shmobile/smp-sh73a0.c  |  3 +--
+ 5 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index b03a77b3d22f..7d4c5597af5b 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -403,8 +403,9 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6e60000 0 64>;
- 		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_SCIF0>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7794_CLK_SCIF0>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -416,8 +417,9 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6e68000 0 64>;
- 		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_SCIF1>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7794_CLK_SCIF1>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -429,8 +431,9 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6e58000 0 64>;
- 		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_SCIF2>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7794_CLK_SCIF2>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -442,8 +445,9 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6ea8000 0 64>;
- 		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_SCIF3>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7794_CLK_SCIF3>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x2f>, <&dmac0 0x30>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -455,8 +459,9 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6ee0000 0 64>;
- 		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_SCIF4>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7794_CLK_SCIF4>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -468,8 +473,9 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6ee8000 0 64>;
- 		interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_SCIF5>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7794_CLK_SCIF5>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -481,8 +487,9 @@
- 			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62c0000 0 96>;
- 		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_HSCIF0>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7794_CLK_HSCIF0>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -494,8 +501,9 @@
- 			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62c8000 0 96>;
- 		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_HSCIF1>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7794_CLK_HSCIF1>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -507,8 +515,9 @@
- 			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62d0000 0 96>;
- 		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7794_CLK_HSCIF2>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7794_CLK_HSCIF2>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -815,6 +824,15 @@
- 			clock-output-names = "extal";
- 		};
+diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
+index 9cb11215ceba..225c12bb3de9 100644
+--- a/arch/arm/mach-shmobile/common.h
++++ b/arch/arm/mach-shmobile/common.h
+@@ -12,7 +12,8 @@ extern void shmobile_smp_hook(unsigned int cpu, unsigned long fn,
+ 			      unsigned long arg);
+ extern bool shmobile_smp_cpu_can_disable(unsigned int cpu);
+ extern void shmobile_boot_scu(void);
+-extern void shmobile_smp_scu_prepare_cpus(unsigned int max_cpus);
++extern void shmobile_smp_scu_prepare_cpus(phys_addr_t scu_base_phys,
++					  unsigned int max_cpus);
+ extern void shmobile_smp_scu_cpu_die(unsigned int cpu);
+ extern int shmobile_smp_scu_cpu_kill(unsigned int cpu);
+ extern struct platform_suspend_ops shmobile_suspend_ops;
+@@ -31,8 +32,6 @@ int shmobile_cpufreq_init(void);
+ static inline int shmobile_cpufreq_init(void) { return 0; }
+ #endif
  
-+		/* External SCIF clock */
-+		scif_clk: scif {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			/* This value must be overridden by the board. */
-+			clock-frequency = <0>;
-+			status = "disabled";
-+		};
-+
- 		/* Special CPG clocks */
- 		cpg_clocks: cpg_clocks@e6150000 {
- 			compatible = "renesas,r8a7794-cpg-clocks",
+-extern void __iomem *shmobile_scu_base;
+-
+ static inline void __init shmobile_init_late(void)
+ {
+ 	shmobile_suspend_init();
+diff --git a/arch/arm/mach-shmobile/platsmp-scu.c b/arch/arm/mach-shmobile/platsmp-scu.c
+index f2198c9c7435..4c7d2caf3730 100644
+--- a/arch/arm/mach-shmobile/platsmp-scu.c
++++ b/arch/arm/mach-shmobile/platsmp-scu.c
+@@ -18,7 +18,8 @@
+ #include "common.h"
+ 
+ 
+-void __iomem *shmobile_scu_base;
++static phys_addr_t shmobile_scu_base_phys;
++static void __iomem *shmobile_scu_base;
+ 
+ static int shmobile_smp_scu_notifier_call(struct notifier_block *nfb,
+ 					  unsigned long action, void *hcpu)
+@@ -29,7 +30,7 @@ static int shmobile_smp_scu_notifier_call(struct notifier_block *nfb,
+ 	case CPU_UP_PREPARE:
+ 		/* For this particular CPU register SCU SMP boot vector */
+ 		shmobile_smp_hook(cpu, virt_to_phys(shmobile_boot_scu),
+-				  (unsigned long)shmobile_scu_base);
++				  shmobile_scu_base_phys);
+ 		break;
+ 	};
+ 
+@@ -40,13 +41,16 @@ static struct notifier_block shmobile_smp_scu_notifier = {
+ 	.notifier_call = shmobile_smp_scu_notifier_call,
+ };
+ 
+-void __init shmobile_smp_scu_prepare_cpus(unsigned int max_cpus)
++void __init shmobile_smp_scu_prepare_cpus(phys_addr_t scu_base_phys,
++					  unsigned int max_cpus)
+ {
+ 	/* install boot code shared by all CPUs */
+ 	shmobile_boot_fn = virt_to_phys(shmobile_smp_boot);
+ 	shmobile_boot_arg = MPIDR_HWID_BITMASK;
+ 
+ 	/* enable SCU and cache coherency on booting CPU */
++	shmobile_scu_base_phys = scu_base_phys;
++	shmobile_scu_base = ioremap(scu_base_phys, PAGE_SIZE);
+ 	scu_enable(shmobile_scu_base);
+ 	scu_power_mode(shmobile_scu_base, SCU_PM_NORMAL);
+ 
+diff --git a/arch/arm/mach-shmobile/smp-emev2.c b/arch/arm/mach-shmobile/smp-emev2.c
+index adbac6963f2b..4dfafd845452 100644
+--- a/arch/arm/mach-shmobile/smp-emev2.c
++++ b/arch/arm/mach-shmobile/smp-emev2.c
+@@ -45,8 +45,7 @@ static void __init emev2_smp_prepare_cpus(unsigned int max_cpus)
+ 	}
+ 
+ 	/* setup EMEV2 specific SCU bits */
+-	shmobile_scu_base = ioremap(EMEV2_SCU_BASE, PAGE_SIZE);
+-	shmobile_smp_scu_prepare_cpus(max_cpus);
++	shmobile_smp_scu_prepare_cpus(EMEV2_SCU_BASE, max_cpus);
+ }
+ 
+ const struct smp_operations emev2_smp_ops __initconst = {
+diff --git a/arch/arm/mach-shmobile/smp-r8a7779.c b/arch/arm/mach-shmobile/smp-r8a7779.c
+index 0b024a9dbd43..f5c31fbc10b2 100644
+--- a/arch/arm/mach-shmobile/smp-r8a7779.c
++++ b/arch/arm/mach-shmobile/smp-r8a7779.c
+@@ -94,8 +94,7 @@ static void __init r8a7779_smp_prepare_cpus(unsigned int max_cpus)
+ 	__raw_writel(__pa(shmobile_boot_vector), AVECR);
+ 
+ 	/* setup r8a7779 specific SCU bits */
+-	shmobile_scu_base = IOMEM(R8A7779_SCU_BASE);
+-	shmobile_smp_scu_prepare_cpus(max_cpus);
++	shmobile_smp_scu_prepare_cpus(R8A7779_SCU_BASE, max_cpus);
+ 
+ 	r8a7779_pm_init();
+ 
+diff --git a/arch/arm/mach-shmobile/smp-sh73a0.c b/arch/arm/mach-shmobile/smp-sh73a0.c
+index ee1a4b70604b..41137404382e 100644
+--- a/arch/arm/mach-shmobile/smp-sh73a0.c
++++ b/arch/arm/mach-shmobile/smp-sh73a0.c
+@@ -52,8 +52,7 @@ static void __init sh73a0_smp_prepare_cpus(unsigned int max_cpus)
+ 	__raw_writel(__pa(shmobile_boot_vector), SBAR);
+ 
+ 	/* setup sh73a0 specific SCU bits */
+-	shmobile_scu_base = IOMEM(SH73A0_SCU_BASE);
+-	shmobile_smp_scu_prepare_cpus(max_cpus);
++	shmobile_smp_scu_prepare_cpus(SH73A0_SCU_BASE, max_cpus);
+ }
+ 
+ const struct smp_operations sh73a0_smp_ops __initconst = {
 -- 
 2.7.0.rc3.207.g0ac5344
