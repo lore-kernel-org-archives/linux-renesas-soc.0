@@ -1,58 +1,87 @@
-Return-Path: <horms@vergenet.net>
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/4] ARM: shmobile: Move shmobile_scu_base from .text to .bss
-Date: Fri, 19 Feb 2016 15:09:44 +0900
-Message-Id: <d2613f56ce0287211d70a86443a143cae1887911.1455859965.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455859965.git.horms+renesas@verge.net.au>
-References: <cover.1455859965.git.horms+renesas@verge.net.au>
+Subject: [PATCH 49/68] ARM: dts: r8a7778: Rename the serial port clock to fck
+Date: Fri, 12 Feb 2016 20:05:39 +0100
+Message-Id: <258b3c31897cefca8430b5d1de4ccbab0049efbc.1455303422.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
+References: <cover.1455303422.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-shmobile_scu_base is being written to, so it doesn't belong in the .text
-section. Fix this by moving it from asm .text to C .bss, as it's no
-longer used from asm code since commit 4f6da36f7edd5790 ("ARM: shmobile:
-Remove old SCU boot code").
+The clock is really the device functional clock, not the interface
+clock. Rename it.
 
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/headsmp-scu.S | 6 ------
- arch/arm/mach-shmobile/platsmp-scu.c | 3 +++
- 2 files changed, 3 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a7778.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/headsmp-scu.S b/arch/arm/mach-shmobile/headsmp-scu.S
-index fa5248c52399..5e503d91ad70 100644
---- a/arch/arm/mach-shmobile/headsmp-scu.S
-+++ b/arch/arm/mach-shmobile/headsmp-scu.S
-@@ -38,9 +38,3 @@ ENTRY(shmobile_boot_scu)
- 
- 	b	secondary_startup
- ENDPROC(shmobile_boot_scu)
--
--	.text
--	.align	2
--	.globl	shmobile_scu_base
--shmobile_scu_base:
--	.space	4
-diff --git a/arch/arm/mach-shmobile/platsmp-scu.c b/arch/arm/mach-shmobile/platsmp-scu.c
-index 64663110ab6c..f2198c9c7435 100644
---- a/arch/arm/mach-shmobile/platsmp-scu.c
-+++ b/arch/arm/mach-shmobile/platsmp-scu.c
-@@ -17,6 +17,9 @@
- #include <asm/smp_scu.h>
- #include "common.h"
- 
-+
-+void __iomem *shmobile_scu_base;
-+
- static int shmobile_smp_scu_notifier_call(struct notifier_block *nfb,
- 					  unsigned long action, void *hcpu)
- {
+diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
+index 8ea1792c5146..50784e2b632d 100644
+--- a/arch/arm/boot/dts/r8a7778.dtsi
++++ b/arch/arm/boot/dts/r8a7778.dtsi
+@@ -302,7 +302,7 @@
+ 		reg = <0xffe40000 0x100>;
+ 		interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_SCIF0>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -313,7 +313,7 @@
+ 		reg = <0xffe41000 0x100>;
+ 		interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_SCIF1>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -324,7 +324,7 @@
+ 		reg = <0xffe42000 0x100>;
+ 		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_SCIF2>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -335,7 +335,7 @@
+ 		reg = <0xffe43000 0x100>;
+ 		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_SCIF3>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -346,7 +346,7 @@
+ 		reg = <0xffe44000 0x100>;
+ 		interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_SCIF4>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -357,7 +357,7 @@
+ 		reg = <0xffe45000 0x100>;
+ 		interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_SCIF5>;
+-		clock-names = "sci_ick";
++		clock-names = "fck";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
 -- 
-2.1.4
+2.7.0.rc3.207.g0ac5344
