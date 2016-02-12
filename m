@@ -3,164 +3,124 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 35/68] ARM: dts: r8a7793: enable audio DMAC in device tree
-Date: Fri, 12 Feb 2016 20:05:25 +0100
-Message-Id: <f418cbb69a2f5a481bd5f210bb5c8c5cc9322224.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 55/68] ARM: dts: r8a7778: Add BRG support for SCIF
+Date: Fri, 12 Feb 2016 20:05:45 +0100
+Message-Id: <5fb544da5f9a77ef723b685181d4e763f6a1b2eb.1455303422.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
 References: <cover.1455303422.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable audio DMAC (= rcar-dmac) in r8a7793 device tree.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Based on similar work for the r8a7791 by Kuninori Morimoto.
+Add the device node for the external SCIF_CLK.
+The presence of the SCIF_CLK crystal and its clock frequency depends on
+the actual board.
 
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add the two optional clock sources (S1 and SCIF_CLK for the internal
+resp. external clock) for the Baud Rate Generator for External Clock
+(BRG) to all SCIF device nodes.
+
+This increases the range and accuracy of supported baud rates on SCIF.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-
 ---
-v4
-* Use GIC_SPI in interrupts properties
----
- arch/arm/boot/dts/r8a7793.dtsi | 91 ++++++++++++++++++++++++++++++++++++------
- 1 file changed, 79 insertions(+), 12 deletions(-)
+ arch/arm/boot/dts/r8a7778.dtsi | 39 +++++++++++++++++++++++++++------------
+ 1 file changed, 27 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index ddbda9d2c177..6817f14314e2 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -1201,52 +1201,119 @@
+diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
+index 50784e2b632d..f83a348fc07a 100644
+--- a/arch/arm/boot/dts/r8a7778.dtsi
++++ b/arch/arm/boot/dts/r8a7778.dtsi
+@@ -301,8 +301,9 @@
+ 			     "renesas,scif";
+ 		reg = <0xffe40000 0x100>;
+ 		interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp0_clks R8A7778_CLK_SCIF0>;
+-		clock-names = "fck";
++		clocks = <&mstp0_clks R8A7778_CLK_SCIF0>,
++			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
++		clock-names = "fck", "brg_int", "scif_clk";
+ 		power-domains = <&cpg_clocks>;
  		status = "disabled";
- 
- 		rcar_sound,dvc {
--			dvc0: dvc@0 { };
--			dvc1: dvc@1 { };
-+			dvc0: dvc@0 {
-+				dmas = <&audma0 0xbc>;
-+				dma-names = "tx";
-+			};
-+			dvc1: dvc@1 {
-+				dmas = <&audma0 0xbe>;
-+				dma-names = "tx";
-+			};
- 		};
-+
- 		rcar_sound,src {
--			src0: src@0 { };
--			src1: src@1 { };
--			src2: src@2 { };
--			src3: src@3 { };
--			src4: src@4 { };
--			src5: src@5 { };
--			src6: src@6 { };
--			src7: src@7 { };
--			src8: src@8 { };
--			src9: src@9 { };
-+			src0: src@0 {
-+				interrupts = <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x85>, <&audma1 0x9a>;
-+				dma-names = "rx", "tx";
-+			};
-+			src1: src@1 {
-+				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x87>, <&audma1 0x9c>;
-+				dma-names = "rx", "tx";
-+			};
-+			src2: src@2 {
-+				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x89>, <&audma1 0x9e>;
-+				dma-names = "rx", "tx";
-+			};
-+			src3: src@3 {
-+				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x8b>, <&audma1 0xa0>;
-+				dma-names = "rx", "tx";
-+			};
-+			src4: src@4 {
-+				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x8d>, <&audma1 0xb0>;
-+				dma-names = "rx", "tx";
-+			};
-+			src5: src@5 {
-+				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x8f>, <&audma1 0xb2>;
-+				dma-names = "rx", "tx";
-+			};
-+			src6: src@6 {
-+				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x91>, <&audma1 0xb4>;
-+				dma-names = "rx", "tx";
-+			};
-+			src7: src@7 {
-+				interrupts = <GIC_SPI 359 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x93>, <&audma1 0xb6>;
-+				dma-names = "rx", "tx";
-+			};
-+			src8: src@8 {
-+				interrupts = <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x95>, <&audma1 0xb8>;
-+				dma-names = "rx", "tx";
-+			};
-+			src9: src@9 {
-+				interrupts = <GIC_SPI 361 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x97>, <&audma1 0xba>;
-+				dma-names = "rx", "tx";
-+			};
- 		};
- 
- 		rcar_sound,ssi {
- 			ssi0: ssi@0 {
- 				interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x01>, <&audma1 0x02>, <&audma0 0x15>, <&audma1 0x16>;
-+				dma-names = "rx", "tx", "rxu", "txu";
- 			};
- 			ssi1: ssi@1 {
- 				 interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
-+				dma-names = "rx", "tx", "rxu", "txu";
- 			};
- 			ssi2: ssi@2 {
- 				interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x05>, <&audma1 0x06>, <&audma0 0x63>, <&audma1 0x64>;
-+				dma-names = "rx", "tx", "rxu", "txu";
- 			};
- 			ssi3: ssi@3 {
- 				interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x07>, <&audma1 0x08>, <&audma0 0x6f>, <&audma1 0x70>;
-+				dma-names = "rx", "tx", "rxu", "txu";
- 			};
- 			ssi4: ssi@4 {
- 				interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x09>, <&audma1 0x0a>, <&audma0 0x71>, <&audma1 0x72>;
-+				dma-names = "rx", "tx", "rxu", "txu";
- 			};
- 			ssi5: ssi@5 {
- 				interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x0b>, <&audma1 0x0c>, <&audma0 0x73>, <&audma1 0x74>;
-+				dma-names = "rx", "tx", "rxu", "txu";
- 			};
- 			ssi6: ssi@6 {
- 				interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x0d>, <&audma1 0x0e>, <&audma0 0x75>, <&audma1 0x76>;
-+				dma-names = "rx", "tx", "rxu", "txu";
- 			};
- 			ssi7: ssi@7 {
- 				interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x0f>, <&audma1 0x10>, <&audma0 0x79>, <&audma1 0x7a>;
-+				dma-names = "rx", "tx", "rxu", "txu";
- 			};
- 			ssi8: ssi@8 {
- 				interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x11>, <&audma1 0x12>, <&audma0 0x7b>, <&audma1 0x7c>;
-+				dma-names = "rx", "tx", "rxu", "txu";
- 			};
- 			ssi9: ssi@9 {
- 				interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
-+				dmas = <&audma0 0x13>, <&audma1 0x14>, <&audma0 0x7d>, <&audma1 0x7e>;
-+				dma-names = "rx", "tx", "rxu", "txu";
- 			};
- 		};
  	};
+@@ -312,8 +313,9 @@
+ 			     "renesas,scif";
+ 		reg = <0xffe41000 0x100>;
+ 		interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp0_clks R8A7778_CLK_SCIF1>;
+-		clock-names = "fck";
++		clocks = <&mstp0_clks R8A7778_CLK_SCIF1>,
++			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
++		clock-names = "fck", "brg_int", "scif_clk";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -323,8 +325,9 @@
+ 			     "renesas,scif";
+ 		reg = <0xffe42000 0x100>;
+ 		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp0_clks R8A7778_CLK_SCIF2>;
+-		clock-names = "fck";
++		clocks = <&mstp0_clks R8A7778_CLK_SCIF2>,
++			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
++		clock-names = "fck", "brg_int", "scif_clk";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -334,8 +337,9 @@
+ 			     "renesas,scif";
+ 		reg = <0xffe43000 0x100>;
+ 		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp0_clks R8A7778_CLK_SCIF3>;
+-		clock-names = "fck";
++		clocks = <&mstp0_clks R8A7778_CLK_SCIF3>,
++			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
++		clock-names = "fck", "brg_int", "scif_clk";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -345,8 +349,9 @@
+ 			     "renesas,scif";
+ 		reg = <0xffe44000 0x100>;
+ 		interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp0_clks R8A7778_CLK_SCIF4>;
+-		clock-names = "fck";
++		clocks = <&mstp0_clks R8A7778_CLK_SCIF4>,
++			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
++		clock-names = "fck", "brg_int", "scif_clk";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -356,8 +361,9 @@
+ 			     "renesas,scif";
+ 		reg = <0xffe45000 0x100>;
+ 		interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp0_clks R8A7778_CLK_SCIF5>;
+-		clock-names = "fck";
++		clocks = <&mstp0_clks R8A7778_CLK_SCIF5>,
++			 <&cpg_clocks R8A7778_CLK_S1>, <&scif_clk>;
++		clock-names = "fck", "brg_int", "scif_clk";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -444,6 +450,15 @@
+ 			clock-output-names = "extal";
+ 		};
+ 
++		/* External SCIF clock */
++		scif_clk: scif {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			/* This value must be overridden by the board. */
++			clock-frequency = <0>;
++			status = "disabled";
++		};
++
+ 		/* Special CPG clocks */
+ 		cpg_clocks: cpg_clocks@ffc80000 {
+ 			compatible = "renesas,r8a7778-cpg-clocks";
 -- 
 2.7.0.rc3.207.g0ac5344
