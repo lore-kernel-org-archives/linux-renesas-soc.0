@@ -1,68 +1,67 @@
-Return-Path: <horms@vergenet.net>
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/6] ARM: shmobile: r8a7740: Remove legacy machine_desc.map_io() callback
-Date: Wed, 24 Feb 2016 10:21:28 +0900
-Message-Id: <f5757b9af80af1ecf229bac6ba9ecb143a724aa0.1456275652.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1456275652.git.horms+renesas@verge.net.au>
-References: <cover.1456275652.git.horms+renesas@verge.net.au>
+Subject: [PATCH 65/68] ARM: dts: lager: Enable SCIF_CLK frequency and pins
+Date: Fri, 12 Feb 2016 20:05:55 +0100
+Message-Id: <1781460c9accb106b0887985754b63be1b4c63f8.1455303422.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
+References: <cover.1455303422.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Commit 37201ba5c99d0be8 ("ARM: shmobile: r8a7740: Migrate to generic l2c
-OF initialization") removed the last user of the legacy "IOMEM()" macro
-on r8a7740-based systems. Hence there's no longer a need to set up a
-transparent mapping of system I/O registers. Remove the mapping and the
-legacy machine_desc.map_io() callback.
+Add and enable the external crystal for the SCIF_CLK and its pinctrl, to
+be used by the Baud Rate Generator for External Clock (BRG) on (H)SCIF.
+
+This increases the range and accuracy of supported baud rates.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/setup-r8a7740.c | 20 --------------------
- 1 file changed, 20 deletions(-)
+ arch/arm/boot/dts/r8a7790-lager.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/setup-r8a7740.c b/arch/arm/mach-shmobile/setup-r8a7740.c
-index 3e71cd4168dd..db6dbfbaf9f1 100644
---- a/arch/arm/mach-shmobile/setup-r8a7740.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7740.c
-@@ -26,25 +26,6 @@
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 052dcee4790d..cdc0414f5f07 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -291,6 +291,9 @@
+ };
  
- #include "common.h"
+ &pfc {
++	pinctrl-0 = <&scif_clk_pins>;
++	pinctrl-names = "default";
++
+ 	du_pins: du {
+ 		renesas,groups = "du_rgb666", "du_sync_1", "du_clk_out_0";
+ 		renesas,function = "du";
+@@ -301,6 +304,11 @@
+ 		renesas,function = "scif0";
+ 	};
  
--static struct map_desc r8a7740_io_desc[] __initdata = {
--	 /*
--	  * for CPGA/INTC/PFC
--	  * 0xe6000000-0xefffffff -> 0xe6000000-0xefffffff
--	  */
--	{
--		.virtual	= 0xe6000000,
--		.pfn		= __phys_to_pfn(0xe6000000),
--		.length		= 160 << 20,
--		.type		= MT_DEVICE_NONSHARED
--	},
--};
--
--static void __init r8a7740_map_io(void)
--{
--	debug_ll_io_init();
--	iotable_init(r8a7740_io_desc, ARRAY_SIZE(r8a7740_io_desc));
--}
--
- /*
-  * r8a7740 chip has lasting errata on MERAM buffer.
-  * this is work-around for it.
-@@ -108,7 +89,6 @@ static const char *const r8a7740_boards_compat_dt[] __initconst = {
- DT_MACHINE_START(R8A7740_DT, "Generic R8A7740 (Flattened Device Tree)")
- 	.l2c_aux_val	= 0,
- 	.l2c_aux_mask	= ~0,
--	.map_io		= r8a7740_map_io,
- 	.init_early	= shmobile_init_delay,
- 	.init_irq	= r8a7740_init_irq_of,
- 	.init_machine	= r8a7740_generic_init,
++	scif_clk_pins: scif_clk {
++		renesas,groups = "scif_clk";
++		renesas,function = "scif_clk";
++	};
++
+ 	ether_pins: ether {
+ 		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
+ 		renesas,function = "eth";
+@@ -485,6 +493,11 @@
+ 	status = "okay";
+ };
+ 
++&scif_clk {
++	clock-frequency = <14745600>;
++	status = "okay";
++};
++
+ &msiof1 {
+ 	pinctrl-0 = <&msiof1_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.1.4
+2.7.0.rc3.207.g0ac5344
