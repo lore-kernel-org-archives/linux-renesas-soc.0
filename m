@@ -1,107 +1,161 @@
-Return-Path: <horms@vergenet.net>
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/4] ARM: shmobile: Remove shmobile_boot_arg
-Date: Fri, 19 Feb 2016 15:09:47 +0900
-Message-Id: <901c5ffaaed117a38be9d0c29247c4888d6c8636.1455859965.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455859965.git.horms+renesas@verge.net.au>
-References: <cover.1455859965.git.horms+renesas@verge.net.au>
+Subject: [PATCH 13/68] ARM: dts: silk: add DU DT support
+Date: Fri, 12 Feb 2016 20:05:03 +0100
+Message-Id: <84e734f497cd48f60c16c400d14b8da08cd281dc.1455303422.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
+References: <cover.1455303422.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-CPU boot configuration writes to shmobile_boot_arg, which is located in
-the .text section, and thus should not be written to.
+Define  the SILK board dependent part of the DU device node.
+Add the device nodes for the Analog Devices ADV7511W HDMI transmitter
+(connected to DU0) and ADV7123  video DAC (connected to DU1). Add the
+necessary subnodes to interconnect DU, HDMI/VDAC devices, and HDMI/VGA
+connectors.
 
-As of commit 1d33a354bbb618ba ("ARM: shmobile: Per-CPU SMP boot / sleep
-code for SCU SoCs"), and ignoring accidental remainings,
-shmobile_boot_arg is always set to MPIDR_HWID_BITMASK by C code.
-Hence we can just hardcode this in the assembler code, and remove the
-variable, and thus also remove the need to write to this variable.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Nicolas Pitre <nico@linaro.org>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/common.h       | 1 -
- arch/arm/mach-shmobile/headsmp.S      | 8 ++------
- arch/arm/mach-shmobile/platsmp-apmu.c | 1 -
- arch/arm/mach-shmobile/platsmp-scu.c  | 1 -
- 4 files changed, 2 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/r8a7794-silk.dts | 109 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 109 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
-index 9cb11215ceba..b3a4ed5289ec 100644
---- a/arch/arm/mach-shmobile/common.h
-+++ b/arch/arm/mach-shmobile/common.h
-@@ -4,7 +4,6 @@
- extern void shmobile_init_delay(void);
- extern void shmobile_boot_vector(void);
- extern unsigned long shmobile_boot_fn;
--extern unsigned long shmobile_boot_arg;
- extern unsigned long shmobile_boot_size;
- extern void shmobile_smp_boot(void);
- extern void shmobile_smp_sleep(void);
-diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/headsmp.S
-index 94d86ed16414..32e0bf6e3ccb 100644
---- a/arch/arm/mach-shmobile/headsmp.S
-+++ b/arch/arm/mach-shmobile/headsmp.S
-@@ -24,7 +24,6 @@
- 	.arm
- 	.align  12
- ENTRY(shmobile_boot_vector)
--	ldr     r0, 2f
- 	ldr     r1, 1f
- 	bx	r1
+diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
+index 5153e3af25d9..98b8bcca84da 100644
+--- a/arch/arm/boot/dts/r8a7794-silk.dts
++++ b/arch/arm/boot/dts/r8a7794-silk.dts
+@@ -64,6 +64,61 @@
+ 		states = <3300000 1
+ 			  1800000 0>;
+ 	};
++
++	vga-encoder {
++		compatible = "adi,adv7123";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7123_in: endpoint {
++					remote-endpoint = <&du_out_rgb1>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				adv7123_out: endpoint {
++					remote-endpoint = <&vga_in>;
++				};
++			};
++		};
++	};
++
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con: endpoint {
++				remote-endpoint = <&adv7511_out>;
++			};
++		};
++	};
++
++	vga {
++		compatible = "vga-connector";
++
++		port {
++			vga_in: endpoint {
++				remote-endpoint = <&adv7123_out>;
++			};
++		};
++	};
++
++	x2_clk: x2-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <148500000>;
++	};
++
++	x3_clk: x3-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <74250000>;
++	};
+ };
  
-@@ -34,9 +33,6 @@ ENDPROC(shmobile_boot_vector)
- 	.globl	shmobile_boot_fn
- shmobile_boot_fn:
- 1:	.space	4
--	.globl	shmobile_boot_arg
--shmobile_boot_arg:
--2:	.space	4
- 	.globl	shmobile_boot_size
- shmobile_boot_size:
- 	.long	. - shmobile_boot_vector
-@@ -46,9 +42,9 @@ shmobile_boot_size:
-  */
+ &extal_clk {
+@@ -164,6 +219,38 @@
+ 			};
+ 		};
+ 	};
++
++	hdmi@39 {
++		compatible = "adi,adv7511w";
++		reg = <0x39>;
++		interrupt-parent = <&gpio5>;
++		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
++
++		adi,input-depth = <8>;
++		adi,input-colorspace = "rgb";
++		adi,input-clock = "1x";
++		adi,input-style = <1>;
++		adi,input-justification = "evenly";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7511_in: endpoint {
++					remote-endpoint = <&du_out_rgb0>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				adv7511_out: endpoint {
++					remote-endpoint = <&hdmi_con>;
++				};
++			};
++		};
++	};
+ };
  
- ENTRY(shmobile_smp_boot)
--						@ r0 = MPIDR_HWID_BITMASK
- 	mrc	p15, 0, r1, c0, c0, 5		@ r1 = MPIDR
--	and	r0, r1, r0			@ r0 = cpu_logical_map() value
-+	and	r0, r1, #0xffffff		@ MPIDR_HWID_BITMASK
-+						@ r0 = cpu_logical_map() value
- 	mov	r1, #0				@ r1 = CPU index
- 	adr	r2, 1f
- 	ldmia	r2, {r5, r6, r7}
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index 911884f7e28b..aba75c89f9c1 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -123,7 +123,6 @@ void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
- {
- 	/* install boot code shared by all CPUs */
- 	shmobile_boot_fn = virt_to_phys(shmobile_smp_boot);
--	shmobile_boot_arg = MPIDR_HWID_BITMASK;
- 
- 	/* perform per-cpu setup */
- 	apmu_parse_cfg(apmu_init_cpu, apmu_config, num);
-diff --git a/arch/arm/mach-shmobile/platsmp-scu.c b/arch/arm/mach-shmobile/platsmp-scu.c
-index f2198c9c7435..081a097c9219 100644
---- a/arch/arm/mach-shmobile/platsmp-scu.c
-+++ b/arch/arm/mach-shmobile/platsmp-scu.c
-@@ -44,7 +44,6 @@ void __init shmobile_smp_scu_prepare_cpus(unsigned int max_cpus)
- {
- 	/* install boot code shared by all CPUs */
- 	shmobile_boot_fn = virt_to_phys(shmobile_smp_boot);
--	shmobile_boot_arg = MPIDR_HWID_BITMASK;
- 
- 	/* enable SCU and cache coherency on booting CPU */
- 	scu_enable(shmobile_scu_base);
+ &mmcif0 {
+@@ -258,3 +345,25 @@
+ &usbphy {
+ 	status = "okay";
+ };
++
++&du {
++	status = "okay";
++
++	clocks = <&mstp7_clks R8A7794_CLK_DU0>,
++		 <&mstp7_clks R8A7794_CLK_DU0>,
++		 <&x2_clk>, <&x3_clk>;
++	clock-names = "du.0", "du.1", "dclkin.0", "dclkin.1";
++
++	ports {
++		port@0 {
++			endpoint {
++				remote-endpoint = <&adv7511_in>;
++			};
++		};
++		port@1 {
++			endpoint {
++				remote-endpoint = <&adv7123_in>;
++			};
++		};
++	};
++};
 -- 
-2.1.4
+2.7.0.rc3.207.g0ac5344
