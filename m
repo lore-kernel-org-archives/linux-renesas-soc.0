@@ -3,65 +3,43 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 67/70] ARM: dts: lager: Enable SCIF_CLK frequency and pins
-Date: Thu,  4 Feb 2016 15:30:01 +0100
-Message-Id: <c538d4ca3722cb0640d3f67724128ac635f3d785.1454595846.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
-References: <cover.1454595846.git.horms+renesas@verge.net.au>
+Subject: [PATCH 27/68] ARM: dts: r8a7793: add audio DMAC clocks to device tree
+Date: Fri, 12 Feb 2016 20:05:17 +0100
+Message-Id: <8d2883bddf47e3d59a4f041c6bd338f0d18783fe.1455303422.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
+References: <cover.1455303422.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Instantiate Audio DMA clocks in the r8a7791 device tree.
 
-Add and enable the external crystal for the SCIF_CLK and its pinctrl, to
-be used by the Baud Rate Generator for External Clock (BRG) on (H)SCIF.
+Based on similar work for the r8a7791 by Kuninori Morimoto.
 
-This increases the range and accuracy of supported baud rates.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790-lager.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/boot/dts/r8a7793.dtsi | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 052dcee4790d..cdc0414f5f07 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -291,6 +291,9 @@
- };
- 
- &pfc {
-+	pinctrl-0 = <&scif_clk_pins>;
-+	pinctrl-names = "default";
-+
- 	du_pins: du {
- 		renesas,groups = "du_rgb666", "du_sync_1", "du_clk_out_0";
- 		renesas,function = "du";
-@@ -301,6 +304,11 @@
- 		renesas,function = "scif0";
- 	};
- 
-+	scif_clk_pins: scif_clk {
-+		renesas,groups = "scif_clk";
-+		renesas,function = "scif_clk";
-+	};
-+
- 	ether_pins: ether {
- 		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
- 		renesas,function = "eth";
-@@ -485,6 +493,11 @@
- 	status = "okay";
- };
- 
-+&scif_clk {
-+	clock-frequency = <14745600>;
-+	status = "okay";
-+};
-+
- &msiof1 {
- 	pinctrl-0 = <&msiof1_pins>;
- 	pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 3531d30fe107..cb6251e71ef9 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -924,10 +924,11 @@
+ 		mstp5_clks: mstp5_clks@e6150144 {
+ 			compatible = "renesas,r8a7793-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
+-			clocks = <&extal_clk>;
++			clocks = <&hp_clk>, <&hp_clk>, <&extal_clk>;
+ 			#clock-cells = <1>;
+-			clock-indices = <R8A7793_CLK_THERMAL>;
+-			clock-output-names = "thermal";
++			clock-indices = <R8A7793_CLK_AUDIO_DMAC0 R8A7793_CLK_AUDIO_DMAC1
++					 R8A7793_CLK_THERMAL>;
++			clock-output-names = "audmac0", "audmac1", "thermal";
+ 		};
+ 		mstp7_clks: mstp7_clks@e615014c {
+ 			compatible = "renesas,r8a7793-mstp-clocks",
 -- 
 2.7.0.rc3.207.g0ac5344
