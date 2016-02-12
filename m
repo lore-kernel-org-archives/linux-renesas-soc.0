@@ -1,58 +1,139 @@
 Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Vinod Koul <vinod.koul@intel.com>,
-	dmaengine@vger.kernel.org,
+Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFC] dmaengine: sh: Use ARCH_RENESAS
-Date: Wed,  3 Feb 2016 11:55:34 +0100
-Message-Id: <1454496934-20672-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 03/68] ARM: dts: porter: add DU DT support
+Date: Fri, 12 Feb 2016 20:04:53 +0100
+Message-Id: <c5af8a4248d3cb01078d2a20df28081dd588b0e3.1455303422.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
+References: <cover.1455303422.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
-appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
+Define  the Porter board dependent part of the DU device node.
+Add the device node  for Analog Devices ADV7511W  HDMI transmitter to I2C2
+bus and the HDMI connector. Add the necessary subnodes to interconnect  DU
+and HDMI devices.
 
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-* Based on the next branch of Vinod's slave-dma tree
----
- drivers/dma/sh/Kconfig | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7791-porter.dts | 81 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 81 insertions(+)
 
-diff --git a/drivers/dma/sh/Kconfig b/drivers/dma/sh/Kconfig
-index f32c430eb16c..6e0685f1a838 100644
---- a/drivers/dma/sh/Kconfig
-+++ b/drivers/dma/sh/Kconfig
-@@ -12,7 +12,7 @@ config RENESAS_DMA
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index 6713b1ea732b..fe81fa0e478c 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -78,6 +78,29 @@
+ 		states = <3300000 1
+ 			  1800000 0>;
+ 	};
++
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con: endpoint {
++				remote-endpoint = <&adv7511_out>;
++			};
++		};
++	};
++
++	x3_clk: x3-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <148500000>;
++	};
++
++	x16_clk: x16-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <74250000>;
++	};
+ };
  
- config SH_DMAE_BASE
- 	bool "Renesas SuperH DMA Engine support"
--	depends on SUPERH || ARCH_SHMOBILE || COMPILE_TEST
-+	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
- 	depends on !SUPERH || SH_DMA
- 	depends on !SH_DMA_API
- 	default y
-@@ -41,7 +41,7 @@ endif
+ &extal_clk {
+@@ -139,6 +162,11 @@
+ 		renesas,groups = "can0_data";
+ 		renesas,function = "can0";
+ 	};
++
++	du_pins: du {
++		renesas,groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
++		renesas,function = "du";
++	};
+ };
  
- config RCAR_DMAC
- 	tristate "Renesas R-Car Gen2 DMA Controller"
--	depends on ARCH_SHMOBILE || COMPILE_TEST
-+	depends on ARCH_RENESAS || COMPILE_TEST
- 	select RENESAS_DMA
- 	help
- 	  This driver supports the general purpose DMA controller found in the
-@@ -49,7 +49,7 @@ config RCAR_DMAC
+ &scif0 {
+@@ -241,6 +269,38 @@
+ 			};
+ 		};
+ 	};
++
++	hdmi@39 {
++		compatible = "adi,adv7511w";
++		reg = <0x39>;
++		interrupt-parent = <&gpio3>;
++		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
++
++		adi,input-depth = <8>;
++		adi,input-colorspace = "rgb";
++		adi,input-clock = "1x";
++		adi,input-style = <1>;
++		adi,input-justification = "evenly";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7511_in: endpoint {
++					remote-endpoint = <&du_out_rgb>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++				adv7511_out: endpoint {
++					remote-endpoint = <&hdmi_con>;
++				};
++			};
++		};
++	};
+ };
  
- config RENESAS_USB_DMAC
- 	tristate "Renesas USB-DMA Controller"
--	depends on ARCH_SHMOBILE || COMPILE_TEST
-+	depends on ARCH_RENESAS || COMPILE_TEST
- 	select RENESAS_DMA
- 	select DMA_VIRTUAL_CHANNELS
- 	help
+ &sata0 {
+@@ -304,3 +364,24 @@
+ 
+ 	status = "okay";
+ };
++
++&du {
++	pinctrl-0 = <&du_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	clocks = <&mstp7_clks R8A7791_CLK_DU0>,
++		 <&mstp7_clks R8A7791_CLK_DU1>,
++		 <&mstp7_clks R8A7791_CLK_LVDS0>,
++		 <&x3_clk>, <&x16_clk>;
++	clock-names = "du.0", "du.1", "lvds.0",
++		      "dclkin.0", "dclkin.1";
++
++	ports {
++		port@1 {
++			endpoint {
++				remote-endpoint = <&adv7511_in>;
++			};
++		};
++	};
++};
 -- 
 2.7.0.rc3.207.g0ac5344
