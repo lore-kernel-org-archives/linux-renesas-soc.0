@@ -4,115 +4,45 @@ To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/68] ARM: dts: gose: Add GPIO keys to DT
-Date: Fri, 12 Feb 2016 20:04:51 +0100
-Message-Id: <d7d5974b156e2ef7436483de00ccada5987c9d31.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 32/68] ARM: dts: gose: enable sound DMA support via BUSIF in device tree
+Date: Fri, 12 Feb 2016 20:05:22 +0100
+Message-Id: <402586d0cce05317100356cfd73f0c044c60ccd7.1455303422.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
 References: <cover.1455303422.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Instantiate the GPIO keys in the gose device tree.
+Enable DMA transfer to/from SSIU in gose/r8a7791 device tree.
 
-Based on similar work for the koelsch board by Laurent Pinchart.
+     DMA
+[MEM] -> [SSIU] -> [SSI]
 
+     DMA
+[MEM] <- [SSIU] <- [SSI]
+
+Based on similar work for the r8a7791/koelsch by Kuninori Morimoto.
+
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Tested-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 82 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
+ arch/arm/boot/dts/r8a7793-gose.dts | 5 -----
+ 1 file changed, 5 deletions(-)
 
 diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index baa59fe84298..ccbc1c66cc6c 100644
+index a4b2dcb8e73d..81bfe9484bbc 100644
 --- a/arch/arm/boot/dts/r8a7793-gose.dts
 +++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -31,6 +31,88 @@
- 		device_type = "memory";
- 		reg = <0 0x40000000 0 0x40000000>;
+@@ -407,11 +407,6 @@
  	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		key-1 {
-+		        gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;
-+		        linux,code = <KEY_1>;
-+		        label = "SW2-1";
-+		        gpio-key,wakeup;
-+		        debounce-interval = <20>;
-+		};
-+		key-2 {
-+		        gpios = <&gpio5 1 GPIO_ACTIVE_LOW>;
-+		        linux,code = <KEY_2>;
-+		        label = "SW2-2";
-+		        gpio-key,wakeup;
-+		        debounce-interval = <20>;
-+		};
-+		key-3 {
-+		        gpios = <&gpio5 2 GPIO_ACTIVE_LOW>;
-+		        linux,code = <KEY_3>;
-+		        label = "SW2-3";
-+		        gpio-key,wakeup;
-+		        debounce-interval = <20>;
-+		};
-+		key-4 {
-+		        gpios = <&gpio5 3 GPIO_ACTIVE_LOW>;
-+		        linux,code = <KEY_4>;
-+		        label = "SW2-4";
-+		        gpio-key,wakeup;
-+		        debounce-interval = <20>;
-+		};
-+		key-a {
-+		        gpios = <&gpio7 0 GPIO_ACTIVE_LOW>;
-+		        linux,code = <KEY_A>;
-+		        label = "SW30";
-+		        gpio-key,wakeup;
-+		        debounce-interval = <20>;
-+		};
-+		key-b {
-+		        gpios = <&gpio7 1 GPIO_ACTIVE_LOW>;
-+		        linux,code = <KEY_B>;
-+		        label = "SW31";
-+		        gpio-key,wakeup;
-+		        debounce-interval = <20>;
-+		};
-+		key-c {
-+		        gpios = <&gpio7 2 GPIO_ACTIVE_LOW>;
-+		        linux,code = <KEY_C>;
-+		        label = "SW32";
-+		        gpio-key,wakeup;
-+		        debounce-interval = <20>;
-+		};
-+		key-d {
-+		        gpios = <&gpio7 3 GPIO_ACTIVE_LOW>;
-+		        linux,code = <KEY_D>;
-+		        label = "SW33";
-+		        gpio-key,wakeup;
-+		        debounce-interval = <20>;
-+		};
-+		key-e {
-+		        gpios = <&gpio7 4 GPIO_ACTIVE_LOW>;
-+		        linux,code = <KEY_E>;
-+		        label = "SW34";
-+		        gpio-key,wakeup;
-+		        debounce-interval = <20>;
-+		};
-+		key-f {
-+		        gpios = <&gpio7 5 GPIO_ACTIVE_LOW>;
-+		        linux,code = <KEY_F>;
-+		        label = "SW35";
-+		        gpio-key,wakeup;
-+		        debounce-interval = <20>;
-+		};
-+		key-g {
-+		        gpios = <&gpio7 6 GPIO_ACTIVE_LOW>;
-+		        linux,code = <KEY_G>;
-+		        label = "SW36";
-+		        gpio-key,wakeup;
-+		        debounce-interval = <20>;
-+		};
-+	};
  };
  
- &extal_clk {
+-&ssi0 {
+-	no-busif;
+-};
+-
+ &ssi1 {
+-	no-busif;
+ 	shared-pin;
+ };
 -- 
 2.7.0.rc3.207.g0ac5344
