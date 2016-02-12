@@ -5,9 +5,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 63/68] ARM: dts: gose: Enable SCIF_CLK frequency and pins
-Date: Fri, 12 Feb 2016 20:05:53 +0100
-Message-Id: <81a81ba9412c2c29309abd8752bcf771c22335a1.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 67/68] ARM: dts: porter: Enable SCIF_CLK frequency and pins
+Date: Fri, 12 Feb 2016 20:05:57 +0100
+Message-Id: <19417bd9c5112f58ea63e97ba72edabd5e1cc0fe.1455303422.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
 References: <cover.1455303422.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -22,25 +22,23 @@ This increases the range and accuracy of supported baud rates.
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 13 +++++++++++++
+ arch/arm/boot/dts/r8a7791-porter.dts | 13 +++++++++++++
  1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 2fa052036dbc..cfe142c2ba38 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -236,6 +236,9 @@
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index 5015eaa0ae50..ed1f6f884e2b 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -143,11 +143,19 @@
  };
  
  &pfc {
 +	pinctrl-0 = <&scif_clk_pins>;
 +	pinctrl-names = "default";
 +
- 	i2c2_pins: i2c2 {
- 		renesas,groups = "i2c2";
- 		renesas,function = "i2c2";
-@@ -256,6 +259,11 @@
- 		renesas,function = "scif1";
+ 	scif0_pins: serial0 {
+ 		renesas,groups = "scif0_data_d";
+ 		renesas,function = "scif0";
  	};
  
 +	scif_clk_pins: scif_clk {
@@ -51,7 +49,7 @@ index 2fa052036dbc..cfe142c2ba38 100644
  	ether_pins: ether {
  		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
  		renesas,function = "eth";
-@@ -316,6 +324,11 @@
+@@ -221,6 +229,11 @@
  	status = "okay";
  };
  
@@ -60,8 +58,8 @@ index 2fa052036dbc..cfe142c2ba38 100644
 +	status = "okay";
 +};
 +
- &qspi {
- 	pinctrl-0 = <&qspi_pins>;
+ &ether {
+ 	pinctrl-0 = <&ether_pins &phy1_pins>;
  	pinctrl-names = "default";
 -- 
 2.7.0.rc3.207.g0ac5344
