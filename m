@@ -5,204 +5,55 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 46/70] ARM: dts: r8a7794: Add SCIF fallback compatibility strings
-Date: Thu,  4 Feb 2016 15:29:40 +0100
-Message-Id: <c72a339364c00477a9e314fc2f929782bb296827.1454595846.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
-References: <cover.1454595846.git.horms+renesas@verge.net.au>
+Subject: [PATCH 2/8] ARM: shmobile: r8a7740: Migrate to generic l2c OF initialization
+Date: Fri, 12 Feb 2016 20:06:20 +0100
+Message-Id: <f5b891cc1078d0185837dc2af09ae33044163b56.1455303757.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1455303757.git.horms+renesas@verge.net.au>
+References: <cover.1455303757.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Migrate the generic r8a7740 platform from calling l2x0_of_init() to the
+generic l2c OF initialization.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 54 ++++++++++++++++++++++++++++--------------
- 1 file changed, 36 insertions(+), 18 deletions(-)
+ arch/arm/mach-shmobile/setup-r8a7740.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 21be4bdc4001..a49bf303a02d 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -282,7 +282,8 @@
- 	};
+diff --git a/arch/arm/mach-shmobile/setup-r8a7740.c b/arch/arm/mach-shmobile/setup-r8a7740.c
+index 0c8f80c5b04d..bf221e05c8dc 100644
+--- a/arch/arm/mach-shmobile/setup-r8a7740.c
++++ b/arch/arm/mach-shmobile/setup-r8a7740.c
+@@ -23,7 +23,6 @@
+ #include <asm/mach/map.h>
+ #include <asm/mach/arch.h>
+ #include <asm/mach/time.h>
+-#include <asm/hardware/cache-l2x0.h>
  
- 	scifa0: serial@e6c40000 {
--		compatible = "renesas,scifa-r8a7794", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7794",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c40000 0 64>;
- 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFA0>;
-@@ -294,7 +295,8 @@
- 	};
+ #include "common.h"
  
- 	scifa1: serial@e6c50000 {
--		compatible = "renesas,scifa-r8a7794", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7794",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c50000 0 64>;
- 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFA1>;
-@@ -306,7 +308,8 @@
- 	};
+@@ -110,10 +109,6 @@ static void __init r8a7740_generic_init(void)
+ {
+ 	r8a7740_meram_workaround();
  
- 	scifa2: serial@e6c60000 {
--		compatible = "renesas,scifa-r8a7794", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7794",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c60000 0 64>;
- 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFA2>;
-@@ -318,7 +321,8 @@
- 	};
+-#ifdef CONFIG_CACHE_L2X0
+-	/* Shared attribute override enable, 32K*8way */
+-	l2x0_init(IOMEM(0xf0002000), 0x00400000, 0xc20f0fff);
+-#endif
+ 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+ }
  
- 	scifa3: serial@e6c70000 {
--		compatible = "renesas,scifa-r8a7794", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7794",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c70000 0 64>;
- 		interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7794_CLK_SCIFA3>;
-@@ -330,7 +334,8 @@
- 	};
+@@ -123,6 +118,8 @@ static const char *const r8a7740_boards_compat_dt[] __initconst = {
+ };
  
- 	scifa4: serial@e6c78000 {
--		compatible = "renesas,scifa-r8a7794", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7794",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c78000 0 64>;
- 		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7794_CLK_SCIFA4>;
-@@ -342,7 +347,8 @@
- 	};
- 
- 	scifa5: serial@e6c80000 {
--		compatible = "renesas,scifa-r8a7794", "renesas,scifa";
-+		compatible = "renesas,scifa-r8a7794",
-+			     "renesas,rcar-gen2-scifa", "renesas,scifa";
- 		reg = <0 0xe6c80000 0 64>;
- 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7794_CLK_SCIFA5>;
-@@ -354,7 +360,8 @@
- 	};
- 
- 	scifb0: serial@e6c20000 {
--		compatible = "renesas,scifb-r8a7794", "renesas,scifb";
-+		compatible = "renesas,scifb-r8a7794",
-+			     "renesas,rcar-gen2-scifb", "renesas,scifb";
- 		reg = <0 0xe6c20000 0 64>;
- 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFB0>;
-@@ -366,7 +373,8 @@
- 	};
- 
- 	scifb1: serial@e6c30000 {
--		compatible = "renesas,scifb-r8a7794", "renesas,scifb";
-+		compatible = "renesas,scifb-r8a7794",
-+			     "renesas,rcar-gen2-scifb", "renesas,scifb";
- 		reg = <0 0xe6c30000 0 64>;
- 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFB1>;
-@@ -378,7 +386,8 @@
- 	};
- 
- 	scifb2: serial@e6ce0000 {
--		compatible = "renesas,scifb-r8a7794", "renesas,scifb";
-+		compatible = "renesas,scifb-r8a7794",
-+			     "renesas,rcar-gen2-scifb", "renesas,scifb";
- 		reg = <0 0xe6ce0000 0 64>;
- 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFB2>;
-@@ -390,7 +399,8 @@
- 	};
- 
- 	scif0: serial@e6e60000 {
--		compatible = "renesas,scif-r8a7794", "renesas,scif";
-+		compatible = "renesas,scif-r8a7794", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6e60000 0 64>;
- 		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF0>;
-@@ -402,7 +412,8 @@
- 	};
- 
- 	scif1: serial@e6e68000 {
--		compatible = "renesas,scif-r8a7794", "renesas,scif";
-+		compatible = "renesas,scif-r8a7794", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6e68000 0 64>;
- 		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF1>;
-@@ -414,7 +425,8 @@
- 	};
- 
- 	scif2: serial@e6e58000 {
--		compatible = "renesas,scif-r8a7794", "renesas,scif";
-+		compatible = "renesas,scif-r8a7794", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6e58000 0 64>;
- 		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF2>;
-@@ -426,7 +438,8 @@
- 	};
- 
- 	scif3: serial@e6ea8000 {
--		compatible = "renesas,scif-r8a7794", "renesas,scif";
-+		compatible = "renesas,scif-r8a7794", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6ea8000 0 64>;
- 		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF3>;
-@@ -438,7 +451,8 @@
- 	};
- 
- 	scif4: serial@e6ee0000 {
--		compatible = "renesas,scif-r8a7794", "renesas,scif";
-+		compatible = "renesas,scif-r8a7794", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6ee0000 0 64>;
- 		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF4>;
-@@ -450,7 +464,8 @@
- 	};
- 
- 	scif5: serial@e6ee8000 {
--		compatible = "renesas,scif-r8a7794", "renesas,scif";
-+		compatible = "renesas,scif-r8a7794", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
- 		reg = <0 0xe6ee8000 0 64>;
- 		interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_SCIF5>;
-@@ -462,7 +477,8 @@
- 	};
- 
- 	hscif0: serial@e62c0000 {
--		compatible = "renesas,hscif-r8a7794", "renesas,hscif";
-+		compatible = "renesas,hscif-r8a7794",
-+			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62c0000 0 96>;
- 		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_HSCIF0>;
-@@ -474,7 +490,8 @@
- 	};
- 
- 	hscif1: serial@e62c8000 {
--		compatible = "renesas,hscif-r8a7794", "renesas,hscif";
-+		compatible = "renesas,hscif-r8a7794",
-+			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62c8000 0 96>;
- 		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_HSCIF1>;
-@@ -486,7 +503,8 @@
- 	};
- 
- 	hscif2: serial@e62d0000 {
--		compatible = "renesas,hscif-r8a7794", "renesas,hscif";
-+		compatible = "renesas,hscif-r8a7794",
-+			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62d0000 0 96>;
- 		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_HSCIF2>;
+ DT_MACHINE_START(R8A7740_DT, "Generic R8A7740 (Flattened Device Tree)")
++	.l2c_aux_val	= 0,
++	.l2c_aux_mask	= ~0,
+ 	.map_io		= r8a7740_map_io,
+ 	.init_early	= shmobile_init_delay,
+ 	.init_irq	= r8a7740_init_irq_of,
 -- 
 2.7.0.rc3.207.g0ac5344
