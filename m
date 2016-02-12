@@ -4,11 +4,11 @@ To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 39/70] ARM: dts: sh73a0: use GIC_* defines
-Date: Thu,  4 Feb 2016 15:29:33 +0100
-Message-Id: <a51b6c7fdfc040136c34a69564ba42c71287cfd3.1454595846.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
-References: <cover.1454595846.git.horms+renesas@verge.net.au>
+Subject: [PATCH 37/68] ARM: dts: sh73a0: use GIC_* defines
+Date: Fri, 12 Feb 2016 20:05:27 +0100
+Message-Id: <10bbad96d4bc135d0bb0ea64e996a8870d42d989.1455303422.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
+References: <cover.1455303422.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Use GIC_* defines for GIC interrupt cells in sh73a0 device tree.
