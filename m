@@ -3,51 +3,56 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 33/68] ARM: dts: gose: enable sound DMA support via SRC in device tree
-Date: Fri, 12 Feb 2016 20:05:23 +0100
-Message-Id: <d2cde3b6103678a4f3d2079af744937dfc9c4104.1455303422.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
-References: <cover.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 4/8] ARM: shmobile: Move shmobile_scu_base from .text to .data
+Date: Fri, 12 Feb 2016 20:06:22 +0100
+Message-Id: <797eff54b22b76d9f356074ff3c7ed25d9742e54.1455303757.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1455303757.git.horms+renesas@verge.net.au>
+References: <cover.1455303757.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable DMA transfer to/from SRC in r8a7793/gose device tree.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-     DMA      DMApp
-[MEM] -> [SRC] -> [SSIU] -> [SSI]
+shmobile_scu_base is being written to, so it doesn't belong in the .text
+section. Fix this by moving it from asm .text to C .data, as it's no
+longer used from asm code since commit 4f6da36f7edd5790 ("ARM: shmobile:
+Remove old SCU boot code").
 
-     DMA      DMApp
-[MEM] <- [SRC] <- [SSIU] <- [SSI]
-
-Current sound driver is supporting
-SSI/SRC random connection.
-So, this patch is tring
-SSI0 -> SRC2
-SSI1 <- SRC3
-
-Based on similar work for the r8a7791/koeslch by Kuninori Morimoto.
-
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mach-shmobile/headsmp-scu.S | 6 ------
+ arch/arm/mach-shmobile/platsmp-scu.c | 3 +++
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 81bfe9484bbc..17c87fe0944f 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -401,8 +401,8 @@
+diff --git a/arch/arm/mach-shmobile/headsmp-scu.S b/arch/arm/mach-shmobile/headsmp-scu.S
+index c0008a5aa4ca..936d7011c314 100644
+--- a/arch/arm/mach-shmobile/headsmp-scu.S
++++ b/arch/arm/mach-shmobile/headsmp-scu.S
+@@ -38,9 +38,3 @@ ENTRY(shmobile_boot_scu)
  
- 	rcar_sound,dai {
- 		dai0 {
--			playback = <&ssi0>;
--			capture  = <&ssi1>;
-+			playback = <&ssi0 &src2>;
-+			capture  = <&ssi1 &src3>;
- 		};
- 	};
- };
+ 	b	secondary_startup
+ ENDPROC(shmobile_boot_scu)
+-
+-	.text
+-	.align	2
+-	.globl	shmobile_scu_base
+-shmobile_scu_base:
+-	.space	4
+diff --git a/arch/arm/mach-shmobile/platsmp-scu.c b/arch/arm/mach-shmobile/platsmp-scu.c
+index 64663110ab6c..f2198c9c7435 100644
+--- a/arch/arm/mach-shmobile/platsmp-scu.c
++++ b/arch/arm/mach-shmobile/platsmp-scu.c
+@@ -17,6 +17,9 @@
+ #include <asm/smp_scu.h>
+ #include "common.h"
+ 
++
++void __iomem *shmobile_scu_base;
++
+ static int shmobile_smp_scu_notifier_call(struct notifier_block *nfb,
+ 					  unsigned long action, void *hcpu)
+ {
 -- 
 2.7.0.rc3.207.g0ac5344
