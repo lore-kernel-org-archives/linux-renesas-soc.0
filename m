@@ -5,47 +5,64 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 36/70] ARM: shmobile: r8a7740: Migrate to generic l2c OF initialization
-Date: Thu,  4 Feb 2016 15:29:30 +0100
-Message-Id: <540977ae9746e60cb95bc3d7d6769fd59b6b2cfc.1454595846.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
-References: <cover.1454595846.git.horms+renesas@verge.net.au>
+Subject: [PATCH 6/8] ARM: shmobile: r8a7740: Remove legacy machine_desc.map_io() callback
+Date: Fri, 12 Feb 2016 20:06:24 +0100
+Message-Id: <a0827317f5f351c303ed91f0272f10b1394bdab1.1455303757.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1455303757.git.horms+renesas@verge.net.au>
+References: <cover.1455303757.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Migrate the generic r8a7740 platform from calling l2x0_of_init() to the
-generic l2c OF initialization.
+Commit 37201ba5c99d0be8 ("ARM: shmobile: r8a7740: Migrate to generic l2c
+OF initialization") removed the last user of the legacy "IOMEM()" macro
+on r8a7740-based systems. Hence there's no longer a need to set up a
+transparent mapping of system I/O registers. Remove the mapping and the
+legacy machine_desc.map_io() callback.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/setup-r8a7740.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/arm/mach-shmobile/setup-r8a7740.c | 20 --------------------
+ 1 file changed, 20 deletions(-)
 
 diff --git a/arch/arm/mach-shmobile/setup-r8a7740.c b/arch/arm/mach-shmobile/setup-r8a7740.c
-index 0c8f80c5b04d..7b16c12e3f81 100644
+index 3e71cd4168dd..db6dbfbaf9f1 100644
 --- a/arch/arm/mach-shmobile/setup-r8a7740.c
 +++ b/arch/arm/mach-shmobile/setup-r8a7740.c
-@@ -110,10 +110,6 @@ static void __init r8a7740_generic_init(void)
- {
- 	r8a7740_meram_workaround();
+@@ -26,25 +26,6 @@
  
--#ifdef CONFIG_CACHE_L2X0
--	/* Shared attribute override enable, 32K*8way */
--	l2x0_init(IOMEM(0xf0002000), 0x00400000, 0xc20f0fff);
--#endif
- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
- }
+ #include "common.h"
  
-@@ -123,6 +119,8 @@ static const char *const r8a7740_boards_compat_dt[] __initconst = {
- };
- 
+-static struct map_desc r8a7740_io_desc[] __initdata = {
+-	 /*
+-	  * for CPGA/INTC/PFC
+-	  * 0xe6000000-0xefffffff -> 0xe6000000-0xefffffff
+-	  */
+-	{
+-		.virtual	= 0xe6000000,
+-		.pfn		= __phys_to_pfn(0xe6000000),
+-		.length		= 160 << 20,
+-		.type		= MT_DEVICE_NONSHARED
+-	},
+-};
+-
+-static void __init r8a7740_map_io(void)
+-{
+-	debug_ll_io_init();
+-	iotable_init(r8a7740_io_desc, ARRAY_SIZE(r8a7740_io_desc));
+-}
+-
+ /*
+  * r8a7740 chip has lasting errata on MERAM buffer.
+  * this is work-around for it.
+@@ -108,7 +89,6 @@ static const char *const r8a7740_boards_compat_dt[] __initconst = {
  DT_MACHINE_START(R8A7740_DT, "Generic R8A7740 (Flattened Device Tree)")
-+	.l2c_aux_val	= 0,
-+	.l2c_aux_mask	= ~0,
- 	.map_io		= r8a7740_map_io,
+ 	.l2c_aux_val	= 0,
+ 	.l2c_aux_mask	= ~0,
+-	.map_io		= r8a7740_map_io,
  	.init_early	= shmobile_init_delay,
  	.init_irq	= r8a7740_init_irq_of,
+ 	.init_machine	= r8a7740_generic_init,
 -- 
 2.7.0.rc3.207.g0ac5344
