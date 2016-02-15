@@ -1,51 +1,124 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20160215121719.27056.43809.sendpatchset@little-apple>
-References: <20160215121719.27056.43809.sendpatchset@little-apple>
-Date: Tue, 16 Feb 2016 14:16:42 +0100
-Message-ID: <CAMuHMdX01+vqJC78mLVvWDCLXn3B07eLRqKsS07YU8Uecyu6jg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add support for INTC-EX IRQ pins
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	Simon Horman <horms@verge.net.au>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, horms@verge.net.au, geert@glider.be,
+	laurent.pinchart@ideasonboard.com,
+	Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 15 Feb 2016 21:17:19 +0900
+Message-Id: <20160215121719.27056.43809.sendpatchset@little-apple>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Add support for INTC-EX IRQ pins
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Feb 15, 2016 at 1:17 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
->
-> Most pins on the r8a7795 SoC can be configured in GPIO mode for
-> interrupt and GPIO functionality, while a couple of them can also
-> be routed to the INTC-EX hardware block (formerly known as IRQC).
->
-> On r8a7795 the INTC-EX hardware handles pins IRQ0 -> IRQ5 and
-> this patch adds support for them to the PFC driver as "intc_ex_irqN".
->
-> Tested on r8a7795 Salvator-X with an external loop back adapter on
-> EXIO_D that connects pin 9 (IRQ2/GP2_02) and pin 26 (ExA22/GP2_06).
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Thanks!
+Most pins on the r8a7795 SoC can be configured in GPIO mode for
+interrupt and GPIO functionality, while a couple of them can also
+be routed to the INTC-EX hardware block (formerly known as IRQC).
 
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+On r8a7795 the INTC-EX hardware handles pins IRQ0 -> IRQ5 and
+this patch adds support for them to the PFC driver as "intc_ex_irqN".
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested on r8a7795 Salvator-X with an external loop back adapter on
+EXIO_D that connects pin 9 (IRQ2/GP2_02) and pin 26 (ExA22/GP2_06).
 
-Will queue for next renesas-drivers and sh-pfc-for-v4.6.
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-Gr{oetje,eeting}s,
+ Developed on top of renesas-drivers-2016-02-09-v4.5-rc3
 
-                        Geert
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c |   60 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--- 0001/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ work/drivers/pinctrl/sh-pfc/pfc-r8a7795.c	2016-02-15 21:05:24.500513000 +0900
+@@ -1835,6 +1835,50 @@ static const unsigned int i2c6_c_mux[] =
+ 	SDA6_C_MARK, SCL6_C_MARK,
+ };
+ 
++/* - INTC-EX ---------------------------------------------------------------- */
++static const unsigned int intc_ex_irq0_pins[] = {
++	/* IRQ0 */
++	RCAR_GP_PIN(2, 0),
++};
++static const unsigned int intc_ex_irq0_mux[] = {
++	IRQ0_MARK,
++};
++static const unsigned int intc_ex_irq1_pins[] = {
++	/* IRQ1 */
++	RCAR_GP_PIN(2, 1),
++};
++static const unsigned int intc_ex_irq1_mux[] = {
++	IRQ1_MARK,
++};
++static const unsigned int intc_ex_irq2_pins[] = {
++	/* IRQ2 */
++	RCAR_GP_PIN(2, 2),
++};
++static const unsigned int intc_ex_irq2_mux[] = {
++	IRQ2_MARK,
++};
++static const unsigned int intc_ex_irq3_pins[] = {
++	/* IRQ3 */
++	RCAR_GP_PIN(2, 3),
++};
++static const unsigned int intc_ex_irq3_mux[] = {
++	IRQ3_MARK,
++};
++static const unsigned int intc_ex_irq4_pins[] = {
++	/* IRQ4 */
++	RCAR_GP_PIN(2, 4),
++};
++static const unsigned int intc_ex_irq4_mux[] = {
++	IRQ4_MARK,
++};
++static const unsigned int intc_ex_irq5_pins[] = {
++	/* IRQ5 */
++	RCAR_GP_PIN(2, 5),
++};
++static const unsigned int intc_ex_irq5_mux[] = {
++	IRQ5_MARK,
++};
++
+ /* - MSIOF0 ----------------------------------------------------------------- */
+ static const unsigned int msiof0_clk_pins[] = {
+ 	/* SCK */
+@@ -3173,6 +3217,12 @@ static const struct sh_pfc_pin_group pin
+ 	SH_PFC_PIN_GROUP(i2c6_a),
+ 	SH_PFC_PIN_GROUP(i2c6_b),
+ 	SH_PFC_PIN_GROUP(i2c6_c),
++	SH_PFC_PIN_GROUP(intc_ex_irq0),
++	SH_PFC_PIN_GROUP(intc_ex_irq1),
++	SH_PFC_PIN_GROUP(intc_ex_irq2),
++	SH_PFC_PIN_GROUP(intc_ex_irq3),
++	SH_PFC_PIN_GROUP(intc_ex_irq4),
++	SH_PFC_PIN_GROUP(intc_ex_irq5),
+ 	SH_PFC_PIN_GROUP(msiof0_clk),
+ 	SH_PFC_PIN_GROUP(msiof0_sync),
+ 	SH_PFC_PIN_GROUP(msiof0_ss1),
+@@ -3439,6 +3489,15 @@ static const char * const i2c6_groups[]
+ 	"i2c6_c",
+ };
+ 
++static const char * const intc_ex_groups[] = {
++	"intc_ex_irq0",
++	"intc_ex_irq1",
++	"intc_ex_irq2",
++	"intc_ex_irq3",
++	"intc_ex_irq4",
++	"intc_ex_irq5",
++};
++
+ static const char * const msiof0_groups[] = {
+ 	"msiof0_clk",
+ 	"msiof0_sync",
+@@ -3686,6 +3745,7 @@ static const struct sh_pfc_function pinm
+ 	SH_PFC_FUNCTION(i2c1),
+ 	SH_PFC_FUNCTION(i2c2),
+ 	SH_PFC_FUNCTION(i2c6),
++	SH_PFC_FUNCTION(intc_ex),
+ 	SH_PFC_FUNCTION(msiof0),
+ 	SH_PFC_FUNCTION(msiof1),
+ 	SH_PFC_FUNCTION(msiof2),
