@@ -1,77 +1,105 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	geert+renesas@glider.be, linus.walleij@linaro.org,
-	dan.j.williams@intel.com, arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v4 3/8] dma-mapping: add dma_{map,unmap}_resource
-Date: Tue, 16 Feb 2016 21:39:39 +0100
-Message-Id: <1455655184-14478-4-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1455655184-14478-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1455655184-14478-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v2 08/11] ARM: dts: r8a7791: Add SYSC PM domains
+Date: Mon, 15 Feb 2016 22:16:57 +0100
+Message-Id: <1455571020-18968-9-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
+References: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Map/Unmap a device resource from a physical address. If no dma_map_ops
-method is available the operation is a no-op.
+Add a device node for the System Controller, with subnodes that
+represent the hardware power area hierarchy.
+Hook up the Cortex-A15 CPU cores and the Cortex-A15 L2 cache/SCU to
+their respective PM domains.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/linux/dma-mapping.h | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+v2:
+  - Change one-line summary prefix to match current arm-soc practices,
+  - Update compatible values.
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index e3aba4e..cc305d1 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -216,6 +216,38 @@ static inline void dma_unmap_page(struct device *dev, dma_addr_t addr,
- 	debug_dma_unmap_page(dev, addr, size, dir, false);
- }
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index a65910ed5884edfd..a194273eb2b7951e 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -51,6 +51,7 @@
+ 			voltage-tolerance = <1>; /* 1% */
+ 			clocks = <&cpg_clocks R8A7791_CLK_Z>;
+ 			clock-latency = <300000>; /* 300 us */
++			power-domains = <&pd_ca15_cpu0>;
+ 			next-level-cache = <&L2_CA15>;
  
-+static inline dma_addr_t dma_map_resource(struct device *dev,
-+					  phys_addr_t phys_addr,
-+					  size_t size,
-+					  enum dma_data_direction dir,
-+					  struct dma_attrs *attrs)
-+{
-+	struct dma_map_ops *ops = get_dma_ops(dev);
-+	unsigned long pfn = __phys_to_pfn(phys_addr);
+ 			/* kHz - uV - OPPs unknown yet */
+@@ -67,12 +68,14 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <1>;
+ 			clock-frequency = <1500000000>;
++			power-domains = <&pd_ca15_cpu1>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
+ 	};
+ 
+ 	L2_CA15: cache-controller@0 {
+ 		compatible = "cache";
++		power-domains = <&pd_ca15_scu>;
+ 		cache-unified;
+ 		cache-level = <2>;
+ 	};
+@@ -1473,6 +1476,43 @@
+ 		};
+ 	};
+ 
++	sysc: system-controller@e6180000 {
++		compatible = "renesas,r8a7791-sysc", "renesas,rcar-gen2-sysc";
++		reg = <0 0xe6180000 0 0x0200>;
 +
-+	BUG_ON(!valid_dma_direction(dir));
++		pm-domains {
++			#address-cells = <2>;
++			#size-cells = <0>;
 +
-+	/* Don't allow RAM to be mapped */
-+	BUG_ON(pfn_valid(pfn));
++			pd_ca15_scu: scu@12 {
++				reg = <12 0x180>;
++				#address-cells = <2>;
++				#size-cells = <0>;
++				#power-domain-cells = <0>;
 +
-+	if (ops->map_resource)
-+		return ops->map_resource(dev, phys_addr, size, dir, attrs);
++				pd_ca15_cpu0: cpu@0 {
++					reg = <0 0x40>;
++					#power-domain-cells = <0>;
++				};
 +
-+	return phys_addr;
-+}
++				pd_ca15_cpu1: cpu@1 {
++					reg = <1 0x41>;
++					#power-domain-cells = <0>;
++				};
++			};
 +
-+static inline void dma_unmap_resource(struct device *dev, dma_addr_t addr,
-+				      size_t size, enum dma_data_direction dir,
-+				      struct dma_attrs *attrs)
-+{
-+	struct dma_map_ops *ops = get_dma_ops(dev);
++			pd_sh: sh@16 {
++				reg = <16 0x80>;
++				#power-domain-cells = <0>;
++			};
 +
-+	BUG_ON(!valid_dma_direction(dir));
-+	if (ops->unmap_resource)
-+		ops->unmap_resource(dev, addr, size, dir, attrs);
++			pd_sgx: sgx@20 {
++				reg = <20 0xc0>;
++				#power-domain-cells = <0>;
++			};
++		};
++	};
 +
-+}
-+
- static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
- 					   size_t size,
- 					   enum dma_data_direction dir)
+ 	qspi: spi@e6b10000 {
+ 		compatible = "renesas,qspi-r8a7791", "renesas,qspi";
+ 		reg = <0 0xe6b10000 0 0x2c>;
 -- 
-2.7.1
+1.9.1
+
