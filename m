@@ -1,36 +1,111 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chris.paterson2@renesas.com,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH 1/3] clk: shmobile: r8a7795: Add CAN peripheral clock
-Date: Thu, 25 Feb 2016 17:05:24 +0000
-Message-Id: <1456419926-8732-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v2 06/11] ARM: dts: r8a7779: Add SYSC PM domains
+Date: Mon, 15 Feb 2016 22:16:55 +0100
+Message-Id: <1455571020-18968-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
+References: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- drivers/clk/shmobile/r8a7795-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+Add a device node for the System Controller, with subnodes that
+represent the hardware power area hierarchy.
+Hook up ARM CPU cores 1-3 to their respective PM domains.
+Note that ARM CPU core 0 cannot be shut off.
 
-diff --git a/drivers/clk/shmobile/r8a7795-cpg-mssr.c b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-index 1f4b21a..b2b9880 100644
---- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-@@ -176,6 +176,8 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
- 	DEF_MOD("gpio2",		 910,	R8A7795_CLK_CP),
- 	DEF_MOD("gpio1",		 911,	R8A7795_CLK_CP),
- 	DEF_MOD("gpio0",		 912,	R8A7795_CLK_CP),
-+	DEF_MOD("can-if1",		 915,	R8A7795_CLK_S3D4),
-+	DEF_MOD("can-if0",		 916,	R8A7795_CLK_S3D4),
- 	DEF_MOD("i2c6",			 918,	R8A7795_CLK_S3D2),
- 	DEF_MOD("i2c5",			 919,	R8A7795_CLK_S3D2),
- 	DEF_MOD("i2c4",			 927,	R8A7795_CLK_S3D2),
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Correct sysc "reg" property (#address/size-cells = 1, not 2),
+  - Change one-line summary prefix to match current arm-soc practices,
+  - Update compatible values.
+---
+ arch/arm/boot/dts/r8a7779.dtsi | 48 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index a0cc08e6295b0396..14b28c225bb3587c 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -34,18 +34,21 @@
+ 			compatible = "arm,cortex-a9";
+ 			reg = <1>;
+ 			clock-frequency = <1000000000>;
++			power-domains = <&pd_arm1>;
+ 		};
+ 		cpu@2 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <2>;
+ 			clock-frequency = <1000000000>;
++			power-domains = <&pd_arm2>;
+ 		};
+ 		cpu@3 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <3>;
+ 			clock-frequency = <1000000000>;
++			power-domains = <&pd_arm3>;
+ 		};
+ 	};
+ 
+@@ -591,4 +594,49 @@
+ 				"mmc1", "mmc0";
+ 		};
+ 	};
++
++	sysc: system-controller@ffd85000 {
++		compatible = "renesas,r8a7779-sysc";
++		reg = <0xffd85000 0x0200>;
++
++		pm-domains {
++			#address-cells = <2>;
++			#size-cells = <0>;
++
++			pd_arm1: cpu@1 {
++				reg = <1 0x41>;
++				#power-domain-cells = <0>;
++			};
++
++			pd_arm2: cpu@2 {
++				reg = <2 0x42>;
++				#power-domain-cells = <0>;
++			};
++
++			pd_arm3: cpu@3 {
++				reg = <3 0x43>;
++				#power-domain-cells = <0>;
++			};
++
++			pd_sh: sh@16 {
++				reg = <16 0x80>;
++				#power-domain-cells = <0>;
++			};
++
++			pd_sgx: sgx@20 {
++				reg = <20 0xc0>;
++				#power-domain-cells = <0>;
++			};
++
++			pd_vdp: vdp@21 {
++				reg = <21 0x100>;
++				#power-domain-cells = <0>;
++			};
++
++			pd_imp: imp@24 {
++				reg = <24 0x140>;
++				#power-domain-cells = <0>;
++			};
++		};
++	};
+ };
 -- 
 1.9.1
+
