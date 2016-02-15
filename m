@@ -1,67 +1,128 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 2 Feb 2016 11:21:33 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 0/9] ARM/arm64: dts: rcar: Enable SCIF_CLK frequency
- and pins
-Message-ID: <20160202102132.GE15554@verge.net.au>
-References: <1454062646-4826-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1454062646-4826-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 2/7] ARM: dts: r8a7790: Add L2 cache-controller nodes
+Date: Mon, 15 Feb 2016 21:38:30 +0100
+Message-Id: <1455568715-20880-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
+References: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jan 29, 2016 at 11:17:17AM +0100, Geert Uytterhoeven wrote:
-> 	Hi Simon, Magnus,
-> 
-> This patch series adds support for the external crystal feeding SCIF_CLK
-> to (H)SCIF on the various Renesas R-Car Gen1, Gen2, and Gen3 development
-> boards.  This increases the range and accuracy of supported baud rates.
-> Support for this has been accepted in the driver in v4.5-rc1.
-> 
-> Changes compared to v3:
->   - Change one-line summary prefix to match current arm-soc practices,
->   - Tested on r8a7794/alt,
->   - Rebased,
-> 
-> Changes compared to v2:
->   - Add support for r8a7778/bockw, r8a7779/marzen, r8a7790/lager,
->     r8a7791/porter, r8a7793/gose, r8a7794/alt, and r8a7794/silk,
->   - Add Reviewed-by.
-> 
-> Testing:
->   - This was tested locally on r8a7791/koelsch and r8a7795/salvator-x,
->   - This was tested remotely on r8a7778/bockw, r8a7779/marzen, and
->     r8a7794/alt,
->   - This has been in renesas-drivers for a while, so I assume it has
->     received basic testing on other boards,
->   - Hints for various levels of testing:
->       - Change the "dev_dbg" after "done:" in
-> 	drivers/tty/serial/sh-sci.c to "dev_info" to print clock and bit
-> 	rate,
->       - "yes U | tr -d '\n' > /dev/ttySCx" outputs a square wave with a
->         frequency of half the bit rate on TXD,
->       - Modifying the frequency of SCIF_CLK causes garbage on the serial
->         console, unless you compensate by changing the bit rate in
->         /chosen/stdout-path,
->       - If you disable the SCIF_CLK, the brg_int clock will be used. If
->         you change that clock, you'll get garbage again.
-> 
-> Dependencies:
->   - renesas-devel-20160129-v4.5-rc1,
->   - series "[PATCH v4 0/7] ARM: dts: R-Car: Add SCIF fallback
->     compatibility strings",
->   - series "[PATCH v4 00/11] ARM: dts: shmobile: Rename the serial port
->     clock to fck",
->   - series "[PATCH v4 0/7] ARM: dts: r-car: Add BRG support for
->     (H)SCIF".
-> 
-> Thanks for applying!
+Add device nodes for the L2 caches, and link the CPU nodes to them.
 
-Is this safe to queue up in the light of the dependency on
-renesas-devel-20160129-v4.5-rc1?
+The L2 cache for the Cortex-A15 CPU cores is 2 MiB large (organized as
+128 KiB x 16 ways).
+
+The L2 cache for the Cortex-A7 CPU cores is 512 KiB large (organized as
+64 KiB x 8 ways).
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - Drop "arm,data-latency" and "arm,tag-latency" properties, as they
+    may not be valid when using virtualization,
+  - Change one-line summary prefix to match current arm-soc practices,
+
+v2:
+  - Drop (incorrect) optional cache-{size,sets,{block,line}-size}
+    properties, as this information is auto-detected,
+  - Integrate linking CPUs to L2 caches into this patch,
+  - Extracted from series "[PATCH/RFC 00/15] ARM: shmobile: R-Car: Add
+    SYSC PM Domain DT Support".
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 76ddf5c6cca79c3c..e40aa6585831c520 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -52,6 +52,7 @@
+ 			voltage-tolerance = <1>; /* 1% */
+ 			clocks = <&cpg_clocks R8A7790_CLK_Z>;
+ 			clock-latency = <300000>; /* 300 us */
++			next-level-cache = <&L2_CA15>;
+ 
+ 			/* kHz - uV - OPPs unknown yet */
+ 			operating-points = <1400000 1000000>,
+@@ -67,6 +68,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <1>;
+ 			clock-frequency = <1300000000>;
++			next-level-cache = <&L2_CA15>;
+ 		};
+ 
+ 		cpu2: cpu@2 {
+@@ -74,6 +76,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <2>;
+ 			clock-frequency = <1300000000>;
++			next-level-cache = <&L2_CA15>;
+ 		};
+ 
+ 		cpu3: cpu@3 {
+@@ -81,6 +84,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <3>;
+ 			clock-frequency = <1300000000>;
++			next-level-cache = <&L2_CA15>;
+ 		};
+ 
+ 		cpu4: cpu@4 {
+@@ -88,6 +92,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x100>;
+ 			clock-frequency = <780000000>;
++			next-level-cache = <&L2_CA7>;
+ 		};
+ 
+ 		cpu5: cpu@5 {
+@@ -95,6 +100,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x101>;
+ 			clock-frequency = <780000000>;
++			next-level-cache = <&L2_CA7>;
+ 		};
+ 
+ 		cpu6: cpu@6 {
+@@ -102,6 +108,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x102>;
+ 			clock-frequency = <780000000>;
++			next-level-cache = <&L2_CA7>;
+ 		};
+ 
+ 		cpu7: cpu@7 {
+@@ -109,9 +116,22 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x103>;
+ 			clock-frequency = <780000000>;
++			next-level-cache = <&L2_CA7>;
+ 		};
+ 	};
+ 
++	L2_CA15: cache-controller@0 {
++		compatible = "cache";
++		cache-unified;
++		cache-level = <2>;
++	};
++
++	L2_CA7: cache-controller@1 {
++		compatible = "cache";
++		cache-unified;
++		cache-level = <2>;
++	};
++
+ 	gic: interrupt-controller@f1001000 {
+ 		compatible = "arm,gic-400";
+ 		#interrupt-cells = <3>;
+-- 
+1.9.1
+
