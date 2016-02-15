@@ -1,64 +1,71 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	robh@kernel.org, daniel.lezcano@linaro.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>, tglx@linutronix.de
-Date: Tue, 16 Feb 2016 16:18:09 +0900
-Message-Id: <20160216071809.25461.92875.sendpatchset@little-apple>
-In-Reply-To: <20160216071722.25461.61862.sendpatchset@little-apple>
-References: <20160216071722.25461.61862.sendpatchset@little-apple>
-Subject: [PATCH v3 05/06] devicetree: bindings: Remove unused 32-bit CMT bindings
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 3/7] ARM: dts: r8a7791: Add L2 cache-controller node
+Date: Mon, 15 Feb 2016 21:38:31 +0100
+Message-Id: <1455568715-20880-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
+References: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Add a device node for the L2 cache, and link the CPU nodes to it.
 
-Remove the 32-bit CMT compat strings to reduce maintenance burden.
+The L2 cache for the Cortex-A15 CPU cores is 1 MiB large (organized as
+64 KiB x 16 ways).
 
-It should be fine to break DT compatibility because the 32-bit
-32-bit CMT DT binding was never part of any upstream DTS file.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+v3:
+  - Drop "arm,data-latency" and "arm,tag-latency" properties, as they
+    may not be valid when using virtualization,
+  - Change one-line summary prefix to match current arm-soc practices,
 
- Changes since V2:
- - Added Acked-by from Rob
- - Added Acked-by from Geert
+v2:
+  - Drop (incorrect) optional cache-{size,sets,{block,line}-size}
+    properties, as this information is auto-detected,
+  - Integrate linking CPUs to L2 cache into this patch,
+  - Extracted from series "[PATCH/RFC 00/15] ARM: shmobile: R-Car: Add
+    SYSC PM Domain DT Support".
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- Changes since V1:
- - New patch
-
- Documentation/devicetree/bindings/timer/renesas,cmt.txt |   16 ---------------
- 1 file changed, 16 deletions(-)
-
---- 0008/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-+++ work/Documentation/devicetree/bindings/timer/renesas,cmt.txt	2015-09-17 18:04:35.060513000 +0900
-@@ -12,22 +12,6 @@ datasheets.
- Required Properties:
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 8910236e64bf93ed..a65910ed5884edfd 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -51,6 +51,7 @@
+ 			voltage-tolerance = <1>; /* 1% */
+ 			clocks = <&cpg_clocks R8A7791_CLK_Z>;
+ 			clock-latency = <300000>; /* 300 us */
++			next-level-cache = <&L2_CA15>;
  
-   - compatible: must contain one or more of the following:
--    - "renesas,cmt-32-r8a7740" for the r8a7740 32-bit CMT
--		(CMT0)
--    - "renesas,cmt-32-sh73a0" for the sh73a0 32-bit CMT
--		(CMT0)
--    - "renesas,cmt-32" for all 32-bit CMT without fast clock support
--		(CMT0 on sh73a0 and r8a7740)
--		This is a fallback for the above renesas,cmt-32-* entries.
--
--    - "renesas,cmt-32-fast-r8a7740" for the r8a7740 32-bit CMT with fast
--		clock support (CMT[234])
--    - "renesas,cmt-32-fast-sh73a0" for the sh73A0 32-bit CMT with fast
--		clock support (CMT[234])
--    - "renesas,cmt-32-fast" for all 32-bit CMT with fast clock support
--		(CMT[234] on sh73a0 and r8a7740)
--		This is a fallback for the above renesas,cmt-32-fast-* entries.
--
-     - "renesas,cmt-48-sh73a0" for the sh73A0 48-bit CMT
- 		(CMT1)
-     - "renesas,cmt-48-r8a7740" for the r8a7740 48-bit CMT
+ 			/* kHz - uV - OPPs unknown yet */
+ 			operating-points = <1500000 1000000>,
+@@ -66,9 +67,16 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <1>;
+ 			clock-frequency = <1500000000>;
++			next-level-cache = <&L2_CA15>;
+ 		};
+ 	};
+ 
++	L2_CA15: cache-controller@0 {
++		compatible = "cache";
++		cache-unified;
++		cache-level = <2>;
++	};
++
+ 	gic: interrupt-controller@f1001000 {
+ 		compatible = "arm,gic-400";
+ 		#interrupt-cells = <3>;
+-- 
+1.9.1
+
