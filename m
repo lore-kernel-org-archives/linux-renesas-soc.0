@@ -1,147 +1,59 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC 03/10] phy: rcar-gen3-usb2: remove unnecesary struct rcar_gen3_data
-Date: Tue, 2 Feb 2016 19:18:51 +0900
-Message-ID: <1454408338-4612-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 15 Feb 2016 10:49:47 +0900
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2] MAINTAINERS: Update mailing list for Renesas ARM64 SoC
+ Development
+Message-ID: <20160215014947.GA14034@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since this driver uses the struct rcar_gen3_data in struct rcar_gen3_chan
-only, we can remove the rcar_gen3_data.
+Update the mailing list used for development of support for
+ARM64 Renesas SoCs.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This is a follow-up for a similar change for other Renesas SoCs and
+drivers uses by Renesas SoCs. The ARM64 SoC entry was not updated in
+that patch as it was not yet present in mainline.
+
+The motivation for the mailing list update is that Renesas SoCs are now
+much wider than the SH architecture and there is some desire from some for
+the linux-sh list to refocus on discussion of the work on the SH
+architecture.
+
+Acked-by: Magnus Damm <damm@opensource.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/phy/phy-rcar-gen3-usb2.c | 33 ++++++++++++++-------------------
- 1 file changed, 14 insertions(+), 19 deletions(-)
+Linus, please consider this for v4.5.
 
-diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
-index bc4f7dd..2da2148 100644
---- a/drivers/phy/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/phy-rcar-gen3-usb2.c
-@@ -74,20 +74,15 @@
- #define USB2_ADPCTRL_IDPULLUP		BIT(5)	/* 1 = ID sampling is enabled */
- #define USB2_ADPCTRL_DRVVBUS		BIT(4)
- 
--struct rcar_gen3_data {
--	void __iomem *base;
--	struct clk *clk;
--};
--
- struct rcar_gen3_chan {
--	struct rcar_gen3_data usb2;
-+	void __iomem *base;
- 	struct phy *phy;
- 	bool has_otg;
- };
- 
- static void rcar_gen3_set_host_mode(struct rcar_gen3_chan *ch, int host)
- {
--	void __iomem *usb2_base = ch->usb2.base;
-+	void __iomem *usb2_base = ch->base;
- 	u32 val = readl(usb2_base + USB2_COMMCTRL);
- 
- 	dev_vdbg(&ch->phy->dev, "%s: %08x, %d\n", __func__, val, host);
-@@ -100,7 +95,7 @@ static void rcar_gen3_set_host_mode(struct rcar_gen3_chan *ch, int host)
- 
- static void rcar_gen3_set_linectrl(struct rcar_gen3_chan *ch, int dp, int dm)
- {
--	void __iomem *usb2_base = ch->usb2.base;
-+	void __iomem *usb2_base = ch->base;
- 	u32 val = readl(usb2_base + USB2_LINECTRL1);
- 
- 	dev_vdbg(&ch->phy->dev, "%s: %08x, %d, %d\n", __func__, val, dp, dm);
-@@ -114,7 +109,7 @@ static void rcar_gen3_set_linectrl(struct rcar_gen3_chan *ch, int dp, int dm)
- 
- static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
- {
--	void __iomem *usb2_base = ch->usb2.base;
-+	void __iomem *usb2_base = ch->base;
- 	u32 val = readl(usb2_base + USB2_ADPCTRL);
- 
- 	dev_vdbg(&ch->phy->dev, "%s: %08x, %d\n", __func__, val, vbus);
-@@ -141,13 +136,13 @@ static void rcar_gen3_init_for_peri(struct rcar_gen3_chan *ch)
- 
- static bool rcar_gen3_check_vbus(struct rcar_gen3_chan *ch)
- {
--	return !!(readl(ch->usb2.base + USB2_ADPCTRL) &
-+	return !!(readl(ch->base + USB2_ADPCTRL) &
- 		  USB2_ADPCTRL_OTGSESSVLD);
- }
- 
- static bool rcar_gen3_check_id(struct rcar_gen3_chan *ch)
- {
--	return !!(readl(ch->usb2.base + USB2_ADPCTRL) & USB2_ADPCTRL_IDDIG);
-+	return !!(readl(ch->base + USB2_ADPCTRL) & USB2_ADPCTRL_IDDIG);
- }
- 
- static void rcar_gen3_device_recognition(struct rcar_gen3_chan *ch)
-@@ -166,7 +161,7 @@ static void rcar_gen3_device_recognition(struct rcar_gen3_chan *ch)
- 
- static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
- {
--	void __iomem *usb2_base = ch->usb2.base;
-+	void __iomem *usb2_base = ch->base;
- 	u32 val;
- 
- 	val = readl(usb2_base + USB2_VBCTRL);
-@@ -187,7 +182,7 @@ static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
- static int rcar_gen3_phy_usb2_init(struct phy *p)
- {
- 	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
--	void __iomem *usb2_base = channel->usb2.base;
-+	void __iomem *usb2_base = channel->base;
- 
- 	/* Initialize USB2 part */
- 	writel(USB2_INT_ENABLE_INIT, usb2_base + USB2_INT_ENABLE);
-@@ -205,7 +200,7 @@ static int rcar_gen3_phy_usb2_exit(struct phy *p)
- {
- 	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
- 
--	writel(0, channel->usb2.base + USB2_INT_ENABLE);
-+	writel(0, channel->base + USB2_INT_ENABLE);
- 
- 	return 0;
- }
-@@ -213,7 +208,7 @@ static int rcar_gen3_phy_usb2_exit(struct phy *p)
- static int rcar_gen3_phy_usb2_power_on(struct phy *p)
- {
- 	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
--	void __iomem *usb2_base = channel->usb2.base;
-+	void __iomem *usb2_base = channel->base;
- 	u32 val;
- 
- 	val = readl(usb2_base + USB2_USBCTR);
-@@ -235,7 +230,7 @@ static struct phy_ops rcar_gen3_phy_usb2_ops = {
- static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
- {
- 	struct rcar_gen3_chan *ch = _ch;
--	void __iomem *usb2_base = ch->usb2.base;
-+	void __iomem *usb2_base = ch->base;
- 	u32 status = readl(usb2_base + USB2_OBINTSTA);
- 	irqreturn_t ret = IRQ_NONE;
- 
-@@ -273,9 +268,9 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	channel->usb2.base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(channel->usb2.base))
--		return PTR_ERR(channel->usb2.base);
-+	channel->base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(channel->base))
-+		return PTR_ERR(channel->base);
- 
- 	/* call request_irq for OTG */
- 	irq = platform_get_irq(pdev, 0);
+v2
+* Added Acks.
+---
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 293874ca4d4e..0331ce2a6dc6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1439,8 +1439,8 @@ S:	Maintained
+ ARM/RENESAS ARM64 ARCHITECTURE
+ M:	Simon Horman <horms@verge.net.au>
+ M:	Magnus Damm <magnus.damm@gmail.com>
+-L:	linux-sh@vger.kernel.org
+-Q:	http://patchwork.kernel.org/project/linux-sh/list/
++L:	linux-renesas-soc@vger.kernel.org
++Q:	http://patchwork.kernel.org/project/linux-renesas-soc/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
+ S:	Supported
+ F:	arch/arm64/boot/dts/renesas/
 -- 
-1.9.1
-
+2.1.4
