@@ -1,88 +1,34 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
-From: Simon Horman <horms+renesas@verge.net.au>
+Return-Path: <SRS0+z8Qh=OO=gmail.com=magnus.damm@vergenet.net>
+From: Magnus Damm <magnus.damm@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/19] ARM: dts: r8a7793: enable to use thermal-zone
-Date: Fri, 26 Feb 2016 08:52:58 +0900
-Message-Id: <57f9156bc620ac561ed46b2316de328e6b280023.1456443769.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1456443769.git.horms+renesas@verge.net.au>
-References: <cover.1456443769.git.horms+renesas@verge.net.au>
+Cc: mturquette@baylibre.com,horms@verge.net.au,geert@linux-m68k.org,laurent.pinchart@ideasonboard.com,Magnus Damm <magnus.damm@gmail.com>,linux-clk@vger.kernel.org
+Date: Mon, 15 Feb 2016 21:24:32 +0900
+Message-Id: <20160215122432.28998.18180.sendpatchset@little-apple>
+Subject: [PATCH] clk: shmobile: r8a7795: Add INTC-EX clock
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-This patch enables to use thermal-zone on r8a7793.
-This thermal sensor can measure temperature from -40000 to 125000,
-but over 117000 can be critical on this chip.
-Thus, default critical temperature is now set as 115000 (this driver
-is using 5000 steps) (Current critical temperature is using it as
-90000, but there is no big reason about it)
+Add the "intc-ex" clock to the r8a7795 CPG MSSR driver.
 
-And it doesn't check thermal zone periodically (same as current
-behavior). You can exchange it by modifying polling-delay[-passive]
-property.
+The parent clock is assumed to be S3D1 since other INTC
+hardware is using this clock.
 
-You can set trip temp if your kernel has CONFIG_THERMAL_WRITABLE_TRIPS,
-but you need to take care to use it, since it will call
-orderly_poweroff() it it reaches to the value.
-echo $temp > /sys/class/thermal/thermal_zone0/trip_point_0_temp
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 45dba1c79a43..9837f90f1718 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -54,6 +54,25 @@
- 		};
- 	};
- 
-+	thermal-zones {
-+		cpu_thermal: cpu-thermal {
-+			polling-delay-passive	= <0>;
-+			polling-delay		= <0>;
-+
-+			thermal-sensors = <&thermal>;
-+
-+			trips {
-+				cpu-crit {
-+					temperature	= <115000>;
-+					hysteresis	= <0>;
-+					type		= "critical";
-+				};
-+			};
-+			cooling-maps {
-+			};
-+		};
-+	};
-+
- 	gic: interrupt-controller@f1001000 {
- 		compatible = "arm,gic-400";
- 		#interrupt-cells = <3>;
-@@ -170,12 +189,15 @@
- 		power-domains = <&cpg_clocks>;
- 	};
- 
--	thermal@e61f0000 {
--		compatible = "renesas,thermal-r8a7793", "renesas,rcar-thermal";
-+	thermal: thermal@e61f0000 {
-+		compatible =	"renesas,thermal-r8a7793",
-+				"renesas,rcar-gen2-thermal",
-+				"renesas,rcar-thermal";
- 		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
- 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp5_clks R8A7793_CLK_THERMAL>;
- 		power-domains = <&cpg_clocks>;
-+		#thermal-sensor-cells = <0>;
- 	};
- 
- 	timer {
--- 
-2.7.0.rc3.207.g0ac5344
+ Developed on top of renesas-drivers-2016-02-09-v4.5-rc3
+
+ drivers/clk/shmobile/r8a7795-cpg-mssr.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- 0001/drivers/clk/shmobile/r8a7795-cpg-mssr.c
++++ work/drivers/clk/shmobile/r8a7795-cpg-mssr.c	2016-02-15 21:18:16.530513000 +0900
+@@ -138,6 +138,7 @@ static const struct mssr_mod_clk r8a7795
+ 	DEF_MOD("usb3-if0",		 328,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("usb-dmac0",		 330,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("usb-dmac1",		 331,	R8A7795_CLK_S3D1),
++	DEF_MOD("intc-ex",		 407,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("intc-ap",		 408,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("audmac0",		 502,	R8A7795_CLK_S3D4),
+ 	DEF_MOD("audmac1",		 501,	R8A7795_CLK_S3D4),
