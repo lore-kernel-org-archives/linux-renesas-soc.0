@@ -1,57 +1,46 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH v3 6/7] arm64: dts: r8a7795: Add missing properties to
- CA57 L2 cache node
-To: Sudeep Holla <sudeep.holla@arm.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 6/7] arm64: dts: r8a7795: Add missing properties to CA57 L2 cache node
+Date: Mon, 15 Feb 2016 21:38:34 +0100
+Message-Id: <1455568715-20880-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
 References: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
- <1455568715-20880-7-git-send-email-geert+renesas@glider.be>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	<linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Message-ID: <56C2C471.80000@de.bosch.com>
-Date: Tue, 16 Feb 2016 07:40:49 +0100
-MIME-Version: 1.0
-In-Reply-To: <1455568715-20880-7-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 15.02.2016 21:38, Geert Uytterhoeven wrote:
-> Add the missing "cache-unified" and "cache-level" properties to the
-> Cortex-A57 cache-controller node.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v3:
->    - Remaining part of "[PATCH v2 6/6] arm64: renesas: r8a7795: Add L2
->      cache-controller nodes", after dropping the "arm,data-latency" and
->      "arm,tag-latency" properties.
-> ---
->   arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> index b5e46e4ff72ad003..c07f4e83b988ba42 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> @@ -68,6 +68,8 @@
->
->   	L2_CA57: cache-controller@0 {
->   		compatible = "cache";
-> +		cache-unified;
-> +		cache-level = <2>;
+Add the missing "cache-unified" and "cache-level" properties to the
+Cortex-A57 cache-controller node.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - Remaining part of "[PATCH v2 6/6] arm64: renesas: r8a7795: Add L2
+    cache-controller nodes", after dropping the "arm,data-latency" and
+    "arm,tag-latency" properties.
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-As this is completely unused on ARMv8 I don't think that we want to have 
-these unused entries in the DT.
-
-Sudeep: What do you think?
-
-Best regards
-
-Dirk
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index b5e46e4ff72ad003..c07f4e83b988ba42 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -68,6 +68,8 @@
+ 
+ 	L2_CA57: cache-controller@0 {
+ 		compatible = "cache";
++		cache-unified;
++		cache-level = <2>;
+ 	};
+ 
+ 	extal_clk: extal {
+-- 
+1.9.1
 
