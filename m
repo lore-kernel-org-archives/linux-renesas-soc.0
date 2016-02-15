@@ -1,56 +1,43 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH/RFC v2 03/11] soc: renesas: Improve rcar_sysc_power() debug info
-Date: Tue, 16 Feb 2016 00:11:24 +0200
-Message-ID: <1640540.sfVMLcT3LH@avalon>
-In-Reply-To: <1455571020-18968-4-git-send-email-geert+renesas@glider.be>
-References: <1455571020-18968-1-git-send-email-geert+renesas@glider.be> <1455571020-18968-4-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v2 03/11] soc: renesas: Improve rcar_sysc_power() debug info
+Date: Mon, 15 Feb 2016 22:16:52 +0100
+Message-Id: <1455571020-18968-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
+References: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Print requested power domain state.
 
-Thank you for the patch.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - New.
+---
+ drivers/soc/renesas/pm-rcar.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Monday 15 February 2016 22:16:52 Geert Uytterhoeven wrote:
-> Print requested power domain state.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
-> v2:
->   - New.
-> ---
->  drivers/soc/renesas/pm-rcar.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/renesas/pm-rcar.c b/drivers/soc/renesas/pm-rcar.c
-> index bc605d9fbc6ce79c..cc684e9cc8db5d1c 100644
-> --- a/drivers/soc/renesas/pm-rcar.c
-> +++ b/drivers/soc/renesas/pm-rcar.c
-> @@ -128,7 +128,7 @@ static int rcar_sysc_power(const struct rcar_sysc_ch
-> *sysc_ch, bool on) out:
->  	spin_unlock_irqrestore(&rcar_sysc_lock, flags);
-> 
-> -	pr_debug("sysc power domain %d: %08x -> %d\n",
-> +	pr_debug("sysc power %s domain %d: %08x -> %d\n", on ? "on" : "off",
->  		 sysc_ch->isr_bit, ioread32(rcar_sysc_base + SYSCISR), ret);
->  	return ret;
->  }
-
+diff --git a/drivers/soc/renesas/pm-rcar.c b/drivers/soc/renesas/pm-rcar.c
+index bc605d9fbc6ce79c..cc684e9cc8db5d1c 100644
+--- a/drivers/soc/renesas/pm-rcar.c
++++ b/drivers/soc/renesas/pm-rcar.c
+@@ -128,7 +128,7 @@ static int rcar_sysc_power(const struct rcar_sysc_ch *sysc_ch, bool on)
+  out:
+ 	spin_unlock_irqrestore(&rcar_sysc_lock, flags);
+ 
+-	pr_debug("sysc power domain %d: %08x -> %d\n",
++	pr_debug("sysc power %s domain %d: %08x -> %d\n", on ? "on" : "off",
+ 		 sysc_ch->isr_bit, ioread32(rcar_sysc_base + SYSCISR), ret);
+ 	return ret;
+ }
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
 
