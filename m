@@ -1,50 +1,202 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: dts: porter: fix JP3 jumper description
-Date: Fri, 12 Feb 2016 00:49:52 +0300
-Message-ID: <1655804.y4T36KvG5v@wasted.cogentembedded.com>
-In-Reply-To: <1674850.BZpGW9kEud@wasted.cogentembedded.com>
-References: <1674850.BZpGW9kEud@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v2 07/11] ARM: dts: r8a7790: Add SYSC PM domains
+Date: Mon, 15 Feb 2016 22:16:56 +0100
+Message-Id: <1455571020-18968-8-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
+References: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When finishing the Porter sound support patch, I managed to call the JP3
-jumper SW3 in the comment.  Fix this  along with (also miscalled) jumper
-positions...
+Add a device node for the System Controller, with subnodes that
+represent the hardware power area hierarchy.
+Hook up the Cortex-A15 and Cortex-A7 CPU cores and L2 caches/SCUs to
+their respective PM domains.
 
-Fixes: 493b4da7c10c ("ARM: dts: porter: add sound support")
-Reported-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-This patch is against the 'renesas-devel-20160209-v4.5-rc3' tag of Simon
-Horman's 'renesas.git' repo.
+v2:
+  - Change one-line summary prefix to match current arm-soc practices,
+  - Update compatible values.
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 89 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
 
-arch/arm/boot/dts/r8a7791-porter.dts |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-Index: renesas/arch/arm/boot/dts/r8a7791-porter.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7791-porter.dts
-+++ renesas/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -11,8 +11,8 @@
- /*
-  * SSI-AK4642
-  *
-- * SW3: 1: AK4642
-- *      3: ADV7511
-+ * JP3: 2-1: AK4642
-+ *      2-3: ADV7511
-  *
-  * This command is required before playback/capture:
-  *
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index e40aa6585831c520..3e5a97c70480cbbc 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -52,6 +52,7 @@
+ 			voltage-tolerance = <1>; /* 1% */
+ 			clocks = <&cpg_clocks R8A7790_CLK_Z>;
+ 			clock-latency = <300000>; /* 300 us */
++			power-domains = <&pd_ca15_cpu0>;
+ 			next-level-cache = <&L2_CA15>;
+ 
+ 			/* kHz - uV - OPPs unknown yet */
+@@ -68,6 +69,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <1>;
+ 			clock-frequency = <1300000000>;
++			power-domains = <&pd_ca15_cpu1>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
+ 
+@@ -76,6 +78,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <2>;
+ 			clock-frequency = <1300000000>;
++			power-domains = <&pd_ca15_cpu2>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
+ 
+@@ -84,6 +87,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <3>;
+ 			clock-frequency = <1300000000>;
++			power-domains = <&pd_ca15_cpu3>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
+ 
+@@ -92,6 +96,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x100>;
+ 			clock-frequency = <780000000>;
++			power-domains = <&pd_ca7_cpu0>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+ 
+@@ -100,6 +105,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x101>;
+ 			clock-frequency = <780000000>;
++			power-domains = <&pd_ca7_cpu1>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+ 
+@@ -108,6 +114,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x102>;
+ 			clock-frequency = <780000000>;
++			power-domains = <&pd_ca7_cpu2>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+ 
+@@ -116,18 +123,21 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x103>;
+ 			clock-frequency = <780000000>;
++			power-domains = <&pd_ca7_cpu3>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+ 	};
+ 
+ 	L2_CA15: cache-controller@0 {
+ 		compatible = "cache";
++		power-domains = <&pd_ca15_scu>;
+ 		cache-unified;
+ 		cache-level = <2>;
+ 	};
+ 
+ 	L2_CA7: cache-controller@1 {
+ 		compatible = "cache";
++		power-domains = <&pd_ca7_scu>;
+ 		cache-unified;
+ 		cache-level = <2>;
+ 	};
+@@ -1441,6 +1451,85 @@
+ 		};
+ 	};
+ 
++	sysc: system-controller@e6180000 {
++		compatible = "renesas,r8a7790-sysc", "renesas,rcar-gen2-sysc";
++		reg = <0 0xe6180000 0 0x0200>;
++
++		pm-domains {
++			#address-cells = <2>;
++			#size-cells = <0>;
++
++			pd_ca15_scu: scu@12 {
++				reg = <12 0x180>;
++				#address-cells = <2>;
++				#size-cells = <0>;
++				#power-domain-cells = <0>;
++
++				pd_ca15_cpu0: cpu@0 {
++					reg = <0 0x40>;
++					#power-domain-cells = <0>;
++				};
++
++				pd_ca15_cpu1: cpu@1 {
++					reg = <1 0x41>;
++					#power-domain-cells = <0>;
++				};
++
++				pd_ca15_cpu2: cpu@2 {
++					reg = <2 0x42>;
++					#power-domain-cells = <0>;
++				};
++
++				pd_ca15_cpu3: cpu@3 {
++					reg = <3 0x43>;
++					#power-domain-cells = <0>;
++				};
++			};
++
++			pd_ca7_scu: scu@21 {
++				reg = <21 0x100>;
++				#address-cells = <2>;
++				#size-cells = <0>;
++				#power-domain-cells = <0>;
++
++				pd_ca7_cpu0: cpu@5 {
++					reg = <5 0x1c0>;
++					#power-domain-cells = <0>;
++				};
++
++				pd_ca7_cpu1: cpu@6 {
++					reg = <6 0x1c1>;
++					#power-domain-cells = <0>;
++				};
++
++				pd_ca7_cpu2: cpu@7 {
++					reg = <7 0x1c2>;
++					#power-domain-cells = <0>;
++				};
++
++				pd_ca7_cpu3: cpu@8 {
++					reg = <8 0x1c3>;
++					#power-domain-cells = <0>;
++				};
++			};
++
++			pd_sh: sh@16 {
++				reg = <16 0x80>;
++				#power-domain-cells = <0>;
++			};
++
++			pd_rgx: rgx@20 {
++				reg = <20 0xc0>;
++				#power-domain-cells = <0>;
++			};
++
++			pd_imp: imp@24 {
++				reg = <24 0x140>;
++				#power-domain-cells = <0>;
++			};
++		};
++	};
++
+ 	qspi: spi@e6b10000 {
+ 		compatible = "renesas,qspi-r8a7790", "renesas,qspi";
+ 		reg = <0 0xe6b10000 0 0x2c>;
+-- 
+1.9.1
 
