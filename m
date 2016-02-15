@@ -1,68 +1,63 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/5] ARM: dts: r8a7794: add audio clocks
-Date: Tue, 09 Feb 2016 01:57:22 +0300
-Message-ID: <1840385.PK7TPc1Pyy@wasted.cogentembedded.com>
-In-Reply-To: <4253511.vvGjIdOnb6@wasted.cogentembedded.com>
-References: <4253511.vvGjIdOnb6@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 4/7] ARM: dts: r8a7793: Add L2 cache-controller node
+Date: Mon, 15 Feb 2016 21:38:32 +0100
+Message-Id: <1455568715-20880-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
+References: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the external audio clocks (signals AUDIO_CLK[ABC]) required by
-the sound driver. Boards that provide audio clocks need to override the
-clock frequencies.
+Add a device node for the L2 cache, and link the CPU node to it.
 
-This patch is based on the commit 0d3dbde84a45 ("ARM: shmobile: r8a7791:
-add  audio clock on DTSI").
+The L2 cache for the Cortex-A15 CPU cores is 1 MiB large (organized as
+64 KiB x 16 ways).
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7794.dtsi |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+v3:
+  - Drop "arm,data-latency" and "arm,tag-latency" properties, as they
+    may not be valid when using virtualization,
+  - Change one-line summary prefix to match current arm-soc practices,
 
-Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7794.dtsi
-@@ -833,6 +833,30 @@
- 			status = "disabled";
+v2:
+  - Drop (incorrect) optional cache-{size,sets,{block,line}-size}
+    properties, as this information is auto-detected,
+  - Integrate linking CPU to L2 cache into this patch,
+  - Extracted from series "[PATCH/RFC 00/15] ARM: shmobile: R-Car: Add
+    SYSC PM Domain DT Support".
+---
+ arch/arm/boot/dts/r8a7793.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 45dba1c79a43c287..9a30f650aa515b80 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -51,9 +51,16 @@
+ 					   < 937500 1000000>,
+ 					   < 750000 1000000>,
+ 					   < 375000 1000000>;
++			next-level-cache = <&L2_CA15>;
  		};
+ 	};
  
-+		/*
-+		 * The external audio clocks are configured  as 0 Hz fixed
-+		 * frequency clocks by default.  Boards that provide audio
-+		 * clocks should override them.
-+		 */
-+		audio_clka: audio_clka {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <0>;
-+			clock-output-names = "audio_clka";
-+		};
-+		audio_clkb: audio_clkb {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <0>;
-+			clock-output-names = "audio_clkb";
-+		};
-+		audio_clkc: audio_clkc {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <0>;
-+			clock-output-names = "audio_clkc";
-+		};
++	L2_CA15: cache-controller@0 {
++		compatible = "cache";
++		cache-unified;
++		cache-level = <2>;
++	};
 +
- 		/* Special CPG clocks */
- 		cpg_clocks: cpg_clocks@e6150000 {
- 			compatible = "renesas,r8a7794-cpg-clocks",
+ 	gic: interrupt-controller@f1001000 {
+ 		compatible = "arm,gic-400";
+ 		#interrupt-cells = <3>;
+-- 
+1.9.1
 
