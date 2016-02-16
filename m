@@ -1,147 +1,79 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: dts: silk: add sound support
-Date: Thu, 11 Feb 2016 23:26:38 +0300
-Message-ID: <4246644.0ZLx3MiCIL@wasted.cogentembedded.com>
-In-Reply-To: <1674850.BZpGW9kEud@wasted.cogentembedded.com>
-References: <1674850.BZpGW9kEud@wasted.cogentembedded.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
+Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
+	geert+renesas@glider.be, linus.walleij@linaro.org,
+	dan.j.williams@intel.com, arnd@arndb.de,
+	linux-arch@vger.kernel.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v4 1/8] iommu: Add MMIO mapping type
+Date: Tue, 16 Feb 2016 21:39:37 +0100
+Message-Id: <1455655184-14478-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1455655184-14478-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1455655184-14478-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the SILK board dependent part of the R8A7794 sound  device node.
-Add device node for Asahi Kasei AK4643 stereo codec to the I2C1 bus.
-Add the "simple-audio-card" device node to interconnect the SoC sound
-device  and the codec.
+From: Robin Murphy <robin.murphy@arm.com>
 
-This patch is based on the commit 493b4da7c10c ("ARM: dts: porter: add
-sound support").
+On some platforms, MMIO regions might need slightly different treatment
+compared to mapping regular memory; add the notion of MMIO mappings to
+the IOMMU API's memory type flags, so that callers can let the IOMMU
+drivers know to do the right thing.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-This patch is against the 'renesas-devel-20160209-v4.5-rc3' tag of Simon
-Horman's 'renesas.git' repo. It depends on the 5 R8A7794 sound support patches
-in posted earlier this week  in order to build and the R8A7794 PFC driver
-patches posted yesterday in  order  for  the pins to be properly configured
-(but works without the pins  configured  too)...
+ drivers/iommu/io-pgtable-arm.c | 9 +++++++--
+ include/linux/iommu.h          | 1 +
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
- arch/arm/boot/dts/r8a7794-silk.dts |   71 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/r8a7794-silk.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7794-silk.dts
-+++ renesas/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -10,6 +10,17 @@
-  * kind, whether express or implied.
-  */
+diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+index 381ca5a..9c19989 100644
+--- a/drivers/iommu/io-pgtable-arm.c
++++ b/drivers/iommu/io-pgtable-arm.c
+@@ -355,7 +355,10 @@ static arm_lpae_iopte arm_lpae_prot_to_pte(struct arm_lpae_io_pgtable *data,
+ 		if (!(prot & IOMMU_WRITE) && (prot & IOMMU_READ))
+ 			pte |= ARM_LPAE_PTE_AP_RDONLY;
  
-+/*
-+ * SSI-AK4643
-+ *
-+ * SW1: 2-1: AK4643
-+ *      2-3: ADV7511
-+ *
-+ * This command is required before playback/capture:
-+ *
-+ *	amixer set "LINEOUT Mixer DACL" on
-+ */
-+
- /dts-v1/;
- #include "r8a7794.dtsi"
- #include <dt-bindings/gpio/gpio.h>
-@@ -119,6 +130,30 @@
- 		#clock-cells = <0>;
- 		clock-frequency = <74250000>;
- 	};
-+
-+	x9_clk: x9-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <12288000>;
-+		clock-output-names = "audio_clock";
-+	};
-+
-+	sound {
-+		compatible = "simple-audio-card";
-+
-+		simple-audio-card,format = "left_j";
-+		simple-audio-card,bitclock-master = <&soundcodec>;
-+		simple-audio-card,frame-master = <&soundcodec>;
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&rcar_sound>;
-+		};
-+
-+		soundcodec: simple-audio-card,codec {
-+			sound-dai = <&ak4643>;
-+			clocks = <&x9_clk>;
-+		};
-+	};
- };
+-		if (prot & IOMMU_CACHE)
++		if (prot & IOMMU_MMIO)
++			pte |= (ARM_LPAE_MAIR_ATTR_IDX_DEV
++				<< ARM_LPAE_PTE_ATTRINDX_SHIFT);
++		else if (prot & IOMMU_CACHE)
+ 			pte |= (ARM_LPAE_MAIR_ATTR_IDX_CACHE
+ 				<< ARM_LPAE_PTE_ATTRINDX_SHIFT);
+ 	} else {
+@@ -364,7 +367,9 @@ static arm_lpae_iopte arm_lpae_prot_to_pte(struct arm_lpae_io_pgtable *data,
+ 			pte |= ARM_LPAE_PTE_HAP_READ;
+ 		if (prot & IOMMU_WRITE)
+ 			pte |= ARM_LPAE_PTE_HAP_WRITE;
+-		if (prot & IOMMU_CACHE)
++		if (prot & IOMMU_MMIO)
++			pte |= ARM_LPAE_PTE_MEMATTR_DEV;
++		else if (prot & IOMMU_CACHE)
+ 			pte |= ARM_LPAE_PTE_MEMATTR_OIWB;
+ 		else
+ 			pte |= ARM_LPAE_PTE_MEMATTR_NC;
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index a5c539f..34b6432 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -30,6 +30,7 @@
+ #define IOMMU_WRITE	(1 << 1)
+ #define IOMMU_CACHE	(1 << 2) /* DMA cache coherency */
+ #define IOMMU_NOEXEC	(1 << 3)
++#define IOMMU_MMIO	(1 << 4) /* e.g. things like MSI doorbells */
  
- &extal_clk {
-@@ -183,6 +218,16 @@
- 		renesas,groups = "usb1";
- 		renesas,function = "usb1";
- 	};
-+
-+	ssi_pins: sound {
-+		renesas,groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data";
-+		renesas,function = "ssi";
-+	};
-+
-+	audio_clk_pins: audio_clk {
-+		renesas,groups = "audio_clkc";
-+		renesas,function = "audio_clk";
-+	};
- };
- 
- &scif2 {
-@@ -220,6 +265,12 @@
- 	status = "okay";
- 	clock-frequency = <400000>;
- 
-+	ak4643: codec@12 {
-+		compatible = "asahi-kasei,ak4643";
-+		#sound-dai-cells = <0>;
-+		reg = <0x12>;
-+	};
-+
- 	composite-in@20 {
- 		compatible = "adi,adv7180";
- 		reg = <0x20>;
-@@ -380,3 +431,23 @@
- 		};
- 	};
- };
-+
-+&rcar_sound {
-+	pinctrl-0 = <&ssi_pins &audio_clk_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	/* Single DAI */
-+	#sound-dai-cells = <0>;
-+
-+	rcar_sound,dai {
-+		dai0 {
-+			playback = <&ssi0>;
-+			capture  = <&ssi1>;
-+		};
-+	};
-+};
-+
-+&ssi1 {
-+	shared-pin;
-+};
-
+ struct iommu_ops;
+ struct iommu_group;
+-- 
+2.7.1
