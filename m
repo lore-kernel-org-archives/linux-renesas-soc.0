@@ -1,40 +1,82 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 17 Feb 2016 14:58:54 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
 	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
 	robh@kernel.org, daniel.lezcano@linaro.org,
-	linux-renesas-soc@vger.kernel.org, tglx@linutronix.de
-Subject: Re: [PATCH v3 01/06] devicetree: bindings: Remove sh7372 CMT binding
-Message-ID: <20160217055854.GG11534@verge.net.au>
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>, tglx@linutronix.de
+Date: Tue, 16 Feb 2016 16:17:31 +0900
+Message-Id: <20160216071731.25461.77388.sendpatchset@little-apple>
+In-Reply-To: <20160216071722.25461.61862.sendpatchset@little-apple>
 References: <20160216071722.25461.61862.sendpatchset@little-apple>
- <20160216071731.25461.77388.sendpatchset@little-apple>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20160216071731.25461.77388.sendpatchset@little-apple>
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH v3 01/06] devicetree: bindings: Remove sh7372 CMT binding
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Feb 16, 2016 at 04:17:31PM +0900, Magnus Damm wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
-> 
-> Remove the sh7372 CMT compat string to reduce maintenance burden.
-> 
-> It should be fine to break DT compatibility because:
-> 1) The sh7372 SoC support has been removed from upstream
-> 2) The sh7372 CMT DT binding was never part of upstream DTS
-> 3) The CMT driver never matches on the sh7372 binding
+From: Magnus Damm <damm+renesas@opensource.se>
 
-A trifecta!
+Remove the sh7372 CMT compat string to reduce maintenance burden.
 
-> 
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Acked-by: Rob Herring <robh@kernel.org>
+It should be fine to break DT compatibility because:
+1) The sh7372 SoC support has been removed from upstream
+2) The sh7372 CMT DT binding was never part of upstream DTS
+3) The CMT driver never matches on the sh7372 binding
 
-I'd like to join this Ack-party!
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+ Changes since V2:
+ - Added Acked-by from Rob
+ - Removed Tested-by tag from DT binding patch - duh!
+
+ Changes since V1:
+ - Removed all references to sh7372
+ - Added Acked-by and Tested-by from Geert
+ - Added Acked-by from Laurent
+
+ Documentation/devicetree/bindings/timer/renesas,cmt.txt |   12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+--- 0001/Documentation/devicetree/bindings/timer/renesas,cmt.txt
++++ work/Documentation/devicetree/bindings/timer/renesas,cmt.txt	2015-09-17 17:22:52.420513000 +0900
+@@ -14,32 +14,26 @@ Required Properties:
+   - compatible: must contain one or more of the following:
+     - "renesas,cmt-32-r8a7740" for the r8a7740 32-bit CMT
+ 		(CMT0)
+-    - "renesas,cmt-32-sh7372" for the sh7372 32-bit CMT
+-		(CMT0)
+     - "renesas,cmt-32-sh73a0" for the sh73a0 32-bit CMT
+ 		(CMT0)
+     - "renesas,cmt-32" for all 32-bit CMT without fast clock support
+-		(CMT0 on sh7372, sh73a0 and r8a7740)
++		(CMT0 on sh73a0 and r8a7740)
+ 		This is a fallback for the above renesas,cmt-32-* entries.
+ 
+     - "renesas,cmt-32-fast-r8a7740" for the r8a7740 32-bit CMT with fast
+ 		clock support (CMT[234])
+-    - "renesas,cmt-32-fast-sh7372" for the sh7372 32-bit CMT with fast
+-		clock support (CMT[234])
+     - "renesas,cmt-32-fast-sh73a0" for the sh73A0 32-bit CMT with fast
+ 		clock support (CMT[234])
+     - "renesas,cmt-32-fast" for all 32-bit CMT with fast clock support
+-		(CMT[234] on sh7372, sh73a0 and r8a7740)
++		(CMT[234] on sh73a0 and r8a7740)
+ 		This is a fallback for the above renesas,cmt-32-fast-* entries.
+ 
+-    - "renesas,cmt-48-sh7372" for the sh7372 48-bit CMT
+-		(CMT1)
+     - "renesas,cmt-48-sh73a0" for the sh73A0 48-bit CMT
+ 		(CMT1)
+     - "renesas,cmt-48-r8a7740" for the r8a7740 48-bit CMT
+ 		(CMT1)
+     - "renesas,cmt-48" for all non-second generation 48-bit CMT
+-		(CMT1 on sh7372, sh73a0 and r8a7740)
++		(CMT1 on sh73a0 and r8a7740)
+ 		This is a fallback for the above renesas,cmt-48-* entries.
+ 
+     - "renesas,cmt-48-r8a73a4" for the r8a73a4 48-bit CMT
