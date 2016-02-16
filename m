@@ -1,32 +1,58 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 17 Feb 2016 15:30:29 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
 	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
 	robh@kernel.org, daniel.lezcano@linaro.org,
-	linux-renesas-soc@vger.kernel.org, tglx@linutronix.de
-Subject: Re: [PATCH v3 06/06] devicetree: bindings: Remove deprecated
- properties
-Message-ID: <20160217063029.GJ11534@verge.net.au>
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>, tglx@linutronix.de
+Date: Tue, 16 Feb 2016 16:18:19 +0900
+Message-Id: <20160216071819.25461.83168.sendpatchset@little-apple>
+In-Reply-To: <20160216071722.25461.61862.sendpatchset@little-apple>
 References: <20160216071722.25461.61862.sendpatchset@little-apple>
- <20160216071819.25461.83168.sendpatchset@little-apple>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20160216071819.25461.83168.sendpatchset@little-apple>
+Subject: [PATCH v3 06/06] devicetree: bindings: Remove deprecated properties
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Feb 16, 2016 at 04:18:19PM +0900, Magnus Damm wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
-> 
-> The deprecated DT properties are part of the GIT history,
-> no need to keep them around any longer.
-> 
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+The deprecated DT properties are part of the GIT history,
+no need to keep them around any longer.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+
+ Changes since V2:
+ - Added Acked-by from Rob
+ - Fixed properties typo - Thanks Geert
+ - Added Acked-by from Geert
+
+ Changes since V1:
+ - New patch
+
+ Documentation/devicetree/bindings/timer/renesas,cmt.txt |    4 ----
+ 1 file changed, 4 deletions(-)
+
+--- 0011/Documentation/devicetree/bindings/timer/renesas,cmt.txt
++++ work/Documentation/devicetree/bindings/timer/renesas,cmt.txt	2015-09-17 18:08:17.000513000 +0900
+@@ -35,8 +35,6 @@ Required Properties:
+     - "renesas,cmt1-rcar-gen2" for 48-bit CMT1 devices included in R-Car Gen2.
+ 		These are fallbacks for r8a73a4 and all the R-Car Gen2
+ 		entries	listed above.
+-
+-    - "renesas,cmt-48-gen2" is <deprecated>, use "renesas,cmt[01]-*" instead.
+     
+   - reg: base address and length of the registers block for the timer module.
+   - interrupts: interrupt-specifier for the timer, one per channel.
+@@ -44,8 +42,6 @@ Required Properties:
+     in clock-names.
+   - clock-names: must contain "fck" for the functional clock.
+ 
+-  - renesas,channels-mask: <deprecated>, information kept in device driver.
+-
+ 
+ Example: R8A7790 (R-Car H2) CMT0 and CMT1 nodes
+ 
