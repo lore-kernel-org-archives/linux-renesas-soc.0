@@ -1,82 +1,72 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
 Subject: Re: [PATCH v3 6/7] arm64: dts: r8a7795: Add missing properties to
  CA57 L2 cache node
-To: Sudeep Holla <sudeep.holla@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
+To: Dirk Behme <dirk.behme@de.bosch.com>
 References: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
  <1455568715-20880-7-git-send-email-geert+renesas@glider.be>
- <56C2C471.80000@de.bosch.com> <56C2EF47.4080809@arm.com>
-CC: Simon Horman <horms@verge.net.au>,
+ <56C2C471.80000@de.bosch.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	<linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Message-ID: <56C2F207.2080703@de.bosch.com>
-Date: Tue, 16 Feb 2016 10:55:19 +0100
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <56C2EF47.4080809@arm.com>
+Date: Tue, 16 Feb 2016 09:43:35 +0000
 MIME-Version: 1.0
-In-Reply-To: <56C2EF47.4080809@arm.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <56C2C471.80000@de.bosch.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 16.02.2016 10:43, Sudeep Holla wrote:
+
+
+On 16/02/16 06:40, Dirk Behme wrote:
+> On 15.02.2016 21:38, Geert Uytterhoeven wrote:
+>> Add the missing "cache-unified" and "cache-level" properties to the
+>> Cortex-A57 cache-controller node.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> v3:
+>>    - Remaining part of "[PATCH v2 6/6] arm64: renesas: r8a7795: Add L2
+>>      cache-controller nodes", after dropping the "arm,data-latency" and
+>>      "arm,tag-latency" properties.
+>> ---
+>>   arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>> b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>> index b5e46e4ff72ad003..c07f4e83b988ba42 100644
+>> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>> @@ -68,6 +68,8 @@
+>>
+>>       L2_CA57: cache-controller@0 {
+>>           compatible = "cache";
+>> +        cache-unified;
+>> +        cache-level = <2>;
 >
 >
-> On 16/02/16 06:40, Dirk Behme wrote:
->> On 15.02.2016 21:38, Geert Uytterhoeven wrote:
->>> Add the missing "cache-unified" and "cache-level" properties to the
->>> Cortex-A57 cache-controller node.
->>>
->>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>> ---
->>> v3:
->>>    - Remaining part of "[PATCH v2 6/6] arm64: renesas: r8a7795: Add L2
->>>      cache-controller nodes", after dropping the "arm,data-latency" and
->>>      "arm,tag-latency" properties.
->>> ---
->>>   arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 ++
->>>   1 file changed, 2 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
->>> b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
->>> index b5e46e4ff72ad003..c07f4e83b988ba42 100644
->>> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
->>> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
->>> @@ -68,6 +68,8 @@
->>>
->>>       L2_CA57: cache-controller@0 {
->>>           compatible = "cache";
->>> +        cache-unified;
->>> +        cache-level = <2>;
->>
->>
->> As this is completely unused on ARMv8 I don't think that we want to have
->> these unused entries in the DT.
->>
->> Sudeep: What do you think?
->>
+> As this is completely unused on ARMv8 I don't think that we want to have
+> these unused entries in the DT.
 >
-> I am fine with that, I don't see any issue having them as they are
-> static values and highly unlikely to change and hence no threat to
-> backward compatibility.
+> Sudeep: What do you think?
 >
-> The main concern I had with latency values is that it's currently not
-> used anywhere but if we decide to use say in secure software, having the
-> untested/early values in DT might cause compatibility issues in future
-> as they were added much before the actual understanding of it's usage.
-> So I prefer to defer them until then.
 
+I am fine with that, I don't see any issue having them as they are
+static values and highly unlikely to change and hence no threat to
+backward compatibility.
 
-Fine with me, thanks! :)
+The main concern I had with latency values is that it's currently not
+used anywhere but if we decide to use say in secure software, having the
+untested/early values in DT might cause compatibility issues in future
+as they were added much before the actual understanding of it's usage.
+So I prefer to defer them until then.
 
-With this clarification:
-
-Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
-
-
-Thanks again and best regards
-
-Dirk
-
-
+-- 
+Regards,
+Sudeep
