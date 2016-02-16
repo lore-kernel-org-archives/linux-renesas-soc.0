@@ -1,111 +1,58 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+Subject: Re: [PATCH v3 7/7] arm64: dts: r8a7795: Add CA53 L2 cache-controller
+ node
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>
+References: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
+ <1455568715-20880-8-git-send-email-geert+renesas@glider.be>
+ <56C2C534.30704@de.bosch.com>
+ <CAMuHMdX=Kgb-i+QpP=yNO2e6nw7sXuCutXPoK0U9NwK-OyANFA@mail.gmail.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v2 06/11] ARM: dts: r8a7779: Add SYSC PM domains
-Date: Mon, 15 Feb 2016 22:16:55 +0100
-Message-Id: <1455571020-18968-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
-References: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
+	linux-renesas-soc@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <56C2EFE3.6010900@arm.com>
+Date: Tue, 16 Feb 2016 09:46:11 +0000
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdX=Kgb-i+QpP=yNO2e6nw7sXuCutXPoK0U9NwK-OyANFA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the System Controller, with subnodes that
-represent the hardware power area hierarchy.
-Hook up ARM CPU cores 1-3 to their respective PM domains.
-Note that ARM CPU core 0 cannot be shut off.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Correct sysc "reg" property (#address/size-cells = 1, not 2),
-  - Change one-line summary prefix to match current arm-soc practices,
-  - Update compatible values.
----
- arch/arm/boot/dts/r8a7779.dtsi | 48 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index a0cc08e6295b0396..14b28c225bb3587c 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -34,18 +34,21 @@
- 			compatible = "arm,cortex-a9";
- 			reg = <1>;
- 			clock-frequency = <1000000000>;
-+			power-domains = <&pd_arm1>;
- 		};
- 		cpu@2 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <2>;
- 			clock-frequency = <1000000000>;
-+			power-domains = <&pd_arm2>;
- 		};
- 		cpu@3 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <3>;
- 			clock-frequency = <1000000000>;
-+			power-domains = <&pd_arm3>;
- 		};
- 	};
- 
-@@ -591,4 +594,49 @@
- 				"mmc1", "mmc0";
- 		};
- 	};
-+
-+	sysc: system-controller@ffd85000 {
-+		compatible = "renesas,r8a7779-sysc";
-+		reg = <0xffd85000 0x0200>;
-+
-+		pm-domains {
-+			#address-cells = <2>;
-+			#size-cells = <0>;
-+
-+			pd_arm1: cpu@1 {
-+				reg = <1 0x41>;
-+				#power-domain-cells = <0>;
-+			};
-+
-+			pd_arm2: cpu@2 {
-+				reg = <2 0x42>;
-+				#power-domain-cells = <0>;
-+			};
-+
-+			pd_arm3: cpu@3 {
-+				reg = <3 0x43>;
-+				#power-domain-cells = <0>;
-+			};
-+
-+			pd_sh: sh@16 {
-+				reg = <16 0x80>;
-+				#power-domain-cells = <0>;
-+			};
-+
-+			pd_sgx: sgx@20 {
-+				reg = <20 0xc0>;
-+				#power-domain-cells = <0>;
-+			};
-+
-+			pd_vdp: vdp@21 {
-+				reg = <21 0x100>;
-+				#power-domain-cells = <0>;
-+			};
-+
-+			pd_imp: imp@24 {
-+				reg = <24 0x140>;
-+				#power-domain-cells = <0>;
-+			};
-+		};
-+	};
- };
+On 16/02/16 07:12, Geert Uytterhoeven wrote:
+> Hi Dirk,
+>
+> On Tue, Feb 16, 2016 at 7:44 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+
+[...]
+
+>>
+>> As we don't have any CA53 in the device tree yet, and it was rejected to add
+>> it, I'd think that we don't want these unused entries at the moment.
+>
+> This is a preparatory step for adding the SYSC PM Domains.
+>
+>> I'd propose to add the CA53 entries, first. And then add their L2 cache
+>> entries.
+>>
+>> Based on the outcome of the discussion for the CA57 we have to see if we
+>> want to add the unused cache-unified and cache-level, then, too.
+>
+> These are specified by ePAPR, as I said before.
+> Remember, DT describes the hardware, not what Linux (or any other OS) is
+> using.
+>
+
+I completely agree and I mentioned the same in the other email.
+
 -- 
-1.9.1
-
+Regards,
+Sudeep
