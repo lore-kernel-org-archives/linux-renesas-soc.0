@@ -1,53 +1,77 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	robh@kernel.org, daniel.lezcano@linaro.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>, tglx@linutronix.de
-Date: Tue, 16 Feb 2016 16:17:41 +0900
-Message-Id: <20160216071741.25461.54191.sendpatchset@little-apple>
-In-Reply-To: <20160216071722.25461.61862.sendpatchset@little-apple>
-References: <20160216071722.25461.61862.sendpatchset@little-apple>
-Subject: [PATCH v3 02/06] devicetree: bindings: R-Car Gen2 CMT0 and CMT1 bindings
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
+Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
+	geert+renesas@glider.be, linus.walleij@linaro.org,
+	dan.j.williams@intel.com, arnd@arndb.de,
+	linux-arch@vger.kernel.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v4 3/8] dma-mapping: add dma_{map,unmap}_resource
+Date: Tue, 16 Feb 2016 21:39:39 +0100
+Message-Id: <1455655184-14478-4-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1455655184-14478-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1455655184-14478-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Map/Unmap a device resource from a physical address. If no dma_map_ops
+method is available the operation is a no-op.
 
-Add documentation for new separate CMT0 and CMT1 DT compatible strings
-for R-Car Gen2. These compat strings allow us to enable CMT1-specific
-features in the driver. The old compat strings will be deprecated in
-the not so distant future.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
+ include/linux/dma-mapping.h | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
- Changes since V2:
- - Added Acked-by from Rob
- - Removed Tested-by tag from DT binding patch - duh!
-
- Changes since V1:
- - Added Acked-by and Tested-by from Geert
- - Added Acked-by from Laurent
-
- Documentation/devicetree/bindings/timer/renesas,cmt.txt |    3 +++
- 1 file changed, 3 insertions(+)
-
---- 0002/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-+++ work/Documentation/devicetree/bindings/timer/renesas,cmt.txt	2015-09-17 17:26:57.440513000 +0900
-@@ -36,6 +36,9 @@ Required Properties:
- 		(CMT1 on sh73a0 and r8a7740)
- 		This is a fallback for the above renesas,cmt-48-* entries.
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index e3aba4e..cc305d1 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -216,6 +216,38 @@ static inline void dma_unmap_page(struct device *dev, dma_addr_t addr,
+ 	debug_dma_unmap_page(dev, addr, size, dir, false);
+ }
  
-+    - "renesas,cmt0-rcar-gen2" for 32-bit CMT0 devices included in R-Car Gen2.
-+    - "renesas,cmt1-rcar-gen2" for 48-bit CMT1 devices included in R-Car Gen2.
++static inline dma_addr_t dma_map_resource(struct device *dev,
++					  phys_addr_t phys_addr,
++					  size_t size,
++					  enum dma_data_direction dir,
++					  struct dma_attrs *attrs)
++{
++	struct dma_map_ops *ops = get_dma_ops(dev);
++	unsigned long pfn = __phys_to_pfn(phys_addr);
 +
-     - "renesas,cmt-48-r8a73a4" for the r8a73a4 48-bit CMT
- 		(CMT[01])
-     - "renesas,cmt-48-r8a7790" for the r8a7790 48-bit CMT
++	BUG_ON(!valid_dma_direction(dir));
++
++	/* Don't allow RAM to be mapped */
++	BUG_ON(pfn_valid(pfn));
++
++	if (ops->map_resource)
++		return ops->map_resource(dev, phys_addr, size, dir, attrs);
++
++	return phys_addr;
++}
++
++static inline void dma_unmap_resource(struct device *dev, dma_addr_t addr,
++				      size_t size, enum dma_data_direction dir,
++				      struct dma_attrs *attrs)
++{
++	struct dma_map_ops *ops = get_dma_ops(dev);
++
++	BUG_ON(!valid_dma_direction(dir));
++	if (ops->unmap_resource)
++		ops->unmap_resource(dev, addr, size, dir, attrs);
++
++}
++
+ static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
+ 					   size_t size,
+ 					   enum dma_data_direction dir)
+-- 
+2.7.1
