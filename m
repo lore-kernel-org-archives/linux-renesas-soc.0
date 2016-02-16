@@ -1,35 +1,45 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfgang Grandegger <wg@grandegger.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH can-next 0/2] CAN: rcar: add fallback and r8a779[234] bindings
-Date: Mon, 22 Feb 2016 11:15:48 +0900
-Message-Id: <1456107350-12100-1-git-send-email-horms+renesas@verge.net.au>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 16 Feb 2016 10:50:47 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Magnus <magnus.damm@gmail.com>,
+	Linux-Kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/4][RESEND] thermal: rcar: use thermal-zone on DT
+Message-ID: <20160216015047.GA21125@verge.net.au>
+References: <878u3a2zqt.wl%kuninori.morimoto.gx@renesas.com>
+ <87k2meodkd.wl%kuninori.morimoto.gx@renesas.com>
+ <20160209213315.GA27284@localhost.localdomain>
+ <20160209220532.GA28102@localhost.localdomain>
+ <8760xxtnjg.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8760xxtnjg.wl%kuninori.morimoto.gx@renesas.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Wed, Feb 10, 2016 at 12:34:13AM +0000, Kuninori Morimoto wrote:
+> 
+> Hi Eduardo, Simon
+> 
+> > > > Hi Eduardo
+> > > > 
+> > > > I'm sorry I didn't mention you.
+> > > > Can you please check these patches ?
+> > > 
+> > > Yes Morimoto, they are now on my todo list.
+> > 
+> > 
+> > Applied first one.
+> 
+> Thank you very much !!
+> 
+> Simon, can you please check other patches ?
+> These are for SH-ARM boards
 
-this series adds fallback bindings for R-Car Gen 1 and Gen 2 SoCs,
-and SoC-specific bindings for the r8a779[234] SoCs which are
-of the R-Car Gen 2 SoCs.
-
-The aim is to provide consistent bindings for R-Car Gen 1 and Gen 2
-SoCs in a maner consistent with that progressively being used
-for drivers for other IP blocks used by Renesas SoCs.
-
-Simon Horman (2):
-  CAN: rcar: add gen[12] fallback compatibility strings
-  CAN: rcar: add device tree support for r8a779[234]
-
- Documentation/devicetree/bindings/net/can/rcar_can.txt | 7 ++++++-
- drivers/net/can/rcar_can.c                             | 5 +++++
- 2 files changed, 11 insertions(+), 1 deletion(-)
-
--- 
-2.1.4
-
+Sorry for the delay, I have queued up those patches.
