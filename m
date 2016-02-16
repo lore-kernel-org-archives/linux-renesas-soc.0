@@ -1,33 +1,65 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1455618171-11719-1-git-send-email-geert+renesas@glider.be>
-References: <1455618171-11719-1-git-send-email-geert+renesas@glider.be>
-Date: Thu, 18 Feb 2016 20:47:42 +0100
-Message-ID: <CACRpkdYdzM_Anfa4UBafC5ASAiBc4BPr_PYc+QMV7-cM9L5zLA@mail.gmail.com>
-Subject: Re: [PATCH -next] gpio: Use kzalloc() to allocate struct gpio_device
- to fix crash
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Alexandre Courbot <gnurou@gmail.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH -next] gpio: Use kzalloc() to allocate struct gpio_device to fix crash
+Date: Tue, 16 Feb 2016 11:22:51 +0100
+Message-Id: <1455618171-11719-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Feb 16, 2016 at 11:22 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+gpiochip_add_data() allocates the struct gpio_device using kmalloc(),
+which doesn't zero the returned memory.
 
-> gpiochip_add_data() allocates the struct gpio_device using kmalloc(),
-> which doesn't zero the returned memory.
->
-> Hence when calling dev_set_name(), it may try to free a bogus old name,
-> causing a crash:
+Hence when calling dev_set_name(), it may try to free a bogus old name,
+causing a crash:
 
-Ooops got two patches to this independently and applied the other one,
-I tagged your name onto the Reported-by now. Thanks!
+    Unable to handle kernel NULL pointer dereference at virtual address 00000000
+    ...
+    Backtrace:
+    [<c01c9258>] (kfree) from [<c01a701c>] (kfree_const+0x28/0x34)
+     r9:eea77210 r8:ffffffff r7:00000001 r6:eea77008 r5:eea77010 r4:ee13afc0
+    [<c01a6ff4>] (kfree_const) from [<c02c47cc>] (kobject_set_name_vargs+0x90/0xa0)
+    [<c02c473c>] (kobject_set_name_vargs) from [<c038b374>] (dev_set_name+0x28/0x30)
+     r6:eea77008 r5:eea7721c r4:eea77000 r3:00001743
+    [<c038b350>] (dev_set_name) from [<c02ed200>] (gpiochip_add_data+0xa8/0x5e4)
+     r3:00001743 r2:00000001 r1:c083b195
+    [<c02ed158>] (gpiochip_add_data) from [<c02f0890>] (gpio_rcar_probe+0x228/0x344)
+     r10:ee922e9c r9:ee922e00 r8:0000001a r7:eea7721c r6:ee90e010 r5:ee922e80
+     r4:eea77210
+    [<c02f0668>] (gpio_rcar_probe) from [<c0390220>] (platform_drv_probe+0x58/0xa8)
 
-Yours,
-Linus Walleij
+Use kzalloc() instead of kmalloc() to fix this.
+
+See also the comment for device_initialize():
+
+    All fields in @dev must be initialized by the caller to 0, except
+    for those explicitly set to some other value.  The simplest
+    approach is to use kzalloc() to allocate the structure containing
+    @dev.
+
+Fixes: ff2b135922992756 ("gpio: make the gpiochip a real device")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index aa4a60e19339b8b5..dc49ba3fe5acf089 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -435,7 +435,7 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
+ 	 * First: allocate and populate the internal stat container, and
+ 	 * set up the struct device.
+ 	 */
+-	gdev = kmalloc(sizeof(*gdev), GFP_KERNEL);
++	gdev = kzalloc(sizeof(*gdev), GFP_KERNEL);
+ 	if (!gdev)
+ 		return -ENOMEM;
+ 	gdev->dev.bus = &gpio_bus_type;
+-- 
+1.9.1
