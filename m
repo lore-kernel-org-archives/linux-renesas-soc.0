@@ -1,125 +1,51 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Paul Gortmaker <paul.gortmaker@windriver.com>,
-	Antoine Tenart <antoine.tenart@free-electrons.com>,
-	Beniamino Galvani <b.galvani@gmail.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Carlo Caione <carlo@endlessm.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Hongzhou Yang <hongzhou.yang@mediatek.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Thomas Abraham <thomas.ab@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Vishnu Patekar <vishnupatekar0510@gmail.com>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-gpio@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-renesas-soc@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>
-Subject: [PATCH 0/8] drivers/pinctrl: remove truly orphaned module code
-Date: Mon, 29 Feb 2016 15:48:36 -0500
-Message-ID: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20160215121719.27056.43809.sendpatchset@little-apple>
+References: <20160215121719.27056.43809.sendpatchset@little-apple>
+Date: Tue, 16 Feb 2016 14:16:42 +0100
+Message-ID: <CAMuHMdX01+vqJC78mLVvWDCLXn3B07eLRqKsS07YU8Uecyu6jg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add support for INTC-EX IRQ pins
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	Simon Horman <horms@verge.net.au>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series of commits is a part of a larger project to ensure
-people don't reference modular support functions in non-modular
-code.  Overall there was roughly 5k lines of dead code in the
-kernel due to this.  So far we've fixed several areas, like tty,
-x86, net, ... and we continue to work on other areas.
+On Mon, Feb 15, 2016 at 1:17 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Most pins on the r8a7795 SoC can be configured in GPIO mode for
+> interrupt and GPIO functionality, while a couple of them can also
+> be routed to the INTC-EX hardware block (formerly known as IRQC).
+>
+> On r8a7795 the INTC-EX hardware handles pins IRQ0 -> IRQ5 and
+> this patch adds support for them to the PFC driver as "intc_ex_irqN".
+>
+> Tested on r8a7795 Salvator-X with an external loop back adapter on
+> EXIO_D that connects pin 9 (IRQ2/GP2_02) and pin 26 (ExA22/GP2_06).
 
-There are several reasons to not use module support for code that
-can never be built as a module, but the big ones are:
+Thanks!
 
- (1) it is easy to accidentally write unused module_exit and remove code
- (2) it can be misleading when reading the source, thinking it can be
-     modular when the Makefile and/or Kconfig prohibit it
- (3) it requires the include of the module.h header file which in turn
-     includes nearly everything else, thus adding to CPP overhead.
- (4) it gets copied/replicated into other code and spreads like weeds.
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-This group represents roughly 1/2 of the pinctrl commits I've got under
-testing locally.  The commonality within this group is that there should
-be zero runtime changes with this series, because none of the drivers
-here deployed a ".remove" field which in turn would cause me to add the
-".suppress_bind_attrs = true," to the driver struct.  Similarly there is
-no change in the initcall ordering either.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-So hopefully with that in mind it eases review.
+Will queue for next renesas-drivers and sh-pfc-for-v4.6.
 
-I'm happy to have this go in via the maintainer's tree and reduce the
-(large) number of patches I'm carrying locally.
----
+Gr{oetje,eeting}s,
 
-Cc: Antoine Tenart <antoine.tenart@free-electrons.com>
-Cc: Beniamino Galvani <b.galvani@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Carlo Caione <carlo@endlessm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Patrice Chotard <patrice.chotard@st.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-mediatek@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Paul Gortmaker (8):
-  drivers/pinctrl: sunxi/pinctrl-sunxi.c does not need module.h
-  drivers/pinctrl: make mediatek/pinctrl-mt6397 driver explicitly non-modular
-  drivers/pinctrl: make meson/pinctrl-meson.c explicitly non-modular
-  drivers/pinctrl: make sh-pfc/core.c explicitly non-modular
-  drivers/pinctrl: make stm32/pinctrl-stm32f429.c explicitly non-modular
-  drivers/pinctrl: make sunxi/pinctrl-sun[4-9]* explicitly non-modular
-  drivers/pinctrl: make sunxi/pinctrl-sun9i-a80-r.c explicitly non-modular
-  drivers/pinctrl: clean up samsung modular vs. non-modular distinctions
-
- drivers/pinctrl/mediatek/pinctrl-mt6397.c    | 10 ++--------
- drivers/pinctrl/meson/pinctrl-meson.c        |  8 +-------
- drivers/pinctrl/samsung/pinctrl-exynos.c     |  1 -
- drivers/pinctrl/samsung/pinctrl-exynos5440.c | 15 +++------------
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c    |  2 +-
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c    |  2 +-
- drivers/pinctrl/samsung/pinctrl-samsung.c    | 12 +-----------
- drivers/pinctrl/sh-pfc/core.c                | 18 ++++--------------
- drivers/pinctrl/stm32/pinctrl-stm32f429.c    |  9 +--------
- drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun5i-a10s.c   |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun5i-a13.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c  | 10 ++--------
- drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun6i-a31s.c   |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c  | 11 ++---------
- drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c    | 10 ++--------
- drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c  |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c    |  9 ++-------
- drivers/pinctrl/sunxi/pinctrl-sunxi.c        |  2 +-
- 22 files changed, 39 insertions(+), 152 deletions(-)
-
--- 
-2.6.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
