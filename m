@@ -1,88 +1,32 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
-From: Simon Horman <horms+renesas@verge.net.au>
+Return-Path: <SRS0+93W/=OP=gmail.com=magnus.damm@vergenet.net>
+From: Magnus Damm <magnus.damm@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/19] ARM: dts: r8a7790: enable to use thermal-zone
-Date: Fri, 26 Feb 2016 08:52:56 +0900
-Message-Id: <a8b805f3606f7af7f2b44763d3d6cf05f7c15afd.1456443769.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1456443769.git.horms+renesas@verge.net.au>
-References: <cover.1456443769.git.horms+renesas@verge.net.au>
+Cc: horms+renesas@verge.net.au,Magnus Damm <magnus.damm@gmail.com>,laurent.pinchart+renesas@ideasonboard.com,geert+renesas@glider.be
+Date: Tue, 16 Feb 2016 11:26:53 +0900
+Message-Id: <20160216022653.12147.84730.sendpatchset@little-apple>
+In-Reply-To: <20160216022635.12147.46525.sendpatchset@little-apple>
+References: <20160216022635.12147.46525.sendpatchset@little-apple>
+Subject: [PATCH 02/02] arm64: renesas: Enable RENESAS_IRQC
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-This patch enables to use thermal-zone on r8a7790.
-This thermal sensor can measure temperature from -40000 to 125000,
-but over 117000 can be critical on this chip.
-Thus, default critical temperature is now set as 115000 (this driver
-is using 5000 steps) (Current critical temperature is using it as
-90000, but there is no big reason about it)
+Select RENESAS_IRQC for Arm64 SoCs from Renesas to enable
+build of drivers/irqchip/irq-renesas-irqc.c.
 
-And it doesn't check thermal zone periodically (same as current
-behavior). You can exchange it by modifying polling-delay[-passive]
-property.
-
-You can set trip temp if your kernel has CONFIG_THERMAL_WRITABLE_TRIPS,
-but you need to take care to use it, since it will call
-orderly_poweroff() it it reaches to the value.
-echo $temp > /sys/class/thermal/thermal_zone0/trip_point_0_temp
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 76ddf5c6cca7..24b773ae133a 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -112,6 +112,25 @@
- 		};
- 	};
+ arch/arm64/Kconfig.platforms |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- 0001/arch/arm64/Kconfig.platforms
++++ work/arch/arm64/Kconfig.platforms	2016-02-16 11:02:55.040513000 +0900
+@@ -77,6 +77,7 @@ config ARCH_RENESAS
+ 	select ARCH_SHMOBILE
+ 	select PINCTRL
+ 	select PM_GENERIC_DOMAINS if PM
++	select RENESAS_IRQC
+ 	help
+ 	  This enables support for the ARMv8 based Renesas SoCs.
  
-+	thermal-zones {
-+		cpu_thermal: cpu-thermal {
-+			polling-delay-passive	= <0>;
-+			polling-delay		= <0>;
-+
-+			thermal-sensors = <&thermal>;
-+
-+			trips {
-+				cpu-crit {
-+					temperature	= <115000>;
-+					hysteresis	= <0>;
-+					type		= "critical";
-+				};
-+			};
-+			cooling-maps {
-+			};
-+		};
-+	};
-+
- 	gic: interrupt-controller@f1001000 {
- 		compatible = "arm,gic-400";
- 		#interrupt-cells = <3>;
-@@ -202,12 +221,15 @@
- 		power-domains = <&cpg_clocks>;
- 	};
- 
--	thermal@e61f0000 {
--		compatible = "renesas,thermal-r8a7790", "renesas,rcar-thermal";
-+	thermal: thermal@e61f0000 {
-+		compatible =	"renesas,thermal-r8a7790",
-+				"renesas,rcar-gen2-thermal",
-+				"renesas,rcar-thermal";
- 		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
- 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp5_clks R8A7790_CLK_THERMAL>;
- 		power-domains = <&cpg_clocks>;
-+		#thermal-sensor-cells = <0>;
- 	};
- 
- 	timer {
--- 
-2.7.0.rc3.207.g0ac5344
