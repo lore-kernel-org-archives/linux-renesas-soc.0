@@ -1,35 +1,108 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chris.paterson2@renesas.com,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH 2/3] clk: shmobile: r8a7795: Add CANFD clock
-Date: Thu, 25 Feb 2016 17:05:25 +0000
-Message-Id: <1456419926-8732-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
+Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
+	geert+renesas@glider.be, linus.walleij@linaro.org,
+	dan.j.williams@intel.com, arnd@arndb.de,
+	linux-arch@vger.kernel.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v4 6/8] dmaengine: rcar-dmac: add iommu support for slave transfers
+Date: Tue, 16 Feb 2016 21:39:42 +0100
+Message-Id: <1455655184-14478-7-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1455655184-14478-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1455655184-14478-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- drivers/clk/shmobile/r8a7795-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+Enable slave transfers to devices behind IPMMU:s by mapping the slave
+addresses using the dma-mapping API.
 
-diff --git a/drivers/clk/shmobile/r8a7795-cpg-mssr.c b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-index b2b9880..9961405 100644
---- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-@@ -112,6 +112,7 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ drivers/dma/sh/rcar-dmac.c | 52 +++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 47 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index 743873c..6a24847 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1106,21 +1106,63 @@ rcar_dmac_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t buf_addr,
+ 	return desc;
+ }
  
- 	DEF_DIV6P1("mso",       R8A7795_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
- 	DEF_DIV6P1("hdmi",      R8A7795_CLK_HDMI,  CLK_PLL1_DIV2, 0x250),
-+	DEF_DIV6P1("canfd",     R8A7795_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
- };
++static int rcar_dmac_set_slave_addr(struct dma_chan *chan,
++				     struct rcar_dmac_chan_slave *slave,
++				     phys_addr_t addr, size_t size)
++{
++	enum dma_data_direction dir;
++
++	/*
++	 * We can't know the direction at this time, see documentation for
++	 * 'direction' in struct dma_slave_config.
++	 */
++	dir = DMA_BIDIRECTIONAL;
++
++	if (slave->xfer_size) {
++		dma_unmap_resource(chan->device->dev, slave->slave_addr,
++				   slave->xfer_size, dir, NULL);
++		slave->slave_addr = 0;
++		slave->xfer_size = 0;
++	}
++
++	if (size) {
++		slave->slave_addr = dma_map_resource(chan->device->dev, addr,
++				size, dir, NULL);
++
++		if (dma_mapping_error(chan->device->dev, slave->slave_addr)) {
++			struct rcar_dmac_chan *rchan = to_rcar_dmac_chan(chan);
++
++			dev_err(chan->device->dev,
++				"chan%u: failed to map %zx@%pap", rchan->index,
++				size, &addr);
++			return -EIO;
++		}
++
++		slave->xfer_size = size;
++	}
++
++	return 0;
++}
++
+ static int rcar_dmac_device_config(struct dma_chan *chan,
+ 				   struct dma_slave_config *cfg)
+ {
+ 	struct rcar_dmac_chan *rchan = to_rcar_dmac_chan(chan);
++	int ret;
  
- static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+ 	/*
+ 	 * We could lock this, but you shouldn't be configuring the
+ 	 * channel, while using it...
+ 	 */
+-	rchan->src.slave_addr = cfg->src_addr;
+-	rchan->dst.slave_addr = cfg->dst_addr;
+-	rchan->src.xfer_size = cfg->src_addr_width;
+-	rchan->dst.xfer_size = cfg->dst_addr_width;
+ 
+-	return 0;
++	ret = rcar_dmac_set_slave_addr(chan, &rchan->src, cfg->src_addr,
++				       cfg->src_addr_width);
++	if (ret)
++		return ret;
++
++	ret = rcar_dmac_set_slave_addr(chan, &rchan->dst, cfg->dst_addr,
++				       cfg->dst_addr_width);
++	return ret;
+ }
+ 
+ static int rcar_dmac_chan_terminate_all(struct dma_chan *chan)
 -- 
-1.9.1
+2.7.1
