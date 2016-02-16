@@ -1,76 +1,82 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	robh@kernel.org, daniel.lezcano@linaro.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>, tglx@linutronix.de
-Date: Tue, 16 Feb 2016 16:17:50 +0900
-Message-Id: <20160216071750.25461.48942.sendpatchset@little-apple>
-In-Reply-To: <20160216071722.25461.61862.sendpatchset@little-apple>
-References: <20160216071722.25461.61862.sendpatchset@little-apple>
-Subject: [PATCH v3 03/06] devicetree: bindings: r8a73a4 and R-Car Gen2 CMT bindings
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH v3 6/7] arm64: dts: r8a7795: Add missing properties to
+ CA57 L2 cache node
+To: Sudeep Holla <sudeep.holla@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+References: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
+ <1455568715-20880-7-git-send-email-geert+renesas@glider.be>
+ <56C2C471.80000@de.bosch.com> <56C2EF47.4080809@arm.com>
+CC: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	<linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <56C2F207.2080703@de.bosch.com>
+Date: Tue, 16 Feb 2016 10:55:19 +0100
+MIME-Version: 1.0
+In-Reply-To: <56C2EF47.4080809@arm.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 16.02.2016 10:43, Sudeep Holla wrote:
+>
+>
+> On 16/02/16 06:40, Dirk Behme wrote:
+>> On 15.02.2016 21:38, Geert Uytterhoeven wrote:
+>>> Add the missing "cache-unified" and "cache-level" properties to the
+>>> Cortex-A57 cache-controller node.
+>>>
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> ---
+>>> v3:
+>>>    - Remaining part of "[PATCH v2 6/6] arm64: renesas: r8a7795: Add L2
+>>>      cache-controller nodes", after dropping the "arm,data-latency" and
+>>>      "arm,tag-latency" properties.
+>>> ---
+>>>   arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 ++
+>>>   1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>>> b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>>> index b5e46e4ff72ad003..c07f4e83b988ba42 100644
+>>> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>>> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>>> @@ -68,6 +68,8 @@
+>>>
+>>>       L2_CA57: cache-controller@0 {
+>>>           compatible = "cache";
+>>> +        cache-unified;
+>>> +        cache-level = <2>;
+>>
+>>
+>> As this is completely unused on ARMv8 I don't think that we want to have
+>> these unused entries in the DT.
+>>
+>> Sudeep: What do you think?
+>>
+>
+> I am fine with that, I don't see any issue having them as they are
+> static values and highly unlikely to change and hence no threat to
+> backward compatibility.
+>
+> The main concern I had with latency values is that it's currently not
+> used anywhere but if we decide to use say in secure software, having the
+> untested/early values in DT might cause compatibility issues in future
+> as they were added much before the actual understanding of it's usage.
+> So I prefer to defer them until then.
 
-Update SoC-specific bindings for r8a73a4 and R-Car Gen2 CMT0 and CMT1.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
+Fine with me, thanks! :)
 
- Changes since V2:
- - Added Acked-by from Rob
- - Removed Tested-by tag from DT binding patch - duh!
+With this clarification:
 
- Changes since V1:
- - Added Acked-by and Tested-by from Geert
- - Added Acked-by from Laurent
+Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
 
- Documentation/devicetree/bindings/timer/renesas,cmt.txt |   26 ++++++++-------
- 1 file changed, 15 insertions(+), 11 deletions(-)
 
---- 0005/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-+++ work/Documentation/devicetree/bindings/timer/renesas,cmt.txt	2015-09-17 17:31:02.650513000 +0900
-@@ -36,20 +36,24 @@ Required Properties:
- 		(CMT1 on sh73a0 and r8a7740)
- 		This is a fallback for the above renesas,cmt-48-* entries.
- 
-+    - "renesas,cmt0-r8a73a4" for the 32-bit CMT0 device included in r8a73a4.
-+    - "renesas,cmt1-r8a73a4" for the 48-bit CMT1 device included in r8a73a4.
-+    - "renesas,cmt0-r8a7790" for the 32-bit CMT0 device included in r8a7790.
-+    - "renesas,cmt1-r8a7790" for the 48-bit CMT1 device included in r8a7790.
-+    - "renesas,cmt0-r8a7791" for the 32-bit CMT0 device included in r8a7791.
-+    - "renesas,cmt1-r8a7791" for the 48-bit CMT1 device included in r8a7791.
-+    - "renesas,cmt0-r8a7793" for the 32-bit CMT0 device included in r8a7793.
-+    - "renesas,cmt1-r8a7793" for the 48-bit CMT1 device included in r8a7793.
-+    - "renesas,cmt0-r8a7794" for the 32-bit CMT0 device included in r8a7794.
-+    - "renesas,cmt1-r8a7794" for the 48-bit CMT1 device included in r8a7794.
-+
-     - "renesas,cmt0-rcar-gen2" for 32-bit CMT0 devices included in R-Car Gen2.
-     - "renesas,cmt1-rcar-gen2" for 48-bit CMT1 devices included in R-Car Gen2.
-+		These are fallbacks for r8a73a4 and all the R-Car Gen2
-+		entries	listed above.
- 
--    - "renesas,cmt-48-r8a73a4" for the r8a73a4 48-bit CMT
--		(CMT[01])
--    - "renesas,cmt-48-r8a7790" for the r8a7790 48-bit CMT
--		(CMT[01])
--    - "renesas,cmt-48-r8a7791" for the r8a7791 48-bit CMT
--		(CMT[01])
--    - "renesas,cmt-48-gen2" for all second generation 48-bit CMT
--		(CMT[01] on r8a73a4, r8a7790 and r8a7791)
--		This is a fallback for the renesas,cmt-48-r8a73a4,
--		renesas,cmt-48-r8a7790 and renesas,cmt-48-r8a7791 entries.
--
-+    - "renesas,cmt-48-gen2" is <deprecated>, use "renesas,cmt[01]-*" instead.
-+    
-   - reg: base address and length of the registers block for the timer module.
-   - interrupts: interrupt-specifier for the timer, one per channel.
-   - clocks: a list of phandle + clock-specifier pairs, one for each entry
+Thanks again and best regards
+
+Dirk
+
+
