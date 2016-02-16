@@ -1,125 +1,46 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
-From: Simon Horman <horms+renesas@verge.net.au>
+Return-Path: <SRS0+93W/=OP=gmail.com=magnus.damm@vergenet.net>
+From: Magnus Damm <magnus.damm@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Sudeep Holla <sudeep.holla@arm.com>
-Subject: [PATCH] ARM: dts: r8a7794: replace gpio-key,wakeup with wakeup-source property
-Date: Tue, 16 Feb 2016 06:48:45 +0900
-Message-Id: <1455572925-27697-1-git-send-email-horms+renesas@verge.net.au>
+Cc: horms+renesas@verge.net.au,Magnus Damm <magnus.damm@gmail.com>,laurent.pinchart+renesas@ideasonboard.com,geert+renesas@glider.be
+Date: Tue, 16 Feb 2016 11:26:44 +0900
+Message-Id: <20160216022644.12147.42064.sendpatchset@little-apple>
+In-Reply-To: <20160216022635.12147.46525.sendpatchset@little-apple>
+References: <20160216022635.12147.46525.sendpatchset@little-apple>
+Subject: [PATCH 01/02] arm64: dts: r8a7795: Add INTC-EX device node
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Though the keyboard driver for GPIO buttons(gpio-keys) will continue to
-check for/support the legacy "gpio-key,wakeup" boolean property to
-enable gpio buttons as wakeup source, "wakeup-source" is the new
-standard binding.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-This patch replaces the legacy "gpio-key,wakeup" with the unified
-"wakeup-source" property in order to avoid any futher copy-paste
-duplication.
+Add a single r8a7795 INTC-EX device node to support
+external IRQ pins IRQ0 -> IRQ5.
 
-Changelog text from a similar patch by Sudeep Holla.
-
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index cfe142c2ba38..87e89ec9dd47 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -67,77 +67,77 @@
- 		        gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_1>;
- 		        label = "SW2-1";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+--- 0001/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2016-02-16 11:01:37.760513000 +0900
+@@ -357,6 +357,21 @@
+ 			reg = <0 0xe6060000 0 0x50c>;
  		};
- 		key-2 {
- 		        gpios = <&gpio5 1 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_2>;
- 		        label = "SW2-2";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-3 {
- 		        gpios = <&gpio5 2 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_3>;
- 		        label = "SW2-3";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-4 {
- 		        gpios = <&gpio5 3 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_4>;
- 		        label = "SW2-4";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-a {
- 		        gpios = <&gpio7 0 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_A>;
- 		        label = "SW30";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-b {
- 		        gpios = <&gpio7 1 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_B>;
- 		        label = "SW31";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-c {
- 		        gpios = <&gpio7 2 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_C>;
- 		        label = "SW32";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-d {
- 		        gpios = <&gpio7 3 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_D>;
- 		        label = "SW33";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-e {
- 		        gpios = <&gpio7 4 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_E>;
- 		        label = "SW34";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-f {
- 		        gpios = <&gpio7 5 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_F>;
- 		        label = "SW35";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 		key-g {
- 		        gpios = <&gpio7 6 GPIO_ACTIVE_LOW>;
- 		        linux,code = <KEY_G>;
- 		        label = "SW36";
--		        gpio-key,wakeup;
-+		        wakeup-source;
- 		        debounce-interval = <20>;
- 		};
- 	};
--- 
-2.7.0.rc3.207.g0ac5344
+ 
++		intc_ex: interrupt-controller@e61c0000 {
++			compatible = "renesas,intc-ex-r8a7795", "renesas,irqc";
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			reg = <0 0xe61c0000 0 0x200>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 407>;
++			power-domains = <&cpg>;
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a7795",
+ 				     "renesas,rcar-dmac";
