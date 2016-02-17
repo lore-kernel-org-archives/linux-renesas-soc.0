@@ -1,59 +1,32 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] i2c: riic, sh_mobile, rcar: Use ARCH_RENESAS
-Date: Mon, 22 Feb 2016 10:15:19 +0900
-Message-Id: <1456103719-10818-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 17 Feb 2016 15:30:29 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	robh@kernel.org, daniel.lezcano@linaro.org,
+	linux-renesas-soc@vger.kernel.org, tglx@linutronix.de
+Subject: Re: [PATCH v3 06/06] devicetree: bindings: Remove deprecated
+ properties
+Message-ID: <20160217063029.GJ11534@verge.net.au>
+References: <20160216071722.25461.61862.sendpatchset@little-apple>
+ <20160216071819.25461.83168.sendpatchset@little-apple>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160216071819.25461.83168.sendpatchset@little-apple>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
+On Tue, Feb 16, 2016 at 04:18:19PM +0900, Magnus Damm wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+> 
+> The deprecated DT properties are part of the GIT history,
+> no need to keep them around any longer.
+> 
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
-appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/i2c/busses/Kconfig | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-Based on the for-next branch of Wolfram's tree on kernel.org.
-
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index a2e456a0f3e2..faa8e6821fea 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -789,7 +789,7 @@ config I2C_QUP
- 
- config I2C_RIIC
- 	tristate "Renesas RIIC adapter"
--	depends on ARCH_SHMOBILE || COMPILE_TEST
-+	depends on ARCH_RENESAS || COMPILE_TEST
- 	help
- 	  If you say yes to this option, support will be included for the
- 	  Renesas RIIC I2C interface.
-@@ -833,7 +833,7 @@ config I2C_SH7760
- config I2C_SH_MOBILE
- 	tristate "SuperH Mobile I2C Controller"
- 	depends on HAS_DMA
--	depends on SUPERH || ARCH_SHMOBILE || COMPILE_TEST
-+	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
- 	help
- 	  If you say yes to this option, support will be included for the
- 	  built-in I2C interface on the Renesas SH-Mobile processor.
-@@ -985,7 +985,7 @@ config I2C_XLP9XX
- 
- config I2C_RCAR
- 	tristate "Renesas R-Car I2C Controller"
--	depends on ARCH_SHMOBILE || COMPILE_TEST
-+	depends on ARCH_RENESAS || COMPILE_TEST
- 	select I2C_SLAVE
- 	help
- 	  If you say yes to this option, support will be included for the
--- 
-2.1.4
-
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
