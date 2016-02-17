@@ -1,99 +1,61 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	geert+renesas@glider.be, linus.walleij@linaro.org,
-	dan.j.williams@intel.com, arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v4 0/8] dmaengine: rcar-dmac: add iommu support for slave transfers
-Date: Tue, 16 Feb 2016 21:39:36 +0100
-Message-Id: <1455655184-14478-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 17 Feb 2016 14:53:41 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	Dirk Behme <dirk.behme@de.bosch.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/7] ARM/arm64: dts: renesas: Add/complete L2
+ cache-controller nodes
+Message-ID: <20160217055340.GD11534@verge.net.au>
+References: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1455568715-20880-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Mon, Feb 15, 2016 at 09:38:28PM +0100, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series adds the missing L2 cache-controller nodes to the
+> DTSes for various Renesas ARM-based SoCs, or completes the existing
+> nodes, and links the CPU nodes to them.
+> 
+> For R-Mobile APE6 (r8a73a4), the L2 cache-controllers are also linked to
+> the respective (already existing) SYSC Power Domains. Fortunately these
+> Power Domains were never powered down, as they are parents of the Power
+> Domains containing CPU cores. This may change in the future.
+> 
+> For R-Car Gen2 and Gen3 (r8a779x), this serves as a preparatory step for
+> adding SYSC Power Domain support later.
+> 
+> Changes compared to v2:
+>   - Dropped "arm,data-latency" and "arm,tag-latency" properties, as they
+>     may not be valid when using virtualization,
+>   - Dropped already applied parts of "[PATCH v2 6/6] arm64: renesas:
+>     r8a7795: Add L2 cache-controller nodes",
+>   - Changed one-line summary prefix to match current arm-soc practices.
+> 
+> This series is against renesas-devel-20160215-v4.5-rc4.
+> It has been tested on r8a73a4/ape6evm, r8a7791/koelsch, r8a7794/alt, and
+> r8a7795/salvator-x.
+> 
+> For your convenience, I've also pushed this series to
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git#topic/l2-cache-v3
+> 
+> Thanks for applying!
+> 
+> Geert Uytterhoeven (7):
+>   ARM: dts: r8a73a4: Add L2 cache-controller nodes
+>   ARM: dts: r8a7790: Add L2 cache-controller nodes
+>   ARM: dts: r8a7791: Add L2 cache-controller node
+>   ARM: dts: r8a7793: Add L2 cache-controller node
+>   ARM: dts: r8a7794: Add L2 cache-controller node
+>   arm64: dts: r8a7795: Add missing properties to CA57 L2 cache node
+>   arm64: dts: r8a7795: Add CA53 L2 cache-controller node
 
-This series add iommu support to rcar-dmac. It's tested on Koelsch with
-CONFIG_IPMMU_VMSA and by enabling the ipmmu_ds node in r8a7791.dtsi. I verified
-operation by interacting with /dev/mmcblk1  which is a device behind the iommu.
-
-The series depends on out of tree patch '[PATCH] dmaengine: use phys_addr_t for
-slave configuration' which Vinod now have moved forward whit, thanks!
-
-* Changes since v3
-- Folded in a fix from Robin to his patch.
-- Added a check to make sure dma_map_resource can not be used to map RAM as
-  pointed out by Robin. I use BUG_ON to enforce this. It might not be the best
-  method but I saw no other good way since DMA_ERROR_CODE might not be defined
-  on all platforms.
-- Added comment about that DTS changes will disable 2 DMA channels due to a HW
-  (?) but in the DMAC.
-- Dropped the use of dma_attrs, no longer needed.
-- Collected Acked-by and Reviewed-by from Laurent.
-- Various indentation fix ups.
-
-* Changes since v2
-- Drop patch to add dma_{map,unmap}_page_attrs.
-- Add dma_{map,unmap}_resource to handle the mapping without involving a
-  'struct page'. Thanks Laurent and Robin for pointing this out.
-- Use size instead of address to keep track of if a mapping exist or not
-  since addr == 0 is valid. Thanks Laurent.
-- Pick up patch from Robin with Laurents ack (hope it's OK for me to
-  attach the ack?) to add IOMMU_MMIO.
-- Fix bug in rcar_dmac_device_config where the error check where
-  inverted.
-- Use DMA_BIDIRECTIONAL in rcar_dmac_device_config since we at that
-  point can't be sure what direction the mapping is going to be used.
-
-* Changes since v1
-- Add and use a dma_{map,unmap}_page_attrs to be able to map the page
-  using attributes DMA_ATTR_NO_KERNEL_MAPPING and
-  DMA_ATTR_SKIP_CPU_SYNC. Thanks Laurent.
-- Drop check if dmac is part of a iommu group or not, let the DMA
-  mapping api handle it.
-- Move slave configuration data around in rcar-dmac to avoid code
-  duplication.
-- Fix build issue reported by 'kbuild test robot' regarding phys_to_page
-  not availability on some configurations.
-- Add DT information for r8a7791.
-
-* Changes since RFC
-- Switch to use the dma-mapping api instead of using the iommu_map()
-  directly. Turns out the dma-mapper is much smarter then me...
-- Dropped the patch to expose domain->ops->pgsize_bitmap from within the
-  iommu api.
-- Dropped the patch showing how I tested the RFC.
-
-
-Niklas Söderlund (7):
-  dma-mapping: add {map,unmap}_resource to dma_map_ops
-  dma-mapping: add dma_{map,unmap}_resource
-  arm: dma-mapping: add {map,unmap}_resource for iommu ops
-  dmaengine: rcar-dmac: group slave configuration
-  dmaengine: rcar-dmac: add iommu support for slave transfers
-  ARM: dts: r8a7790: add iommus to dmac0 and dmac1
-  ARM: dts: r8a7791: add iommus to dmac0 and dmac1
-
-Robin Murphy (1):
-  iommu: Add MMIO mapping type
-
- arch/arm/boot/dts/r8a7790.dtsi | 30 ++++++++++++++++
- arch/arm/boot/dts/r8a7791.dtsi | 30 ++++++++++++++++
- arch/arm/mm/dma-mapping.c      | 63 ++++++++++++++++++++++++++++++++
- drivers/dma/sh/rcar-dmac.c     | 81 +++++++++++++++++++++++++++++++++---------
- drivers/iommu/io-pgtable-arm.c |  9 +++--
- include/linux/dma-mapping.h    | 38 ++++++++++++++++++++
- include/linux/iommu.h          |  1 +
- 7 files changed, 233 insertions(+), 19 deletions(-)
-
---
-2.7.1
+Thanks, I have queued these up for v4.6.
