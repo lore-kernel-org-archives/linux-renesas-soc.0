@@ -1,60 +1,241 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC v2 8/9] arm64: dts: salvator-x: enable USB 2.0 Host channels
-Date: Mon, 22 Feb 2016 18:58:07 +0900
-Message-ID: <1456135088-7976-9-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1456135088-7976-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1456135088-7976-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linus.walleij@linaro.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	horms@verge.net.au, geert@glider.be
+Subject: Re: [PATCH v2] pinctrl: sh-pfc: Rework PFC GPIO support
+Date: Wed, 17 Feb 2016 16:04:43 +0200
+Message-ID: <2264268.BBIPzDY8Yc@avalon>
+In-Reply-To: <20160217081549.17344.77173.sendpatchset@little-apple>
+References: <20160217081549.17344.77173.sendpatchset@little-apple>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should set SW15 to pin 2-3 side on the board before we use CN9
-as USB host or peripheral.
+Hi Magnus,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Thank you for the patch.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 6adb65f..f9d904b 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -364,3 +364,27 @@
- 	pinctrl-0 = <&usb2_pins>;
- 	pinctrl-names = "default";
- };
-+
-+&ehci0 {
-+	status = "okay";
-+};
-+
-+&ehci1 {
-+	status = "okay";
-+};
-+
-+&ehci2 {
-+	status = "okay";
-+};
-+
-+&ohci0 {
-+	status = "okay";
-+};
-+
-+&ohci1 {
-+	status = "okay";
-+};
-+
-+&ohci2 {
-+	status = "okay";
-+};
+On Wednesday 17 February 2016 17:15:49 Magnus Damm wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+> 
+> The sh-pfc pinctrl driver is currently handling SoC-specific
+> PFC hardware blocks on ARM64, ARM and SH architectures.
+> 
+> For older SoCs using SH cores and some 32-bit ARM SoCs the PFC
+> hardware also provides GPIO functionality. On the majority of
+> 32-bit ARM SoCs from Renesas and so far all ARM64 SoCs the GPIO
+> feature is provided by separate hardware blocks.
+> 
+> So far GPIO support in the PFC driver has been compiled-in for
+> the majority of the SoCs, but with this patch applied the SoCs
+> with PFC support may select from one of the following:
+>  - CONFIG_PINCTRL_SH_PFC - Used if PFC lacks GPIO hardware
+>  - CONFIG_PINCTRL_SH_PFC_GPIO - Used if PFC includes GPIO support
+> 
+> This patch results in the following changes:
+>  - The GPIO functionality is only compiled-in on relevant SoCs
+>  - The number of lines of code is reduced
+> 
+> Build tested using the following configurations:
+>  - r8a7795 -> CONFIG_PINCTRL_SH_PFC_GPIO=n -> OK (ARM64)
+>  - r8a7790 -> CONFIG_PINCTRL_SH_PFC_GPIO=n -> OK (ARM)
+>  - r8a7790 + r8a7740 -> CONFIG_PINCTRL_SH_PFC_GPIO=y -> OK (ARM)
+>  - r8a7740 -> CONFIG_PINCTRL_SH_PFC_GPIO=y -> OK (ARM)
+>  - sh7751 -> CONFIG_PINCTRL_SH_PFC=n -> OK (SH rts7751r2d1)
+>  - sh7724 -> CONFIG_PINCTRL_SH_PFC_GPIO=y -> OK (SH ecovec24)
+> 
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+> 
+>  Changes since V1:
+>  - Simplied Makefile bits to remove sh-pfc-objs and use new Kconfig symbol
+> 
+>  drivers/pinctrl/sh-pfc/Kconfig  |   54
+> ++++++++++++++------------------------- drivers/pinctrl/sh-pfc/Makefile |  
+>  7 +----
+>  drivers/pinctrl/sh-pfc/core.c   |    4 +-
+>  3 files changed, 24 insertions(+), 41 deletions(-)
+> 
+> --- 0001/drivers/pinctrl/sh-pfc/Kconfig
+> +++ work/drivers/pinctrl/sh-pfc/Kconfig	2016-02-17 16:23:21.630513000 +0900
+> @@ -5,7 +5,6 @@
+>  if ARCH_SHMOBILE || SUPERH
+> 
+>  config PINCTRL_SH_PFC
+> -	select GPIO_SH_PFC if ARCH_REQUIRE_GPIOLIB
+>  	select PINMUX
+>  	select PINCONF
+>  	select GENERIC_PINCONF
+> @@ -13,12 +12,12 @@ config PINCTRL_SH_PFC
+>  	help
+>  	  This enables pin control drivers for SH and SH Mobile platforms
+> 
+> -config GPIO_SH_PFC
+> -	bool "SuperH PFC GPIO support"
+> -	depends on PINCTRL_SH_PFC && GPIOLIB
+> +config PINCTRL_SH_PFC_GPIO
+> +	select GPIOLIB
+> +	select PINCTRL_SH_PFC
+> +	def_bool n
+>  	help
+> -	  This enables support for GPIOs within the SoC's pin function
+> -	  controller.
+> +	  This enables pin control and GPIO drivers for SH/SH Mobile platforms
+> 
+>  config PINCTRL_PFC_EMEV2
+>  	def_bool y
+> @@ -28,12 +27,12 @@ config PINCTRL_PFC_EMEV2
+>  config PINCTRL_PFC_R8A73A4
+>  	def_bool y
+>  	depends on ARCH_R8A73A4
+> -	select PINCTRL_SH_PFC
+> +	select PINCTRL_SH_PFC_GPIO
+> 
+>  config PINCTRL_PFC_R8A7740
+>  	def_bool y
+>  	depends on ARCH_R8A7740
+> -	select PINCTRL_SH_PFC
+> +	select PINCTRL_SH_PFC_GPIO
+> 
+>  config PINCTRL_PFC_R8A7778
+>  	def_bool y
+> @@ -73,79 +72,66 @@ config PINCTRL_PFC_R8A7795
+>  config PINCTRL_PFC_SH7203
+>  	def_bool y
+>  	depends on CPU_SUBTYPE_SH7203
+> -	depends on GPIOLIB
+> -	select PINCTRL_SH_PFC
+> +	select PINCTRL_SH_PFC_GPIO
+> 
+>  config PINCTRL_PFC_SH7264
+>  	def_bool y
+>  	depends on CPU_SUBTYPE_SH7264
+> -	depends on GPIOLIB
+> -	select PINCTRL_SH_PFC
+> +	select PINCTRL_SH_PFC_GPIO
+> 
+>  config PINCTRL_PFC_SH7269
+>  	def_bool y
+>  	depends on CPU_SUBTYPE_SH7269
+> -	depends on GPIOLIB
+> -	select PINCTRL_SH_PFC
+> +	select PINCTRL_SH_PFC_GPIO
+> 
+>  config PINCTRL_PFC_SH73A0
+>  	def_bool y
+>  	depends on ARCH_SH73A0
+> -	select PINCTRL_SH_PFC
+> +	select PINCTRL_SH_PFC_GPIO
+>  	select REGULATOR
+> 
+>  config PINCTRL_PFC_SH7720
+>  	def_bool y
+>  	depends on CPU_SUBTYPE_SH7720
+> -	depends on GPIOLIB
+> -	select PINCTRL_SH_PFC
+> +	select PINCTRL_SH_PFC_GPIO
+> 
+>  config PINCTRL_PFC_SH7722
+>  	def_bool y
+>  	depends on CPU_SUBTYPE_SH7722
+> -	depends on GPIOLIB
+> -	select PINCTRL_SH_PFC
+> +	select PINCTRL_SH_PFC_GPIO
+> 
+>  config PINCTRL_PFC_SH7723
+>  	def_bool y
+>  	depends on CPU_SUBTYPE_SH7723
+> -	depends on GPIOLIB
+> -	select PINCTRL_SH_PFC
+> +	select PINCTRL_SH_PFC_GPIO
+> 
+>  config PINCTRL_PFC_SH7724
+>  	def_bool y
+>  	depends on CPU_SUBTYPE_SH7724
+> -	depends on GPIOLIB
+> -	select PINCTRL_SH_PFC
+> +	select PINCTRL_SH_PFC_GPIO
+> 
+>  config PINCTRL_PFC_SH7734
+>  	def_bool y
+>  	depends on CPU_SUBTYPE_SH7734
+> -	depends on GPIOLIB
+> -	select PINCTRL_SH_PFC
+> +	select PINCTRL_SH_PFC_GPIO
+> 
+>  config PINCTRL_PFC_SH7757
+>  	def_bool y
+>  	depends on CPU_SUBTYPE_SH7757
+> -	depends on GPIOLIB
+> -	select PINCTRL_SH_PFC
+> +	select PINCTRL_SH_PFC_GPIO
+> 
+>  config PINCTRL_PFC_SH7785
+>  	def_bool y
+>  	depends on CPU_SUBTYPE_SH7785
+> -	depends on GPIOLIB
+> -	select PINCTRL_SH_PFC
+> +	select PINCTRL_SH_PFC_GPIO
+> 
+>  config PINCTRL_PFC_SH7786
+>  	def_bool y
+>  	depends on CPU_SUBTYPE_SH7786
+> -	depends on GPIOLIB
+> -	select PINCTRL_SH_PFC
+> +	select PINCTRL_SH_PFC_GPIO
+> 
+>  config PINCTRL_PFC_SHX3
+>  	def_bool y
+>  	depends on CPU_SUBTYPE_SHX3
+> -	depends on GPIOLIB
+> -	select PINCTRL_SH_PFC
+> -
+> +	select PINCTRL_SH_PFC_GPIO
+>  endif
+> --- 0001/drivers/pinctrl/sh-pfc/Makefile
+> +++ work/drivers/pinctrl/sh-pfc/Makefile	2016-02-17 16:26:18.660513000 
++0900
+> @@ -1,8 +1,5 @@
+> -sh-pfc-objs			= core.o pinctrl.o
+> -ifeq ($(CONFIG_GPIO_SH_PFC),y)
+> -sh-pfc-objs			+= gpio.o
+> -endif
+> -obj-$(CONFIG_PINCTRL_SH_PFC)	+= sh-pfc.o
+> +obj-$(CONFIG_PINCTRL_SH_PFC)	+= core.o pinctrl.o
+> +obj-$(CONFIG_PINCTRL_SH_PFC_GPIO)	+= gpio.o
+>  obj-$(CONFIG_PINCTRL_PFC_EMEV2)	+= pfc-emev2.o
+>  obj-$(CONFIG_PINCTRL_PFC_R8A73A4)	+= pfc-r8a73a4.o
+>  obj-$(CONFIG_PINCTRL_PFC_R8A7740)	+= pfc-r8a7740.o
+> --- 0001/drivers/pinctrl/sh-pfc/core.c
+> +++ work/drivers/pinctrl/sh-pfc/core.c	2016-02-17 16:23:21.640513000 +0900
+> @@ -558,7 +558,7 @@ static int sh_pfc_probe(struct platform_
+>  	if (unlikely(ret != 0))
+>  		return ret;
+> 
+> -#ifdef CONFIG_GPIO_SH_PFC
+> +#ifdef CONFIG_PINCTRL_SH_PFC_GPIO
+>  	/*
+>  	 * Then the GPIO chip
+>  	 */
+> @@ -584,7 +584,7 @@ static int sh_pfc_remove(struct platform
+>  {
+>  	struct sh_pfc *pfc = platform_get_drvdata(pdev);
+> 
+> -#ifdef CONFIG_GPIO_SH_PFC
+> +#ifdef CONFIG_PINCTRL_SH_PFC_GPIO
+>  	sh_pfc_unregister_gpiochip(pfc);
+>  #endif
+>  	sh_pfc_unregister_pinctrl(pfc);
+
 -- 
-1.9.1
+Regards,
 
+Laurent Pinchart
