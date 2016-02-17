@@ -1,57 +1,65 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] drivers: sh: Restore legacy clock domain on SuperH platforms
-Date: Wed, 24 Feb 2016 09:43:23 +0100
-Message-Id: <1456303403-22803-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/2] ARM: dts: r8a7794: add EtherAVB clock
+Date: Wed, 17 Feb 2016 23:43:41 +0300
+Message-ID: <29718029.UyjYgE2loj@wasted.cogentembedded.com>
+In-Reply-To: <1926986.gmrsfKE5A2@wasted.cogentembedded.com>
+References: <1926986.gmrsfKE5A2@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-CONFIG_ARCH_SHMOBILE is not only enabled for Renesas ARM platforms
-(which are DT based and multi-platform), but also on a select set of
-Renesas SuperH platforms (SH7722/SH7723/SH7724/SH7343/SH7366). Hence
-since commit 0ba58de231066e47 ("drivers: sh: Get rid of
-CONFIG_ARCH_SHMOBILE_MULTI"), the legacy clock domain is no longer
-installed on these SuperH platforms, and module clocks may not be
-enabled when needed, leading to driver failures.
+Add the EtherAVB clock to the R8A7794 device tree.
 
-To fix this, add an additional check for CONFIG_OF.
+Based on the commit eaa870b30553 ("ARM: shmobile: r8a7791: add EtherAVB clock").
 
-Fixes: 0ba58de231066e47 ("drivers: sh: Get rid of CONFIG_ARCH_SHMOBILE_MULTI").
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
-Verified by looking at the resulting assembler output.
-Not run-tested due to lack of hardware.
+ arch/arm/boot/dts/r8a7794.dtsi            |    7 ++++---
+ include/dt-bindings/clock/r8a7794-clock.h |    1 +
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-This is meant to be applied to stable (v4.4 and up), and to whatever
-tree the original commit was backported to.
-
-I didn't just change the test to ARCH_RENESAS, as that symbol does not
-exist in v4.4.
----
- drivers/sh/pm_runtime.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/sh/pm_runtime.c b/drivers/sh/pm_runtime.c
-index 91a003011acfacb2..a9bac3bf20de14e5 100644
---- a/drivers/sh/pm_runtime.c
-+++ b/drivers/sh/pm_runtime.c
-@@ -34,7 +34,7 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
+Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
++++ renesas/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1173,13 +1173,14 @@
+ 		mstp8_clks: mstp8_clks@e6150990 {
+ 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe6150990 0 4>, <0 0xe61509a0 0 4>;
+-			clocks = <&zg_clk>, <&zg_clk>, <&p_clk>;
++			clocks = <&zg_clk>, <&zg_clk>, <&hp_clk>, <&p_clk>;
+ 			#clock-cells = <1>;
+ 			clock-indices = <
+-				R8A7794_CLK_VIN1 R8A7794_CLK_VIN0 R8A7794_CLK_ETHER
++				R8A7794_CLK_VIN1 R8A7794_CLK_VIN0
++				R8A7794_CLK_ETHERAVB R8A7794_CLK_ETHER
+ 			>;
+ 			clock-output-names =
+-				"vin1", "vin0", "ether";
++				"vin1", "vin0", "etheravb", "ether";
+ 		};
+ 		mstp9_clks: mstp9_clks@e6150994 {
+ 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+Index: renesas/include/dt-bindings/clock/r8a7794-clock.h
+===================================================================
+--- renesas.orig/include/dt-bindings/clock/r8a7794-clock.h
++++ renesas/include/dt-bindings/clock/r8a7794-clock.h
+@@ -85,6 +85,7 @@
+ /* MSTP8 */
+ #define R8A7794_CLK_VIN1		10
+ #define R8A7794_CLK_VIN0		11
++#define R8A7794_CLK_ETHERAVB		12
+ #define R8A7794_CLK_ETHER		13
  
- static int __init sh_pm_runtime_init(void)
- {
--	if (IS_ENABLED(CONFIG_ARCH_SHMOBILE)) {
-+	if (IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_ARCH_SHMOBILE)) {
- 		if (!of_find_compatible_node(NULL, NULL,
- 					     "renesas,cpg-mstp-clocks"))
- 			return 0;
--- 
-1.9.1
+ /* MSTP9 */
+
