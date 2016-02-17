@@ -1,101 +1,40 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC v2 5/9] arm64: dts: r8a7795: add USB2.0 Host (EHCI/OHCI) device nodes
-Date: Mon, 22 Feb 2016 18:58:04 +0900
-Message-ID: <1456135088-7976-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1456135088-7976-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1456135088-7976-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Date: Wed, 17 Feb 2016 14:58:54 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	robh@kernel.org, daniel.lezcano@linaro.org,
+	linux-renesas-soc@vger.kernel.org, tglx@linutronix.de
+Subject: Re: [PATCH v3 01/06] devicetree: bindings: Remove sh7372 CMT binding
+Message-ID: <20160217055854.GG11534@verge.net.au>
+References: <20160216071722.25461.61862.sendpatchset@little-apple>
+ <20160216071731.25461.77388.sendpatchset@little-apple>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160216071731.25461.77388.sendpatchset@little-apple>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 66 ++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+On Tue, Feb 16, 2016 at 04:17:31PM +0900, Magnus Damm wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+> 
+> Remove the sh7372 CMT compat string to reduce maintenance burden.
+> 
+> It should be fine to break DT compatibility because:
+> 1) The sh7372 SoC support has been removed from upstream
+> 2) The sh7372 CMT DT binding was never part of upstream DTS
+> 3) The CMT driver never matches on the sh7372 binding
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 2203b8e..75142f3 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1434,5 +1434,71 @@
- 			#phy-cells = <0>;
- 			status = "disabled";
- 		};
-+
-+		ehci0: usb@ee080100 {
-+			compatible = "renesas,ehci-r8a7795", "generic-ehci";
-+			reg = <0 0xee080100 0 0x100>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		ehci1: usb@ee0a0100 {
-+			compatible = "renesas,ehci-r8a7795", "generic-ehci";
-+			reg = <0 0xee0a0100 0 0x100>;
-+			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 702>;
-+			phys = <&usb2_phy1>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		ehci2: usb@ee0c0100 {
-+			compatible = "renesas,ehci-r8a7795", "generic-ehci";
-+			reg = <0 0xee0c0100 0 0x100>;
-+			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 701>;
-+			phys = <&usb2_phy2>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		ohci0: usb@ee080000 {
-+			compatible = "renesas,ohci-r8a7795", "generic-ohci";
-+			reg = <0 0xee080000 0 0x100>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		ohci1: usb@ee0a0000 {
-+			compatible = "renesas,ohci-r8a7795", "generic-ohci";
-+			reg = <0 0xee0a0000 0 0x100>;
-+			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 702>;
-+			phys = <&usb2_phy1>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		ohci2: usb@ee0c0000 {
-+			compatible = "renesas,ohci-r8a7795", "generic-ohci";
-+			reg = <0 0xee0c0000 0 0x100>;
-+			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 701>;
-+			phys = <&usb2_phy2>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-1.9.1
+A trifecta!
 
+> 
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+
+I'd like to join this Ack-party!
+
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
