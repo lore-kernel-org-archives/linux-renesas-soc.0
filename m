@@ -1,37 +1,54 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 5/5] arm64: defconfig: Add Renesas R-Car Gen3 USB 2.0 phy driver support
-Date: Tue, 23 Feb 2016 21:28:36 +0900
-Message-ID: <1456230516-5112-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1456230516-5112-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1456230516-5112-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Date: Wed, 17 Feb 2016 15:33:17 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Marc Zyngier <Marc.Zyngier@arm.com>
+Subject: Re: [PATCH v2] arm64: dts: r8a7795: Add GIC-400 virtual interfaces
+Message-ID: <20160217063316.GL11534@verge.net.au>
+References: <1455615802-9083-1-git-send-email-dirk.behme@de.bosch.com>
+ <CAMuHMdVP4wA4eXK-fkENndNs=zS2vuUeDww2ZZbXvocfFiOgWQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVP4wA4eXK-fkENndNs=zS2vuUeDww2ZZbXvocfFiOgWQ@mail.gmail.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, Feb 16, 2016 at 10:55:37AM +0100, Geert Uytterhoeven wrote:
+> CC Marc
+> 
+> On Tue, Feb 16, 2016 at 10:43 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+> > Besides the distributor and the CPU interface the GIC-400 additionally
+> > supports the virtual interface control blocks and the virtual CPU interfaces.
+> >
+> > Add the physical base addresses and size for these.
+> >
+> > See
+> >
+> > http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0471b/index.html
+> > -> 3.2. GIC-400 register map
+> >
+> > and Linux kernel's
+> >
+> > Documentation/devicetree/bindings/interrupt-controller/arm,gic.txt
+> >
+> > for more details.
+> >
+> > For the at GICH Virtual interface control blocks at 0xf1040000 cover the
+> > whole 128kB (0x20000) range. This is done based on the advice from Marc
+> > Zyngier http://www.spinics.net/lists/arm-kernel/msg483139.html
+> >
+> > Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> 
+> Thanks!
+> 
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 86581f7..eaf738a 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -213,6 +213,7 @@ CONFIG_QCOM_SMD_RPM=y
- CONFIG_ARCH_TEGRA_132_SOC=y
- CONFIG_ARCH_TEGRA_210_SOC=y
- CONFIG_HISILICON_IRQ_MBIGEN=y
-+CONFIG_PHY_RCAR_GEN3_USB2=y
- CONFIG_PHY_XGENE=y
- CONFIG_EXT2_FS=y
- CONFIG_EXT3_FS=y
--- 
-1.9.1
-
+Thanks, I have queued this up for v4.6.
