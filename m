@@ -1,54 +1,30 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+Date: Thu, 18 Feb 2016 09:00:31 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
 	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] ARM: dts: r8a7794: add EtherAVB support
-Date: Wed, 17 Feb 2016 23:45:10 +0300
-Message-ID: <3612334.eXmTxlrOol@wasted.cogentembedded.com>
-In-Reply-To: <1926986.gmrsfKE5A2@wasted.cogentembedded.com>
+	devicetree@vger.kernel.org, magnus.damm@gmail.com,
+	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/2] Add R8A7794 EtherAVB DT support
+Message-ID: <20160218000031.GB6886@verge.net.au>
 References: <1926986.gmrsfKE5A2@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1926986.gmrsfKE5A2@wasted.cogentembedded.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A7794 part of the EtherAVB device node.
+On Wed, Feb 17, 2016 at 11:41:57PM +0300, Sergei Shtylyov wrote:
+> Hello.
+> 
+>    Here's the set of 2 patches against Simon Horman's 'renesas.git' repo,
+> 'renesas-devel-20160217v2-v4.5-rc4' tag plus the R8A7794 audio patches posted
+> last week. Here we add the EtherAVB device tree support for the R8A7794 SoC.
+> 
+> [1/2] ARM: dts: r8a7794: add EtherAVB clock
+> [2/2] ARM: dts: r8a7794: add EtherAVB support
 
-Based on the commit 46ece349aa54 ("ARM: shmobile: r8a7791: add EtherAVB DT
-support").
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
- arch/arm/boot/dts/r8a7794.dtsi |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7794.dtsi
-@@ -572,6 +572,18 @@
- 		status = "disabled";
- 	};
- 
-+	avb: ethernet@e6800000 {
-+		compatible = "renesas,etheravb-r8a7794",
-+			     "renesas,etheravb-rcar-gen2";
-+		reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
-+		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp8_clks R8A7794_CLK_ETHERAVB>;
-+		power-domains = <&cpg_clocks>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+
- 	/* The memory map in the User's Manual maps the cores to bus numbers */
- 	i2c0: i2c@e6508000 {
- 		compatible = "renesas,i2c-r8a7794";
-
+Thanks, I have queued these up for v4.6.
