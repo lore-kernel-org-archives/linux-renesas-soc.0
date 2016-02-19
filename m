@@ -1,78 +1,44 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+Return-Path: <horms@vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 64/68] ARM: dts: koelsch: Enable SCIF_CLK frequency and pins
-Date: Fri, 12 Feb 2016 20:05:54 +0100
-Message-Id: <338f7ebf46e184746e63bcb93b3e5dbee95564a3.1455303422.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
-References: <cover.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 2/4] ARM: shmobile: r8a7779: Remove remainings of removed SCU boot setup code
+Date: Fri, 19 Feb 2016 15:09:45 +0900
+Message-Id: <b1568d80123a7e7ab528f587ef6896b2d5413b61.1455859965.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1455859965.git.horms+renesas@verge.net.au>
+References: <cover.1455859965.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add and enable the external crystal for the SCIF_CLK and its pinctrl, to
-be used by the Baud Rate Generator for External Clock (BRG) on (H)SCIF.
+Commit 0ca2894b5a900709 ("ARM: shmobile: Use shared SCU SMP boot code on
+r8a7779") obsoleted the r8a7779-specific SCU boot code, but forgot to
+remove the setup of shmobile_boot_fn and shmobile_boot_arg, which is
+overwritten by shmobile_smp_scu_prepare_cpus().
 
-This increases the range and accuracy of supported baud rates:
-  - SCIF:
-      - Supports now 50, 75, 110, 1152000, 1500000, 2000000, and
-        4000000 bps,
-      - Perfect match for standard 50-460800, and 9216000 bps.
-      - More accurate 576000 bps.
-  - HSCIF:
-      - Supports now 50, 75, 110, 134, 150, and 200 bps,
-      - Perfect match for standard 50-460800, and 9216000 bps.
-      - More accurate 576000, 1152000, 3000000, 3500000, and 4000000
-	bps.
+Note that shmobile_scu_base wasn't initialized at that point yet anyway.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/mach-shmobile/smp-r8a7779.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 45256f3cc835..0ad71b81d3a2 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -320,6 +320,9 @@
- };
+diff --git a/arch/arm/mach-shmobile/smp-r8a7779.c b/arch/arm/mach-shmobile/smp-r8a7779.c
+index b854fe2095ad..0b024a9dbd43 100644
+--- a/arch/arm/mach-shmobile/smp-r8a7779.c
++++ b/arch/arm/mach-shmobile/smp-r8a7779.c
+@@ -92,8 +92,6 @@ static void __init r8a7779_smp_prepare_cpus(unsigned int max_cpus)
+ {
+ 	/* Map the reset vector (in headsmp-scu.S, headsmp.S) */
+ 	__raw_writel(__pa(shmobile_boot_vector), AVECR);
+-	shmobile_boot_fn = virt_to_phys(shmobile_boot_scu);
+-	shmobile_boot_arg = (unsigned long)shmobile_scu_base;
  
- &pfc {
-+	pinctrl-0 = <&scif_clk_pins>;
-+	pinctrl-names = "default";
-+
- 	i2c2_pins: i2c2 {
- 		renesas,groups = "i2c2";
- 		renesas,function = "i2c2";
-@@ -340,6 +343,11 @@
- 		renesas,function = "scif1";
- 	};
- 
-+	scif_clk_pins: scif_clk {
-+		renesas,groups = "scif_clk";
-+		renesas,function = "scif_clk";
-+	};
-+
- 	ether_pins: ether {
- 		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
- 		renesas,function = "eth";
-@@ -440,6 +448,11 @@
- 	status = "okay";
- };
- 
-+&scif_clk {
-+	clock-frequency = <14745600>;
-+	status = "okay";
-+};
-+
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
- 	pinctrl-names = "default";
+ 	/* setup r8a7779 specific SCU bits */
+ 	shmobile_scu_base = IOMEM(R8A7779_SCU_BASE);
 -- 
-2.7.0.rc3.207.g0ac5344
+2.1.4
