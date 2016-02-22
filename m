@@ -5,113 +5,102 @@ To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
 	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
 CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC 04/10] phy: rcar-gen3-usb2: add extcon support
-Date: Tue, 2 Feb 2016 19:18:52 +0900
-Message-ID: <1454408338-4612-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC v2 7/9] arm64: dts: salvator-x: enable usb2_phy
+Date: Mon, 22 Feb 2016 18:58:06 +0900
+Message-ID: <1456135088-7976-8-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1456135088-7976-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1456135088-7976-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds extcon support for otg related channel.
+This patch also adds a regulator node for USB2.0 to handle VBUS on/off
+by the generic PHY framework.
+This board has a MAX3355 chip. However, we cannot use the extcon/max3355
+driver because the ID pin doesn't connect to a gpio pin (in other words,
+it connects to the SoC specific pin).
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/phy/Kconfig              |  1 +
- drivers/phy/phy-rcar-gen3-usb2.c | 26 ++++++++++++++++++++++++++
- 2 files changed, 27 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 45 +++++++++++++++++++++-
+ 1 file changed, 44 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-index e7e117d..6d0e625 100644
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@ -121,6 +121,7 @@ config PHY_RCAR_GEN2
- config PHY_RCAR_GEN3_USB2
- 	tristate "Renesas R-Car generation 3 USB 2.0 PHY driver"
- 	depends on OF && ARCH_SHMOBILE
-+	depends on EXTCON
- 	select GENERIC_PHY
- 	help
- 	  Support for USB 2.0 PHY found on Renesas R-Car generation 3 SoCs.
-diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
-index 2da2148..5ff5653 100644
---- a/drivers/phy/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/phy-rcar-gen3-usb2.c
-@@ -12,6 +12,7 @@
-  * published by the Free Software Foundation.
-  */
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index fb1f382..6adb65f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -33,6 +33,7 @@
  
-+#include <linux/extcon.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
-@@ -76,6 +77,7 @@
+ /dts-v1/;
+ #include "r8a7795.dtsi"
++#include <dt-bindings/gpio/gpio.h>
  
- struct rcar_gen3_chan {
- 	void __iomem *base;
-+	struct extcon_dev *extcon;
- 	struct phy *phy;
- 	bool has_otg;
- };
-@@ -125,6 +127,9 @@ static void rcar_gen3_init_for_host(struct rcar_gen3_chan *ch)
- 	rcar_gen3_set_linectrl(ch, 1, 1);
- 	rcar_gen3_set_host_mode(ch, 1);
- 	rcar_gen3_enable_vbus_ctrl(ch, 1);
+ / {
+ 	model = "Renesas Salvator-X board based on r8a7795";
+@@ -118,6 +119,15 @@
+ 			};
+ 		};
+ 	};
 +
-+	extcon_set_cable_state_(ch->extcon, EXTCON_USB_HOST, true);
-+	extcon_set_cable_state_(ch->extcon, EXTCON_USB, false);
- }
- 
- static void rcar_gen3_init_for_peri(struct rcar_gen3_chan *ch)
-@@ -132,6 +137,9 @@ static void rcar_gen3_init_for_peri(struct rcar_gen3_chan *ch)
- 	rcar_gen3_set_linectrl(ch, 0, 1);
- 	rcar_gen3_set_host_mode(ch, 0);
- 	rcar_gen3_enable_vbus_ctrl(ch, 0);
-+
-+	extcon_set_cable_state_(ch->extcon, EXTCON_USB_HOST, false);
-+	extcon_set_cable_state_(ch->extcon, EXTCON_USB, true);
- }
- 
- static bool rcar_gen3_check_vbus(struct rcar_gen3_chan *ch)
-@@ -250,6 +258,12 @@ static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
++	vcc_usb2_phy0: regulator@0 {
++		compatible = "regulator-fixed";
++		regulator-name = "USB20_VBUS0";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&gpio6 16 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
  };
- MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
  
-+static const unsigned int rcar_gen3_phy_cable[] = {
-+	EXTCON_USB,
-+	EXTCON_USB_HOST,
-+	EXTCON_NONE,
+ &du {
+@@ -173,8 +183,22 @@
+ 				 "audio_clkout_a", "audio_clkout3_a";
+ 		renesas,function = "audio_clk";
+ 	};
+-};
+ 
++	usb0_pins: usb0 {
++		renesas,groups = "usb0";
++		renesas,function = "usb";
++	};
++
++	usb1_pins: usb1 {
++		renesas,groups = "usb1";
++		renesas,function = "usb";
++	};
++
++	usb2_pins: usb2 {
++		renesas,groups = "usb2";
++		renesas,function = "usb";
++	};
++};
+ &scif1 {
+ 	pinctrl-0 = <&scif1_pins>;
+ 	pinctrl-names = "default";
+@@ -321,3 +345,22 @@
+ &xhci0 {
+ 	status = "okay";
+ };
++
++&usb2_phy0 {
++	status = "okay";
++	vbus-supply = <&vcc_usb2_phy0>;
++	pinctrl-0 = <&usb0_pins>;
++	pinctrl-names = "default";
 +};
 +
- static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -275,11 +289,23 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	/* call request_irq for OTG */
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq >= 0) {
-+		int ret;
++&usb2_phy1 {
++	status = "okay";
++	pinctrl-0 = <&usb1_pins>;
++	pinctrl-names = "default";
++};
 +
- 		irq = devm_request_irq(dev, irq, rcar_gen3_phy_usb2_irq,
- 				       IRQF_SHARED, dev_name(dev), channel);
- 		if (irq < 0)
- 			dev_err(dev, "No irq handler (%d)\n", irq);
- 		channel->has_otg = true;
-+		channel->extcon = devm_extcon_dev_allocate(dev,
-+							rcar_gen3_phy_cable);
-+		if (IS_ERR(channel->extcon))
-+			return PTR_ERR(channel->extcon);
-+
-+		ret = devm_extcon_dev_register(dev, channel->extcon);
-+		if (ret < 0) {
-+			dev_err(dev, "Failed to register extcon\n");
-+			return ret;
-+		}
- 	}
- 
- 	/* devm_phy_create() will call pm_runtime_enable(dev); */
++&usb2_phy2 {
++	status = "okay";
++	pinctrl-0 = <&usb2_pins>;
++	pinctrl-names = "default";
++};
 -- 
 1.9.1
 
