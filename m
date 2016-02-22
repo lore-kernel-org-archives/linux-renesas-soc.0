@@ -1,58 +1,39 @@
 Return-Path: <linux-i2c-owner@vger.kernel.org>
-Date: Wed, 24 Feb 2016 11:21:06 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] i2c: riic, sh_mobile, rcar: Use ARCH_RENESAS
-Message-ID: <20160224102106.GC1391@katana>
-References: <1456103719-10818-1-git-send-email-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="iFRdW5/EC4oqxDHL"
-Content-Disposition: inline
 In-Reply-To: <1456103719-10818-1-git-send-email-horms+renesas@verge.net.au>
+References: <1456103719-10818-1-git-send-email-horms+renesas@verge.net.au>
+Date: Mon, 22 Feb 2016 14:44:34 +0100
+Message-ID: <CAMuHMdV7XKdCYoJMYzv8zdUgiQrzWFtzVE2NuOY6Sj=6dnD-dg@mail.gmail.com>
+Subject: Re: [PATCH] i2c: riic, sh_mobile, rcar: Use ARCH_RENESAS
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Linux I2C <linux-i2c@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---iFRdW5/EC4oqxDHL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Feb 22, 2016 at 10:15:19AM +0900, Simon Horman wrote:
+On Mon, Feb 22, 2016 at 2:15 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
 > Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
->=20
+>
 > This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-> ARCH_RENESAS the motivation for which being that RENESAS seems to be a mo=
-re
+> ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
 > appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
->=20
+>
 > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Applied to for-next, thanks!
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
 
---iFRdW5/EC4oqxDHL
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIcBAEBAgAGBQJWzYQSAAoJEBQN5MwUoCm2/ZwP/RhP7usRQjvtQRJqRGaChq3d
-mZicFaFBVrVdGFjgjn+CD8nCR/qYhBBl26KFcUc9uqzO0+9zWj7zrxtn3gsyoCdA
-zvUAbq1oe04jN2MvepZElUMCCYLcy46UMyo26A11ISzwo2FdAz38t+9dlPnfs/FD
-KHrb6P9SosqzHL38LYMFdBgUsxb5IbX7LTYRCfElFSiil/6akeXeY1maTKtrP+tf
-vLWmZYQVA9cUZ8Ewd+7Gxbgb8B919w21oSFD5blLAGjZe53VQqA4SOaLxFWIZYF3
-kb5vogxII0YvMOhAvUq3G+U50T2EfgAyYiEkZHmOu8YGFUB8/KnvJQjUTcponlF3
-oM17iMCAl5GuvDCLTt+0Gy2utGN7IdfBJt/EkGYE/BRStUSzMQ91PNSXgX6SdqWr
-bPdMAKGwFmAc0n8qYo7gV1H4vWPPROTkHmEfaMtYv6CuanfqqsNY9z4RDgtXDobK
-bIg10/4Itn8UyEhwVmA/4aAxJ4z/2jGCOZ8SXE4gzSEUeMvnudNvdGECgc8EBe9D
-swyAQf6+j155QaK+iJxjzhUnTBuAjWUW1+qxKN36JELxE5ebca0lpfnPK1YiCQnC
-JUwY05p6EBNIRet31cJZhUGnQrW6ZNK9pvLjRIB33nKFImdyOOQBjlVuKX5tf63s
-XXG2ykOP7sqnCi0A4RlZ
-=Tb6k
------END PGP SIGNATURE-----
-
---iFRdW5/EC4oqxDHL--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
