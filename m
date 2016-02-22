@@ -1,33 +1,64 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Sun, 21 Feb 2016 21:37:20 -0600
-From: Rob Herring <robh@kernel.org>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfgang Grandegger <wg@grandegger.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-can@vger.kernel.org,
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfgang Grandegger <wg@grandegger.com>,
+	Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-can@vger.kernel.org,
 	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH can-next 1/2] CAN: rcar: add gen[12] fallback
- compatibility strings
-Message-ID: <20160222033720.GA27711@rob-hp-laptop>
+	devicetree@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH can-next 1/2] CAN: rcar: add gen[12] fallback compatibility strings
+Date: Mon, 22 Feb 2016 11:15:49 +0900
+Message-Id: <1456107350-12100-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1456107350-12100-1-git-send-email-horms+renesas@verge.net.au>
 References: <1456107350-12100-1-git-send-email-horms+renesas@verge.net.au>
- <1456107350-12100-2-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1456107350-12100-2-git-send-email-horms+renesas@verge.net.au>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Feb 22, 2016 at 11:15:49AM +0900, Simon Horman wrote:
-> Add fallback compatibility string for R-Car Gen 1 and Gen2 families.
-> This is in keeping with the fallback scheme being adopted wherever
-> appropriate for drivers for Renesas SoCs.
-> 
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
->  Documentation/devicetree/bindings/net/can/rcar_can.txt | 4 +++-
->  drivers/net/can/rcar_can.c                             | 2 ++
->  2 files changed, 5 insertions(+), 1 deletion(-)
+Add fallback compatibility string for R-Car Gen 1 and Gen2 families.
+This is in keeping with the fallback scheme being adopted wherever
+appropriate for drivers for Renesas SoCs.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/net/can/rcar_can.txt | 4 +++-
+ drivers/net/can/rcar_can.c                             | 2 ++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+index 002d8440bf66..036786e1f70d 100644
+--- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
++++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+@@ -6,6 +6,8 @@ Required properties:
+ 	      "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
+ 	      "renesas,can-r8a7790" if CAN controller is a part of R8A7790 SoC.
+ 	      "renesas,can-r8a7791" if CAN controller is a part of R8A7791 SoC.
++	      "renesas,can-gen1" for a generic R-Car Gen1 compatible device.
++	      "renesas,can-gen2" for a generic R-Car Gen2 compatible device.
+ - reg: physical base address and size of the R-Car CAN register map.
+ - interrupts: interrupt specifier for the sole interrupt.
+ - clocks: phandles and clock specifiers for 3 CAN clock inputs.
+@@ -25,7 +27,7 @@ Example
+ SoC common .dtsi file:
+ 
+ 	can0: can@e6e80000 {
+-		compatible = "renesas,can-r8a7791";
++		compatible = "renesas,can-r8a7791", "renesas,can-gen2";
+ 		reg = <0 0xe6e80000 0 0x1000>;
+ 		interrupts = <0 186 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7791_CLK_RCAN0>,
+diff --git a/drivers/net/can/rcar_can.c b/drivers/net/can/rcar_can.c
+index bc46be39549d..c70a1f795933 100644
+--- a/drivers/net/can/rcar_can.c
++++ b/drivers/net/can/rcar_can.c
+@@ -904,6 +904,8 @@ static const struct of_device_id rcar_can_of_table[] __maybe_unused = {
+ 	{ .compatible = "renesas,can-r8a7779" },
+ 	{ .compatible = "renesas,can-r8a7790" },
+ 	{ .compatible = "renesas,can-r8a7791" },
++	{ .compatible = "renesas,can-gen1" },
++	{ .compatible = "renesas,can-gen2" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, rcar_can_of_table);
+-- 
+2.1.4
+
