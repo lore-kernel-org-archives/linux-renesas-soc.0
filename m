@@ -1,70 +1,160 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: mark.rutland@arm.com, laurent.pinchart+renesas@ideasonboard.com,
-	geert+renesas@glider.be, pawel.moll@arm.com,
-	ijc+devicetree@hellion.org.uk, joro@8bytes.org,
-	linux-renesas-soc@vger.kernel.org,
-	iommu@lists.linux-foundation.org, robh+dt@kernel.org,
-	galak@codeaurora.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 29 Feb 2016 23:33:09 +0900
-Message-Id: <20160229143309.28517.77269.sendpatchset@little-apple>
-Subject: [PATCH] iommu/ipmmu-vmsa: Add r8a7795 DT binding
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+Date: Mon, 22 Feb 2016 13:14:54 +0100
+Message-ID: <CAMuHMdWbpj=ZnFqh1uWZSCojvrM+NB=Bbzw=UebodTr+vAKy7g@mail.gmail.com>
+Subject: [RFD] Sharing GPIOs for input (buttons) and output (LEDs)
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+TL;DR: If a GPIO is connected to both a push button and an LED, can we
+(1) still use both, or can we (2) chose which one to use?
+This affects both the hardware description in DT and user policies.
 
-Update the IPMMU DT binding documentation to include the r8a7795 compat
-string as well as the "renesas,ipmmu-main" property that on r8a7795 will
-be used to describe the topology and the relationship between the various
-cache IPMMU instances and the main IPMMU.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+Introduction
+------------
 
- Written against linux-next tag next-20160229
+On the Renesas Salvator-X development board, 3 GPIO pins are connected to both
+push buttons and LEDs.
+  - If the GPIO is configured for output, it can control the LED,
+  - If the GPIO is configured for input, the push button status can be
+    read. Note that the LED is on if the push button is not pressed; it is
+    turned off while holding the button.
 
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |   15 ++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
 
---- 0001/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-+++ work/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt	2016-02-29 23:25:15.540513000 +0900
-@@ -7,23 +7,34 @@ connected to the IPMMU through a port ca
- 
- Required Properties:
- 
--  - compatible: Must contain SoC-specific and generic entries from below.
-+  - compatible: Must contain SoC-specific and generic entry below in case
-+    the device is compatible with the R-Car Gen2 VMSA-compatible IPMMU.
- 
-     - "renesas,ipmmu-r8a73a4" for the R8A73A4 (R-Mobile APE6) IPMMU.
-     - "renesas,ipmmu-r8a7790" for the R8A7790 (R-Car H2) IPMMU.
-     - "renesas,ipmmu-r8a7791" for the R8A7791 (R-Car M2-W) IPMMU.
-     - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
-     - "renesas,ipmmu-r8a7794" for the R8A7794 (R-Car E2) IPMMU.
-+    - "renesas,ipmmu-r8a7795" for the R8A7795 (R-Car H3) IPMMU.
-     - "renesas,ipmmu-vmsa" for generic R-Car Gen2 VMSA-compatible IPMMU.
- 
-   - reg: Base address and size of the IPMMU registers.
-   - interrupts: Specifiers for the MMU fault interrupts. For instances that
-     support secure mode two interrupts must be specified, for non-secure and
-     secure mode, in that order. For instances that don't support secure mode a
--    single interrupt must be specified.
-+    single interrupt must be specified. Not required for cache IPMMUs.
- 
-   - #iommu-cells: Must be 1.
- 
-+Optional properties:
-+
-+  - renesas,ipmmu-main: reference to the main IPMMU instance in two cells.
-+    The first cell is a phandle to the main IPMMU and the second cell is
-+    the interrupt bit number associated with the particular cache IPMMU device.
-+    The interrupt bit number needs to match the main IPMMU IMSSTR register.
-+    Only used by cache IPMMU instances.
-+
-+
- Each bus master connected to an IPMMU must reference the IPMMU in its device
- node with the following property:
- 
+DT Hardware Description
+-----------------------
+
+There exist device tree bindings for push buttons connected to GPIOs,
+and the following works:
+
+        keyboard {
+                compatible = "gpio-keys";
+
+                key-a {
+                        gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
+                        label = "SW20";
+                        wakeup-source;
+                        linux,code = <KEY_A>;
+                };
+                key-b {
+                        gpios = <&gpio6 12 GPIO_ACTIVE_LOW>;
+                        label = "SW21";
+                        wakeup-source;
+                        linux,code = <KEY_B>;
+                };
+                key-c {
+                        gpios = <&gpio6 13 GPIO_ACTIVE_LOW>;
+                        label = "SW22";
+                        wakeup-source;
+                        linux,code = <KEY_C>;
+                };
+        };
+
+
+There exist device tree bindings for LEDs connected to GPIOs, and the
+following also works:
+
+        leds {
+                compatible = "gpio-leds";
+
+                led4 {
+                        gpios = <&gpio6 11 GPIO_ACTIVE_HIGH>;
+                        label = "LED4";
+                };
+                led5 {
+                        gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
+                        label = "LED5";
+                };
+                led6 {
+                        gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
+                        label = "LED6";
+                };
+        };
+
+
+However, having both in the DTS doesn't mean you'll have working buttons
+and LEDs. The first driver initialized will bind to the GPIOs. The
+second driver will fail to initialize as the GPIOs are already busy.
+
+One option to solve this is to introduce new bindings for GPIOs shared
+by push buttons and LEDs. But that isn't without its own set of
+problems. E.g. in my case the buttons use GPIO_ACTIVE_LOW, while the
+LEDs use GPIO_ACTIVE_HIGH (I'm sure other combinations are possible),
+which is supposed to be encoded in the GPIO descriptor.
+
+Hence I'm inclined to keep the existing bindings, as they do describe
+the hardware.
+
+
+Device Driver
+-------------
+
+As a proof-of-concept, I hacked up a new driver that binds to both
+"gpio-keys" and "gpio-leds", by combining the existing gpio-keys-polled
+and gpio-leds drivers.
+
+If a GPIO is found busy during initialization, and if it's already in
+use by the other half of the driver, the driver switches to a special
+"polled-key-and-LED" mode. I.e. during polling, it does:
+  - Save the GPIO output state,
+  - Switch the GPIO to input mode,
+  - Wait 5 ms (else it will read the old output state, depending on
+    e.g. hardware capacitance),
+  - Read the GPIO input state,
+  - Switch the GPIO to output mode,
+  - Restore the GPIO output state.
+
+And it works, the LEDs can be controlled, and the push button states can
+be read!
+
+However, due to the 5 ms delay, there's a visible flickering of LEDs
+that are supposed to be turned off (remember, when the GPIO is
+configured for input and the button is not pressed, the LED is lit).
+
+If we go this route, adding support for non-polled GPIOs (if the GPIO is
+not shared with an LED) and wake-up should be doable.
+
+
+User Policies
+-------------
+
+Hence we can have support for GPIOs connected to both push buttons and
+LEDs. But perhaps the user doesn't want to use both at the same time,
+or not for all GPIOs. On a final product this is probably not the case,
+but it is on a development board like Salvator-X.
+
+If it wasn't for the visible flickering when both are enabled, this
+wouldn't matter. But the flickering may be considered annoying, so it
+would be good if the user could disable either the push button or LED by
+software.
+
+One option is to disable the keyboard node using a DT overlay. But
+that's cheating, as it modifies the hardware description, while this is
+clearly a user policy.
+
+Another use case would be to use the LEDs, and not the buttons, except
+for system wake-up. Then there wouldn't be a need to poll during normal
+system operation.
+
+
+Thanks for your comments!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
