@@ -1,39 +1,59 @@
 Return-Path: <linux-i2c-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1456103719-10818-1-git-send-email-horms+renesas@verge.net.au>
-References: <1456103719-10818-1-git-send-email-horms+renesas@verge.net.au>
-Date: Mon, 22 Feb 2016 14:44:34 +0100
-Message-ID: <CAMuHMdV7XKdCYoJMYzv8zdUgiQrzWFtzVE2NuOY6Sj=6dnD-dg@mail.gmail.com>
-Subject: Re: [PATCH] i2c: riic, sh_mobile, rcar: Use ARCH_RENESAS
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Linux I2C <linux-i2c@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] i2c: riic, sh_mobile, rcar: Use ARCH_RENESAS
+Date: Mon, 22 Feb 2016 10:15:19 +0900
+Message-Id: <1456103719-10818-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Feb 22, 2016 at 2:15 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
->
-> This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-> ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
-> appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This is part of an ongoing process to migrate from ARCH_SHMOBILE to
+ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
+appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/i2c/busses/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-                        Geert
+Based on the for-next branch of Wolfram's tree on kernel.org.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index a2e456a0f3e2..faa8e6821fea 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -789,7 +789,7 @@ config I2C_QUP
+ 
+ config I2C_RIIC
+ 	tristate "Renesas RIIC adapter"
+-	depends on ARCH_SHMOBILE || COMPILE_TEST
++	depends on ARCH_RENESAS || COMPILE_TEST
+ 	help
+ 	  If you say yes to this option, support will be included for the
+ 	  Renesas RIIC I2C interface.
+@@ -833,7 +833,7 @@ config I2C_SH7760
+ config I2C_SH_MOBILE
+ 	tristate "SuperH Mobile I2C Controller"
+ 	depends on HAS_DMA
+-	depends on SUPERH || ARCH_SHMOBILE || COMPILE_TEST
++	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
+ 	help
+ 	  If you say yes to this option, support will be included for the
+ 	  built-in I2C interface on the Renesas SH-Mobile processor.
+@@ -985,7 +985,7 @@ config I2C_XLP9XX
+ 
+ config I2C_RCAR
+ 	tristate "Renesas R-Car I2C Controller"
+-	depends on ARCH_SHMOBILE || COMPILE_TEST
++	depends on ARCH_RENESAS || COMPILE_TEST
+ 	select I2C_SLAVE
+ 	help
+ 	  If you say yes to this option, support will be included for the
+-- 
+2.1.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
