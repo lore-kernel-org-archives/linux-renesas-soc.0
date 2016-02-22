@@ -1,35 +1,48 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chris.paterson2@renesas.com,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH 3/3] clk: shmobile: r8a7795: Add CAN FD peripheral clock
-Date: Thu, 25 Feb 2016 17:05:26 +0000
-Message-Id: <1456419926-8732-4-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC v2 6/9] arm64: dts: r8a7795: add HS-USB device node
+Date: Mon, 22 Feb 2016 18:58:05 +0900
+Message-ID: <1456135088-7976-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1456135088-7976-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1456135088-7976-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/clk/shmobile/r8a7795-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/clk/shmobile/r8a7795-cpg-mssr.c b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-index 9961405..7c622af0 100644
---- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
-@@ -177,6 +177,7 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
- 	DEF_MOD("gpio2",		 910,	R8A7795_CLK_CP),
- 	DEF_MOD("gpio1",		 911,	R8A7795_CLK_CP),
- 	DEF_MOD("gpio0",		 912,	R8A7795_CLK_CP),
-+	DEF_MOD("can-fd",		 914,	R8A7795_CLK_S3D2),
- 	DEF_MOD("can-if1",		 915,	R8A7795_CLK_S3D4),
- 	DEF_MOD("can-if0",		 916,	R8A7795_CLK_S3D4),
- 	DEF_MOD("i2c6",			 918,	R8A7795_CLK_S3D2),
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 75142f3..76ad097 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1500,5 +1500,18 @@
+ 			power-domains = <&cpg>;
+ 			status = "disabled";
+ 		};
++
++		hsusb: usb@e6590000 {
++			compatible = "renesas,usbhs-r8a7795",
++				     "renesas,rcar-gen3-usbhs";
++			reg = <0 0xe6590000 0 0x100>;
++			interrupts = <0 107 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 704>;
++			renesas,buswait = <11>;
++			phys = <&usb2_phy0>;
++			phy-names = "usb";
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
+ 	};
+ };
 -- 
 1.9.1
+
