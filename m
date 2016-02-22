@@ -1,60 +1,61 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: <linux-renesas-soc@vger.kernel.org>, <horms@verge.net.au>,
-	<geert+renesas@glider.be>, <kuninori.morimoto.gx@renesas.com>
-CC: <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH v2] arm64: dts: r8a7795: Add GIC-400 virtual interfaces
-Date: Tue, 16 Feb 2016 10:43:22 +0100
-Message-ID: <1455615802-9083-1-git-send-email-dirk.behme@de.bosch.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC v2 0/9] Add support for USB2.0 host/peripheral on R-Car H3
+Date: Mon, 22 Feb 2016 18:57:59 +0900
+Message-ID: <1456135088-7976-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Besides the distributor and the CPU interface the GIC-400 additionally
-supports the virtual interface control blocks and the virtual CPU interfaces.
+This patch set is based on the renesas-drivers.git /
+renesas-drivers-2016-02-16-v4.5-rc4 tag
+(commit id = a633abe6e6393c60417bd8cb0cf82f3297740198),
+and the following patches:
 
-Add the physical base addresses and size for these.
+[ renesas_usbhs driver ]
+http://git.kernel.org/cgit/linux/kernel/git/balbi/usb.git/commit/?h=testing/next&id=cff0fef33d77bd7e98463029e5d0a4191d9bbb95
 
-See
+[ generic phy driver for R-Car H3 ]
+http://thread.gmane.org/gmane.linux.kernel/2120685
 
-http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0471b/index.html
--> 3.2. GIC-400 register map
+This patch set contains patches that are related to generic phy driver.
+As I wrote a comment in patch 7, to handle VBUS on/off for USB2.0 host
+channel 0, I use a regulator driver instead of extcon/max3355 driver.
+This is a reason that I marked this patch set is a RFC because I'm not
+sure that this way is acceptable or not.
 
-and Linux kernel's
+Also patch 5 should resolve checkpatch.pl warnings, and patch 6 should
+have dmas property to use USB-DMAC later.
 
-Documentation/devicetree/bindings/interrupt-controller/arm,gic.txt
+Changes from v1:
+ - Remove PFC for usb2.0 host patch because it contains the renesas-drivers.
+ - Change the patch order of the phy driver. (clean up code is in first.)
+ - Change the property of "phy-supply" to "vbus-supply".
 
-for more details.
+Yoshihiro Shimoda (9):
+  phy: rcar-gen3-usb2: remove unnecesary struct rcar_gen3_data
+  phy: rcar-gen3-usb2: Add vbus-supply to handle VBUS on/off
+  phy: rcar-gen3-usb2: add extcon support
+  arm64: dts: r8a7795: add usb2_phy device nodes
+  arm64: dts: r8a7795: add USB2.0 Host (EHCI/OHCI) device nodes
+  arm64: dts: r8a7795: add HS-USB device node
+  arm64: dts: salvator-x: enable usb2_phy
+  arm64: dts: salvator-x: enable USB 2.0 Host channels
+  arm64: dts: salvator-x: enable HS-USB
 
-For the at GICH Virtual interface control blocks at 0xf1040000 cover the
-whole 128kB (0x20000) range. This is done based on the advice from Marc
-Zyngier http://www.spinics.net/lists/arm-kernel/msg483139.html
+ .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |   2 +
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  73 +++++++++++++-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 107 +++++++++++++++++++++
+ drivers/phy/Kconfig                                |   1 +
+ drivers/phy/phy-rcar-gen3-usb2.c                   |  87 +++++++++++++----
+ 5 files changed, 250 insertions(+), 20 deletions(-)
 
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
----
-Changes in v2: Extend the GICH size to 128kB.
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 8f1ed23..65f9cc8 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -130,7 +130,9 @@
- 			#address-cells = <0>;
- 			interrupt-controller;
- 			reg = <0x0 0xf1010000 0 0x1000>,
--			      <0x0 0xf1020000 0 0x2000>;
-+			      <0x0 0xf1020000 0 0x2000>,
-+			      <0x0 0xf1040000 0 0x20000>,
-+			      <0x0 0xf1060000 0 0x2000>;
- 			interrupts = <GIC_PPI 9
- 					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
- 		};
 -- 
-2.5.1
+1.9.1
 
