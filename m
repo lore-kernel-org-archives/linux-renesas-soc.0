@@ -1,87 +1,26 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+Return-Path: <horms@vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 50/68] ARM: dts: r8a7779: Rename the serial port clock to fck
-Date: Fri, 12 Feb 2016 20:05:40 +0100
-Message-Id: <b406f38d4b4d06f617d4e2a826abadda7327b652.1455303422.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
-References: <cover.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 0/2] ARM, arm64: dts: use fallback etheravb compatibility string
+Date: Tue, 23 Feb 2016 10:17:44 +0900
+Message-Id: <1456190266-3781-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Use recently added fallback etheravb compatibility string in
+device trees where it is not already used.
 
-The clock is really the device functional clock, not the interface
-clock. Rename it.
+Based on renesas-devel-20160222-v4.5-rc5
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7779.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Simon Horman (2):
+  ARM: dts: r8a7790: use fallback etheravb compatibility string
+  arm64: dts: r8a7795: use fallback etheravb compatibility string
 
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index 1671839f55a6..8fddfae13865 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -216,7 +216,7 @@
- 		reg = <0xffe40000 0x100>;
- 		interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF0>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -227,7 +227,7 @@
- 		reg = <0xffe41000 0x100>;
- 		interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF1>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -238,7 +238,7 @@
- 		reg = <0xffe42000 0x100>;
- 		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF2>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -249,7 +249,7 @@
- 		reg = <0xffe43000 0x100>;
- 		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF3>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -260,7 +260,7 @@
- 		reg = <0xffe44000 0x100>;
- 		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF4>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -271,7 +271,7 @@
- 		reg = <0xffe45000 0x100>;
- 		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF5>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
+ arch/arm/boot/dts/r8a7790.dtsi           | 2 +-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
 -- 
-2.7.0.rc3.207.g0ac5344
+2.1.4
