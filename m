@@ -1,114 +1,53 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 23 Feb 2016 09:08:22 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>,
+	Wolfgang Grandegger <wg@grandegger.com>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-can@vger.kernel.org,
+	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH can-next 1/2] CAN: rcar: add gen[12] fallback
+ compatibility strings
+Message-ID: <20160223000822.GF1853@verge.net.au>
+References: <1456107350-12100-1-git-send-email-horms+renesas@verge.net.au>
+ <1456107350-12100-2-git-send-email-horms+renesas@verge.net.au>
+ <20160222033720.GA27711@rob-hp-laptop>
+ <56CAD795.1090509@pengutronix.de>
 MIME-Version: 1.0
-Date: Mon, 15 Feb 2016 09:16:14 +0100
-Message-ID: <CAMuHMdU-q++XEgthKG=XOgnaq7TY899EsgMFHuWu4Skr5woLZg@mail.gmail.com>
-Subject: ARM GIC DT binding reg block mismatch? (Re: [PATCH v11 1/8] arm64:
- renesas: r8a7795: Add Renesas R8A7795 SoC support)
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Marc Zyngier <Marc.Zyngier@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Dirk Behme <dirk.behme@de.bosch.com>,
-	linux-renesas-soc@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <56CAD795.1090509@pengutronix.de>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Cc Marz Zyngier
-Cc Dirk Behme
-Cc devicetree
-Cc linux-renesas-soc
-Drop linux-sh
+On Mon, Feb 22, 2016 at 10:40:37AM +0100, Marc Kleine-Budde wrote:
+> On 02/22/2016 04:37 AM, Rob Herring wrote:
+> > On Mon, Feb 22, 2016 at 11:15:49AM +0900, Simon Horman wrote:
+> >> Add fallback compatibility string for R-Car Gen 1 and Gen2 families.
+> >> This is in keeping with the fallback scheme being adopted wherever
+> >> appropriate for drivers for Renesas SoCs.
+> >>
+> >> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> >> ---
+> >>  Documentation/devicetree/bindings/net/can/rcar_can.txt | 4 +++-
+> >>  drivers/net/can/rcar_can.c                             | 2 ++
+> >>  2 files changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > Acked-by: Rob Herring <robh@kernel.org>
+> 
+> I'm not following the latest DT discussions, is there a (new) decision
+> to add such "generic" compatibles? AFAIK you add the oldest device
+> that's compatible with your driver to your SoC dtsi at rightmost
+> compatible. You can add one that identifies your SoC's IP core in front
+> of it. So there's no need to modify the driver until an IP core needs
+> different handling.
+> 
+> In your case you'd identify the oldest SoC that implements the Gen1 IP
+> core and use this instead of "renesas,can-gen1. Same for Gen2 IP core.
 
-On Wed, Dec 9, 2015 at 9:23 AM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Tue, Nov 3, 2015 at 3:28 PM, Mark Rutland <mark.rutland@arm.com> wrote:
->> On Wed, Oct 21, 2015 at 03:34:39PM +0200, Geert Uytterhoeven wrote:
->>> On Thu, Oct 15, 2015 at 12:58 PM, Mark Rutland <mark.rutland@arm.com> wrote:
->>> >> > +           gic: interrupt-controller@0xf1010000 {
->>> >> +                     compatible = "arm,gic-400";
->>> >> +                     #interrupt-cells = <3>;
->>> >> +                     #address-cells = <0>;
->>> >> +                     interrupt-controller;
->>> >> +                     reg = <0x0 0xf1010000 0 0x1000>,
->>> >> +                           <0x0 0xf1020000 0 0x2000>;
->>> >> +                     interrupts = <GIC_PPI 9
->>> >> +                                     (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
->>> >> +             };
->>> >
->>> > No GICH and GICV?
->>>
->>> These seem to be defined in the "arm,gic-v3" DT bindings only, while this is
->>> an "arm,gic-400" (GICD_IIDR 0x0200043b)?
->>
->> See the "GIC virtualization extensions (VGIC)" section in
->> Documentation/devicetree/bindings/arm/gic.txt
->
-> DDI0471B_gic400_r0p1_trm.pdf says:
->
->     Address range GIC-400 functional block
->     A. 0x0000 - 0x0FFF Reserved
->     B. 0x1000 - 0x1FFF Distributor
->     C. 0x2000 - 0x3FFF CPU interfaces
->     D. 0x4000 - 0x4FFF Virtual interface control block, for the processor that
->                        is performing the access
->     E. 0x5000 - 0x5FFF Virtual interface control block, for the processor
->                        selected by address bits [11:9]
->     F. 0x6000 - 0x7FFF Virtual CPU interfaces
->
-> The DT binding document says:
->   1. The  first region is the GIC distributor register base and size.
->   2. The 2nd region is the GIC cpu interface register base and size.
->   3. The first additional region is the GIC virtual interface control register
->      base and size.
->   4. The 2nd additional region is the GIC virtual cpu interface register base
->      and size.
->
-> Matching with the example:
->
->         interrupt-controller@2c001000 {
->                 compatible = "arm,cortex-a15-gic";
->                 #interrupt-cells = <3>;
->                 interrupt-controller;
->                 reg = <0x2c001000 0x1000>,
->                       <0x2c002000 0x1000>,
->                       <0x2c004000 0x2000>,
->                       <0x2c006000 0x2000>;
->                 interrupts = <1 9 0xf04>;
->         };
->
-> This means:
->   - reg entry 1. covers address range B,
->   - reg entry 2. covers address range C,
->   - reg entry 3. covers address ranges D _and_ E,
->   - reg entry 4. covers address range F.
->
-> On R-Car Gen3, the base addresses are:
->
->     Distributor             : 0xF101_0000
->     CPU interfaces          : 0xF102_0000
->     Virtual interfaces      : 0xF104_0000
->     Virtual interfaces      : 0xF105_0000
->     Virtual CPU interfaces  : 0xF106_0000
->
-> Note the additional multiplication factor of 16 in the offsets relative to
-> the base address 0xf1000000 (e.g. 0x50000 instead of 0x5000).
->
-> As address ranges D and E are merged in a single reg entry, how is the GIC
-> driver supposed to know about this multiplication factor?
->
-> Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+In the case of Renesas R-Car hardware we know that there are generations of
+SoCs, e.g. Gen 1 and Gen 2, but beyond that its not clear what the
+relationship between IP blocks might be. For example, I believe that
+r8a7779 is older than r8a7778 but that doesn't imply that the
+latter is a descendant of the former or vice versa.
