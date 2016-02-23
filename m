@@ -1,61 +1,63 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/5] ARM: dts: r8a7794: add MSTP5 clocks
-Date: Tue, 09 Feb 2016 01:58:20 +0300
-Message-ID: <5774819.Zu4cvUL4gZ@wasted.cogentembedded.com>
-In-Reply-To: <4253511.vvGjIdOnb6@wasted.cogentembedded.com>
-References: <4253511.vvGjIdOnb6@wasted.cogentembedded.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/5] arm64: dts: r8a7795: add usb2_phy device nodes
+Date: Tue, 23 Feb 2016 21:28:32 +0900
+Message-ID: <1456230516-5112-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1456230516-5112-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1456230516-5112-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add some MSTP5 clocks to R8A7794 device tree.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm/boot/dts/r8a7794.dtsi            |    9 +++++++++
- include/dt-bindings/clock/r8a7794-clock.h |    1 +
- 2 files changed, 10 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1105,6 +1105,15 @@
- 			clock-indices = <R8A7794_CLK_IRQC>;
- 			clock-output-names = "irqc";
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index c2bffd1..be64bb2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1023,5 +1023,33 @@
+ 			cap-mmc-highspeed;
+ 			status = "disabled";
  		};
-+		mstp5_clks: mstp5_clks@e6150144 {
-+			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
-+			clocks = <&hp_clk>, <&extal_clk>, <&p_clk>;
-+			#clock-cells = <1>;
-+			clock-indices = <R8A7794_CLK_AUDIO_DMAC0
-+					 R8A7794_CLK_THERMAL R8A7794_CLK_PWM>;
-+			clock-output-names = "audmac0", "thermal", "pwm";
++
++		usb2_phy0: usb-phy@ee080200 {
++			compatible = "renesas,usb2-phy-r8a7795";
++			reg = <0 0xee080200 0 0x700>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 703>;
++			power-domains = <&cpg>;
++			#phy-cells = <0>;
++			status = "disabled";
 +		};
- 		mstp7_clks: mstp7_clks@e615014c {
- 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
-Index: renesas/include/dt-bindings/clock/r8a7794-clock.h
-===================================================================
---- renesas.orig/include/dt-bindings/clock/r8a7794-clock.h
-+++ renesas/include/dt-bindings/clock/r8a7794-clock.h
-@@ -64,6 +64,7 @@
- #define R8A7794_CLK_IRQC		7
- 
- /* MSTP5 */
-+#define R8A7794_CLK_AUDIO_DMAC0		2
- #define R8A7794_CLK_THERMAL		22
- #define R8A7794_CLK_PWM			23
- 
++
++		usb2_phy1: usb-phy@ee0a0200 {
++			compatible = "renesas,usb2-phy-r8a7795";
++			reg = <0 0xee0a0200 0 0x700>;
++			clocks = <&cpg CPG_MOD 702>;
++			power-domains = <&cpg>;
++			#phy-cells = <0>;
++			status = "disabled";
++		};
++
++		usb2_phy2: usb-phy@ee0c0200 {
++			compatible = "renesas,usb2-phy-r8a7795";
++			reg = <0 0xee0c0200 0 0x700>;
++			clocks = <&cpg CPG_MOD 701>;
++			power-domains = <&cpg>;
++			#phy-cells = <0>;
++			status = "disabled";
++		};
+ 	};
+ };
+-- 
+1.9.1
 
