@@ -1,32 +1,33 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-	linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chris.paterson2@renesas.com,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v2 0/2] Add CAN & CAN FD pinctrl support for r8a7795 SoC
-Date: Fri, 26 Feb 2016 11:10:03 +0000
-Message-Id: <1456485005-37035-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 23 Feb 2016 15:39:24 -0600
+From: Rob Herring <robh@kernel.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: horms@verge.net.au, magnus.damm@gmail.com, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH/RFC v2 2/9] phy: rcar-gen3-usb2: Add vbus-supply to
+ handle VBUS on/off
+Message-ID: <20160223213924.GA20264@rob-hp-laptop>
+References: <1456135088-7976-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1456135088-7976-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1456135088-7976-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+On Mon, Feb 22, 2016 at 06:58:01PM +0900, Yoshihiro Shimoda wrote:
+> To handle the VBUS on/off by a regulator driver, this patch adds
+> regulator APIs calling in the driver and description about vbus-supply
+> in the rcar-gen3-phy-usb2.txt.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  2 ++
 
-   Thanks for the comments (https://lkml.org/lkml/2016/2/25/531).
-   I have incorporated those and created this v2 patch set.
+Acked-by: Rob Herring <robh@kernel.org>
 
-   Changes since v1:
-   * Inserted pin block in alphabetical order
-   * Corrected controller name in comment
-
-Ramesh Shanmugasundaram (2):
-  pinctrl: sh-pfc: r8a7795: Add CAN support
-  pinctrl: sh-pfc: r8a7795: Add CAN FD support
-
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 89 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
-
--- 
-1.9.1
+>  drivers/phy/phy-rcar-gen3-usb2.c                   | 28 ++++++++++++++++++++++
+>  2 files changed, 30 insertions(+)
