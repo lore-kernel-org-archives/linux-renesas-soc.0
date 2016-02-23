@@ -1,45 +1,70 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Fri, 5 Feb 2016 10:57:59 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Dirk Behme <dirk.behme@gmail.com>
-Cc: linux-sh@vger.kernel.org, geert+renesas@glider.be,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: r8a7795: Add L2 cache-controller nodes
-Message-ID: <20160205095758.GE16556@verge.net.au>
-References: <1452953856-5146-1-git-send-email-dirk.behme@gmail.com>
- <56B2370D.2010102@gmail.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 3/5] arm64: dts: salvator-x: enable usb2_phy of channel 1 and 2
+Date: Tue, 23 Feb 2016 21:28:34 +0900
+Message-ID: <1456230516-5112-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1456230516-5112-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1456230516-5112-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <56B2370D.2010102@gmail.com>
+Content-Type: text/plain
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-[CC new linux-renesas-soc ML]
+This board has a MAX3355 chip. However, we cannot use the extcon/max3355
+driver because the ID pin doesn't connect to a gpio pin (in other words,
+it connects to the SoC specific pin).
+And, the phy-rcar-gen3-usb2 driver cannot handle such a chip for now.
+So, this patch enables usb2_phy of channel 1 and 2.
 
-Hi Dirk,
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 24 ++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-On Wed, Feb 03, 2016 at 06:21:17PM +0100, Dirk Behme wrote:
-> On 16.01.2016 15:17, Dirk Behme wrote:
-> >From: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> >Add device nodes for the L2 caches, and link the CPU node to its L2
-> >cache node.
-> >
-> >The L2 cache for the Cortex-A57 CPU cores is 2 MiB large (organized as
-> >128 KiB x 16 ways).
-> >
-> >Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 1af6757..e415535 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -188,6 +188,16 @@
+ 				 "audio_clkout_a", "audio_clkout3_a";
+ 		renesas,function = "audio_clk";
+ 	};
++
++	usb1_pins: usb1 {
++		renesas,groups = "usb1";
++		renesas,function = "usb1";
++	};
++
++	usb2_pins: usb2 {
++		renesas,groups = "usb2";
++		renesas,function = "usb2";
++	};
+ };
+ 
+ &scif1 {
+@@ -348,3 +358,17 @@
+ &xhci0 {
+ 	status = "okay";
+ };
++
++&usb2_phy1 {
++	pinctrl-0 = <&usb1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&usb2_phy2 {
++	pinctrl-0 = <&usb2_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
+-- 
+1.9.1
 
-[snip]
-
-> Any further comments to this? If not, could this be applied?
-
-Sorry for the delay.
-
-This looks good; I have queued it up.
-
-It should appear in the next (and devel) branches of my renesas tree soon.
-And in linux-next whenever it includes my updated next branch.
