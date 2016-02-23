@@ -1,128 +1,97 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	geert+renesas@glider.be, linus.walleij@linaro.org,
-	dan.j.williams@intel.com, arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v4 5/8] dmaengine: rcar-dmac: group slave configuration
-Date: Tue, 16 Feb 2016 21:39:41 +0100
-Message-Id: <1455655184-14478-6-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1455655184-14478-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1455655184-14478-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 23 Feb 2016 09:02:00 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfgang Grandegger <wg@grandegger.com>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-can@vger.kernel.org,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH can-next 2/2] CAN: rcar: add device tree support for
+ r8a779[234]
+Message-ID: <20160223000200.GD1853@verge.net.au>
+References: <1456107350-12100-1-git-send-email-horms+renesas@verge.net.au>
+ <1456107350-12100-3-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdU5zMG=Sha5MfotbKmdBDgzJucve483oZbmseLvLR-2sA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU5zMG=Sha5MfotbKmdBDgzJucve483oZbmseLvLR-2sA@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Group slave address and transfer size in own structs for source and
-destination. This is in preparation for hooking up the dma-mapping API
-to the slave addresses.
+On Mon, Feb 22, 2016 at 02:48:39PM +0100, Geert Uytterhoeven wrote:
+> On Mon, Feb 22, 2016 at 3:15 AM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Simply document new compatibility string.
+> > As a previous patch adds a generic R-Car Gen2 compatibility string
+> > there appears to be no need for a driver updates.
+> > By documenting this compat sting it may be used in DTSs shipped, for
+> 
+> string
+> 
+> > example as part of ROMs. It must be used in conjunction with the Gen2
+> > fallback compat string. At this time there are no known differences between
+> > the r8a779[234] IP blocks and that implemented by the driver for the Gen2
+> > fallback compat string. Thus there is no need to update the driver as the
+>                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> > use of the Gen2 fallback compat string will activate the correct code in
+>   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 
+> > the current driver while leaving the option for r8a779[234]-specific driver
+> > code to be activated in an updated driver should the need arise.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > ---
+> >  Documentation/devicetree/bindings/net/can/rcar_can.txt | 3 +++
+> >  drivers/net/can/rcar_can.c                             | 3 +++
+> >  2 files changed, 6 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> > index 036786e1f70d..c6fb74d7c809 100644
+> > --- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> > +++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+> > @@ -6,6 +6,9 @@ Required properties:
+> >               "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
+> >               "renesas,can-r8a7790" if CAN controller is a part of R8A7790 SoC.
+> >               "renesas,can-r8a7791" if CAN controller is a part of R8A7791 SoC.
+> > +             "renesas,can-r8a7792" if CAN controller is a part of R8A7792 SoC.
+> > +             "renesas,can-r8a7793" if CAN controller is a part of R8A7793 SoC.
+> > +             "renesas,can-r8a7794" if CAN controller is a part of R8A7794 SoC.
+> >               "renesas,can-gen1" for a generic R-Car Gen1 compatible device.
+> >               "renesas,can-gen2" for a generic R-Car Gen2 compatible device.
+> >  - reg: physical base address and size of the R-Car CAN register map.
+> > diff --git a/drivers/net/can/rcar_can.c b/drivers/net/can/rcar_can.c
+> > index c70a1f795933..73761a4dd1bf 100644
+> > --- a/drivers/net/can/rcar_can.c
+> > +++ b/drivers/net/can/rcar_can.c
+> > @@ -904,6 +904,9 @@ static const struct of_device_id rcar_can_of_table[] __maybe_unused = {
+> >         { .compatible = "renesas,can-r8a7779" },
+> >         { .compatible = "renesas,can-r8a7790" },
+> >         { .compatible = "renesas,can-r8a7791" },
+> > +       { .compatible = "renesas,can-r8a7792" },
+> > +       { .compatible = "renesas,can-r8a7793" },
+> > +       { .compatible = "renesas,can-r8a7794" },
+> 
+> So why do you update the driver?
+> 
+> There's no upstream DTS using "renesas,can-r8a779[234]", so
+> "renesas,can-gen2" should be fine.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/dma/sh/rcar-dmac.c | 37 +++++++++++++++++++++----------------
- 1 file changed, 21 insertions(+), 16 deletions(-)
+True. I'm not sure how that slipped in.
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 7820d07..743873c 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -118,14 +118,21 @@ struct rcar_dmac_desc_page {
- 	sizeof(struct rcar_dmac_xfer_chunk))
- 
- /*
-+ * @slave_addr: slave memory address
-+ * @xfer_size: size (in bytes) of hardware transfers
-+ */
-+struct rcar_dmac_chan_slave {
-+	dma_addr_t slave_addr;
-+	unsigned int xfer_size;
-+};
-+
-+/*
-  * struct rcar_dmac_chan - R-Car Gen2 DMA Controller Channel
-  * @chan: base DMA channel object
-  * @iomem: channel I/O memory base
-  * @index: index of this channel in the controller
-- * @src_xfer_size: size (in bytes) of hardware transfers on the source side
-- * @dst_xfer_size: size (in bytes) of hardware transfers on the destination side
-- * @src_slave_addr: slave source memory address
-- * @dst_slave_addr: slave destination memory address
-+ * @src: slave memory address and size on the source side
-+ * @dst: slave memory address and size on the destination side
-  * @mid_rid: hardware MID/RID for the DMA client using this channel
-  * @lock: protects the channel CHCR register and the desc members
-  * @desc.free: list of free descriptors
-@@ -142,10 +149,8 @@ struct rcar_dmac_chan {
- 	void __iomem *iomem;
- 	unsigned int index;
- 
--	unsigned int src_xfer_size;
--	unsigned int dst_xfer_size;
--	dma_addr_t src_slave_addr;
--	dma_addr_t dst_slave_addr;
-+	struct rcar_dmac_chan_slave src;
-+	struct rcar_dmac_chan_slave dst;
- 	int mid_rid;
- 
- 	spinlock_t lock;
-@@ -793,13 +798,13 @@ static void rcar_dmac_chan_configure_desc(struct rcar_dmac_chan *chan,
- 	case DMA_DEV_TO_MEM:
- 		chcr = RCAR_DMACHCR_DM_INC | RCAR_DMACHCR_SM_FIXED
- 		     | RCAR_DMACHCR_RS_DMARS;
--		xfer_size = chan->src_xfer_size;
-+		xfer_size = chan->src.xfer_size;
- 		break;
- 
- 	case DMA_MEM_TO_DEV:
- 		chcr = RCAR_DMACHCR_DM_FIXED | RCAR_DMACHCR_SM_INC
- 		     | RCAR_DMACHCR_RS_DMARS;
--		xfer_size = chan->dst_xfer_size;
-+		xfer_size = chan->dst.xfer_size;
- 		break;
- 
- 	case DMA_MEM_TO_MEM:
-@@ -1038,7 +1043,7 @@ rcar_dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
- 	}
- 
- 	dev_addr = dir == DMA_DEV_TO_MEM
--		 ? rchan->src_slave_addr : rchan->dst_slave_addr;
-+		 ? rchan->src.slave_addr : rchan->dst.slave_addr;
- 	return rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, dev_addr,
- 				      dir, flags, false);
- }
-@@ -1093,7 +1098,7 @@ rcar_dmac_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t buf_addr,
- 	}
- 
- 	dev_addr = dir == DMA_DEV_TO_MEM
--		 ? rchan->src_slave_addr : rchan->dst_slave_addr;
-+		 ? rchan->src.slave_addr : rchan->dst.slave_addr;
- 	desc = rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, dev_addr,
- 				      dir, flags, true);
- 
-@@ -1110,10 +1115,10 @@ static int rcar_dmac_device_config(struct dma_chan *chan,
- 	 * We could lock this, but you shouldn't be configuring the
- 	 * channel, while using it...
- 	 */
--	rchan->src_slave_addr = cfg->src_addr;
--	rchan->dst_slave_addr = cfg->dst_addr;
--	rchan->src_xfer_size = cfg->src_addr_width;
--	rchan->dst_xfer_size = cfg->dst_addr_width;
-+	rchan->src.slave_addr = cfg->src_addr;
-+	rchan->dst.slave_addr = cfg->dst_addr;
-+	rchan->src.xfer_size = cfg->src_addr_width;
-+	rchan->dst.xfer_size = cfg->dst_addr_width;
- 
- 	return 0;
- }
--- 
-2.7.1
+> >         { .compatible = "renesas,can-gen1" },
+> >         { .compatible = "renesas,can-gen2" },
+> >         { }
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
