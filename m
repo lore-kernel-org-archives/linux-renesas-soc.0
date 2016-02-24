@@ -1,137 +1,76 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v2 05/11] soc: renesas: rcar: Handle clock domain devices in SYSC PM domains
-Date: Mon, 15 Feb 2016 22:16:54 +0100
-Message-Id: <1455571020-18968-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
-References: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 24 Feb 2016 14:10:38 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Rob Herring <robh@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v3 02/06] devicetree: bindings: R-Car Gen2 CMT0 and CMT1
+ bindings
+Message-ID: <20160224051038.GB5435@verge.net.au>
+References: <20160216071722.25461.61862.sendpatchset@little-apple>
+ <20160216071741.25461.54191.sendpatchset@little-apple>
+ <CAMuHMdVEPeEd3cTWWd-a_6k7MgtcGiiHdyMLZ1yXoWQpsH_URg@mail.gmail.com>
+ <CANqRtoQg--gnv+ZkopO3PR3Pt7i5quiKvaPDyeJVOnahJGgdmg@mail.gmail.com>
+ <20160217062805.GH11534@verge.net.au>
+ <CANqRtoRORF0MBs9GZPeppT0p28=s98Kw_foP7W8eyUCeOyuBJQ@mail.gmail.com>
+ <20160217120829.GA346@verge.net.au>
+ <CANqRtoTC=UshKih94JrsNMkxwj+1dqzkRaQHKP0ajLA3qRHG9A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANqRtoTC=UshKih94JrsNMkxwj+1dqzkRaQHKP0ajLA3qRHG9A@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car H3 contains some hardware modules (e.g. VSP and FCP_V) that are
-not only located in a power area controlled by the SYSC system
-controller, but that are also part of the generic CPG/MSSR clock domain.
-Make sure both are handled by enabling module clock PM when the device
-for such a hardware module is attached to the SYSC PM Domain.
+On Wed, Feb 24, 2016 at 01:19:25PM +0900, Magnus Damm wrote:
+> Hi Simon,
+> 
+> On Wed, Feb 17, 2016 at 9:08 PM, Simon Horman <horms@verge.net.au> wrote:
+> > On Wed, Feb 17, 2016 at 03:45:19PM +0900, Magnus Damm wrote:
+> >> $ grep "renesas," Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
+> >> - compatible: "renesas,dmac-<soctype>", "renesas,rcar-dmac" as fallback.
+> >>         - "renesas,dmac-r8a7790" (R-Car H2)
+> >>         - "renesas,dmac-r8a7791" (R-Car M2-W)
+> >>         - "renesas,dmac-r8a7792" (R-Car V2H)
+> >>         - "renesas,dmac-r8a7793" (R-Car M2-N)
+> >>         - "renesas,dmac-r8a7794" (R-Car E2)
+> >>         - "renesas,dmac-r8a7795" (R-Car H3)
+> >>         compatible = "renesas,dmac-r8a7790", "renesas,rcar-dmac";
+> >>         compatible = "renesas,dmac-r8a7790", "renesas,rcar-dmac";
+> >> $
+> >
+> > It looks like I have been making the mess worse :(
+> >
+> > Possibly I prepared the patch in question, though recently,
+> > before I was properly aware of the preferred order.
+> 
+> No worries! The code above is at least consistent and matches the
+> common current case.
+> 
+> >> No need to rework existing stuff IMO. However once we rework DT
+> >> bindings (CMT) or add new ones (SYS-DMAC) then we have a good
+> >> opportunity to clean things up.
+> >
+> > Understood. From my point of view that seems like an opportunity worth taking.
+> 
+> So shall we leave the SYS-DMAC as-is or change things around? I
+> personally don't see the point in redoing things just to change order,
+> so keep as-is sounds good to me.
+> 
+> For the "fallback" CMT DT compat strings I think we should follow the
+> proposal from Geert and go with "renesas,rcar-gen2-cmt0". Regarding
+> the per-soc CMT DT compat strings my feeling is that we should follow
+> the same order as SYS-DMAC to keep things consistent.
 
-FIXME Share code with the renesas-cpg-mssr driver.
+I would lean towards changing the order of the per-soc CMT DT compat
+strings but I do not feel strongly about it.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- drivers/soc/renesas/pm-rcar.c | 68 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
-
-diff --git a/drivers/soc/renesas/pm-rcar.c b/drivers/soc/renesas/pm-rcar.c
-index c0540934126e58eb..d1bf8c231540b11d 100644
---- a/drivers/soc/renesas/pm-rcar.c
-+++ b/drivers/soc/renesas/pm-rcar.c
-@@ -9,16 +9,20 @@
-  * for more details.
-  */
- 
-+#include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/mm.h>
- #include <linux/of_address.h>
-+#include <linux/pm_clock.h>
- #include <linux/pm_domain.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/io.h>
- #include <linux/soc/renesas/pm-rcar.h>
- 
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
- /* SYSC Common */
- #define SYSCSR			0x00	/* SYSC Status Register */
- #define SYSCISR			0x04	/* Interrupt Status Register */
-@@ -248,11 +252,75 @@ static int rcar_pd_power_up(struct generic_pm_domain *genpd)
- 	return rcar_sysc_power_up(&to_rcar_pd(genpd)->ch);
- }
- 
-+#ifdef CONFIG_ARCH_R8A7795
-+static int rcar_clk_pd_attach_dev(struct generic_pm_domain *genpd,
-+				  struct device *dev)
-+{
-+	struct device_node *np = dev->of_node;
-+	struct of_phandle_args clkspec;
-+	struct clk *clk;
-+	int i = 0;
-+	int error;
-+
-+	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
-+					   &clkspec)) {
-+		if (clkspec.args_count == 2 && clkspec.args[0] == CPG_MOD &&
-+		    of_device_is_compatible(clkspec.np,
-+					    "renesas,r8a7795-cpg-mssr"))
-+			goto found;
-+
-+		of_node_put(clkspec.np);
-+		i++;
-+	}
-+
-+	return 0;
-+
-+found:
-+	clk = of_clk_get_from_provider(&clkspec);
-+	of_node_put(clkspec.np);
-+
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	error = pm_clk_create(dev);
-+	if (error) {
-+		dev_err(dev, "pm_clk_create failed %d\n", error);
-+		goto fail_put;
-+	}
-+
-+	error = pm_clk_add_clk(dev, clk);
-+	if (error) {
-+		dev_err(dev, "pm_clk_add_clk %pC failed %d\n", clk, error);
-+		goto fail_destroy;
-+	}
-+
-+	return 0;
-+
-+fail_destroy:
-+	pm_clk_destroy(dev);
-+fail_put:
-+	clk_put(clk);
-+	return error;
-+}
-+
-+static void rcar_clk_pd_detach_dev(struct generic_pm_domain *genpd,
-+				   struct device *dev)
-+{
-+	if (!list_empty(&dev->power.subsys_data->clock_list))
-+		pm_clk_destroy(dev);
-+}
-+#endif /* CONFIG_ARCH_R8A7795 */
-+
- static void rcar_init_pm_domain(struct rcar_pm_domain *rcar_pd)
- {
- 	struct generic_pm_domain *genpd = &rcar_pd->genpd;
- 	struct dev_power_governor *gov = rcar_pd->gov;
- 
-+#ifdef CONFIG_ARCH_R8A7795
-+	genpd->flags = GENPD_FLAG_PM_CLK;
-+	genpd->attach_dev = rcar_clk_pd_attach_dev;
-+	genpd->detach_dev = rcar_clk_pd_detach_dev;
-+#endif
- 	pm_genpd_init(genpd, gov ? : &simple_qos_governor, false);
- 	genpd->dev_ops.active_wakeup	= rcar_pd_active_wakeup;
- 	genpd->power_off		= rcar_pd_power_down;
--- 
-1.9.1
-
+As for the rest of your proposal above: I agree without reservation.
