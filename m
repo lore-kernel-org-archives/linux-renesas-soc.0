@@ -1,82 +1,35 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+Return-Path: <horms@vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 8/8] ARM: shmobile: emev2: Move declaration of emev2_smp_ops to emev2.h
-Date: Fri, 12 Feb 2016 20:06:26 +0100
-Message-Id: <9c9c1320111449c770a51488ca74a5902835e227.1455303757.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303757.git.horms+renesas@verge.net.au>
-References: <cover.1455303757.git.horms+renesas@verge.net.au>
+Subject: [PATCH 2/2] ARM: dts: r8a7791: use fallback jpu compatibility string
+Date: Wed, 24 Feb 2016 11:29:06 +0900
+Message-Id: <1456280946-14859-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1456280946-14859-1-git-send-email-horms+renesas@verge.net.au>
+References: <1456280946-14859-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Use recently added fallback compatibility string in r8a7791 device tree.
 
-make C=1:
-
-    arch/arm/mach-shmobile/smp-emev2.c:51:29: warning: symbol 'emev2_smp_ops' was not declared. Should it be static?
-
-To fix this, move the forward declaration of emev2_smp_ops to a header
-file, and include it where appropriate.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/emev2.h       | 6 ++++++
- arch/arm/mach-shmobile/setup-emev2.c | 4 ++--
- arch/arm/mach-shmobile/smp-emev2.c   | 2 ++
- 3 files changed, 10 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm/mach-shmobile/emev2.h
+ arch/arm/boot/dts/r8a7791.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-shmobile/emev2.h b/arch/arm/mach-shmobile/emev2.h
-new file mode 100644
-index 000000000000..916d25f6780e
---- /dev/null
-+++ b/arch/arm/mach-shmobile/emev2.h
-@@ -0,0 +1,6 @@
-+#ifndef __ASM_EMEV2_H__
-+#define __ASM_EMEV2_H__
-+
-+extern const struct smp_operations emev2_smp_ops;
-+
-+#endif /* __ASM_EMEV2_H__ */
-diff --git a/arch/arm/mach-shmobile/setup-emev2.c b/arch/arm/mach-shmobile/setup-emev2.c
-index 0829d0215c38..3c99aaf65325 100644
---- a/arch/arm/mach-shmobile/setup-emev2.c
-+++ b/arch/arm/mach-shmobile/setup-emev2.c
-@@ -18,15 +18,15 @@
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-+
- #include "common.h"
-+#include "emev2.h"
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 6439f0569fe2..9bfd1dc054b3 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1035,7 +1035,7 @@
+ 	};
  
- static const char *const emev2_boards_compat_dt[] __initconst = {
- 	"renesas,emev2",
- 	NULL,
- };
- 
--extern const struct smp_operations emev2_smp_ops;
--
- DT_MACHINE_START(EMEV2_DT, "Generic Emma Mobile EV2 (Flattened Device Tree)")
- 	.smp		= smp_ops(emev2_smp_ops),
- 	.init_early	= shmobile_init_delay,
-diff --git a/arch/arm/mach-shmobile/smp-emev2.c b/arch/arm/mach-shmobile/smp-emev2.c
-index 4dfafd845452..3a732199cf5e 100644
---- a/arch/arm/mach-shmobile/smp-emev2.c
-+++ b/arch/arm/mach-shmobile/smp-emev2.c
-@@ -21,7 +21,9 @@
- #include <linux/delay.h>
- #include <asm/smp_plat.h>
- #include <asm/smp_scu.h>
-+
- #include "common.h"
-+#include "emev2.h"
- 
- #define EMEV2_SCU_BASE 0x1e000000
- #define EMEV2_SMU_BASE 0xe0110000
+ 	jpu: jpeg-codec@fe980000 {
+-		compatible = "renesas,jpu-r8a7791";
++		compatible = "renesas,jpu-r8a7791", "renesas,rcar-gen2-jpu";
+ 		reg = <0 0xfe980000 0 0x10300>;
+ 		interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7791_CLK_JPU>;
 -- 
-2.7.0.rc3.207.g0ac5344
+2.1.4
