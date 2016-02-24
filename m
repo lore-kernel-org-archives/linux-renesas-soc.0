@@ -1,124 +1,57 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	geert+renesas@glider.be, linus.walleij@linaro.org,
-	dan.j.williams@intel.com, arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v4 4/8] arm: dma-mapping: add {map,unmap}_resource for iommu ops
-Date: Tue, 16 Feb 2016 21:39:40 +0100
-Message-Id: <1455655184-14478-5-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1455655184-14478-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1455655184-14478-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] drivers: sh: Restore legacy clock domain on SuperH platforms
+Date: Wed, 24 Feb 2016 09:43:23 +0100
+Message-Id: <1456303403-22803-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add methods to map/unmap device resources addresses for dma_map_ops that
-are IOMMU aware. This is needed to map a device MMIO register from a
-physical address.
+CONFIG_ARCH_SHMOBILE is not only enabled for Renesas ARM platforms
+(which are DT based and multi-platform), but also on a select set of
+Renesas SuperH platforms (SH7722/SH7723/SH7724/SH7343/SH7366). Hence
+since commit 0ba58de231066e47 ("drivers: sh: Get rid of
+CONFIG_ARCH_SHMOBILE_MULTI"), the legacy clock domain is no longer
+installed on these SuperH platforms, and module clocks may not be
+enabled when needed, leading to driver failures.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To fix this, add an additional check for CONFIG_OF.
+
+Fixes: 0ba58de231066e47 ("drivers: sh: Get rid of CONFIG_ARCH_SHMOBILE_MULTI").
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mm/dma-mapping.c | 63 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+Verified by looking at the resulting assembler output.
+Not run-tested due to lack of hardware.
 
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index 0eca381..ae2b175 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -1814,6 +1814,63 @@ static void arm_iommu_unmap_page(struct device *dev, dma_addr_t handle,
- 	__free_iova(mapping, iova, len);
- }
+This is meant to be applied to stable (v4.4 and up), and to whatever
+tree the original commit was backported to.
+
+I didn't just change the test to ARCH_RENESAS, as that symbol does not
+exist in v4.4.
+---
+ drivers/sh/pm_runtime.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/sh/pm_runtime.c b/drivers/sh/pm_runtime.c
+index 91a003011acfacb2..a9bac3bf20de14e5 100644
+--- a/drivers/sh/pm_runtime.c
++++ b/drivers/sh/pm_runtime.c
+@@ -34,7 +34,7 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
  
-+/**
-+ * arm_iommu_map_resource - map a device resource for DMA
-+ * @dev: valid struct device pointer
-+ * @phys_addr: physical address of resource
-+ * @size: size of resource to map
-+ * @dir: DMA transfer direction
-+ */
-+static dma_addr_t arm_iommu_map_resource(struct device *dev,
-+		phys_addr_t phys_addr, size_t size,
-+		enum dma_data_direction dir, struct dma_attrs *attrs)
-+{
-+	struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
-+	dma_addr_t dma_addr;
-+	int ret, prot;
-+	phys_addr_t addr = phys_addr & PAGE_MASK;
-+	int offset = phys_addr & ~PAGE_MASK;
-+	int len = PAGE_ALIGN(size + offset);
-+
-+	dma_addr = __alloc_iova(mapping, size);
-+	if (dma_addr == DMA_ERROR_CODE)
-+		return dma_addr;
-+
-+	prot = __dma_direction_to_prot(dir) | IOMMU_MMIO;
-+
-+	ret = iommu_map(mapping->domain, dma_addr, addr, len, prot);
-+	if (ret < 0)
-+		goto fail;
-+
-+	return dma_addr + offset;
-+fail:
-+	__free_iova(mapping, dma_addr, size);
-+	return DMA_ERROR_CODE;
-+}
-+
-+/**
-+ * arm_iommu_unmap_resource - unmap a device DMA resource
-+ * @dev: valid struct device pointer
-+ * @dma_handle: DMA address to resource
-+ * @size: size of resource to map
-+ * @dir: DMA transfer direction
-+ */
-+static void arm_iommu_unmap_resource(struct device *dev, dma_addr_t dma_handle,
-+		size_t size, enum dma_data_direction dir,
-+		struct dma_attrs *attrs)
-+{
-+	struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
-+	dma_addr_t iova = dma_handle & PAGE_MASK;
-+	int offset = dma_handle & ~PAGE_MASK;
-+	int len = PAGE_ALIGN(size + offset);
-+
-+	if (!iova)
-+		return;
-+
-+	iommu_unmap(mapping->domain, iova, len);
-+	__free_iova(mapping, iova, len);
-+}
-+
- static void arm_iommu_sync_single_for_cpu(struct device *dev,
- 		dma_addr_t handle, size_t size, enum dma_data_direction dir)
+ static int __init sh_pm_runtime_init(void)
  {
-@@ -1858,6 +1915,9 @@ struct dma_map_ops iommu_ops = {
- 	.sync_sg_for_cpu	= arm_iommu_sync_sg_for_cpu,
- 	.sync_sg_for_device	= arm_iommu_sync_sg_for_device,
- 
-+	.map_resource		= arm_iommu_map_resource,
-+	.unmap_resource		= arm_iommu_unmap_resource,
-+
- 	.set_dma_mask		= arm_dma_set_mask,
- };
- 
-@@ -1873,6 +1933,9 @@ struct dma_map_ops iommu_coherent_ops = {
- 	.map_sg		= arm_coherent_iommu_map_sg,
- 	.unmap_sg	= arm_coherent_iommu_unmap_sg,
- 
-+	.map_resource	= arm_iommu_map_resource,
-+	.unmap_resource	= arm_iommu_unmap_resource,
-+
- 	.set_dma_mask	= arm_dma_set_mask,
- };
- 
+-	if (IS_ENABLED(CONFIG_ARCH_SHMOBILE)) {
++	if (IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_ARCH_SHMOBILE)) {
+ 		if (!of_find_compatible_node(NULL, NULL,
+ 					     "renesas,cpg-mstp-clocks"))
+ 			return 0;
 -- 
-2.7.1
+1.9.1
