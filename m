@@ -1,15 +1,15 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+Return-Path: <horms@vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 7/8] ARM: shmobile: emev2: Remove legacy machine_desc.map_io() callback
-Date: Fri, 12 Feb 2016 20:06:25 +0100
-Message-Id: <77621efa3544e5597892274de4fcff55294fffc8.1455303757.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303757.git.horms+renesas@verge.net.au>
-References: <cover.1455303757.git.horms+renesas@verge.net.au>
+Subject: [PATCH 4/6] ARM: shmobile: emev2: Remove legacy machine_desc.map_io() callback
+Date: Wed, 24 Feb 2016 10:21:29 +0900
+Message-Id: <247ac89b99102f79483f7e08b9a94911f9b482d9.1456275652.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1456275652.git.horms+renesas@verge.net.au>
+References: <cover.1456275652.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -61,4 +61,4 @@ index 10b7cb5dcb3a..0829d0215c38 100644
  	.init_late	= shmobile_init_late,
  	.dt_compat	= emev2_boards_compat_dt,
 -- 
-2.7.0.rc3.207.g0ac5344
+2.1.4
