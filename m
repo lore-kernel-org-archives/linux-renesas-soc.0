@@ -1,60 +1,59 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+Return-Path: <horms@vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/68] ARM: dts: gose: add i2c2 bus to device tree
-Date: Fri, 12 Feb 2016 20:05:00 +0100
-Message-Id: <f6890af3ad2b6440d287c8ee97b3f38e18b0674e.1455303422.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
-References: <cover.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 1/6] ARM: shmobile: r8a7740: Migrate to generic l2c OF initialization
+Date: Wed, 24 Feb 2016 10:21:26 +0900
+Message-Id: <4a6cc501511f68c9aafb4985231eaa932d97cff4.1456275652.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1456275652.git.horms+renesas@verge.net.au>
+References: <cover.1456275652.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Activate i2c2 bus in r8a7793/gose device tree.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Based on similar work for the r8a7791/koelsch by Wolfram Sang.
+Migrate the generic r8a7740 platform from calling l2x0_of_init() to the
+generic l2c OF initialization.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm/mach-shmobile/setup-r8a7740.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 90b587c3c736..987ed03b1e02 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -136,6 +136,11 @@
+diff --git a/arch/arm/mach-shmobile/setup-r8a7740.c b/arch/arm/mach-shmobile/setup-r8a7740.c
+index 0c8f80c5b04d..bf221e05c8dc 100644
+--- a/arch/arm/mach-shmobile/setup-r8a7740.c
++++ b/arch/arm/mach-shmobile/setup-r8a7740.c
+@@ -23,7 +23,6 @@
+ #include <asm/mach/map.h>
+ #include <asm/mach/arch.h>
+ #include <asm/mach/time.h>
+-#include <asm/hardware/cache-l2x0.h>
+ 
+ #include "common.h"
+ 
+@@ -110,10 +109,6 @@ static void __init r8a7740_generic_init(void)
+ {
+ 	r8a7740_meram_workaround();
+ 
+-#ifdef CONFIG_CACHE_L2X0
+-	/* Shared attribute override enable, 32K*8way */
+-	l2x0_init(IOMEM(0xf0002000), 0x00400000, 0xc20f0fff);
+-#endif
+ 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+ }
+ 
+@@ -123,6 +118,8 @@ static const char *const r8a7740_boards_compat_dt[] __initconst = {
  };
  
- &pfc {
-+	i2c2_pins: i2c2 {
-+		renesas,groups = "i2c2";
-+		renesas,function = "i2c2";
-+	};
-+
- 	scif0_pins: serial0 {
- 		renesas,groups = "scif0_data_d";
- 		renesas,function = "scif0";
-@@ -234,3 +239,17 @@
- 		};
- 	};
- };
-+
-+&i2c2 {
-+	pinctrl-0 = <&i2c2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <100000>;
-+
-+	eeprom@50 {
-+		compatible = "renesas,r1ex24002", "atmel,24c02";
-+		reg = <0x50>;
-+		pagesize = <16>;
-+	};
-+};
+ DT_MACHINE_START(R8A7740_DT, "Generic R8A7740 (Flattened Device Tree)")
++	.l2c_aux_val	= 0,
++	.l2c_aux_mask	= ~0,
+ 	.map_io		= r8a7740_map_io,
+ 	.init_early	= shmobile_init_delay,
+ 	.init_irq	= r8a7740_init_irq_of,
 -- 
-2.7.0.rc3.207.g0ac5344
+2.1.4
