@@ -1,53 +1,58 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	geert+renesas@glider.be, linus.walleij@linaro.org,
-	dan.j.williams@intel.com, arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v4 2/8] dma-mapping: add {map,unmap}_resource to dma_map_ops
-Date: Tue, 16 Feb 2016 21:39:38 +0100
-Message-Id: <1455655184-14478-3-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1455655184-14478-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1455655184-14478-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Wed, 24 Feb 2016 11:21:06 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: riic, sh_mobile, rcar: Use ARCH_RENESAS
+Message-ID: <20160224102106.GC1391@katana>
+References: <1456103719-10818-1-git-send-email-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="iFRdW5/EC4oqxDHL"
+Content-Disposition: inline
+In-Reply-To: <1456103719-10818-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add methods to handle mapping of device resources from a physical
-address. This is needed for example to be able to map MMIO FIFO
-registers to a IOMMU.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- include/linux/dma-mapping.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+--iFRdW5/EC4oqxDHL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 75857cd..e3aba4e 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -49,6 +49,12 @@ struct dma_map_ops {
- 			 struct scatterlist *sg, int nents,
- 			 enum dma_data_direction dir,
- 			 struct dma_attrs *attrs);
-+	dma_addr_t (*map_resource)(struct device *dev, phys_addr_t phys_addr,
-+			       size_t size, enum dma_data_direction dir,
-+			       struct dma_attrs *attrs);
-+	void (*unmap_resource)(struct device *dev, dma_addr_t dma_handle,
-+			   size_t size, enum dma_data_direction dir,
-+			   struct dma_attrs *attrs);
- 	void (*sync_single_for_cpu)(struct device *dev,
- 				    dma_addr_t dma_handle, size_t size,
- 				    enum dma_data_direction dir);
--- 
-2.7.1
+On Mon, Feb 22, 2016 at 10:15:19AM +0900, Simon Horman wrote:
+> Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
+>=20
+> This is part of an ongoing process to migrate from ARCH_SHMOBILE to
+> ARCH_RENESAS the motivation for which being that RENESAS seems to be a mo=
+re
+> appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
+>=20
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
+Applied to for-next, thanks!
+
+
+--iFRdW5/EC4oqxDHL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWzYQSAAoJEBQN5MwUoCm2/ZwP/RhP7usRQjvtQRJqRGaChq3d
+mZicFaFBVrVdGFjgjn+CD8nCR/qYhBBl26KFcUc9uqzO0+9zWj7zrxtn3gsyoCdA
+zvUAbq1oe04jN2MvepZElUMCCYLcy46UMyo26A11ISzwo2FdAz38t+9dlPnfs/FD
+KHrb6P9SosqzHL38LYMFdBgUsxb5IbX7LTYRCfElFSiil/6akeXeY1maTKtrP+tf
+vLWmZYQVA9cUZ8Ewd+7Gxbgb8B919w21oSFD5blLAGjZe53VQqA4SOaLxFWIZYF3
+kb5vogxII0YvMOhAvUq3G+U50T2EfgAyYiEkZHmOu8YGFUB8/KnvJQjUTcponlF3
+oM17iMCAl5GuvDCLTt+0Gy2utGN7IdfBJt/EkGYE/BRStUSzMQ91PNSXgX6SdqWr
+bPdMAKGwFmAc0n8qYo7gV1H4vWPPROTkHmEfaMtYv6CuanfqqsNY9z4RDgtXDobK
+bIg10/4Itn8UyEhwVmA/4aAxJ4z/2jGCOZ8SXE4gzSEUeMvnudNvdGECgc8EBe9D
+swyAQf6+j155QaK+iJxjzhUnTBuAjWUW1+qxKN36JELxE5ebca0lpfnPK1YiCQnC
+JUwY05p6EBNIRet31cJZhUGnQrW6ZNK9pvLjRIB33nKFImdyOOQBjlVuKX5tf63s
+XXG2ykOP7sqnCi0A4RlZ
+=Tb6k
+-----END PGP SIGNATURE-----
+
+--iFRdW5/EC4oqxDHL--
