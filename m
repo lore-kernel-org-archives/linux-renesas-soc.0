@@ -3,52 +3,51 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Magnus Damm <damm+renesas@opensource.se>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 06/14] arm64: dts: r8a7795: Add INTC-EX device node
-Date: Fri, 26 Feb 2016 09:07:39 +0900
-Message-Id: <9c6c053c9ea845d61d3f0a7f1ba656b8154c64d0.1456445161.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1456445161.git.horms+renesas@verge.net.au>
-References: <cover.1456445161.git.horms+renesas@verge.net.au>
+Subject: [PATCH 03/19] ARM: dts: r8a7790: use fallback pci compatibility string
+Date: Fri, 26 Feb 2016 08:52:52 +0900
+Message-Id: <2d82c14460575bdf7ea78146d988c10db94d8343.1456443769.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1456443769.git.horms+renesas@verge.net.au>
+References: <cover.1456443769.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Use recently added fallback compatibility string in r8a7790 device tree.
 
-Add a single r8a7795 INTC-EX device node to support
-external IRQ pins IRQ0 -> IRQ5.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm/boot/dts/r8a7790.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index e32b652c8fd0..6da8f79f10df 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -356,6 +356,21 @@
- 			reg = <0 0xe6060000 0 0x50c>;
- 		};
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index db019f2619c7..76ddf5c6cca7 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1499,7 +1499,7 @@
+ 	};
  
-+		intc_ex: interrupt-controller@e61c0000 {
-+			compatible = "renesas,intc-ex-r8a7795", "renesas,irqc";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			reg = <0 0xe61c0000 0 0x200>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 407>;
-+			power-domains = <&cpg>;
-+		};
-+
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a7795",
- 				     "renesas,rcar-dmac";
+ 	pci0: pci@ee090000 {
+-		compatible = "renesas,pci-r8a7790";
++		compatible = "renesas,pci-r8a7790", "renesas,pci-rcar-gen2";
+ 		device_type = "pci";
+ 		reg = <0 0xee090000 0 0xc00>,
+ 		      <0 0xee080000 0 0x1100>;
+@@ -1534,7 +1534,7 @@
+ 	};
+ 
+ 	pci1: pci@ee0b0000 {
+-		compatible = "renesas,pci-r8a7790";
++		compatible = "renesas,pci-r8a7790", "renesas,pci-rcar-gen2";
+ 		device_type = "pci";
+ 		reg = <0 0xee0b0000 0 0xc00>,
+ 		      <0 0xee0a0000 0 0x1100>;
+@@ -1555,7 +1555,7 @@
+ 	};
+ 
+ 	pci2: pci@ee0d0000 {
+-		compatible = "renesas,pci-r8a7790";
++		compatible = "renesas,pci-r8a7790", "renesas,pci-rcar-gen2";
+ 		device_type = "pci";
+ 		clocks = <&mstp7_clks R8A7790_CLK_EHCI>;
+ 		power-domains = <&cpg_clocks>;
 -- 
 2.7.0.rc3.207.g0ac5344
