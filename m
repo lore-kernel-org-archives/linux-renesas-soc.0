@@ -3,65 +3,38 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <damm+renesas@opensource.se>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 68/70] ARM: dts: marzen: Enable SCIF_CLK frequency and pins
-Date: Thu,  4 Feb 2016 15:30:02 +0100
-Message-Id: <4603bc2b08134ad2257b1d968c9293bcc07a8bb9.1454595846.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1454595846.git.horms+renesas@verge.net.au>
-References: <cover.1454595846.git.horms+renesas@verge.net.au>
+Subject: [PATCH 1/2] arm64: renesas: Enable RENESAS_IRQC
+Date: Fri, 26 Feb 2016 08:52:55 +0900
+Message-Id: <f7e020512e10a185d58d0f11faa57093345fd5b2.1456442718.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1456442718.git.horms+renesas@verge.net.au>
+References: <cover.1456442718.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Add and enable the external crystal for the SCIF_CLK and its pinctrl, to
-be used by the Baud Rate Generator for External Clock (BRG) on (H)SCIF.
+Select RENESAS_IRQC for Arm64 SoCs from Renesas to enable
+build of drivers/irqchip/irq-renesas-irqc.c.
 
-This increases the range and accuracy of supported baud rates.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7779-marzen.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm64/Kconfig.platforms | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7779-marzen.dts b/arch/arm/boot/dts/r8a7779-marzen.dts
-index fe396c8d58db..e111d35d02ae 100644
---- a/arch/arm/boot/dts/r8a7779-marzen.dts
-+++ b/arch/arm/boot/dts/r8a7779-marzen.dts
-@@ -165,6 +165,9 @@
- };
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 21074f674bde..757220cb1b7f 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -77,6 +77,7 @@ config ARCH_RENESAS
+ 	select ARCH_SHMOBILE
+ 	select PINCTRL
+ 	select PM_GENERIC_DOMAINS if PM
++	select RENESAS_IRQC
+ 	help
+ 	  This enables support for the ARMv8 based Renesas SoCs.
  
- &pfc {
-+	pinctrl-0 = <&scif_clk_pins>;
-+	pinctrl-names = "default";
-+
- 	du_pins: du {
- 		du0 {
- 			renesas,groups = "du0_rgb888", "du0_sync_1", "du0_clk_out_0";
-@@ -176,6 +179,11 @@
- 		};
- 	};
- 
-+	scif_clk_pins: scif_clk {
-+		renesas,groups = "scif_clk_b";
-+		renesas,function = "scif_clk";
-+	};
-+
- 	ethernet_pins: ethernet {
- 		intc {
- 			renesas,groups = "intc_irq1_b";
-@@ -222,6 +230,11 @@
- 	status = "okay";
- };
- 
-+&scif_clk {
-+	clock-frequency = <14745600>;
-+	status = "okay";
-+};
-+
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
- 	pinctrl-names = "default";
 -- 
 2.7.0.rc3.207.g0ac5344
