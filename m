@@ -5,122 +5,64 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 56/68] ARM: dts: r8a7779: Add BRG support for SCIF
-Date: Fri, 12 Feb 2016 20:05:46 +0100
-Message-Id: <f2be5f00d5eef701871cb1bc2b573dd5a75f66d3.1455303422.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
-References: <cover.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 10/19] ARM: dts: r8a73a4: Add L2 cache-controller nodes
+Date: Fri, 26 Feb 2016 08:52:59 +0900
+Message-Id: <c86a4b621994dbe9361185362c4be6887f04b1a4.1456443769.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1456443769.git.horms+renesas@verge.net.au>
+References: <cover.1456443769.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add the device node for the external SCIF_CLK.
-The presence of the SCIF_CLK crystal and its clock frequency depends on
-the actual board.
+Add device nodes for the L2 caches, and link the CPU node to its L2
+cache node.
 
-Add the two optional clock sources (S1 and SCIF_CLK for the internal
-resp. external clock) for the Baud Rate Generator for External Clock
-(BRG) to all SCIF device nodes.
+The L2 cache for the Cortex-A15 CPU cores is 1 MiB large (organized as
+64 KiB x 16 ways), and located in PM domain A3SM.
 
-This increases the range and accuracy of supported baud rates on SCIF.
+The L2 cache for the Cortex-A7 CPU cores is 512 KiB large (organized as
+64 KiB x 8 ways), and located in PM domain A3KM.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7779.dtsi | 39 +++++++++++++++++++++++++++------------
- 1 file changed, 27 insertions(+), 12 deletions(-)
+ arch/arm/boot/dts/r8a73a4.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index 8fddfae13865..a0cc08e6295b 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -215,8 +215,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe40000 0x100>;
- 		interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7779_CLK_SCIF0>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7779_CLK_SCIF0>,
-+			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -226,8 +227,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe41000 0x100>;
- 		interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7779_CLK_SCIF1>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7779_CLK_SCIF1>,
-+			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -237,8 +239,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe42000 0x100>;
- 		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7779_CLK_SCIF2>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7779_CLK_SCIF2>,
-+			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -248,8 +251,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe43000 0x100>;
- 		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7779_CLK_SCIF3>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7779_CLK_SCIF3>,
-+			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -259,8 +263,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe44000 0x100>;
- 		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7779_CLK_SCIF4>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7779_CLK_SCIF4>,
-+			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -270,8 +275,9 @@
- 			     "renesas,scif";
- 		reg = <0xffe45000 0x100>;
- 		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp0_clks R8A7779_CLK_SCIF5>;
--		clock-names = "fck";
-+		clocks = <&mstp0_clks R8A7779_CLK_SCIF5>,
-+			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -447,6 +453,15 @@
- 			clock-output-names = "extal";
+diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
+index 138414a7d170..6583a1dfca1f 100644
+--- a/arch/arm/boot/dts/r8a73a4.dtsi
++++ b/arch/arm/boot/dts/r8a73a4.dtsi
+@@ -29,6 +29,7 @@
+ 			reg = <0>;
+ 			clock-frequency = <1500000000>;
+ 			power-domains = <&pd_a2sl>;
++			next-level-cache = <&L2_CA15>;
  		};
+ 	};
  
-+		/* External SCIF clock */
-+		scif_clk: scif {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			/* This value must be overridden by the board. */
-+			clock-frequency = <0>;
-+			status = "disabled";
-+		};
+@@ -45,6 +46,22 @@
+ 			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
+ 
++	L2_CA15: cache-controller@0 {
++		compatible = "cache";
++		clocks = <&cpg_clocks R8A73A4_CLK_Z>;
++		power-domains = <&pd_a3sm>;
++		cache-unified;
++		cache-level = <2>;
++	};
 +
- 		/* Special CPG clocks */
- 		cpg_clocks: clocks@ffc80000 {
- 			compatible = "renesas,r8a7779-cpg-clocks";
++	L2_CA7: cache-controller@1 {
++		compatible = "cache";
++		clocks = <&cpg_clocks R8A73A4_CLK_Z2>;
++		power-domains = <&pd_a3km>;
++		cache-unified;
++		cache-level = <2>;
++	};
++
+ 	dbsc1: memory-controller@e6790000 {
+ 		compatible = "renesas,dbsc-r8a73a4";
+ 		reg = <0 0xe6790000 0 0x10000>;
 -- 
 2.7.0.rc3.207.g0ac5344
