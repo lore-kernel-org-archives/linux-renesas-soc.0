@@ -1,100 +1,54 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: mkl@pengutronix.de, wg@grandegger.com, horms@verge.net.au,
-	magnus.damm@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	netdev@vger.kernel.org, chris.paterson2@renesas.com,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH 1/2] can: rcar_can: Add r8a7795 support
-Date: Mon, 29 Feb 2016 09:21:00 +0000
-Message-Id: <1456737661-20538-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1456737661-20538-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456737661-20538-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Date: Thu, 25 Feb 2016 18:40:51 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-ide@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH] SATA: rcar: add device tree support for r8a7792
+Message-ID: <20160225094051.GB28141@verge.net.au>
+References: <1456362985-24137-1-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1456362985-24137-1-git-send-email-horms+renesas@verge.net.au>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Added r8a7795 SoC support.
+On Thu, Feb 25, 2016 at 10:16:25AM +0900, Simon Horman wrote:
+> Simply document new compatibility string.
+> As a previous patch adds a generic R-Car Gen2 compatibility string
+> there appears to be no need for a driver updates.
+> 
+> By documenting this compat sting it may be used in DTSs shipped, for
+> example as part of ROMs. It must be used in conjunction with the Gen2
+> fallback compat string. At this time there are no known differences between
+> the r8a7792 IP block and that implemented by the driver for the Gen2
+> fallback compat string. Thus there is no need to update the driver as the
+> use of the Gen2 fallback compat string will activate the correct code in
+> the current driver while leaving the option for r8a7792-specific driver
+> code to be activated in an updated driver should the need arise.
+> 
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  Documentation/devicetree/bindings/ata/sata_rcar.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+>  Based on the for-next branch of the libata tree
 
-For smoother bit timing calculation, the rounded clock frequency is used.
+I seem to have omitted the patch to add the fallback binding.
+I'll respin. In the mean time please ignore this patch.
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- Documentation/devicetree/bindings/net/can/rcar_can.txt | 12 ++++++++++++
- drivers/net/can/Kconfig                                |  2 +-
- drivers/net/can/rcar_can.c                             |  7 ++++++-
- 3 files changed, 19 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-index 002d844..7f1305f 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-@@ -6,6 +6,9 @@ Required properties:
- 	      "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
- 	      "renesas,can-r8a7790" if CAN controller is a part of R8A7790 SoC.
- 	      "renesas,can-r8a7791" if CAN controller is a part of R8A7791 SoC.
-+	      "renesas,can-r8a7795" if CAN controller is a part of R8A7795 SoC.
-+	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 compatible device.
-+
- - reg: physical base address and size of the R-Car CAN register map.
- - interrupts: interrupt specifier for the sole interrupt.
- - clocks: phandles and clock specifiers for 3 CAN clock inputs.
-@@ -13,6 +16,15 @@ Required properties:
- - pinctrl-0: pin control group to be used for this controller.
- - pinctrl-names: must be "default".
- 
-+Required properties for "renesas,can-r8a7795" compatible:
-+In R8A7795 SoC, "clkp2" can be CANFD clock. This is a div6 clock and can be
-+used by both CAN and CAN FD controller at the same time. It needs to be scaled
-+to maximum frequency if any of these controllers use it. This is done using
-+the below properties.
-+
-+- assigned-clocks: phandle of clkp2(CANFD) clock.
-+- assigned-clock-rates: maximum frequency of this clock.
-+
- Optional properties:
- - renesas,can-clock-select: R-Car CAN Clock Source Select. Valid values are:
- 			    <0x0> (default) : Peripheral clock (clkp1)
-diff --git a/drivers/net/can/Kconfig b/drivers/net/can/Kconfig
-index 164ccde..0d40aef 100644
---- a/drivers/net/can/Kconfig
-+++ b/drivers/net/can/Kconfig
-@@ -106,7 +106,7 @@ config CAN_JANZ_ICAN3
- 
- config CAN_RCAR
- 	tristate "Renesas R-Car CAN controller"
--	depends on ARM
-+	depends on ARCH_RENESAS || ARM
- 	---help---
- 	  Say Y here if you want to use CAN controller found on Renesas R-Car
- 	  SoCs.
-diff --git a/drivers/net/can/rcar_can.c b/drivers/net/can/rcar_can.c
-index bc46be3..55e34de 100644
---- a/drivers/net/can/rcar_can.c
-+++ b/drivers/net/can/rcar_can.c
-@@ -808,6 +808,10 @@ static int rcar_can_probe(struct platform_device *pdev)
- 	priv->regs = addr;
- 	priv->clock_select = clock_select;
- 	priv->can.clock.freq = clk_get_rate(priv->can_clk);
-+
-+	/* Use the rounded clock value (nearest kHz) */
-+	priv->can.clock.freq = 1000 * DIV_ROUND_UP(priv->can.clock.freq, 1000);
-+
- 	priv->can.bittiming_const = &rcar_can_bittiming_const;
- 	priv->can.do_set_mode = rcar_can_do_set_mode;
- 	priv->can.do_get_berr_counter = rcar_can_get_berr_counter;
-@@ -904,7 +908,8 @@ static const struct of_device_id rcar_can_of_table[] __maybe_unused = {
- 	{ .compatible = "renesas,can-r8a7779" },
- 	{ .compatible = "renesas,can-r8a7790" },
- 	{ .compatible = "renesas,can-r8a7791" },
--	{ }
-+	{ .compatible = "renesas,rcar-gen3-can" },
-+	{ },
- };
- MODULE_DEVICE_TABLE(of, rcar_can_of_table);
- 
--- 
-1.9.1
-
+> diff --git a/Documentation/devicetree/bindings/ata/sata_rcar.txt b/Documentation/devicetree/bindings/ata/sata_rcar.txt
+> index 0764f9ab63dc..539dbdfba8de 100644
+> --- a/Documentation/devicetree/bindings/ata/sata_rcar.txt
+> +++ b/Documentation/devicetree/bindings/ata/sata_rcar.txt
+> @@ -7,6 +7,7 @@ Required properties:
+>  			  - "renesas,sata-r8a7790-es1" for R-Car H2 ES1
+>  			  - "renesas,sata-r8a7790" for R-Car H2 other than ES1
+>  			  - "renesas,sata-r8a7791" for R-Car M2-W
+> +			  - "renesas,sata-r8a7792" for R-Car V2H
+>  			  - "renesas,sata-r8a7793" for R-Car M2-N
+>  			  - "renesas,sata-r8a7795" for R-Car H3
+>  - reg			: address and length of the SATA registers;
+> -- 
+> 2.7.0.rc3.207.g0ac5344
