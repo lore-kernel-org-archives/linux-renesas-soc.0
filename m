@@ -3,66 +3,86 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 6/8] ARM: shmobile: r8a7740: Remove legacy machine_desc.map_io() callback
-Date: Fri, 12 Feb 2016 20:06:24 +0100
-Message-Id: <a0827317f5f351c303ed91f0272f10b1394bdab1.1455303757.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303757.git.horms+renesas@verge.net.au>
-References: <cover.1455303757.git.horms+renesas@verge.net.au>
+Subject: [PATCH 09/19] ARM: dts: r8a7793: enable to use thermal-zone
+Date: Fri, 26 Feb 2016 08:52:58 +0900
+Message-Id: <57f9156bc620ac561ed46b2316de328e6b280023.1456443769.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1456443769.git.horms+renesas@verge.net.au>
+References: <cover.1456443769.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Commit 37201ba5c99d0be8 ("ARM: shmobile: r8a7740: Migrate to generic l2c
-OF initialization") removed the last user of the legacy "IOMEM()" macro
-on r8a7740-based systems. Hence there's no longer a need to set up a
-transparent mapping of system I/O registers. Remove the mapping and the
-legacy machine_desc.map_io() callback.
+This patch enables to use thermal-zone on r8a7793.
+This thermal sensor can measure temperature from -40000 to 125000,
+but over 117000 can be critical on this chip.
+Thus, default critical temperature is now set as 115000 (this driver
+is using 5000 steps) (Current critical temperature is using it as
+90000, but there is no big reason about it)
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+And it doesn't check thermal zone periodically (same as current
+behavior). You can exchange it by modifying polling-delay[-passive]
+property.
+
+You can set trip temp if your kernel has CONFIG_THERMAL_WRITABLE_TRIPS,
+but you need to take care to use it, since it will call
+orderly_poweroff() it it reaches to the value.
+echo $temp > /sys/class/thermal/thermal_zone0/trip_point_0_temp
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/setup-r8a7740.c | 20 --------------------
- 1 file changed, 20 deletions(-)
+ arch/arm/boot/dts/r8a7793.dtsi | 26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/setup-r8a7740.c b/arch/arm/mach-shmobile/setup-r8a7740.c
-index 3e71cd4168dd..db6dbfbaf9f1 100644
---- a/arch/arm/mach-shmobile/setup-r8a7740.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7740.c
-@@ -26,25 +26,6 @@
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 45dba1c79a43..9837f90f1718 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -54,6 +54,25 @@
+ 		};
+ 	};
  
- #include "common.h"
++	thermal-zones {
++		cpu_thermal: cpu-thermal {
++			polling-delay-passive	= <0>;
++			polling-delay		= <0>;
++
++			thermal-sensors = <&thermal>;
++
++			trips {
++				cpu-crit {
++					temperature	= <115000>;
++					hysteresis	= <0>;
++					type		= "critical";
++				};
++			};
++			cooling-maps {
++			};
++		};
++	};
++
+ 	gic: interrupt-controller@f1001000 {
+ 		compatible = "arm,gic-400";
+ 		#interrupt-cells = <3>;
+@@ -170,12 +189,15 @@
+ 		power-domains = <&cpg_clocks>;
+ 	};
  
--static struct map_desc r8a7740_io_desc[] __initdata = {
--	 /*
--	  * for CPGA/INTC/PFC
--	  * 0xe6000000-0xefffffff -> 0xe6000000-0xefffffff
--	  */
--	{
--		.virtual	= 0xe6000000,
--		.pfn		= __phys_to_pfn(0xe6000000),
--		.length		= 160 << 20,
--		.type		= MT_DEVICE_NONSHARED
--	},
--};
--
--static void __init r8a7740_map_io(void)
--{
--	debug_ll_io_init();
--	iotable_init(r8a7740_io_desc, ARRAY_SIZE(r8a7740_io_desc));
--}
--
- /*
-  * r8a7740 chip has lasting errata on MERAM buffer.
-  * this is work-around for it.
-@@ -108,7 +89,6 @@ static const char *const r8a7740_boards_compat_dt[] __initconst = {
- DT_MACHINE_START(R8A7740_DT, "Generic R8A7740 (Flattened Device Tree)")
- 	.l2c_aux_val	= 0,
- 	.l2c_aux_mask	= ~0,
--	.map_io		= r8a7740_map_io,
- 	.init_early	= shmobile_init_delay,
- 	.init_irq	= r8a7740_init_irq_of,
- 	.init_machine	= r8a7740_generic_init,
+-	thermal@e61f0000 {
+-		compatible = "renesas,thermal-r8a7793", "renesas,rcar-thermal";
++	thermal: thermal@e61f0000 {
++		compatible =	"renesas,thermal-r8a7793",
++				"renesas,rcar-gen2-thermal",
++				"renesas,rcar-thermal";
+ 		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
+ 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp5_clks R8A7793_CLK_THERMAL>;
+ 		power-domains = <&cpg_clocks>;
++		#thermal-sensor-cells = <0>;
+ 	};
+ 
+ 	timer {
 -- 
 2.7.0.rc3.207.g0ac5344
