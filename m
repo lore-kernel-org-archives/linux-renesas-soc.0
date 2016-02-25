@@ -3,75 +3,60 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Ai Kyuse <ai.kyuse.uw@renesas.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/14] arm64: dts: r8a7795: Add SDHI support to dtsi
-Date: Fri, 26 Feb 2016 09:07:41 +0900
-Message-Id: <d9d67010e0c699c838ac84245ec6d8651420d337.1456445161.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1456445161.git.horms+renesas@verge.net.au>
-References: <cover.1456445161.git.horms+renesas@verge.net.au>
+Subject: [PATCH 12/19] ARM: dts: r8a7791: Add L2 cache-controller node
+Date: Fri, 26 Feb 2016 08:53:01 +0900
+Message-Id: <8ffe93a5b2cb55d4da9c285d9277699bdb828b47.1456443769.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1456443769.git.horms+renesas@verge.net.au>
+References: <cover.1456443769.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ai Kyuse <ai.kyuse.uw@renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-[wsa: squashed some fixes and added mmc-caps]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Add a device node for the L2 cache, and link the CPU nodes to it.
+
+The L2 cache for the Cortex-A15 CPU cores is 1 MiB large (organized as
+64 KiB x 16 ways).
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 38 ++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ arch/arm/boot/dts/r8a7791.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 1072c681f8b4..c2bffd160c18 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -985,5 +985,43 @@
- 			#dma-cells = <1>;
- 			dma-channels = <2>;
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index f1732dde114b..6439f0569fe2 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -51,6 +51,7 @@
+ 			voltage-tolerance = <1>; /* 1% */
+ 			clocks = <&cpg_clocks R8A7791_CLK_Z>;
+ 			clock-latency = <300000>; /* 300 us */
++			next-level-cache = <&L2_CA15>;
+ 
+ 			/* kHz - uV - OPPs unknown yet */
+ 			operating-points = <1500000 1000000>,
+@@ -66,6 +67,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <1>;
+ 			clock-frequency = <1500000000>;
++			next-level-cache = <&L2_CA15>;
  		};
-+
-+		sdhi0: sd@ee100000 {
-+			compatible = "renesas,sdhi-r8a7795";
-+			reg = <0 0xee100000 0 0x2000>;
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 314>;
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		sdhi1: sd@ee120000 {
-+			compatible = "renesas,sdhi-r8a7795";
-+			reg = <0 0xee120000 0 0x2000>;
-+			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 313>;
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		sdhi2: sd@ee140000 {
-+			compatible = "renesas,sdhi-r8a7795";
-+			reg = <0 0xee140000 0 0x2000>;
-+			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 312>;
-+			power-domains = <&cpg>;
-+			cap-mmc-highspeed;
-+			status = "disabled";
-+		};
-+
-+		sdhi3: sd@ee160000 {
-+			compatible = "renesas,sdhi-r8a7795";
-+			reg = <0 0xee160000 0 0x2000>;
-+			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 311>;
-+			power-domains = <&cpg>;
-+			cap-mmc-highspeed;
-+			status = "disabled";
-+		};
  	};
- };
+ 
+@@ -88,6 +90,12 @@
+ 		};
+ 	};
+ 
++	L2_CA15: cache-controller@0 {
++		compatible = "cache";
++		cache-unified;
++		cache-level = <2>;
++	};
++
+ 	gic: interrupt-controller@f1001000 {
+ 		compatible = "arm,gic-400";
+ 		#interrupt-cells = <3>;
 -- 
 2.7.0.rc3.207.g0ac5344
