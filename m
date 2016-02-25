@@ -3,40 +3,62 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Dirk Behme <dirk.behme@gmail.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 02/14] arm64: dts: r8a7795: pmu: switch to Cortex specific device nodes
-Date: Fri, 26 Feb 2016 09:07:35 +0900
-Message-Id: <3d0cd46889e0a57ce63dba1f34156b54dfdf0ad2.1456445161.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1456445161.git.horms+renesas@verge.net.au>
-References: <cover.1456445161.git.horms+renesas@verge.net.au>
+Subject: [PATCH 16/19] ARM: dts: r8a7794: add EtherAVB clock
+Date: Fri, 26 Feb 2016 08:53:05 +0900
+Message-Id: <255a40424e2618610a2ad8d39e12b843b723959a.1456443769.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1456443769.git.horms+renesas@verge.net.au>
+References: <cover.1456443769.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Dirk Behme <dirk.behme@gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Instead of using the generic armv8-pmuv3 compatibility use the more
-specific Cortex A57 compatibility.
+Add the EtherAVB clock to the R8A7794 device tree.
 
-Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
+Based on the commit eaa870b30553 ("ARM: shmobile: r8a7791: add EtherAVB
+clock").
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7794.dtsi            | 7 ++++---
+ include/dt-bindings/clock/r8a7794-clock.h | 1 +
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 3f00e85641a8..b5e46e4ff72a 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -246,8 +246,8 @@
- 			power-domains = <&cpg>;
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 21a02df3609b..042440b6dc8c 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1112,13 +1112,14 @@
+ 		mstp8_clks: mstp8_clks@e6150990 {
+ 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe6150990 0 4>, <0 0xe61509a0 0 4>;
+-			clocks = <&zg_clk>, <&zg_clk>, <&p_clk>;
++			clocks = <&zg_clk>, <&zg_clk>, <&hp_clk>, <&p_clk>;
+ 			#clock-cells = <1>;
+ 			clock-indices = <
+-				R8A7794_CLK_VIN1 R8A7794_CLK_VIN0 R8A7794_CLK_ETHER
++				R8A7794_CLK_VIN1 R8A7794_CLK_VIN0
++				R8A7794_CLK_ETHERAVB R8A7794_CLK_ETHER
+ 			>;
+ 			clock-output-names =
+-				"vin1", "vin0", "ether";
++				"vin1", "vin0", "etheravb", "ether";
  		};
+ 		mstp9_clks: mstp9_clks@e6150994 {
+ 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+diff --git a/include/dt-bindings/clock/r8a7794-clock.h b/include/dt-bindings/clock/r8a7794-clock.h
+index a7a7e0370968..f843de6bf377 100644
+--- a/include/dt-bindings/clock/r8a7794-clock.h
++++ b/include/dt-bindings/clock/r8a7794-clock.h
+@@ -84,6 +84,7 @@
+ /* MSTP8 */
+ #define R8A7794_CLK_VIN1		10
+ #define R8A7794_CLK_VIN0		11
++#define R8A7794_CLK_ETHERAVB		12
+ #define R8A7794_CLK_ETHER		13
  
--		pmu {
--			compatible = "arm,armv8-pmuv3";
-+		pmu_a57 {
-+			compatible = "arm,cortex-a57-pmu";
- 			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
+ /* MSTP9 */
 -- 
 2.7.0.rc3.207.g0ac5344
