@@ -1,39 +1,35 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1456419926-8732-4-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chris.paterson2@renesas.com,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH 3/3] clk: shmobile: r8a7795: Add CAN FD peripheral clock
+Date: Thu, 25 Feb 2016 17:05:26 +0000
+Message-Id: <1456419926-8732-4-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 References: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-	<1456419926-8732-4-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Date: Fri, 26 Feb 2016 09:26:19 +0100
-Message-ID: <CAMuHMdXWEo=mXO4p8EX4fCz+v0r-SV+31R7SHjFRjDDUXA1+xw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: shmobile: r8a7795: Add CAN FD peripheral clock
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Chris Paterson <chris.paterson2@renesas.com>
-Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Feb 25, 2016 at 6:05 PM, Ramesh Shanmugasundaram
-<ramesh.shanmugasundaram@bp.renesas.com> wrote:
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ drivers/clk/shmobile/r8a7795-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/shmobile/r8a7795-cpg-mssr.c b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+index 9961405..7c622af0 100644
+--- a/drivers/clk/shmobile/r8a7795-cpg-mssr.c
++++ b/drivers/clk/shmobile/r8a7795-cpg-mssr.c
+@@ -177,6 +177,7 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+ 	DEF_MOD("gpio2",		 910,	R8A7795_CLK_CP),
+ 	DEF_MOD("gpio1",		 911,	R8A7795_CLK_CP),
+ 	DEF_MOD("gpio0",		 912,	R8A7795_CLK_CP),
++	DEF_MOD("can-fd",		 914,	R8A7795_CLK_S3D2),
+ 	DEF_MOD("can-if1",		 915,	R8A7795_CLK_S3D4),
+ 	DEF_MOD("can-if0",		 916,	R8A7795_CLK_S3D4),
+ 	DEF_MOD("i2c6",			 918,	R8A7795_CLK_S3D2),
+-- 
+1.9.1
