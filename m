@@ -3,161 +3,99 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 59/68] ARM: dts: r8a7793: Add BRG support for SCIF
-Date: Fri, 12 Feb 2016 20:05:49 +0100
-Message-Id: <166d8ca693a9a1f4f3285ba03d9aebe7f679753f.1455303422.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
-References: <cover.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 18/19] ARM: dts: r8a7790: lager: use demuxer for IIC0/I2C0
+Date: Fri, 26 Feb 2016 08:53:07 +0900
+Message-Id: <880cb5702471c4eb56b1af1c26e5273e48f50a32.1456443769.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1456443769.git.horms+renesas@verge.net.au>
+References: <cover.1456443769.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Add the device node for the external SCIF_CLK.
-The presence of the SCIF_CLK crystal and its clock frequency depends on
-the actual board.
+Make it possible to select which I2C IP core you want to run on the
+EXIO-A connector. This is the reference how to use this feature. Update
+the copyright while we are here.
 
-Add the two optional clock sources (ZS_CLK and SCIF_CLK for the internal
-resp. external clock) for the Baud Rate Generator for External Clock
-(BRG) to all SCIF and HSCIF device nodes.
-
-This increases the range and accuracy of supported baud rates on
-(H)SCIF.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 54 ++++++++++++++++++++++++++++--------------
- 1 file changed, 36 insertions(+), 18 deletions(-)
+ arch/arm/boot/dts/r8a7790-lager.dts | 32 ++++++++++++++++++++++++++++++--
+ 1 file changed, 30 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 07af584915c6..45dba1c79a43 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -600,8 +600,9 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6e60000 0 64>;
- 		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7793_CLK_SCIF0>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7793_CLK_SCIF0>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -613,8 +614,9 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6e68000 0 64>;
- 		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7793_CLK_SCIF1>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7793_CLK_SCIF1>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -626,8 +628,9 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6e58000 0 64>;
- 		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7793_CLK_SCIF2>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7793_CLK_SCIF2>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -639,8 +642,9 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6ea8000 0 64>;
- 		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7793_CLK_SCIF3>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7793_CLK_SCIF3>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x2f>, <&dmac0 0x30>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -652,8 +656,9 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6ee0000 0 64>;
- 		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7793_CLK_SCIF4>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7793_CLK_SCIF4>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -665,8 +670,9 @@
- 			     "renesas,scif";
- 		reg = <0 0xe6ee8000 0 64>;
- 		interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7793_CLK_SCIF5>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7793_CLK_SCIF5>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -678,8 +684,9 @@
- 			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62c0000 0 96>;
- 		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7793_CLK_HSCIF0>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7793_CLK_HSCIF0>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -691,8 +698,9 @@
- 			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62c8000 0 96>;
- 		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7793_CLK_HSCIF1>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7793_CLK_HSCIF1>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -704,8 +712,9 @@
- 			     "renesas,rcar-gen2-hscif", "renesas,hscif";
- 		reg = <0 0xe62d0000 0 96>;
- 		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7793_CLK_HSCIF2>;
--		clock-names = "fck";
-+		clocks = <&mstp7_clks R8A7793_CLK_HSCIF2>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -805,6 +814,15 @@
- 			clock-output-names = "audio_clk_c";
- 		};
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index cdc0414f5f07..aa6ca92a9485 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -3,6 +3,7 @@
+  *
+  * Copyright (C) 2013-2014 Renesas Solutions Corp.
+  * Copyright (C) 2014 Cogent Embedded, Inc.
++ * Copyright (C) 2015-2016 Renesas Electronics Corporation
+  *
+  * This file is licensed under the terms of the GNU General Public License
+  * version 2.  This program is licensed "as is" without any warranty of any
+@@ -49,6 +50,7 @@
+ 	aliases {
+ 		serial0 = &scif0;
+ 		serial1 = &scifa1;
++		i2c8 = "i2cexio";
+ 	};
  
-+		/* External SCIF clock */
-+		scif_clk: scif {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			/* This value must be overridden by the board. */
-+			clock-frequency = <0>;
-+			status = "disabled";
-+		};
+ 	chosen {
+@@ -252,6 +254,23 @@
+ 		#clock-cells = <0>;
+ 		clock-frequency = <148500000>;
+ 	};
 +
- 		/* Special CPG clocks */
- 		cpg_clocks: cpg_clocks@e6150000 {
- 			compatible = "renesas,r8a7793-cpg-clocks",
++	/*
++	 * IIC0/I2C0 is routed to EXIO connector A, pins 114 (SCL) + 116 (SDA) only.
++	 * We use the I2C demuxer, so the desired IP core can be selected at runtime
++	 * depending on the use case (e.g. DMA with IIC0 or slave support with I2C0).
++	 * Note: For testing the I2C slave feature, it is convenient to connect this
++	 * bus with IIC3 on pins 110 (SCL) + 112 (SDA), select I2C0 at runtime, and
++	 * instantiate the slave device at runtime according to the documentation.
++	 * You can then communicate with the slave via IIC3.
++	 */
++	i2cexio: i2c@8 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&iic0>, <&i2c0>;
++		i2c-bus-name = "i2c-exio";
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
+ };
+ 
+ &du {
+@@ -350,6 +369,11 @@
+ 		renesas,function = "msiof1";
+ 	};
+ 
++	i2c0_pins: i2c0 {
++		renesas,groups = "i2c0";
++		renesas,function = "i2c0";
++	};
++
+ 	iic0_pins: iic0 {
+ 		renesas,groups = "iic0";
+ 		renesas,function = "iic0";
+@@ -537,10 +561,14 @@
+ 	cpu0-supply = <&vdd_dvfs>;
+ };
+ 
++&i2c0	{
++	pinctrl-0 = <&i2c0_pins>;
++	pinctrl-names = "i2c-exio";
++};
++
+ &iic0	{
+-	status = "okay";
+ 	pinctrl-0 = <&iic0_pins>;
+-	pinctrl-names = "default";
++	pinctrl-names = "i2c-exio";
+ };
+ 
+ &iic1	{
 -- 
 2.7.0.rc3.207.g0ac5344
