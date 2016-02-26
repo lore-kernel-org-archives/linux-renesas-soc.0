@@ -1,58 +1,67 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms@verge.net.au>,
+MIME-Version: 1.0
+In-Reply-To: <1456496023-16240-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1456496023-16240-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Date: Fri, 26 Feb 2016 15:25:47 +0100
+Message-ID: <CAMuHMdXJRN2kF2r=bqcY8v87aYHj_OKr2=5vzcfoHwvr02Y2CA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: r8a7795: Add CAN external clock support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Pawel Moll <pawel.moll@arm.com>,
-	"Mark Rutland" <mark.rutland@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
 	Ian Campbell <ijc+devicetree@hellion.org.uk>,
 	Kumar Gala <galak@codeaurora.org>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
 	"linux-arm-kernel@lists.infradead.org"
 	<linux-arm-kernel@lists.infradead.org>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH] arm64: dts: r8a7795: Add CAN external clock support
-Date: Fri, 26 Feb 2016 15:00:35 +0000
-Message-ID: <SG2PR06MB1038B995B4C12A01C280DFC4C3A70@SG2PR06MB1038.apcprd06.prod.outlook.com>
-References: <1456496023-16240-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <CAMuHMdXJRN2kF2r=bqcY8v87aYHj_OKr2=5vzcfoHwvr02Y2CA@mail.gmail.com>
-In-Reply-To: <CAMuHMdXJRN2kF2r=bqcY8v87aYHj_OKr2=5vzcfoHwvr02Y2CA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+	Chris Paterson <chris.paterson2@renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCj4gT24gRnJpLCBGZWIgMjYsIDIwMTYgYXQgMzoxMyBQTSwgUmFtZXNoIFNo
-YW5tdWdhc3VuZGFyYW0NCj4gPHJhbWVzaC5zaGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMuY29t
-PiB3cm90ZToNCj4gPiBBZGRzIGV4dGVybmFsIENBTiBjbG9jayBub2RlIGZvciByOGE3Nzk1LiBU
-aGlzIGNsb2NrIGNhbiBiZSB1c2VkIGFzDQo+ID4gZkNBTiBjbG9jayBvZiBDQU4gYW5kIENBTiBG
-RCBjb250cm9sbGVyLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmFtZXNoIFNoYW5tdWdhc3Vu
-ZGFyYW0NCj4gPiA8cmFtZXNoLnNoYW5tdWdhc3VuZGFyYW1AYnAucmVuZXNhcy5jb20+DQo+ID4g
-LS0tDQo+ID4gIGFyY2gvYXJtNjQvYm9vdC9kdHMvcmVuZXNhcy9yOGE3Nzk1LmR0c2kgfCA3ICsr
-KysrKysNCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlm
-ZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvcmVuZXNhcy9yOGE3Nzk1LmR0c2kNCj4gPiBi
-L2FyY2gvYXJtNjQvYm9vdC9kdHMvcmVuZXNhcy9yOGE3Nzk1LmR0c2kNCj4gPiBpbmRleCBhNzMx
-NWViLi41MTY3YTZjIDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvcmVuZXNh
-cy9yOGE3Nzk1LmR0c2kNCj4gPiArKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL3JlbmVzYXMvcjhh
-Nzc5NS5kdHNpDQo+ID4gQEAgLTExNSw2ICsxMTUsMTMgQEANCj4gPiAgICAgICAgICAgICAgICAg
-Y2xvY2stZnJlcXVlbmN5ID0gPDA+Ow0KPiA+ICAgICAgICAgfTsNCj4gPg0KPiA+ICsgICAgICAg
-LyogRXh0ZXJuYWwgQ0FOIGNsb2NrIC0gdG8gYmUgb3ZlcnJpZGRlbiBieSBib2FyZHMgdGhhdCBw
-cm92aWRlDQo+IGl0ICovDQo+ID4gKyAgICAgICBjYW5fY2xrOiBjYW4gew0KPiA+ICsgICAgICAg
-ICAgICAgICBjb21wYXRpYmxlID0gImZpeGVkLWNsb2NrIjsNCj4gPiArICAgICAgICAgICAgICAg
-I2Nsb2NrLWNlbGxzID0gPDA+Ow0KPiA+ICsgICAgICAgICAgICAgICBjbG9jay1mcmVxdWVuY3kg
-PSA8MD47DQo+IA0KPiBBcyB0aGlzIGlzIGFuIG9wdGlvbmFsIGNsb2NrLCBpdCBzaG91bGQgaGF2
-ZQ0KPiANCj4gICAgICAgICBzdGF0dXMgPSAiZGlzYWJsZWQiOw0KDQpZZXMsIEkgdG9vIHRob3Vn
-aHQgdGhlIHNhbWUgYnV0IHRoZSBzdGF0dXMgcHJvcGVydHkgaXMgbm90IG9iZXllZC4gVGhlICJk
-aXNhYmxlZCIgY2xvY2sgc3RpbGwgc2hvd3MgdXAgaW4gY2xrX3RyZWUgYW5kIGNsa194eHggYXBp
-cyB3b3JrcyBqdXN0IGZpbmUgKElzIHRoaXMgYSBEVCBidWc/KS4gSGVuY2UgbGVmdCB0aGUgYW1i
-aWd1b3VzICJzdGF0dXMiLiBJbiBjb2RlIEkgdXNlIGNsa19nZXRfcmF0ZShjYW5fY2xrKSAhPSAw
-IHRvIHNlZSBpZiBpdCdzIGVuYWJsZWQsIHdoaWNoIHNlZW1zIGxvZ2ljYWwuDQoNCklmIHlvdSBh
-ZGQgdGhpcyBhcyBhIGNoaWxkIG9mIHNvYyBub2RlLCBzdGF0dXMgcHJvcGVydHkgaXMgb2JleWVk
-LiBCdXQgYWxsIGV4dGVybmFsIGNsb2NrcyBhcmUgZGVmaW5lZCBvdXRzaWRlIHNvYyAoY29ycmVj
-dGx5KSBhbmQgSSBmb2xsb3dlZCB0aGUgc2FtZS4NCg0KVGhhbmtzLA0KUmFtZXNoDQoNCk5vdGU6
-IHRlc3RzIGJhc2VkIG9uIG5leHQtMjAxNjAxMjcNCg==
+Hi Ramesh,
+
+On Fri, Feb 26, 2016 at 3:13 PM, Ramesh Shanmugasundaram
+<ramesh.shanmugasundaram@bp.renesas.com> wrote:
+> Adds external CAN clock node for r8a7795. This clock can be used as
+> fCAN clock of CAN and CAN FD controller.
+>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7795.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> index a7315eb..5167a6c 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> @@ -115,6 +115,13 @@
+>                 clock-frequency = <0>;
+>         };
+>
+> +       /* External CAN clock - to be overridden by boards that provide it */
+> +       can_clk: can {
+> +               compatible = "fixed-clock";
+> +               #clock-cells = <0>;
+> +               clock-frequency = <0>;
+
+As this is an optional clock, it should have
+
+        status = "disabled";
+
+> +       };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
