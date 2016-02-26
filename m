@@ -1,105 +1,77 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v2 10/11] ARM: dts: r8a7794: Add SYSC PM domains
-Date: Mon, 15 Feb 2016 22:16:59 +0100
-Message-Id: <1455571020-18968-11-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
-References: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+	Ai Kyuse <ai.kyuse.uw@renesas.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/14] arm64: dts: r8a7795: Add SDHI support to dtsi
+Date: Fri, 26 Feb 2016 09:07:41 +0900
+Message-Id: <d9d67010e0c699c838ac84245ec6d8651420d337.1456445161.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1456445161.git.horms+renesas@verge.net.au>
+References: <cover.1456445161.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the System Controller, with subnodes that
-represent the hardware power area hierarchy.
-Hook up the Cortex-A7 CPU cores and the Cortex-A7 L2 cache/SCU to their
-respective PM domains.
+From: Ai Kyuse <ai.kyuse.uw@renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+[wsa: squashed some fixes and added mmc-caps]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v2:
-  - Change one-line summary prefix to match current arm-soc practices,
-  - Update compatible values.
----
- arch/arm/boot/dts/r8a7794.dtsi | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 38 ++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 21a02df3609b24aa..d0fc735571242fd1 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -40,6 +40,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0>;
- 			clock-frequency = <1000000000>;
-+			power-domains = <&pd_ca7_cpu0>;
- 			next-level-cache = <&L2_CA7>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 1072c681f8b4..c2bffd160c18 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -985,5 +985,43 @@
+ 			#dma-cells = <1>;
+ 			dma-channels = <2>;
  		};
- 
-@@ -48,12 +49,14 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <1>;
- 			clock-frequency = <1000000000>;
-+			power-domains = <&pd_ca7_cpu1>;
- 			next-level-cache = <&L2_CA7>;
- 		};
- 	};
- 
- 	L2_CA7: cache-controller@1 {
- 		compatible = "cache";
-+		power-domains = <&pd_ca7_scu>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
-@@ -1152,6 +1155,43 @@
- 		};
- 	};
- 
-+	sysc: system-controller@e6180000 {
-+		compatible = "renesas,r8a7794-sysc", "renesas,rcar-gen2-sysc";
-+		reg = <0 0xe6180000 0 0x0200>;
 +
-+		pm-domains {
-+			#address-cells = <2>;
-+			#size-cells = <0>;
-+
-+			pd_ca7_scu: scu@21 {
-+				reg = <21 0x100>;
-+				#address-cells = <2>;
-+				#size-cells = <0>;
-+				#power-domain-cells = <0>;
-+
-+				pd_ca7_cpu0: cpu@5 {
-+					reg = <5 0x1c0>;
-+					#power-domain-cells = <0>;
-+				};
-+
-+				pd_ca7_cpu1: cpu@6 {
-+					reg = <6 0x1c0>;
-+					#power-domain-cells = <0>;
-+				};
-+			};
-+
-+			pd_sh: sh@16 {
-+				reg = <16 0x80>;
-+				#power-domain-cells = <0>;
-+			};
-+
-+			pd_sgx: sgx@20 {
-+				reg = <20 0xc0>;
-+				#power-domain-cells = <0>;
-+			};
++		sdhi0: sd@ee100000 {
++			compatible = "renesas,sdhi-r8a7795";
++			reg = <0 0xee100000 0 0x2000>;
++			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 314>;
++			power-domains = <&cpg>;
++			status = "disabled";
 +		};
-+	};
 +
- 	ipmmu_sy0: mmu@e6280000 {
- 		compatible = "renesas,ipmmu-r8a7794", "renesas,ipmmu-vmsa";
- 		reg = <0 0xe6280000 0 0x1000>;
++		sdhi1: sd@ee120000 {
++			compatible = "renesas,sdhi-r8a7795";
++			reg = <0 0xee120000 0 0x2000>;
++			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 313>;
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++
++		sdhi2: sd@ee140000 {
++			compatible = "renesas,sdhi-r8a7795";
++			reg = <0 0xee140000 0 0x2000>;
++			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 312>;
++			power-domains = <&cpg>;
++			cap-mmc-highspeed;
++			status = "disabled";
++		};
++
++		sdhi3: sd@ee160000 {
++			compatible = "renesas,sdhi-r8a7795";
++			reg = <0 0xee160000 0 0x2000>;
++			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 311>;
++			power-domains = <&cpg>;
++			cap-mmc-highspeed;
++			status = "disabled";
++		};
+ 	};
+ };
 -- 
-1.9.1
-
+2.7.0.rc3.207.g0ac5344
