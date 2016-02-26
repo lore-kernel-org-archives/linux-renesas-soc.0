@@ -1,52 +1,45 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: robin.murphy@arm.com, vinod.koul@intel.com,
-	laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-	linus.walleij@linaro.org, dan.j.williams@intel.com, arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 2/8] dma-mapping: add {map,unmap}_resource to dma_map_ops
-Date: Wed, 10 Feb 2016 01:57:52 +0100
-Message-Id: <1455065878-11906-3-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1455065878-11906-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1455065878-11906-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Renesas ARM Based SoC SH Drivers Fixes for v4.5
+Date: Fri, 26 Feb 2016 09:12:35 +0900
+Message-Id: <cover.1456445477.git.horms+renesas@verge.net.au>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add methods to handle mapping of device resources from a physical
-address. This is needed for example to map be able to map MMIO FIFO
-registers to a IOMMU.
+Hi Linus,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- include/linux/dma-mapping.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+Please consider this Renesas ARM based SoC SH drivers fix for v4.5.
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 75857cd..e3aba4e 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -49,6 +49,12 @@ struct dma_map_ops {
- 			 struct scatterlist *sg, int nents,
- 			 enum dma_data_direction dir,
- 			 struct dma_attrs *attrs);
-+	dma_addr_t (*map_resource)(struct device *dev, phys_addr_t phys_addr,
-+			       size_t size, enum dma_data_direction dir,
-+			       struct dma_attrs *attrs);
-+	void (*unmap_resource)(struct device *dev, dma_addr_t dma_handle,
-+			   size_t size, enum dma_data_direction dir,
-+			   struct dma_attrs *attrs);
- 	void (*sync_single_for_cpu)(struct device *dev,
- 				    dma_addr_t dma_handle, size_t size,
- 				    enum dma_data_direction dir);
--- 
-2.7.1
+This corrects a regression for some SuperH platforms which was
+introduced in v4.4. The regression may lead to driver failures due
+to clocks not being enabled when needed.
+
+
+The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
+
+  Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-sh-drivers-fixes-for-v4.5
+
+for you to fetch changes up to 0378ba4899d5fbd8494ed6580cbc81d7b44dbac6:
+
+  drivers: sh: Restore legacy clock domain on SuperH platforms (2016-02-25 09:05:19 +0900)
+
+----------------------------------------------------------------
+Renesas ARM Based SoC SH Drivers Fixes for v4.5
+
+* Restore legacy clock domain on SuperH platforms
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      drivers: sh: Restore legacy clock domain on SuperH platforms
+
+ drivers/sh/pm_runtime.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
