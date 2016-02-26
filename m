@@ -1,64 +1,66 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfgang Grandegger <wg@grandegger.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH can-next 1/2] CAN: rcar: add gen[12] fallback compatibility strings
-Date: Mon, 22 Feb 2016 11:15:49 +0900
-Message-Id: <1456107350-12100-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1456107350-12100-1-git-send-email-horms+renesas@verge.net.au>
-References: <1456107350-12100-1-git-send-email-horms+renesas@verge.net.au>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1456485005-37035-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1456485005-37035-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+	<1456485005-37035-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Date: Fri, 26 Feb 2016 13:13:11 +0100
+Message-ID: <CAMuHMdX_cTg_EieXZD53_hq3dxb1QTBvDkUnx-B6U2GSerJR2g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] pinctrl: sh-pfc: r8a7795: Add CAN support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-renesas-soc@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Chris Paterson <chris.paterson2@renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add fallback compatibility string for R-Car Gen 1 and Gen2 families.
-This is in keeping with the fallback scheme being adopted wherever
-appropriate for drivers for Renesas SoCs.
+Hi Ramesh,
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/net/can/rcar_can.txt | 4 +++-
- drivers/net/can/rcar_can.c                             | 2 ++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+On Fri, Feb 26, 2016 at 12:10 PM, Ramesh Shanmugasundaram
+<ramesh.shanmugasundaram@bp.renesas.com> wrote:
+> This patch adds CAN[0-1] pinmux support to r8a7795 SoC.
+>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-index 002d8440bf66..036786e1f70d 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-@@ -6,6 +6,8 @@ Required properties:
- 	      "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
- 	      "renesas,can-r8a7790" if CAN controller is a part of R8A7790 SoC.
- 	      "renesas,can-r8a7791" if CAN controller is a part of R8A7791 SoC.
-+	      "renesas,can-gen1" for a generic R-Car Gen1 compatible device.
-+	      "renesas,can-gen2" for a generic R-Car Gen2 compatible device.
- - reg: physical base address and size of the R-Car CAN register map.
- - interrupts: interrupt specifier for the sole interrupt.
- - clocks: phandles and clock specifiers for 3 CAN clock inputs.
-@@ -25,7 +27,7 @@ Example
- SoC common .dtsi file:
- 
- 	can0: can@e6e80000 {
--		compatible = "renesas,can-r8a7791";
-+		compatible = "renesas,can-r8a7791", "renesas,can-gen2";
- 		reg = <0 0xe6e80000 0 0x1000>;
- 		interrupts = <0 186 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7791_CLK_RCAN0>,
-diff --git a/drivers/net/can/rcar_can.c b/drivers/net/can/rcar_can.c
-index bc46be39549d..c70a1f795933 100644
---- a/drivers/net/can/rcar_can.c
-+++ b/drivers/net/can/rcar_can.c
-@@ -904,6 +904,8 @@ static const struct of_device_id rcar_can_of_table[] __maybe_unused = {
- 	{ .compatible = "renesas,can-r8a7779" },
- 	{ .compatible = "renesas,can-r8a7790" },
- 	{ .compatible = "renesas,can-r8a7791" },
-+	{ .compatible = "renesas,can-gen1" },
-+	{ .compatible = "renesas,can-gen2" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rcar_can_of_table);
--- 
-2.1.4
+Thanks for the update!
 
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> @@ -1535,6 +1535,38 @@ static const unsigned int audio_clkout3_b_mux[] = {
+>         AUDIO_CLKOUT3_B_MARK,
+>  };
+>
+> +/* - CAN ------------------------------------------------------------------ */
+> +static const unsigned int can0_data_a_pins[] = {
+> +       /* TX, RX */
+> +       RCAR_GP_PIN(1, 23),     RCAR_GP_PIN(1, 24),
+> +};
+
+[...]
+
+> +static const unsigned int can_clk_mux[] = {
+> +       CAN_CLK_MARK,
+> +};
+> +
+>  /* - EtherAVB --------------------------------------------------------------- */
+>  static const unsigned int avb_link_pins[] = {
+>         /* AVB_LINK */
+
+However, "can" should be below "avb".
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
