@@ -3,121 +3,233 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 51/68] ARM: dts: r8a7790: Rename the serial port clock to fck
-Date: Fri, 12 Feb 2016 20:05:41 +0100
-Message-Id: <6c6e12a1f90d9b1cc5ae7428f43aeee33049c2ee.1455303422.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1455303422.git.horms+renesas@verge.net.au>
-References: <cover.1455303422.git.horms+renesas@verge.net.au>
+Subject: [PATCH 03/14] arm64: dts: r8a7795: use GIC_* defines
+Date: Fri, 26 Feb 2016 09:07:36 +0900
+Message-Id: <52b541abbc02f64e2105dff278c8b4e7e75041f4.1456445161.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1456445161.git.horms+renesas@verge.net.au>
+References: <cover.1456445161.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Use GIC_* defines for GIC interrupt cells in r8a7795 device tree.
 
-The clock is really the device functional clock, not the interface
-clock. Rename it.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 108 +++++++++++++++----------------
+ 1 file changed, 54 insertions(+), 54 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 1d94dfd53141..c5672745a1e5 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -590,7 +590,7 @@
- 		reg = <0 0xe6c40000 0 64>;
- 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFA0>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -603,7 +603,7 @@
- 		reg = <0 0xe6c50000 0 64>;
- 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFA1>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -616,7 +616,7 @@
- 		reg = <0 0xe6c60000 0 64>;
- 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFA2>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -629,7 +629,7 @@
- 		reg = <0 0xe6c20000 0 64>;
- 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFB0>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -642,7 +642,7 @@
- 		reg = <0 0xe6c30000 0 64>;
- 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFB1>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x19>, <&dmac0 0x1a>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -655,7 +655,7 @@
- 		reg = <0 0xe6ce0000 0 64>;
- 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFB2>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -668,7 +668,7 @@
- 		reg = <0 0xe6e60000 0 64>;
- 		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7790_CLK_SCIF0>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -681,7 +681,7 @@
- 		reg = <0 0xe6e68000 0 64>;
- 		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7790_CLK_SCIF1>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -694,7 +694,7 @@
- 		reg = <0 0xe62c0000 0 96>;
- 		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7790_CLK_HSCIF0>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
-@@ -707,7 +707,7 @@
- 		reg = <0 0xe62c8000 0 96>;
- 		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7790_CLK_HSCIF1>;
--		clock-names = "sci_ick";
-+		clock-names = "fck";
- 		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
- 		dma-names = "tx", "rx";
- 		power-domains = <&cpg_clocks>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index b5e46e4ff72a..832a5665bb27 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -282,23 +282,23 @@
+ 		audma0: dma-controller@ec700000 {
+ 			compatible = "renesas,rcar-dmac";
+ 			reg = <0 0xec700000 0 0x10000>;
+-			interrupts =	<0 350 IRQ_TYPE_LEVEL_HIGH
+-					 0 320 IRQ_TYPE_LEVEL_HIGH
+-					 0 321 IRQ_TYPE_LEVEL_HIGH
+-					 0 322 IRQ_TYPE_LEVEL_HIGH
+-					 0 323 IRQ_TYPE_LEVEL_HIGH
+-					 0 324 IRQ_TYPE_LEVEL_HIGH
+-					 0 325 IRQ_TYPE_LEVEL_HIGH
+-					 0 326 IRQ_TYPE_LEVEL_HIGH
+-					 0 327 IRQ_TYPE_LEVEL_HIGH
+-					 0 328 IRQ_TYPE_LEVEL_HIGH
+-					 0 329 IRQ_TYPE_LEVEL_HIGH
+-					 0 330 IRQ_TYPE_LEVEL_HIGH
+-					 0 331 IRQ_TYPE_LEVEL_HIGH
+-					 0 332 IRQ_TYPE_LEVEL_HIGH
+-					 0 333 IRQ_TYPE_LEVEL_HIGH
+-					 0 334 IRQ_TYPE_LEVEL_HIGH
+-					 0 335 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 350 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "error",
+ 					"ch0", "ch1", "ch2", "ch3",
+ 					"ch4", "ch5", "ch6", "ch7",
+@@ -314,23 +314,23 @@
+ 		audma1: dma-controller@ec720000 {
+ 			compatible = "renesas,rcar-dmac";
+ 			reg = <0 0xec720000 0 0x10000>;
+-			interrupts =	<0 351 IRQ_TYPE_LEVEL_HIGH
+-					 0 336 IRQ_TYPE_LEVEL_HIGH
+-					 0 337 IRQ_TYPE_LEVEL_HIGH
+-					 0 338 IRQ_TYPE_LEVEL_HIGH
+-					 0 339 IRQ_TYPE_LEVEL_HIGH
+-					 0 340 IRQ_TYPE_LEVEL_HIGH
+-					 0 341 IRQ_TYPE_LEVEL_HIGH
+-					 0 342 IRQ_TYPE_LEVEL_HIGH
+-					 0 343 IRQ_TYPE_LEVEL_HIGH
+-					 0 344 IRQ_TYPE_LEVEL_HIGH
+-					 0 345 IRQ_TYPE_LEVEL_HIGH
+-					 0 346 IRQ_TYPE_LEVEL_HIGH
+-					 0 347 IRQ_TYPE_LEVEL_HIGH
+-					 0 348 IRQ_TYPE_LEVEL_HIGH
+-					 0 349 IRQ_TYPE_LEVEL_HIGH
+-					 0 382 IRQ_TYPE_LEVEL_HIGH
+-					 0 383 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 351 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 348 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 349 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 382 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 383 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "error",
+ 					"ch0", "ch1", "ch2", "ch3",
+ 					"ch4", "ch5", "ch6", "ch7",
+@@ -804,52 +804,52 @@
+ 
+ 			rcar_sound,src {
+ 				src0: src@0 {
+-					interrupts = <0 352 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x85>, <&audma1 0x9a>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src1: src@1 {
+-					interrupts = <0 353 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x87>, <&audma1 0x9c>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src2: src@2 {
+-					interrupts = <0 354 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x89>, <&audma1 0x9e>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src3: src@3 {
+-					interrupts = <0 355 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x8b>, <&audma1 0xa0>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src4: src@4 {
+-					interrupts = <0 356 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x8d>, <&audma1 0xb0>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src5: src@5 {
+-					interrupts = <0 357 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x8f>, <&audma1 0xb2>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src6: src@6 {
+-					interrupts = <0 358 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x91>, <&audma1 0xb4>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src7: src@7 {
+-					interrupts = <0 359 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 359 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x93>, <&audma1 0xb6>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src8: src@8 {
+-					interrupts = <0 360 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x95>, <&audma1 0xb8>;
+ 					dma-names = "rx", "tx";
+ 				};
+ 				src9: src@9 {
+-					interrupts = <0 361 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 361 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x97>, <&audma1 0xba>;
+ 					dma-names = "rx", "tx";
+ 				};
+@@ -857,52 +857,52 @@
+ 
+ 			rcar_sound,ssi {
+ 				ssi0: ssi@0 {
+-					interrupts = <0 370 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x01>, <&audma1 0x02>, <&audma0 0x15>, <&audma1 0x16>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi1: ssi@1 {
+-					 interrupts = <0 371 IRQ_TYPE_LEVEL_HIGH>;
++					 interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi2: ssi@2 {
+-					interrupts = <0 372 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x05>, <&audma1 0x06>, <&audma0 0x63>, <&audma1 0x64>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi3: ssi@3 {
+-					interrupts = <0 373 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x07>, <&audma1 0x08>, <&audma0 0x6f>, <&audma1 0x70>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi4: ssi@4 {
+-					interrupts = <0 374 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x09>, <&audma1 0x0a>, <&audma0 0x71>, <&audma1 0x72>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi5: ssi@5 {
+-					interrupts = <0 375 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x0b>, <&audma1 0x0c>, <&audma0 0x73>, <&audma1 0x74>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi6: ssi@6 {
+-					interrupts = <0 376 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x0d>, <&audma1 0x0e>, <&audma0 0x75>, <&audma1 0x76>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi7: ssi@7 {
+-					interrupts = <0 377 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x0f>, <&audma1 0x10>, <&audma0 0x79>, <&audma1 0x7a>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi8: ssi@8 {
+-					interrupts = <0 378 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x11>, <&audma1 0x12>, <&audma0 0x7b>, <&audma1 0x7c>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
+ 				ssi9: ssi@9 {
+-					interrupts = <0 379 IRQ_TYPE_LEVEL_HIGH>;
++					interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
+ 					dmas = <&audma0 0x13>, <&audma1 0x14>, <&audma0 0x7d>, <&audma1 0x7e>;
+ 					dma-names = "rx", "tx", "rxu", "txu";
+ 				};
 -- 
 2.7.0.rc3.207.g0ac5344
