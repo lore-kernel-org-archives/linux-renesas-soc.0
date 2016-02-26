@@ -1,46 +1,74 @@
-Return-Path: <SRS0+93W/=OP=gmail.com=magnus.damm@vergenet.net>
-From: Magnus Damm <magnus.damm@gmail.com>
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au,Magnus Damm <magnus.damm@gmail.com>,laurent.pinchart+renesas@ideasonboard.com,geert+renesas@glider.be
-Date: Tue, 16 Feb 2016 11:26:44 +0900
-Message-Id: <20160216022644.12147.42064.sendpatchset@little-apple>
-In-Reply-To: <20160216022635.12147.46525.sendpatchset@little-apple>
-References: <20160216022635.12147.46525.sendpatchset@little-apple>
-Subject: [PATCH 01/02] arm64: dts: r8a7795: Add INTC-EX device node
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Dirk Behme <dirk.behme@gmail.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 01/14] arm64: dts: r8a7795: Add L2 cache-controller nodes
+Date: Fri, 26 Feb 2016 09:07:34 +0900
+Message-Id: <7b337e61a4104d5a0abde1e733916de2208800e6.1456445161.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1456445161.git.horms+renesas@verge.net.au>
+References: <cover.1456445161.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add a single r8a7795 INTC-EX device node to support
-external IRQ pins IRQ0 -> IRQ5.
+Add device nodes for the L2 caches, and link the CPU node to its L2
+cache node.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+The L2 cache for the Cortex-A57 CPU cores is 2 MiB large (organized as
+128 KiB x 16 ways).
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
---- 0001/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2016-02-16 11:01:37.760513000 +0900
-@@ -357,6 +357,21 @@
- 			reg = <0 0xe6060000 0 0x50c>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 9634e3a4858e..3f00e85641a8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -39,6 +39,7 @@
+ 			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x0>;
+ 			device_type = "cpu";
++			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
  		};
  
-+		intc_ex: interrupt-controller@e61c0000 {
-+			compatible = "renesas,intc-ex-r8a7795", "renesas,irqc";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			reg = <0 0xe61c0000 0 0x200>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 407>;
-+			power-domains = <&cpg>;
-+		};
+@@ -46,22 +47,29 @@
+ 			compatible = "arm,cortex-a57","arm,armv8";
+ 			reg = <0x1>;
+ 			device_type = "cpu";
++			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+ 		};
+ 		a57_2: cpu@2 {
+ 			compatible = "arm,cortex-a57","arm,armv8";
+ 			reg = <0x2>;
+ 			device_type = "cpu";
++			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+ 		};
+ 		a57_3: cpu@3 {
+ 			compatible = "arm,cortex-a57","arm,armv8";
+ 			reg = <0x3>;
+ 			device_type = "cpu";
++			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+ 		};
+ 	};
+ 
++	L2_CA57: cache-controller@0 {
++		compatible = "cache";
++	};
 +
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a7795",
- 				     "renesas,rcar-dmac";
+ 	extal_clk: extal {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+-- 
+2.7.0.rc3.207.g0ac5344
