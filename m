@@ -1,101 +1,50 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC 06/10] arm64: dts: r8a7795: add USB2.0 Host (EHCI/OHCI) device nodes
-Date: Tue, 2 Feb 2016 19:18:54 +0900
-Message-ID: <1454408338-4612-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Date: Fri, 26 Feb 2016 10:29:26 +0100
+Message-ID: <CAMuHMdXbcjuQxxkAj+dF85YerPXjQwwvNPVSMK9LXs3bL6SGiw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] CAN & CAN FD clk support for r8a7795 SoC
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Chris Paterson <chris.paterson2@renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 66 ++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+Hi Ramesh,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index f0f0c27..76800ba 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -908,5 +908,71 @@
- 			#phy-cells = <0>;
- 			status = "disabled";
- 		};
-+
-+		ehci0: usb@ee080100 {
-+			compatible = "renesas,ehci-r8a7795", "generic-ehci";
-+			reg = <0 0xee080100 0 0x100>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		ehci1: usb@ee0a0100 {
-+			compatible = "renesas,ehci-r8a7795", "generic-ehci";
-+			reg = <0 0xee0a0100 0 0x100>;
-+			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 702>;
-+			phys = <&usb2_phy1>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		ehci2: usb@ee0c0100 {
-+			compatible = "renesas,ehci-r8a7795", "generic-ehci";
-+			reg = <0 0xee0c0100 0 0x100>;
-+			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 701>;
-+			phys = <&usb2_phy2>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		ohci0: usb@ee080000 {
-+			compatible = "renesas,ohci-r8a7795", "generic-ohci";
-+			reg = <0 0xee080000 0 0x100>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		ohci1: usb@ee0a0000 {
-+			compatible = "renesas,ohci-r8a7795", "generic-ohci";
-+			reg = <0 0xee0a0000 0 0x100>;
-+			interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 702>;
-+			phys = <&usb2_phy1>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		ohci2: usb@ee0c0000 {
-+			compatible = "renesas,ohci-r8a7795", "generic-ohci";
-+			reg = <0 0xee0c0000 0 0x100>;
-+			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 701>;
-+			phys = <&usb2_phy2>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-1.9.1
+On Thu, Feb 25, 2016 at 6:05 PM, Ramesh Shanmugasundaram
+<ramesh.shanmugasundaram@bp.renesas.com> wrote:
+> This patch set adds CAN & CAN FD clk support for r8a7795 SoC.
+>
+> This set is based on linux-next repo(tag: next-20160225).
+>
+> Ramesh Shanmugasundaram (3):
+>   clk: shmobile: r8a7795: Add CAN peripheral clock
+>   clk: shmobile: r8a7795: Add CANFD clock
+>   clk: shmobile: r8a7795: Add CAN FD peripheral clock
+>
+>  drivers/clk/shmobile/r8a7795-cpg-mssr.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 
+Thank you, I will queue this next renesas-drivers, and clk-shmobile-for-v4.7.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
