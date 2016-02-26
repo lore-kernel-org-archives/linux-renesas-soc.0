@@ -1,72 +1,96 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: robin.murphy@arm.com, vinod.koul@intel.com,
-	laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-	linus.walleij@linaro.org, dan.j.williams@intel.com, arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 3/8] dma-mapping: add dma_{map,unmap}_resource
-Date: Wed, 10 Feb 2016 01:57:53 +0100
-Message-Id: <1455065878-11906-4-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1455065878-11906-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1455065878-11906-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
+In-Reply-To: <1456418933-3948-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1456418933-3948-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+	<1456418933-3948-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Date: Fri, 26 Feb 2016 10:11:19 +0100
+Message-ID: <CAMuHMdUrxU08T1f_9r0+23FZas3J5b90xHTYdCohNS9qU+iT7w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Add CAN FD support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-renesas-soc@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Chris Paterson <chris.paterson2@renesas.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Map/Unmap a device resource from a physical address. If no dma_map_ops
-method is available the operation is a no-op.
+Hi Ramesh,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- include/linux/dma-mapping.h | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+On Thu, Feb 25, 2016 at 5:48 PM, Ramesh Shanmugasundaram
+<ramesh.shanmugasundaram@bp.renesas.com> wrote:
+> This patch adds CANFD[0-1] pinmux support to r8a7795 SoC.
+>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index e3aba4e..21bf986 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -216,6 +216,33 @@ static inline void dma_unmap_page(struct device *dev, dma_addr_t addr,
- 	debug_dma_unmap_page(dev, addr, size, dir, false);
- }
- 
-+static inline dma_addr_t dma_map_resource(struct device *dev,
-+					  phys_addr_t phys_addr,
-+					  size_t size,
-+					  enum dma_data_direction dir,
-+					  struct dma_attrs *attrs)
-+{
-+	struct dma_map_ops *ops = get_dma_ops(dev);
-+
-+	BUG_ON(!valid_dma_direction(dir));
-+	if (ops->map_resource)
-+		return ops->map_resource(dev, phys_addr, size, dir, attrs);
-+
-+	return phys_addr;
-+}
-+
-+static inline void dma_unmap_resource(struct device *dev, dma_addr_t addr,
-+				      size_t size, enum dma_data_direction dir,
-+				      struct dma_attrs *attrs)
-+{
-+	struct dma_map_ops *ops = get_dma_ops(dev);
-+
-+	BUG_ON(!valid_dma_direction(dir));
-+	if (ops->unmap_resource)
-+		ops->unmap_resource(dev, addr, size, dir, attrs);
-+
-+}
-+
- static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
- 					   size_t size,
- 					   enum dma_data_direction dir)
--- 
-2.7.1
+Sorry, I spoke too soon. While the pin data is correct, I noticed the following
+while applying:
+
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> @@ -2940,6 +2940,36 @@ static const unsigned int can1_data_pins[] = {
+>  static const unsigned int can1_data_mux[] = {
+>         CAN1_TX_MARK,           CAN1_RX_MARK,
+>  };
+> +
+> +/* - RCAN FD --------------------------------------------------------------- */
+
+Please use "CAN" instead of "RCAN", and insert in alphabetical order.
+
+> +static const unsigned int canfd0_data_a_pins[] = {
+
+> @@ -3362,6 +3392,9 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+>         SH_PFC_PIN_GROUP(can0_data_a),
+>         SH_PFC_PIN_GROUP(can0_data_b),
+>         SH_PFC_PIN_GROUP(can1_data),
+> +       SH_PFC_PIN_GROUP(canfd0_data_a),
+> +       SH_PFC_PIN_GROUP(canfd0_data_b),
+> +       SH_PFC_PIN_GROUP(canfd1_data),
+>         SH_PFC_PIN_GROUP(can_clk),
+
+Please insert in alphabetical order.
+
+> @@ -3686,6 +3719,15 @@ static const char * const can1_groups[] = {
+>         "can1_data",
+>  };
+>
+> +static const char * const canfd0_groups[] = {
+> +       "canfd0_data_a",
+> +       "canfd0_data_b",
+> +};
+> +
+> +static const char * const canfd1_groups[] = {
+> +       "canfd1_data",
+> +};
+
+Please insert in alphabetical order.
+
+> +
+>  static const char * const can_clk_groups[] = {
+>         "can_clk",
+>  };
+> @@ -3721,6 +3763,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
+>         SH_PFC_FUNCTION(ssi),
+>         SH_PFC_FUNCTION(can0),
+>         SH_PFC_FUNCTION(can1),
+> +       SH_PFC_FUNCTION(canfd0),
+> +       SH_PFC_FUNCTION(canfd1),
+>         SH_PFC_FUNCTION(can_clk),
+
+Please insert in alphabetical order.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
