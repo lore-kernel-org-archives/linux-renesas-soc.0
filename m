@@ -1,104 +1,46 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Paul Gortmaker <paul.gortmaker@windriver.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-Subject: [PATCH 4/8] drivers/pinctrl: make sh-pfc/core.c explicitly non-modular
-Date: Mon, 29 Feb 2016 15:48:40 -0500
-Message-ID: <1456778924-20730-5-git-send-email-paul.gortmaker@windriver.com>
-In-Reply-To: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
-References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+From: Arnd Bergmann <arnd@arndb.de>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	David Airlie <airlied@linux.ie>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: rcar-du: clarify vsp dependency
+Date: Fri, 26 Feb 2016 12:52:20 +0100
+Message-Id: <1456487546-3886345-1-git-send-email-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Kconfig / Makefile currently controlling compilation of this code is:
+The VSP1 compositor code in DRM links against the respective V4L
+driver, but the dependency is not expressed correctly in Kconfig,
+which leads to a build error when the DRM driver is built-in
+and the V4L driver is a module:
 
-drivers/pinctrl/sh-pfc/Makefile:obj-$(CONFIG_PINCTRL_SH_PFC)    += sh-pfc.o
-drivers/pinctrl/sh-pfc/Makefile:sh-pfc-objs                     = core.o pinctrl.o
+drivers/gpu/built-in.o: In function `rcar_du_vsp_plane_atomic_update':
+rcar-du/rcar_du_vsp.c:183: undefined reference to `vsp1_du_atomic_update'
 
-drivers/pinctrl/sh-pfc/Kconfig:config PINCTRL_SH_PFC
-drivers/pinctrl/sh-pfc/Kconfig: def_bool y
+This patch avoids the problem by ensuring that the DRM VSP code can
+only be enabled if the V4L driver is linked into the kernel, or
+both are loadable modules.
 
-...meaning that it currently is not being built as a module by anyone.
-
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
-
-Since module_init already wasn't being used in this code, the init
-ordering remains unchanged with this commit.
-
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
-was (or is now) contained at the top of the file in the comments.
-
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 6d62ef3ac30b ("drm: rcar-du: Expose the VSP1 compositor through KMS planes")
 ---
- drivers/pinctrl/sh-pfc/core.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/rcar-du/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 181ea98a63b7..3f3f904e458b 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -1,5 +1,7 @@
- /*
-- * SuperH Pin Function Controller support.
-+ * Pin Control and GPIO driver for SuperH Pin Function Controller.
-+ *
-+ * Authors: Magnus Damm, Paul Mundt, Laurent Pinchart
-  *
-  * Copyright (C) 2008 Magnus Damm
-  * Copyright (C) 2009 - 2012 Paul Mundt
-@@ -17,7 +19,7 @@
- #include <linux/io.h>
- #include <linux/ioport.h>
- #include <linux/kernel.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/pinctrl/machine.h>
-@@ -503,7 +505,6 @@ static const struct of_device_id sh_pfc_of_table[] = {
- #endif
- 	{ },
- };
--MODULE_DEVICE_TABLE(of, sh_pfc_of_table);
- #endif
- 
- static int sh_pfc_probe(struct platform_device *pdev)
-@@ -632,7 +633,6 @@ static const struct platform_device_id sh_pfc_id_table[] = {
- 	{ "sh-pfc", 0 },
- 	{ },
- };
--MODULE_DEVICE_TABLE(platform, sh_pfc_id_table);
- 
- static struct platform_driver sh_pfc_driver = {
- 	.probe		= sh_pfc_probe,
-@@ -649,13 +649,3 @@ static int __init sh_pfc_init(void)
- 	return platform_driver_register(&sh_pfc_driver);
- }
- postcore_initcall(sh_pfc_init);
--
--static void __exit sh_pfc_exit(void)
--{
--	platform_driver_unregister(&sh_pfc_driver);
--}
--module_exit(sh_pfc_exit);
--
--MODULE_AUTHOR("Magnus Damm, Paul Mundt, Laurent Pinchart");
--MODULE_DESCRIPTION("Pin Control and GPIO driver for SuperH pin function controller");
--MODULE_LICENSE("GPL v2");
+diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
+index 1f10fa0928b4..eb1e6d5cfed9 100644
+--- a/drivers/gpu/drm/rcar-du/Kconfig
++++ b/drivers/gpu/drm/rcar-du/Kconfig
+@@ -27,6 +27,6 @@ config DRM_RCAR_LVDS
+ config DRM_RCAR_VSP
+ 	bool "R-Car DU VSP Compositor Support"
+ 	depends on DRM_RCAR_DU
+-	depends on VIDEO_RENESAS_VSP1
++	depends on VIDEO_RENESAS_VSP1=y || (VIDEO_RENESAS_VSP1 && DRM_RCAR_DU=m)
+ 	help
+ 	  Enable support to expose the R-Car VSP Compositor as KMS planes.
 -- 
-2.6.1
+2.7.0
