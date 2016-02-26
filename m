@@ -1,48 +1,39 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-ide@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	devicetree@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] SATA: rcar: add device tree support for r8a7792
-Date: Thu, 25 Feb 2016 10:16:25 +0900
-Message-Id: <1456362985-24137-1-git-send-email-horms+renesas@verge.net.au>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <1456419926-8732-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+	<1456419926-8732-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Date: Fri, 26 Feb 2016 09:25:16 +0100
+Message-ID: <CAMuHMdViEFQUsx42bx8g-OmX-CkxjT7XcPOE5LvQg6E3kgLK6Q@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: shmobile: r8a7795: Add CANFD clock
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Chris Paterson <chris.paterson2@renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Simply document new compatibility string.
-As a previous patch adds a generic R-Car Gen2 compatibility string
-there appears to be no need for a driver updates.
+On Thu, Feb 25, 2016 at 6:05 PM, Ramesh Shanmugasundaram
+<ramesh.shanmugasundaram@bp.renesas.com> wrote:
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-By documenting this compat sting it may be used in DTSs shipped, for
-example as part of ROMs. It must be used in conjunction with the Gen2
-fallback compat string. At this time there are no known differences between
-the r8a7792 IP block and that implemented by the driver for the Gen2
-fallback compat string. Thus there is no need to update the driver as the
-use of the Gen2 fallback compat string will activate the correct code in
-the current driver while leaving the option for r8a7792-specific driver
-code to be activated in an updated driver should the need arise.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/ata/sata_rcar.txt | 1 +
- 1 file changed, 1 insertion(+)
+Gr{oetje,eeting}s,
 
- Based on the for-next branch of the libata tree
+                        Geert
 
-diff --git a/Documentation/devicetree/bindings/ata/sata_rcar.txt b/Documentation/devicetree/bindings/ata/sata_rcar.txt
-index 0764f9ab63dc..539dbdfba8de 100644
---- a/Documentation/devicetree/bindings/ata/sata_rcar.txt
-+++ b/Documentation/devicetree/bindings/ata/sata_rcar.txt
-@@ -7,6 +7,7 @@ Required properties:
- 			  - "renesas,sata-r8a7790-es1" for R-Car H2 ES1
- 			  - "renesas,sata-r8a7790" for R-Car H2 other than ES1
- 			  - "renesas,sata-r8a7791" for R-Car M2-W
-+			  - "renesas,sata-r8a7792" for R-Car V2H
- 			  - "renesas,sata-r8a7793" for R-Car M2-N
- 			  - "renesas,sata-r8a7795" for R-Car H3
- - reg			: address and length of the SATA registers;
--- 
-2.7.0.rc3.207.g0ac5344
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
