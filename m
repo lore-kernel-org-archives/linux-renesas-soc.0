@@ -1,101 +1,86 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-	linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chris.paterson2@renesas.com,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Add CAN FD support
-Date: Thu, 25 Feb 2016 16:48:53 +0000
-Message-Id: <1456418933-3948-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1456418933-3948-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456418933-3948-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Linux PM list <linux-pm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH/RFC v2 04/11] soc: renesas: rcar: Add DT support for SYSC PM domains
+Date: Fri, 26 Feb 2016 18:28:55 +0200
+Message-ID: <5625748.8DscGPjtYP@avalon>
+In-Reply-To: <CAMuHMdVo2V7Ez5g8ZW74w-QWiwS8i2mbYeCjOU9brxRzNjMAdg@mail.gmail.com>
+References: <1455571020-18968-1-git-send-email-geert+renesas@glider.be> <3535519.g4KL1PCIZy@avalon> <CAMuHMdVo2V7Ez5g8ZW74w-QWiwS8i2mbYeCjOU9brxRzNjMAdg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds CANFD[0-1] pinmux support to r8a7795 SoC.
+Hi Geert,
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 44 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+On Friday 26 February 2016 16:41:27 Geert Uytterhoeven wrote:
+> On Mon, Feb 15, 2016 at 11:51 PM, Laurent Pinchart wrote:
+> >>  drivers/soc/renesas/pm-rcar.c | 327 ++++++++++++++++++++++++++++++++++++
+> >>  1 file changed, 327 insertions(+)
+> >> 
+> >> diff --git a/drivers/soc/renesas/pm-rcar.c
+> >> b/drivers/soc/renesas/pm-rcar.c
+> >> index cc684e9cc8db5d1c..c0540934126e58eb 100644
+> >> --- a/drivers/soc/renesas/pm-rcar.c
+> >> +++ b/drivers/soc/renesas/pm-rcar.c
+> >> 
+> >> +static int __init rcar_init_pm_domains(void)
+> >> +{
+> >> +     const struct of_device_id *match;
+> >> +     struct device_node *np, *pmd;
+> >> +     bool scanned = false;
+> >> +     void __iomem *base;
+> >> +     int ret = 0;
+> >> +
+> >> +     for_each_matching_node_and_match(np, rcar_sysc_matches, &match) {
+> >> +             u32 syscier = 0;
+> >> +
+> >> +             rcar_gen = (uintptr_t)match->data;
+> >> +
+> >> +             base = of_iomap(np, 0);
+> >> +             if (!base) {
+> >> +                     pr_warn("%s cannot map reg 0\n", np->full_name);
+> >> +                     continue;
+> >> +             }
+> >> +
+> >> +             rcar_sysc_base = base;  // FIXME conflicts with
+> >> rcar_sysc_init() +
+> >> +             pmd = of_get_child_by_name(np, "pm-domains");
+> >> +             if (!pmd) {
+> >> +                     pr_warn("%s lacks pm-domains node\n",
+> >> np->full_name);
+> > 
+> > Shouldn't you call iounmap() here ?
+> 
+> Yes. Will fix.
+> 
+> >> +             /*
+> >> +              * Enable all interrupt sources, but do not use interrupt
+> >> +              * handler
+> >> +              */
+> >> +             pr_debug("%s: syscier = 0x%08x\n", np->full_name, syscier);
+> >> +             iowrite32(syscier, rcar_sysc_base + SYSCIER);
+> >> +             iowrite32(0, rcar_sysc_base + SYSCIMR);
+> > 
+> > Shouldn't the SYSCIMR bits be set to 1 to mask interrupts ?
+> 
+> That would work, too. It doesn't matter much, as the driver doesn't use
+> interrupts, so they stay disabled at the GIC level.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index fbe8e95..0e6fb18 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -2940,6 +2940,36 @@ static const unsigned int can1_data_pins[] = {
- static const unsigned int can1_data_mux[] = {
- 	CAN1_TX_MARK,		CAN1_RX_MARK,
- };
-+
-+/* - RCAN FD --------------------------------------------------------------- */
-+static const unsigned int canfd0_data_a_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 23),     RCAR_GP_PIN(1, 24),
-+};
-+
-+static const unsigned int canfd0_data_a_mux[] = {
-+	CANFD0_TX_A_MARK,       CANFD0_RX_A_MARK,
-+};
-+
-+static const unsigned int canfd0_data_b_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(2, 0),      RCAR_GP_PIN(2, 1),
-+};
-+
-+static const unsigned int canfd0_data_b_mux[] = {
-+	CANFD0_TX_B_MARK,       CANFD0_RX_B_MARK,
-+};
-+
-+static const unsigned int canfd1_data_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 22),     RCAR_GP_PIN(1, 26),
-+};
-+
-+static const unsigned int canfd1_data_mux[] = {
-+	CANFD1_TX_MARK,         CANFD1_RX_MARK,
-+};
-+
-+
- /* - RCAN-CLK --------------------------------------------------------------- */
- static const unsigned int can_clk_pins[] = {
- 	/* CLK */
-@@ -3362,6 +3392,9 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(can0_data_a),
- 	SH_PFC_PIN_GROUP(can0_data_b),
- 	SH_PFC_PIN_GROUP(can1_data),
-+	SH_PFC_PIN_GROUP(canfd0_data_a),
-+	SH_PFC_PIN_GROUP(canfd0_data_b),
-+	SH_PFC_PIN_GROUP(canfd1_data),
- 	SH_PFC_PIN_GROUP(can_clk),
- };
- 
-@@ -3686,6 +3719,15 @@ static const char * const can1_groups[] = {
- 	"can1_data",
- };
- 
-+static const char * const canfd0_groups[] = {
-+	"canfd0_data_a",
-+	"canfd0_data_b",
-+};
-+
-+static const char * const canfd1_groups[] = {
-+	"canfd1_data",
-+};
-+
- static const char * const can_clk_groups[] = {
- 	"can_clk",
- };
-@@ -3721,6 +3763,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(ssi),
- 	SH_PFC_FUNCTION(can0),
- 	SH_PFC_FUNCTION(can1),
-+	SH_PFC_FUNCTION(canfd0),
-+	SH_PFC_FUNCTION(canfd1),
- 	SH_PFC_FUNCTION(can_clk),
- };
- 
+You're right, but as you write to the SYSCIMR register anyway, I'd feel safer 
+if interrupts were masked in it too.
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
+
