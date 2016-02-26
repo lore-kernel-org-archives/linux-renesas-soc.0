@@ -1,54 +1,31 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 8 Feb 2016 19:31:36 +0100
-Message-ID: <CAMuHMdUHiBfYDrA_=wq3DwyN1dOb-af_cuhCNaWZjvHSmMfg2Q@mail.gmail.com>
-Subject: Salvator-X ravb failure with v4.5-rc3 due to irqchip power down
+In-Reply-To: <1456419926-8732-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1456419926-8732-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+	<1456419926-8732-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Date: Fri, 26 Feb 2016 09:24:30 +0100
+Message-ID: <CAMuHMdW+grMZkd8zi=zH6B1GP7noPaGSD8qf0m3WC==o841zRg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: shmobile: r8a7795: Add CAN peripheral clock
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Chris Paterson <chris.paterson2@renesas.com>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On r8a7795/salvator-x, ravb Ethernet fails on v4.5-rc3 with:
+On Thu, Feb 25, 2016 at 6:05 PM, Ramesh Shanmugasundaram
+<ramesh.shanmugasundaram@bp.renesas.com> wrote:
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-    ravb e6800000.ethernet eth0: limited PHY to 100Mbit/s
-    Micrel KSZ9031 Gigabit PHY e6800000.etherne:00: attached PHY
-driver [Micrel KSZ9031 Gigabit PHY]
-(mii_bus:phy_addr=e6800000.etherne:00, irq=202)
-    ata1: link resume succeeded after 1 retries
-    ata1: SATA link down (SStatus 0 SControl 300)
-    Waiting up to 110 more seconds for network.
-    Waiting up to 100 more seconds for network.
-    ...
-
-On success, it would continue with:
-
-    ravb e6800000.ethernet eth0: Link is Up - 100Mbps/Full - flow control rx/tx
-    Sending DHCP requests ., OK
-    IP-Config: Got DHCP answer from [ ... ]
-
-This problem started when commit d5c3d84657db57bd ("net: phy: Avoid
-polling PHY with PHY_IGNORE_INTERRUPTS") was merged into mainline.
-Reverting it fixes the
-problem, or rather the symptom.
-
-The real problem is that the PHY interrupt is wired to an on-chip GPIO
-controller, which is disabled by PM Runtime if no GPIOs are in use, and
-interrupts are not taken into account (the irqchip subsystem is not (yet) PM
-Runtime aware) for GPIO use.
-
-Adding a call to
-
-    pm_runtime_get_sync(dev);
-
-to gpio_rcar_probe() fixes the problem, but keeps the GPIO modules enabled
-all the time.
-
-IIRC, we have a similar issue with HDMI on r8a7791/koelsch...
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
