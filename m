@@ -1,48 +1,39 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC v2 6/9] arm64: dts: r8a7795: add HS-USB device node
-Date: Mon, 22 Feb 2016 18:58:05 +0900
-Message-ID: <1456135088-7976-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1456135088-7976-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1456135088-7976-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH] ARM: dts: porter: remove enable prop from HS-USB device
+ node
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+References: <1674850.BZpGW9kEud@wasted.cogentembedded.com>
+ <2684686.0L09MeB6pA@wasted.cogentembedded.com>
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <56D0AADF.6090201@cogentembedded.com>
+Date: Fri, 26 Feb 2016 22:43:27 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <2684686.0L09MeB6pA@wasted.cogentembedded.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+On 02/14/2016 01:26 AM, Sergei Shtylyov wrote:
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 75142f3..76ad097 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1500,5 +1500,18 @@
- 			power-domains = <&cpg>;
- 			status = "disabled";
- 		};
-+
-+		hsusb: usb@e6590000 {
-+			compatible = "renesas,usbhs-r8a7795",
-+				     "renesas,rcar-gen3-usbhs";
-+			reg = <0 0xe6590000 0 0x100>;
-+			interrupts = <0 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 704>;
-+			renesas,buswait = <11>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-1.9.1
+> In  the final versions of the Porter board (called "PORTER_C") Renesas
+> decided to get rid  of the Maxim Integrated MAX3355 OTG chip and didn't
+> add any other provision to differ the host/gadget mode, so we'll have to
+> remove  no longer valid "renesas,enable-gpio" property from the HS-USB
+> device node.  Hopefully, the earlier revisions of the board were never
+> seen in the wild...
+>
+> Fixes: c794f6a09a25 ("ARM: shmobile: porter: add HS-USB DT support")
+> Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+    Simon, what about this patch? It was posted 12 days ago and no reaction 
+whatsoever...
+
+MBR, Sergei
 
