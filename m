@@ -6,11 +6,11 @@ To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
 Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org, chris.paterson2@renesas.com,
 	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v3 2/2] pinctrl: sh-pfc: r8a7795: Add CAN FD support
-Date: Fri, 26 Feb 2016 12:37:04 +0000
-Message-Id: <1456490224-18124-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1456490224-18124-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456490224-18124-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v2 2/2] pinctrl: sh-pfc: r8a7795: Add CAN FD support
+Date: Fri, 26 Feb 2016 11:10:05 +0000
+Message-Id: <1456485005-37035-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1456485005-37035-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1456485005-37035-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -22,10 +22,10 @@ Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
  1 file changed, 37 insertions(+)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 1aea3af..516df24 100644
+index 847fecb..be985d5 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -1632,6 +1632,29 @@ static const unsigned int can_clk_mux[] = {
+@@ -1567,6 +1567,29 @@ static const unsigned int can_clk_mux[] = {
  	CAN_CLK_MARK,
  };
  
@@ -52,9 +52,9 @@ index 1aea3af..516df24 100644
 +	CANFD1_TX_MARK,         CANFD1_RX_MARK,
 +};
 +
- /* - HSCIF0 ----------------------------------------------------------------- */
- static const unsigned int hscif0_data_pins[] = {
- 	/* RX, TX */
+ /* - EtherAVB --------------------------------------------------------------- */
+ static const unsigned int avb_link_pins[] = {
+ 	/* AVB_LINK */
 @@ -3153,6 +3176,9 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
  	SH_PFC_PIN_GROUP(can0_data_b),
  	SH_PFC_PIN_GROUP(can1_data),
