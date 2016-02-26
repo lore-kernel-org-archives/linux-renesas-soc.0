@@ -1,94 +1,93 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-	linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chris.paterson2@renesas.com,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v2 2/2] pinctrl: sh-pfc: r8a7795: Add CAN FD support
-Date: Fri, 26 Feb 2016 11:10:05 +0000
-Message-Id: <1456485005-37035-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1456485005-37035-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456485005-37035-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+MIME-Version: 1.0
+In-Reply-To: <1456418933-3948-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1456418933-3948-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+	<1456418933-3948-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Date: Fri, 26 Feb 2016 10:09:11 +0100
+Message-ID: <CAMuHMdU9yth0fT3=kB8xhBRFsEN-gmgQQimBzW_vJF2D-9ZvQA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7795: Add CAN support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-renesas-soc@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Chris Paterson <chris.paterson2@renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds CANFD[0-1] pinmux support to r8a7795 SoC.
+Hi Ramesh,
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 37 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+On Thu, Feb 25, 2016 at 5:48 PM, Ramesh Shanmugasundaram
+<ramesh.shanmugasundaram@bp.renesas.com> wrote:
+> This patch adds CAN[0-1] pinmux support to r8a7795 SoC.
+>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 847fecb..be985d5 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -1567,6 +1567,29 @@ static const unsigned int can_clk_mux[] = {
- 	CAN_CLK_MARK,
- };
- 
-+/* - CAN FD --------------------------------------------------------------- */
-+static const unsigned int canfd0_data_a_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 23),     RCAR_GP_PIN(1, 24),
-+};
-+static const unsigned int canfd0_data_a_mux[] = {
-+	CANFD0_TX_A_MARK,       CANFD0_RX_A_MARK,
-+};
-+static const unsigned int canfd0_data_b_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(2, 0),      RCAR_GP_PIN(2, 1),
-+};
-+static const unsigned int canfd0_data_b_mux[] = {
-+	CANFD0_TX_B_MARK,       CANFD0_RX_B_MARK,
-+};
-+static const unsigned int canfd1_data_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(1, 22),     RCAR_GP_PIN(1, 26),
-+};
-+static const unsigned int canfd1_data_mux[] = {
-+	CANFD1_TX_MARK,         CANFD1_RX_MARK,
-+};
-+
- /* - EtherAVB --------------------------------------------------------------- */
- static const unsigned int avb_link_pins[] = {
- 	/* AVB_LINK */
-@@ -3153,6 +3176,9 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(can0_data_b),
- 	SH_PFC_PIN_GROUP(can1_data),
- 	SH_PFC_PIN_GROUP(can_clk),
-+	SH_PFC_PIN_GROUP(canfd0_data_a),
-+	SH_PFC_PIN_GROUP(canfd0_data_b),
-+	SH_PFC_PIN_GROUP(canfd1_data),
- 	SH_PFC_PIN_GROUP(hscif0_data),
- 	SH_PFC_PIN_GROUP(hscif0_clk),
- 	SH_PFC_PIN_GROUP(hscif0_ctrl),
-@@ -3405,6 +3431,15 @@ static const char * const can_clk_groups[] = {
- 	"can_clk",
- };
- 
-+static const char * const canfd0_groups[] = {
-+	"canfd0_data_a",
-+	"canfd0_data_b",
-+};
-+
-+static const char * const canfd1_groups[] = {
-+	"canfd1_data",
-+};
-+
- static const char * const hscif0_groups[] = {
- 	"hscif0_data",
- 	"hscif0_clk",
-@@ -3691,6 +3726,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(can0),
- 	SH_PFC_FUNCTION(can1),
- 	SH_PFC_FUNCTION(can_clk),
-+	SH_PFC_FUNCTION(canfd0),
-+	SH_PFC_FUNCTION(canfd1),
- 	SH_PFC_FUNCTION(hscif0),
- 	SH_PFC_FUNCTION(hscif1),
- 	SH_PFC_FUNCTION(hscif2),
--- 
-1.9.1
+Sorry, I spoke too soon. While the pin data is correct, I noticed the following
+while applying:
+
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 58 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+>
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> index ce4f5cd..fbe8e95 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> @@ -2913,6 +2913,43 @@ static const unsigned int scif_clk_b_mux[] = {
+>         SCIF_CLK_B_MARK,
+>  };
+>
+> +/* - RCAN ------------------------------------------------------------------ */
+
+Please use "CAN" instead of "RCAN", and insert in alphabetical order.
+
+> +static const unsigned int can0_data_a_pins[] = {
+> +       /* TX, RX */
+> +       RCAR_GP_PIN(1, 23),     RCAR_GP_PIN(1, 24),
+> +};
+
+> @@ -3322,6 +3359,10 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+>         SH_PFC_PIN_GROUP(ssi9_data_b),
+>         SH_PFC_PIN_GROUP(ssi9_ctrl_a),
+>         SH_PFC_PIN_GROUP(ssi9_ctrl_b),
+> +       SH_PFC_PIN_GROUP(can0_data_a),
+> +       SH_PFC_PIN_GROUP(can0_data_b),
+> +       SH_PFC_PIN_GROUP(can1_data),
+> +       SH_PFC_PIN_GROUP(can_clk),
+
+Please insert in alphabetical order.
+
+> @@ -3636,6 +3677,20 @@ static const char * const ssi_groups[] = {
+>         "ssi9_ctrl_b",
+>  };
+>
+> +static const char * const can0_groups[] = {
+
+Please insert in alphabetical order.
+
+> @@ -3664,6 +3719,9 @@ static const struct sh_pfc_function pinmux_functions[] = {
+>         SH_PFC_FUNCTION(sdhi2),
+>         SH_PFC_FUNCTION(sdhi3),
+>         SH_PFC_FUNCTION(ssi),
+> +       SH_PFC_FUNCTION(can0),
+> +       SH_PFC_FUNCTION(can1),
+> +       SH_PFC_FUNCTION(can_clk),
+
+Please insert in alphabetical order.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
