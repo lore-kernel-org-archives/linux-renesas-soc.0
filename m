@@ -1,63 +1,137 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <8723964.uvbBYGm8Wz@avalon>
-References: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
-	<8723964.uvbBYGm8Wz@avalon>
-Date: Sun, 28 Feb 2016 09:55:32 +0100
-Message-ID: <CAMuHMdWxHWfghHM5xLVPdDcun5bQPVJKBQ69ZAa6TszDFD+XBw@mail.gmail.com>
-Subject: Re: [PATCH/RFC v2 00/11] ARM/arm64: renesas: Add SYSC PM Domain DT Support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	linux-renesas-soc@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Linux PM list <linux-pm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH/RFC v2 00/11] ARM/arm64: renesas: Add SYSC PM Domain DT Support
+Date: Sat, 27 Feb 2016 03:53:16 +0200
+Message-ID: <8723964.uvbBYGm8Wz@avalon>
+In-Reply-To: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
+References: <1455571020-18968-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hi Geert,
 
-On Sat, Feb 27, 2016 at 2:53 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> After rebasing this series on top of Simon's latest devel branch, I'm
-> experiencing hard system freezes when using the VSP.
+After rebasing this series on top of Simon's latest devel branch, I'm 
+experiencing hard system freezes when using the VSP.
 
-Is this due to the rebasing? Did it work in renesas-drivers-2016-02-16-v4.5-rc4
-or renesas-drivers-2016-02-23-v4.5-rc5?
+What makes the problem curious is that PM runtime works fine when the VSP 
+instances are probed, the A3VP power domain is turned on and off correctly for 
+each instance. However, after booting the system, if I try to RPM resume the 
+device, the system hangs.
 
-> What makes the problem curious is that PM runtime works fine when the VSP
-> instances are probed, the A3VP power domain is turned on and off correctly for
-> each instance. However, after booting the system, if I try to RPM resume the
-> device, the system hangs.
->
-> I've traced this (using printk debugging) down to the SYSCISCR write in
-> rcar_sysc_power(). The value written is 0x00000200, which corresponds to the
-> A3VP power domain, and the resume request completion wait loop doesn't time
-> out.
+I've traced this (using printk debugging) down to the SYSCISCR write in 
+rcar_sysc_power(). The value written is 0x00000200, which corresponds to the 
+A3VP power domain, and the resume request completion wait loop doesn't time 
+out.
 
-So the second write to SYSCISCR in that function locks up the system?
+Does this ring any bell ? Do you have a more recent version of this patch 
+series that I could try ?
 
-> Does this ring any bell ? Do you have a more recent version of this patch
-> series that I could try ?
+On Monday 15 February 2016 22:16:49 Geert Uytterhoeven wrote:
+> 	Hi all,
+> 
+> The Renesas R-Car System Controller, as found in various Renesas R-Car
+> SoCs, provides power management for the CPU cores and various
+> coprocessors.
+> 
+> This RFC patch series adds DT support for the R-Car SYSC, using the
+> generic PM Domain. It supports R-Car H1, R-Car Gen2, and R-Car H3.
+> 
+> Patches:
+>   - Patch 1 adds the DT binding documentation (alternatives I considered
+>     below the "---"-line),
+>   - Patch 2 moves the existing pm-rcar driver to drivers/soc/renesas, so
+>     it can be shared by arm32 and arm64,
+>   - Patches 3-5 contain the driver implementation,
+>   - Patches 6-11 add the SYSC PM domains themselves to the various dtsi
+>     files.
+> 
+> Known issues:
+>   - This needs better integration with the PM code in pm-rcar-gen2, the
+>     SMP code in smp-r8a7790, and Magnus' DT APMU series,
+>   - CPG/MSSR clock domain handling should share more code with the
+>     renesas-cpg-mssr driver.
+> 
+> Changes compared to v2 (more details in the individual patches):
+>   - Moved pm-rcar from arch/arm/mach-shmobile/ to drivers/soc/renesas/,
+>   - Added R-Car H3 (r8a7795) support, incl. support for devices part of
+>     a SYSC PM domain and the CPG/MSSR clock domain,
+>   - Use "renesas,<type>-sysc" instead of "renesas,sysc-<type>",
+>   - Added fallback compatibility strings for R-Car Gen2 and Gen3.
+>   - Changed one-line summary prefix to match current arm-soc practices,
+>   - The L2 cache-controller patches have been extracted into a separate
+>     series ("[PATCH v3 0/7] ARM/arm64: dts: renesas: Add/complete L2
+>     cache-controller nodes"),
+>   - Minor fixes.
+> 
+> This series is against renesas-devel-20160215-v4.5-rc4, with series
+> "[PATCH v3 0/7] ARM/arm64: dts: renesas: Add/complete L2
+> cache-controller nodes" applied. It is not yet meant to be applied!
+> It's published as-is to ease development of drivers for devices residing
+> in a SYSC PM domain on R-Car H3 (e.g. VSP, FCP_V).
+> 
+> This was tested on r8a7779/marzen, r8a7791/koelsch, r8a7794/alt, and
+> r8a7795/salvator-x.
+> 
+> For your convenience, I've also pushed this series to
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git#topi
+> c/rcar-sysc-pd-rfc-v2
+> 
+> Thanks for your comments!
+> 
+> Geert Uytterhoeven (11):
+>   PM / Domains: Add DT bindings for the R-Car System Controller
+>   soc: renesas: Move pm-rcar to drivers/soc/renesas/
+>   soc: renesas: Improve rcar_sysc_power() debug info
+>   soc: renesas: rcar: Add DT support for SYSC PM domains
+>   soc: renesas: rcar: Handle clock domain devices in SYSC PM domains
+>   ARM: dts: r8a7779: Add SYSC PM domains
+>   ARM: dts: r8a7790: Add SYSC PM domains
+>   ARM: dts: r8a7791: Add SYSC PM domains
+>   ARM: dts: r8a7793: Add SYSC PM domains
+>   ARM: dts: r8a7794: Add SYSC PM domains
+>   arm64: dts: r8a7795: Add SYSC PM domains
+> 
+>  .../bindings/power/renesas,sysc-rcar.txt           |  87 ++++
+>  arch/arm/boot/dts/r8a7779.dtsi                     |  48 ++
+>  arch/arm/boot/dts/r8a7790.dtsi                     |  89 ++++
+>  arch/arm/boot/dts/r8a7791.dtsi                     |  40 ++
+>  arch/arm/boot/dts/r8a7793.dtsi                     |  39 ++
+>  arch/arm/boot/dts/r8a7794.dtsi                     |  40 ++
+>  arch/arm/mach-shmobile/Kconfig                     |   8 +-
+>  arch/arm/mach-shmobile/Makefile                    |   1 -
+>  arch/arm/mach-shmobile/pm-r8a7779.c                |   3 +-
+>  arch/arm/mach-shmobile/pm-rcar-gen2.c              |   2 +-
+>  arch/arm/mach-shmobile/pm-rcar.c                   | 164 ------
+>  arch/arm/mach-shmobile/smp-r8a7779.c               |   2 +-
+>  arch/arm/mach-shmobile/smp-r8a7790.c               |   2 +-
+>  arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 142 ++++++
+>  drivers/soc/Kconfig                                |   1 +
+>  drivers/soc/Makefile                               |   3 +-
+>  drivers/soc/renesas/Kconfig                        |   8 +
+>  drivers/soc/renesas/Makefile                       |   1 +
+>  drivers/soc/renesas/pm-rcar.c                      | 559 ++++++++++++++++++
+>  .../linux/soc/renesas}/pm-rcar.h                   |   2 +
+>  20 files changed, 1065 insertions(+), 176 deletions(-)
+>  create mode 100644
+> Documentation/devicetree/bindings/power/renesas,sysc-rcar.txt delete mode
+> 100644 arch/arm/mach-shmobile/pm-rcar.c
+>  create mode 100644 drivers/soc/renesas/Kconfig
+>  create mode 100644 drivers/soc/renesas/Makefile
+>  create mode 100644 drivers/soc/renesas/pm-rcar.c
+>  rename {arch/arm/mach-shmobile => include/linux/soc/renesas}/pm-rcar.h
+> (93%)
 
-No clue, and no more recent version available yet.
+-- 
+Regards,
 
-What do I need to reproduce this?
+Laurent Pinchart
 
-Thanks for testing!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
