@@ -1,60 +1,75 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC 09/10] arm64: dts: salvator-x: enable USB 2.0 Host channels
-Date: Tue, 2 Feb 2016 19:18:57 +0900
-Message-ID: <1454408338-4612-10-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1454408338-4612-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Linux PM list <linux-pm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH/RFC v2 00/11] ARM/arm64: renesas: Add SYSC PM Domain DT Support
+Date: Sun, 28 Feb 2016 21:26:10 +0200
+Message-ID: <4841673.3GCjGElFcY@avalon>
+In-Reply-To: <2939018.LGDkKsjeJ3@avalon>
+References: <1455571020-18968-1-git-send-email-geert+renesas@glider.be> <CAMuHMdWxHWfghHM5xLVPdDcun5bQPVJKBQ69ZAa6TszDFD+XBw@mail.gmail.com> <2939018.LGDkKsjeJ3@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We should set SW15 to pin 2-3 side on the board before we use CN9
-as USB host or peripheral.
+Hi Geert,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Here's an update.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 3ff6e79..c92ec89 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -296,3 +296,27 @@
- 	pinctrl-0 = <&usb2_pins>;
- 	pinctrl-names = "default";
- };
-+
-+&ehci0 {
-+	status = "okay";
-+};
-+
-+&ehci1 {
-+	status = "okay";
-+};
-+
-+&ehci2 {
-+	status = "okay";
-+};
-+
-+&ohci0 {
-+	status = "okay";
-+};
-+
-+&ohci1 {
-+	status = "okay";
-+};
-+
-+&ohci2 {
-+	status = "okay";
-+};
+On Sunday 28 February 2016 17:04:47 Laurent Pinchart wrote:
+> On Sunday 28 February 2016 09:55:32 Geert Uytterhoeven wrote:
+> > On Sat, Feb 27, 2016 at 2:53 AM, Laurent Pinchart wrote:
+> >> After rebasing this series on top of Simon's latest devel branch, I'm
+> >> experiencing hard system freezes when using the VSP.
+> > 
+> > Is this due to the rebasing? Did it work in
+> > renesas-drivers-2016-02-16-v4.5-rc4 or
+> > renesas-drivers-2016-02-23-v4.5-rc5?
+> 
+> I thought it was, but after further investigations I've been unable to get
+> it working at all even on my older branches, so I think the problem has
+> always been there.
+> 
+> >> What makes the problem curious is that PM runtime works fine when the
+> >> VSP instances are probed, the A3VP power domain is turned on and off
+> >> correctly for each instance. However, after booting the system, if I try
+> >> to RPM resume the device, the system hangs.
+> >> 
+> >> I've traced this (using printk debugging) down to the SYSCISCR write in
+> >> rcar_sysc_power(). The value written is 0x00000200, which corresponds to
+> >> the A3VP power domain, and the resume request completion wait loop
+> >> doesn't time out.
+> > 
+> > So the second write to SYSCISCR in that function locks up the system?
+> 
+> Correct, and only after the kernel has booted, there's a bunch of calls to
+> rcar_sysc_power() to enable/disable the A3VP power domain at boot time when
+> the vsp devices are probed, and those don't cause any issue.
+
+I've investigated the problem further, and realized the freeze was caused by 
+writing to the PWRONCR_OFFS register, not the SYSCISCR register. It doesn't 
+occur immediately though, I had to put longer delays between the register 
+writes to locate the faulty one.
+
+Furthermore, I've also realized that commenting out the A3SH power domain from 
+DT seemed to fix the problem. Unused power domains are powered off at the end 
+of the boot sequence, and it looks like powering A3SH there somehow messes up 
+the SYSC and hangs the system the next time a power domain is turned on.
+
+Given that the latest version of the datasheet doesn't document the A3SH power 
+domain it would probably be a good idea to remove it, at least until we can 
+get more information from the hardware team.
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
 
