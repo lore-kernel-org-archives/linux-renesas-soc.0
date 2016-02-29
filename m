@@ -1,99 +1,50 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
 From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: mkl@pengutronix.de, wg@grandegger.com, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	geert+renesas@glider.be, horms+renesas@verge.net.au,
-	chris.paterson2@renesas.com,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH] can: rcar_can: Add r8a7795 support
-Date: Mon, 29 Feb 2016 12:37:25 +0000
-Message-Id: <1456749445-50766-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Wolfgang Grandegger <wg@grandegger.com>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: RE: [PATCH 1/2] can: rcar_can: Add r8a7795 support
+Date: Mon, 29 Feb 2016 11:06:34 +0000
+Message-ID: <SG2PR06MB10389D8C1D30451EC2AE8FF0C3BA0@SG2PR06MB1038.apcprd06.prod.outlook.com>
+References: <1456737661-20538-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+	<1456737661-20538-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <CAMuHMdV3EsvN=sqiB2npB=cH8Bz4D6UVcQj-BKqfdHerKSDowQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdV3EsvN=sqiB2npB=cH8Bz4D6UVcQj-BKqfdHerKSDowQ@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Added r8a7795 SoC support.
-
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-Hi All,
-
-   This patch is based on linux-can-next (tag:linux-can-next-for-4.6-20160226)
-
-   Pinctrl & Clock related to the controller are already submitted as below:
-
-   https://lkml.org/lkml/2016/2/25/546
-   https://lkml.org/lkml/2016/2/26/452
-   http://www.spinics.net/lists/arm-kernel/msg487238.html
-
-   Changes since v1:
-   * Rebased from linux-next to linux-can-next
-   * Removed clock rounding hack (http://www.spinics.net/lists/netdev/msg366611.html)
-   * CAN dtsi changes will be submitted separately based on linux-next (http://marc.info/?l=linux-can&m=145674764815430&w=2)
-
- Documentation/devicetree/bindings/net/can/rcar_can.txt | 11 +++++++++++
- drivers/net/can/Kconfig                                |  2 +-
- drivers/net/can/rcar_can.c                             |  1 +
- 3 files changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-index 65edc05..8d40ab2 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-@@ -9,8 +9,10 @@ Required properties:
- 	      "renesas,can-r8a7792" if CAN controller is a part of R8A7792 SoC.
- 	      "renesas,can-r8a7793" if CAN controller is a part of R8A7793 SoC.
- 	      "renesas,can-r8a7794" if CAN controller is a part of R8A7794 SoC.
-+	      "renesas,can-r8a7795" if CAN controller is a part of R8A7795 SoC.
- 	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device.
- 	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 compatible device.
-+	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 compatible device.
- 	      When compatible with the generic version, nodes must list the
- 	      SoC-specific version corresponding to the platform first
- 	      followed by the generic version.
-@@ -22,6 +24,15 @@ Required properties:
- - pinctrl-0: pin control group to be used for this controller.
- - pinctrl-names: must be "default".
- 
-+Required properties for "renesas,can-r8a7795" compatible:
-+In R8A7795 SoC, "clkp2" can be CANFD clock. This is a div6 clock and can be
-+used by both CAN and CAN FD controller at the same time. It needs to be scaled
-+to maximum frequency if any of these controllers use it. This is done using
-+the below properties.
-+
-+- assigned-clocks: phandle of clkp2(CANFD) clock.
-+- assigned-clock-rates: maximum frequency of this clock.
-+
- Optional properties:
- - renesas,can-clock-select: R-Car CAN Clock Source Select. Valid values are:
- 			    <0x0> (default) : Peripheral clock (clkp1)
-diff --git a/drivers/net/can/Kconfig b/drivers/net/can/Kconfig
-index 164ccde..0d40aef 100644
---- a/drivers/net/can/Kconfig
-+++ b/drivers/net/can/Kconfig
-@@ -106,7 +106,7 @@ config CAN_JANZ_ICAN3
- 
- config CAN_RCAR
- 	tristate "Renesas R-Car CAN controller"
--	depends on ARM
-+	depends on ARCH_RENESAS || ARM
- 	---help---
- 	  Say Y here if you want to use CAN controller found on Renesas R-Car
- 	  SoCs.
-diff --git a/drivers/net/can/rcar_can.c b/drivers/net/can/rcar_can.c
-index ad3d2e0..788459f 100644
---- a/drivers/net/can/rcar_can.c
-+++ b/drivers/net/can/rcar_can.c
-@@ -906,6 +906,7 @@ static const struct of_device_id rcar_can_of_table[] __maybe_unused = {
- 	{ .compatible = "renesas,can-r8a7791" },
- 	{ .compatible = "renesas,rcar-gen1-can" },
- 	{ .compatible = "renesas,rcar-gen2-can" },
-+	{ .compatible = "renesas,rcar-gen3-can" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rcar_can_of_table);
--- 
-1.9.1
-
+SGkgR2VlcnQsDQoNCj4gT24gTW9uLCBGZWIgMjksIDIwMTYgYXQgMTA6MjEgQU0sIFJhbWVzaCBT
+aGFubXVnYXN1bmRhcmFtDQo+IDxyYW1lc2guc2hhbm11Z2FzdW5kYXJhbUBicC5yZW5lc2FzLmNv
+bT4gd3JvdGU6DQo+ID4gLS0tIGEvZHJpdmVycy9uZXQvY2FuL3JjYXJfY2FuLmMNCj4gPiArKysg
+Yi9kcml2ZXJzL25ldC9jYW4vcmNhcl9jYW4uYw0KPiA+IEBAIC04MDgsNiArODA4LDEwIEBAIHN0
+YXRpYyBpbnQgcmNhcl9jYW5fcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZQ0KPiAqcGRldikN
+Cj4gPiAgICAgICAgIHByaXYtPnJlZ3MgPSBhZGRyOw0KPiA+ICAgICAgICAgcHJpdi0+Y2xvY2tf
+c2VsZWN0ID0gY2xvY2tfc2VsZWN0Ow0KPiA+ICAgICAgICAgcHJpdi0+Y2FuLmNsb2NrLmZyZXEg
+PSBjbGtfZ2V0X3JhdGUocHJpdi0+Y2FuX2Nsayk7DQo+ID4gKw0KPiA+ICsgICAgICAgLyogVXNl
+IHRoZSByb3VuZGVkIGNsb2NrIHZhbHVlIChuZWFyZXN0IGtIeikgKi8NCj4gPiArICAgICAgIHBy
+aXYtPmNhbi5jbG9jay5mcmVxID0gMTAwMCAqDQo+ID4gKyBESVZfUk9VTkRfVVAocHJpdi0+Y2Fu
+LmNsb2NrLmZyZXEsIDEwMDApOw0KPiANCj4gVGhlIGNvbW1lbnQgYW5kIHRoZSBpbXBsZW1lbnRh
+dGlvbiBkb24ndCBtYXRjaC4NCj4gVG8gZ2V0IHRoZSBuZWFyZXN0IGtIeiwgeW91IGhhdmUgdG8g
+dXNlRElWX1JPVU5EX0NMT1NFU1QoKS4NCg0KVGhhbmtzIEdlZXJ0LiBZZXMsIERJVl9ST1VORF9D
+TE9TRVNUKCkgd291bGQgYmUgYXB0IGFzIHlvdSBwb2ludGVkIG91dC4NCkknbGwgYmUgcmVtb3Zp
+bmcgdGhpcyBoYWNrIHdoZW4gSSByZWJhc2UsIGFzIE1hcmMgaXMgZml4aW5nIHRoZSBhbGdvcml0
+aG0uDQoNClRoYW5rcywNClJhbWVzaA0K
