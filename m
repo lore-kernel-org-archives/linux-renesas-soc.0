@@ -1,16 +1,19 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Wolfgang Grandegger <wg@grandegger.com>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"linux-renesas-soc@vger.kernel.org"
+Subject: Re: [PATCH 1/2] can: rcar_can: Add r8a7795 support
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+	"wg@grandegger.com" <wg@grandegger.com>,
+	"horms@verge.net.au" <horms@verge.net.au>,
+	"magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"pawel.moll@arm.com" <pawel.moll@arm.com>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
+	"galak@codeaurora.org" <galak@codeaurora.org>
+References: <1456737661-20538-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1456737661-20538-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <56D411A5.9070706@pengutronix.de>
+ <SG2PR06MB10380FC567E038EA92D5401EC3BA0@SG2PR06MB1038.apcprd06.prod.outlook.com>
+Cc: "linux-renesas-soc@vger.kernel.org"
 	<linux-renesas-soc@vger.kernel.org>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
@@ -18,33 +21,52 @@ CC: Marc Kleine-Budde <mkl@pengutronix.de>,
 	<linux-arm-kernel@lists.infradead.org>,
 	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
 	Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH 1/2] can: rcar_can: Add r8a7795 support
-Date: Mon, 29 Feb 2016 11:06:34 +0000
-Message-ID: <SG2PR06MB10389D8C1D30451EC2AE8FF0C3BA0@SG2PR06MB1038.apcprd06.prod.outlook.com>
-References: <1456737661-20538-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-	<1456737661-20538-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <CAMuHMdV3EsvN=sqiB2npB=cH8Bz4D6UVcQj-BKqfdHerKSDowQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdV3EsvN=sqiB2npB=cH8Bz4D6UVcQj-BKqfdHerKSDowQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <56D4172E.4050407@pengutronix.de>
+Date: Mon, 29 Feb 2016 11:02:22 +0100
 MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB10380FC567E038EA92D5401EC3BA0@SG2PR06MB1038.apcprd06.prod.outlook.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="91c4EuRkOnW0mIoP9axSHeADILd2MUGcP"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCj4gT24gTW9uLCBGZWIgMjksIDIwMTYgYXQgMTA6MjEgQU0sIFJhbWVzaCBT
-aGFubXVnYXN1bmRhcmFtDQo+IDxyYW1lc2guc2hhbm11Z2FzdW5kYXJhbUBicC5yZW5lc2FzLmNv
-bT4gd3JvdGU6DQo+ID4gLS0tIGEvZHJpdmVycy9uZXQvY2FuL3JjYXJfY2FuLmMNCj4gPiArKysg
-Yi9kcml2ZXJzL25ldC9jYW4vcmNhcl9jYW4uYw0KPiA+IEBAIC04MDgsNiArODA4LDEwIEBAIHN0
-YXRpYyBpbnQgcmNhcl9jYW5fcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZQ0KPiAqcGRldikN
-Cj4gPiAgICAgICAgIHByaXYtPnJlZ3MgPSBhZGRyOw0KPiA+ICAgICAgICAgcHJpdi0+Y2xvY2tf
-c2VsZWN0ID0gY2xvY2tfc2VsZWN0Ow0KPiA+ICAgICAgICAgcHJpdi0+Y2FuLmNsb2NrLmZyZXEg
-PSBjbGtfZ2V0X3JhdGUocHJpdi0+Y2FuX2Nsayk7DQo+ID4gKw0KPiA+ICsgICAgICAgLyogVXNl
-IHRoZSByb3VuZGVkIGNsb2NrIHZhbHVlIChuZWFyZXN0IGtIeikgKi8NCj4gPiArICAgICAgIHBy
-aXYtPmNhbi5jbG9jay5mcmVxID0gMTAwMCAqDQo+ID4gKyBESVZfUk9VTkRfVVAocHJpdi0+Y2Fu
-LmNsb2NrLmZyZXEsIDEwMDApOw0KPiANCj4gVGhlIGNvbW1lbnQgYW5kIHRoZSBpbXBsZW1lbnRh
-dGlvbiBkb24ndCBtYXRjaC4NCj4gVG8gZ2V0IHRoZSBuZWFyZXN0IGtIeiwgeW91IGhhdmUgdG8g
-dXNlRElWX1JPVU5EX0NMT1NFU1QoKS4NCg0KVGhhbmtzIEdlZXJ0LiBZZXMsIERJVl9ST1VORF9D
-TE9TRVNUKCkgd291bGQgYmUgYXB0IGFzIHlvdSBwb2ludGVkIG91dC4NCkknbGwgYmUgcmVtb3Zp
-bmcgdGhpcyBoYWNrIHdoZW4gSSByZWJhc2UsIGFzIE1hcmMgaXMgZml4aW5nIHRoZSBhbGdvcml0
-aG0uDQoNClRoYW5rcywNClJhbWVzaA0K
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--91c4EuRkOnW0mIoP9axSHeADILd2MUGcP
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+On 02/29/2016 10:56 AM, Ramesh Shanmugasundaram wrote:
+> root@salvator-x:~# can-calc-bit-timing -c 39999998 rcar_can =20
+
+Can you send me the patches to support the rcar_can. On the linux-can ML
+or github pull request.
+
+Thanks,
+Marc
+
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--91c4EuRkOnW0mIoP9axSHeADILd2MUGcP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBCgAGBQJW1BcuAAoJED07qiWsqSVqZLoH/0b812uFBjQenKKxA6LeTN20
+z7pev5rXBYS8uBd1/RJ5aAZRqnEmEIoVKxSOa1PPRYLTqoUog5Ev9QlS+UQdVdBr
+tw5jPlI7btvT7NraWA7ZaOFIVCp6lvpPC7dfY4JX5oXvcLmRLEOUP0KAP9rSgupw
+RjKxTSuAPk5uRuv8nI9ua85cCMhLu+ojjx4SGY2hWVP/6VkGiMc/agBfhfzHDX6G
+S822ZTTKwRSpCHx8jimyhHAz6aLDYVdbKWwaV+M/V9K6Cpo4y1bp2c6GSmgZr52R
+mycX8naTomBCsMG7pvTyQp3uGuAzdy4h1VTErXH/yKxwzAwAsgg25Mb9K9jXM7o=
+=ahJr
+-----END PGP SIGNATURE-----
+
+--91c4EuRkOnW0mIoP9axSHeADILd2MUGcP--
