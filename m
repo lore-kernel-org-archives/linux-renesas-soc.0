@@ -1,61 +1,100 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH 1/2] can: rcar_can: Add r8a7795 support
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-	wg@grandegger.com, horms@verge.net.au, magnus.damm@gmail.com,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org
-References: <1456737661-20538-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <1456737661-20538-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: mkl@pengutronix.de, wg@grandegger.com, horms@verge.net.au,
+	magnus.damm@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org
 Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	netdev@vger.kernel.org, chris.paterson2@renesas.com
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Message-ID: <56D411A5.9070706@pengutronix.de>
-Date: Mon, 29 Feb 2016 10:38:45 +0100
-MIME-Version: 1.0
-In-Reply-To: <1456737661-20538-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="Qsc6qjR6hkmMe0dFLmbkfq7NGW9UKqASk"
+	netdev@vger.kernel.org, chris.paterson2@renesas.com,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH 1/2] can: rcar_can: Add r8a7795 support
+Date: Mon, 29 Feb 2016 09:21:00 +0000
+Message-Id: <1456737661-20538-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1456737661-20538-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1456737661-20538-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---Qsc6qjR6hkmMe0dFLmbkfq7NGW9UKqASk
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Added r8a7795 SoC support.
 
-On 02/29/2016 10:21 AM, Ramesh Shanmugasundaram wrote:
-> Added r8a7795 SoC support.
->=20
-> For smoother bit timing calculation, the rounded clock frequency is use=
-d.
+For smoother bit timing calculation, the rounded clock frequency is used.
 
-Why this? From my point of view this introduces a clock error.
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/net/can/rcar_can.txt | 12 ++++++++++++
+ drivers/net/can/Kconfig                                |  2 +-
+ drivers/net/can/rcar_can.c                             |  7 ++++++-
+ 3 files changed, 19 insertions(+), 2 deletions(-)
 
-Marc
+diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+index 002d844..7f1305f 100644
+--- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
++++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+@@ -6,6 +6,9 @@ Required properties:
+ 	      "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
+ 	      "renesas,can-r8a7790" if CAN controller is a part of R8A7790 SoC.
+ 	      "renesas,can-r8a7791" if CAN controller is a part of R8A7791 SoC.
++	      "renesas,can-r8a7795" if CAN controller is a part of R8A7795 SoC.
++	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 compatible device.
++
+ - reg: physical base address and size of the R-Car CAN register map.
+ - interrupts: interrupt specifier for the sole interrupt.
+ - clocks: phandles and clock specifiers for 3 CAN clock inputs.
+@@ -13,6 +16,15 @@ Required properties:
+ - pinctrl-0: pin control group to be used for this controller.
+ - pinctrl-names: must be "default".
+ 
++Required properties for "renesas,can-r8a7795" compatible:
++In R8A7795 SoC, "clkp2" can be CANFD clock. This is a div6 clock and can be
++used by both CAN and CAN FD controller at the same time. It needs to be scaled
++to maximum frequency if any of these controllers use it. This is done using
++the below properties.
++
++- assigned-clocks: phandle of clkp2(CANFD) clock.
++- assigned-clock-rates: maximum frequency of this clock.
++
+ Optional properties:
+ - renesas,can-clock-select: R-Car CAN Clock Source Select. Valid values are:
+ 			    <0x0> (default) : Peripheral clock (clkp1)
+diff --git a/drivers/net/can/Kconfig b/drivers/net/can/Kconfig
+index 164ccde..0d40aef 100644
+--- a/drivers/net/can/Kconfig
++++ b/drivers/net/can/Kconfig
+@@ -106,7 +106,7 @@ config CAN_JANZ_ICAN3
+ 
+ config CAN_RCAR
+ 	tristate "Renesas R-Car CAN controller"
+-	depends on ARM
++	depends on ARCH_RENESAS || ARM
+ 	---help---
+ 	  Say Y here if you want to use CAN controller found on Renesas R-Car
+ 	  SoCs.
+diff --git a/drivers/net/can/rcar_can.c b/drivers/net/can/rcar_can.c
+index bc46be3..55e34de 100644
+--- a/drivers/net/can/rcar_can.c
++++ b/drivers/net/can/rcar_can.c
+@@ -808,6 +808,10 @@ static int rcar_can_probe(struct platform_device *pdev)
+ 	priv->regs = addr;
+ 	priv->clock_select = clock_select;
+ 	priv->can.clock.freq = clk_get_rate(priv->can_clk);
++
++	/* Use the rounded clock value (nearest kHz) */
++	priv->can.clock.freq = 1000 * DIV_ROUND_UP(priv->can.clock.freq, 1000);
++
+ 	priv->can.bittiming_const = &rcar_can_bittiming_const;
+ 	priv->can.do_set_mode = rcar_can_do_set_mode;
+ 	priv->can.do_get_berr_counter = rcar_can_get_berr_counter;
+@@ -904,7 +908,8 @@ static const struct of_device_id rcar_can_of_table[] __maybe_unused = {
+ 	{ .compatible = "renesas,can-r8a7779" },
+ 	{ .compatible = "renesas,can-r8a7790" },
+ 	{ .compatible = "renesas,can-r8a7791" },
+-	{ }
++	{ .compatible = "renesas,rcar-gen3-can" },
++	{ },
+ };
+ MODULE_DEVICE_TABLE(of, rcar_can_of_table);
+ 
+-- 
+1.9.1
 
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
-
-
---Qsc6qjR6hkmMe0dFLmbkfq7NGW9UKqASk
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEcBAEBCgAGBQJW1BGlAAoJED07qiWsqSVqj9wIALV0Be3Dw2xV2MBDLliLjsEV
-5d5vkR56on1+IqlyQsfIGgaffCoKOncnaZK0tlnR3r9RF9DmQUOlXEOkB9+VN9ss
-SmmtpBsn2e6tRrmeYgWyllY+pv6qOiHWLuXWpfVXBnpNt+Pq7hrh7LbUO3U1Ypka
-xZQ44xcq9HQgW8lcXIloOt+wSMl18ufL3h7ljnML8vEWKYJHKgEGgM+I3wrU3kMZ
-G55PBXRafmHBv++8QjLEXF1cBTio2E7odkvoT9NdtkY86mi+8VNDu2I0cR7ompiJ
-75/kfbcYF9RSu/irw29b5HHro7OleTdwfOcJ4uvL46FcDHi0xgg64JZALVFhVog=
-=ookP
------END PGP SIGNATURE-----
-
---Qsc6qjR6hkmMe0dFLmbkfq7NGW9UKqASk--
