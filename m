@@ -1,62 +1,83 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: robin.murphy@arm.com, vinod.koul@intel.com,
-	laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-	linus.walleij@linaro.org, dan.j.williams@intel.com, arnd@arndb.de,
-	linux-arch@vger.kernel.org
-Subject: [PATCH v3 1/8] iommu: Add MMIO mapping type
-Date: Wed, 10 Feb 2016 01:57:51 +0100
-Message-Id: <1455065878-11906-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1455065878-11906-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1455065878-11906-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH 0/2] Add CAN support to r8a7795 SoC
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+	wg@grandegger.com, horms@verge.net.au, magnus.damm@gmail.com,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+References: <1456737661-20538-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	netdev@vger.kernel.org, chris.paterson2@renesas.com
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <56D410C3.7020106@pengutronix.de>
+Date: Mon, 29 Feb 2016 10:34:59 +0100
+MIME-Version: 1.0
+In-Reply-To: <1456737661-20538-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="msI5Cm51HadH9LhC9meAmI3NifBS8fj7i"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Robin Murphy <robin.murphy@arm.com>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--msI5Cm51HadH9LhC9meAmI3NifBS8fj7i
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On some platforms, MMIO regions might need slightly different treatment
-compared to mapping regular memory; add the notion of MMIO mappings to
-the IOMMU API's memory type flags, so that callers can let the IOMMU
-drivers know to do the right thing.
+On 02/29/2016 10:20 AM, Ramesh Shanmugasundaram wrote:
+> This patch set adds CAN support to r8a7795 SoC.
+>=20
+> This is based on linux-next (tag: next-20160225).
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/iommu/io-pgtable-arm.c | 4 +++-
- include/linux/iommu.h          | 1 +
- 2 files changed, 4 insertions(+), 1 deletion(-)
+Please rebase to tags/linux-can-next-for-4.6-20160226 of
+git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git
 
-diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-index 381ca5a..3ff4f87 100644
---- a/drivers/iommu/io-pgtable-arm.c
-+++ b/drivers/iommu/io-pgtable-arm.c
-@@ -364,7 +364,9 @@ static arm_lpae_iopte arm_lpae_prot_to_pte(struct arm_lpae_io_pgtable *data,
- 			pte |= ARM_LPAE_PTE_HAP_READ;
- 		if (prot & IOMMU_WRITE)
- 			pte |= ARM_LPAE_PTE_HAP_WRITE;
--		if (prot & IOMMU_CACHE)
-+		if (prot & IOMMU_MMIO)
-+			pte |= ARM_LPAE_PTE_MEMATTR_DEV;
-+		else if (prot & IOMMU_CACHE)
- 			pte |= ARM_LPAE_PTE_MEMATTR_OIWB;
- 		else
- 			pte |= ARM_LPAE_PTE_MEMATTR_NC;
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index a5c539f..34b6432 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -30,6 +30,7 @@
- #define IOMMU_WRITE	(1 << 1)
- #define IOMMU_CACHE	(1 << 2) /* DMA cache coherency */
- #define IOMMU_NOEXEC	(1 << 3)
-+#define IOMMU_MMIO	(1 << 4) /* e.g. things like MSI doorbells */
- 
- struct iommu_ops;
- struct iommu_group;
--- 
-2.7.1
+> Pinctrl & Clock related to the controller are already submitted as belo=
+w:
+>=20
+> https://lkml.org/lkml/2016/2/25/546
+> https://lkml.org/lkml/2016/2/26/452
+> http://www.spinics.net/lists/arm-kernel/msg487238.html
+>=20
+> The compatibility string used follows the same format as in this patch:=
+
+> http://www.spinics.net/lists/netdev/msg365756.html
+>=20
+> Ramesh Shanmugasundaram (2):
+>   can: rcar_can: Add r8a7795 support
+>   arm64: dts: r8a7795: Add CAN support
+>=20
+>  .../devicetree/bindings/net/can/rcar_can.txt       | 12 +++++++++
+>  arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 30 ++++++++++++++=
+++++++++
+>  drivers/net/can/Kconfig                            |  2 +-
+>  drivers/net/can/rcar_can.c                         |  7 ++++-
+>  4 files changed, 49 insertions(+), 2 deletions(-)
+>=20
+
+Marc
+
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--msI5Cm51HadH9LhC9meAmI3NifBS8fj7i
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBCgAGBQJW1BDDAAoJED07qiWsqSVq028H/imPQ5sbo1KPNCizsCSmlbwS
+3IQBwHcKUTUnYzyUnuHIohWDyChdvB5QybKAtXa7dKByNfINgRBjaI7rX4qSoLS2
+x5/rxbvCd/4g3RftJxa+9y73MD6JmSIXjGrLIii/Zjt8qd4MEO0jI0Md1aH1WiCm
+II0EGnTh3x+tkwTaPm0ztC5C88gWmqlfg+oRbZ2/C37TfEW1VXabzsDME22DoMYk
+K4CW2ACzNuJkuR3YgD/6F/BpniOyDts0vaR4P5Q/WY/md14svKKtCkdBaApZOa/d
+ylV55w4QXQ+IxB+zmLnZeK7fp1mLACjcfPTGGhjpcm7v59DtJEyq3DJUxADokbs=
+=ektL
+-----END PGP SIGNATURE-----
+
+--msI5Cm51HadH9LhC9meAmI3NifBS8fj7i--
