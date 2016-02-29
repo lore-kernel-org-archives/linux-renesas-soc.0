@@ -1,145 +1,70 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35181 "EHLO
-	mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752399AbcASMSV (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 19 Jan 2016 07:18:21 -0500
-Received: by mail-lf0-f66.google.com with SMTP id c134so13718193lfb.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Jan 2016 04:18:20 -0800 (PST)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: ryo.kodama.vz@renesas.com, takeshi.kihara.df@renesas.com,
-	harunobu.kurokawa.dn@renesas.com, magnus.damm@gmail.com,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 4/4] arm64: dts: r8a7795: Add PWM device nodes
-Date: Tue, 19 Jan 2016 13:18:08 +0100
-Message-Id: <1453205888-8985-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1453205888-8985-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1453205888-8985-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: devicetree@vger.kernel.org
+Cc: mark.rutland@arm.com, laurent.pinchart+renesas@ideasonboard.com,
+	geert+renesas@glider.be, pawel.moll@arm.com,
+	ijc+devicetree@hellion.org.uk, joro@8bytes.org,
+	linux-renesas-soc@vger.kernel.org,
+	iommu@lists.linux-foundation.org, robh+dt@kernel.org,
+	galak@codeaurora.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 29 Feb 2016 23:33:09 +0900
+Message-Id: <20160229143309.28517.77269.sendpatchset@little-apple>
+Subject: [PATCH] iommu/ipmmu-vmsa: Add r8a7795 DT binding
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ryo Kodama <ryo.kodama.vz@renesas.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
-Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-[uli: adapted to new MSTP clock scheme]
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Update the IPMMU DT binding documentation to include the r8a7795 compat
+string as well as the "renesas,ipmmu-main" property that on r8a7795 will
+be used to describe the topology and the relationship between the various
+cache IPMMU instances and the main IPMMU.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- .../devicetree/bindings/pwm/renesas,pwm-rcar.txt   |  1 +
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 21 ++++++++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 48 ++++++++++++++++++++++
- 3 files changed, 70 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-index 0822a08..d6de643 100644
---- a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-+++ b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-@@ -7,6 +7,7 @@ Required Properties:
-  - "renesas,pwm-r8a7790": for R-Car H2
-  - "renesas,pwm-r8a7791": for R-Car M2-W
-  - "renesas,pwm-r8a7794": for R-Car E2
-+ - "renesas,pwm-r8a7795": for R-Car H3
- - reg: base address and length of the registers block for the PWM.
- - #pwm-cells: should be 2. See pwm.txt in this directory for a description of
-   the cells format.
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 265d12f..04661cf 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -93,6 +93,15 @@
- };
+ Written against linux-next tag next-20160229
+
+ Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |   15 ++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+--- 0001/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
++++ work/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt	2016-02-29 23:25:15.540513000 +0900
+@@ -7,23 +7,34 @@ connected to the IPMMU through a port ca
  
- &pfc {
-+	pwm1_pins: pwm1 {
-+		renesas,groups = "pwm1_a", "pwm1_b";
-+		renesas,function = "pwm1";
-+	};
-+	pwm2_pins: pwm2 {
-+		renesas,groups = "pwm2_a", "pwm2_b";
-+		renesas,function = "pwm2";
-+	};
-+
- 	scif1_pins: scif1 {
- 		renesas,groups = "scif1_data_a", "scif1_ctrl";
- 		renesas,function = "scif1";
-@@ -174,6 +183,18 @@
- 	};
- };
+ Required Properties:
  
-+&pwm1 {
-+	pinctrl-0 = <&pwm1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&pwm2 {
-+	pinctrl-0 = <&pwm2_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
- &rcar_sound {
- 	pinctrl-0 = <&sound_pins &sound_clk_pins>;
- 	pinctrl-names = "default";
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index bb353cd..3c88b04 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -446,6 +446,54 @@
- 			status = "disabled";
- 		};
+-  - compatible: Must contain SoC-specific and generic entries from below.
++  - compatible: Must contain SoC-specific and generic entry below in case
++    the device is compatible with the R-Car Gen2 VMSA-compatible IPMMU.
  
-+		pwm1: pwm@e6e31000 {
-+			compatible = "renesas,pwm-r8a7795", "renesas,pwm-rcar";
-+			reg = <0 0xe6e31000 0 0x10>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			status = "disabled";
-+		};
+     - "renesas,ipmmu-r8a73a4" for the R8A73A4 (R-Mobile APE6) IPMMU.
+     - "renesas,ipmmu-r8a7790" for the R8A7790 (R-Car H2) IPMMU.
+     - "renesas,ipmmu-r8a7791" for the R8A7791 (R-Car M2-W) IPMMU.
+     - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
+     - "renesas,ipmmu-r8a7794" for the R8A7794 (R-Car E2) IPMMU.
++    - "renesas,ipmmu-r8a7795" for the R8A7795 (R-Car H3) IPMMU.
+     - "renesas,ipmmu-vmsa" for generic R-Car Gen2 VMSA-compatible IPMMU.
+ 
+   - reg: Base address and size of the IPMMU registers.
+   - interrupts: Specifiers for the MMU fault interrupts. For instances that
+     support secure mode two interrupts must be specified, for non-secure and
+     secure mode, in that order. For instances that don't support secure mode a
+-    single interrupt must be specified.
++    single interrupt must be specified. Not required for cache IPMMUs.
+ 
+   - #iommu-cells: Must be 1.
+ 
++Optional properties:
 +
-+		pwm2: pwm@e6e32000 {
-+			compatible = "renesas,pwm-r8a7795", "renesas,pwm-rcar";
-+			reg = <0 0xe6e32000 0 0x10>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			status = "disabled";
-+		};
++  - renesas,ipmmu-main: reference to the main IPMMU instance in two cells.
++    The first cell is a phandle to the main IPMMU and the second cell is
++    the interrupt bit number associated with the particular cache IPMMU device.
++    The interrupt bit number needs to match the main IPMMU IMSSTR register.
++    Only used by cache IPMMU instances.
 +
-+		pwm3: pwm@e6e33000 {
-+			compatible = "renesas,pwm-r8a7795", "renesas,pwm-rcar";
-+			reg = <0 0xe6e33000 0 0x10>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			status = "disabled";
-+		};
 +
-+		pwm4: pwm@e6e34000 {
-+			compatible = "renesas,pwm-r8a7795", "renesas,pwm-rcar";
-+			reg = <0 0xe6e34000 0 0x10>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			status = "disabled";
-+		};
-+
-+		pwm5: pwm@e6e35000 {
-+			compatible = "renesas,pwm-r8a7795", "renesas,pwm-rcar";
-+			reg = <0 0xe6e35000 0 0x10>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			status = "disabled";
-+		};
-+
-+		pwm6: pwm@e6e36000 {
-+			compatible = "renesas,pwm-r8a7795", "renesas,pwm-rcar";
-+			reg = <0 0xe6e36000 0 0x10>;
-+			#pwm-cells = <2>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			status = "disabled";
-+		};
-+
- 		scif0: serial@e6e60000 {
- 			compatible = "renesas,scif-r8a7795", "renesas,scif";
- 			reg = <0 0xe6e60000 0 64>;
--- 
-2.6.4
+ Each bus master connected to an IPMMU must reference the IPMMU in its device
+ node with the following property:
+ 
