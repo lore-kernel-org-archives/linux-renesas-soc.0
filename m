@@ -1,57 +1,61 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH 1/2] can: rcar_can: Add r8a7795 support
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+	wg@grandegger.com, horms@verge.net.au, magnus.damm@gmail.com,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+References: <1456737661-20538-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1456737661-20538-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	netdev@vger.kernel.org, chris.paterson2@renesas.com
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <56D411A5.9070706@pengutronix.de>
+Date: Mon, 29 Feb 2016 10:38:45 +0100
 MIME-Version: 1.0
 In-Reply-To: <1456737661-20538-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456737661-20538-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-	<1456737661-20538-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Date: Mon, 29 Feb 2016 10:54:19 +0100
-Message-ID: <CAMuHMdV3EsvN=sqiB2npB=cH8Bz4D6UVcQj-BKqfdHerKSDowQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] can: rcar_can: Add r8a7795 support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Wolfgang Grandegger <wg@grandegger.com>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-renesas-soc@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	linux-can@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	Chris Paterson <chris.paterson2@renesas.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="Qsc6qjR6hkmMe0dFLmbkfq7NGW9UKqASk"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ramesh,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--Qsc6qjR6hkmMe0dFLmbkfq7NGW9UKqASk
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 29, 2016 at 10:21 AM, Ramesh Shanmugasundaram
-<ramesh.shanmugasundaram@bp.renesas.com> wrote:
-> --- a/drivers/net/can/rcar_can.c
-> +++ b/drivers/net/can/rcar_can.c
-> @@ -808,6 +808,10 @@ static int rcar_can_probe(struct platform_device *pdev)
->         priv->regs = addr;
->         priv->clock_select = clock_select;
->         priv->can.clock.freq = clk_get_rate(priv->can_clk);
-> +
-> +       /* Use the rounded clock value (nearest kHz) */
-> +       priv->can.clock.freq = 1000 * DIV_ROUND_UP(priv->can.clock.freq, 1000);
+On 02/29/2016 10:21 AM, Ramesh Shanmugasundaram wrote:
+> Added r8a7795 SoC support.
+>=20
+> For smoother bit timing calculation, the rounded clock frequency is use=
+d.
 
-The comment and the implementation don't match.
-To get the nearest kHz, you have to useDIV_ROUND_CLOSEST().
+Why this? From my point of view this introduces a clock error.
 
-Gr{oetje,eeting}s,
+Marc
 
-                        Geert
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--Qsc6qjR6hkmMe0dFLmbkfq7NGW9UKqASk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBCgAGBQJW1BGlAAoJED07qiWsqSVqj9wIALV0Be3Dw2xV2MBDLliLjsEV
+5d5vkR56on1+IqlyQsfIGgaffCoKOncnaZK0tlnR3r9RF9DmQUOlXEOkB9+VN9ss
+SmmtpBsn2e6tRrmeYgWyllY+pv6qOiHWLuXWpfVXBnpNt+Pq7hrh7LbUO3U1Ypka
+xZQ44xcq9HQgW8lcXIloOt+wSMl18ufL3h7ljnML8vEWKYJHKgEGgM+I3wrU3kMZ
+G55PBXRafmHBv++8QjLEXF1cBTio2E7odkvoT9NdtkY86mi+8VNDu2I0cR7ompiJ
+75/kfbcYF9RSu/irw29b5HHro7OleTdwfOcJ4uvL46FcDHi0xgg64JZALVFhVog=
+=ookP
+-----END PGP SIGNATURE-----
+
+--Qsc6qjR6hkmMe0dFLmbkfq7NGW9UKqASk--
