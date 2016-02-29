@@ -6,11 +6,13 @@ To: mkl@pengutronix.de, wg@grandegger.com, horms@verge.net.au,
 	galak@codeaurora.org
 Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	chris.paterson2@renesas.com,
+	netdev@vger.kernel.org, chris.paterson2@renesas.com,
 	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH] arm64: dts: r8a7795: Add CAN support
-Date: Mon, 29 Feb 2016 14:22:39 +0000
-Message-Id: <1456755759-51288-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH 2/2] arm64: dts: r8a7795: Add CAN support
+Date: Mon, 29 Feb 2016 09:21:01 +0000
+Message-Id: <1456737661-20538-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1456737661-20538-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1456737661-20538-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -24,15 +26,6 @@ CAN Channel 1 - 0xe6c38000
 
 Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
-Hi All,
-
-   This patch is based on linux-next (tag:next-20160225) with following patch
-   applied on top
-
-   [PATCH v2] arm64: dts: r8a7795: Add CAN external clock support
-
-   The respective CAN subsystem changes are submitted separately here (http://marc.info/?l=linux-can&m=145674974416086&w=2)
-
  arch/arm64/boot/dts/renesas/r8a7795.dtsi | 30 ++++++++++++++++++++++++++++++
  1 file changed, 30 insertions(+)
 
