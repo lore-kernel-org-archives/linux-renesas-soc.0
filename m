@@ -1,35 +1,46 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 2 Mar 2016 09:25:27 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: mkl@pengutronix.de, wg@grandegger.com, magnus.damm@gmail.com,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	netdev@vger.kernel.org, chris.paterson2@renesas.com
-Subject: Re: [PATCH 2/2] arm64: dts: r8a7795: Add CAN support
-Message-ID: <20160302002527.GG17986@verge.net.au>
-References: <1456737661-20538-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <1456737661-20538-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	"wg@grandegger.com" <wg@grandegger.com>,
+	"horms@verge.net.au" <horms@verge.net.au>,
+	"magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"pawel.moll@arm.com" <pawel.moll@arm.com>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
+	"galak@codeaurora.org" <galak@codeaurora.org>
+CC: "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: RE: [PATCH] arm64: dts: r8a7795: Add CAN support
+Date: Tue, 1 Mar 2016 08:20:25 +0000
+Message-ID: <SG2PR06MB103895394DED2A849E2A801BC3BB0@SG2PR06MB1038.apcprd06.prod.outlook.com>
+References: <1456755759-51288-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <56D54EFA.6020105@pengutronix.de>
+In-Reply-To: <56D54EFA.6020105@pengutronix.de>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1456737661-20538-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Feb 29, 2016 at 09:21:01AM +0000, Ramesh Shanmugasundaram wrote:
-> Adds CAN controller nodes for r8a7795.
-> 
-> Note: CAN channel register base address mentioned in R-Car Gen3 Hardware
-> User Manual v0.5E is incorrect. The corrected base addresses are:
-> 
-> CAN Channel 0 - 0xe6c30000
-> CAN Channel 1 - 0xe6c38000
-> 
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-
-I have deferred this patch pending acceptance of the bindings
-(basically patch 1/2). Please repost this patch or ping me once
-that has happened.
+SGkgTWFyYywNCg0KPiBPbiAwMi8yOS8yMDE2IDAzOjIyIFBNLCBSYW1lc2ggU2hhbm11Z2FzdW5k
+YXJhbSB3cm90ZToNCj4gPiBBZGRzIENBTiBjb250cm9sbGVyIG5vZGVzIGZvciByOGE3Nzk1Lg0K
+PiA+DQo+ID4gTm90ZTogQ0FOIGNoYW5uZWwgcmVnaXN0ZXIgYmFzZSBhZGRyZXNzIG1lbnRpb25l
+ZCBpbiBSLUNhciBHZW4zDQo+ID4gSGFyZHdhcmUgVXNlciBNYW51YWwgdjAuNUUgaXMgaW5jb3Jy
+ZWN0LiBUaGUgY29ycmVjdGVkIGJhc2UgYWRkcmVzc2VzDQo+IGFyZToNCj4gPg0KPiA+IENBTiBD
+aGFubmVsIDAgLSAweGU2YzMwMDAwDQo+ID4gQ0FOIENoYW5uZWwgMSAtIDB4ZTZjMzgwMDANCj4g
+Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IFJhbWVzaCBTaGFubXVnYXN1bmRhcmFtDQo+ID4gPHJhbWVz
+aC5zaGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMuY29tPg0KPiA+IC0tLQ0KPiA+IEhpIEFsbCwN
+Cj4gPg0KPiA+ICAgIFRoaXMgcGF0Y2ggaXMgYmFzZWQgb24gbGludXgtbmV4dCAodGFnOm5leHQt
+MjAxNjAyMjUpIHdpdGggZm9sbG93aW5nDQo+IHBhdGNoDQo+ID4gICAgYXBwbGllZCBvbiB0b3AN
+Cj4gDQo+IFdobyBzaG91bGQgdGFrZSB0aGlzIHBhdGNoPw0KDQpJZiBhY2tlZCwgSSB0aGluayBp
+dCBpcyBTaW1vbiAod2hvIGNvbnNvbGlkYXRlcyBhbGwgUmVuZXNhcyBBUk02NCBEVCBjaGFuZ2Vz
+IGFuZCBtYWtlIG9uZSBwdWxsIHJlcXVlc3QpLiBDb3BpZWQgR2VlcnQgdG9vLg0KDQpUaGFua3Ms
+DQpSYW1lc2gNCg==
