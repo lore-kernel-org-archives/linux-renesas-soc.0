@@ -1,36 +1,40 @@
 Return-Path: <linux-i2c-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1456850216-8197-1-git-send-email-wsa@the-dreams.de>
-References: <1456850216-8197-1-git-send-email-wsa@the-dreams.de>
-Date: Wed, 2 Mar 2016 10:06:51 +0100
-Message-ID: <CAMuHMdXd5JYKSAd1D3=gmSQFfCOeYzxzOvT6EDuGY+t1y4+_=w@mail.gmail.com>
-Subject: Re: [PATCH] i2c: rcar: don't open code of_device_get_match_data()
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Linux I2C <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
+Subject: [PATCH] i2c: rcar: don't open code of_device_get_match_data()
+Date: Tue,  1 Mar 2016 17:36:43 +0100
+Message-Id: <1456850216-8197-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Mar 1, 2016 at 5:36 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> This change will also make Coverity happy by avoiding a theoretical NULL
-> pointer dereference; yet another reason is to use the above helper function
-> to tighten the code and make it more readable.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This change will also make Coverity happy by avoiding a theoretical NULL
+pointer dereference; yet another reason is to use the above helper function
+to tighten the code and make it more readable.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-                        Geert
+Tested on a Lager board.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ drivers/i2c/busses/i2c-rcar.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 1abeadc8ab7959..68ecb5630ad588 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -611,7 +611,7 @@ static int rcar_i2c_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->io))
+ 		return PTR_ERR(priv->io);
+ 
+-	priv->devtype = (enum rcar_i2c_type)of_match_device(rcar_i2c_dt_ids, dev)->data;
++	priv->devtype = (enum rcar_i2c_type)of_device_get_match_data(dev);
+ 	init_waitqueue_head(&priv->wait);
+ 
+ 	adap = &priv->adap;
+-- 
+2.7.0
+
