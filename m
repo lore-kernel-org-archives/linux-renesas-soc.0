@@ -1,6 +1,6 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
+Subject: Re: [PATCH] can: rcar_canfd: Add Renesas R-Car CAN FD driver
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
 	"wg@grandegger.com" <wg@grandegger.com>,
 	"robh+dt@kernel.org" <robh+dt@kernel.org>,
 	"pawel.moll@arm.com" <pawel.moll@arm.com>,
@@ -8,7 +8,12 @@ To: Marc Kleine-Budde <mkl@pengutronix.de>,
 	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
 	"galak@codeaurora.org" <galak@codeaurora.org>,
 	"corbet@lwn.net" <corbet@lwn.net>
-CC: "linux-renesas-soc@vger.kernel.org"
+References: <1456824849-7987-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <56D5FE8E.1090400@pengutronix.de>
+ <SG2PR06MB1038AC389CDB35916408A5D6C3BC0@SG2PR06MB1038.apcprd06.prod.outlook.com>
+ <56D6B067.306@pengutronix.de>
+ <SG2PR06MB1038DD32D284801452BA633EC3BC0@SG2PR06MB1038.apcprd06.prod.outlook.com>
+Cc: "linux-renesas-soc@vger.kernel.org"
 	<linux-renesas-soc@vger.kernel.org>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
@@ -16,48 +21,87 @@ CC: "linux-renesas-soc@vger.kernel.org"
 	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
 	"geert+renesas@glider.be" <geert+renesas@glider.be>,
 	Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH] can: rcar_canfd: Add Renesas R-Car CAN FD driver
-Date: Thu, 3 Mar 2016 13:48:14 +0000
-Message-ID: <SG2PR06MB1038ABE33F06BCCA9EB072B7C3BD0@SG2PR06MB1038.apcprd06.prod.outlook.com>
-References: <1456824849-7987-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <56D5FE8E.1090400@pengutronix.de>
- <SG2PR06MB1038AC389CDB35916408A5D6C3BC0@SG2PR06MB1038.apcprd06.prod.outlook.com>
- <56D6B067.306@pengutronix.de>
- <SG2PR06MB1038DD32D284801452BA633EC3BC0@SG2PR06MB1038.apcprd06.prod.outlook.com>
- <56D6BEAC.10408@pengutronix.de>
-In-Reply-To: <56D6BEAC.10408@pengutronix.de>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <56D6BEAC.10408@pengutronix.de>
+Date: Wed, 2 Mar 2016 11:21:32 +0100
 MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB1038DD32D284801452BA633EC3BC0@SG2PR06MB1038.apcprd06.prod.outlook.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="EOqqlLP077GJ35Qm6UgDcw51wwPOgcTih"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgTWFyYywNCg0KU29ycnkgZm9yIHRoZSBsYXRlIHJlc3BvbnNlLg0KDQo+IE9uIDAzLzAyLzIw
-MTYgMTE6MDggQU0sIFJhbWVzaCBTaGFubXVnYXN1bmRhcmFtIHdyb3RlOg0KPiA+Pj4+IEkgc2Vl
-IG5vIGxvY2tpbmcgZm9yIHRoZSB0eC1wYXRoLg0KPiA+Pj4NCj4gPj4+IEkgYW0gbm90IHN1cmUg
-d2h5IGxvY2tpbmcgaXMgbmVlZGVkIGluIHR4LXBhdGg/DQo+ID4+DQo+ID4+IElmIHRoZSB0eC1w
-YXRoIGlzIHNoYXJlZCBiZXR3ZWVuIGJvdGggY2hhbm5lbHMgeW91IG5lZWQgbG9ja2luZyBhcw0K
-PiA+PiB0aGUgbmV0d29ya2luZyBzdWJzeXN0ZW0gbWF5IHNlbmQgb25lIGZyYW1lIHRvIGVhY2gg
-Y29udHJvbGxlciBhdCB0aGUNCj4gPj4gc2FtZSB0aW1lLg0KPiA+DQo+ID4gWWVzLiBUeCBjb21w
-bGV0aW9uIGludGVycnVwdCBpcyBzaGFyZWQgYnkgYm90aCBjaGFubmVscyBidXQgdGhlIFR4DQo+
-ID4gRklGTywgZWNobyBza2JzLCBoZWFkLCB0YWlsIGFyZSBtYWludGFpbmVkIG9uIGEgcGVyIGNo
-YW5uZWwgYmFzaXMuDQo+ID4gWWVzLCBuZXQgc3Vic3lzdGVtIGNhbiBzZW5kIG9uZSBmcmFtZSB0
-byBlYWNoIGNoYW5uZWwgYXQgdGhlIHNhbWUgdGltZQ0KPiA+IGFuZCB0aGUgdHggY29tcGxldGlv
-biBpbnRlcnJ1cHQgaGFuZGxlciB3aWxsIHRyYXZlcnNlIGVhY2ggY2hhbm5lbCAmDQo+ID4gdXBk
-YXRlIHBlciBjaGFubmVsIGNvbnRleHQgYWNjb3JkaW5nbHkuDQo+IA0KPiBPay4gV2hpY2ggaW5z
-dHJ1Y3Rpb24gc3RhcnRzIHRoZSB0cmFuc21pdD8gUGxlYXNlIGFkZCBhIGNvbW1lbnQgdG8gdGhl
-DQo+IGNvZGUuDQoNClBsZWFzZSBzZWUNCg0KLS0tPHNuaXA+LS0tDQoNCisJLyogU3RhcnQgVHg6
-IFdyaXRlIDB4ZmYgdG8gQ0ZQQyB0byBpbmNyZW1lbnQgdGhlIENQVS1zaWRlDQorCSAqIHBvaW50
-ZXIgZm9yIHRoZSBDb21tb24gRklGTw0KKwkgKi8NCisJcmNhcl9jYW5mZF93cml0ZShwcml2LCBS
-Q0FORkRfQ0ZQQ1RSKGNoLCBSQ0FORkRfQ0ZGSUZPX0lEWCksIDB4ZmYpOw0KDQotLS08c25pcD4t
-LS0NCg0KPiBZb3Ugc3RvcCB0aGUgdHhfcXVldWUgYWZ0ZXIgdGhpcywgc28geW91ciBjb2RlIGlz
-IHJhY3ksIGFzIHRoZQ0KPiBpbnRlcnJ1cHQgbWlnaHQgaGFwcGVuIGluIGJldHdlZW4uDQoNCkl0
-IGlzIGEgdmVyeSBnb29kIHBvaW50LiBUaGFuayB5b3UuIA0KSSBtYW5hZ2VkIHRvIHJlcHJvZHVj
-ZSB0aGlzIGlzc3VlIG9uY2Ugd2l0aCA1MEticHMgcmF0ZSBhbmQgaWdub3JpbmcgLUVOT0JVRlMg
-aW4gdXNlciBzcGFjZS4gSXQgYWxzbyBleHBvc2VkIGFub3RoZXIgc3VidGxlIGlzc3VlIGluIHRo
-ZSBlY2hvIHNrYiBtYW5hZ2VtZW50IHdoZXJlIHRoZSB0eF9kb25lIGxvb3AgcHVzaGVzIHRoZSBz
-a2IgYmVmb3JlIHRoZSBhY3R1YWwgQUNLIGZvciB0aGF0IGluZGV4IGhhcHBlbnMuIEZpeGVkIGJv
-dGggaXNzdWVzLg0KQXMgeW91IG1lbnRpb25lZCwgSSBoYXZlIGludHJvZHVjZWQgYSBsb2NrIHRv
-IHByb3RlY3QgdGhpcyBjcml0aWNhbCBzZWN0aW9uLiBJJ2xsIHNlbmQgdGhlIHVwZGF0ZXMgaW4g
-dGhlIG5leHQgdjIgcGF0Y2guDQoNClRoYW5rcywNClJhbWVzaA0K
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--EOqqlLP077GJ35Qm6UgDcw51wwPOgcTih
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+On 03/02/2016 11:08 AM, Ramesh Shanmugasundaram wrote:
+>>>> I see no locking for the tx-path.
+>>>
+>>> I am not sure why locking is needed in tx-path?
+>>
+>> If the tx-path is shared between both channels you need locking as the=
+
+>> networking subsystem may send one frame to each controller at the same=
+
+>> time.
+>=20
+> Yes. Tx completion interrupt is shared by both channels but the Tx
+> FIFO, echo skbs, head, tail are maintained on a per channel basis.=20
+> Yes, net subsystem can send one frame to each channel at the same
+> time and the tx completion interrupt handler will traverse each
+> channel & update per channel context accordingly.
+
+Ok. Which instruction starts the transmit? Please add a comment to the
+code. You stop the tx_queue after this, so your code is racy, as the
+interrupt might happen in between.
+
+>>> However, looking at it again, I should move the incrementing of head
+>>> after the "sts" handing to be apt. What do you think?
+>>
+>> With one producer (one SW instance) and one consumer (the HW) you can
+>> write lockless code (if the HW allows it), but with two producers it's=
+ not
+>> possible.
+>=20
+> For a channel represented as netdev, there is still one producer (one
+> SW instance) isn't it? net acquires lock before calling xmit. The
+> consumer is tx completion interrupt handler which updates per channel
+> attributes only.
+
+Ok - I haven't looked at the code in depth yet. Now it's clear, that
+just the tx interrupt is shared.
+
+> Sorry if I am annoying. I have tested this with two channels
+> transmitting & receiving at the same time and it works fine. If I am
+> missing lock, I would like to understand it thoroughly before making
+> the change.
+
+Marc
+
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--EOqqlLP077GJ35Qm6UgDcw51wwPOgcTih
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBCgAGBQJW1r6tAAoJED07qiWsqSVqNHYIAIhiBlD+W3zYRUuXAj40j691
+lIsSEQ4CQf6GZB/e3BauDVYR7Kzy75buNTC8vE8I01u1IXDcjeFmDyy0aF288oCw
+B8oqeisYderLDhPg5uJQ4HUclN4mwtoiGKW0co2FG4Xsag6jh4m4Yv/BOObSediH
+HczMST59ap3hNnjd5VkHb2fwsJ/+I82lIY+i0AQ3Za2T3mLkSY5JPcXTXDA4y5BC
+XrjmEfALPxlpCfrYWsx3n19qLVcVvSd4av/yv87eQmND6Li0zm9N8V8PSZUCA8fx
+Gt8MWOO1mGrPPgvzkMTNXMq1K0MOikhU09QCnwaPNQazfcD2XAIuHH97DIjYFXo=
+=8Llr
+-----END PGP SIGNATURE-----
+
+--EOqqlLP077GJ35Qm6UgDcw51wwPOgcTih--
