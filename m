@@ -4,11 +4,12 @@ MIME-Version: 1.0
 In-Reply-To: <1456778924-20730-5-git-send-email-paul.gortmaker@windriver.com>
 References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
 	<1456778924-20730-5-git-send-email-paul.gortmaker@windriver.com>
-Date: Wed, 9 Mar 2016 10:24:10 +0700
-Message-ID: <CACRpkdb67YPaUbHBqQ2=qw9CRV83A4Cf+9v5-idFvKOb60NyhQ@mail.gmail.com>
+Date: Wed, 2 Mar 2016 12:05:39 +0100
+Message-ID: <CAMuHMdWwiZNJ7UavdNJhfee9EhOHM6CybtNgOKkH9nRdqjiqWg@mail.gmail.com>
 Subject: Re: [PATCH 4/8] drivers/pinctrl: make sh-pfc/core.c explicitly non-modular
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>,
+	Linus Walleij <linus.walleij@linaro.org>
 Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -18,9 +19,8 @@ Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Mar 1, 2016 at 3:48 AM, Paul Gortmaker
+On Mon, Feb 29, 2016 at 9:48 PM, Paul Gortmaker
 <paul.gortmaker@windriver.com> wrote:
-
 > The Kconfig / Makefile currently controlling compilation of this code is:
 >
 > drivers/pinctrl/sh-pfc/Makefile:obj-$(CONFIG_PINCTRL_SH_PFC)    += sh-pfc.o
@@ -49,7 +49,18 @@ On Tue, Mar 1, 2016 at 3:48 AM, Paul Gortmaker
 > Cc: linux-gpio@vger.kernel.org
 > Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-Patch applied with Laurent's and Geert's ACKs.
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Yours,
-Linus Walleij
+Linus: Feel free to take this with the other patches from the series.
+Or do you prefer I queue it up in sh-pfc-for-v4.7?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
