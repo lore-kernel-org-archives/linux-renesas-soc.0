@@ -1,42 +1,36 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 2 Mar 2016 09:47:50 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org, magnus.damm@gmail.com,
-	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: porter: remove enable prop from HS-USB device
- node
-Message-ID: <20160302004750.GA26508@verge.net.au>
-References: <1674850.BZpGW9kEud@wasted.cogentembedded.com>
- <2684686.0L09MeB6pA@wasted.cogentembedded.com>
- <56D0AADF.6090201@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <56D0AADF.6090201@cogentembedded.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org,
+	linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH 0/6] treewide: test clock rate to avoid division by 0
+Date: Wed,  2 Mar 2016 23:33:31 +0100
+Message-Id: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Feb 26, 2016 at 10:43:27PM +0300, Sergei Shtylyov wrote:
-> On 02/14/2016 01:26 AM, Sergei Shtylyov wrote:
-> 
-> >In  the final versions of the Porter board (called "PORTER_C") Renesas
-> >decided to get rid  of the Maxim Integrated MAX3355 OTG chip and didn't
-> >add any other provision to differ the host/gadget mode, so we'll have to
-> >remove  no longer valid "renesas,enable-gpio" property from the HS-USB
-> >device node.  Hopefully, the earlier revisions of the board were never
-> >seen in the wild...
-> >
-> >Fixes: c794f6a09a25 ("ARM: shmobile: porter: add HS-USB DT support")
-> >Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> >Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
->    Simon, what about this patch? It was posted 12 days ago and no reaction
-> whatsoever...
+Here is the outcome of researching if the result of clk_get_rate() was directly
+used as a divisor without checking if it is 0. Inspired by a Coverity report.
 
-Hi Sergei,
+Wolfram Sang (6):
+  ide: palm_bk3710: test clock rate to avoid division by 0
+  net: ethernet: renesas: ravb_main: test clock rate to avoid division
+    by 0
+  pwm: pwm-img: test clock rate to avoid division by 0
+  pwm: pwm-lpc18xx-sct: test clock rate to avoid division by 0
+  watchdog: atlas7_wdt: test clock rate to avoid division by 0
+  watchdog: tangox_wdt: test clock rate to avoid division by 0
 
-sorry for the extended delay. I have queued this up as a fix for v4.5.
+ drivers/ide/palm_bk3710.c                | 2 ++
+ drivers/net/ethernet/renesas/ravb_main.c | 3 +++
+ drivers/pwm/pwm-img.c                    | 5 +++++
+ drivers/pwm/pwm-lpc18xx-sct.c            | 2 ++
+ drivers/watchdog/atlas7_wdt.c            | 5 +++++
+ drivers/watchdog/tangox_wdt.c            | 2 ++
+ 6 files changed, 19 insertions(+)
+
+-- 
+2.7.0
