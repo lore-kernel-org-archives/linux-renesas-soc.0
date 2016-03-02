@@ -1,66 +1,46 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 4 Mar 2016 16:01:30 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Thierry Reding <thierry.reding@gmail.com>,
 	linux-pwm@vger.kernel.org
-Subject: Re: [PATCH 3/6] pwm: pwm-img: test clock rate to avoid division by 0
-Message-ID: <20160304150130.GB26400@ulmo.nvidia.com>
+Subject: [PATCH 3/6] pwm: pwm-img: test clock rate to avoid division by 0
+Date: Wed,  2 Mar 2016 23:33:34 +0100
+Message-Id: <1456958018-7849-4-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
 References: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
- <1456958018-7849-4-git-send-email-wsa@the-dreams.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Fba/0zbH8Xs+Fj9o"
-Content-Disposition: inline
-In-Reply-To: <1456958018-7849-4-git-send-email-wsa@the-dreams.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
---Fba/0zbH8Xs+Fj9o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The clk API may return 0 on clk_get_rate, so we should check the result before
+using it as a divisor.
 
-On Wed, Mar 02, 2016 at 11:33:34PM +0100, Wolfram Sang wrote:
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->=20
-> The clk API may return 0 on clk_get_rate, so we should check the result b=
-efore
-> using it as a divisor.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->=20
-> Should go individually via subsystem tree.
->=20
->  drivers/pwm/pwm-img.c | 5 +++++
->  1 file changed, 5 insertions(+)
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Applied, thanks.
+Should go individually via subsystem tree.
 
-Thierry
+ drivers/pwm/pwm-img.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---Fba/0zbH8Xs+Fj9o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJW2aNKAAoJEN0jrNd/PrOhrDkQALxc3vaC8cXSFuPl4OODUe8e
-m8k/64Uud/EDpWV57WbOKSKuUpf8RdnpsyNZjwhuMiDMbuoz74CmBruZ4hIQRAtZ
-WKJXSI7d5PxuDm64p5R2i26fbmr0O6LvSXNZhjC6sKdqptG9MJ2wX2aFaO4dv/Df
-I59PYbK+qkKcZdKQIXsIuWuRUXV0inn30mcBlYIFlBZvOHIeFwOrnKqbAgP7ef+B
-LoB+vaJMMfjhr9b2u6lAmTj0L5IVDlq7D3ASaXW0CQi8bg9zWfbnQRQ/hmkLMMY0
-qIVnaFQsXVVSdChO7U8KVXlm8RSE0qCIk58VsZilcZkTie4uF2QGhyCPikcvpmLN
-BWUZpEUwGFVqFLciFYne8yv6W8YSbKMCscWzaUlfQLWlZi8ZF7KOUILMEE7CKwk2
-85pO7t2WlMZRw4XY0hjjq7Ib0m4rvYNoMDwt/Gc3C1DG0dQB+VAoWFvOUU4WaDga
-xVvAoADItYbh1KetCY0CL9FrC8TSIrD+VSgAKfr/Kyaz6zGhXSkOAuYP+H1KZOE2
-ru+LYL4glqIC+9REE9R2OHkhxc5Cy+CrEib4Svia8buS0kScKO6+WI9cOQZtMbpf
-5KBi9i9KyVjJRW07w+Y9ohQor23y2rlj9ZIw+ag7jXWqPLNIgzC9UXnSR/J4FCBl
-ZBm9F+QeukGT/9OndROj
-=Zr2X
------END PGP SIGNATURE-----
-
---Fba/0zbH8Xs+Fj9o--
+diff --git a/drivers/pwm/pwm-img.c b/drivers/pwm/pwm-img.c
+index 8a029f9bc18cb0..2fb30deee34570 100644
+--- a/drivers/pwm/pwm-img.c
++++ b/drivers/pwm/pwm-img.c
+@@ -237,6 +237,11 @@ static int img_pwm_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	clk_rate = clk_get_rate(pwm->pwm_clk);
++	if (!clk_rate) {
++		dev_err(&pdev->dev, "pwm clock has no frequency\n");
++		ret = -EINVAL;
++		goto disable_pwmclk;
++	}
+ 
+ 	/* The maximum input clock divider is 512 */
+ 	val = (u64)NSEC_PER_SEC * 512 * pwm->data->max_timebase;
+-- 
+2.7.0
