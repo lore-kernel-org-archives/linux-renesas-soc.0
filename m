@@ -1,72 +1,42 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 01/30] ARM: dts: r8a7790: Reference both DMA controllers in SCIFA nodes
-Date: Thu, 10 Mar 2016 12:35:53 +0100
-Message-Id: <1457609782-24108-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Date: Wed, 2 Mar 2016 09:47:50 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org, magnus.damm@gmail.com,
+	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: dts: porter: remove enable prop from HS-USB device
+ node
+Message-ID: <20160302004750.GA26508@verge.net.au>
+References: <1674850.BZpGW9kEud@wasted.cogentembedded.com>
+ <2684686.0L09MeB6pA@wasted.cogentembedded.com>
+ <56D0AADF.6090201@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <56D0AADF.6090201@cogentembedded.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+On Fri, Feb 26, 2016 at 10:43:27PM +0300, Sergei Shtylyov wrote:
+> On 02/14/2016 01:26 AM, Sergei Shtylyov wrote:
+> 
+> >In  the final versions of the Porter board (called "PORTER_C") Renesas
+> >decided to get rid  of the Maxim Integrated MAX3355 OTG chip and didn't
+> >add any other provision to differ the host/gadget mode, so we'll have to
+> >remove  no longer valid "renesas,enable-gpio" property from the HS-USB
+> >device node.  Hopefully, the earlier revisions of the board were never
+> >seen in the wild...
+> >
+> >Fixes: c794f6a09a25 ("ARM: shmobile: porter: add HS-USB DT support")
+> >Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> >Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+>    Simon, what about this patch? It was posted 12 days ago and no reaction
+> whatsoever...
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm/boot/dts/r8a7790.dtsi | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+Hi Sergei,
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 7dfd393..f4210f5 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -590,8 +590,9 @@
- 		interrupts = <0 144 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFA0>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x21>, <&dmac0 0x22>,
-+		       <&dmac1 0x21>, <&dmac1 0x22>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -602,8 +603,9 @@
- 		interrupts = <0 145 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFA1>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x25>, <&dmac0 0x26>,
-+		       <&dmac1 0x25>, <&dmac1 0x26>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -614,8 +616,9 @@
- 		interrupts = <0 151 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFA2>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x27>, <&dmac0 0x28>,
-+		       <&dmac1 0x27>, <&dmac1 0x28>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
--- 
-2.7.2
-
+sorry for the extended delay. I have queued this up as a fix for v4.5.
