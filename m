@@ -1,56 +1,44 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org,
-	Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@linux.ie>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 4/4 v2] drm: rcar-du - use generic drm_connector_register_all() helper
-Date: Mon, 21 Mar 2016 15:28:40 +0300
-Message-Id: <1458563320-30541-5-git-send-email-abrodkin@synopsys.com>
-In-Reply-To: <1458563320-30541-1-git-send-email-abrodkin@synopsys.com>
-References: <1458563320-30541-1-git-send-email-abrodkin@synopsys.com>
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 0/2] phy: rcar-gen2, rcar-gen3-usb2: add fallback binding
+Date: Wed,  2 Mar 2016 11:37:15 +0900
+Message-Id: <1456886237-29936-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now when generic drm_connector_register_all() helper exists we may safely
-substiture with it driver-specific implementation of connectors plugging in
-sysfs.
+Add fallback compatibility strings for rcar phy drivers.
 
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
+In the case of Renesas R-Car hardware we know that there are generations of
+SoCs, e.g. Gen 2 and Gen 3. But beyond that its not clear what the
+relationship between IP blocks might be. For example, I believe that
+r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
+descendant of the former or vice versa.
 
-No changes v1 -> v2.
+We can, however, by examining the documentation and behaviour of the
+hardware at run-time observe that the current driver implementation appears
+to be compatible with the IP blocks on SoCs within a given generation.
 
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+For the above reasons and convenience when enabling new SoCs a
+per-generation fallback compatibility string scheme being adopted for
+drivers for Renesas SoCs.
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 644db36..0f251dc 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -361,14 +361,7 @@ static int rcar_du_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto error;
- 
--	mutex_lock(&ddev->mode_config.mutex);
--	drm_for_each_connector(connector, ddev) {
--		ret = drm_connector_register(connector);
--		if (ret < 0)
--			break;
--	}
--	mutex_unlock(&ddev->mode_config.mutex);
--
-+	ret = drm_connector_register_all(ddev);
- 	if (ret < 0)
- 		goto error;
- 
+Based on v4.5-rc1
+
+Simon Horman (2):
+  phy: rcar-gen2: add fallback binding
+  phy: rcar-gen3-usb2: add fallback binding
+
+ Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt      |  8 +++++++-
+ Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 10 ++++++++--
+ drivers/phy/phy-rcar-gen2.c                                  |  1 +
+ drivers/phy/phy-rcar-gen3-usb2.c                             |  1 +
+ 4 files changed, 17 insertions(+), 3 deletions(-)
+
 -- 
-2.5.0
+2.1.4
