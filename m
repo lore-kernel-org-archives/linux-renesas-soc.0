@@ -1,84 +1,42 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 05/30] ARM: dts: r8a7790: Reference both DMA controllers in MSIOF nodes
-Date: Thu, 10 Mar 2016 12:35:57 +0100
-Message-Id: <1457609782-24108-6-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>, linux-ide@vger.kernel.org
+Subject: [PATCH 1/6] ide: palm_bk3710: test clock rate to avoid division by 0
+Date: Wed,  2 Mar 2016 23:33:32 +0100
+Message-Id: <1456958018-7849-2-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
+References: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+The clk API may return 0 on clk_get_rate, so we should check the result before
+using it as a divisor.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 164bad25..2105f57 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1427,8 +1427,9 @@
- 		reg = <0 0xe6e20000 0 0x0064>;
- 		interrupts = <0 156 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7790_CLK_MSIOF0>;
--		dmas = <&dmac0 0x51>, <&dmac0 0x52>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x51>, <&dmac0 0x52>,
-+		       <&dmac1 0x51>, <&dmac1 0x52>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -1440,8 +1441,9 @@
- 		reg = <0 0xe6e10000 0 0x0064>;
- 		interrupts = <0 157 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_MSIOF1>;
--		dmas = <&dmac0 0x55>, <&dmac0 0x56>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x55>, <&dmac0 0x56>,
-+		       <&dmac1 0x55>, <&dmac1 0x56>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -1453,8 +1455,9 @@
- 		reg = <0 0xe6e00000 0 0x0064>;
- 		interrupts = <0 158 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_MSIOF2>;
--		dmas = <&dmac0 0x41>, <&dmac0 0x42>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x41>, <&dmac0 0x42>,
-+		       <&dmac1 0x41>, <&dmac1 0x42>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -1466,8 +1469,9 @@
- 		reg = <0 0xe6c90000 0 0x0064>;
- 		interrupts = <0 159 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_MSIOF3>;
--		dmas = <&dmac0 0x45>, <&dmac0 0x46>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x45>, <&dmac0 0x46>,
-+		       <&dmac1 0x45>, <&dmac1 0x46>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+Should go individually via subsystem tree.
+
+ drivers/ide/palm_bk3710.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/ide/palm_bk3710.c b/drivers/ide/palm_bk3710.c
+index 8012e43bf8f618..46427ea01753b4 100644
+--- a/drivers/ide/palm_bk3710.c
++++ b/drivers/ide/palm_bk3710.c
+@@ -325,6 +325,8 @@ static int __init palm_bk3710_probe(struct platform_device *pdev)
+ 
+ 	clk_enable(clk);
+ 	rate = clk_get_rate(clk);
++	if (!rate)
++		return -EINVAL;
+ 
+ 	/* NOTE:  round *down* to meet minimum timings; we count in clocks */
+ 	ideclk_period = 1000000000UL / rate;
 -- 
-2.7.2
-
+2.7.0
