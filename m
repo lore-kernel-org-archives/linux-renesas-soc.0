@@ -1,97 +1,75 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH] arm64: dts: r8a7795: Add CAN FD support
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-	"mkl@pengutronix.de" <mkl@pengutronix.de>,
-	"wg@grandegger.com" <wg@grandegger.com>,
-	"horms@verge.net.au" <horms@verge.net.au>,
-	"magnus.damm@gmail.com" <magnus.damm@gmail.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"pawel.moll@arm.com" <pawel.moll@arm.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
-	"galak@codeaurora.org" <galak@codeaurora.org>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: mkl@pengutronix.de, wg@grandegger.com, horms@verge.net.au,
+	magnus.damm@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	chris.paterson2@renesas.com,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v2] arm64: dts: r8a7795: Add CAN FD support
+Date: Wed,  2 Mar 2016 08:15:50 +0000
+Message-Id: <1456906550-4849-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1456826640-23237-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 References: <1456826640-23237-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <56D59538.2060100@cogentembedded.com>
- <SG2PR06MB1038FBA247777C89F70E2633C3BC0@SG2PR06MB1038.apcprd06.prod.outlook.com>
-Cc: "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Chris Paterson <Chris.Paterson2@renesas.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <56D6D6AD.7080207@cogentembedded.com>
-Date: Wed, 2 Mar 2016 15:03:57 +0300
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB1038FBA247777C89F70E2633C3BC0@SG2PR06MB1038.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+Adds CAN FD controller node for r8a7795.
 
-On 3/2/2016 10:29 AM, Ramesh Shanmugasundaram wrote:
+Note: CAN FD controller register base address specified in R-Car Gen3
+Hardware User Manual v0.5E is incorrect. The correct address is:
 
->>> Adds CAN FD controller node for r8a7795.
->>>
->>> Note: CAN FD controller register base address specified in R-Car Gen3
->>> Hardware User Manual v0.5E is incorrect. The correct address is:
->>>
->>> CAN FD - 0xe66c0000
->>>
->>> Signed-off-by: Ramesh Shanmugasundaram
->>> <ramesh.shanmugasundaram@bp.renesas.com>
->>> ---
->>> Hi All,
->>>
->>>      This patch is based on linux-next (tag:next-20160225) with the
->> following
->>>      patches applied on top.
->>>
->>>      [PATCH v2] arm64: dts: r8a7795: Add CAN external clock support
->>>      [PATCH] arm64: dts: r8a7795: Add CAN support
->>>
->>>      The respective CAN subsystem changes are submitted separately here
->>> (https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg013
->>> 88.html)
->>>
->>> Thanks,
->>> Ramesh
->>> ---
->>>    arch/arm64/boot/dts/renesas/r8a7795.dtsi | 24 ++++++++++++++++++++++++
->>>    1 file changed, 24 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
->>> b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
->>> index a88f8d8..5049ba6 100644
->>> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
->>> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
->>> @@ -553,6 +553,30 @@
->>>    			status = "disabled";
->>>    		};
->>>
->>> +		canfd: canfd@e66c0000 {
->>
->>      The node name should still be "can@e66c0000", I think.
->
-> Thanks for the review.
->
-> The SoC has CAN controller too
+CAN FD - 0xe66c0000
 
-    Yes, I figured. BTW, is the CAN-FD identical to the older CAN on the 
-hardware level? I haven't see you posting the CAN-FD driver yet...
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+Thanks Sergei, Simon for the comments.
 
-> and hence I chose this node name to differentiate. A grep of canfd on sysfs would tell if the controller is enabled. The channels on "net" would still be named "canx".
->
-> I'll change it if you still feel "can@e66c0000" is more appropriate.
+	Changes since v1:
+	As suggested by Sergei, Simon
+	* Changed node name from canfd@ to can@
 
-    It is -- the node names should be generic and ePAPR even has the "can" 
-name listed explicitly in the section 2.2.2.
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-> Thanks,
-> Ramesh
-
-MBR, Sergei
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index a88f8d8..9185688 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -553,6 +553,30 @@
+ 			status = "disabled";
+ 		};
+ 
++		canfd: can@e66c0000 {
++			compatible = "renesas,r8a7795-canfd",
++				     "renesas,rcar-gen3-canfd";
++			reg = <0 0xe66c0000 0 0x8000>;
++			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++				   <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 914>,
++			       <&cpg CPG_CORE R8A7795_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "fck", "canfd", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A7795_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&cpg>;
++			status = "disabled";
++
++			channel0 {
++				status = "disabled";
++			};
++
++			channel1 {
++				status = "disabled";
++			};
++		};
++
+ 		hscif0: serial@e6540000 {
+ 			compatible = "renesas,hscif-r8a7795",
+ 				     "renesas,rcar-gen3-hscif",
+-- 
+1.9.1
 
