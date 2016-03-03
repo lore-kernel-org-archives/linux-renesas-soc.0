@@ -1,8 +1,8 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Thu, 3 Mar 2016 10:59:34 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+Date: Thu, 3 Mar 2016 09:05:39 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Joerg Roedel <joro@8bytes.org>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
@@ -13,41 +13,37 @@ Cc: Magnus Damm <magnus.damm@gmail.com>,
 	iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>,
 	Kumar Gala <galak@codeaurora.org>
 Subject: Re: [PATCH] iommu/ipmmu-vmsa: Add r8a7795 DT binding
-Message-ID: <20160303095934.GA27379@8bytes.org>
+Message-ID: <20160303000539.GB23040@verge.net.au>
 References: <20160229143309.28517.77269.sendpatchset@little-apple>
  <20160302145559.GU22747@8bytes.org>
  <CANqRtoQQzav-kweM80NnVUqtr2xxaA95XV88U1Ye7yoYHzSUsA@mail.gmail.com>
- <20160303000539.GB23040@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20160303000539.GB23040@verge.net.au>
+In-Reply-To: <CANqRtoQQzav-kweM80NnVUqtr2xxaA95XV88U1Ye7yoYHzSUsA@mail.gmail.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Mar 03, 2016 at 09:05:39AM +0900, Simon Horman wrote:
-> On Thu, Mar 03, 2016 at 12:46:30AM +0900, Magnus Damm wrote:
-> > On Wed, Mar 2, 2016 at 11:55 PM, Joerg Roedel <joro@8bytes.org> wrote:
-> > > On Mon, Feb 29, 2016 at 11:33:09PM +0900, Magnus Damm wrote:
-> > >> From: Magnus Damm <damm+renesas@opensource.se>
-> > >>
-> > >> Update the IPMMU DT binding documentation to include the r8a7795 compat
-> > >> string as well as the "renesas,ipmmu-main" property that on r8a7795 will
-> > >> be used to describe the topology and the relationship between the various
-> > >> cache IPMMU instances and the main IPMMU.
-> > >>
-> > >> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> > >> ---
-> > >>
-> > >>  Written against linux-next tag next-20160229
-> > >>
-> > >>  Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |   15 ++++++++--
-> > >>  1 file changed, 13 insertions(+), 2 deletions(-)
-> > >
-> > > Through which tree should this go?
-> > 
-> > Unless anyone objects may I suggest going through your tree please!
+On Thu, Mar 03, 2016 at 12:46:30AM +0900, Magnus Damm wrote:
+> On Wed, Mar 2, 2016 at 11:55 PM, Joerg Roedel <joro@8bytes.org> wrote:
+> > On Mon, Feb 29, 2016 at 11:33:09PM +0900, Magnus Damm wrote:
+> >> From: Magnus Damm <damm+renesas@opensource.se>
+> >>
+> >> Update the IPMMU DT binding documentation to include the r8a7795 compat
+> >> string as well as the "renesas,ipmmu-main" property that on r8a7795 will
+> >> be used to describe the topology and the relationship between the various
+> >> cache IPMMU instances and the main IPMMU.
+> >>
+> >> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> >> ---
+> >>
+> >>  Written against linux-next tag next-20160229
+> >>
+> >>  Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |   15 ++++++++--
+> >>  1 file changed, 13 insertions(+), 2 deletions(-)
+> >
+> > Through which tree should this go?
 > 
-> FWIW that would be my preferred option.
+> Unless anyone objects may I suggest going through your tree please!
 
-Okay, applied.
+FWIW that would be my preferred option.
