@@ -1,40 +1,42 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1456969198-20365-1-git-send-email-horms+renesas@verge.net.au>
-References: <1456969198-20365-1-git-send-email-horms+renesas@verge.net.au>
-Date: Thu, 3 Mar 2016 09:31:49 +0100
-Message-ID: <CAMuHMdVU1RPAafTbUpw6CyW-tQ1amHeiR2DGY_QK8vTFEXpHTA@mail.gmail.com>
-Subject: Re: [PATCH] bus: simple-pm-bus: Use ARCH_RENESAS
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+	linux-kernel@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] bus: simple-pm-bus: Use ARCH_RENESAS
+Date: Thu,  3 Mar 2016 10:39:58 +0900
+Message-Id: <1456969198-20365-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Mar 3, 2016 at 2:39 AM, Simon Horman <horms+renesas@verge.net.au> wrote:
-> Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
->
-> This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-> ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
-> appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This is part of an ongoing process to migrate from ARCH_SHMOBILE to
+ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
+appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/bus/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-                        Geert
+ v4.5-rc1
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
+index 129d47bcc5fc..c10c6def1565 100644
+--- a/drivers/bus/Kconfig
++++ b/drivers/bus/Kconfig
+@@ -110,7 +110,7 @@ config OMAP_OCP2SCP
+ config SIMPLE_PM_BUS
+ 	bool "Simple Power-Managed Bus Driver"
+ 	depends on OF && PM
+-	depends on ARCH_SHMOBILE || COMPILE_TEST
++	depends on ARCH_RENESAS || COMPILE_TEST
+ 	help
+ 	  Driver for transparent busses that don't need a real driver, but
+ 	  where the bus controller is part of a PM domain, or under the control
+-- 
+2.1.4
