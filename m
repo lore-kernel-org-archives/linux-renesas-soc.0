@@ -1,29 +1,33 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Sun, 6 Mar 2016 10:09:20 +0100
-From: Wim Van Sebroeck <wim@iguana.be>
+Date: Wed, 2 Mar 2016 20:25:05 -0800
+From: Guenter Roeck <linux@roeck-us.net>
 To: Wolfram Sang <wsa@the-dreams.de>
 Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
+	Wim Van Sebroeck <wim@iguana.be>,
 	linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH 5/6] watchdog: atlas7_wdt: test clock rate to avoid division by 0
-Message-ID: <20160306090920.GA1333@spo001.leaseweb.nl>
-References: <1456958018-7849-1-git-send-email-wsa@the-dreams.de> <1456958018-7849-6-git-send-email-wsa@the-dreams.de>
-Mime-Version: 1.0
+Subject: Re: [PATCH 5/6] watchdog: atlas7_wdt: test clock rate to avoid
+ division by 0
+Message-ID: <20160303042505.GA4578@roeck-us.net>
+References: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
+ <1456958018-7849-6-git-send-email-wsa@the-dreams.de>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1456958018-7849-6-git-send-email-wsa@the-dreams.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
-
+On Wed, Mar 02, 2016 at 11:33:36PM +0100, Wolfram Sang wrote:
 > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > 
 > The clk API may return 0 on clk_get_rate, so we should check the result before
 > using it as a divisor.
 > 
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
 > ---
 > 
 > Should go individually via subsystem tree.
@@ -50,8 +54,3 @@ Hi Wolfram,
 > -- 
 > 2.7.0
 > 
-
-Patch has been added to linux-watchdog-next.
-
-Kind regards,
-Wim.
