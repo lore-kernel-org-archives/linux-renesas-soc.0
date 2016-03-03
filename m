@@ -1,44 +1,48 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+In-Reply-To: <87d1rcayon.wl%kuninori.morimoto.gx@renesas.com>
+References: <87d1rcayon.wl%kuninori.morimoto.gx@renesas.com>
+Date: Thu, 3 Mar 2016 09:22:29 +0100
+Message-ID: <CAMuHMdV0QQG-k274on0B4D31_qyi0fH=9HGO6=V-yObxVy-_ag@mail.gmail.com>
+Subject: Re: [PATCH] dmaengine: rcar-dmac: clear pertinence number of channels
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	netdev@vger.kernel.org
-Subject: [PATCH 2/6] net: ethernet: renesas: ravb_main: test clock rate to avoid division by 0
-Date: Wed,  2 Mar 2016 23:33:33 +0100
-Message-Id: <1456958018-7849-3-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
-References: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	dmaengine@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Thu, Mar 3, 2016 at 7:04 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> DMACHCLR clears each channels, but its channel number is based on
+> its SoC or IP. Current driver is using fixed 0x7fff (= for 14ch),
 
-The clk API may return 0 on clk_get_rate, so we should check the result before
-using it as a divisor.
+15ch.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+> it is not good match for Gen3 or Gen2 Audio DMAC. This patch fixes it
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Should go individually via subsystem tree.
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
- drivers/net/ethernet/renesas/ravb_main.c | 3 +++
- 1 file changed, 3 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 88656ceb6e2946..ce1954a6a12726 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1691,6 +1691,9 @@ static int ravb_set_gti(struct net_device *ndev)
- 	rate = clk_get_rate(clk);
- 	clk_put(clk);
- 
-+	if (!rate)
-+		return -EINVAL;
-+
- 	inc = 1000000000ULL << 20;
- 	do_div(inc, rate);
- 
--- 
-2.7.0
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
