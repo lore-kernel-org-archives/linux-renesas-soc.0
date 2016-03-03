@@ -1,67 +1,35 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Simon Horman <horms+renesas@verge.net.au>
+CC: Kishon Vijay Abraham I <kishon@ti.com>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 2/7] soc: renesas: Add r8a7779 SYSC PM Domain Binding Definitions
-Date: Wed,  9 Mar 2016 20:18:37 +0100
-Message-Id: <1457551122-21838-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
-References: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: RE: [PATCH] phy: rcar-gen3-usb2, rcar-gen2: Use ARCH_RENESAS
+Date: Thu, 3 Mar 2016 09:22:11 +0000
+Message-ID: <SG2PR06MB091968EF2D0B163E67BE5F9AD8BD0@SG2PR06MB0919.apcprd06.prod.outlook.com>
+References: <1456885514-27466-1-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdVLoxgWdPXdmDCQL3rWmi4Vej0xayPJP_zrNdanADe5Jg@mail.gmail.com>
+In-Reply-To: <CAMuHMdVLoxgWdPXdmDCQL3rWmi4Vej0xayPJP_zrNdanADe5Jg@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - New.
----
- include/dt-bindings/power/r8a7779-sysc.h | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a7779-sysc.h
-
-diff --git a/include/dt-bindings/power/r8a7779-sysc.h b/include/dt-bindings/power/r8a7779-sysc.h
-new file mode 100644
-index 0000000000000000..6b66612d1260d396
---- /dev/null
-+++ b/include/dt-bindings/power/r8a7779-sysc.h
-@@ -0,0 +1,25 @@
-+/*
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7779_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7779_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A7779_PD_ARM1			 1
-+#define R8A7779_PD_ARM2			 2
-+#define R8A7779_PD_ARM3			 3
-+#define R8A7779_PD_SH			16
-+#define R8A7779_PD_SGX			20
-+#define R8A7779_PD_VDP			21
-+#define R8A7779_PD_IMP			24
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7779_SYSC_H__ */
--- 
-1.9.1
-
+SGkgU2ltb24tc2FuLA0KDQo+IFNlbnQ6IFdlZG5lc2RheSwgTWFyY2ggMDIsIDIwMTYgNjozNyBQ
+TQ0KPiANCj4gT24gV2VkLCBNYXIgMiwgMjAxNiBhdCAzOjI1IEFNLCBTaW1vbiBIb3JtYW4gPGhv
+cm1zK3JlbmVzYXNAdmVyZ2UubmV0LmF1PiB3cm90ZToNCj4gPiBNYWtlIHVzZSBvZiBBUkNIX1JF
+TkVTQVMgaW4gcGxhY2Ugb2YgQVJDSF9TSE1PQklMRS4NCj4gPg0KPiA+IFRoaXMgaXMgcGFydCBv
+ZiBhbiBvbmdvaW5nIHByb2Nlc3MgdG8gbWlncmF0ZSBmcm9tIEFSQ0hfU0hNT0JJTEUgdG8NCj4g
+PiBBUkNIX1JFTkVTQVMgdGhlIG1vdGl2YXRpb24gZm9yIHdoaWNoIGJlaW5nIHRoYXQgUkVORVNB
+UyBzZWVtcyB0byBiZSBhIG1vcmUNCj4gPiBhcHByb3ByaWF0ZSBuYW1lIHRoYW4gU0hNT0JJTEUg
+Zm9yIHRoZSBtYWpvcml0eSBvZiBSZW5lc2FzIEFSTSBiYXNlZCBTb0NzLg0KPiA+DQo+ID4gU2ln
+bmVkLW9mZi1ieTogU2ltb24gSG9ybWFuIDxob3JtcytyZW5lc2FzQHZlcmdlLm5ldC5hdT4NCj4g
+DQo+IEFja2VkLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJl
+Pg0KDQpBY2tlZC1ieTogWW9zaGloaXJvIFNoaW1vZGEgPHlvc2hpaGlyby5zaGltb2RhLnVoQHJl
+bmVzYXMuY29tPg0KDQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo=
