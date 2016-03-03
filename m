@@ -1,47 +1,37 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Guenter Roeck <linux@roeck-us.net>,
-	linux-watchdog@vger.kernel.org
-Subject: [PATCH 5/6] watchdog: atlas7_wdt: test clock rate to avoid division by 0
-Date: Wed,  2 Mar 2016 23:33:36 +0100
-Message-Id: <1456958018-7849-6-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
-References: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
+Date: Thu, 3 Mar 2016 22:54:21 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-renesas-soc@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	dmaengine@vger.kernel.org
+Subject: Re: [PATCH v2] dma: rcar-dmac: clear pertinence number of channels
+Message-ID: <20160303172421.GX11154@localhost>
+References: <87d1rcayon.wl%kuninori.morimoto.gx@renesas.com>
+ <CAMuHMdV0QQG-k274on0B4D31_qyi0fH=9HGO6=V-yObxVy-_ag@mail.gmail.com>
+ <874mcoarxq.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <874mcoarxq.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Thu, Mar 03, 2016 at 05:25:53PM +0900, Kuninori Morimoto wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> DMACHCLR clears each channels, but its channel number is based on
+> its SoC or IP. Current driver is using fixed 0x7fff (= for 15ch),
+> it is not good match for Gen3 or Gen2 Audio DMAC. This patch fixes it
 
-The clk API may return 0 on clk_get_rate, so we should check the result before
-using it as a divisor.
+Applied, thanks
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-Should go individually via subsystem tree.
-
- drivers/watchdog/atlas7_wdt.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/watchdog/atlas7_wdt.c b/drivers/watchdog/atlas7_wdt.c
-index df6d9242a31958..ed80734befae16 100644
---- a/drivers/watchdog/atlas7_wdt.c
-+++ b/drivers/watchdog/atlas7_wdt.c
-@@ -154,6 +154,11 @@ static int atlas7_wdt_probe(struct platform_device *pdev)
- 	writel(0, wdt->base + ATLAS7_WDT_CNT_CTRL);
- 
- 	wdt->tick_rate = clk_get_rate(clk);
-+	if (!wdt->tick_rate) {
-+		ret = -EINVAL;
-+		goto err1;
-+	}
-+
- 	wdt->clk = clk;
- 	atlas7_wdd.min_timeout = 1;
- 	atlas7_wdd.max_timeout = UINT_MAX / wdt->tick_rate;
 -- 
-2.7.0
+~Vinod
