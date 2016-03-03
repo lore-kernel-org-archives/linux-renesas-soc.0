@@ -1,48 +1,47 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 15/30] ARM: dts: r8a7791: Reference both DMA controllers in QSPI node
-Date: Thu, 10 Mar 2016 12:36:07 +0100
-Message-Id: <1457609782-24108-16-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Date: Thu, 3 Mar 2016 16:22:57 -0600
+From: Rob Herring <robh@kernel.org>
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: mkl@pengutronix.de, wg@grandegger.com, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-can@vger.kernel.org,
+	netdev@vger.kernel.org, geert+renesas@glider.be,
+	horms+renesas@verge.net.au, chris.paterson2@renesas.com
+Subject: Re: [PATCH] can: rcar_can: Add r8a7795 support
+Message-ID: <20160303222257.GA5346@rob-hp-laptop>
+References: <1456749445-50766-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1456749445-50766-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+On Mon, Feb 29, 2016 at 12:37:25PM +0000, Ramesh Shanmugasundaram wrote:
+> Added r8a7795 SoC support.
+> 
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> ---
+> Hi All,
+> 
+>    This patch is based on linux-can-next (tag:linux-can-next-for-4.6-20160226)
+> 
+>    Pinctrl & Clock related to the controller are already submitted as below:
+> 
+>    https://lkml.org/lkml/2016/2/25/546
+>    https://lkml.org/lkml/2016/2/26/452
+>    http://www.spinics.net/lists/arm-kernel/msg487238.html
+> 
+>    Changes since v1:
+>    * Rebased from linux-next to linux-can-next
+>    * Removed clock rounding hack (http://www.spinics.net/lists/netdev/msg366611.html)
+>    * CAN dtsi changes will be submitted separately based on linux-next (http://marc.info/?l=linux-can&m=145674764815430&w=2)
+> 
+>  Documentation/devicetree/bindings/net/can/rcar_can.txt | 11 +++++++++++
+>  drivers/net/can/Kconfig                                |  2 +-
+>  drivers/net/can/rcar_can.c                             |  1 +
+>  3 files changed, 13 insertions(+), 1 deletion(-)
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm/boot/dts/r8a7791.dtsi | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index c1751cc..50ac831 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1452,8 +1452,9 @@
- 		reg = <0 0xe6b10000 0 0x2c>;
- 		interrupts = <0 184 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7791_CLK_QSPI_MOD>;
--		dmas = <&dmac0 0x17>, <&dmac0 0x18>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x17>, <&dmac0 0x18>,
-+		       <&dmac1 0x17>, <&dmac1 0x18>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		num-cs = <1>;
- 		#address-cells = <1>;
--- 
-2.7.2
+Acked-by: Rob Herring <robh@kernel.org>
 
