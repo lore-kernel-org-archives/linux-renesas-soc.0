@@ -1,62 +1,40 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2] phy: rcar-gen3-usb2, rcar-gen2: Use ARCH_RENESAS
-Date: Mon,  7 Mar 2016 10:14:24 +0900
-Message-Id: <1457313264-18476-1-git-send-email-horms+renesas@verge.net.au>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <kishon@ti.com>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
+	<mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
+	<galak@codeaurora.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/3] phy: rcar-gen3-usb2: add vbus-supply and extcon
+Date: Thu, 3 Mar 2016 19:09:03 +0900
+Message-ID: <1456999746-2800-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
-A now redundant dependency on OF is also dropped.
+This patch set is based on the latest linux-phy / next branch
+(commit id = 89636adde4a05953e3bf18807ba1f6f205572f67)
+and the following patches:
 
-This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
-appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
+http://thread.gmane.org/gmane.linux.kernel/2166364
+http://thread.gmane.org/gmane.linux.kernel.renesas-soc/1512/focus=1514
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+The patch "Add vbus-supply to handle VBUS on/off" has
+Rob's Acked-by as the followings:
+http://thread.gmane.org/gmane.linux.kernel.renesas-soc/1087/focus=1153
 
----
-Based on v4.5-rc1
+Yoshihiro Shimoda (3):
+  phy: rcar-gen3-usb2: remove unnecesary struct rcar_gen3_data
+  phy: rcar-gen3-usb2: Add vbus-supply to handle VBUS on/off
+  phy: rcar-gen3-usb2: add extcon support
 
-v2
-* Dropped redundant dependency on OF
-* Added Ack from Shimoda-san
+ .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  2 +
+ drivers/phy/Kconfig                                |  1 +
+ drivers/phy/phy-rcar-gen3-usb2.c                   | 87 +++++++++++++++++-----
+ 3 files changed, 71 insertions(+), 19 deletions(-)
 
-I have it in mind to follow-up with a patch to add dependencies
-on "|| COMPILE_TEST" in which case the dependency on OF will need
-to be re-introduced.
----
- drivers/phy/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-index e7e117d5dbbe..a4295cabad25 100644
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@ -113,14 +113,14 @@ config PHY_MIPHY365X
- 
- config PHY_RCAR_GEN2
- 	tristate "Renesas R-Car generation 2 USB PHY driver"
--	depends on ARCH_SHMOBILE
-+	depends on ARCH_RENESAS
- 	depends on GENERIC_PHY
- 	help
- 	  Support for USB PHY found on Renesas R-Car generation 2 SoCs.
- 
- config PHY_RCAR_GEN3_USB2
- 	tristate "Renesas R-Car generation 3 USB 2.0 PHY driver"
--	depends on OF && ARCH_SHMOBILE
-+	depends on ARCH_RENESAS
- 	select GENERIC_PHY
- 	help
- 	  Support for USB 2.0 PHY found on Renesas R-Car generation 3 SoCs.
 -- 
-2.1.4
+1.9.1
