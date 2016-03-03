@@ -1,77 +1,32 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	robh@kernel.org, daniel.lezcano@linaro.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>, tglx@linutronix.de
-Date: Mon, 14 Mar 2016 23:24:13 +0900
-Message-Id: <20160314142413.17180.32464.sendpatchset@little-apple>
-In-Reply-To: <20160314142342.17180.21352.sendpatchset@little-apple>
-References: <20160314142342.17180.21352.sendpatchset@little-apple>
-Subject: [PATCH v4 03/06] devicetree: bindings: r8a73a4 and R-Car Gen2 CMT bindings
+Subject: Re: [PATCH 2/6] net: ethernet: renesas: ravb_main: test clock rate to
+ avoid division by 0
+To: Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org
+References: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
+ <1456958018-7849-3-git-send-email-wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <56D81C8C.3070903@cogentembedded.com>
+Date: Thu, 3 Mar 2016 14:14:20 +0300
+MIME-Version: 1.0
+In-Reply-To: <1456958018-7849-3-git-send-email-wsa@the-dreams.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hello.
 
-Update SoC-specific bindings for r8a73a4 and R-Car Gen2 CMT0 and CMT1.
+On 3/3/2016 1:33 AM, Wolfram Sang wrote:
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> The clk API may return 0 on clk_get_rate, so we should check the result before
+> using it as a divisor.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
- Changes since V3:
- - Fix trailing whitespace damage
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
- Changes since V2:
- - Added Acked-by from Rob
- - Removed Tested-by tag from DT binding patch - duh!
-
- Changes since V1:
- - Added Acked-by and Tested-by from Geert
- - Added Acked-by from Laurent
-
- Documentation/devicetree/bindings/timer/renesas,cmt.txt |   24 ++++++++-------
- 1 file changed, 14 insertions(+), 10 deletions(-)
-
---- 0003/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-+++ work/Documentation/devicetree/bindings/timer/renesas,cmt.txt	2016-03-14 22:47:31.550513000 +0900
-@@ -36,19 +36,23 @@ Required Properties:
- 		(CMT1 on sh73a0 and r8a7740)
- 		This is a fallback for the above renesas,cmt-48-* entries.
- 
-+    - "renesas,cmt0-r8a73a4" for the 32-bit CMT0 device included in r8a73a4.
-+    - "renesas,cmt1-r8a73a4" for the 48-bit CMT1 device included in r8a73a4.
-+    - "renesas,cmt0-r8a7790" for the 32-bit CMT0 device included in r8a7790.
-+    - "renesas,cmt1-r8a7790" for the 48-bit CMT1 device included in r8a7790.
-+    - "renesas,cmt0-r8a7791" for the 32-bit CMT0 device included in r8a7791.
-+    - "renesas,cmt1-r8a7791" for the 48-bit CMT1 device included in r8a7791.
-+    - "renesas,cmt0-r8a7793" for the 32-bit CMT0 device included in r8a7793.
-+    - "renesas,cmt1-r8a7793" for the 48-bit CMT1 device included in r8a7793.
-+    - "renesas,cmt0-r8a7794" for the 32-bit CMT0 device included in r8a7794.
-+    - "renesas,cmt1-r8a7794" for the 48-bit CMT1 device included in r8a7794.
-+
-     - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car Gen2.
-     - "renesas,rcar-gen2-cmt1" for 48-bit CMT1 devices included in R-Car Gen2.
-+		These are fallbacks for r8a73a4 and all the R-Car Gen2
-+		entries	listed above.
- 
--    - "renesas,cmt-48-r8a73a4" for the r8a73a4 48-bit CMT
--		(CMT[01])
--    - "renesas,cmt-48-r8a7790" for the r8a7790 48-bit CMT
--		(CMT[01])
--    - "renesas,cmt-48-r8a7791" for the r8a7791 48-bit CMT
--		(CMT[01])
--    - "renesas,cmt-48-gen2" for all second generation 48-bit CMT
--		(CMT[01] on r8a73a4, r8a7790 and r8a7791)
--		This is a fallback for the renesas,cmt-48-r8a73a4,
--		renesas,cmt-48-r8a7790 and renesas,cmt-48-r8a7791 entries.
-+    - "renesas,cmt-48-gen2" is <deprecated>, use "renesas,cmt[01]-*" instead.
- 
-   - reg: base address and length of the registers block for the timer module.
-   - interrupts: interrupt-specifier for the timer, one per channel.
+MBR, Sergei
