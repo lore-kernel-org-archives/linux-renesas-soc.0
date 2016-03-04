@@ -1,73 +1,66 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>
-Date: Fri, 18 Mar 2016 01:30:14 +0900
-Message-Id: <20160317163014.24104.93912.sendpatchset@little-apple>
-In-Reply-To: <20160317162909.24104.31682.sendpatchset@little-apple>
-References: <20160317162909.24104.31682.sendpatchset@little-apple>
-Subject: [PATCH 07/10] iommu/ipmmu-vmsa: Write IMCTR twice
+Date: Fri, 4 Mar 2016 16:01:30 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-pwm@vger.kernel.org
+Subject: Re: [PATCH 3/6] pwm: pwm-img: test clock rate to avoid division by 0
+Message-ID: <20160304150130.GB26400@ulmo.nvidia.com>
+References: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
+ <1456958018-7849-4-git-send-email-wsa@the-dreams.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Fba/0zbH8Xs+Fj9o"
+Content-Disposition: inline
+In-Reply-To: <1456958018-7849-4-git-send-email-wsa@the-dreams.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
 
-Write IMCTR both in the root device and the leaf node.
+--Fba/0zbH8Xs+Fj9o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+On Wed, Mar 02, 2016 at 11:33:34PM +0100, Wolfram Sang wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> The clk API may return 0 on clk_get_rate, so we should check the result b=
+efore
+> using it as a divisor.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>=20
+> Should go individually via subsystem tree.
+>=20
+>  drivers/pwm/pwm-img.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 
- drivers/iommu/ipmmu-vmsa.c |   17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+Applied, thanks.
 
---- 0021/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-03-18 00:31:24.250513000 +0900
-@@ -256,6 +256,16 @@ static void ipmmu_ctx_write(struct ipmmu
- 	ipmmu_write(domain->root, domain->context_id * IM_CTX_SIZE + reg, data);
- }
- 
-+static void ipmmu_ctx_write2(struct ipmmu_vmsa_domain *domain, unsigned int reg,
-+			     u32 data)
-+{
-+	if (domain->mmu != domain->root)
-+		ipmmu_write(domain->mmu,
-+			    domain->context_id * IM_CTX_SIZE + reg, data);
-+
-+	ipmmu_write(domain->root, domain->context_id * IM_CTX_SIZE + reg, data);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * TLB and microTLB Management
-  */
-@@ -282,7 +292,7 @@ static void ipmmu_tlb_invalidate(struct
- 
- 	reg = ipmmu_ctx_read(domain, IMCTR);
- 	reg |= IMCTR_FLUSH;
--	ipmmu_ctx_write(domain, IMCTR, reg);
-+	ipmmu_ctx_write2(domain, IMCTR, reg);
- 
- 	ipmmu_tlb_sync(domain);
- }
-@@ -422,7 +432,8 @@ static int ipmmu_domain_init_context(str
- 	 * software management as we have no use for it. Flush the TLB as
- 	 * required when modifying the context registers.
- 	 */
--	ipmmu_ctx_write(domain, IMCTR, IMCTR_INTEN | IMCTR_FLUSH | IMCTR_MMUEN);
-+	ipmmu_ctx_write2(domain, IMCTR,
-+			 IMCTR_INTEN | IMCTR_FLUSH | IMCTR_MMUEN);
- 
- 	return 0;
- }
-@@ -437,7 +448,7 @@ static void ipmmu_domain_destroy_context
- 	 *
- 	 * TODO: Is TLB flush really needed ?
- 	 */
--	ipmmu_ctx_write(domain, IMCTR, IMCTR_FLUSH);
-+	ipmmu_ctx_write2(domain, IMCTR, IMCTR_FLUSH);
- 	ipmmu_tlb_sync(domain);
- }
- 
+Thierry
+
+--Fba/0zbH8Xs+Fj9o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJW2aNKAAoJEN0jrNd/PrOhrDkQALxc3vaC8cXSFuPl4OODUe8e
+m8k/64Uud/EDpWV57WbOKSKuUpf8RdnpsyNZjwhuMiDMbuoz74CmBruZ4hIQRAtZ
+WKJXSI7d5PxuDm64p5R2i26fbmr0O6LvSXNZhjC6sKdqptG9MJ2wX2aFaO4dv/Df
+I59PYbK+qkKcZdKQIXsIuWuRUXV0inn30mcBlYIFlBZvOHIeFwOrnKqbAgP7ef+B
+LoB+vaJMMfjhr9b2u6lAmTj0L5IVDlq7D3ASaXW0CQi8bg9zWfbnQRQ/hmkLMMY0
+qIVnaFQsXVVSdChO7U8KVXlm8RSE0qCIk58VsZilcZkTie4uF2QGhyCPikcvpmLN
+BWUZpEUwGFVqFLciFYne8yv6W8YSbKMCscWzaUlfQLWlZi8ZF7KOUILMEE7CKwk2
+85pO7t2WlMZRw4XY0hjjq7Ib0m4rvYNoMDwt/Gc3C1DG0dQB+VAoWFvOUU4WaDga
+xVvAoADItYbh1KetCY0CL9FrC8TSIrD+VSgAKfr/Kyaz6zGhXSkOAuYP+H1KZOE2
+ru+LYL4glqIC+9REE9R2OHkhxc5Cy+CrEib4Svia8buS0kScKO6+WI9cOQZtMbpf
+5KBi9i9KyVjJRW07w+Y9ohQor23y2rlj9ZIw+ag7jXWqPLNIgzC9UXnSR/J4FCBl
+ZBm9F+QeukGT/9OndROj
+=Zr2X
+-----END PGP SIGNATURE-----
+
+--Fba/0zbH8Xs+Fj9o--
