@@ -1,87 +1,52 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 1/2] phy: rcar-gen2: add fallback binding
-Date: Mon,  7 Mar 2016 10:58:40 +0900
-Message-Id: <1457315921-30217-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1457315921-30217-1-git-send-email-horms+renesas@verge.net.au>
-References: <1457315921-30217-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Sat, 5 Mar 2016 13:24:50 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Rob Herring <robh@kernel.org>, Simon <horms@verge.net.au>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Linux-DT <devicetree@vger.kernel.org>,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Laurent <laurent.pinchart@ideasonboard.com>
+Message-ID: <20160305042450.GA18327@sirena.org.uk>
+References: <877fht7376.wl%kuninori.morimoto.gx@renesas.com>
+ <874mcx734l.wl%kuninori.morimoto.gx@renesas.com>
+ <20160302173921.GA6580@rob-hp-laptop>
+ <8760x4asmv.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yoBsNywy4J3JKC/M"
+Content-Disposition: inline
+In-Reply-To: <8760x4asmv.wl%kuninori.morimoto.gx@renesas.com>
+Subject: Re: [PATCH 2/6] ASoC: rsrc-card: add convert channels support
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, e.g. Gen 2 and Gen 3. But beyond that its not clear what the
-relationship between IP blocks might be. For example, I believe that
-r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
-descendant of the former or vice versa.
 
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
+--yoBsNywy4J3JKC/M
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme being adopted for
-drivers for Renesas SoCs.
+On Thu, Mar 03, 2016 at 08:15:19AM +0000, Kuninori Morimoto wrote:
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
----
-v3
-* Added Acks from Geert Uytterhoeven and Rob Herring
-* Correct whitespace in example
+> Mark, can I send additional patch ?
+> or is v2 patch better ?
 
-v2
-* Use renesas,rcar-gen2-usb-phy rather than renesas,usb-phy-gen2 as
-  the new compatibility string to fit in with the preferred scheme
-  for new compatibility string names.
----
- Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt | 8 +++++++-
- drivers/phy/phy-rcar-gen2.c                             | 1 +
- 2 files changed, 8 insertions(+), 1 deletion(-)
+An incremental patch is fine.
 
-diff --git a/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt b/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
-index d564ba4f1cf6..91da947ae9b6 100644
---- a/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
-@@ -7,6 +7,12 @@ Required properties:
- - compatible: "renesas,usb-phy-r8a7790" if the device is a part of R8A7790 SoC.
- 	      "renesas,usb-phy-r8a7791" if the device is a part of R8A7791 SoC.
- 	      "renesas,usb-phy-r8a7794" if the device is a part of R8A7794 SoC.
-+	      "renesas,rcar-gen2-usb-phy" for a generic R-Car Gen2 compatible device.
-+
-+	      When compatible with the generic version, nodes must list the
-+	      SoC-specific version corresponding to the platform first
-+	      followed by the generic version.
-+
- - reg: offset and length of the register block.
- - #address-cells: number of address cells for the USB channel subnodes, must
- 		  be <1>.
-@@ -34,7 +40,7 @@ the USB channel; see the selector meanings below:
- Example (Lager board):
- 
- 	usb-phy@e6590100 {
--		compatible = "renesas,usb-phy-r8a7790";
-+		compatible = "renesas,usb-phy-r8a7790", "renesas,rcar-gen2-usb-phy";
- 		reg = <0 0xe6590100 0 0x100>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-diff --git a/drivers/phy/phy-rcar-gen2.c b/drivers/phy/phy-rcar-gen2.c
-index c7a05996d5c1..97d4dd6ea924 100644
---- a/drivers/phy/phy-rcar-gen2.c
-+++ b/drivers/phy/phy-rcar-gen2.c
-@@ -195,6 +195,7 @@ static const struct of_device_id rcar_gen2_phy_match_table[] = {
- 	{ .compatible = "renesas,usb-phy-r8a7790" },
- 	{ .compatible = "renesas,usb-phy-r8a7791" },
- 	{ .compatible = "renesas,usb-phy-r8a7794" },
-+	{ .compatible = "renesas,rcar-gen2-usb-phy" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rcar_gen2_phy_match_table);
--- 
-2.1.4
+--yoBsNywy4J3JKC/M
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJW2l+RAAoJECTWi3JdVIfQ7WwIAIFp07nFd/SqAOT4s5ALZzq9
+T0TDdk27bmw1IryzajApGhkhqOGHuYZ3p84EcNBSD51TR5guhmGOx7t/9Ejha8wr
+9V4VIcGTUMju0tzBh2KibwAYnodMQrIxLsDq17SS6YYNzM2s5YNsbYELWTXHrjYw
+CeexxvG2+oDqnCSZO/8KTuU203a6UtyU6j02M9SHTJaEo3YWcTSMIuj/sbAFL37O
+vTgdFygTOdx/Ms5VemkRO6VxB9gQgH1IA1p/CUHIGmOv2OdfdAlHaLMt2e2Pw2G9
+uigJZ//ngaWaYDxEmuqol7WyKCVMtHt3gup3svt0Go4dDZBEkMrNJ4hds1LJqTw=
+=4tST
+-----END PGP SIGNATURE-----
+
+--yoBsNywy4J3JKC/M--
