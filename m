@@ -1,51 +1,61 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <2096023.P4Pq9IvUAO@avalon>
-References: <Pine.LNX.4.44L0.1603041021200.1885-100000@iolanthe.rowland.org>
-	<1481433.r0tFS4sTcH@avalon>
-	<2096023.P4Pq9IvUAO@avalon>
-Date: Mon, 7 Mar 2016 11:10:08 +0100
-Message-ID: <CAPDyKFqtrdw+MHh6tAz658=PQi+REGAEiNzNs_4aRzTTpOwP9Q@mail.gmail.com>
-Subject: Re: [PATCH] PM / Runtime: Only force-resume device if it has been force-suspended
-From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Sun, 6 Mar 2016 11:59:07 -0500 (EST)
+From: Alan Stern <stern@rowland.harvard.edu>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
+cc: Ulf Hansson <ulf.hansson@linaro.org>,
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
 	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
 	Kevin Hilman <khilman@kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+	<linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] PM / Runtime: Only force-resume device if it has been
+ force-suspended
+In-Reply-To: <2096023.P4Pq9IvUAO@avalon>
+Message-ID: <Pine.LNX.4.44L0.1603061156590.26397-100000@netrider.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-[...]
+On Sun, 6 Mar 2016, Laurent Pinchart wrote:
 
->> I agree, that's a better idea. Drivers shouldn't call
->> pm_runtime_force_resume() if they haven't called pm_runtime_force_suspend(),
->> so checking the PM use count should be fine. I'll modify the patch, test it
->> and resubmit.
->
-> I gave it an unfortunately unsuccessful try. The problem I ran into is that
-> device_prepare() calls pm_runtime_get_noresume() calls
-> pm_runtime_get_noresume(), with the corresponding pm_runtime_put() call being
-> performed in device_complete(). The device power usage_count is thus always
+> > >> What I was thinking though, but it might be a bit controversial. :-)...
+> > >> Instead of relying on whether we actually forced runtime suspend
+> > >> earlier, why couldn't we instead check the runtime PM usage count of
+> > >> the device?
+> > >> 
+> > >> Only when it's greater than zero, we shall do the forced resume of the
+> > >> device, otherwise just re-enable runtime PM.
+> > >> 
+> > >> This would have the affect of leaving devices in runtime suspend,
+> > >> until they really needs to be used again. It would thus decrease the
+> > >> total system PM resume time.
+> > >> 
+> > >> Do you think this could work?
+> > > 
+> > > If you do this then there would be no need for is_force_suspended.  It
+> > > seems like a good idea to me.
+> > 
+> > I agree, that's a better idea. Drivers shouldn't call
+> > pm_runtime_force_resume() if they haven't called pm_runtime_force_suspend(),
+> > so checking the PM use count should be fine. I'll modify the patch, test it
+> > and resubmit.
+> 
+> I gave it an unfortunately unsuccessful try. The problem I ran into is that 
+> device_prepare() calls pm_runtime_get_noresume() calls 
+> pm_runtime_get_noresume(), with the corresponding pm_runtime_put() call being 
+> performed in device_complete(). The device power usage_count is thus always 
 > non-zero in the system resume handler, so I can't base the decision on that.
 
-As Alan said, let's just check against 1 instead.
+You could check for usage_count > 1 instead of > 0.  With a comment 
+explaining why, of course.
 
->
-> I also noticed that pm_genpd_prepare() runtime-resumes the device (when the
-> power domain is in the GPD_STATE_ACTIVE state). I don't know why that is, but
-> it means that in practice my device gets runtime-resumed when suspending the
+Alan Stern
+
+> I also noticed that pm_genpd_prepare() runtime-resumes the device (when the 
+> power domain is in the GPD_STATE_ACTIVE state). I don't know why that is, but 
+> it means that in practice my device gets runtime-resumed when suspending the 
 > system while it could stay runtime-suspended in practice.
-
-I am aware of this and it's on my TODO list of improvements of genpd,
-The issue is related to an unoptimized behaviour for how genpd deal
-with wakeups during system PM.
-
-Kind regards
-Uffe
