@@ -1,84 +1,87 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	geert+renesas@glider.be, linus.walleij@linaro.org,
-	dan.j.williams@intel.com, arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v5 9/9] ARM: dts: r8a7791: add iommus to dmac0 and dmac1
-Date: Tue,  8 Mar 2016 03:42:54 +0100
-Message-Id: <1457404974-1800-10-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 1/2] phy: rcar-gen2: add fallback binding
+Date: Mon,  7 Mar 2016 10:58:40 +0900
+Message-Id: <1457315921-30217-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1457315921-30217-1-git-send-email-horms+renesas@verge.net.au>
+References: <1457315921-30217-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-A unconfirmed hardware bug prevents channel 0 and 15 to be used by the
-DMAC together with the IPMMU. The DMAC driver will disable the channels
-reducing the effective number of channels to 14 per DMAC.
+In the case of Renesas R-Car hardware we know that there are generations of
+SoCs, e.g. Gen 2 and Gen 3. But beyond that its not clear what the
+relationship between IP blocks might be. For example, I believe that
+r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
+descendant of the former or vice versa.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+We can, however, by examining the documentation and behaviour of the
+hardware at run-time observe that the current driver implementation appears
+to be compatible with the IP blocks on SoCs within a given generation.
+
+For the above reasons and convenience when enabling new SoCs a
+per-generation fallback compatibility string scheme being adopted for
+drivers for Renesas SoCs.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+v3
+* Added Acks from Geert Uytterhoeven and Rob Herring
+* Correct whitespace in example
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index c6bee4a..341c460 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -283,6 +283,21 @@
- 		power-domains = <&cpg_clocks>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
-+		iommus = <&ipmmu_ds 0>,
-+			 <&ipmmu_ds 1>,
-+			 <&ipmmu_ds 2>,
-+			 <&ipmmu_ds 3>,
-+			 <&ipmmu_ds 4>,
-+			 <&ipmmu_ds 5>,
-+			 <&ipmmu_ds 6>,
-+			 <&ipmmu_ds 7>,
-+			 <&ipmmu_ds 8>,
-+			 <&ipmmu_ds 9>,
-+			 <&ipmmu_ds 10>,
-+			 <&ipmmu_ds 11>,
-+			 <&ipmmu_ds 12>,
-+			 <&ipmmu_ds 13>,
-+			 <&ipmmu_ds 14>;
- 	};
+v2
+* Use renesas,rcar-gen2-usb-phy rather than renesas,usb-phy-gen2 as
+  the new compatibility string to fit in with the preferred scheme
+  for new compatibility string names.
+---
+ Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt | 8 +++++++-
+ drivers/phy/phy-rcar-gen2.c                             | 1 +
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt b/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
+index d564ba4f1cf6..91da947ae9b6 100644
+--- a/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
++++ b/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
+@@ -7,6 +7,12 @@ Required properties:
+ - compatible: "renesas,usb-phy-r8a7790" if the device is a part of R8A7790 SoC.
+ 	      "renesas,usb-phy-r8a7791" if the device is a part of R8A7791 SoC.
+ 	      "renesas,usb-phy-r8a7794" if the device is a part of R8A7794 SoC.
++	      "renesas,rcar-gen2-usb-phy" for a generic R-Car Gen2 compatible device.
++
++	      When compatible with the generic version, nodes must list the
++	      SoC-specific version corresponding to the platform first
++	      followed by the generic version.
++
+ - reg: offset and length of the register block.
+ - #address-cells: number of address cells for the USB channel subnodes, must
+ 		  be <1>.
+@@ -34,7 +40,7 @@ the USB channel; see the selector meanings below:
+ Example (Lager board):
  
- 	dmac1: dma-controller@e6720000 {
-@@ -314,6 +329,21 @@
- 		power-domains = <&cpg_clocks>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
-+		iommus = <&ipmmu_ds 15>,
-+			 <&ipmmu_ds 16>,
-+			 <&ipmmu_ds 17>,
-+			 <&ipmmu_ds 18>,
-+			 <&ipmmu_ds 19>,
-+			 <&ipmmu_ds 20>,
-+			 <&ipmmu_ds 21>,
-+			 <&ipmmu_ds 22>,
-+			 <&ipmmu_ds 23>,
-+			 <&ipmmu_ds 24>,
-+			 <&ipmmu_ds 25>,
-+			 <&ipmmu_ds 26>,
-+			 <&ipmmu_ds 27>,
-+			 <&ipmmu_ds 28>,
-+			 <&ipmmu_ds 29>;
- 	};
- 
- 	audma0: dma-controller@ec700000 {
+ 	usb-phy@e6590100 {
+-		compatible = "renesas,usb-phy-r8a7790";
++		compatible = "renesas,usb-phy-r8a7790", "renesas,rcar-gen2-usb-phy";
+ 		reg = <0 0xe6590100 0 0x100>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+diff --git a/drivers/phy/phy-rcar-gen2.c b/drivers/phy/phy-rcar-gen2.c
+index c7a05996d5c1..97d4dd6ea924 100644
+--- a/drivers/phy/phy-rcar-gen2.c
++++ b/drivers/phy/phy-rcar-gen2.c
+@@ -195,6 +195,7 @@ static const struct of_device_id rcar_gen2_phy_match_table[] = {
+ 	{ .compatible = "renesas,usb-phy-r8a7790" },
+ 	{ .compatible = "renesas,usb-phy-r8a7791" },
+ 	{ .compatible = "renesas,usb-phy-r8a7794" },
++	{ .compatible = "renesas,rcar-gen2-usb-phy" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, rcar_gen2_phy_match_table);
 -- 
-2.7.2
+2.1.4
