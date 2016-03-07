@@ -1,36 +1,96 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH 0/6] treewide: test clock rate to avoid division by 0
-Date: Wed,  2 Mar 2016 23:33:31 +0100
-Message-Id: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 2/2] phy: rcar-gen3-usb2: add fallback binding
+Date: Mon,  7 Mar 2016 10:58:41 +0900
+Message-Id: <1457315921-30217-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1457315921-30217-1-git-send-email-horms+renesas@verge.net.au>
+References: <1457315921-30217-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Here is the outcome of researching if the result of clk_get_rate() was directly
-used as a divisor without checking if it is 0. Inspired by a Coverity report.
+In the case of Renesas R-Car hardware we know that there are generations of
+SoCs, e.g. Gen 2 and Gen 3. But beyond that its not clear what the
+relationship between IP blocks might be. For example, I believe that
+r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
+descendant of the former or vice versa.
 
-Wolfram Sang (6):
-  ide: palm_bk3710: test clock rate to avoid division by 0
-  net: ethernet: renesas: ravb_main: test clock rate to avoid division
-    by 0
-  pwm: pwm-img: test clock rate to avoid division by 0
-  pwm: pwm-lpc18xx-sct: test clock rate to avoid division by 0
-  watchdog: atlas7_wdt: test clock rate to avoid division by 0
-  watchdog: tangox_wdt: test clock rate to avoid division by 0
+We can, however, by examining the documentation and behaviour of the
+hardware at run-time observe that the current driver implementation appears
+to be compatible with the IP blocks on SoCs within a given generation.
 
- drivers/ide/palm_bk3710.c                | 2 ++
- drivers/net/ethernet/renesas/ravb_main.c | 3 +++
- drivers/pwm/pwm-img.c                    | 5 +++++
- drivers/pwm/pwm-lpc18xx-sct.c            | 2 ++
- drivers/watchdog/atlas7_wdt.c            | 5 +++++
- drivers/watchdog/tangox_wdt.c            | 2 ++
- 6 files changed, 19 insertions(+)
+For the above reasons and convenience when enabling new SoCs a
+per-generation fallback compatibility string scheme being adopted for
+drivers for Renesas SoCs.
 
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+v3
+* Added Acks from Geert Uytterhoeven, Rob Herring and Shimoda-san
+* Corrected whitespace in examples
+
+v2
+* Use renesas,rcar-gen3-usb2-phy rather than renesas,usb2-phy-gen3 as
+  the new compatibility string to fit in with the preferred scheme
+  for new compatibility string names.
+---
+ Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 10 ++++++++--
+ drivers/phy/phy-rcar-gen3-usb2.c                             |  1 +
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+index eaf7e9b7ce6b..f9511ad95b94 100644
+--- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
++++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+@@ -6,6 +6,12 @@ This file provides information on what the device node for the R-Car generation
+ Required properties:
+ - compatible: "renesas,usb2-phy-r8a7795" if the device is a part of an R8A7795
+ 	      SoC.
++	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3 compatible device.
++
++	      When compatible with the generic version, nodes must list the
++	      SoC-specific version corresponding to the platform first
++	      followed by the generic version.
++
+ - reg: offset and length of the partial USB 2.0 Host register block.
+ - clocks: clock phandle and specifier pair(s).
+ - #phy-cells: see phy-bindings.txt in the same directory, must be <0>.
+@@ -19,14 +25,14 @@ channel as USB OTG:
+ Example (R-Car H3):
+ 
+ 	usb-phy@ee080200 {
+-		compatible = "renesas,usb2-phy-r8a7795";
++		compatible = "renesas,usb2-phy-r8a7795", "renesas,rcar-gen3-usb2-phy";
+ 		reg = <0 0xee080200 0 0x700>;
+ 		interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7795_CLK_EHCI0>;
+ 	};
+ 
+ 	usb-phy@ee0a0200 {
+-		compatible = "renesas,usb2-phy-r8a7795";
++		compatible = "renesas,usb2-phy-r8a7795", "renesas,rcar-gen3-usb2-phy";
+ 		reg = <0 0xee0a0200 0 0x700>;
+ 		clocks = <&mstp7_clks R8A7795_CLK_EHCI0>;
+ 	};
+diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
+index bc4f7dd821aa..257be74f93f5 100644
+--- a/drivers/phy/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/phy-rcar-gen3-usb2.c
+@@ -251,6 +251,7 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
+ 
+ static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
+ 	{ .compatible = "renesas,usb2-phy-r8a7795" },
++	{ .compatible = "renesas,rcar-gen3-usb2-phy" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
 -- 
-2.7.0
+2.1.4
