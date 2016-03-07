@@ -1,40 +1,51 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <kishon@ti.com>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-	<mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
-	<galak@codeaurora.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/3] phy: rcar-gen3-usb2: add vbus-supply and extcon
-Date: Thu, 3 Mar 2016 19:09:03 +0900
-Message-ID: <1456999746-2800-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <2096023.P4Pq9IvUAO@avalon>
+References: <Pine.LNX.4.44L0.1603041021200.1885-100000@iolanthe.rowland.org>
+	<1481433.r0tFS4sTcH@avalon>
+	<2096023.P4Pq9IvUAO@avalon>
+Date: Mon, 7 Mar 2016 11:10:08 +0100
+Message-ID: <CAPDyKFqtrdw+MHh6tAz658=PQi+REGAEiNzNs_4aRzTTpOwP9Q@mail.gmail.com>
+Subject: Re: [PATCH] PM / Runtime: Only force-resume device if it has been force-suspended
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+	Kevin Hilman <khilman@kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is based on the latest linux-phy / next branch
-(commit id = 89636adde4a05953e3bf18807ba1f6f205572f67)
-and the following patches:
+[...]
 
-http://thread.gmane.org/gmane.linux.kernel/2166364
-http://thread.gmane.org/gmane.linux.kernel.renesas-soc/1512/focus=1514
+>> I agree, that's a better idea. Drivers shouldn't call
+>> pm_runtime_force_resume() if they haven't called pm_runtime_force_suspend(),
+>> so checking the PM use count should be fine. I'll modify the patch, test it
+>> and resubmit.
+>
+> I gave it an unfortunately unsuccessful try. The problem I ran into is that
+> device_prepare() calls pm_runtime_get_noresume() calls
+> pm_runtime_get_noresume(), with the corresponding pm_runtime_put() call being
+> performed in device_complete(). The device power usage_count is thus always
+> non-zero in the system resume handler, so I can't base the decision on that.
 
-The patch "Add vbus-supply to handle VBUS on/off" has
-Rob's Acked-by as the followings:
-http://thread.gmane.org/gmane.linux.kernel.renesas-soc/1087/focus=1153
+As Alan said, let's just check against 1 instead.
 
-Yoshihiro Shimoda (3):
-  phy: rcar-gen3-usb2: remove unnecesary struct rcar_gen3_data
-  phy: rcar-gen3-usb2: Add vbus-supply to handle VBUS on/off
-  phy: rcar-gen3-usb2: add extcon support
+>
+> I also noticed that pm_genpd_prepare() runtime-resumes the device (when the
+> power domain is in the GPD_STATE_ACTIVE state). I don't know why that is, but
+> it means that in practice my device gets runtime-resumed when suspending the
+> system while it could stay runtime-suspended in practice.
 
- .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  2 +
- drivers/phy/Kconfig                                |  1 +
- drivers/phy/phy-rcar-gen3-usb2.c                   | 87 +++++++++++++++++-----
- 3 files changed, 71 insertions(+), 19 deletions(-)
+I am aware of this and it's on my TODO list of improvements of genpd,
+The issue is related to an unoptimized behaviour for how genpd deal
+with wakeups during system PM.
 
--- 
-1.9.1
+Kind regards
+Uffe
