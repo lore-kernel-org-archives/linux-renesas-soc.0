@@ -1,84 +1,53 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
 	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
+Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
+	geert+renesas@glider.be, linus.walleij@linaro.org,
+	dan.j.williams@intel.com, arnd@arndb.de,
+	linux-arch@vger.kernel.org,
 	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
 	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 07/30] ARM: dts: r8a7790: Reference both DMA controllers in IIC nodes
-Date: Thu, 10 Mar 2016 12:35:59 +0100
-Message-Id: <1457609782-24108-8-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v5 2/9] dma-mapping: add {map,unmap}_resource to dma_map_ops
+Date: Tue,  8 Mar 2016 03:42:47 +0100
+Message-Id: <1457404974-1800-3-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+Add methods to handle mapping of device resources from a physical
+address. This is needed for example to be able to map MMIO FIFO
+registers to a IOMMU.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ include/linux/dma-mapping.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index bec630e..b89bf28 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -464,8 +464,9 @@
- 		reg = <0 0xe6500000 0 0x425>;
- 		interrupts = <0 174 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_IIC0>;
--		dmas = <&dmac0 0x61>, <&dmac0 0x62>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x61>, <&dmac0 0x62>,
-+		       <&dmac1 0x61>, <&dmac1 0x62>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -477,8 +478,9 @@
- 		reg = <0 0xe6510000 0 0x425>;
- 		interrupts = <0 175 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_IIC1>;
--		dmas = <&dmac0 0x65>, <&dmac0 0x66>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x65>, <&dmac0 0x66>,
-+		       <&dmac1 0x65>, <&dmac1 0x66>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -490,8 +492,9 @@
- 		reg = <0 0xe6520000 0 0x425>;
- 		interrupts = <0 176 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_IIC2>;
--		dmas = <&dmac0 0x69>, <&dmac0 0x6a>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x69>, <&dmac0 0x6a>,
-+		       <&dmac1 0x69>, <&dmac1 0x6a>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -503,8 +506,9 @@
- 		reg = <0 0xe60b0000 0 0x425>;
- 		interrupts = <0 173 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7790_CLK_IICDVFS>;
--		dmas = <&dmac0 0x77>, <&dmac0 0x78>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x77>, <&dmac0 0x78>,
-+		       <&dmac1 0x77>, <&dmac1 0x78>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index 75857cd..e3aba4e 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -49,6 +49,12 @@ struct dma_map_ops {
+ 			 struct scatterlist *sg, int nents,
+ 			 enum dma_data_direction dir,
+ 			 struct dma_attrs *attrs);
++	dma_addr_t (*map_resource)(struct device *dev, phys_addr_t phys_addr,
++			       size_t size, enum dma_data_direction dir,
++			       struct dma_attrs *attrs);
++	void (*unmap_resource)(struct device *dev, dma_addr_t dma_handle,
++			   size_t size, enum dma_data_direction dir,
++			   struct dma_attrs *attrs);
+ 	void (*sync_single_for_cpu)(struct device *dev,
+ 				    dma_addr_t dma_handle, size_t size,
+ 				    enum dma_data_direction dir);
 -- 
 2.7.2
-
