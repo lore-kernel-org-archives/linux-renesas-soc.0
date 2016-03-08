@@ -1,24 +1,77 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 7 Mar 2016 23:38:47 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Niklas S??derlund <niklas.soderlund+renesas@ragnatech.se>
-Cc: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org,
-	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
+	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
+Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
 	geert+renesas@glider.be, linus.walleij@linaro.org,
-	dan.j.williams@intel.com, arnd@arndb.de, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v5 3/9] dma-mapping: add dma_{map,unmap}_resource
-Message-ID: <20160308073847.GA15520@infradead.org>
+	dan.j.williams@intel.com, arnd@arndb.de,
+	linux-arch@vger.kernel.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v5 3/9] dma-mapping: add dma_{map,unmap}_resource
+Date: Tue,  8 Mar 2016 03:42:48 +0100
+Message-Id: <1457404974-1800-4-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 References: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
- <1457404974-1800-4-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1457404974-1800-4-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Please add some documentation on where/how this should be used.  It's
-not a very obvious interface.
+Map/Unmap a device resource from a physical address. If no dma_map_ops
+method is available the operation is a no-op.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ include/linux/dma-mapping.h | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index e3aba4e..cc305d1 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -216,6 +216,38 @@ static inline void dma_unmap_page(struct device *dev, dma_addr_t addr,
+ 	debug_dma_unmap_page(dev, addr, size, dir, false);
+ }
+ 
++static inline dma_addr_t dma_map_resource(struct device *dev,
++					  phys_addr_t phys_addr,
++					  size_t size,
++					  enum dma_data_direction dir,
++					  struct dma_attrs *attrs)
++{
++	struct dma_map_ops *ops = get_dma_ops(dev);
++	unsigned long pfn = __phys_to_pfn(phys_addr);
++
++	BUG_ON(!valid_dma_direction(dir));
++
++	/* Don't allow RAM to be mapped */
++	BUG_ON(pfn_valid(pfn));
++
++	if (ops->map_resource)
++		return ops->map_resource(dev, phys_addr, size, dir, attrs);
++
++	return phys_addr;
++}
++
++static inline void dma_unmap_resource(struct device *dev, dma_addr_t addr,
++				      size_t size, enum dma_data_direction dir,
++				      struct dma_attrs *attrs)
++{
++	struct dma_map_ops *ops = get_dma_ops(dev);
++
++	BUG_ON(!valid_dma_direction(dir));
++	if (ops->unmap_resource)
++		ops->unmap_resource(dev, addr, size, dir, attrs);
++
++}
++
+ static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
+ 					   size_t size,
+ 					   enum dma_data_direction dir)
+-- 
+2.7.2
