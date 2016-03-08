@@ -1,44 +1,42 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Guenter Roeck <linux@roeck-us.net>,
-	linux-watchdog@vger.kernel.org
-Subject: [PATCH 6/6] watchdog: tangox_wdt: test clock rate to avoid division by 0
-Date: Wed,  2 Mar 2016 23:33:37 +0100
-Message-Id: <1456958018-7849-7-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
-References: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Tue, 8 Mar 2016 10:32:30 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-ide@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH] SATA: rcar: add device tree support for r8a7792
+Message-ID: <20160308013230.GA19428@verge.net.au>
+References: <1456362985-24137-1-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1456362985-24137-1-git-send-email-horms+renesas@verge.net.au>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Thu, Feb 25, 2016 at 10:16:25AM +0900, Simon Horman wrote:
+> Simply document new compatibility string.
+> As a previous patch adds a generic R-Car Gen2 compatibility string
+> there appears to be no need for a driver updates.
+> 
+> By documenting this compat sting it may be used in DTSs shipped, for
+> example as part of ROMs. It must be used in conjunction with the Gen2
+> fallback compat string. At this time there are no known differences between
+> the r8a7792 IP block and that implemented by the driver for the Gen2
+> fallback compat string. Thus there is no need to update the driver as the
+> use of the Gen2 fallback compat string will activate the correct code in
+> the current driver while leaving the option for r8a7792-specific driver
+> code to be activated in an updated driver should the need arise.
+> 
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  Documentation/devicetree/bindings/ata/sata_rcar.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+>  Based on the for-next branch of the libata tree
 
-The clk API may return 0 on clk_get_rate, so we should check the result before
-using it as a divisor.
+I would like to withdraw this patch.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-
-Should go individually via subsystem tree.
-
- drivers/watchdog/tangox_wdt.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/watchdog/tangox_wdt.c b/drivers/watchdog/tangox_wdt.c
-index 709c1ed6fd79b9..cc702718ae4dbb 100644
---- a/drivers/watchdog/tangox_wdt.c
-+++ b/drivers/watchdog/tangox_wdt.c
-@@ -139,6 +139,8 @@ static int tangox_wdt_probe(struct platform_device *pdev)
- 		return err;
- 
- 	dev->clk_rate = clk_get_rate(dev->clk);
-+	if (!dev->clk_rate)
-+		return -EINVAL;
- 
- 	dev->wdt.parent = &pdev->dev;
- 	dev->wdt.info = &tangox_wdt_info;
--- 
-2.7.0
+On closer inspection of the documentation the SATA IP block does
+not appear to be present on the r8a7792. I am now searching for
+an appropriately sized brown paper bag.
