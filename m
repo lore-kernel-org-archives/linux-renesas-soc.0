@@ -1,6 +1,6 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH v2] can: rcar_canfd: Add Renesas R-Car CAN FD driver
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: Oliver Hartkopp <socketcan@hartkopp.net>,
 	Marc Kleine-Budde <mkl@pengutronix.de>,
 	"wg@grandegger.com" <wg@grandegger.com>,
 	"robh+dt@kernel.org" <robh+dt@kernel.org>,
@@ -9,6 +9,17 @@ To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
 	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
 	"galak@codeaurora.org" <galak@codeaurora.org>,
 	"corbet@lwn.net" <corbet@lwn.net>
+CC: "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>,
+	Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: RE: [PATCH v2] can: rcar_canfd: Add Renesas R-Car CAN FD driver
+Date: Tue, 8 Mar 2016 12:48:50 +0000
+Message-ID: <SG2PR06MB10388F87746A1191E51B199FC3B20@SG2PR06MB1038.apcprd06.prod.outlook.com>
 References: <1456824849-7987-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
  <1457019515-21158-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
  <56DC1561.9060306@hartkopp.net>
@@ -18,69 +29,53 @@ References: <1456824849-7987-1-git-send-email-ramesh.shanmugasundaram@bp.renesas
  <56DE8345.50901@hartkopp.net>
  <SG2PR06MB1038B71C7921984611F72CF5C3B20@SG2PR06MB1038.apcprd06.prod.outlook.com>
  <56DEC49D.4@hartkopp.net>
- <SG2PR06MB10388F87746A1191E51B199FC3B20@SG2PR06MB1038.apcprd06.prod.outlook.com>
-Cc: "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>,
-	Chris Paterson <Chris.Paterson2@renesas.com>
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-Message-ID: <56DF0900.6090906@hartkopp.net>
-Date: Tue, 8 Mar 2016 18:16:48 +0100
+In-Reply-To: <56DEC49D.4@hartkopp.net>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB10388F87746A1191E51B199FC3B20@SG2PR06MB1038.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 03/08/2016 01:48 PM, Ramesh Shanmugasundaram wrote:
-
->> In fact you provided a CAN driver which is "CAN-FD-only".
-> 
-> Yes. That's the status of current submission.
-> 
->> We did not had that before but there's a solution for this kind of setup.
->>
->> There is a similar case with CAN_CTRLMODE_FD_NON_ISO we had on the M_CAN
->> driver which only provides non-ISO configuration for the supported IP core
->> and _no_ option to _change_ this value:
->>
->> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id
->> =6cfda7fbebe8a4fd33ea5722fa0212f98f643c35
->>
->> If you would do it similar in rcar_canfd.c with
->>
->> /* CAN_CTRLMODE_FD is fixed with R-Car CAN FD */
->> priv->can.ctrlmode = CAN_CTRLMODE_FD;
->>
->> and remove CAN_CTRLMODE_FD from the priv->can.ctrlmode_supported
->> assignment then it should do the entire configuration process correctly
->> for you.
->> Including the proper tests for the two bitrates.
->> (see open_candev() in linux/drivers/net/can/dev.c)
->>
->> Right?
-> 
-> I did try this option earlier but there are two problems with this method.
-> 
-> 1) Below configuration is not possible
-> 
-> ip link set can0 up type can bitrate 1000000 dbitrate 1000000 fd on
-> 
-> "fd on" -> This is not allowed because CAN_CTRLMODE_FD bit is not set in ctrlmode_supported.
-> 
-> 2) If I ignore "fd on", my interface MTU stays as CAN_MTU only. If I have to change the MTU alone to CANFD_MTU using another netlink message, it again checks ctrlmode_supported where it would fail. I have the option of providing my own change_mtu function & ignore this check but two configuration messages are required for my driver alone :-(.
-> 
-> Both these anomalies are addressed with the current check I have. 
-
-Oh - you are right with complaining about this inconsistency.
-
-Can you check my RFC patch for Linux stable I just sent on the mailing list?
-http://marc.info/?l=linux-can&m=145745724917976&w=2
-
-Many thanks,
-Oliver
+SGkgT2xpdmVyLA0KDQpUaGFua3MgZm9yIHRoZSBjb21tZW50cy4NCg0KPiBPbiAwOC4wMy4yMDE2
+IDA5OjU3LCBSYW1lc2ggU2hhbm11Z2FzdW5kYXJhbSB3cm90ZToNCj4gDQo+ID4NCj4gPiBBcyB5
+b3UgbWVudGlvbmVkIGZ1cnRoZXIgZG93biwgd2hlbiBhIHVzZXIgZG9lcyB0aGlzDQo+ID4NCj4g
+PiAiaXAgbGluayBzZXQgY2FuMCB1cCB0eXBlIGNhbiBiaXRyYXRlIDEwMDAwMDAiDQo+ID4NCj4g
+PiB0aGUgaW50ZW50aW9uIGlzIHRvIHB1dCB0aGUgY29udHJvbGxlciBpbiBDQU4gMi4wIG1vZGUu
+IEV2ZW4gaWYgd2UgdXNlIGENCj4gc3RhdHVzIGZsYWcgb3IgY29weSB0aGUgZGF0YSBiaXRyYXRl
+IGVxdWFsIHRvIHRoZSBub21pbmFsIGJpdHJhdGUsIHdoYXQNCj4gd291bGQgaXQgYWNoaWV2ZT8g
+SXQgc3RpbGwgY2Fubm90IGJlIGEgQ0FOIDIuMCBub2RlIC0gaXQgaXMgYSBDQU4gRkQgbm9kZQ0K
+PiBjb25maWd1cmVkIHdpdGggc2FtZSBub21pbmFsICYgZGF0YSBiaXRyYXRlLg0KPiA+DQo+ID4g
+VGhpcyBpcyB3aHkgSSBoYXZlIHRoaXMgY2hlY2sgaW4gbmRvX29wZW4sIHNvIHRoYXQgdGhlIHVz
+ZXIgaXMgYXdhcmUgaXQNCj4gaXMgYSBDQU4gRkQgbm9kZSBhbHdheXMgYW5kIGF2b2lkIG1pc2Nv
+bmZpZ3VyYXRpb24gbGlrZSBhYm92ZSB3aXRoDQo+IEVPUE5PVFNVUFAuDQo+ID4NCj4gDQo+IG9r
+IC0gZ290IGl0IG5vdy4NCj4gDQo+IEluIGZhY3QgeW91IHByb3ZpZGVkIGEgQ0FOIGRyaXZlciB3
+aGljaCBpcyAiQ0FOLUZELW9ubHkiLg0KDQpZZXMuIFRoYXQncyB0aGUgc3RhdHVzIG9mIGN1cnJl
+bnQgc3VibWlzc2lvbi4NCg0KPiBXZSBkaWQgbm90IGhhZCB0aGF0IGJlZm9yZSBidXQgdGhlcmUn
+cyBhIHNvbHV0aW9uIGZvciB0aGlzIGtpbmQgb2Ygc2V0dXAuDQo+IA0KPiBUaGVyZSBpcyBhIHNp
+bWlsYXIgY2FzZSB3aXRoIENBTl9DVFJMTU9ERV9GRF9OT05fSVNPIHdlIGhhZCBvbiB0aGUgTV9D
+QU4NCj4gZHJpdmVyIHdoaWNoIG9ubHkgcHJvdmlkZXMgbm9uLUlTTyBjb25maWd1cmF0aW9uIGZv
+ciB0aGUgc3VwcG9ydGVkIElQIGNvcmUNCj4gYW5kIF9ub18gb3B0aW9uIHRvIF9jaGFuZ2VfIHRo
+aXMgdmFsdWU6DQo+IA0KPiBodHRwczovL2dpdC5rZXJuZWwub3JnL2NnaXQvbGludXgva2VybmVs
+L2dpdC90b3J2YWxkcy9saW51eC5naXQvY29tbWl0Lz9pZA0KPiA9NmNmZGE3ZmJlYmU4YTRmZDMz
+ZWE1NzIyZmEwMjEyZjk4ZjY0M2MzNQ0KPiANCj4gSWYgeW91IHdvdWxkIGRvIGl0IHNpbWlsYXIg
+aW4gcmNhcl9jYW5mZC5jIHdpdGgNCj4gDQo+IC8qIENBTl9DVFJMTU9ERV9GRCBpcyBmaXhlZCB3
+aXRoIFItQ2FyIENBTiBGRCAqLw0KPiBwcml2LT5jYW4uY3RybG1vZGUgPSBDQU5fQ1RSTE1PREVf
+RkQ7DQo+IA0KPiBhbmQgcmVtb3ZlIENBTl9DVFJMTU9ERV9GRCBmcm9tIHRoZSBwcml2LT5jYW4u
+Y3RybG1vZGVfc3VwcG9ydGVkDQo+IGFzc2lnbm1lbnQgdGhlbiBpdCBzaG91bGQgZG8gdGhlIGVu
+dGlyZSBjb25maWd1cmF0aW9uIHByb2Nlc3MgY29ycmVjdGx5DQo+IGZvciB5b3UuDQo+IEluY2x1
+ZGluZyB0aGUgcHJvcGVyIHRlc3RzIGZvciB0aGUgdHdvIGJpdHJhdGVzLg0KPiAoc2VlIG9wZW5f
+Y2FuZGV2KCkgaW4gbGludXgvZHJpdmVycy9uZXQvY2FuL2Rldi5jKQ0KPiANCj4gUmlnaHQ/DQoN
+CkkgZGlkIHRyeSB0aGlzIG9wdGlvbiBlYXJsaWVyIGJ1dCB0aGVyZSBhcmUgdHdvIHByb2JsZW1z
+IHdpdGggdGhpcyBtZXRob2QuDQoNCjEpIEJlbG93IGNvbmZpZ3VyYXRpb24gaXMgbm90IHBvc3Np
+YmxlDQoNCmlwIGxpbmsgc2V0IGNhbjAgdXAgdHlwZSBjYW4gYml0cmF0ZSAxMDAwMDAwIGRiaXRy
+YXRlIDEwMDAwMDAgZmQgb24NCg0KImZkIG9uIiAtPiBUaGlzIGlzIG5vdCBhbGxvd2VkIGJlY2F1
+c2UgQ0FOX0NUUkxNT0RFX0ZEIGJpdCBpcyBub3Qgc2V0IGluIGN0cmxtb2RlX3N1cHBvcnRlZC4N
+Cg0KMikgSWYgSSBpZ25vcmUgImZkIG9uIiwgbXkgaW50ZXJmYWNlIE1UVSBzdGF5cyBhcyBDQU5f
+TVRVIG9ubHkuIElmIEkgaGF2ZSB0byBjaGFuZ2UgdGhlIE1UVSBhbG9uZSB0byBDQU5GRF9NVFUg
+dXNpbmcgYW5vdGhlciBuZXRsaW5rIG1lc3NhZ2UsIGl0IGFnYWluIGNoZWNrcyBjdHJsbW9kZV9z
+dXBwb3J0ZWQgd2hlcmUgaXQgd291bGQgZmFpbC4gSSBoYXZlIHRoZSBvcHRpb24gb2YgcHJvdmlk
+aW5nIG15IG93biBjaGFuZ2VfbXR1IGZ1bmN0aW9uICYgaWdub3JlIHRoaXMgY2hlY2sgYnV0IHR3
+byBjb25maWd1cmF0aW9uIG1lc3NhZ2VzIGFyZSByZXF1aXJlZCBmb3IgbXkgZHJpdmVyIGFsb25l
+IDotKC4NCg0KQm90aCB0aGVzZSBhbm9tYWxpZXMgYXJlIGFkZHJlc3NlZCB3aXRoIHRoZSBjdXJy
+ZW50IGNoZWNrIEkgaGF2ZS4gDQoNClRoYW5rcywNClJhbWVzaA0KDQo=
