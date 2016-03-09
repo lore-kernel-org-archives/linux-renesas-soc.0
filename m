@@ -1,82 +1,82 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 00/31] ARM: dts: r8a779[0-4]: Reference both DMA controllers
-Date: Tue, 15 Mar 2016 13:41:37 +0100
-Message-Id: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 1/6] ARM: dts: r8a7779: Add SYSC PM domains
+Date: Wed,  9 Mar 2016 20:18:50 +0100
+Message-Id: <1457551135-22078-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1457551135-22078-1-git-send-email-geert+renesas@glider.be>
+References: <1457551135-22078-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Add a device node for the System Controller.
+Hook up ARM CPU cores 1-3 to their respective PM domains.
+Note that ARM CPU core 0 cannot be shut off.
 
-R-Car Gen2 have two DMA controllers, which are equivalent. However DMA
-slaves were tied only to a single DMA controller in .dtsi. This series
-add references to to both DMA controllers for all nodes that previously
-only referenced one of them. It also adds dma references to the SDHI
-nodes for r8a7794 which according to the datasheet should work but I
-have not access to HW to verify.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - Drop power area hiearchy from DT,
+  - Switch to "#power-domain-cells = <1>",
 
-Tested on Koelsch (r8a7791) by altering the compatible value of either
-dmac0 or dmac1 and verifying that the DMA slaves pick the DMA controller
-that is instantiated.
+v2:
+  - Correct sysc "reg" property (#address/size-cells = 1, not 2),
+  - Change one-line summary prefix to match current arm-soc practices,
+  - Update compatible values.
+---
+ arch/arm/boot/dts/r8a7779.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-For your convince the series can be fetched from
-https://git.ragnatech.se/linux rcar-dmas-dt-2
-
-* Changes since v1
-- Rebase on top of renesas-devel-20160315-v4.5 and add dmas references
-  new nodes (r8a7790: scif2 r8a7793: i2c6,i2c7,i2c8).
-- Correct error in commit message 31/31 (s/QSPI/MMCIF).
-- Collect Ack and Reviewed tags from Geert.
-
-Niklas Söderlund (31):
-  ARM: dts: r8a7790: Reference both DMA controllers in SCIFA nodes
-  ARM: dts: r8a7790: Reference both DMA controllers in SCIFB nodes
-  ARM: dts: r8a7790: Reference both DMA controllers in HSCIF nodes
-  ARM: dts: r8a7790: Reference both DMA controllers in SCIF nodes
-  ARM: dts: r8a7790: Reference both DMA controllers in MSIOF nodes
-  ARM: dts: r8a7790: Reference both DMA controllers in QSPI node
-  ARM: dts: r8a7790: Reference both DMA controllers in IIC nodes
-  ARM: dts: r8a7790: Reference both DMA controllers in SDHI nodes
-  ARM: dts: r8a7790: Reference both DMA controllers in MMCIF nodes
-  ARM: dts: r8a7791: Reference both DMA controllers in SCIFA nodes
-  ARM: dts: r8a7791: Reference both DMA controllers in SCIFB nodes
-  ARM: dts: r8a7791: Reference both DMA controllers in HSCIF nodes
-  ARM: dts: r8a7791: Reference both DMA controllers in SCIF nodes
-  ARM: dts: r8a7791: Reference both DMA controllers in MSIOF nodes
-  ARM: dts: r8a7791: Reference both DMA controllers in QSPI node
-  ARM: dts: r8a7791: Reference both DMA controllers in IIC nodes
-  ARM: dts: r8a7791: Reference both DMA controllers in SDHI nodes
-  ARM: dts: r8a7791: Reference both DMA controllers in MMCIF node
-  ARM: dts: r8a7793: Reference both DMA controllers in SCIFA nodes
-  ARM: dts: r8a7793: Reference both DMA controllers in SCIFB nodes
-  ARM: dts: r8a7793: Reference both DMA controllers in HSCIF nodes
-  ARM: dts: r8a7793: Reference both DMA controllers in SCIF nodes
-  ARM: dts: r8a7793: Reference both DMA controllers in QSPI node
-  ARM: dts: r8a7793: Reference both DMA controllers in IIC nodes
-  ARM: dts: r8a7794: Reference both DMA controllers in SCIFA nodes
-  ARM: dts: r8a7794: Reference both DMA controllers in SCIFB nodes
-  ARM: dts: r8a7794: Reference both DMA controllers in HSCIF nodes
-  ARM: dts: r8a7794: Reference both DMA controllers in SCIF nodes
-  ARM: dts: r8a7794: Reference both DMA controllers in QSPI node
-  ARM: dts: r8a7794: Reference both DMA controllers in SDHI nodes
-  ARM: dts: r8a7794: Reference both DMA controllers in MMCIF node
-
- arch/arm/boot/dts/r8a7790.dtsi | 130 +++++++++++++++++++++---------------
- arch/arm/boot/dts/r8a7791.dtsi | 145 ++++++++++++++++++++++++-----------------
- arch/arm/boot/dts/r8a7793.dtsi | 110 ++++++++++++++++++-------------
- arch/arm/boot/dts/r8a7794.dtsi | 109 +++++++++++++++++++------------
- 4 files changed, 300 insertions(+), 194 deletions(-)
-
---
-2.7.2
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index a0cc08e6295b0396..540f3c57a7b32356 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -14,6 +14,7 @@
+ #include <dt-bindings/clock/r8a7779-clock.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/power/r8a7779-sysc.h>
+ 
+ / {
+ 	compatible = "renesas,r8a7779";
+@@ -34,18 +35,21 @@
+ 			compatible = "arm,cortex-a9";
+ 			reg = <1>;
+ 			clock-frequency = <1000000000>;
++			power-domains = <&sysc R8A7779_PD_ARM1>;
+ 		};
+ 		cpu@2 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <2>;
+ 			clock-frequency = <1000000000>;
++			power-domains = <&sysc R8A7779_PD_ARM2>;
+ 		};
+ 		cpu@3 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <3>;
+ 			clock-frequency = <1000000000>;
++			power-domains = <&sysc R8A7779_PD_ARM3>;
+ 		};
+ 	};
+ 
+@@ -591,4 +595,10 @@
+ 				"mmc1", "mmc0";
+ 		};
+ 	};
++
++	sysc: system-controller@ffd85000 {
++		compatible = "renesas,r8a7779-sysc";
++		reg = <0xffd85000 0x0200>;
++		#power-domain-cells = <1>;
++	};
+ };
+-- 
+1.9.1
 
