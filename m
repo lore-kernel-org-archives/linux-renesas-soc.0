@@ -1,84 +1,81 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	geert+renesas@glider.be, linus.walleij@linaro.org,
-	dan.j.williams@intel.com, arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v5 8/9] ARM: dts: r8a7790: add iommus to dmac0 and dmac1
-Date: Tue,  8 Mar 2016 03:42:53 +0100
-Message-Id: <1457404974-1800-9-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 0/6] ARM/arm64: dts: rcar: Add SYSC PM domains
+Date: Wed,  9 Mar 2016 20:18:49 +0100
+Message-Id: <1457551135-22078-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-A unconfirmed hardware bug prevents channel 0 and 15 to be used by the
-DMAC together with the IPMMU. The DMAC driver will disable the channels
-reducing the effective number of channels to 14 per DMAC.
+	Hi all,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- arch/arm/boot/dts/r8a7790.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+This patch series adds the R-Car System Controller to the DTS files for
+the various R-Car SoCs, and hooks up devices to their respective PM
+domains.
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 26772f7..c600daa 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -294,6 +294,21 @@
- 		power-domains = <&cpg_clocks>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
-+		iommus = <&ipmmu_ds 0>,
-+			 <&ipmmu_ds 1>,
-+			 <&ipmmu_ds 2>,
-+			 <&ipmmu_ds 3>,
-+			 <&ipmmu_ds 4>,
-+			 <&ipmmu_ds 5>,
-+			 <&ipmmu_ds 6>,
-+			 <&ipmmu_ds 7>,
-+			 <&ipmmu_ds 8>,
-+			 <&ipmmu_ds 9>,
-+			 <&ipmmu_ds 10>,
-+			 <&ipmmu_ds 11>,
-+			 <&ipmmu_ds 12>,
-+			 <&ipmmu_ds 13>,
-+			 <&ipmmu_ds 14>;
- 	};
- 
- 	dmac1: dma-controller@e6720000 {
-@@ -325,6 +340,21 @@
- 		power-domains = <&cpg_clocks>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
-+		iommus = <&ipmmu_ds 15>,
-+			 <&ipmmu_ds 16>,
-+			 <&ipmmu_ds 17>,
-+			 <&ipmmu_ds 18>,
-+			 <&ipmmu_ds 19>,
-+			 <&ipmmu_ds 20>,
-+			 <&ipmmu_ds 21>,
-+			 <&ipmmu_ds 22>,
-+			 <&ipmmu_ds 23>,
-+			 <&ipmmu_ds 24>,
-+			 <&ipmmu_ds 25>,
-+			 <&ipmmu_ds 26>,
-+			 <&ipmmu_ds 27>,
-+			 <&ipmmu_ds 28>,
-+			 <&ipmmu_ds 29>;
- 	};
- 
- 	audma0: dma-controller@ec700000 {
+This is a dependency for the enablement of DU and VSP on R-Car H3, as
+the VSPs are located in a PM Domain.
+
+Changes compared to v2:
+  - Move power area hierarchy from DT to C (cfr. DT bindings for Renesas
+    CPG/MSSR), and switch to "#power-domain-cells = <1>",
+  - Drop fallback compatibility strings, as the bindings are
+    SoC-specific,
+  - Add an "always-on" power area on R-Car H3.
+
+Changes compared to v1:
+  - Add R-Car H3 (r8a7795) support,
+  - Use "renesas,<type>-sysc" instead of "renesas,sysc-<type>",
+  - Add fallback compatibility strings for R-Car Gen2 and Gen3.
+
+Dependencies:
+  - renesas-devel-20160307-v4.5-rc7,
+  - clk/clk-next with "[PATCH v2] clk: renesas: Rename header file
+    renesas.h" applied,
+  - "[PATCH 0/4] clk: renesas: PM Domain Cleanups and Preparation".
+  - "[PATCH v3 0/7] PM / Domains: Add DT bindings for the R-Car System
+    Controller",
+  - "[PATCH v3 00/11] soc: renesas: Add R-Car SYSC PM Domain Support".
+Note that these are hard dependencies: adding SYSC PM Domains to DTS
+files without driver support cause breakage!
+
+For your convenience, I've pushed this, incl. all dependencies, to the
+topic/rcar-sysc-pd-v3 branch of
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+
+Thanks for your comments!
+
+Geert Uytterhoeven (6):
+  ARM: dts: r8a7779: Add SYSC PM domains
+  ARM: dts: r8a7790: Add SYSC PM domains
+  ARM: dts: r8a7791: Add SYSC PM domains
+  ARM: dts: r8a7793: Add SYSC PM domains
+  ARM: dts: r8a7794: Add SYSC PM domains
+  arm64: dts: r8a7795: Add SYSC PM domains
+
+ arch/arm/boot/dts/r8a7779.dtsi           |  10 +++
+ arch/arm/boot/dts/r8a7790.dtsi           |  17 +++++
+ arch/arm/boot/dts/r8a7791.dtsi           |  10 +++
+ arch/arm/boot/dts/r8a7793.dtsi           |   9 +++
+ arch/arm/boot/dts/r8a7794.dtsi           |  10 +++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 115 +++++++++++++++++--------------
+ 6 files changed, 120 insertions(+), 51 deletions(-)
+
 -- 
-2.7.2
+1.9.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
