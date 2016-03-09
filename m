@@ -1,72 +1,55 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 16/30] ARM: dts: r8a7791: Reference both DMA controllers in IIC nodes
-Date: Thu, 10 Mar 2016 12:36:08 +0100
-Message-Id: <1457609782-24108-17-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <1456778924-20730-5-git-send-email-paul.gortmaker@windriver.com>
+References: <1456778924-20730-1-git-send-email-paul.gortmaker@windriver.com>
+	<1456778924-20730-5-git-send-email-paul.gortmaker@windriver.com>
+Date: Wed, 9 Mar 2016 10:24:10 +0700
+Message-ID: <CACRpkdb67YPaUbHBqQ2=qw9CRV83A4Cf+9v5-idFvKOb60NyhQ@mail.gmail.com>
+Subject: Re: [PATCH 4/8] drivers/pinctrl: make sh-pfc/core.c explicitly non-modular
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+On Tue, Mar 1, 2016 at 3:48 AM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm/boot/dts/r8a7791.dtsi | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+> The Kconfig / Makefile currently controlling compilation of this code is:
+>
+> drivers/pinctrl/sh-pfc/Makefile:obj-$(CONFIG_PINCTRL_SH_PFC)    += sh-pfc.o
+> drivers/pinctrl/sh-pfc/Makefile:sh-pfc-objs                     = core.o pinctrl.o
+>
+> drivers/pinctrl/sh-pfc/Kconfig:config PINCTRL_SH_PFC
+> drivers/pinctrl/sh-pfc/Kconfig: def_bool y
+>
+> ...meaning that it currently is not being built as a module by anyone.
+>
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+>
+> Since module_init already wasn't being used in this code, the init
+> ordering remains unchanged with this commit.
+>
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+>
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> was (or is now) contained at the top of the file in the comments.
+>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 50ac831..30b78a3 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -480,8 +480,9 @@
- 		reg = <0 0xe60b0000 0 0x425>;
- 		interrupts = <0 173 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7791_CLK_IICDVFS>;
--		dmas = <&dmac0 0x77>, <&dmac0 0x78>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x77>, <&dmac0 0x78>,
-+		       <&dmac1 0x77>, <&dmac1 0x78>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -493,8 +494,9 @@
- 		reg = <0 0xe6500000 0 0x425>;
- 		interrupts = <0 174 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7791_CLK_IIC0>;
--		dmas = <&dmac0 0x61>, <&dmac0 0x62>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x61>, <&dmac0 0x62>,
-+		       <&dmac1 0x61>, <&dmac1 0x62>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -506,8 +508,9 @@
- 		reg = <0 0xe6510000 0 0x425>;
- 		interrupts = <0 175 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7791_CLK_IIC1>;
--		dmas = <&dmac0 0x65>, <&dmac0 0x66>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x65>, <&dmac0 0x66>,
-+		       <&dmac1 0x65>, <&dmac1 0x66>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
--- 
-2.7.2
+Patch applied with Laurent's and Geert's ACKs.
 
+Yours,
+Linus Walleij
