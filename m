@@ -1,109 +1,85 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 19/31] ARM: dts: r8a7793: Reference both DMA controllers in SCIFA nodes
-Date: Tue, 15 Mar 2016 13:41:56 +0100
-Message-Id: <1458045728-4758-20-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 5/6] ARM: dts: r8a7794: Add SYSC PM domains
+Date: Wed,  9 Mar 2016 20:18:54 +0100
+Message-Id: <1457551135-22078-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1457551135-22078-1-git-send-email-geert+renesas@glider.be>
+References: <1457551135-22078-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+Add a device node for the System Controller.
+Hook up the Cortex-A7 CPU cores and the Cortex-A7 L2 cache/SCU to their
+respective PM domains.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 30 ++++++++++++++++++------------
- 1 file changed, 18 insertions(+), 12 deletions(-)
+v3:
+  - Drop power area hiearchy from DT,
+  - Switch to "#power-domain-cells = <1>",
+  - Drop fallback compatibility strings,
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index b482159..d833423 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -514,8 +514,9 @@
- 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7793_CLK_SCIFA0>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x21>, <&dmac0 0x22>,
-+		       <&dmac1 0x21>, <&dmac1 0x22>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
+v2:
+  - Change one-line summary prefix to match current arm-soc practices,
+  - Update compatible values.
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index eacb2b291361ec5c..0d0b728f86d14886 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -12,6 +12,7 @@
+ #include <dt-bindings/clock/r8a7794-clock.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/power/r8a7794-sysc.h>
+ 
+ / {
+ 	compatible = "renesas,r8a7794";
+@@ -40,6 +41,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0>;
+ 			clock-frequency = <1000000000>;
++			power-domains = <&sysc R8A7794_PD_CA7_CPU0>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+ 
+@@ -48,12 +50,14 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <1>;
+ 			clock-frequency = <1000000000>;
++			power-domains = <&sysc R8A7794_PD_CA7_CPU1>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
  	};
-@@ -527,8 +528,9 @@
- 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7793_CLK_SCIFA1>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x25>, <&dmac0 0x26>,
-+		       <&dmac1 0x25>, <&dmac1 0x26>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
+ 
+ 	L2_CA7: cache-controller@1 {
+ 		compatible = "cache";
++		power-domains = <&sysc R8A7794_PD_CA7_SCU>;
+ 		cache-unified;
+ 		cache-level = <2>;
  	};
-@@ -540,8 +542,9 @@
- 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7793_CLK_SCIFA2>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x27>, <&dmac0 0x28>,
-+		       <&dmac1 0x27>, <&dmac1 0x28>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
+@@ -1165,6 +1169,12 @@
+ 		};
  	};
-@@ -553,8 +556,9 @@
- 		interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7793_CLK_SCIFA3>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>,
-+		       <&dmac1 0x1b>, <&dmac1 0x1c>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -566,8 +570,9 @@
- 		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7793_CLK_SCIFA4>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x1f>, <&dmac0 0x20>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x1f>, <&dmac0 0x20>,
-+		       <&dmac1 0x1f>, <&dmac1 0x20>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -579,8 +584,9 @@
- 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7793_CLK_SCIFA5>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x23>, <&dmac0 0x24>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x23>, <&dmac0 0x24>,
-+		       <&dmac1 0x23>, <&dmac1 0x24>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
+ 
++	sysc: system-controller@e6180000 {
++		compatible = "renesas,r8a7794-sysc";
++		reg = <0 0xe6180000 0 0x0200>;
++		#power-domain-cells = <1>;
++	};
++
+ 	ipmmu_sy0: mmu@e6280000 {
+ 		compatible = "renesas,ipmmu-r8a7794", "renesas,ipmmu-vmsa";
+ 		reg = <0 0xe6280000 0 0x1000>;
 -- 
-2.7.2
+1.9.1
 
