@@ -1,51 +1,58 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+MIME-Version: 1.0
+In-Reply-To: <3847967.WBShi7eqzc@avalon>
+References: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
+	<1457551122-21838-3-git-send-email-geert+renesas@glider.be>
+	<3847967.WBShi7eqzc@avalon>
+Date: Thu, 10 Mar 2016 09:02:57 +0100
+Message-ID: <CAMuHMdXnUxr6kCtonKFoRRASy1t1Zzyk+SHkz3hzqkSXLcod1Q@mail.gmail.com>
+Subject: Re: [PATCH v3 2/7] soc: renesas: Add r8a7779 SYSC PM Domain Binding Definitions
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	devicetree@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 0/2] phy: rcar-gen2, rcar-gen3-usb2: add fallback binding
-Date: Thu,  3 Mar 2016 09:38:36 +0900
-Message-Id: <1456965518-13615-1-git-send-email-horms+renesas@verge.net.au>
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux PM list <linux-pm@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add fallback compatibility strings for rcar phy drivers.
+Hi Laurent,
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, e.g. Gen 2 and Gen 3. But beyond that its not clear what the
-relationship between IP blocks might be. For example, I believe that
-r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
-descendant of the former or vice versa.
+On Thu, Mar 10, 2016 at 3:40 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Wednesday 09 March 2016 20:18:37 Geert Uytterhoeven wrote:
+>> --- /dev/null
+>> +++ b/include/dt-bindings/power/r8a7779-sysc.h
 
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
+>> +#define R8A7779_PD_SH                        16
+>
+> I don't see this power domain in version 0.6 of the datasheet, you might have
+> a more recent version than I do.
 
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme being adopted for
-drivers for Renesas SoCs.
+It's indeed not in the datasheet.
+I based it's presence on the value written to SYSCIER, which has bit 16 set,
+both in upstream and in the BSP.
 
-Changes since v1:
-* Update new compatibility strings to match the preferred scheme for
-  ordering elements
-* Rebase
+Perhaps Magnus knows, as he's the author of that code?
 
-Based on linux-phy/next
+Gr{oetje,eeting}s,
 
-Simon Horman (2):
-  phy: rcar-gen2: add fallback binding
-  phy: rcar-gen3-usb2: add fallback binding
+                        Geert
 
- Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt      |  8 +++++++-
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 10 ++++++++--
- drivers/phy/phy-rcar-gen2.c                                  |  1 +
- drivers/phy/phy-rcar-gen3-usb2.c                             |  1 +
- 4 files changed, 17 insertions(+), 3 deletions(-)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
--- 
-2.1.4
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
