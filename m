@@ -1,121 +1,60 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 7 Mar 2016 11:33:49 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
 	<niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org,
-	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	geert+renesas@glider.be, linus.walleij@linaro.org,
-	dan.j.williams@intel.com, arnd@arndb.de, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v4 6/8] dmaengine: rcar-dmac: add iommu support for slave
- transfers
-Message-ID: <20160307060349.GE11154@localhost>
-References: <1455655184-14478-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
- <1455655184-14478-7-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+	laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 03/30] ARM: dts: r8a7790: Reference both DMA controllers in HSCIF nodes
+Date: Thu, 10 Mar 2016 12:35:55 +0100
+Message-Id: <1457609782-24108-4-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1455655184-14478-7-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Feb 16, 2016 at 09:39:42PM +0100, Niklas S�derlund wrote:
-> Enable slave transfers to devices behind IPMMU:s by mapping the slave
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
 
-IPMMU:s ?
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-> addresses using the dma-mapping API.
-> 
-> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> ---
->  drivers/dma/sh/rcar-dmac.c | 52 +++++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 47 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-> index 743873c..6a24847 100644
-> --- a/drivers/dma/sh/rcar-dmac.c
-> +++ b/drivers/dma/sh/rcar-dmac.c
-> @@ -1106,21 +1106,63 @@ rcar_dmac_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t buf_addr,
->  	return desc;
->  }
->  
-> +static int rcar_dmac_set_slave_addr(struct dma_chan *chan,
-> +				     struct rcar_dmac_chan_slave *slave,
-> +				     phys_addr_t addr, size_t size)
-> +{
-> +	enum dma_data_direction dir;
-> +
-> +	/*
-> +	 * We can't know the direction at this time, see documentation for
-> +	 * 'direction' in struct dma_slave_config.
-> +	 */
-
-Okay so we are mapping on the device config, which doesn't seem intutive.
-Why is this not done during prepare calls?
-
-> +	dir = DMA_BIDIRECTIONAL;
-> +
-> +	if (slave->xfer_size) {
-> +		dma_unmap_resource(chan->device->dev, slave->slave_addr,
-> +				   slave->xfer_size, dir, NULL);
-> +		slave->slave_addr = 0;
-> +		slave->xfer_size = 0;
-> +	}
-> +
-> +	if (size) {
-> +		slave->slave_addr = dma_map_resource(chan->device->dev, addr,
-> +				size, dir, NULL);
-> +
-> +		if (dma_mapping_error(chan->device->dev, slave->slave_addr)) {
-> +			struct rcar_dmac_chan *rchan = to_rcar_dmac_chan(chan);
-> +
-> +			dev_err(chan->device->dev,
-> +				"chan%u: failed to map %zx@%pap", rchan->index,
-> +				size, &addr);
-> +			return -EIO;
-> +		}
-> +
-> +		slave->xfer_size = size;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int rcar_dmac_device_config(struct dma_chan *chan,
->  				   struct dma_slave_config *cfg)
->  {
->  	struct rcar_dmac_chan *rchan = to_rcar_dmac_chan(chan);
-> +	int ret;
->  
->  	/*
->  	 * We could lock this, but you shouldn't be configuring the
->  	 * channel, while using it...
->  	 */
-> -	rchan->src.slave_addr = cfg->src_addr;
-> -	rchan->dst.slave_addr = cfg->dst_addr;
-> -	rchan->src.xfer_size = cfg->src_addr_width;
-> -	rchan->dst.xfer_size = cfg->dst_addr_width;
->  
-> -	return 0;
-> +	ret = rcar_dmac_set_slave_addr(chan, &rchan->src, cfg->src_addr,
-> +				       cfg->src_addr_width);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = rcar_dmac_set_slave_addr(chan, &rchan->dst, cfg->dst_addr,
-> +				       cfg->dst_addr_width);
-> +	return ret;
->  }
->  
->  static int rcar_dmac_chan_terminate_all(struct dma_chan *chan)
-> -- 
-> 2.7.1
-> 
-
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 8856111..c8a2f68 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -692,8 +692,9 @@
+ 		interrupts = <0 154 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7790_CLK_HSCIF0>;
+ 		clock-names = "sci_ick";
+-		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
++		       <&dmac1 0x39>, <&dmac1 0x3a>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -704,8 +705,9 @@
+ 		interrupts = <0 155 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp7_clks R8A7790_CLK_HSCIF1>;
+ 		clock-names = "sci_ick";
+-		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
++		       <&dmac1 0x4d>, <&dmac1 0x4e>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
 -- 
-~Vinod
+2.7.2
+
