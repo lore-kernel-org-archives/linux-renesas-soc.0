@@ -1,6 +1,14 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+MIME-Version: 1.0
+In-Reply-To: <1636171.nVxheqdHqq@avalon>
+References: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
+	<1457551122-21838-8-git-send-email-geert+renesas@glider.be>
+	<1636171.nVxheqdHqq@avalon>
+Date: Thu, 10 Mar 2016 09:17:40 +0100
+Message-ID: <CAMuHMdUyFy427ydtojd_4uDUuxUs0Erf-KDJR1y-dMzy3o_vgA@mail.gmail.com>
+Subject: Re: [PATCH v3 7/7] soc: renesas: Add r8a7795 SYSC PM Domain Binding Definitions
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
@@ -15,56 +23,50 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	Linux PM list <linux-pm@vger.kernel.org>,
 	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] soc: renesas: Add r8a7795 SYSC PM Domain Binding Definitions
-Date: Thu, 10 Mar 2016 10:54:21 +0200
-Message-ID: <1579605.LMd6ZIAa80@avalon>
-In-Reply-To: <CAMuHMdUyFy427ydtojd_4uDUuxUs0Erf-KDJR1y-dMzy3o_vgA@mail.gmail.com>
-References: <1457551122-21838-1-git-send-email-geert+renesas@glider.be> <1636171.nVxheqdHqq@avalon> <CAMuHMdUyFy427ydtojd_4uDUuxUs0Erf-KDJR1y-dMzy3o_vgA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Hi Laurent,
 
-On Thursday 10 March 2016 09:17:40 Geert Uytterhoeven wrote:
-> On Thu, Mar 10, 2016 at 3:32 AM, Laurent Pinchart wrote:
-> > On Wednesday 09 March 2016 20:18:42 Geert Uytterhoeven wrote:
-> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> 
-> >> --- /dev/null
-> >> +++ b/include/dt-bindings/power/r8a7795-sysc.h
-> >> @@ -0,0 +1,42 @@
-> >> 
-> >> +/* Always-on power area */
-> >> +#define R8A7795_PD_ALWAYS_ON         32
-> > 
-> > Shouldn't we also define the always-on power domain for the other SoCs
-> > (patches 2/7 to 6/7 in this series) ? I know they're already covered by
-> > the cpg power domain, but going forward I believe that standardizing on
-> > the SYSC power domains would be beneficial. We of course have to keep
-> > backward compatibility in the implementation.
-> 
-> Yes, that's the plan. I didn't want to make that change now, as someone
-> may object against the always-on power domain. On r8a7795 it feels more
-> natural, as it also has I/O devices in SYSC power areas, unlike R-Car Gen2
-> and H1.
+On Thu, Mar 10, 2016 at 3:32 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Wednesday 09 March 2016 20:18:42 Geert Uytterhoeven wrote:
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-That's fine with me.
+>> --- /dev/null
+>> +++ b/include/dt-bindings/power/r8a7795-sysc.h
+>> @@ -0,0 +1,42 @@
 
-> Note that it also complicates the rcar-sysc core driver: it has to choose
-> between the cpg_mssr_*() or cpg_mstp_*() callbacks, depending on SoC, and
-> also depending on DTS if we migrate the older SoCs to CPG/MSSR and want to
-> maintain backwards-compatibility.
-> 
-> Time to finish the "renesas,apmu" enable-method work, and celebrate one big
-> flag day for all the new DT evolutions?
+>> +/* Always-on power area */
+>> +#define R8A7795_PD_ALWAYS_ON         32
+>
+> Shouldn't we also define the always-on power domain for the other SoCs
+> (patches 2/7 to 6/7 in this series) ? I know they're already covered by the
+> cpg power domain, but going forward I believe that standardizing on the SYSC
+> power domains would be beneficial. We of course have to keep backward
+> compatibility in the implementation.
 
-I'll bring champagne ;-)
+Yes, that's the plan. I didn't want to make that change now, as someone
+may object against the always-on power domain. On r8a7795 it feels more
+natural, as it also has I/O devices in SYSC power areas, unlike R-Car Gen2
+and H1.
 
--- 
-Regards,
+Note that it also complicates the rcar-sysc core driver: it has to choose
+between the cpg_mssr_*() or cpg_mstp_*() callbacks, depending on SoC, and also
+depending on DTS if we migrate the older SoCs to CPG/MSSR and want to
+maintain backwards-compatibility.
 
-Laurent Pinchart
+Time to finish the "renesas,apmu" enable-method work, and celebrate one big
+flag day for all the new DT evolutions?
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
