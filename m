@@ -1,49 +1,108 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Peter Hurley <peter@hurleysoftware.com>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	devicetree@vger.kernel.org
-Subject: [PATCH/RFC 1/5] serial: sh-sci: Update DT binding documentation for GPIO modem lines
-Date: Thu, 17 Mar 2016 14:47:25 +0100
-Message-Id: <1458222449-12324-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1458222449-12324-1-git-send-email-geert+renesas@glider.be>
-References: <1458222449-12324-1-git-send-email-geert+renesas@glider.be>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+	laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 19/30] ARM: dts: r8a7793: Reference both DMA controllers in SCIFA nodes
+Date: Thu, 10 Mar 2016 12:36:11 +0100
+Message-Id: <1457609782-24108-20-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Amend the DT bindings for the Renesas SCI driver to allow describing
-optional GPIO-controlled modem lines, which can be used where dedicated
-modem lines are not available.
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
 
-The property naming is dictated by the SERIAL_MCTRL_GPIO helpers.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: devicetree@vger.kernel.org
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/r8a7793.dtsi | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index 528c3b90f23cb04b..f8d7b36742967163 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -76,6 +76,9 @@ Optional properties:
-   - dmas: Must contain a list of two references to DMA specifiers, one for
- 	  transmission, and one for reception.
-   - dma-names: Must contain a list of two DMA names, "tx" and "rx".
-+  - {cts,dsr,dcd,rng,rts,dtr,out1,out2}-gpios: Must contain a GPIO specifier,
-+    referring to the GPIO pin to be used as the UART's CTS, DSR, DCD, RNG, RTS,
-+    DTR, OUT1, or OUT2 line.
- 
- Example:
- 	aliases {
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index aef9e69..322d290 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -303,8 +303,9 @@
+ 		interrupts = <0 144 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7793_CLK_SCIFA0>;
+ 		clock-names = "sci_ick";
+-		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x21>, <&dmac0 0x22>,
++		       <&dmac1 0x21>, <&dmac1 0x22>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -315,8 +316,9 @@
+ 		interrupts = <0 145 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7793_CLK_SCIFA1>;
+ 		clock-names = "sci_ick";
+-		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x25>, <&dmac0 0x26>,
++		       <&dmac1 0x25>, <&dmac1 0x26>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -327,8 +329,9 @@
+ 		interrupts = <0 151 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7793_CLK_SCIFA2>;
+ 		clock-names = "sci_ick";
+-		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x27>, <&dmac0 0x28>,
++		       <&dmac1 0x27>, <&dmac1 0x28>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -339,8 +342,9 @@
+ 		interrupts = <0 29 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp11_clks R8A7793_CLK_SCIFA3>;
+ 		clock-names = "sci_ick";
+-		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>,
++		       <&dmac1 0x1b>, <&dmac1 0x1c>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -351,8 +355,9 @@
+ 		interrupts = <0 30 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp11_clks R8A7793_CLK_SCIFA4>;
+ 		clock-names = "sci_ick";
+-		dmas = <&dmac0 0x1f>, <&dmac0 0x20>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x1f>, <&dmac0 0x20>,
++		       <&dmac1 0x1f>, <&dmac1 0x20>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -363,8 +368,9 @@
+ 		interrupts = <0 31 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp11_clks R8A7793_CLK_SCIFA5>;
+ 		clock-names = "sci_ick";
+-		dmas = <&dmac0 0x23>, <&dmac0 0x24>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x23>, <&dmac0 0x24>,
++		       <&dmac1 0x23>, <&dmac1 0x24>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
 -- 
-1.9.1
+2.7.2
 
