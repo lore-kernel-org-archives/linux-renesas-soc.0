@@ -1,7 +1,13 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Thu, 10 Mar 2016 14:43:25 +0100
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+MIME-Version: 1.0
+In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Date: Thu, 10 Mar 2016 13:20:56 +0100
+Message-ID: <CAMuHMdXF4FMLg=Y_cZ2chjzGWAV90N=vLsCkPKGmmYx5mFY64Q@mail.gmail.com>
+Subject: Re: [PATCH 00/30] ARM: dts: r8a779[0-4]: Reference both DMA controllers
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
 Cc: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -9,67 +15,45 @@ Cc: Simon Horman <horms@verge.net.au>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	"linux-arm-kernel@lists.infradead.org"
 	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 00/30] ARM: dts: r8a779[0-4]: Reference both DMA
- controllers
-Message-ID: <20160310134325.GA1111@bigcity.dyn.berto.se>
-References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdXF4FMLg=Y_cZ2chjzGWAV90N=vLsCkPKGmmYx5mFY64Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdXF4FMLg=Y_cZ2chjzGWAV90N=vLsCkPKGmmYx5mFY64Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Hi Niklas,
 
-On 2016-03-10 13:20:56 +0100, Geert Uytterhoeven wrote:
-> Hi Niklas,
-> 
-> On Thu, Mar 10, 2016 at 12:35 PM, Niklas S�derlund
-> <niklas.soderlund+renesas@ragnatech.se> wrote:
-> > R-Car Gen2 have two DMA controllers, which are equivalent. However DMA
-> > slaves were tied only to a single DMA controller in .dtsi. This series
-> > add references to to both DMA controllers for all nodes that previously
-> > only referenced one of them. It also adds dma references to the SDHI
-> > nodes for r8a7794 which according to the datasheet should work but I
-> > have not access to HW to verify.
-> >
-> > Tested on Koelsch (r8a7791) by altering the compatible value of either
-> > dmac0 or dmac1 and verifying that the DMA slaves pick the DMA controller
-> > that is instantiated.
-> 
-> Thanks for your series!
-> 
-> If you fix the subject of patch 30:
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, Mar 10, 2016 at 12:35 PM, Niklas Söderlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> R-Car Gen2 have two DMA controllers, which are equivalent. However DMA
+> slaves were tied only to a single DMA controller in .dtsi. This series
+> add references to to both DMA controllers for all nodes that previously
+> only referenced one of them. It also adds dma references to the SDHI
+> nodes for r8a7794 which according to the datasheet should work but I
+> have not access to HW to verify.
+>
+> Tested on Koelsch (r8a7791) by altering the compatible value of either
+> dmac0 or dmac1 and verifying that the DMA slaves pick the DMA controller
+> that is instantiated.
 
-Thanks for your review and that you found my error in the subject.
+Thanks for your series!
 
-> 
-> I guess this is against v4.5-rc7? It doesn't apply against
-> renesas-devel-20160308-v4.5-rc7.
-> Unfortunately you'll have to rebase against Simon's tree, and add scif2
-> on r8a7790, and i2c[6-8] on r8a7793.
+If you fix the subject of patch 30:
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I will rebase and update the relevant patches to include the additions 
-to r8a7790 and r8a7793.
+I guess this is against v4.5-rc7? It doesn't apply against
+renesas-devel-20160308-v4.5-rc7.
+Unfortunately you'll have to rebase against Simon's tree, and add scif2
+on r8a7790, and i2c[6-8] on r8a7793.
 
-> 
-> Hint for the other reviewers: use the --color-words option of git diff/show.
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+Hint for the other reviewers: use the --color-words option of git diff/show.
 
--- 
-Regards,
-Niklas S�derlund
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
