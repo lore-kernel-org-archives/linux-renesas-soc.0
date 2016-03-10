@@ -7,9 +7,9 @@ Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
 	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 12/30] ARM: dts: r8a7791: Reference both DMA controllers in HSCIF nodes
-Date: Thu, 10 Mar 2016 12:36:04 +0100
-Message-Id: <1457609782-24108-13-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 14/30] ARM: dts: r8a7791: Reference both DMA controllers in MSIOF nodes
+Date: Thu, 10 Mar 2016 12:36:06 +0100
+Message-Id: <1457609782-24108-15-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
@@ -28,45 +28,45 @@ Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
  1 file changed, 9 insertions(+), 6 deletions(-)
 
 diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 3538bd5..004c5b7 100644
+index 3c229d5..c1751cc 100644
 --- a/arch/arm/boot/dts/r8a7791.dtsi
 +++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -758,8 +758,9 @@
- 		interrupts = <0 154 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF0>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
+@@ -1466,8 +1466,9 @@
+ 		reg = <0 0xe6e20000 0 0x0064>;
+ 		interrupts = <0 156 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7791_CLK_MSIOF0>;
+-		dmas = <&dmac0 0x51>, <&dmac0 0x52>;
 -		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
-+		       <&dmac1 0x39>, <&dmac1 0x3a>;
++		dmas = <&dmac0 0x51>, <&dmac0 0x52>,
++		       <&dmac1 0x51>, <&dmac1 0x52>;
 +		dma-names = "tx", "rx", "tx", "rx";
  		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -770,8 +771,9 @@
- 		interrupts = <0 155 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF1>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -1479,8 +1480,9 @@
+ 		reg = <0 0xe6e10000 0 0x0064>;
+ 		interrupts = <0 157 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_MSIOF1>;
+-		dmas = <&dmac0 0x55>, <&dmac0 0x56>;
 -		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
-+		       <&dmac1 0x4d>, <&dmac1 0x4e>;
++		dmas = <&dmac0 0x55>, <&dmac0 0x56>,
++		       <&dmac1 0x55>, <&dmac1 0x56>;
 +		dma-names = "tx", "rx", "tx", "rx";
  		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -782,8 +784,9 @@
- 		interrupts = <0 21 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF2>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -1492,8 +1494,9 @@
+ 		reg = <0 0xe6e00000 0 0x0064>;
+ 		interrupts = <0 158 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_MSIOF2>;
+-		dmas = <&dmac0 0x41>, <&dmac0 0x42>;
 -		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>,
-+		       <&dmac1 0x3b>, <&dmac1 0x3c>;
++		dmas = <&dmac0 0x41>, <&dmac0 0x42>,
++		       <&dmac1 0x41>, <&dmac1 0x42>;
 +		dma-names = "tx", "rx", "tx", "rx";
  		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
 2.7.2
 
