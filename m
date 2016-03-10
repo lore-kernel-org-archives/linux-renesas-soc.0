@@ -1,59 +1,72 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-Date: Thu, 10 Mar 2016 13:20:56 +0100
-Message-ID: <CAMuHMdXF4FMLg=Y_cZ2chjzGWAV90N=vLsCkPKGmmYx5mFY64Q@mail.gmail.com>
-Subject: Re: [PATCH 00/30] ARM: dts: r8a779[0-4]: Reference both DMA controllers
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
 	<niklas.soderlund+renesas@ragnatech.se>
-Cc: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+	laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 00/30] ARM: dts: r8a779[0-4]: Reference both DMA controllers
+Date: Thu, 10 Mar 2016 12:35:52 +0100
+Message-Id: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+Hi,
 
-On Thu, Mar 10, 2016 at 12:35 PM, Niklas Söderlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> R-Car Gen2 have two DMA controllers, which are equivalent. However DMA
-> slaves were tied only to a single DMA controller in .dtsi. This series
-> add references to to both DMA controllers for all nodes that previously
-> only referenced one of them. It also adds dma references to the SDHI
-> nodes for r8a7794 which according to the datasheet should work but I
-> have not access to HW to verify.
->
-> Tested on Koelsch (r8a7791) by altering the compatible value of either
-> dmac0 or dmac1 and verifying that the DMA slaves pick the DMA controller
-> that is instantiated.
+R-Car Gen2 have two DMA controllers, which are equivalent. However DMA
+slaves were tied only to a single DMA controller in .dtsi. This series
+add references to to both DMA controllers for all nodes that previously
+only referenced one of them. It also adds dma references to the SDHI
+nodes for r8a7794 which according to the datasheet should work but I
+have not access to HW to verify.
 
-Thanks for your series!
+Tested on Koelsch (r8a7791) by altering the compatible value of either
+dmac0 or dmac1 and verifying that the DMA slaves pick the DMA controller
+that is instantiated.
 
-If you fix the subject of patch 30:
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Niklas Söderlund (30):
+  ARM: dts: r8a7790: Reference both DMA controllers in SCIFA nodes
+  ARM: dts: r8a7790: Reference both DMA controllers in SCIFB nodes
+  ARM: dts: r8a7790: Reference both DMA controllers in HSCIF nodes
+  ARM: dts: r8a7790: Reference both DMA controllers in SCIF nodes
+  ARM: dts: r8a7790: Reference both DMA controllers in MSIOF nodes
+  ARM: dts: r8a7790: Reference both DMA controllers in QSPI node
+  ARM: dts: r8a7790: Reference both DMA controllers in IIC nodes
+  ARM: dts: r8a7790: Reference both DMA controllers in SDHI nodes
+  ARM: dts: r8a7790: Reference both DMA controllers in MMCIF nodes
+  ARM: dts: r8a7791: Reference both DMA controllers in SCIFA nodes
+  ARM: dts: r8a7791: Reference both DMA controllers in SCIFB nodes
+  ARM: dts: r8a7791: Reference both DMA controllers in HSCIF nodes
+  ARM: dts: r8a7791: Reference both DMA controllers in SCIF nodes
+  ARM: dts: r8a7791: Reference both DMA controllers in MSIOF nodes
+  ARM: dts: r8a7791: Reference both DMA controllers in QSPI node
+  ARM: dts: r8a7791: Reference both DMA controllers in IIC nodes
+  ARM: dts: r8a7791: Reference both DMA controllers in SDHI nodes
+  ARM: dts: r8a7791: Reference both DMA controllers in MMCIF node
+  ARM: dts: r8a7793: Reference both DMA controllers in SCIFA nodes
+  ARM: dts: r8a7793: Reference both DMA controllers in SCIFB nodes
+  ARM: dts: r8a7793: Reference both DMA controllers in HSCIF nodes
+  ARM: dts: r8a7793: Reference both DMA controllers in SCIF nodes
+  ARM: dts: r8a7793: Reference both DMA controllers in QSPI node
+  ARM: dts: r8a7794: Reference both DMA controllers in SCIFA nodes
+  ARM: dts: r8a7794: Reference both DMA controllers in SCIFB nodes
+  ARM: dts: r8a7794: Reference both DMA controllers in HSCIF nodes
+  ARM: dts: r8a7794: Reference both DMA controllers in SCIF nodes
+  ARM: dts: r8a7794: Reference both DMA controllers in QSPI node
+  ARM: dts: r8a7794: Reference both DMA controllers in SDHI nodes
+  ARM: dts: r8a7794: Reference both DMA controllers in QSPI node
 
-I guess this is against v4.5-rc7? It doesn't apply against
-renesas-devel-20160308-v4.5-rc7.
-Unfortunately you'll have to rebase against Simon's tree, and add scif2
-on r8a7790, and i2c[6-8] on r8a7793.
-
-Hint for the other reviewers: use the --color-words option of git diff/show.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+ arch/arm/boot/dts/r8a7790.dtsi | 125 +++++++++++++++++++++--------------
+ arch/arm/boot/dts/r8a7791.dtsi | 145 ++++++++++++++++++++++++-----------------
+ arch/arm/boot/dts/r8a7793.dtsi |  95 ++++++++++++++++-----------
+ arch/arm/boot/dts/r8a7794.dtsi | 109 +++++++++++++++++++------------
+ 4 files changed, 288 insertions(+), 186 deletions(-)
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
