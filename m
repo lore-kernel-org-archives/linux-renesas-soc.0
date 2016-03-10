@@ -1,16 +1,7 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1636171.nVxheqdHqq@avalon>
-References: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
-	<1457551122-21838-8-git-send-email-geert+renesas@glider.be>
-	<1636171.nVxheqdHqq@avalon>
-Date: Thu, 10 Mar 2016 09:17:40 +0100
-Message-ID: <CAMuHMdUyFy427ydtojd_4uDUuxUs0Erf-KDJR1y-dMzy3o_vgA@mail.gmail.com>
-Subject: Re: [PATCH v3 7/7] soc: renesas: Add r8a7795 SYSC PM Domain Binding Definitions
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>,
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Pawel Moll <pawel.moll@arm.com>,
@@ -20,53 +11,94 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
 	Kevin Hilman <khilman@kernel.org>,
 	Ulf Hansson <ulf.hansson@linaro.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linux PM list <linux-pm@vger.kernel.org>,
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v3 7/7] soc: renesas: Add r8a7795 SYSC PM Domain Binding Definitions
+Date: Thu, 10 Mar 2016 04:32:27 +0200
+Message-ID: <1636171.nVxheqdHqq@avalon>
+In-Reply-To: <1457551122-21838-8-git-send-email-geert+renesas@glider.be>
+References: <1457551122-21838-1-git-send-email-geert+renesas@glider.be> <1457551122-21838-8-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hi Geert,
 
-On Thu, Mar 10, 2016 at 3:32 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Wednesday 09 March 2016 20:18:42 Geert Uytterhoeven wrote:
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thank you for the patch.
 
->> --- /dev/null
->> +++ b/include/dt-bindings/power/r8a7795-sysc.h
->> @@ -0,0 +1,42 @@
+On Wednesday 09 March 2016 20:18:42 Geert Uytterhoeven wrote:
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3:
+>   - New.
+> ---
+>  include/dt-bindings/power/r8a7795-sysc.h | 42 +++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>  create mode 100644 include/dt-bindings/power/r8a7795-sysc.h
+> 
+> diff --git a/include/dt-bindings/power/r8a7795-sysc.h
+> b/include/dt-bindings/power/r8a7795-sysc.h new file mode 100644
+> index 0000000000000000..ee2e26ba605ef9a3
+> --- /dev/null
+> +++ b/include/dt-bindings/power/r8a7795-sysc.h
+> @@ -0,0 +1,42 @@
+> +/*
+> + * Copyright (C) 2016 Glider bvba
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; version 2 of the License.
+> + */
+> +#ifndef __DT_BINDINGS_POWER_R8A7795_SYSC_H__
+> +#define __DT_BINDINGS_POWER_R8A7795_SYSC_H__
+> +
+> +/*
+> + * These power domain indices match the numbers of the interrupt bits
+> + * representing the power areas in the various Interrupt Registers
+> + * (e.g. SYSCISR, Interrupt Status Register)
+> + */
+> +
+> +#define R8A7795_PD_CA57_CPU0		 0
+> +#define R8A7795_PD_CA57_CPU1		 1
+> +#define R8A7795_PD_CA57_CPU2		 2
+> +#define R8A7795_PD_CA57_CPU3		 3
+> +#define R8A7795_PD_CA53_CPU0		 5
+> +#define R8A7795_PD_CA53_CPU1		 6
+> +#define R8A7795_PD_CA53_CPU2		 7
+> +#define R8A7795_PD_CA53_CPU3		 8
+> +#define R8A7795_PD_A3VP			 9
+> +#define R8A7795_PD_CA57_SCU		12
+> +#define R8A7795_PD_CR7			13
+> +#define R8A7795_PD_A3VC			14
+> +#define R8A7795_PD_3DG_A		17
+> +#define R8A7795_PD_3DG_B		18
+> +#define R8A7795_PD_3DG_C		19
+> +#define R8A7795_PD_3DG_D		20
+> +#define R8A7795_PD_CA53_SCU		21
+> +#define R8A7795_PD_3DG_E		22
+> +#define R8A7795_PD_A3IR			24
+> +#define R8A7795_PD_A2VC0		25
+> +#define R8A7795_PD_A2VC1		26
+> +
+> +/* Always-on power area */
+> +#define R8A7795_PD_ALWAYS_ON		32
 
->> +/* Always-on power area */
->> +#define R8A7795_PD_ALWAYS_ON         32
->
-> Shouldn't we also define the always-on power domain for the other SoCs
-> (patches 2/7 to 6/7 in this series) ? I know they're already covered by the
-> cpg power domain, but going forward I believe that standardizing on the SYSC
-> power domains would be beneficial. We of course have to keep backward
-> compatibility in the implementation.
+Shouldn't we also define the always-on power domain for the other SoCs 
+(patches 2/7 to 6/7 in this series) ? I know they're already covered by the 
+cpg power domain, but going forward I believe that standardizing on the SYSC 
+power domains would be beneficial. We of course have to keep backward 
+compatibility in the implementation.
 
-Yes, that's the plan. I didn't want to make that change now, as someone
-may object against the always-on power domain. On r8a7795 it feels more
-natural, as it also has I/O devices in SYSC power areas, unlike R-Car Gen2
-and H1.
+This isn't an issue for this patch, so
 
-Note that it also complicates the rcar-sysc core driver: it has to choose
-between the cpg_mssr_*() or cpg_mstp_*() callbacks, depending on SoC, and also
-depending on DTS if we migrate the older SoCs to CPG/MSSR and want to
-maintain backwards-compatibility.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Time to finish the "renesas,apmu" enable-method work, and celebrate one big
-flag day for all the new DT evolutions?
+> +#endif /* __DT_BINDINGS_POWER_R8A7795_SYSC_H__ */
 
-Gr{oetje,eeting}s,
+-- 
+Regards,
 
-                        Geert
+Laurent Pinchart
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
