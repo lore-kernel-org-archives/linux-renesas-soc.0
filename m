@@ -1,12 +1,11 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVy1eY1t55NSmdkJ=haFEPYWoTReecOOK-63XaJj6ztew@mail.gmail.com>
+In-Reply-To: <9850717.l0t66FzFha@avalon>
 References: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
 	<1457551122-21838-4-git-send-email-geert+renesas@glider.be>
 	<9850717.l0t66FzFha@avalon>
-	<CAMuHMdVy1eY1t55NSmdkJ=haFEPYWoTReecOOK-63XaJj6ztew@mail.gmail.com>
-Date: Thu, 24 Mar 2016 16:35:30 +0100
-Message-ID: <CAMuHMdX_Aw=HqJHEpyPdg3qBpReTA0jLk60BGhhdiF=Bf5JV1w@mail.gmail.com>
+Date: Thu, 10 Mar 2016 09:26:34 +0100
+Message-ID: <CAMuHMdVy1eY1t55NSmdkJ=haFEPYWoTReecOOK-63XaJj6ztew@mail.gmail.com>
 Subject: Re: [PATCH v3 3/7] soc: renesas: Add r8a7790 SYSC PM Domain Binding Definitions
 From: Geert Uytterhoeven <geert@linux-m68k.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
@@ -28,13 +27,30 @@ Content-Type: text/plain; charset=UTF-8
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Mar 10, 2016 at 9:26 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->>> +#define R8A7790_PD_IMP                       24
->
-> Then this has to become R8A7790_PD_IMP_X4.
+Hi Laurent,
 
-Actually this bit is called IMP, so I'll keep it.
+On Thu, Mar 10, 2016 at 7:57 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>> --- /dev/null
+>> +++ b/include/dt-bindings/power/r8a7790-sysc.h
+>> @@ -0,0 +1,31 @@
+
+>> +#define R8A7790_PD_SH                        16
+>
+> The power domain is called SH-4A in the datasheet, how about naming it
+> R8A7790_PD_SH_4A ?
+
+Thanks, wlll update (for all SoCs).
+
+> Apart from that,
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+>> +#define R8A7790_PD_RGX                       20
+>> +#define R8A7790_PD_CA7_SCU           21
+>> +#define R8A7790_PD_IMP                       24
+
+Then this has to become R8A7790_PD_IMP_X4.
 
 Gr{oetje,eeting}s,
 
