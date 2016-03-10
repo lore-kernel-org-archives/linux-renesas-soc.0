@@ -7,9 +7,9 @@ Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
 	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 30/30] ARM: dts: r8a7794: Reference both DMA controllers in QSPI node
-Date: Thu, 10 Mar 2016 12:36:22 +0100
-Message-Id: <1457609782-24108-31-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 28/30] ARM: dts: r8a7794: Reference both DMA controllers in QSPI node
+Date: Thu, 10 Mar 2016 12:36:20 +0100
+Message-Id: <1457609782-24108-29-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
@@ -28,21 +28,21 @@ Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
  1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 76709ff..e098eab 100644
+index 325ba88..23617a0 100644
 --- a/arch/arm/boot/dts/r8a7794.dtsi
 +++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -605,8 +605,9 @@
- 		reg = <0 0xee200000 0 0x80>;
- 		interrupts = <0 169 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_MMCIF0>;
--		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>;
+@@ -644,8 +644,9 @@
+ 		reg = <0 0xe6b10000 0 0x2c>;
+ 		interrupts = <0 184 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7794_CLK_QSPI_MOD>;
+-		dmas = <&dmac0 0x17>, <&dmac0 0x18>;
 -		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
-+		       <&dmac1 0xd1>, <&dmac1 0xd2>;
++		dmas = <&dmac0 0x17>, <&dmac0 0x18>,
++		       <&dmac1 0x17>, <&dmac1 0x18>;
 +		dma-names = "tx", "rx", "tx", "rx";
  		power-domains = <&cpg_clocks>;
- 		reg-io-width = <4>;
- 		status = "disabled";
+ 		num-cs = <1>;
+ 		#address-cells = <1>;
 -- 
 2.7.2
 
