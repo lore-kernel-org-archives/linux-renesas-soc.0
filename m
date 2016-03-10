@@ -1,9 +1,18 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Thu, 17 Mar 2016 14:17:07 -0500
-From: Rob Herring <robh@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
+MIME-Version: 1.0
+In-Reply-To: <5264125.Rrtl9KtOQy@avalon>
+References: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
+	<1457551122-21838-2-git-send-email-geert+renesas@glider.be>
+	<5264125.Rrtl9KtOQy@avalon>
+Date: Thu, 10 Mar 2016 09:21:19 +0100
+Message-ID: <CAMuHMdWYPYHwn3GgPvqqXkJg0+8wGOxkcbEhMyx5thGsnU3D6A@mail.gmail.com>
+Subject: Re: [PATCH v3 1/7] PM / Domains: Add DT bindings for the R-Car System Controller
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
 	Pawel Moll <pawel.moll@arm.com>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Ian Campbell <ijc+devicetree@hellion.org.uk>,
@@ -11,44 +20,48 @@ Cc: Simon Horman <horms+renesas@verge.net.au>,
 	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
 	Kevin Hilman <khilman@kernel.org>,
 	Ulf Hansson <ulf.hansson@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux PM list <linux-pm@vger.kernel.org>,
 	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] PM / Domains: Add DT bindings for the R-Car
- System Controller
-Message-ID: <20160317191707.GA2713@rob-hp-laptop>
-References: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
- <1457551122-21838-2-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1457551122-21838-2-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Mar 09, 2016 at 08:18:36PM +0100, Geert Uytterhoeven wrote:
-> The Renesas R-Car System Controller provides power management for the
-> CPU cores and various coprocessors, following the generic PM domain
-> bindings in Documentation/devicetree/bindings/power/power_domain.txt.
-> 
-> This supports R-Car Gen1 (H1), Gen2, and Gen3.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v3:
->   - Move power area hierarchy from DT to C (cfr. DT bindings for Renesas
->     CPG/MSSR), and switch to "#power-domain-cells = <1>",
->   - Drop fallback compatibility strings, as the bindings are
->     SoC-specific,
->   - Rename from renesas,sysc-rcar.txt to renesas,rcar-sysc.txt,
-> 
-> v2:
->   - Add R-Car H3 (r8a7795) support,
->   - Use "renesas,<type>-sysc" instead of "renesas,sysc-<type>",
->   - Add fallback compatibility strings for R-Car Gen2 and Gen3.
-> ---
->  .../bindings/power/renesas,rcar-sysc.txt           | 48 ++++++++++++++++++++++
->  1 file changed, 48 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+On Thu, Mar 10, 2016 at 3:24 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Wednesday 09 March 2016 20:18:36 Geert Uytterhoeven wrote:
+>> The Renesas R-Car System Controller provides power management for the
+>> CPU cores and various coprocessors, following the generic PM domain
+>> bindings in Documentation/devicetree/bindings/power/power_domain.txt.
+>>
+>> This supports R-Car Gen1 (H1), Gen2, and Gen3.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Acked-by: Rob Herring <robh@kernel.org>
+>> +++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+>> @@ -0,0 +1,48 @@
+>> +DT bindings for the Renesas R-Car System Controller
+>> +
+>> +== System Controller Node ==
+>> +
+>> +The R-Car System Controller provides power management for the CPU cores and
+>> +various coprocessors.
+>> +
+>> +Required properties:
+>> +  - compatible: Must contain one or more of the following:
+>
+> I'd be curious to see a use case for specifying more than one ;-) I think you
+> can phrase it as "Must contain exactly one of the following".
+
+Thanks, that was a leftover of the previous version. Will fix.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
