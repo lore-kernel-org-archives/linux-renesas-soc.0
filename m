@@ -1,100 +1,108 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: mkl@pengutronix.de, wg@grandegger.com, socketcan@hartkopp.net,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+	laurent.pinchart@ideasonboard.com
 Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	chris.paterson2@renesas.com,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH 2/2] can: rcar_can: Move Renesas CAN driver to rcar dir
-Date: Mon, 21 Mar 2016 16:45:56 +0000
-Message-Id: <1458578756-42898-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1458578756-42898-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1458035294-8150-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <1458578756-42898-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+	linux-arm-kernel@lists.infradead.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 10/30] ARM: dts: r8a7791: Reference both DMA controllers in SCIFA nodes
+Date: Thu, 10 Mar 2016 12:36:02 +0100
+Message-Id: <1457609782-24108-11-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch clubs the Renesas controller drivers in one rcar dir.
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/net/can/Kconfig               | 10 ----------
- drivers/net/can/Makefile              |  1 -
- drivers/net/can/rcar/Kconfig          | 10 ++++++++++
- drivers/net/can/rcar/Makefile         |  3 ++-
- drivers/net/can/{ => rcar}/rcar_can.c |  0
- 5 files changed, 12 insertions(+), 12 deletions(-)
- rename drivers/net/can/{ => rcar}/rcar_can.c (100%)
+ arch/arm/boot/dts/r8a7791.dtsi | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/can/Kconfig b/drivers/net/can/Kconfig
-index 13003a9..22570ea 100644
---- a/drivers/net/can/Kconfig
-+++ b/drivers/net/can/Kconfig
-@@ -104,16 +104,6 @@ config CAN_JANZ_ICAN3
- 	  This driver can also be built as a module. If so, the module will be
- 	  called janz-ican3.ko.
- 
--config CAN_RCAR
--	tristate "Renesas R-Car CAN controller"
--	depends on ARCH_RENESAS || ARM
--	---help---
--	  Say Y here if you want to use CAN controller found on Renesas R-Car
--	  SoCs.
--
--	  To compile this driver as a module, choose M here: the module will
--	  be called rcar_can.
--
- config CAN_SUN4I
- 	tristate "Allwinner A10 CAN controller"
- 	depends on MACH_SUN4I || MACH_SUN7I || COMPILE_TEST
-diff --git a/drivers/net/can/Makefile b/drivers/net/can/Makefile
-index 226d5b5..26ba4b7 100644
---- a/drivers/net/can/Makefile
-+++ b/drivers/net/can/Makefile
-@@ -25,7 +25,6 @@ obj-$(CONFIG_CAN_IFI_CANFD)	+= ifi_canfd/
- obj-$(CONFIG_CAN_JANZ_ICAN3)	+= janz-ican3.o
- obj-$(CONFIG_CAN_MSCAN)		+= mscan/
- obj-$(CONFIG_CAN_M_CAN)		+= m_can/
--obj-$(CONFIG_CAN_RCAR)		+= rcar_can.o
- obj-$(CONFIG_CAN_SJA1000)	+= sja1000/
- obj-$(CONFIG_CAN_SUN4I)		+= sun4i_can.o
- obj-$(CONFIG_CAN_TI_HECC)	+= ti_hecc.o
-diff --git a/drivers/net/can/rcar/Kconfig b/drivers/net/can/rcar/Kconfig
-index 6ea64d1..7b03a3a 100644
---- a/drivers/net/can/rcar/Kconfig
-+++ b/drivers/net/can/rcar/Kconfig
-@@ -1,3 +1,13 @@
-+config CAN_RCAR
-+	tristate "Renesas R-Car CAN controller"
-+	depends on ARCH_RENESAS || ARM
-+	---help---
-+	  Say Y here if you want to use CAN controller found on Renesas R-Car
-+	  SoCs.
-+
-+	  To compile this driver as a module, choose M here: the module will
-+	  be called rcar_can.
-+
- config CAN_RCAR_CANFD
- 	tristate "Renesas R-Car CAN FD controller"
- 	depends on ARCH_RENESAS || ARM
-diff --git a/drivers/net/can/rcar/Makefile b/drivers/net/can/rcar/Makefile
-index cbaf498e..08de36a 100644
---- a/drivers/net/can/rcar/Makefile
-+++ b/drivers/net/can/rcar/Makefile
-@@ -1,5 +1,6 @@
- #
--#  Makefile for the Renesas R-Car CAN FD controller driver
-+#  Makefile for the Renesas R-Car CAN & CAN FD controller drivers
- #
- 
-+obj-$(CONFIG_CAN_RCAR)		+= rcar_can.o
- obj-$(CONFIG_CAN_RCAR_CANFD)	+= rcar_canfd.o
-diff --git a/drivers/net/can/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
-similarity index 100%
-rename from drivers/net/can/rcar_can.c
-rename to drivers/net/can/rcar/rcar_can.c
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 2a369dd..db5d6a5 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -569,8 +569,9 @@
+ 		interrupts = <0 144 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA0>;
+ 		clock-names = "sci_ick";
+-		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x21>, <&dmac0 0x22>,
++		       <&dmac1 0x21>, <&dmac1 0x22>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -581,8 +582,9 @@
+ 		interrupts = <0 145 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA1>;
+ 		clock-names = "sci_ick";
+-		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x25>, <&dmac0 0x26>,
++		       <&dmac1 0x25>, <&dmac1 0x26>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -593,8 +595,9 @@
+ 		interrupts = <0 151 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA2>;
+ 		clock-names = "sci_ick";
+-		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x27>, <&dmac0 0x28>,
++		       <&dmac1 0x27>, <&dmac1 0x28>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -605,8 +608,9 @@
+ 		interrupts = <0 29 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA3>;
+ 		clock-names = "sci_ick";
+-		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>,
++		       <&dmac1 0x1b>, <&dmac1 0x1c>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -617,8 +621,9 @@
+ 		interrupts = <0 30 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA4>;
+ 		clock-names = "sci_ick";
+-		dmas = <&dmac0 0x1f>, <&dmac0 0x20>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x1f>, <&dmac0 0x20>,
++		       <&dmac1 0x1f>, <&dmac1 0x20>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -629,8 +634,9 @@
+ 		interrupts = <0 31 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA5>;
+ 		clock-names = "sci_ick";
+-		dmas = <&dmac0 0x23>, <&dmac0 0x24>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x23>, <&dmac0 0x24>,
++		       <&dmac1 0x23>, <&dmac1 0x24>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
 -- 
-1.9.1
+2.7.2
 
