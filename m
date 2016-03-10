@@ -1,12 +1,11 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUHZEGyGcb259-2mAW-g+Oy-eY2k_bFV=pnFrMgTRWJgw@mail.gmail.com>
+In-Reply-To: <2151958.o58rGSd9YV@avalon>
 References: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
 	<1457551122-21838-6-git-send-email-geert+renesas@glider.be>
 	<2151958.o58rGSd9YV@avalon>
-	<CAMuHMdUHZEGyGcb259-2mAW-g+Oy-eY2k_bFV=pnFrMgTRWJgw@mail.gmail.com>
-Date: Thu, 24 Mar 2016 17:09:18 +0100
-Message-ID: <CAMuHMdX5dxJYNTGK31Umb_ZdAcJDf4nkVUcK=stQ-1-B-hZg7Q@mail.gmail.com>
+Date: Thu, 10 Mar 2016 09:09:04 +0100
+Message-ID: <CAMuHMdUHZEGyGcb259-2mAW-g+Oy-eY2k_bFV=pnFrMgTRWJgw@mail.gmail.com>
 Subject: Re: [PATCH v3 5/7] soc: renesas: Add r8a7793 SYSC PM Domain Binding Definitions
 From: Geert Uytterhoeven <geert@linux-m68k.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
@@ -28,55 +27,52 @@ Content-Type: text/plain; charset=UTF-8
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Mar 10, 2016 at 9:09 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Thu, Mar 10, 2016 at 7:59 AM, Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
->> On Wednesday 09 March 2016 20:18:40 Geert Uytterhoeven wrote:
->>> R-Car M2-N is identical to R-Car M2-W w.r.t. power domains, so reuse the
->>> definitions from the latter.
->>>
->>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
->>> --- /dev/null
->>> +++ b/include/dt-bindings/power/r8a7793-sysc.h
->>> @@ -0,0 +1,27 @@
->>> +/*
->>> + * Copyright (C) 2016 Glider bvba
->>> + *
->>> + * This program is free software; you can redistribute it and/or modify
->>> + * it under the terms of the GNU General Public License as published by
->>> + * the Free Software Foundation; version 2 of the License.
->>> + */
->>> +#ifndef __DT_BINDINGS_POWER_R8A7793_SYSC_H__
->>> +#define __DT_BINDINGS_POWER_R8A7793_SYSC_H__
->>> +
->>> +/*
->>> + * These power domain indices match the numbers of the interrupt bits
->>> + * representing the power areas in the various Interrupt Registers
->>> + * (e.g. SYSCISR, Interrupt Status Register)
->>> + *
->>> + * R-Car M2-N is identical to R-Car M2-W w.r.t. power domains.
->>> + */
->>> +
->>> +#include "r8a7791-sysc.h"
->>> +
->>> +#define R8A7793_PD_CA15_CPU0         R8A7791_PD_CA15_CPU0
->>> +#define R8A7793_PD_CA15_CPU1         R8A7791_PD_CA15_CPU1
->>> +#define R8A7793_PD_CA15_SCU          R8A7791_PD_CA15_SCU
->>> +#define R8A7793_PD_SH                        R8A7791_PD_SH
->>> +#define R8A7793_PD_SGX                       R8A7791_PD_SGX
->>
->> I would use numbers directly without including r8a7791-sysc.h, it would save
->> going through yet another file when looking for the numerical value.
->
-> My main motivation of doing it this way is that r8a7791-sysc.c is also used
-> on r8a7793, and thus uses the R8A7791_PD_* values directly.
->
-> But if you prefer it this way, I can make that change.
+Hi Laurent,
 
-Upon second thought, I'll follow Laurent's advice, as it makes r8a7793-sysc.h
-self-contained.
+On Thu, Mar 10, 2016 at 7:59 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Wednesday 09 March 2016 20:18:40 Geert Uytterhoeven wrote:
+>> R-Car M2-N is identical to R-Car M2-W w.r.t. power domains, so reuse the
+>> definitions from the latter.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+>> --- /dev/null
+>> +++ b/include/dt-bindings/power/r8a7793-sysc.h
+>> @@ -0,0 +1,27 @@
+>> +/*
+>> + * Copyright (C) 2016 Glider bvba
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by
+>> + * the Free Software Foundation; version 2 of the License.
+>> + */
+>> +#ifndef __DT_BINDINGS_POWER_R8A7793_SYSC_H__
+>> +#define __DT_BINDINGS_POWER_R8A7793_SYSC_H__
+>> +
+>> +/*
+>> + * These power domain indices match the numbers of the interrupt bits
+>> + * representing the power areas in the various Interrupt Registers
+>> + * (e.g. SYSCISR, Interrupt Status Register)
+>> + *
+>> + * R-Car M2-N is identical to R-Car M2-W w.r.t. power domains.
+>> + */
+>> +
+>> +#include "r8a7791-sysc.h"
+>> +
+>> +#define R8A7793_PD_CA15_CPU0         R8A7791_PD_CA15_CPU0
+>> +#define R8A7793_PD_CA15_CPU1         R8A7791_PD_CA15_CPU1
+>> +#define R8A7793_PD_CA15_SCU          R8A7791_PD_CA15_SCU
+>> +#define R8A7793_PD_SH                        R8A7791_PD_SH
+>> +#define R8A7793_PD_SGX                       R8A7791_PD_SGX
+>
+> I would use numbers directly without including r8a7791-sysc.h, it would save
+> going through yet another file when looking for the numerical value.
+
+My main motivation of doing it this way is that r8a7791-sysc.c is also used
+on r8a7793, and thus uses the R8A7791_PD_* values directly.
+
+But if you prefer it this way, I can make that change.
 
 Gr{oetje,eeting}s,
 
