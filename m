@@ -1,76 +1,70 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/2] phy: rcar-gen2: add fallback binding
-Date: Wed,  2 Mar 2016 11:37:16 +0900
-Message-Id: <1456886237-29936-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1456886237-29936-1-git-send-email-horms+renesas@verge.net.au>
-References: <1456886237-29936-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-kernel-owner@vger.kernel.org
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux PM list <linux-pm@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 7/7] soc: renesas: Add r8a7795 SYSC PM Domain Binding Definitions
+Date: Thu, 10 Mar 2016 10:54:21 +0200
+Message-ID: <1579605.LMd6ZIAa80@avalon>
+In-Reply-To: <CAMuHMdUyFy427ydtojd_4uDUuxUs0Erf-KDJR1y-dMzy3o_vgA@mail.gmail.com>
+References: <1457551122-21838-1-git-send-email-geert+renesas@glider.be> <1636171.nVxheqdHqq@avalon> <CAMuHMdUyFy427ydtojd_4uDUuxUs0Erf-KDJR1y-dMzy3o_vgA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, e.g. Gen 2 and Gen 3. But beyond that its not clear what the
-relationship between IP blocks might be. For example, I believe that
-r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
-descendant of the former or vice versa.
+Hi Geert,
 
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
+On Thursday 10 March 2016 09:17:40 Geert Uytterhoeven wrote:
+> On Thu, Mar 10, 2016 at 3:32 AM, Laurent Pinchart wrote:
+> > On Wednesday 09 March 2016 20:18:42 Geert Uytterhoeven wrote:
+> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> 
+> >> --- /dev/null
+> >> +++ b/include/dt-bindings/power/r8a7795-sysc.h
+> >> @@ -0,0 +1,42 @@
+> >> 
+> >> +/* Always-on power area */
+> >> +#define R8A7795_PD_ALWAYS_ON         32
+> > 
+> > Shouldn't we also define the always-on power domain for the other SoCs
+> > (patches 2/7 to 6/7 in this series) ? I know they're already covered by
+> > the cpg power domain, but going forward I believe that standardizing on
+> > the SYSC power domains would be beneficial. We of course have to keep
+> > backward compatibility in the implementation.
+> 
+> Yes, that's the plan. I didn't want to make that change now, as someone
+> may object against the always-on power domain. On r8a7795 it feels more
+> natural, as it also has I/O devices in SYSC power areas, unlike R-Car Gen2
+> and H1.
 
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme being adopted for
-drivers for Renesas SoCs.
+That's fine with me.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt | 8 +++++++-
- drivers/phy/phy-rcar-gen2.c                             | 1 +
- 2 files changed, 8 insertions(+), 1 deletion(-)
+> Note that it also complicates the rcar-sysc core driver: it has to choose
+> between the cpg_mssr_*() or cpg_mstp_*() callbacks, depending on SoC, and
+> also depending on DTS if we migrate the older SoCs to CPG/MSSR and want to
+> maintain backwards-compatibility.
+> 
+> Time to finish the "renesas,apmu" enable-method work, and celebrate one big
+> flag day for all the new DT evolutions?
 
-diff --git a/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt b/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
-index d564ba4f1cf6..f1102ee464fb 100644
---- a/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt
-@@ -7,6 +7,12 @@ Required properties:
- - compatible: "renesas,usb-phy-r8a7790" if the device is a part of R8A7790 SoC.
- 	      "renesas,usb-phy-r8a7791" if the device is a part of R8A7791 SoC.
- 	      "renesas,usb-phy-r8a7794" if the device is a part of R8A7794 SoC.
-+	      "renesas,usb-phy-gen2" for a generic R-Car Gen2 compatible device.
-+
-+	      When compatible with the generic version, nodes must list the
-+	      SoC-specific version corresponding to the platform first
-+	      followed by the generic version.
-+
- - reg: offset and length of the register block.
- - #address-cells: number of address cells for the USB channel subnodes, must
- 		  be <1>.
-@@ -34,7 +40,7 @@ the USB channel; see the selector meanings below:
- Example (Lager board):
- 
- 	usb-phy@e6590100 {
--		compatible = "renesas,usb-phy-r8a7790";
-+		compatible = "renesas,usb-phy-r8a7790","renesas,usb-phy-gen2";
- 		reg = <0 0xe6590100 0 0x100>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-diff --git a/drivers/phy/phy-rcar-gen2.c b/drivers/phy/phy-rcar-gen2.c
-index c7a05996d5c1..e10d326d51e7 100644
---- a/drivers/phy/phy-rcar-gen2.c
-+++ b/drivers/phy/phy-rcar-gen2.c
-@@ -195,6 +195,7 @@ static const struct of_device_id rcar_gen2_phy_match_table[] = {
- 	{ .compatible = "renesas,usb-phy-r8a7790" },
- 	{ .compatible = "renesas,usb-phy-r8a7791" },
- 	{ .compatible = "renesas,usb-phy-r8a7794" },
-+	{ .compatible = "renesas,usb-phy-gen2" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rcar_gen2_phy_match_table);
+I'll bring champagne ;-)
+
 -- 
-2.1.4
+Regards,
+
+Laurent Pinchart
+
