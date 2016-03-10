@@ -1,65 +1,84 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: David Airlie <airlied@linux.ie>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+	laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: rcar-du: clarify vsp dependency
-Date: Tue, 01 Mar 2016 23:15:03 +0200
-Message-ID: <1889313.6DCL1oqnHh@avalon>
-In-Reply-To: <1456487546-3886345-1-git-send-email-arnd@arndb.de>
-References: <1456487546-3886345-1-git-send-email-arnd@arndb.de>
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 05/30] ARM: dts: r8a7790: Reference both DMA controllers in MSIOF nodes
+Date: Thu, 10 Mar 2016 12:35:57 +0100
+Message-Id: <1457609782-24108-6-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Arnd,
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
 
-Thank you for the patch.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-On Friday 26 February 2016 12:52:20 Arnd Bergmann wrote:
-> The VSP1 compositor code in DRM links against the respective V4L
-> driver, but the dependency is not expressed correctly in Kconfig,
-> which leads to a build error when the DRM driver is built-in
-> and the V4L driver is a module:
-> 
-> drivers/gpu/built-in.o: In function `rcar_du_vsp_plane_atomic_update':
-> rcar-du/rcar_du_vsp.c:183: undefined reference to `vsp1_du_atomic_update'
-> 
-> This patch avoids the problem by ensuring that the DRM VSP code can
-> only be enabled if the V4L driver is linked into the kernel, or
-> both are loadable modules.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: 6d62ef3ac30b ("drm: rcar-du: Expose the VSP1 compositor through KMS
-> planes")
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-Dave, could you please queue this for v4.6 ?
-
-> ---
->  drivers/gpu/drm/rcar-du/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/Kconfig
-> b/drivers/gpu/drm/rcar-du/Kconfig index 1f10fa0928b4..eb1e6d5cfed9 100644
-> --- a/drivers/gpu/drm/rcar-du/Kconfig
-> +++ b/drivers/gpu/drm/rcar-du/Kconfig
-> @@ -27,6 +27,6 @@ config DRM_RCAR_LVDS
->  config DRM_RCAR_VSP
->  	bool "R-Car DU VSP Compositor Support"
->  	depends on DRM_RCAR_DU
-> -	depends on VIDEO_RENESAS_VSP1
-> +	depends on VIDEO_RENESAS_VSP1=y || (VIDEO_RENESAS_VSP1 && DRM_RCAR_DU=m)
->  	help
->  	  Enable support to expose the R-Car VSP Compositor as KMS planes.
-
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 164bad25..2105f57 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1427,8 +1427,9 @@
+ 		reg = <0 0xe6e20000 0 0x0064>;
+ 		interrupts = <0 156 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7790_CLK_MSIOF0>;
+-		dmas = <&dmac0 0x51>, <&dmac0 0x52>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x51>, <&dmac0 0x52>,
++		       <&dmac1 0x51>, <&dmac1 0x52>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -1440,8 +1441,9 @@
+ 		reg = <0 0xe6e10000 0 0x0064>;
+ 		interrupts = <0 157 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7790_CLK_MSIOF1>;
+-		dmas = <&dmac0 0x55>, <&dmac0 0x56>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x55>, <&dmac0 0x56>,
++		       <&dmac1 0x55>, <&dmac1 0x56>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -1453,8 +1455,9 @@
+ 		reg = <0 0xe6e00000 0 0x0064>;
+ 		interrupts = <0 158 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7790_CLK_MSIOF2>;
+-		dmas = <&dmac0 0x41>, <&dmac0 0x42>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x41>, <&dmac0 0x42>,
++		       <&dmac1 0x41>, <&dmac1 0x42>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -1466,8 +1469,9 @@
+ 		reg = <0 0xe6c90000 0 0x0064>;
+ 		interrupts = <0 159 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7790_CLK_MSIOF3>;
+-		dmas = <&dmac0 0x45>, <&dmac0 0x46>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x45>, <&dmac0 0x46>,
++		       <&dmac1 0x45>, <&dmac1 0x46>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
-Regards,
+2.7.2
 
-Laurent Pinchart
