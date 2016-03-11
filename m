@@ -1,6 +1,6 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH v2] can: rcar_canfd: Add Renesas R-Car CAN FD driver
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: Oliver Hartkopp <socketcan@hartkopp.net>,
 	Marc Kleine-Budde <mkl@pengutronix.de>,
 	"wg@grandegger.com" <wg@grandegger.com>,
 	"robh+dt@kernel.org" <robh+dt@kernel.org>,
@@ -9,6 +9,17 @@ To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
 	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
 	"galak@codeaurora.org" <galak@codeaurora.org>,
 	"corbet@lwn.net" <corbet@lwn.net>
+CC: "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>,
+	Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: RE: [PATCH v2] can: rcar_canfd: Add Renesas R-Car CAN FD driver
+Date: Fri, 11 Mar 2016 07:14:43 +0000
+Message-ID: <KL1PR06MB10315B45ADA2037A5AA85A56C3B50@KL1PR06MB1031.apcprd06.prod.outlook.com>
 References: <1456824849-7987-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
  <1457019515-21158-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
  <56DC1561.9060306@hartkopp.net>
@@ -20,43 +31,37 @@ References: <1456824849-7987-1-git-send-email-ramesh.shanmugasundaram@bp.renesas
  <56DEC49D.4@hartkopp.net>
  <SG2PR06MB10388F87746A1191E51B199FC3B20@SG2PR06MB1038.apcprd06.prod.outlook.com>
  <56DF0900.6090906@hartkopp.net>
- <KL1PR06MB10315B45ADA2037A5AA85A56C3B50@KL1PR06MB1031.apcprd06.prod.outlook.com>
-Cc: "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>,
-	Chris Paterson <Chris.Paterson2@renesas.com>
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-Message-ID: <56E464B2.5050303@hartkopp.net>
-Date: Sat, 12 Mar 2016 19:49:22 +0100
+In-Reply-To: <56DF0900.6090906@hartkopp.net>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <KL1PR06MB10315B45ADA2037A5AA85A56C3B50@KL1PR06MB1031.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ramesh,
-
-On 03/11/2016 08:14 AM, Ramesh Shanmugasundaram wrote:
-
-> As we are fixing this issue in CAN dev.c, I'll remove this check in ndo_open and set CAN_CTRLMODE_FD flag in ctrlmode & remove the flag in ctrlmode_supported in the next v3 version of the patch.
-
-I posted a V2 version of that fix some minutes ago.
-It also adds some documentation and a new variable ctrlmode_static which 
-makes it clear how to specify static/fixed control modes.
-
-Please use the new can_set_static_ctrlmode() helper as suggested in the 
-changes for m_can.c.
-
-A feedback is welcome whether this new fix fits your expectations.
-
-> Are there any further comments on v2 patch please?
-
-Besides the stuff I wrote above: No :-)
-
-Best regards,
-Oliver
+SGkgT2xpdmVyLCBNYXJjLA0KDQo+IE9uIDAzLzA4LzIwMTYgMDE6NDggUE0sIFJhbWVzaCBTaGFu
+bXVnYXN1bmRhcmFtIHdyb3RlOg0KPiANCj4gPj4gSW4gZmFjdCB5b3UgcHJvdmlkZWQgYSBDQU4g
+ZHJpdmVyIHdoaWNoIGlzICJDQU4tRkQtb25seSIuDQo+ID4NCj4gPiBZZXMuIFRoYXQncyB0aGUg
+c3RhdHVzIG9mIGN1cnJlbnQgc3VibWlzc2lvbi4NCg0KKC4uLikNCg0KPiA+DQo+ID4gSSBkaWQg
+dHJ5IHRoaXMgb3B0aW9uIGVhcmxpZXIgYnV0IHRoZXJlIGFyZSB0d28gcHJvYmxlbXMgd2l0aCB0
+aGlzDQo+IG1ldGhvZC4NCj4gPg0KPiA+IDEpIEJlbG93IGNvbmZpZ3VyYXRpb24gaXMgbm90IHBv
+c3NpYmxlDQo+ID4NCj4gPiBpcCBsaW5rIHNldCBjYW4wIHVwIHR5cGUgY2FuIGJpdHJhdGUgMTAw
+MDAwMCBkYml0cmF0ZSAxMDAwMDAwIGZkIG9uDQo+ID4NCj4gPiAiZmQgb24iIC0+IFRoaXMgaXMg
+bm90IGFsbG93ZWQgYmVjYXVzZSBDQU5fQ1RSTE1PREVfRkQgYml0IGlzIG5vdCBzZXQgaW4NCj4g
+Y3RybG1vZGVfc3VwcG9ydGVkLg0KPiA+DQo+ID4gMikgSWYgSSBpZ25vcmUgImZkIG9uIiwgbXkg
+aW50ZXJmYWNlIE1UVSBzdGF5cyBhcyBDQU5fTVRVIG9ubHkuIElmIEkNCj4gaGF2ZSB0byBjaGFu
+Z2UgdGhlIE1UVSBhbG9uZSB0byBDQU5GRF9NVFUgdXNpbmcgYW5vdGhlciBuZXRsaW5rIG1lc3Nh
+Z2UsDQo+IGl0IGFnYWluIGNoZWNrcyBjdHJsbW9kZV9zdXBwb3J0ZWQgd2hlcmUgaXQgd291bGQg
+ZmFpbC4gSSBoYXZlIHRoZSBvcHRpb24NCj4gb2YgcHJvdmlkaW5nIG15IG93biBjaGFuZ2VfbXR1
+IGZ1bmN0aW9uICYgaWdub3JlIHRoaXMgY2hlY2sgYnV0IHR3bw0KPiBjb25maWd1cmF0aW9uIG1l
+c3NhZ2VzIGFyZSByZXF1aXJlZCBmb3IgbXkgZHJpdmVyIGFsb25lIDotKC4NCj4gPg0KPiA+IEJv
+dGggdGhlc2UgYW5vbWFsaWVzIGFyZSBhZGRyZXNzZWQgd2l0aCB0aGUgY3VycmVudCBjaGVjayBJ
+IGhhdmUuDQo+IA0KPiBPaCAtIHlvdSBhcmUgcmlnaHQgd2l0aCBjb21wbGFpbmluZyBhYm91dCB0
+aGlzIGluY29uc2lzdGVuY3kuDQo+IA0KPiBDYW4geW91IGNoZWNrIG15IFJGQyBwYXRjaCBmb3Ig
+TGludXggc3RhYmxlIEkganVzdCBzZW50IG9uIHRoZSBtYWlsaW5nDQo+IGxpc3Q/DQo+IGh0dHA6
+Ly9tYXJjLmluZm8vP2w9bGludXgtY2FuJm09MTQ1NzQ1NzI0OTE3OTc2Jnc9Mg0KDQpBcyB3ZSBh
+cmUgZml4aW5nIHRoaXMgaXNzdWUgaW4gQ0FOIGRldi5jLCBJJ2xsIHJlbW92ZSB0aGlzIGNoZWNr
+IGluIG5kb19vcGVuIGFuZCBzZXQgQ0FOX0NUUkxNT0RFX0ZEIGZsYWcgaW4gY3RybG1vZGUgJiBy
+ZW1vdmUgdGhlIGZsYWcgaW4gY3RybG1vZGVfc3VwcG9ydGVkIGluIHRoZSBuZXh0IHYzIHZlcnNp
+b24gb2YgdGhlIHBhdGNoLg0KDQpBcmUgdGhlcmUgYW55IGZ1cnRoZXIgY29tbWVudHMgb24gdjIg
+cGF0Y2ggcGxlYXNlPw0KDQpUaGFua3MsDQpSYW1lc2gNCg==
