@@ -1,44 +1,69 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 11 Mar 2016 10:16:28 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 0/2] phy: rcar-gen2, rcar-gen3-usb2: add fallback binding
-Date: Wed,  2 Mar 2016 11:37:15 +0900
-Message-Id: <1456886237-29936-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-kernel-owner@vger.kernel.org
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 00/30] ARM: dts: r8a779[0-4]: Reference both DMA
+ controllers
+Message-ID: <20160311011627.GA20699@verge.net.au>
+References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdXF4FMLg=Y_cZ2chjzGWAV90N=vLsCkPKGmmYx5mFY64Q@mail.gmail.com>
+ <20160310134325.GA1111@bigcity.dyn.berto.se>
+ <20160310233855.GD7423@verge.net.au>
+ <20160311002326.GC1111@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20160311002326.GC1111@bigcity.dyn.berto.se>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add fallback compatibility strings for rcar phy drivers.
+On Fri, Mar 11, 2016 at 01:23:26AM +0100, Niklas Söderlund wrote:
+> On 2016-03-11 08:38:56 +0900, Simon Horman wrote:
+> > On Thu, Mar 10, 2016 at 02:43:25PM +0100, Niklas Söderlund wrote:
+> > > Hi Geert,
+> > > 
+> > > On 2016-03-10 13:20:56 +0100, Geert Uytterhoeven wrote:
+> > > > Hi Niklas,
+> > > > 
+> > > > On Thu, Mar 10, 2016 at 12:35 PM, Niklas Söderlund
+> > > > <niklas.soderlund+renesas@ragnatech.se> wrote:
+> > > > > R-Car Gen2 have two DMA controllers, which are equivalent. However DMA
+> > > > > slaves were tied only to a single DMA controller in .dtsi. This series
+> > > > > add references to to both DMA controllers for all nodes that previously
+> > > > > only referenced one of them. It also adds dma references to the SDHI
+> > > > > nodes for r8a7794 which according to the datasheet should work but I
+> > > > > have not access to HW to verify.
+> > > > >
+> > > > > Tested on Koelsch (r8a7791) by altering the compatible value of either
+> > > > > dmac0 or dmac1 and verifying that the DMA slaves pick the DMA controller
+> > > > > that is instantiated.
+> > > > 
+> > > > Thanks for your series!
+> > > > 
+> > > > If you fix the subject of patch 30:
+> > > > Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > 
+> > > Thanks for your review and that you found my error in the subject.
+> > > 
+> > > > 
+> > > > I guess this is against v4.5-rc7? It doesn't apply against
+> > > > renesas-devel-20160308-v4.5-rc7.
+> > > > Unfortunately you'll have to rebase against Simon's tree, and add scif2
+> > > > on r8a7790, and i2c[6-8] on r8a7793.
+> > > 
+> > > I will rebase and update the relevant patches to include the additions 
+> > > to r8a7790 and r8a7793.
+> > 
+> > If its not too much bother could you provide a git branch as well as
+> > patches posted to the mailing list.  For larger series that is helpful to me.
+> 
+> No problem I will include a link when i send v2.
 
-In the case of Renesas R-Car hardware we know that there are generations of
-SoCs, e.g. Gen 2 and Gen 3. But beyond that its not clear what the
-relationship between IP blocks might be. For example, I believe that
-r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
-descendant of the former or vice versa.
-
-We can, however, by examining the documentation and behaviour of the
-hardware at run-time observe that the current driver implementation appears
-to be compatible with the IP blocks on SoCs within a given generation.
-
-For the above reasons and convenience when enabling new SoCs a
-per-generation fallback compatibility string scheme being adopted for
-drivers for Renesas SoCs.
-
-Based on v4.5-rc1
-
-Simon Horman (2):
-  phy: rcar-gen2: add fallback binding
-  phy: rcar-gen3-usb2: add fallback binding
-
- Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt      |  8 +++++++-
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 10 ++++++++--
- drivers/phy/phy-rcar-gen2.c                                  |  1 +
- drivers/phy/phy-rcar-gen3-usb2.c                             |  1 +
- 4 files changed, 17 insertions(+), 3 deletions(-)
-
--- 
-2.1.4
+Excellent!
