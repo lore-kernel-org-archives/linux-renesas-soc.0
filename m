@@ -1,38 +1,36 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Sun, 13 Mar 2016 08:50:14 -0300
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Date: Sun, 13 Mar 2016 08:30:13 +0000
+From: Nicholas Mc Guire <der.herr@hofr.at>
 To: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: kyungmin.park@samsung.com, a.hajda@samsung.com,
-	sakari.ailus@iki.fi, s.nawrocki@samsung.com, kgene@kernel.org,
-	k.kozlowski@samsung.com, laurent.pinchart@ideasonboard.com,
-	hyun.kwon@xilinx.com, soren.brinkmann@xilinx.com,
-	gregkh@linuxfoundation.org, perex@perex.cz, tiwai@suse.com,
-	hans.verkuil@cisco.com, lixiubo@cmss.chinamobile.com,
-	javier@osg.samsung.com, g.liakhovetski@gmx.de,
-	chehabrafael@gmail.com, crope@iki.fi, tommi.franttila@intel.com,
-	dan.carpenter@oracle.com, prabhakar.csengg@gmail.com,
-	hamohammed.sa@gmail.com, der.herr@hofr.at, navyasri.tech@gmail.com,
-	Julia.Lawall@lip6.fr, amitoj1606@gmail.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Cc: mchehab@osg.samsung.com, kyungmin.park@samsung.com,
+	a.hajda@samsung.com, sakari.ailus@iki.fi, s.nawrocki@samsung.com,
+	kgene@kernel.org, k.kozlowski@samsung.com,
+	laurent.pinchart@ideasonboard.com, hyun.kwon@xilinx.com,
+	soren.brinkmann@xilinx.com, gregkh@linuxfoundation.org,
+	perex@perex.cz, tiwai@suse.com, hans.verkuil@cisco.com,
+	lixiubo@cmss.chinamobile.com, javier@osg.samsung.com,
+	g.liakhovetski@gmx.de, chehabrafael@gmail.com, crope@iki.fi,
+	tommi.franttila@intel.com, dan.carpenter@oracle.com,
+	prabhakar.csengg@gmail.com, hamohammed.sa@gmail.com,
+	navyasri.tech@gmail.com, Julia.Lawall@lip6.fr,
+	amitoj1606@gmail.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org, devel@driverdev.osuosl.org,
 	alsa-devel@alsa-project.org
 Subject: Re: [PATCH] media: add GFP flag to media_*() that could get called
  in atomic context
-Message-ID: <20160313085014.1383b355@recife.lan>
-In-Reply-To: <1457833689-4926-1-git-send-email-shuahkh@osg.samsung.com>
+Message-ID: <20160313083013.GA5515@osadl.at>
 References: <1457833689-4926-1-git-send-email-shuahkh@osg.samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1457833689-4926-1-git-send-email-shuahkh@osg.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Em Sat, 12 Mar 2016 18:48:09 -0700
-Shuah Khan <shuahkh@osg.samsung.com> escreveu:
-
+On Sat, Mar 12, 2016 at 06:48:09PM -0700, Shuah Khan wrote:
 > Add GFP flags to media_create_pad_link(), media_create_intf_link(),
 > media_devnode_create(), and media_add_link() that could get called
 > in atomic context to allow callers to pass in the right flags for
@@ -41,20 +39,27 @@ Shuah Khan <shuahkh@osg.samsung.com> escreveu:
 > tree-wide driver changes for media_*() GFP flags change:
 > Change drivers to add gfpflags to interffaces, media_create_pad_link(),
 > media_create_intf_link() and media_devnode_create().
-> 
+>
+
+in two cases (media_add_link,media_devnode_create) it is passing in 
+gfpflags but then checking for in_atomic() and in case it is, dumping
+stack - so does it make sense in those cases to allow GFP_ATOMIC to be
+passed in ? could not figure out why that would be needed (current 
+callers in media-entity.c do not seem to be under a spin_lock).
+
+and in a few cases there seems to be a little glitch with indentation 
+  dvb_create_media_graph
+  __fimc_md_create_fimc_sink_links
+  __fimc_md_create_fimc_is_links
+  vsp1_create_sink_links
+  v4l2_mc_create_media_graph
+  vpfe_ipipeif_register_entities
+
+thx!
+hofrat
+ 
 > Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 > Suggested-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-
-Patches look OK to me[1], provided that a followup patch is
-changes some of the callers to use GFP_ATOMIC.
-
-I'll wait for such patch before merging this one.
-
-Regards,
-Mauro
-
-[1] but see Nicholas comments about indentation.
-
 > ---
 > Ran through kbuild-all compile testing.
 > Tested the changes in Win-TV HVR-950Q device
@@ -1161,8 +1166,6 @@ Mauro
 >  		if (!mctl->intf_link) {
 >  			media_device_unregister_entity(&mctl->media_entity);
 >  			media_entity_cleanup(&mctl->media_entity);
-
-
--- 
-Thanks,
-Mauro
+> -- 
+> 2.5.0
+> 
