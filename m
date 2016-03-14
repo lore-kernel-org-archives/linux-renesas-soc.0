@@ -1,109 +1,129 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 25/31] ARM: dts: r8a7794: Reference both DMA controllers in SCIFA nodes
-Date: Tue, 15 Mar 2016 13:42:02 +0100
-Message-Id: <1458045728-4758-26-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-version: 1.0
+Content-type: text/plain; charset=UTF-8
+Content-transfer-encoding: 8BIT
+Message-id: <56E631A1.2090302@samsung.com>
+Date: Mon, 14 Mar 2016 12:36:01 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	kishon@ti.com, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 3/3] phy: rcar-gen3-usb2: add extcon support
+References: <1456999746-2800-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1456999746-2800-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-reply-to: <1456999746-2800-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+Hi Yoshihiro,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7794.dtsi | 30 ++++++++++++++++++------------
- 1 file changed, 18 insertions(+), 12 deletions(-)
+On 2016년 03월 03일 19:09, Yoshihiro Shimoda wrote:
+> This patch adds extcon support for otg related channel.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  drivers/phy/Kconfig              |  1 +
+>  drivers/phy/phy-rcar-gen3-usb2.c | 26 ++++++++++++++++++++++++++
+>  2 files changed, 27 insertions(+)
+> 
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index ba68f14..db57d6c 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -121,6 +121,7 @@ config PHY_RCAR_GEN2
+>  config PHY_RCAR_GEN3_USB2
+>  	tristate "Renesas R-Car generation 3 USB 2.0 PHY driver"
+>  	depends on OF && ARCH_RENESAS
+> +	depends on EXTCON
+>  	select GENERIC_PHY
+>  	help
+>  	  Support for USB 2.0 PHY found on Renesas R-Car generation 3 SoCs.
+> diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
+> index 7b14244..76bb88f 100644
+> --- a/drivers/phy/phy-rcar-gen3-usb2.c
+> +++ b/drivers/phy/phy-rcar-gen3-usb2.c
+> @@ -12,6 +12,7 @@
+>   * published by the Free Software Foundation.
+>   */
+>  
+> +#include <linux/extcon.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+>  #include <linux/module.h>
+> @@ -77,6 +78,7 @@
+>  
+>  struct rcar_gen3_chan {
+>  	void __iomem *base;
+> +	struct extcon_dev *extcon;
+>  	struct phy *phy;
+>  	struct regulator *vbus;
+>  	bool has_otg;
+> @@ -127,6 +129,9 @@ static void rcar_gen3_init_for_host(struct rcar_gen3_chan *ch)
+>  	rcar_gen3_set_linectrl(ch, 1, 1);
+>  	rcar_gen3_set_host_mode(ch, 1);
+>  	rcar_gen3_enable_vbus_ctrl(ch, 1);
+> +
+> +	extcon_set_cable_state_(ch->extcon, EXTCON_USB_HOST, true);
+> +	extcon_set_cable_state_(ch->extcon, EXTCON_USB, false);
+>  }
+>  
+>  static void rcar_gen3_init_for_peri(struct rcar_gen3_chan *ch)
+> @@ -134,6 +139,9 @@ static void rcar_gen3_init_for_peri(struct rcar_gen3_chan *ch)
+>  	rcar_gen3_set_linectrl(ch, 0, 1);
+>  	rcar_gen3_set_host_mode(ch, 0);
+>  	rcar_gen3_enable_vbus_ctrl(ch, 0);
+> +
+> +	extcon_set_cable_state_(ch->extcon, EXTCON_USB_HOST, false);
+> +	extcon_set_cable_state_(ch->extcon, EXTCON_USB, true);
+>  }
+>  
+>  static bool rcar_gen3_check_vbus(struct rcar_gen3_chan *ch)
+> @@ -272,6 +280,12 @@ static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
+>  
+> +static const unsigned int rcar_gen3_phy_cable[] = {
+> +	EXTCON_USB,
+> +	EXTCON_USB_HOST,
+> +	EXTCON_NONE,
+> +};
+> +
+>  static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -297,11 +311,23 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+>  	/* call request_irq for OTG */
+>  	irq = platform_get_irq(pdev, 0);
+>  	if (irq >= 0) {
+> +		int ret;
+> +
+>  		irq = devm_request_irq(dev, irq, rcar_gen3_phy_usb2_irq,
+>  				       IRQF_SHARED, dev_name(dev), channel);
+>  		if (irq < 0)
+>  			dev_err(dev, "No irq handler (%d)\n", irq);
+>  		channel->has_otg = true;
+> +		channel->extcon = devm_extcon_dev_allocate(dev,
+> +							rcar_gen3_phy_cable);
+> +		if (IS_ERR(channel->extcon))
+> +			return PTR_ERR(channel->extcon);
+> +
+> +		ret = devm_extcon_dev_register(dev, channel->extcon);
+> +		if (ret < 0) {
+> +			dev_err(dev, "Failed to register extcon\n");
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	/* devm_phy_create() will call pm_runtime_enable(dev); */
+> 
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index eacb2b2..4256557 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -296,8 +296,9 @@
- 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFA0>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x21>, <&dmac0 0x22>,
-+		       <&dmac1 0x21>, <&dmac1 0x22>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -309,8 +310,9 @@
- 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFA1>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x25>, <&dmac0 0x26>,
-+		       <&dmac1 0x25>, <&dmac1 0x26>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -322,8 +324,9 @@
- 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFA2>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x27>, <&dmac0 0x28>,
-+		       <&dmac1 0x27>, <&dmac1 0x28>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -335,8 +338,9 @@
- 		interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7794_CLK_SCIFA3>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>,
-+		       <&dmac1 0x1b>, <&dmac1 0x1c>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -348,8 +352,9 @@
- 		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7794_CLK_SCIFA4>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x1f>, <&dmac0 0x20>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x1f>, <&dmac0 0x20>,
-+		       <&dmac1 0x1f>, <&dmac1 0x20>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -361,8 +366,9 @@
- 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7794_CLK_SCIFA5>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x23>, <&dmac0 0x24>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x23>, <&dmac0 0x24>,
-+		       <&dmac1 0x23>, <&dmac1 0x24>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
--- 
-2.7.2
+Looks good to me about extcon usgae.
 
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+Best Regards,
+Chanwoo Choi
