@@ -4,37 +4,41 @@ To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 0/2] ARM: dts: r8a7793: add CAN to device tree
-Date: Wed, 16 Mar 2016 10:52:54 +0900
-Message-Id: <1458093176-1926-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 1/2] ARM: dts: r8a7791: use fallback can compatibility string
+Date: Mon, 14 Mar 2016 11:13:58 +0900
+Message-Id: <1457921639-15017-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1457921639-15017-1-git-send-email-horms+renesas@verge.net.au>
+References: <1457921639-15017-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Use recently added fallback compatibility string in r8a7791 device tree.
 
-this short series adds CAN clocks and nodes to the r8a7793 device tree.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I am not aware of an r8a7793 board that exposes CAN - the gose
-board does not appear to - and thus am unsure of a way to test these changes.
-However, they are based on what is present for the r8a7791 SoC and
-I am unable to find a difference in the SoC documentation.
-
-This series is similar to a series I posted for the r8a7794
-earlier this week.
-
-Based on renesas-devel-20160315-v4.5
-
-Changes in v2
-* Correct clock node names
-* Add MSTP9 clocks
-* Omit clock-output-names property from new nodes
-* Use "renesas,rcar-gen2-can" compat string
-
-Simon Horman (2):
-  ARM: dts: r8a7793: add CAN clocks to device tree
-  ARM: dts: r8a7793: add CAN nodes to device tree
-
- arch/arm/boot/dts/r8a7793.dtsi | 49 ++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 45 insertions(+), 4 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 9bfd1dc054b3..396a640927c8 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1013,7 +1013,7 @@
+ 	};
+ 
+ 	can0: can@e6e80000 {
+-		compatible = "renesas,can-r8a7791";
++		compatible = "renesas,can-r8a7791", "renesas,rcar-gen2-can";
+ 		reg = <0 0xe6e80000 0 0x1000>;
+ 		interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7791_CLK_RCAN0>,
+@@ -1024,7 +1024,7 @@
+ 	};
+ 
+ 	can1: can@e6e88000 {
+-		compatible = "renesas,can-r8a7791";
++		compatible = "renesas,can-r8a7791", "renesas,rcar-gen2-can";
+ 		reg = <0 0xe6e88000 0 0x1000>;
+ 		interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7791_CLK_RCAN1>,
 -- 
 2.1.4
