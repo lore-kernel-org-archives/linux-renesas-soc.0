@@ -1,72 +1,50 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 14/30] ARM: dts: r8a7791: Reference both DMA controllers in MSIOF nodes
-Date: Thu, 10 Mar 2016 12:36:06 +0100
-Message-Id: <1457609782-24108-15-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Date: Mon, 14 Mar 2016 09:12:18 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Linux PM list <linux-pm@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 6/6] arm64: dts: r8a7795: Add SYSC PM domains
+Message-ID: <20160314001217.GA32221@verge.net.au>
+References: <1457551135-22078-1-git-send-email-geert+renesas@glider.be>
+ <1457551135-22078-7-git-send-email-geert+renesas@glider.be>
+ <20160310233411.GC7423@verge.net.au>
+ <CAMuHMdWH96S6W_h+zYqos6r2-kr6qf_3yo_PvDUc1zfJTzwfdw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWH96S6W_h+zYqos6r2-kr6qf_3yo_PvDUc1zfJTzwfdw@mail.gmail.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+On Fri, Mar 11, 2016 at 09:01:09AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Fri, Mar 11, 2016 at 12:34 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Wed, Mar 09, 2016 at 08:18:55PM +0100, Geert Uytterhoeven wrote:
+> >> Add a device node for the System Controller.
+> >> Hook up the Cortex-A57 CPU cores and the Cortex-A57 and Cortex A53 L2
+> >> caches/SCUs to their respective PM domains.
+> >> Hook up all devices that are part of the CPG/MSSR Clock Domain to the
+> >> SYSC "always-on" PM Domain.
+> >
+> > [snip]
+> >
+> >> +             sysc: system-controller@e6180000 {
+> >> +                     compatible = "renesas,r8a7795-sysc";
+> >> +                     reg = <0 0xe6180000 0 0x0400>;
+> >
+> > In table 9.2 of v0.51e of the documentation I see some registers
+> > beyond the 0x400 range above. Perhaps it could be enlarged accordingly?
+> 
+> No, these registers do not apply to R-Car H3.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm/boot/dts/r8a7791.dtsi | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+True.
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 3c229d5..c1751cc 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1466,8 +1466,9 @@
- 		reg = <0 0xe6e20000 0 0x0064>;
- 		interrupts = <0 156 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7791_CLK_MSIOF0>;
--		dmas = <&dmac0 0x51>, <&dmac0 0x52>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x51>, <&dmac0 0x52>,
-+		       <&dmac1 0x51>, <&dmac1 0x52>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -1479,8 +1480,9 @@
- 		reg = <0 0xe6e10000 0 0x0064>;
- 		interrupts = <0 157 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_MSIOF1>;
--		dmas = <&dmac0 0x55>, <&dmac0 0x56>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x55>, <&dmac0 0x56>,
-+		       <&dmac1 0x55>, <&dmac1 0x56>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -1492,8 +1494,9 @@
- 		reg = <0 0xe6e00000 0 0x0064>;
- 		interrupts = <0 158 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_MSIOF2>;
--		dmas = <&dmac0 0x41>, <&dmac0 0x42>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x41>, <&dmac0 0x42>,
-+		       <&dmac1 0x41>, <&dmac1 0x42>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--- 
-2.7.2
-
+In that case I'm fine with all the patches in this series.
