@@ -1,72 +1,77 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 20/30] ARM: dts: r8a7793: Reference both DMA controllers in SCIFB nodes
-Date: Thu, 10 Mar 2016 12:36:12 +0100
-Message-Id: <1457609782-24108-21-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	robh@kernel.org, daniel.lezcano@linaro.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>, tglx@linutronix.de
+Date: Mon, 14 Mar 2016 23:24:13 +0900
+Message-Id: <20160314142413.17180.32464.sendpatchset@little-apple>
+In-Reply-To: <20160314142342.17180.21352.sendpatchset@little-apple>
+References: <20160314142342.17180.21352.sendpatchset@little-apple>
+Subject: [PATCH v4 03/06] devicetree: bindings: r8a73a4 and R-Car Gen2 CMT bindings
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Update SoC-specific bindings for r8a73a4 and R-Car Gen2 CMT0 and CMT1.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 322d290..445ab3a 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -381,8 +381,9 @@
- 		interrupts = <0 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB0>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
-+		       <&dmac1 0x3d>, <&dmac1 0x3e>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -393,8 +394,9 @@
- 		interrupts = <0 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB1>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x19>, <&dmac0 0x1a>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x19>, <&dmac0 0x1a>,
-+		       <&dmac1 0x19>, <&dmac1 0x1a>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -405,8 +407,9 @@
- 		interrupts = <0 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB2>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>,
-+		       <&dmac1 0x1d>, <&dmac1 0x1e>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
--- 
-2.7.2
+ Changes since V3:
+ - Fix trailing whitespace damage
 
+ Changes since V2:
+ - Added Acked-by from Rob
+ - Removed Tested-by tag from DT binding patch - duh!
+
+ Changes since V1:
+ - Added Acked-by and Tested-by from Geert
+ - Added Acked-by from Laurent
+
+ Documentation/devicetree/bindings/timer/renesas,cmt.txt |   24 ++++++++-------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
+
+--- 0003/Documentation/devicetree/bindings/timer/renesas,cmt.txt
++++ work/Documentation/devicetree/bindings/timer/renesas,cmt.txt	2016-03-14 22:47:31.550513000 +0900
+@@ -36,19 +36,23 @@ Required Properties:
+ 		(CMT1 on sh73a0 and r8a7740)
+ 		This is a fallback for the above renesas,cmt-48-* entries.
+ 
++    - "renesas,cmt0-r8a73a4" for the 32-bit CMT0 device included in r8a73a4.
++    - "renesas,cmt1-r8a73a4" for the 48-bit CMT1 device included in r8a73a4.
++    - "renesas,cmt0-r8a7790" for the 32-bit CMT0 device included in r8a7790.
++    - "renesas,cmt1-r8a7790" for the 48-bit CMT1 device included in r8a7790.
++    - "renesas,cmt0-r8a7791" for the 32-bit CMT0 device included in r8a7791.
++    - "renesas,cmt1-r8a7791" for the 48-bit CMT1 device included in r8a7791.
++    - "renesas,cmt0-r8a7793" for the 32-bit CMT0 device included in r8a7793.
++    - "renesas,cmt1-r8a7793" for the 48-bit CMT1 device included in r8a7793.
++    - "renesas,cmt0-r8a7794" for the 32-bit CMT0 device included in r8a7794.
++    - "renesas,cmt1-r8a7794" for the 48-bit CMT1 device included in r8a7794.
++
+     - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car Gen2.
+     - "renesas,rcar-gen2-cmt1" for 48-bit CMT1 devices included in R-Car Gen2.
++		These are fallbacks for r8a73a4 and all the R-Car Gen2
++		entries	listed above.
+ 
+-    - "renesas,cmt-48-r8a73a4" for the r8a73a4 48-bit CMT
+-		(CMT[01])
+-    - "renesas,cmt-48-r8a7790" for the r8a7790 48-bit CMT
+-		(CMT[01])
+-    - "renesas,cmt-48-r8a7791" for the r8a7791 48-bit CMT
+-		(CMT[01])
+-    - "renesas,cmt-48-gen2" for all second generation 48-bit CMT
+-		(CMT[01] on r8a73a4, r8a7790 and r8a7791)
+-		This is a fallback for the renesas,cmt-48-r8a73a4,
+-		renesas,cmt-48-r8a7790 and renesas,cmt-48-r8a7791 entries.
++    - "renesas,cmt-48-gen2" is <deprecated>, use "renesas,cmt[01]-*" instead.
+ 
+   - reg: base address and length of the registers block for the timer module.
+   - interrupts: interrupt-specifier for the timer, one per channel.
