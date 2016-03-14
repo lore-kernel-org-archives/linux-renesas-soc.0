@@ -1,128 +1,83 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWbpj=ZnFqh1uWZSCojvrM+NB=Bbzw=UebodTr+vAKy7g@mail.gmail.com>
-References: <CAMuHMdWbpj=ZnFqh1uWZSCojvrM+NB=Bbzw=UebodTr+vAKy7g@mail.gmail.com>
-Date: Thu, 17 Mar 2016 11:18:28 +0100
-Message-ID: <CACRpkdb1J+-_9szuv6xWhrD7+NFeCjug+cqaYsHDYyLUYbLw1w@mail.gmail.com>
-Subject: Re: [RFD] Sharing GPIOs for input (buttons) and output (LEDs)
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	robh@kernel.org, daniel.lezcano@linaro.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>, tglx@linutronix.de
+Date: Mon, 14 Mar 2016 23:24:24 +0900
+Message-Id: <20160314142424.17180.47541.sendpatchset@little-apple>
+In-Reply-To: <20160314142342.17180.21352.sendpatchset@little-apple>
+References: <20160314142342.17180.21352.sendpatchset@little-apple>
+Subject: [PATCH v4 04/06] devicetree: bindings: Deprecate property, update example
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Feb 22, 2016 at 1:14 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
+From: Magnus Damm <damm+renesas@opensource.se>
 
-> On the Renesas Salvator-X development board, 3 GPIO pins are connected to both
-> push buttons and LEDs.
->   - If the GPIO is configured for output, it can control the LED,
->   - If the GPIO is configured for input, the push button status can be
->     read. Note that the LED is on if the push button is not pressed; it is
->     turned off while holding the button.
+Deprecate "renesas,channels-mask" and update the r8a7790 CMT example.
 
-Have you asked the hardware engineer who did this construction
-what s/he was thinking? And I mean seriously: what was the
-usecase? Did they really design the LEDs to be used to flicker
-with or just as an indication as to whether the button was being
-pushed or not?
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
 
-Your approach seems dedicated to use it for both usecases (also
-as a stand-alone heartbeat or whatever) but was that really
-intended?
+ Changes since V3:
+ - Update example to use new compat string format for fallback entries
+   Now "renesas,rcar-gen2-cmt0" is used instead of "renesas,cmt0-rcar-gen2"
 
->         keyboard {
->                 compatible = "gpio-keys";
->
->                 key-a {
->                         gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
->                         label = "SW20";
->                         wakeup-source;
->                         linux,code = <KEY_A>;
->                 };
->                 key-b {
->                         gpios = <&gpio6 12 GPIO_ACTIVE_LOW>;
->                         label = "SW21";
->                         wakeup-source;
->                         linux,code = <KEY_B>;
->                 };
->                 key-c {
->                         gpios = <&gpio6 13 GPIO_ACTIVE_LOW>;
->                         label = "SW22";
->                         wakeup-source;
->                         linux,code = <KEY_C>;
->                 };
->         };
+ Changes since V2:
+ - Added Acked-by from Rob
+ - Removed Tested-by tag from DT binding patch - duh!
 
-I suspect that in this usecase, the GPIO should be flagged
-GPIO_OPEN_DRAIN rather than GPIO_ACTIVE_LOW,
-as the construction with the LED draws current fron the line.
+ Changes since V1:
+ - Added Acked-by and Tested-by from Geert
+ - Added Acked-by from Laurent
 
-> There exist device tree bindings for LEDs connected to GPIOs, and the
-> following also works:
->
->         leds {
->                 compatible = "gpio-leds";
->
->                 led4 {
->                         gpios = <&gpio6 11 GPIO_ACTIVE_HIGH>;
->                         label = "LED4";
->                 };
->                 led5 {
->                         gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
->                         label = "LED5";
->                 };
->                 led6 {
->                         gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
->                         label = "LED6";
->                 };
->         };
+ Documentation/devicetree/bindings/timer/renesas,cmt.txt |   24 ++++++++++-----
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
-OK
-
-> If a GPIO is found busy during initialization, and if it's already in
-> use by the other half of the driver, the driver switches to a special
-> "polled-key-and-LED" mode. I.e. during polling, it does:
->   - Save the GPIO output state,
->   - Switch the GPIO to input mode,
->   - Wait 5 ms (else it will read the old output state, depending on
->     e.g. hardware capacitance),
->   - Read the GPIO input state,
->   - Switch the GPIO to output mode,
->   - Restore the GPIO output state.
->
-> And it works, the LEDs can be controlled, and the push button states can
-> be read!
-
-Why go to such troubles of switching the line from output to
-input to read it?
-
-Especially when a line is OPEN_DRAIN it should be perfectly legal
-to read it's value even if it is set as output, but AFAICT that is
-always working no matter whether the line is set as output.
-
-> However, due to the 5 ms delay, there's a visible flickering of LEDs
-> that are supposed to be turned off (remember, when the GPIO is
-> configured for input and the button is not pressed, the LED is lit).
->
-> If we go this route, adding support for non-polled GPIOs (if the GPIO is
-> not shared with an LED) and wake-up should be doable.
-
-I think this actually implies OPEN_DRAIN and if you flag it as such
-the core should be happy using it as input and output at the same
-time.
-
-If the hardware has a problem with reading the value from a line
-that is set to output, it needs a workaround hack in the driver to
-support reading and output line, *NOT* changes to gpiolib,
-because the lib assumes this is always possible, i.e. it will
-call the driver .get() callback no matter what.
-
-Yours,
-Linus Walleij
+--- 0006/Documentation/devicetree/bindings/timer/renesas,cmt.txt
++++ work/Documentation/devicetree/bindings/timer/renesas,cmt.txt	2016-03-14 22:40:35.550513000 +0900
+@@ -60,21 +60,31 @@ Required Properties:
+     in clock-names.
+   - clock-names: must contain "fck" for the functional clock.
+ 
+-  - renesas,channels-mask: bitmask of the available channels.
++  - renesas,channels-mask: <deprecated>, information kept in device driver.
+ 
+ 
+-Example: R8A7790 (R-Car H2) CMT0 node
+-
+-	CMT0 on R8A7790 implements hardware channels 5 and 6 only and names
+-	them channels 0 and 1 in the documentation.
++Example: R8A7790 (R-Car H2) CMT0 and CMT1 nodes
+ 
+ 	cmt0: timer@ffca0000 {
+-		compatible = "renesas,cmt-48-r8a7790", "renesas,cmt-48-gen2";
++		compatible = "renesas,cmt0-r8a7790", "renesas,rcar-gen2-cmt0";
+ 		reg = <0 0xffca0000 0 0x1004>;
+ 		interrupts = <0 142 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <0 142 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7790_CLK_CMT0>;
+ 		clock-names = "fck";
++	};
+ 
+-		renesas,channels-mask = <0x60>;
++	cmt1: timer@e6130000 {
++		compatible = "renesas,cmt1-r8a7790", "renesas,rcar-gen2-cmt1";
++		reg = <0 0xe6130000 0 0x1004>;
++		interrupts = <0 120 IRQ_TYPE_LEVEL_HIGH>,
++			     <0 121 IRQ_TYPE_LEVEL_HIGH>,
++			     <0 122 IRQ_TYPE_LEVEL_HIGH>,
++			     <0 123 IRQ_TYPE_LEVEL_HIGH>,
++			     <0 124 IRQ_TYPE_LEVEL_HIGH>,
++			     <0 125 IRQ_TYPE_LEVEL_HIGH>,
++			     <0 126 IRQ_TYPE_LEVEL_HIGH>,
++			     <0 127 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp3_clks R8A7790_CLK_CMT1>;
++		clock-names = "fck";
+ 	};
