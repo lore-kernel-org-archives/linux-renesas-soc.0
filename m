@@ -1,81 +1,85 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
+To: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	robh@kernel.org, daniel.lezcano@linaro.org,
 	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>
-Date: Fri, 18 Mar 2016 01:30:32 +0900
-Message-Id: <20160317163032.24104.7820.sendpatchset@little-apple>
-In-Reply-To: <20160317162909.24104.31682.sendpatchset@little-apple>
-References: <20160317162909.24104.31682.sendpatchset@little-apple>
-Subject: [PATCH 09/10] iommu/ipmmu-vmsa: Allow two bit SL0
+	Magnus Damm <magnus.damm@gmail.com>, tglx@linutronix.de
+Date: Mon, 14 Mar 2016 23:23:53 +0900
+Message-Id: <20160314142353.17180.31686.sendpatchset@little-apple>
+In-Reply-To: <20160314142342.17180.21352.sendpatchset@little-apple>
+References: <20160314142342.17180.21352.sendpatchset@little-apple>
+Subject: [PATCH v4 01/06] devicetree: bindings: Remove sh7372 CMT binding
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Magnus Damm <damm+renesas@opensource.se>
 
-Introduce support for two bit SL0 bitfield in IMTTBCR
-by using a separate feature flag.
+Remove the sh7372 CMT compat string to reduce maintenance burden.
+
+It should be fine to break DT compatibility because:
+1) The sh7372 SoC support has been removed from upstream
+2) The sh7372 CMT DT binding was never part of upstream DTS
+3) The CMT driver never matches on the sh7372 binding
 
 Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
 
- drivers/iommu/ipmmu-vmsa.c |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ Changes since V3:
+ - None
+ 
+ Changes since V2:
+ - Added Acked-by from Rob
+ - Removed Tested-by tag from DT binding patch - duh!
 
---- 0025/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-03-18 00:33:36.500513000 +0900
-@@ -37,6 +37,7 @@ struct ipmmu_features {
- 	bool use_ns_alias_offset;
- 	bool has_cache_leaf_nodes;
- 	bool setup_imbuscr;
-+	bool twobit_imttbcr_sl0;
- };
+ Changes since V1:
+ - Removed all references to sh7372
+ - Added Acked-by and Tested-by from Geert
+ - Added Acked-by from Laurent
+
+ Documentation/devicetree/bindings/timer/renesas,cmt.txt |   12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+--- 0001/Documentation/devicetree/bindings/timer/renesas,cmt.txt
++++ work/Documentation/devicetree/bindings/timer/renesas,cmt.txt	2016-03-14 22:26:19.260513000 +0900
+@@ -14,32 +14,26 @@ Required Properties:
+   - compatible: must contain one or more of the following:
+     - "renesas,cmt-32-r8a7740" for the r8a7740 32-bit CMT
+ 		(CMT0)
+-    - "renesas,cmt-32-sh7372" for the sh7372 32-bit CMT
+-		(CMT0)
+     - "renesas,cmt-32-sh73a0" for the sh73a0 32-bit CMT
+ 		(CMT0)
+     - "renesas,cmt-32" for all 32-bit CMT without fast clock support
+-		(CMT0 on sh7372, sh73a0 and r8a7740)
++		(CMT0 on sh73a0 and r8a7740)
+ 		This is a fallback for the above renesas,cmt-32-* entries.
  
- struct ipmmu_vmsa_device {
-@@ -141,6 +142,10 @@ static struct ipmmu_vmsa_domain *to_vmsa
- #define IMTTBCR_TSZ0_MASK		(7 << 0)
- #define IMTTBCR_TSZ0_SHIFT		O
+     - "renesas,cmt-32-fast-r8a7740" for the r8a7740 32-bit CMT with fast
+ 		clock support (CMT[234])
+-    - "renesas,cmt-32-fast-sh7372" for the sh7372 32-bit CMT with fast
+-		clock support (CMT[234])
+     - "renesas,cmt-32-fast-sh73a0" for the sh73A0 32-bit CMT with fast
+ 		clock support (CMT[234])
+     - "renesas,cmt-32-fast" for all 32-bit CMT with fast clock support
+-		(CMT[234] on sh7372, sh73a0 and r8a7740)
++		(CMT[234] on sh73a0 and r8a7740)
+ 		This is a fallback for the above renesas,cmt-32-fast-* entries.
  
-+#define IMTTBCR_SL0_TWOBIT_LVL_3	(0 << 6)
-+#define IMTTBCR_SL0_TWOBIT_LVL_2	(1 << 6)
-+#define IMTTBCR_SL0_TWOBIT_LVL_1	(2 << 6)
-+
- #define IMBUSCR				0x000c
- #define IMBUSCR_DVM			(1 << 2)
- #define IMBUSCR_BUSSEL_SYS		(0 << 0)
-@@ -356,6 +361,7 @@ static struct iommu_gather_ops ipmmu_gat
- static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
- {
- 	u64 ttbr;
-+	u32 tmp;
- 	int ret;
+-    - "renesas,cmt-48-sh7372" for the sh7372 48-bit CMT
+-		(CMT1)
+     - "renesas,cmt-48-sh73a0" for the sh73A0 48-bit CMT
+ 		(CMT1)
+     - "renesas,cmt-48-r8a7740" for the r8a7740 48-bit CMT
+ 		(CMT1)
+     - "renesas,cmt-48" for all non-second generation 48-bit CMT
+-		(CMT1 on sh7372, sh73a0 and r8a7740)
++		(CMT1 on sh73a0 and r8a7740)
+ 		This is a fallback for the above renesas,cmt-48-* entries.
  
- 	/*
-@@ -408,9 +414,15 @@ static int ipmmu_domain_init_context(str
- 	 * We use long descriptors with inner-shareable WBWA tables and allocate
- 	 * the whole 32-bit VA space to TTBR0.
- 	 */
-+
-+	if (domain->root->features->twobit_imttbcr_sl0)
-+		tmp = IMTTBCR_SL0_TWOBIT_LVL_1;
-+	else
-+		tmp = IMTTBCR_SL0_LVL_1;
-+
- 	ipmmu_ctx_write(domain, IMTTBCR, IMTTBCR_EAE |
- 			IMTTBCR_SH0_INNER_SHAREABLE | IMTTBCR_ORGN0_WB_WA |
--			IMTTBCR_IRGN0_WB_WA | IMTTBCR_SL0_LVL_1);
-+			IMTTBCR_IRGN0_WB_WA | tmp);
- 
- 	/* MAIR0 */
- 	ipmmu_ctx_write(domain, IMMAIR0, domain->cfg.arm_lpae_s1_cfg.mair[0]);
-@@ -994,6 +1006,7 @@ static const struct ipmmu_features ipmmu
- 	.use_ns_alias_offset = true,
- 	.has_cache_leaf_nodes = false,
- 	.setup_imbuscr = true,
-+	.twobit_imttbcr_sl0 = false,
- };
- 
- static const struct of_device_id ipmmu_of_ids[] = {
+     - "renesas,cmt-48-r8a73a4" for the r8a73a4 48-bit CMT
