@@ -1,50 +1,109 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 2 Mar 2016 11:39:21 -0600
-From: Rob Herring <robh@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Simon <horms@verge.net.au>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux-DT <devicetree@vger.kernel.org>,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Laurent <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 2/6] ASoC: rsrc-card: add convert channels support
-Message-ID: <20160302173921.GA6580@rob-hp-laptop>
-References: <877fht7376.wl%kuninori.morimoto.gx@renesas.com>
- <874mcx734l.wl%kuninori.morimoto.gx@renesas.com>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+	laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 13/31] ARM: dts: r8a7791: Reference both DMA controllers in SCIF nodes
+Date: Tue, 15 Mar 2016 13:41:50 +0100
+Message-Id: <1458045728-4758-14-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <874mcx734l.wl%kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Feb 25, 2016 at 05:51:44AM +0000, Kuninori Morimoto wrote:
-> 
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> 
-> Renesas sound device has CTU (= Channel Transfer Unit), and
-> sound card needs its support.
-> 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> ---
->  .../bindings/sound/renesas,rsrc-card.txt           |  1 +
->  sound/soc/sh/rcar/rsrc-card.c                      | 22 ++++++++++++++++------
->  2 files changed, 17 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/renesas,rsrc-card.txt b/Documentation/devicetree/bindings/sound/renesas,rsrc-card.txt
-> index 2b2caa2..5abebf7 100644
-> --- a/Documentation/devicetree/bindings/sound/renesas,rsrc-card.txt
-> +++ b/Documentation/devicetree/bindings/sound/renesas,rsrc-card.txt
-> @@ -30,6 +30,7 @@ Optional subnode properties:
->  - frame-inversion			: bool property. Add this if the
->  					  dai-link uses frame clock inversion.
->  - convert-rate				: platform specified sampling rate convert
-> +- convert-channels			: platform specified channel size convert
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
 
-This needs a better description (as did convert-rate). What is the type?
-What are valid values?
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
->  - audio-prefix				: see audio-routing
->  - audio-routing				: A list of the connections between audio components.
->  					  Each entry is a pair of strings, the first being the connection's sink,
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 7854a4f..76c8da8 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -727,8 +727,9 @@
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF0>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
++		       <&dmac1 0x29>, <&dmac1 0x2a>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -741,8 +742,9 @@
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF1>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
++		       <&dmac1 0x2d>, <&dmac1 0x2e>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -755,8 +757,9 @@
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF2>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
++		       <&dmac1 0x2b>, <&dmac1 0x2c>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -769,8 +772,9 @@
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF3>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x2f>, <&dmac0 0x30>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
++		       <&dmac1 0x2f>, <&dmac1 0x30>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -783,8 +787,9 @@
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF4>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
++		       <&dmac1 0xfb>, <&dmac1 0xfc>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -797,8 +802,9 @@
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF5>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
++		       <&dmac1 0xfd>, <&dmac1 0xfe>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+-- 
+2.7.2
+
