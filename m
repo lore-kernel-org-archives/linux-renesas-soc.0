@@ -1,68 +1,73 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>
-Date: Fri, 18 Mar 2016 01:29:09 +0900
-Message-Id: <20160317162909.24104.31682.sendpatchset@little-apple>
-Subject: [PATCH 00/10] iommu/ipmmu-vmsa: Initial r8a7795 support
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+	laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 17/31] ARM: dts: r8a7791: Reference both DMA controllers in SDHI nodes
+Date: Tue, 15 Mar 2016 13:41:54 +0100
+Message-Id: <1458045728-4758-18-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-iommu/ipmmu-vmsa: Initial r8a7795 support
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
 
-[PATCH 01/10] iommu/ipmmu-vmsa: Make use of IOMMU_OF_DECLARE()
-[PATCH 02/10] iommu/ipmmu-vmsa: Enable multi context support
-[PATCH 03/10] iommu/ipmmu-vmsa: Teach xlate() to skip disabled iommus
-[PATCH 04/10] iommu/ipmmu-vmsa: IPMMU device is 64-bit bus master
-[PATCH 05/10] iommu/ipmmu-vmsa: Introduce features, break out alias
-[PATCH 06/10] iommu/ipmmu-vmsa: Add optional root device feature
-[PATCH 07/10] iommu/ipmmu-vmsa: Write IMCTR twice
-[PATCH 08/10] iommu/ipmmu-vmsa: Make IMBUSCTR setup optional
-[PATCH 09/10] iommu/ipmmu-vmsa: Allow two bit SL0
-[PATCH 10/10] iommu/ipmmu-vmsa: Hook up r8a7795 DT matching code
-
-This series contains slightly more mature r8a7795 support for the
-IPMMU driver compared to the earlier series posted as:
-
-[PATCH/RFC 00/10] iommu/ipmmu-vmsa: Experimental r8a7795 support
-
-The DT binding for r8a7795 has been accepted for upstream merge
-and this series implements support following such format:
-
-d4e42e7 iommu/ipmmu-vmsa: Add r8a7795 DT binding
-
-The r8a7795 IPMMU is almost register compatible with earlier devices
-like r8a7790-r8a7794, however some bitfields have been shifted
-slightly. On a grander scale topology has been added and interrupts
-have been reworked. So now there are several "cache" IPMMU units
-without interrupt that somehow communicate with IPMMU-MM that
-is the only instance that supports interrupts. The code refers to
-IPMMU-MM as a "root" device and the other ones as leaf nodes.
-
-To make this more interesting the IPMMU driver needs to be shared
-between 32-bit ARM for r8a7790-r8a7794 and 64-bit ARM for r8a7795.
-In practice this means that two separate implementations are needed
-inside the driver to attach to the rather different architecture
-specific code.
-
-CONFIG_IOMMU_DMA=y is needed on 64-bit ARM while on 32-bit ARM
-the arch specific dma-mapping code is hooked up rather directly.
-During init 64-bit ARM IPMMU support is relying on IOMMU_OF_DECLARE().
-
-The code is known to build on 32-bit and 64-bit ARM and x86_64.
-Tested on 32-bit ARM and 64-bit ARM with addtional DT integration
-changes.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+ arch/arm/boot/dts/r8a7791.dtsi | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
- Developed on top of next-20160315 and:
- [PATCH v2 00/04] iommu/ipmmu-vmsa: IPMMU multi-arch update V2
- [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 9acecdf..145c5aa 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -568,8 +568,9 @@
+ 		reg = <0 0xee100000 0 0x328>;
+ 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7791_CLK_SDHI0>;
+-		dmas = <&dmac1 0xcd>, <&dmac1 0xce>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac1 0xcd>, <&dmac1 0xce>,
++		       <&dmac0 0xcd>, <&dmac0 0xce>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -579,8 +580,9 @@
+ 		reg = <0 0xee140000 0 0x100>;
+ 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7791_CLK_SDHI1>;
+-		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>,
++		       <&dmac0 0xc1>, <&dmac0 0xc2>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -590,8 +592,9 @@
+ 		reg = <0 0xee160000 0 0x100>;
+ 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7791_CLK_SDHI2>;
+-		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>,
++		       <&dmac0 0xd3>, <&dmac0 0xd4>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+-- 
+2.7.2
 
- drivers/iommu/ipmmu-vmsa.c |  231 ++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 191 insertions(+), 40 deletions(-)
