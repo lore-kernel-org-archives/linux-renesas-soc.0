@@ -1,67 +1,73 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org,
-	Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@linux.ie>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/4 v3] drm: Introduce drm_connector_register_all() helper
-Date: Wed, 23 Mar 2016 11:42:53 +0300
-Message-Id: <1458722577-20283-1-git-send-email-abrodkin@synopsys.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+	laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 24/31] ARM: dts: r8a7793: Reference both DMA controllers in IIC nodes
+Date: Tue, 15 Mar 2016 13:42:01 +0100
+Message-Id: <1458045728-4758-25-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As a pair to already existing drm_connector_unplug_all()
-(which we'll rename in this series to drm_connector_unregister_all())
-we're adding generic implementation of what is already done in some drivers
-for registering all connectors.
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
 
-After implementation of that new helper we're updating 2 drivers
-that used to use it's own implementation:
- [1] atmel_hlcdc
- [2] rcar_du
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7793.dtsi | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-And one driver that uses unregister():
- [1] udl
-
-Other drivers still use load() callback and so should be first modified so
-their load() gets called from their probe() explicitly.
-
-Build- and run-tested on yet to be upstreamed ARC PGU (part of AXS10x board).
-
-Changes v2 -> v3:
- * Added acks for 1, 3 and 4 patches
- * Updated kerneldoc descriptins of both register_ and unregister_all()
- * Updated commit messages (mostly spellos and grammar issues)
-
-Changes v1 -> v2:
- * Rename drm_connector_unplug_all() to drm_connector_unregister_all()
- * Use drm_for_each_connector() instead of list_for_each_entry()
- * Updated kerneldoc for drm_dev_register()
-
-Alexey Brodkin (4):
-  drm: Rename drm_connector_unplug_all() to
-    drm_connector_unregister_all()
-  drm: Introduce drm_connector_register_all() helper
-  drm: atmel_hldc: Use generic drm_connector_register_all() helper
-  drm: rcar-du: Use generic drm_connector_register_all() helper
-
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 39 +-----------------
- drivers/gpu/drm/drm_crtc.c                   | 59 ++++++++++++++++++++++++----
- drivers/gpu/drm/drm_drv.c                    |  6 ++-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c        | 14 +------
- drivers/gpu/drm/udl/udl_drv.c                |  2 +-
- include/drm/drm_crtc.h                       |  5 ++-
- 6 files changed, 64 insertions(+), 61 deletions(-)
-
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index b16b0cc..90925c5 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -470,8 +470,9 @@
+ 		reg = <0 0xe60b0000 0 0x425>;
+ 		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7793_CLK_IICDVFS>;
+-		dmas = <&dmac0 0x77>, <&dmac0 0x78>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x77>, <&dmac0 0x78>,
++		       <&dmac1 0x77>, <&dmac1 0x78>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -483,8 +484,9 @@
+ 		reg = <0 0xe6500000 0 0x425>;
+ 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7793_CLK_IIC0>;
+-		dmas = <&dmac0 0x61>, <&dmac0 0x62>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x61>, <&dmac0 0x62>,
++		       <&dmac1 0x61>, <&dmac1 0x62>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -496,8 +498,9 @@
+ 		reg = <0 0xe6510000 0 0x425>;
+ 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7793_CLK_IIC1>;
+-		dmas = <&dmac0 0x65>, <&dmac0 0x66>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x65>, <&dmac0 0x66>,
++		       <&dmac1 0x65>, <&dmac1 0x66>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
 -- 
-2.5.0
+2.7.2
+
