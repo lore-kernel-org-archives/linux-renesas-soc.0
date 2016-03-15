@@ -1,39 +1,68 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] thermal: rcar: Remove binding docs for r8a7794
-Date: Tue, 29 Mar 2016 14:07:45 +0900
-Message-Id: <1459228065-18674-1-git-send-email-horms+renesas@verge.net.au>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+	laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 30/31] ARM: dts: r8a7794: Reference both DMA controllers in SDHI nodes
+Date: Tue, 15 Mar 2016 13:42:07 +0100
+Message-Id: <1458045728-4758-31-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The latest information that I have is that there is no thermal IP
-block present on the r8a7794 SoC so remove the corresponding binding.
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
 
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/boot/dts/r8a7794.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-index e5ee3f159893..a8e52c8ccfcc 100644
---- a/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/rcar-thermal.txt
-@@ -11,7 +11,6 @@ Required properties:
- 			    - "renesas,thermal-r8a7791" (R-Car M2-W)
- 			    - "renesas,thermal-r8a7792" (R-Car V2H)
- 			    - "renesas,thermal-r8a7793" (R-Car M2-N)
--			    - "renesas,thermal-r8a7794" (R-Car E2)
- - reg			: Address range of the thermal registers.
- 			  The 1st reg will be recognized as common register
- 			  if it has "interrupts".
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 4761849..ec54246 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -664,6 +664,9 @@
+ 		reg = <0 0xee100000 0 0x200>;
+ 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7794_CLK_SDHI0>;
++		dmas = <&dmac1 0xcd>, <&dmac1 0xce>,
++		       <&dmac0 0xcd>, <&dmac0 0xce>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -673,6 +676,9 @@
+ 		reg = <0 0xee140000 0 0x100>;
+ 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7794_CLK_SDHI1>;
++		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>,
++		       <&dmac0 0xc1>, <&dmac0 0xc2>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -682,6 +688,9 @@
+ 		reg = <0 0xee160000 0 0x100>;
+ 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7794_CLK_SDHI2>;
++		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>,
++		       <&dmac0 0xd3>, <&dmac0 0xd4>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
 -- 
-2.1.4
+2.7.2
 
