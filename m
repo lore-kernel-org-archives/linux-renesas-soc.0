@@ -1,72 +1,48 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 11/30] ARM: dts: r8a7791: Reference both DMA controllers in SCIFB nodes
-Date: Thu, 10 Mar 2016 12:36:03 +0100
-Message-Id: <1457609782-24108-12-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <56E6F30B.9090707@cogentembedded.com>
+References: <20160314142342.17180.21352.sendpatchset@little-apple>
+	<20160314142434.17180.92245.sendpatchset@little-apple>
+	<56E6F30B.9090707@cogentembedded.com>
+Date: Tue, 15 Mar 2016 10:18:23 +0900
+Message-ID: <CANqRtoReyc+1NKXXupVShSrGcM8MPtA0JLHMjG31ABLbcQKCRQ@mail.gmail.com>
+Subject: Re: [PATCH v4 05/06] devicetree: bindings: Remove unused 32-bit CMT bindings
+From: Magnus Damm <magnus.damm@gmail.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Rob Herring <robh@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Thomas Gleixner <tglx@linutronix.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+Hi Sergei,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm/boot/dts/r8a7791.dtsi | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+On Tue, Mar 15, 2016 at 2:21 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Hello.
+>
+> On 03/14/2016 05:24 PM, Magnus Damm wrote:
+>
+>> From: Magnus Damm <damm+renesas@opensource.se>
+>>
+>> Remove the 32-bit CMT compat strings to reduce maintenance burden.
+>>
+>> It should be fine to break DT compatibility because the 32-bit
+>> 32-bit
+>
+>
+>    Once is enough. :-)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index db5d6a5..3538bd5 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -647,8 +647,9 @@
- 		interrupts = <0 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB0>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
-+		       <&dmac1 0x3d>, <&dmac1 0x3e>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -659,8 +660,9 @@
- 		interrupts = <0 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB1>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x19>, <&dmac0 0x1a>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x19>, <&dmac0 0x1a>,
-+		       <&dmac1 0x19>, <&dmac1 0x1a>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -671,8 +673,9 @@
- 		interrupts = <0 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB2>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>,
-+		       <&dmac1 0x1d>, <&dmac1 0x1e>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
--- 
-2.7.2
+Right, forgot about that one. Think of it as 64-bit compatible. =)
 
+Cheers,
+
+/ magnus
