@@ -1,109 +1,73 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 8 Mar 2016 10:33:12 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-ide@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH] ata: sata_rcar: add gen[123] fallback compatibility
- strings
-Message-ID: <20160308013312.GA19565@verge.net.au>
-References: <1457400642-19377-1-git-send-email-horms+renesas@verge.net.au>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+	laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 20/31] ARM: dts: r8a7793: Reference both DMA controllers in SCIFB nodes
+Date: Tue, 15 Mar 2016 13:41:57 +0100
+Message-Id: <1458045728-4758-21-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1457400642-19377-1-git-send-email-horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-[CC devicetree@vger.kernel.org]
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
 
-On Tue, Mar 08, 2016 at 10:30:42AM +0900, Simon Horman wrote:
-> Add fallback compatibility string for R-Car Gen 1, 2 and 3.
-> 
-> In the case of Renesas R-Car hardware we know that there are generations of
-> SoCs, e.g. Gen 1 and 2. But beyond that its not clear what the relationship
-> between IP blocks might be. For example, I believe that r8a7779 is older
-> than r8a7778 but that doesn't imply that the latter is a descendant of the
-> former or vice versa.
-> 
-> We can, however, by examining the documentation and behaviour of the
-> hardware at run-time observe that the current driver implementation appears
-> to be compatible with the IP blocks on SoCs within a given generation.
-> 
-> For the above reasons and convenience when enabling new SoCs a
-> per-generation fallback compatibility string scheme being adopted for
-> drivers for Renesas SoCs.
-> 
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
-> Based on libata/for-next
-> ---
->  Documentation/devicetree/bindings/ata/sata_rcar.txt | 15 ++++++++++++---
->  drivers/ata/sata_rcar.c                             | 12 ++++++++++++
->  2 files changed, 24 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/ata/sata_rcar.txt b/Documentation/devicetree/bindings/ata/sata_rcar.txt
-> index 0764f9ab63dc..b44048176938 100644
-> --- a/Documentation/devicetree/bindings/ata/sata_rcar.txt
-> +++ b/Documentation/devicetree/bindings/ata/sata_rcar.txt
-> @@ -1,14 +1,23 @@
->  * Renesas R-Car SATA
->  
->  Required properties:
-> -- compatible		: should contain one of the following:
-> +- compatible		: should contain one or more of the following:
->  			  - "renesas,sata-r8a7779" for R-Car H1
-> -			    ("renesas,rcar-sata" is deprecated)
->  			  - "renesas,sata-r8a7790-es1" for R-Car H2 ES1
->  			  - "renesas,sata-r8a7790" for R-Car H2 other than ES1
->  			  - "renesas,sata-r8a7791" for R-Car M2-W
->  			  - "renesas,sata-r8a7793" for R-Car M2-N
->  			  - "renesas,sata-r8a7795" for R-Car H3
-> +			  - "renesas,rcar-gen1-sata" for a generic R-Car Gen1 compatible device
-> +			  - "renesas,rcar-gen2-sata" for a generic R-Car Gen2 compatible device
-> +			  - "renesas,rcar-gen3-sata" for a generic R-Car Gen3 compatible device
-> +			  - "renesas,rcar-sata" is deprecated
-> +
-> +			  When compatible with the generic version, nodes
-> +			  must list the SoC-specific version corresponding
-> +			  to the platform first followed by the generic
-> +			  version.
-> +
->  - reg			: address and length of the SATA registers;
->  - interrupts		: must consist of one interrupt specifier.
->  - clocks		: must contain a reference to the functional clock.
-> @@ -16,7 +25,7 @@ Required properties:
->  Example:
->  
->  sata0: sata@ee300000 {
-> -	compatible = "renesas,sata-r8a7791";
-> +	compatible = "renesas,sata-r8a7791", "renesas,rcar-gen2-sata";
->  	reg = <0 0xee300000 0 0x2000>;
->  	interrupt-parent = <&gic>;
->  	interrupts = <0 105 IRQ_TYPE_LEVEL_HIGH>;
-> diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
-> index f72d601e300a..09d4ba3f0bc4 100644
-> --- a/drivers/ata/sata_rcar.c
-> +++ b/drivers/ata/sata_rcar.c
-> @@ -858,6 +858,18 @@ static struct of_device_id sata_rcar_match[] = {
->  		.compatible = "renesas,sata-r8a7795",
->  		.data = (void *)RCAR_GEN2_SATA
->  	},
-> +	{
-> +		.compatible = "renesas,rcar-gen1-sata",
-> +		.data = (void *)RCAR_GEN1_SATA
-> +	},
-> +	{
-> +		.compatible = "renesas,rcar-gen2-sata",
-> +		.data = (void *)RCAR_GEN2_SATA
-> +	},
-> +	{
-> +		.compatible = "renesas,rcar-gen3-sata",
-> +		.data = (void *)RCAR_GEN2_SATA
-> +	},
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(of, sata_rcar_match);
-> -- 
-> 2.1.4
-> 
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7793.dtsi | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index d833423..d704790 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -598,8 +598,9 @@
+ 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB0>;
+ 		clock-names = "fck";
+-		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
++		       <&dmac1 0x3d>, <&dmac1 0x3e>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -611,8 +612,9 @@
+ 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB1>;
+ 		clock-names = "fck";
+-		dmas = <&dmac0 0x19>, <&dmac0 0x1a>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x19>, <&dmac0 0x1a>,
++		       <&dmac1 0x19>, <&dmac1 0x1a>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -624,8 +626,9 @@
+ 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB2>;
+ 		clock-names = "fck";
+-		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>,
++		       <&dmac1 0x1d>, <&dmac1 0x1e>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+-- 
+2.7.2
+
