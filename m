@@ -1,72 +1,61 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 5/7] soc: renesas: Add r8a7793 SYSC PM Domain Binding Definitions
-Date: Wed,  9 Mar 2016 20:18:40 +0100
-Message-Id: <1457551122-21838-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
-References: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+	laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 03/31] ARM: dts: r8a7790: Reference both DMA controllers in HSCIF nodes
+Date: Tue, 15 Mar 2016 13:41:40 +0100
+Message-Id: <1458045728-4758-4-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car M2-N is identical to R-Car M2-W w.r.t. power domains, so reuse the
-definitions from the latter.
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v3:
-  - New.
----
- include/dt-bindings/power/r8a7793-sysc.h | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a7793-sysc.h
+ arch/arm/boot/dts/r8a7790.dtsi | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/include/dt-bindings/power/r8a7793-sysc.h b/include/dt-bindings/power/r8a7793-sysc.h
-new file mode 100644
-index 0000000000000000..c2cc74cf06d653ed
---- /dev/null
-+++ b/include/dt-bindings/power/r8a7793-sysc.h
-@@ -0,0 +1,27 @@
-+/*
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7793_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7793_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ *
-+ * R-Car M2-N is identical to R-Car M2-W w.r.t. power domains.
-+ */
-+
-+#include "r8a7791-sysc.h"
-+
-+#define R8A7793_PD_CA15_CPU0		R8A7791_PD_CA15_CPU0
-+#define R8A7793_PD_CA15_CPU1		R8A7791_PD_CA15_CPU1
-+#define R8A7793_PD_CA15_SCU		R8A7791_PD_CA15_SCU
-+#define R8A7793_PD_SH			R8A7791_PD_SH
-+#define R8A7793_PD_SGX			R8A7791_PD_SGX
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7793_SYSC_H__ */
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 13e8817..2c02493 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -760,8 +760,9 @@
+ 		clocks = <&mstp7_clks R8A7790_CLK_HSCIF0>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
++		       <&dmac1 0x39>, <&dmac1 0x3a>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -774,8 +775,9 @@
+ 		clocks = <&mstp7_clks R8A7790_CLK_HSCIF1>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
++		       <&dmac1 0x4d>, <&dmac1 0x4e>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
 -- 
-1.9.1
+2.7.2
 
