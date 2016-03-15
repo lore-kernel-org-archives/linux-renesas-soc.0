@@ -3,42 +3,61 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/2] ARM: dts: r8a7791: use fallback can compatibility string
-Date: Mon, 14 Mar 2016 11:13:58 +0900
-Message-Id: <1457921639-15017-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1457921639-15017-1-git-send-email-horms+renesas@verge.net.au>
-References: <1457921639-15017-1-git-send-email-horms+renesas@verge.net.au>
+	Simon Horman <horms+renesas@verge.net.au>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v2 2/2] ARM: dts: r8a7794: add CAN nodes to device tree
+Date: Tue, 15 Mar 2016 09:26:34 +0900
+Message-Id: <1458001594-632-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1458001594-632-1-git-send-email-horms+renesas@verge.net.au>
+References: <1458001594-632-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added fallback compatibility string in r8a7791 device tree.
+Add CAN nodes to r8a7794 device tree.
 
+Based on work by Sergei Shtylyov for the r8a7791 SoC.
+
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v2
+* Added Reviewed-by from Geert Uytterhoeven
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 9bfd1dc054b3..396a640927c8 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1013,7 +1013,7 @@
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index e7a3c792c97c..97181b228aa3 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -830,6 +830,28 @@
+ 		};
  	};
  
- 	can0: can@e6e80000 {
--		compatible = "renesas,can-r8a7791";
-+		compatible = "renesas,can-r8a7791", "renesas,rcar-gen2-can";
- 		reg = <0 0xe6e80000 0 0x1000>;
- 		interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7791_CLK_RCAN0>,
-@@ -1024,7 +1024,7 @@
- 	};
- 
- 	can1: can@e6e88000 {
--		compatible = "renesas,can-r8a7791";
-+		compatible = "renesas,can-r8a7791", "renesas,rcar-gen2-can";
- 		reg = <0 0xe6e88000 0 0x1000>;
- 		interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7791_CLK_RCAN1>,
++	can0: can@e6e80000 {
++		compatible = "renesas,can-r8a7794", "renesas,rcar-gen2-can";
++		reg = <0 0xe6e80000 0 0x1000>;
++		interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp9_clks R8A7794_CLK_RCAN0>,
++			 <&cpg_clocks R8A7794_CLK_RCAN>, <&can_clk>;
++		clock-names = "clkp1", "clkp2", "can_clk";
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
++	can1: can@e6e88000 {
++		compatible = "renesas,can-r8a7794", "renesas,rcar-gen2-can";
++		reg = <0 0xe6e88000 0 0x1000>;
++		interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp9_clks R8A7794_CLK_RCAN1>,
++			 <&cpg_clocks R8A7794_CLK_RCAN>, <&can_clk>;
++		clock-names = "clkp1", "clkp2", "can_clk";
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
+ 	clocks {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
 -- 
 2.1.4
