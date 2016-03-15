@@ -1,85 +1,141 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	"wg@grandegger.com" <wg@grandegger.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"pawel.moll@arm.com" <pawel.moll@arm.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
-	"galak@codeaurora.org" <galak@codeaurora.org>,
-	"corbet@lwn.net" <corbet@lwn.net>
-CC: "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>,
-	Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH v3] can: rcar_canfd: Add Renesas R-Car CAN FD driver
-Date: Tue, 15 Mar 2016 14:26:03 +0000
-Message-ID: <SG2PR06MB1038438FAB232ECD54066FF7C3890@SG2PR06MB1038.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH v3] can: rcar_canfd: Add Renesas R-Car CAN FD driver
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+	wg@grandegger.com, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, corbet@lwn.net
 References: <1457019515-21158-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
  <1458035294-8150-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <56E80567.9060201@pengutronix.de>
-In-Reply-To: <56E80567.9060201@pengutronix.de>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-can@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, geert+renesas@glider.be,
+	chris.paterson2@renesas.com
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <56E80567.9060201@pengutronix.de>
+Date: Tue, 15 Mar 2016 13:51:51 +0100
 MIME-Version: 1.0
+In-Reply-To: <1458035294-8150-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="6nomFkabhXg7Xua0Wkbm7e13uQQ3O9l37"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgTWFyYywNCg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYzXSBjYW46IHJjYXJfY2FuZmQ6IEFk
-ZCBSZW5lc2FzIFItQ2FyIENBTiBGRCBkcml2ZXINCj4gDQo+IE9uIDAzLzE1LzIwMTYgMTA6NDgg
-QU0sIFJhbWVzaCBTaGFubXVnYXN1bmRhcmFtIHdyb3RlOg0KPiA+IFRoaXMgcGF0Y2ggYWRkcyBz
-dXBwb3J0IGZvciB0aGUgQ0FOIEZEIGNvbnRyb2xsZXIgZm91bmQgaW4gUmVuZXNhcw0KPiA+IFIt
-Q2FyIFNvQ3MuIFRoZSBjb250cm9sbGVyIG9wZXJhdGVzIGluIENBTiBGRCBvbmx5IG1vZGUgYnkg
-ZGVmYXVsdC4NCj4gPg0KPiA+IENBTiBGRCBtb2RlIHN1cHBvcnRzIGJvdGggQ2xhc3NpY2FsIENB
-TiAmIENBTiBGRCBmcmFtZSBmb3JtYXRzLiBUaGUNCj4gPiBjb250cm9sbGVyIHN1cHBvcnRzIElT
-TyAxMTg5OC0xOjIwMTUgQ0FOIEZEIGZvcm1hdCBvbmx5Lg0KPiA+DQo+ID4gVGhpcyBjb250cm9s
-bGVyIHN1cHBvcnRzIHR3byBjaGFubmVscyBhbmQgdGhlIGRyaXZlciBjYW4gZW5hYmxlIGVpdGhl
-cg0KPiA+IG9yIGJvdGggb2YgdGhlIGNoYW5uZWxzLg0KPiA+DQo+ID4gRHJpdmVyIHVzZXMgUngg
-RklGT3MgKG9uZSBwZXIgY2hhbm5lbCkgZm9yIHJlY2VwdGlvbiAmIENvbW1vbiBGSUZPcw0KPiA+
-IChvbmUgcGVyIGNoYW5uZWwpIGZvciB0cmFuc21pc3Npb24uIFJ4IGZpbHRlciBydWxlcyBhcmUg
-Y29uZmlndXJlZCB0bw0KPiA+IHRoZSBtaW5pbXVtIChvbmUgcGVyIGNoYW5uZWwpIGFuZCBpdCBh
-Y2NlcHRzIFN0YW5kYXJkLCBFeHRlbmRlZCwgRGF0YQ0KPiA+ICYgUmVtb3RlIEZyYW1lIGNvbWJp
-bmF0aW9ucy4NCj4gPg0KPiA+IE5vdGU6IFRoZXJlIGFyZSBmZXcgZG9jdW1lbnRhdGlvbiBlcnJv
-cnMgaW4gUi1DYXIgR2VuMyBIYXJkd2FyZSBVc2VyDQo+ID4gTWFudWFsIHYwLjVFIHdpdGggcmVz
-cGVjdCB0byBDQU4gRkQgY29udHJvbGxlci4gVGhleSBhcmUgbGlzdGVkIGJlbG93Og0KPiA+DQo+
-ID4gMS4gQ0FOIEZEIGludGVycnVwdCBudW1iZXJzIDI5ICYgMzAgYXJlIGxpc3RlZCBhcyBwZXIg
-Y2hhbm5lbA0KPiA+IGludGVycnVwdHMuIEhvd2V2ZXIsIHRoZXkgYXJlIGNvbW1vbiB0byBib3Ro
-IGNoYW5uZWxzIChpLmUuKSB0aGV5IGFyZQ0KPiA+IGdsb2JhbCBhbmQgY2hhbm5lbCBpbnRlcnJ1
-cHRzIHJlc3BlY3RpdmVseS4NCj4gPg0KPiA+IDIuIENBTkZEIGNsb2NrIGlzIGRlcml2ZWQgZnJv
-bSBQTEwxLiBUaGlzIGlzIG5vdCBkb2N1bWVudGVkLg0KPiA+DQo+ID4gMy4gQ0FORkQgY2xvY2sg
-aXMgZnVydGhlciBkaXZpZGVkIGJ5ICgxLzIpIHdpdGhpbiB0aGUgQ0FOIEZEIGNvbnRyb2xsZXIu
-DQo+ID4gVGhpcyBpcyBub3QgZG9jdW1lbnRlZC4NCj4gPg0KPiA+IDQuIFRoZSBtaW5pbXVtIHZh
-bHVlIG9mIE5UU0VHMSBpbiBSU0NGRG5DRkRDbU5DRkcgcmVnaXN0ZXIgaXMgMiBUcS4gSXQNCj4g
-PiBpcyBzcGVjaWZpZWQgNCBUcSBpbiB0aGUgbWFudWFsLg0KPiA+DQo+ID4gNS4gVGhlIG1heGlt
-dW0gbnVtYmVyIG9mIG1lc3NhZ2UgUkFNIGFyZWEgdGhlIGNvbnRyb2xsZXIgY2FuIHVzZSBpcw0K
-PiA+IDM1ODQgYnl0ZXMuIEl0IGlzIHNwZWNpZmllZCAxMDc1MiBieXRlcyBpbiB0aGUgbWFudWFs
-Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmFtZXNoIFNoYW5tdWdhc3VuZGFyYW0NCj4gPiA8
-cmFtZXNoLnNoYW5tdWdhc3VuZGFyYW1AYnAucmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4gSGkg
-QWxsLA0KPiA+DQo+ID4gICAgVGhhbmtzIGZvciB0aGUgcmV2aWV3IGNvbW1lbnRzLg0KPiA+DQo+
-ID4gICAgVGhpcyB1cGRhdGVkIHBhdGNoIGlzIGJhc2VkIG9uIGxpbnV4LWNhbi1uZXh0IHRhZyAo
-bGludXgtY2FuLW5leHQtDQo+IGZvci00LjYtMjAxNjAzMTApLg0KPiA+DQo+ID4gICAgVGhpcyBw
-YXRjaCBkZXBlbmRzIG9uDQo+ID4NCj4gPiAgICBbUkZDXSBbUEFUQ0ggdjNdIGNhbjogZml4IGhh
-bmRsaW5nIG9mIHVubW9kaWZpYWJsZSBjb25maWd1cmF0aW9uDQo+IG9wdGlvbnMNCj4gPiAgICAo
-aHR0cDovL2NvbW1lbnRzLmdtYW5lLm9yZy9nbWFuZS5saW51eC5jYW4vOTEyNikNCj4gPg0KPiA+
-IENoYW5nZXMgc2luY2UgdjI6DQo+ID4gCSogUmViYXNlZCB0byBsYXRlc3QgdGFnIChsaW51eC1j
-YW4tbmV4dC1mb3ItNC42LTIwMTYwMzEwKQ0KPiA+IAkqIENsZWFuZWQgdXAgbGVmdG92ZXIgZGVi
-dWdmcyBjb2RlIChUaGFua3MgT2xpdmVyIEgpDQo+ID4gCSogUmV2aXNlZCBkZXZpY2V0cmVlIGRv
-Y3VtZW50YXRpb24gdGV4dCAoYXMgc3VnZ2VzdGVkIGJ5IFJvYiBIKQ0KPiA+IAkgIChodHRwczov
-L3d3dy5tYWlsLWFyY2hpdmUuY29tL2xpbnV4LXJlbmVzYXMtDQo+IHNvY0B2Z2VyLmtlcm5lbC5v
-cmcvbXNnMDE1OTcuaHRtbCkNCj4gPiAJKiBVc2VkIG5ldyBjYW4gc3Vic3lzdGVtIGFwaSB0byBz
-ZXQgc3RhdGljIGNvbmZpZ3VyYXRpb24gJiByZW1vdmVkDQo+IGNoZWNrIGluIHJjYXJfY2FuZmRf
-c3RhcnQgKGFzIHN1Z2dlc3RlZCBieSBPbGl2ZXIgSCkNCj4gPiAJICAoUmVmZXI6IGh0dHA6Ly9j
-b21tZW50cy5nbWFuZS5vcmcvZ21hbmUubGludXguY2FuLzkxMjYgJg0KPiA+IAkgICBodHRwczov
-L3d3dy5tYWlsLWFyY2hpdmUuY29tL2xpbnV4LXJlbmVzYXMtDQo+IHNvY0B2Z2VyLmtlcm5lbC5v
-cmcvbXNnMDE4NjcuaHRtbCkNCj4gPiAJKiBDbHViYmVkIFJlbmVzYXMgY29udHJvbGxlciBkcml2
-ZXJzIHRvIGRyaXZlci9uZXQvY2FuL3JjYXIgZGlyIChhcw0KPiA+IHN1Z2dlc3RlZCBieSBPbGl2
-ZXIgSCkNCj4gDQo+IFBsZWFzZSBtYWtlIG1vdmluZyBvZiB0aGUgZXhpc3RpbmcgZHJpdmVycyBh
-IHNlcGFyYXRlIHBhdGNoLg0KDQpPSy4gSSdsbCBzdWJtaXQgbmV3IHBhdGNoIHdpdGggQ0FOIEZE
-IGRyaXZlciBpbiBuZXcgInJjYXIiIGRpciBhbmQgd2lsbCBwcm92aWRlIGEgc2VwYXJhdGUgcGF0
-Y2ggb24gdG9wIHRoYXQgd2lsbCBtb3ZlIHRoZSBDQU4gZHJpdmVyIHRvICJyY2FyIiBkaXIuDQoN
-ClRoYW5rcywNClJhbWVzaA0K
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--6nomFkabhXg7Xua0Wkbm7e13uQQ3O9l37
+Content-Type: multipart/mixed; boundary="tVEFGSCu3uInSe5LrCKVaiDJhlpLsPSna"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+ wg@grandegger.com, robh+dt@kernel.org, pawel.moll@arm.com,
+ mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+ corbet@lwn.net
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-can@vger.kernel.org, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, geert+renesas@glider.be,
+ chris.paterson2@renesas.com
+Message-ID: <56E80567.9060201@pengutronix.de>
+Subject: Re: [PATCH v3] can: rcar_canfd: Add Renesas R-Car CAN FD driver
+References: <1457019515-21158-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1458035294-8150-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1458035294-8150-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+
+--tVEFGSCu3uInSe5LrCKVaiDJhlpLsPSna
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+On 03/15/2016 10:48 AM, Ramesh Shanmugasundaram wrote:
+> This patch adds support for the CAN FD controller found in Renesas R-Ca=
+r
+> SoCs. The controller operates in CAN FD only mode by default.
+>=20
+> CAN FD mode supports both Classical CAN & CAN FD frame formats. The
+> controller supports ISO 11898-1:2015 CAN FD format only.
+>=20
+> This controller supports two channels and the driver can enable either
+> or both of the channels.
+>=20
+> Driver uses Rx FIFOs (one per channel) for reception & Common FIFOs (on=
+e
+> per channel) for transmission. Rx filter rules are configured to the
+> minimum (one per channel) and it accepts Standard, Extended, Data &
+> Remote Frame combinations.
+>=20
+> Note: There are few documentation errors in R-Car Gen3 Hardware User
+> Manual v0.5E with respect to CAN FD controller. They are listed below:
+>=20
+> 1. CAN FD interrupt numbers 29 & 30 are listed as per channel
+> interrupts. However, they are common to both channels (i.e.) they are
+> global and channel interrupts respectively.
+>=20
+> 2. CANFD clock is derived from PLL1. This is not documented.
+>=20
+> 3. CANFD clock is further divided by (1/2) within the CAN FD controller=
+=2E
+> This is not documented.
+>=20
+> 4. The minimum value of NTSEG1 in RSCFDnCFDCmNCFG register is 2 Tq. It
+> is specified 4 Tq in the manual.
+>=20
+> 5. The maximum number of message RAM area the controller can use is 358=
+4
+> bytes. It is specified 10752 bytes in the manual.
+>=20
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.rene=
+sas.com>
+> ---
+> Hi All,
+>=20
+>    Thanks for the review comments.
+>=20
+>    This updated patch is based on linux-can-next tag (linux-can-next-fo=
+r-4.6-20160310).
+>=20
+>    This patch depends on
+>=20
+>    [RFC] [PATCH v3] can: fix handling of unmodifiable configuration opt=
+ions
+>    (http://comments.gmane.org/gmane.linux.can/9126)
+>=20
+> Changes since v2:
+> 	* Rebased to latest tag (linux-can-next-for-4.6-20160310)
+> 	* Cleaned up leftover debugfs code (Thanks Oliver H)
+> 	* Revised devicetree documentation text (as suggested by Rob H)
+> 	  (https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg0=
+1597.html)
+> 	* Used new can subsystem api to set static configuration & removed che=
+ck in rcar_canfd_start (as suggested by Oliver H)
+> 	  (Refer: http://comments.gmane.org/gmane.linux.can/9126 &
+> 	   https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg0=
+1867.html)
+> 	* Clubbed Renesas controller drivers to driver/net/can/rcar dir (as su=
+ggested by Oliver H)
+
+Please make moving of the existing drivers a separate patch.
+
+Marc
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--tVEFGSCu3uInSe5LrCKVaiDJhlpLsPSna--
+
+--6nomFkabhXg7Xua0Wkbm7e13uQQ3O9l37
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBCgAGBQJW6AVnAAoJED07qiWsqSVqRZAH/2Sgg5ZB3lVEHw6niY8B5p5S
+OaUlvXm2LvGM55+hFnyswDdIYRkHRhpt6ww7b1FscdJISPXyac4QpUz1HCYgEiV1
+vkETBGfVcza4XCgGwN9rSXPwJdLpS5Mgaf6lkCewdZ6Wv1RKXrA72pheOrkusu79
+EWoz1wkJ7doJvIyaOJiI6ehME1PM/VZjXhxjG3ZSWnIYZVsPafmo6XMs/yfyEamX
+0Yb4o6ucKxXQuR7vKClEx/1zrYvX4q9OAjSafW63vu9EoU40N1tnBNbW66s+GlwA
+7nn23dHmsZzr5TTdmUTXJYStFMnHhWQH0NLo/SboCYgyaCFhRf0/ocoAY25UlfA=
+=TcTX
+-----END PGP SIGNATURE-----
+
+--6nomFkabhXg7Xua0Wkbm7e13uQQ3O9l37--
