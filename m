@@ -1,84 +1,192 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 7/7] soc: renesas: Add r8a7795 SYSC PM Domain Binding Definitions
-Date: Wed,  9 Mar 2016 20:18:42 +0100
-Message-Id: <1457551122-21838-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
-References: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+	m.szyprowski@samsung.com
+Date: Wed, 16 Mar 2016 02:04:51 +0900
+Message-Id: <20160315170451.20615.97297.sendpatchset@little-apple>
+In-Reply-To: <20160315170431.20615.30333.sendpatchset@little-apple>
+References: <20160315170431.20615.30333.sendpatchset@little-apple>
+Subject: [PATCH 02/04] iommu/ipmmu-vmsa: Break out utlb parsing code
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - New.
----
- include/dt-bindings/power/r8a7795-sysc.h | 42 ++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a7795-sysc.h
+From: Magnus Damm <damm+renesas@opensource.se>
 
-diff --git a/include/dt-bindings/power/r8a7795-sysc.h b/include/dt-bindings/power/r8a7795-sysc.h
-new file mode 100644
-index 0000000000000000..ee2e26ba605ef9a3
---- /dev/null
-+++ b/include/dt-bindings/power/r8a7795-sysc.h
-@@ -0,0 +1,42 @@
-+/*
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7795_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7795_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A7795_PD_CA57_CPU0		 0
-+#define R8A7795_PD_CA57_CPU1		 1
-+#define R8A7795_PD_CA57_CPU2		 2
-+#define R8A7795_PD_CA57_CPU3		 3
-+#define R8A7795_PD_CA53_CPU0		 5
-+#define R8A7795_PD_CA53_CPU1		 6
-+#define R8A7795_PD_CA53_CPU2		 7
-+#define R8A7795_PD_CA53_CPU3		 8
-+#define R8A7795_PD_A3VP			 9
-+#define R8A7795_PD_CA57_SCU		12
-+#define R8A7795_PD_CR7			13
-+#define R8A7795_PD_A3VC			14
-+#define R8A7795_PD_3DG_A		17
-+#define R8A7795_PD_3DG_B		18
-+#define R8A7795_PD_3DG_C		19
-+#define R8A7795_PD_3DG_D		20
-+#define R8A7795_PD_CA53_SCU		21
-+#define R8A7795_PD_3DG_E		22
-+#define R8A7795_PD_A3IR			24
-+#define R8A7795_PD_A2VC0		25
-+#define R8A7795_PD_A2VC1		26
-+
-+/* Always-on power area */
-+#define R8A7795_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7795_SYSC_H__ */
--- 
-1.9.1
+Break out the utlb parsing code and dev_data allocation into a
+separate function. This is preparation for future code sharing.
 
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
+
+ drivers/iommu/ipmmu-vmsa.c |  125 ++++++++++++++++++++++++--------------------
+ 1 file changed, 70 insertions(+), 55 deletions(-)
+
+--- 0008/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-03-15 21:08:20.180513000 +0900
+@@ -619,6 +619,69 @@ static int ipmmu_find_utlbs(struct ipmmu
+ 	return 0;
+ }
+ 
++static int ipmmu_init_platform_device(struct device *dev,
++				      struct iommu_group *group)
++{
++	struct ipmmu_vmsa_archdata *archdata;
++	struct ipmmu_vmsa_device *mmu;
++	unsigned int *utlbs;
++	unsigned int i;
++	int num_utlbs;
++	int ret = -ENODEV;
++
++	/* Find the master corresponding to the device. */
++
++	num_utlbs = of_count_phandle_with_args(dev->of_node, "iommus",
++					       "#iommu-cells");
++	if (num_utlbs < 0)
++		return -ENODEV;
++
++	utlbs = kcalloc(num_utlbs, sizeof(*utlbs), GFP_KERNEL);
++	if (!utlbs)
++		return -ENOMEM;
++
++	spin_lock(&ipmmu_devices_lock);
++
++	list_for_each_entry(mmu, &ipmmu_devices, list) {
++		ret = ipmmu_find_utlbs(mmu, dev, utlbs, num_utlbs);
++		if (!ret) {
++			/*
++			 * TODO Take a reference to the MMU to protect
++			 * against device removal.
++			 */
++			break;
++		}
++	}
++
++	spin_unlock(&ipmmu_devices_lock);
++
++	if (ret < 0)
++		goto error;
++
++	for (i = 0; i < num_utlbs; ++i) {
++		if (utlbs[i] >= mmu->num_utlbs) {
++			ret = -EINVAL;
++			goto error;
++		}
++	}
++
++	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
++	if (!archdata) {
++		ret = -ENOMEM;
++		goto error;
++	}
++
++	archdata->mmu = mmu;
++	archdata->utlbs = utlbs;
++	archdata->num_utlbs = num_utlbs;
++	dev->archdata.iommu = archdata;
++	return 0;
++
++error:
++	kfree(utlbs);
++	return ret;
++}
++
+ #if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
+ static int ipmmu_map_attach(struct device *dev, struct ipmmu_vmsa_device *mmu)
+ {
+@@ -675,13 +738,8 @@ static inline void ipmmu_release_mapping
+ 
+ static int ipmmu_add_device(struct device *dev)
+ {
+-	struct ipmmu_vmsa_archdata *archdata;
+-	struct ipmmu_vmsa_device *mmu;
+-	struct iommu_group *group = NULL;
+-	unsigned int *utlbs;
+-	unsigned int i;
+-	int num_utlbs;
+-	int ret = -ENODEV;
++	struct iommu_group *group;
++	int ret;
+ 
+ 	if (dev->archdata.iommu) {
+ 		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
+@@ -689,42 +747,6 @@ static int ipmmu_add_device(struct devic
+ 		return -EINVAL;
+ 	}
+ 
+-	/* Find the master corresponding to the device. */
+-
+-	num_utlbs = of_count_phandle_with_args(dev->of_node, "iommus",
+-					       "#iommu-cells");
+-	if (num_utlbs < 0)
+-		return -ENODEV;
+-
+-	utlbs = kcalloc(num_utlbs, sizeof(*utlbs), GFP_KERNEL);
+-	if (!utlbs)
+-		return -ENOMEM;
+-
+-	spin_lock(&ipmmu_devices_lock);
+-
+-	list_for_each_entry(mmu, &ipmmu_devices, list) {
+-		ret = ipmmu_find_utlbs(mmu, dev, utlbs, num_utlbs);
+-		if (!ret) {
+-			/*
+-			 * TODO Take a reference to the MMU to protect
+-			 * against device removal.
+-			 */
+-			break;
+-		}
+-	}
+-
+-	spin_unlock(&ipmmu_devices_lock);
+-
+-	if (ret < 0)
+-		return -ENODEV;
+-
+-	for (i = 0; i < num_utlbs; ++i) {
+-		if (utlbs[i] >= mmu->num_utlbs) {
+-			ret = -EINVAL;
+-			goto error;
+-		}
+-	}
+-
+ 	/* Create a device group and add the device to it. */
+ 	group = iommu_group_alloc();
+ 	if (IS_ERR(group)) {
+@@ -742,27 +764,20 @@ static int ipmmu_add_device(struct devic
+ 		goto error;
+ 	}
+ 
+-	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
+-	if (!archdata) {
+-		ret = -ENOMEM;
++	ret = ipmmu_init_platform_device(dev, group);
++	if (ret < 0) {
++		dev_err(dev, "Failed to init platform device\n");
+ 		goto error;
+ 	}
+ 
+-	archdata->mmu = mmu;
+-	archdata->utlbs = utlbs;
+-	archdata->num_utlbs = num_utlbs;
+-	dev->archdata.iommu = archdata;
+-
+-	ret = ipmmu_map_attach(dev, mmu);
++	ret = ipmmu_map_attach(dev, ((struct ipmmu_vmsa_archdata *)
++				     dev->archdata.iommu)->mmu);
+ 	if (ret < 0)
+ 		goto error;
+ 
+ 	return 0;
+ 
+ error:
+-	kfree(dev->archdata.iommu);
+-	kfree(utlbs);
+-
+ 	dev->archdata.iommu = NULL;
+ 
+ 	if (!IS_ERR_OR_NULL(group))
