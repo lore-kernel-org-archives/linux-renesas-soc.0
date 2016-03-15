@@ -1,100 +1,85 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Fri, 18 Mar 2016 16:07:29 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: mkl@pengutronix.de, wg@grandegger.com, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, corbet@lwn.net,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, geert+renesas@glider.be,
-	chris.paterson2@renesas.com
-Subject: Re: [PATCH v3] can: rcar_canfd: Add Renesas R-Car CAN FD driver
-Message-ID: <20160318210729.GA30163@rob-hp-laptop>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	"wg@grandegger.com" <wg@grandegger.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"pawel.moll@arm.com" <pawel.moll@arm.com>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
+	"galak@codeaurora.org" <galak@codeaurora.org>,
+	"corbet@lwn.net" <corbet@lwn.net>
+CC: "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>,
+	Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: RE: [PATCH v3] can: rcar_canfd: Add Renesas R-Car CAN FD driver
+Date: Tue, 15 Mar 2016 14:26:03 +0000
+Message-ID: <SG2PR06MB1038438FAB232ECD54066FF7C3890@SG2PR06MB1038.apcprd06.prod.outlook.com>
 References: <1457019515-21158-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
  <1458035294-8150-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <56E80567.9060201@pengutronix.de>
+In-Reply-To: <56E80567.9060201@pengutronix.de>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1458035294-8150-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Mar 15, 2016 at 09:48:14AM +0000, Ramesh Shanmugasundaram wrote:
-> This patch adds support for the CAN FD controller found in Renesas R-Car
-> SoCs. The controller operates in CAN FD only mode by default.
-> 
-> CAN FD mode supports both Classical CAN & CAN FD frame formats. The
-> controller supports ISO 11898-1:2015 CAN FD format only.
-> 
-> This controller supports two channels and the driver can enable either
-> or both of the channels.
-> 
-> Driver uses Rx FIFOs (one per channel) for reception & Common FIFOs (one
-> per channel) for transmission. Rx filter rules are configured to the
-> minimum (one per channel) and it accepts Standard, Extended, Data &
-> Remote Frame combinations.
-> 
-> Note: There are few documentation errors in R-Car Gen3 Hardware User
-> Manual v0.5E with respect to CAN FD controller. They are listed below:
-> 
-> 1. CAN FD interrupt numbers 29 & 30 are listed as per channel
-> interrupts. However, they are common to both channels (i.e.) they are
-> global and channel interrupts respectively.
-> 
-> 2. CANFD clock is derived from PLL1. This is not documented.
-> 
-> 3. CANFD clock is further divided by (1/2) within the CAN FD controller.
-> This is not documented.
-> 
-> 4. The minimum value of NTSEG1 in RSCFDnCFDCmNCFG register is 2 Tq. It
-> is specified 4 Tq in the manual.
-> 
-> 5. The maximum number of message RAM area the controller can use is 3584
-> bytes. It is specified 10752 bytes in the manual.
-> 
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-> ---
-> Hi All,
-> 
->    Thanks for the review comments.
-> 
->    This updated patch is based on linux-can-next tag (linux-can-next-for-4.6-20160310).
-> 
->    This patch depends on
-> 
->    [RFC] [PATCH v3] can: fix handling of unmodifiable configuration options
->    (http://comments.gmane.org/gmane.linux.can/9126)
-> 
-> Changes since v2:
-> 	* Rebased to latest tag (linux-can-next-for-4.6-20160310)
-> 	* Cleaned up leftover debugfs code (Thanks Oliver H)
-> 	* Revised devicetree documentation text (as suggested by Rob H)
-> 	  (https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg01597.html)
-> 	* Used new can subsystem api to set static configuration & removed check in rcar_canfd_start (as suggested by Oliver H)
-> 	  (Refer: http://comments.gmane.org/gmane.linux.can/9126 &
-> 	   https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg01867.html)
-> 	* Clubbed Renesas controller drivers to driver/net/can/rcar dir (as suggested by Oliver H)
-> 	* Updated commit message
-> 
-> Changes since v1:
-> 	* Removed testmodes & debugfs code (suggested by Oliver H)
-> 	* Fixed tx path race issue by introducing lock (suggested by Marc K)
-> 	* Removed __maybe_unused attribute of rcar_canfd_of_table
-> ---
->  .../devicetree/bindings/net/can/rcar_canfd.txt     |   89 ++
-
-Acked-by: Rob Herring <robh@kernel.org>
-
->  drivers/net/can/Kconfig                            |   11 +-
->  drivers/net/can/Makefile                           |    2 +-
->  drivers/net/can/rcar/Kconfig                       |   19 +
->  drivers/net/can/rcar/Makefile                      |    6 +
->  drivers/net/can/{ => rcar}/rcar_can.c              |    0
->  drivers/net/can/rcar/rcar_canfd.c                  | 1614 ++++++++++++++++++++
->  7 files changed, 1730 insertions(+), 11 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/net/can/rcar_canfd.txt
->  create mode 100644 drivers/net/can/rcar/Kconfig
->  create mode 100644 drivers/net/can/rcar/Makefile
->  rename drivers/net/can/{ => rcar}/rcar_can.c (100%)
->  create mode 100644 drivers/net/can/rcar/rcar_canfd.c
+SGkgTWFyYywNCg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYzXSBjYW46IHJjYXJfY2FuZmQ6IEFk
+ZCBSZW5lc2FzIFItQ2FyIENBTiBGRCBkcml2ZXINCj4gDQo+IE9uIDAzLzE1LzIwMTYgMTA6NDgg
+QU0sIFJhbWVzaCBTaGFubXVnYXN1bmRhcmFtIHdyb3RlOg0KPiA+IFRoaXMgcGF0Y2ggYWRkcyBz
+dXBwb3J0IGZvciB0aGUgQ0FOIEZEIGNvbnRyb2xsZXIgZm91bmQgaW4gUmVuZXNhcw0KPiA+IFIt
+Q2FyIFNvQ3MuIFRoZSBjb250cm9sbGVyIG9wZXJhdGVzIGluIENBTiBGRCBvbmx5IG1vZGUgYnkg
+ZGVmYXVsdC4NCj4gPg0KPiA+IENBTiBGRCBtb2RlIHN1cHBvcnRzIGJvdGggQ2xhc3NpY2FsIENB
+TiAmIENBTiBGRCBmcmFtZSBmb3JtYXRzLiBUaGUNCj4gPiBjb250cm9sbGVyIHN1cHBvcnRzIElT
+TyAxMTg5OC0xOjIwMTUgQ0FOIEZEIGZvcm1hdCBvbmx5Lg0KPiA+DQo+ID4gVGhpcyBjb250cm9s
+bGVyIHN1cHBvcnRzIHR3byBjaGFubmVscyBhbmQgdGhlIGRyaXZlciBjYW4gZW5hYmxlIGVpdGhl
+cg0KPiA+IG9yIGJvdGggb2YgdGhlIGNoYW5uZWxzLg0KPiA+DQo+ID4gRHJpdmVyIHVzZXMgUngg
+RklGT3MgKG9uZSBwZXIgY2hhbm5lbCkgZm9yIHJlY2VwdGlvbiAmIENvbW1vbiBGSUZPcw0KPiA+
+IChvbmUgcGVyIGNoYW5uZWwpIGZvciB0cmFuc21pc3Npb24uIFJ4IGZpbHRlciBydWxlcyBhcmUg
+Y29uZmlndXJlZCB0bw0KPiA+IHRoZSBtaW5pbXVtIChvbmUgcGVyIGNoYW5uZWwpIGFuZCBpdCBh
+Y2NlcHRzIFN0YW5kYXJkLCBFeHRlbmRlZCwgRGF0YQ0KPiA+ICYgUmVtb3RlIEZyYW1lIGNvbWJp
+bmF0aW9ucy4NCj4gPg0KPiA+IE5vdGU6IFRoZXJlIGFyZSBmZXcgZG9jdW1lbnRhdGlvbiBlcnJv
+cnMgaW4gUi1DYXIgR2VuMyBIYXJkd2FyZSBVc2VyDQo+ID4gTWFudWFsIHYwLjVFIHdpdGggcmVz
+cGVjdCB0byBDQU4gRkQgY29udHJvbGxlci4gVGhleSBhcmUgbGlzdGVkIGJlbG93Og0KPiA+DQo+
+ID4gMS4gQ0FOIEZEIGludGVycnVwdCBudW1iZXJzIDI5ICYgMzAgYXJlIGxpc3RlZCBhcyBwZXIg
+Y2hhbm5lbA0KPiA+IGludGVycnVwdHMuIEhvd2V2ZXIsIHRoZXkgYXJlIGNvbW1vbiB0byBib3Ro
+IGNoYW5uZWxzIChpLmUuKSB0aGV5IGFyZQ0KPiA+IGdsb2JhbCBhbmQgY2hhbm5lbCBpbnRlcnJ1
+cHRzIHJlc3BlY3RpdmVseS4NCj4gPg0KPiA+IDIuIENBTkZEIGNsb2NrIGlzIGRlcml2ZWQgZnJv
+bSBQTEwxLiBUaGlzIGlzIG5vdCBkb2N1bWVudGVkLg0KPiA+DQo+ID4gMy4gQ0FORkQgY2xvY2sg
+aXMgZnVydGhlciBkaXZpZGVkIGJ5ICgxLzIpIHdpdGhpbiB0aGUgQ0FOIEZEIGNvbnRyb2xsZXIu
+DQo+ID4gVGhpcyBpcyBub3QgZG9jdW1lbnRlZC4NCj4gPg0KPiA+IDQuIFRoZSBtaW5pbXVtIHZh
+bHVlIG9mIE5UU0VHMSBpbiBSU0NGRG5DRkRDbU5DRkcgcmVnaXN0ZXIgaXMgMiBUcS4gSXQNCj4g
+PiBpcyBzcGVjaWZpZWQgNCBUcSBpbiB0aGUgbWFudWFsLg0KPiA+DQo+ID4gNS4gVGhlIG1heGlt
+dW0gbnVtYmVyIG9mIG1lc3NhZ2UgUkFNIGFyZWEgdGhlIGNvbnRyb2xsZXIgY2FuIHVzZSBpcw0K
+PiA+IDM1ODQgYnl0ZXMuIEl0IGlzIHNwZWNpZmllZCAxMDc1MiBieXRlcyBpbiB0aGUgbWFudWFs
+Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmFtZXNoIFNoYW5tdWdhc3VuZGFyYW0NCj4gPiA8
+cmFtZXNoLnNoYW5tdWdhc3VuZGFyYW1AYnAucmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4gSGkg
+QWxsLA0KPiA+DQo+ID4gICAgVGhhbmtzIGZvciB0aGUgcmV2aWV3IGNvbW1lbnRzLg0KPiA+DQo+
+ID4gICAgVGhpcyB1cGRhdGVkIHBhdGNoIGlzIGJhc2VkIG9uIGxpbnV4LWNhbi1uZXh0IHRhZyAo
+bGludXgtY2FuLW5leHQtDQo+IGZvci00LjYtMjAxNjAzMTApLg0KPiA+DQo+ID4gICAgVGhpcyBw
+YXRjaCBkZXBlbmRzIG9uDQo+ID4NCj4gPiAgICBbUkZDXSBbUEFUQ0ggdjNdIGNhbjogZml4IGhh
+bmRsaW5nIG9mIHVubW9kaWZpYWJsZSBjb25maWd1cmF0aW9uDQo+IG9wdGlvbnMNCj4gPiAgICAo
+aHR0cDovL2NvbW1lbnRzLmdtYW5lLm9yZy9nbWFuZS5saW51eC5jYW4vOTEyNikNCj4gPg0KPiA+
+IENoYW5nZXMgc2luY2UgdjI6DQo+ID4gCSogUmViYXNlZCB0byBsYXRlc3QgdGFnIChsaW51eC1j
+YW4tbmV4dC1mb3ItNC42LTIwMTYwMzEwKQ0KPiA+IAkqIENsZWFuZWQgdXAgbGVmdG92ZXIgZGVi
+dWdmcyBjb2RlIChUaGFua3MgT2xpdmVyIEgpDQo+ID4gCSogUmV2aXNlZCBkZXZpY2V0cmVlIGRv
+Y3VtZW50YXRpb24gdGV4dCAoYXMgc3VnZ2VzdGVkIGJ5IFJvYiBIKQ0KPiA+IAkgIChodHRwczov
+L3d3dy5tYWlsLWFyY2hpdmUuY29tL2xpbnV4LXJlbmVzYXMtDQo+IHNvY0B2Z2VyLmtlcm5lbC5v
+cmcvbXNnMDE1OTcuaHRtbCkNCj4gPiAJKiBVc2VkIG5ldyBjYW4gc3Vic3lzdGVtIGFwaSB0byBz
+ZXQgc3RhdGljIGNvbmZpZ3VyYXRpb24gJiByZW1vdmVkDQo+IGNoZWNrIGluIHJjYXJfY2FuZmRf
+c3RhcnQgKGFzIHN1Z2dlc3RlZCBieSBPbGl2ZXIgSCkNCj4gPiAJICAoUmVmZXI6IGh0dHA6Ly9j
+b21tZW50cy5nbWFuZS5vcmcvZ21hbmUubGludXguY2FuLzkxMjYgJg0KPiA+IAkgICBodHRwczov
+L3d3dy5tYWlsLWFyY2hpdmUuY29tL2xpbnV4LXJlbmVzYXMtDQo+IHNvY0B2Z2VyLmtlcm5lbC5v
+cmcvbXNnMDE4NjcuaHRtbCkNCj4gPiAJKiBDbHViYmVkIFJlbmVzYXMgY29udHJvbGxlciBkcml2
+ZXJzIHRvIGRyaXZlci9uZXQvY2FuL3JjYXIgZGlyIChhcw0KPiA+IHN1Z2dlc3RlZCBieSBPbGl2
+ZXIgSCkNCj4gDQo+IFBsZWFzZSBtYWtlIG1vdmluZyBvZiB0aGUgZXhpc3RpbmcgZHJpdmVycyBh
+IHNlcGFyYXRlIHBhdGNoLg0KDQpPSy4gSSdsbCBzdWJtaXQgbmV3IHBhdGNoIHdpdGggQ0FOIEZE
+IGRyaXZlciBpbiBuZXcgInJjYXIiIGRpciBhbmQgd2lsbCBwcm92aWRlIGEgc2VwYXJhdGUgcGF0
+Y2ggb24gdG9wIHRoYXQgd2lsbCBtb3ZlIHRoZSBDQU4gZHJpdmVyIHRvICJyY2FyIiBkaXIuDQoN
+ClRoYW5rcywNClJhbWVzaA0K
