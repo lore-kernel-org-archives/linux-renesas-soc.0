@@ -1,50 +1,47 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 16 Mar 2016 09:06:05 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
 	<niklas.soderlund+renesas@ragnatech.se>
-To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	geert+renesas@glider.be, linus.walleij@linaro.org,
-	dan.j.williams@intel.com, arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v5 5/9] dmaengine: rcar-dmac: slave address are physical
-Date: Tue,  8 Mar 2016 03:42:50 +0100
-Message-Id: <1457404974-1800-6-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Cc: magnus.damm@gmail.com, geert@linux-m68k.org,
+	laurent.pinchart@ideasonboard.com,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv2 00/31] ARM: dts: r8a779[0-4]: Reference both DMA
+ controllers
+Message-ID: <20160316000603.GE6912@verge.net.au>
+References: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Slave addresses coming from a client is physical not dma. Store the
-address using the correct data type. This is in preparation for hooking
-up the dma-mapping API to the slave addresses.
+On Tue, Mar 15, 2016 at 01:41:37PM +0100, Niklas Söderlund wrote:
+> Hi,
+> 
+> R-Car Gen2 have two DMA controllers, which are equivalent. However DMA
+> slaves were tied only to a single DMA controller in .dtsi. This series
+> add references to to both DMA controllers for all nodes that previously
+> only referenced one of them. It also adds dma references to the SDHI
+> nodes for r8a7794 which according to the datasheet should work but I
+> have not access to HW to verify.
+> 
+> Tested on Koelsch (r8a7791) by altering the compatible value of either
+> dmac0 or dmac1 and verifying that the DMA slaves pick the DMA controller
+> that is instantiated.
+> 
+> For your convince the series can be fetched from
+> https://git.ragnatech.se/linux rcar-dmas-dt-2
+> 
+> * Changes since v1
+> - Rebase on top of renesas-devel-20160315-v4.5 and add dmas references
+>   new nodes (r8a7790: scif2 r8a7793: i2c6,i2c7,i2c8).
+> - Correct error in commit message 31/31 (s/QSPI/MMCIF).
+> - Collect Ack and Reviewed tags from Geert.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/dma/sh/rcar-dmac.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks Niklas,
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 7820d07..01cf82f 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -144,8 +144,8 @@ struct rcar_dmac_chan {
- 
- 	unsigned int src_xfer_size;
- 	unsigned int dst_xfer_size;
--	dma_addr_t src_slave_addr;
--	dma_addr_t dst_slave_addr;
-+	phys_addr_t src_slave_addr;
-+	phys_addr_t dst_slave_addr;
- 	int mid_rid;
- 
- 	spinlock_t lock;
--- 
-2.7.2
+I have queued these up for v4.7.
