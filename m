@@ -3,42 +3,65 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/2] ARM: dts: r8a7790: use fallback can compatibility string
-Date: Mon, 14 Mar 2016 11:13:59 +0900
-Message-Id: <1457921639-15017-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1457921639-15017-1-git-send-email-horms+renesas@verge.net.au>
-References: <1457921639-15017-1-git-send-email-horms+renesas@verge.net.au>
+	Simon Horman <horms+renesas@verge.net.au>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 1/2] ARM: dts: r8a7794: add IIC clocks
+Date: Thu, 17 Mar 2016 16:33:10 +0900
+Message-Id: <1458199991-19391-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1458199991-19391-1-git-send-email-horms+renesas@verge.net.au>
+References: <1458199991-19391-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added fallback compatibility string in r8a7790 device tree.
+Add IIC clocks to r8a7794 device tree.
 
+Based on similar work for the r8a7790 by Wolfram Sang.
+
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7794.dtsi            | 9 ++++++---
+ include/dt-bindings/clock/r8a7794-clock.h | 2 ++
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index b2d6a0f6105c..0077de70b6a4 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -982,7 +982,7 @@
- 	};
- 
- 	can0: can@e6e80000 {
--		compatible = "renesas,can-r8a7790";
-+		compatible = "renesas,can-r8a7790", "renesas,rcar-gen2-can";
- 		reg = <0 0xe6e80000 0 0x1000>;
- 		interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7790_CLK_RCAN0>,
-@@ -993,7 +993,7 @@
- 	};
- 
- 	can1: can@e6e88000 {
--		compatible = "renesas,can-r8a7790";
-+		compatible = "renesas,can-r8a7790", "renesas,rcar-gen2-can";
- 		reg = <0 0xe6e88000 0 0x1000>;
- 		interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7790_CLK_RCAN1>,
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index e2a4b6bd16a0..755d85715c4a 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1150,16 +1150,19 @@
+ 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe615013c 0 4>, <0 0xe6150048 0 4>;
+ 			clocks = <&sd3_clk>, <&sd2_clk>, <&cpg_clocks R8A7794_CLK_SD0>,
+-			         <&mmc0_clk>, <&rclk_clk>, <&hp_clk>, <&hp_clk>;
++			         <&mmc0_clk>, <&hp_clk>, <&hp_clk>, <&rclk_clk>,
++				 <&hp_clk>, <&hp_clk>;
+ 			#clock-cells = <1>;
+ 			clock-indices = <
+ 			        R8A7794_CLK_SDHI2 R8A7794_CLK_SDHI1 R8A7794_CLK_SDHI0
+-				R8A7794_CLK_MMCIF0 R8A7794_CLK_CMT1
++				R8A7794_CLK_MMCIF0 R8A7794_CLK_IIC0
++				R8A7794_CLK_IIC1 R8A7794_CLK_CMT1
+ 				R8A7794_CLK_USBDMAC0 R8A7794_CLK_USBDMAC1
+ 			>;
+ 			clock-output-names =
+ 			        "sdhi2", "sdhi1", "sdhi0",
+-				"mmcif0", "cmt1", "usbdmac0", "usbdmac1";
++				"mmcif0", "i2c6", "i2c7",
++				"cmt1", "usbdmac0", "usbdmac1";
+ 		};
+ 		mstp4_clks: mstp4_clks@e6150140 {
+ 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+diff --git a/include/dt-bindings/clock/r8a7794-clock.h b/include/dt-bindings/clock/r8a7794-clock.h
+index 9703fbdb81c8..4d3ecd626c1f 100644
+--- a/include/dt-bindings/clock/r8a7794-clock.h
++++ b/include/dt-bindings/clock/r8a7794-clock.h
+@@ -57,6 +57,8 @@
+ #define R8A7794_CLK_SDHI1		12
+ #define R8A7794_CLK_SDHI0		14
+ #define R8A7794_CLK_MMCIF0		15
++#define R8A7794_CLK_IIC0		18
++#define R8A7794_CLK_IIC1		23
+ #define R8A7794_CLK_CMT1		29
+ #define R8A7794_CLK_USBDMAC0		30
+ #define R8A7794_CLK_USBDMAC1		31
 -- 
 2.1.4
