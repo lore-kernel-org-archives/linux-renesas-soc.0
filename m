@@ -1,46 +1,71 @@
-Return-Path: <SRS0+uua1=PN=gmail.com=magnus.damm@vergenet.net>
-From: Magnus Damm <magnus.damm@gmail.com>
+Return-Path: <horms@vergenet.net>
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au,Magnus Damm <magnus.damm@gmail.com>,laurent.pinchart+renesas@ideasonboard.com,joro@8bytes.org,geert+renesas@glider.be
-Date: Fri, 18 Mar 2016 01:55:27 +0900
-Message-Id: <20160317165527.28213.60694.sendpatchset@little-apple>
-Subject: [PATCH/RFC 00/05] arm64: dts: r8a7795: salvator-x: IPMMU test code V2
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 01/12] ARM: dts: ape6evm: use generic pinctrl properties
+Date: Fri, 18 Mar 2016 08:59:11 +0900
+Message-Id: <1458259162-15706-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1458259162-15706-1-git-send-email-horms+renesas@verge.net.au>
+References: <1458259162-15706-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-arm64: dts: r8a7795: salvator-x: IPMMU test code V2
+Since 16ccaf5bb5a5 ("pinctrl: sh-pfc: Accept standard function, pins and
+groups properties") renesas pfc drivers accept generic "function", "pins"
+and "groups" properties.
 
-[PATCH/RFC 01/05] arm64: dts: r8a7795: Add IPMMU device nodes
-[PATCH/RFC 02/05] arm64: dts: r8a7795: Enable IPMMU-MM
-[PATCH/RFC 03/05] arm64: dts: r8a7795: Hook up SYS-DMAC to IPMMU
-[PATCH/RFC 04/05] arm64: dts: r8a7795: Enable IPMMU-DS0
-[PATCH/RFC 05/05] arm64: dts: salvator-x: External SCIF3/HSCIF3 loop
+This patch updates the ape6evm device tree to use the generic properties.
 
-Hook up r8a7795 IPMMU to SYS-DMAC and also tie in the external
-SCIF3/HSCIF3 loop back adapter via DT. Previous version posted as:
-
-[PATCH/RFC 00/03] ARM: shmobile: r8a7795 Salvator-X IPMMU test code
-
-The DT binding for r8a7795 has been accepted for upstream merge
-and this series implements support following such format:
-
-d4e42e7 iommu/ipmmu-vmsa: Add r8a7795 DT binding
-
-Even though the DT binding has been accepted I prefer to hold off
-for a bit longer before merging patch 1-4 upstream.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/r8a73a4-ape6evm.dts | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
- Developed on top of next-20160315 and:
+diff --git a/arch/arm/boot/dts/r8a73a4-ape6evm.dts b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
+index 590257095700..93ace33e3e36 100644
+--- a/arch/arm/boot/dts/r8a73a4-ape6evm.dts
++++ b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
+@@ -189,28 +189,28 @@
  
- [PATCH v2 00/04] iommu/ipmmu-vmsa: IPMMU multi-arch update V2
- [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
- [PATCH 00/10] iommu/ipmmu-vmsa: Initial r8a7795 support
-
- No special run time or compile time dependencies apart from
- IPMMU DT binding change in the driver that can be merged
- independently from this series.
-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |   26 +++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  155 +++++++++++++++++++-
- 2 files changed, 179 insertions(+), 2 deletions(-)
+ &pfc {
+ 	scifa0_pins: serial0 {
+-		renesas,groups = "scifa0_data";
+-		renesas,function = "scifa0";
++		groups = "scifa0_data";
++		function = "scifa0";
+ 	};
+ 
+ 	mmc0_pins: mmc {
+-		renesas,groups = "mmc0_data8", "mmc0_ctrl";
+-		renesas,function = "mmc0";
++		groups = "mmc0_data8", "mmc0_ctrl";
++		function = "mmc0";
+ 	};
+ 
+ 	sdhi0_pins: sd0 {
+-		renesas,groups = "sdhi0_data4", "sdhi0_ctrl", "sdhi0_cd";
+-		renesas,function = "sdhi0";
++		groups = "sdhi0_data4", "sdhi0_ctrl", "sdhi0_cd";
++		function = "sdhi0";
+ 	};
+ 
+ 	sdhi1_pins: sd1 {
+-		renesas,groups = "sdhi1_data4", "sdhi1_ctrl";
+-		renesas,function = "sdhi1";
++		groups = "sdhi1_data4", "sdhi1_ctrl";
++		function = "sdhi1";
+ 	};
+ 
+ 	keyboard_pins: keyboard {
+-		renesas,pins = "PORT324", "PORT325", "PORT326", "PORT327",
+-			       "PORT328", "PORT329";
++		pins = "PORT324", "PORT325", "PORT326", "PORT327", "PORT328",
++		       "PORT329";
+ 		bias-pull-up;
+ 	};
+ };
+-- 
+2.1.4
