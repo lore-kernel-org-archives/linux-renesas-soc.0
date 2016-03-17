@@ -5,56 +5,86 @@ To: iommu@lists.linux-foundation.org
 Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
 	joro@8bytes.org, linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-	m.szyprowski@samsung.com
-Date: Wed, 16 Mar 2016 02:05:00 +0900
-Message-Id: <20160315170500.20615.65801.sendpatchset@little-apple>
-In-Reply-To: <20160315170431.20615.30333.sendpatchset@little-apple>
-References: <20160315170431.20615.30333.sendpatchset@little-apple>
-Subject: [PATCH 03/04] iommu/ipmmu-vmsa: Break out domain allocation code
+	Magnus Damm <magnus.damm@gmail.com>
+Date: Fri, 18 Mar 2016 01:29:18 +0900
+Message-Id: <20160317162918.24104.29242.sendpatchset@little-apple>
+In-Reply-To: <20160317162909.24104.31682.sendpatchset@little-apple>
+References: <20160317162909.24104.31682.sendpatchset@little-apple>
+Subject: [PATCH 01/10] iommu/ipmmu-vmsa: Make use of IOMMU_OF_DECLARE()
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Magnus Damm <damm+renesas@opensource.se>
 
-Break out the domain allocation code into a separate function.
-This is preparation for future code sharing.
+Hook up IOMMU_OF_DECLARE() support in case CONFIG_IOMMU_DMA
+is enabled. The only current supported case for 32-bit ARM
+is disabled, however for 64-bit ARM this is required.
 
 Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
 
- drivers/iommu/ipmmu-vmsa.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/iommu/ipmmu-vmsa.c |   31 +++++++++++++++++++++++++++----
+ 1 file changed, 27 insertions(+), 4 deletions(-)
 
 --- 0014/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2015-12-14 19:23:22.210513000 +0900
-@@ -457,13 +457,10 @@ static irqreturn_t ipmmu_domain_irq(int
-  * IOMMU Operations
-  */
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-03-18 00:12:22.950513000 +0900
+@@ -19,6 +19,7 @@
+ #include <linux/iommu.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/of_iommu.h>
+ #include <linux/platform_device.h>
+ #include <linux/sizes.h>
+ #include <linux/slab.h>
+@@ -1016,18 +1017,22 @@ static struct platform_driver ipmmu_driv
  
--static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
-+static struct iommu_domain *__ipmmu_domain_alloc(unsigned type)
+ static int __init ipmmu_init(void)
  {
- 	struct ipmmu_vmsa_domain *domain;
+-	const struct iommu_ops *ops;
++	static bool setup_done;
+ 	int ret;
  
--	if (type != IOMMU_DOMAIN_UNMANAGED)
--		return NULL;
++	if (setup_done)
++		return 0;
++
+ 	ret = platform_driver_register(&ipmmu_driver);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ops = IS_ENABLED(CONFIG_IOMMU_DMA) ? &ipmmu_ops_dma : &ipmmu_ops;
 -
- 	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
- 	if (!domain)
- 		return NULL;
-@@ -473,6 +470,14 @@ static struct iommu_domain *ipmmu_domain
- 	return &domain->io_domain;
++#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
+ 	if (!iommu_present(&platform_bus_type))
+-		bus_set_iommu(&platform_bus_type, ops);
++		bus_set_iommu(&platform_bus_type, &ipmmu_ops);
++#endif
+ 
++	setup_done = true;
+ 	return 0;
  }
  
-+static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
+@@ -1039,6 +1044,24 @@ static void __exit ipmmu_exit(void)
+ subsys_initcall(ipmmu_init);
+ module_exit(ipmmu_exit);
+ 
++#ifdef CONFIG_IOMMU_DMA
++static int __init ipmmu_vmsa_iommu_of_setup(struct device_node *np)
 +{
-+	if (type != IOMMU_DOMAIN_UNMANAGED)
-+		return NULL;
++	static const struct iommu_ops *ops = &ipmmu_ops_dma;
 +
-+	return __ipmmu_domain_alloc(type);
++	ipmmu_init();
++
++	of_iommu_set_ops(np, (struct iommu_ops *)ops);
++	if (!iommu_present(&platform_bus_type))
++		bus_set_iommu(&platform_bus_type, ops);
++
++	return 0;
 +}
 +
- static void ipmmu_domain_free(struct iommu_domain *io_domain)
- {
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
++IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa",
++		 ipmmu_vmsa_iommu_of_setup);
++#endif
++
+ MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
+ MODULE_AUTHOR("Laurent Pinchart <laurent.pinchart@ideasonboard.com>");
+ MODULE_LICENSE("GPL v2");
