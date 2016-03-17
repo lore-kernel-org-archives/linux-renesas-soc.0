@@ -3,40 +3,93 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 0/3] ARM, arm64: dts: Use USB3.0 fallback compatibility strings
-Date: Thu, 24 Mar 2016 11:01:06 +0900
-Message-Id: <1458784869-17829-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 02/12] ARM: dts: armadillo800eva: use generic pinctrl properties
+Date: Fri, 18 Mar 2016 08:59:12 +0900
+Message-Id: <1458259162-15706-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1458259162-15706-1-git-send-email-horms+renesas@verge.net.au>
+References: <1458259162-15706-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added fallback compatibility strings in r8a779[015] device
-trees.
+Since 16ccaf5bb5a5 ("pinctrl: sh-pfc: Accept standard function, pins and
+groups properties") renesas pfc drivers accept generic "function", "pins"
+and "groups" properties.
 
-Based on renesas-devel-20160323-v4.5
+This patch updates the armadillo800eva device tree to use the generic
+properties.
 
-Simon Horman (3):
-  ARM: dts: r8a7790: Use USB3.0 fallback compatibility string
-  ARM: dts: r8a7791: Use USB3.0 fallback compatibility string
-  arm64: dts: r8a7795: Use USB3.0 fallback compatibility string
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 34 +++++++++++++--------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
- arch/arm/boot/dts/r8a7790.dtsi           | 2 +-
- arch/arm/boot/dts/r8a7791.dtsi           | 2 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
-
--- 
-2.1.4
-
-
-Simon Horman (3):
-  ARM: dts: r8a7790: Use USB3.0 fallback compatibility string
-  ARM: dts: r8a7791: Use USB3.0 fallback compatibility string
-  arm64: dts: r8a7795: Use USB3.0 fallback compatibility string
-
- arch/arm/boot/dts/r8a7790.dtsi           | 2 +-
- arch/arm/boot/dts/r8a7791.dtsi           | 2 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+index c548cabb102f..2c82dab2b6f4 100644
+--- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
++++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+@@ -228,44 +228,44 @@
+ 	pinctrl-names = "default";
+ 
+ 	ether_pins: ether {
+-		renesas,groups = "gether_mii", "gether_int";
+-		renesas,function = "gether";
++		groups = "gether_mii", "gether_int";
++		function = "gether";
+ 	};
+ 
+ 	scifa1_pins: serial1 {
+-		renesas,groups = "scifa1_data";
+-		renesas,function = "scifa1";
++		groups = "scifa1_data";
++		function = "scifa1";
+ 	};
+ 
+ 	st1232_pins: touchscreen {
+-		renesas,groups = "intc_irq10";
+-		renesas,function = "intc";
++		groups = "intc_irq10";
++		function = "intc";
+ 	};
+ 
+ 	backlight_pins: backlight {
+-		renesas,groups = "tpu0_to2_1";
+-		renesas,function = "tpu0";
++		groups = "tpu0_to2_1";
++		function = "tpu0";
+ 	};
+ 
+ 	mmc0_pins: mmc0 {
+-		renesas,groups = "mmc0_data8_1", "mmc0_ctrl_1";
+-		renesas,function = "mmc0";
++		groups = "mmc0_data8_1", "mmc0_ctrl_1";
++		function = "mmc0";
+ 	};
+ 
+ 	sdhi0_pins: sd0 {
+-		renesas,groups = "sdhi0_data4", "sdhi0_ctrl", "sdhi0_wp";
+-		renesas,function = "sdhi0";
++		groups = "sdhi0_data4", "sdhi0_ctrl", "sdhi0_wp";
++		function = "sdhi0";
+ 	};
+ 
+ 	fsia_pins: sounda {
+-		renesas,groups = "fsia_sclk_in", "fsia_mclk_out",
+-				 "fsia_data_in_1", "fsia_data_out_0";
+-		renesas,function = "fsia";
++		groups = "fsia_sclk_in", "fsia_mclk_out",
++			 "fsia_data_in_1", "fsia_data_out_0";
++		function = "fsia";
+ 	};
+ 
+ 	lcd0_pins: lcd0 {
+-		renesas,groups = "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
+-		renesas,function = "lcd0";
++		groups = "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
++		function = "lcd0";
+ 
+ 		/* DBGMD/LCDC0/FSIA MUX */
+ 		gpio-hog;
 -- 
 2.1.4
