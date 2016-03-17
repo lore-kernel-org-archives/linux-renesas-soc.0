@@ -1,42 +1,61 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <8737rrfe1f.wl%kuninori.morimoto.gx@renesas.com>
-References: <8760wnfe3r.wl%kuninori.morimoto.gx@renesas.com>
-	<8737rrfe1f.wl%kuninori.morimoto.gx@renesas.com>
-Date: Tue, 22 Mar 2016 14:18:53 +0100
-Message-ID: <CACRpkdYFzKkDEr-PE1euG7ZOGe5MQJfm-rdW-7YN1yQ_y4W9Zg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: IPSRx and MOD_SELx should be set
- before GPSRx
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Magnus <magnus.damm@gmail.com>, Simon <horms@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: IPSRx and MOD_SELx should be set before GPSRx
+Date: Thu, 17 Mar 2016 08:58:45 +0200
+Message-ID: <1532372.pY3qGGVVN1@avalon>
+In-Reply-To: <8737rrfe1f.wl%kuninori.morimoto.gx@renesas.com>
+References: <8760wnfe3r.wl%kuninori.morimoto.gx@renesas.com> <8737rrfe1f.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Mar 16, 2016 at 1:48 AM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
+Hi Morimoto-san,
 
+Thank you for the patch.
+
+On Wednesday 16 March 2016 00:48:11 Kuninori Morimoto wrote:
 > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->
+> 
 > Gen2 / Gen3 datasheet will have below note in next version.
 > This patch follows this note.
->
+> 
 > IPSRx and MOD_SELx registers shall be set before setting GPSRx
 > registers in case that they need to be configured.
 > MOD_SELx registers can be set either earlier or later than setting
 > IPSRx registers.
->
+> 
 > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-I wait for Geert to either queue this for his first v4.7 pull request
-or tell me to apply it for fixes. Is it a regression?
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Yours,
-Linus Walleij
+> ---
+>  drivers/pinctrl/sh-pfc/sh_pfc.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> b/drivers/pinctrl/sh-pfc/sh_pfc.h index 2b593fc..f174d61 100644
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -279,7 +279,7 @@ struct sh_pfc_soc_info {
+>   *   - msel: Module selector
+>   */
+>  #define PINMUX_IPSR_MSEL(ipsr, fn, msel)				\
+> -	PINMUX_DATA(fn##_MARK, FN_##msel, FN_##ipsr, FN_##fn)
+> +	PINMUX_DATA(fn##_MARK, FN_##msel, FN_##fn, FN_##ipsr)
+> 
+>  /*
+>   * Describe a pinmux configuration for a single-function pin with GPIO
+
+-- 
+Regards,
+
+Laurent Pinchart
