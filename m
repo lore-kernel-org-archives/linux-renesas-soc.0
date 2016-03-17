@@ -1,128 +1,60 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	geert+renesas@glider.be, linus.walleij@linaro.org,
-	dan.j.williams@intel.com, arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v5 6/9] dmaengine: rcar-dmac: group slave configuration
-Date: Tue,  8 Mar 2016 03:42:51 +0100
-Message-Id: <1457404974-1800-7-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>
+Date: Fri, 18 Mar 2016 01:30:23 +0900
+Message-Id: <20160317163023.24104.41969.sendpatchset@little-apple>
+In-Reply-To: <20160317162909.24104.31682.sendpatchset@little-apple>
+References: <20160317162909.24104.31682.sendpatchset@little-apple>
+Subject: [PATCH 08/10] iommu/ipmmu-vmsa: Make IMBUSCTR setup optional
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Group slave address and transfer size in own structs for source and
-destination. This is in preparation for hooking up the dma-mapping API
-to the slave addresses.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Allow certain DT compat strings to opt-out of setting up
+IMBUSCR. The default case is unchanged.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/dma/sh/rcar-dmac.c | 38 ++++++++++++++++++++++----------------
- 1 file changed, 22 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 01cf82f..b3911fe 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -118,14 +118,22 @@ struct rcar_dmac_desc_page {
- 	sizeof(struct rcar_dmac_xfer_chunk))
+ drivers/iommu/ipmmu-vmsa.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+--- 0023/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-03-18 00:32:45.550513000 +0900
+@@ -36,6 +36,7 @@
+ struct ipmmu_features {
+ 	bool use_ns_alias_offset;
+ 	bool has_cache_leaf_nodes;
++	bool setup_imbuscr;
+ };
  
- /*
-+ * struct rcar_dmac_chan_slave - Slave configuration
-+ * @slave_addr: slave memory address
-+ * @xfer_size: size (in bytes) of hardware transfers
-+ */
-+struct rcar_dmac_chan_slave {
-+	phys_addr_t slave_addr;
-+	unsigned int xfer_size;
-+};
-+
-+/*
-  * struct rcar_dmac_chan - R-Car Gen2 DMA Controller Channel
-  * @chan: base DMA channel object
-  * @iomem: channel I/O memory base
-  * @index: index of this channel in the controller
-- * @src_xfer_size: size (in bytes) of hardware transfers on the source side
-- * @dst_xfer_size: size (in bytes) of hardware transfers on the destination side
-- * @src_slave_addr: slave source memory address
-- * @dst_slave_addr: slave destination memory address
-+ * @src: slave memory address and size on the source side
-+ * @dst: slave memory address and size on the destination side
-  * @mid_rid: hardware MID/RID for the DMA client using this channel
-  * @lock: protects the channel CHCR register and the desc members
-  * @desc.free: list of free descriptors
-@@ -142,10 +150,8 @@ struct rcar_dmac_chan {
- 	void __iomem *iomem;
- 	unsigned int index;
+ struct ipmmu_vmsa_device {
+@@ -415,10 +416,10 @@ static int ipmmu_domain_init_context(str
+ 	ipmmu_ctx_write(domain, IMMAIR0, domain->cfg.arm_lpae_s1_cfg.mair[0]);
  
--	unsigned int src_xfer_size;
--	unsigned int dst_xfer_size;
--	phys_addr_t src_slave_addr;
--	phys_addr_t dst_slave_addr;
-+	struct rcar_dmac_chan_slave src;
-+	struct rcar_dmac_chan_slave dst;
- 	int mid_rid;
+ 	/* IMBUSCR */
+-	ipmmu_ctx_write(domain, IMBUSCR,
+-			ipmmu_ctx_read(domain, IMBUSCR) &
+-			~(IMBUSCR_DVM | IMBUSCR_BUSSEL_MASK));
+-
++	if (domain->root->features->setup_imbuscr)
++		ipmmu_ctx_write(domain, IMBUSCR,
++				ipmmu_ctx_read(domain, IMBUSCR) &
++				~(IMBUSCR_DVM | IMBUSCR_BUSSEL_MASK));
+ 	/*
+ 	 * IMSTR
+ 	 * Clear all interrupt flags.
+@@ -992,6 +993,7 @@ static void ipmmu_device_reset(struct ip
+ static const struct ipmmu_features ipmmu_features_default = {
+ 	.use_ns_alias_offset = true,
+ 	.has_cache_leaf_nodes = false,
++	.setup_imbuscr = true,
+ };
  
- 	spinlock_t lock;
-@@ -793,13 +799,13 @@ static void rcar_dmac_chan_configure_desc(struct rcar_dmac_chan *chan,
- 	case DMA_DEV_TO_MEM:
- 		chcr = RCAR_DMACHCR_DM_INC | RCAR_DMACHCR_SM_FIXED
- 		     | RCAR_DMACHCR_RS_DMARS;
--		xfer_size = chan->src_xfer_size;
-+		xfer_size = chan->src.xfer_size;
- 		break;
- 
- 	case DMA_MEM_TO_DEV:
- 		chcr = RCAR_DMACHCR_DM_FIXED | RCAR_DMACHCR_SM_INC
- 		     | RCAR_DMACHCR_RS_DMARS;
--		xfer_size = chan->dst_xfer_size;
-+		xfer_size = chan->dst.xfer_size;
- 		break;
- 
- 	case DMA_MEM_TO_MEM:
-@@ -1038,7 +1044,7 @@ rcar_dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
- 	}
- 
- 	dev_addr = dir == DMA_DEV_TO_MEM
--		 ? rchan->src_slave_addr : rchan->dst_slave_addr;
-+		 ? rchan->src.slave_addr : rchan->dst.slave_addr;
- 	return rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, dev_addr,
- 				      dir, flags, false);
- }
-@@ -1093,7 +1099,7 @@ rcar_dmac_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t buf_addr,
- 	}
- 
- 	dev_addr = dir == DMA_DEV_TO_MEM
--		 ? rchan->src_slave_addr : rchan->dst_slave_addr;
-+		 ? rchan->src.slave_addr : rchan->dst.slave_addr;
- 	desc = rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, dev_addr,
- 				      dir, flags, true);
- 
-@@ -1110,10 +1116,10 @@ static int rcar_dmac_device_config(struct dma_chan *chan,
- 	 * We could lock this, but you shouldn't be configuring the
- 	 * channel, while using it...
- 	 */
--	rchan->src_slave_addr = cfg->src_addr;
--	rchan->dst_slave_addr = cfg->dst_addr;
--	rchan->src_xfer_size = cfg->src_addr_width;
--	rchan->dst_xfer_size = cfg->dst_addr_width;
-+	rchan->src.slave_addr = cfg->src_addr;
-+	rchan->dst.slave_addr = cfg->dst_addr;
-+	rchan->src.xfer_size = cfg->src_addr_width;
-+	rchan->dst.xfer_size = cfg->dst_addr_width;
- 
- 	return 0;
- }
--- 
-2.7.2
+ static const struct of_device_id ipmmu_of_ids[] = {
