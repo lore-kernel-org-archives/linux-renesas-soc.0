@@ -1,116 +1,115 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <kishon@ti.com>, <robh+dt@kernel.org>, <pawel.moll@arm.com>,
-	<mark.rutland@arm.com>, <ijc+devicetree@hellion.org.uk>,
-	<galak@codeaurora.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/3] phy: rcar-gen3-usb2: Add vbus-supply to handle VBUS on/off
-Date: Thu, 3 Mar 2016 19:09:05 +0900
-Message-ID: <1456999746-2800-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1456999746-2800-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1456999746-2800-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>
+Date: Fri, 18 Mar 2016 01:29:55 +0900
+Message-Id: <20160317162955.24104.26177.sendpatchset@little-apple>
+In-Reply-To: <20160317162909.24104.31682.sendpatchset@little-apple>
+References: <20160317162909.24104.31682.sendpatchset@little-apple>
+Subject: [PATCH 05/10] iommu/ipmmu-vmsa: Introduce features, break out alias
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To handle the VBUS on/off by a regulator driver, this patch adds
-regulator APIs calling in the driver and description about vbus-supply
-in the rcar-gen3-phy-usb2.txt.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Introduce struct ipmmu_features to track various hardware
+and software implementation changes inside the driver for
+different kinds of IPMMU hardware. Add use_ns_alias_offset
+as a first example of a feature to control if the secure
+register bank offset should be used or not.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  2 ++
- drivers/phy/phy-rcar-gen3-usb2.c                   | 28 ++++++++++++++++++++++
- 2 files changed, 30 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-index 86826ca..7243b3b 100644
---- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-+++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-@@ -21,6 +21,8 @@ To use a USB channel where USB 2.0 Host and HSUSB (USB 2.0 Peripheral) are
- combined, the device tree node should set interrupt properties to use the
- channel as USB OTG:
- - interrupts: interrupt specifier for the PHY.
-+- vbus-supply: Phandle to a regulator that provides power to the VBUS. This
-+	       regulator will be managed during the PHY power on/off sequence.
+ drivers/iommu/ipmmu-vmsa.c |   34 ++++++++++++++++++++++++++++------
+ 1 file changed, 28 insertions(+), 6 deletions(-)
+
+--- 0017/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-03-18 00:29:15.860513000 +0900
+@@ -33,6 +33,10 @@
  
- Example (R-Car H3):
+ #define IPMMU_CTX_MAX 4
  
-diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
-index 3c647cd..7b14244 100644
---- a/drivers/phy/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/phy-rcar-gen3-usb2.c
-@@ -19,6 +19,7 @@
- #include <linux/of_address.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
- 
- /******* USB2.0 Host registers (original offset is +0x200) *******/
- #define USB2_INT_ENABLE		0x000
-@@ -77,6 +78,7 @@
- struct rcar_gen3_chan {
++struct ipmmu_features {
++	bool use_ns_alias_offset;
++};
++
+ struct ipmmu_vmsa_device {
+ 	struct device *dev;
  	void __iomem *base;
- 	struct phy *phy;
-+	struct regulator *vbus;
- 	bool has_otg;
+@@ -45,6 +49,7 @@ struct ipmmu_vmsa_device {
+ #if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
+ 	struct dma_iommu_mapping *mapping;
+ #endif
++	const struct ipmmu_features *features;
  };
  
-@@ -210,6 +212,13 @@ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
- 	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
- 	void __iomem *usb2_base = channel->base;
- 	u32 val;
-+	int ret;
-+
-+	if (channel->vbus) {
-+		ret = regulator_enable(channel->vbus);
-+		if (ret)
-+			return ret;
-+	}
+ struct ipmmu_vmsa_domain {
+@@ -932,13 +937,33 @@ static void ipmmu_device_reset(struct ip
+ 		ipmmu_write(mmu, i * IM_CTX_SIZE + IMCTR, 0);
+ }
  
- 	val = readl(usb2_base + USB2_USBCTR);
- 	val |= USB2_USBCTR_PLL_RST;
-@@ -220,10 +229,22 @@ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
++static const struct ipmmu_features ipmmu_features_default = {
++	.use_ns_alias_offset = true,
++};
++
++static const struct of_device_id ipmmu_of_ids[] = {
++	{
++		.compatible = "renesas,ipmmu-vmsa",
++		.data = &ipmmu_features_default,
++	}, {
++		/* Terminator */
++	},
++};
++
++MODULE_DEVICE_TABLE(of, ipmmu_of_ids);
++
+ static int ipmmu_probe(struct platform_device *pdev)
+ {
+ 	struct ipmmu_vmsa_device *mmu;
++	const struct of_device_id *match;
+ 	struct resource *res;
+ 	int irq;
+ 	int ret;
+ 
++	match = of_match_node(ipmmu_of_ids, pdev->dev.of_node);
++	if (!match)
++		return -EINVAL;
++
+ 	mmu = devm_kzalloc(&pdev->dev, sizeof(*mmu), GFP_KERNEL);
+ 	if (!mmu) {
+ 		dev_err(&pdev->dev, "cannot allocate device data\n");
+@@ -948,6 +973,7 @@ static int ipmmu_probe(struct platform_d
+ 	mmu->dev = &pdev->dev;
+ 	mmu->num_utlbs = 32;
+ 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
++	mmu->features = match->data;
+ 	dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 
+ 	/* Map I/O memory and request IRQ. */
+@@ -968,7 +994,8 @@ static int ipmmu_probe(struct platform_d
+ 	 * Offset the registers base unconditionally to point to the non-secure
+ 	 * alias space for now.
+ 	 */
+-	mmu->base += IM_NS_ALIAS_OFFSET;
++	if (mmu->features->use_ns_alias_offset)
++		mmu->base += IM_NS_ALIAS_OFFSET;
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+@@ -1015,11 +1042,6 @@ static int ipmmu_remove(struct platform_
  	return 0;
  }
  
-+static int rcar_gen3_phy_usb2_power_off(struct phy *p)
-+{
-+	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
-+	int ret = 0;
-+
-+	if (channel->vbus)
-+		ret = regulator_disable(channel->vbus);
-+
-+	return ret;
-+}
-+
- static struct phy_ops rcar_gen3_phy_usb2_ops = {
- 	.init		= rcar_gen3_phy_usb2_init,
- 	.exit		= rcar_gen3_phy_usb2_exit,
- 	.power_on	= rcar_gen3_phy_usb2_power_on,
-+	.power_off	= rcar_gen3_phy_usb2_power_off,
- 	.owner		= THIS_MODULE,
- };
- 
-@@ -290,6 +311,13 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 		return PTR_ERR(channel->phy);
- 	}
- 
-+	channel->vbus = devm_regulator_get_optional(dev, "vbus");
-+	if (IS_ERR(channel->vbus)) {
-+		if (PTR_ERR(channel->vbus) == -EPROBE_DEFER)
-+			return PTR_ERR(channel->vbus);
-+		channel->vbus = NULL;
-+	}
-+
- 	phy_set_drvdata(channel->phy, channel);
- 
- 	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
--- 
-1.9.1
+-static const struct of_device_id ipmmu_of_ids[] = {
+-	{ .compatible = "renesas,ipmmu-vmsa", },
+-	{ }
+-};
+-
+ static struct platform_driver ipmmu_driver = {
+ 	.driver = {
+ 		.name = "ipmmu-vmsa",
