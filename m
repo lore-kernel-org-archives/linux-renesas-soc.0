@@ -3,191 +3,111 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/13] ARM: dts: r8a7793: Remove unnecessary clock-output-names properties
-Date: Tue, 22 Mar 2016 10:40:35 +0900
-Message-Id: <1458610840-15194-9-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1458610840-15194-1-git-send-email-horms+renesas@verge.net.au>
-References: <1458610840-15194-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 12/12] arm64: dts: salvator-x: use generic pinctrl properties
+Date: Fri, 18 Mar 2016 08:59:22 +0900
+Message-Id: <1458259162-15706-13-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1458259162-15706-1-git-send-email-horms+renesas@verge.net.au>
+References: <1458259162-15706-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-* Fixed rate and fixed factor clocks do not require an
-  clock-output-names property.
-* Since 07705583e920fef6 ("clk: shmobile: div6: Make clock-output-names
-  optional") Renesas div6 clocks do not require a clock-output-names
-  property.
+Since 16ccaf5bb5a5 ("pinctrl: sh-pfc: Accept standard function, pins and
+groups properties") renesas pfc drivers accept generic "function", "pins"
+and "groups" properties.
 
-In the above cases there is only one clock output and its name is taken
-from that of the clock node.  Accordingly, remove the unnecessary
-clock-output-names properties and as necessary update the node names.
+This patch updates the kzm9g device tree to use the generic properties.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 45 +++++++++++++-----------------------------
- 1 file changed, 14 insertions(+), 31 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 46 +++++++++++-----------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index e34d7f48eff3..bf70c464920b 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -856,12 +856,11 @@
- 		ranges;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index b992b1a3d956..5165d450c10b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -146,57 +146,57 @@
+ 	pinctrl-names = "default";
  
- 		/* External root clock */
--		extal_clk: extal_clk {
-+		extal_clk: extal {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			/* This value must be overridden by the board. */
- 			clock-frequency = <0>;
--			clock-output-names = "extal";
- 		};
+ 	scif1_pins: scif1 {
+-		renesas,groups = "scif1_data_a", "scif1_ctrl";
+-		renesas,function = "scif1";
++		groups = "scif1_data_a", "scif1_ctrl";
++		function = "scif1";
+ 	};
+ 	scif2_pins: scif2 {
+-		renesas,groups = "scif2_data_a";
+-		renesas,function = "scif2";
++		groups = "scif2_data_a";
++		function = "scif2";
+ 	};
+ 	scif_clk_pins: scif_clk {
+-		renesas,groups = "scif_clk_a";
+-		renesas,function = "scif_clk";
++		groups = "scif_clk_a";
++		function = "scif_clk";
+ 	};
  
- 		/*
-@@ -872,19 +871,16 @@
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <0>;
--			clock-output-names = "audio_clk_a";
- 		};
- 		audio_clk_b: audio_clk_b {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <0>;
--			clock-output-names = "audio_clk_b";
- 		};
- 		audio_clk_c: audio_clk_c {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <0>;
--			clock-output-names = "audio_clk_c";
- 		};
+ 	i2c2_pins: i2c2 {
+-		renesas,groups = "i2c2_a";
+-		renesas,function = "i2c2";
++		groups = "i2c2_a";
++		function = "i2c2";
+ 	};
  
- 		/* External USB clock - can be overridden by the board */
-@@ -926,111 +922,98 @@
- 		};
+ 	avb_pins: avb {
+-		renesas,groups = "avb_mdc";
+-		renesas,function = "avb";
++		groups = "avb_mdc";
++		function = "avb";
+ 	};
  
- 		/* Variable factor clocks */
--		sd2_clk: sd2_clk@e6150078 {
-+		sd2_clk: sd2@e6150078 {
- 			compatible = "renesas,r8a7793-div6-clock",
- 				     "renesas,cpg-div6-clock";
- 			reg = <0 0xe6150078 0 4>;
- 			clocks = <&pll1_div2_clk>;
- 			#clock-cells = <0>;
--			clock-output-names = "sd2";
- 		};
--		sd3_clk: sd3_clk@e615026c {
-+		sd3_clk: sd3@e615026c {
- 			compatible = "renesas,r8a7793-div6-clock",
- 				     "renesas,cpg-div6-clock";
- 			reg = <0 0xe615026c 0 4>;
- 			clocks = <&pll1_div2_clk>;
- 			#clock-cells = <0>;
--			clock-output-names = "sd3";
- 		};
--		mmc0_clk: mmc0_clk@e6150240 {
-+		mmc0_clk: mmc0@e6150240 {
- 			compatible = "renesas,r8a7793-div6-clock",
- 				     "renesas,cpg-div6-clock";
- 			reg = <0 0xe6150240 0 4>;
- 			clocks = <&pll1_div2_clk>;
- 			#clock-cells = <0>;
--			clock-output-names = "mmc0";
- 		};
+ 	sdhi0_pins: sd0 {
+-		renesas,groups = "sdhi0_data4", "sdhi0_ctrl";
+-		renesas,function = "sdhi0";
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
+ 	};
  
- 		/* Fixed factor clocks */
--		pll1_div2_clk: pll1_div2_clk {
-+		pll1_div2_clk: pll1_div2 {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
- 			#clock-cells = <0>;
- 			clock-div = <2>;
- 			clock-mult = <1>;
--			clock-output-names = "pll1_div2";
- 		};
--		zg_clk: zg_clk {
-+		zg_clk: zg {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
- 			#clock-cells = <0>;
- 			clock-div = <5>;
- 			clock-mult = <1>;
--			clock-output-names = "zg";
- 		};
--		zx_clk: zx_clk {
-+		zx_clk: zx {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
- 			#clock-cells = <0>;
- 			clock-div = <3>;
- 			clock-mult = <1>;
--			clock-output-names = "zx";
- 		};
--		zs_clk: zs_clk {
-+		zs_clk: zs {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
- 			#clock-cells = <0>;
- 			clock-div = <6>;
- 			clock-mult = <1>;
--			clock-output-names = "zs";
- 		};
--		hp_clk: hp_clk {
-+		hp_clk: hp {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
- 			#clock-cells = <0>;
- 			clock-div = <12>;
- 			clock-mult = <1>;
--			clock-output-names = "hp";
- 		};
--		p_clk: p_clk {
-+		p_clk: p {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
- 			#clock-cells = <0>;
- 			clock-div = <24>;
- 			clock-mult = <1>;
--			clock-output-names = "p";
- 		};
--		m2_clk: m2_clk {
-+		m2_clk: m2 {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
- 			#clock-cells = <0>;
- 			clock-div = <8>;
- 			clock-mult = <1>;
--			clock-output-names = "m2";
- 		};
--		rclk_clk: rclk_clk {
-+		rclk_clk: rclk {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
- 			#clock-cells = <0>;
- 			clock-div = <(48 * 1024)>;
- 			clock-mult = <1>;
--			clock-output-names = "rclk";
- 		};
--		mp_clk: mp_clk {
-+		mp_clk: mp {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&pll1_div2_clk>;
- 			#clock-cells = <0>;
- 			clock-div = <15>;
- 			clock-mult = <1>;
--			clock-output-names = "mp";
- 		};
--		cp_clk: cp_clk {
-+		cp_clk: cp {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&extal_clk>;
- 			#clock-cells = <0>;
- 			clock-div = <2>;
- 			clock-mult = <1>;
--			clock-output-names = "cp";
- 		};
+ 	sdhi3_pins: sd3 {
+-		renesas,groups = "sdhi3_data4", "sdhi3_ctrl";
+-		renesas,function = "sdhi3";
++		groups = "sdhi3_data4", "sdhi3_ctrl";
++		function = "sdhi3";
+ 	};
  
- 		/* Gate clocks */
+ 	sound_pins: sound {
+-		renesas,groups = "ssi01239_ctrl", "ssi0_data", "ssi1_data_a";
+-		renesas,function = "ssi";
++		groups = "ssi01239_ctrl", "ssi0_data", "ssi1_data_a";
++		function = "ssi";
+ 	};
+ 
+ 	sound_clk_pins: sound_clk {
+-		renesas,groups = "audio_clk_a_a", "audio_clk_b_a", "audio_clk_c_a",
+-				 "audio_clkout_a", "audio_clkout3_a";
+-		renesas,function = "audio_clk";
++		groups = "audio_clk_a_a", "audio_clk_b_a", "audio_clk_c_a",
++			 "audio_clkout_a", "audio_clkout3_a";
++		function = "audio_clk";
+ 	};
+ 
+ 	usb1_pins: usb1 {
+-		renesas,groups = "usb1";
+-		renesas,function = "usb1";
++		groups = "usb1";
++		function = "usb1";
+ 	};
+ 
+ 	usb2_pins: usb2 {
+-		renesas,groups = "usb2";
+-		renesas,function = "usb2";
++		groups = "usb2";
++		function = "usb2";
+ 	};
+ };
+ 
 -- 
 2.1.4
