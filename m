@@ -1,71 +1,141 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] ARM: dts: r8a7779: Correct interrupt type for ARM TWD
-Date: Fri, 18 Mar 2016 11:19:21 +0100
-Message-Id: <1458296361-4468-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1458296361-4468-1-git-send-email-geert+renesas@glider.be>
-References: <1458296361-4468-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Cc: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org,
+	robin.murphy@arm.com, geert+renesas@glider.be,
+	linus.walleij@linaro.org, dan.j.williams@intel.com, arnd@arndb.de,
+	linux-arch@vger.kernel.org
+Subject: Re: [PATCH v5 6/9] dmaengine: rcar-dmac: group slave configuration
+Date: Thu, 17 Mar 2016 13:28:50 +0200
+Message-ID: <5083144.aEzMy68lFX@avalon>
+In-Reply-To: <1457404974-1800-7-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se> <1457404974-1800-7-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The ARM TWD interrupt is a private peripheral interrupt (PPI), and per
-the ARM GIC documentation, whether the type for PPIs can be set is
-IMPLEMENTATION DEFINED.
+Hi Niklas,
 
-For R-Car H1 devices the PPI type cannot be set, and so when we attempt
-to set the type for the ARM TWD interrupt it fails.  This has gone
-unnoticed because it fails silently, and because we cannot re-configure
-the type it has had no impact. Nevertheless fix the type for the TWD
-interrupt so that it matches the hardware configuration.
+Thank you for the patch.
 
-Based on patches by Jon Hunter for Tegra20/30 and OMAP4.
+On Tuesday 08 March 2016 03:42:51 Niklas S�derlund wrote:
+> Group slave address and transfer size in own structs for source and
+> destination. This is in preparation for hooking up the dma-mapping API
+> to the slave addresses.
+> 
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Exposed by Jon Hunter's "[PATCH 04/15] irqchip/gic: WARN if setting the
-interrupt type fails":
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-common.c:61 gic_configure_irq+0x64/0x7c()
-Modules linked in:
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.5.0-marzen-00426-g226dd0f378de2fe5-dirty #87
-Hardware name: Generic R8A7779 (Flattened Device Tree)
-[<c010fb54>] (unwind_backtrace) from [<c010b614>] (show_stack+0x10/0x14)
-[<c010b614>] (show_stack) from [<c02f362c>] (dump_stack+0xa4/0xdc)
-[<c02f362c>] (dump_stack) from [<c0121d88>] (warn_slowpath_common+0x84/0xb0)
-[<c0121d88>] (warn_slowpath_common) from [<c0121e44>] (warn_slowpath_null+0x18/0x20)
-[<c0121e44>] (warn_slowpath_null) from [<c03171cc>] (gic_configure_irq+0x64/0x7c)
-[<c03171cc>] (gic_configure_irq) from [<c0316878>] (gic_set_type+0x48/0x60)
-[<c0316878>] (gic_set_type) from [<c016fa98>] (__irq_set_trigger+0xac/0x17c)
-[<c016fa98>] (__irq_set_trigger) from [<c016feac>] (__setup_irq+0x344/0x5d8)
-[<c016feac>] (__setup_irq) from [<c017042c>] (request_percpu_irq+0x98/0xe0)
-[<c017042c>] (request_percpu_irq) from [<c0804dd8>] (twd_local_timer_common_register+0x38/0x1ac)
-[<c0804dd8>] (twd_local_timer_common_register) from [<c0804f94>] (twd_local_timer_of_register+0x48/0x70)
-[<c0804f94>] (twd_local_timer_of_register) from [<c081c04c>] (clocksource_probe+0x48/0x88)
-[<c081c04c>] (clocksource_probe) from [<c0800b14>] (start_kernel+0x24c/0x3cc)
-[<c0800b14>] (start_kernel) from [<6000807c>] (0x6000807c)
----
- arch/arm/boot/dts/r8a7779.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> ---
+>  drivers/dma/sh/rcar-dmac.c | 38 ++++++++++++++++++++++----------------
+>  1 file changed, 22 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+> index 01cf82f..b3911fe 100644
+> --- a/drivers/dma/sh/rcar-dmac.c
+> +++ b/drivers/dma/sh/rcar-dmac.c
+> @@ -118,14 +118,22 @@ struct rcar_dmac_desc_page {
+>  	sizeof(struct rcar_dmac_xfer_chunk))
+> 
+>  /*
+> + * struct rcar_dmac_chan_slave - Slave configuration
+> + * @slave_addr: slave memory address
+> + * @xfer_size: size (in bytes) of hardware transfers
+> + */
+> +struct rcar_dmac_chan_slave {
+> +	phys_addr_t slave_addr;
+> +	unsigned int xfer_size;
+> +};
+> +
+> +/*
+>   * struct rcar_dmac_chan - R-Car Gen2 DMA Controller Channel
+>   * @chan: base DMA channel object
+>   * @iomem: channel I/O memory base
+>   * @index: index of this channel in the controller
+> - * @src_xfer_size: size (in bytes) of hardware transfers on the source side
+> - * @dst_xfer_size: size (in bytes) of hardware transfers on the
+> destination side - * @src_slave_addr: slave source memory address
+> - * @dst_slave_addr: slave destination memory address
+> + * @src: slave memory address and size on the source side
+> + * @dst: slave memory address and size on the destination side
+>   * @mid_rid: hardware MID/RID for the DMA client using this channel
+>   * @lock: protects the channel CHCR register and the desc members
+>   * @desc.free: list of free descriptors
+> @@ -142,10 +150,8 @@ struct rcar_dmac_chan {
+>  	void __iomem *iomem;
+>  	unsigned int index;
+> 
+> -	unsigned int src_xfer_size;
+> -	unsigned int dst_xfer_size;
+> -	phys_addr_t src_slave_addr;
+> -	phys_addr_t dst_slave_addr;
+> +	struct rcar_dmac_chan_slave src;
+> +	struct rcar_dmac_chan_slave dst;
+>  	int mid_rid;
+> 
+>  	spinlock_t lock;
+> @@ -793,13 +799,13 @@ static void rcar_dmac_chan_configure_desc(struct
+> rcar_dmac_chan *chan, case DMA_DEV_TO_MEM:
+>  		chcr = RCAR_DMACHCR_DM_INC | RCAR_DMACHCR_SM_FIXED
+> 
+>  		     | RCAR_DMACHCR_RS_DMARS;
+> 
+> -		xfer_size = chan->src_xfer_size;
+> +		xfer_size = chan->src.xfer_size;
+>  		break;
+> 
+>  	case DMA_MEM_TO_DEV:
+>  		chcr = RCAR_DMACHCR_DM_FIXED | RCAR_DMACHCR_SM_INC
+> 
+>  		     | RCAR_DMACHCR_RS_DMARS;
+> 
+> -		xfer_size = chan->dst_xfer_size;
+> +		xfer_size = chan->dst.xfer_size;
+>  		break;
+> 
+>  	case DMA_MEM_TO_MEM:
+> @@ -1038,7 +1044,7 @@ rcar_dmac_prep_slave_sg(struct dma_chan *chan, struct
+> scatterlist *sgl, }
+> 
+>  	dev_addr = dir == DMA_DEV_TO_MEM
+> -		 ? rchan->src_slave_addr : rchan->dst_slave_addr;
+> +		 ? rchan->src.slave_addr : rchan->dst.slave_addr;
+>  	return rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, dev_addr,
+>  				      dir, flags, false);
+>  }
+> @@ -1093,7 +1099,7 @@ rcar_dmac_prep_dma_cyclic(struct dma_chan *chan,
+> dma_addr_t buf_addr, }
+> 
+>  	dev_addr = dir == DMA_DEV_TO_MEM
+> -		 ? rchan->src_slave_addr : rchan->dst_slave_addr;
+> +		 ? rchan->src.slave_addr : rchan->dst.slave_addr;
+>  	desc = rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, dev_addr,
+>  				      dir, flags, true);
+> 
+> @@ -1110,10 +1116,10 @@ static int rcar_dmac_device_config(struct dma_chan
+> *chan, * We could lock this, but you shouldn't be configuring the
+>  	 * channel, while using it...
+>  	 */
+> -	rchan->src_slave_addr = cfg->src_addr;
+> -	rchan->dst_slave_addr = cfg->dst_addr;
+> -	rchan->src_xfer_size = cfg->src_addr_width;
+> -	rchan->dst_xfer_size = cfg->dst_addr_width;
+> +	rchan->src.slave_addr = cfg->src_addr;
+> +	rchan->dst.slave_addr = cfg->dst_addr;
+> +	rchan->src.xfer_size = cfg->src_addr_width;
+> +	rchan->dst.xfer_size = cfg->dst_addr_width;
+> 
+>  	return 0;
+>  }
 
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index 540f3c57a7b32356..2581363879d9dfff 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -71,7 +71,7 @@
- 		compatible = "arm,cortex-a9-twd-timer";
- 		reg = <0xf0000600 0x20>;
- 		interrupts = <GIC_PPI 13
--			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>;
- 		clocks = <&cpg_clocks R8A7779_CLK_ZS>;
- 	};
- 
 -- 
-1.9.1
+Regards,
 
+Laurent Pinchart
