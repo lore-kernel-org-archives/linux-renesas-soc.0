@@ -1,112 +1,63 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20160327090859.GH5028@sirena.org.uk>
-References: <1458587912-32665-1-git-send-email-broonie@kernel.org>
-	<1458587912-32665-2-git-send-email-broonie@kernel.org>
-	<56F0624C.8010004@gmail.com>
-	<CAJKOXPd5h0Cq++OxdiXytNJH94PN4Kh_wM3M=p3JdU1m_qyFTA@mail.gmail.com>
-	<CAJKOXPcBOT_8NOH-=sEHSP0Rc+=Dvz-aqVTsBTMKg-VNWqQotw@mail.gmail.com>
-	<CAJAp7OgGQ3qm-_QhydvN0n6QeNoHFdso4zOk41qvVJhKNeRn8Q@mail.gmail.com>
-	<20160327090859.GH5028@sirena.org.uk>
-Date: Tue, 29 Mar 2016 14:00:52 +0200
-Message-ID: <CAMuHMdXuy2TxACTcsgOpZvrJEeTSQbCgCUmS9PXfBhhZfgbBBA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] regulator: core: Ensure we are at least in bounds for
- our constraints
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Bjorn Andersson <bjorn@kryo.se>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-mmc <linux-mmc@vger.kernel.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	Javier Martinez Canillas <javier@osg.samsung.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>
+Date: Fri, 18 Mar 2016 01:29:28 +0900
+Message-Id: <20160317162928.24104.46943.sendpatchset@little-apple>
+In-Reply-To: <20160317162909.24104.31682.sendpatchset@little-apple>
+References: <20160317162909.24104.31682.sendpatchset@little-apple>
+Subject: [PATCH 02/10] iommu/ipmmu-vmsa: Enable multi context support
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Mark,
+From: Magnus Damm <damm+renesas@opensource.se>
 
-On Sun, Mar 27, 2016 at 11:08 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Sat, Mar 26, 2016 at 04:50:41PM -0700, Bjorn Andersson wrote:
->
->> Reinstating the following snippet in of_get_regulation_constraints()
->> sort this out:
->
->> if (constraints->min_uV && constraints->max_uV)
->>                                        constraints->apply_uV = true;
->
-> The existing check in the patch should be an || not an ==, or possibly
-> we should just not bother looking for min_uV at all.  I just pushed out
-> a version of that, let's see how that goes.
+Add support for up to 4 contexts. Each context is mapped
+to one domain. One domain is associated with each device,
+however one or more uTLBs for a single device are kept
+in the same domain.
 
-Has the fix really been pushed out?
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-With commit fa93fd4ecc9c58475abac6db93a797bff893bc16
-Author: Mark Brown <broonie@kernel.org>
-Date:   Mon Mar 21 18:12:52 2016 +0000
+ drivers/iommu/ipmmu-vmsa.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-    regulator: core: Ensure we are at least in bounds for our constraints
-
-I see a few cases of
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 31 at drivers/regulator/core.c:2223
-_regulator_disable+0x2c/0x128
-unbalanced disables for SDHI0 VccQ
-Modules linked in:
-CPU: 1 PID: 31 Comm: kworker/1:1 Not tainted
-4.6.0-rc1-koelsch-00724-g58d619227282dc16 #2422
-Hardware name: Generic R8A7791 (Flattened Device Tree)
-Workqueue: events_freezable mmc_rescan
-sh_mobile_sdhi ee140000.sd: could not set regulator OCR (-22)
-
-[<c020e040>] (unwind_backtrace) from [<c0209d70>] (show_stack+0x10/0x14)
-[<c0209d70>] (show_stack) from [<c03c7584>] (dump_stack+0x7c/0x9c)
-[<c03c7584>] (dump_stack) from [<c021fa48>] (__warn+0xcc/0xfc)
-[<c021fa48>] (__warn) from [<c021faac>] (warn_slowpath_fmt+0x34/0x44)
-[<c021faac>] (warn_slowpath_fmt) from [<c041e464>]
-(_regulator_disable+0x2c/0x128)
-[<c041e464>] (_regulator_disable) from [<c041e590>]
-(regulator_disable+0x30/0x60)
-[<c041e590>] (regulator_disable) from [<c0572e18>] (tmio_mmc_set_ios+0xb8/0x1d4)
-[<c0572e18>] (tmio_mmc_set_ios) from [<c056300c>] (mmc_power_off+0x34/0x54)
-[<c056300c>] (mmc_power_off) from [<c0563a5c>] (mmc_rescan+0x214/0x30c)
-[<c0563a5c>] (mmc_rescan) from [<c0233368>] (process_one_work+0x1bc/0x2f4)
-[<c0233368>] (process_one_work) from [<c0233a2c>] (worker_thread+0x2a8/0x3d0)
-[<c0233a2c>] (worker_thread) from [<c0237a9c>] (kthread+0xd8/0xec)
-[<c0237a9c>] (kthread) from [<c0206b68>] (ret_from_fork+0x14/0x2c)
----[ end trace 1c61a7f6221c11ea ]---
-
-when booting on r8a7791/koelsch.
-
-I'm a bit confused by the discussion of "&&" vs. "||" vs. "==", but the
-warnings do go away when using "!=", cfr. the whitespace-damaged patch below.
-
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -43,7 +43,7 @@ static void of_get_regulation_constraints(struct device_node *
-                constraints->max_uV = pval;
-
-        /* Voltage change possible? */
--       if (constraints->min_uV && constraints->max_uV) {
-+       if (constraints->min_uV != constraints->max_uV) {
-                constraints->valid_ops_mask |= REGULATOR_CHANGE_VOLTAGE;
-                constraints->apply_uV = true;
-        }
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--- 0015/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-03-18 00:15:49.180513000 +0900
+@@ -31,7 +31,7 @@
+ 
+ #include "io-pgtable.h"
+ 
+-#define IPMMU_CTX_MAX 1
++#define IPMMU_CTX_MAX 4
+ 
+ struct ipmmu_vmsa_device {
+ 	struct device *dev;
+@@ -536,6 +536,13 @@ static int ipmmu_attach_device(struct io
+ 		/* The domain hasn't been used yet, initialize it. */
+ 		domain->mmu = mmu;
+ 		ret = ipmmu_domain_init_context(domain);
++		if (ret < 0) {
++			dev_err(dev, "Unable to initialize IPMMU context\n");
++			domain->mmu = NULL;
++		} else {
++			dev_info(dev, "Using IPMMU context %u\n",
++				 domain->context_id);
++		}
+ 	} else if (domain->mmu != mmu) {
+ 		/*
+ 		 * Something is wrong, we can't attach two devices using
+@@ -915,7 +922,7 @@ static void ipmmu_device_reset(struct ip
+ 	unsigned int i;
+ 
+ 	/* Disable all contexts. */
+-	for (i = 0; i < 4; ++i)
++	for (i = 0; i < IPMMU_CTX_MAX; ++i)
+ 		ipmmu_write(mmu, i * IM_CTX_SIZE + IMCTR, 0);
+ }
+ 
