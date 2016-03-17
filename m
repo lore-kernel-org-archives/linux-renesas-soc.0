@@ -1,71 +1,141 @@
-Return-Path: <SRS0+uua1=PN=gmail.com=magnus.damm@vergenet.net>
-From: Magnus Damm <magnus.damm@gmail.com>
+Return-Path: <horms@vergenet.net>
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au,Magnus Damm <magnus.damm@gmail.com>,laurent.pinchart+renesas@ideasonboard.com,joro@8bytes.org,geert+renesas@glider.be
-Date: Fri, 18 Mar 2016 01:56:12 +0900
-Message-Id: <20160317165612.28213.75474.sendpatchset@little-apple>
-In-Reply-To: <20160317165527.28213.60694.sendpatchset@little-apple>
-References: <20160317165527.28213.60694.sendpatchset@little-apple>
-Subject: [PATCH/RFC 05/05] arm64: dts: salvator-x: External SCIF3/HSCIF3 loop
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 06/12] ARM: dts: porter: use generic pinctrl properties
+Date: Fri, 18 Mar 2016 08:59:16 +0900
+Message-Id: <1458259162-15706-7-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1458259162-15706-1-git-send-email-horms+renesas@verge.net.au>
+References: <1458259162-15706-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Since 16ccaf5bb5a5 ("pinctrl: sh-pfc: Accept standard function, pins and
+groups properties") renesas pfc drivers accept generic "function", "pins"
+and "groups" properties.
 
-Add SCIF3 and HSCIF3 as two new serial ports to the r8a7795
-Salvator-X DT file. 
+This patch updates the porter device tree to use the generic properties.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/r8a7791-porter.dts | 60 ++++++++++++++++++------------------
+ 1 file changed, 30 insertions(+), 30 deletions(-)
 
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |   26 ++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
---- 0001/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ work/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts	2016-03-17 17:14:00.630513000 +0900
-@@ -42,6 +42,8 @@
- 	aliases {
- 		serial0 = &scif2;
- 		serial1 = &scif1;
-+		serial2 = &scif3;
-+		serial3 = &hscif3;
- 		ethernet0 = &avb;
- 	};
- 
-@@ -153,6 +155,14 @@
- 		renesas,groups = "scif2_data_a";
- 		renesas,function = "scif2";
- 	};
-+	scif3_pins: scif3 { /* TX: 1_11, RX: 1_8 */
-+		renesas,groups = "scif3_data_b";
-+		renesas,function = "scif3";
-+	};
-+	hscif3_pins: hscif3 { /* TX: 2_8, RX: 2_7 */
-+		renesas,groups = "hscif3_data_d";
-+		renesas,function = "hscif3";
-+	};
- 	scif_clk_pins: scif_clk {
- 		renesas,groups = "scif_clk_a";
- 		renesas,function = "scif_clk";
-@@ -205,6 +215,22 @@
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index 6c08314427d6..af3751ff519a 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -147,78 +147,78 @@
  	pinctrl-names = "default";
  
- 	status = "okay";
-+};
-+
-+&scif3 {
-+	pinctrl-0 = <&scif3_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+/* SCIF3 TX -> HSCIF3 RX, HSCIF3 TX -> SCIF3 RX */
-+
-+&hscif3 {
-+	pinctrl-0 = <&hscif3_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
+ 	scif0_pins: serial0 {
+-		renesas,groups = "scif0_data_d";
+-		renesas,function = "scif0";
++		groups = "scif0_data_d";
++		function = "scif0";
+ 	};
+ 
+ 	scif_clk_pins: scif_clk {
+-		renesas,groups = "scif_clk";
+-		renesas,function = "scif_clk";
++		groups = "scif_clk";
++		function = "scif_clk";
+ 	};
+ 
+ 	ether_pins: ether {
+-		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
+-		renesas,function = "eth";
++		groups = "eth_link", "eth_mdio", "eth_rmii";
++		function = "eth";
+ 	};
+ 
+ 	phy1_pins: phy1 {
+-		renesas,groups = "intc_irq0";
+-		renesas,function = "intc";
++		groups = "intc_irq0";
++		function = "intc";
+ 	};
+ 
+ 	sdhi0_pins: sd0 {
+-		renesas,groups = "sdhi0_data4", "sdhi0_ctrl";
+-		renesas,function = "sdhi0";
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
+ 	};
+ 
+ 	sdhi2_pins: sd2 {
+-		renesas,groups = "sdhi2_data4", "sdhi2_ctrl";
+-		renesas,function = "sdhi2";
++		groups = "sdhi2_data4", "sdhi2_ctrl";
++		function = "sdhi2";
+ 	};
+ 
+ 	qspi_pins: spi0 {
+-		renesas,groups = "qspi_ctrl", "qspi_data4";
+-		renesas,function = "qspi";
++		groups = "qspi_ctrl", "qspi_data4";
++		function = "qspi";
+ 	};
+ 
+ 	i2c2_pins: i2c2 {
+-		renesas,groups = "i2c2";
+-		renesas,function = "i2c2";
++		groups = "i2c2";
++		function = "i2c2";
+ 	};
+ 
+ 	usb0_pins: usb0 {
+-		renesas,groups = "usb0";
+-		renesas,function = "usb0";
++		groups = "usb0";
++		function = "usb0";
+ 	};
+ 
+ 	usb1_pins: usb1 {
+-		renesas,groups = "usb1";
+-		renesas,function = "usb1";
++		groups = "usb1";
++		function = "usb1";
+ 	};
+ 
+ 	vin0_pins: vin0 {
+-		renesas,groups = "vin0_data8", "vin0_clk";
+-		renesas,function = "vin0";
++		groups = "vin0_data8", "vin0_clk";
++		function = "vin0";
+ 	};
+ 
+ 	can0_pins: can0 {
+-		renesas,groups = "can0_data";
+-		renesas,function = "can0";
++		groups = "can0_data";
++		function = "can0";
+ 	};
+ 
+ 	du_pins: du {
+-		renesas,groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
+-		renesas,function = "du";
++		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
++		function = "du";
+ 	};
+ 
+ 	ssi_pins: sound {
+-		renesas,groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data";
+-		renesas,function = "ssi";
++		groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data";
++		function = "ssi";
+ 	};
+ 
+ 	audio_clk_pins: audio_clk {
+-		renesas,groups = "audio_clk_a";
+-		renesas,function = "audio_clk";
++		groups = "audio_clk_a";
++		function = "audio_clk";
+ 	};
  };
  
- &scif2 {
+-- 
+2.1.4
