@@ -1,122 +1,184 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Subject: Re: [PATCH v3 09/11] i2c: rcar: revoke START request early
-To: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
-References: <1447948611-2615-1-git-send-email-wsa@the-dreams.de>
- <1447948611-2615-10-git-send-email-wsa@the-dreams.de>
-Cc: linux-sh@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms@verge.net.au>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <56FD9080.4090203@cogentembedded.com>
-Date: Fri, 1 Apr 2016 00:02:56 +0300
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH 04/04] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
+To: Magnus Damm <magnus.damm@gmail.com>,
+	iommu@lists.linux-foundation.org
+References: <20160315170431.20615.30333.sendpatchset@little-apple>
+ <20160315170510.20615.16557.sendpatchset@little-apple>
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	horms+renesas@verge.net.au
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <56EB0D60.8050104@arm.com>
+Date: Thu, 17 Mar 2016 20:02:40 +0000
 MIME-Version: 1.0
-In-Reply-To: <1447948611-2615-10-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <20160315170510.20615.16557.sendpatchset@little-apple>
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Sender: linux-i2c-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
-
-On 11/19/2015 06:56 PM, Wolfram Sang wrote:
-
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On 15/03/16 17:05, Magnus Damm wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
 >
-> If we don't clear START generation as soon as possible, it may cause
-> another message to be generated, e.g. when receiving NACK in address
-> phase. To keep the race window as small as possible, we clear it right
-> at the beginning of the interrupt. We don't need any checks since we
-> always want to stop START and STOP generation on the next occasion after
-> we started it.
+> Introduce a new set of iommu_ops suitable for 64-bit ARM
+> as well as 32-bit ARM when CONFIG_IOMMU_DMA=y. The ->of_xlate()
+> callback is needed by the code exported by of_iommu.h and
+> it is wrapped in #ifdefs to also compile of x86_64.
 >
-> This patch improves the situation but sadly does not completely fix it.
-> It is still to be researched if we can do better given this HW design.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-    Thanks for a great work, Wolfram!
-    We need this patch in -stable kernels. The R-Car audio just doesn't work 
-without it...
-
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 > ---
->   drivers/i2c/busses/i2c-rcar.c | 23 +++++++----------------
->   1 file changed, 7 insertions(+), 16 deletions(-)
 >
-> diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-> index f237b4fc5b5e55..40979130200935 100644
-> --- a/drivers/i2c/busses/i2c-rcar.c
-> +++ b/drivers/i2c/busses/i2c-rcar.c
-> @@ -83,6 +83,7 @@
+>   drivers/iommu/ipmmu-vmsa.c |   94 +++++++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 92 insertions(+), 2 deletions(-)
 >
->   #define RCAR_BUS_PHASE_START	(MDBS | MIE | ESG)
->   #define RCAR_BUS_PHASE_DATA	(MDBS | MIE)
-> +#define RCAR_BUS_MASK_DATA	(~(ESG | FSB) & 0xFF)
->   #define RCAR_BUS_PHASE_STOP	(MDBS | MIE | FSB)
+> --- 0011/drivers/iommu/ipmmu-vmsa.c
+> +++ work/drivers/iommu/ipmmu-vmsa.c	2016-03-16 01:35:06.990513000 +0900
+> @@ -10,6 +10,7 @@
 >
->   #define RCAR_IRQ_SEND	(MNR | MAL | MST | MAT | MDE)
-> @@ -289,13 +290,6 @@ static void rcar_i2c_irq_send(struct rcar_i2c_priv *priv, u32 msr)
->   	if (!(msr & MDE))
->   		return;
+>   #include <linux/bitmap.h>
+>   #include <linux/delay.h>
+> +#include <linux/dma-iommu.h>
+>   #include <linux/dma-mapping.h>
+>   #include <linux/err.h>
+>   #include <linux/export.h>
+> @@ -804,7 +805,7 @@ static void ipmmu_remove_device(struct d
+>   	dev->archdata.iommu = NULL;
+>   }
 >
-> -	/*
-> -	 * If address transfer phase finished,
-> -	 * goto data phase.
-> -	 */
-> -	if (msr & MAT)
-> -		rcar_i2c_write(priv, ICMCR, RCAR_BUS_PHASE_DATA);
-> -
->   	if (priv->pos < msg->len) {
->   		/*
->   		 * Prepare next data to ICRXTX register.
-> @@ -345,11 +339,7 @@ static void rcar_i2c_irq_recv(struct rcar_i2c_priv *priv, u32 msr)
->   		return;
+> -static const struct iommu_ops ipmmu_ops = {
+> +static const struct iommu_ops __maybe_unused ipmmu_ops = {
+>   	.domain_alloc = ipmmu_domain_alloc,
+>   	.domain_free = ipmmu_domain_free,
+>   	.attach_dev = ipmmu_attach_device,
+> @@ -818,6 +819,92 @@ static const struct iommu_ops ipmmu_ops
+>   	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
+>   };
 >
->   	if (msr & MAT) {
-> -		/*
-> -		 * Address transfer phase finished,
-> -		 * but, there is no data at this point.
-> -		 * Do nothing.
-> -		 */
-> +		/* Address transfer phase finished, but no data at this point. */
->   	} else if (priv->pos < msg->len) {
->   		/*
->   		 * get received data
-> @@ -365,8 +355,6 @@ static void rcar_i2c_irq_recv(struct rcar_i2c_priv *priv, u32 msr)
->   	 */
->   	if (priv->pos + 1 >= msg->len)
->   		rcar_i2c_write(priv, ICMCR, RCAR_BUS_PHASE_STOP);
-> -	else
-> -		rcar_i2c_write(priv, ICMCR, RCAR_BUS_PHASE_DATA);
->
->   	if (priv->pos == msg->len && !(priv->flags & ID_LAST_MSG))
->   		rcar_i2c_next_msg(priv);
-> @@ -432,7 +420,11 @@ static bool rcar_i2c_slave_irq(struct rcar_i2c_priv *priv)
->   static irqreturn_t rcar_i2c_irq(int irq, void *ptr)
->   {
->   	struct rcar_i2c_priv *priv = ptr;
-> -	u32 msr;
-> +	u32 msr, val;
+> +static struct iommu_domain *ipmmu_domain_alloc_dma(unsigned type)
+> +{
+> +	struct iommu_domain *io_domain;
 > +
-> +	/* Clear START or STOP as soon as we can */
-> +	val = rcar_i2c_read(priv, ICMCR);
-> +	rcar_i2c_write(priv, ICMCR, val & RCAR_BUS_MASK_DATA);
->
->   	msr = rcar_i2c_read(priv, ICMSR);
->
-> @@ -454,7 +446,6 @@ static irqreturn_t rcar_i2c_irq(int irq, void *ptr)
->   	/* Nack */
->   	if (msr & MNR) {
->   		/* HW automatically sends STOP after received NACK */
-> -		rcar_i2c_write(priv, ICMCR, RCAR_BUS_PHASE_DATA);
->   		rcar_i2c_write(priv, ICMIER, RCAR_IRQ_STOP);
->   		rcar_i2c_flags_set(priv, ID_NACK);
->   		goto out;
+> +	if (type != IOMMU_DOMAIN_DMA)
+> +		return NULL;
+> +
+> +	io_domain = __ipmmu_domain_alloc(type);
+> +	if (io_domain)
+> +		iommu_get_dma_cookie(io_domain);
+> +
+> +	return io_domain;
+> +}
+> +
+> +static void ipmmu_domain_free_dma(struct iommu_domain *io_domain)
+> +{
+> +	iommu_put_dma_cookie(io_domain);
+> +	ipmmu_domain_free(io_domain);
+> +}
+> +
+> +static int ipmmu_add_device_dma(struct device *dev)
+> +{
+> +	struct iommu_group *group;
+> +
+> +	/* only accept devices with iommus property */
+> +	if (of_count_phandle_with_args(dev->of_node, "iommus",
+> +				       "#iommu-cells") < 0)
+> +		return -ENODEV;
 
-MBR, Sergei
+It seems a bit weird to deliberately ignore the information of_xlate 
+gives you, only to go off poking the DT to dredge it up manually later. 
+Why not use of_xlate to create the archdata, then simply check for it 
+here? (Ideally that should also be common with ARM, but I think you 
+still get called in the wrong order there)
 
+> +
+> +	group = iommu_group_get_for_dev(dev);
+> +	if (IS_ERR(group))
+> +		return PTR_ERR(group);
+> +
+> +	return 0;
+> +}
+> +
+> +static void ipmmu_remove_device_dma(struct device *dev)
+> +{
+> +	iommu_group_remove_device(dev);
+> +}
+> +
+> +static struct iommu_group *ipmmu_device_group_dma(struct device *dev)
+> +{
+> +	struct iommu_group *group;
+> +	int ret;
+> +
+> +	group = generic_device_group(dev);
+> +	if (IS_ERR(group))
+> +		return group;
+> +
+> +	ret = ipmmu_init_platform_device(dev, group);
+> +	if (ret) {
+> +		iommu_group_put(group);
+> +		group = ERR_PTR(ret);
+> +	}
+> +
+> +	return group;
+> +}
+> +
+> +#ifdef CONFIG_OF_IOMMU
+> +static int ipmmu_of_xlate_dma(struct device *dev,
+> +			      struct of_phandle_args *spec)
+> +{
+> +	/* dummy callback to satisfy of_iommu_configure() */
+> +	return 0;
+> +}
+> +#endif
+> +
+> +static const struct iommu_ops __maybe_unused ipmmu_ops_dma = {
+> +	.domain_alloc = ipmmu_domain_alloc_dma,
+> +	.domain_free = ipmmu_domain_free_dma,
+> +	.attach_dev = ipmmu_attach_device,
+> +	.detach_dev = ipmmu_detach_device,
+> +	.map = ipmmu_map,
+> +	.unmap = ipmmu_unmap,
+> +	.map_sg = default_iommu_map_sg,
+> +	.iova_to_phys = ipmmu_iova_to_phys,
+> +	.add_device = ipmmu_add_device_dma,
+> +	.remove_device = ipmmu_remove_device_dma,
+> +	.device_group = ipmmu_device_group_dma,
+> +	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
+> +#ifdef CONFIG_OF_IOMMU
+> +	.of_xlate = ipmmu_of_xlate_dma,
+> +#endif
+
+Yup, I definitely think Arnd is right about eradicating these #ifdefs[1].
+
+Robin.
+
+[1]:http://thread.gmane.org/gmane.linux.kernel/2177390
+
+> +};
+> +
+>   /* -----------------------------------------------------------------------------
+>    * Probe/remove and init
+>    */
+> @@ -929,14 +1016,17 @@ static struct platform_driver ipmmu_driv
+>
+>   static int __init ipmmu_init(void)
+>   {
+> +	const struct iommu_ops *ops;
+>   	int ret;
+>
+>   	ret = platform_driver_register(&ipmmu_driver);
+>   	if (ret < 0)
+>   		return ret;
+>
+> +	ops = IS_ENABLED(CONFIG_IOMMU_DMA) ? &ipmmu_ops_dma : &ipmmu_ops;
+> +
+>   	if (!iommu_present(&platform_bus_type))
+> -		bus_set_iommu(&platform_bus_type, &ipmmu_ops);
+> +		bus_set_iommu(&platform_bus_type, ops);
+>
+>   	return 0;
+>   }
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+>
