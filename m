@@ -1,113 +1,68 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-	Kevin Hilman <khilman@kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] PM / Runtime: Only force-resume device if it has been force-suspended
-Date: Thu,  3 Mar 2016 22:16:54 +0200
-Message-Id: <1457036214-26136-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>
+Date: Fri, 18 Mar 2016 01:29:09 +0900
+Message-Id: <20160317162909.24104.31682.sendpatchset@little-apple>
+Subject: [PATCH 00/10] iommu/ipmmu-vmsa: Initial r8a7795 support
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The pm_runtime_force_suspend() and pm_runtime_force_resume() helpers are
-designed to help driver being RPM-centric by offering an easy way to
-manager runtime PM state during system suspend and resume. The first
-function will force the device into runtime suspend at system suspend
-time, while the second one will perform the reverse operation at system
-resume time.
+iommu/ipmmu-vmsa: Initial r8a7795 support
 
-However, the pm_runtime_force_resume() really forces resume, regarding
-of whether the device was running or already suspended before the call
-to pm_runtime_force_suspend(). This results in devices being runtime
-resumed at system resume time when they shouldn't.
+[PATCH 01/10] iommu/ipmmu-vmsa: Make use of IOMMU_OF_DECLARE()
+[PATCH 02/10] iommu/ipmmu-vmsa: Enable multi context support
+[PATCH 03/10] iommu/ipmmu-vmsa: Teach xlate() to skip disabled iommus
+[PATCH 04/10] iommu/ipmmu-vmsa: IPMMU device is 64-bit bus master
+[PATCH 05/10] iommu/ipmmu-vmsa: Introduce features, break out alias
+[PATCH 06/10] iommu/ipmmu-vmsa: Add optional root device feature
+[PATCH 07/10] iommu/ipmmu-vmsa: Write IMCTR twice
+[PATCH 08/10] iommu/ipmmu-vmsa: Make IMBUSCTR setup optional
+[PATCH 09/10] iommu/ipmmu-vmsa: Allow two bit SL0
+[PATCH 10/10] iommu/ipmmu-vmsa: Hook up r8a7795 DT matching code
 
-Fix this by recording whether the device has been forcefully suspended
-in pm_runtime_force_suspend() and condition resume in
-pm_runtime_force_resume() to that state.
+This series contains slightly more mature r8a7795 support for the
+IPMMU driver compared to the earlier series posted as:
 
-All current users of pm_runtime_force_resume() call the function
-uncontionally in their system resume handler (some actually set it as
-the resume handler), all after calling pm_runtime_force_suspend() at
-system suspend time. The change in behaviour should thus be safe.
+[PATCH/RFC 00/10] iommu/ipmmu-vmsa: Experimental r8a7795 support
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+The DT binding for r8a7795 has been accepted for upstream merge
+and this series implements support following such format:
+
+d4e42e7 iommu/ipmmu-vmsa: Add r8a7795 DT binding
+
+The r8a7795 IPMMU is almost register compatible with earlier devices
+like r8a7790-r8a7794, however some bitfields have been shifted
+slightly. On a grander scale topology has been added and interrupts
+have been reworked. So now there are several "cache" IPMMU units
+without interrupt that somehow communicate with IPMMU-MM that
+is the only instance that supports interrupts. The code refers to
+IPMMU-MM as a "root" device and the other ones as leaf nodes.
+
+To make this more interesting the IPMMU driver needs to be shared
+between 32-bit ARM for r8a7790-r8a7794 and 64-bit ARM for r8a7795.
+In practice this means that two separate implementations are needed
+inside the driver to attach to the rather different architecture
+specific code.
+
+CONFIG_IOMMU_DMA=y is needed on 64-bit ARM while on 32-bit ARM
+the arch specific dma-mapping code is hooked up rather directly.
+During init 64-bit ARM IPMMU support is relying on IOMMU_OF_DECLARE().
+
+The code is known to build on 32-bit and 64-bit ARM and x86_64.
+Tested on 32-bit ARM and 64-bit ARM with addtional DT integration
+changes.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/base/power/runtime.c | 12 +++++++++---
- include/linux/pm.h           |  1 +
- 2 files changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-index 4c7055009bd6..ad2189294c9b 100644
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -1400,6 +1400,7 @@ void pm_runtime_init(struct device *dev)
- 	pm_suspend_ignore_children(dev, false);
- 	dev->power.runtime_auto = true;
- 
-+	dev->power.is_force_suspended = false;
- 	dev->power.request_pending = false;
- 	dev->power.request = RPM_REQ_NONE;
- 	dev->power.deferred_resume = false;
-@@ -1475,6 +1476,7 @@ int pm_runtime_force_suspend(struct device *dev)
- 		goto err;
- 
- 	pm_runtime_set_suspended(dev);
-+	dev->power.is_force_suspended = true;
- 	return 0;
- err:
- 	pm_runtime_enable(dev);
-@@ -1483,13 +1485,13 @@ err:
- EXPORT_SYMBOL_GPL(pm_runtime_force_suspend);
- 
- /**
-- * pm_runtime_force_resume - Force a device into resume state.
-+ * pm_runtime_force_resume - Force a device into resume state if needed.
-  * @dev: Device to resume.
-  *
-  * Prior invoking this function we expect the user to have brought the device
-  * into low power state by a call to pm_runtime_force_suspend(). Here we reverse
-- * those actions and brings the device into full power. We update the runtime PM
-- * status and re-enables runtime PM.
-+ * those actions and bring the device back to its runtime PM state before forced
-+ * suspension. We update the runtime PM status and re-enables runtime PM.
-  *
-  * Typically this function may be invoked from a system resume callback to make
-  * sure the device is put into full power state.
-@@ -1499,6 +1501,9 @@ int pm_runtime_force_resume(struct device *dev)
- 	int (*callback)(struct device *);
- 	int ret = 0;
- 
-+	if (!dev->power.is_force_suspended)
-+		goto out;
-+
- 	callback = RPM_GET_CALLBACK(dev, runtime_resume);
- 
- 	if (!callback) {
-@@ -1510,6 +1515,7 @@ int pm_runtime_force_resume(struct device *dev)
- 	if (ret)
- 		goto out;
- 
-+	dev->power.is_force_suspended = false;
- 	pm_runtime_set_active(dev);
- 	pm_runtime_mark_last_busy(dev);
- out:
-diff --git a/include/linux/pm.h b/include/linux/pm.h
-index 6a5d654f4447..bec15e0f244e 100644
---- a/include/linux/pm.h
-+++ b/include/linux/pm.h
-@@ -596,6 +596,7 @@ struct dev_pm_info {
- 	unsigned int		use_autosuspend:1;
- 	unsigned int		timer_autosuspends:1;
- 	unsigned int		memalloc_noio:1;
-+	unsigned int		is_force_suspended:1;
- 	enum rpm_request	request;
- 	enum rpm_status		runtime_status;
- 	int			runtime_error;
--- 
-Regards,
+ Developed on top of next-20160315 and:
+ [PATCH v2 00/04] iommu/ipmmu-vmsa: IPMMU multi-arch update V2
+ [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
 
-Laurent Pinchart
+ drivers/iommu/ipmmu-vmsa.c |  231 ++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 191 insertions(+), 40 deletions(-)
