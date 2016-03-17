@@ -1,44 +1,89 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Joachim Eastwood <manabian@gmail.com>,
-	linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 4/6] pwm: pwm-lpc18xx-sct: test clock rate to avoid division by 0
-Date: Wed,  2 Mar 2016 23:33:35 +0100
-Message-Id: <1456958018-7849-5-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
-References: <1456958018-7849-1-git-send-email-wsa@the-dreams.de>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Cc: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org,
+	robin.murphy@arm.com, geert+renesas@glider.be,
+	linus.walleij@linaro.org, dan.j.williams@intel.com, arnd@arndb.de,
+	linux-arch@vger.kernel.org
+Subject: Re: [PATCH v5 1/9] iommu: Add MMIO mapping type
+Date: Thu, 17 Mar 2016 13:18:36 +0200
+Message-ID: <1602932.Q3715QPPaf@avalon>
+In-Reply-To: <1457404974-1800-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se> <1457404974-1800-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Niklas,
 
-The clk API may return 0 on clk_get_rate, so we should check the result before
-using it as a divisor.
+Thank you for the patch.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+On Tuesday 08 March 2016 03:42:46 Niklas S�derlund wrote:
+> From: Robin Murphy <robin.murphy@arm.com>
+> 
+> On some platforms, MMIO regions might need slightly different treatment
+> compared to mapping regular memory; add the notion of MMIO mappings to
+> the IOMMU API's memory type flags, so that callers can let the IOMMU
+> drivers know to do the right thing.
+> 
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-Should go individually via subsystem tree.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
- drivers/pwm/pwm-lpc18xx-sct.c | 2 ++
- 1 file changed, 2 insertions(+)
+> ---
+>  drivers/iommu/io-pgtable-arm.c | 9 +++++++--
+>  include/linux/iommu.h          | 1 +
+>  2 files changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+> index 381ca5a..9c19989 100644
+> --- a/drivers/iommu/io-pgtable-arm.c
+> +++ b/drivers/iommu/io-pgtable-arm.c
+> @@ -355,7 +355,10 @@ static arm_lpae_iopte arm_lpae_prot_to_pte(struct
+> arm_lpae_io_pgtable *data, if (!(prot & IOMMU_WRITE) && (prot &
+> IOMMU_READ))
+>  			pte |= ARM_LPAE_PTE_AP_RDONLY;
+> 
+> -		if (prot & IOMMU_CACHE)
+> +		if (prot & IOMMU_MMIO)
+> +			pte |= (ARM_LPAE_MAIR_ATTR_IDX_DEV
+> +				<< ARM_LPAE_PTE_ATTRINDX_SHIFT);
+> +		else if (prot & IOMMU_CACHE)
+>  			pte |= (ARM_LPAE_MAIR_ATTR_IDX_CACHE
+>  				<< ARM_LPAE_PTE_ATTRINDX_SHIFT);
+>  	} else {
+> @@ -364,7 +367,9 @@ static arm_lpae_iopte arm_lpae_prot_to_pte(struct
+> arm_lpae_io_pgtable *data, pte |= ARM_LPAE_PTE_HAP_READ;
+>  		if (prot & IOMMU_WRITE)
+>  			pte |= ARM_LPAE_PTE_HAP_WRITE;
+> -		if (prot & IOMMU_CACHE)
+> +		if (prot & IOMMU_MMIO)
+> +			pte |= ARM_LPAE_PTE_MEMATTR_DEV;
+> +		else if (prot & IOMMU_CACHE)
+>  			pte |= ARM_LPAE_PTE_MEMATTR_OIWB;
+>  		else
+>  			pte |= ARM_LPAE_PTE_MEMATTR_NC;
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index a5c539f..34b6432 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -30,6 +30,7 @@
+>  #define IOMMU_WRITE	(1 << 1)
+>  #define IOMMU_CACHE	(1 << 2) /* DMA cache coherency */
+>  #define IOMMU_NOEXEC	(1 << 3)
+> +#define IOMMU_MMIO	(1 << 4) /* e.g. things like MSI doorbells */
+> 
+>  struct iommu_ops;
+>  struct iommu_group;
 
-diff --git a/drivers/pwm/pwm-lpc18xx-sct.c b/drivers/pwm/pwm-lpc18xx-sct.c
-index 9163085101bc94..6487962c355c03 100644
---- a/drivers/pwm/pwm-lpc18xx-sct.c
-+++ b/drivers/pwm/pwm-lpc18xx-sct.c
-@@ -360,6 +360,8 @@ static int lpc18xx_pwm_probe(struct platform_device *pdev)
- 	}
- 
- 	lpc18xx_pwm->clk_rate = clk_get_rate(lpc18xx_pwm->pwm_clk);
-+	if (!lpc18xx_pwm->clk_rate)
-+		return -EINVAL;
- 
- 	mutex_init(&lpc18xx_pwm->res_lock);
- 	mutex_init(&lpc18xx_pwm->period_lock);
 -- 
-2.7.0
+Regards,
+
+Laurent Pinchart
