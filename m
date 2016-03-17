@@ -1,73 +1,143 @@
-Return-Path: <horms@vergenet.net>
-From: Simon Horman <horms+renesas@verge.net.au>
+Return-Path: <SRS0+uua1=PN=gmail.com=magnus.damm@vergenet.net>
+From: Magnus Damm <magnus.damm@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 2/2] ARM: dts: r8a7794: add CAN nodes to device tree
-Date: Mon, 14 Mar 2016 11:29:03 +0900
-Message-Id: <1457922543-20975-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1457922543-20975-1-git-send-email-horms+renesas@verge.net.au>
-References: <1457922543-20975-1-git-send-email-horms+renesas@verge.net.au>
+Cc: horms+renesas@verge.net.au,Magnus Damm <magnus.damm@gmail.com>,laurent.pinchart+renesas@ideasonboard.com,joro@8bytes.org,geert+renesas@glider.be
+Date: Fri, 18 Mar 2016 01:55:36 +0900
+Message-Id: <20160317165536.28213.47533.sendpatchset@little-apple>
+In-Reply-To: <20160317165527.28213.60694.sendpatchset@little-apple>
+References: <20160317165527.28213.60694.sendpatchset@little-apple>
+Subject: [PATCH/RFC 01/05] arm64: dts: r8a7795: Add IPMMU device nodes
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add CAN nodes to r8a7794 device tree.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Based on work by Sergei Shtylyov for the r8a7791 SoC.
+Add r8a7795 IPMMU nodes and keep all disabled by default.
 
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- arch/arm/boot/dts/r8a7794.dtsi            | 22 ++++++++++++++++++++++
- include/dt-bindings/clock/r8a7794-clock.h |  2 ++
- 2 files changed, 24 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index c8742a599330..ab755b754a9e 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -830,6 +830,28 @@
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi |  113 ++++++++++++++++++++++++++++++
+ 1 file changed, 113 insertions(+)
+
+--- 0001/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2016-03-17 18:42:51.210513000 +0900
+@@ -373,6 +373,119 @@
+ 			power-domains = <&cpg>;
  		};
- 	};
  
-+	can0: can@e6e80000 {
-+		compatible = "renesas,can-r8a7794", "renesas,rcar-gen2-can";
-+		reg = <0 0xe6e80000 0 0x1000>;
-+		interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp9_clks R8A7794_CLK_RCAN0>,
-+			 <&cpg_clocks R8A7794_CLK_RCAN>, <&can_clk>;
-+		clock-names = "clkp1", "clkp2", "can_clk";
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
-+	};
++		ipmmu_vi: mmu@febd0000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xfebd0000 0 0x1000>; /* IPMMU-VI */
++			renesas,ipmmu-main = <&ipmmu_mm 11>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
 +
-+	can1: can@e6e88000 {
-+		compatible = "renesas,can-r8a7794", "renesas,rcar-gen2-can";
-+		reg = <0 0xe6e88000 0 0x1000>;
-+		interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp9_clks R8A7794_CLK_RCAN1>,
-+			 <&cpg_clocks R8A7794_CLK_RCAN>, <&can_clk>;
-+		clock-names = "clkp1", "clkp2", "can_clk";
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
-+	};
++		ipmmu_vp: mmu@fe990000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xfe990000 0 0x1000>; /* IPMMU-VP */
++			renesas,ipmmu-main = <&ipmmu_mm 12>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
 +
- 	clocks {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
-diff --git a/include/dt-bindings/clock/r8a7794-clock.h b/include/dt-bindings/clock/r8a7794-clock.h
-index 222a9dcbabb8..9703fbdb81c8 100644
---- a/include/dt-bindings/clock/r8a7794-clock.h
-+++ b/include/dt-bindings/clock/r8a7794-clock.h
-@@ -96,6 +96,8 @@
- #define R8A7794_CLK_GPIO2		10
- #define R8A7794_CLK_GPIO1		11
- #define R8A7794_CLK_GPIO0		12
-+#define R8A7794_CLK_RCAN1		15
-+#define R8A7794_CLK_RCAN0		16
- #define R8A7794_CLK_QSPI_MOD		17
- #define R8A7794_CLK_I2C5		25
- #define R8A7794_CLK_I2C4		27
--- 
-2.1.4
++		ipmmu_vc0: mmu@fe6b0000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xfe6b0000 0 0x1000>; /* IPMMU-VC0 */
++			renesas,ipmmu-main = <&ipmmu_mm 9>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_vc1: mmu@fe6f0000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xfe6f0000 0 0x1000>; /* IPMMU-VC1 */
++			renesas,ipmmu-main = <&ipmmu_mm 10>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_pv0: mmu@fd800000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xfd800000 0 0x1000>; /* IPMMU-PV0 */
++			renesas,ipmmu-main = <&ipmmu_mm 6>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_ir: mmu@ff8b0000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xff8b0000 0 0x1000>; /* IPMMU-IR */
++			renesas,ipmmu-main = <&ipmmu_mm 3>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_hc: mmu@e6570000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xe6570000 0 0x1000>; /* IPMMU-HC */
++			renesas,ipmmu-main = <&ipmmu_mm 2>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_rt: mmu@ffc80000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xffc80000 0 0x1000>; /* IPMMU-RT */
++			renesas,ipmmu-main = <&ipmmu_mm 7>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_mp0: mmu@ec670000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xec670000 0 0x1000>; /* IPMMU-MP0 */
++			renesas,ipmmu-main = <&ipmmu_mm 4>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_mp1: mmu@ec680000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xec680000 0 0x1000>; /* IPMMU-MP1 */
++			renesas,ipmmu-main = <&ipmmu_mm 5>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_sy: mmu@e7730000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xe7730000 0 0x1000>; /* IPMMU-SY */
++			renesas,ipmmu-main = <&ipmmu_mm 8>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_ds0: mmu@e6740000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xe6740000 0 0x1000>; /* IPMMU-DS0 */
++			renesas,ipmmu-main = <&ipmmu_mm 0>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_ds1: mmu@e7740000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xe7740000 0 0x1000>; /* IPMMU-DS1 */
++			renesas,ipmmu-main = <&ipmmu_mm 1>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
++		ipmmu_mm: mmu@e67b0000 {
++			compatible = "renesas,ipmmu-r8a7795";
++			reg = <0 0xe67b0000 0 0x1000>; /* IPMMU-MM */
++			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
++			#iommu-cells = <1>;
++			status = "disabled";
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a7795",
+ 				     "renesas,rcar-dmac";
