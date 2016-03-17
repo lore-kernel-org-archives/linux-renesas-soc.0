@@ -1,106 +1,32 @@
-Return-Path: <horms@vergenet.net>
-From: Simon Horman <horms+renesas@verge.net.au>
+Return-Path: <SRS0+uua1=PN=gmail.com=magnus.damm@vergenet.net>
+From: Magnus Damm <magnus.damm@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/12] ARM: dts: gose: use generic pinctrl properties
-Date: Fri, 18 Mar 2016 08:59:17 +0900
-Message-Id: <1458259162-15706-8-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1458259162-15706-1-git-send-email-horms+renesas@verge.net.au>
-References: <1458259162-15706-1-git-send-email-horms+renesas@verge.net.au>
+Cc: horms+renesas@verge.net.au,Magnus Damm <magnus.damm@gmail.com>,laurent.pinchart+renesas@ideasonboard.com,joro@8bytes.org,geert+renesas@glider.be
+Date: Fri, 18 Mar 2016 01:55:46 +0900
+Message-Id: <20160317165546.28213.87659.sendpatchset@little-apple>
+In-Reply-To: <20160317165527.28213.60694.sendpatchset@little-apple>
+References: <20160317165527.28213.60694.sendpatchset@little-apple>
+Subject: [PATCH/RFC 02/05] arm64: dts: r8a7795: Enable IPMMU-MM
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since 16ccaf5bb5a5 ("pinctrl: sh-pfc: Accept standard function, pins and
-groups properties") renesas pfc drivers accept generic "function", "pins"
-and "groups" properties.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-This patch updates the gose device tree to use the generic
+Enable r8a7795 IPMMU-MM node to allow the IPMMU main
+device to be probed in case of driver support exists.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- arch/arm/boot/dts/r8a7793-gose.dts | 40 +++++++++++++++++++-------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 87e89ec9dd47..c61df8b316ee 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -240,53 +240,53 @@
- 	pinctrl-names = "default";
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi |    1 -
+ 1 file changed, 1 deletion(-)
+
+--- 0029/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2016-03-17 19:00:45.900513000 +0900
+@@ -483,7 +483,6 @@
+ 			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
  
- 	i2c2_pins: i2c2 {
--		renesas,groups = "i2c2";
--		renesas,function = "i2c2";
-+		groups = "i2c2";
-+		function = "i2c2";
- 	};
- 
- 	du_pins: du {
--		renesas,groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
--		renesas,function = "du";
-+		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
-+		function = "du";
- 	};
- 
- 	scif0_pins: serial0 {
--		renesas,groups = "scif0_data_d";
--		renesas,function = "scif0";
-+		groups = "scif0_data_d";
-+		function = "scif0";
- 	};
- 
- 	scif1_pins: serial1 {
--		renesas,groups = "scif1_data_d";
--		renesas,function = "scif1";
-+		groups = "scif1_data_d";
-+		function = "scif1";
- 	};
- 
- 	scif_clk_pins: scif_clk {
--		renesas,groups = "scif_clk";
--		renesas,function = "scif_clk";
-+		groups = "scif_clk";
-+		function = "scif_clk";
- 	};
- 
- 	ether_pins: ether {
--		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
--		renesas,function = "eth";
-+		groups = "eth_link", "eth_mdio", "eth_rmii";
-+		function = "eth";
- 	};
- 
- 	phy1_pins: phy1 {
--		renesas,groups = "intc_irq0";
--		renesas,function = "intc";
-+		groups = "intc_irq0";
-+		function = "intc";
- 	};
- 
- 	qspi_pins: spi0 {
--		renesas,groups = "qspi_ctrl", "qspi_data4";
--		renesas,function = "qspi";
-+		groups = "qspi_ctrl", "qspi_data4";
-+		function = "qspi";
- 	};
- 
- 	sound_pins: sound {
--		renesas,groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data";
--		renesas,function = "ssi";
-+		groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data";
-+		function = "ssi";
- 	};
- 
- 	sound_clk_pins: sound_clk {
--		renesas,groups = "audio_clk_a";
--		renesas,function = "audio_clk";
-+		groups = "audio_clk_a";
-+		function = "audio_clk";
- 	};
- };
- 
--- 
-2.1.4
+ 		dmac0: dma-controller@e6700000 {
