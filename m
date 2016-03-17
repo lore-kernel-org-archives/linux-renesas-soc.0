@@ -1,71 +1,71 @@
-Return-Path: <horms@vergenet.net>
-From: Simon Horman <horms+renesas@verge.net.au>
+Return-Path: <SRS0+uua1=PN=gmail.com=magnus.damm@vergenet.net>
+From: Magnus Damm <magnus.damm@gmail.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/12] ARM: dts: ape6evm: use generic pinctrl properties
-Date: Fri, 18 Mar 2016 08:59:11 +0900
-Message-Id: <1458259162-15706-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1458259162-15706-1-git-send-email-horms+renesas@verge.net.au>
-References: <1458259162-15706-1-git-send-email-horms+renesas@verge.net.au>
+Cc: horms+renesas@verge.net.au,Magnus Damm <magnus.damm@gmail.com>,laurent.pinchart+renesas@ideasonboard.com,joro@8bytes.org,geert+renesas@glider.be
+Date: Fri, 18 Mar 2016 01:56:12 +0900
+Message-Id: <20160317165612.28213.75474.sendpatchset@little-apple>
+In-Reply-To: <20160317165527.28213.60694.sendpatchset@little-apple>
+References: <20160317165527.28213.60694.sendpatchset@little-apple>
+Subject: [PATCH/RFC 05/05] arm64: dts: salvator-x: External SCIF3/HSCIF3 loop
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since 16ccaf5bb5a5 ("pinctrl: sh-pfc: Accept standard function, pins and
-groups properties") renesas pfc drivers accept generic "function", "pins"
-and "groups" properties.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-This patch updates the ape6evm device tree to use the generic properties.
+Add SCIF3 and HSCIF3 as two new serial ports to the r8a7795
+Salvator-X DT file. 
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- arch/arm/boot/dts/r8a73a4-ape6evm.dts | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a73a4-ape6evm.dts b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-index 590257095700..93ace33e3e36 100644
---- a/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-+++ b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-@@ -189,28 +189,28 @@
- 
- &pfc {
- 	scifa0_pins: serial0 {
--		renesas,groups = "scifa0_data";
--		renesas,function = "scifa0";
-+		groups = "scifa0_data";
-+		function = "scifa0";
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |   26 ++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+--- 0001/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ work/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts	2016-03-17 17:14:00.630513000 +0900
+@@ -42,6 +42,8 @@
+ 	aliases {
+ 		serial0 = &scif2;
+ 		serial1 = &scif1;
++		serial2 = &scif3;
++		serial3 = &hscif3;
+ 		ethernet0 = &avb;
  	};
  
- 	mmc0_pins: mmc {
--		renesas,groups = "mmc0_data8", "mmc0_ctrl";
--		renesas,function = "mmc0";
-+		groups = "mmc0_data8", "mmc0_ctrl";
-+		function = "mmc0";
+@@ -153,6 +155,14 @@
+ 		renesas,groups = "scif2_data_a";
+ 		renesas,function = "scif2";
  	};
++	scif3_pins: scif3 { /* TX: 1_11, RX: 1_8 */
++		renesas,groups = "scif3_data_b";
++		renesas,function = "scif3";
++	};
++	hscif3_pins: hscif3 { /* TX: 2_8, RX: 2_7 */
++		renesas,groups = "hscif3_data_d";
++		renesas,function = "hscif3";
++	};
+ 	scif_clk_pins: scif_clk {
+ 		renesas,groups = "scif_clk_a";
+ 		renesas,function = "scif_clk";
+@@ -205,6 +215,22 @@
+ 	pinctrl-names = "default";
  
- 	sdhi0_pins: sd0 {
--		renesas,groups = "sdhi0_data4", "sdhi0_ctrl", "sdhi0_cd";
--		renesas,function = "sdhi0";
-+		groups = "sdhi0_data4", "sdhi0_ctrl", "sdhi0_cd";
-+		function = "sdhi0";
- 	};
- 
- 	sdhi1_pins: sd1 {
--		renesas,groups = "sdhi1_data4", "sdhi1_ctrl";
--		renesas,function = "sdhi1";
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
- 	};
- 
- 	keyboard_pins: keyboard {
--		renesas,pins = "PORT324", "PORT325", "PORT326", "PORT327",
--			       "PORT328", "PORT329";
-+		pins = "PORT324", "PORT325", "PORT326", "PORT327", "PORT328",
-+		       "PORT329";
- 		bias-pull-up;
- 	};
+ 	status = "okay";
++};
++
++&scif3 {
++	pinctrl-0 = <&scif3_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++/* SCIF3 TX -> HSCIF3 RX, HSCIF3 TX -> SCIF3 RX */
++
++&hscif3 {
++	pinctrl-0 = <&hscif3_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
  };
--- 
-2.1.4
+ 
+ &scif2 {
