@@ -1,68 +1,71 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>
 Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 30/31] ARM: dts: r8a7794: Reference both DMA controllers in SDHI nodes
-Date: Tue, 15 Mar 2016 13:42:07 +0100
-Message-Id: <1458045728-4758-31-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1458045728-4758-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] ARM: dts: sh73a0: Correct interrupt type for ARM TWD
+Date: Fri, 18 Mar 2016 11:19:20 +0100
+Message-Id: <1458296361-4468-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1458296361-4468-1-git-send-email-geert+renesas@glider.be>
+References: <1458296361-4468-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+The ARM TWD interrupt is a private peripheral interrupt (PPI), and per
+the ARM GIC documentation, whether the type for PPIs can be set is
+IMPLEMENTATION DEFINED.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+For SH-Mobile AG5 devices the PPI type cannot be set, and so when we
+attempt to set the type for the ARM TWD interrupt it fails.  This has
+gone unnoticed because it fails silently, and because we cannot
+re-configure the type it has had no impact. Nevertheless fix the type
+for the TWD interrupt so that it matches the hardware configuration.
+
+Based on patches by Jon Hunter for Tegra20/30 and OMAP4.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Exposed by Jon Hunter's "[PATCH 04/15] irqchip/gic: WARN if setting the
+interrupt type fails":
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 4761849..ec54246 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -664,6 +664,9 @@
- 		reg = <0 0xee100000 0 0x200>;
- 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI0>;
-+		dmas = <&dmac1 0xcd>, <&dmac1 0xce>,
-+		       <&dmac0 0xcd>, <&dmac0 0xce>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
+WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-common.c:61 gic_configure_irq+0x64/0x7c()
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.5.0-kzm9g-00426-g226dd0f378de2fe5-dirty #721
+Hardware name: Generic SH73A0 (Flattened Device Tree)
+[<c010e570>] (unwind_backtrace) from [<c010acc0>] (show_stack+0x10/0x14)
+[<c010acc0>] (show_stack) from [<c02de4dc>] (dump_stack+0xa4/0xdc)
+[<c02de4dc>] (dump_stack) from [<c011fdb4>] (warn_slowpath_common+0x84/0xb0)
+[<c011fdb4>] (warn_slowpath_common) from [<c011fe70>] (warn_slowpath_null+0x18/0x20)
+[<c011fe70>] (warn_slowpath_null) from [<c02fd2d8>] (gic_configure_irq+0x64/0x7c)
+[<c02fd2d8>] (gic_configure_irq) from [<c02fc98c>] (gic_set_type+0x48/0x60)
+[<c02fc98c>] (gic_set_type) from [<c016f934>] (__irq_set_trigger+0x64/0x13c)
+[<c016f934>] (__irq_set_trigger) from [<c016fd50>] (__setup_irq+0x344/0x5d8)
+[<c016fd50>] (__setup_irq) from [<c01702d0>] (request_percpu_irq+0x98/0xe0)
+[<c01702d0>] (request_percpu_irq) from [<c0802f84>] (twd_local_timer_common_register+0x38/0x1ac)
+[<c0802f84>] (twd_local_timer_common_register) from [<c0803140>] (twd_local_timer_of_register+0x48/0x70)
+[<c0803140>] (twd_local_timer_of_register) from [<c08180b4>] (clocksource_probe+0x48/0x88)
+[<c08180b4>] (clocksource_probe) from [<c0800b04>] (start_kernel+0x250/0x374)
+[<c0800b04>] (start_kernel) from [<4000807c>] (0x4000807c)
+---
+ arch/arm/boot/dts/sh73a0.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
+index bf825ca4f6f7912a..3d41fb97689e6a49 100644
+--- a/arch/arm/boot/dts/sh73a0.dtsi
++++ b/arch/arm/boot/dts/sh73a0.dtsi
+@@ -43,7 +43,7 @@
+ 	timer@f0000600 {
+ 		compatible = "arm,cortex-a9-twd-timer";
+ 		reg = <0xf0000600 0x20>;
+-		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_EDGE_RISING)>;
+ 		clocks = <&twd_clk>;
  	};
-@@ -673,6 +676,9 @@
- 		reg = <0 0xee140000 0 0x100>;
- 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI1>;
-+		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>,
-+		       <&dmac0 0xc1>, <&dmac0 0xc2>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -682,6 +688,9 @@
- 		reg = <0 0xee160000 0 0x100>;
- 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI2>;
-+		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>,
-+		       <&dmac0 0xd3>, <&dmac0 0xd4>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
+ 
 -- 
-2.7.2
+1.9.1
 
