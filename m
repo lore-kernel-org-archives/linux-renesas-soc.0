@@ -1,73 +1,50 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 3/7] soc: renesas: Add r8a7790 SYSC PM Domain Binding Definitions
-Date: Wed,  9 Mar 2016 20:18:38 +0100
-Message-Id: <1457551122-21838-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
-References: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org,
+	Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@linux.ie>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/3] drm: introduce drm_connector_plug_all() helper
+Date: Fri, 18 Mar 2016 13:01:41 +0300
+Message-Id: <1458295304-5528-1-git-send-email-abrodkin@synopsys.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - New.
----
- include/dt-bindings/power/r8a7790-sysc.h | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a7790-sysc.h
+As a pair to already existing drm_connector_unplug_all() we're adding
+generic implementation of what is already done in some drivers.
 
-diff --git a/include/dt-bindings/power/r8a7790-sysc.h b/include/dt-bindings/power/r8a7790-sysc.h
-new file mode 100644
-index 0000000000000000..8ff5b86c12a46e85
---- /dev/null
-+++ b/include/dt-bindings/power/r8a7790-sysc.h
-@@ -0,0 +1,31 @@
-+/*
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7790_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7790_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A7790_PD_CA15_CPU0		 0
-+#define R8A7790_PD_CA15_CPU1		 1
-+#define R8A7790_PD_CA15_CPU2		 2
-+#define R8A7790_PD_CA15_CPU3		 3
-+#define R8A7790_PD_CA7_CPU0		 5
-+#define R8A7790_PD_CA7_CPU1		 6
-+#define R8A7790_PD_CA7_CPU2		 7
-+#define R8A7790_PD_CA7_CPU3		 8
-+#define R8A7790_PD_CA15_SCU		12
-+#define R8A7790_PD_SH			16
-+#define R8A7790_PD_RGX			20
-+#define R8A7790_PD_CA7_SCU		21
-+#define R8A7790_PD_IMP			24
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7790_SYSC_H__ */
+After implementation of that new helper we're updating 2 drivers
+that used to use it's own implementation:
+ [1] atmel_hlcdc
+ [2] rcar_du
+
+Other drivers still use load() callback and so should be first modified so
+their load() gets called from their probe() explicitly.
+
+Build- and run-tested on yet to be upstreamed ARC PGU (part of AXS10x board).
+
+Alexey Brodkin (3):
+  drm: introduce drm_connector_plug_all() helper
+  drm: atmel_hldc - use generic drm_connector_plug_all() helper
+  drm: rcar-du - use generic drm_connector_plug_all() helper
+
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 39 ++----------------------
+ drivers/gpu/drm/drm_crtc.c                   | 44 +++++++++++++++++++++++++++-
+ drivers/gpu/drm/drm_drv.c                    |  3 +-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c        |  9 +-----
+ include/drm/drm_crtc.h                       |  3 +-
+ 5 files changed, 50 insertions(+), 48 deletions(-)
+
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+
 -- 
-1.9.1
-
+2.5.0
