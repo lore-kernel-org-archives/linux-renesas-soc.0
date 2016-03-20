@@ -1,59 +1,55 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Date: Sat, 19 Mar 2016 19:04:59 -0500
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Jiri Slaby <jslaby@suse.com>,
 	Peter Hurley <peter@hurleysoftware.com>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Yoshinori Sato <ysato@users.sourceforge.jp>,
 	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	devicetree@vger.kernel.org
-Subject: [PATCH/RFC 2/5] serial: sh-sci: Update DT binding documentation for dedicated RTS/CTS
-Date: Thu, 17 Mar 2016 14:47:26 +0100
-Message-Id: <1458222449-12324-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1458222449-12324-1-git-send-email-geert+renesas@glider.be>
+	linux-sh@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH/RFC 1/5] serial: sh-sci: Update DT binding documentation
+ for GPIO modem lines
+Message-ID: <20160320000459.GA18995@rob-hp-laptop>
 References: <1458222449-12324-1-git-send-email-geert+renesas@glider.be>
+ <1458222449-12324-2-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1458222449-12324-2-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some Renesas SCIF UARTs have dedicated lines for RTS/CTS hardware flow
-control.  Whether these lines exist depends on SoC and UART instance
-inside the SoC.  Whether these lines can be used for hardware flow
-control depends on board wiring.
+On Thu, Mar 17, 2016 at 02:47:25PM +0100, Geert Uytterhoeven wrote:
+> Amend the DT bindings for the Renesas SCI driver to allow describing
+> optional GPIO-controlled modem lines, which can be used where dedicated
+> modem lines are not available.
+> 
+> The property naming is dictated by the SERIAL_MCTRL_GPIO helpers.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: devicetree@vger.kernel.org
+> ---
+>  Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+> index 528c3b90f23cb04b..f8d7b36742967163 100644
+> --- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+> +++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+> @@ -76,6 +76,9 @@ Optional properties:
+>    - dmas: Must contain a list of two references to DMA specifiers, one for
+>  	  transmission, and one for reception.
+>    - dma-names: Must contain a list of two DMA names, "tx" and "rx".
+> +  - {cts,dsr,dcd,rng,rts,dtr,out1,out2}-gpios: Must contain a GPIO specifier,
+> +    referring to the GPIO pin to be used as the UART's CTS, DSR, DCD, RNG, RTS,
+> +    DTR, OUT1, or OUT2 line.
 
-Amend the DT bindings with an optional property to indicate that RTS/CTS
-hardware flow control lines exist, and can be used as such.
+It would be good to document these in a common location as at least some 
+are already in use. Otherwise,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: devicetree@vger.kernel.org
----
-This has been mimicked after the "fsl,uart-has-rtscts" and
-"sirf,uart-has-rtscts" properties.
+Acked-by: Rob Herring <robh@kernel.org>
 
-However, as this is fairly generic, perhaps it should just be named
-"uart-has-rtscts" instead?
----
- Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index f8d7b36742967163..8de177c187536c68 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -79,6 +79,11 @@ Optional properties:
-   - {cts,dsr,dcd,rng,rts,dtr,out1,out2}-gpios: Must contain a GPIO specifier,
-     referring to the GPIO pin to be used as the UART's CTS, DSR, DCD, RNG, RTS,
-     DTR, OUT1, or OUT2 line.
-+  - renesas,uart-has-rtscts: The presence of this property indicates that the
-+    UART has dedicated lines for RTS/CTS hardware flow control, and that
-+    they are available for use (wired and enabled by pinmux configuration).
-+    Note that this property is mutually-exclusive with "cts-gpios" and
-+    "rts-gpios" above.
- 
- Example:
- 	aliases {
--- 
-1.9.1
-
+Rob
