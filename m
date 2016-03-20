@@ -1,48 +1,72 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 06/30] ARM: dts: r8a7790: Reference both DMA controllers in QSPI node
-Date: Thu, 10 Mar 2016 12:35:58 +0100
-Message-Id: <1457609782-24108-7-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Date: Sat, 19 Mar 2016 19:10:59 -0500
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Peter Hurley <peter@hurleysoftware.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH/RFC 2/5] serial: sh-sci: Update DT binding documentation
+ for dedicated RTS/CTS
+Message-ID: <20160320001059.GA20960@rob-hp-laptop>
+References: <1458222449-12324-1-git-send-email-geert+renesas@glider.be>
+ <1458222449-12324-3-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1458222449-12324-3-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+On Thu, Mar 17, 2016 at 02:47:26PM +0100, Geert Uytterhoeven wrote:
+> Some Renesas SCIF UARTs have dedicated lines for RTS/CTS hardware flow
+> control.  Whether these lines exist depends on SoC and UART instance
+> inside the SoC.  Whether these lines can be used for hardware flow
+> control depends on board wiring.
+> 
+> Amend the DT bindings with an optional property to indicate that RTS/CTS
+> hardware flow control lines exist, and can be used as such.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: devicetree@vger.kernel.org
+> ---
+> This has been mimicked after the "fsl,uart-has-rtscts" and
+> "sirf,uart-has-rtscts" properties.
+> 
+> However, as this is fairly generic, perhaps it should just be named
+> "uart-has-rtscts" instead?
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm/boot/dts/r8a7790.dtsi | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Yes. And there are some other variations of properties to enable 
+flow-control.
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 2105f57..bec630e 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1413,8 +1413,9 @@
- 		reg = <0 0xe6b10000 0 0x2c>;
- 		interrupts = <0 184 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7790_CLK_QSPI_MOD>;
--		dmas = <&dmac0 0x17>, <&dmac0 0x18>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x17>, <&dmac0 0x18>,
-+		       <&dmac1 0x17>, <&dmac1 0x18>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		num-cs = <1>;
- 		#address-cells = <1>;
--- 
-2.7.2
-
+> ---
+>  Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+> index f8d7b36742967163..8de177c187536c68 100644
+> --- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+> +++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+> @@ -79,6 +79,11 @@ Optional properties:
+>    - {cts,dsr,dcd,rng,rts,dtr,out1,out2}-gpios: Must contain a GPIO specifier,
+>      referring to the GPIO pin to be used as the UART's CTS, DSR, DCD, RNG, RTS,
+>      DTR, OUT1, or OUT2 line.
+> +  - renesas,uart-has-rtscts: The presence of this property indicates that the
+> +    UART has dedicated lines for RTS/CTS hardware flow control, and that
+> +    they are available for use (wired and enabled by pinmux configuration).
+> +    Note that this property is mutually-exclusive with "cts-gpios" and
+> +    "rts-gpios" above.
+>  
+>  Example:
+>  	aliases {
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
