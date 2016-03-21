@@ -1,62 +1,100 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] gpio: rcar: Implement gpiochip.set_multiple()
-Date: Mon, 14 Mar 2016 16:21:44 +0100
-Message-Id: <1457968904-22899-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: mkl@pengutronix.de, wg@grandegger.com, socketcan@hartkopp.net,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-can@vger.kernel.org, netdev@vger.kernel.org,
+	chris.paterson2@renesas.com,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH 2/2] can: rcar_can: Move Renesas CAN driver to rcar dir
+Date: Mon, 21 Mar 2016 16:45:56 +0000
+Message-Id: <1458578756-42898-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1458578756-42898-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1458035294-8150-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1458578756-42898-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This allows to set multiple outputs using a single register write.
+This patch clubs the Renesas controller drivers in one rcar dir.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- drivers/gpio/gpio-rcar.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/net/can/Kconfig               | 10 ----------
+ drivers/net/can/Makefile              |  1 -
+ drivers/net/can/rcar/Kconfig          | 10 ++++++++++
+ drivers/net/can/rcar/Makefile         |  3 ++-
+ drivers/net/can/{ => rcar}/rcar_can.c |  0
+ 5 files changed, 12 insertions(+), 12 deletions(-)
+ rename drivers/net/can/{ => rcar}/rcar_can.c (100%)
 
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index d9ab0cd1d2059635..3fe8e773d95c3b62 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -336,6 +336,25 @@ static void gpio_rcar_set(struct gpio_chip *chip, unsigned offset, int value)
- 	spin_unlock_irqrestore(&p->lock, flags);
- }
+diff --git a/drivers/net/can/Kconfig b/drivers/net/can/Kconfig
+index 13003a9..22570ea 100644
+--- a/drivers/net/can/Kconfig
++++ b/drivers/net/can/Kconfig
+@@ -104,16 +104,6 @@ config CAN_JANZ_ICAN3
+ 	  This driver can also be built as a module. If so, the module will be
+ 	  called janz-ican3.ko.
  
-+static void gpio_rcar_set_multiple(struct gpio_chip *chip, unsigned long *mask,
-+				   unsigned long *bits)
-+{
-+	struct gpio_rcar_priv *p = gpiochip_get_data(chip);
-+	unsigned long flags;
-+	u32 val, bankmask;
+-config CAN_RCAR
+-	tristate "Renesas R-Car CAN controller"
+-	depends on ARCH_RENESAS || ARM
+-	---help---
+-	  Say Y here if you want to use CAN controller found on Renesas R-Car
+-	  SoCs.
+-
+-	  To compile this driver as a module, choose M here: the module will
+-	  be called rcar_can.
+-
+ config CAN_SUN4I
+ 	tristate "Allwinner A10 CAN controller"
+ 	depends on MACH_SUN4I || MACH_SUN7I || COMPILE_TEST
+diff --git a/drivers/net/can/Makefile b/drivers/net/can/Makefile
+index 226d5b5..26ba4b7 100644
+--- a/drivers/net/can/Makefile
++++ b/drivers/net/can/Makefile
+@@ -25,7 +25,6 @@ obj-$(CONFIG_CAN_IFI_CANFD)	+= ifi_canfd/
+ obj-$(CONFIG_CAN_JANZ_ICAN3)	+= janz-ican3.o
+ obj-$(CONFIG_CAN_MSCAN)		+= mscan/
+ obj-$(CONFIG_CAN_M_CAN)		+= m_can/
+-obj-$(CONFIG_CAN_RCAR)		+= rcar_can.o
+ obj-$(CONFIG_CAN_SJA1000)	+= sja1000/
+ obj-$(CONFIG_CAN_SUN4I)		+= sun4i_can.o
+ obj-$(CONFIG_CAN_TI_HECC)	+= ti_hecc.o
+diff --git a/drivers/net/can/rcar/Kconfig b/drivers/net/can/rcar/Kconfig
+index 6ea64d1..7b03a3a 100644
+--- a/drivers/net/can/rcar/Kconfig
++++ b/drivers/net/can/rcar/Kconfig
+@@ -1,3 +1,13 @@
++config CAN_RCAR
++	tristate "Renesas R-Car CAN controller"
++	depends on ARCH_RENESAS || ARM
++	---help---
++	  Say Y here if you want to use CAN controller found on Renesas R-Car
++	  SoCs.
 +
-+	bankmask = mask[0] & GENMASK(chip->ngpio - 1, 0);
-+	if (!bankmask)
-+		return;
++	  To compile this driver as a module, choose M here: the module will
++	  be called rcar_can.
 +
-+	spin_lock_irqsave(&p->lock, flags);
-+	val = gpio_rcar_read(p, OUTDT);
-+	val &= ~bankmask;
-+	val |= (bankmask & bits[0]);
-+	gpio_rcar_write(p, OUTDT, val);
-+	spin_unlock_irqrestore(&p->lock, flags);
-+}
-+
- static int gpio_rcar_direction_output(struct gpio_chip *chip, unsigned offset,
- 				      int value)
- {
-@@ -476,6 +495,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
- 	gpio_chip->get = gpio_rcar_get;
- 	gpio_chip->direction_output = gpio_rcar_direction_output;
- 	gpio_chip->set = gpio_rcar_set;
-+	gpio_chip->set_multiple = gpio_rcar_set_multiple;
- 	gpio_chip->label = name;
- 	gpio_chip->parent = dev;
- 	gpio_chip->owner = THIS_MODULE;
+ config CAN_RCAR_CANFD
+ 	tristate "Renesas R-Car CAN FD controller"
+ 	depends on ARCH_RENESAS || ARM
+diff --git a/drivers/net/can/rcar/Makefile b/drivers/net/can/rcar/Makefile
+index cbaf498e..08de36a 100644
+--- a/drivers/net/can/rcar/Makefile
++++ b/drivers/net/can/rcar/Makefile
+@@ -1,5 +1,6 @@
+ #
+-#  Makefile for the Renesas R-Car CAN FD controller driver
++#  Makefile for the Renesas R-Car CAN & CAN FD controller drivers
+ #
+ 
++obj-$(CONFIG_CAN_RCAR)		+= rcar_can.o
+ obj-$(CONFIG_CAN_RCAR_CANFD)	+= rcar_canfd.o
+diff --git a/drivers/net/can/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
+similarity index 100%
+rename from drivers/net/can/rcar_can.c
+rename to drivers/net/can/rcar/rcar_can.c
 -- 
 1.9.1
+
