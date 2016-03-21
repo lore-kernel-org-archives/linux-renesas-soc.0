@@ -1,81 +1,77 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 0/6] ARM/arm64: dts: rcar: Add SYSC PM domains
-Date: Wed,  9 Mar 2016 20:18:49 +0100
-Message-Id: <1457551135-22078-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 4/4 v2] drm: rcar-du - use generic drm_connector_register_all() helper
+Date: Mon, 21 Mar 2016 15:26:45 +0200
+Message-ID: <1560693.4UujGVhTuc@avalon>
+In-Reply-To: <1458563320-30541-5-git-send-email-abrodkin@synopsys.com>
+References: <1458563320-30541-1-git-send-email-abrodkin@synopsys.com> <1458563320-30541-5-git-send-email-abrodkin@synopsys.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+Hi Alexey,
 
-This patch series adds the R-Car System Controller to the DTS files for
-the various R-Car SoCs, and hooks up devices to their respective PM
-domains.
+Thank you for the patch.
 
-This is a dependency for the enablement of DU and VSP on R-Car H3, as
-the VSPs are located in a PM Domain.
+On Monday 21 Mar 2016 15:28:40 Alexey Brodkin wrote:
+> Now when generic drm_connector_register_all() helper exists we may safely
 
-Changes compared to v2:
-  - Move power area hierarchy from DT to C (cfr. DT bindings for Renesas
-    CPG/MSSR), and switch to "#power-domain-cells = <1>",
-  - Drop fallback compatibility strings, as the bindings are
-    SoC-specific,
-  - Add an "always-on" power area on R-Car H3.
+s/Now when/Now that a/
 
-Changes compared to v1:
-  - Add R-Car H3 (r8a7795) support,
-  - Use "renesas,<type>-sysc" instead of "renesas,sysc-<type>",
-  - Add fallback compatibility strings for R-Car Gen2 and Gen3.
+> substiture with it driver-specific implementation of connectors plugging in
 
-Dependencies:
-  - renesas-devel-20160307-v4.5-rc7,
-  - clk/clk-next with "[PATCH v2] clk: renesas: Rename header file
-    renesas.h" applied,
-  - "[PATCH 0/4] clk: renesas: PM Domain Cleanups and Preparation".
-  - "[PATCH v3 0/7] PM / Domains: Add DT bindings for the R-Car System
-    Controller",
-  - "[PATCH v3 00/11] soc: renesas: Add R-Car SYSC PM Domain Support".
-Note that these are hard dependencies: adding SYSC PM Domains to DTS
-files without driver support cause breakage!
+s/substiture with it/substitute it for the/
 
-For your convenience, I've pushed this, incl. all dependencies, to the
-topic/rcar-sysc-pd-v3 branch of
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+> sysfs.
 
-Thanks for your comments!
+And while at it, in the subject line,
 
-Geert Uytterhoeven (6):
-  ARM: dts: r8a7779: Add SYSC PM domains
-  ARM: dts: r8a7790: Add SYSC PM domains
-  ARM: dts: r8a7791: Add SYSC PM domains
-  ARM: dts: r8a7793: Add SYSC PM domains
-  ARM: dts: r8a7794: Add SYSC PM domains
-  arm64: dts: r8a7795: Add SYSC PM domains
+s/rcar-du - use/rcar-du: Use/
 
- arch/arm/boot/dts/r8a7779.dtsi           |  10 +++
- arch/arm/boot/dts/r8a7790.dtsi           |  17 +++++
- arch/arm/boot/dts/r8a7791.dtsi           |  10 +++
- arch/arm/boot/dts/r8a7793.dtsi           |   9 +++
- arch/arm/boot/dts/r8a7794.dtsi           |  10 +++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 115 +++++++++++++++++--------------
- 6 files changed, 120 insertions(+), 51 deletions(-)
+> Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+
+Apart for the commit message fixes,
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+> 
+> No changes v1 -> v2.
+> 
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 644db36..0f251dc 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -361,14 +361,7 @@ static int rcar_du_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto error;
+> 
+> -	mutex_lock(&ddev->mode_config.mutex);
+> -	drm_for_each_connector(connector, ddev) {
+> -		ret = drm_connector_register(connector);
+> -		if (ret < 0)
+> -			break;
+> -	}
+> -	mutex_unlock(&ddev->mode_config.mutex);
+> -
+> +	ret = drm_connector_register_all(ddev);
+>  	if (ret < 0)
+>  		goto error;
 
 -- 
-1.9.1
+Regards,
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Laurent Pinchart
