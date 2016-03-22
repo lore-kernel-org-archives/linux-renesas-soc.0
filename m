@@ -1,85 +1,71 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 5/6] ARM: dts: r8a7794: Add SYSC PM domains
-Date: Wed,  9 Mar 2016 20:18:54 +0100
-Message-Id: <1457551135-22078-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1457551135-22078-1-git-send-email-geert+renesas@glider.be>
-References: <1457551135-22078-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <56F14FC2.8060804@linaro.org>
+References: <CAMuHMdWbpj=ZnFqh1uWZSCojvrM+NB=Bbzw=UebodTr+vAKy7g@mail.gmail.com>
+	<CACRpkdb1J+-_9szuv6xWhrD7+NFeCjug+cqaYsHDYyLUYbLw1w@mail.gmail.com>
+	<56F14FC2.8060804@linaro.org>
+Date: Tue, 22 Mar 2016 15:18:17 +0100
+Message-ID: <CACRpkdZ=Xd3_T7paMif10P1zwOT5+p-qn_i1pYoUfvX1wi=EVQ@mail.gmail.com>
+Subject: Re: [RFD] Sharing GPIOs for input (buttons) and output (LEDs)
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the System Controller.
-Hook up the Cortex-A7 CPU cores and the Cortex-A7 L2 cache/SCU to their
-respective PM domains.
+On Tue, Mar 22, 2016 at 2:59 PM, Vaibhav Hiremath
+<vaibhav.hiremath@linaro.org> wrote:
+> On Thursday 17 March 2016 03:48 PM, Linus Walleij wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - Drop power area hiearchy from DT,
-  - Switch to "#power-domain-cells = <1>",
-  - Drop fallback compatibility strings,
+> but recently I came across another usecase of shared gpio,
+>
+> Say, for example, we have multiple external I2C peripheral which share
+> interrupt line over gpio (ofcourse irq line is muxed onto single gpio).
+>
+> Now in kernel I would have multiple instances of driver supporting each
+> peripheral but gpio can not be shared for registering irq.
+>
+> Do you suggest MFD driver for such simple usecases ? Should gpiolib
+> support SHARED gpios, and gpiolib can define all the policies over
+> configuration
 
-v2:
-  - Change one-line summary prefix to match current arm-soc practices,
-  - Update compatible values.
----
- arch/arm/boot/dts/r8a7794.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+I don't see why you would want to use MFD at all.
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index eacb2b291361ec5c..0d0b728f86d14886 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -12,6 +12,7 @@
- #include <dt-bindings/clock/r8a7794-clock.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/power/r8a7794-sysc.h>
- 
- / {
- 	compatible = "renesas,r8a7794";
-@@ -40,6 +41,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0>;
- 			clock-frequency = <1000000000>;
-+			power-domains = <&sysc R8A7794_PD_CA7_CPU0>;
- 			next-level-cache = <&L2_CA7>;
- 		};
- 
-@@ -48,12 +50,14 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <1>;
- 			clock-frequency = <1000000000>;
-+			power-domains = <&sysc R8A7794_PD_CA7_CPU1>;
- 			next-level-cache = <&L2_CA7>;
- 		};
- 	};
- 
- 	L2_CA7: cache-controller@1 {
- 		compatible = "cache";
-+		power-domains = <&sysc R8A7794_PD_CA7_SCU>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
-@@ -1165,6 +1169,12 @@
- 		};
- 	};
- 
-+	sysc: system-controller@e6180000 {
-+		compatible = "renesas,r8a7794-sysc";
-+		reg = <0 0xe6180000 0 0x0200>;
-+		#power-domain-cells = <1>;
-+	};
-+
- 	ipmmu_sy0: mmu@e6280000 {
- 		compatible = "renesas,ipmmu-r8a7794", "renesas,ipmmu-vmsa";
- 		reg = <0 0xe6280000 0 0x1000>;
--- 
-1.9.1
+Not shared GPIOs but shared interrupt lines.
 
+If you're using device tree is is pretty straight forward:
+
+- Make sure the GPIOlib and irqchip portions of the driver
+  are totally orthogonal. (See Documentation/gpio/driver.txt
+  section "GPIO drivers providing IRQs")
+
+- Just use the irqchip side of the GPIO
+
+- Make sure your consumers check if the IRQ is theirs
+  and return IRQ_HANDLED vs NO_IRQ depending on
+  whether it's theirs or not.
+
+It is quite obvious from context that in this case all consumers
+are using an open drain (if active low) scheme. However
+since the GPIO is then used as input it has no effect, it is
+more a question for the consumers to assure their IRQ
+logic is not using push-pull but rather open drain or you will
+get a disaster in the totempole...
+
+> (input only, what about conflicts, bidirectional mode?)
+
+We thought about this, see Documentation/gpio/driver.txt section
+Locking IRQ usage".
+
+When the line is locked for IRQ usage, it cannot be switched to
+output.
+
+Yours,
+Linus Walleij
