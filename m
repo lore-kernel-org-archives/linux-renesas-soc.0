@@ -1,32 +1,112 @@
-Return-Path: <SRS0+uua1=PN=gmail.com=magnus.damm@vergenet.net>
-From: Magnus Damm <magnus.damm@gmail.com>
+Return-Path: <horms@vergenet.net>
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au,Magnus Damm <magnus.damm@gmail.com>,laurent.pinchart+renesas@ideasonboard.com,joro@8bytes.org,geert+renesas@glider.be
-Date: Fri, 18 Mar 2016 01:55:46 +0900
-Message-Id: <20160317165546.28213.87659.sendpatchset@little-apple>
-In-Reply-To: <20160317165527.28213.60694.sendpatchset@little-apple>
-References: <20160317165527.28213.60694.sendpatchset@little-apple>
-Subject: [PATCH/RFC 02/05] arm64: dts: r8a7795: Enable IPMMU-MM
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 05/13] ARM: dts: r8a7778: Remove unnecessary clock-output-names properties
+Date: Tue, 22 Mar 2016 10:40:32 +0900
+Message-Id: <1458610840-15194-6-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1458610840-15194-1-git-send-email-horms+renesas@verge.net.au>
+References: <1458610840-15194-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+* Fixed rate and fixed factor clocks do not require an
+  clock-output-names property.
+* Since 07705583e920fef6 ("clk: shmobile: div6: Make clock-output-names
+  optional") Renesas div6 clocks do not require a clock-output-names
+  property.
 
-Enable r8a7795 IPMMU-MM node to allow the IPMMU main
-device to be probed in case of driver support exists.
+In the above cases there is only one clock output and its name is taken
+from that of the clock node.  Accordingly, remove the unnecessary
+clock-output-names properties and as necessary update the node names.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/r8a7778.dtsi | 21 ++++++---------------
+ 1 file changed, 6 insertions(+), 15 deletions(-)
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |    1 -
- 1 file changed, 1 deletion(-)
-
---- 0029/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2016-03-17 19:00:45.900513000 +0900
-@@ -483,7 +483,6 @@
- 			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
- 			#iommu-cells = <1>;
--			status = "disabled";
+diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
+index f83a348fc07a..99c10ebbaca2 100644
+--- a/arch/arm/boot/dts/r8a7778.dtsi
++++ b/arch/arm/boot/dts/r8a7778.dtsi
+@@ -443,11 +443,10 @@
+ 		ranges;
+ 
+ 		/* External input clock */
+-		extal_clk: extal_clk {
++		extal_clk: extal {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <0>;
+-			clock-output-names = "extal";
  		};
  
- 		dmac0: dma-controller@e6700000 {
+ 		/* External SCIF clock */
+@@ -474,59 +473,51 @@
+ 		audio_clk_a: audio_clk_a {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+-			clock-output-names = "audio_clk_a";
+ 		};
+ 		audio_clk_b: audio_clk_b {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+-			clock-output-names = "audio_clk_b";
+ 		};
+ 		audio_clk_c: audio_clk_c {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+-			clock-output-names = "audio_clk_c";
+ 		};
+ 
+ 		/* Fixed ratio clocks */
+-		g_clk: g_clk {
++		g_clk: g {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7778_CLK_PLLA>;
+ 			#clock-cells = <0>;
+ 			clock-div = <12>;
+ 			clock-mult = <1>;
+-			clock-output-names = "g";
+ 		};
+-		i_clk: i_clk {
++		i_clk: i {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7778_CLK_PLLA>;
+ 			#clock-cells = <0>;
+ 			clock-div = <1>;
+ 			clock-mult = <1>;
+-			clock-output-names = "i";
+ 		};
+-		s3_clk: s3_clk {
++		s3_clk: s3 {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7778_CLK_PLLA>;
+ 			#clock-cells = <0>;
+ 			clock-div = <4>;
+ 			clock-mult = <1>;
+-			clock-output-names = "s3";
+ 		};
+-		s4_clk: s4_clk {
++		s4_clk: s4 {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7778_CLK_PLLA>;
+ 			#clock-cells = <0>;
+ 			clock-div = <8>;
+ 			clock-mult = <1>;
+-			clock-output-names = "s4";
+ 		};
+-		z_clk: z_clk {
++		z_clk: z {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7778_CLK_PLLB>;
+ 			#clock-cells = <0>;
+ 			clock-div = <1>;
+ 			clock-mult = <1>;
+-			clock-output-names = "z";
+ 		};
+ 
+ 		/* Gate clocks */
+-- 
+2.1.4
