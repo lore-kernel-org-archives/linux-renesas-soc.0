@@ -1,105 +1,41 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUbcJZmyXgRd3EyNi55b-Gwc-dN84TQNdFf3F5JxvOR5Q@mail.gmail.com>
+References: <8760wnfe3r.wl%kuninori.morimoto.gx@renesas.com>
+	<8737rrfe1f.wl%kuninori.morimoto.gx@renesas.com>
+	<CACRpkdYFzKkDEr-PE1euG7ZOGe5MQJfm-rdW-7YN1yQ_y4W9Zg@mail.gmail.com>
+	<CAMuHMdUbcJZmyXgRd3EyNi55b-Gwc-dN84TQNdFf3F5JxvOR5Q@mail.gmail.com>
+Date: Tue, 22 Mar 2016 15:33:22 +0100
+Message-ID: <CACRpkdZmxFaN1aVDVHjLLf-2qjjkpz5aKYOvpuAzqZwnHUx5TA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: IPSRx and MOD_SELx should be set
+ before GPSRx
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus <magnus.damm@gmail.com>, Simon <horms@verge.net.au>,
 	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 1/7] PM / Domains: Add DT bindings for the R-Car System Controller
-Date: Wed,  9 Mar 2016 20:18:36 +0100
-Message-Id: <1457551122-21838-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
-References: <1457551122-21838-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas R-Car System Controller provides power management for the
-CPU cores and various coprocessors, following the generic PM domain
-bindings in Documentation/devicetree/bindings/power/power_domain.txt.
+On Tue, Mar 22, 2016 at 3:30 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Tue, Mar 22, 2016 at 2:18 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-This supports R-Car Gen1 (H1), Gen2, and Gen3.
+>> I wait for Geert to either queue this for his first v4.7 pull request
+>> or tell me to apply it for fixes. Is it a regression?
+>
+> I'm not aware of any issues due to this.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - Move power area hierarchy from DT to C (cfr. DT bindings for Renesas
-    CPG/MSSR), and switch to "#power-domain-cells = <1>",
-  - Drop fallback compatibility strings, as the bindings are
-    SoC-specific,
-  - Rename from renesas,sysc-rcar.txt to renesas,rcar-sysc.txt,
+OK just queue it with the rest.
 
-v2:
-  - Add R-Car H3 (r8a7795) support,
-  - Use "renesas,<type>-sysc" instead of "renesas,sysc-<type>",
-  - Add fallback compatibility strings for R-Car Gen2 and Gen3.
----
- .../bindings/power/renesas,rcar-sysc.txt           | 48 ++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+I assume there will still be lots of action in sh-pfc for this merge
+window.
 
-diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-new file mode 100644
-index 0000000000000000..1765fd37c3658b60
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-@@ -0,0 +1,48 @@
-+DT bindings for the Renesas R-Car System Controller
-+
-+== System Controller Node ==
-+
-+The R-Car System Controller provides power management for the CPU cores and
-+various coprocessors.
-+
-+Required properties:
-+  - compatible: Must contain one or more of the following:
-+      - "renesas,r8a7779-sysc" (R-Car H1)
-+      - "renesas,r8a7790-sysc" (R-Car H2)
-+      - "renesas,r8a7791-sysc" (R-Car M2-W)
-+      - "renesas,r8a7792-sysc" (R-Car V2H)
-+      - "renesas,r8a7793-sysc" (R-Car M2-N)
-+      - "renesas,r8a7794-sysc" (R-Car E2)
-+      - "renesas,r8a7795-sysc" (R-Car H3)
-+  - reg: Address start and address range for the device.
-+  - #power-domain-cells: Must be 1.
-+
-+
-+Example:
-+
-+	sysc: system-controller@e6180000 {
-+		compatible = "renesas,r8a7791-sysc";
-+		reg = <0 0xe6180000 0 0x0200>;
-+		#power-domain-cells = <1>;
-+	};
-+
-+
-+== PM Domain Consumers ==
-+
-+Devices residing in a power area must refer to that power area, as documented
-+by the generic PM domain bindings in
-+Documentation/devicetree/bindings/power/power_domain.txt.
-+
-+Required properties:
-+  - power-domains: A phandle and symbolic PM domain specifier, as defined in
-+		   <dt-bindings/power/r8a77*-sysc.h>.
-+
-+
-+Example:
-+
-+	L2_CA15: cache-controller@0 {
-+		compatible = "cache";
-+		power-domains = <&sysc R8A7791_PD_CA15_SCU>;
-+		cache-unified;
-+		cache-level = <2>;
-+	};
--- 
-1.9.1
-
+Yours,
+Linus Walleij
