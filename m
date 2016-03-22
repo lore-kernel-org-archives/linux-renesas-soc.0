@@ -1,67 +1,74 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20160322012849.GA14367@verge.net.au>
-References: <1458296361-4468-1-git-send-email-geert+renesas@glider.be>
-	<20160322012849.GA14367@verge.net.au>
-Date: Tue, 22 Mar 2016 09:43:40 +0100
-Message-ID: <CAMuHMdXcew-NHGeb2x69CR4ZBeyf3hET3xtQYSkToSX9BD68uw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] ARM: dts: shmobile: Correct interrupt type for ARM TWD
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
+Date: Tue, 22 Mar 2016 10:28:50 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
 	Jon Hunter <jonathanh@nvidia.com>,
-	linux-renesas-soc@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/2] ARM: dts: shmobile: Correct interrupt type for ARM
+ TWD
+Message-ID: <20160322012849.GA14367@verge.net.au>
+References: <1458296361-4468-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1458296361-4468-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+Hi Geert,
 
-On Tue, Mar 22, 2016 at 2:28 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Fri, Mar 18, 2016 at 11:19:19AM +0100, Geert Uytterhoeven wrote:
->> This patch series corrects the interrupt type for ARM TWD timers on
->> SH-Mobile AG5 and R-Car H1.
->>
->> The ARM TWD interrupt is a private peripheral interrupt (PPI), and per
->> the ARM GIC documentation, whether the type for PPIs can be set is
->> IMPLEMENTATION DEFINED.
->>
->> For SH-Mobile AG5 and R-Car H1 devices the PPI type cannot be set, and
->> so when we attempt to set the type for the ARM TWD interrupt it fails.
->> This has gone unnoticed because it fails silently, and because we cannot
->> re-configure the type it has had no impact. Nevertheless fix the type
->> for the TWD interrupt so that it matches the hardware configuration.
->>
->> This was exposed by Jon Hunter's "[PATCH 04/15] irqchip/gic: WARN if
->> setting the interrupt type fails" (https://lkml.org/lkml/2016/3/17/339),
->> which triggers:
->>
->>     WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-common.c:61 gic_configure_irq+0x64/0x7c()
->>
->> Other Renesas SoCs using private peripheral interrupts (R-Mobile APE6,
->> R-Car Gen2, and R-Car Gen3) seem to be fine.
->>
->> Based on patches by Jon Hunter for Tegra20/30 and OMAP4.
->
-> Thanks for this. Do you think it would be best to queue these up
-> for v4.7 or as fixes for v4.6?
+On Fri, Mar 18, 2016 at 11:19:19AM +0100, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus, Jon,
+> 
+> This patch series corrects the interrupt type for ARM TWD timers on
+> SH-Mobile AG5 and R-Car H1.
+> 
+> The ARM TWD interrupt is a private peripheral interrupt (PPI), and per
+> the ARM GIC documentation, whether the type for PPIs can be set is
+> IMPLEMENTATION DEFINED.
+> 
+> For SH-Mobile AG5 and R-Car H1 devices the PPI type cannot be set, and
+> so when we attempt to set the type for the ARM TWD interrupt it fails.
+> This has gone unnoticed because it fails silently, and because we cannot
+> re-configure the type it has had no impact. Nevertheless fix the type
+> for the TWD interrupt so that it matches the hardware configuration.
+> 
+> This was exposed by Jon Hunter's "[PATCH 04/15] irqchip/gic: WARN if
+> setting the interrupt type fails" (https://lkml.org/lkml/2016/3/17/339),
+> which triggers:
+> 
+>     WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-common.c:61 gic_configure_irq+0x64/0x7c()
+> 
+> Other Renesas SoCs using private peripheral interrupts (R-Mobile APE6,
+> R-Car Gen2, and R-Car Gen3) seem to be fine.
+> 
+> Based on patches by Jon Hunter for Tegra20/30 and OMAP4.
 
-I don't know if/when Jon's patch will go in, but he's tracking the fixes for
-various SoCs, as we don't know yet how many are affected.
+Thanks for this. Do you think it would be best to queue these up
+for v4.7 or as fixes for v4.6?
 
-So I think it's basically up to you.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Thanks!
+> 
+> Geert Uytterhoeven (2):
+>   ARM: dts: sh73a0: Correct interrupt type for ARM TWD
+>   ARM: dts: r8a7779: Correct interrupt type for ARM TWD
+> 
+>  arch/arm/boot/dts/r8a7779.dtsi | 2 +-
+>  arch/arm/boot/dts/sh73a0.dtsi  | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> -- 
+> 1.9.1
+> 
+> Gr{oetje,eeting}s,
+> 
+> 						Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+> 							    -- Linus Torvalds
