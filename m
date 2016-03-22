@@ -1,17 +1,16 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUbcJZmyXgRd3EyNi55b-Gwc-dN84TQNdFf3F5JxvOR5Q@mail.gmail.com>
+In-Reply-To: <CACRpkdYFzKkDEr-PE1euG7ZOGe5MQJfm-rdW-7YN1yQ_y4W9Zg@mail.gmail.com>
 References: <8760wnfe3r.wl%kuninori.morimoto.gx@renesas.com>
 	<8737rrfe1f.wl%kuninori.morimoto.gx@renesas.com>
 	<CACRpkdYFzKkDEr-PE1euG7ZOGe5MQJfm-rdW-7YN1yQ_y4W9Zg@mail.gmail.com>
-	<CAMuHMdUbcJZmyXgRd3EyNi55b-Gwc-dN84TQNdFf3F5JxvOR5Q@mail.gmail.com>
-Date: Tue, 22 Mar 2016 15:33:22 +0100
-Message-ID: <CACRpkdZmxFaN1aVDVHjLLf-2qjjkpz5aKYOvpuAzqZwnHUx5TA@mail.gmail.com>
+Date: Tue, 22 Mar 2016 15:30:24 +0100
+Message-ID: <CAMuHMdUbcJZmyXgRd3EyNi55b-Gwc-dN84TQNdFf3F5JxvOR5Q@mail.gmail.com>
 Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: IPSRx and MOD_SELx should be set
  before GPSRx
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -23,19 +22,36 @@ Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Mar 22, 2016 at 3:30 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Tue, Mar 22, 2016 at 2:18 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+Hi Linus,
 
->> I wait for Geert to either queue this for his first v4.7 pull request
->> or tell me to apply it for fixes. Is it a regression?
+On Tue, Mar 22, 2016 at 2:18 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Mar 16, 2016 at 1:48 AM, Kuninori Morimoto
+> <kuninori.morimoto.gx@renesas.com> wrote:
 >
-> I'm not aware of any issues due to this.
+>> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>>
+>> Gen2 / Gen3 datasheet will have below note in next version.
+>> This patch follows this note.
+>>
+>> IPSRx and MOD_SELx registers shall be set before setting GPSRx
+>> registers in case that they need to be configured.
+>> MOD_SELx registers can be set either earlier or later than setting
+>> IPSRx registers.
+>>
+>> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> I wait for Geert to either queue this for his first v4.7 pull request
+> or tell me to apply it for fixes. Is it a regression?
 
-OK just queue it with the rest.
+I'm not aware of any issues due to this.
 
-I assume there will still be lots of action in sh-pfc for this merge
-window.
+Gr{oetje,eeting}s,
 
-Yours,
-Linus Walleij
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
