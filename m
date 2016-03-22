@@ -1,98 +1,193 @@
-Return-Path: <SRS0+uua1=PN=gmail.com=magnus.damm@vergenet.net>
-From: Magnus Damm <magnus.damm@gmail.com>
+Return-Path: <horms@vergenet.net>
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: horms+renesas@verge.net.au,Magnus Damm <magnus.damm@gmail.com>,laurent.pinchart+renesas@ideasonboard.com,joro@8bytes.org,geert+renesas@glider.be
-Date: Fri, 18 Mar 2016 01:55:54 +0900
-Message-Id: <20160317165554.28213.89797.sendpatchset@little-apple>
-In-Reply-To: <20160317165527.28213.60694.sendpatchset@little-apple>
-References: <20160317165527.28213.60694.sendpatchset@little-apple>
-Subject: [PATCH/RFC 03/05] arm64: dts: r8a7795: Hook up SYS-DMAC to IPMMU
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/13] ARM: dts: r8a7793: Remove unnecessary clock-output-names properties
+Date: Tue, 22 Mar 2016 10:40:35 +0900
+Message-Id: <1458610840-15194-9-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1458610840-15194-1-git-send-email-horms+renesas@verge.net.au>
+References: <1458610840-15194-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+* Fixed rate and fixed factor clocks do not require an
+  clock-output-names property.
+* Since 07705583e920fef6 ("clk: shmobile: div6: Make clock-output-names
+  optional") Renesas div6 clocks do not require a clock-output-names
+  property.
 
-Hook up r8a7795 DMAC nodes to IPMMU-MP1, IPMMU-DS0 and IPMMU-DS1.
+In the above cases there is only one clock output and its name is taken
+from that of the clock node.  Accordingly, remove the unnecessary
+clock-output-names properties and as necessary update the node names.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm/boot/dts/r8a7793.dtsi | 45 +++++++++++++-----------------------------
+ 1 file changed, 14 insertions(+), 31 deletions(-)
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |   40 ++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
-
---- 0028/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a7795.dtsi	2016-03-17 18:52:03.720513000 +0900
-@@ -319,6 +319,14 @@
- 			power-domains = <&cpg>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_mp1 0>, <&ipmmu_mp1 1>,
-+			       <&ipmmu_mp1 2>, <&ipmmu_mp1 3>,
-+			       <&ipmmu_mp1 4>, <&ipmmu_mp1 5>,
-+			       <&ipmmu_mp1 6>, <&ipmmu_mp1 7>,
-+			       <&ipmmu_mp1 8>, <&ipmmu_mp1 9>,
-+			       <&ipmmu_mp1 10>, <&ipmmu_mp1 11>,
-+			       <&ipmmu_mp1 12>, <&ipmmu_mp1 13>,
-+			       <&ipmmu_mp1 14>, <&ipmmu_mp1 15>;
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index e34d7f48eff3..bf70c464920b 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -856,12 +856,11 @@
+ 		ranges;
+ 
+ 		/* External root clock */
+-		extal_clk: extal_clk {
++		extal_clk: extal {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			/* This value must be overridden by the board. */
+ 			clock-frequency = <0>;
+-			clock-output-names = "extal";
  		};
  
- 		audma1: dma-controller@ec720000 {
-@@ -351,6 +359,14 @@
- 			power-domains = <&cpg>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_mp1 16>, <&ipmmu_mp1 17>,
-+			       <&ipmmu_mp1 18>, <&ipmmu_mp1 19>,
-+			       <&ipmmu_mp1 20>, <&ipmmu_mp1 21>,
-+			       <&ipmmu_mp1 22>, <&ipmmu_mp1 23>,
-+			       <&ipmmu_mp1 24>, <&ipmmu_mp1 25>,
-+			       <&ipmmu_mp1 26>, <&ipmmu_mp1 27>,
-+			       <&ipmmu_mp1 28>, <&ipmmu_mp1 29>,
-+			       <&ipmmu_mp1 30>, <&ipmmu_mp1 31>;
+ 		/*
+@@ -872,19 +871,16 @@
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <0>;
+-			clock-output-names = "audio_clk_a";
+ 		};
+ 		audio_clk_b: audio_clk_b {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <0>;
+-			clock-output-names = "audio_clk_b";
+ 		};
+ 		audio_clk_c: audio_clk_c {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <0>;
+-			clock-output-names = "audio_clk_c";
  		};
  
- 		pfc: pfc@e6060000 {
-@@ -517,6 +533,14 @@
- 			power-domains = <&cpg>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds0 0>, <&ipmmu_ds0 1>,
-+			       <&ipmmu_ds0 2>, <&ipmmu_ds0 3>,
-+			       <&ipmmu_ds0 4>, <&ipmmu_ds0 5>,
-+			       <&ipmmu_ds0 6>, <&ipmmu_ds0 7>,
-+			       <&ipmmu_ds0 8>, <&ipmmu_ds0 9>,
-+			       <&ipmmu_ds0 10>, <&ipmmu_ds0 11>,
-+			       <&ipmmu_ds0 12>, <&ipmmu_ds0 13>,
-+			       <&ipmmu_ds0 14>, <&ipmmu_ds0 15>;
+ 		/* External USB clock - can be overridden by the board */
+@@ -926,111 +922,98 @@
  		};
  
- 		dmac1: dma-controller@e7300000 {
-@@ -550,6 +574,14 @@
- 			power-domains = <&cpg>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds1 0>, <&ipmmu_ds1 1>,
-+			       <&ipmmu_ds1 2>, <&ipmmu_ds1 3>,
-+			       <&ipmmu_ds1 4>, <&ipmmu_ds1 5>,
-+			       <&ipmmu_ds1 6>, <&ipmmu_ds1 7>,
-+			       <&ipmmu_ds1 8>, <&ipmmu_ds1 9>,
-+			       <&ipmmu_ds1 10>, <&ipmmu_ds1 11>,
-+			       <&ipmmu_ds1 12>, <&ipmmu_ds1 13>,
-+			       <&ipmmu_ds1 14>, <&ipmmu_ds1 15>;
+ 		/* Variable factor clocks */
+-		sd2_clk: sd2_clk@e6150078 {
++		sd2_clk: sd2@e6150078 {
+ 			compatible = "renesas,r8a7793-div6-clock",
+ 				     "renesas,cpg-div6-clock";
+ 			reg = <0 0xe6150078 0 4>;
+ 			clocks = <&pll1_div2_clk>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "sd2";
+ 		};
+-		sd3_clk: sd3_clk@e615026c {
++		sd3_clk: sd3@e615026c {
+ 			compatible = "renesas,r8a7793-div6-clock",
+ 				     "renesas,cpg-div6-clock";
+ 			reg = <0 0xe615026c 0 4>;
+ 			clocks = <&pll1_div2_clk>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "sd3";
+ 		};
+-		mmc0_clk: mmc0_clk@e6150240 {
++		mmc0_clk: mmc0@e6150240 {
+ 			compatible = "renesas,r8a7793-div6-clock",
+ 				     "renesas,cpg-div6-clock";
+ 			reg = <0 0xe6150240 0 4>;
+ 			clocks = <&pll1_div2_clk>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "mmc0";
  		};
  
- 		dmac2: dma-controller@e7310000 {
-@@ -583,6 +615,14 @@
- 			power-domains = <&cpg>;
- 			#dma-cells = <1>;
- 			dma-channels = <16>;
-+			iommus = <&ipmmu_ds1 16>, <&ipmmu_ds1 17>,
-+			       <&ipmmu_ds1 18>, <&ipmmu_ds1 19>,
-+			       <&ipmmu_ds1 20>, <&ipmmu_ds1 21>,
-+			       <&ipmmu_ds1 22>, <&ipmmu_ds1 23>,
-+			       <&ipmmu_ds1 24>, <&ipmmu_ds1 25>,
-+			       <&ipmmu_ds1 26>, <&ipmmu_ds1 27>,
-+			       <&ipmmu_ds1 28>, <&ipmmu_ds1 29>,
-+			       <&ipmmu_ds1 30>, <&ipmmu_ds1 31>;
+ 		/* Fixed factor clocks */
+-		pll1_div2_clk: pll1_div2_clk {
++		pll1_div2_clk: pll1_div2 {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
+ 			#clock-cells = <0>;
+ 			clock-div = <2>;
+ 			clock-mult = <1>;
+-			clock-output-names = "pll1_div2";
+ 		};
+-		zg_clk: zg_clk {
++		zg_clk: zg {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
+ 			#clock-cells = <0>;
+ 			clock-div = <5>;
+ 			clock-mult = <1>;
+-			clock-output-names = "zg";
+ 		};
+-		zx_clk: zx_clk {
++		zx_clk: zx {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
+ 			#clock-cells = <0>;
+ 			clock-div = <3>;
+ 			clock-mult = <1>;
+-			clock-output-names = "zx";
+ 		};
+-		zs_clk: zs_clk {
++		zs_clk: zs {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
+ 			#clock-cells = <0>;
+ 			clock-div = <6>;
+ 			clock-mult = <1>;
+-			clock-output-names = "zs";
+ 		};
+-		hp_clk: hp_clk {
++		hp_clk: hp {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
+ 			#clock-cells = <0>;
+ 			clock-div = <12>;
+ 			clock-mult = <1>;
+-			clock-output-names = "hp";
+ 		};
+-		p_clk: p_clk {
++		p_clk: p {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
+ 			#clock-cells = <0>;
+ 			clock-div = <24>;
+ 			clock-mult = <1>;
+-			clock-output-names = "p";
+ 		};
+-		m2_clk: m2_clk {
++		m2_clk: m2 {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
+ 			#clock-cells = <0>;
+ 			clock-div = <8>;
+ 			clock-mult = <1>;
+-			clock-output-names = "m2";
+ 		};
+-		rclk_clk: rclk_clk {
++		rclk_clk: rclk {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7793_CLK_PLL1>;
+ 			#clock-cells = <0>;
+ 			clock-div = <(48 * 1024)>;
+ 			clock-mult = <1>;
+-			clock-output-names = "rclk";
+ 		};
+-		mp_clk: mp_clk {
++		mp_clk: mp {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&pll1_div2_clk>;
+ 			#clock-cells = <0>;
+ 			clock-div = <15>;
+ 			clock-mult = <1>;
+-			clock-output-names = "mp";
+ 		};
+-		cp_clk: cp_clk {
++		cp_clk: cp {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&extal_clk>;
+ 			#clock-cells = <0>;
+ 			clock-div = <2>;
+ 			clock-mult = <1>;
+-			clock-output-names = "cp";
  		};
  
- 		avb: ethernet@e6800000 {
+ 		/* Gate clocks */
+-- 
+2.1.4
