@@ -3,87 +3,88 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/12] ARM: dts: kzm9g: use generic pinctrl properties
-Date: Fri, 18 Mar 2016 08:59:20 +0900
-Message-Id: <1458259162-15706-11-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1458259162-15706-1-git-send-email-horms+renesas@verge.net.au>
-References: <1458259162-15706-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 06/13] ARM: dts: r8a7779: Remove unnecessary clock-output-names properties
+Date: Tue, 22 Mar 2016 10:40:33 +0900
+Message-Id: <1458610840-15194-7-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1458610840-15194-1-git-send-email-horms+renesas@verge.net.au>
+References: <1458610840-15194-1-git-send-email-horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since 16ccaf5bb5a5 ("pinctrl: sh-pfc: Accept standard function, pins and
-groups properties") renesas pfc drivers accept generic "function", "pins"
-and "groups" properties.
+* Fixed rate and fixed factor clocks do not require an
+  clock-output-names property.
+* Since 07705583e920fef6 ("clk: shmobile: div6: Make clock-output-names
+  optional") Renesas div6 clocks do not require a clock-output-names
+  property.
 
-This patch updates the kzm9g device tree to use the generic properties.
+In the above cases there is only one clock output and its name is taken
+from that of the clock node.  Accordingly, remove the unnecessary
+clock-output-names properties and as necessary update the node names.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/sh73a0-kzm9g.dts | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ arch/arm/boot/dts/r8a7779.dtsi | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sh73a0-kzm9g.dts b/arch/arm/boot/dts/sh73a0-kzm9g.dts
-index aa8bae3b8fcf..e40a2f23b6cd 100644
---- a/arch/arm/boot/dts/sh73a0-kzm9g.dts
-+++ b/arch/arm/boot/dts/sh73a0-kzm9g.dts
-@@ -329,41 +329,41 @@
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index a0cc08e6295b..60bc1e66bba9 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -445,12 +445,11 @@
+ 		ranges;
  
- &pfc {
- 	i2c3_pins: i2c3 {
--		renesas,groups = "i2c3_1";
--		renesas,function = "i2c3";
-+		groups = "i2c3_1";
-+		function = "i2c3";
- 	};
- 
- 	mmcif_pins: mmc {
- 		mux {
--			renesas,groups = "mmc0_data8_0", "mmc0_ctrl_0";
--			renesas,function = "mmc0";
-+			groups = "mmc0_data8_0", "mmc0_ctrl_0";
-+			function = "mmc0";
+ 		/* External root clock */
+-		extal_clk: extal_clk {
++		extal_clk: extal {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			/* This value must be overriden by the board. */
+ 			clock-frequency = <0>;
+-			clock-output-names = "extal";
  		};
- 		cfg {
--			renesas,groups = "mmc0_data8_0";
--			renesas,pins = "PORT279";
-+			groups = "mmc0_data8_0";
-+			pins = "PORT279";
- 			bias-pull-up;
+ 
+ 		/* External SCIF clock */
+@@ -474,37 +473,33 @@
  		};
- 	};
  
- 	scifa4_pins: serial4 {
--		renesas,groups = "scifa4_data", "scifa4_ctrl";
--		renesas,function = "scifa4";
-+		groups = "scifa4_data", "scifa4_ctrl";
-+		function = "scifa4";
- 	};
+ 		/* Fixed factor clocks */
+-		i_clk: i_clk {
++		i_clk: i {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7779_CLK_PLLA>;
+ 			#clock-cells = <0>;
+ 			clock-div = <2>;
+ 			clock-mult = <1>;
+-			clock-output-names = "i";
+ 		};
+-		s3_clk: s3_clk {
++		s3_clk: s3 {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7779_CLK_PLLA>;
+ 			#clock-cells = <0>;
+ 			clock-div = <8>;
+ 			clock-mult = <1>;
+-			clock-output-names = "s3";
+ 		};
+-		s4_clk: s4_clk {
++		s4_clk: s4 {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7779_CLK_PLLA>;
+ 			#clock-cells = <0>;
+ 			clock-div = <16>;
+ 			clock-mult = <1>;
+-			clock-output-names = "s4";
+ 		};
+-		g_clk: g_clk {
++		g_clk: g {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7779_CLK_PLLA>;
+ 			#clock-cells = <0>;
+ 			clock-div = <24>;
+ 			clock-mult = <1>;
+-			clock-output-names = "g";
+ 		};
  
- 	sdhi0_pins: sd0 {
--		renesas,groups = "sdhi0_data4", "sdhi0_ctrl", "sdhi0_cd", "sdhi0_wp";
--		renesas,function = "sdhi0";
-+		groups = "sdhi0_data4", "sdhi0_ctrl", "sdhi0_cd", "sdhi0_wp";
-+		function = "sdhi0";
- 	};
- 
- 	sdhi2_pins: sd2 {
--		renesas,groups = "sdhi2_data4", "sdhi2_ctrl";
--		renesas,function = "sdhi2";
-+		groups = "sdhi2_data4", "sdhi2_ctrl";
-+		function = "sdhi2";
- 	};
- 
- 	fsia_pins: sounda {
--		renesas,groups = "fsia_mclk_in", "fsia_sclk_in",
--				 "fsia_data_in", "fsia_data_out";
--		renesas,function = "fsia";
-+		groups = "fsia_mclk_in", "fsia_sclk_in",
-+			 "fsia_data_in", "fsia_data_out";
-+		function = "fsia";
- 	};
- };
- 
+ 		/* Gate clocks */
 -- 
 2.1.4
