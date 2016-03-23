@@ -1,137 +1,63 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org,
-	Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@linux.ie>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/4 v3] drm: Rename drm_connector_unplug_all() to drm_connector_unregister_all()
-Date: Wed, 23 Mar 2016 11:42:54 +0300
-Message-Id: <1458722577-20283-2-git-send-email-abrodkin@synopsys.com>
-In-Reply-To: <1458722577-20283-1-git-send-email-abrodkin@synopsys.com>
-References: <1458722577-20283-1-git-send-email-abrodkin@synopsys.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 23 Mar 2016 09:48:03 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	linux-renesas-soc@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 0/2] ARM: dts: shmobile: Correct interrupt type for ARM
+ TWD
+Message-ID: <20160323004803.GB5950@verge.net.au>
+References: <1458296361-4468-1-git-send-email-geert+renesas@glider.be>
+ <20160322012849.GA14367@verge.net.au>
+ <CAMuHMdXcew-NHGeb2x69CR4ZBeyf3hET3xtQYSkToSX9BD68uw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXcew-NHGeb2x69CR4ZBeyf3hET3xtQYSkToSX9BD68uw@mail.gmail.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Current name is a bit misleading because what that helper function
-really does it calls drm_connector_unregister() for all connectors.
+On Tue, Mar 22, 2016 at 09:43:40AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Tue, Mar 22, 2016 at 2:28 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Fri, Mar 18, 2016 at 11:19:19AM +0100, Geert Uytterhoeven wrote:
+> >> This patch series corrects the interrupt type for ARM TWD timers on
+> >> SH-Mobile AG5 and R-Car H1.
+> >>
+> >> The ARM TWD interrupt is a private peripheral interrupt (PPI), and per
+> >> the ARM GIC documentation, whether the type for PPIs can be set is
+> >> IMPLEMENTATION DEFINED.
+> >>
+> >> For SH-Mobile AG5 and R-Car H1 devices the PPI type cannot be set, and
+> >> so when we attempt to set the type for the ARM TWD interrupt it fails.
+> >> This has gone unnoticed because it fails silently, and because we cannot
+> >> re-configure the type it has had no impact. Nevertheless fix the type
+> >> for the TWD interrupt so that it matches the hardware configuration.
+> >>
+> >> This was exposed by Jon Hunter's "[PATCH 04/15] irqchip/gic: WARN if
+> >> setting the interrupt type fails" (https://lkml.org/lkml/2016/3/17/339),
+> >> which triggers:
+> >>
+> >>     WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-common.c:61 gic_configure_irq+0x64/0x7c()
+> >>
+> >> Other Renesas SoCs using private peripheral interrupts (R-Mobile APE6,
+> >> R-Car Gen2, and R-Car Gen3) seem to be fine.
+> >>
+> >> Based on patches by Jon Hunter for Tegra20/30 and OMAP4.
+> >
+> > Thanks for this. Do you think it would be best to queue these up
+> > for v4.7 or as fixes for v4.6?
+> 
+> I don't know if/when Jon's patch will go in, but he's tracking the fixes for
+> various SoCs, as we don't know yet how many are affected.
+> 
+> So I think it's basically up to you.
 
-This all has nothing to do with hotplugging so let's name things
-properly.
-
-And while at it remove potentially dangerous locking around
-drm_connector_unregister() in rcar_du_remove() as mentioned
-in kerneldoc for drm_connector_unregister_all().
-
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-
-Changes v2 -> v3:
- * Updated title with capital after colon
- * Updated kerneldoc description of drm_connector_unregister_all()
-   so that it will match description of register_all() to be introduced
-   in the next change
- * Added ack from Laurent
-
-Changes v1 -> v2:
- * This patch was only introduced in v2.
-
- drivers/gpu/drm/drm_crtc.c            | 18 +++++++++---------
- drivers/gpu/drm/rcar-du/rcar_du_drv.c |  5 +----
- drivers/gpu/drm/udl/udl_drv.c         |  2 +-
- include/drm/drm_crtc.h                |  4 ++--
- 4 files changed, 13 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-index 65258ac..65488a6 100644
---- a/drivers/gpu/drm/drm_crtc.c
-+++ b/drivers/gpu/drm/drm_crtc.c
-@@ -1080,25 +1080,25 @@ void drm_connector_unregister(struct drm_connector *connector)
- }
- EXPORT_SYMBOL(drm_connector_unregister);
- 
--
- /**
-- * drm_connector_unplug_all - unregister connector userspace interfaces
-+ * drm_connector_unregister_all - unregister connector userspace interfaces
-  * @dev: drm device
-  *
-- * This function unregisters all connector userspace interfaces in sysfs. Should
-- * be call when the device is disconnected, e.g. from an usb driver's
-- * ->disconnect callback.
-+ * This functions unregisters all connectors from sysfs and other places so
-+ * that userspace can no longer access them. Drivers should call this as the
-+ * first step tearing down the device instace, or when the underlying
-+ * physical device disappeared (e.g. USB unplug), right before calling
-+ * drm_dev_unregister().
-  */
--void drm_connector_unplug_all(struct drm_device *dev)
-+void drm_connector_unregister_all(struct drm_device *dev)
- {
- 	struct drm_connector *connector;
- 
- 	/* FIXME: taking the mode config mutex ends up in a clash with sysfs */
--	list_for_each_entry(connector, &dev->mode_config.connector_list, head)
-+	drm_for_each_connector(connector, dev)
- 		drm_connector_unregister(connector);
--
- }
--EXPORT_SYMBOL(drm_connector_unplug_all);
-+EXPORT_SYMBOL(drm_connector_unregister_all);
- 
- /**
-  * drm_encoder_init - Init a preallocated encoder
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index ed6006b..644db36 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -278,10 +278,7 @@ static int rcar_du_remove(struct platform_device *pdev)
- 	struct rcar_du_device *rcdu = platform_get_drvdata(pdev);
- 	struct drm_device *ddev = rcdu->ddev;
- 
--	mutex_lock(&ddev->mode_config.mutex);
--	drm_connector_unplug_all(ddev);
--	mutex_unlock(&ddev->mode_config.mutex);
--
-+	drm_connector_unregister_all(ddev);
- 	drm_dev_unregister(ddev);
- 
- 	if (rcdu->fbdev)
-diff --git a/drivers/gpu/drm/udl/udl_drv.c b/drivers/gpu/drm/udl/udl_drv.c
-index 772ec9e..c204089 100644
---- a/drivers/gpu/drm/udl/udl_drv.c
-+++ b/drivers/gpu/drm/udl/udl_drv.c
-@@ -94,7 +94,7 @@ static void udl_usb_disconnect(struct usb_interface *interface)
- 	struct drm_device *dev = usb_get_intfdata(interface);
- 
- 	drm_kms_helper_poll_disable(dev);
--	drm_connector_unplug_all(dev);
-+	drm_connector_unregister_all(dev);
- 	udl_fbdev_unplug(dev);
- 	udl_drop_usb(dev);
- 	drm_unplug_dev(dev);
-diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-index 8c7fb3d..42d9f4d 100644
---- a/include/drm/drm_crtc.h
-+++ b/include/drm/drm_crtc.h
-@@ -2214,8 +2214,8 @@ void drm_connector_unregister(struct drm_connector *connector);
- 
- extern void drm_connector_cleanup(struct drm_connector *connector);
- extern unsigned int drm_connector_index(struct drm_connector *connector);
--/* helper to unplug all connectors from sysfs for device */
--extern void drm_connector_unplug_all(struct drm_device *dev);
-+/* helper to unregister all connectors from sysfs for device */
-+extern void drm_connector_unregister_all(struct drm_device *dev);
- 
- extern int drm_bridge_add(struct drm_bridge *bridge);
- extern void drm_bridge_remove(struct drm_bridge *bridge);
--- 
-2.5.0
+Thanks, got it.
+I will tentatively queue them up for v4.7.
