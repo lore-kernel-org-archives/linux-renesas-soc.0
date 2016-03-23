@@ -1,79 +1,151 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	geert+renesas@glider.be, linus.walleij@linaro.org,
-	dan.j.williams@intel.com, arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v5 1/9] iommu: Add MMIO mapping type
-Date: Tue,  8 Mar 2016 03:42:46 +0100
-Message-Id: <1457404974-1800-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Date: Wed, 23 Mar 2016 10:02:06 +0100
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@linux.ie>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/4 v3] drm: Rename drm_connector_unplug_all() to
+ drm_connector_unregister_all()
+Message-ID: <20160323100206.517d1ddf@bbrezillon>
+In-Reply-To: <1458722577-20283-2-git-send-email-abrodkin@synopsys.com>
+References: <1458722577-20283-1-git-send-email-abrodkin@synopsys.com>
+	<1458722577-20283-2-git-send-email-abrodkin@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Robin Murphy <robin.murphy@arm.com>
+On Wed, 23 Mar 2016 11:42:54 +0300
+Alexey Brodkin <Alexey.Brodkin@synopsys.com> wrote:
 
-On some platforms, MMIO regions might need slightly different treatment
-compared to mapping regular memory; add the notion of MMIO mappings to
-the IOMMU API's memory type flags, so that callers can let the IOMMU
-drivers know to do the right thing.
+> Current name is a bit misleading because what that helper function
+> really does it calls drm_connector_unregister() for all connectors.
+> 
+> This all has nothing to do with hotplugging so let's name things
+> properly.
+> 
+> And while at it remove potentially dangerous locking around
+> drm_connector_unregister() in rcar_du_remove() as mentioned
+> in kerneldoc for drm_connector_unregister_all().
+> 
+> Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/iommu/io-pgtable-arm.c | 9 +++++++--
- include/linux/iommu.h          | 1 +
- 2 files changed, 8 insertions(+), 2 deletions(-)
+Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-index 381ca5a..9c19989 100644
---- a/drivers/iommu/io-pgtable-arm.c
-+++ b/drivers/iommu/io-pgtable-arm.c
-@@ -355,7 +355,10 @@ static arm_lpae_iopte arm_lpae_prot_to_pte(struct arm_lpae_io_pgtable *data,
- 		if (!(prot & IOMMU_WRITE) && (prot & IOMMU_READ))
- 			pte |= ARM_LPAE_PTE_AP_RDONLY;
- 
--		if (prot & IOMMU_CACHE)
-+		if (prot & IOMMU_MMIO)
-+			pte |= (ARM_LPAE_MAIR_ATTR_IDX_DEV
-+				<< ARM_LPAE_PTE_ATTRINDX_SHIFT);
-+		else if (prot & IOMMU_CACHE)
- 			pte |= (ARM_LPAE_MAIR_ATTR_IDX_CACHE
- 				<< ARM_LPAE_PTE_ATTRINDX_SHIFT);
- 	} else {
-@@ -364,7 +367,9 @@ static arm_lpae_iopte arm_lpae_prot_to_pte(struct arm_lpae_io_pgtable *data,
- 			pte |= ARM_LPAE_PTE_HAP_READ;
- 		if (prot & IOMMU_WRITE)
- 			pte |= ARM_LPAE_PTE_HAP_WRITE;
--		if (prot & IOMMU_CACHE)
-+		if (prot & IOMMU_MMIO)
-+			pte |= ARM_LPAE_PTE_MEMATTR_DEV;
-+		else if (prot & IOMMU_CACHE)
- 			pte |= ARM_LPAE_PTE_MEMATTR_OIWB;
- 		else
- 			pte |= ARM_LPAE_PTE_MEMATTR_NC;
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index a5c539f..34b6432 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -30,6 +30,7 @@
- #define IOMMU_WRITE	(1 << 1)
- #define IOMMU_CACHE	(1 << 2) /* DMA cache coherency */
- #define IOMMU_NOEXEC	(1 << 3)
-+#define IOMMU_MMIO	(1 << 4) /* e.g. things like MSI doorbells */
- 
- struct iommu_ops;
- struct iommu_group;
+> Cc: linux-renesas-soc@vger.kernel.org
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+> 
+> Changes v2 -> v3:
+>  * Updated title with capital after colon
+>  * Updated kerneldoc description of drm_connector_unregister_all()
+>    so that it will match description of register_all() to be introduced
+>    in the next change
+>  * Added ack from Laurent
+> 
+> Changes v1 -> v2:
+>  * This patch was only introduced in v2.
+> 
+>  drivers/gpu/drm/drm_crtc.c            | 18 +++++++++---------
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c |  5 +----
+>  drivers/gpu/drm/udl/udl_drv.c         |  2 +-
+>  include/drm/drm_crtc.h                |  4 ++--
+>  4 files changed, 13 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+> index 65258ac..65488a6 100644
+> --- a/drivers/gpu/drm/drm_crtc.c
+> +++ b/drivers/gpu/drm/drm_crtc.c
+> @@ -1080,25 +1080,25 @@ void drm_connector_unregister(struct drm_connector *connector)
+>  }
+>  EXPORT_SYMBOL(drm_connector_unregister);
+>  
+> -
+>  /**
+> - * drm_connector_unplug_all - unregister connector userspace interfaces
+> + * drm_connector_unregister_all - unregister connector userspace interfaces
+>   * @dev: drm device
+>   *
+> - * This function unregisters all connector userspace interfaces in sysfs. Should
+> - * be call when the device is disconnected, e.g. from an usb driver's
+> - * ->disconnect callback.
+> + * This functions unregisters all connectors from sysfs and other places so
+> + * that userspace can no longer access them. Drivers should call this as the
+> + * first step tearing down the device instace, or when the underlying
+> + * physical device disappeared (e.g. USB unplug), right before calling
+> + * drm_dev_unregister().
+>   */
+> -void drm_connector_unplug_all(struct drm_device *dev)
+> +void drm_connector_unregister_all(struct drm_device *dev)
+>  {
+>  	struct drm_connector *connector;
+>  
+>  	/* FIXME: taking the mode config mutex ends up in a clash with sysfs */
+> -	list_for_each_entry(connector, &dev->mode_config.connector_list, head)
+> +	drm_for_each_connector(connector, dev)
+>  		drm_connector_unregister(connector);
+> -
+>  }
+> -EXPORT_SYMBOL(drm_connector_unplug_all);
+> +EXPORT_SYMBOL(drm_connector_unregister_all);
+>  
+>  /**
+>   * drm_encoder_init - Init a preallocated encoder
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> index ed6006b..644db36 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -278,10 +278,7 @@ static int rcar_du_remove(struct platform_device *pdev)
+>  	struct rcar_du_device *rcdu = platform_get_drvdata(pdev);
+>  	struct drm_device *ddev = rcdu->ddev;
+>  
+> -	mutex_lock(&ddev->mode_config.mutex);
+> -	drm_connector_unplug_all(ddev);
+> -	mutex_unlock(&ddev->mode_config.mutex);
+> -
+> +	drm_connector_unregister_all(ddev);
+>  	drm_dev_unregister(ddev);
+>  
+>  	if (rcdu->fbdev)
+> diff --git a/drivers/gpu/drm/udl/udl_drv.c b/drivers/gpu/drm/udl/udl_drv.c
+> index 772ec9e..c204089 100644
+> --- a/drivers/gpu/drm/udl/udl_drv.c
+> +++ b/drivers/gpu/drm/udl/udl_drv.c
+> @@ -94,7 +94,7 @@ static void udl_usb_disconnect(struct usb_interface *interface)
+>  	struct drm_device *dev = usb_get_intfdata(interface);
+>  
+>  	drm_kms_helper_poll_disable(dev);
+> -	drm_connector_unplug_all(dev);
+> +	drm_connector_unregister_all(dev);
+>  	udl_fbdev_unplug(dev);
+>  	udl_drop_usb(dev);
+>  	drm_unplug_dev(dev);
+> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+> index 8c7fb3d..42d9f4d 100644
+> --- a/include/drm/drm_crtc.h
+> +++ b/include/drm/drm_crtc.h
+> @@ -2214,8 +2214,8 @@ void drm_connector_unregister(struct drm_connector *connector);
+>  
+>  extern void drm_connector_cleanup(struct drm_connector *connector);
+>  extern unsigned int drm_connector_index(struct drm_connector *connector);
+> -/* helper to unplug all connectors from sysfs for device */
+> -extern void drm_connector_unplug_all(struct drm_device *dev);
+> +/* helper to unregister all connectors from sysfs for device */
+> +extern void drm_connector_unregister_all(struct drm_device *dev);
+>  
+>  extern int drm_bridge_add(struct drm_bridge *bridge);
+>  extern void drm_bridge_remove(struct drm_bridge *bridge);
+
+
+
 -- 
-2.7.2
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
