@@ -1,151 +1,137 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 23 Mar 2016 10:02:06 +0100
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org,
+	Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
 	Daniel Vetter <daniel@ffwll.ch>,
 	David Airlie <airlied@linux.ie>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/4 v3] drm: Rename drm_connector_unplug_all() to
- drm_connector_unregister_all()
-Message-ID: <20160323100206.517d1ddf@bbrezillon>
-In-Reply-To: <1458722577-20283-2-git-send-email-abrodkin@synopsys.com>
+Subject: [PATCH 1/4 v3] drm: Rename drm_connector_unplug_all() to drm_connector_unregister_all()
+Date: Wed, 23 Mar 2016 11:42:54 +0300
+Message-Id: <1458722577-20283-2-git-send-email-abrodkin@synopsys.com>
+In-Reply-To: <1458722577-20283-1-git-send-email-abrodkin@synopsys.com>
 References: <1458722577-20283-1-git-send-email-abrodkin@synopsys.com>
-	<1458722577-20283-2-git-send-email-abrodkin@synopsys.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, 23 Mar 2016 11:42:54 +0300
-Alexey Brodkin <Alexey.Brodkin@synopsys.com> wrote:
+Current name is a bit misleading because what that helper function
+really does it calls drm_connector_unregister() for all connectors.
 
-> Current name is a bit misleading because what that helper function
-> really does it calls drm_connector_unregister() for all connectors.
-> 
-> This all has nothing to do with hotplugging so let's name things
-> properly.
-> 
-> And while at it remove potentially dangerous locking around
-> drm_connector_unregister() in rcar_du_remove() as mentioned
-> in kerneldoc for drm_connector_unregister_all().
-> 
-> Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+This all has nothing to do with hotplugging so let's name things
+properly.
 
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+And while at it remove potentially dangerous locking around
+drm_connector_unregister() in rcar_du_remove() as mentioned
+in kerneldoc for drm_connector_unregister_all().
 
-> Cc: linux-renesas-soc@vger.kernel.org
-> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> ---
-> 
-> Changes v2 -> v3:
->  * Updated title with capital after colon
->  * Updated kerneldoc description of drm_connector_unregister_all()
->    so that it will match description of register_all() to be introduced
->    in the next change
->  * Added ack from Laurent
-> 
-> Changes v1 -> v2:
->  * This patch was only introduced in v2.
-> 
->  drivers/gpu/drm/drm_crtc.c            | 18 +++++++++---------
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c |  5 +----
->  drivers/gpu/drm/udl/udl_drv.c         |  2 +-
->  include/drm/drm_crtc.h                |  4 ++--
->  4 files changed, 13 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-> index 65258ac..65488a6 100644
-> --- a/drivers/gpu/drm/drm_crtc.c
-> +++ b/drivers/gpu/drm/drm_crtc.c
-> @@ -1080,25 +1080,25 @@ void drm_connector_unregister(struct drm_connector *connector)
->  }
->  EXPORT_SYMBOL(drm_connector_unregister);
->  
-> -
->  /**
-> - * drm_connector_unplug_all - unregister connector userspace interfaces
-> + * drm_connector_unregister_all - unregister connector userspace interfaces
->   * @dev: drm device
->   *
-> - * This function unregisters all connector userspace interfaces in sysfs. Should
-> - * be call when the device is disconnected, e.g. from an usb driver's
-> - * ->disconnect callback.
-> + * This functions unregisters all connectors from sysfs and other places so
-> + * that userspace can no longer access them. Drivers should call this as the
-> + * first step tearing down the device instace, or when the underlying
-> + * physical device disappeared (e.g. USB unplug), right before calling
-> + * drm_dev_unregister().
->   */
-> -void drm_connector_unplug_all(struct drm_device *dev)
-> +void drm_connector_unregister_all(struct drm_device *dev)
->  {
->  	struct drm_connector *connector;
->  
->  	/* FIXME: taking the mode config mutex ends up in a clash with sysfs */
-> -	list_for_each_entry(connector, &dev->mode_config.connector_list, head)
-> +	drm_for_each_connector(connector, dev)
->  		drm_connector_unregister(connector);
-> -
->  }
-> -EXPORT_SYMBOL(drm_connector_unplug_all);
-> +EXPORT_SYMBOL(drm_connector_unregister_all);
->  
->  /**
->   * drm_encoder_init - Init a preallocated encoder
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> index ed6006b..644db36 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> @@ -278,10 +278,7 @@ static int rcar_du_remove(struct platform_device *pdev)
->  	struct rcar_du_device *rcdu = platform_get_drvdata(pdev);
->  	struct drm_device *ddev = rcdu->ddev;
->  
-> -	mutex_lock(&ddev->mode_config.mutex);
-> -	drm_connector_unplug_all(ddev);
-> -	mutex_unlock(&ddev->mode_config.mutex);
-> -
-> +	drm_connector_unregister_all(ddev);
->  	drm_dev_unregister(ddev);
->  
->  	if (rcdu->fbdev)
-> diff --git a/drivers/gpu/drm/udl/udl_drv.c b/drivers/gpu/drm/udl/udl_drv.c
-> index 772ec9e..c204089 100644
-> --- a/drivers/gpu/drm/udl/udl_drv.c
-> +++ b/drivers/gpu/drm/udl/udl_drv.c
-> @@ -94,7 +94,7 @@ static void udl_usb_disconnect(struct usb_interface *interface)
->  	struct drm_device *dev = usb_get_intfdata(interface);
->  
->  	drm_kms_helper_poll_disable(dev);
-> -	drm_connector_unplug_all(dev);
-> +	drm_connector_unregister_all(dev);
->  	udl_fbdev_unplug(dev);
->  	udl_drop_usb(dev);
->  	drm_unplug_dev(dev);
-> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-> index 8c7fb3d..42d9f4d 100644
-> --- a/include/drm/drm_crtc.h
-> +++ b/include/drm/drm_crtc.h
-> @@ -2214,8 +2214,8 @@ void drm_connector_unregister(struct drm_connector *connector);
->  
->  extern void drm_connector_cleanup(struct drm_connector *connector);
->  extern unsigned int drm_connector_index(struct drm_connector *connector);
-> -/* helper to unplug all connectors from sysfs for device */
-> -extern void drm_connector_unplug_all(struct drm_device *dev);
-> +/* helper to unregister all connectors from sysfs for device */
-> +extern void drm_connector_unregister_all(struct drm_device *dev);
->  
->  extern int drm_bridge_add(struct drm_bridge *bridge);
->  extern void drm_bridge_remove(struct drm_bridge *bridge);
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
 
+Changes v2 -> v3:
+ * Updated title with capital after colon
+ * Updated kerneldoc description of drm_connector_unregister_all()
+   so that it will match description of register_all() to be introduced
+   in the next change
+ * Added ack from Laurent
 
+Changes v1 -> v2:
+ * This patch was only introduced in v2.
 
+ drivers/gpu/drm/drm_crtc.c            | 18 +++++++++---------
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c |  5 +----
+ drivers/gpu/drm/udl/udl_drv.c         |  2 +-
+ include/drm/drm_crtc.h                |  4 ++--
+ 4 files changed, 13 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+index 65258ac..65488a6 100644
+--- a/drivers/gpu/drm/drm_crtc.c
++++ b/drivers/gpu/drm/drm_crtc.c
+@@ -1080,25 +1080,25 @@ void drm_connector_unregister(struct drm_connector *connector)
+ }
+ EXPORT_SYMBOL(drm_connector_unregister);
+ 
+-
+ /**
+- * drm_connector_unplug_all - unregister connector userspace interfaces
++ * drm_connector_unregister_all - unregister connector userspace interfaces
+  * @dev: drm device
+  *
+- * This function unregisters all connector userspace interfaces in sysfs. Should
+- * be call when the device is disconnected, e.g. from an usb driver's
+- * ->disconnect callback.
++ * This functions unregisters all connectors from sysfs and other places so
++ * that userspace can no longer access them. Drivers should call this as the
++ * first step tearing down the device instace, or when the underlying
++ * physical device disappeared (e.g. USB unplug), right before calling
++ * drm_dev_unregister().
+  */
+-void drm_connector_unplug_all(struct drm_device *dev)
++void drm_connector_unregister_all(struct drm_device *dev)
+ {
+ 	struct drm_connector *connector;
+ 
+ 	/* FIXME: taking the mode config mutex ends up in a clash with sysfs */
+-	list_for_each_entry(connector, &dev->mode_config.connector_list, head)
++	drm_for_each_connector(connector, dev)
+ 		drm_connector_unregister(connector);
+-
+ }
+-EXPORT_SYMBOL(drm_connector_unplug_all);
++EXPORT_SYMBOL(drm_connector_unregister_all);
+ 
+ /**
+  * drm_encoder_init - Init a preallocated encoder
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index ed6006b..644db36 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -278,10 +278,7 @@ static int rcar_du_remove(struct platform_device *pdev)
+ 	struct rcar_du_device *rcdu = platform_get_drvdata(pdev);
+ 	struct drm_device *ddev = rcdu->ddev;
+ 
+-	mutex_lock(&ddev->mode_config.mutex);
+-	drm_connector_unplug_all(ddev);
+-	mutex_unlock(&ddev->mode_config.mutex);
+-
++	drm_connector_unregister_all(ddev);
+ 	drm_dev_unregister(ddev);
+ 
+ 	if (rcdu->fbdev)
+diff --git a/drivers/gpu/drm/udl/udl_drv.c b/drivers/gpu/drm/udl/udl_drv.c
+index 772ec9e..c204089 100644
+--- a/drivers/gpu/drm/udl/udl_drv.c
++++ b/drivers/gpu/drm/udl/udl_drv.c
+@@ -94,7 +94,7 @@ static void udl_usb_disconnect(struct usb_interface *interface)
+ 	struct drm_device *dev = usb_get_intfdata(interface);
+ 
+ 	drm_kms_helper_poll_disable(dev);
+-	drm_connector_unplug_all(dev);
++	drm_connector_unregister_all(dev);
+ 	udl_fbdev_unplug(dev);
+ 	udl_drop_usb(dev);
+ 	drm_unplug_dev(dev);
+diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+index 8c7fb3d..42d9f4d 100644
+--- a/include/drm/drm_crtc.h
++++ b/include/drm/drm_crtc.h
+@@ -2214,8 +2214,8 @@ void drm_connector_unregister(struct drm_connector *connector);
+ 
+ extern void drm_connector_cleanup(struct drm_connector *connector);
+ extern unsigned int drm_connector_index(struct drm_connector *connector);
+-/* helper to unplug all connectors from sysfs for device */
+-extern void drm_connector_unplug_all(struct drm_device *dev);
++/* helper to unregister all connectors from sysfs for device */
++extern void drm_connector_unregister_all(struct drm_device *dev);
+ 
+ extern int drm_bridge_add(struct drm_bridge *bridge);
+ extern void drm_bridge_remove(struct drm_bridge *bridge);
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+2.5.0
