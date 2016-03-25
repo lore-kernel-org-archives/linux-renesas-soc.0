@@ -1,60 +1,65 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 09/30] ARM: dts: r8a7790: Reference both DMA controllers in MMCIF nodes
-Date: Thu, 10 Mar 2016 12:36:01 +0100
-Message-Id: <1457609782-24108-10-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 25 Mar 2016 11:09:51 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] phy: rcar-gen2, rcar-gen3-usb2: add fallback
+ binding
+Message-ID: <20160325020948.GB31681@verge.net.au>
+References: <1457315921-30217-1-git-send-email-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1457315921-30217-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+On Mon, Mar 07, 2016 at 10:58:39AM +0900, Simon Horman wrote:
+> Add fallback compatibility strings for rcar phy drivers.
+> 
+> In the case of Renesas R-Car hardware we know that there are generations of
+> SoCs, e.g. Gen 2 and Gen 3. But beyond that its not clear what the
+> relationship between IP blocks might be. For example, I believe that
+> r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
+> descendant of the former or vice versa.
+> 
+> We can, however, by examining the documentation and behaviour of the
+> hardware at run-time observe that the current driver implementation appears
+> to be compatible with the IP blocks on SoCs within a given generation.
+> 
+> For the above reasons and convenience when enabling new SoCs a
+> per-generation fallback compatibility string scheme being adopted for
+> drivers for Renesas SoCs.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm/boot/dts/r8a7790.dtsi | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Hi Kishon,
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index ae86a68..108dc4d 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -518,8 +518,9 @@
- 		reg = <0 0xee200000 0 0x80>;
- 		interrupts = <0 169 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_MMCIF0>;
--		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
-+		       <&dmac1 0xd1>, <&dmac1 0xd2>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		reg-io-width = <4>;
- 		status = "disabled";
-@@ -531,8 +532,9 @@
- 		reg = <0 0xee220000 0 0x80>;
- 		interrupts = <0 170 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_MMCIF1>;
--		dmas = <&dmac0 0xe1>, <&dmac0 0xe2>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xe1>, <&dmac0 0xe2>,
-+		       <&dmac1 0xe1>, <&dmac1 0xe2>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		reg-io-width = <4>;
- 		status = "disabled";
--- 
-2.7.2
+I am wondering if you could consider applying this series.
 
+Thanks!
+
+> 
+> Changes in v3:
+> * Added Acks
+> * Corrected whitespace in examples
+> 
+> Changes in v2:
+> * Update new compatibility strings to match the preferred scheme for
+>   ordering elements
+> * Rebase
+> 
+> Simon Horman (2):
+>   phy: rcar-gen2: add fallback binding
+>   phy: rcar-gen3-usb2: add fallback binding
+> 
+>  Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt      |  8 +++++++-
+>  Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 10 ++++++++--
+>  drivers/phy/phy-rcar-gen2.c                                  |  1 +
+>  drivers/phy/phy-rcar-gen3-usb2.c                             |  1 +
+>  4 files changed, 17 insertions(+), 3 deletions(-)
+> 
+> -- 
+> 2.1.4
+> 
