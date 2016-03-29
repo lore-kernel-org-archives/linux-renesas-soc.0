@@ -7,11 +7,11 @@ Cc: linux-kernel@vger.kernel.org,
 	Daniel Vetter <daniel@ffwll.ch>,
 	David Airlie <airlied@linux.ie>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/3 v5] drm: rcar-du: Use generic drm_connector_register_all() helper
-Date: Tue, 29 Mar 2016 13:22:52 +0300
-Message-Id: <1459246972-9860-4-git-send-email-abrodkin@synopsys.com>
-In-Reply-To: <1459246972-9860-1-git-send-email-abrodkin@synopsys.com>
-References: <1459246972-9860-1-git-send-email-abrodkin@synopsys.com>
+Subject: [PATCH 3/3 v4] drm: rcar-du: Use generic drm_connector_register_all() helper
+Date: Tue, 29 Mar 2016 13:02:14 +0300
+Message-Id: <1459245734-2392-4-git-send-email-abrodkin@synopsys.com>
+In-Reply-To: <1459245734-2392-1-git-send-email-abrodkin@synopsys.com>
+References: <1459245734-2392-1-git-send-email-abrodkin@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -25,8 +25,6 @@ Cc: David Airlie <airlied@linux.ie>
 Cc: linux-renesas-soc@vger.kernel.org
 Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-
-No changes v4 -> v5.
 
 No changes v3 -> v4.
 
