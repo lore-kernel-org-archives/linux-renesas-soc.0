@@ -10,9 +10,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	linux-renesas-soc@vger.kernel.org,
 	David Herrmann <dh.herrmann@gmail.com>
-Subject: [PATCH 0/3 v5] drm: Introduce drm_connector_register_all() helper
-Date: Tue, 29 Mar 2016 13:22:49 +0300
-Message-Id: <1459246972-9860-1-git-send-email-abrodkin@synopsys.com>
+Subject: [PATCH 0/3 v4] drm: Introduce drm_connector_register_all() helper
+Date: Tue, 29 Mar 2016 13:02:11 +0300
+Message-Id: <1459245734-2392-1-git-send-email-abrodkin@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -30,10 +30,6 @@ Other drivers still use load() callback and so should be first modified so
 their load() gets called from their probe() explicitly.
 
 Build- and run-tested on yet to be upstreamed ARC PGU (part of AXS10x board).
-
-Changes v4 -> v5:
- * Added missing mutex unlock on a fail path in drm_connector_register_all()
-   Thanks David for his attention and patience!
 
 Changes v3 -> v4:
  * Based on current drm-intel/topic/drm-misc
@@ -55,6 +51,11 @@ Changes v1 -> v2:
  * Use drm_for_each_connector() instead of list_for_each_entry()
  * Updated kerneldoc for drm_dev_register()
 
+Alexey Brodkin (3):
+  drm: Introduce drm_connector_register_all() helper
+  drm: atmel_hldc: Use generic drm_connector_register_all() helper
+  drm: rcar-du: Use generic drm_connector_register_all() helper
+
 Cc: Daniel Vetter <daniel@ffwll.ch>
 Cc: David Airlie <airlied@linux.ie>
 Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
@@ -62,17 +63,12 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: linux-renesas-soc@vger.kernel.org
 Cc: David Herrmann <dh.herrmann@gmail.com>
 
-Alexey Brodkin (3):
-  drm: Introduce drm_connector_register_all() helper
-  drm: atmel_hldc: Use generic drm_connector_register_all() helper
-  drm: rcar-du: Use generic drm_connector_register_all() helper
-
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 39 ++-------------------------
- drivers/gpu/drm/drm_crtc.c                   | 40 ++++++++++++++++++++++++++++
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 39 ++--------------------------
+ drivers/gpu/drm/drm_crtc.c                   | 39 ++++++++++++++++++++++++++++
  drivers/gpu/drm/drm_drv.c                    |  6 ++++-
  drivers/gpu/drm/rcar-du/rcar_du_drv.c        |  9 +------
  include/drm/drm_crtc.h                       |  3 ++-
- 5 files changed, 50 insertions(+), 47 deletions(-)
+ 5 files changed, 49 insertions(+), 47 deletions(-)
 
 -- 
 2.5.0
