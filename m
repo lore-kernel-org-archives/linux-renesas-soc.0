@@ -1,8 +1,20 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 29 Mar 2016 07:58:23 -0700
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+MIME-Version: 1.0
+In-Reply-To: <20160327090859.GH5028@sirena.org.uk>
+References: <1458587912-32665-1-git-send-email-broonie@kernel.org>
+	<1458587912-32665-2-git-send-email-broonie@kernel.org>
+	<56F0624C.8010004@gmail.com>
+	<CAJKOXPd5h0Cq++OxdiXytNJH94PN4Kh_wM3M=p3JdU1m_qyFTA@mail.gmail.com>
+	<CAJKOXPcBOT_8NOH-=sEHSP0Rc+=Dvz-aqVTsBTMKg-VNWqQotw@mail.gmail.com>
+	<CAJAp7OgGQ3qm-_QhydvN0n6QeNoHFdso4zOk41qvVJhKNeRn8Q@mail.gmail.com>
+	<20160327090859.GH5028@sirena.org.uk>
+Date: Tue, 29 Mar 2016 14:00:52 +0200
+Message-ID: <CAMuHMdXuy2TxACTcsgOpZvrJEeTSQbCgCUmS9PXfBhhZfgbBBA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] regulator: core: Ensure we are at least in bounds for
+ our constraints
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Mark Brown <broonie@kernel.org>
 Cc: Bjorn Andersson <bjorn@kryo.se>,
 	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
 	Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
@@ -14,80 +26,87 @@ Cc: Bjorn Andersson <bjorn@kryo.se>,
 	Javier Martinez Canillas <javier@osg.samsung.com>,
 	Marek Szyprowski <m.szyprowski@samsung.com>,
 	linux-renesas-soc@vger.kernel.org
-Message-ID: <20160329145823.GK2350@sirena.org.uk>
-References: <1458587912-32665-1-git-send-email-broonie@kernel.org>
- <1458587912-32665-2-git-send-email-broonie@kernel.org>
- <56F0624C.8010004@gmail.com>
- <CAJKOXPd5h0Cq++OxdiXytNJH94PN4Kh_wM3M=p3JdU1m_qyFTA@mail.gmail.com>
- <CAJKOXPcBOT_8NOH-=sEHSP0Rc+=Dvz-aqVTsBTMKg-VNWqQotw@mail.gmail.com>
- <CAJAp7OgGQ3qm-_QhydvN0n6QeNoHFdso4zOk41qvVJhKNeRn8Q@mail.gmail.com>
- <20160327090859.GH5028@sirena.org.uk>
- <CAMuHMdXuy2TxACTcsgOpZvrJEeTSQbCgCUmS9PXfBhhZfgbBBA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="cN0A5YokcrYPGsSB"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXuy2TxACTcsgOpZvrJEeTSQbCgCUmS9PXfBhhZfgbBBA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] regulator: core: Ensure we are at least in bounds
- for our constraints
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Mark,
 
---cN0A5YokcrYPGsSB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Sun, Mar 27, 2016 at 11:08 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Sat, Mar 26, 2016 at 04:50:41PM -0700, Bjorn Andersson wrote:
+>
+>> Reinstating the following snippet in of_get_regulation_constraints()
+>> sort this out:
+>
+>> if (constraints->min_uV && constraints->max_uV)
+>>                                        constraints->apply_uV = true;
+>
+> The existing check in the patch should be an || not an ==, or possibly
+> we should just not bother looking for min_uV at all.  I just pushed out
+> a version of that, let's see how that goes.
 
-On Tue, Mar 29, 2016 at 02:00:52PM +0200, Geert Uytterhoeven wrote:
-> On Sun, Mar 27, 2016 at 11:08 AM, Mark Brown <broonie@kernel.org> wrote:
+Has the fix really been pushed out?
 
-> > The existing check in the patch should be an || not an ==, or possibly
-> > we should just not bother looking for min_uV at all.  I just pushed out
-> > a version of that, let's see how that goes.
+With commit fa93fd4ecc9c58475abac6db93a797bff893bc16
+Author: Mark Brown <broonie@kernel.org>
+Date:   Mon Mar 21 18:12:52 2016 +0000
 
-> Has the fix really been pushed out?
+    regulator: core: Ensure we are at least in bounds for our constraints
 
-Yes.
+I see a few cases of
 
-> WARNING: CPU: 1 PID: 31 at drivers/regulator/core.c:2223
-> _regulator_disable+0x2c/0x128
-> unbalanced disables for SDHI0 VccQ
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 31 at drivers/regulator/core.c:2223
+_regulator_disable+0x2c/0x128
+unbalanced disables for SDHI0 VccQ
+Modules linked in:
+CPU: 1 PID: 31 Comm: kworker/1:1 Not tainted
+4.6.0-rc1-koelsch-00724-g58d619227282dc16 #2422
+Hardware name: Generic R8A7791 (Flattened Device Tree)
+Workqueue: events_freezable mmc_rescan
+sh_mobile_sdhi ee140000.sd: could not set regulator OCR (-22)
 
-> when booting on r8a7791/koelsch.
+[<c020e040>] (unwind_backtrace) from [<c0209d70>] (show_stack+0x10/0x14)
+[<c0209d70>] (show_stack) from [<c03c7584>] (dump_stack+0x7c/0x9c)
+[<c03c7584>] (dump_stack) from [<c021fa48>] (__warn+0xcc/0xfc)
+[<c021fa48>] (__warn) from [<c021faac>] (warn_slowpath_fmt+0x34/0x44)
+[<c021faac>] (warn_slowpath_fmt) from [<c041e464>]
+(_regulator_disable+0x2c/0x128)
+[<c041e464>] (_regulator_disable) from [<c041e590>]
+(regulator_disable+0x30/0x60)
+[<c041e590>] (regulator_disable) from [<c0572e18>] (tmio_mmc_set_ios+0xb8/0x1d4)
+[<c0572e18>] (tmio_mmc_set_ios) from [<c056300c>] (mmc_power_off+0x34/0x54)
+[<c056300c>] (mmc_power_off) from [<c0563a5c>] (mmc_rescan+0x214/0x30c)
+[<c0563a5c>] (mmc_rescan) from [<c0233368>] (process_one_work+0x1bc/0x2f4)
+[<c0233368>] (process_one_work) from [<c0233a2c>] (worker_thread+0x2a8/0x3d0)
+[<c0233a2c>] (worker_thread) from [<c0237a9c>] (kthread+0xd8/0xec)
+[<c0237a9c>] (kthread) from [<c0206b68>] (ret_from_fork+0x14/0x2c)
+---[ end trace 1c61a7f6221c11ea ]---
 
-This seems like a bug somewhere else in your code, we're looking at
-changes in the voltage setting code but this is an unbalanced disable.
+when booting on r8a7791/koelsch.
 
-> I'm a bit confused by the discussion of "&&" vs. "||" vs. "==", but the
-> warnings do go away when using "!=", cfr. the whitespace-damaged patch below.
+I'm a bit confused by the discussion of "&&" vs. "||" vs. "==", but the
+warnings do go away when using "!=", cfr. the whitespace-damaged patch below.
 
->         /* Voltage change possible? */
-> -       if (constraints->min_uV && constraints->max_uV) {
-> +       if (constraints->min_uV != constraints->max_uV) {
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -43,7 +43,7 @@ static void of_get_regulation_constraints(struct device_node *
+                constraints->max_uV = pval;
 
-Do you have constraints that specify a maximum voltage but no minimum
-(which I'd say are broken), or constraints that are just plain wrong but
-are now being applied like specifying the entire range of the regulator?
-The above might be some follow on error handling from something that
-happened the change in handling of the constraints.  You need to look at
-what the relevant regulator constraints are...
+        /* Voltage change possible? */
+-       if (constraints->min_uV && constraints->max_uV) {
++       if (constraints->min_uV != constraints->max_uV) {
+                constraints->valid_ops_mask |= REGULATOR_CHANGE_VOLTAGE;
+                constraints->apply_uV = true;
+        }
 
-Previously both voltages needed to be non-zero and equal for anything to
-happen, now they only need to both be non-zero.
+Gr{oetje,eeting}s,
 
---cN0A5YokcrYPGsSB
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQEcBAEBCAAGBQJW+pgMAAoJECTWi3JdVIfQCucH/1/USTGFrgDo9MmHSTdjircd
-2/eqh3nsosSxmmlgjURnNI30aTA+GnRt4RQKudT4FrlYdKfTjLwi3pIBG+ErOHHq
-wD8C0Zt6JKfb68Ghzgsf63kM7wHwL6VCBVOFxP55KzYAhtiAnb0Dsu10c/coeNNM
-aaSqhy31/0MoU0p4f/OF+9h8NqR84nWS7qnJcTNS20FHV5iVhs75X3Q1csTfetoT
-PuVvJ260fDrfsf778Ex9+To0CHkaKJYfcmCKfvNev869C4RGwBDfHHqey2XmlIUW
-+CH7aj13KOJLxwvvF+Bj4Y+l3wJ4WWSb+y5dnTFZHQfGQz+oTIobckSl0we0NYs=
-=hoVL
------END PGP SIGNATURE-----
-
---cN0A5YokcrYPGsSB--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
