@@ -1,227 +1,90 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>
-Date: Fri, 18 Mar 2016 01:30:05 +0900
-Message-Id: <20160317163005.24104.44265.sendpatchset@little-apple>
-In-Reply-To: <20160317162909.24104.31682.sendpatchset@little-apple>
-References: <20160317162909.24104.31682.sendpatchset@little-apple>
-Subject: [PATCH 06/10] iommu/ipmmu-vmsa: Add optional root device feature
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To: "boris.brezillon@free-electrons.com"
+	<boris.brezillon@free-electrons.com>
+CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"daniel@ffwll.ch" <daniel@ffwll.ch>,
+	"laurent.pinchart@ideasonboard.com"
+	<laurent.pinchart@ideasonboard.com>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"airlied@linux.ie" <airlied@linux.ie>,
+	"dh.herrmann@gmail.com" <dh.herrmann@gmail.com>
+Subject: Re: [PATCH 0/3 v5] drm: Introduce drm_connector_register_all()
+ helper
+Date: Tue, 29 Mar 2016 12:46:41 +0000
+Message-ID: <1459255601.3021.37.camel@synopsys.com>
+References: <1459246972-9860-1-git-send-email-abrodkin@synopsys.com>
+	 <20160329144334.258c4ba7@bbrezillon>
+In-Reply-To: <20160329144334.258c4ba7@bbrezillon>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-7"
+Content-ID: <FC047FE6B2ACDE4D87F32BAD1167F037@internal.synopsys.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Boris,
 
-Add root device handling to the IPMMU driver by
-allowing certain DT compat strings to enable
-has_cache_leaf_nodes that in turn will support
-both root devices with interrupts and leaf devices
-that face the actual IPMMU consumer devices.
+On Tue, 2016-03-29 at 14:43 +-0200, Boris Brezillon wrote:
++AD4- Hi Alexey,
++AD4- 
++AD4- On Tue, 29 Mar 2016 13:22:49 +-0300
++AD4- Alexey Brodkin +ADw-Alexey.Brodkin+AEA-synopsys.com+AD4- wrote:
++AD4- 
++AD4- +AD4- 
++AD4- +AD4- As a pair to already existing drm+AF8-connector+AF8-unplug+AF8-all()
++AD4- +AD4- (which we'll rename in this series to drm+AF8-connector+AF8-unregister+AF8-all())
++AD4- +AD4- we're adding generic implementation of what is already done in some drivers
++AD4- +AD4- for registering all connectors.
++AD4- +AD4- 
++AD4- +AD4- After implementation of that new helper we're updating 2 drivers
++AD4- +AD4- that used to use it's own implementation:
++AD4- +AD4- +AKAAWw-1+AF0- atmel+AF8-hlcdc
++AD4- +AD4- +AKAAWw-2+AF0- rcar+AF8-du
++AD4- +AD4- 
++AD4- +AD4- Other drivers still use load() callback and so should be first modified so
++AD4- +AD4- their load() gets called from their probe() explicitly.
++AD4- +AD4- 
++AD4- +AD4- Build- and run-tested on yet to be upstreamed ARC PGU (part of AXS10x board).
++AD4- +AD4- 
++AD4- +AD4- Changes v4 -+AD4- v5:
++AD4- +AD4- +AKAAKg- Added missing mutex unlock on a fail path in drm+AF8-connector+AF8-register+AF8-all()
++AD4- +AD4- +AKAAoACg-Thanks David for his attention and patience+ACE-
++AD4- +AD4- 
++AD4- +AD4- Changes v3 -+AD4- v4:
++AD4- +AD4- +AKAAKg- Based on current drm-intel/topic/drm-misc
++AD4- +AD4- +AKAAoACg-It's now on commit 6c87e5c3ec6db052f3744804a517b6fb003906e1
++AD4- +AD4- +AKAAoACg-And since thet new base already has
++AD4- +AD4- +AKAAoACgACI-drm: Rename drm+AF8-connector+AF8-unplug+AF8-all() to drm+AF8-connector+AF8-unregister+AF8-all()+ACI-
++AD4- +AD4- +AKAAoACg-this series now only includes 3 subsequent patches.
++AD4- +AD4- 
++AD4- +AD4- +AKAAKg- In drm+AF8-connector+AF8-register+AF8-all() fail path which calls unregister+AF8-all()
++AD4- +AD4- +AKAAoACg-is moved outside of loop+ACY-locked section (as suggested by Daniel)
++AD4- +AD4- 
++AD4- +AD4- Changes v2 -+AD4- v3:
++AD4- +AD4- +AKAAKg- Added acks for 1, 3 and 4 patches
++AD4- +AD4- +AKAAKg- Updated kerneldoc descriptins of both register+AF8- and unregister+AF8-all()
++AD4- +AD4- +AKAAKg- Updated commit messages (mostly spellos and grammar issues)
++AD4- +AD4- 
++AD4- +AD4- Changes v1 -+AD4- v2:
++AD4- +AD4- +AKAAKg- Rename drm+AF8-connector+AF8-unplug+AF8-all() to drm+AF8-connector+AF8-unregister+AF8-all()
++AD4- +AD4- +AKAAKg- Use drm+AF8-for+AF8-each+AF8-connector() instead of list+AF8-for+AF8-each+AF8-entry()
++AD4- +AD4- +AKAAKg- Updated kerneldoc for drm+AF8-dev+AF8-register()
++AD4- +AD4- 
++AD4- +AD4- Cc: Daniel Vetter +ADw-daniel+AEA-ffwll.ch+AD4-
++AD4- +AD4- Cc: David Airlie +ADw-airlied+AEA-linux.ie+AD4-
++AD4- +AD4- Cc: Boris Brezillon +ADw-boris.brezillon+AEA-free-electrons.com+AD4-
++AD4- Next time, can you please send all the patches of the series, not
++AD4- only the cover letter.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+Sure.
 
- drivers/iommu/ipmmu-vmsa.c |   92 ++++++++++++++++++++++++++++++++++----------
- 1 file changed, 73 insertions(+), 19 deletions(-)
+It would be so much more convenient if git may add all people mentioned
+in any patch of series to Cc list for all other patches (+- cover letter).
+Without that feature one has to add all people in Cc explicitly in each patch.
 
---- 0019/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-03-18 00:30:22.270513000 +0900
-@@ -35,6 +35,7 @@
- 
- struct ipmmu_features {
- 	bool use_ns_alias_offset;
-+	bool has_cache_leaf_nodes;
- };
- 
- struct ipmmu_vmsa_device {
-@@ -50,10 +51,12 @@ struct ipmmu_vmsa_device {
- 	struct dma_iommu_mapping *mapping;
- #endif
- 	const struct ipmmu_features *features;
-+	bool is_leaf;
- };
- 
- struct ipmmu_vmsa_domain {
- 	struct ipmmu_vmsa_device *mmu;
-+	struct ipmmu_vmsa_device *root;
- 	struct iommu_domain io_domain;
- 
- 	struct io_pgtable_cfg cfg;
-@@ -198,6 +201,36 @@ static struct ipmmu_vmsa_domain *to_vmsa
- #define IMUASID_ASID0_SHIFT		0
- 
- /* -----------------------------------------------------------------------------
-+ * Root device handling
-+ */
-+
-+static bool ipmmu_is_root(struct ipmmu_vmsa_device *mmu)
-+{
-+	if (mmu->features->has_cache_leaf_nodes)
-+		return mmu->is_leaf ? false : true;
-+	else
-+		return true; /* older IPMMU hardware treated as single root */
-+}
-+
-+static struct ipmmu_vmsa_device *ipmmu_find_root(struct ipmmu_vmsa_device *leaf)
-+{
-+	struct ipmmu_vmsa_device *mmu = NULL;
-+
-+	if (ipmmu_is_root(leaf))
-+		return leaf;
-+
-+	spin_lock(&ipmmu_devices_lock);
-+
-+	list_for_each_entry(mmu, &ipmmu_devices, list) {
-+		if (ipmmu_is_root(mmu))
-+			break;
-+	}
-+
-+	spin_unlock(&ipmmu_devices_lock);
-+	return mmu;
-+}
-+
-+/* -----------------------------------------------------------------------------
-  * Read/Write Access
-  */
- 
-@@ -214,13 +247,13 @@ static void ipmmu_write(struct ipmmu_vms
- 
- static u32 ipmmu_ctx_read(struct ipmmu_vmsa_domain *domain, unsigned int reg)
- {
--	return ipmmu_read(domain->mmu, domain->context_id * IM_CTX_SIZE + reg);
-+	return ipmmu_read(domain->root, domain->context_id * IM_CTX_SIZE + reg);
- }
- 
- static void ipmmu_ctx_write(struct ipmmu_vmsa_domain *domain, unsigned int reg,
- 			    u32 data)
- {
--	ipmmu_write(domain->mmu, domain->context_id * IM_CTX_SIZE + reg, data);
-+	ipmmu_write(domain->root, domain->context_id * IM_CTX_SIZE + reg, data);
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -334,7 +367,7 @@ static int ipmmu_domain_init_context(str
- 	 * TODO: Add support for coherent walk through CCI with DVM and remove
- 	 * cache handling. For now, delegate it to the io-pgtable code.
- 	 */
--	domain->cfg.iommu_dev = domain->mmu->dev;
-+	domain->cfg.iommu_dev = domain->root->dev;
- 
- 	domain->iop = alloc_io_pgtable_ops(ARM_32_LPAE_S1, &domain->cfg,
- 					   domain);
-@@ -344,15 +377,15 @@ static int ipmmu_domain_init_context(str
- 	/*
- 	 * Find an unused context.
- 	 */
--	ret = find_first_zero_bit(domain->mmu->ctx, IPMMU_CTX_MAX);
-+	ret = find_first_zero_bit(domain->root->ctx, IPMMU_CTX_MAX);
- 	if (ret == IPMMU_CTX_MAX) {
- 		free_io_pgtable_ops(domain->iop);
- 		return -EBUSY;
- 	}
- 
- 	domain->context_id = ret;
--	domain->mmu->domains[ret] = domain;
--	set_bit(ret, domain->mmu->ctx);
-+	domain->root->domains[ret] = domain;
-+	set_bit(ret, domain->root->ctx);
- 
- 	/* TTBR0 */
- 	ttbr = domain->cfg.arm_lpae_s1_cfg.ttbr[0];
-@@ -396,7 +429,7 @@ static int ipmmu_domain_init_context(str
- 
- static void ipmmu_domain_destroy_context(struct ipmmu_vmsa_domain *domain)
- {
--	clear_bit(domain->context_id, domain->mmu->ctx);
-+	clear_bit(domain->context_id, domain->root->ctx);
- 
- 	/*
- 	 * Disable the context. Flush the TLB as required when modifying the
-@@ -524,7 +557,7 @@ static int ipmmu_attach_device(struct io
- 			       struct device *dev)
- {
- 	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
--	struct ipmmu_vmsa_device *mmu = archdata->mmu;
-+	struct ipmmu_vmsa_device *root, *mmu = archdata->mmu;
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
- 	unsigned long flags;
- 	unsigned int i;
-@@ -535,15 +568,23 @@ static int ipmmu_attach_device(struct io
- 		return -ENXIO;
- 	}
- 
-+	root = ipmmu_find_root(archdata->mmu);
-+	if (!root) {
-+		dev_err(dev, "Unable to locate root IPMMU\n");
-+		return -EAGAIN;
-+	}
-+
- 	spin_lock_irqsave(&domain->lock, flags);
- 
- 	if (!domain->mmu) {
- 		/* The domain hasn't been used yet, initialize it. */
- 		domain->mmu = mmu;
-+		domain->root = root;
- 		ret = ipmmu_domain_init_context(domain);
- 		if (ret < 0) {
- 			dev_err(dev, "Unable to initialize IPMMU context\n");
- 			domain->mmu = NULL;
-+			domain->root = NULL;
- 		} else {
- 			dev_info(dev, "Using IPMMU context %u\n",
- 				 domain->context_id);
-@@ -939,6 +980,7 @@ static void ipmmu_device_reset(struct ip
- 
- static const struct ipmmu_features ipmmu_features_default = {
- 	.use_ns_alias_offset = true,
-+	.has_cache_leaf_nodes = false,
- };
- 
- static const struct of_device_id ipmmu_of_ids[] = {
-@@ -998,19 +1040,31 @@ static int ipmmu_probe(struct platform_d
- 		mmu->base += IM_NS_ALIAS_OFFSET;
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "no IRQ found\n");
--		return irq;
--	}
- 
--	ret = devm_request_irq(&pdev->dev, irq, ipmmu_irq, 0,
--			       dev_name(&pdev->dev), mmu);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "failed to request IRQ %d\n", irq);
--		return ret;
--	}
-+	/*
-+	 * Determine if this IPMMU instance is a leaf device by checking
-+	 * if the renesas,ipmmu-main property exists or not.
-+	 */
-+	if (mmu->features->has_cache_leaf_nodes &&
-+	    of_find_property(pdev->dev.of_node, "renesas,ipmmu-main", NULL))
-+		mmu->is_leaf = true;
-+
-+	/* Root devices have mandatory IRQs */
-+	if (ipmmu_is_root(mmu)) {
-+		if (irq < 0) {
-+			dev_err(&pdev->dev, "no IRQ found\n");
-+			return irq;
-+		}
-+
-+		ret = devm_request_irq(&pdev->dev, irq, ipmmu_irq, 0,
-+				       dev_name(&pdev->dev), mmu);
-+		if (ret < 0) {
-+			dev_err(&pdev->dev, "failed to request IRQ %d\n", irq);
-+			return ret;
-+		}
- 
--	ipmmu_device_reset(mmu);
-+		ipmmu_device_reset(mmu);
-+	}
- 
- 	/*
- 	 * We can't create the ARM mapping here as it requires the bus to have
+-Alexey
