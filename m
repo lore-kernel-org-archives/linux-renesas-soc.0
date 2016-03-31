@@ -1,108 +1,86 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 19/30] ARM: dts: r8a7793: Reference both DMA controllers in SCIFA nodes
-Date: Thu, 10 Mar 2016 12:36:11 +0100
-Message-Id: <1457609782-24108-20-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1457609782-24108-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Fri, 1 Apr 2016 00:48:38 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-i2c@vger.kernel.org, linux-sh@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Simon Horman <horms@verge.net.au>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 09/11] i2c: rcar: revoke START request early
+Message-ID: <20160331224838.GA7381@katana>
+References: <1447948611-2615-1-git-send-email-wsa@the-dreams.de>
+ <1447948611-2615-10-git-send-email-wsa@the-dreams.de>
+ <56FD9080.4090203@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
+Content-Disposition: inline
+In-Reply-To: <56FD9080.4090203@cogentembedded.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm/boot/dts/r8a7793.dtsi | 30 ++++++++++++++++++------------
- 1 file changed, 18 insertions(+), 12 deletions(-)
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index aef9e69..322d290 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -303,8 +303,9 @@
- 		interrupts = <0 144 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7793_CLK_SCIFA0>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x21>, <&dmac0 0x22>,
-+		       <&dmac1 0x21>, <&dmac1 0x22>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -315,8 +316,9 @@
- 		interrupts = <0 145 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7793_CLK_SCIFA1>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x25>, <&dmac0 0x26>,
-+		       <&dmac1 0x25>, <&dmac1 0x26>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -327,8 +329,9 @@
- 		interrupts = <0 151 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7793_CLK_SCIFA2>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x27>, <&dmac0 0x28>,
-+		       <&dmac1 0x27>, <&dmac1 0x28>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -339,8 +342,9 @@
- 		interrupts = <0 29 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7793_CLK_SCIFA3>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>,
-+		       <&dmac1 0x1b>, <&dmac1 0x1c>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -351,8 +355,9 @@
- 		interrupts = <0 30 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7793_CLK_SCIFA4>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x1f>, <&dmac0 0x20>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x1f>, <&dmac0 0x20>,
-+		       <&dmac1 0x1f>, <&dmac1 0x20>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -363,8 +368,9 @@
- 		interrupts = <0 31 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7793_CLK_SCIFA5>;
- 		clock-names = "sci_ick";
--		dmas = <&dmac0 0x23>, <&dmac0 0x24>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x23>, <&dmac0 0x24>,
-+		       <&dmac1 0x23>, <&dmac1 0x24>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
--- 
-2.7.2
+On Fri, Apr 01, 2016 at 12:02:56AM +0300, Sergei Shtylyov wrote:
+> Hello.
+>=20
+> On 11/19/2015 06:56 PM, Wolfram Sang wrote:
+>=20
+> >From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >
+> >If we don't clear START generation as soon as possible, it may cause
+> >another message to be generated, e.g. when receiving NACK in address
+> >phase. To keep the race window as small as possible, we clear it right
+> >at the beginning of the interrupt. We don't need any checks since we
+> >always want to stop START and STOP generation on the next occasion after
+> >we started it.
+> >
+> >This patch improves the situation but sadly does not completely fix it.
+> >It is still to be researched if we can do better given this HW design.
+> >
+> >Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+>    Thanks for a great work, Wolfram!
+>    We need this patch in -stable kernels. The R-Car audio just doesn't wo=
+rk
+> without it...
 
+Really only this patch? IIRC my tests showed that if you don't remove
+the spinlocks (patch 4), the interrupt latency will already be too high
+again. In any case, you'd need to do some careful backporting to rip
+this out of the whole refactoring series. But maybe you did that already
+and have good experiences?
+
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJW/alGAAoJEBQN5MwUoCm2aDYQAIphQ8sj8xqYciN2AVn74F8u
+h0Sj73iPs5sKbkvO7lDYCrZCk89spGMTNEXkHAs6CPOUe5wTGKjnaBhiwQu7Z7AW
+JmCcNbxgdjCmJbo0b7jUVqHSGlBx9TC6kOoyIgG/MiQaMPOWZZ0F2QfquPybDWJM
+1fC2XVzi6mKxVDbCWUHunTf7p12v9JAemdNxnHmdTxs9xE+tA54zU/KMlkVFmkBv
+KMSflwLno6Um1XrTpOA5C9eOwnLRfcGIgrC9FVEXV5RgsPPUjvgzLq/dTtfhKADM
+nPxObX7oEt5czR/tJAGnlyCM1Ja7Y1MYqG7eE9LuSlXhoLGEL8VOEMX5Z/yUcfQM
+F7b31zBM+/0IccM5z4J1UTV5hmrsfu91FfGz0OW/SfAJgveRcPKmx3rsZj+czt/y
+I466MgFsrk86+Iln8lmjY8K9BUd3zh8/V1IajJYAx/ayPd+JKn/yBhUU2YVp/xfK
+JlIODSgb0hllPYhbN3TwR/8RGi90T3EZ3+RlMqdM8RgUIx3N+5RndHRPehm66WMl
+X8bVE8wViHYWnByIe60yIO25/bFy7yc1zw61pl+MYUIZ+xL+j8aQBT1fk2g15uv0
+bpXKBSuiv2gpJxs3lArPTH4gyYXf3rTrlV4DKMXU39m2V4yZX9gGXAdxfr85ZLqa
+qlnAJjWnTL00OuBL8TwS
+=wTsX
+-----END PGP SIGNATURE-----
+
+--7AUc2qLy4jB3hD7Z--
