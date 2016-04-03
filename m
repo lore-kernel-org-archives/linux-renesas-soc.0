@@ -1,135 +1,74 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-	Kevin Hilman <khilman@kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2] PM / Runtime: Only force-resume device if it has been force-suspended
-Date: Thu, 21 Apr 2016 02:52:55 +0300
-Message-Id: <1461196375-21768-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Sun, 3 Apr 2016 15:47:40 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-i2c@vger.kernel.org, linux-sh@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Simon Horman <horms@verge.net.au>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3 09/11] i2c: rcar: revoke START request early
+Message-ID: <20160403134740.GA7231@katana>
+References: <1447948611-2615-10-git-send-email-wsa@the-dreams.de>
+ <56FD9080.4090203@cogentembedded.com>
+ <20160331224838.GA7381@katana>
+ <56FED245.4010503@cogentembedded.com>
+ <20160401201415.GA25936@katana>
+ <56FEFEC4.6010401@cogentembedded.com>
+ <20160402072726.GA1384@katana>
+ <56FFC06F.70108@cogentembedded.com>
+ <20160403082513.GA1404@katana>
+ <57011C30.7020805@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
+Content-Disposition: inline
+In-Reply-To: <57011C30.7020805@cogentembedded.com>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The pm_runtime_force_suspend() and pm_runtime_force_resume() helpers are
-designed to help driver being RPM-centric by offering an easy way to
-manage runtime PM state during system suspend and resume. The first
-function will force the device into runtime suspend at system suspend
-time, while the second one will perform the reverse operation at system
-resume time.
 
-However, the pm_runtime_force_resume() really forces resume, regardless
-of whether the device was running or already suspended before the call
-to pm_runtime_force_suspend(). This results in devices being runtime
-resumed at system resume time when they shouldn't.
+--y0ulUmNC+osPPQO6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix this by recording whether the device has been forcefully suspended
-in pm_runtime_force_suspend() and condition resume in
-pm_runtime_force_resume() to that state.
 
-All current users of pm_runtime_force_resume() call the function
-unconditionally in their system resume handler (some actually set it as
-the resume handler), all after calling pm_runtime_force_suspend() at
-system suspend time. The change in behaviour should thus be safe.
+> >>    And I still don't feel good about the patch removing the spinlock -=
+- I'm
+> >>not sure it's SMP-safe...
+> >
+> >In what scenario?
+>=20
+>    I've reviewed the patches once again and it looked like they are safe.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
----
- drivers/base/power/runtime.c | 19 ++++++++++++++++---
- include/linux/pm.h           |  1 +
- 2 files changed, 17 insertions(+), 3 deletions(-)
+Thanks.
 
-Changes since v1:
 
-- Fix typos
-- Protect the is_force_suspended flag modifications with power.lock
+--y0ulUmNC+osPPQO6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-index 4c7055009bd6..8fc7fba811fa 100644
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -1400,6 +1400,7 @@ void pm_runtime_init(struct device *dev)
- 	pm_suspend_ignore_children(dev, false);
- 	dev->power.runtime_auto = true;
- 
-+	dev->power.is_force_suspended = false;
- 	dev->power.request_pending = false;
- 	dev->power.request = RPM_REQ_NONE;
- 	dev->power.deferred_resume = false;
-@@ -1457,6 +1458,7 @@ void pm_runtime_remove(struct device *dev)
- int pm_runtime_force_suspend(struct device *dev)
- {
- 	int (*callback)(struct device *);
-+	unsigned long flags;
- 	int ret = 0;
- 
- 	pm_runtime_disable(dev);
-@@ -1475,6 +1477,10 @@ int pm_runtime_force_suspend(struct device *dev)
- 		goto err;
- 
- 	pm_runtime_set_suspended(dev);
-+	spin_lock_irqsave(&dev->power.lock, flags);
-+	dev->power.is_force_suspended = true;
-+	spin_unlock_irqrestore(&dev->power.lock, flags);
-+
- 	return 0;
- err:
- 	pm_runtime_enable(dev);
-@@ -1483,13 +1489,13 @@ err:
- EXPORT_SYMBOL_GPL(pm_runtime_force_suspend);
- 
- /**
-- * pm_runtime_force_resume - Force a device into resume state.
-+ * pm_runtime_force_resume - Force a device into resume state if needed.
-  * @dev: Device to resume.
-  *
-  * Prior invoking this function we expect the user to have brought the device
-  * into low power state by a call to pm_runtime_force_suspend(). Here we reverse
-- * those actions and brings the device into full power. We update the runtime PM
-- * status and re-enables runtime PM.
-+ * those actions and bring the device back to its runtime PM state before forced
-+ * suspension. We update the runtime PM status and re-enable runtime PM.
-  *
-  * Typically this function may be invoked from a system resume callback to make
-  * sure the device is put into full power state.
-@@ -1497,8 +1503,12 @@ EXPORT_SYMBOL_GPL(pm_runtime_force_suspend);
- int pm_runtime_force_resume(struct device *dev)
- {
- 	int (*callback)(struct device *);
-+	unsigned long flags;
- 	int ret = 0;
- 
-+	if (!dev->power.is_force_suspended)
-+		goto out;
-+
- 	callback = RPM_GET_CALLBACK(dev, runtime_resume);
- 
- 	if (!callback) {
-@@ -1510,6 +1520,9 @@ int pm_runtime_force_resume(struct device *dev)
- 	if (ret)
- 		goto out;
- 
-+	spin_lock_irqsave(&dev->power.lock, flags);
-+	dev->power.is_force_suspended = false;
-+	spin_unlock_irqrestore(&dev->power.lock, flags);
- 	pm_runtime_set_active(dev);
- 	pm_runtime_mark_last_busy(dev);
- out:
-diff --git a/include/linux/pm.h b/include/linux/pm.h
-index 6a5d654f4447..bec15e0f244e 100644
---- a/include/linux/pm.h
-+++ b/include/linux/pm.h
-@@ -596,6 +596,7 @@ struct dev_pm_info {
- 	unsigned int		use_autosuspend:1;
- 	unsigned int		timer_autosuspends:1;
- 	unsigned int		memalloc_noio:1;
-+	unsigned int		is_force_suspended:1;
- 	enum rpm_request	request;
- 	enum rpm_status		runtime_status;
- 	int			runtime_error;
--- 
-Regards,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Laurent Pinchart
+iQIcBAEBAgAGBQJXAR78AAoJEBQN5MwUoCm2I1QQAKsVA7Ox0U5X8VOh+q3ETJux
+SoFEUcPoQQ7ODNUKbymn0FjkntGnPnIRdQoCpzJSFoqOSySYKNuGw9aKNE5UioeT
+0qwNnpLIOF7iM5ttM9krXCyFjh/9yxaeUGBVDmgZgy2YgUqcVPwNcOPzi/lasY8F
+qnmJTUwrfHoiAKh+D91jY2ou9v+bBSERyCNUtzMm3UtlXCvaE15xFQVac2uWLsCE
+Hwf+i4lQw/fDzReZTjE6WKucTuu+7yqGBxSQlfqIZ4W30WpJuolMpk4UjaUjaHYX
+Wnt8g62+HrrH493R4c7xkYNRiIEVyO12KvNmwc9ISRSXgEF5r/i80aKTTZBiQVh1
+u69Z6A9JfG0xxf4BUqqpSaFwGVBqxC6YK2J6Vtz0bYTGXKOvw/SvKVadqnBCPW6q
+cbGtQ5HyFmSVN7IwqpxQZ+iaPXOe6PDOTVcdEKqwA9CiMd7BorCJE+sXV0wFQdZc
+ctwFa5pUfusguZMdr8sc4eaJuLtCXRV3kJmHn5b3IAXIeJBAGdNL3BS4u53DgbYZ
+qVQQ1/5JsMEKj3W6yTx+BvdQa3Vy+xH/7et/1sJ9YAxdx9c3NzjXpW50SRdduXqI
+eAVwD4qs9t9n/y0Nbb/psFKH9IW7IyaMP5tB3JZfUCOtOJTNh1Zjxv1D6PM0eCCy
+moJdHqv5atwi9bUxZT7N
+=V6v+
+-----END PGP SIGNATURE-----
+
+--y0ulUmNC+osPPQO6--
