@@ -1,49 +1,45 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+Return-Path: <horms@vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 14/22] ARM: dts: r8a7779: Correct interrupt type for ARM TWD
-Date: Mon, 25 Apr 2016 14:27:32 +1000
-Message-Id: <e6c2488251b1c7e62f3e43907ca3f6fd016b1353.1461558315.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
-References: <cover.1461558315.git.horms+renesas@verge.net.au>
+Subject: [PATCH 05/47] ARM: dts: r8a7791: use fallback can compatibility string
+Date: Mon,  4 Apr 2016 10:22:37 +0900
+Message-Id: <c6bf8c86f5ba3a49fe97253c1c745dea2b734522.1459732726.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
+References: <cover.1459732726.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Use recently added fallback compatibility string in r8a7791 device tree.
 
-The ARM TWD interrupt is a private peripheral interrupt (PPI), and per
-the ARM GIC documentation, whether the type for PPIs can be set is
-IMPLEMENTATION DEFINED.
-
-For R-Car H1 devices the PPI type cannot be set, and so when we attempt
-to set the type for the ARM TWD interrupt it fails.  This has gone
-unnoticed because it fails silently, and because we cannot re-configure
-the type it has had no impact. Nevertheless fix the type for the TWD
-interrupt so that it matches the hardware configuration.
-
-Based on patches by Jon Hunter for Tegra20/30 and OMAP4.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7779.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index 60bc1e66bba9..5c1d48d712a1 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -67,7 +67,7 @@
- 		compatible = "arm,cortex-a9-twd-timer";
- 		reg = <0xf0000600 0x20>;
- 		interrupts = <GIC_PPI 13
--			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>;
- 		clocks = <&cpg_clocks R8A7779_CLK_ZS>;
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 9bfd1dc054b3..396a640927c8 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1013,7 +1013,7 @@
  	};
  
+ 	can0: can@e6e80000 {
+-		compatible = "renesas,can-r8a7791";
++		compatible = "renesas,can-r8a7791", "renesas,rcar-gen2-can";
+ 		reg = <0 0xe6e80000 0 0x1000>;
+ 		interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7791_CLK_RCAN0>,
+@@ -1024,7 +1024,7 @@
+ 	};
+ 
+ 	can1: can@e6e88000 {
+-		compatible = "renesas,can-r8a7791";
++		compatible = "renesas,can-r8a7791", "renesas,rcar-gen2-can";
+ 		reg = <0 0xe6e88000 0 0x1000>;
+ 		interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7791_CLK_RCAN1>,
 -- 
-2.7.0.rc3.207.g0ac5344
+2.1.4
