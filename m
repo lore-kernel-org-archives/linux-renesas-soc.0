@@ -1,93 +1,73 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+Return-Path: <horms@vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/3] ARM: shmobile: timer: Fix preset_lpj leading to too short delays
-Date: Thu, 21 Apr 2016 13:44:31 +1000
-Message-Id: <c531fb27e9699eaee478ee5686a3cca5dee73602.1461209970.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461209970.git.horms+renesas@verge.net.au>
-References: <cover.1461209970.git.horms+renesas@verge.net.au>
+Subject: [PATCH 2/3] arm64: dts: r8a7795: Add CAN support
+Date: Mon,  4 Apr 2016 10:22:22 +0900
+Message-Id: <308b7e4ba62e2ab60efcaf426cc219d591f0cd28.1459731817.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1459731817.git.horms+renesas@verge.net.au>
+References: <cover.1459731817.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-On all shmobile ARM SoCs, loop-based delays may complete early, which
-can be after only 1/3 (Cortex A9) or 1/2 (Cortex A7 or A15) of the
-minimum required time.
+Adds CAN controller nodes for r8a7795.
 
-This is caused by calculating preset_lpj based on incorrect assumptions
-about the number of clock cycles per loop:
-  - All of Cortex A7, A9, and A15 run __loop_delay() at 1 loop per
-    CPU clock cycle,
-  - As of commit 11d4bb1bd067f9d0 ("ARM: 7907/1: lib: delay-loop: Add
-    align directive to fix BogoMIPS calculation"), Cortex A8 runs
-    __loop_delay() at 1 loop per 2 instead of 3 CPU clock cycles.
+Note: CAN channel register base address mentioned in R-Car Gen3 Hardware
+User Manual v0.5E is incorrect. The corrected base addresses are:
 
-On SoCs with Cortex A7 and/or A15 CPU cores, this went unnoticed, as
-delays use the ARM arch timer if available. R-Car Gen2 doesn't work if
-the arch timer is disabled. However, APE6 can be used without the arch
-timer.
+CAN Channel 0 - 0xe6c30000
+CAN Channel 1 - 0xe6c38000
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/timer.c | 28 +++++++++++-----------------
- 1 file changed, 11 insertions(+), 17 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/timer.c b/arch/arm/mach-shmobile/timer.c
-index ad008e4b0c49..67d79f9c6bad 100644
---- a/arch/arm/mach-shmobile/timer.c
-+++ b/arch/arm/mach-shmobile/timer.c
-@@ -40,8 +40,7 @@ static void __init shmobile_setup_delay_hz(unsigned int max_cpu_core_hz,
- void __init shmobile_init_delay(void)
- {
- 	struct device_node *np, *cpus;
--	bool is_a7_a8_a9 = false;
--	bool is_a15 = false;
-+	unsigned int div = 0;
- 	bool has_arch_timer = false;
- 	u32 max_freq = 0;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 4049182e6608..a88f8d840c48 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -523,6 +523,36 @@
+ 			#size-cells = <0>;
+ 		};
  
-@@ -55,27 +54,22 @@ void __init shmobile_init_delay(void)
- 		if (!of_property_read_u32(np, "clock-frequency", &freq))
- 			max_freq = max(max_freq, freq);
- 
--		if (of_device_is_compatible(np, "arm,cortex-a8") ||
--		    of_device_is_compatible(np, "arm,cortex-a9")) {
--			is_a7_a8_a9 = true;
--		} else if (of_device_is_compatible(np, "arm,cortex-a7")) {
--			is_a7_a8_a9 = true;
--			has_arch_timer = true;
--		} else if (of_device_is_compatible(np, "arm,cortex-a15")) {
--			is_a15 = true;
-+		if (of_device_is_compatible(np, "arm,cortex-a8")) {
-+			div = 2;
-+		} else if (of_device_is_compatible(np, "arm,cortex-a9")) {
-+			div = 1;
-+		} else if (of_device_is_compatible(np, "arm,cortex-a7") ||
-+			 of_device_is_compatible(np, "arm,cortex-a15")) {
-+			div = 1;
- 			has_arch_timer = true;
- 		}
- 	}
- 
- 	of_node_put(cpus);
- 
--	if (!max_freq)
-+	if (!max_freq || !div)
- 		return;
- 
--	if (!has_arch_timer || !IS_ENABLED(CONFIG_ARM_ARCH_TIMER)) {
--		if (is_a7_a8_a9)
--			shmobile_setup_delay_hz(max_freq, 1, 3);
--		else if (is_a15)
--			shmobile_setup_delay_hz(max_freq, 2, 4);
--	}
-+	if (!has_arch_timer || !IS_ENABLED(CONFIG_ARM_ARCH_TIMER))
-+		shmobile_setup_delay_hz(max_freq, 1, div);
- }
++		can0: can@e6c30000 {
++			compatible = "renesas,can-r8a7795",
++				     "renesas,rcar-gen3-can";
++			reg = <0 0xe6c30000 0 0x1000>;
++			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 916>,
++			       <&cpg CPG_CORE R8A7795_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "clkp1", "clkp2", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A7795_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++
++		can1: can@e6c38000 {
++			compatible = "renesas,can-r8a7795",
++				     "renesas,rcar-gen3-can";
++			reg = <0 0xe6c38000 0 0x1000>;
++			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 915>,
++			       <&cpg CPG_CORE R8A7795_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "clkp1", "clkp2", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A7795_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++
+ 		hscif0: serial@e6540000 {
+ 			compatible = "renesas,hscif-r8a7795",
+ 				     "renesas,rcar-gen3-hscif",
 -- 
-2.7.0.rc3.207.g0ac5344
+2.1.4
