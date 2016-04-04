@@ -1,64 +1,48 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+Return-Path: <horms@vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 17/22] ARM: dts: r8a7790: Set maximum frequencies for SDHI clocks
-Date: Mon, 25 Apr 2016 14:27:35 +1000
-Message-Id: <22f708b057dbe3ab4aa53c76b5f3051743784777.1461558315.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
-References: <cover.1461558315.git.horms+renesas@verge.net.au>
+Subject: [PATCH 1/2] ARM: multi_v7_defconfig: enable I2C demultiplexer and slave eeprom
+Date: Mon,  4 Apr 2016 10:22:45 +0900
+Message-Id: <651435d68253b0a5059175e2f113528080e5928e.1459732004.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1459732004.git.horms+renesas@verge.net.au>
+References: <cover.1459732004.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Taken from the datasheet.
+The Renesas Lager board shall be a reference platform for the runtime
+I2C IP core switcher and for I2C slave support. Enable the needed
+drivers for this.
 
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/configs/multi_v7_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 7486fcf985c4..b920facb0c3b 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -589,6 +589,7 @@
- 		clocks = <&mstp3_clks R8A7790_CLK_SDHI0>;
- 		dmas = <&dmac1 0xcd>, <&dmac1 0xce>;
- 		dma-names = "tx", "rx";
-+		max-frequency = <156000000>;
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -600,6 +601,7 @@
- 		clocks = <&mstp3_clks R8A7790_CLK_SDHI1>;
- 		dmas = <&dmac1 0xc9>, <&dmac1 0xca>;
- 		dma-names = "tx", "rx";
-+		max-frequency = <156000000>;
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -611,6 +613,7 @@
- 		clocks = <&mstp3_clks R8A7790_CLK_SDHI2>;
- 		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>;
- 		dma-names = "tx", "rx";
-+		max-frequency = <97500000>;
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -622,6 +625,7 @@
- 		clocks = <&mstp3_clks R8A7790_CLK_SDHI3>;
- 		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>;
- 		dma-names = "tx", "rx";
-+		max-frequency = <97500000>;
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 28234906a064..434f86b110bb 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -322,6 +322,7 @@ CONFIG_I2C_MUX=y
+ CONFIG_I2C_ARB_GPIO_CHALLENGE=m
+ CONFIG_I2C_MUX_PCA954x=y
+ CONFIG_I2C_MUX_PINCTRL=y
++CONFIG_I2C_DEMUX_PINCTRL=y
+ CONFIG_I2C_AT91=m
+ CONFIG_I2C_BCM2835=y
+ CONFIG_I2C_CADENCE=y
+@@ -345,6 +346,7 @@ CONFIG_I2C_UNIPHIER_F=y
+ CONFIG_I2C_XILINX=y
+ CONFIG_I2C_RCAR=y
+ CONFIG_I2C_CROS_EC_TUNNEL=m
++CONFIG_I2C_SLAVE_EEPROM=y
+ CONFIG_SPI=y
+ CONFIG_SPI_ATMEL=m
+ CONFIG_SPI_BCM2835=y
 -- 
-2.7.0.rc3.207.g0ac5344
+2.1.4
