@@ -1,37 +1,204 @@
-Return-Path: <>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>
-CC: <linux-renesas-soc@vger.kernel.org>, Yoshihiro Shimoda
-	<yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2] arm64: defconfig: Add Renesas R-Car USB 3.0 driver support
-Date: Thu, 21 Apr 2016 20:39:32 +0900
-Message-ID: <1461238772-3580-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <horms@vergenet.net>
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 15/26] ARM: dts: r8a7740: Remove unnecessary clock-output-names properties
+Date: Mon,  4 Apr 2016 10:22:23 +0900
+Message-Id: <2dca78980372f154a2181e6044db71be9da626e9.1459731908.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1459731908.git.horms+renesas@verge.net.au>
+References: <cover.1459731908.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+* Fixed rate and fixed factor clocks do not require an
+  clock-output-names property.
+* Since 07705583e920fef6 ("clk: shmobile: div6: Make clock-output-names
+  optional") Renesas div6 clocks do not require a clock-output-names
+  property.
+
+In the above cases there is only one clock output and its name is taken
+from that of the clock node.  Accordingly, remove the unnecessary
+clock-output-names properties and as necessary update the node names.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Changes from v1:
-  - Remove unrelated change (CONFIG_FHANDLE)
-  - Remove commit log because the xhci-plat driver is possible to fix
-    the long wait issue.
+ arch/arm/boot/dts/r8a7740.dtsi | 57 ++++++++++++++----------------------------
+ 1 file changed, 19 insertions(+), 38 deletions(-)
 
- arch/arm64/configs/defconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index a44ef99..9cf9c85 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -192,7 +192,7 @@ CONFIG_SND_SOC_AK4613=y
- CONFIG_USB=y
- CONFIG_USB_OTG=y
- CONFIG_USB_XHCI_HCD=y
--CONFIG_USB_XHCI_PLATFORM=y
-+CONFIG_USB_XHCI_RCAR=y
- CONFIG_USB_EHCI_HCD=y
- CONFIG_USB_EHCI_MSM=y
- CONFIG_USB_EHCI_HCD_PLATFORM=y
+diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
+index 995fbda74b7a..39b2f88ad151 100644
+--- a/arch/arm/boot/dts/r8a7740.dtsi
++++ b/arch/arm/boot/dts/r8a7740.dtsi
+@@ -422,53 +422,45 @@
+ 		ranges;
+ 
+ 		/* External root clock */
+-		extalr_clk: extalr_clk {
++		extalr_clk: extalr {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <32768>;
+-			clock-output-names = "extalr";
+ 		};
+-		extal1_clk: extal1_clk {
++		extal1_clk: extal1 {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <0>;
+-			clock-output-names = "extal1";
+ 		};
+-		extal2_clk: extal2_clk {
++		extal2_clk: extal2 {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <0>;
+-			clock-output-names = "extal2";
+ 		};
+-		dv_clk: dv_clk {
++		dv_clk: dv {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <27000000>;
+-			clock-output-names = "dv";
+ 		};
+-		fmsick_clk: fmsick_clk {
++		fmsick_clk: fmsick {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <0>;
+-			clock-output-names = "fmsick";
+ 		};
+-		fmsock_clk: fmsock_clk {
++		fmsock_clk: fmsock {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <0>;
+-			clock-output-names = "fmsock";
+ 		};
+-		fsiack_clk: fsiack_clk {
++		fsiack_clk: fsiack {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <0>;
+-			clock-output-names = "fsiack";
+ 		};
+-		fsibck_clk: fsibck_clk {
++		fsibck_clk: fsibck {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <0>;
+-			clock-output-names = "fsibck";
+ 		};
+ 
+ 		/* Special CPG clocks */
+@@ -486,7 +478,7 @@
+ 		};
+ 
+ 		/* Variable factor clocks (DIV6) */
+-		vclk1_clk: vclk1_clk@e6150008 {
++		vclk1_clk: vclk1@e6150008 {
+ 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150008 4>;
+ 			clocks = <&pllc1_div2_clk>, <0>, <&dv_clk>,
+@@ -494,9 +486,8 @@
+ 				 <&extal1_div2_clk>, <&extalr_clk>, <0>,
+ 				 <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "vclk1";
+ 		};
+-		vclk2_clk: vclk2_clk@e615000c {
++		vclk2_clk: vclk2@e615000c {
+ 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe615000c 4>;
+ 			clocks = <&pllc1_div2_clk>, <0>, <&dv_clk>,
+@@ -504,77 +495,67 @@
+ 				 <&extal1_div2_clk>, <&extalr_clk>, <0>,
+ 				 <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "vclk2";
+ 		};
+-		fmsi_clk: fmsi_clk@e6150010 {
++		fmsi_clk: fmsi@e6150010 {
+ 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150010 4>;
+ 			clocks = <&pllc1_div2_clk>, <&fmsick_clk>, <0>, <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "fmsi";
+ 		};
+-		fmso_clk: fmso_clk@e6150014 {
++		fmso_clk: fmso@e6150014 {
+ 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150014 4>;
+ 			clocks = <&pllc1_div2_clk>, <&fmsock_clk>, <0>, <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "fmso";
+ 		};
+-		fsia_clk: fsia_clk@e6150018 {
++		fsia_clk: fsia@e6150018 {
+ 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150018 4>;
+ 			clocks = <&pllc1_div2_clk>, <&fsiack_clk>, <0>, <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "fsia";
+ 		};
+-		sub_clk: sub_clk@e6150080 {
++		sub_clk: sub@e6150080 {
+ 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150080 4>;
+ 			clocks = <&pllc1_div2_clk>,
+ 				 <&cpg_clocks R8A7740_CLK_USB24S>, <0>, <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "sub";
+ 		};
+-		spu_clk: spu_clk@e6150084 {
++		spu_clk: spu@e6150084 {
+ 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150084 4>;
+ 			clocks = <&pllc1_div2_clk>,
+ 				 <&cpg_clocks R8A7740_CLK_USB24S>, <0>, <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "spu";
+ 		};
+-		vou_clk: vou_clk@e6150088 {
++		vou_clk: vou@e6150088 {
+ 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150088 4>;
+ 			clocks = <&pllc1_div2_clk>, <&extal1_clk>, <&dv_clk>,
+ 				 <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "vou";
+ 		};
+-		stpro_clk: stpro_clk@e615009c {
++		stpro_clk: stpro@e615009c {
+ 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe615009c 4>;
+ 			clocks = <&cpg_clocks R8A7740_CLK_PLLC0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "stpro";
+ 		};
+ 
+ 		/* Fixed factor clocks */
+-		pllc1_div2_clk: pllc1_div2_clk {
++		pllc1_div2_clk: pllc1_div2 {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7740_CLK_PLLC1>;
+ 			#clock-cells = <0>;
+ 			clock-div = <2>;
+ 			clock-mult = <1>;
+-			clock-output-names = "pllc1_div2";
+ 		};
+-		extal1_div2_clk: extal1_div2_clk {
++		extal1_div2_clk: extal1_div2 {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&extal1_clk>;
+ 			#clock-cells = <0>;
+ 			clock-div = <2>;
+ 			clock-mult = <1>;
+-			clock-output-names = "extal1_div2";
+ 		};
+ 
+ 		/* Gate clocks */
 -- 
-1.9.1
+2.1.4
