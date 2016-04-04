@@ -1,93 +1,66 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 03/12] ARM: dts: r8a7791: Add SYSC PM Domains
-Date: Thu,  7 Apr 2016 14:20:26 +0200
-Message-Id: <1460031635-13452-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
-References: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+Date: Mon, 4 Apr 2016 12:46:26 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Peter Rosin <peda@axentia.se>
+Cc: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: Re: [PATCH] i2c: mux: demux-pinctrl: Update docs to new
+ sysfs-attributes
+Message-ID: <20160404104626.GB1383@katana>
+References: <1459694536-23144-1-git-send-email-wsa@the-dreams.de>
+ <f78524a192204258911c64a633e10d3c@EMAIL.axentia.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+pHx0qQiF2pBVqBT"
+Content-Disposition: inline
+In-Reply-To: <f78524a192204258911c64a633e10d3c@EMAIL.axentia.se>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the System Controller, and hook it up to the
-CPG/MSTP Clock Domain.
-Hook up the Cortex-A15 CPU cores and the Cortex-A15 L2 cache/SCU to
-their respective PM Domains.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - Add power-domains property to the sysc node, to refer to the SoC's
-    Clock Domain,
+--+pHx0qQiF2pBVqBT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v3:
-  - Drop power area hiearchy from DT,
-  - Switch to "#power-domain-cells = <1>",
-  - Drop fallback compatibility strings,
+On Sun, Apr 03, 2016 at 10:13:57PM +0000, Peter Rosin wrote:
+> Wolfram Sang wrote:
+> > Update the docs according to the recent code changes, too.
+> >=20
+> > Fixes: c0c508a418f9da ("i2c: mux: demux-pinctrl: Clean up sysfs attribu=
+tes")
+> > Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> Wolfram, in case it wasn't obvious, I just wanted to clarify that I'm
+> perfectly happy with you handling everything about demux-pinctrl.
+> If that suits you?
 
-v2:
-  - Change one-line summary prefix to match current arm-soc practices,
-  - Update compatible values.
----
- arch/arm/boot/dts/r8a7791.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Sure, I don't expect there much to happen anyhow.
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 8693888057ff3f7d..b7f69a538223ee53 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -13,6 +13,7 @@
- #include <dt-bindings/clock/r8a7791-clock.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/power/r8a7791-sysc.h>
- 
- / {
- 	compatible = "renesas,r8a7791";
-@@ -51,6 +52,7 @@
- 			voltage-tolerance = <1>; /* 1% */
- 			clocks = <&cpg_clocks R8A7791_CLK_Z>;
- 			clock-latency = <300000>; /* 300 us */
-+			power-domains = <&sysc R8A7791_PD_CA15_CPU0>;
- 			next-level-cache = <&L2_CA15>;
- 
- 			/* kHz - uV - OPPs unknown yet */
-@@ -67,6 +69,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
- 			clock-frequency = <1500000000>;
-+			power-domains = <&sysc R8A7791_PD_CA15_CPU1>;
- 			next-level-cache = <&L2_CA15>;
- 		};
- 	};
-@@ -92,6 +95,7 @@
- 
- 	L2_CA15: cache-controller@0 {
- 		compatible = "cache";
-+		power-domains = <&sysc R8A7791_PD_CA15_SCU>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
-@@ -1491,6 +1495,13 @@
- 		};
- 	};
- 
-+	sysc: system-controller@e6180000 {
-+		compatible = "renesas,r8a7791-sysc";
-+		reg = <0 0xe6180000 0 0x0200>;
-+		power-domains = <&cpg_clocks>;
-+		#power-domain-cells = <1>;
-+	};
-+
- 	qspi: spi@e6b10000 {
- 		compatible = "renesas,qspi-r8a7791", "renesas,qspi";
- 		reg = <0 0xe6b10000 0 0x2c>;
--- 
-1.9.1
 
+--+pHx0qQiF2pBVqBT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXAkYCAAoJEBQN5MwUoCm2CQIP/RCcjEt6Qd2njz5XSEPoTxB0
+hIpKQfvwzPiCzqGhdwE2+vIYaPDjKXRzMxY1a/6ORoooMHGuI4lvV1G/eZl+TCzG
+jY8nfP97UKOv5IeSrlh+AhJPwlcFBEaSL+TUW1RPy91AwxxQTXlruiUPHK08ALZd
+p4BBrIGiTyKIxfATEqTjMl51/syQUDeRyzehhcMUJ9JJ2jS5bmT0ZYxBx7jpGztp
+/LxJ49i9Nz8mDvAulrGW2TVQ5kvPFG6+GpmgQZjFFNLvabWlSdL1/DoEFpZY61wR
+eHozOSshkq1MUiVsm72KA1yWHyK06cqjn+lhYmvUQrwFzp8BerCsX1RniBG9Qy+7
+UvGN85hNFRXkV5qallgNZRuc6Az8+1Bsb8+KPC4nyfQF+ZLyPg39+m21sGJySavN
+AfOGGcKfEk9Te0zNDnPPVCRAqK8ycx8VTKXAY0EDSQrvP6M6HcZAc/9d5NTPGGAH
+J76lItN0Ie7ENT2eK4+3XIa9NryMkn+ZYp2vu4FHC660DFOSXPLBY3Nwa04PmwyM
+sZlUI6F03e07Z1Rzxc9BP/RfDCCrFdZJvwvf5eVX6zOfRXhp/hwf7B/dbSxGfCmi
+8XwzOLE1yPFqnUlCqfFPNAj5JiMLzUaktd5ZSyMrgBLoz3xjSAh+tKX/SCKdMExZ
+Kjy3m6IkdYukrKRnYzP1
+=m6rO
+-----END PGP SIGNATURE-----
+
+--+pHx0qQiF2pBVqBT--
