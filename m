@@ -1,70 +1,72 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+Return-Path: <horms@vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 21/22] ARM: dts: r8a7793: Add SDHI controllers
-Date: Mon, 25 Apr 2016 14:27:39 +1000
-Message-Id: <fc9ee228f5005437b9fdb1b85804b6d3f8d497be.1461558315.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
-References: <cover.1461558315.git.horms+renesas@verge.net.au>
+Subject: [PATCH 33/47] ARM: dts: r8a7794: Reference both DMA controllers in HSCIF nodes
+Date: Mon,  4 Apr 2016 10:23:05 +0900
+Message-Id: <3323bfdff0392d88fbfd021bc750ef4a283ca7d6.1459732726.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
+References: <cover.1459732726.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Same as on r8a7791.
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ arch/arm/boot/dts/r8a7794.dtsi | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index bddc31283bd9..6186179fd66d 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -507,6 +507,39 @@
- 		reg = <0 0xe6060000 0 0x250>;
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index ccf3061a71b2..bc6515303015 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -507,8 +507,9 @@
+ 		clocks = <&mstp7_clks R8A7794_CLK_HSCIF0>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
++		       <&dmac1 0x39>, <&dmac1 0x3a>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
  	};
- 
-+	sdhi0: sd@ee100000 {
-+		compatible = "renesas,sdhi-r8a7793";
-+		reg = <0 0xee100000 0 0x328>;
-+		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp3_clks R8A7793_CLK_SDHI0>;
-+		dmas = <&dmac0 0xcd>, <&dmac0 0xce>;
-+		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
-+	};
-+
-+	sdhi1: sd@ee140000 {
-+		compatible = "renesas,sdhi-r8a7793";
-+		reg = <0 0xee140000 0 0x100>;
-+		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp3_clks R8A7793_CLK_SDHI1>;
-+		dmas = <&dmac0 0xc1>, <&dmac0 0xc2>;
-+		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
-+	};
-+
-+	sdhi2: sd@ee160000 {
-+		compatible = "renesas,sdhi-r8a7793";
-+		reg = <0 0xee160000 0 0x100>;
-+		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp3_clks R8A7793_CLK_SDHI2>;
-+		dmas = <&dmac0 0xd3>, <&dmac0 0xd4>;
-+		dma-names = "tx", "rx";
-+		power-domains = <&cpg_clocks>;
-+		status = "disabled";
-+	};
-+
- 	scifa0: serial@e6c40000 {
- 		compatible = "renesas,scifa-r8a7793",
- 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+@@ -521,8 +522,9 @@
+ 		clocks = <&mstp7_clks R8A7794_CLK_HSCIF1>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
++		       <&dmac1 0x4d>, <&dmac1 0x4e>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -535,8 +537,9 @@
+ 		clocks = <&mstp7_clks R8A7794_CLK_HSCIF2>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>,
++		       <&dmac1 0x3b>, <&dmac1 0x3c>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
 -- 
-2.7.0.rc3.207.g0ac5344
+2.1.4
