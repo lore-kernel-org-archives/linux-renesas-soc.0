@@ -1,66 +1,72 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+Return-Path: <horms@vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/22] ARM: dts: r8a7790: Add SCIF2 clock
-Date: Mon, 25 Apr 2016 14:27:21 +1000
-Message-Id: <38805823377d762ec46f2430f29ef0cb8b3937d4.1461558315.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
-References: <cover.1461558315.git.horms+renesas@verge.net.au>
+Subject: [PATCH 27/47] ARM: dts: r8a7793: Reference both DMA controllers in HSCIF nodes
+Date: Mon,  4 Apr 2016 10:22:59 +0900
+Message-Id: <91bf5060f94643f81b030b26d3a1a190eb5bfe59.1459732726.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
+References: <cover.1459732726.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Based on Rev. 2.00 of the R-Car Gen2 datasheet.
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790.dtsi            | 6 +++---
- include/dt-bindings/clock/r8a7790-clock.h | 1 +
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7793.dtsi | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 60db8e4f5790..6f4fdfccdcfd 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1302,19 +1302,19 @@
- 		mstp3_clks: mstp3_clks@e615013c {
- 			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe615013c 0 4>, <0 0xe6150048 0 4>;
--			clocks = <&hp_clk>, <&cp_clk>, <&mmc1_clk>, <&sd3_clk>,
-+			clocks = <&hp_clk>, <&cp_clk>, <&mmc1_clk>, <&p_clk>, <&sd3_clk>,
- 				 <&sd2_clk>, <&cpg_clocks R8A7790_CLK_SD1>, <&cpg_clocks R8A7790_CLK_SD0>, <&mmc0_clk>,
- 				 <&hp_clk>, <&mp_clk>, <&hp_clk>, <&mp_clk>, <&rclk_clk>,
- 				 <&hp_clk>, <&hp_clk>;
- 			#clock-cells = <1>;
- 			clock-indices = <
--				R8A7790_CLK_IIC2 R8A7790_CLK_TPU0 R8A7790_CLK_MMCIF1 R8A7790_CLK_SDHI3
-+				R8A7790_CLK_IIC2 R8A7790_CLK_TPU0 R8A7790_CLK_MMCIF1 R8A7790_CLK_SCIF2 R8A7790_CLK_SDHI3
- 				R8A7790_CLK_SDHI2 R8A7790_CLK_SDHI1 R8A7790_CLK_SDHI0 R8A7790_CLK_MMCIF0
- 				R8A7790_CLK_IIC0 R8A7790_CLK_PCIEC R8A7790_CLK_IIC1 R8A7790_CLK_SSUSB R8A7790_CLK_CMT1
- 				R8A7790_CLK_USBDMAC0 R8A7790_CLK_USBDMAC1
- 			>;
- 			clock-output-names =
--				"iic2", "tpu0", "mmcif1", "sdhi3",
-+				"iic2", "tpu0", "mmcif1", "scif2", "sdhi3",
- 				"sdhi2", "sdhi1", "sdhi0", "mmcif0",
- 				"iic0", "pciec", "iic1", "ssusb", "cmt1",
- 				"usbdmac0", "usbdmac1";
-diff --git a/include/dt-bindings/clock/r8a7790-clock.h b/include/dt-bindings/clock/r8a7790-clock.h
-index 7b1ad8922eec..fa5e8da809f2 100644
---- a/include/dt-bindings/clock/r8a7790-clock.h
-+++ b/include/dt-bindings/clock/r8a7790-clock.h
-@@ -66,6 +66,7 @@
- #define R8A7790_CLK_IIC2		0
- #define R8A7790_CLK_TPU0		4
- #define R8A7790_CLK_MMCIF1		5
-+#define R8A7790_CLK_SCIF2		10
- #define R8A7790_CLK_SDHI3		11
- #define R8A7790_CLK_SDHI2		12
- #define R8A7790_CLK_SDHI1		13
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index d70479085b13..be2e1fdfb07b 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -725,8 +725,9 @@
+ 		clocks = <&mstp7_clks R8A7793_CLK_HSCIF0>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
++		       <&dmac1 0x39>, <&dmac1 0x3a>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -739,8 +740,9 @@
+ 		clocks = <&mstp7_clks R8A7793_CLK_HSCIF1>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
++		       <&dmac1 0x4d>, <&dmac1 0x4e>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -753,8 +755,9 @@
+ 		clocks = <&mstp7_clks R8A7793_CLK_HSCIF2>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>,
++		       <&dmac1 0x3b>, <&dmac1 0x3c>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
 -- 
-2.7.0.rc3.207.g0ac5344
+2.1.4
