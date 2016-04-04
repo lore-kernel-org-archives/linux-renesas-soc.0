@@ -1,66 +1,72 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+Return-Path: <horms@vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/3] Revert "ARM: dts: porter: Enable SCIF_CLK frequency and pins"
-Date: Thu, 21 Apr 2016 13:44:30 +1000
-Message-Id: <01638a7f5ef967e94e8aff455874d62e12fe32ed.1461209970.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461209970.git.horms+renesas@verge.net.au>
-References: <cover.1461209970.git.horms+renesas@verge.net.au>
+Subject: [PATCH 30/47] ARM: dts: r8a7793: Reference both DMA controllers in IIC nodes
+Date: Mon,  4 Apr 2016 10:23:02 +0900
+Message-Id: <9e4239aa0ce9ab6d2feb976fcbacd11c0b7a8622.1459732726.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
+References: <cover.1459732726.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-This reverts commit 19417bd9c511 ("ARM: dts: porter: Enable SCIF_CLK
-frequency and pins") as according to
-http://elinux.org/File:R-CarM2-KOELSCH_PORTER-B_PORTER_C_Comparison.pdf
-the external oscillator for SCIF_CLK is not mounted on the porter boards.
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
 
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791-porter.dts | 13 -------------
- 1 file changed, 13 deletions(-)
+ arch/arm/boot/dts/r8a7793.dtsi | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index 76c5b2ef8b7e..a9285d9a57cd 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -143,19 +143,11 @@
- };
- 
- &pfc {
--	pinctrl-0 = <&scif_clk_pins>;
--	pinctrl-names = "default";
--
- 	scif0_pins: serial0 {
- 		renesas,groups = "scif0_data_d";
- 		renesas,function = "scif0";
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index b16b0cca638c..90925c5d14d0 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -470,8 +470,9 @@
+ 		reg = <0 0xe60b0000 0 0x425>;
+ 		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7793_CLK_IICDVFS>;
+-		dmas = <&dmac0 0x77>, <&dmac0 0x78>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x77>, <&dmac0 0x78>,
++		       <&dmac1 0x77>, <&dmac1 0x78>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
  	};
- 
--	scif_clk_pins: scif_clk {
--		renesas,groups = "scif_clk";
--		renesas,function = "scif_clk";
--	};
--
- 	ether_pins: ether {
- 		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
- 		renesas,function = "eth";
-@@ -229,11 +221,6 @@
- 	status = "okay";
- };
- 
--&scif_clk {
--	clock-frequency = <14745600>;
--	status = "okay";
--};
--
- &ether {
- 	pinctrl-0 = <&ether_pins &phy1_pins>;
- 	pinctrl-names = "default";
+@@ -483,8 +484,9 @@
+ 		reg = <0 0xe6500000 0 0x425>;
+ 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7793_CLK_IIC0>;
+-		dmas = <&dmac0 0x61>, <&dmac0 0x62>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x61>, <&dmac0 0x62>,
++		       <&dmac1 0x61>, <&dmac1 0x62>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -496,8 +498,9 @@
+ 		reg = <0 0xe6510000 0 0x425>;
+ 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7793_CLK_IIC1>;
+-		dmas = <&dmac0 0x65>, <&dmac0 0x66>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x65>, <&dmac0 0x66>,
++		       <&dmac1 0x65>, <&dmac1 0x66>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
 -- 
-2.7.0.rc3.207.g0ac5344
+2.1.4
