@@ -1,46 +1,67 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+Return-Path: <horms@vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 19/22] ARM: dts: kzm9g: Configure NMI key as wake-up source
-Date: Mon, 25 Apr 2016 14:27:37 +1000
-Message-Id: <7e2a1bcd2185c9d7d4c9b2910249a1a8fa841341.1461558315.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
-References: <cover.1461558315.git.horms+renesas@verge.net.au>
+Subject: [PATCH 36/47] ARM: dts: r8a7794: Reference both DMA controllers in SDHI nodes
+Date: Mon,  4 Apr 2016 10:23:08 +0900
+Message-Id: <877df57b4d07a6d19bf1914b0318eaf4c20b2c20.1459732726.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
+References: <cover.1459732726.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Add a GPIO key with wake-up capability for the NMI button.
-This allows to wake up the system from s2ram without relying on the
-buttons on the optional switch board.
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/sh73a0-kzm9g.dts | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/r8a7794.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sh73a0-kzm9g.dts b/arch/arm/boot/dts/sh73a0-kzm9g.dts
-index e40a2f23b6cd..c2d8a080e392 100644
---- a/arch/arm/boot/dts/sh73a0-kzm9g.dts
-+++ b/arch/arm/boot/dts/sh73a0-kzm9g.dts
-@@ -149,6 +149,13 @@
- 			label = "SW1";
- 			wakeup-source;
- 		};
-+
-+		wakeup-key {
-+			gpios = <&pfc 159 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_WAKEUP>;
-+			label = "NMI";
-+			wakeup-source;
-+		};
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 4761849cb1f7..ec54246879b4 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -664,6 +664,9 @@
+ 		reg = <0 0xee100000 0 0x200>;
+ 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7794_CLK_SDHI0>;
++		dmas = <&dmac1 0xcd>, <&dmac1 0xce>,
++		       <&dmac0 0xcd>, <&dmac0 0xce>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
  	};
- 
- 	sound {
+@@ -673,6 +676,9 @@
+ 		reg = <0 0xee140000 0 0x100>;
+ 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7794_CLK_SDHI1>;
++		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>,
++		       <&dmac0 0xc1>, <&dmac0 0xc2>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -682,6 +688,9 @@
+ 		reg = <0 0xee160000 0 0x100>;
+ 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7794_CLK_SDHI2>;
++		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>,
++		       <&dmac0 0xd3>, <&dmac0 0xd4>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
 -- 
-2.7.0.rc3.207.g0ac5344
+2.1.4
