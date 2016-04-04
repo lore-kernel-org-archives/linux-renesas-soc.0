@@ -3,106 +3,312 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 28/47] ARM: dts: r8a7793: Reference both DMA controllers in SCIF nodes
-Date: Mon,  4 Apr 2016 10:23:00 +0900
-Message-Id: <d71b7abf9f8e896078f13573727adf18a8601678.1459732726.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
-References: <cover.1459732726.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH 26/26] ARM: dts: sh73a0: Remove unnecessary clock-output-names properties
+Date: Mon,  4 Apr 2016 10:22:34 +0900
+Message-Id: <000025cfbb9e8bafd0a1fa84d8d83526d24bde42.1459731908.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1459731908.git.horms+renesas@verge.net.au>
+References: <cover.1459731908.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+* Fixed rate and fixed factor clocks do not require an
+  clock-output-names property.
+* Since 07705583e920fef6 ("clk: shmobile: div6: Make clock-output-names
+  optional") Renesas div6 clocks do not require a clock-output-names
+  property.
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+In the above cases there is only one clock output and its name is taken
+from that of the clock node.  Accordingly, remove the unnecessary
+clock-output-names properties and as necessary update the node names.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The clock-output-names property is left in place for the zb_clk which is
+thus treated as a special case as the MSTP clock driver (clk-mstp.c)
+explicitly looks for a clock with node name zb_clk for the r8a73a4 and
+sh73a0 SoCs.
+
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 30 ++++++++++++++++++------------
- 1 file changed, 18 insertions(+), 12 deletions(-)
+ arch/arm/boot/dts/sh73a0.dtsi | 87 +++++++++++++++----------------------------
+ 1 file changed, 29 insertions(+), 58 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index be2e1fdfb07b..88164ac44929 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -641,8 +641,9 @@
- 		clocks = <&mstp7_clks R8A7793_CLK_SCIF0>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
-+		       <&dmac1 0x29>, <&dmac1 0x2a>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -655,8 +656,9 @@
- 		clocks = <&mstp7_clks R8A7793_CLK_SCIF1>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
-+		       <&dmac1 0x2d>, <&dmac1 0x2e>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -669,8 +671,9 @@
- 		clocks = <&mstp7_clks R8A7793_CLK_SCIF2>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
-+		       <&dmac1 0x2b>, <&dmac1 0x2c>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -683,8 +686,9 @@
- 		clocks = <&mstp7_clks R8A7793_CLK_SCIF3>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0x2f>, <&dmac0 0x30>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
-+		       <&dmac1 0x2f>, <&dmac1 0x30>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -697,8 +701,9 @@
- 		clocks = <&mstp7_clks R8A7793_CLK_SCIF4>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
-+		       <&dmac1 0xfb>, <&dmac1 0xfc>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -711,8 +716,9 @@
- 		clocks = <&mstp7_clks R8A7793_CLK_SCIF5>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
-+		       <&dmac1 0xfd>, <&dmac1 0xfe>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
+diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
+index bf825ca4f6f7..639ea2d76970 100644
+--- a/arch/arm/boot/dts/sh73a0.dtsi
++++ b/arch/arm/boot/dts/sh73a0.dtsi
+@@ -602,39 +602,33 @@
+ 		ranges;
+ 
+ 		/* External root clocks */
+-		extalr_clk: extalr_clk {
++		extalr_clk: extalr {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <32768>;
+-			clock-output-names = "extalr";
+ 		};
+-		extal1_clk: extal1_clk {
++		extal1_clk: extal1 {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <26000000>;
+-			clock-output-names = "extal1";
+ 		};
+-		extal2_clk: extal2_clk {
++		extal2_clk: extal2 {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+-			clock-output-names = "extal2";
+ 		};
+-		extcki_clk: extcki_clk {
++		extcki_clk: extcki {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+-			clock-output-names = "extcki";
+ 		};
+-		fsiack_clk: fsiack_clk {
++		fsiack_clk: fsiack {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <0>;
+-			clock-output-names = "fsiack";
+ 		};
+-		fsibck_clk: fsibck_clk {
++		fsibck_clk: fsibck {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <0>;
+-			clock-output-names = "fsibck";
+ 		};
+ 
+ 		/* Special CPG clocks */
+@@ -650,7 +644,7 @@
+ 		};
+ 
+ 		/* Variable factor clocks (DIV6) */
+-		vclk1_clk: vclk1_clk@e6150008 {
++		vclk1_clk: vclk1@e6150008 {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150008 4>;
+ 			clocks = <&pll1_div2_clk>, <&cpg_clocks SH73A0_CLK_PLL2>,
+@@ -658,9 +652,8 @@
+ 				 <&extalr_clk>, <&cpg_clocks SH73A0_CLK_MAIN>,
+ 				 <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "vclk1";
+ 		};
+-		vclk2_clk: vclk2_clk@e615000c {
++		vclk2_clk: vclk2@e615000c {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe615000c 4>;
+ 			clocks = <&pll1_div2_clk>, <&cpg_clocks SH73A0_CLK_PLL2>,
+@@ -668,9 +661,8 @@
+ 				 <&extalr_clk>, <&cpg_clocks SH73A0_CLK_MAIN>,
+ 				 <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "vclk2";
+ 		};
+-		vclk3_clk: vclk3_clk@e615001c {
++		vclk3_clk: vclk3@e615001c {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe615001c 4>;
+ 			clocks = <&pll1_div2_clk>, <&cpg_clocks SH73A0_CLK_PLL2>,
+@@ -678,7 +670,6 @@
+ 				 <&extalr_clk>, <&cpg_clocks SH73A0_CLK_MAIN>,
+ 				 <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "vclk3";
+ 		};
+ 		zb_clk: zb_clk@e6150010 {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+@@ -688,168 +679,148 @@
+ 			#clock-cells = <0>;
+ 			clock-output-names = "zb";
+ 		};
+-		flctl_clk: flctl_clk@e6150014 {
++		flctl_clk: flctlck@e6150014 {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150014 4>;
+ 			clocks = <&pll1_div2_clk>, <0>,
+ 				 <&cpg_clocks SH73A0_CLK_PLL2>, <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "flctlck";
+ 		};
+-		sdhi0_clk: sdhi0_clk@e6150074 {
++		sdhi0_clk: sdhi0ck@e6150074 {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150074 4>;
+ 			clocks = <&pll1_div2_clk>, <&cpg_clocks SH73A0_CLK_PLL2>,
+ 				 <&pll1_div13_clk>, <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "sdhi0ck";
+ 		};
+-		sdhi1_clk: sdhi1_clk@e6150078 {
++		sdhi1_clk: sdhi1ck@e6150078 {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150078 4>;
+ 			clocks = <&pll1_div2_clk>, <&cpg_clocks SH73A0_CLK_PLL2>,
+ 				 <&pll1_div13_clk>, <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "sdhi1ck";
+ 		};
+-		sdhi2_clk: sdhi2_clk@e615007c {
++		sdhi2_clk: sdhi2ck@e615007c {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe615007c 4>;
+ 			clocks = <&pll1_div2_clk>, <&cpg_clocks SH73A0_CLK_PLL2>,
+ 				 <&pll1_div13_clk>, <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "sdhi2ck";
+ 		};
+-		fsia_clk: fsia_clk@e6150018 {
++		fsia_clk: fsia@e6150018 {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150018 4>;
+ 			clocks = <&pll1_div2_clk>, <&cpg_clocks SH73A0_CLK_PLL2>,
+ 				 <&fsiack_clk>, <&fsiack_clk>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "fsia";
+ 		};
+-		fsib_clk: fsib_clk@e6150090 {
++		fsib_clk: fsib@e6150090 {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150090 4>;
+ 			clocks = <&pll1_div2_clk>, <&cpg_clocks SH73A0_CLK_PLL2>,
+ 				 <&fsibck_clk>, <&fsibck_clk>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "fsib";
+ 		};
+-		sub_clk: sub_clk@e6150080 {
++		sub_clk: sub@e6150080 {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150080 4>;
+ 			clocks = <&pll1_div2_clk>, <&cpg_clocks SH73A0_CLK_PLL2>,
+ 				 <&extal2_clk>, <&extal2_clk>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "sub";
+ 		};
+-		spua_clk: spua_clk@e6150084 {
++		spua_clk: spua@e6150084 {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150084 4>;
+ 			clocks = <&pll1_div2_clk>, <&cpg_clocks SH73A0_CLK_PLL2>,
+ 				 <&extal2_clk>, <&extal2_clk>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "spua";
+ 		};
+-		spuv_clk: spuv_clk@e6150094 {
++		spuv_clk: spuv@e6150094 {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150094 4>;
+ 			clocks = <&pll1_div2_clk>, <&cpg_clocks SH73A0_CLK_PLL2>,
+ 				 <&extal2_clk>, <&extal2_clk>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "spuv";
+ 		};
+-		msu_clk: msu_clk@e6150088 {
++		msu_clk: msu@e6150088 {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150088 4>;
+ 			clocks = <&pll1_div2_clk>, <0>,
+ 				 <&cpg_clocks SH73A0_CLK_PLL2>, <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "msu";
+ 		};
+-		hsi_clk: hsi_clk@e615008c {
++		hsi_clk: hsi@e615008c {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe615008c 4>;
+ 			clocks = <&pll1_div2_clk>, <&cpg_clocks SH73A0_CLK_PLL2>,
+ 				 <&pll1_div7_clk>, <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "hsi";
+ 		};
+-		mfg1_clk: mfg1_clk@e6150098 {
++		mfg1_clk: mfg1@e6150098 {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150098 4>;
+ 			clocks = <&pll1_div2_clk>, <0>,
+ 				 <&cpg_clocks SH73A0_CLK_PLL2>, <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "mfg1";
+ 		};
+-		mfg2_clk: mfg2_clk@e615009c {
++		mfg2_clk: mfg2@e615009c {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe615009c 4>;
+ 			clocks = <&pll1_div2_clk>, <0>,
+ 				 <&cpg_clocks SH73A0_CLK_PLL2>, <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "mfg2";
+ 		};
+-		dsit_clk: dsit_clk@e6150060 {
++		dsit_clk: dsit@e6150060 {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150060 4>;
+ 			clocks = <&pll1_div2_clk>, <0>,
+ 				 <&cpg_clocks SH73A0_CLK_PLL2>, <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "dsit";
+ 		};
+-		dsi0p_clk: dsi0p_clk@e6150064 {
++		dsi0p_clk: dsi0pck@e6150064 {
+ 			compatible = "renesas,sh73a0-div6-clock", "renesas,cpg-div6-clock";
+ 			reg = <0xe6150064 4>;
+ 			clocks = <&pll1_div2_clk>, <&cpg_clocks SH73A0_CLK_PLL2>,
+ 				 <&cpg_clocks SH73A0_CLK_MAIN>, <&extal2_clk>,
+ 				 <&extcki_clk>, <0>, <0>, <0>;
+ 			#clock-cells = <0>;
+-			clock-output-names = "dsi0pck";
+ 		};
+ 
+ 		/* Fixed factor clocks */
+-		main_div2_clk: main_div2_clk {
++		main_div2_clk: main_div2 {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks SH73A0_CLK_MAIN>;
+ 			#clock-cells = <0>;
+ 			clock-div = <2>;
+ 			clock-mult = <1>;
+-			clock-output-names = "main_div2";
+ 		};
+-		pll1_div2_clk: pll1_div2_clk {
++		pll1_div2_clk: pll1_div2 {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks SH73A0_CLK_PLL1>;
+ 			#clock-cells = <0>;
+ 			clock-div = <2>;
+ 			clock-mult = <1>;
+-			clock-output-names = "pll1_div2";
+ 		};
+-		pll1_div7_clk: pll1_div7_clk {
++		pll1_div7_clk: pll1_div7 {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks SH73A0_CLK_PLL1>;
+ 			#clock-cells = <0>;
+ 			clock-div = <7>;
+ 			clock-mult = <1>;
+-			clock-output-names = "pll1_div7";
+ 		};
+-		pll1_div13_clk: pll1_div13_clk {
++		pll1_div13_clk: pll1_div13 {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks SH73A0_CLK_PLL1>;
+ 			#clock-cells = <0>;
+ 			clock-div = <13>;
+ 			clock-mult = <1>;
+-			clock-output-names = "pll1_div13";
+ 		};
+-		twd_clk: twd_clk {
++		twd_clk: twd {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks SH73A0_CLK_Z>;
+ 			#clock-cells = <0>;
+ 			clock-div = <4>;
+ 			clock-mult = <1>;
+-			clock-output-names = "twd";
+ 		};
+ 
+ 		/* Gate clocks */
 -- 
 2.1.4
