@@ -1,36 +1,43 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+Return-Path: <horms@vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 16/22] ARM: dts: r8a7791: Use USB3.0 fallback compatibility string
-Date: Mon, 25 Apr 2016 14:27:34 +1000
-Message-Id: <26dba29689aef1135378ab8783157debe1314bce.1461558315.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
-References: <cover.1461558315.git.horms+renesas@verge.net.au>
+Subject: [PATCH 2/2] ARM: shmobile: timer: Drop support for Cortex A8
+Date: Mon,  4 Apr 2016 10:22:58 +0900
+Message-Id: <cd89841fc6dbb6dc11aa113769f39dcd30be720f.1459732456.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1459732456.git.horms+renesas@verge.net.au>
+References: <cover.1459732456.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use recently added fallback compatibility string in r8a7791 device tree.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Commit edf4100906044225 ("ARM: shmobile: sh7372 dtsi: Remove Legacy
+file") removed the DTS for the last shmobile SoC with a Cortex A8 CPU
+core (sh7372 aka SH-Mobile AP4).
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-shmobile/timer.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 6122a7919c9f..6d4a0b6e4df9 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1520,7 +1520,7 @@
- 	};
+diff --git a/arch/arm/mach-shmobile/timer.c b/arch/arm/mach-shmobile/timer.c
+index 67d79f9c6bad..1fc7759feab1 100644
+--- a/arch/arm/mach-shmobile/timer.c
++++ b/arch/arm/mach-shmobile/timer.c
+@@ -54,9 +54,7 @@ void __init shmobile_init_delay(void)
+ 		if (!of_property_read_u32(np, "clock-frequency", &freq))
+ 			max_freq = max(max_freq, freq);
  
- 	xhci: usb@ee000000 {
--		compatible = "renesas,xhci-r8a7791";
-+		compatible = "renesas,xhci-r8a7791", "renesas,rcar-gen2-xhci";
- 		reg = <0 0xee000000 0 0xc00>;
- 		interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7791_CLK_SSUSB>;
+-		if (of_device_is_compatible(np, "arm,cortex-a8")) {
+-			div = 2;
+-		} else if (of_device_is_compatible(np, "arm,cortex-a9")) {
++		if (of_device_is_compatible(np, "arm,cortex-a9")) {
+ 			div = 1;
+ 		} else if (of_device_is_compatible(np, "arm,cortex-a7") ||
+ 			 of_device_is_compatible(np, "arm,cortex-a15")) {
 -- 
-2.7.0.rc3.207.g0ac5344
+2.1.4
