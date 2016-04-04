@@ -3,47 +3,106 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 44/47] ARM: dts: sh73a0: Correct interrupt type for ARM TWD
-Date: Mon,  4 Apr 2016 10:23:16 +0900
-Message-Id: <eaf2be722f632d02055c63a85e966fc05a26ff33.1459732726.git.horms+renesas@verge.net.au>
+Subject: [PATCH 28/47] ARM: dts: r8a7793: Reference both DMA controllers in SCIF nodes
+Date: Mon,  4 Apr 2016 10:23:00 +0900
+Message-Id: <d71b7abf9f8e896078f13573727adf18a8601678.1459732726.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
 References: <cover.1459732726.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-The ARM TWD interrupt is a private peripheral interrupt (PPI), and per
-the ARM GIC documentation, whether the type for PPIs can be set is
-IMPLEMENTATION DEFINED.
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
 
-For SH-Mobile AG5 devices the PPI type cannot be set, and so when we
-attempt to set the type for the ARM TWD interrupt it fails.  This has
-gone unnoticed because it fails silently, and because we cannot
-re-configure the type it has had no impact. Nevertheless fix the type
-for the TWD interrupt so that it matches the hardware configuration.
-
-Based on patches by Jon Hunter for Tegra20/30 and OMAP4.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/sh73a0.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7793.dtsi | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
-index bf825ca4f6f7..3d41fb97689e 100644
---- a/arch/arm/boot/dts/sh73a0.dtsi
-+++ b/arch/arm/boot/dts/sh73a0.dtsi
-@@ -43,7 +43,7 @@
- 	timer@f0000600 {
- 		compatible = "arm,cortex-a9-twd-timer";
- 		reg = <0xf0000600 0x20>;
--		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_EDGE_RISING)>;
- 		clocks = <&twd_clk>;
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index be2e1fdfb07b..88164ac44929 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -641,8 +641,9 @@
+ 		clocks = <&mstp7_clks R8A7793_CLK_SCIF0>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
++		       <&dmac1 0x29>, <&dmac1 0x2a>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
  	};
- 
+@@ -655,8 +656,9 @@
+ 		clocks = <&mstp7_clks R8A7793_CLK_SCIF1>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
++		       <&dmac1 0x2d>, <&dmac1 0x2e>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -669,8 +671,9 @@
+ 		clocks = <&mstp7_clks R8A7793_CLK_SCIF2>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
++		       <&dmac1 0x2b>, <&dmac1 0x2c>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -683,8 +686,9 @@
+ 		clocks = <&mstp7_clks R8A7793_CLK_SCIF3>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x2f>, <&dmac0 0x30>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
++		       <&dmac1 0x2f>, <&dmac1 0x30>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -697,8 +701,9 @@
+ 		clocks = <&mstp7_clks R8A7793_CLK_SCIF4>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
++		       <&dmac1 0xfb>, <&dmac1 0xfc>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
+@@ -711,8 +716,9 @@
+ 		clocks = <&mstp7_clks R8A7793_CLK_SCIF5>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
++		       <&dmac1 0xfd>, <&dmac1 0xfe>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
 -- 
 2.1.4
