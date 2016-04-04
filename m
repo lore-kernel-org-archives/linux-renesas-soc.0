@@ -1,116 +1,49 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+Return-Path: <horms@vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/22] ARM: dts: r8a7794: add CAN clocks to device tree
-Date: Mon, 25 Apr 2016 14:27:25 +1000
-Message-Id: <e980f9418f45a3c0d53e54bc17bd48406060c2bb.1461558315.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
-References: <cover.1461558315.git.horms+renesas@verge.net.au>
+Subject: [PATCH 44/47] ARM: dts: sh73a0: Correct interrupt type for ARM TWD
+Date: Mon,  4 Apr 2016 10:23:16 +0900
+Message-Id: <eaf2be722f632d02055c63a85e966fc05a26ff33.1459732726.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
+References: <cover.1459732726.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add CAN nodes to r8a7794 device tree.
-Based on work by Sergei Shtylyov for the r8a7791 SoC.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
+The ARM TWD interrupt is a private peripheral interrupt (PPI), and per
+the ARM GIC documentation, whether the type for PPIs can be set is
+IMPLEMENTATION DEFINED.
+
+For SH-Mobile AG5 devices the PPI type cannot be set, and so when we
+attempt to set the type for the ARM TWD interrupt it fails.  This has
+gone unnoticed because it fails silently, and because we cannot
+re-configure the type it has had no impact. Nevertheless fix the type
+for the TWD interrupt so that it matches the hardware configuration.
+
+Based on patches by Jon Hunter for Tegra20/30 and OMAP4.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7794.dtsi            | 33 ++++++++++++++++++++++++-------
- include/dt-bindings/clock/r8a7794-clock.h |  3 +++
- 2 files changed, 29 insertions(+), 7 deletions(-)
+ arch/arm/boot/dts/sh73a0.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 7d7d18766540..2d8835bdf3f6 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -843,6 +843,22 @@
- 			clock-frequency = <0>;
- 		};
+diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
+index bf825ca4f6f7..3d41fb97689e 100644
+--- a/arch/arm/boot/dts/sh73a0.dtsi
++++ b/arch/arm/boot/dts/sh73a0.dtsi
+@@ -43,7 +43,7 @@
+ 	timer@f0000600 {
+ 		compatible = "arm,cortex-a9-twd-timer";
+ 		reg = <0xf0000600 0x20>;
+-		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_EDGE_RISING)>;
+ 		clocks = <&twd_clk>;
+ 	};
  
-+		/* External USB clock - can be overridden by the board */
-+		usb_extal_clk: usb_extal {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <48000000>;
-+		};
-+
-+		/* External CAN clock */
-+		can_clk: can {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			/* This value must be overridden by the board. */
-+			clock-frequency = <0>;
-+			status = "disabled";
-+		};
-+
- 		/* External SCIF clock */
- 		scif_clk: scif {
- 			compatible = "fixed-clock";
-@@ -857,10 +873,11 @@
- 			compatible = "renesas,r8a7794-cpg-clocks",
- 				     "renesas,rcar-gen2-cpg-clocks";
- 			reg = <0 0xe6150000 0 0x1000>;
--			clocks = <&extal_clk>;
-+			clocks = <&extal_clk &usb_extal_clk>;
- 			#clock-cells = <1>;
- 			clock-output-names = "main", "pll0", "pll1", "pll3",
--					     "lb", "qspi", "sdh", "sd0", "z";
-+					     "lb", "qspi", "sdh", "sd0", "z",
-+					     "rcan";
- 			#power-domain-cells = <0>;
- 		};
- 		/* Variable factor clocks */
-@@ -1115,20 +1132,22 @@
- 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe6150994 0 4>, <0 0xe61509a4 0 4>;
- 			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
--				 <&cp_clk>, <&cp_clk>, <&cp_clk>,
--				 <&cpg_clocks R8A7794_CLK_QSPI>, <&hp_clk>, <&hp_clk>,
--				 <&hp_clk>, <&hp_clk>, <&hp_clk>, <&hp_clk>;
-+				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&p_clk>,
-+				 <&p_clk>, <&cpg_clocks R8A7794_CLK_QSPI>,
-+				 <&hp_clk>, <&hp_clk>, <&hp_clk>, <&hp_clk>,
-+				 <&hp_clk>, <&hp_clk>;
- 			#clock-cells = <1>;
- 			clock-indices = <R8A7794_CLK_GPIO6 R8A7794_CLK_GPIO5
- 					 R8A7794_CLK_GPIO4 R8A7794_CLK_GPIO3
- 					 R8A7794_CLK_GPIO2 R8A7794_CLK_GPIO1
--					 R8A7794_CLK_GPIO0 R8A7794_CLK_QSPI_MOD
-+					 R8A7794_CLK_GPIO0 R8A7794_CLK_RCAN1
-+					 R8A7794_CLK_RCAN0 R8A7794_CLK_QSPI_MOD
- 					 R8A7794_CLK_I2C5 R8A7794_CLK_I2C4
- 					 R8A7794_CLK_I2C3 R8A7794_CLK_I2C2
- 					 R8A7794_CLK_I2C1 R8A7794_CLK_I2C0>;
- 			clock-output-names =
- 				"gpio6", "gpio5", "gpio4", "gpio3", "gpio2",
--				"gpio1", "gpio0", "qspi_mod",
-+				"gpio1", "gpio0", "rcan1", "rcan0", "qspi_mod",
- 				"i2c5", "i2c4", "i2c3", "i2c2", "i2c1", "i2c0";
- 		};
- 		mstp11_clks: mstp11_clks@e615099c {
-diff --git a/include/dt-bindings/clock/r8a7794-clock.h b/include/dt-bindings/clock/r8a7794-clock.h
-index f843de6bf377..9703fbdb81c8 100644
---- a/include/dt-bindings/clock/r8a7794-clock.h
-+++ b/include/dt-bindings/clock/r8a7794-clock.h
-@@ -21,6 +21,7 @@
- #define R8A7794_CLK_SDH			6
- #define R8A7794_CLK_SD0			7
- #define R8A7794_CLK_Z			8
-+#define R8A7794_CLK_RCAN		9
- 
- /* MSTP0 */
- #define R8A7794_CLK_MSIOF0		0
-@@ -95,6 +96,8 @@
- #define R8A7794_CLK_GPIO2		10
- #define R8A7794_CLK_GPIO1		11
- #define R8A7794_CLK_GPIO0		12
-+#define R8A7794_CLK_RCAN1		15
-+#define R8A7794_CLK_RCAN0		16
- #define R8A7794_CLK_QSPI_MOD		17
- #define R8A7794_CLK_I2C5		25
- #define R8A7794_CLK_I2C4		27
 -- 
-2.7.0.rc3.207.g0ac5344
+2.1.4
