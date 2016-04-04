@@ -1,95 +1,155 @@
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
+Return-Path: <horms@vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/22] ARM: dts: r8a7793: add CAN clocks to device tree
-Date: Mon, 25 Apr 2016 14:27:27 +1000
-Message-Id: <7892e6c1be78a7b008722badd99e5abd0ad6007b.1461558315.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
-References: <cover.1461558315.git.horms+renesas@verge.net.au>
+Subject: [PATCH 06/26] ARM: dts: koelsch: use generic pinctrl properties
+Date: Mon,  4 Apr 2016 10:22:14 +0900
+Message-Id: <fec7b9f8952f396d88228677f44d52c7e20a6be8.1459731908.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1459731908.git.horms+renesas@verge.net.au>
+References: <cover.1459731908.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car CAN controllers can derive the CAN bus clock not only from their
-peripheral clock input (clkp1) but also from the other internal clock
-(clkp2) and external clock fed on CAN_CLK pin. Describe those clocks in
-the device tree along with  the USB_EXTAL clock from which clkp2 is
-derived.
+Since 16ccaf5bb5a5 ("pinctrl: sh-pfc: Accept standard function, pins and
+groups properties") renesas pfc drivers accept generic "function", "pins"
+and "groups" properties.
 
-Based on work by Sergei Shtylyov for the r8a7791 SoC.
+This patch updates the koelsch device tree to use the generic properties.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 27 +++++++++++++++++++++++----
- 1 file changed, 23 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 68 +++++++++++++++++------------------
+ 1 file changed, 34 insertions(+), 34 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 95bbed95b0c1..0e609bdafaa9 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -839,6 +839,22 @@
- 			clock-frequency = <0>;
- 		};
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index 0ad71b81d3a2..c6b43c85a0b1 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -324,89 +324,89 @@
+ 	pinctrl-names = "default";
  
-+		/* External USB clock - can be overridden by the board */
-+		usb_extal_clk: usb_extal {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <48000000>;
-+		};
-+
-+		/* External CAN clock */
-+		can_clk: can {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			/* This value must be overridden by the board. */
-+			clock-frequency = <0>;
-+			status = "disabled";
-+		};
-+
- 		/* External SCIF clock */
- 		scif_clk: scif {
- 			compatible = "fixed-clock";
-@@ -853,7 +869,7 @@
- 			compatible = "renesas,r8a7793-cpg-clocks",
- 				     "renesas,rcar-gen2-cpg-clocks";
- 			reg = <0 0xe6150000 0 0x1000>;
--			clocks = <&extal_clk>;
-+			clocks = <&extal_clk &usb_extal_clk>;
- 			#clock-cells = <1>;
- 			clock-output-names = "main", "pll0", "pll1", "pll3",
- 					     "lb", "qspi", "sdh", "sd0", "z",
-@@ -1081,6 +1097,7 @@
- 			reg = <0 0xe6150994 0 4>, <0 0xe61509a4 0 4>;
- 			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
- 				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
-+				 <&p_clk>, <&p_clk>,
- 				 <&cpg_clocks R8A7793_CLK_QSPI>, <&hp_clk>,
- 				 <&cp_clk>, <&hp_clk>, <&hp_clk>, <&hp_clk>,
- 				 <&hp_clk>, <&hp_clk>;
-@@ -1090,7 +1107,8 @@
- 				R8A7793_CLK_GPIO5 R8A7793_CLK_GPIO4
- 				R8A7793_CLK_GPIO3 R8A7793_CLK_GPIO2
- 				R8A7793_CLK_GPIO1 R8A7793_CLK_GPIO0
--				R8A7793_CLK_QSPI_MOD R8A7793_CLK_I2C5
-+				R8A7793_CLK_QSPI_MOD R8A7793_CLK_RCAN1
-+				R8A7793_CLK_RCAN0 R8A7793_CLK_I2C5
- 				R8A7793_CLK_IICDVFS R8A7793_CLK_I2C4
- 				R8A7793_CLK_I2C3 R8A7793_CLK_I2C2
- 				R8A7793_CLK_I2C1 R8A7793_CLK_I2C0
-@@ -1098,8 +1116,9 @@
- 			clock-output-names =
- 				"gpio7", "gpio6", "gpio5", "gpio4",
- 				"gpio3", "gpio2", "gpio1", "gpio0",
--				"qspi_mod", "i2c5", "i2c6", "i2c4",
--				"i2c3", "i2c2", "i2c1", "i2c0";
-+				"rcan1", "rcan0", "qspi_mod", "i2c5",
-+				"i2c6", "i2c4", "i2c3", "i2c2", "i2c1",
-+				"i2c0";
- 		};
- 		mstp10_clks: mstp10_clks@e6150998 {
- 			compatible = "renesas,r8a7793-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 	i2c2_pins: i2c2 {
+-		renesas,groups = "i2c2";
+-		renesas,function = "i2c2";
++		groups = "i2c2";
++		function = "i2c2";
+ 	};
+ 
+ 	du_pins: du {
+-		renesas,groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
+-		renesas,function = "du";
++		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
++		function = "du";
+ 	};
+ 
+ 	scif0_pins: serial0 {
+-		renesas,groups = "scif0_data_d";
+-		renesas,function = "scif0";
++		groups = "scif0_data_d";
++		function = "scif0";
+ 	};
+ 
+ 	scif1_pins: serial1 {
+-		renesas,groups = "scif1_data_d";
+-		renesas,function = "scif1";
++		groups = "scif1_data_d";
++		function = "scif1";
+ 	};
+ 
+ 	scif_clk_pins: scif_clk {
+-		renesas,groups = "scif_clk";
+-		renesas,function = "scif_clk";
++		groups = "scif_clk";
++		function = "scif_clk";
+ 	};
+ 
+ 	ether_pins: ether {
+-		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
+-		renesas,function = "eth";
++		groups = "eth_link", "eth_mdio", "eth_rmii";
++		function = "eth";
+ 	};
+ 
+ 	phy1_pins: phy1 {
+-		renesas,groups = "intc_irq0";
+-		renesas,function = "intc";
++		groups = "intc_irq0";
++		function = "intc";
+ 	};
+ 
+ 	sdhi0_pins: sd0 {
+-		renesas,groups = "sdhi0_data4", "sdhi0_ctrl";
+-		renesas,function = "sdhi0";
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
+ 	};
+ 
+ 	sdhi1_pins: sd1 {
+-		renesas,groups = "sdhi1_data4", "sdhi1_ctrl";
+-		renesas,function = "sdhi1";
++		groups = "sdhi1_data4", "sdhi1_ctrl";
++		function = "sdhi1";
+ 	};
+ 
+ 	sdhi2_pins: sd2 {
+-		renesas,groups = "sdhi2_data4", "sdhi2_ctrl";
+-		renesas,function = "sdhi2";
++		groups = "sdhi2_data4", "sdhi2_ctrl";
++		function = "sdhi2";
+ 	};
+ 
+ 	qspi_pins: spi0 {
+-		renesas,groups = "qspi_ctrl", "qspi_data4";
+-		renesas,function = "qspi";
++		groups = "qspi_ctrl", "qspi_data4";
++		function = "qspi";
+ 	};
+ 
+ 	msiof0_pins: spi1 {
+-		renesas,groups = "msiof0_clk", "msiof0_sync", "msiof0_rx",
++		groups = "msiof0_clk", "msiof0_sync", "msiof0_rx",
+ 				 "msiof0_tx";
+-		renesas,function = "msiof0";
++		function = "msiof0";
+ 	};
+ 
+ 	usb0_pins: usb0 {
+-		renesas,groups = "usb0";
+-		renesas,function = "usb0";
++		groups = "usb0";
++		function = "usb0";
+ 	};
+ 
+ 	usb1_pins: usb1 {
+-		renesas,groups = "usb1";
+-		renesas,function = "usb1";
++		groups = "usb1";
++		function = "usb1";
+ 	};
+ 
+ 	vin1_pins: vin1 {
+-		renesas,groups = "vin1_data8", "vin1_clk";
+-		renesas,function = "vin1";
++		groups = "vin1_data8", "vin1_clk";
++		function = "vin1";
+ 	};
+ 
+ 	sound_pins: sound {
+-		renesas,groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data";
+-		renesas,function = "ssi";
++		groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data";
++		function = "ssi";
+ 	};
+ 
+ 	sound_clk_pins: sound_clk {
+-		renesas,groups = "audio_clk_a";
+-		renesas,function = "audio_clk";
++		groups = "audio_clk_a";
++		function = "audio_clk";
+ 	};
+ };
+ 
 -- 
-2.7.0.rc3.207.g0ac5344
+2.1.4
