@@ -3,110 +3,70 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: dts: salvator-x: use generic pinctrl properties
-Date: Mon,  4 Apr 2016 10:22:12 +0900
-Message-Id: <fa3d2aede8bf9dd69e9309230169b5ec1cc234e4.1459731706.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1459731706.git.horms+renesas@verge.net.au>
-References: <cover.1459731706.git.horms+renesas@verge.net.au>
+Subject: [PATCH 23/47] ARM: dts: r8a7791: Reference both DMA controllers in SDHI nodes
+Date: Mon,  4 Apr 2016 10:22:55 +0900
+Message-Id: <e1f387ce17c7a04dbe7623699b5b1e35bb9fb3a8.1459732726.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
+References: <cover.1459732726.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since 16ccaf5bb5a5 ("pinctrl: sh-pfc: Accept standard function, pins and
-groups properties") renesas pfc drivers accept generic "function", "pins"
-and "groups" properties.
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-This patch updates the kzm9g device tree to use the generic properties.
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 46 +++++++++++-----------
- 1 file changed, 23 insertions(+), 23 deletions(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index b992b1a3d956..5165d450c10b 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -146,57 +146,57 @@
- 	pinctrl-names = "default";
- 
- 	scif1_pins: scif1 {
--		renesas,groups = "scif1_data_a", "scif1_ctrl";
--		renesas,function = "scif1";
-+		groups = "scif1_data_a", "scif1_ctrl";
-+		function = "scif1";
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 9acecdfed5a7..145c5aa0a134 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -568,8 +568,9 @@
+ 		reg = <0 0xee100000 0 0x328>;
+ 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7791_CLK_SDHI0>;
+-		dmas = <&dmac1 0xcd>, <&dmac1 0xce>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac1 0xcd>, <&dmac1 0xce>,
++		       <&dmac0 0xcd>, <&dmac0 0xce>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
  	};
- 	scif2_pins: scif2 {
--		renesas,groups = "scif2_data_a";
--		renesas,function = "scif2";
-+		groups = "scif2_data_a";
-+		function = "scif2";
+@@ -579,8 +580,9 @@
+ 		reg = <0 0xee140000 0 0x100>;
+ 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7791_CLK_SDHI1>;
+-		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>,
++		       <&dmac0 0xc1>, <&dmac0 0xc2>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
  	};
- 	scif_clk_pins: scif_clk {
--		renesas,groups = "scif_clk_a";
--		renesas,function = "scif_clk";
-+		groups = "scif_clk_a";
-+		function = "scif_clk";
+@@ -590,8 +592,9 @@
+ 		reg = <0 0xee160000 0 0x100>;
+ 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7791_CLK_SDHI2>;
+-		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>,
++		       <&dmac0 0xd3>, <&dmac0 0xd4>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
  	};
- 
- 	i2c2_pins: i2c2 {
--		renesas,groups = "i2c2_a";
--		renesas,function = "i2c2";
-+		groups = "i2c2_a";
-+		function = "i2c2";
- 	};
- 
- 	avb_pins: avb {
--		renesas,groups = "avb_mdc";
--		renesas,function = "avb";
-+		groups = "avb_mdc";
-+		function = "avb";
- 	};
- 
- 	sdhi0_pins: sd0 {
--		renesas,groups = "sdhi0_data4", "sdhi0_ctrl";
--		renesas,function = "sdhi0";
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
- 	};
- 
- 	sdhi3_pins: sd3 {
--		renesas,groups = "sdhi3_data4", "sdhi3_ctrl";
--		renesas,function = "sdhi3";
-+		groups = "sdhi3_data4", "sdhi3_ctrl";
-+		function = "sdhi3";
- 	};
- 
- 	sound_pins: sound {
--		renesas,groups = "ssi01239_ctrl", "ssi0_data", "ssi1_data_a";
--		renesas,function = "ssi";
-+		groups = "ssi01239_ctrl", "ssi0_data", "ssi1_data_a";
-+		function = "ssi";
- 	};
- 
- 	sound_clk_pins: sound_clk {
--		renesas,groups = "audio_clk_a_a", "audio_clk_b_a", "audio_clk_c_a",
--				 "audio_clkout_a", "audio_clkout3_a";
--		renesas,function = "audio_clk";
-+		groups = "audio_clk_a_a", "audio_clk_b_a", "audio_clk_c_a",
-+			 "audio_clkout_a", "audio_clkout3_a";
-+		function = "audio_clk";
- 	};
- 
- 	usb1_pins: usb1 {
--		renesas,groups = "usb1";
--		renesas,function = "usb1";
-+		groups = "usb1";
-+		function = "usb1";
- 	};
- 
- 	usb2_pins: usb2 {
--		renesas,groups = "usb2";
--		renesas,function = "usb2";
-+		groups = "usb2";
-+		function = "usb2";
- 	};
- };
- 
 -- 
 2.1.4
