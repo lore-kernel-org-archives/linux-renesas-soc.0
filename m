@@ -4,63 +4,102 @@ To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 42/47] ARM: dts: r8a7794: add IIC clocks
-Date: Mon,  4 Apr 2016 10:23:14 +0900
-Message-Id: <7b3cfd26d0e46147291e9a03a834d5821e982648.1459732726.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
-References: <cover.1459732726.git.horms+renesas@verge.net.au>
+Subject: [PATCH 04/26] ARM: dts: bockw: use generic pinctrl properties
+Date: Mon,  4 Apr 2016 10:22:12 +0900
+Message-Id: <ddf72563890a3361f7da82510ef8baca37a13830.1459731908.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1459731908.git.horms+renesas@verge.net.au>
+References: <cover.1459731908.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add IIC clocks to r8a7794 device tree.
+Since 16ccaf5bb5a5 ("pinctrl: sh-pfc: Accept standard function, pins and
+groups properties") renesas pfc drivers accept generic "function", "pins"
+and "groups" properties.
 
-Based on similar work for the r8a7790 by Wolfram Sang.
+This patch updates the bockw device tree to use the generic properties.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7794.dtsi            | 9 ++++++---
- include/dt-bindings/clock/r8a7794-clock.h | 2 ++
- 2 files changed, 8 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7778-bockw.dts | 40 ++++++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index e2a4b6bd16a0..78e0b8186e4a 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1150,16 +1150,19 @@
- 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe615013c 0 4>, <0 0xe6150048 0 4>;
- 			clocks = <&sd3_clk>, <&sd2_clk>, <&cpg_clocks R8A7794_CLK_SD0>,
--			         <&mmc0_clk>, <&rclk_clk>, <&hp_clk>, <&hp_clk>;
-+				 <&mmc0_clk>, <&hp_clk>, <&hp_clk>, <&rclk_clk>,
-+				 <&hp_clk>, <&hp_clk>;
- 			#clock-cells = <1>;
- 			clock-indices = <
- 			        R8A7794_CLK_SDHI2 R8A7794_CLK_SDHI1 R8A7794_CLK_SDHI0
--				R8A7794_CLK_MMCIF0 R8A7794_CLK_CMT1
-+				R8A7794_CLK_MMCIF0 R8A7794_CLK_IIC0
-+				R8A7794_CLK_IIC1 R8A7794_CLK_CMT1
- 				R8A7794_CLK_USBDMAC0 R8A7794_CLK_USBDMAC1
- 			>;
- 			clock-output-names =
- 			        "sdhi2", "sdhi1", "sdhi0",
--				"mmcif0", "cmt1", "usbdmac0", "usbdmac1";
-+				"mmcif0", "i2c6", "i2c7",
-+				"cmt1", "usbdmac0", "usbdmac1";
- 		};
- 		mstp4_clks: mstp4_clks@e6150140 {
- 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
-diff --git a/include/dt-bindings/clock/r8a7794-clock.h b/include/dt-bindings/clock/r8a7794-clock.h
-index 9703fbdb81c8..4d3ecd626c1f 100644
---- a/include/dt-bindings/clock/r8a7794-clock.h
-+++ b/include/dt-bindings/clock/r8a7794-clock.h
-@@ -57,6 +57,8 @@
- #define R8A7794_CLK_SDHI1		12
- #define R8A7794_CLK_SDHI0		14
- #define R8A7794_CLK_MMCIF0		15
-+#define R8A7794_CLK_IIC0		18
-+#define R8A7794_CLK_IIC1		23
- #define R8A7794_CLK_CMT1		29
- #define R8A7794_CLK_USBDMAC0		30
- #define R8A7794_CLK_USBDMAC1		31
+diff --git a/arch/arm/boot/dts/r8a7778-bockw.dts b/arch/arm/boot/dts/r8a7778-bockw.dts
+index 21e3b9dda2da..e0dab1464648 100644
+--- a/arch/arm/boot/dts/r8a7778-bockw.dts
++++ b/arch/arm/boot/dts/r8a7778-bockw.dts
+@@ -130,53 +130,53 @@
+ 	pinctrl-names = "default";
+ 
+ 	scif0_pins: serial0 {
+-		renesas,groups = "scif0_data_a", "scif0_ctrl";
+-		renesas,function = "scif0";
++		groups = "scif0_data_a", "scif0_ctrl";
++		function = "scif0";
+ 	};
+ 
+ 	scif_clk_pins: scif_clk {
+-		renesas,groups = "scif_clk";
+-		renesas,function = "scif_clk";
++		groups = "scif_clk";
++		function = "scif_clk";
+ 	};
+ 
+ 	mmc_pins: mmc {
+-		renesas,groups = "mmc_data8", "mmc_ctrl";
+-		renesas,function = "mmc";
++		groups = "mmc_data8", "mmc_ctrl";
++		function = "mmc";
+ 	};
+ 
+ 	sdhi0_pins: sd0 {
+-		renesas,groups = "sdhi0_data4", "sdhi0_ctrl";
+-		renesas,function = "sdhi0";
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
+ 	};
+ 	sdhi0_pup_pins: sd0_pup {
+-		renesas,groups = "sdhi0_cd", "sdhi0_wp";
+-		renesas,function = "sdhi0";
++		groups = "sdhi0_cd", "sdhi0_wp";
++		function = "sdhi0";
+ 		bias-pull-up;
+ 	};
+ 
+ 	hspi0_pins: hspi0 {
+-		renesas,groups = "hspi0_a";
+-		renesas,function = "hspi0";
++		groups = "hspi0_a";
++		function = "hspi0";
+ 	};
+ 
+ 	usb0_pins: usb0 {
+-		renesas,groups = "usb0";
+-		renesas,function = "usb0";
++		groups = "usb0";
++		function = "usb0";
+ 	};
+ 
+ 	usb1_pins: usb1 {
+-		renesas,groups = "usb1";
+-		renesas,function = "usb1";
++		groups = "usb1";
++		function = "usb1";
+ 	};
+ 
+ 	vin0_pins: vin0 {
+-		renesas,groups = "vin0_data8", "vin0_clk";
+-		renesas,function = "vin0";
++		groups = "vin0_data8", "vin0_clk";
++		function = "vin0";
+ 	};
+ 
+ 	vin1_pins: vin1 {
+-		renesas,groups = "vin1_data8", "vin1_clk";
+-		renesas,function = "vin1";
++		groups = "vin1_data8", "vin1_clk";
++		function = "vin1";
+ 	};
+ };
+ 
 -- 
 2.1.4
