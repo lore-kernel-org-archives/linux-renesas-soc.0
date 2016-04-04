@@ -1,77 +1,48 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 2/7] soc: renesas: Add r8a7779 SYSC PM Domain Binding Definitions
-Date: Wed, 13 Apr 2016 16:44:18 +0200
-Message-Id: <1460558663-10197-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460558663-10197-1-git-send-email-geert+renesas@glider.be>
-References: <1460558663-10197-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <horms@vergenet.net>
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 35/47] ARM: dts: r8a7794: Reference both DMA controllers in QSPI node
+Date: Mon,  4 Apr 2016 10:23:07 +0900
+Message-Id: <c6db0133bb01f1ca789df0197c99afe87ee945fe.1459732726.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
+References: <cover.1459732726.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can fallback to the
+later if the first one is unavailable.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v5:
-  - No changes,
+ arch/arm/boot/dts/r8a7794.dtsi | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-v4:
-  - Add Reviewed-by,
-  - Drop R8A7779_PD_SH, as it's not documented in the datasheet,
-  - Add always-on power area,
-
-v3:
-  - New.
----
- include/dt-bindings/power/r8a7779-sysc.h | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a7779-sysc.h
-
-diff --git a/include/dt-bindings/power/r8a7779-sysc.h b/include/dt-bindings/power/r8a7779-sysc.h
-new file mode 100644
-index 0000000000000000..183571da507e5c45
---- /dev/null
-+++ b/include/dt-bindings/power/r8a7779-sysc.h
-@@ -0,0 +1,27 @@
-+/*
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7779_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7779_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A7779_PD_ARM1			 1
-+#define R8A7779_PD_ARM2			 2
-+#define R8A7779_PD_ARM3			 3
-+#define R8A7779_PD_SGX			20
-+#define R8A7779_PD_VDP			21
-+#define R8A7779_PD_IMP			24
-+
-+/* Always-on power area */
-+#define R8A7779_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7779_SYSC_H__ */
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 982f089f218e..4761849cb1f7 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -691,8 +691,9 @@
+ 		reg = <0 0xe6b10000 0 0x2c>;
+ 		interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7794_CLK_QSPI_MOD>;
+-		dmas = <&dmac0 0x17>, <&dmac0 0x18>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x17>, <&dmac0 0x18>,
++		       <&dmac1 0x17>, <&dmac1 0x18>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&cpg_clocks>;
+ 		num-cs = <1>;
+ 		#address-cells = <1>;
 -- 
-1.9.1
-
+2.1.4
