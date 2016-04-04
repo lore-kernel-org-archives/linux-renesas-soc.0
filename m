@@ -5,45 +5,62 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 45/47] ARM: dts: r8a7779: Correct interrupt type for ARM TWD
-Date: Mon,  4 Apr 2016 10:23:17 +0900
-Message-Id: <aff877eb9baec6fa708ad4a8d278795d77f16e1a.1459732726.git.horms+renesas@verge.net.au>
+Subject: [PATCH 03/47] ARM: dts: r8a7790: Add SCIF2 clock
+Date: Mon,  4 Apr 2016 10:22:35 +0900
+Message-Id: <a76e76e582d02e7be37cef51ab8815d27262dfe0.1459732726.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
 References: <cover.1459732726.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The ARM TWD interrupt is a private peripheral interrupt (PPI), and per
-the ARM GIC documentation, whether the type for PPIs can be set is
-IMPLEMENTATION DEFINED.
-
-For R-Car H1 devices the PPI type cannot be set, and so when we attempt
-to set the type for the ARM TWD interrupt it fails.  This has gone
-unnoticed because it fails silently, and because we cannot re-configure
-the type it has had no impact. Nevertheless fix the type for the TWD
-interrupt so that it matches the hardware configuration.
-
-Based on patches by Jon Hunter for Tegra20/30 and OMAP4.
+Based on Rev. 2.00 of the R-Car Gen2 datasheet.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7779.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7790.dtsi            | 6 +++---
+ include/dt-bindings/clock/r8a7790-clock.h | 1 +
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index a0cc08e6295b..efe16bceed39 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -67,7 +67,7 @@
- 		compatible = "arm,cortex-a9-twd-timer";
- 		reg = <0xf0000600 0x20>;
- 		interrupts = <GIC_PPI 13
--			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>;
- 		clocks = <&cpg_clocks R8A7779_CLK_ZS>;
- 	};
- 
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 0967f231f4f4..cc4974a348d9 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1334,19 +1334,19 @@
+ 		mstp3_clks: mstp3_clks@e615013c {
+ 			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe615013c 0 4>, <0 0xe6150048 0 4>;
+-			clocks = <&hp_clk>, <&cp_clk>, <&mmc1_clk>, <&sd3_clk>,
++			clocks = <&hp_clk>, <&cp_clk>, <&mmc1_clk>, <&p_clk>, <&sd3_clk>,
+ 				 <&sd2_clk>, <&cpg_clocks R8A7790_CLK_SD1>, <&cpg_clocks R8A7790_CLK_SD0>, <&mmc0_clk>,
+ 				 <&hp_clk>, <&mp_clk>, <&hp_clk>, <&mp_clk>, <&rclk_clk>,
+ 				 <&hp_clk>, <&hp_clk>;
+ 			#clock-cells = <1>;
+ 			clock-indices = <
+-				R8A7790_CLK_IIC2 R8A7790_CLK_TPU0 R8A7790_CLK_MMCIF1 R8A7790_CLK_SDHI3
++				R8A7790_CLK_IIC2 R8A7790_CLK_TPU0 R8A7790_CLK_MMCIF1 R8A7790_CLK_SCIF2 R8A7790_CLK_SDHI3
+ 				R8A7790_CLK_SDHI2 R8A7790_CLK_SDHI1 R8A7790_CLK_SDHI0 R8A7790_CLK_MMCIF0
+ 				R8A7790_CLK_IIC0 R8A7790_CLK_PCIEC R8A7790_CLK_IIC1 R8A7790_CLK_SSUSB R8A7790_CLK_CMT1
+ 				R8A7790_CLK_USBDMAC0 R8A7790_CLK_USBDMAC1
+ 			>;
+ 			clock-output-names =
+-				"iic2", "tpu0", "mmcif1", "sdhi3",
++				"iic2", "tpu0", "mmcif1", "scif2", "sdhi3",
+ 				"sdhi2", "sdhi1", "sdhi0", "mmcif0",
+ 				"iic0", "pciec", "iic1", "ssusb", "cmt1",
+ 				"usbdmac0", "usbdmac1";
+diff --git a/include/dt-bindings/clock/r8a7790-clock.h b/include/dt-bindings/clock/r8a7790-clock.h
+index 7b1ad8922eec..fa5e8da809f2 100644
+--- a/include/dt-bindings/clock/r8a7790-clock.h
++++ b/include/dt-bindings/clock/r8a7790-clock.h
+@@ -66,6 +66,7 @@
+ #define R8A7790_CLK_IIC2		0
+ #define R8A7790_CLK_TPU0		4
+ #define R8A7790_CLK_MMCIF1		5
++#define R8A7790_CLK_SCIF2		10
+ #define R8A7790_CLK_SDHI3		11
+ #define R8A7790_CLK_SDHI2		12
+ #define R8A7790_CLK_SDHI1		13
 -- 
 2.1.4
