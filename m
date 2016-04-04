@@ -3,70 +3,46 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 30/47] ARM: dts: r8a7793: Reference both DMA controllers in IIC nodes
-Date: Mon,  4 Apr 2016 10:23:02 +0900
-Message-Id: <9e4239aa0ce9ab6d2feb976fcbacd11c0b7a8622.1459732726.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
-References: <cover.1459732726.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH 21/26] ARM: dts: gose: Remove unnecessary clock-output-names properties
+Date: Mon,  4 Apr 2016 10:22:29 +0900
+Message-Id: <45e4f51311f3d4551326bfa43547f86b00af0a94.1459731908.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1459731908.git.horms+renesas@verge.net.au>
+References: <cover.1459731908.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+* Fixed rate and fixed factor clocks do not require an
+  clock-output-names property.
+* Since 07705583e920fef6 ("clk: shmobile: div6: Make clock-output-names
+  optional") Renesas div6 clocks do not require a clock-output-names
+  property.
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+In the above cases there is only one clock output and its name is taken
+from that of the clock node.  Accordingly, remove the unnecessary
+clock-output-names properties and as necessary update the node names.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a7793-gose.dts | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index b16b0cca638c..90925c5d14d0 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -470,8 +470,9 @@
- 		reg = <0 0xe60b0000 0 0x425>;
- 		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7793_CLK_IICDVFS>;
--		dmas = <&dmac0 0x77>, <&dmac0 0x78>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x77>, <&dmac0 0x78>,
-+		       <&dmac1 0x77>, <&dmac1 0x78>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index c61df8b316ee..3cd1c804621f 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -158,11 +158,10 @@
+ 		};
  	};
-@@ -483,8 +484,9 @@
- 		reg = <0 0xe6500000 0 0x425>;
- 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7793_CLK_IIC0>;
--		dmas = <&dmac0 0x61>, <&dmac0 0x62>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x61>, <&dmac0 0x62>,
-+		       <&dmac1 0x61>, <&dmac1 0x62>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
+ 
+-	audio_clock: clock {
++	audio_clock: audio_clock {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <11289600>;
+-		clock-output-names = "audio_clock";
  	};
-@@ -496,8 +498,9 @@
- 		reg = <0 0xe6510000 0 0x425>;
- 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7793_CLK_IIC1>;
--		dmas = <&dmac0 0x65>, <&dmac0 0x66>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x65>, <&dmac0 0x66>,
-+		       <&dmac1 0x65>, <&dmac1 0x66>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
+ 
+ 	rsnd_ak4643: sound {
 -- 
 2.1.4
