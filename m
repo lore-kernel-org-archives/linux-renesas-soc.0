@@ -1,81 +1,102 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 5/7] soc: renesas: Add r8a7793 SYSC PM Domain Binding Definitions
-Date: Wed, 13 Apr 2016 16:44:21 +0200
-Message-Id: <1460558663-10197-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460558663-10197-1-git-send-email-geert+renesas@glider.be>
-References: <1460558663-10197-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: "kishon@ti.com" <kishon@ti.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"pawel.moll@arm.com" <pawel.moll@arm.com>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
+	"galak@codeaurora.org" <galak@codeaurora.org>
+Subject: RE: [PATCH 3/3] phy: rcar-gen3-usb2: add extcon support
+Date: Tue, 5 Apr 2016 09:56:28 +0000
+Message-ID: <SG2PR06MB0919501651329B9449E5A9B2D89E0@SG2PR06MB0919.apcprd06.prod.outlook.com>
+References: <1456999746-2800-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1456999746-2800-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <56E631A1.2090302@samsung.com>
+In-Reply-To: <56E631A1.2090302@samsung.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car M2-N is identical to R-Car M2-W w.r.t. power domains, so reuse the
-definitions from the latter.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-v5:
-  - Add Reviewed-by,
-
-v4:
-  - Rename R8A7793_PD_SH to R8A7793_PD_SH_4A,
-  - Use the numbers directly, to make the header file self-contained,
-  - Add always-on power area,
-
-v3:
-  - New.
----
- include/dt-bindings/power/r8a7793-sysc.h | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a7793-sysc.h
-
-diff --git a/include/dt-bindings/power/r8a7793-sysc.h b/include/dt-bindings/power/r8a7793-sysc.h
-new file mode 100644
-index 0000000000000000..b5693df3d830ed42
---- /dev/null
-+++ b/include/dt-bindings/power/r8a7793-sysc.h
-@@ -0,0 +1,28 @@
-+/*
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7793_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7793_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ *
-+ * Note that R-Car M2-N is identical to R-Car M2-W w.r.t. power domains.
-+ */
-+
-+#define R8A7793_PD_CA15_CPU0		 0
-+#define R8A7793_PD_CA15_CPU1		 1
-+#define R8A7793_PD_CA15_SCU		12
-+#define R8A7793_PD_SH_4A		16
-+#define R8A7793_PD_SGX			20
-+
-+/* Always-on power area */
-+#define R8A7793_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7793_SYSC_H__ */
--- 
-1.9.1
-
+SGkgS2lzaG9uLA0KDQpXb3VsZCB5b3UgcmV2aWV3IHRoaXMgcGF0Y2ggc2V0Pw0KQXMgSSBzYWlk
+IG9uIHRoZSBjb3ZlciBsZXR0ZXIsIHRoaXMgcGF0Y2ggc2V0IGlzIGJhc2VkIG9uIHNvbWUgcGF0
+Y2hlcy4NCmh0dHA6Ly90aHJlYWQuZ21hbmUub3JnL2dtYW5lLmxpbnV4LmRyaXZlcnMuZGV2aWNl
+dHJlZS8xNTg1NjMNCg0KDQpIaSBDaGFud29vLA0KDQpUaGFuayB5b3UgdmVyeSBtdWNoIGZvciB0
+aGUgcmV2aWV3IGFib3V0IGV4dGNvbiB1c2FnZSENCg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJv
+IFNoaW1vZGENCg0KPiBGcm9tOiBDaGFud29vIENob2kgW21haWx0bzpjdzAwLmNob2lAc2Ftc3Vu
+Zy5jb21dDQo+IFNlbnQ6IE1vbmRheSwgTWFyY2ggMTQsIDIwMTYgMTI6MzYgUE0NCj4gDQo+IEhp
+IFlvc2hpaGlybywNCj4gDQo+IE9uIDIwMTbrhYQgMDPsm5QgMDPsnbwgMTk6MDksIFlvc2hpaGly
+byBTaGltb2RhIHdyb3RlOg0KPiA+IFRoaXMgcGF0Y2ggYWRkcyBleHRjb24gc3VwcG9ydCBmb3Ig
+b3RnIHJlbGF0ZWQgY2hhbm5lbC4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFlvc2hpaGlybyBT
+aGltb2RhIDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4NCj4gPiAtLS0NCj4gPiAg
+ZHJpdmVycy9waHkvS2NvbmZpZyAgICAgICAgICAgICAgfCAgMSArDQo+ID4gIGRyaXZlcnMvcGh5
+L3BoeS1yY2FyLWdlbjMtdXNiMi5jIHwgMjYgKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4g
+PiAgMiBmaWxlcyBjaGFuZ2VkLCAyNyBpbnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9waHkvS2NvbmZpZyBiL2RyaXZlcnMvcGh5L0tjb25maWcNCj4gPiBpbmRleCBi
+YTY4ZjE0Li5kYjU3ZDZjIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvcGh5L0tjb25maWcNCj4g
+PiArKysgYi9kcml2ZXJzL3BoeS9LY29uZmlnDQo+ID4gQEAgLTEyMSw2ICsxMjEsNyBAQCBjb25m
+aWcgUEhZX1JDQVJfR0VOMg0KPiA+ICBjb25maWcgUEhZX1JDQVJfR0VOM19VU0IyDQo+ID4gIAl0
+cmlzdGF0ZSAiUmVuZXNhcyBSLUNhciBnZW5lcmF0aW9uIDMgVVNCIDIuMCBQSFkgZHJpdmVyIg0K
+PiA+ICAJZGVwZW5kcyBvbiBPRiAmJiBBUkNIX1JFTkVTQVMNCj4gPiArCWRlcGVuZHMgb24gRVhU
+Q09ODQo+ID4gIAlzZWxlY3QgR0VORVJJQ19QSFkNCj4gPiAgCWhlbHANCj4gPiAgCSAgU3VwcG9y
+dCBmb3IgVVNCIDIuMCBQSFkgZm91bmQgb24gUmVuZXNhcyBSLUNhciBnZW5lcmF0aW9uIDMgU29D
+cy4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waHkvcGh5LXJjYXItZ2VuMy11c2IyLmMgYi9k
+cml2ZXJzL3BoeS9waHktcmNhci1nZW4zLXVzYjIuYw0KPiA+IGluZGV4IDdiMTQyNDQuLjc2YmI4
+OGYgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9waHkvcGh5LXJjYXItZ2VuMy11c2IyLmMNCj4g
+PiArKysgYi9kcml2ZXJzL3BoeS9waHktcmNhci1nZW4zLXVzYjIuYw0KPiA+IEBAIC0xMiw2ICsx
+Miw3IEBADQo+ID4gICAqIHB1Ymxpc2hlZCBieSB0aGUgRnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9u
+Lg0KPiA+ICAgKi8NCj4gPg0KPiA+ICsjaW5jbHVkZSA8bGludXgvZXh0Y29uLmg+DQo+ID4gICNp
+bmNsdWRlIDxsaW51eC9pbnRlcnJ1cHQuaD4NCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2lvLmg+DQo+
+ID4gICNpbmNsdWRlIDxsaW51eC9tb2R1bGUuaD4NCj4gPiBAQCAtNzcsNiArNzgsNyBAQA0KPiA+
+DQo+ID4gIHN0cnVjdCByY2FyX2dlbjNfY2hhbiB7DQo+ID4gIAl2b2lkIF9faW9tZW0gKmJhc2U7
+DQo+ID4gKwlzdHJ1Y3QgZXh0Y29uX2RldiAqZXh0Y29uOw0KPiA+ICAJc3RydWN0IHBoeSAqcGh5
+Ow0KPiA+ICAJc3RydWN0IHJlZ3VsYXRvciAqdmJ1czsNCj4gPiAgCWJvb2wgaGFzX290ZzsNCj4g
+PiBAQCAtMTI3LDYgKzEyOSw5IEBAIHN0YXRpYyB2b2lkIHJjYXJfZ2VuM19pbml0X2Zvcl9ob3N0
+KHN0cnVjdCByY2FyX2dlbjNfY2hhbiAqY2gpDQo+ID4gIAlyY2FyX2dlbjNfc2V0X2xpbmVjdHJs
+KGNoLCAxLCAxKTsNCj4gPiAgCXJjYXJfZ2VuM19zZXRfaG9zdF9tb2RlKGNoLCAxKTsNCj4gPiAg
+CXJjYXJfZ2VuM19lbmFibGVfdmJ1c19jdHJsKGNoLCAxKTsNCj4gPiArDQo+ID4gKwlleHRjb25f
+c2V0X2NhYmxlX3N0YXRlXyhjaC0+ZXh0Y29uLCBFWFRDT05fVVNCX0hPU1QsIHRydWUpOw0KPiA+
+ICsJZXh0Y29uX3NldF9jYWJsZV9zdGF0ZV8oY2gtPmV4dGNvbiwgRVhUQ09OX1VTQiwgZmFsc2Up
+Ow0KPiA+ICB9DQo+ID4NCj4gPiAgc3RhdGljIHZvaWQgcmNhcl9nZW4zX2luaXRfZm9yX3Blcmko
+c3RydWN0IHJjYXJfZ2VuM19jaGFuICpjaCkNCj4gPiBAQCAtMTM0LDYgKzEzOSw5IEBAIHN0YXRp
+YyB2b2lkIHJjYXJfZ2VuM19pbml0X2Zvcl9wZXJpKHN0cnVjdCByY2FyX2dlbjNfY2hhbiAqY2gp
+DQo+ID4gIAlyY2FyX2dlbjNfc2V0X2xpbmVjdHJsKGNoLCAwLCAxKTsNCj4gPiAgCXJjYXJfZ2Vu
+M19zZXRfaG9zdF9tb2RlKGNoLCAwKTsNCj4gPiAgCXJjYXJfZ2VuM19lbmFibGVfdmJ1c19jdHJs
+KGNoLCAwKTsNCj4gPiArDQo+ID4gKwlleHRjb25fc2V0X2NhYmxlX3N0YXRlXyhjaC0+ZXh0Y29u
+LCBFWFRDT05fVVNCX0hPU1QsIGZhbHNlKTsNCj4gPiArCWV4dGNvbl9zZXRfY2FibGVfc3RhdGVf
+KGNoLT5leHRjb24sIEVYVENPTl9VU0IsIHRydWUpOw0KPiA+ICB9DQo+ID4NCj4gPiAgc3RhdGlj
+IGJvb2wgcmNhcl9nZW4zX2NoZWNrX3ZidXMoc3RydWN0IHJjYXJfZ2VuM19jaGFuICpjaCkNCj4g
+PiBAQCAtMjcyLDYgKzI4MCwxMiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBy
+Y2FyX2dlbjNfcGh5X3VzYjJfbWF0Y2hfdGFibGVbXSA9IHsNCj4gPiAgfTsNCj4gPiAgTU9EVUxF
+X0RFVklDRV9UQUJMRShvZiwgcmNhcl9nZW4zX3BoeV91c2IyX21hdGNoX3RhYmxlKTsNCj4gPg0K
+PiA+ICtzdGF0aWMgY29uc3QgdW5zaWduZWQgaW50IHJjYXJfZ2VuM19waHlfY2FibGVbXSA9IHsN
+Cj4gPiArCUVYVENPTl9VU0IsDQo+ID4gKwlFWFRDT05fVVNCX0hPU1QsDQo+ID4gKwlFWFRDT05f
+Tk9ORSwNCj4gPiArfTsNCj4gPiArDQo+ID4gIHN0YXRpYyBpbnQgcmNhcl9nZW4zX3BoeV91c2Iy
+X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ID4gIHsNCj4gPiAgCXN0cnVj
+dCBkZXZpY2UgKmRldiA9ICZwZGV2LT5kZXY7DQo+ID4gQEAgLTI5NywxMSArMzExLDIzIEBAIHN0
+YXRpYyBpbnQgcmNhcl9nZW4zX3BoeV91c2IyX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2Ug
+KnBkZXYpDQo+ID4gIAkvKiBjYWxsIHJlcXVlc3RfaXJxIGZvciBPVEcgKi8NCj4gPiAgCWlycSA9
+IHBsYXRmb3JtX2dldF9pcnEocGRldiwgMCk7DQo+ID4gIAlpZiAoaXJxID49IDApIHsNCj4gPiAr
+CQlpbnQgcmV0Ow0KPiA+ICsNCj4gPiAgCQlpcnEgPSBkZXZtX3JlcXVlc3RfaXJxKGRldiwgaXJx
+LCByY2FyX2dlbjNfcGh5X3VzYjJfaXJxLA0KPiA+ICAJCQkJICAgICAgIElSUUZfU0hBUkVELCBk
+ZXZfbmFtZShkZXYpLCBjaGFubmVsKTsNCj4gPiAgCQlpZiAoaXJxIDwgMCkNCj4gPiAgCQkJZGV2
+X2VycihkZXYsICJObyBpcnEgaGFuZGxlciAoJWQpXG4iLCBpcnEpOw0KPiA+ICAJCWNoYW5uZWwt
+Pmhhc19vdGcgPSB0cnVlOw0KPiA+ICsJCWNoYW5uZWwtPmV4dGNvbiA9IGRldm1fZXh0Y29uX2Rl
+dl9hbGxvY2F0ZShkZXYsDQo+ID4gKwkJCQkJCQlyY2FyX2dlbjNfcGh5X2NhYmxlKTsNCj4gPiAr
+CQlpZiAoSVNfRVJSKGNoYW5uZWwtPmV4dGNvbikpDQo+ID4gKwkJCXJldHVybiBQVFJfRVJSKGNo
+YW5uZWwtPmV4dGNvbik7DQo+ID4gKw0KPiA+ICsJCXJldCA9IGRldm1fZXh0Y29uX2Rldl9yZWdp
+c3RlcihkZXYsIGNoYW5uZWwtPmV4dGNvbik7DQo+ID4gKwkJaWYgKHJldCA8IDApIHsNCj4gPiAr
+CQkJZGV2X2VycihkZXYsICJGYWlsZWQgdG8gcmVnaXN0ZXIgZXh0Y29uXG4iKTsNCj4gPiArCQkJ
+cmV0dXJuIHJldDsNCj4gPiArCQl9DQo+ID4gIAl9DQo+ID4NCj4gPiAgCS8qIGRldm1fcGh5X2Ny
+ZWF0ZSgpIHdpbGwgY2FsbCBwbV9ydW50aW1lX2VuYWJsZShkZXYpOyAqLw0KPiA+DQo+IA0KPiBM
+b29rcyBnb29kIHRvIG1lIGFib3V0IGV4dGNvbiB1c2dhZS4NCj4gDQo+IFJldmlld2VkLWJ5OiBD
+aGFud29vIENob2kgPGN3MDAuY2hvaUBzYW1zdW5nLmNvbT4NCj4gDQo+IEJlc3QgUmVnYXJkcywN
+Cj4gQ2hhbndvbyBDaG9pDQoNCg==
