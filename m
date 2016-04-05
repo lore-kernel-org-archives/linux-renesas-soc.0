@@ -1,111 +1,33 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Peter Hurley <peter@hurleysoftware.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 00/11] serial: sh-sci: Hardware Flow Control Updates
-Date: Fri, 29 Apr 2016 14:58:23 +0200
-Message-Id: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+Date: Tue, 5 Apr 2016 16:02:35 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: iommu@lists.linux-foundation.org,
+	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	horms+renesas@verge.net.au, robin.murphy@arm.com,
+	m.szyprowski@samsung.com
+Subject: Re: [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
+Message-ID: <20160405140235.GA11519@8bytes.org>
+References: <20160315170431.20615.30333.sendpatchset@little-apple>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160315170431.20615.30333.sendpatchset@little-apple>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+On Wed, Mar 16, 2016 at 02:04:31AM +0900, Magnus Damm wrote:
+> iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
+> 
+> [PATCH 01/04] iommu/ipmmu-vmsa: 32-bit ARM may have CONFIG_IOMMU_DMA=y
+> [PATCH 02/04] iommu/ipmmu-vmsa: Break out utlb parsing code
+> [PATCH 03/04] iommu/ipmmu-vmsa: Break out domain allocation code
+> [PATCH 04/04] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
 
-This patch series contains updates to the Renesas SCI UART driver,
-related to hardware flow control:
-  - Patches 1-2: Device Tree binding updates for GPIO-controlled modem
-    lines, and for dedicated RTS/CTS modem lines,
-  - Patches 3-4: Driver support for GPIO-controlled modem lines, using
-    the serial_mctrl_gpio helpers,
-  - New patches 5-11: Driver support for hardware-assisted (automatic)
-    hardware flow control using the dedicated RTS/CTS modem lines.
+These patches do not apply to v4.6-rc2. Can you please rebase them,
+address the comments and add the Reviewed-by's?
 
-Changes compared to v1 (more details in the individual patches):
-  - Add Acked-by,
-  - Refer to the Generic Serial DT Bindings,
-  - Drop out[12]-gpios,
-  - Reject combining GPIO and dedicated RTS/CTS,
-  - Drop "serial: sh-sci: Replace SCIx_HAVE_RTSCTS by standard
-    UPF_HARD_FLOW",
-  - Add support for hardware-assisted automatic RTS/CTS control on
-    (H)SCIF, SCIFA, and SCIFB.
 
-Dependencies:
-  - The patches apply to next-20160429,
-  - The DT bindings refer to the Generic Serial DT Bindings that were
-    added by "doc: DT: Add Generic Serial Device Tree Bindings", which
-    is in tty-testing.
-
-This was tested on r8a7791/koelsch and r8a7740/armadillo, using UARTs
-and GPIO pins on expansion connectors.
-
-Expected behavior, using GPIO-based RTS/CTS as a reference:
-  - When CRTSCTS is disabled:
-      - Reading from a UART asserts the RTS line,
-      - Writing to a UART asserts the RTS line.
-  - When CRTSCTS is enabled:
-      - Reading from a UART asserts the RTS line,
-      - Writing to a UART asserts the RTS line.
-      - Writing is blocked until CTS is asserted.
-
-Hardware-assisted hardware flow control with HSCIF and SCIFB on
-r8a7791/koelsch behaves as expected when dedicated RTS/CTS modem lines
-are enabled (beware the large transmission FIFOs on SCIFB ;-)
-
-For SCIFA on r8a7740/armadillo, manually overriding (asserting) the RTS
-signal doesn't seem to work. Hence when CRTSCTS is disabled, RTS is
-never asserted. When CRTSCTS is enabled, hardware-assisted RTS/CTS does
-control RTS as expected. As SCIFA on r8a7791 doesn't have dedicated
-RTS/CTS modem lines, I cannot compare.
-
-DT overlays for testing can be found in the topic/renesas-overlays
-branch of
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git.
-
-Regression testing on platforms without DT and/or GPIOLIB support
-(SuperH) would be appreciated.
-Compile-tested on ecovec24_defconfig(GPIOLIB=y) and se7780_defconfig
-(GPIOLIB=n).
-
-Thanks!
-
-Geert Uytterhoeven (11):
-  serial: sh-sci: Update DT binding documentation for GPIO modem lines
-  serial: sh-sci: Update DT binding documentation for dedicated RTS/CTS
-  serial: sh-sci: Always set TIOCM_CTS in .get_mctrl() callback
-  serial: sh-sci: Add support for GPIO-controlled modem lines
-  serial: sh-sci: Do not open-code sci_getreg()
-  serial: sh-sci: Add more Serial Port Register documentation
-  serial: sh-sci: Add more Serial Port Control/Data Register
-    documentation
-  serial: sh-sci: Correct pin initialization on (H)SCIF
-  serial: sh-sci: Add pin initialization for SCIFA/SCIFB
-  serial: sh-sci: Fix support for hardware-assisted RTS/CTS
-  serial: sh-sci: Add DT support for dedicated RTS/CTS
-
- .../bindings/serial/renesas,sci-serial.txt         |   4 +
- drivers/tty/serial/Kconfig                         |   1 +
- drivers/tty/serial/sh-sci.c                        | 177 ++++++++++++++++++---
- drivers/tty/serial/sh-sci.h                        |  24 ++-
- 4 files changed, 173 insertions(+), 33 deletions(-)
-
--- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+	Joerg
