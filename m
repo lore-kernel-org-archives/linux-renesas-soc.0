@@ -3,8 +3,8 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
 In-Reply-To: <1459947173-6664-1-git-send-email-sjoerd.simons@collabora.co.uk>
 References: <1459947173-6664-1-git-send-email-sjoerd.simons@collabora.co.uk>
-Date: Wed, 6 Apr 2016 15:11:37 +0200
-Message-ID: <CAMuHMdUtPhBT0_+hSk_t5osHC8TssyGMFo+YOWetTGBkbpB4PQ@mail.gmail.com>
+Date: Wed, 6 Apr 2016 15:09:20 +0200
+Message-ID: <CAMuHMdWriHffbdXH0bDwgoCsn0zzhC3_c3X6dYVU1-8DzFLCWQ@mail.gmail.com>
 Subject: Re: [PATCH] ARM: dts: r8a7791: Don't disable referenced optional clocks
 From: Geert Uytterhoeven <geert@linux-m68k.org>
 To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
@@ -14,14 +14,14 @@ Cc: Simon Horman <horms@verge.net.au>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	"linux-arm-kernel@lists.infradead.org"
 	<linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>,
+	Mike Turquette <mturquette@linaro.org>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-CC Mike, Stephen, linux-clk (this time with the new Mike)
+CC Mike, Stephen, linux-clk
 
 On Wed, Apr 6, 2016 at 2:52 PM, Sjoerd Simons
 <sjoerd.simons@collabora.co.uk> wrote:
