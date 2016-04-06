@@ -1,41 +1,63 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1459971126-26622-1-git-send-email-sjoerd.simons@collabora.co.uk>
-References: <1459971126-26622-1-git-send-email-sjoerd.simons@collabora.co.uk>
-Date: Thu, 7 Apr 2016 09:00:00 +0200
-Message-ID: <CAMuHMdWnJn8-FybRrZH1+72GbyKa-kM_JG6PR01mZHn=4ZNuxQ@mail.gmail.com>
-Subject: Re: [PATCH] Revert "ARM: dts: porter: Enable SCIF_CLK frequency and pins"
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Cc: Simon Horman <horms@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+To: Simon Horman <horms@verge.net.au>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] Revert "ARM: dts: porter: Enable SCIF_CLK frequency and pins"
+Date: Wed,  6 Apr 2016 21:32:06 +0200
+Message-Id: <1459971126-26622-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Apr 6, 2016 at 9:32 PM, Sjoerd Simons
-<sjoerd.simons@collabora.co.uk> wrote:
-> This reverts commit 19417bd9c5112f58ea63e97ba72edabd5e1cc0fe as
-> according to
-> http://elinux.org/File:R-CarM2-KOELSCH_PORTER-B_PORTER_C_Comparison.pdf
-> the external oscilator for SCIF_CLK is not mounted on the porter boards.
->
-> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+This reverts commit 19417bd9c5112f58ea63e97ba72edabd5e1cc0fe as
+according to
+http://elinux.org/File:R-CarM2-KOELSCH_PORTER-B_PORTER_C_Comparison.pdf
+the external oscilator for SCIF_CLK is not mounted on the porter boards.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-Gr{oetje,eeting}s,
+---
 
-                        Geert
+ arch/arm/boot/dts/r8a7791-porter.dts | 13 -------------
+ 1 file changed, 13 deletions(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index 9554d13..dbcf3bb 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -142,19 +142,11 @@
+ };
+ 
+ &pfc {
+-	pinctrl-0 = <&scif_clk_pins>;
+-	pinctrl-names = "default";
+-
+ 	scif0_pins: serial0 {
+ 		groups = "scif0_data_d";
+ 		function = "scif0";
+ 	};
+ 
+-	scif_clk_pins: scif_clk {
+-		groups = "scif_clk";
+-		function = "scif_clk";
+-	};
+-
+ 	ether_pins: ether {
+ 		groups = "eth_link", "eth_mdio", "eth_rmii";
+ 		function = "eth";
+@@ -228,11 +220,6 @@
+ 	status = "okay";
+ };
+ 
+-&scif_clk {
+-	clock-frequency = <14745600>;
+-	status = "okay";
+-};
+-
+ &ether {
+ 	pinctrl-0 = <&ether_pins &phy1_pins>;
+ 	pinctrl-names = "default";
+-- 
+2.8.0.rc3
