@@ -1,68 +1,169 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f196.google.com ([209.85.213.196]:36231 "EHLO
-	mail-ig0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752601AbcDYO5H (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 10:57:07 -0400
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUDTaMyx1Rjtc-z-MsbEmqpRuZNAvQC3sH-JykneJd2Hg@mail.gmail.com>
-References: <1461232154-7420-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-	<874mavb7lk.fsf@intel.com>
-	<SG2PR06MB09192CE67BF5338A96FA0203D86E0@SG2PR06MB0919.apcprd06.prod.outlook.com>
-	<871t5zb6xl.fsf@intel.com>
-	<SG2PR06MB0919CA6B51CAE8FEFFA993D1D86E0@SG2PR06MB0919.apcprd06.prod.outlook.com>
-	<CAMuHMdUDTaMyx1Rjtc-z-MsbEmqpRuZNAvQC3sH-JykneJd2Hg@mail.gmail.com>
-Date: Mon, 25 Apr 2016 16:57:05 +0200
-Message-ID: <CAMuHMdWH3mm0NzmRs0sX7q_nb-HCcdCkTRM1SfteApqQ+feVxw@mail.gmail.com>
-Subject: Re: [PATCH] usb: host: xhci-rcar: Avoid long wait in xhci_reset()
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Felipe Balbi <felipe.balbi@linux.intel.com>,
-	"mathias.nyman@intel.com" <mathias.nyman@intel.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH 2/3] phy: rcar-gen3-usb2: Add vbus-supply to handle VBUS
+ on/off
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"pawel.moll@arm.com" <pawel.moll@arm.com>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
+	"galak@codeaurora.org" <galak@codeaurora.org>
+References: <1456999746-2800-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1456999746-2800-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <5703992F.7090601@ti.com>
+ <SG2PR06MB0919DB87061EB528C9211B24D89F0@SG2PR06MB0919.apcprd06.prod.outlook.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	<linux-renesas-soc@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <570504E8.2090201@ti.com>
+Date: Wed, 6 Apr 2016 18:15:28 +0530
+MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB0919DB87061EB528C9211B24D89F0@SG2PR06MB0919.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Shimoda-san,
+Hi,
 
-On Thu, Apr 21, 2016 at 2:57 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Thu, Apr 21, 2016 at 12:27 PM, Yoshihiro Shimoda
-> <yoshihiro.shimoda.uh@renesas.com> wrote:
->>> > [    1.565605] xhci-hcd ee000000.usb: xHCI Host Controller
->>> > [    1.570636] xhci-hcd ee000000.usb: new USB bus registered, assigned bus number 5
->>> > [   22.270160] xhci-hcd ee000000.usb: can't setup: -110
->>> > [   22.274931] xhci-hcd ee000000.usb: USB bus 5 deregistered
->>> > [   22.280158] xhci-hcd: probe of ee000000.usb failed with error -110
->>> >
->>> > The timestamp is strange to me. But, logs of R-Car H3 (ES1.0) and
->>> > R-Car H2 were the same.
->>>
->>> yeah, seems like your system timer is counting twice for each tick.
+On Wednesday 06 April 2016 05:55 AM, Yoshihiro Shimoda wrote:
+> Hi,
+> 
+>> From: Kishon Vijay Abraham I
+>> Sent: Tuesday, April 05, 2016 7:54 PM
 >>
->> Yes, I will investigate this later.
->
-> The main clock crystal on Salvator-X is half of the expected value. But
-> despite the correct value being in the DTS, there's some timer code that
-> doesn't take this into account.
+>> Hi,
+>>
+>> On Thursday 03 March 2016 03:39 PM, Yoshihiro Shimoda wrote:
+>>> To handle the VBUS on/off by a regulator driver, this patch adds
+>>> regulator APIs calling in the driver and description about vbus-supply
+>>> in the rcar-gen3-phy-usb2.txt.
+>>>
+>>> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>>> Acked-by: Rob Herring <robh@kernel.org>
+>>> ---
+>>>  .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  2 ++
+>>>  drivers/phy/phy-rcar-gen3-usb2.c                   | 28 ++++++++++++++++++++++
+>>>  2 files changed, 30 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+>> b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+>>> index 86826ca..7243b3b 100644
+>>> --- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+>>> +++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+>>> @@ -21,6 +21,8 @@ To use a USB channel where USB 2.0 Host and HSUSB (USB 2.0 Peripheral) are
+>>>  combined, the device tree node should set interrupt properties to use the
+>>>  channel as USB OTG:
+>>>  - interrupts: interrupt specifier for the PHY.
+>>> +- vbus-supply: Phandle to a regulator that provides power to the VBUS. This
+>>> +	       regulator will be managed during the PHY power on/off sequence.
+>>
+>> Why not use phy-supply from the generic PHY binding? It can then be managed by
+>> the phy core during power_on/power_off.
+> 
+> Thank you for the review!
+> 
+> I'm afraid, I should have added your address as CC when I sent RFC patch set.
+> Anyway, Rob had a comment about "phy-supply":
+> http://thread.gmane.org/gmane.linux.kernel.renesas-soc/366/focus=406
+> 
+> I agreed with Rob because the document mentioned the followings:
+> 
+> Optional Properties:
+> phy-supply:	Phandle to a regulator that provides power to the PHY. This
+> 		regulator will be managed during the PHY power on/off sequence.
+> 
+> https://git.kernel.org/cgit/linux/kernel/git/kishon/linux-phy.git/tree/Documentation/devicetree/bindings/phy/phy-bindings.txt?h=next#n13
+> 
+> And then, I changed the "phy-supply" to "vbus-supply" and this driver managed the "vbus-supply".
+> Or, do I misunderstand the document?
 
-It's fixed by upgrading to bootloader v270:
+All right. Will queue this for 4.7.
 
--Architected cp15 timer(s) running at 16.66MHz (virt).
-+Architected cp15 timer(s) running at 8.33MHz (virt).
+Thanks
+Kishon
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+> Best regards,
+> Yoshihiro Shimoda
+> 
+>> Thanks
+>> Kishon
+>>
+>>>
+>>>  Example (R-Car H3):
+>>>
+>>> diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
+>>> index 3c647cd..7b14244 100644
+>>> --- a/drivers/phy/phy-rcar-gen3-usb2.c
+>>> +++ b/drivers/phy/phy-rcar-gen3-usb2.c
+>>> @@ -19,6 +19,7 @@
+>>>  #include <linux/of_address.h>
+>>>  #include <linux/phy/phy.h>
+>>>  #include <linux/platform_device.h>
+>>> +#include <linux/regulator/consumer.h>
+>>>
+>>>  /******* USB2.0 Host registers (original offset is +0x200) *******/
+>>>  #define USB2_INT_ENABLE		0x000
+>>> @@ -77,6 +78,7 @@
+>>>  struct rcar_gen3_chan {
+>>>  	void __iomem *base;
+>>>  	struct phy *phy;
+>>> +	struct regulator *vbus;
+>>>  	bool has_otg;
+>>>  };
+>>>
+>>> @@ -210,6 +212,13 @@ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
+>>>  	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
+>>>  	void __iomem *usb2_base = channel->base;
+>>>  	u32 val;
+>>> +	int ret;
+>>> +
+>>> +	if (channel->vbus) {
+>>> +		ret = regulator_enable(channel->vbus);
+>>> +		if (ret)
+>>> +			return ret;
+>>> +	}
+>>>
+>>>  	val = readl(usb2_base + USB2_USBCTR);
+>>>  	val |= USB2_USBCTR_PLL_RST;
+>>> @@ -220,10 +229,22 @@ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
+>>>  	return 0;
+>>>  }
+>>>
+>>> +static int rcar_gen3_phy_usb2_power_off(struct phy *p)
+>>> +{
+>>> +	struct rcar_gen3_chan *channel = phy_get_drvdata(p);
+>>> +	int ret = 0;
+>>> +
+>>> +	if (channel->vbus)
+>>> +		ret = regulator_disable(channel->vbus);
+>>> +
+>>> +	return ret;
+>>> +}
+>>> +
+>>>  static struct phy_ops rcar_gen3_phy_usb2_ops = {
+>>>  	.init		= rcar_gen3_phy_usb2_init,
+>>>  	.exit		= rcar_gen3_phy_usb2_exit,
+>>>  	.power_on	= rcar_gen3_phy_usb2_power_on,
+>>> +	.power_off	= rcar_gen3_phy_usb2_power_off,
+>>>  	.owner		= THIS_MODULE,
+>>>  };
+>>>
+>>> @@ -290,6 +311,13 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+>>>  		return PTR_ERR(channel->phy);
+>>>  	}
+>>>
+>>> +	channel->vbus = devm_regulator_get_optional(dev, "vbus");
+>>> +	if (IS_ERR(channel->vbus)) {
+>>> +		if (PTR_ERR(channel->vbus) == -EPROBE_DEFER)
+>>> +			return PTR_ERR(channel->vbus);
+>>> +		channel->vbus = NULL;
+>>> +	}
+>>> +
+>>>  	phy_set_drvdata(channel->phy, channel);
+>>>
+>>>  	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+>>>
