@@ -1,108 +1,148 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:37360 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965217AbcDYVga (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 17:36:30 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH v2 12/13] drm: rcar-du: Add Z-order support for VSP planes
-Date: Tue, 26 Apr 2016 00:36:37 +0300
-Message-Id: <1461620198-13428-13-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1461620198-13428-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1461620198-13428-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 02/12] ARM: dts: r8a7790: Add SYSC PM Domains
+Date: Thu,  7 Apr 2016 14:20:25 +0200
+Message-Id: <1460031635-13452-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
+References: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make the Z-order of VSP planes configurable through the zpos property,
-exactly as for the native DU planes.
+Add a device node for the System Controller, and hook it up to the
+CPG/MSTP Clock Domain.
+Hook up the Cortex-A15 and Cortex-A7 CPU cores and L2 caches/SCUs to
+their respective PM Domains.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Acked-by: Dave Airlie <airlied@redhat.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c | 11 ++++++++---
- drivers/gpu/drm/rcar-du/rcar_du_vsp.h |  2 ++
- 2 files changed, 10 insertions(+), 3 deletions(-)
+v4:
+  - Add power-domains property to the sysc node, to refer to the SoC's
+    Clock Domain,
 
-Cc: dri-devel@lists.freedesktop.org
+v3:
+  - Drop power area hiearchy from DT,
+  - Switch to "#power-domain-cells = <1>",
+  - Drop fallback compatibility strings,
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 8c89a6401542..4927fb3b8554 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -152,7 +152,7 @@ static void rcar_du_vsp_plane_setup(struct rcar_du_vsp_plane *plane)
- 		.pixelformat = 0,
- 		.pitch = fb->pitches[0],
- 		.alpha = state->alpha,
--		.zpos = 0,
-+		.zpos = state->zpos,
+v2:
+  - Change one-line summary prefix to match current arm-soc practices,
+  - Update compatible values.
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 50e8484511893572..952059a925650bea 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -13,6 +13,7 @@
+ #include <dt-bindings/clock/r8a7790-clock.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/power/r8a7790-sysc.h>
+ 
+ / {
+ 	compatible = "renesas,r8a7790";
+@@ -52,6 +53,7 @@
+ 			voltage-tolerance = <1>; /* 1% */
+ 			clocks = <&cpg_clocks R8A7790_CLK_Z>;
+ 			clock-latency = <300000>; /* 300 us */
++			power-domains = <&sysc R8A7790_PD_CA15_CPU0>;
+ 			next-level-cache = <&L2_CA15>;
+ 
+ 			/* kHz - uV - OPPs unknown yet */
+@@ -68,6 +70,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <1>;
+ 			clock-frequency = <1300000000>;
++			power-domains = <&sysc R8A7790_PD_CA15_CPU1>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
+ 
+@@ -76,6 +79,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <2>;
+ 			clock-frequency = <1300000000>;
++			power-domains = <&sysc R8A7790_PD_CA15_CPU2>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
+ 
+@@ -84,6 +88,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <3>;
+ 			clock-frequency = <1300000000>;
++			power-domains = <&sysc R8A7790_PD_CA15_CPU3>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
+ 
+@@ -92,6 +97,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x100>;
+ 			clock-frequency = <780000000>;
++			power-domains = <&sysc R8A7790_PD_CA7_CPU0>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+ 
+@@ -100,6 +106,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x101>;
+ 			clock-frequency = <780000000>;
++			power-domains = <&sysc R8A7790_PD_CA7_CPU1>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+ 
+@@ -108,6 +115,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x102>;
+ 			clock-frequency = <780000000>;
++			power-domains = <&sysc R8A7790_PD_CA7_CPU2>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+ 
+@@ -116,6 +124,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x103>;
+ 			clock-frequency = <780000000>;
++			power-domains = <&sysc R8A7790_PD_CA7_CPU3>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
  	};
- 	unsigned int i;
+@@ -141,12 +150,14 @@
  
-@@ -180,8 +180,6 @@ static void rcar_du_vsp_plane_setup(struct rcar_du_vsp_plane *plane)
- 		}
- 	}
+ 	L2_CA15: cache-controller@0 {
+ 		compatible = "cache";
++		power-domains = <&sysc R8A7790_PD_CA15_SCU>;
+ 		cache-unified;
+ 		cache-level = <2>;
+ 	};
  
--	WARN_ON(!cfg.pixelformat);
--
- 	vsp1_du_atomic_update(plane->vsp->vsp, plane->index, &cfg);
- }
+ 	L2_CA7: cache-controller@1 {
+ 		compatible = "cache";
++		power-domains = <&sysc R8A7790_PD_CA7_SCU>;
+ 		cache-unified;
+ 		cache-level = <2>;
+ 	};
+@@ -1471,6 +1482,13 @@
+ 		};
+ 	};
  
-@@ -269,6 +267,7 @@ static void rcar_du_vsp_plane_reset(struct drm_plane *plane)
- 		return;
- 
- 	state->alpha = 255;
-+	state->zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
- 
- 	plane->state = &state->state;
- 	plane->state->plane = plane;
-@@ -283,6 +282,8 @@ static int rcar_du_vsp_plane_atomic_set_property(struct drm_plane *plane,
- 
- 	if (property == rcdu->props.alpha)
- 		rstate->alpha = val;
-+	else if (property == rcdu->props.zpos)
-+		rstate->zpos = val;
- 	else
- 		return -EINVAL;
- 
-@@ -299,6 +300,8 @@ static int rcar_du_vsp_plane_atomic_get_property(struct drm_plane *plane,
- 
- 	if (property == rcdu->props.alpha)
- 		*val = rstate->alpha;
-+	else if (property == rcdu->props.zpos)
-+		*val = rstate->zpos;
- 	else
- 		return -EINVAL;
- 
-@@ -378,6 +381,8 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp)
- 
- 		drm_object_attach_property(&plane->plane.base,
- 					   rcdu->props.alpha, 255);
-+		drm_object_attach_property(&plane->plane.base,
-+					   rcdu->props.zpos, 1);
- 	}
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.h b/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-index df3bf3805c69..510dcc9c6816 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-@@ -44,6 +44,7 @@ static inline struct rcar_du_vsp_plane *to_rcar_vsp_plane(struct drm_plane *p)
-  * @state: base DRM plane state
-  * @format: information about the pixel format used by the plane
-  * @alpha: value of the plane alpha property
-+ * @zpos: value of the plane zpos property
-  */
- struct rcar_du_vsp_plane_state {
- 	struct drm_plane_state state;
-@@ -51,6 +52,7 @@ struct rcar_du_vsp_plane_state {
- 	const struct rcar_du_format_info *format;
- 
- 	unsigned int alpha;
-+	unsigned int zpos;
- };
- 
- static inline struct rcar_du_vsp_plane_state *
++	sysc: system-controller@e6180000 {
++		compatible = "renesas,r8a7790-sysc";
++		reg = <0 0xe6180000 0 0x0200>;
++		power-domains = <&cpg_clocks>;
++		#power-domain-cells = <1>;
++	};
++
+ 	qspi: spi@e6b10000 {
+ 		compatible = "renesas,qspi-r8a7790", "renesas,qspi";
+ 		reg = <0 0xe6b10000 0 0x2c>;
 -- 
-2.7.3
+1.9.1
+
