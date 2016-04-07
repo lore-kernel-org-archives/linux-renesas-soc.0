@@ -13,103 +13,84 @@ Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
 	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-pm@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 1/7] PM / Domains: Add DT bindings for the R-Car System Controller
-Date: Thu,  7 Apr 2016 14:20:14 +0200
-Message-Id: <1460031620-13240-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460031620-13240-1-git-send-email-geert+renesas@glider.be>
-References: <1460031620-13240-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4 0/7] PM / Domains: Add DT bindings for the R-Car System Controller
+Date: Thu,  7 Apr 2016 14:20:13 +0200
+Message-Id: <1460031620-13240-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas R-Car System Controller provides power management for the
-CPU cores and various coprocessors, following the generic PM domain
-bindings in Documentation/devicetree/bindings/power/power_domain.txt.
+	Hi Simon, Magnus,
 
-This supports R-Car Gen1 (H1), Gen2, and Gen3.
+This patch series introduces DT bindings for the R-Car System
+Controller, as found on Renesas R-Car H1, R-Car Gen2, and R-Car Gen3
+SoCs.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
-v4:
+Changes compared to v3:
   - Add Reviewed-by, Acked-by,
   - Compatible value must contain "exactly one" instead of "one or
     more",
   - Add power-domains property to refer to the SoC's Clock Domain,
+  - Drop R8A7779_PD_SH, as it's not documented in the datasheet,
+  - Rename R8A779*_PD_SH to R8A779*_PD_SH_4A on R-Car Gen2,
+  - Add always-on power area on R-Car H1 and R-Car Gen2,
+  - Use numbers directly on R-Car M2-N, to make the header file
+    self-contained,
 
-v3:
+Changes compared to v2:
   - Move power area hierarchy from DT to C (cfr. DT bindings for Renesas
     CPG/MSSR), and switch to "#power-domain-cells = <1>",
   - Drop fallback compatibility strings, as the bindings are
     SoC-specific,
+  - Drop power area A3SH on R-Car H3, as it's no longer
+    documented in the datasheet, and touching it seems to crash SYSC,
+  - Add an "always-on" power area on R-Car H3,
   - Rename from renesas,sysc-rcar.txt to renesas,rcar-sysc.txt,
+  - Extract bindings into a separate series (was "[PATCH/RFC v2 00/11]
+    ARM/arm64: renesas: Add SYSC PM Domain DT Support",
+    http://www.spinics.net/lists/arm-kernel/msg483199.html).
 
-v2:
+Changes compared to v1:
   - Add R-Car H3 (r8a7795) support,
   - Use "renesas,<type>-sysc" instead of "renesas,sysc-<type>",
   - Add fallback compatibility strings for R-Car Gen2 and Gen3.
----
- .../bindings/power/renesas,rcar-sysc.txt           | 51 ++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
 
-diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-new file mode 100644
-index 0000000000000000..19cb18c6d6d4736f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-@@ -0,0 +1,51 @@
-+DT bindings for the Renesas R-Car System Controller
-+
-+== System Controller Node ==
-+
-+The R-Car System Controller provides power management for the CPU cores and
-+various coprocessors.
-+
-+Required properties:
-+  - compatible: Must contain exactly one of the following:
-+      - "renesas,r8a7779-sysc" (R-Car H1)
-+      - "renesas,r8a7790-sysc" (R-Car H2)
-+      - "renesas,r8a7791-sysc" (R-Car M2-W)
-+      - "renesas,r8a7792-sysc" (R-Car V2H)
-+      - "renesas,r8a7793-sysc" (R-Car M2-N)
-+      - "renesas,r8a7794-sysc" (R-Car E2)
-+      - "renesas,r8a7795-sysc" (R-Car H3)
-+  - reg: Address start and address range for the device.
-+  - power-domains: A reference to the device node that provides the SoC's Clock
-+    Domain.
-+  - #power-domain-cells: Must be 1.
-+
-+
-+Example:
-+
-+	sysc: system-controller@e6180000 {
-+		compatible = "renesas,r8a7791-sysc";
-+		reg = <0 0xe6180000 0 0x0200>;
-+		power-domains = <&cpg_clocks>;
-+		#power-domain-cells = <1>;
-+	};
-+
-+
-+== PM Domain Consumers ==
-+
-+Devices residing in a power area must refer to that power area, as documented
-+by the generic PM domain bindings in
-+Documentation/devicetree/bindings/power/power_domain.txt.
-+
-+Required properties:
-+  - power-domains: A phandle and symbolic PM domain specifier, as defined in
-+		   <dt-bindings/power/r8a77*-sysc.h>.
-+
-+
-+Example:
-+
-+	L2_CA15: cache-controller@0 {
-+		compatible = "cache";
-+		power-domains = <&sysc R8A7791_PD_CA15_SCU>;
-+		cache-unified;
-+		cache-level = <2>;
-+	};
+Thanks for appplying!
+
+Geert Uytterhoeven (7):
+  PM / Domains: Add DT bindings for the R-Car System Controller
+  soc: renesas: Add r8a7779 SYSC PM Domain Binding Definitions
+  soc: renesas: Add r8a7790 SYSC PM Domain Binding Definitions
+  soc: renesas: Add r8a7791 SYSC PM Domain Binding Definitions
+  soc: renesas: Add r8a7793 SYSC PM Domain Binding Definitions
+  soc: renesas: Add r8a7794 SYSC PM Domain Binding Definitions
+  soc: renesas: Add r8a7795 SYSC PM Domain Binding Definitions
+
+ .../bindings/power/renesas,rcar-sysc.txt           | 51 ++++++++++++++++++++++
+ include/dt-bindings/power/r8a7779-sysc.h           | 27 ++++++++++++
+ include/dt-bindings/power/r8a7790-sysc.h           | 34 +++++++++++++++
+ include/dt-bindings/power/r8a7791-sysc.h           | 26 +++++++++++
+ include/dt-bindings/power/r8a7793-sysc.h           | 28 ++++++++++++
+ include/dt-bindings/power/r8a7794-sysc.h           | 26 +++++++++++
+ include/dt-bindings/power/r8a7795-sysc.h           | 42 ++++++++++++++++++
+ 7 files changed, 234 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+ create mode 100644 include/dt-bindings/power/r8a7779-sysc.h
+ create mode 100644 include/dt-bindings/power/r8a7790-sysc.h
+ create mode 100644 include/dt-bindings/power/r8a7791-sysc.h
+ create mode 100644 include/dt-bindings/power/r8a7793-sysc.h
+ create mode 100644 include/dt-bindings/power/r8a7794-sysc.h
+ create mode 100644 include/dt-bindings/power/r8a7795-sysc.h
+
 -- 
 1.9.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
