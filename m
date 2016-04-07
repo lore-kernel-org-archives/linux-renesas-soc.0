@@ -1,126 +1,234 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52474 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750817AbcDZB3A (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 21:29:00 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/11] soc: renesas: rcar-sysc: Add support for R-Car H2 power areas
-Date: Tue, 26 Apr 2016 11:28:42 +1000
-Message-Id: <ad7c9dbc25d19c2fbf4414a8cb4f02f7933611d6.1461632180.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461632180.git.horms+renesas@verge.net.au>
-References: <cover.1461632180.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 07/12] ARM: dts: r8a7779: Use SYSC "always-on" PM Domain
+Date: Thu,  7 Apr 2016 14:20:30 +0200
+Message-Id: <1460031635-13452-8-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
+References: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hook up all devices that are part of the CPG/MSTP Clock Domain to the
+SYSC "always-on" PM Domain, for a more consistent device-power-area
+description in DT.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/soc/renesas/Makefile       |  2 +-
- drivers/soc/renesas/r8a7790-sysc.c | 48 ++++++++++++++++++++++++++++++++++++++
- drivers/soc/renesas/rcar-sysc.c    |  3 +++
- drivers/soc/renesas/rcar-sysc.h    |  1 +
- 4 files changed, 53 insertions(+), 1 deletion(-)
- create mode 100644 drivers/soc/renesas/r8a7790-sysc.c
+v4:
+  - New.
+---
+ arch/arm/boot/dts/r8a7779.dtsi | 44 +++++++++++++++++++++---------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index b8aa9db4fdd9..6588be3c6776 100644
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@ -1,5 +1,5 @@
- obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
--obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o
-+obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
- obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o
- obj-$(CONFIG_ARCH_R8A7793)	+= rcar-sysc.o
- obj-$(CONFIG_ARCH_R8A7794)	+= rcar-sysc.o
-diff --git a/drivers/soc/renesas/r8a7790-sysc.c b/drivers/soc/renesas/r8a7790-sysc.c
-new file mode 100644
-index 000000000000..7a567ad0ff73
---- /dev/null
-+++ b/drivers/soc/renesas/r8a7790-sysc.c
-@@ -0,0 +1,48 @@
-+/*
-+ * Renesas R-Car H2 System Controller
-+ *
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+
-+#include <linux/bug.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/power/r8a7790-sysc.h>
-+
-+#include "rcar-sysc.h"
-+
-+static const struct rcar_sysc_area r8a7790_areas[] __initconst = {
-+	{ "always-on",	    0, 0, R8A7790_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
-+	{ "ca15-scu",	0x180, 0, R8A7790_PD_CA15_SCU,	R8A7790_PD_ALWAYS_ON,
-+	  PD_SCU },
-+	{ "ca15-cpu0",	 0x40, 0, R8A7790_PD_CA15_CPU0,	R8A7790_PD_CA15_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca15-cpu1",	 0x40, 1, R8A7790_PD_CA15_CPU1,	R8A7790_PD_CA15_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca15-cpu2",	 0x40, 2, R8A7790_PD_CA15_CPU2,	R8A7790_PD_CA15_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca15-cpu3",	 0x40, 3, R8A7790_PD_CA15_CPU3,	R8A7790_PD_CA15_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca7-scu",	0x100, 0, R8A7790_PD_CA7_SCU,	R8A7790_PD_ALWAYS_ON,
-+	  PD_SCU },
-+	{ "ca7-cpu0",	0x1c0, 0, R8A7790_PD_CA7_CPU0,	R8A7790_PD_CA7_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca7-cpu1",	0x1c0, 1, R8A7790_PD_CA7_CPU1,	R8A7790_PD_CA7_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca7-cpu2",	0x1c0, 2, R8A7790_PD_CA7_CPU2,	R8A7790_PD_CA7_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca7-cpu3",	0x1c0, 3, R8A7790_PD_CA7_CPU3,	R8A7790_PD_CA7_SCU,
-+	  PD_CPU_NOCR },
-+	{ "sh-4a",	 0x80, 0, R8A7790_PD_SH_4A,	R8A7790_PD_ALWAYS_ON },
-+	{ "rgx",	 0xc0, 0, R8A7790_PD_RGX,	R8A7790_PD_ALWAYS_ON },
-+	{ "imp",	0x140, 0, R8A7790_PD_IMP,	R8A7790_PD_ALWAYS_ON },
-+};
-+
-+const struct rcar_sysc_info r8a7790_sysc_info __initconst = {
-+	.areas = r8a7790_areas,
-+	.num_areas = ARRAY_SIZE(r8a7790_areas),
-+};
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 858ad23ae03a..07ea25925e85 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -287,6 +287,9 @@ static const struct of_device_id rcar_sysc_matches[] = {
- #ifdef CONFIG_ARCH_R8A7779
- 	{ .compatible = "renesas,r8a7779-sysc", .data = &r8a7779_sysc_info },
- #endif
-+#ifdef CONFIG_ARCH_R8A7790
-+	{ .compatible = "renesas,r8a7790-sysc", .data = &r8a7790_sysc_info },
-+#endif
- 	{ /* sentinel */ }
- };
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 2679ab4629d5c2b2..dacef3f02b8b9a25 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -177,7 +177,7 @@
+ 		reg = <0xffc70000 0x1000>;
+ 		interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C0>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
  
-diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
-index 7cf58b9cd544..33c8f2d00a01 100644
---- a/drivers/soc/renesas/rcar-sysc.h
-+++ b/drivers/soc/renesas/rcar-sysc.h
-@@ -51,4 +51,5 @@ struct rcar_sysc_info {
- };
+@@ -188,7 +188,7 @@
+ 		reg = <0xffc71000 0x1000>;
+ 		interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C1>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
  
- extern const struct rcar_sysc_info r8a7779_sysc_info;
-+extern const struct rcar_sysc_info r8a7790_sysc_info;
- #endif /* __SOC_RENESAS_RCAR_SYSC_H__ */
+@@ -199,7 +199,7 @@
+ 		reg = <0xffc72000 0x1000>;
+ 		interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C2>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -210,7 +210,7 @@
+ 		reg = <0xffc73000 0x1000>;
+ 		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C3>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -222,7 +222,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF0>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -234,7 +234,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF1>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -246,7 +246,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF2>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -258,7 +258,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF3>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -270,7 +270,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF4>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -282,7 +282,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF5>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -304,7 +304,7 @@
+ 			     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_TMU0>;
+ 		clock-names = "fck";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 
+ 		#renesas,channels = <3>;
+ 
+@@ -319,7 +319,7 @@
+ 			     <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_TMU1>;
+ 		clock-names = "fck";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 
+ 		#renesas,channels = <3>;
+ 
+@@ -334,7 +334,7 @@
+ 			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_TMU2>;
+ 		clock-names = "fck";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 
+ 		#renesas,channels = <3>;
+ 
+@@ -346,7 +346,7 @@
+ 		reg = <0xfc600000 0x2000>;
+ 		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 	};
+ 
+ 	sdhi0: sd@ffe4c000 {
+@@ -354,7 +354,7 @@
+ 		reg = <0xffe4c000 0x100>;
+ 		interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI0>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -363,7 +363,7 @@
+ 		reg = <0xffe4d000 0x100>;
+ 		interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI1>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -372,7 +372,7 @@
+ 		reg = <0xffe4e000 0x100>;
+ 		interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI2>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -381,7 +381,7 @@
+ 		reg = <0xffe4f000 0x100>;
+ 		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI3>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -392,7 +392,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -403,7 +403,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -414,7 +414,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -423,7 +423,7 @@
+ 		reg = <0 0xfff80000 0 0x40000>;
+ 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7779_CLK_DU>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 
+ 		ports {
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
+
