@@ -1,52 +1,85 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41654 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751534AbcD0EGx (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 00:06:53 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Phil Edworthy <Phil.Edworthy@renesas.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/4] arm64: dts: r8a7795: enable PCIe on Salvator-X
-Date: Wed, 27 Apr 2016 14:06:44 +1000
-Message-Id: <bbd273047b765b431411103c2f7a2688b7288c85.1461723181.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461723181.git.horms+renesas@verge.net.au>
-References: <cover.1461723181.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 04/12] ARM: dts: r8a7793: Add SYSC PM Domains
+Date: Thu,  7 Apr 2016 14:20:27 +0200
+Message-Id: <1460031635-13452-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
+References: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Phil Edworthy <Phil.Edworthy@renesas.com>
+Add a device node for the System Controller, and hook it up to the
+CPG/MSTP Clock Domain.
+Hook up the first Cortex-A15 CPU core and the Cortex-A15 L2 cache/SCU to
+their respective PM Domains.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+v4:
+  - Add power-domains property to the sysc node, to refer to the SoC's
+    Clock Domain,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index b992b1a3d956..7c40ac8232f3 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -388,3 +388,15 @@
- &ohci2 {
- 	status = "okay";
- };
+v3:
+  - Drop power area hiearchy from DT,
+  - Switch to "#power-domain-cells = <1>",
+  - Drop fallback compatibility strings,
+
+v2:
+  - Change one-line summary prefix to match current arm-soc practices,
+  - Update compatible values.
+---
+ arch/arm/boot/dts/r8a7793.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index bf70c464920bc687..aa5af3b16f1826ab 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -11,6 +11,7 @@
+ #include <dt-bindings/clock/r8a7793-clock.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/power/r8a7793-sysc.h>
+ 
+ / {
+ 	compatible = "renesas,r8a7793";
+@@ -43,6 +44,7 @@
+ 			voltage-tolerance = <1>; /* 1% */
+ 			clocks = <&cpg_clocks R8A7793_CLK_Z>;
+ 			clock-latency = <300000>; /* 300 us */
++			power-domains = <&sysc R8A7793_PD_CA15_CPU0>;
+ 
+ 			/* kHz - uV - OPPs unknown yet */
+ 			operating-points = <1500000 1000000>,
+@@ -76,6 +78,7 @@
+ 
+ 	L2_CA15: cache-controller@0 {
+ 		compatible = "cache";
++		power-domains = <&sysc R8A7793_PD_CA15_SCU>;
+ 		cache-unified;
+ 		cache-level = <2>;
+ 	};
+@@ -1212,6 +1215,13 @@
+ 		};
+ 	};
+ 
++	sysc: system-controller@e6180000 {
++		compatible = "renesas,r8a7793-sysc";
++		reg = <0 0xe6180000 0 0x0200>;
++		power-domains = <&cpg_clocks>;
++		#power-domain-cells = <1>;
++	};
 +
-+&pcie_bus_clk {
-+	status = "okay";
-+};
-+
-+&pciec0 {
-+	status = "okay";
-+};
-+
-+&pciec1 {
-+	status = "okay";
-+};
+ 	ipmmu_sy0: mmu@e6280000 {
+ 		compatible = "renesas,ipmmu-r8a7793", "renesas,ipmmu-vmsa";
+ 		reg = <0 0xe6280000 0 0x1000>;
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
+
