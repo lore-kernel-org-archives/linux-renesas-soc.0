@@ -1,10 +1,8 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <1460112654.31245.20.camel@collabora.co.uk>
-Subject: Re: [PATCH] ARM: dts: r8a7791: Don't disable referenced optional
- clocks
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-To: Stephen Boyd <sboyd@codeaurora.org>
+Date: Thu, 7 Apr 2016 16:21:55 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
 	Simon Horman <horms@verge.net.au>,
 	linux-renesas-soc@vger.kernel.org,
@@ -14,83 +12,50 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
 	<linux-arm-kernel@lists.infradead.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	linux-clk <linux-clk@vger.kernel.org>
-Date: Fri, 08 Apr 2016 12:50:54 +0200
-In-Reply-To: <20160407232155.GH18567@codeaurora.org>
+Subject: Re: [PATCH] ARM: dts: r8a7791: Don't disable referenced optional
+ clocks
+Message-ID: <20160407232155.GH18567@codeaurora.org>
 References: <1459947173-6664-1-git-send-email-sjoerd.simons@collabora.co.uk>
-	 <CAMuHMdUtPhBT0_+hSk_t5osHC8TssyGMFo+YOWetTGBkbpB4PQ@mail.gmail.com>
-	 <1459949826.23936.19.camel@collabora.co.uk>
-	 <20160407232155.GH18567@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Mime-Version: 1.0
+ <CAMuHMdUtPhBT0_+hSk_t5osHC8TssyGMFo+YOWetTGBkbpB4PQ@mail.gmail.com>
+ <1459949826.23936.19.camel@collabora.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1459949826.23936.19.camel@collabora.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, 2016-04-07 at 16:21 -0700, Stephen Boyd wrote:
-> On 04/06, Sjoerd Simons wrote:
+On 04/06, Sjoerd Simons wrote:
+> On Wed, 2016-04-06 at 15:11 +0200, Geert Uytterhoeven wrote:
+> > CC Mike, Stephen, linux-clk (this time with the new Mike)
 > > 
-> > On Wed, 2016-04-06 at 15:11 +0200, Geert Uytterhoeven wrote:
+> > On Wed, Apr 6, 2016 at 2:52 PM, Sjoerd Simons
+> > <sjoerd.simons@collabora.co.uk> wrote:
 > > > 
-> > > CC Mike, Stephen, linux-clk (this time with the new Mike)
-> > > 
-> > > On Wed, Apr 6, 2016 at 2:52 PM, Sjoerd Simons
-> > > <sjoerd.simons@collabora.co.uk> wrote:
-> > > > 
-> > > > 
-> > > > clk_get on a disabled clock node will return EPROBE_DEFER,
-> > > > which
-> > > > can
-> > > > cause drivers to be deferred forever if such clocks are
-> > > > referenced
-> > > > in
-> > > > their clocks property.
-> > > Is this a side effect of commit 3e5dd6f6e690048d ("clk: Ignore
-> > > disabled DT
-> > > clock providers")?
-> > Yes it seems so. Reverting that patch means that i can drop this
-> > one
-> > and get the expected behaviour again.
-> The DT is broken then? Is it possible to mark these status =
-> "okay" so that things work again?
+> > > clk_get on a disabled clock node will return EPROBE_DEFER, which
+> > > can
+> > > cause drivers to be deferred forever if such clocks are referenced
+> > > in
+> > > their clocks property.
+> > Is this a side effect of commit 3e5dd6f6e690048d ("clk: Ignore
+> > disabled DT
+> > clock providers")?
+> 
+> Yes it seems so. Reverting that patch means that i can drop this one
+> and get the expected behaviour again.
 
-> > 
-> > 
-> > Though even so I'm not sure what the convention is for clocks like
-> > these, the r8a7791.dtsi is inconsistent, as some are disabled while
-> > others (e.g. the audio clocks) are 0hz. Would be good to get some
-> > input
-> > on that regardless.
-> > 
-> What's the question here?
+The DT is broken then? Is it possible to mark these status =
+"okay" so that things work again?
 
-So the question is how to model unconnected external clocks in device-
-tree.
+> 
+> Though even so I'm not sure what the convention is for clocks like
+> these, the r8a7791.dtsi is inconsistent, as some are disabled while
+> others (e.g. the audio clocks) are 0hz. Would be good to get some input
+> on that regardless.
+> 
 
-The dtsi we're loooking at has (in pseudo dt):
-
-device {
-  clock-names = "internal", "external";
-  clocks = <&internal, &external>
-};
-
-external {
-  compatible = "fixed-clock";
-  clock-frequency = <12345>;
-  status = "disabled";
-};
-
-Before 3e5dd6f6e690048d ("clk: Ignore disabled DT clock providers")
-this apparently worked. Afterwards drivers getting all the clocks would
-fail to probe with -EPROBE_DEFER.
-
-Judging by your comment I assume this way of modelling it is broken
-(and the behaviour caused by the patch is correct)? 
-
-And as a follow-up, is modelling unconnected clocks as enabled with a
-frequency of 0hz as my proposed patch does seen as the right way of
-doing things?
-
+What's the question here?
 
 -- 
-Sjoerd Simons
-Collabora Ltd.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
