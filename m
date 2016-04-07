@@ -1,60 +1,81 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:51177 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751772AbcDZPzn (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 11:55:43 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-mmc@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH V2 0/6] mmc: tmio/sdhi: clean up cruft
-Date: Tue, 26 Apr 2016 17:55:21 +0200
-Message-Id: <1461686127-3217-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 3/7] soc: renesas: Add r8a7790 SYSC PM Domain Binding Definitions
+Date: Thu,  7 Apr 2016 14:20:16 +0200
+Message-Id: <1460031620-13240-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1460031620-13240-1-git-send-email-geert+renesas@glider.be>
+References: <1460031620-13240-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Largely due to DT unification, some parts of the code became obsolete. Let's
-remove that, the code is complex enough still:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+v4:
+  - Add Reviewed-by,
+  - Rename R8A7790_PD_SH to R8A7790_PD_SH_4A,
+  - Add always-on power area,
 
-* There are no boards anymore with named interrupt support. Drop support for
-  that (patches 2-4)
-* No need anymore for a public mmc/tmio.h header file. Merge it into the
-  private one (patch 5)
+v3:
+  - New.
+---
+ include/dt-bindings/power/r8a7790-sysc.h | 34 ++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+ create mode 100644 include/dt-bindings/power/r8a7790-sysc.h
 
-Patches 1 and 6 are small cleanups found on the way :)
-
-Based on latest renesas-drivers which is based on v4.6-rc1 with my sdr50
-patches on top. Tested on a Renesas Lager board and build bot is happy, too
-(after finding some issues initially).
-
-Change since V1:
-
-* Drop a small cleanup touching SH board files, so we stay in the MMC realm.
-  I will do this as a seperate patch so this series won't get delayed.
-
-Please test, comment, apply...
-
-   Wolfram
-
-
-Wolfram Sang (6):
-  mmc: sh_mobile_sdhi: don't use array for DT configs
-  mmc: sh_mobile_sdhi: remove obsolete irq_by_name registration
-  mmc: tmio: remove now unneeded seperate irq handlers
-  mmc: tmio: simplify irq handler
-  mmc: tmio: merge distributed include files
-  mmc: sh_mobile_sdhi: simplify code for voltage switching
-
- drivers/mmc/host/sh_mobile_sdhi.c | 75 ++++++++-------------------------------
- drivers/mmc/host/tmio_mmc.h       | 59 +++++++++++++++++++++++++++---
- drivers/mmc/host/tmio_mmc_dma.c   |  1 -
- drivers/mmc/host/tmio_mmc_pio.c   | 55 ++++++----------------------
- include/linux/mmc/tmio.h          | 73 -------------------------------------
- 5 files changed, 79 insertions(+), 184 deletions(-)
- delete mode 100644 include/linux/mmc/tmio.h
-
+diff --git a/include/dt-bindings/power/r8a7790-sysc.h b/include/dt-bindings/power/r8a7790-sysc.h
+new file mode 100644
+index 0000000000000000..6af4e9929bd04ba4
+--- /dev/null
++++ b/include/dt-bindings/power/r8a7790-sysc.h
+@@ -0,0 +1,34 @@
++/*
++ * Copyright (C) 2016 Glider bvba
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
++#ifndef __DT_BINDINGS_POWER_R8A7790_SYSC_H__
++#define __DT_BINDINGS_POWER_R8A7790_SYSC_H__
++
++/*
++ * These power domain indices match the numbers of the interrupt bits
++ * representing the power areas in the various Interrupt Registers
++ * (e.g. SYSCISR, Interrupt Status Register)
++ */
++
++#define R8A7790_PD_CA15_CPU0		 0
++#define R8A7790_PD_CA15_CPU1		 1
++#define R8A7790_PD_CA15_CPU2		 2
++#define R8A7790_PD_CA15_CPU3		 3
++#define R8A7790_PD_CA7_CPU0		 5
++#define R8A7790_PD_CA7_CPU1		 6
++#define R8A7790_PD_CA7_CPU2		 7
++#define R8A7790_PD_CA7_CPU3		 8
++#define R8A7790_PD_CA15_SCU		12
++#define R8A7790_PD_SH_4A		16
++#define R8A7790_PD_RGX			20
++#define R8A7790_PD_CA7_SCU		21
++#define R8A7790_PD_IMP			24
++
++/* Always-on power area */
++#define R8A7790_PD_ALWAYS_ON		32
++
++#endif /* __DT_BINDINGS_POWER_R8A7790_SYSC_H__ */
 -- 
-2.7.0
+1.9.1
+
