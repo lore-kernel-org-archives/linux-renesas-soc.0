@@ -1,10 +1,16 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 8 Apr 2016 12:06:00 +0200
-From: Ralf Baechle <ralf@linux-mips.org>
+MIME-Version: 1.0
+In-Reply-To: <20160408003328.GA14441@codeaurora.org>
+References: <1459821083-28116-1-git-send-email-yamada.masahiro@socionext.com>
+	<20160408003328.GA14441@codeaurora.org>
+Date: Fri, 8 Apr 2016 10:52:57 +0900
+Message-ID: <CAK7LNASW+D0B_k97r__AZeYDR5UqNPqn_j1aoQepHz-bGgV2ng@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: let clk_disable() return immediately if clk is
+ NULL or error
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-	linux-clk@vger.kernel.org,
+Cc: linux-clk@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
 	Haojian Zhuang <haojian.zhuang@gmail.com>,
@@ -20,108 +26,88 @@ Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
 	Yoshinori Sato <ysato@users.sourceforge.jp>,
 	adi-buildroot-devel@lists.sourceforge.net,
 	Russell King <linux@arm.linux.org.uk>,
-	linux-m68k@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	John Crispin <blogic@openwrt.org>,
-	Haavard Skinnemoen <hskinnemoen@gmail.com>,
-	Hans-Christian Egtvedt <egtvedt@samfundet.no>,
-	Paul Walmsley <paul@pwsan.com>,
-	Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
-	Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH v2] clk: let clk_disable() return immediately if clk is
- NULL or error
-Message-ID: <20160408100600.GI1668@linux-mips.org>
-References: <1459821083-28116-1-git-send-email-yamada.masahiro@socionext.com>
- <20160408003328.GA14441@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20160408003328.GA14441@codeaurora.org>
+	John Crispin <blogic@openwrt.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 07, 2016 at 05:33:28PM -0700, Stephen Boyd wrote:
+Hi Stephen,
 
+
+2016-04-08 9:33 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
 > On 04/05, Masahiro Yamada wrote:
-> > The clk_disable() in the common clock framework (drivers/clk/clk.c)
-> > returns immediately if a given clk is NULL or an error pointer.  It
-> > allows clock consumers to call clk_disable() without IS_ERR_OR_NULL
-> > checking if drivers are only used with the common clock framework.
-> > 
-> > Unfortunately, NULL/error checking is missing from some of non-common
-> > clk_disable() implementations.  This prevents us from completely
-> > dropping NULL/error checking from callers.  Let's make it tree-wide
-> > consistent by adding IS_ERR_OR_NULL(clk) to all callees.
-> > 
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Acked-by: Greg Ungerer <gerg@uclinux.org>
-> > Acked-by: Wan Zongshun <mcuos.com@gmail.com>
-> > ---
-> > 
-> > Stephen,
-> > 
-> > This patch has been unapplied for a long time.
-> > 
-> > Please let me know if there is something wrong with this patch.
-> > 
-> 
+>> The clk_disable() in the common clock framework (drivers/clk/clk.c)
+>> returns immediately if a given clk is NULL or an error pointer.  It
+>> allows clock consumers to call clk_disable() without IS_ERR_OR_NULL
+>> checking if drivers are only used with the common clock framework.
+>>
+>> Unfortunately, NULL/error checking is missing from some of non-common
+>> clk_disable() implementations.  This prevents us from completely
+>> dropping NULL/error checking from callers.  Let's make it tree-wide
+>> consistent by adding IS_ERR_OR_NULL(clk) to all callees.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> Acked-by: Greg Ungerer <gerg@uclinux.org>
+>> Acked-by: Wan Zongshun <mcuos.com@gmail.com>
+>> ---
+>>
+>> Stephen,
+>>
+>> This patch has been unapplied for a long time.
+>>
+>> Please let me know if there is something wrong with this patch.
+>>
+>
 > I'm mostly confused why we wouldn't want to encourage people to
 > call clk_disable or unprepare on a clk that's an error pointer.
 > Typically an error pointer should be dealt with, instead of
 > silently ignored, so why wasn't it dealt with by passing it up
 > the probe() path?
+>
 
-While your argument makes perfect sense, Many clk_disable implementations
-are already doing similar checks, for example:
 
-arch/arm/mach-davinci/clock.c:
+This makes our driver programming life easier.
 
-void clk_disable(struct clk *clk)
-{
-	unsigned long flags;
 
-	if (clk == NULL || IS_ERR(clk))
-		return;
-[...]
+For example, let's see drivers/tty/serial/8250/8250_of.c
 
-arch/arm/mach-omap1/clock.c
 
-void clk_disable(struct clk *clk)
-{
-        unsigned long flags;
+The "clock-frequency" DT property takes precedence over "clocks" property.
+So, it is valid to probe the driver with a NULL pointer for info->clk.
 
-        if (clk == NULL || IS_ERR(clk))
-                return;
-[...]
 
-arch/avr32/mach-at32ap/clock.c
+        if (of_property_read_u32(np, "clock-frequency", &clk)) {
 
-void clk_disable(struct clk *clk)
-{
-        unsigned long flags;
+                /* Get clk rate through clk driver if present */
+                info->clk = devm_clk_get(&ofdev->dev, NULL);
+                if (IS_ERR(info->clk)) {
+                        dev_warn(&ofdev->dev,
+                                "clk or clock-frequency not defined\n");
+                        return PTR_ERR(info->clk);
+                }
 
-        if (IS_ERR_OR_NULL(clk))
-                return;
-[...]
+                ret = clk_prepare_enable(info->clk);
+                if (ret < 0)
+                        return ret;
 
-arch/mips/lantiq/clk.c:
+                clk = clk_get_rate(info->clk);
+        }
 
-static inline int clk_good(struct clk *clk)
-{
-	return clk && !IS_ERR(clk);
-}
 
-[...]
+As a result, we need to make sure the clk pointer is valid
+before calling clk_disable_unprepare().
 
-void clk_disable(struct clk *clk)
-{
-	if (unlikely(!clk_good(clk)))
-		return;
 
-	if (clk->disable)
-[...]
+If we could support pointer checking in callees, we would be able to
+clean-up lots of clock consumers.
 
-So should we go and weed out these checks?
 
-  Ralf
+
+-- 
+Best Regards
+Masahiro Yamada
