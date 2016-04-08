@@ -1,73 +1,85 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 8 Apr 2016 15:58:44 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
 	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 6/7] soc: renesas: Add r8a7794 SYSC PM Domain Binding Definitions
-Date: Thu,  7 Apr 2016 14:20:19 +0200
-Message-Id: <1460031620-13240-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460031620-13240-1-git-send-email-geert+renesas@glider.be>
-References: <1460031620-13240-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] Revert "ARM: dts: porter: Enable SCIF_CLK frequency and
+ pins"
+Message-ID: <20160408065844.GA27209@verge.net.au>
+References: <1459971126-26622-1-git-send-email-sjoerd.simons@collabora.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1459971126-26622-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-v4:
-  - Add Reviewed-by,
-  - Rename R8A7794_PD_SH to R8A7794_PD_SH_4A,
-  - Add always-on power area,
+On Wed, Apr 06, 2016 at 09:32:06PM +0200, Sjoerd Simons wrote:
+> This reverts commit 19417bd9c5112f58ea63e97ba72edabd5e1cc0fe as
+> according to
+> http://elinux.org/File:R-CarM2-KOELSCH_PORTER-B_PORTER_C_Comparison.pdf
+> the external oscilator for SCIF_CLK is not mounted on the porter boards.
+> 
+> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-v3:
-  - New.
----
- include/dt-bindings/power/r8a7794-sysc.h | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a7794-sysc.h
+Thanks, I will queue up the following as a fix for v4.6 based
+on v4.6-rc1.
 
-diff --git a/include/dt-bindings/power/r8a7794-sysc.h b/include/dt-bindings/power/r8a7794-sysc.h
-new file mode 100644
-index 0000000000000000..862241c2d27b2fa3
---- /dev/null
-+++ b/include/dt-bindings/power/r8a7794-sysc.h
-@@ -0,0 +1,26 @@
-+/*
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7794_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7794_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A7794_PD_CA7_CPU0		 5
-+#define R8A7794_PD_CA7_CPU1		 6
-+#define R8A7794_PD_SH_4A		16
-+#define R8A7794_PD_SGX			20
-+#define R8A7794_PD_CA7_SCU		21
-+
-+/* Always-on power area */
-+#define R8A7794_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7794_SYSC_H__ */
+>From e885767418bff0c591cc1e45babdd25d91b4a795 Mon Sep 17 00:00:00 2001
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Date: Wed, 6 Apr 2016 21:32:06 +0200
+Subject: [PATCH] Revert "ARM: dts: porter: Enable SCIF_CLK frequency and pins"
+
+This reverts commit 19417bd9c511 ("ARM: dts: porter: Enable SCIF_CLK
+frequency and pins") as according to
+http://elinux.org/File:R-CarM2-KOELSCH_PORTER-B_PORTER_C_Comparison.pdf
+the external oscillator for SCIF_CLK is not mounted on the porter boards.
+
+Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7791-porter.dts | 13 -------------
+ 1 file changed, 13 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index 6c08314427d6..329a9dcc88e9 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -143,19 +143,11 @@
+ };
+ 
+ &pfc {
+-	pinctrl-0 = <&scif_clk_pins>;
+-	pinctrl-names = "default";
+-
+ 	scif0_pins: serial0 {
+ 		renesas,groups = "scif0_data_d";
+ 		renesas,function = "scif0";
+ 	};
+ 
+-	scif_clk_pins: scif_clk {
+-		renesas,groups = "scif_clk";
+-		renesas,function = "scif_clk";
+-	};
+-
+ 	ether_pins: ether {
+ 		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
+ 		renesas,function = "eth";
+@@ -229,11 +221,6 @@
+ 	status = "okay";
+ };
+ 
+-&scif_clk {
+-	clock-frequency = <14745600>;
+-	status = "okay";
+-};
+-
+ &ether {
+ 	pinctrl-0 = <&ether_pins &phy1_pins>;
+ 	pinctrl-names = "default";
 -- 
-1.9.1
-
+2.1.4
