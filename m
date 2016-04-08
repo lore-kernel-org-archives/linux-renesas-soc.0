@@ -1,149 +1,115 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 13 Apr 2016 17:19:13 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Simon Horman <horms@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
+	Simon Horman <horms@verge.net.au>
+CC: "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] ARM: dts: r8a7791: Don't disable referenced optional
+	<linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH] ARM: dts: r8a7791: Don't disable referenced optional
  clocks
-Message-ID: <20160414001913.GG14441@codeaurora.org>
+Date: Fri, 8 Apr 2016 14:20:34 +0000
+Message-ID: <HK2PR0601MB13938CB5B56DDCF340FBAC37F5910@HK2PR0601MB1393.apcprd06.prod.outlook.com>
 References: <1459947173-6664-1-git-send-email-sjoerd.simons@collabora.co.uk>
- <CAMuHMdUtPhBT0_+hSk_t5osHC8TssyGMFo+YOWetTGBkbpB4PQ@mail.gmail.com>
- <1459949826.23936.19.camel@collabora.co.uk>
- <20160407232155.GH18567@codeaurora.org>
- <1460112654.31245.20.camel@collabora.co.uk>
+ <57059874.1070309@cogentembedded.com>
+ <1460012450.13819.38.camel@collabora.co.uk>
+ <5706B191.3060903@cogentembedded.com>
+In-Reply-To: <5706B191.3060903@cogentembedded.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1460112654.31245.20.camel@collabora.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 04/08, Sjoerd Simons wrote:
-> On Thu, 2016-04-07 at 16:21 -0700, Stephen Boyd wrote:
-> > On 04/06, Sjoerd Simons wrote:
-> > > 
-> > > Though even so I'm not sure what the convention is for clocks like
-> > > these, the r8a7791.dtsi is inconsistent, as some are disabled while
-> > > others (e.g. the audio clocks) are 0hz. Would be good to get some
-> > > input
-> > > on that regardless.
-> > > 
-> > What's the question here?
-> 
-> So the question is how to model unconnected external clocks in device-
-> tree.
-> 
-> The dtsi we're loooking at has (in pseudo dt):
-> 
-> device {
-> � clock-names = "internal", "external";
-> � clocks = <&internal, &external>
-> };
-> 
-> external {
-> � compatible = "fixed-clock";
-> � clock-frequency = <12345>;
-> � status = "disabled";
-> };
-> 
-> Before�3e5dd6f6e690048d ("clk: Ignore�disabled DT�clock providers")
-> this apparently worked. Afterwards drivers getting all the clocks would
-> fail to probe with -EPROBE_DEFER.
-> 
-> Judging by your comment I assume this way of modelling it is broken
-> (and the behaviour caused by the patch is correct)?�
-> 
-> And as a follow-up, is modelling unconnected clocks as enabled with a
-> frequency of 0hz as my proposed patch does seen as the right way of
-> doing things?
-> 
-
-Right. In the case where the external clk is populated, I imagine
-there would be a DT node describing it with the clock-frequency
-property if it's a fixed rate clk. If the clk is not populated on
-the board, then we would have a "ground" clk node that has a
-frequency of 0. This way, if we have some mux clk that is default
-connected to the external clk but can switch to some internal clk
-it isn't orphaned forever. This is actually a problem for orphan
-clk deferral right now.
-
-My head starts to spin when we consider something like expansion
-boards that have clk pins on them though. Hopefully for things
-like that, we can populate clks with DT overlays and then change
-the root hierarchy of the clk tree by swapping out the "ground"
-clk for some real clk on the expansion board. The usage of
-strings to describe the clk tree is probably going to get us here
-though. Fun!
-
-If we can't do this DT design because of backwards compatibility
-concerns, then perhaps we need to expand the core to return a
-fixed rate of 0 clk whenever clk_get() is called on a provider
-that's status = "disabled"? Here's an untested patch to show that
-idea.
-
----8<----
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index fb74dc1f7520..19c3777b1cea 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3085,6 +3085,17 @@ int of_clk_parent_fill(struct device_node *np, const char **parents,
- }
- EXPORT_SYMBOL_GPL(of_clk_parent_fill);
- 
-+static void init_disabled_clk_provider(struct device_node *np)
-+{
-+	struct clk *clk;
-+
-+	clk = clk_register_fixed_rate(NULL, of_node_full_name(np), NULL, 0, 0);
-+	if (IS_ERR(clk))
-+		return;
-+
-+	of_clk_add_provider(np, of_clk_src_simple_get, clk);
-+}
-+
- struct clock_provider {
- 	of_clk_init_cb_t clk_init_cb;
- 	struct device_node *np;
-@@ -3150,9 +3161,6 @@ void __init of_clk_init(const struct of_device_id *matches)
- 	for_each_matching_node_and_match(np, matches, &match) {
- 		struct clock_provider *parent;
- 
--		if (!of_device_is_available(np))
--			continue;
--
- 		parent = kzalloc(sizeof(*parent), GFP_KERNEL);
- 		if (!parent) {
- 			list_for_each_entry_safe(clk_provider, next,
-@@ -3165,7 +3173,18 @@ void __init of_clk_init(const struct of_device_id *matches)
- 			return;
- 		}
- 
--		parent->clk_init_cb = match->data;
-+		/*
-+		 * Sometimes DT nodes are status = "disabled" but they're used
-+		 * by other clk providers. In that case we make the disabled
-+		 * provider return fixed rate clks with a frequency of 0 so
-+		 * that nothing is orphaned and drivers can still get all
-+		 * their clks.
-+		 */
-+		if (!of_device_is_available(np)) {
-+			parent->clk_init_cb = init_disabled_clk_provider;
-+		} else {
-+			parent->clk_init_cb = match->data;
-+		}
- 		parent->np = of_node_get(np);
- 		list_add_tail(&parent->node, &clk_provider_list);
- 	}
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+SGksDQoNCk9uIDA3IEFwcmlsIDIwMTYgMjA6MTQsIFNlcmdlaSBTaHR5bHlvdiB3cm90ZToNCj4g
+T24gMDQvMDcvMjAxNiAxMDowMCBBTSwgU2pvZXJkIFNpbW9ucyB3cm90ZToNCj4gDQo+ID4gSGV5
+IFNlcmdlaSwNCj4gPg0KPiA+IFRoYW5rcyBmb3IgeW91ciByZXZpZXcuDQo+IA0KPiAgICAgWW91
+J3JlIHdlbGNvbWUuIDotKQ0KPiANCj4gPiBPbiBUaHUsIDIwMTYtMDQtMDcgYXQgMDI6MTUgKzAz
+MDAsIFNlcmdlaSBTaHR5bHlvdiB3cm90ZToNCj4gPj4gT24gMDQvMDYvMjAxNiAwMzo1MiBQTSwg
+U2pvZXJkIFNpbW9ucyB3cm90ZToNCj4gPj4NCj4gPj4+DQo+ID4+PiBjbGtfZ2V0IG9uIGEgZGlz
+YWJsZWQgY2xvY2sgbm9kZSB3aWxsIHJldHVybiBFUFJPQkVfREVGRVIsIHdoaWNoDQo+ID4+PiBj
+YW4NCj4gPj4+IGNhdXNlIGRyaXZlcnMgdG8gYmUgZGVmZXJyZWQgZm9yZXZlciBpZiBzdWNoIGNs
+b2NrcyBhcmUgcmVmZXJlbmNlZA0KPiA+Pj4gaW4NCj4gPj4+IHRoZWlyIGNsb2NrcyBwcm9wZXJ0
+eS4NCj4gPj4+DQo+ID4+PiBVcGRhdGUgdGhlIHZhcmlvdXMgZGlzYWJsZWQgZXh0ZXJuYWwgY2xv
+Y2sgbm9kZXMgdG8gZGVmYXVsdCB0byBhDQo+ID4+PiBmcmVxdWVuY3kgb2YgMCwgYnV0IGRvbid0
+IGRpc2FibGUgdGhlbSB0byBwcmV2ZW50IHRoaXMuDQo+ID4+Pg0KPiA+Pj4gU2lnbmVkLW9mZi1i
+eTogU2pvZXJkIFNpbW9ucyA8c2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28udWs+DQo+ID4+Pg0K
+PiA+Pj4gLS0tDQo+ID4+Pg0KPiA+Pj4gICAgYXJjaC9hcm0vYm9vdC9kdHMvcjhhNzc5MS1rb2Vs
+c2NoLmR0cyB8IDEgKw0KPiA+Pj4gICAgYXJjaC9hcm0vYm9vdC9kdHMvcjhhNzc5MS1wb3J0ZXIu
+ZHRzICB8IDEgKw0KPiA+Pj4gICAgYXJjaC9hcm0vYm9vdC9kdHMvcjhhNzc5MS5kdHNpICAgICAg
+ICB8IDUgKy0tLS0NCj4gPj4+ICAgIDMgZmlsZXMgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCA0
+IGRlbGV0aW9ucygtKQ0KPiA+Pj4NCj4gPj4+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0
+cy9yOGE3NzkxLWtvZWxzY2guZHRzDQo+ID4+PiBiL2FyY2gvYXJtL2Jvb3QvZHRzL3I4YTc3OTEt
+a29lbHNjaC5kdHMNCj4gPj4+IGluZGV4IDFhZGY4NzcuLmRhNTljMjggMTAwNjQ0DQo+ID4+PiAt
+LS0gYS9hcmNoL2FybS9ib290L2R0cy9yOGE3NzkxLWtvZWxzY2guZHRzDQo+ID4+PiArKysgYi9h
+cmNoL2FybS9ib290L2R0cy9yOGE3NzkxLWtvZWxzY2guZHRzDQo+ID4+PiBAQCAtNjYwLDYgKzY2
+MCw3IEBADQo+ID4+PiAgICB9Ow0KPiA+Pj4NCj4gPj4+ICAgICZwY2llX2J1c19jbGsgew0KPiA+
+Pj4gKwljbG9jay1mcmVxdWVuY3kgPSA8MTAwMDAwMDAwPjsNCj4gDQo+ID4+ICAgICAgSG1tbSwg
+bG9va2luZyBhdCB0aGUgS29lbHNjaCBzY2hlbWF0aWNzLCBJIGRvbid0IHNlZSB0aGlzIGNsb2Nr
+Lg0KPiA+PiA6LS8NCj4gPg0KPiA+IEkgZG9uJ3QgaGF2ZSB0aGUgc2NoZW1hdGljcyBzbyBpIHdh
+cyBzaW1wbHkga2VlcGluZyB0aGUgY3VycmVudCBzdGF0ZS4NCj4gDQo+ICAgICBJIHVuZGVyc3Rh
+bmQuIEkgd2FzIGp1c3Qgc3VycHJpc2VkIGJ5IHdoYXQgY2hlY2tpbmcgdGhlIGNvZGUgYWdhaW5z
+dCB0aGUNCj4gc2NoZW1hdGljcyByZXZlYWxlZC4NCj4gDQo+ID4gSSd2ZSBhZGRlZCBQaGlsIEVk
+d29ydGh5IHRvIHRoZSBsaXN0IGFzIGhlIHdhcyB0aGUgb25lIG9yaWdpbmFsbHkNCj4gDQo+ICAg
+ICBJIHNob3VsZCd2ZSBDQydlZCBQaGlsIG15c2VsZi4uLg0KPg0KPiA+IGVuYWJsZSB0aGUgYnVz
+IGNsayBmb3IgS29lbHNoIGFjY29yZGluZyB0byBnaXQuIEhvcGVmdWxseSBoZSBjYW4NCj4gPiBj
+bGFyaWZ5IDopDQo+IA0KPiAgICAgTGV0J3MgaG9wZSBoZSdkIHJlcGx5Li4uDQo+IA0KPiA+Pj4g
+ICAgCXN0YXR1cyA9ICJva2F5IjsNCj4gPj4+ICAgIH07DQo+ID4+Pg0KPiA+Pj4gZGlmZiAtLWdp
+dCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3I4YTc3OTEtcG9ydGVyLmR0cw0KPiA+Pj4gYi9hcmNoL2Fy
+bS9ib290L2R0cy9yOGE3NzkxLXBvcnRlci5kdHMNCj4gPj4+IGluZGV4IDk1NTRkMTMuLjE5YjI1
+N2UgMTAwNjQ0DQo+ID4+PiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9yOGE3NzkxLXBvcnRlci5k
+dHMNCj4gPj4+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3I4YTc3OTEtcG9ydGVyLmR0cw0KPiA+
+Pj4gQEAgLTQxMyw2ICs0MTMsNyBAQA0KPiA+Pj4gICAgfTsNCj4gPj4+DQo+ID4+PiAgICAmcGNp
+ZV9idXNfY2xrIHsNCj4gPj4+ICsJY2xvY2stZnJlcXVlbmN5ID0gPDEwMDAwMDAwMD47DQo+ID4+
+PiAgICAJc3RhdHVzID0gIm9rYXkiOw0KPiA+Pj4gICAgfTsNCj4gPj4+DQo+ID4+ICAgICAgQWdh
+aW4sIGxvb2tpbmcgYXQgdGhlIFBvcnRlciBzY2hlbWF0aWNzLCBJIGRvbid0IHNlZSB0aGlzIGNs
+b2NrDQo+ID4+IGVpdGhlci4gOi0vDQo+ID4NCj4gPiBZb3Ugd2VyZSB0aGUgb25lIGVuYWJsaW5n
+IHRoaXMgY2xvY2sgZm9yIFBvcnRlciA7KSBJIGRvbid0IGhhdmUgUENJRQ0KPiANCj4gICAgIFll
+cywgb2YgY291cnNlLiBJIGRvbid0IHJlbWVtYmVyIHRoZSBnb3J5IGRldGFpbHMgYWxyZWFkeSAt
+LSBJIG1pZ2h0IGhhdmUNCj4gYmxpbmRseSBjb3BpZWQgd2hhdCB3YXMgaW4gdGhlIEtvZWxzY2gn
+cyAuZHRzLg0KPiANCj4gPiBoYXJkd2FyZSB0byB0ZXN0IHdpdGggb24gbXkgcG9ydGVyIGJvYXJk
+LCBtaWdodCBiZSB3b3J0aCBpZiB5b3UgY291bGQNCj4gPiBkaXNhYmxlIHRoaXMgY2xvY2sgYW5k
+IHNlZSBpZiBQQ0ktRSBzdGlsbCBmdWNudGlvbnMgYXMgZXhwZWN0ZWQgKG1heWJlDQo+ID4gaW4g
+cHJhY3Rpc2UgaXQganVzdCBoYXBwZW5zIHRvIHByZWZlciB0aGUgaW50ZXJuYWwgY2xvY2s/KSA/
+DQo+IA0KPiAgICAgSSBrbm93IHRoZSBQQ0llIGRyaXZlciBkb2VzIHJlcXVpcmUgdGhpcyBjbG9j
+ayBpbiBvcmRlciB0byBmdW5jdGlvbiAtLSBpdA0KPiB3b3VsZCBiZSB0aGUgc2FtZSBldGVybmFs
+IC1FUFJPQkVfREVGRVIgY29uZGl0aW9uIHlvdSdkIGFscmVhZHkgZGVzY3JpYmVkOw0KPiBzZWUg
+ZHJpdmVycy9wY2kvaG9zdC9wY2llLXJjYXIuYyB5b3Vyc2VsZi4uLg0KPiANCj4gPj4+IGRpZmYg
+LS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9yOGE3NzkxLmR0c2kNCj4gPj4+IGIvYXJjaC9hcm0v
+Ym9vdC9kdHMvcjhhNzc5MS5kdHNpDQo+ID4+PiBpbmRleCA4NjkzODg4Li42NzZkZjYzIDEwMDY0
+NA0KPiA+Pj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvcjhhNzc5MS5kdHNpDQo+ID4+PiArKysg
+Yi9hcmNoL2FybS9ib290L2R0cy9yOGE3NzkxLmR0c2kNCj4gPj4+IEBAIC0xMTA0LDggKzExMDQs
+NyBAQA0KPiA+Pj4gICAgCQlwY2llX2J1c19jbGs6IHBjaWVfYnVzIHsNCj4gPj4+ICAgIAkJCWNv
+bXBhdGlibGUgPSAiZml4ZWQtY2xvY2siOw0KPiA+Pj4gICAgCQkJI2Nsb2NrLWNlbGxzID0gPDA+
+Ow0KPiA+Pj4gLQkJCWNsb2NrLWZyZXF1ZW5jeSA9IDwxMDAwMDAwMDA+Ow0KPiA+Pj4gLQkJCXN0
+YXR1cyA9ICJkaXNhYmxlZCI7DQo+ID4+PiArCQkJY2xvY2stZnJlcXVlbmN5ID0gPDA+Ow0KPiA+
+PiAgICAgIElmIHRoZSBjbG9jayBoYXMgYSBnb29kIGRlZmF1bHQgZnJlcXVlbmN5LCBJIGRvbid0
+IHRoaW5rIHlvdSBuZWVkDQo+ID4+IHRvDQo+ID4+IHJlbW92ZSBpdC4gT3RoZXJ3aXNlIHlvdSBt
+aXNzZWQgVVNCX0VYVEFMIHdoaWNoIGlzIDQ4IE1IeiAoYW5kIGNhbiBiZQ0KPiA+PiBvdmVycmlk
+ZGVuKS4NCj4gPg0KPiA+IEkgZGlkIHRoYXQgYXMgaXQgd2FzIGJ5IGRlZmF1bHQgZGlzYWJsZWQs
+IHNvIGlmIGkgZG8gZW5hYmxlIGl0IGJ1dA0KPiA+IGRvbid0IGRyb3AgdGhlIGRlZmF1bHQgZnJl
+cXVlbmN5IHRvIDAgYm9hcmQgc3dpdGhvdXQgdGhhdCBjbG9jayB3aWxsDQo+ID4gc3VkZGVubHkg
+aGF2ZSBpdCBhZGRlZCB0byB0aGVpciBkdGIuDQo+IA0KPiAgICAgWmVybyBmcmVxdWVuY3kgaXMg
+aGFyZGx5IGFueSBiZXR0ZXIgdGhlbiB0aGUgZGVmYXVsdC4uLg0KPiANCj4gPiBGb3IgdGhlIHVz
+YiBleHRlcm5hbCBjbG9jayBJIGRpZG4ndCB0b3VjaCBpdCBhcyBpdCB3YXMgYWxyZWFkeSBlbmFi
+bGVkDQo+ID4gYnkgZGVmYXVsdCB3aXRoIGEgcHJvcGVyIGZyZXF1ZW5jeSwgc28gaXQgd291bGRu
+J3QgaGl0IHRoZSBpc3N1ZSBpIHdhcw0KPiA+IHRyeWluZyB0byBmaXggaGVyZS4gQnV0IGkgYWdy
+ZWUsIGJvdGggbG9va2luZyBhdCBvdGhlciBSZW5lc2FzIGR0c2lzDQo+ID4gYW5kIGhvdyBhbGwg
+b3RoZXIgZXh0ZXJuYWwgY2xvY2tzIGFyZSBkb25lIGluIHRoaXMgZHRzaSwgdGhpcyBub2RlIGlz
+DQo+ID4gb2RkLg0KPiANCj4gICAgIEl0J3Mgbm90IHRoYXQgb2RkIGdpdmVuIHRoYXQgdGhlIFIt
+Q2FyIGdlbjIgbWFudWFsIHNwZWNpZmljYWxseSBzYXlzIGl0DQo+IHNob3VsZCBiZSA0OCBNSHou
+DQo+ICAgICBMb29raW5nIGludG8gdGhlIG1hbnVhbCBhZ2FpbiwgdGhlIFBDSWUgYnVzIGNsb2Nr
+IG11c3QgYmUgdGhlIG9ubmUNCj4gcHJlc2VudGVkIG9uIHRoZSBDSUNSRUZbUE5dMV9TQVRBL1BD
+SWUgaW5wdXQgc2lnbmFscyBhbmQgaXQgaW5kZWVkIHNob3VsZCBiZQ0KPiAxMDAgTUh6Li4uIFNv
+IFBoaWwgd2FzIGNvcnJlY3QuDQoNClBDSWUgYWx3YXlzIHJlcXVpcmVzIGEgMTAwTUh6IHJlZmVy
+ZW5jZSBjbG9jay4gT24gS29lbHNjaCwgdGhpcyBjbG9jayBpcw0KZ2VuZXJhdGVkIGJ5IFU2IGFu
+ZCBhbHdheXMgb24uIFNvbWUgYm9hcmRzIG1heSBuZWVkIGFkZGl0aW9uYWwgaGFyZHdhcmUNCnRv
+IGJlIHNldHVwIGluIG9yZGVyIHRvIG91dHB1dCB0aGUgY2xvY2ssIGhlbmNlIHRoZSBEVCBub2Rl
+IGZvciB0aGUgY2xvY2suDQoNCkkgaG9wZSB0aGF0IGNsYXJpZmllcyB0aGUgc2l0dWF0aW9uIQ0K
+UGhpbA0KDQo=
