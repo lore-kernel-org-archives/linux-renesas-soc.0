@@ -1,99 +1,68 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 13 Apr 2016 15:29:17 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-	<niklas.soderlund@ragnatech.se>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	linux-renesas-soc@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	iommu@lists.linux-foundation.org, robin.murphy@arm.com,
-	geert+renesas@glider.be, Linus Walleij <linus.walleij@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v5 3/9] dma-mapping: add dma_{map,unmap}_resource
-Message-ID: <20160413132916.GC19650@bigcity.dyn.berto.se>
-References: <1457404974-1800-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
- <20160311125846.GF1111@bigcity.dyn.berto.se>
- <20160315082254.GE9136@infradead.org>
- <3286525.zPAGiD4Xk2@avalon>
- <20160321152601.GA11674@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20160321152601.GA11674@infradead.org>
+In-Reply-To: <1459935952-4639-1-git-send-email-sjoerd.simons@collabora.co.uk>
+References: <1459935952-4639-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Date: Tue, 12 Apr 2016 09:40:30 +0200
+Message-ID: <CAMuHMdW7anK4LqraZmJqJwrB7AuqWmLLDUenEUazHCScu022dw@mail.gmail.com>
+Subject: Re: [PATCH] drm: rcar-du: Only unwindow as necessary on probe failure
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	DRI Development <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Christoph,
+Hi Sjoerd,
 
-On 2016-03-21 08:26:01 -0700, Christoph Hellwig wrote:
-> On Thu, Mar 17, 2016 at 01:33:51PM +0200, Laurent Pinchart wrote:
-> > The good news is that, given that no code uses this new API at the moment, 
-> > there isn't much to audit. The patch series implements the resource mapping 
-> > for arch/arm only, and makes use of it in the rcar-dmac driver only. Would you 
-> > like anything audited else than the arch/arm dma mapping implementation, the 
-> > rcar-dmac driver and the code that then deals with the dma addresses (I'm 
-> > thinking about the IOMMU subsystem and the ipmmu-vmsa driver in particular) ?
-> 
-> Yes, it would be good to do an audit of all the ARM dma_ops as well
-> as generic code like drivers/base/dma-*.c, lib/dma-debug.c and
-> include/linux/dma-*.h
+On Wed, Apr 6, 2016 at 11:45 AM, Sjoerd Simons
+<sjoerd.simons@collabora.co.uk> wrote:
+> Simply calling rcar_du_remove on any error can cause unbalanced calls to
+> various functions (e.g. drm_connector_register/unregister,
+> drm_dev_register/drm_dev_unref).
+>
+> This can be seen at bootup of my Porter boards with current next:
+>
+> [    2.789322] rcar-du feb00000.display: failed to initialize DRM/KMS (-517)
+> [    2.796267] ------------[ cut here ]------------
+> [    2.800996] WARNING: CPU: 1 PID: 1 at include/drm/drm_crtc.h:2623 drm_connector_unregister_all+0x60/0x68
+> [    2.810689] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.6.0-rc2-next-20160405-dirty #11
+> [    2.818864] Hardware name: Generic R8A7791 (Flattened Device Tree)
+> [    2.825174] Backtrace:
+> [    2.827699] [<c010aa2c>] (dump_backtrace) from [<c010abd8>] (show_stack+0x18/0x1c)
+> [    2.835430]  r7:c042da78 r6:00000009 r5:60000013 r4:00000000
+> [    2.841251] [<c010abc0>] (show_stack) from [<c0379244>] (dump_stack+0x84/0xa4)
+> [    2.848632] [<c03791c0>] (dump_stack) from [<c011c3b0>] (__warn+0xd0/0x100)
+> [    2.855739]  r5:00000000 r4:00000000
+> [    2.859409] [<c011c2e0>] (__warn) from [<c011c498>] (warn_slowpath_null+0x28/0x30)
+> [    2.867139]  r9:00000001 r8:ef1dc610 r7:ef114010 r6:ef1dc600 r5:ef114010 r4:ef2f2400
+> [    2.875096] [<c011c470>] (warn_slowpath_null) from [<c042da78>] (drm_connector_unregister_all+0x60/0x68)
+> [    2.884785] [<c042da18>] (drm_connector_unregister_all) from [<c0440ac8>] (rcar_du_remove+0x1c/0x5c)
+> [    2.894111]  r5:ef114010 r4:ef2f2400
+> [    2.897780] [<c0440aac>] (rcar_du_remove) from [<c0440d50>] (rcar_du_probe+0x1d0/0x210)
+> [    2.905953]  r5:ef2f2400 r4:fffffdfb
+> [    2.909625] [<c0440b80>] (rcar_du_probe) from [<c044c1d4>] (platform_drv_probe+0x58/0xa8)
+> [    2.917976]  r9:00000000 r8:c0a1cca4 r7:c0a71a48 r6:c0a1cca4 r5:ef1dc610 r4:c0440b80
+>
+> Adjust the code to only unwind as necessary on probe failures
+>
+> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-I have now done an audit to the best of my abilities, thanks to Laurent 
-for pointing me in the right direction. And from what I can tell we are 
-good.
+Thanks!
 
-* drivers/dma/sh/rcar-dmac.c
-  Once the phys_addr_t is mapped to a dma_addr_t using 
-  dma_map_resource() it is only used to check that the transfere do not 
-  cross 4GB boundaries and then only directly written to HW registers.
+I can confirm your patch fixes the same warning on r8a7791/koelsch, so
+I'll include it in today's renesas-drivers release.
 
-* drivers/iommu/iommu.c
-  - iommu_map()
-    Check that it's align to min page size or return -EINVAL then calls
-    domain->ops->map()
+Gr{oetje,eeting}s,
 
-* drivers/iommu/ipmmu-vmsa.c
-  - ipmmu_map()
-    No logic only calls domain->ops->map()
+                        Geert
 
-* drivers/iommu/io-pgtable-arm.c
-  - arm_lpae_map()
-    No logic only calls __arm_lpae_map()
-  - __arm_lpae_map()
-    No logic only calls arm_lpae_init_pte()
-  - arm_lpae_init_pte()
-    Used to get a pte:
-      pte |= pfn_to_iopte(paddr >> data->pg_shift, data);
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-* drivers/iommu/io-pgtable-arm-v7s.c
-  - arm_v7s_map()
-    No logic only calls __arm_v7s_map()
-  - __arm_v7s_map()
-    No logic only calls arm_v7s_init_pte()
-  - arm_v7s_init_pte
-    Used to get a pte:
-      pte |= paddr & ARM_V7S_LVL_MASK(lvl);
-
-* ARM dma-mapping
-  - dma_unmap_*
-    Only valid unmap is dma_unmap_resource() all others are an invalid 
-    use case.
-  - dma_sync_single_*
-    Invalid use case, memmory that is mapped is device memmory
-  - dma_common_mmap() and dma_mmap_attrs()
-    Invalid use case
-  - dma_common_get_sgtable() and dma_get_sgtable_attrs()
-    Invalid use case, only for dma_alloc_* allocated memory,
-  - dma_mapping_error()
-    OK
-
--- 
-Regards,
-Niklas S�derlund
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
