@@ -1,77 +1,94 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:33113 "EHLO
-	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752226AbcDZTOq (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 15:14:46 -0400
-Received: by mail-lf0-f45.google.com with SMTP id y84so27087608lfc.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Apr 2016 12:14:45 -0700 (PDT)
-Subject: Re: [PATCH net-next] ravb: Remove rx buffer ALIGN
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>, netdev@vger.kernel.org
-References: <1461514567-23444-1-git-send-email-ykaneko0929@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <571FBE21.4050908@cogentembedded.com>
-Date: Tue, 26 Apr 2016 22:14:41 +0300
-MIME-Version: 1.0
-In-Reply-To: <1461514567-23444-1-git-send-email-ykaneko0929@gmail.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v5 05/12] ARM: dts: r8a7794: Add SYSC PM Domains
+Date: Wed, 13 Apr 2016 16:44:45 +0200
+Message-Id: <1460558692-10414-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1460558692-10414-1-git-send-email-geert+renesas@glider.be>
+References: <1460558692-10414-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+Add a device node for the System Controller.
+Hook up the Cortex-A7 CPU cores and the Cortex-A7 L2 cache/SCU to their
+respective PM Domains.
 
-On 04/24/2016 07:16 PM, Yoshihiro Kaneko wrote:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v5:
+  - Remove "power-domains" property again from the sysc node, as the
+    System Controller itself is not part of the Clock Domain,
 
-> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
->
-> Aligning the reception data size is not required.
+v4:
+  - Add "power-domains" property to the sysc node, to refer to the SoC's
+    Clock Domain,
 
-    OK, the gen 2/3 manuals indeed don't require this. I assume the patch has 
-been tested...
+v3:
+  - Drop power area hiearchy from DT,
+  - Switch to "#power-domain-cells = <1>",
+  - Drop fallback compatibility strings,
 
-> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+v2:
+  - Change one-line summary prefix to match current arm-soc practices,
+  - Update compatible values.
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-    I have a few comments though...
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 29a0a001f1b21a9e..99c41c9099b0c233 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -12,6 +12,7 @@
+ #include <dt-bindings/clock/r8a7794-clock.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/power/r8a7794-sysc.h>
+ 
+ / {
+ 	compatible = "renesas,r8a7794";
+@@ -42,6 +43,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0>;
+ 			clock-frequency = <1000000000>;
++			power-domains = <&sysc R8A7794_PD_CA7_CPU0>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+ 
+@@ -50,12 +52,14 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <1>;
+ 			clock-frequency = <1000000000>;
++			power-domains = <&sysc R8A7794_PD_CA7_CPU1>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+ 	};
+ 
+ 	L2_CA7: cache-controller@1 {
+ 		compatible = "cache";
++		power-domains = <&sysc R8A7794_PD_CA7_SCU>;
+ 		cache-unified;
+ 		cache-level = <2>;
+ 	};
+@@ -1244,6 +1248,12 @@
+ 		};
+ 	};
+ 
++	sysc: system-controller@e6180000 {
++		compatible = "renesas,r8a7794-sysc";
++		reg = <0 0xe6180000 0 0x0200>;
++		#power-domain-cells = <1>;
++	};
++
+ 	ipmmu_sy0: mmu@e6280000 {
+ 		compatible = "renesas,ipmmu-r8a7794", "renesas,ipmmu-vmsa";
+ 		reg = <0 0xe6280000 0 0x1000>;
+-- 
+1.9.1
 
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index 238b56f..66ed80c 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -246,10 +246,10 @@ static void ravb_ring_format(struct net_device *ndev, int q)
->   	for (i = 0; i < priv->num_rx_ring[q]; i++) {
->   		/* RX descriptor */
->   		rx_desc = &priv->rx_ring[q][i];
-> -		/* The size of the buffer should be on 16-byte boundary. */
-> -		rx_desc->ds_cc = cpu_to_le16(ALIGN(PKT_BUF_SZ, 16));
-> -		dma_addr = dma_map_single(ndev->dev.parent, priv->rx_skb[q][i]->data,
-> -					  ALIGN(PKT_BUF_SZ, 16),
-> +		rx_desc->ds_cc = cpu_to_le16(PKT_BUF_SZ);
-> +		dma_addr = dma_map_single(ndev->dev.parent,
-> +					  priv->rx_skb[q][i]->data,
-
-    Please don't reformat the lines above.
-
-> +					  PKT_BUF_SZ,
->   					  DMA_FROM_DEVICE);
->   		/* We just set the data size to 0 for a failed mapping which
->   		 * should prevent DMA from happening...
-> @@ -557,8 +557,9 @@ static bool ravb_rx(struct net_device *ndev, int *quota, int q)
->
->   			skb = priv->rx_skb[q][entry];
->   			priv->rx_skb[q][entry] = NULL;
-> -			dma_unmap_single(ndev->dev.parent, le32_to_cpu(desc->dptr),
-> -					 ALIGN(PKT_BUF_SZ, 16),
-> +			dma_unmap_single(ndev->dev.parent,
-> +					 le32_to_cpu(desc->dptr),
-
-   Same here.
-
-[...]
-
-MBR, Sergei
