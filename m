@@ -7,11 +7,11 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v6 10/12] ARM: dts: r8a7791: Use SYSC "always-on" PM Domain
-Date: Fri, 22 Apr 2016 11:07:32 +0200
-Message-Id: <1461316054-27999-11-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461316054-27999-1-git-send-email-geert+renesas@glider.be>
-References: <1461316054-27999-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v5 09/12] ARM: dts: r8a7791: Use SYSC "always-on" PM Domain
+Date: Wed, 13 Apr 2016 16:44:49 +0200
+Message-Id: <1460558692-10414-10-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1460558692-10414-1-git-send-email-geert+renesas@glider.be>
+References: <1460558692-10414-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -22,9 +22,6 @@ description in DT.
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-v6:
-  - Rebased,
-
 v5:
   - Add Acked-by,
 
@@ -35,7 +32,7 @@ v4:
  1 file changed, 73 insertions(+), 73 deletions(-)
 
 diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index b8657f4b45efdfe5..db67e342c58566fa 100644
+index cffd7f49c01fb7a1..3f962299ae6212f3 100644
 --- a/arch/arm/boot/dts/r8a7791.dtsi
 +++ b/arch/arm/boot/dts/r8a7791.dtsi
 @@ -122,7 +122,7 @@
@@ -254,232 +251,232 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  		i2c-scl-internal-delay-ns = <110>;
  		status = "disabled";
  	};
-@@ -516,7 +516,7 @@
- 		clocks = <&mstp9_clks R8A7791_CLK_IICDVFS>;
- 		dmas = <&dmac0 0x77>, <&dmac0 0x78>;
- 		dma-names = "tx", "rx";
+@@ -517,7 +517,7 @@
+ 		dmas = <&dmac0 0x77>, <&dmac0 0x78>,
+ 		       <&dmac1 0x77>, <&dmac1 0x78>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -529,7 +529,7 @@
- 		clocks = <&mstp3_clks R8A7791_CLK_IIC0>;
- 		dmas = <&dmac0 0x61>, <&dmac0 0x62>;
- 		dma-names = "tx", "rx";
+@@ -531,7 +531,7 @@
+ 		dmas = <&dmac0 0x61>, <&dmac0 0x62>,
+ 		       <&dmac1 0x61>, <&dmac1 0x62>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -542,7 +542,7 @@
- 		clocks = <&mstp3_clks R8A7791_CLK_IIC1>;
- 		dmas = <&dmac0 0x65>, <&dmac0 0x66>;
- 		dma-names = "tx", "rx";
+@@ -545,7 +545,7 @@
+ 		dmas = <&dmac0 0x65>, <&dmac0 0x66>,
+ 		       <&dmac1 0x65>, <&dmac1 0x66>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -558,7 +558,7 @@
- 		clocks = <&mstp3_clks R8A7791_CLK_MMCIF0>;
- 		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>;
- 		dma-names = "tx", "rx";
+@@ -562,7 +562,7 @@
+ 		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
+ 		       <&dmac1 0xd1>, <&dmac1 0xd2>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		reg-io-width = <4>;
  		status = "disabled";
  		max-frequency = <97500000>;
-@@ -571,7 +571,7 @@
- 		clocks = <&mstp3_clks R8A7791_CLK_SDHI0>;
- 		dmas = <&dmac1 0xcd>, <&dmac1 0xce>;
- 		dma-names = "tx", "rx";
+@@ -576,7 +576,7 @@
+ 		dmas = <&dmac1 0xcd>, <&dmac1 0xce>,
+ 		       <&dmac0 0xcd>, <&dmac0 0xce>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -582,7 +582,7 @@
- 		clocks = <&mstp3_clks R8A7791_CLK_SDHI1>;
- 		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>;
- 		dma-names = "tx", "rx";
+@@ -588,7 +588,7 @@
+ 		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>,
+ 		       <&dmac0 0xc1>, <&dmac0 0xc2>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -593,7 +593,7 @@
- 		clocks = <&mstp3_clks R8A7791_CLK_SDHI2>;
- 		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>;
- 		dma-names = "tx", "rx";
+@@ -600,7 +600,7 @@
+ 		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>,
+ 		       <&dmac0 0xd3>, <&dmac0 0xd4>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -606,7 +606,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
- 		dma-names = "tx", "rx";
+@@ -614,7 +614,7 @@
+ 		dmas = <&dmac0 0x21>, <&dmac0 0x22>,
+ 		       <&dmac1 0x21>, <&dmac1 0x22>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -619,7 +619,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
- 		dma-names = "tx", "rx";
+@@ -628,7 +628,7 @@
+ 		dmas = <&dmac0 0x25>, <&dmac0 0x26>,
+ 		       <&dmac1 0x25>, <&dmac1 0x26>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -632,7 +632,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
- 		dma-names = "tx", "rx";
+@@ -642,7 +642,7 @@
+ 		dmas = <&dmac0 0x27>, <&dmac0 0x28>,
+ 		       <&dmac1 0x27>, <&dmac1 0x28>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -645,7 +645,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>;
- 		dma-names = "tx", "rx";
+@@ -656,7 +656,7 @@
+ 		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>,
+ 		       <&dmac1 0x1b>, <&dmac1 0x1c>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -658,7 +658,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x1f>, <&dmac0 0x20>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -671,7 +671,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x23>, <&dmac0 0x24>;
- 		dma-names = "tx", "rx";
+@@ -670,7 +670,7 @@
+ 		dmas = <&dmac0 0x1f>, <&dmac0 0x20>,
+ 		       <&dmac1 0x1f>, <&dmac1 0x20>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
 @@ -684,7 +684,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>;
- 		dma-names = "tx", "rx";
+ 		dmas = <&dmac0 0x23>, <&dmac0 0x24>,
+ 		       <&dmac1 0x23>, <&dmac1 0x24>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -697,7 +697,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x19>, <&dmac0 0x1a>;
- 		dma-names = "tx", "rx";
+@@ -698,7 +698,7 @@
+ 		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
+ 		       <&dmac1 0x3d>, <&dmac1 0x3e>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -710,7 +710,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>;
- 		dma-names = "tx", "rx";
+@@ -712,7 +712,7 @@
+ 		dmas = <&dmac0 0x19>, <&dmac0 0x1a>,
+ 		       <&dmac1 0x19>, <&dmac1 0x1a>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -724,7 +724,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
- 		dma-names = "tx", "rx";
+@@ -726,7 +726,7 @@
+ 		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>,
+ 		       <&dmac1 0x1d>, <&dmac1 0x1e>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -738,7 +738,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
- 		dma-names = "tx", "rx";
+@@ -741,7 +741,7 @@
+ 		dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
+ 		       <&dmac1 0x29>, <&dmac1 0x2a>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -752,7 +752,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>;
- 		dma-names = "tx", "rx";
+@@ -756,7 +756,7 @@
+ 		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
+ 		       <&dmac1 0x2d>, <&dmac1 0x2e>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -766,7 +766,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x2f>, <&dmac0 0x30>;
- 		dma-names = "tx", "rx";
+@@ -771,7 +771,7 @@
+ 		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
+ 		       <&dmac1 0x2b>, <&dmac1 0x2c>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -780,7 +780,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>;
- 		dma-names = "tx", "rx";
+@@ -786,7 +786,7 @@
+ 		dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
+ 		       <&dmac1 0x2f>, <&dmac1 0x30>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -794,7 +794,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>;
- 		dma-names = "tx", "rx";
+@@ -801,7 +801,7 @@
+ 		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
+ 		       <&dmac1 0xfb>, <&dmac1 0xfc>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -808,7 +808,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
- 		dma-names = "tx", "rx";
+@@ -816,7 +816,7 @@
+ 		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
+ 		       <&dmac1 0xfd>, <&dmac1 0xfe>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -822,7 +822,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
- 		dma-names = "tx", "rx";
+@@ -831,7 +831,7 @@
+ 		dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
+ 		       <&dmac1 0x39>, <&dmac1 0x3a>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -836,7 +836,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>;
- 		dma-names = "tx", "rx";
+@@ -846,7 +846,7 @@
+ 		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
+ 		       <&dmac1 0x4d>, <&dmac1 0x4e>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		status = "disabled";
  	};
  
-@@ -845,7 +845,7 @@
+@@ -861,7 +861,7 @@
+ 		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>,
+ 		       <&dmac1 0x3b>, <&dmac1 0x3c>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -870,7 +870,7 @@
  		reg = <0 0xee700000 0 0x400>;
  		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp8_clks R8A7791_CLK_ETHER>;
@@ -488,7 +485,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  		phy-mode = "rmii";
  		#address-cells = <1>;
  		#size-cells = <0>;
-@@ -858,7 +858,7 @@
+@@ -883,7 +883,7 @@
  		reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
  		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp8_clks R8A7791_CLK_ETHERAVB>;
@@ -497,7 +494,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  		#address-cells = <1>;
  		#size-cells = <0>;
  		status = "disabled";
-@@ -869,7 +869,7 @@
+@@ -894,7 +894,7 @@
  		reg = <0 0xee300000 0 0x2000>;
  		interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp8_clks R8A7791_CLK_SATA0>;
@@ -506,7 +503,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  		status = "disabled";
  	};
  
-@@ -878,7 +878,7 @@
+@@ -903,7 +903,7 @@
  		reg = <0 0xee500000 0 0x2000>;
  		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp8_clks R8A7791_CLK_SATA1>;
@@ -515,7 +512,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  		status = "disabled";
  	};
  
-@@ -890,7 +890,7 @@
+@@ -915,7 +915,7 @@
  		dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
  		       <&usb_dmac1 0>, <&usb_dmac1 1>;
  		dma-names = "ch0", "ch1", "ch2", "ch3";
@@ -524,7 +521,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  		renesas,buswait = <4>;
  		phys = <&usb0 1>;
  		phy-names = "usb";
-@@ -904,7 +904,7 @@
+@@ -929,7 +929,7 @@
  		#size-cells = <0>;
  		clocks = <&mstp7_clks R8A7791_CLK_HSUSB>;
  		clock-names = "usbhs";
@@ -533,7 +530,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  		status = "disabled";
  
  		usb0: usb-channel@0 {
-@@ -922,7 +922,7 @@
+@@ -947,7 +947,7 @@
  		reg = <0 0xe6ef0000 0 0x1000>;
  		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp8_clks R8A7791_CLK_VIN0>;
@@ -542,7 +539,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  		status = "disabled";
  	};
  
-@@ -931,7 +931,7 @@
+@@ -956,7 +956,7 @@
  		reg = <0 0xe6ef1000 0 0x1000>;
  		interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp8_clks R8A7791_CLK_VIN1>;
@@ -551,7 +548,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  		status = "disabled";
  	};
  
-@@ -940,7 +940,7 @@
+@@ -965,7 +965,7 @@
  		reg = <0 0xe6ef2000 0 0x1000>;
  		interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp8_clks R8A7791_CLK_VIN2>;
@@ -560,7 +557,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  		status = "disabled";
  	};
  
-@@ -949,7 +949,7 @@
+@@ -974,7 +974,7 @@
  		reg = <0 0xfe928000 0 0x8000>;
  		interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp1_clks R8A7791_CLK_VSP1_S>;
@@ -569,7 +566,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  
  		renesas,has-lut;
  		renesas,has-sru;
-@@ -963,7 +963,7 @@
+@@ -988,7 +988,7 @@
  		reg = <0 0xfe930000 0 0x8000>;
  		interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp1_clks R8A7791_CLK_VSP1_DU0>;
@@ -578,7 +575,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  
  		renesas,has-lif;
  		renesas,has-lut;
-@@ -977,7 +977,7 @@
+@@ -1002,7 +1002,7 @@
  		reg = <0 0xfe938000 0 0x8000>;
  		interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp1_clks R8A7791_CLK_VSP1_DU1>;
@@ -587,7 +584,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  
  		renesas,has-lif;
  		renesas,has-lut;
-@@ -1023,7 +1023,7 @@
+@@ -1048,7 +1048,7 @@
  		clocks = <&mstp9_clks R8A7791_CLK_RCAN0>,
  			 <&cpg_clocks R8A7791_CLK_RCAN>, <&can_clk>;
  		clock-names = "clkp1", "clkp2", "can_clk";
@@ -596,7 +593,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  		status = "disabled";
  	};
  
-@@ -1034,7 +1034,7 @@
+@@ -1059,7 +1059,7 @@
  		clocks = <&mstp9_clks R8A7791_CLK_RCAN1>,
  			 <&cpg_clocks R8A7791_CLK_RCAN>, <&can_clk>;
  		clock-names = "clkp1", "clkp2", "can_clk";
@@ -605,7 +602,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  		status = "disabled";
  	};
  
-@@ -1043,7 +1043,7 @@
+@@ -1068,7 +1068,7 @@
  		reg = <0 0xfe980000 0 0x10300>;
  		interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp1_clks R8A7791_CLK_JPU>;
@@ -614,43 +611,43 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  	};
  
  	clocks {
-@@ -1480,7 +1480,7 @@
- 		clocks = <&mstp9_clks R8A7791_CLK_QSPI_MOD>;
- 		dmas = <&dmac0 0x17>, <&dmac0 0x18>;
- 		dma-names = "tx", "rx";
+@@ -1509,7 +1509,7 @@
+ 		dmas = <&dmac0 0x17>, <&dmac0 0x18>,
+ 		       <&dmac1 0x17>, <&dmac1 0x18>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		num-cs = <1>;
  		#address-cells = <1>;
  		#size-cells = <0>;
-@@ -1494,7 +1494,7 @@
- 		clocks = <&mstp0_clks R8A7791_CLK_MSIOF0>;
- 		dmas = <&dmac0 0x51>, <&dmac0 0x52>;
- 		dma-names = "tx", "rx";
+@@ -1524,7 +1524,7 @@
+ 		dmas = <&dmac0 0x51>, <&dmac0 0x52>,
+ 		       <&dmac1 0x51>, <&dmac1 0x52>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		#address-cells = <1>;
  		#size-cells = <0>;
  		status = "disabled";
-@@ -1507,7 +1507,7 @@
- 		clocks = <&mstp2_clks R8A7791_CLK_MSIOF1>;
- 		dmas = <&dmac0 0x55>, <&dmac0 0x56>;
- 		dma-names = "tx", "rx";
+@@ -1538,7 +1538,7 @@
+ 		dmas = <&dmac0 0x55>, <&dmac0 0x56>,
+ 		       <&dmac1 0x55>, <&dmac1 0x56>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		#address-cells = <1>;
  		#size-cells = <0>;
  		status = "disabled";
-@@ -1520,7 +1520,7 @@
- 		clocks = <&mstp2_clks R8A7791_CLK_MSIOF2>;
- 		dmas = <&dmac0 0x41>, <&dmac0 0x42>;
- 		dma-names = "tx", "rx";
+@@ -1552,7 +1552,7 @@
+ 		dmas = <&dmac0 0x41>, <&dmac0 0x42>,
+ 		       <&dmac1 0x41>, <&dmac1 0x42>;
+ 		dma-names = "tx", "rx", "tx", "rx";
 -		power-domains = <&cpg_clocks>;
 +		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  		#address-cells = <1>;
  		#size-cells = <0>;
  		status = "disabled";
-@@ -1531,7 +1531,7 @@
+@@ -1563,7 +1563,7 @@
  		reg = <0 0xee000000 0 0xc00>;
  		interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp3_clks R8A7791_CLK_SSUSB>;
@@ -659,7 +656,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  		phys = <&usb2 1>;
  		phy-names = "usb";
  		status = "disabled";
-@@ -1544,7 +1544,7 @@
+@@ -1576,7 +1576,7 @@
  		      <0 0xee080000 0 0x1100>;
  		interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp7_clks R8A7791_CLK_EHCI>;
@@ -668,7 +665,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  		status = "disabled";
  
  		bus-range = <0 0>;
-@@ -1579,7 +1579,7 @@
+@@ -1611,7 +1611,7 @@
  		      <0 0xee0c0000 0 0x1100>;
  		interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp7_clks R8A7791_CLK_EHCI>;
@@ -677,7 +674,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  		status = "disabled";
  
  		bus-range = <1 1>;
-@@ -1629,7 +1629,7 @@
+@@ -1661,7 +1661,7 @@
  		interrupt-map = <0 0 0 0 &gic GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
  		clocks = <&mstp3_clks R8A7791_CLK_PCIEC>, <&pcie_bus_clk>;
  		clock-names = "pcie", "pcie_bus";
@@ -686,7 +683,7 @@ index b8657f4b45efdfe5..db67e342c58566fa 100644
  		status = "disabled";
  	};
  
-@@ -1732,7 +1732,7 @@
+@@ -1764,7 +1764,7 @@
  				"mix.0", "mix.1",
  				"dvc.0", "dvc.1",
  				"clk_a", "clk_b", "clk_c", "clk_i";
