@@ -1,31 +1,62 @@
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] ARM: dts: silk: add DU pins
+Date: Wed, 13 Apr 2016 22:36:21 +0300
+Message-ID: <2415333.mtLdVEoB2G@wasted.cogentembedded.com>
+In-Reply-To: <1674850.BZpGW9kEud@wasted.cogentembedded.com>
+References: <1674850.BZpGW9kEud@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: [v3,6/6] clk: shmobile: r8a7795: add PWM clock
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Message-Id: <1459424356-26061-7-git-send-email-ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: linux-pwm@vger.kernel.org, thierry.reding@gmail.com,
-	magnus.damm@gmail.com, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Date: Thu, 31 Mar 2016 13:39:16 +0200
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add the (previously omitted) DU pin data to the SILK board's device tree.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
 ---
-drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+This patch is against the 'renesas-devel-20160411-v4.6-rc3' tag of Simon
+Horman's 'renesas.git' repo. It depends on the R8A7794 DU PFC driver patch
+just posted for the pins to be configured...
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index b2198aef..9de458a 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -148,6 +148,7 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
- 	DEF_MOD("hscif2",		 518,	R8A7795_CLK_S3D1),
- 	DEF_MOD("hscif1",		 519,	R8A7795_CLK_S3D1),
- 	DEF_MOD("hscif0",		 520,	R8A7795_CLK_S3D1),
-+	DEF_MOD("pwm",			 523,	R8A7795_CLK_S3D4),
- 	DEF_MOD("fcpvd3",		 600,	R8A7795_CLK_S2D1),
- 	DEF_MOD("fcpvd2",		 601,	R8A7795_CLK_S2D1),
- 	DEF_MOD("fcpvd1",		 602,	R8A7795_CLK_S2D1),
+ arch/arm/boot/dts/r8a7794-silk.dts |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7794-silk.dts
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7794-silk.dts
++++ renesas/arch/arm/boot/dts/r8a7794-silk.dts
+@@ -183,6 +183,16 @@
+ 		groups = "usb1";
+ 		function = "usb1";
+ 	};
++
++	du0_pins: du0 {
++		groups = "du0_rgb888", "du0_sync", "du0_disp", "du0_clk0_out";
++		function = "du0";
++	};
++
++	du1_pins: du1 {
++		groups = "du1_rgb666", "du1_sync", "du1_disp", "du1_clk0_out";
++		function = "du1";
++	};
+ };
+ 
+ &scif2 {
+@@ -360,6 +370,8 @@
+ };
+ 
+ &du {
++	pinctrl-0 = <&du0_pins &du1_pins>;
++	pinctrl-names = "default";
+ 	status = "okay";
+ 
+ 	clocks = <&mstp7_clks R8A7794_CLK_DU0>,
+
