@@ -1,65 +1,238 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52028 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750835AbcDZAvA (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 20:51:00 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC PCI Defconfig Updates for v4.7
-Date: Tue, 26 Apr 2016 10:50:10 +1000
-Message-Id: <cover.1461631445.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v5 07/12] ARM: dts: r8a7779: Use SYSC "always-on" PM Domain
+Date: Wed, 13 Apr 2016 16:44:47 +0200
+Message-Id: <1460558692-10414-8-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1460558692-10414-1-git-send-email-geert+renesas@glider.be>
+References: <1460558692-10414-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Hook up all devices that are part of the CPG/MSTP Clock Domain to the
+SYSC "always-on" PM Domain, for a more consistent device-power-area
+description in DT.
 
-Please consider these Renesas ARM based SoC PCI defconfig updates for v4.7.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+v5:
+  - Add Acked-by,
 
+v4:
+  - New.
+---
+ arch/arm/boot/dts/r8a7779.dtsi | 44 +++++++++++++++++++++---------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
-This pull request includes a single patch with changes that I would
-ordinarily be inclined to split into different branches. However,
-are most easily done atomicly and as they are rather small I have
-kept them in one patch in its own branch. My hope is that you can find
-an appropriate home for it.
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index e02875a8c040f304..d43e3b2105aef7dc 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -177,7 +177,7 @@
+ 		reg = <0xffc70000 0x1000>;
+ 		interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C0>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -188,7 +188,7 @@
+ 		reg = <0xffc71000 0x1000>;
+ 		interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C1>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -199,7 +199,7 @@
+ 		reg = <0xffc72000 0x1000>;
+ 		interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C2>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -210,7 +210,7 @@
+ 		reg = <0xffc73000 0x1000>;
+ 		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C3>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -222,7 +222,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF0>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -234,7 +234,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF1>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -246,7 +246,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF2>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -258,7 +258,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF3>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -270,7 +270,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF4>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -282,7 +282,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF5>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -304,7 +304,7 @@
+ 			     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_TMU0>;
+ 		clock-names = "fck";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 
+ 		#renesas,channels = <3>;
+ 
+@@ -319,7 +319,7 @@
+ 			     <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_TMU1>;
+ 		clock-names = "fck";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 
+ 		#renesas,channels = <3>;
+ 
+@@ -334,7 +334,7 @@
+ 			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_TMU2>;
+ 		clock-names = "fck";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 
+ 		#renesas,channels = <3>;
+ 
+@@ -346,7 +346,7 @@
+ 		reg = <0xfc600000 0x2000>;
+ 		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 	};
+ 
+ 	sdhi0: sd@ffe4c000 {
+@@ -354,7 +354,7 @@
+ 		reg = <0xffe4c000 0x100>;
+ 		interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI0>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -363,7 +363,7 @@
+ 		reg = <0xffe4d000 0x100>;
+ 		interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI1>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -372,7 +372,7 @@
+ 		reg = <0xffe4e000 0x100>;
+ 		interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI2>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -381,7 +381,7 @@
+ 		reg = <0xffe4f000 0x100>;
+ 		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI3>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -392,7 +392,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -403,7 +403,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -414,7 +414,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -423,7 +423,7 @@
+ 		reg = <0 0xfff80000 0 0x40000>;
+ 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7779_CLK_DU>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 
+ 		ports {
+-- 
+1.9.1
 
-The patch updates renames PCI_RCAR_GEN2_PCIE Kconfig symbol
-as PCIE_RCAR. It includes PCI Makefile and Kconfig changes and
-accordingly the patch has an ack from Bjorn Helgaas. It also updates
-arm and arm64 defconfigs.
-
-
-The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
-
-  Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-pci-defconfig-for-v4.7
-
-for you to fetch changes up to 350a73b4f896e620216d8e9429bbac16d89da8b0:
-
-  PCI: rcar-pcie: Remove Gen2 designation from Kconfig (2016-04-22 10:14:34 +1000)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC Pci Defconfig Updates for v4.7
-
-* Remove Gen2 designation from Kconfig for R-Car PCIE driver
-
-----------------------------------------------------------------
-Simon Horman (1):
-      PCI: rcar-pcie: Remove Gen2 designation from Kconfig
-
- arch/arm/configs/multi_v7_defconfig | 2 +-
- arch/arm/configs/shmobile_defconfig | 2 +-
- arch/arm64/configs/defconfig        | 2 +-
- drivers/pci/host/Kconfig            | 4 ++--
- drivers/pci/host/Makefile           | 2 +-
- 5 files changed, 6 insertions(+), 6 deletions(-)
