@@ -2,84 +2,80 @@ Return-Path: <devicetree-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 04/12] ARM: dts: r8a7793: Add SYSC PM Domains
-Date: Thu,  7 Apr 2016 14:20:27 +0200
-Message-Id: <1460031635-13452-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
-References: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v5 5/7] soc: renesas: Add r8a7793 SYSC PM Domain Binding Definitions
+Date: Wed, 13 Apr 2016 16:44:21 +0200
+Message-Id: <1460558663-10197-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1460558663-10197-1-git-send-email-geert+renesas@glider.be>
+References: <1460558663-10197-1-git-send-email-geert+renesas@glider.be>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the System Controller, and hook it up to the
-CPG/MSTP Clock Domain.
-Hook up the first Cortex-A15 CPU core and the Cortex-A15 L2 cache/SCU to
-their respective PM Domains.
+R-Car M2-N is identical to R-Car M2-W w.r.t. power domains, so reuse the
+definitions from the latter.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
+v5:
+  - Add Reviewed-by,
+
 v4:
-  - Add power-domains property to the sysc node, to refer to the SoC's
-    Clock Domain,
+  - Rename R8A7793_PD_SH to R8A7793_PD_SH_4A,
+  - Use the numbers directly, to make the header file self-contained,
+  - Add always-on power area,
 
 v3:
-  - Drop power area hiearchy from DT,
-  - Switch to "#power-domain-cells = <1>",
-  - Drop fallback compatibility strings,
-
-v2:
-  - Change one-line summary prefix to match current arm-soc practices,
-  - Update compatible values.
+  - New.
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ include/dt-bindings/power/r8a7793-sysc.h | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 include/dt-bindings/power/r8a7793-sysc.h
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index bf70c464920bc687..aa5af3b16f1826ab 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -11,6 +11,7 @@
- #include <dt-bindings/clock/r8a7793-clock.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/power/r8a7793-sysc.h>
- 
- / {
- 	compatible = "renesas,r8a7793";
-@@ -43,6 +44,7 @@
- 			voltage-tolerance = <1>; /* 1% */
- 			clocks = <&cpg_clocks R8A7793_CLK_Z>;
- 			clock-latency = <300000>; /* 300 us */
-+			power-domains = <&sysc R8A7793_PD_CA15_CPU0>;
- 
- 			/* kHz - uV - OPPs unknown yet */
- 			operating-points = <1500000 1000000>,
-@@ -76,6 +78,7 @@
- 
- 	L2_CA15: cache-controller@0 {
- 		compatible = "cache";
-+		power-domains = <&sysc R8A7793_PD_CA15_SCU>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
-@@ -1212,6 +1215,13 @@
- 		};
- 	};
- 
-+	sysc: system-controller@e6180000 {
-+		compatible = "renesas,r8a7793-sysc";
-+		reg = <0 0xe6180000 0 0x0200>;
-+		power-domains = <&cpg_clocks>;
-+		#power-domain-cells = <1>;
-+	};
+diff --git a/include/dt-bindings/power/r8a7793-sysc.h b/include/dt-bindings/power/r8a7793-sysc.h
+new file mode 100644
+index 0000000000000000..b5693df3d830ed42
+--- /dev/null
++++ b/include/dt-bindings/power/r8a7793-sysc.h
+@@ -0,0 +1,28 @@
++/*
++ * Copyright (C) 2016 Glider bvba
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
++#ifndef __DT_BINDINGS_POWER_R8A7793_SYSC_H__
++#define __DT_BINDINGS_POWER_R8A7793_SYSC_H__
 +
- 	ipmmu_sy0: mmu@e6280000 {
- 		compatible = "renesas,ipmmu-r8a7793", "renesas,ipmmu-vmsa";
- 		reg = <0 0xe6280000 0 0x1000>;
++/*
++ * These power domain indices match the numbers of the interrupt bits
++ * representing the power areas in the various Interrupt Registers
++ * (e.g. SYSCISR, Interrupt Status Register)
++ *
++ * Note that R-Car M2-N is identical to R-Car M2-W w.r.t. power domains.
++ */
++
++#define R8A7793_PD_CA15_CPU0		 0
++#define R8A7793_PD_CA15_CPU1		 1
++#define R8A7793_PD_CA15_SCU		12
++#define R8A7793_PD_SH_4A		16
++#define R8A7793_PD_SGX			20
++
++/* Always-on power area */
++#define R8A7793_PD_ALWAYS_ON		32
++
++#endif /* __DT_BINDINGS_POWER_R8A7793_SYSC_H__ */
 -- 
 1.9.1
 
