@@ -1,67 +1,124 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60436 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752615AbcD0XIS (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 19:08:18 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/5] ARM: dts: r8a7790: Don't disable referenced optional clocks
-Date: Thu, 28 Apr 2016 09:08:10 +1000
-Message-Id: <03adc1811cefae9494deb2002c7ab44f31d782d7.1461798352.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461798352.git.horms+renesas@verge.net.au>
-References: <cover.1461798352.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 00/12] ARM/arm64: dts: rcar: Add SYSC PM domains
+Date: Thu, 14 Apr 2016 19:39:11 +0300
+Message-ID: <69568188.pxFZj2OQEq@avalon>
+In-Reply-To: <1460558692-10414-1-git-send-email-geert+renesas@glider.be>
+References: <1460558692-10414-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Geert,
 
-clk_get() on a disabled clock node will return -EPROBE_DEFER, which can
-cause drivers to be deferred forever if such clocks are referenced in
-their devices' clocks properties.
+Thank you for the patches.
 
-Update the various disabled external clock nodes to default to a
-frequency of 0, but don't disable them, to prevent this.
+For the whole series,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7790.dtsi | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 776a2aed81d2..935064fe7b13 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1032,8 +1032,7 @@
- 		pcie_bus_clk: pcie_bus {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
--			clock-frequency = <100000000>;
--			status = "disabled";
-+			clock-frequency = <0>;
- 		};
- 
- 		/*
-@@ -1062,7 +1061,6 @@
- 			#clock-cells = <0>;
- 			/* This value must be overridden by the board. */
- 			clock-frequency = <0>;
--			status = "disabled";
- 		};
- 
- 		/* External USB clock - can be overridden by the board */
-@@ -1078,7 +1076,6 @@
- 			#clock-cells = <0>;
- 			/* This value must be overridden by the board. */
- 			clock-frequency = <0>;
--			status = "disabled";
- 		};
- 
- 		/* Special CPG clocks */
+On Wednesday 13 Apr 2016 16:44:40 Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series adds the R-Car System Controller to the DTS files for
+> the various Renesas R-Car SoCs, and hooks up devices to their respective
+> PM domains.
+> 
+> This is a dependency for the enablement of DU and VSP on R-Car H3, as
+> on this SoC the VSPs are located in a PM Domain.
+> 
+> This series contains 2 parts:
+>   1. Patches 1-6 add device node for the System Controllers, and hook
+>      up CPU cores and L2 caches/SCUs to their respective PM Domains,
+>   2. Patches 7-12 hook up devices to the SYSC "always-on" PM Domain, for
+>      a more consistent device-power-area description in DT.
+> 
+> As "[PATCH v5 00/11] soc: renesas: Add R-Car SYSC PM Domain Support"
+> merged the two initialization phases again, the issues in v4 caused by
+> excessive deferred probing are gone, and both parts are now safe to
+> apply.
+> 
+> Changes compared to v4:
+>   - Add Acked-by,
+>   - Remove "power-domains" property again from the sysc nodes, as the
+>     System Controller theirselves are not part of the Clock Domains.
+> 
+> Changes compared to v3:
+>   - Add power-domains properties to the sysc nodes, to refer to the
+>     SoC's Clock Domains,
+>   - Extract using the SYSC "always-on" PM Domain on R-Car H3 into its
+>     own patch,
+>   - Add patches to use the SYSC "always-on" PM Domain on R-Car H1 and
+>     R-Car Gen2,
+>   - Update for recently added can0, can1, pciec0, and pciec1 device
+>     nodes on R-Car H3.
+> 
+> Changes compared to v2:
+>   - Move power area hierarchy from DT to C (cfr. DT bindings for Renesas
+>     CPG/MSSR), and switch to "#power-domain-cells = <1>",
+>   - Drop fallback compatibility strings, as the bindings are
+>     SoC-specific,
+>   - Add an "always-on" power area on R-Car H3.
+> 
+> Changes compared to v1:
+>   - Add R-Car H3 (r8a7795) support,
+>   - Use "renesas,<type>-sysc" instead of "renesas,sysc-<type>",
+>   - Add fallback compatibility strings for R-Car Gen2 and Gen3.
+> 
+> Dependencies:
+>   - renesas-devel-20160411-v4.6-rc3
+>   - clk-renesas-for-v4.7
+>   - "[PATCH v2 0/4] clk: renesas: R-Car SYSC PM Domain Preparation",
+>   - "[PATCH v5 0/7] PM / Domains: Add DT bindings for the R-Car System
+>     Controller",
+>   - "[PATCH v5 00/11] soc: renesas: Add R-Car SYSC PM Domain Support".
+> Note that these are hard dependencies: adding SYSC PM Domains to DTS
+> files without driver support will cause breakage!
+> 
+> For your convenience, I've pushed this, incl. all dependencies, to the
+> topic/rcar-sysc-pd-v5 branch of
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+> Integration with renesas-drivers-2016-04-12-v4.6-rc3 is available in the
+> topic/gen3-latest branch.
+> 
+> This has been tested on r8a7779/marzen, r8a7790/lager, r8a7791/koelsch,
+> r8a7794/alt, and r8a7795/salvator-x.
+> 
+> Thanks for applying!
+> 
+> Geert Uytterhoeven (12):
+>   ARM: dts: r8a7779: Add SYSC PM Domains
+>   ARM: dts: r8a7790: Add SYSC PM Domains
+>   ARM: dts: r8a7791: Add SYSC PM Domains
+>   ARM: dts: r8a7793: Add SYSC PM Domains
+>   ARM: dts: r8a7794: Add SYSC PM Domains
+>   arm64: dts: r8a7795: Add SYSC PM Domains
+>   ARM: dts: r8a7779: Use SYSC "always-on" PM Domain
+>   ARM: dts: r8a7790: Use SYSC "always-on" PM Domain
+>   ARM: dts: r8a7791: Use SYSC "always-on" PM Domain
+>   ARM: dts: r8a7793: Use SYSC "always-on" PM Domain
+>   ARM: dts: r8a7794: Use SYSC "always-on" PM Domain
+>   arm64: dts: r8a7795: Use SYSC "always-on" PM Domain
+> 
+>  arch/arm/boot/dts/r8a7779.dtsi           |  54 ++++++-----
+>  arch/arm/boot/dts/r8a7790.dtsi           | 155
+> ++++++++++++++++-------------- arch/arm/boot/dts/r8a7791.dtsi           |
+> 156 ++++++++++++++++--------------- arch/arm/boot/dts/r8a7793.dtsi         
+>  | 105 +++++++++++---------- arch/arm/boot/dts/r8a7794.dtsi           | 116
+> ++++++++++++----------- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 123
+> +++++++++++++----------- 6 files changed, 389 insertions(+), 320
+> deletions(-)
+
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
+
