@@ -1,63 +1,55 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Peter Hurley <peter@hurleysoftware.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 07/11] serial: sh-sci: Add more Serial Port Control/Data Register documentation
-Date: Fri, 29 Apr 2016 14:58:30 +0200
-Message-Id: <1461934714-18681-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
-References: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: dri-devel@lists.freedesktop.org,
+	Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
+	David Airlie <airlied@linux.ie>,
+	"open list:DRM DRIVERS FOR RENESAS"
+	<linux-renesas-soc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 09/14] drm/rcar-du: use drm_crtc_send_vblank_event()
+Date: Fri, 15 Apr 2016 00:59:13 +0300
+Message-ID: <16243013.Njob2NOWPF@avalon>
+In-Reply-To: <1460656118-16766-9-git-send-email-gustavo@padovan.org>
+References: <1460656118-16766-1-git-send-email-gustavo@padovan.org> <1460656118-16766-9-git-send-email-gustavo@padovan.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Improve documentation for the SCIFA/SCIFB Serial Port Control and Data
-Registers:
-  - State clearly that the RTS and CTS lines are active-low,
-  - Document the bits related to the serial port's SCK, RXD, and TXD
-    pins.
+Hi Gustavo,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- drivers/tty/serial/sh-sci.h | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
-index 85a2b81ba0a845e5..e7d2bc692a581e9e 100644
---- a/drivers/tty/serial/sh-sci.h
-+++ b/drivers/tty/serial/sh-sci.h
-@@ -121,12 +121,18 @@ enum {
- #define HSCIF_SRE	BIT(15)	/* Sampling Rate Register Enable */
- 
- /* SCPCR (Serial Port Control Register), SCIFA/SCIFB only */
--#define SCPCR_RTSC	BIT(4)	/* Serial Port RTS Pin / Output Pin */
--#define SCPCR_CTSC	BIT(3)	/* Serial Port CTS Pin / Input Pin */
-+#define SCPCR_RTSC	BIT(4)	/* Serial Port RTS# Pin / Output Pin */
-+#define SCPCR_CTSC	BIT(3)	/* Serial Port CTS# Pin / Input Pin */
-+#define SCPCR_SCKC	BIT(2)	/* Serial Port SCK Pin / Output Pin */
-+#define SCPCR_RXDC	BIT(1)	/* Serial Port RXD Pin / Input Pin */
-+#define SCPCR_TXDC	BIT(0)	/* Serial Port TXD Pin / Output Pin */
- 
- /* SCPDR (Serial Port Data Register), SCIFA/SCIFB only */
--#define SCPDR_RTSD	BIT(4)	/* Serial Port RTS Output Pin Data */
--#define SCPDR_CTSD	BIT(3)	/* Serial Port CTS Input Pin Data */
-+#define SCPDR_RTSD	BIT(4)	/* Serial Port RTS# Output Pin Data */
-+#define SCPDR_CTSD	BIT(3)	/* Serial Port CTS# Input Pin Data */
-+#define SCPDR_SCKD	BIT(2)	/* Serial Port SCK Output Pin Data */
-+#define SCPDR_RXDD	BIT(1)	/* Serial Port RXD Input Pin Data */
-+#define SCPDR_TXDD	BIT(0)	/* Serial Port TXD Output Pin Data */
- 
- /*
-  * BRG Clock Select Register (Some SCIF and HSCIF)
+On Thursday 14 Apr 2016 10:48:20 Gustavo Padovan wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> 
+> Replace the legacy drm_send_vblank_event() with the new helper function.
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c index d9f06cc..0d8bdda 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -314,7 +314,7 @@ static void rcar_du_crtc_finish_page_flip(struct
+> rcar_du_crtc *rcrtc) return;
+> 
+>  	spin_lock_irqsave(&dev->event_lock, flags);
+> -	drm_send_vblank_event(dev, rcrtc->index, event);
+> +	drm_crtc_send_vblank_event(&rcrtc->crtc, event);
+>  	wake_up(&rcrtc->flip_wait);
+>  	spin_unlock_irqrestore(&dev->event_lock, flags);
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
