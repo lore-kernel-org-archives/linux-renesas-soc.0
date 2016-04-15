@@ -1,111 +1,56 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52474 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751785AbcDZB3C (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 21:29:02 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20160415010416.GC31938@verge.net.au>
+References: <1460558663-10197-1-git-send-email-geert+renesas@glider.be>
+	<20160415010416.GC31938@verge.net.au>
+Date: Fri, 15 Apr 2016 08:37:12 +0200
+Message-ID: <CAMuHMdXm-enyrJSs66R73tCADZomEZD0eAL3HftWPoS26hZHjQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/7] PM / Domains: Add DT bindings for the R-Car System Controller
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/11] soc: renesas: rcar-sysc: Add support for R-Car M2-W power areas
-Date: Tue, 26 Apr 2016 11:28:43 +1000
-Message-Id: <c5fbb3c08897c8941852e9096f8507785d8a18f2.1461632180.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461632180.git.horms+renesas@verge.net.au>
-References: <cover.1461632180.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Linux PM list <linux-pm@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Simon,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/soc/renesas/Makefile       |  2 +-
- drivers/soc/renesas/r8a7791-sysc.c | 33 +++++++++++++++++++++++++++++++++
- drivers/soc/renesas/rcar-sysc.c    |  3 +++
- drivers/soc/renesas/rcar-sysc.h    |  1 +
- 4 files changed, 38 insertions(+), 1 deletion(-)
- create mode 100644 drivers/soc/renesas/r8a7791-sysc.c
+On Fri, Apr 15, 2016 at 3:04 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Wed, Apr 13, 2016 at 04:44:16PM +0200, Geert Uytterhoeven wrote:
+>> This patch series introduces DT bindings for the R-Car System
+>> Controller, as found on Renesas R-Car H1, R-Car Gen2, and R-Car Gen3
+>> SoCs.
+>
+> Thanks Geert,
+>
+> I have queued this up for v4.7
 
-diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index 6588be3c6776..96463c05ee59 100644
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@ -1,5 +1,5 @@
- obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
- obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
--obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o
-+obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
- obj-$(CONFIG_ARCH_R8A7793)	+= rcar-sysc.o
- obj-$(CONFIG_ARCH_R8A7794)	+= rcar-sysc.o
-diff --git a/drivers/soc/renesas/r8a7791-sysc.c b/drivers/soc/renesas/r8a7791-sysc.c
-new file mode 100644
-index 000000000000..03b9f41a34e6
---- /dev/null
-+++ b/drivers/soc/renesas/r8a7791-sysc.c
-@@ -0,0 +1,33 @@
-+/*
-+ * Renesas R-Car M2-W/N System Controller
-+ *
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+
-+#include <linux/bug.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/power/r8a7791-sysc.h>
-+
-+#include "rcar-sysc.h"
-+
-+static const struct rcar_sysc_area r8a7791_areas[] __initconst = {
-+	{ "always-on",	    0, 0, R8A7791_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
-+	{ "ca15-scu",	0x180, 0, R8A7791_PD_CA15_SCU,	R8A7791_PD_ALWAYS_ON,
-+	  PD_SCU },
-+	{ "ca15-cpu0",	 0x40, 0, R8A7791_PD_CA15_CPU0,	R8A7791_PD_CA15_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca15-cpu1",	 0x40, 1, R8A7791_PD_CA15_CPU1,	R8A7791_PD_CA15_SCU,
-+	  PD_CPU_NOCR },
-+	{ "sh-4a",	 0x80, 0, R8A7791_PD_SH_4A,	R8A7791_PD_ALWAYS_ON },
-+	{ "sgx",	 0xc0, 0, R8A7791_PD_SGX,	R8A7791_PD_ALWAYS_ON },
-+};
-+
-+const struct rcar_sysc_info r8a7791_sysc_info __initconst = {
-+	.areas = r8a7791_areas,
-+	.num_areas = ARRAY_SIZE(r8a7791_areas),
-+};
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 07ea25925e85..5b70b93a2aa7 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -290,6 +290,9 @@ static const struct of_device_id rcar_sysc_matches[] = {
- #ifdef CONFIG_ARCH_R8A7790
- 	{ .compatible = "renesas,r8a7790-sysc", .data = &r8a7790_sysc_info },
- #endif
-+#ifdef CONFIG_ARCH_R8A7791
-+	{ .compatible = "renesas,r8a7791-sysc", .data = &r8a7791_sysc_info },
-+#endif
- 	{ /* sentinel */ }
- };
- 
-diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
-index 33c8f2d00a01..d58b39400e79 100644
---- a/drivers/soc/renesas/rcar-sysc.h
-+++ b/drivers/soc/renesas/rcar-sysc.h
-@@ -52,4 +52,5 @@ struct rcar_sysc_info {
- 
- extern const struct rcar_sysc_info r8a7779_sysc_info;
- extern const struct rcar_sysc_info r8a7790_sysc_info;
-+extern const struct rcar_sysc_info r8a7791_sysc_info;
- #endif /* __SOC_RENESAS_RCAR_SYSC_H__ */
--- 
-2.7.0.rc3.207.g0ac5344
+Thanks a lot!
+
+> Please let me know if that was not your intention.
+
+The bindings don't have any dependencies.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
