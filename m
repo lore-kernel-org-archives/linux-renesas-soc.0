@@ -1,15 +1,13 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqKK1QmGdyae-P9SoP2-7JiLK1XCyskxbd-wrn+7CidMJw@mail.gmail.com>
-References: <1460476853-3306-1-git-send-email-wsa@the-dreams.de>
-	<CACRpkdaUj5w3zkjWVf1GML3reeDnRpT8avOPkRB6_qFXB6EGjw@mail.gmail.com>
-	<CAL_JsqKK1QmGdyae-P9SoP2-7JiLK1XCyskxbd-wrn+7CidMJw@mail.gmail.com>
-Date: Tue, 19 Apr 2016 10:19:38 +0200
-Message-ID: <CACRpkdZKS77CQpf5xQ4aA++jg6SH32BptoSbDCg0yugF4O0Jtw@mail.gmail.com>
+In-Reply-To: <CACRpkdaUj5w3zkjWVf1GML3reeDnRpT8avOPkRB6_qFXB6EGjw@mail.gmail.com>
+References: <1460476853-3306-1-git-send-email-wsa@the-dreams.de> <CACRpkdaUj5w3zkjWVf1GML3reeDnRpT8avOPkRB6_qFXB6EGjw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 15 Apr 2016 11:53:46 -0500
+Message-ID: <CAL_JsqKK1QmGdyae-P9SoP2-7JiLK1XCyskxbd-wrn+7CidMJw@mail.gmail.com>
 Subject: Re: [PATCH] Documentation: power: reset: move gpio-{poweroff|restart}
  to proper place
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Rob Herring <robh@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Wolfram Sang <wsa@the-dreams.de>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
@@ -20,27 +18,22 @@ Content-Type: text/plain; charset=UTF-8
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 15, 2016 at 6:53 PM, Rob Herring <robh@kernel.org> wrote:
-> On Fri, Apr 15, 2016 at 2:48 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Tue, Apr 12, 2016 at 6:00 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
->>
->>> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>>
->>> I did only find them after a fuzzy search, so let them be where one
->>> would expect them.
->>>
->>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>
->> I saw this the other day too I agree.
->> Sebastian: are you OK that I move this by committing the patch to the GPIO tree?
->> DT maintainers: OK?
+On Fri, Apr 15, 2016 at 2:48 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Apr 12, 2016 at 6:00 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
 >
-> Acked-by: Rob Herring <robh@kernel.org>
+>> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>
+>> I did only find them after a fuzzy search, so let them be where one
+>> would expect them.
+>>
+>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 >
-> Seems like this should go thru my tree though, but I don't have the patch.
+> I saw this the other day too I agree.
+> Sebastian: are you OK that I move this by committing the patch to the GPIO tree?
+> DT maintainers: OK?
 
-I have it merged in my tree, is is OK or shall I extract it and send
-it to you?
+Acked-by: Rob Herring <robh@kernel.org>
 
-Yours,
-Linus Walleij
+Seems like this should go thru my tree though, but I don't have the patch.
+
+Rob
