@@ -1,99 +1,62 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52436 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750843AbcDZB2t (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 21:28:49 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 15 Apr 2016 17:04:43 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-mips@linux-mips.org, Rich Felker <dalias@libc.org>,
+	linux-sh@vger.kernel.org,
 	Michael Turquette <mturquette@baylibre.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Second Round of Renesas ARM Based SoC R-Car SYSC Updates for v4.7
-Date: Tue, 26 Apr 2016 11:28:38 +1000
-Message-Id: <cover.1461632180.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	Greg Ungerer <gerg@uclinux.org>, linux-clk@vger.kernel.org,
+	Russell King <linux@arm.linux.org.uk>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Wan ZongShun <mcuos.com@gmail.com>,
+	Steven Miao <realmz6@gmail.com>,
+	adi-buildroot-devel@lists.sourceforge.net,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	linux-m68k@lists.linux-m68k.org, Simon Horman <horms@verge.net.au>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	John Crispin <blogic@openwrt.org>,
+	Eric Miao <eric.y.miao@gmail.com>,
+	Ryan Mallon <rmallon@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Hartley Sweeten <hsweeten@visionengravers.com>
+Subject: Re: [PATCH v2] clk: let clk_disable() return immediately if clk is
+ NULL or error
+Message-ID: <20160416000443.GA26353@codeaurora.org>
+References: <1459821083-28116-1-git-send-email-yamada.masahiro@socionext.com>
+ <20160408003328.GA14441@codeaurora.org>
+ <CAK7LNASW+D0B_k97r__AZeYDR5UqNPqn_j1aoQepHz-bGgV2ng@mail.gmail.com>
+ <20160414003341.GH14441@codeaurora.org>
+ <CAK7LNARbzRLq_NGWJ8CFBBf6w4cVGCNh45fo6JO=+F7FACBSxA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNARbzRLq_NGWJ8CFBBf6w4cVGCNh45fo6JO=+F7FACBSxA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+On 04/14, Masahiro Yamada wrote:
+> 
+> OK, now I notice another problem in my code;
+> if foo_clk_init() fails for reason [2],
+> clk_disable() WARN's due to zero enable_count.
+> 
+> if (WARN_ON(core->enable_count == 0))
+>          return;
+> 
+> 
+> 
+> Perhaps, I got screwed up by splitting clock init stuff
+> into a helper function.
 
-Please consider these second round of Renesas ARM based SoC R-Car SYSC
-updates for v4.7.
+Yep! Can't we just split the enable/disable out into another
+function separate from the clk_get/put part? That would make
+things more symmetric and avoid this problem.
 
-This pull request is based on a merge of:
-
-* Thee previous round of such requests, tagged as renesas-rcar-sysc-for-v4.7,
-  which you have previously pulled.
-* The clk-renesas-for-v4.7-tag2 tag of Geert Uytterhoeven's renesas-drivers
-  tree which has been accepted into clk-next by Stephen Boyd.
-
-There are follow-up DT changes that depend on this driver which I plan to
-send in a pull-request for in the near future.
-
-
-The following changes since commit a93fed0956bef9e4df420aa181198d86d347895d:
-
-  Merge tag 'clk-renesas-for-v4.7-tag2' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers into rcar-sysc-for-v4.7 (2016-04-22 17:22:21 +1000)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-rcar-sysc2-for-v4.7
-
-for you to fetch changes up to 23f1e2ecdecee9f2ec45de0a468b82bb1f7f3ca2:
-
-  soc: renesas: rcar-sysc: Add support for R-Car H3 power areas (2016-04-26 09:56:38 +1000)
-
-----------------------------------------------------------------
-Second Round of Renesas ARM Based SoC R-Car SYSC Updates for v4.7
-
-Introduce a DT-based driver for the R-Car System Controller, as found on
-Renesas R-Car H1, R-Car Gen2, and R-Car Gen3 SoCs.
-
-----------------------------------------------------------------
-Geert Uytterhoeven (11):
-      soc: renesas: Move pm-rcar to drivers/soc/renesas/rcar-sysc
-      soc: renesas: rcar-sysc: Improve rcar_sysc_power() debug info
-      soc: renesas: rcar-sysc: Add DT support for SYSC PM domains
-      soc: renesas: rcar-sysc: Make rcar_sysc_power_is_off() static
-      soc: renesas: rcar-sysc: Enable Clock Domain for I/O devices
-      soc: renesas: rcar-sysc: Add support for R-Car H1 power areas
-      soc: renesas: rcar-sysc: Add support for R-Car H2 power areas
-      soc: renesas: rcar-sysc: Add support for R-Car M2-W power areas
-      soc: renesas: rcar-sysc: Add support for R-Car M2-N power areas
-      soc: renesas: rcar-sysc: Add support for R-Car E2 power areas
-      soc: renesas: rcar-sysc: Add support for R-Car H3 power areas
-
- MAINTAINERS                                        |   4 +
- arch/arm/mach-shmobile/Kconfig                     |  11 +-
- arch/arm/mach-shmobile/Makefile                    |   1 -
- arch/arm/mach-shmobile/pm-r8a7779.c                |   3 +-
- arch/arm/mach-shmobile/pm-rcar-gen2.c              |   2 +-
- arch/arm/mach-shmobile/pm-rcar.c                   | 164 ---------
- arch/arm/mach-shmobile/smp-r8a7779.c               |   2 +-
- arch/arm/mach-shmobile/smp-r8a7790.c               |   2 +-
- drivers/soc/Makefile                               |   3 +-
- drivers/soc/renesas/Makefile                       |   7 +
- drivers/soc/renesas/r8a7779-sysc.c                 |  34 ++
- drivers/soc/renesas/r8a7790-sysc.c                 |  48 +++
- drivers/soc/renesas/r8a7791-sysc.c                 |  33 ++
- drivers/soc/renesas/r8a7794-sysc.c                 |  33 ++
- drivers/soc/renesas/r8a7795-sysc.c                 |  56 +++
- drivers/soc/renesas/rcar-sysc.c                    | 401 +++++++++++++++++++++
- drivers/soc/renesas/rcar-sysc.h                    |  58 +++
- .../linux/soc/renesas/rcar-sysc.h                  |   9 +-
- 18 files changed, 690 insertions(+), 181 deletions(-)
- delete mode 100644 arch/arm/mach-shmobile/pm-rcar.c
- create mode 100644 drivers/soc/renesas/Makefile
- create mode 100644 drivers/soc/renesas/r8a7779-sysc.c
- create mode 100644 drivers/soc/renesas/r8a7790-sysc.c
- create mode 100644 drivers/soc/renesas/r8a7791-sysc.c
- create mode 100644 drivers/soc/renesas/r8a7794-sysc.c
- create mode 100644 drivers/soc/renesas/r8a7795-sysc.c
- create mode 100644 drivers/soc/renesas/rcar-sysc.c
- create mode 100644 drivers/soc/renesas/rcar-sysc.h
- rename arch/arm/mach-shmobile/pm-rcar.h => include/linux/soc/renesas/rcar-sysc.h (60%)
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
