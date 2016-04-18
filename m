@@ -1,82 +1,96 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Mon, 18 Apr 2016 12:12:48 -0500
-From: Rob Herring <robh@kernel.org>
+Date: Mon, 18 Apr 2016 09:38:27 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>,
 	Laurent <laurent.pinchart@ideasonboard.com>,
 	Lars-Peter Clausen <lars@metafoo.de>,
-	Simon <horms@verge.net.au>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
 	Linux-DT <devicetree@vger.kernel.org>,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Liam Girdwood <lgirdwood@gmail.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>
-Subject: Re: [PATCH 0/4] ASoC: add graph base connection on simple-card
-Message-ID: <20160418171248.GA18460@rob-hp-laptop>
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon <horms@verge.net.au>
+Subject: Re: [alsa-devel] [PATCH 0/4] ASoC: add graph base connection on
+ simple-card
+Message-Id: <20160418093827.65b9f8a5bd2ec17cde2e7b5b@free.fr>
+In-Reply-To: <87r3e3ej5t.wl%kuninori.morimoto.gx@renesas.com>
 References: <871t68wxxe.wl%kuninori.morimoto.gx@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871t68wxxe.wl%kuninori.morimoto.gx@renesas.com>
+	<20160414110128.56a0da97d526cdcb8d5f1ddf@free.fr>
+	<87h9f3jq3m.wl%kuninori.morimoto.gx@renesas.com>
+	<87fuunjkio.wl%kuninori.morimoto.gx@renesas.com>
+	<20160415133158.9c5c0dc7367325606c53ce17@free.fr>
+	<87r3e3ej5t.wl%kuninori.morimoto.gx@renesas.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 14, 2016 at 05:45:41AM +0000, Kuninori Morimoto wrote:
-> Hi Mark
-> 
-> Current simple-card is using "sound-dai" base connection on DT,
-> but V4L2 is using graph base connection.
-> For example HDMI case, we would like to use both connection.
-> To above confusable connection method, and to reuse current resource,
-> this patch adds new function, and detect both "sound-dai" and "remote-endpoint"
-> on simple-card. like this
-> 
-> 	sound {
-> 		compatible = "simple-audio-card";
-> 		...
-> 		sndcpu: simple-audio-card,cpu {
-> 			sound-dai = <&xxx>;
-> 		};
-> 		sndcodec: simple-audio-card,codec {
-> =>			remote-endpoint = <&out_hdmi>;
+On Mon, 18 Apr 2016 02:43:21 +0000
+Kuninori Morimoto <kuninori.morimoto.gx@renesas.com> wrote:
 
-This is not valid usage of the graph binding. You are only using half of 
-it.
+> But can I ask something ?
+> 
+> > > > My concern is if audio side need to care/support "formal" graph style,
+> > > > I think all cpu/codec/card driver (and soc-core too ?) need to be updated,
+> > > > but it is too much for me.
+> > > > if fake graph style (like this patch) is OK, I'm happy to hack it more.
+> > > 
+> > > This "fake graph style" means it is supporting both graph's "remote-endpoint"
+> > > and current simple-card's "sound-dai" (= not 100% graph style).
+> (snip)
+> > So, in brief:
+> > - the simple-card with only "sound-dai" works fine with or without a
+> >   graph of ports,
+> > - for a full use of the graph of ports, forget about the simple-card.
+> 
+> Q1
+> If we use full graph style card, and if it would like to reuse current existing
+> CPU/CODEC driver, then, I think CPU/CODEC driver should support graph style too.
+> (Now, I'm checking v4l2 side existing graph style driver)
+> I know it is based on its current implementation, but basically YES ?
+> 
+> Q2
+> If Q1 was Yes, to keeping ABI compatibility,
+> that CPU/CODEC driver should support both "phandle" and "graph" style ?
 
-> 		};
-> 	};
-> 
-> 	xxx {
-> 		...
-> 		ports {
-> 			...
-> 			port@0 {
-> 				reg = <0>;
-> 				out_rgb: endpoint {
-> 				};
-> 			};
-> 			port@1 {
-> 				reg = <1>;
-> =>				out_hdmi: endpoint {
-> 				};
-> 			};
-> 			...
-> 		};
-> 	};
-> 
-> Kuninori Morimoto (4):
->       of_graph: add of_graph_get_endpoint_count()
->       ASoC: add of_parse_snd_connection_with_args() for sound-dai/graph connection
->       ASoC: snd_soc_of_get_dai_name() uses of_parse_snd_soc_connection_with_args()
->       ASoC: simple-card: probe both sound-dai and remote-endpoint
-> 
->  Documentation/devicetree/bindings/sound/simple-card.txt | 19 +++++++++++++++++++
->  include/linux/of_graph.h                                | 11 +++++++++++
->  include/sound/soc.h                                     |  2 ++
->  sound/soc/generic/simple-card.c                         |  9 ++++++---
->  sound/soc/soc-core.c                                    | 45 +++++++++++++++++++++++++++++++++++++++++++--
->  5 files changed, 81 insertions(+), 5 deletions(-)
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Hi Kuninori,
+
+When the cards are defined from a graph of ports, the CPU/CODEC drivers
+do not need to know about this graph if they use a fixed numbering of
+their DAIs (I think this is the case of all existing drivers but the
+ones in my system). There is no useful information for these drivers
+in the DT, so, they don't need any change when moving to a graph of
+ports.
+
+Such a move is done first in the DT by removing the simple-card node
+and replacing the previous 'dai-link' definitions by couples of ports
+in the CPU (audio controller) and in the CODEC device nodes.
+
+The previous DAI properties (tdm-slots, clocks...) must also be moved
+to the graph (ports of the graph links). As nothing exists about these
+port properties in the DT documentation, they must be added.
+
+The previous global (simple-)card properties (widgets, routing..) must
+also be moved. Where? Simply to the main audio controller node.
+They could be named 'audio-xxx' or included in an audio container.
+
+Now, let's talk about the code. As there is no simple-card device to
+create the card, an other piece of code must do the job.
+The simplest way to run it is to put it in the audio controller:
+when the audio controller scans the DT, it sees the card definitions
+(audio-xxx' or audio container), so, it has all elements to create the
+card.
+This card is as generic as the simple-card, so it could be in the
+sound/soc core.
+
+So, in brief again: when using a full graph style card:
+- there is no change in the CPU/CODEC drivers,
+- there is no simple-card,
+- the 'audio-graph-card's are created by the audio controllers which
+  run a generic code.
+
+-- 
+Ken ar c'henta�	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
