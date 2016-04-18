@@ -1,60 +1,50 @@
-Return-Path: <horms@vergenet.net>
-From: Simon Horman <horms+renesas@verge.net.au>
+Return-Path: <SRS0+SAgi=QN=the-dreams.de=wsa@vergenet.net>
+From: Wolfram Sang <wsa@the-dreams.de>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/47] ARM: dts: r8a7790: Reference both DMA controllers in MMCIF nodes
-Date: Mon,  4 Apr 2016 10:22:47 +0900
-Message-Id: <d1abb069a8e7f11b36b1b383fa4c54ce7cbc8ff7.1459732726.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
-References: <cover.1459732726.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+	Simon Horman <horms@verge.net.au>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] ARM: shmobile: r8a7790: fix max-frequency for SDHI
+Date: Mon, 18 Apr 2016 11:41:30 +0200
+Message-Id: <1460972490-3033-1-git-send-email-wsa@the-dreams.de>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+The wrong values come from an old datasheet (H2 v0.6). Anything later
+has the fixed value of 195MHz (H2 v0.7 up to Gen2-common V2.0).
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+
+V2: * better commit message mentioning document versions
+    * added geerts tag
+
+ arch/arm/boot/dts/r8a7790.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 31b9b0abf458..b71b3e20b6e4 100644
+index 1a3b6b08f1f3c9..e75baf369ccfb4 100644
 --- a/arch/arm/boot/dts/r8a7790.dtsi
 +++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -560,8 +560,9 @@
- 		reg = <0 0xee200000 0 0x80>;
- 		interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_MMCIF0>;
--		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
-+		       <&dmac1 0xd1>, <&dmac1 0xd2>;
-+		dma-names = "tx", "rx", "tx", "rx";
+@@ -607,7 +607,7 @@
+ 		dmas = <&dmac1 0xcd>, <&dmac1 0xce>,
+ 		       <&dmac0 0xcd>, <&dmac0 0xce>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+-		max-frequency = <156000000>;
++		max-frequency = <195000000>;
  		power-domains = <&cpg_clocks>;
- 		reg-io-width = <4>;
  		status = "disabled";
-@@ -573,8 +574,9 @@
- 		reg = <0 0xee220000 0 0x80>;
- 		interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_MMCIF1>;
--		dmas = <&dmac0 0xe1>, <&dmac0 0xe2>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xe1>, <&dmac0 0xe2>,
-+		       <&dmac1 0xe1>, <&dmac1 0xe2>;
-+		dma-names = "tx", "rx", "tx", "rx";
+ 	};
+@@ -620,7 +620,7 @@
+ 		dmas = <&dmac1 0xc9>, <&dmac1 0xca>,
+ 		       <&dmac0 0xc9>, <&dmac0 0xca>;
+ 		dma-names = "tx", "rx", "tx", "rx";
+-		max-frequency = <156000000>;
++		max-frequency = <195000000>;
  		power-domains = <&cpg_clocks>;
- 		reg-io-width = <4>;
  		status = "disabled";
+ 	};
 -- 
-2.1.4
+2.7.0
