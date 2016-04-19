@@ -1,66 +1,38 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org,
-	Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@linux.ie>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/3 v6] drm: rcar-du: Use generic drm_connector_register_all() helper
-Date: Tue, 19 Apr 2016 15:24:53 +0300
-Message-Id: <1461068693-11260-4-git-send-email-abrodkin@synopsys.com>
-In-Reply-To: <1461068693-11260-1-git-send-email-abrodkin@synopsys.com>
-References: <1461068693-11260-1-git-send-email-abrodkin@synopsys.com>
+Date: Wed, 20 Apr 2016 08:51:26 +1000
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
+	linux-renesas-soc@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] ARM: dts: r8a7791: Don't disable referenced optional
+ clocks
+Message-ID: <20160419225125.GB9826@verge.net.au>
+References: <1459947173-6664-1-git-send-email-sjoerd.simons@collabora.co.uk>
+ <CAMuHMdWcsi0XE6htZW=V5DDKy8LX_1rdBoo_dEeDBvLcDeMFvw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWcsi0XE6htZW=V5DDKy8LX_1rdBoo_dEeDBvLcDeMFvw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now that a generic drm_connector_register_all() helper exists we may safely
-substitute it for the driver-specific implementation of connectors plugging
-in sysfs.
+On Tue, Apr 19, 2016 at 09:18:55AM +0200, Geert Uytterhoeven wrote:
+> On Wed, Apr 6, 2016 at 2:52 PM, Sjoerd Simons
+> <sjoerd.simons@collabora.co.uk> wrote:
+> > clk_get on a disabled clock node will return EPROBE_DEFER, which can
+> > cause drivers to be deferred forever if such clocks are referenced in
+> > their clocks property.
+> >
+> > Update the various disabled external clock nodes to default to a
+> > frequency of 0, but don't disable them to prevent this.
+> >
+> > Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: David Airlie <airlied@linux.ie>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-
-No changes v5 -> v6.
-
-No changes v4 -> v5.
-
-No changes v3 -> v4.
-
-Changes v2 -> v3:
- * Updated title with capital after colon
- * Updated commit message with fixes of spellos and grammar issues
- * Added ack from Laurent
-
-No changes v1 -> v2.
-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
-
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 644db36..0f251dc 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -361,14 +361,7 @@ static int rcar_du_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto error;
- 
--	mutex_lock(&ddev->mode_config.mutex);
--	drm_for_each_connector(connector, ddev) {
--		ret = drm_connector_register(connector);
--		if (ret < 0)
--			break;
--	}
--	mutex_unlock(&ddev->mode_config.mutex);
--
-+	ret = drm_connector_register_all(ddev);
- 	if (ret < 0)
- 		goto error;
- 
--- 
-2.5.5
+Thanks, I will add your tag.
