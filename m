@@ -1,98 +1,63 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v6 07/12] ARM: dts: r8a7794: Add SYSC PM Domains
-Date: Fri, 22 Apr 2016 11:07:29 +0200
-Message-Id: <1461316054-27999-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461316054-27999-1-git-send-email-geert+renesas@glider.be>
-References: <1461316054-27999-1-git-send-email-geert+renesas@glider.be>
+Date: Wed, 20 Apr 2016 18:18:55 +0200
+From: Jean-Francois Moine <moinejf@free.fr>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	Laurent <laurent.pinchart@ideasonboard.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Linux-DT <devicetree@vger.kernel.org>,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon <horms@verge.net.au>
+Subject: Re: [alsa-devel] [PATCH 0/4] ASoC: add graph base connection on
+ simple-card
+Message-Id: <20160420181855.38a9dc6dfb4eaeb538a7d5ee@free.fr>
+In-Reply-To: <87shyhngdd.wl%kuninori.morimoto.gx@renesas.com>
+References: <871t68wxxe.wl%kuninori.morimoto.gx@renesas.com>
+	<20160414110128.56a0da97d526cdcb8d5f1ddf@free.fr>
+	<87h9f3jq3m.wl%kuninori.morimoto.gx@renesas.com>
+	<87fuunjkio.wl%kuninori.morimoto.gx@renesas.com>
+	<20160415133158.9c5c0dc7367325606c53ce17@free.fr>
+	<87r3e3ej5t.wl%kuninori.morimoto.gx@renesas.com>
+	<20160418093827.65b9f8a5bd2ec17cde2e7b5b@free.fr>
+	<87shyhngdd.wl%kuninori.morimoto.gx@renesas.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the System Controller.
-Hook up the Cortex-A7 CPU cores and the Cortex-A7 L2 cache/SCU to their
-respective PM Domains.
+On Wed, 20 Apr 2016 02:55:39 +0000
+Kuninori Morimoto <kuninori.morimoto.gx@renesas.com> wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-v6:
-  - Add Acked-by,
+> I could understand your idea,
+> and had read previous some discussions.
+> I would like to have it on upstream too.
+> Can you show me about your plan for next step ?
 
-v5:
-  - Remove "power-domains" property again from the sysc node, as the
-    System Controller itself is not part of the Clock Domain,
+Hi Kuninori,
 
-v4:
-  - Add "power-domains" property to the sysc node, to refer to the SoC's
-    Clock Domain,
+I have no plan.
+My Cubox machine has too many specific code and it is used in an organ
+as the sound synthesizer. I will not do any more development in its
+kernel.
+In my new machine, an Orange PI 2, while audio on HDMI is working for
+me, there is still a lot of job to do aside (YUV video, analog
+audio, embedded wifi...) and I am blocked by the HDMI driver which has
+no free license nor documentation about the hardware. So, I have not
+submitted yet a patch series about audio for this machine.
 
-v3:
-  - Drop power area hiearchy from DT,
-  - Switch to "#power-domain-cells = <1>",
-  - Drop fallback compatibility strings,
+Otherwise, if you read the previous discussions, I think the most
+important is Mark's remark (Sat, 7 Feb 2015 16:33:55 +0800 in the
+alsa-devel mailing-list):
 
-v2:
-  - Change one-line summary prefix to match current arm-soc practices,
-  - Update compatible values.
----
- arch/arm/boot/dts/r8a7794.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> We already have simple-card to provide a binding for trivial
+> systems and don't want to end up with a never ending series of slightly
+> more complicated bindings which each cover slightly different sets of
+> systems in ways that users struggle to differentiate between.
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index b0bce43779f14b0d..70eff80a813ec85a 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -12,6 +12,7 @@
- #include <dt-bindings/clock/r8a7794-clock.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/power/r8a7794-sysc.h>
- 
- / {
- 	compatible = "renesas,r8a7794";
-@@ -42,6 +43,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0>;
- 			clock-frequency = <1000000000>;
-+			power-domains = <&sysc R8A7794_PD_CA7_CPU0>;
- 			next-level-cache = <&L2_CA7>;
- 		};
- 
-@@ -50,12 +52,14 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <1>;
- 			clock-frequency = <1000000000>;
-+			power-domains = <&sysc R8A7794_PD_CA7_CPU1>;
- 			next-level-cache = <&L2_CA7>;
- 		};
- 	};
- 
- 	L2_CA7: cache-controller@1 {
- 		compatible = "cache";
-+		power-domains = <&sysc R8A7794_PD_CA7_SCU>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
-@@ -1215,6 +1219,12 @@
- 		};
- 	};
- 
-+	sysc: system-controller@e6180000 {
-+		compatible = "renesas,r8a7794-sysc";
-+		reg = <0 0xe6180000 0 0x0200>;
-+		#power-domain-cells = <1>;
-+	};
-+
- 	ipmmu_sy0: mmu@e6280000 {
- 		compatible = "renesas,ipmmu-r8a7794", "renesas,ipmmu-vmsa";
- 		reg = <0 0xe6280000 0 0x1000>;
 -- 
-1.9.1
-
+Ken ar c'henta�	|	      ** Breizh ha Linux atav! **
+Jef		|		http://moinejf.free.fr/
