@@ -1,80 +1,98 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:37191 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754653AbcDYOIi (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 10:08:38 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/6] arm64: dts: r8a7795: Don't disable referenced optional clocks
-Date: Mon, 25 Apr 2016 16:08:30 +0200
-Message-Id: <1461593315-21307-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461593315-21307-1-git-send-email-geert+renesas@glider.be>
-References: <1461593315-21307-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 20 Apr 2016 13:29:57 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@linux.ie>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	David Herrmann <dh.herrmann@gmail.com>
+Subject: Re: [PATCH 0/3 v6] drm: Introduce drm_connector_register_all() helper
+Message-ID: <20160420112957.GP2510@phenom.ffwll.local>
+References: <1461068693-11260-1-git-send-email-abrodkin@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1461068693-11260-1-git-send-email-abrodkin@synopsys.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-clk_get() on a disabled clock node will return -EPROBE_DEFER, which can
-cause drivers to be deferred forever if such clocks are referenced in
-their devices' clocks properties.
+On Tue, Apr 19, 2016 at 03:24:50PM +0300, Alexey Brodkin wrote:
+> As a pair to already existing drm_connector_unplug_all()
+> (which we'll rename in this series to drm_connector_unregister_all())
+> we're adding generic implementation of what is already done in some drivers
+> for registering all connectors.
+> 
+> After implementation of that new helper we're updating 2 drivers
+> that used to use it's own implementation:
+>  [1] atmel_hlcdc
+>  [2] rcar_du
+> 
+> Other drivers still use load() callback and so should be first modified so
+> their load() gets called from their probe() explicitly.
+> 
+> Build- and run-tested on yet to be upstreamed ARC PGU (part of AXS10x board).
+> 
+> Changes v5 -> v6:
+>  * In atmel_hlcdc only substitute its own atmel_hlcdc_dc_connector_plug_all().
+>    drm_connector_unregister_all() is already used there since
+>    222b90943446 "drm/atmel: Fixup drm_connector_/unplug/unregister/_all"
+> 
+> Changes v4 -> v5:
+>  * Added missing mutex unlock on a fail path in drm_connector_register_all()
+>    Thanks David for his attention and patience!
+> 
+> Changes v3 -> v4:
+>  * Based on current drm-intel/topic/drm-misc
+>    It's now on commit 6c87e5c3ec6db052f3744804a517b6fb003906e1
+>    And since thet new base already has
+>    "drm: Rename drm_connector_unplug_all() to drm_connector_unregister_all()"
+>    this series now only includes 3 subsequent patches.
+> 
+>  * In drm_connector_register_all() fail path which calls unregister_all()
+>    is moved outside of loop&locked section (as suggested by Daniel)
+> 
+> Changes v2 -> v3:
+>  * Added acks for 1, 3 and 4 patches
+>  * Updated kerneldoc descriptins of both register_ and unregister_all()
+>  * Updated commit messages (mostly spellos and grammar issues)
+> 
+> Changes v1 -> v2:
+>  * Rename drm_connector_unplug_all() to drm_connector_unregister_all()
+>  * Use drm_for_each_connector() instead of list_for_each_entry()
+>  * Updated kerneldoc for drm_dev_register()
+> 
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: David Herrmann <dh.herrmann@gmail.com>
 
-Update the various disabled external clock nodes to default to a
-frequency of 0, but don't disable them, to prevent this.
+All three applied to drm-misc, thanks.
+-Daniel
 
-Reported-by: Jürg Billeter <j@bitron.ch>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 1 +
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 5 +----
- 2 files changed, 2 insertions(+), 4 deletions(-)
+> 
+> Alexey Brodkin (3):
+>   drm: Introduce drm_connector_register_all() helper
+>   drm: atmel_hldc: Use generic drm_connector_register_all() helper
+>   drm: rcar-du: Use generic drm_connector_register_all() helper
+> 
+>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 30 +--------------------
+>  drivers/gpu/drm/drm_crtc.c                   | 40 ++++++++++++++++++++++++++++
+>  drivers/gpu/drm/drm_drv.c                    |  6 ++++-
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c        |  9 +------
+>  include/drm/drm_crtc.h                       |  3 ++-
+>  5 files changed, 49 insertions(+), 39 deletions(-)
+> 
+> -- 
+> 2.5.5
+> 
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 63d51059ae639e9d..263abaede2a82780 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -619,6 +619,7 @@
- };
- 
- &pcie_bus_clk {
-+	clock-frequency = <100000000>;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 575b90c294467bea..727b37d797d9b902 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -159,7 +159,6 @@
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <0>;
--		status = "disabled";
- 	};
- 
- 	/* External SCIF clock - to be overridden by boards that provide it */
-@@ -167,15 +166,13 @@
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <0>;
--		status = "disabled";
- 	};
- 
- 	/* External PCIe clock - can be overridden by the board */
- 	pcie_bus_clk: pcie_bus {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
--		clock-frequency = <100000000>;
--		status = "disabled";
-+		clock-frequency = <0>;
- 	};
- 
- 	soc {
 -- 
-1.9.1
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
