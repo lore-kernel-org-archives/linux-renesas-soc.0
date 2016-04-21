@@ -1,48 +1,37 @@
-Return-Path: <horms@vergenet.net>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 23/26] ARM: dts: porter: Remove unnecessary clock-output-names properties
-Date: Mon,  4 Apr 2016 10:22:31 +0900
-Message-Id: <203f0ef865303412a9d03a88a2f845db682ac628.1459731908.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1459731908.git.horms+renesas@verge.net.au>
-References: <cover.1459731908.git.horms+renesas@verge.net.au>
+Return-Path: <>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <horms@verge.net.au>, <magnus.damm@gmail.com>
+CC: <linux-renesas-soc@vger.kernel.org>, Yoshihiro Shimoda
+	<yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2] arm64: defconfig: Add Renesas R-Car USB 3.0 driver support
+Date: Thu, 21 Apr 2016 20:39:32 +0900
+Message-ID: <1461238772-3580-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-* Fixed rate and fixed factor clocks do not require an
-  clock-output-names property.
-* Since 07705583e920fef6 ("clk: shmobile: div6: Make clock-output-names
-  optional") Renesas div6 clocks do not require a clock-output-names
-  property.
-
-In the above cases there is only one clock output and its name is taken
-from that of the clock node.  Accordingly, remove the unnecessary
-clock-output-names properties and as necessary update the node names.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm/boot/dts/r8a7791-porter.dts | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ Changes from v1:
+  - Remove unrelated change (CONFIG_FHANDLE)
+  - Remove commit log because the xhci-plat driver is possible to fix
+    the long wait issue.
 
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index af3751ff519a..9554d13362f6 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -113,11 +113,10 @@
- 		clock-frequency = <74250000>;
- 	};
- 
--	x14_clk: x14-clock {
-+	x14_clk: audio_clock {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <11289600>;
--		clock-output-names = "audio_clock";
- 	};
- 
- 	sound {
+ arch/arm64/configs/defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index a44ef99..9cf9c85 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -192,7 +192,7 @@ CONFIG_SND_SOC_AK4613=y
+ CONFIG_USB=y
+ CONFIG_USB_OTG=y
+ CONFIG_USB_XHCI_HCD=y
+-CONFIG_USB_XHCI_PLATFORM=y
++CONFIG_USB_XHCI_RCAR=y
+ CONFIG_USB_EHCI_HCD=y
+ CONFIG_USB_EHCI_MSM=y
+ CONFIG_USB_EHCI_HCD_PLATFORM=y
 -- 
-2.1.4
+1.9.1
