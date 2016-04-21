@@ -1,155 +1,66 @@
-Return-Path: <horms@vergenet.net>
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 06/26] ARM: dts: koelsch: use generic pinctrl properties
-Date: Mon,  4 Apr 2016 10:22:14 +0900
-Message-Id: <fec7b9f8952f396d88228677f44d52c7e20a6be8.1459731908.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1459731908.git.horms+renesas@verge.net.au>
-References: <cover.1459731908.git.horms+renesas@verge.net.au>
+Subject: [PATCH 2/3] Revert "ARM: dts: porter: Enable SCIF_CLK frequency and pins"
+Date: Thu, 21 Apr 2016 13:44:30 +1000
+Message-Id: <01638a7f5ef967e94e8aff455874d62e12fe32ed.1461209970.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461209970.git.horms+renesas@verge.net.au>
+References: <cover.1461209970.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since 16ccaf5bb5a5 ("pinctrl: sh-pfc: Accept standard function, pins and
-groups properties") renesas pfc drivers accept generic "function", "pins"
-and "groups" properties.
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-This patch updates the koelsch device tree to use the generic properties.
+This reverts commit 19417bd9c511 ("ARM: dts: porter: Enable SCIF_CLK
+frequency and pins") as according to
+http://elinux.org/File:R-CarM2-KOELSCH_PORTER-B_PORTER_C_Comparison.pdf
+the external oscillator for SCIF_CLK is not mounted on the porter boards.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 68 +++++++++++++++++------------------
- 1 file changed, 34 insertions(+), 34 deletions(-)
+ arch/arm/boot/dts/r8a7791-porter.dts | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 0ad71b81d3a2..c6b43c85a0b1 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -324,89 +324,89 @@
- 	pinctrl-names = "default";
- 
- 	i2c2_pins: i2c2 {
--		renesas,groups = "i2c2";
--		renesas,function = "i2c2";
-+		groups = "i2c2";
-+		function = "i2c2";
- 	};
- 
- 	du_pins: du {
--		renesas,groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
--		renesas,function = "du";
-+		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
-+		function = "du";
- 	};
- 
- 	scif0_pins: serial0 {
--		renesas,groups = "scif0_data_d";
--		renesas,function = "scif0";
-+		groups = "scif0_data_d";
-+		function = "scif0";
- 	};
- 
- 	scif1_pins: serial1 {
--		renesas,groups = "scif1_data_d";
--		renesas,function = "scif1";
-+		groups = "scif1_data_d";
-+		function = "scif1";
- 	};
- 
- 	scif_clk_pins: scif_clk {
--		renesas,groups = "scif_clk";
--		renesas,function = "scif_clk";
-+		groups = "scif_clk";
-+		function = "scif_clk";
- 	};
- 
- 	ether_pins: ether {
--		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
--		renesas,function = "eth";
-+		groups = "eth_link", "eth_mdio", "eth_rmii";
-+		function = "eth";
- 	};
- 
- 	phy1_pins: phy1 {
--		renesas,groups = "intc_irq0";
--		renesas,function = "intc";
-+		groups = "intc_irq0";
-+		function = "intc";
- 	};
- 
- 	sdhi0_pins: sd0 {
--		renesas,groups = "sdhi0_data4", "sdhi0_ctrl";
--		renesas,function = "sdhi0";
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
- 	};
- 
- 	sdhi1_pins: sd1 {
--		renesas,groups = "sdhi1_data4", "sdhi1_ctrl";
--		renesas,function = "sdhi1";
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
- 	};
- 
- 	sdhi2_pins: sd2 {
--		renesas,groups = "sdhi2_data4", "sdhi2_ctrl";
--		renesas,function = "sdhi2";
-+		groups = "sdhi2_data4", "sdhi2_ctrl";
-+		function = "sdhi2";
- 	};
- 
- 	qspi_pins: spi0 {
--		renesas,groups = "qspi_ctrl", "qspi_data4";
--		renesas,function = "qspi";
-+		groups = "qspi_ctrl", "qspi_data4";
-+		function = "qspi";
- 	};
- 
- 	msiof0_pins: spi1 {
--		renesas,groups = "msiof0_clk", "msiof0_sync", "msiof0_rx",
-+		groups = "msiof0_clk", "msiof0_sync", "msiof0_rx",
- 				 "msiof0_tx";
--		renesas,function = "msiof0";
-+		function = "msiof0";
- 	};
- 
- 	usb0_pins: usb0 {
--		renesas,groups = "usb0";
--		renesas,function = "usb0";
-+		groups = "usb0";
-+		function = "usb0";
- 	};
- 
- 	usb1_pins: usb1 {
--		renesas,groups = "usb1";
--		renesas,function = "usb1";
-+		groups = "usb1";
-+		function = "usb1";
- 	};
- 
- 	vin1_pins: vin1 {
--		renesas,groups = "vin1_data8", "vin1_clk";
--		renesas,function = "vin1";
-+		groups = "vin1_data8", "vin1_clk";
-+		function = "vin1";
- 	};
- 
- 	sound_pins: sound {
--		renesas,groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data";
--		renesas,function = "ssi";
-+		groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data";
-+		function = "ssi";
- 	};
- 
- 	sound_clk_pins: sound_clk {
--		renesas,groups = "audio_clk_a";
--		renesas,function = "audio_clk";
-+		groups = "audio_clk_a";
-+		function = "audio_clk";
- 	};
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index 76c5b2ef8b7e..a9285d9a57cd 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -143,19 +143,11 @@
  };
  
+ &pfc {
+-	pinctrl-0 = <&scif_clk_pins>;
+-	pinctrl-names = "default";
+-
+ 	scif0_pins: serial0 {
+ 		renesas,groups = "scif0_data_d";
+ 		renesas,function = "scif0";
+ 	};
+ 
+-	scif_clk_pins: scif_clk {
+-		renesas,groups = "scif_clk";
+-		renesas,function = "scif_clk";
+-	};
+-
+ 	ether_pins: ether {
+ 		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
+ 		renesas,function = "eth";
+@@ -229,11 +221,6 @@
+ 	status = "okay";
+ };
+ 
+-&scif_clk {
+-	clock-frequency = <14745600>;
+-	status = "okay";
+-};
+-
+ &ether {
+ 	pinctrl-0 = <&ether_pins &phy1_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.1.4
+2.7.0.rc3.207.g0ac5344
