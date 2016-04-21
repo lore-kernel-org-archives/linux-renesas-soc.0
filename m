@@ -1,74 +1,81 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 2/7] soc: renesas: Add r8a7779 SYSC PM Domain Binding Definitions
-Date: Thu,  7 Apr 2016 14:20:15 +0200
-Message-Id: <1460031620-13240-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460031620-13240-1-git-send-email-geert+renesas@glider.be>
-References: <1460031620-13240-1-git-send-email-geert+renesas@glider.be>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Simon Horman <horms@verge.net.au>
+CC: "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"pawel.moll@arm.com" <pawel.moll@arm.com>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
+	"galak@codeaurora.org" <galak@codeaurora.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] arm64: defconfig: Add Renesas R-Car USB 3.0 driver
+ support
+Date: Thu, 21 Apr 2016 09:44:57 +0000
+Message-ID: <SG2PR06MB09199B8168E3822A9B09E9C6D86E0@SG2PR06MB0919.apcprd06.prod.outlook.com>
+References: <1461142034-5008-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20160421031514.GB11116@verge.net.au>
+ <SG2PR06MB0919C567798F775F2685811ED86E0@SG2PR06MB0919.apcprd06.prod.outlook.com>
+ <20160421035623.GB28575@verge.net.au>
+In-Reply-To: <20160421035623.GB28575@verge.net.au>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-v4:
-  - Add Reviewed-by,
-  - Drop R8A7779_PD_SH, as it's not documented in the datasheet,
-  - Add always-on power area,
+Hi Simon-san,
 
-v3:
-  - New.
----
- include/dt-bindings/power/r8a7779-sysc.h | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a7779-sysc.h
+> From: Simon Horman
+> Sent: Thursday, April 21, 2016 12:56 PM
+> 
+< snip >
+> > > > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> > > > index a44ef99..a95751d 100644
+> > > > --- a/arch/arm64/configs/defconfig
+> > > > +++ b/arch/arm64/configs/defconfig
+> > > > @@ -1,7 +1,6 @@
+> > > >  # CONFIG_LOCALVERSION_AUTO is not set
+> > > >  CONFIG_SYSVIPC=y
+> > > >  CONFIG_POSIX_MQUEUE=y
+> > > > -CONFIG_FHANDLE=y
+> > > >  CONFIG_AUDIT=y
+> > > >  CONFIG_NO_HZ_IDLE=y
+> > > >  CONFIG_HIGH_RES_TIMERS=y
+> > >
+> > > Is the hunk above intended?
+> > > It does not seem to match my reading of the changelog.
+> >
+> > Perhaps I should make a patch for this change because
+> > if I did the following commands, this change appeared.
+> 
+> I'm not sure how the ARM-SoC maintainers feel about such cleanups
+> these days. I suggest just dropping that part of the change for now.
 
-diff --git a/include/dt-bindings/power/r8a7779-sysc.h b/include/dt-bindings/power/r8a7779-sysc.h
-new file mode 100644
-index 0000000000000000..183571da507e5c45
---- /dev/null
-+++ b/include/dt-bindings/power/r8a7779-sysc.h
-@@ -0,0 +1,27 @@
-+/*
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7779_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7779_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A7779_PD_ARM1			 1
-+#define R8A7779_PD_ARM2			 2
-+#define R8A7779_PD_ARM3			 3
-+#define R8A7779_PD_SGX			20
-+#define R8A7779_PD_VDP			21
-+#define R8A7779_PD_IMP			24
-+
-+/* Always-on power area */
-+#define R8A7779_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7779_SYSC_H__ */
--- 
-1.9.1
+Thank you for the suggestion!
+I agree with you. So, I will submit v2 patch today.
 
+Best regards,
+Yoshihiro Shimoda
+
+> > on renesas-devel-20160420-v4.6-rc4
+> > $ make defconfig
+> > $ cp defconfig arch/arm64/config
+> > $ git diff
+> >
+> > Best regards,
+> > Yoshihiro Shimoda
+> >
+> > > > @@ -192,7 +191,7 @@ CONFIG_SND_SOC_AK4613=y
+> > > >  CONFIG_USB=y
+> > > >  CONFIG_USB_OTG=y
+> > > >  CONFIG_USB_XHCI_HCD=y
+> > > > -CONFIG_USB_XHCI_PLATFORM=y
+> > > > +CONFIG_USB_XHCI_RCAR=y
+> > > >  CONFIG_USB_EHCI_HCD=y
+> > > >  CONFIG_USB_EHCI_MSM=y
+> > > >  CONFIG_USB_EHCI_HCD_PLATFORM=y
+> > > > --
+> > > > 1.9.1
