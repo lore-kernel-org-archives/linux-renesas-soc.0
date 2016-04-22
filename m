@@ -1,76 +1,154 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41953 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750988AbcD0EUs (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 00:20:48 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/10] ARM: dts: r8a7793: Add SYSC PM Domains
-Date: Wed, 27 Apr 2016 14:20:31 +1000
-Message-Id: <a7ede1abeefd69330c5dd45b335d22af1e2baf2e.1461730638.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461730638.git.horms+renesas@verge.net.au>
-References: <cover.1461730638.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v6 04/12] ARM: dts: r8a7790: Add SYSC PM Domains
+Date: Fri, 22 Apr 2016 11:07:26 +0200
+Message-Id: <1461316054-27999-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1461316054-27999-1-git-send-email-geert+renesas@glider.be>
+References: <1461316054-27999-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-
 Add a device node for the System Controller.
-Hook up the first Cortex-A15 CPU core and the Cortex-A15 L2 cache/SCU to
+Hook up the Cortex-A15 and Cortex-A7 CPU cores and L2 caches/SCUs to
 their respective PM Domains.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+v6:
+  - Add Acked-by,
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 6186179fd66d..53e235e3279d 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -11,6 +11,7 @@
- #include <dt-bindings/clock/r8a7793-clock.h>
+v5:
+  - Remove "power-domains" property again from the sysc node, as the
+    System Controller itself is not part of the Clock Domain,
+
+v4:
+  - Add "power-domains" property to the sysc node, to refer to the SoC's
+    Clock Domain,
+
+v3:
+  - Drop power area hiearchy from DT,
+  - Switch to "#power-domain-cells = <1>",
+  - Drop fallback compatibility strings,
+
+v2:
+  - Change one-line summary prefix to match current arm-soc practices,
+  - Update compatible values.
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 776a2aed81d2eff1..36c91d921771336a 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -13,6 +13,7 @@
+ #include <dt-bindings/clock/r8a7790-clock.h>
  #include <dt-bindings/interrupt-controller/arm-gic.h>
  #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/power/r8a7793-sysc.h>
++#include <dt-bindings/power/r8a7790-sysc.h>
  
  / {
- 	compatible = "renesas,r8a7793";
-@@ -43,6 +44,7 @@
+ 	compatible = "renesas,r8a7790";
+@@ -52,6 +53,7 @@
  			voltage-tolerance = <1>; /* 1% */
- 			clocks = <&cpg_clocks R8A7793_CLK_Z>;
+ 			clocks = <&cpg_clocks R8A7790_CLK_Z>;
  			clock-latency = <300000>; /* 300 us */
-+			power-domains = <&sysc R8A7793_PD_CA15_CPU0>;
++			power-domains = <&sysc R8A7790_PD_CA15_CPU0>;
+ 			next-level-cache = <&L2_CA15>;
  
  			/* kHz - uV - OPPs unknown yet */
- 			operating-points = <1500000 1000000>,
-@@ -76,6 +78,7 @@
+@@ -68,6 +70,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <1>;
+ 			clock-frequency = <1300000000>;
++			power-domains = <&sysc R8A7790_PD_CA15_CPU1>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
+ 
+@@ -76,6 +79,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <2>;
+ 			clock-frequency = <1300000000>;
++			power-domains = <&sysc R8A7790_PD_CA15_CPU2>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
+ 
+@@ -84,6 +88,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <3>;
+ 			clock-frequency = <1300000000>;
++			power-domains = <&sysc R8A7790_PD_CA15_CPU3>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
+ 
+@@ -92,6 +97,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x100>;
+ 			clock-frequency = <780000000>;
++			power-domains = <&sysc R8A7790_PD_CA7_CPU0>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+ 
+@@ -100,6 +106,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x101>;
+ 			clock-frequency = <780000000>;
++			power-domains = <&sysc R8A7790_PD_CA7_CPU1>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+ 
+@@ -108,6 +115,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x102>;
+ 			clock-frequency = <780000000>;
++			power-domains = <&sysc R8A7790_PD_CA7_CPU2>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+ 
+@@ -116,6 +124,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x103>;
+ 			clock-frequency = <780000000>;
++			power-domains = <&sysc R8A7790_PD_CA7_CPU3>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+ 	};
+@@ -141,12 +150,14 @@
  
  	L2_CA15: cache-controller@0 {
  		compatible = "cache";
-+		power-domains = <&sysc R8A7793_PD_CA15_SCU>;
++		power-domains = <&sysc R8A7790_PD_CA15_SCU>;
  		cache-unified;
  		cache-level = <2>;
  	};
-@@ -1223,6 +1226,12 @@
+ 
+ 	L2_CA7: cache-controller@1 {
+ 		compatible = "cache";
++		power-domains = <&sysc R8A7790_PD_CA7_SCU>;
+ 		cache-unified;
+ 		cache-level = <2>;
+ 	};
+@@ -1450,6 +1461,12 @@
  		};
  	};
  
 +	sysc: system-controller@e6180000 {
-+		compatible = "renesas,r8a7793-sysc";
++		compatible = "renesas,r8a7790-sysc";
 +		reg = <0 0xe6180000 0 0x0200>;
 +		#power-domain-cells = <1>;
 +	};
 +
- 	ipmmu_sy0: mmu@e6280000 {
- 		compatible = "renesas,ipmmu-r8a7793", "renesas,ipmmu-vmsa";
- 		reg = <0 0xe6280000 0 0x1000>;
+ 	qspi: spi@e6b10000 {
+ 		compatible = "renesas,qspi-r8a7790", "renesas,qspi";
+ 		reg = <0 0xe6b10000 0 0x2c>;
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
+
