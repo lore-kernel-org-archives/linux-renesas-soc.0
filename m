@@ -1,54 +1,99 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60365 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751038AbcD0XHK (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 19:07:10 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: dts: r8a7795: Don't disable referenced optional scif clock
-Date: Thu, 28 Apr 2016 09:07:02 +1000
-Message-Id: <f5515f9cdff136dc32517d4b81fe2b9091237b4a.1461798058.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461798058.git.horms+renesas@verge.net.au>
-References: <cover.1461798058.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v6 05/12] ARM: dts: r8a7791: Add SYSC PM Domains
+Date: Fri, 22 Apr 2016 11:07:27 +0200
+Message-Id: <1461316054-27999-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1461316054-27999-1-git-send-email-geert+renesas@glider.be>
+References: <1461316054-27999-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Add a device node for the System Controller.
+Hook up the Cortex-A15 CPU cores and the Cortex-A15 L2 cache/SCU to
+their respective PM Domains.
 
-clk_get() on a disabled clock node will return -EPROBE_DEFER, which can
-cause drivers to be deferred forever if such clocks are referenced in
-their devices' clocks properties.
-
-Update the disabled external scif clock node so that it
-is not disabled to prevent this.
-
-Reported-by: Jürg Billeter <j@bitron.ch>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[simon: fix for v4.6 extracted from a larger patch targeted at v4.7]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+v6:
+  - Add Acked-by,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index a7315ebe3883..706d2426024f 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -120,7 +120,6 @@
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <0>;
--		status = "disabled";
+v5:
+  - Remove "power-domains" property again from the sysc node, as the
+    System Controller itself is not part of the Clock Domain,
+
+v4:
+  - Add "power-domains" property to the sysc node, to refer to the SoC's
+    Clock Domain,
+
+v3:
+  - Drop power area hiearchy from DT,
+  - Switch to "#power-domain-cells = <1>",
+  - Drop fallback compatibility strings,
+
+v2:
+  - Change one-line summary prefix to match current arm-soc practices,
+  - Update compatible values.
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 565c270e549d2bb6..b8657f4b45efdfe5 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -13,6 +13,7 @@
+ #include <dt-bindings/clock/r8a7791-clock.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/power/r8a7791-sysc.h>
+ 
+ / {
+ 	compatible = "renesas,r8a7791";
+@@ -51,6 +52,7 @@
+ 			voltage-tolerance = <1>; /* 1% */
+ 			clocks = <&cpg_clocks R8A7791_CLK_Z>;
+ 			clock-latency = <300000>; /* 300 us */
++			power-domains = <&sysc R8A7791_PD_CA15_CPU0>;
+ 			next-level-cache = <&L2_CA15>;
+ 
+ 			/* kHz - uV - OPPs unknown yet */
+@@ -67,6 +69,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <1>;
+ 			clock-frequency = <1500000000>;
++			power-domains = <&sysc R8A7791_PD_CA15_CPU1>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
+ 	};
+@@ -92,6 +95,7 @@
+ 
+ 	L2_CA15: cache-controller@0 {
+ 		compatible = "cache";
++		power-domains = <&sysc R8A7791_PD_CA15_SCU>;
+ 		cache-unified;
+ 		cache-level = <2>;
+ 	};
+@@ -1463,6 +1467,12 @@
+ 		};
  	};
  
- 	soc {
++	sysc: system-controller@e6180000 {
++		compatible = "renesas,r8a7791-sysc";
++		reg = <0 0xe6180000 0 0x0200>;
++		#power-domain-cells = <1>;
++	};
++
+ 	qspi: spi@e6b10000 {
+ 		compatible = "renesas,qspi-r8a7791", "renesas,qspi";
+ 		reg = <0 0xe6b10000 0 0x2c>;
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
+
