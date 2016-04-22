@@ -1,76 +1,85 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:36471 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751858AbcDZNn2 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 09:43:28 -0400
-Received: by mail-lf0-f48.google.com with SMTP id u64so16416096lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Apr 2016 06:43:27 -0700 (PDT)
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Tue, 26 Apr 2016 15:43:25 +0200
-To: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 31/47] ARM: dts: r8a7794: Reference both DMA controllers
- in SCIFA nodes
-Message-ID: <20160426134325.GO28777@bigcity.dyn.berto.se>
-References: <cover.1459732726.git.horms+renesas@verge.net.au>
- <65c295f4b305330162795b0cc2508a207ed23a98.1459732726.git.horms+renesas@verge.net.au>
- <CAOesGMgBBmUvoWdb35vcq0UAJNkMk5LD6-ERWDAaSKWEpGwu9A@mail.gmail.com>
- <CAMuHMdUUz-0EhgogpHGV-yE6htbwvAjuoAm2+DtDLa3xiG1XkA@mail.gmail.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdUUz-0EhgogpHGV-yE6htbwvAjuoAm2+DtDLa3xiG1XkA@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1683904.kdfvDOmCDR@avalon>
+References: <1461196375-21768-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	<1469950.TOloHQY8f4@avalon>
+	<CAJZ5v0jWj8X+6BTsxxTAz+AkziZkrgahyi+rVebga7fDWxSjXA@mail.gmail.com>
+	<1683904.kdfvDOmCDR@avalon>
+Date: Fri, 22 Apr 2016 09:15:05 +0200
+Message-ID: <CAPDyKFr5bPCcDmgQNeXCHJNoPLKD7BLVL8m8eh1sh1CXMbNDRA@mail.gmail.com>
+Subject: Re: [PATCH v2] PM / Runtime: Only force-resume device if it has been force-suspended
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+	Kevin Hilman <khilman@kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Arnd and Olof,
+On 21 April 2016 at 23:07, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> Hi Rafael,
+>
+> On Thursday 21 Apr 2016 23:02:06 Rafael J. Wysocki wrote:
+>> On Thu, Apr 21, 2016 at 10:57 PM, Laurent Pinchart wrote:
+>> > On Thursday 21 Apr 2016 21:52:56 Rafael J. Wysocki wrote:
+>> >> On Thursday, April 21, 2016 02:52:55 AM Laurent Pinchart wrote:
+>> >>> The pm_runtime_force_suspend() and pm_runtime_force_resume() helpers
+>> >>> are designed to help driver being RPM-centric by offering an easy way to
+>> >>> manage runtime PM state during system suspend and resume. The first
+>> >>> function will force the device into runtime suspend at system suspend
+>> >>> time, while the second one will perform the reverse operation at system
+>> >>> resume time.
+>> >>>
+>> >>> However, the pm_runtime_force_resume() really forces resume, regardless
+>> >>> of whether the device was running or already suspended before the call
+>> >>> to pm_runtime_force_suspend(). This results in devices being runtime
+>> >>> resumed at system resume time when they shouldn't.
+>> >>>
+>> >>> Fix this by recording whether the device has been forcefully suspended
+>> >>> in pm_runtime_force_suspend() and condition resume in
+>> >>> pm_runtime_force_resume() to that state.
+>> >>>
+>> >>> All current users of pm_runtime_force_resume() call the function
+>> >>> unconditionally in their system resume handler (some actually set it as
+>> >>> the resume handler), all after calling pm_runtime_force_suspend() at
+>> >>> system suspend time. The change in behaviour should thus be safe.
+>> >>>
+>> >>> Signed-off-by: Laurent Pinchart
+>> >>> <laurent.pinchart+renesas@ideasonboard.com>
+>> >>> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+>> >>
+>> >> Ulf, any comments?
+>> >
+>> > Ulf has proposed a different approach in "[PATCH] PM / Runtime: Defer
+>> > resuming of the device in pm_runtime_force_resume()". I agree that using
+>> > usage_count is better than introducing a new state flag in struct
+>> > dev_pm_info, with a caveat: it doesn't work properly :-). We would have
+>> > to fix genpd first, as commented in a reply to Ulf's patch.
+>>
+>> OK, thanks!
+>>
+>> Since I'd prefer to avoid adding more state flags too, I'll let you
+>> guys noodle around this for a while more. :-)
+>
+> Let's see what we can do in a reasonable time frame. We could decide to merge
+> this patch as a temporary fix until the genpd rework is complete.
 
-It seems Arnd have been dropped from this thread and I would appreciate 
-your feedback on this. Do you think it is a good idea to reference both 
-DMA controllers in this fashion to be able to get channels from either 
-of the two DMA controllers?
+Subsystems/driver that uses pm_runtime_force_suspend|resume() don't
+necessarily need to have their devices attached to a genpd. In such
+cases, $subject patch will be an improvement by itself.
 
-Also to both of you if this is a good solution would you like me to 
-squash the patches per SoC and resend it? Olof pointed out it might be a 
-bit silly to do this in so many patches.
+Me personally would rather skip the intermediate step you propose, as
+I prefer to properly change genpd with what is needed. Moreover, I am
+already working on that so it shouldn't take too long before I can
+post some patches.
 
-On 2016-04-13 21:55:14 +0200, Geert Uytterhoeven wrote:
-> Hi Olof,
-> 
-> On Wed, Apr 13, 2016 at 9:48 PM, Olof Johansson <olof@lixom.net> wrote:
-> > On Sun, Apr 3, 2016 at 6:23 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
-> >> diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-> >> index eacb2b291361..4256557ca041 100644
-> >> --- a/arch/arm/boot/dts/r8a7794.dtsi
-> >> +++ b/arch/arm/boot/dts/r8a7794.dtsi
-> >> @@ -296,8 +296,9 @@
-> >>                 interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
-> >>                 clocks = <&mstp2_clks R8A7794_CLK_SCIFA0>;
-> >>                 clock-names = "fck";
-> >> -               dmas = <&dmac0 0x21>, <&dmac0 0x22>;
-> >> -               dma-names = "tx", "rx";
-> >> +               dmas = <&dmac0 0x21>, <&dmac0 0x22>,
-> >> +                      <&dmac1 0x21>, <&dmac1 0x22>;
-> >> +               dma-names = "tx", "rx", "tx", "rx";
-> >>                 power-domains = <&cpg_clocks>;
-> >>                 status = "disabled";
-> >>         };
-> >
-> > The names are no longer unique. So a get_<foo>_by_name() function no
-> > longer can work as expected.
-> 
-> That's intentional, and a relic of how dma_request_slave_channel_compat()
-> works: if e.g. the first "tx" channel can't be gotten (e.g. because
-> the referenced
-> DMAC instance ran out of channels), it will try the next one.
-
--- 
-Regards,
-Niklas S�derlund
+Kind regards
+Uffe
