@@ -1,77 +1,541 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-	Kevin Hilman <khilman@kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] PM / Runtime: Only force-resume device if it has been force-suspended
-Date: Thu, 21 Apr 2016 02:30:11 +0300
-Message-ID: <1747840.aL2QAkXYBh@avalon>
-In-Reply-To: <CAPDyKFqtrdw+MHh6tAz658=PQi+REGAEiNzNs_4aRzTTpOwP9Q@mail.gmail.com>
-References: <Pine.LNX.4.44L0.1603041021200.1885-100000@iolanthe.rowland.org> <2096023.P4Pq9IvUAO@avalon> <CAPDyKFqtrdw+MHh6tAz658=PQi+REGAEiNzNs_4aRzTTpOwP9Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v6 02/12] arm64: dts: r8a7795: Use SYSC "always-on" PM Domain
+Date: Fri, 22 Apr 2016 11:07:24 +0200
+Message-Id: <1461316054-27999-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1461316054-27999-1-git-send-email-geert+renesas@glider.be>
+References: <1461316054-27999-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Hook up all devices that are part of the CPG/MSSR Clock Domain to the
+SYSC "always-on" PM Domain, for a more consistent device-power-area
+description in DT.
 
-Reviving this old thread.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+v6:
+  - No changes,
 
-On Monday 07 Mar 2016 11:10:08 Ulf Hansson wrote:
-> [...]
-> 
-> >> I agree, that's a better idea. Drivers shouldn't call
-> >> pm_runtime_force_resume() if they haven't called
-> >> pm_runtime_force_suspend(), so checking the PM use count should be fine.
-> >> I'll modify the patch, test it and resubmit.
-> > 
-> > I gave it an unfortunately unsuccessful try. The problem I ran into is
-> > that device_prepare() calls pm_runtime_get_noresume() calls
-> > pm_runtime_get_noresume(), with the corresponding pm_runtime_put() call
-> > being performed in device_complete(). The device power usage_count is
-> > thus always non-zero in the system resume handler, so I can't base the
-> > decision on that.
->
-> As Alan said, let's just check against 1 instead.
+v5:
+  - Add Acked-by,
 
-I gave this a try, and unfortunately it won't work.
+v4:
+  - New, extracted from "[PATCH v3] arm64: dts: r8a7795: Add SYSC PM
+    Domains",
+  - Use "<&sysc R8A7795_PD_ALWAYS_ON>" for recently added can0, can1,
+    pciec0, and pciec1 device nodes,
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 110 +++++++++++++++----------------
+ 1 file changed, 55 insertions(+), 55 deletions(-)
 
-pm_genpd_prepare() resumes devices without increasing the usage count, which 
-leads to the device always being active in pm_runtime_force_suspend(). The 
-usage count will be 1 if the device was suspended prior to entering system 
-suspend (due to the pm_runtime_get_noresume() call in device_prepare()) or 
-higher than 1 if the device was active.
-
-However, pm_genpd_prepare() will not resume the device if suspend_power_off is 
-set. In that case the device will be suspended with a usage count of 1 in 
-pm_runtime_force_suspend() or active with a usage count higher than 1.
-
-We thus can't detect at resume time whether we have force-suspended the device 
-using the usage count.
-
-Unless someone has another clever idea I'll keep the power.is_force_suspended 
-flag and protect it with power.lock.
-
-> > I also noticed that pm_genpd_prepare() runtime-resumes the device (when
-> > the power domain is in the GPD_STATE_ACTIVE state). I don't know why that
-> > is, but it means that in practice my device gets runtime-resumed when
-> > suspending the system while it could stay runtime-suspended in practice.
-> 
-> I am aware of this and it's on my TODO list of improvements of genpd,
-> The issue is related to an unoptimized behaviour for how genpd deal
-> with wakeups during system PM.
-
-Looking forward to seeing patches :-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 9c7424fc171fb876..1e0f43e72bf0eb80 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -178,7 +178,7 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 912>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		};
+ 
+ 		gpio1: gpio@e6051000 {
+@@ -192,7 +192,7 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 911>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		};
+ 
+ 		gpio2: gpio@e6052000 {
+@@ -206,7 +206,7 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 910>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		};
+ 
+ 		gpio3: gpio@e6053000 {
+@@ -220,7 +220,7 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 909>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		};
+ 
+ 		gpio4: gpio@e6054000 {
+@@ -234,7 +234,7 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 908>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		};
+ 
+ 		gpio5: gpio@e6055000 {
+@@ -248,7 +248,7 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 907>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		};
+ 
+ 		gpio6: gpio@e6055400 {
+@@ -262,7 +262,7 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 906>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		};
+ 
+ 		gpio7: gpio@e6055800 {
+@@ -276,7 +276,7 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 			clocks = <&cpg CPG_MOD 905>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		};
+ 
+ 		pmu_a57 {
+@@ -345,7 +345,7 @@
+ 					"ch12", "ch13", "ch14", "ch15";
+ 			clocks = <&cpg CPG_MOD 502>;
+ 			clock-names = "fck";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <16>;
+ 		};
+@@ -377,7 +377,7 @@
+ 					"ch12", "ch13", "ch14", "ch15";
+ 			clocks = <&cpg CPG_MOD 501>;
+ 			clock-names = "fck";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <16>;
+ 		};
+@@ -399,7 +399,7 @@
+ 				      GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH
+ 				      GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 407>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		};
+ 
+ 		dmac0: dma-controller@e6700000 {
+@@ -430,7 +430,7 @@
+ 					"ch12", "ch13", "ch14", "ch15";
+ 			clocks = <&cpg CPG_MOD 219>;
+ 			clock-names = "fck";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <16>;
+ 		};
+@@ -463,7 +463,7 @@
+ 					"ch12", "ch13", "ch14", "ch15";
+ 			clocks = <&cpg CPG_MOD 218>;
+ 			clock-names = "fck";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <16>;
+ 		};
+@@ -496,7 +496,7 @@
+ 					"ch12", "ch13", "ch14", "ch15";
+ 			clocks = <&cpg CPG_MOD 217>;
+ 			clock-names = "fck";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <16>;
+ 		};
+@@ -538,7 +538,7 @@
+ 					  "ch20", "ch21", "ch22", "ch23",
+ 					  "ch24";
+ 			clocks = <&cpg CPG_MOD 812>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			phy-mode = "rgmii-id";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -555,7 +555,7 @@
+ 			clock-names = "clkp1", "clkp2", "can_clk";
+ 			assigned-clocks = <&cpg CPG_CORE R8A7795_CLK_CANFD>;
+ 			assigned-clock-rates = <40000000>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -570,7 +570,7 @@
+ 			clock-names = "clkp1", "clkp2", "can_clk";
+ 			assigned-clocks = <&cpg CPG_CORE R8A7795_CLK_CANFD>;
+ 			assigned-clock-rates = <40000000>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -586,7 +586,7 @@
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac1 0x31>, <&dmac1 0x30>;
+ 			dma-names = "tx", "rx";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -602,7 +602,7 @@
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac1 0x33>, <&dmac1 0x32>;
+ 			dma-names = "tx", "rx";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -618,7 +618,7 @@
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac1 0x35>, <&dmac1 0x34>;
+ 			dma-names = "tx", "rx";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -634,7 +634,7 @@
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0x37>, <&dmac0 0x36>;
+ 			dma-names = "tx", "rx";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -650,7 +650,7 @@
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0x39>, <&dmac0 0x38>;
+ 			dma-names = "tx", "rx";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -665,7 +665,7 @@
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac1 0x51>, <&dmac1 0x50>;
+ 			dma-names = "tx", "rx";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -680,7 +680,7 @@
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac1 0x53>, <&dmac1 0x52>;
+ 			dma-names = "tx", "rx";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -695,7 +695,7 @@
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac1 0x13>, <&dmac1 0x12>;
+ 			dma-names = "tx", "rx";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -710,7 +710,7 @@
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0x57>, <&dmac0 0x56>;
+ 			dma-names = "tx", "rx";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -725,7 +725,7 @@
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac0 0x59>, <&dmac0 0x58>;
+ 			dma-names = "tx", "rx";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -740,7 +740,7 @@
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>;
+ 			dma-names = "tx", "rx";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -751,7 +751,7 @@
+ 			reg = <0 0xe6500000 0 0x40>;
+ 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 931>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -763,7 +763,7 @@
+ 			reg = <0 0xe6508000 0 0x40>;
+ 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 930>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -775,7 +775,7 @@
+ 			reg = <0 0xe6510000 0 0x40>;
+ 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 929>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -787,7 +787,7 @@
+ 			reg = <0 0xe66d0000 0 0x40>;
+ 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 928>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -799,7 +799,7 @@
+ 			reg = <0 0xe66d8000 0 0x40>;
+ 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 927>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -811,7 +811,7 @@
+ 			reg = <0 0xe66e0000 0 0x40>;
+ 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 919>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -823,7 +823,7 @@
+ 			reg = <0 0xe66e8000 0 0x40>;
+ 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 918>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -873,7 +873,7 @@
+ 				      "src.1", "src.0",
+ 				      "dvc.0", "dvc.1",
+ 				      "clk_a", "clk_b", "clk_c", "clk_i";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 
+ 			rcar_sound,dvc {
+@@ -1007,7 +1007,7 @@
+ 			reg = <0 0xee000000 0 0xc00>;
+ 			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 328>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1016,7 +1016,7 @@
+ 			reg = <0 0xee040000 0 0xc00>;
+ 			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 327>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1028,7 +1028,7 @@
+ 				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "ch0", "ch1";
+ 			clocks = <&cpg CPG_MOD 330>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <2>;
+ 		};
+@@ -1041,7 +1041,7 @@
+ 				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "ch0", "ch1";
+ 			clocks = <&cpg CPG_MOD 331>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#dma-cells = <1>;
+ 			dma-channels = <2>;
+ 		};
+@@ -1051,7 +1051,7 @@
+ 			reg = <0 0xee100000 0 0x2000>;
+ 			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 314>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1060,7 +1060,7 @@
+ 			reg = <0 0xee120000 0 0x2000>;
+ 			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 313>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1069,7 +1069,7 @@
+ 			reg = <0 0xee140000 0 0x2000>;
+ 			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 312>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			cap-mmc-highspeed;
+ 			status = "disabled";
+ 		};
+@@ -1079,7 +1079,7 @@
+ 			reg = <0 0xee160000 0 0x2000>;
+ 			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 311>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			cap-mmc-highspeed;
+ 			status = "disabled";
+ 		};
+@@ -1089,7 +1089,7 @@
+ 			reg = <0 0xee080200 0 0x700>;
+ 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 703>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#phy-cells = <0>;
+ 			status = "disabled";
+ 		};
+@@ -1098,7 +1098,7 @@
+ 			compatible = "renesas,usb2-phy-r8a7795";
+ 			reg = <0 0xee0a0200 0 0x700>;
+ 			clocks = <&cpg CPG_MOD 702>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#phy-cells = <0>;
+ 			status = "disabled";
+ 		};
+@@ -1107,7 +1107,7 @@
+ 			compatible = "renesas,usb2-phy-r8a7795";
+ 			reg = <0 0xee0c0200 0 0x700>;
+ 			clocks = <&cpg CPG_MOD 701>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#phy-cells = <0>;
+ 			status = "disabled";
+ 		};
+@@ -1119,7 +1119,7 @@
+ 			clocks = <&cpg CPG_MOD 703>;
+ 			phys = <&usb2_phy0>;
+ 			phy-names = "usb";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1130,7 +1130,7 @@
+ 			clocks = <&cpg CPG_MOD 702>;
+ 			phys = <&usb2_phy1>;
+ 			phy-names = "usb";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1141,7 +1141,7 @@
+ 			clocks = <&cpg CPG_MOD 701>;
+ 			phys = <&usb2_phy2>;
+ 			phy-names = "usb";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1152,7 +1152,7 @@
+ 			clocks = <&cpg CPG_MOD 703>;
+ 			phys = <&usb2_phy0>;
+ 			phy-names = "usb";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1163,7 +1163,7 @@
+ 			clocks = <&cpg CPG_MOD 702>;
+ 			phys = <&usb2_phy1>;
+ 			phy-names = "usb";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1174,7 +1174,7 @@
+ 			clocks = <&cpg CPG_MOD 701>;
+ 			phys = <&usb2_phy2>;
+ 			phy-names = "usb";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 		pciec0: pcie@fe000000 {
+@@ -1198,7 +1198,7 @@
+ 			interrupt-map = <0 0 0 0 &gic GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 319>, <&pcie_bus_clk>;
+ 			clock-names = "pcie", "pcie_bus";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1223,7 +1223,7 @@
+ 			interrupt-map = <0 0 0 0 &gic GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 318>, <&pcie_bus_clk>;
+ 			clock-names = "pcie", "pcie_bus";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 	};
 -- 
-Regards,
+1.9.1
 
-Laurent Pinchart
