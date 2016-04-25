@@ -1,83 +1,97 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org,
-	Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@linux.ie>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org,
-	David Herrmann <dh.herrmann@gmail.com>
-Subject: [PATCH 0/3 v6] drm: Introduce drm_connector_register_all() helper
-Date: Tue, 19 Apr 2016 15:24:50 +0300
-Message-Id: <1461068693-11260-1-git-send-email-abrodkin@synopsys.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37359 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965208AbcDYVg1 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 25 Apr 2016 17:36:27 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 09/13] v4l: vsp1: Move frame sequence number from video node to pipeline
+Date: Tue, 26 Apr 2016 00:36:34 +0300
+Message-Id: <1461620198-13428-10-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1461620198-13428-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1461620198-13428-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As a pair to already existing drm_connector_unplug_all()
-(which we'll rename in this series to drm_connector_unregister_all())
-we're adding generic implementation of what is already done in some drivers
-for registering all connectors.
+The frame sequence number is global to the pipeline, there's no need to
+store copies in each video node.
 
-After implementation of that new helper we're updating 2 drivers
-that used to use it's own implementation:
- [1] atmel_hlcdc
- [2] rcar_du
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_pipe.c  | 2 ++
+ drivers/media/platform/vsp1/vsp1_pipe.h  | 2 ++
+ drivers/media/platform/vsp1/vsp1_video.c | 4 +---
+ drivers/media/platform/vsp1/vsp1_video.h | 1 -
+ 4 files changed, 5 insertions(+), 4 deletions(-)
 
-Other drivers still use load() callback and so should be first modified so
-their load() gets called from their probe() explicitly.
-
-Build- and run-tested on yet to be upstreamed ARC PGU (part of AXS10x board).
-
-Changes v5 -> v6:
- * In atmel_hlcdc only substitute its own atmel_hlcdc_dc_connector_plug_all().
-   drm_connector_unregister_all() is already used there since
-   222b90943446 "drm/atmel: Fixup drm_connector_/unplug/unregister/_all"
-
-Changes v4 -> v5:
- * Added missing mutex unlock on a fail path in drm_connector_register_all()
-   Thanks David for his attention and patience!
-
-Changes v3 -> v4:
- * Based on current drm-intel/topic/drm-misc
-   It's now on commit 6c87e5c3ec6db052f3744804a517b6fb003906e1
-   And since thet new base already has
-   "drm: Rename drm_connector_unplug_all() to drm_connector_unregister_all()"
-   this series now only includes 3 subsequent patches.
-
- * In drm_connector_register_all() fail path which calls unregister_all()
-   is moved outside of loop&locked section (as suggested by Daniel)
-
-Changes v2 -> v3:
- * Added acks for 1, 3 and 4 patches
- * Updated kerneldoc descriptins of both register_ and unregister_all()
- * Updated commit messages (mostly spellos and grammar issues)
-
-Changes v1 -> v2:
- * Rename drm_connector_unplug_all() to drm_connector_unregister_all()
- * Use drm_for_each_connector() instead of list_for_each_entry()
- * Updated kerneldoc for drm_dev_register()
-
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: David Herrmann <dh.herrmann@gmail.com>
-
-Alexey Brodkin (3):
-  drm: Introduce drm_connector_register_all() helper
-  drm: atmel_hldc: Use generic drm_connector_register_all() helper
-  drm: rcar-du: Use generic drm_connector_register_all() helper
-
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 30 +--------------------
- drivers/gpu/drm/drm_crtc.c                   | 40 ++++++++++++++++++++++++++++
- drivers/gpu/drm/drm_drv.c                    |  6 ++++-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c        |  9 +------
- include/drm/drm_crtc.h                       |  3 ++-
- 5 files changed, 49 insertions(+), 39 deletions(-)
-
+diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
+index 0c1dc80eb304..be47c8a1a812 100644
+--- a/drivers/media/platform/vsp1/vsp1_pipe.c
++++ b/drivers/media/platform/vsp1/vsp1_pipe.c
+@@ -286,6 +286,8 @@ void vsp1_pipeline_frame_end(struct vsp1_pipeline *pipe)
+ 
+ 	if (pipe->frame_end)
+ 		pipe->frame_end(pipe);
++
++	pipe->sequence++;
+ }
+ 
+ /*
+diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
+index 7b56113511dd..febc62f99d6d 100644
+--- a/drivers/media/platform/vsp1/vsp1_pipe.h
++++ b/drivers/media/platform/vsp1/vsp1_pipe.h
+@@ -67,6 +67,7 @@ enum vsp1_pipeline_state {
+  * @kref: pipeline reference count
+  * @stream_count: number of streaming video nodes
+  * @buffers_ready: bitmask of RPFs and WPFs with at least one buffer available
++ * @sequence: frame sequence number
+  * @num_inputs: number of RPFs
+  * @inputs: array of RPFs in the pipeline (indexed by RPF index)
+  * @output: WPF at the output of the pipeline
+@@ -90,6 +91,7 @@ struct vsp1_pipeline {
+ 	struct kref kref;
+ 	unsigned int stream_count;
+ 	unsigned int buffers_ready;
++	unsigned int sequence;
+ 
+ 	unsigned int num_inputs;
+ 	struct vsp1_rwpf *inputs[VSP1_MAX_RPF];
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index a9aec5c0bec6..34aa6427662d 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -219,7 +219,7 @@ vsp1_video_complete_buffer(struct vsp1_video *video)
+ 
+ 	spin_unlock_irqrestore(&video->irqlock, flags);
+ 
+-	done->buf.sequence = video->sequence++;
++	done->buf.sequence = pipe->sequence;
+ 	done->buf.vb2_buf.timestamp = ktime_get_ns();
+ 	for (i = 0; i < done->buf.vb2_buf.num_planes; ++i)
+ 		vb2_set_plane_payload(&done->buf.vb2_buf, i,
+@@ -805,8 +805,6 @@ vsp1_video_streamon(struct file *file, void *fh, enum v4l2_buf_type type)
+ 	if (video->queue.owner && video->queue.owner != file->private_data)
+ 		return -EBUSY;
+ 
+-	video->sequence = 0;
+-
+ 	/* Get a pipeline for the video node and start streaming on it. No link
+ 	 * touching an entity in the pipeline can be activated or deactivated
+ 	 * once streaming is started.
+diff --git a/drivers/media/platform/vsp1/vsp1_video.h b/drivers/media/platform/vsp1/vsp1_video.h
+index 867b00807c46..1595fd587fbc 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.h
++++ b/drivers/media/platform/vsp1/vsp1_video.h
+@@ -49,7 +49,6 @@ struct vsp1_video {
+ 	void *alloc_ctx;
+ 	spinlock_t irqlock;
+ 	struct list_head irqqueue;
+-	unsigned int sequence;
+ };
+ 
+ static inline struct vsp1_video *to_vsp1_video(struct video_device *vdev)
 -- 
-2.5.5
+2.7.3
