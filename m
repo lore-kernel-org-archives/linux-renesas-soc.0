@@ -1,66 +1,45 @@
-Return-Path: <horms@vergenet.net>
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/47] ARM: dts: r8a7790: Add SCIF2 clock
-Date: Mon,  4 Apr 2016 10:22:35 +0900
-Message-Id: <a76e76e582d02e7be37cef51ab8815d27262dfe0.1459732726.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
-References: <cover.1459732726.git.horms+renesas@verge.net.au>
+Subject: [PATCH 05/22] ARM: dts: r8a7791: use fallback can compatibility string
+Date: Mon, 25 Apr 2016 14:27:23 +1000
+Message-Id: <73ae9cfecd069060e7bf182250e16ff8c598f997.1461558315.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
+References: <cover.1461558315.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Use recently added fallback compatibility string in r8a7791 device tree.
 
-Based on Rev. 2.00 of the R-Car Gen2 datasheet.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7790.dtsi            | 6 +++---
- include/dt-bindings/clock/r8a7790-clock.h | 1 +
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 0967f231f4f4..cc4974a348d9 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1334,19 +1334,19 @@
- 		mstp3_clks: mstp3_clks@e615013c {
- 			compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe615013c 0 4>, <0 0xe6150048 0 4>;
--			clocks = <&hp_clk>, <&cp_clk>, <&mmc1_clk>, <&sd3_clk>,
-+			clocks = <&hp_clk>, <&cp_clk>, <&mmc1_clk>, <&p_clk>, <&sd3_clk>,
- 				 <&sd2_clk>, <&cpg_clocks R8A7790_CLK_SD1>, <&cpg_clocks R8A7790_CLK_SD0>, <&mmc0_clk>,
- 				 <&hp_clk>, <&mp_clk>, <&hp_clk>, <&mp_clk>, <&rclk_clk>,
- 				 <&hp_clk>, <&hp_clk>;
- 			#clock-cells = <1>;
- 			clock-indices = <
--				R8A7790_CLK_IIC2 R8A7790_CLK_TPU0 R8A7790_CLK_MMCIF1 R8A7790_CLK_SDHI3
-+				R8A7790_CLK_IIC2 R8A7790_CLK_TPU0 R8A7790_CLK_MMCIF1 R8A7790_CLK_SCIF2 R8A7790_CLK_SDHI3
- 				R8A7790_CLK_SDHI2 R8A7790_CLK_SDHI1 R8A7790_CLK_SDHI0 R8A7790_CLK_MMCIF0
- 				R8A7790_CLK_IIC0 R8A7790_CLK_PCIEC R8A7790_CLK_IIC1 R8A7790_CLK_SSUSB R8A7790_CLK_CMT1
- 				R8A7790_CLK_USBDMAC0 R8A7790_CLK_USBDMAC1
- 			>;
- 			clock-output-names =
--				"iic2", "tpu0", "mmcif1", "sdhi3",
-+				"iic2", "tpu0", "mmcif1", "scif2", "sdhi3",
- 				"sdhi2", "sdhi1", "sdhi0", "mmcif0",
- 				"iic0", "pciec", "iic1", "ssusb", "cmt1",
- 				"usbdmac0", "usbdmac1";
-diff --git a/include/dt-bindings/clock/r8a7790-clock.h b/include/dt-bindings/clock/r8a7790-clock.h
-index 7b1ad8922eec..fa5e8da809f2 100644
---- a/include/dt-bindings/clock/r8a7790-clock.h
-+++ b/include/dt-bindings/clock/r8a7790-clock.h
-@@ -66,6 +66,7 @@
- #define R8A7790_CLK_IIC2		0
- #define R8A7790_CLK_TPU0		4
- #define R8A7790_CLK_MMCIF1		5
-+#define R8A7790_CLK_SCIF2		10
- #define R8A7790_CLK_SDHI3		11
- #define R8A7790_CLK_SDHI2		12
- #define R8A7790_CLK_SDHI1		13
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index d4de6db1143b..6122a7919c9f 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1013,7 +1013,7 @@
+ 	};
+ 
+ 	can0: can@e6e80000 {
+-		compatible = "renesas,can-r8a7791";
++		compatible = "renesas,can-r8a7791", "renesas,rcar-gen2-can";
+ 		reg = <0 0xe6e80000 0 0x1000>;
+ 		interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7791_CLK_RCAN0>,
+@@ -1024,7 +1024,7 @@
+ 	};
+ 
+ 	can1: can@e6e88000 {
+-		compatible = "renesas,can-r8a7791";
++		compatible = "renesas,can-r8a7791", "renesas,rcar-gen2-can";
+ 		reg = <0 0xe6e88000 0 0x1000>;
+ 		interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7791_CLK_RCAN1>,
 -- 
-2.1.4
+2.7.0.rc3.207.g0ac5344
