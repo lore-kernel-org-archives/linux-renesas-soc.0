@@ -1,150 +1,71 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 02/12] ARM: dts: r8a7790: Add SYSC PM Domains
-Date: Wed, 13 Apr 2016 16:44:42 +0200
-Message-Id: <1460558692-10414-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460558692-10414-1-git-send-email-geert+renesas@glider.be>
-References: <1460558692-10414-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37330 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964811AbcDYVKw (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 25 Apr 2016 17:10:52 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] rcar-du: add/rename DEFR6 TCON bits
+Date: Tue, 26 Apr 2016 00:11:15 +0300
+Message-ID: <3463066.Db4xpr3SQR@avalon>
+In-Reply-To: <2036550.BKBaf2zquB@wasted.cogentembedded.com>
+References: <2036550.BKBaf2zquB@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the System Controller.
-Hook up the Cortex-A15 and Cortex-A7 CPU cores and L2 caches/SCUs to
-their respective PM Domains.
+Hi Sergei,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v5:
-  - Remove "power-domains" property again from the sysc node, as the
-    System Controller itself is not part of the Clock Domain,
+Thank you for the patch.
 
-v4:
-  - Add "power-domains" property to the sysc node, to refer to the SoC's
-    Clock Domain,
+On Saturday 23 Apr 2016 01:56:07 Sergei Shtylyov wrote:
+> The  TCNE2 bit  of the DEFR6 register was renamed to TCNE1 in the R-Car gen2
+> manuals -- which makes more  sense as that bit controls whether DU1, not
+> DU2 is connected to TCON.
+> 
+> While at it, add the TCNE0 bit which controls whether DU0 is connected to
+> TCON.
+> 
+> Based on the large patch by Andrey Gusakov
+> <andrey.gusakov@cogentembedded.com>.
+> 
+> Signed-off-by: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-v3:
-  - Drop power area hiearchy from DT,
-  - Switch to "#power-domain-cells = <1>",
-  - Drop fallback compatibility strings,
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-v2:
-  - Change one-line summary prefix to match current arm-soc practices,
-  - Update compatible values.
----
- arch/arm/boot/dts/r8a7790.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+and applied to my tree.
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 50e8484511893572..1a3b6b08f1f3c90c 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -13,6 +13,7 @@
- #include <dt-bindings/clock/r8a7790-clock.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/power/r8a7790-sysc.h>
- 
- / {
- 	compatible = "renesas,r8a7790";
-@@ -52,6 +53,7 @@
- 			voltage-tolerance = <1>; /* 1% */
- 			clocks = <&cpg_clocks R8A7790_CLK_Z>;
- 			clock-latency = <300000>; /* 300 us */
-+			power-domains = <&sysc R8A7790_PD_CA15_CPU0>;
- 			next-level-cache = <&L2_CA15>;
- 
- 			/* kHz - uV - OPPs unknown yet */
-@@ -68,6 +70,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
- 			clock-frequency = <1300000000>;
-+			power-domains = <&sysc R8A7790_PD_CA15_CPU1>;
- 			next-level-cache = <&L2_CA15>;
- 		};
- 
-@@ -76,6 +79,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <2>;
- 			clock-frequency = <1300000000>;
-+			power-domains = <&sysc R8A7790_PD_CA15_CPU2>;
- 			next-level-cache = <&L2_CA15>;
- 		};
- 
-@@ -84,6 +88,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <3>;
- 			clock-frequency = <1300000000>;
-+			power-domains = <&sysc R8A7790_PD_CA15_CPU3>;
- 			next-level-cache = <&L2_CA15>;
- 		};
- 
-@@ -92,6 +97,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0x100>;
- 			clock-frequency = <780000000>;
-+			power-domains = <&sysc R8A7790_PD_CA7_CPU0>;
- 			next-level-cache = <&L2_CA7>;
- 		};
- 
-@@ -100,6 +106,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0x101>;
- 			clock-frequency = <780000000>;
-+			power-domains = <&sysc R8A7790_PD_CA7_CPU1>;
- 			next-level-cache = <&L2_CA7>;
- 		};
- 
-@@ -108,6 +115,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0x102>;
- 			clock-frequency = <780000000>;
-+			power-domains = <&sysc R8A7790_PD_CA7_CPU2>;
- 			next-level-cache = <&L2_CA7>;
- 		};
- 
-@@ -116,6 +124,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0x103>;
- 			clock-frequency = <780000000>;
-+			power-domains = <&sysc R8A7790_PD_CA7_CPU3>;
- 			next-level-cache = <&L2_CA7>;
- 		};
- 	};
-@@ -141,12 +150,14 @@
- 
- 	L2_CA15: cache-controller@0 {
- 		compatible = "cache";
-+		power-domains = <&sysc R8A7790_PD_CA15_SCU>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
- 
- 	L2_CA7: cache-controller@1 {
- 		compatible = "cache";
-+		power-domains = <&sysc R8A7790_PD_CA7_SCU>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
-@@ -1471,6 +1482,12 @@
- 		};
- 	};
- 
-+	sysc: system-controller@e6180000 {
-+		compatible = "renesas,r8a7790-sysc";
-+		reg = <0 0xe6180000 0 0x0200>;
-+		#power-domain-cells = <1>;
-+	};
-+
- 	qspi: spi@e6b10000 {
- 		compatible = "renesas,qspi-r8a7790", "renesas,qspi";
- 		reg = <0 0xe6b10000 0 0x2c>;
+> ---
+> The patch is against David Airlie's 'linux.git' repo's 'drm-next' branch.
+> 
+>  drivers/gpu/drm/rcar-du/rcar_du_regs.h |    5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> Index: linux/drivers/gpu/drm/rcar-du/rcar_du_regs.h
+> ===================================================================
+> --- linux.orig/drivers/gpu/drm/rcar-du/rcar_du_regs.h
+> +++ linux/drivers/gpu/drm/rcar-du/rcar_du_regs.h
+> @@ -195,9 +195,10 @@
+>  #define DEFR6_ODPM12_DISP	(2 << 8)
+>  #define DEFR6_ODPM12_CDE	(3 << 8)
+>  #define DEFR6_ODPM12_MASK	(3 << 8)
+> -#define DEFR6_TCNE2		(1 << 6)
+> +#define DEFR6_TCNE1		(1 << 6)
+> +#define DEFR6_TCNE0		(1 << 4)
+>  #define DEFR6_MLOS1		(1 << 2)
+> -#define DEFR6_DEFAULT		(DEFR6_CODE | DEFR6_TCNE2)
+> +#define DEFR6_DEFAULT		(DEFR6_CODE | DEFR6_TCNE1)
+> 
+>  /* ------------------------------------------------------------------------
+>   * R8A7790-only Control Registers
+
 -- 
-1.9.1
+Regards,
 
+Laurent Pinchart
