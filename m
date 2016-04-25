@@ -1,48 +1,57 @@
-Return-Path: <horms@vergenet.net>
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 22/26] ARM: dts: koelsch: Remove unnecessary clock-output-names properties
-Date: Mon,  4 Apr 2016 10:22:30 +0900
-Message-Id: <62c7e9da598611827f09984386fa1438ccc46f87.1459731908.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1459731908.git.horms+renesas@verge.net.au>
-References: <cover.1459731908.git.horms+renesas@verge.net.au>
+Subject: [PATCH 10/22] ARM: dts: r8a7793: add CAN nodes to device tree
+Date: Mon, 25 Apr 2016 14:27:28 +1000
+Message-Id: <a0e300ceb5259e8584ff67971981ac22580ef550.1461558315.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
+References: <cover.1461558315.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-* Fixed rate and fixed factor clocks do not require an
-  clock-output-names property.
-* Since 07705583e920fef6 ("clk: shmobile: div6: Make clock-output-names
-  optional") Renesas div6 clocks do not require a clock-output-names
-  property.
+Add CAN nodes to r8a7793 device tree.
 
-In the above cases there is only one clock output and its name is taken
-from that of the clock node.  Accordingly, remove the unnecessary
-clock-output-names properties and as necessary update the node names.
+Based on work by Sergei Shtylyov for the r8a7791 SoC.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7793.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index c6b43c85a0b1..1adf8770db7e 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -242,11 +242,10 @@
- 			  1800000 0>;
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 0e609bdafaa9..bddc31283bd9 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -806,6 +806,28 @@
+ 		};
  	};
  
--	audio_clock: clock {
-+	audio_clock: audio_clock {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <11289600>;
--		clock-output-names = "audio_clock";
- 	};
- 
- 	rsnd_ak4643: sound {
++	can0: can@e6e80000 {
++		compatible = "renesas,can-r8a7793", "renesas,rcar-gen2-can";
++		reg = <0 0xe6e80000 0 0x1000>;
++		interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp9_clks R8A7793_CLK_RCAN0>,
++			 <&cpg_clocks R8A7793_CLK_RCAN>, <&can_clk>;
++		clock-names = "clkp1", "clkp2", "can_clk";
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
++	can1: can@e6e88000 {
++		compatible = "renesas,can-r8a7793", "renesas,rcar-gen2-can";
++		reg = <0 0xe6e88000 0 0x1000>;
++		interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp9_clks R8A7793_CLK_RCAN1>,
++			 <&cpg_clocks R8A7793_CLK_RCAN>, <&can_clk>;
++		clock-names = "clkp1", "clkp2", "can_clk";
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
+ 	clocks {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
 -- 
-2.1.4
+2.7.0.rc3.207.g0ac5344
