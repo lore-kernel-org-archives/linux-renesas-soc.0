@@ -1,48 +1,59 @@
-Return-Path: <horms@vergenet.net>
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/2] ARM: multi_v7_defconfig: enable I2C demultiplexer and slave eeprom
-Date: Mon,  4 Apr 2016 10:22:45 +0900
-Message-Id: <651435d68253b0a5059175e2f113528080e5928e.1459732004.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1459732004.git.horms+renesas@verge.net.au>
-References: <cover.1459732004.git.horms+renesas@verge.net.au>
+Subject: [PATCH 08/22] ARM: dts: r8a7794: add CAN nodes to device tree
+Date: Mon, 25 Apr 2016 14:27:26 +1000
+Message-Id: <9f1c1a2c784d28d45d0cd18a44e45ddd15d7458f.1461558315.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
+References: <cover.1461558315.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Add CAN nodes to r8a7794 device tree.
 
-The Renesas Lager board shall be a reference platform for the runtime
-I2C IP core switcher and for I2C slave support. Enable the needed
-drivers for this.
+Based on work by Sergei Shtylyov for the r8a7791 SoC.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- arch/arm/configs/multi_v7_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/r8a7794.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 28234906a064..434f86b110bb 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -322,6 +322,7 @@ CONFIG_I2C_MUX=y
- CONFIG_I2C_ARB_GPIO_CHALLENGE=m
- CONFIG_I2C_MUX_PCA954x=y
- CONFIG_I2C_MUX_PINCTRL=y
-+CONFIG_I2C_DEMUX_PINCTRL=y
- CONFIG_I2C_AT91=m
- CONFIG_I2C_BCM2835=y
- CONFIG_I2C_CADENCE=y
-@@ -345,6 +346,7 @@ CONFIG_I2C_UNIPHIER_F=y
- CONFIG_I2C_XILINX=y
- CONFIG_I2C_RCAR=y
- CONFIG_I2C_CROS_EC_TUNNEL=m
-+CONFIG_I2C_SLAVE_EEPROM=y
- CONFIG_SPI=y
- CONFIG_SPI_ATMEL=m
- CONFIG_SPI_BCM2835=y
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 2d8835bdf3f6..a1ee2a82c3c0 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -830,6 +830,28 @@
+ 		};
+ 	};
+ 
++	can0: can@e6e80000 {
++		compatible = "renesas,can-r8a7794", "renesas,rcar-gen2-can";
++		reg = <0 0xe6e80000 0 0x1000>;
++		interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp9_clks R8A7794_CLK_RCAN0>,
++			 <&cpg_clocks R8A7794_CLK_RCAN>, <&can_clk>;
++		clock-names = "clkp1", "clkp2", "can_clk";
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
++	can1: can@e6e88000 {
++		compatible = "renesas,can-r8a7794", "renesas,rcar-gen2-can";
++		reg = <0 0xe6e88000 0 0x1000>;
++		interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp9_clks R8A7794_CLK_RCAN1>,
++			 <&cpg_clocks R8A7794_CLK_RCAN>, <&can_clk>;
++		clock-names = "clkp1", "clkp2", "can_clk";
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
+ 	clocks {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
 -- 
-2.1.4
+2.7.0.rc3.207.g0ac5344
