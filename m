@@ -1,40 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f194.google.com ([209.85.213.194]:35045 "EHLO
-	mail-ig0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750995AbcDZG1c convert rfc822-to-8bit (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:36406 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932584AbcDYOIj (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 02:27:32 -0400
-MIME-Version: 1.0
-In-Reply-To: <1461584360-32547-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1461584360-32547-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-	<1461584360-32547-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-Date: Tue, 26 Apr 2016 08:27:31 +0200
-Message-ID: <CAMuHMdV-96nzn8J2niPRp89ZCEzpWi8G4X3UcBNpKnnK8s5v+A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: shmobile: r8a7795: Add VIN clocks
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+	Mon, 25 Apr 2016 10:08:39 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/6] ARM: dts: r8a7778: Don't disable referenced optional clocks
+Date: Mon, 25 Apr 2016 16:08:31 +0200
+Message-Id: <1461593315-21307-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1461593315-21307-1-git-send-email-geert+renesas@glider.be>
+References: <1461593315-21307-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Apr 25, 2016 at 1:39 PM, Niklas Söderlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+clk_get() on a disabled clock node will return -EPROBE_DEFER, which can
+cause drivers to be deferred forever if such clocks are referenced in
+their devices' clocks properties.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Update the various disabled external clock nodes to default to a
+frequency of 0, but don't disable them, to prevent this.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7778.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
+index 99c10ebbaca243eb..fe787b4751d2cf05 100644
+--- a/arch/arm/boot/dts/r8a7778.dtsi
++++ b/arch/arm/boot/dts/r8a7778.dtsi
+@@ -455,7 +455,6 @@
+ 			#clock-cells = <0>;
+ 			/* This value must be overridden by the board. */
+ 			clock-frequency = <0>;
+-			status = "disabled";
+ 		};
+ 
+ 		/* Special CPG clocks */
+-- 
+1.9.1
