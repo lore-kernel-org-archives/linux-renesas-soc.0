@@ -1,122 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:37360 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37359 "EHLO
 	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965205AbcDYVgZ (ORCPT
+	with ESMTP id S965213AbcDYVg2 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 17:36:25 -0400
+	Mon, 25 Apr 2016 17:36:28 -0400
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 06/13] v4l: vsp1: Add output node value to routing table
-Date: Tue, 26 Apr 2016 00:36:31 +0300
-Message-Id: <1461620198-13428-7-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH v2 11/13] drm: rcar-du: Add alpha support for VSP planes
+Date: Tue, 26 Apr 2016 00:36:36 +0300
+Message-Id: <1461620198-13428-12-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 In-Reply-To: <1461620198-13428-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 References: <1461620198-13428-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The output node value indicates the value to be used in a sampling point
-register to use the node as the source of histogram data.
+Make the global alpha multiplier of VSP planes configurable through the
+alpha property, exactly as for the native DU planes.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Acked-by: Dave Airlie <airlied@redhat.com>
 ---
- drivers/media/platform/vsp1/vsp1_entity.c | 52 ++++++++++++++++++++-----------
- drivers/media/platform/vsp1/vsp1_entity.h |  6 +++-
- 2 files changed, 39 insertions(+), 19 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c | 38 +++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_entity.c b/drivers/media/platform/vsp1/vsp1_entity.c
-index 3d070bcc6053..6a96ea77de69 100644
---- a/drivers/media/platform/vsp1/vsp1_entity.c
-+++ b/drivers/media/platform/vsp1/vsp1_entity.c
-@@ -274,28 +274,44 @@ int vsp1_entity_link_setup(struct media_entity *entity,
-  * Initialization
-  */
+Cc: dri-devel@lists.freedesktop.org
+
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+index de7ef041182b..8c89a6401542 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+@@ -148,40 +148,41 @@ static void rcar_du_vsp_plane_setup(struct rcar_du_vsp_plane *plane)
+ 	struct rcar_du_vsp_plane_state *state =
+ 		to_rcar_vsp_plane_state(plane->plane.state);
+ 	struct drm_framebuffer *fb = plane->plane.state->fb;
+-	struct v4l2_rect src;
+-	struct v4l2_rect dst;
+-	dma_addr_t paddr[2] = { 0, };
+-	u32 pixelformat = 0;
++	struct vsp1_du_atomic_config cfg = {
++		.pixelformat = 0,
++		.pitch = fb->pitches[0],
++		.alpha = state->alpha,
++		.zpos = 0,
++	};
+ 	unsigned int i;
  
-+#define VSP1_ENTITY_ROUTE(ent)						\
-+	{ VSP1_ENTITY_##ent, 0, VI6_DPR_##ent##_ROUTE,			\
-+	  { VI6_DPR_NODE_##ent }, VI6_DPR_NODE_##ent }
-+
-+#define VSP1_ENTITY_ROUTE_RPF(idx)					\
-+	{ VSP1_ENTITY_RPF, idx, VI6_DPR_RPF_ROUTE(idx),			\
-+	  { 0, }, VI6_DPR_NODE_RPF(idx) }
-+
-+#define VSP1_ENTITY_ROUTE_UDS(idx)					\
-+	{ VSP1_ENTITY_UDS, idx, VI6_DPR_UDS_ROUTE(idx),			\
-+	  { VI6_DPR_NODE_UDS(idx) }, VI6_DPR_NODE_UDS(idx) }
-+
-+#define VSP1_ENTITY_ROUTE_WPF(idx)					\
-+	{ VSP1_ENTITY_WPF, idx, 0,					\
-+	  { VI6_DPR_NODE_WPF(idx) }, VI6_DPR_NODE_WPF(idx) }
-+
- static const struct vsp1_route vsp1_routes[] = {
- 	{ VSP1_ENTITY_BRU, 0, VI6_DPR_BRU_ROUTE,
- 	  { VI6_DPR_NODE_BRU_IN(0), VI6_DPR_NODE_BRU_IN(1),
- 	    VI6_DPR_NODE_BRU_IN(2), VI6_DPR_NODE_BRU_IN(3),
--	    VI6_DPR_NODE_BRU_IN(4) } },
--	{ VSP1_ENTITY_HSI, 0, VI6_DPR_HSI_ROUTE, { VI6_DPR_NODE_HSI, } },
--	{ VSP1_ENTITY_HST, 0, VI6_DPR_HST_ROUTE, { VI6_DPR_NODE_HST, } },
--	{ VSP1_ENTITY_LIF, 0, 0, { VI6_DPR_NODE_LIF, } },
--	{ VSP1_ENTITY_LUT, 0, VI6_DPR_LUT_ROUTE, { VI6_DPR_NODE_LUT, } },
--	{ VSP1_ENTITY_RPF, 0, VI6_DPR_RPF_ROUTE(0), { 0, } },
--	{ VSP1_ENTITY_RPF, 1, VI6_DPR_RPF_ROUTE(1), { 0, } },
--	{ VSP1_ENTITY_RPF, 2, VI6_DPR_RPF_ROUTE(2), { 0, } },
--	{ VSP1_ENTITY_RPF, 3, VI6_DPR_RPF_ROUTE(3), { 0, } },
--	{ VSP1_ENTITY_RPF, 4, VI6_DPR_RPF_ROUTE(4), { 0, } },
--	{ VSP1_ENTITY_SRU, 0, VI6_DPR_SRU_ROUTE, { VI6_DPR_NODE_SRU, } },
--	{ VSP1_ENTITY_UDS, 0, VI6_DPR_UDS_ROUTE(0), { VI6_DPR_NODE_UDS(0), } },
--	{ VSP1_ENTITY_UDS, 1, VI6_DPR_UDS_ROUTE(1), { VI6_DPR_NODE_UDS(1), } },
--	{ VSP1_ENTITY_UDS, 2, VI6_DPR_UDS_ROUTE(2), { VI6_DPR_NODE_UDS(2), } },
--	{ VSP1_ENTITY_WPF, 0, 0, { VI6_DPR_NODE_WPF(0), } },
--	{ VSP1_ENTITY_WPF, 1, 0, { VI6_DPR_NODE_WPF(1), } },
--	{ VSP1_ENTITY_WPF, 2, 0, { VI6_DPR_NODE_WPF(2), } },
--	{ VSP1_ENTITY_WPF, 3, 0, { VI6_DPR_NODE_WPF(3), } },
-+	    VI6_DPR_NODE_BRU_IN(4) }, VI6_DPR_NODE_BRU_OUT },
-+	VSP1_ENTITY_ROUTE(HSI),
-+	VSP1_ENTITY_ROUTE(HST),
-+	{ VSP1_ENTITY_LIF, 0, 0, { VI6_DPR_NODE_LIF, }, VI6_DPR_NODE_LIF },
-+	VSP1_ENTITY_ROUTE(LUT),
-+	VSP1_ENTITY_ROUTE_RPF(0),
-+	VSP1_ENTITY_ROUTE_RPF(1),
-+	VSP1_ENTITY_ROUTE_RPF(2),
-+	VSP1_ENTITY_ROUTE_RPF(3),
-+	VSP1_ENTITY_ROUTE_RPF(4),
-+	VSP1_ENTITY_ROUTE(SRU),
-+	VSP1_ENTITY_ROUTE_UDS(0),
-+	VSP1_ENTITY_ROUTE_UDS(1),
-+	VSP1_ENTITY_ROUTE_UDS(2),
-+	VSP1_ENTITY_ROUTE_WPF(0),
-+	VSP1_ENTITY_ROUTE_WPF(1),
-+	VSP1_ENTITY_ROUTE_WPF(2),
-+	VSP1_ENTITY_ROUTE_WPF(3),
- };
+-	src.left = state->state.src_x >> 16;
+-	src.top = state->state.src_y >> 16;
+-	src.width = state->state.src_w >> 16;
+-	src.height = state->state.src_h >> 16;
++	cfg.src.left = state->state.src_x >> 16;
++	cfg.src.top = state->state.src_y >> 16;
++	cfg.src.width = state->state.src_w >> 16;
++	cfg.src.height = state->state.src_h >> 16;
  
- int vsp1_entity_init(struct vsp1_device *vsp1, struct vsp1_entity *entity,
-diff --git a/drivers/media/platform/vsp1/vsp1_entity.h b/drivers/media/platform/vsp1/vsp1_entity.h
-index 69eff4e17350..aaab05f4952c 100644
---- a/drivers/media/platform/vsp1/vsp1_entity.h
-+++ b/drivers/media/platform/vsp1/vsp1_entity.h
-@@ -42,17 +42,21 @@ enum vsp1_entity_type {
-  * @index: Entity index this routing entry is associated with
-  * @reg: Output routing configuration register
-  * @inputs: Target node value for each input
-+ * @output: Target node value for entity output
-  *
-  * Each $vsp1_route entry describes routing configuration for the entity
-  * specified by the entry's @type and @index. @reg indicates the register that
-  * holds output routing configuration for the entity, and the @inputs array
-- * store the target node value for each input of the entity.
-+ * store the target node value for each input of the entity. The @output field
-+ * stores the target node value of the entity output when used as a source for
-+ * histogram generation.
-  */
- struct vsp1_route {
- 	enum vsp1_entity_type type;
- 	unsigned int index;
- 	unsigned int reg;
- 	unsigned int inputs[VSP1_ENTITY_MAX_INPUTS];
-+	unsigned int output;
- };
+-	dst.left = state->state.crtc_x;
+-	dst.top = state->state.crtc_y;
+-	dst.width = state->state.crtc_w;
+-	dst.height = state->state.crtc_h;
++	cfg.dst.left = state->state.crtc_x;
++	cfg.dst.top = state->state.crtc_y;
++	cfg.dst.width = state->state.crtc_w;
++	cfg.dst.height = state->state.crtc_h;
  
- /**
+ 	for (i = 0; i < state->format->planes; ++i) {
+ 		struct drm_gem_cma_object *gem;
+ 
+ 		gem = drm_fb_cma_get_gem_obj(fb, i);
+-		paddr[i] = gem->paddr + fb->offsets[i];
++		cfg.mem[i] = gem->paddr + fb->offsets[i];
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(formats_kms); ++i) {
+ 		if (formats_kms[i] == state->format->fourcc) {
+-			pixelformat = formats_v4l2[i];
++			cfg.pixelformat = formats_v4l2[i];
+ 			break;
+ 		}
+ 	}
+ 
+-	WARN_ON(!pixelformat);
++	WARN_ON(!cfg.pixelformat);
+ 
+-	vsp1_du_atomic_update(plane->vsp->vsp, plane->index, pixelformat,
+-			      fb->pitches[0], paddr, &src, &dst);
++	vsp1_du_atomic_update(plane->vsp->vsp, plane->index, &cfg);
+ }
+ 
+ static int rcar_du_vsp_plane_atomic_check(struct drm_plane *plane,
+@@ -220,8 +221,7 @@ static void rcar_du_vsp_plane_atomic_update(struct drm_plane *plane,
+ 	if (plane->state->crtc)
+ 		rcar_du_vsp_plane_setup(rplane);
+ 	else
+-		vsp1_du_atomic_update(rplane->vsp->vsp, rplane->index, 0, 0, 0,
+-				      NULL, NULL);
++		vsp1_du_atomic_update(rplane->vsp->vsp, rplane->index, NULL);
+ }
+ 
+ static const struct drm_plane_helper_funcs rcar_du_vsp_plane_helper_funcs = {
 -- 
 2.7.3
