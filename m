@@ -1,70 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:25228 "EHLO
-	relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751328AbcDZKNv (ORCPT
+Received: from mail-ig0-f196.google.com ([209.85.213.196]:36231 "EHLO
+	mail-ig0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752601AbcDYO5H (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 06:13:51 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Felipe Balbi <felipe.balbi@linux.intel.com>,
-	"mathias.nyman@intel.com" <mathias.nyman@intel.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH] usb: host: xhci-rcar: Avoid long wait in xhci_reset()
-Date: Tue, 26 Apr 2016 10:13:46 +0000
-Message-ID: <SG2PR06MB091999ACA24B980C4623E5BDD8630@SG2PR06MB0919.apcprd06.prod.outlook.com>
+	Mon, 25 Apr 2016 10:57:07 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUDTaMyx1Rjtc-z-MsbEmqpRuZNAvQC3sH-JykneJd2Hg@mail.gmail.com>
 References: <1461232154-7420-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 	<874mavb7lk.fsf@intel.com>
 	<SG2PR06MB09192CE67BF5338A96FA0203D86E0@SG2PR06MB0919.apcprd06.prod.outlook.com>
 	<871t5zb6xl.fsf@intel.com>
 	<SG2PR06MB0919CA6B51CAE8FEFFA993D1D86E0@SG2PR06MB0919.apcprd06.prod.outlook.com>
 	<CAMuHMdUDTaMyx1Rjtc-z-MsbEmqpRuZNAvQC3sH-JykneJd2Hg@mail.gmail.com>
- <CAMuHMdWH3mm0NzmRs0sX7q_nb-HCcdCkTRM1SfteApqQ+feVxw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWH3mm0NzmRs0sX7q_nb-HCcdCkTRM1SfteApqQ+feVxw@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Date: Mon, 25 Apr 2016 16:57:05 +0200
+Message-ID: <CAMuHMdWH3mm0NzmRs0sX7q_nb-HCcdCkTRM1SfteApqQ+feVxw@mail.gmail.com>
+Subject: Re: [PATCH] usb: host: xhci-rcar: Avoid long wait in xhci_reset()
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Felipe Balbi <felipe.balbi@linux.intel.com>,
+	"mathias.nyman@intel.com" <mathias.nyman@intel.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbg0KPiBTZW50OiBNb25k
-YXksIEFwcmlsIDI1LCAyMDE2IDExOjU3IFBNDQo+IA0KPiBIaSBTaGltb2RhLXNhbiwNCj4gDQo+
-IE9uIFRodSwgQXByIDIxLCAyMDE2IGF0IDI6NTcgUE0sIEdlZXJ0IFV5dHRlcmhvZXZlbg0KPiA8
-Z2VlcnRAbGludXgtbTY4ay5vcmc+IHdyb3RlOg0KPiA+IE9uIFRodSwgQXByIDIxLCAyMDE2IGF0
-IDEyOjI3IFBNLCBZb3NoaWhpcm8gU2hpbW9kYQ0KPiA+IDx5b3NoaWhpcm8uc2hpbW9kYS51aEBy
-ZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4+PiA+IFsgICAgMS41NjU2MDVdIHhoY2ktaGNkIGVlMDAw
-MDAwLnVzYjogeEhDSSBIb3N0IENvbnRyb2xsZXINCj4gPj4+ID4gWyAgICAxLjU3MDYzNl0geGhj
-aS1oY2QgZWUwMDAwMDAudXNiOiBuZXcgVVNCIGJ1cyByZWdpc3RlcmVkLCBhc3NpZ25lZCBidXMg
-bnVtYmVyIDUNCj4gPj4+ID4gWyAgIDIyLjI3MDE2MF0geGhjaS1oY2QgZWUwMDAwMDAudXNiOiBj
-YW4ndCBzZXR1cDogLTExMA0KPiA+Pj4gPiBbICAgMjIuMjc0OTMxXSB4aGNpLWhjZCBlZTAwMDAw
-MC51c2I6IFVTQiBidXMgNSBkZXJlZ2lzdGVyZWQNCj4gPj4+ID4gWyAgIDIyLjI4MDE1OF0geGhj
-aS1oY2Q6IHByb2JlIG9mIGVlMDAwMDAwLnVzYiBmYWlsZWQgd2l0aCBlcnJvciAtMTEwDQo+ID4+
-PiA+DQo+ID4+PiA+IFRoZSB0aW1lc3RhbXAgaXMgc3RyYW5nZSB0byBtZS4gQnV0LCBsb2dzIG9m
-IFItQ2FyIEgzIChFUzEuMCkgYW5kDQo+ID4+PiA+IFItQ2FyIEgyIHdlcmUgdGhlIHNhbWUuDQo+
-ID4+Pg0KPiA+Pj4geWVhaCwgc2VlbXMgbGlrZSB5b3VyIHN5c3RlbSB0aW1lciBpcyBjb3VudGlu
-ZyB0d2ljZSBmb3IgZWFjaCB0aWNrLg0KPiA+Pg0KPiA+PiBZZXMsIEkgd2lsbCBpbnZlc3RpZ2F0
-ZSB0aGlzIGxhdGVyLg0KPiA+DQo+ID4gVGhlIG1haW4gY2xvY2sgY3J5c3RhbCBvbiBTYWx2YXRv
-ci1YIGlzIGhhbGYgb2YgdGhlIGV4cGVjdGVkIHZhbHVlLiBCdXQNCj4gPiBkZXNwaXRlIHRoZSBj
-b3JyZWN0IHZhbHVlIGJlaW5nIGluIHRoZSBEVFMsIHRoZXJlJ3Mgc29tZSB0aW1lciBjb2RlIHRo
-YXQNCj4gPiBkb2Vzbid0IHRha2UgdGhpcyBpbnRvIGFjY291bnQuDQo+IA0KPiBJdCdzIGZpeGVk
-IGJ5IHVwZ3JhZGluZyB0byBib290bG9hZGVyIHYyNzA6DQo+IA0KPiAtQXJjaGl0ZWN0ZWQgY3Ax
-NSB0aW1lcihzKSBydW5uaW5nIGF0IDE2LjY2TUh6ICh2aXJ0KS4NCj4gK0FyY2hpdGVjdGVkIGNw
-MTUgdGltZXIocykgcnVubmluZyBhdCA4LjMzTUh6ICh2aXJ0KS4NCg0KVGhhbmsgeW91IGZvciB0
-aGUgY29tbWVudCENClllcywgdGhlIHRpbWVyIHdvcmtzIGNvcnJlY3Qgb24gbXkgZW52aXJvbm1l
-bnQuDQoNCmVjaG8gZG8gPiAvZGV2L2ttc2c7IHNsZWVwIDYwOyBlY2hvIGRvbmUgPiAvZGV2L2tt
-c2cNClsgIDE2OS43ODQ0NzRdIGRvDQpbICAyMjkuNzkxOTYyXSBkb25lDQoNCkhvd2V2ZXIsIHRo
-ZSB4aGNpIHRpbWVvdXQgaXMgc3RpbGwgYWJvdXQgMjAgc2Vjb25kcy4NClNvLCBJIGludmVzdGln
-YXRlZCB0aGlzIGlzc3VlIG1vcmUuIFRoZW4sIGl0IHNlZW1lZCB0aGF0IHJlYWRsKCkgaW4geGhj
-aV9oYW5kc2hha2UoKSBpcw0KbGFyZ2UgZGVsYXkgKGFib3V0IDEwIHNlY29uZHMpIHdoZW4gdGhl
-IHhoY2kgZHJpdmVyIGRpZG4ndCBkbyBmaXJtd2FyZSBkb3dubG9hZGluZy4NCg0KQmVzdCByZWdh
-cmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAg
-ICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2
-ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02
-OGsub3JnDQo+IA0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBl
-b3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8g
-am91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhh
-dC4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
+Hi Shimoda-san,
+
+On Thu, Apr 21, 2016 at 2:57 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Thu, Apr 21, 2016 at 12:27 PM, Yoshihiro Shimoda
+> <yoshihiro.shimoda.uh@renesas.com> wrote:
+>>> > [    1.565605] xhci-hcd ee000000.usb: xHCI Host Controller
+>>> > [    1.570636] xhci-hcd ee000000.usb: new USB bus registered, assigned bus number 5
+>>> > [   22.270160] xhci-hcd ee000000.usb: can't setup: -110
+>>> > [   22.274931] xhci-hcd ee000000.usb: USB bus 5 deregistered
+>>> > [   22.280158] xhci-hcd: probe of ee000000.usb failed with error -110
+>>> >
+>>> > The timestamp is strange to me. But, logs of R-Car H3 (ES1.0) and
+>>> > R-Car H2 were the same.
+>>>
+>>> yeah, seems like your system timer is counting twice for each tick.
+>>
+>> Yes, I will investigate this later.
+>
+> The main clock crystal on Salvator-X is half of the expected value. But
+> despite the correct value being in the DTS, there's some timer code that
+> doesn't take this into account.
+
+It's fixed by upgrading to bootloader v270:
+
+-Architected cp15 timer(s) running at 16.66MHz (virt).
++Architected cp15 timer(s) running at 8.33MHz (virt).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
