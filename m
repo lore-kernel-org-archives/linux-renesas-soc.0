@@ -1,73 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:57592 "EHLO
-	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754679AbcDYOIj (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37128 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751322AbcDYREd (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 10:08:39 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/6] arm64/ARM: dts: renesas: Don't disable referenced optional clocks
-Date: Mon, 25 Apr 2016 16:08:29 +0200
-Message-Id: <1461593315-21307-1-git-send-email-geert+renesas@glider.be>
+	Mon, 25 Apr 2016 13:04:33 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
+	Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm: rcar: remove unused variable
+Date: Mon, 25 Apr 2016 20:04:54 +0300
+Message-ID: <4434458.QD7L4MnxGs@avalon>
+In-Reply-To: <1461589881-1394495-1-git-send-email-arnd@arndb.de>
+References: <1461589881-1394495-1-git-send-email-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+Hi Arnd,
 
-clk_get() on a disabled clock node will return -EPROBE_DEFER, which can
-cause drivers to be deferred forever if such clocks are referenced in
-their devices' clocks properties. Disabled clock nodes show this
-behavior as of commit 3e5dd6f6e690048d ("clk: Ignore disabled DT clock
-providers"), which is in v4.6-rc1.
+Thank you for the patch.
 
-Commit ac6908b3049397b1 ("ARM: dts: r8a7791: Don't disable referenced
-optional clocks") fixed this for the Porter development board, which
-doesn't have the SCIF_CLK crystal populated.  This patch series fixes
-the same problem for the remaining Renesas DTSes, by updating disabled
-external clock nodes to default to a frequency of 0, but not disabling
-them.
+On Monday 25 Apr 2016 15:11:08 Arnd Bergmann wrote:
+> A cleanup for the rcar-du driver left an unused variable behind:
+> 
+> drm/rcar-du/rcar_du_drv.c: In function 'rcar_du_probe':
+> drm/rcar-du/rcar_du_drv.c:300:24: error: unused variable 'connector'
+> [-Werror=unused-variable]
+> 
+> This removes the variable.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: d63c25e4245a ("drm: rcar-du: Use generic drm_connector_register_all()
+> helper")
 
-None of these should show up with in-tree supported boards, but Jürg
-Billeter <j@bitron.ch> reported seeing the problem with v4.6-rc5 on a
-custom R-Car H3 board. Hence you may want to queue at least the arm64
-fix for v4.6.
+I've already submitted an identical patch and Daniel Vetter has queued it up.
 
-Thanks!
-
-Geert Uytterhoeven (6):
-  arm64: dts: r8a7795: Don't disable referenced optional clocks
-  ARM: dts: r8a7778: Don't disable referenced optional clocks
-  ARM: dts: r8a7779: Don't disable referenced optional clocks
-  ARM: dts: r8a7790: Don't disable referenced optional clocks
-  ARM: dts: r8a7793: Don't disable referenced optional clocks
-  ARM: dts: r8a7794: Don't disable referenced optional clocks
-
- arch/arm/boot/dts/r8a7778.dtsi                     | 1 -
- arch/arm/boot/dts/r8a7779.dtsi                     | 1 -
- arch/arm/boot/dts/r8a7790.dtsi                     | 5 +----
- arch/arm/boot/dts/r8a7793.dtsi                     | 2 --
- arch/arm/boot/dts/r8a7794.dtsi                     | 2 --
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 1 +
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 5 +----
- 7 files changed, 3 insertions(+), 14 deletions(-)
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 0f251dc11082..fb9242d27883
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -297,7 +297,6 @@ static int rcar_du_probe(struct platform_device *pdev)
+>  {
+>  	struct device_node *np = pdev->dev.of_node;
+>  	struct rcar_du_device *rcdu;
+> -	struct drm_connector *connector;
+>  	struct drm_device *ddev;
+>  	struct resource *mem;
+>  	int ret;
 
 -- 
-1.9.1
+Regards,
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Laurent Pinchart
