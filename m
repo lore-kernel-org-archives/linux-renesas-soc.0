@@ -1,67 +1,115 @@
-Return-Path: <horms@vergenet.net>
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 36/47] ARM: dts: r8a7794: Reference both DMA controllers in SDHI nodes
-Date: Mon,  4 Apr 2016 10:23:08 +0900
-Message-Id: <877df57b4d07a6d19bf1914b0318eaf4c20b2c20.1459732726.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
-References: <cover.1459732726.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH] ARM: shmobile: timer: Drop support for Cortex A8
+Date: Mon, 25 Apr 2016 14:08:17 +1000
+Message-Id: <a4b8c18c40704c28be62af4606cc6758c9ff3dba.1461542941.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461542941.git.horms+renesas@verge.net.au>
+References: <cover.1461542941.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+Commit edf4100906044225 ("ARM: shmobile: sh7372 dtsi: Remove Legacy
+file") removed the DTS for the last shmobile SoC with a Cortex A8 CPU
+core (sh7372 aka SH-Mobile AP4), hence drop support for it in the
+loops-per-jiffy preset code.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+As "div" is always 1 for supported contemporary ARM processors, we can
+simplify the code:
+  - Absorb shmobile_setup_delay_hz(), which was always called with
+    mult = div = 1,
+  - Return earlier if the Cortex A7/A15 arch timer exists and support is
+    enabled.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/mach-shmobile/timer.c | 52 ++++++++++++++++--------------------------
+ 1 file changed, 20 insertions(+), 32 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 4761849cb1f7..ec54246879b4 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -664,6 +664,9 @@
- 		reg = <0 0xee100000 0 0x200>;
- 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI0>;
-+		dmas = <&dmac1 0xcd>, <&dmac1 0xce>,
-+		       <&dmac0 0xcd>, <&dmac0 0xce>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -673,6 +676,9 @@
- 		reg = <0 0xee140000 0 0x100>;
- 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI1>;
-+		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>,
-+		       <&dmac0 0xc1>, <&dmac0 0xc2>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -682,6 +688,9 @@
- 		reg = <0 0xee160000 0 0x100>;
- 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI2>;
-+		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>,
-+		       <&dmac0 0xd3>, <&dmac0 0xd4>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
+diff --git a/arch/arm/mach-shmobile/timer.c b/arch/arm/mach-shmobile/timer.c
+index 67d79f9c6bad..6196a6380385 100644
+--- a/arch/arm/mach-shmobile/timer.c
++++ b/arch/arm/mach-shmobile/timer.c
+@@ -20,28 +20,9 @@
+ 
+ #include "common.h"
+ 
+-static void __init shmobile_setup_delay_hz(unsigned int max_cpu_core_hz,
+-					   unsigned int mult, unsigned int div)
+-{
+-	/* calculate a worst-case loops-per-jiffy value
+-	 * based on maximum cpu core hz setting and the
+-	 * __delay() implementation in arch/arm/lib/delay.S
+-	 *
+-	 * this will result in a longer delay than expected
+-	 * when the cpu core runs on lower frequencies.
+-	 */
+-
+-	unsigned int value = HZ * div / mult;
+-
+-	if (!preset_lpj)
+-		preset_lpj = max_cpu_core_hz / value;
+-}
+-
+ void __init shmobile_init_delay(void)
+ {
+ 	struct device_node *np, *cpus;
+-	unsigned int div = 0;
+-	bool has_arch_timer = false;
+ 	u32 max_freq = 0;
+ 
+ 	cpus = of_find_node_by_path("/cpus");
+@@ -51,25 +32,32 @@ void __init shmobile_init_delay(void)
+ 	for_each_child_of_node(cpus, np) {
+ 		u32 freq;
+ 
++		if (IS_ENABLED(CONFIG_ARM_ARCH_TIMER) &&
++		    (of_device_is_compatible(np, "arm,cortex-a7") ||
++		     of_device_is_compatible(np, "arm,cortex-a15"))) {
++			of_node_put(np);
++			of_node_put(cpus);
++			return;
++		}
++
+ 		if (!of_property_read_u32(np, "clock-frequency", &freq))
+ 			max_freq = max(max_freq, freq);
+-
+-		if (of_device_is_compatible(np, "arm,cortex-a8")) {
+-			div = 2;
+-		} else if (of_device_is_compatible(np, "arm,cortex-a9")) {
+-			div = 1;
+-		} else if (of_device_is_compatible(np, "arm,cortex-a7") ||
+-			 of_device_is_compatible(np, "arm,cortex-a15")) {
+-			div = 1;
+-			has_arch_timer = true;
+-		}
+ 	}
+ 
+ 	of_node_put(cpus);
+ 
+-	if (!max_freq || !div)
++	if (!max_freq)
+ 		return;
+ 
+-	if (!has_arch_timer || !IS_ENABLED(CONFIG_ARM_ARCH_TIMER))
+-		shmobile_setup_delay_hz(max_freq, 1, div);
++	/*
++	 * Calculate a worst-case loops-per-jiffy value
++	 * based on maximum cpu core hz setting and the
++	 * __delay() implementation in arch/arm/lib/delay.S.
++	 *
++	 * This will result in a longer delay than expected
++	 * when the cpu core runs on lower frequencies.
++	 */
++
++	if (!preset_lpj)
++		preset_lpj = max_freq / HZ;
+ }
 -- 
-2.1.4
+2.7.0.rc3.207.g0ac5344
