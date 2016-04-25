@@ -1,61 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:34131 "EHLO
-	mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752549AbcDYO0C (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:37191 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754653AbcDYOIi (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 10:26:02 -0400
-Received: by mail-lf0-f44.google.com with SMTP id j11so117923867lfb.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 Apr 2016 07:26:01 -0700 (PDT)
-Subject: Re: [PATCH 1/6] arm64: dts: r8a7795: Don't disable referenced
- optional clocks
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
+	Mon, 25 Apr 2016 10:08:38 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>
-References: <1461593315-21307-1-git-send-email-geert+renesas@glider.be>
- <1461593315-21307-2-git-send-email-geert+renesas@glider.be>
 Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <7f571e04-2e61-8299-5374-bddfe788da68@cogentembedded.com>
-Date: Mon, 25 Apr 2016 17:25:58 +0300
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/6] arm64: dts: r8a7795: Don't disable referenced optional clocks
+Date: Mon, 25 Apr 2016 16:08:30 +0200
+Message-Id: <1461593315-21307-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1461593315-21307-1-git-send-email-geert+renesas@glider.be>
+References: <1461593315-21307-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <1461593315-21307-2-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+clk_get() on a disabled clock node will return -EPROBE_DEFER, which can
+cause drivers to be deferred forever if such clocks are referenced in
+their devices' clocks properties.
 
-On 4/25/2016 5:08 PM, Geert Uytterhoeven wrote:
+Update the various disabled external clock nodes to default to a
+frequency of 0, but don't disable them, to prevent this.
 
-> clk_get() on a disabled clock node will return -EPROBE_DEFER, which can
-> cause drivers to be deferred forever if such clocks are referenced in
-> their devices' clocks properties.
->
-> Update the various disabled external clock nodes to default to a
-> frequency of 0, but don't disable them, to prevent this.
->
-> Reported-by: Jürg Billeter <j@bitron.ch>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 1 +
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 5 +----
->  2 files changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-> index 63d51059ae639e9d..263abaede2a82780 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-> @@ -619,6 +619,7 @@
->  };
->
->  &pcie_bus_clk {
-> +	clock-frequency = <100000000>;
->  	status = "okay";
+Reported-by: Jürg Billeter <j@bitron.ch>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 1 +
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 5 +----
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-    This line is no longer needed.
-
-[...]
-
-MBR, Sergei
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 63d51059ae639e9d..263abaede2a82780 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -619,6 +619,7 @@
+ };
+ 
+ &pcie_bus_clk {
++	clock-frequency = <100000000>;
+ 	status = "okay";
+ };
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 575b90c294467bea..727b37d797d9b902 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -159,7 +159,6 @@
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <0>;
+-		status = "disabled";
+ 	};
+ 
+ 	/* External SCIF clock - to be overridden by boards that provide it */
+@@ -167,15 +166,13 @@
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <0>;
+-		status = "disabled";
+ 	};
+ 
+ 	/* External PCIe clock - can be overridden by the board */
+ 	pcie_bus_clk: pcie_bus {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+-		clock-frequency = <100000000>;
+-		status = "disabled";
++		clock-frequency = <0>;
+ 	};
+ 
+ 	soc {
+-- 
+1.9.1
