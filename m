@@ -1,95 +1,122 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v6 03/12] ARM: dts: r8a7779: Add SYSC PM Domains
-Date: Fri, 22 Apr 2016 11:07:25 +0200
-Message-Id: <1461316054-27999-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461316054-27999-1-git-send-email-geert+renesas@glider.be>
-References: <1461316054-27999-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37360 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965205AbcDYVgZ (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 25 Apr 2016 17:36:25 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 06/13] v4l: vsp1: Add output node value to routing table
+Date: Tue, 26 Apr 2016 00:36:31 +0300
+Message-Id: <1461620198-13428-7-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1461620198-13428-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1461620198-13428-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the System Controller.
-Hook up ARM CPU cores 1-3 to their respective PM Domains.
-Note that ARM CPU core 0 cannot be shut off.
+The output node value indicates the value to be used in a sampling point
+register to use the node as the source of histogram data.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-v6:
-  - Add Acked-by,
+ drivers/media/platform/vsp1/vsp1_entity.c | 52 ++++++++++++++++++++-----------
+ drivers/media/platform/vsp1/vsp1_entity.h |  6 +++-
+ 2 files changed, 39 insertions(+), 19 deletions(-)
 
-v5:
-  - Remove "power-domains" property again from the sysc node, as the
-    System Controller itself is not part of the Clock Domain,
-
-v4:
-  - Add "power-domains" property to the sysc node, to refer to the SoC's
-    Clock Domain,
-
-v3:
-  - Drop power area hiearchy from DT,
-  - Switch to "#power-domain-cells = <1>",
-
-v2:
-  - Correct sysc "reg" property (#address/size-cells = 1, not 2),
-  - Change one-line summary prefix to match current arm-soc practices,
-  - Update compatible values.
----
- arch/arm/boot/dts/r8a7779.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index 5c1d48d712a18652..e02875a8c040f304 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -14,6 +14,7 @@
- #include <dt-bindings/clock/r8a7779-clock.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/power/r8a7779-sysc.h>
+diff --git a/drivers/media/platform/vsp1/vsp1_entity.c b/drivers/media/platform/vsp1/vsp1_entity.c
+index 3d070bcc6053..6a96ea77de69 100644
+--- a/drivers/media/platform/vsp1/vsp1_entity.c
++++ b/drivers/media/platform/vsp1/vsp1_entity.c
+@@ -274,28 +274,44 @@ int vsp1_entity_link_setup(struct media_entity *entity,
+  * Initialization
+  */
  
- / {
- 	compatible = "renesas,r8a7779";
-@@ -34,18 +35,21 @@
- 			compatible = "arm,cortex-a9";
- 			reg = <1>;
- 			clock-frequency = <1000000000>;
-+			power-domains = <&sysc R8A7779_PD_ARM1>;
- 		};
- 		cpu@2 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <2>;
- 			clock-frequency = <1000000000>;
-+			power-domains = <&sysc R8A7779_PD_ARM2>;
- 		};
- 		cpu@3 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <3>;
- 			clock-frequency = <1000000000>;
-+			power-domains = <&sysc R8A7779_PD_ARM3>;
- 		};
- 	};
- 
-@@ -586,4 +590,10 @@
- 				"mmc1", "mmc0";
- 		};
- 	};
++#define VSP1_ENTITY_ROUTE(ent)						\
++	{ VSP1_ENTITY_##ent, 0, VI6_DPR_##ent##_ROUTE,			\
++	  { VI6_DPR_NODE_##ent }, VI6_DPR_NODE_##ent }
 +
-+	sysc: system-controller@ffd85000 {
-+		compatible = "renesas,r8a7779-sysc";
-+		reg = <0xffd85000 0x0200>;
-+		#power-domain-cells = <1>;
-+	};
++#define VSP1_ENTITY_ROUTE_RPF(idx)					\
++	{ VSP1_ENTITY_RPF, idx, VI6_DPR_RPF_ROUTE(idx),			\
++	  { 0, }, VI6_DPR_NODE_RPF(idx) }
++
++#define VSP1_ENTITY_ROUTE_UDS(idx)					\
++	{ VSP1_ENTITY_UDS, idx, VI6_DPR_UDS_ROUTE(idx),			\
++	  { VI6_DPR_NODE_UDS(idx) }, VI6_DPR_NODE_UDS(idx) }
++
++#define VSP1_ENTITY_ROUTE_WPF(idx)					\
++	{ VSP1_ENTITY_WPF, idx, 0,					\
++	  { VI6_DPR_NODE_WPF(idx) }, VI6_DPR_NODE_WPF(idx) }
++
+ static const struct vsp1_route vsp1_routes[] = {
+ 	{ VSP1_ENTITY_BRU, 0, VI6_DPR_BRU_ROUTE,
+ 	  { VI6_DPR_NODE_BRU_IN(0), VI6_DPR_NODE_BRU_IN(1),
+ 	    VI6_DPR_NODE_BRU_IN(2), VI6_DPR_NODE_BRU_IN(3),
+-	    VI6_DPR_NODE_BRU_IN(4) } },
+-	{ VSP1_ENTITY_HSI, 0, VI6_DPR_HSI_ROUTE, { VI6_DPR_NODE_HSI, } },
+-	{ VSP1_ENTITY_HST, 0, VI6_DPR_HST_ROUTE, { VI6_DPR_NODE_HST, } },
+-	{ VSP1_ENTITY_LIF, 0, 0, { VI6_DPR_NODE_LIF, } },
+-	{ VSP1_ENTITY_LUT, 0, VI6_DPR_LUT_ROUTE, { VI6_DPR_NODE_LUT, } },
+-	{ VSP1_ENTITY_RPF, 0, VI6_DPR_RPF_ROUTE(0), { 0, } },
+-	{ VSP1_ENTITY_RPF, 1, VI6_DPR_RPF_ROUTE(1), { 0, } },
+-	{ VSP1_ENTITY_RPF, 2, VI6_DPR_RPF_ROUTE(2), { 0, } },
+-	{ VSP1_ENTITY_RPF, 3, VI6_DPR_RPF_ROUTE(3), { 0, } },
+-	{ VSP1_ENTITY_RPF, 4, VI6_DPR_RPF_ROUTE(4), { 0, } },
+-	{ VSP1_ENTITY_SRU, 0, VI6_DPR_SRU_ROUTE, { VI6_DPR_NODE_SRU, } },
+-	{ VSP1_ENTITY_UDS, 0, VI6_DPR_UDS_ROUTE(0), { VI6_DPR_NODE_UDS(0), } },
+-	{ VSP1_ENTITY_UDS, 1, VI6_DPR_UDS_ROUTE(1), { VI6_DPR_NODE_UDS(1), } },
+-	{ VSP1_ENTITY_UDS, 2, VI6_DPR_UDS_ROUTE(2), { VI6_DPR_NODE_UDS(2), } },
+-	{ VSP1_ENTITY_WPF, 0, 0, { VI6_DPR_NODE_WPF(0), } },
+-	{ VSP1_ENTITY_WPF, 1, 0, { VI6_DPR_NODE_WPF(1), } },
+-	{ VSP1_ENTITY_WPF, 2, 0, { VI6_DPR_NODE_WPF(2), } },
+-	{ VSP1_ENTITY_WPF, 3, 0, { VI6_DPR_NODE_WPF(3), } },
++	    VI6_DPR_NODE_BRU_IN(4) }, VI6_DPR_NODE_BRU_OUT },
++	VSP1_ENTITY_ROUTE(HSI),
++	VSP1_ENTITY_ROUTE(HST),
++	{ VSP1_ENTITY_LIF, 0, 0, { VI6_DPR_NODE_LIF, }, VI6_DPR_NODE_LIF },
++	VSP1_ENTITY_ROUTE(LUT),
++	VSP1_ENTITY_ROUTE_RPF(0),
++	VSP1_ENTITY_ROUTE_RPF(1),
++	VSP1_ENTITY_ROUTE_RPF(2),
++	VSP1_ENTITY_ROUTE_RPF(3),
++	VSP1_ENTITY_ROUTE_RPF(4),
++	VSP1_ENTITY_ROUTE(SRU),
++	VSP1_ENTITY_ROUTE_UDS(0),
++	VSP1_ENTITY_ROUTE_UDS(1),
++	VSP1_ENTITY_ROUTE_UDS(2),
++	VSP1_ENTITY_ROUTE_WPF(0),
++	VSP1_ENTITY_ROUTE_WPF(1),
++	VSP1_ENTITY_ROUTE_WPF(2),
++	VSP1_ENTITY_ROUTE_WPF(3),
  };
+ 
+ int vsp1_entity_init(struct vsp1_device *vsp1, struct vsp1_entity *entity,
+diff --git a/drivers/media/platform/vsp1/vsp1_entity.h b/drivers/media/platform/vsp1/vsp1_entity.h
+index 69eff4e17350..aaab05f4952c 100644
+--- a/drivers/media/platform/vsp1/vsp1_entity.h
++++ b/drivers/media/platform/vsp1/vsp1_entity.h
+@@ -42,17 +42,21 @@ enum vsp1_entity_type {
+  * @index: Entity index this routing entry is associated with
+  * @reg: Output routing configuration register
+  * @inputs: Target node value for each input
++ * @output: Target node value for entity output
+  *
+  * Each $vsp1_route entry describes routing configuration for the entity
+  * specified by the entry's @type and @index. @reg indicates the register that
+  * holds output routing configuration for the entity, and the @inputs array
+- * store the target node value for each input of the entity.
++ * store the target node value for each input of the entity. The @output field
++ * stores the target node value of the entity output when used as a source for
++ * histogram generation.
+  */
+ struct vsp1_route {
+ 	enum vsp1_entity_type type;
+ 	unsigned int index;
+ 	unsigned int reg;
+ 	unsigned int inputs[VSP1_ENTITY_MAX_INPUTS];
++	unsigned int output;
+ };
+ 
+ /**
 -- 
-1.9.1
-
+2.7.3
