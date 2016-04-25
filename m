@@ -1,43 +1,66 @@
-Return-Path: <horms@vergenet.net>
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/2] ARM: shmobile: timer: Drop support for Cortex A8
-Date: Mon,  4 Apr 2016 10:22:58 +0900
-Message-Id: <cd89841fc6dbb6dc11aa113769f39dcd30be720f.1459732456.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1459732456.git.horms+renesas@verge.net.au>
-References: <cover.1459732456.git.horms+renesas@verge.net.au>
+Subject: [PATCH 11/22] ARM: dts: r8a7794: add IIC clocks
+Date: Mon, 25 Apr 2016 14:27:29 +1000
+Message-Id: <a856b195d129059c71981b6d069085d611ad8d38.1461558315.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
+References: <cover.1461558315.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Add IIC clocks to r8a7794 device tree.
 
-Commit edf4100906044225 ("ARM: shmobile: sh7372 dtsi: Remove Legacy
-file") removed the DTS for the last shmobile SoC with a Cortex A8 CPU
-core (sh7372 aka SH-Mobile AP4).
+Based on similar work for the r8a7790 by Wolfram Sang.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mach-shmobile/timer.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7794.dtsi            | 9 ++++++---
+ include/dt-bindings/clock/r8a7794-clock.h | 2 ++
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/timer.c b/arch/arm/mach-shmobile/timer.c
-index 67d79f9c6bad..1fc7759feab1 100644
---- a/arch/arm/mach-shmobile/timer.c
-+++ b/arch/arm/mach-shmobile/timer.c
-@@ -54,9 +54,7 @@ void __init shmobile_init_delay(void)
- 		if (!of_property_read_u32(np, "clock-frequency", &freq))
- 			max_freq = max(max_freq, freq);
- 
--		if (of_device_is_compatible(np, "arm,cortex-a8")) {
--			div = 2;
--		} else if (of_device_is_compatible(np, "arm,cortex-a9")) {
-+		if (of_device_is_compatible(np, "arm,cortex-a9")) {
- 			div = 1;
- 		} else if (of_device_is_compatible(np, "arm,cortex-a7") ||
- 			 of_device_is_compatible(np, "arm,cortex-a15")) {
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index a1ee2a82c3c0..8b2060c87a76 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1099,16 +1099,19 @@
+ 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe615013c 0 4>, <0 0xe6150048 0 4>;
+ 			clocks = <&sd3_clk>, <&sd2_clk>, <&cpg_clocks R8A7794_CLK_SD0>,
+-			         <&mmc0_clk>, <&rclk_clk>, <&hp_clk>, <&hp_clk>;
++				 <&mmc0_clk>, <&hp_clk>, <&hp_clk>, <&rclk_clk>,
++				 <&hp_clk>, <&hp_clk>;
+ 			#clock-cells = <1>;
+ 			clock-indices = <
+ 			        R8A7794_CLK_SDHI2 R8A7794_CLK_SDHI1 R8A7794_CLK_SDHI0
+-				R8A7794_CLK_MMCIF0 R8A7794_CLK_CMT1
++				R8A7794_CLK_MMCIF0 R8A7794_CLK_IIC0
++				R8A7794_CLK_IIC1 R8A7794_CLK_CMT1
+ 				R8A7794_CLK_USBDMAC0 R8A7794_CLK_USBDMAC1
+ 			>;
+ 			clock-output-names =
+ 			        "sdhi2", "sdhi1", "sdhi0",
+-				"mmcif0", "cmt1", "usbdmac0", "usbdmac1";
++				"mmcif0", "i2c6", "i2c7",
++				"cmt1", "usbdmac0", "usbdmac1";
+ 		};
+ 		mstp4_clks: mstp4_clks@e6150140 {
+ 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+diff --git a/include/dt-bindings/clock/r8a7794-clock.h b/include/dt-bindings/clock/r8a7794-clock.h
+index 9703fbdb81c8..4d3ecd626c1f 100644
+--- a/include/dt-bindings/clock/r8a7794-clock.h
++++ b/include/dt-bindings/clock/r8a7794-clock.h
+@@ -57,6 +57,8 @@
+ #define R8A7794_CLK_SDHI1		12
+ #define R8A7794_CLK_SDHI0		14
+ #define R8A7794_CLK_MMCIF0		15
++#define R8A7794_CLK_IIC0		18
++#define R8A7794_CLK_IIC1		23
+ #define R8A7794_CLK_CMT1		29
+ #define R8A7794_CLK_USBDMAC0		30
+ #define R8A7794_CLK_USBDMAC1		31
 -- 
-2.1.4
+2.7.0.rc3.207.g0ac5344
