@@ -1,72 +1,49 @@
-Return-Path: <horms@vergenet.net>
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 32/47] ARM: dts: r8a7794: Reference both DMA controllers in SCIFB nodes
-Date: Mon,  4 Apr 2016 10:23:04 +0900
-Message-Id: <97ef0226599a7299c30ad89a15ba08b7c7337271.1459732726.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1459732726.git.horms+renesas@verge.net.au>
-References: <cover.1459732726.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH 14/22] ARM: dts: r8a7779: Correct interrupt type for ARM TWD
+Date: Mon, 25 Apr 2016 14:27:32 +1000
+Message-Id: <e6c2488251b1c7e62f3e43907ca3f6fd016b1353.1461558315.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
+References: <cover.1461558315.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can fallback to the
-later if the first one is unavailable.
+The ARM TWD interrupt is a private peripheral interrupt (PPI), and per
+the ARM GIC documentation, whether the type for PPIs can be set is
+IMPLEMENTATION DEFINED.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+For R-Car H1 devices the PPI type cannot be set, and so when we attempt
+to set the type for the ARM TWD interrupt it fails.  This has gone
+unnoticed because it fails silently, and because we cannot re-configure
+the type it has had no impact. Nevertheless fix the type for the TWD
+interrupt so that it matches the hardware configuration.
+
+Based on patches by Jon Hunter for Tegra20/30 and OMAP4.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a7779.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 4256557ca041..ccf3061a71b2 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -380,8 +380,9 @@
- 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFB0>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
-+		       <&dmac1 0x3d>, <&dmac1 0x3e>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 60bc1e66bba9..5c1d48d712a1 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -67,7 +67,7 @@
+ 		compatible = "arm,cortex-a9-twd-timer";
+ 		reg = <0xf0000600 0x20>;
+ 		interrupts = <GIC_PPI 13
+-			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>;
+ 		clocks = <&cpg_clocks R8A7779_CLK_ZS>;
  	};
-@@ -393,8 +394,9 @@
- 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFB1>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x19>, <&dmac0 0x1a>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x19>, <&dmac0 0x1a>,
-+		       <&dmac1 0x19>, <&dmac1 0x1a>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
-@@ -406,8 +408,9 @@
- 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFB2>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>,
-+		       <&dmac1 0x1d>, <&dmac1 0x1e>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&cpg_clocks>;
- 		status = "disabled";
- 	};
+ 
 -- 
-2.1.4
+2.7.0.rc3.207.g0ac5344
