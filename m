@@ -1,62 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:51178 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752149AbcDZPzn (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:36405 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932587AbcDYOIk (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 11:55:43 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-mmc@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH V2 1/6] mmc: sh_mobile_sdhi: don't use array for DT configs
-Date: Tue, 26 Apr 2016 17:55:22 +0200
-Message-Id: <1461686127-3217-2-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1461686127-3217-1-git-send-email-wsa@the-dreams.de>
-References: <1461686127-3217-1-git-send-email-wsa@the-dreams.de>
+	Mon, 25 Apr 2016 10:08:40 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 6/6] ARM: dts: r8a7794: Don't disable referenced optional clocks
+Date: Mon, 25 Apr 2016 16:08:35 +0200
+Message-Id: <1461593315-21307-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1461593315-21307-1-git-send-email-geert+renesas@glider.be>
+References: <1461593315-21307-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+clk_get() on a disabled clock node will return -EPROBE_DEFER, which can
+cause drivers to be deferred forever if such clocks are referenced in
+their devices' clocks properties.
 
-We won't access an index based array to get our DT config, but create
-seperate structs instead. So, remove the array which only wastes memory.
+Update the various disabled external clock nodes to default to a
+frequency of 0, but don't disable them, to prevent this.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/mmc/host/sh_mobile_sdhi.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ arch/arm/boot/dts/r8a7794.dtsi | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index cf10f8cca9ee2d..9beee48d2e280d 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -51,10 +51,8 @@ struct sh_mobile_sdhi_of_data {
- 	unsigned bus_shift;
- };
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index b6f5502db0987544..8384f4d486c79e0e 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -938,7 +938,6 @@
+ 			#clock-cells = <0>;
+ 			/* This value must be overridden by the board. */
+ 			clock-frequency = <0>;
+-			status = "disabled";
+ 		};
  
--static const struct sh_mobile_sdhi_of_data sh_mobile_sdhi_of_cfg[] = {
--	{
--		.tmio_flags = TMIO_MMC_HAS_IDLE_WAIT,
--	},
-+static const struct sh_mobile_sdhi_of_data of_default_cfg = {
-+	.tmio_flags = TMIO_MMC_HAS_IDLE_WAIT,
- };
+ 		/* External SCIF clock */
+@@ -947,7 +946,6 @@
+ 			#clock-cells = <0>;
+ 			/* This value must be overridden by the board. */
+ 			clock-frequency = <0>;
+-			status = "disabled";
+ 		};
  
- static const struct sh_mobile_sdhi_of_data of_rcar_gen1_compatible = {
-@@ -81,9 +79,9 @@ static const struct sh_mobile_sdhi_of_data of_rcar_gen3_compatible = {
- static const struct of_device_id sh_mobile_sdhi_of_match[] = {
- 	{ .compatible = "renesas,sdhi-shmobile" },
- 	{ .compatible = "renesas,sdhi-sh7372" },
--	{ .compatible = "renesas,sdhi-sh73a0", .data = &sh_mobile_sdhi_of_cfg[0], },
--	{ .compatible = "renesas,sdhi-r8a73a4", .data = &sh_mobile_sdhi_of_cfg[0], },
--	{ .compatible = "renesas,sdhi-r8a7740", .data = &sh_mobile_sdhi_of_cfg[0], },
-+	{ .compatible = "renesas,sdhi-sh73a0", .data = &of_default_cfg, },
-+	{ .compatible = "renesas,sdhi-r8a73a4", .data = &of_default_cfg, },
-+	{ .compatible = "renesas,sdhi-r8a7740", .data = &of_default_cfg, },
- 	{ .compatible = "renesas,sdhi-r8a7778", .data = &of_rcar_gen1_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7779", .data = &of_rcar_gen1_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7790", .data = &of_rcar_gen2_compatible, },
+ 		/* Special CPG clocks */
 -- 
-2.7.0
+1.9.1
