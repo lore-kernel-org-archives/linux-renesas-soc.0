@@ -1,204 +1,71 @@
-Return-Path: <horms@vergenet.net>
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/26] ARM: dts: r8a7740: Remove unnecessary clock-output-names properties
-Date: Mon,  4 Apr 2016 10:22:23 +0900
-Message-Id: <2dca78980372f154a2181e6044db71be9da626e9.1459731908.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1459731908.git.horms+renesas@verge.net.au>
-References: <cover.1459731908.git.horms+renesas@verge.net.au>
+Subject: [PATCH 12/22] ARM: dts: r8a7794: Add IIC nodes
+Date: Mon, 25 Apr 2016 14:27:30 +1000
+Message-Id: <aa9b992ea2d3c2cc48712c21d1e680318d4156e2.1461558315.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
+References: <cover.1461558315.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-* Fixed rate and fixed factor clocks do not require an
-  clock-output-names property.
-* Since 07705583e920fef6 ("clk: shmobile: div6: Make clock-output-names
-  optional") Renesas div6 clocks do not require a clock-output-names
-  property.
+Add IIC nodes to r8a7794 device tree.
 
-In the above cases there is only one clock output and its name is taken
-from that of the clock node.  Accordingly, remove the unnecessary
-clock-output-names properties and as necessary update the node names.
+Based on similar work for the r8a7793 by Laurent Pinchart.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7740.dtsi | 57 ++++++++++++++----------------------------
- 1 file changed, 19 insertions(+), 38 deletions(-)
+ arch/arm/boot/dts/r8a7794.dtsi | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
-index 995fbda74b7a..39b2f88ad151 100644
---- a/arch/arm/boot/dts/r8a7740.dtsi
-+++ b/arch/arm/boot/dts/r8a7740.dtsi
-@@ -422,53 +422,45 @@
- 		ranges;
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 8b2060c87a76..b0bce43779f1 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -26,6 +26,8 @@
+ 		i2c3 = &i2c3;
+ 		i2c4 = &i2c4;
+ 		i2c5 = &i2c5;
++		i2c6 = &i2c6;
++		i2c7 = &i2c7;
+ 		spi0 = &qspi;
+ 		vin0 = &vin0;
+ 		vin1 = &vin1;
+@@ -629,6 +631,32 @@
+ 		status = "disabled";
+ 	};
  
- 		/* External root clock */
--		extalr_clk: extalr_clk {
-+		extalr_clk: extalr {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <32768>;
--			clock-output-names = "extalr";
- 		};
--		extal1_clk: extal1_clk {
-+		extal1_clk: extal1 {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <0>;
--			clock-output-names = "extal1";
- 		};
--		extal2_clk: extal2_clk {
-+		extal2_clk: extal2 {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <0>;
--			clock-output-names = "extal2";
- 		};
--		dv_clk: dv_clk {
-+		dv_clk: dv {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <27000000>;
--			clock-output-names = "dv";
- 		};
--		fmsick_clk: fmsick_clk {
-+		fmsick_clk: fmsick {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <0>;
--			clock-output-names = "fmsick";
- 		};
--		fmsock_clk: fmsock_clk {
-+		fmsock_clk: fmsock {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <0>;
--			clock-output-names = "fmsock";
- 		};
--		fsiack_clk: fsiack_clk {
-+		fsiack_clk: fsiack {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <0>;
--			clock-output-names = "fsiack";
- 		};
--		fsibck_clk: fsibck_clk {
-+		fsibck_clk: fsibck {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <0>;
--			clock-output-names = "fsibck";
- 		};
- 
- 		/* Special CPG clocks */
-@@ -486,7 +478,7 @@
- 		};
- 
- 		/* Variable factor clocks (DIV6) */
--		vclk1_clk: vclk1_clk@e6150008 {
-+		vclk1_clk: vclk1@e6150008 {
- 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
- 			reg = <0xe6150008 4>;
- 			clocks = <&pllc1_div2_clk>, <0>, <&dv_clk>,
-@@ -494,9 +486,8 @@
- 				 <&extal1_div2_clk>, <&extalr_clk>, <0>,
- 				 <0>;
- 			#clock-cells = <0>;
--			clock-output-names = "vclk1";
- 		};
--		vclk2_clk: vclk2_clk@e615000c {
-+		vclk2_clk: vclk2@e615000c {
- 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
- 			reg = <0xe615000c 4>;
- 			clocks = <&pllc1_div2_clk>, <0>, <&dv_clk>,
-@@ -504,77 +495,67 @@
- 				 <&extal1_div2_clk>, <&extalr_clk>, <0>,
- 				 <0>;
- 			#clock-cells = <0>;
--			clock-output-names = "vclk2";
- 		};
--		fmsi_clk: fmsi_clk@e6150010 {
-+		fmsi_clk: fmsi@e6150010 {
- 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
- 			reg = <0xe6150010 4>;
- 			clocks = <&pllc1_div2_clk>, <&fmsick_clk>, <0>, <0>;
- 			#clock-cells = <0>;
--			clock-output-names = "fmsi";
- 		};
--		fmso_clk: fmso_clk@e6150014 {
-+		fmso_clk: fmso@e6150014 {
- 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
- 			reg = <0xe6150014 4>;
- 			clocks = <&pllc1_div2_clk>, <&fmsock_clk>, <0>, <0>;
- 			#clock-cells = <0>;
--			clock-output-names = "fmso";
- 		};
--		fsia_clk: fsia_clk@e6150018 {
-+		fsia_clk: fsia@e6150018 {
- 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
- 			reg = <0xe6150018 4>;
- 			clocks = <&pllc1_div2_clk>, <&fsiack_clk>, <0>, <0>;
- 			#clock-cells = <0>;
--			clock-output-names = "fsia";
- 		};
--		sub_clk: sub_clk@e6150080 {
-+		sub_clk: sub@e6150080 {
- 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
- 			reg = <0xe6150080 4>;
- 			clocks = <&pllc1_div2_clk>,
- 				 <&cpg_clocks R8A7740_CLK_USB24S>, <0>, <0>;
- 			#clock-cells = <0>;
--			clock-output-names = "sub";
- 		};
--		spu_clk: spu_clk@e6150084 {
-+		spu_clk: spu@e6150084 {
- 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
- 			reg = <0xe6150084 4>;
- 			clocks = <&pllc1_div2_clk>,
- 				 <&cpg_clocks R8A7740_CLK_USB24S>, <0>, <0>;
- 			#clock-cells = <0>;
--			clock-output-names = "spu";
- 		};
--		vou_clk: vou_clk@e6150088 {
-+		vou_clk: vou@e6150088 {
- 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
- 			reg = <0xe6150088 4>;
- 			clocks = <&pllc1_div2_clk>, <&extal1_clk>, <&dv_clk>,
- 				 <0>;
- 			#clock-cells = <0>;
--			clock-output-names = "vou";
- 		};
--		stpro_clk: stpro_clk@e615009c {
-+		stpro_clk: stpro@e615009c {
- 			compatible = "renesas,r8a7740-div6-clock", "renesas,cpg-div6-clock";
- 			reg = <0xe615009c 4>;
- 			clocks = <&cpg_clocks R8A7740_CLK_PLLC0>;
- 			#clock-cells = <0>;
--			clock-output-names = "stpro";
- 		};
- 
- 		/* Fixed factor clocks */
--		pllc1_div2_clk: pllc1_div2_clk {
-+		pllc1_div2_clk: pllc1_div2 {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&cpg_clocks R8A7740_CLK_PLLC1>;
- 			#clock-cells = <0>;
- 			clock-div = <2>;
- 			clock-mult = <1>;
--			clock-output-names = "pllc1_div2";
- 		};
--		extal1_div2_clk: extal1_div2_clk {
-+		extal1_div2_clk: extal1_div2 {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&extal1_clk>;
- 			#clock-cells = <0>;
- 			clock-div = <2>;
- 			clock-mult = <1>;
--			clock-output-names = "extal1_div2";
- 		};
- 
- 		/* Gate clocks */
++	i2c6: i2c@e6500000 {
++		compatible = "renesas,iic-r8a7794", "renesas,rmobile-iic";
++		reg = <0 0xe6500000 0 0x425>;
++		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp3_clks R8A7794_CLK_IIC0>;
++		dmas = <&dmac0 0x61>, <&dmac0 0x62>;
++		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++	};
++
++	i2c7: i2c@e6510000 {
++		compatible = "renesas,iic-r8a7794", "renesas,rmobile-iic";
++		reg = <0 0xe6510000 0 0x425>;
++		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp3_clks R8A7794_CLK_IIC1>;
++		dmas = <&dmac0 0x65>, <&dmac0 0x66>;
++		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++	};
++
+ 	mmcif0: mmc@ee200000 {
+ 		compatible = "renesas,mmcif-r8a7794", "renesas,sh-mmcif";
+ 		reg = <0 0xee200000 0 0x80>;
 -- 
-2.1.4
+2.7.0.rc3.207.g0ac5344
