@@ -4,63 +4,113 @@ To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 11/22] ARM: dts: r8a7794: add IIC clocks
-Date: Mon, 25 Apr 2016 14:27:29 +1000
-Message-Id: <a856b195d129059c71981b6d069085d611ad8d38.1461558315.git.horms+renesas@verge.net.au>
+Subject: [PATCH 07/22] ARM: dts: r8a7794: add CAN clocks to device tree
+Date: Mon, 25 Apr 2016 14:27:25 +1000
+Message-Id: <e980f9418f45a3c0d53e54bc17bd48406060c2bb.1461558315.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
 References: <cover.1461558315.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add IIC clocks to r8a7794 device tree.
-
-Based on similar work for the r8a7790 by Wolfram Sang.
+Add CAN nodes to r8a7794 device tree.
+Based on work by Sergei Shtylyov for the r8a7791 SoC.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7794.dtsi            | 9 ++++++---
- include/dt-bindings/clock/r8a7794-clock.h | 2 ++
- 2 files changed, 8 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7794.dtsi            | 33 ++++++++++++++++++++++++-------
+ include/dt-bindings/clock/r8a7794-clock.h |  3 +++
+ 2 files changed, 29 insertions(+), 7 deletions(-)
 
 diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index a1ee2a82c3c0..8b2060c87a76 100644
+index 7d7d18766540..2d8835bdf3f6 100644
 --- a/arch/arm/boot/dts/r8a7794.dtsi
 +++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1099,16 +1099,19 @@
+@@ -843,6 +843,22 @@
+ 			clock-frequency = <0>;
+ 		};
+ 
++		/* External USB clock - can be overridden by the board */
++		usb_extal_clk: usb_extal {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <48000000>;
++		};
++
++		/* External CAN clock */
++		can_clk: can {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			/* This value must be overridden by the board. */
++			clock-frequency = <0>;
++			status = "disabled";
++		};
++
+ 		/* External SCIF clock */
+ 		scif_clk: scif {
+ 			compatible = "fixed-clock";
+@@ -857,10 +873,11 @@
+ 			compatible = "renesas,r8a7794-cpg-clocks",
+ 				     "renesas,rcar-gen2-cpg-clocks";
+ 			reg = <0 0xe6150000 0 0x1000>;
+-			clocks = <&extal_clk>;
++			clocks = <&extal_clk &usb_extal_clk>;
+ 			#clock-cells = <1>;
+ 			clock-output-names = "main", "pll0", "pll1", "pll3",
+-					     "lb", "qspi", "sdh", "sd0", "z";
++					     "lb", "qspi", "sdh", "sd0", "z",
++					     "rcan";
+ 			#power-domain-cells = <0>;
+ 		};
+ 		/* Variable factor clocks */
+@@ -1115,20 +1132,22 @@
  			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe615013c 0 4>, <0 0xe6150048 0 4>;
- 			clocks = <&sd3_clk>, <&sd2_clk>, <&cpg_clocks R8A7794_CLK_SD0>,
--			         <&mmc0_clk>, <&rclk_clk>, <&hp_clk>, <&hp_clk>;
-+				 <&mmc0_clk>, <&hp_clk>, <&hp_clk>, <&rclk_clk>,
+ 			reg = <0 0xe6150994 0 4>, <0 0xe61509a4 0 4>;
+ 			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
+-				 <&cp_clk>, <&cp_clk>, <&cp_clk>,
+-				 <&cpg_clocks R8A7794_CLK_QSPI>, <&hp_clk>, <&hp_clk>,
+-				 <&hp_clk>, <&hp_clk>, <&hp_clk>, <&hp_clk>;
++				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&p_clk>,
++				 <&p_clk>, <&cpg_clocks R8A7794_CLK_QSPI>,
++				 <&hp_clk>, <&hp_clk>, <&hp_clk>, <&hp_clk>,
 +				 <&hp_clk>, <&hp_clk>;
  			#clock-cells = <1>;
- 			clock-indices = <
- 			        R8A7794_CLK_SDHI2 R8A7794_CLK_SDHI1 R8A7794_CLK_SDHI0
--				R8A7794_CLK_MMCIF0 R8A7794_CLK_CMT1
-+				R8A7794_CLK_MMCIF0 R8A7794_CLK_IIC0
-+				R8A7794_CLK_IIC1 R8A7794_CLK_CMT1
- 				R8A7794_CLK_USBDMAC0 R8A7794_CLK_USBDMAC1
- 			>;
+ 			clock-indices = <R8A7794_CLK_GPIO6 R8A7794_CLK_GPIO5
+ 					 R8A7794_CLK_GPIO4 R8A7794_CLK_GPIO3
+ 					 R8A7794_CLK_GPIO2 R8A7794_CLK_GPIO1
+-					 R8A7794_CLK_GPIO0 R8A7794_CLK_QSPI_MOD
++					 R8A7794_CLK_GPIO0 R8A7794_CLK_RCAN1
++					 R8A7794_CLK_RCAN0 R8A7794_CLK_QSPI_MOD
+ 					 R8A7794_CLK_I2C5 R8A7794_CLK_I2C4
+ 					 R8A7794_CLK_I2C3 R8A7794_CLK_I2C2
+ 					 R8A7794_CLK_I2C1 R8A7794_CLK_I2C0>;
  			clock-output-names =
- 			        "sdhi2", "sdhi1", "sdhi0",
--				"mmcif0", "cmt1", "usbdmac0", "usbdmac1";
-+				"mmcif0", "i2c6", "i2c7",
-+				"cmt1", "usbdmac0", "usbdmac1";
+ 				"gpio6", "gpio5", "gpio4", "gpio3", "gpio2",
+-				"gpio1", "gpio0", "qspi_mod",
++				"gpio1", "gpio0", "rcan1", "rcan0", "qspi_mod",
+ 				"i2c5", "i2c4", "i2c3", "i2c2", "i2c1", "i2c0";
  		};
- 		mstp4_clks: mstp4_clks@e6150140 {
- 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 		mstp11_clks: mstp11_clks@e615099c {
 diff --git a/include/dt-bindings/clock/r8a7794-clock.h b/include/dt-bindings/clock/r8a7794-clock.h
-index 9703fbdb81c8..4d3ecd626c1f 100644
+index f843de6bf377..9703fbdb81c8 100644
 --- a/include/dt-bindings/clock/r8a7794-clock.h
 +++ b/include/dt-bindings/clock/r8a7794-clock.h
-@@ -57,6 +57,8 @@
- #define R8A7794_CLK_SDHI1		12
- #define R8A7794_CLK_SDHI0		14
- #define R8A7794_CLK_MMCIF0		15
-+#define R8A7794_CLK_IIC0		18
-+#define R8A7794_CLK_IIC1		23
- #define R8A7794_CLK_CMT1		29
- #define R8A7794_CLK_USBDMAC0		30
- #define R8A7794_CLK_USBDMAC1		31
+@@ -21,6 +21,7 @@
+ #define R8A7794_CLK_SDH			6
+ #define R8A7794_CLK_SD0			7
+ #define R8A7794_CLK_Z			8
++#define R8A7794_CLK_RCAN		9
+ 
+ /* MSTP0 */
+ #define R8A7794_CLK_MSIOF0		0
+@@ -95,6 +96,8 @@
+ #define R8A7794_CLK_GPIO2		10
+ #define R8A7794_CLK_GPIO1		11
+ #define R8A7794_CLK_GPIO0		12
++#define R8A7794_CLK_RCAN1		15
++#define R8A7794_CLK_RCAN0		16
+ #define R8A7794_CLK_QSPI_MOD		17
+ #define R8A7794_CLK_I2C5		25
+ #define R8A7794_CLK_I2C4		27
 -- 
 2.7.0.rc3.207.g0ac5344
