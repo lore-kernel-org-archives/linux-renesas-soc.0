@@ -3,47 +3,68 @@ From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/22] ARM: dts: r8a7790: Add SCIF2 device node
-Date: Mon, 25 Apr 2016 14:27:22 +1000
-Message-Id: <022869a2c4e15c3b615dd278d59e0fa82e5a8449.1461558315.git.horms+renesas@verge.net.au>
+Subject: [PATCH 21/22] ARM: dts: r8a7793: Add SDHI controllers
+Date: Mon, 25 Apr 2016 14:27:39 +1000
+Message-Id: <fc9ee228f5005437b9fdb1b85804b6d3f8d497be.1461558315.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
 References: <cover.1461558315.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Same as on r8a7791.
+
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm/boot/dts/r8a7793.dtsi | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 6f4fdfccdcfd..e96f8a4cb66f 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -732,6 +732,20 @@
- 		status = "disabled";
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index bddc31283bd9..6186179fd66d 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -507,6 +507,39 @@
+ 		reg = <0 0xe6060000 0 0x250>;
  	};
  
-+	scif2: serial@e6e56000 {
-+		compatible = "renesas,scif-r8a7790", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
-+		reg = <0 0xe6e56000 0 64>;
-+		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp3_clks R8A7790_CLK_SCIF2>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
-+		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>;
++	sdhi0: sd@ee100000 {
++		compatible = "renesas,sdhi-r8a7793";
++		reg = <0 0xee100000 0 0x328>;
++		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp3_clks R8A7793_CLK_SDHI0>;
++		dmas = <&dmac0 0xcd>, <&dmac0 0xce>;
 +		dma-names = "tx", "rx";
 +		power-domains = <&cpg_clocks>;
 +		status = "disabled";
 +	};
 +
- 	hscif0: serial@e62c0000 {
- 		compatible = "renesas,hscif-r8a7790",
- 			     "renesas,rcar-gen2-hscif", "renesas,hscif";
++	sdhi1: sd@ee140000 {
++		compatible = "renesas,sdhi-r8a7793";
++		reg = <0 0xee140000 0 0x100>;
++		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp3_clks R8A7793_CLK_SDHI1>;
++		dmas = <&dmac0 0xc1>, <&dmac0 0xc2>;
++		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
++	sdhi2: sd@ee160000 {
++		compatible = "renesas,sdhi-r8a7793";
++		reg = <0 0xee160000 0 0x100>;
++		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp3_clks R8A7793_CLK_SDHI2>;
++		dmas = <&dmac0 0xd3>, <&dmac0 0xd4>;
++		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
++
+ 	scifa0: serial@e6c40000 {
+ 		compatible = "renesas,scifa-r8a7793",
+ 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
 -- 
 2.7.0.rc3.207.g0ac5344
