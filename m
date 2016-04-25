@@ -1,76 +1,85 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:36954 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932599AbcDYN06 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 25 Apr 2016 09:26:58 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 4/7] soc: renesas: Add r8a7791 SYSC PM Domain Binding Definitions
-Date: Wed, 13 Apr 2016 16:44:20 +0200
-Message-Id: <1460558663-10197-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460558663-10197-1-git-send-email-geert+renesas@glider.be>
-References: <1460558663-10197-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 01/13] dt-bindings: Add Renesas R-Car FCP DT bindings
+Date: Mon, 25 Apr 2016 16:27:19 +0300
+Message-ID: <2291064.PDKHfW7Am5@avalon>
+In-Reply-To: <CAMuHMdVaoD7gU0_WvSN0mFSCRyeWntZ1PHtkZ5ccFzCS-H-HUg@mail.gmail.com>
+References: <1461455400-28767-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1461455400-28767-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdVaoD7gU0_WvSN0mFSCRyeWntZ1PHtkZ5ccFzCS-H-HUg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-v5:
-  - No changes,
+Hi Geert,
 
-v4:
-  - Add Reviewed-by,
-  - Rename R8A7791_PD_SH to R8A7791_PD_SH_4A,
-  - Add always-on power area,
+Thank you for the review.
 
-v3:
-  - New.
----
- include/dt-bindings/power/r8a7791-sysc.h | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a7791-sysc.h
+On Monday 25 Apr 2016 09:32:04 Geert Uytterhoeven wrote:
+> On Sun, Apr 24, 2016 at 1:49 AM, Laurent Pinchart wrote:
+> > The FCP is a companion module of video processing modules in the Renesas
+> > R-Car Gen3 SoCs. It provides data compression and decompression, data
+> > caching, and conversion of AXI transaction in order to reduce the memory
+> 
+> transactions
+> 
+> > bandwidth.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> > 
+> >  .../devicetree/bindings/media/renesas,fcp.txt      | 31 +++++++++++++++++
+> >  1 file changed, 31 insertions(+)
+> >  create mode 100644
+> >  Documentation/devicetree/bindings/media/renesas,fcp.txt
+> > 
+> > Cc: devicetree@vger.kernel.org
+> > 
+> > diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt
+> > b/Documentation/devicetree/bindings/media/renesas,fcp.txt new file mode
+> > 100644
+> > index 000000000000..46beec97d625
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
+> > @@ -0,0 +1,31 @@
+> > +Renesas R-Car Frame Compression Processor (FCP)
+> > +-----------------------------------------------
+> > +
+> > +The FCP is a companion module of video processing modules in the Renesas
+> > R-Car +Gen3 SoCs. It provides data compression and decompression, data
+> > caching, and +conversion of AXI transaction in order to reduce the memory
+> > bandwidth.
+>
+> transactions
 
-diff --git a/include/dt-bindings/power/r8a7791-sysc.h b/include/dt-bindings/power/r8a7791-sysc.h
-new file mode 100644
-index 0000000000000000..1403baa0514fb0fc
---- /dev/null
-+++ b/include/dt-bindings/power/r8a7791-sysc.h
-@@ -0,0 +1,26 @@
-+/*
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7791_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7791_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A7791_PD_CA15_CPU0		 0
-+#define R8A7791_PD_CA15_CPU1		 1
-+#define R8A7791_PD_CA15_SCU		12
-+#define R8A7791_PD_SH_4A		16
-+#define R8A7791_PD_SGX			20
-+
-+/* Always-on power area */
-+#define R8A7791_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7791_SYSC_H__ */
+I'll fix the typos.
+ 
+> > +There are three types of FCP whose configuration and behaviour highly
+> > depend +on the module they are paired with.
+> 
+> + - compatible: Must be one or more of the following
+> +
+> +   - "renesas,r8a7795-fcpv" for R8A7795 (R-Car H3) compatible 'FCP for VSP'
+> +   - "renesas,fcpv" for generic compatible 'FCP for VSP'
+> 
+> As you list only one compatible value, I guess the type is determined
+> automatically at run-time?
+
+No, it's just that the bindings only support the FCPV at the moment, the other 
+two variants are not supported yet.
+
 -- 
-1.9.1
+Regards,
 
+Laurent Pinchart
