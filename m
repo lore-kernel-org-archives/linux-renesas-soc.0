@@ -1,112 +1,95 @@
-Return-Path: <horms@vergenet.net>
+Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/26] ARM: dts: silk: use generic pinctrl properties
-Date: Mon,  4 Apr 2016 10:22:18 +0900
-Message-Id: <4386ed21e5c1944f9b666f405796499526c5e59b.1459731908.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1459731908.git.horms+renesas@verge.net.au>
-References: <cover.1459731908.git.horms+renesas@verge.net.au>
+Subject: [PATCH 09/22] ARM: dts: r8a7793: add CAN clocks to device tree
+Date: Mon, 25 Apr 2016 14:27:27 +1000
+Message-Id: <7892e6c1be78a7b008722badd99e5abd0ad6007b.1461558315.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461558315.git.horms+renesas@verge.net.au>
+References: <cover.1461558315.git.horms+renesas@verge.net.au>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since 16ccaf5bb5a5 ("pinctrl: sh-pfc: Accept standard function, pins and
-groups properties") renesas pfc drivers accept generic "function", "pins"
-and "groups" properties.
+The R-Car CAN controllers can derive the CAN bus clock not only from their
+peripheral clock input (clkp1) but also from the other internal clock
+(clkp2) and external clock fed on CAN_CLK pin. Describe those clocks in
+the device tree along with  the USB_EXTAL clock from which clkp2 is
+derived.
 
-This patch updates the silk device tree to use the generic properties.
+Based on work by Sergei Shtylyov for the r8a7791 SoC.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7794-silk.dts | 44 +++++++++++++++++++-------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+ arch/arm/boot/dts/r8a7793.dtsi | 27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index 66f077a3ca41..56d98d5b2185 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -130,58 +130,58 @@
- 	pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 95bbed95b0c1..0e609bdafaa9 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -839,6 +839,22 @@
+ 			clock-frequency = <0>;
+ 		};
  
- 	scif2_pins: serial2 {
--		renesas,groups = "scif2_data";
--		renesas,function = "scif2";
-+		groups = "scif2_data";
-+		function = "scif2";
- 	};
- 
- 	scif_clk_pins: scif_clk {
--		renesas,groups = "scif_clk";
--		renesas,function = "scif_clk";
-+		groups = "scif_clk";
-+		function = "scif_clk";
- 	};
- 
- 	ether_pins: ether {
--		renesas,groups = "eth_link", "eth_mdio", "eth_rmii";
--		renesas,function = "eth";
-+		groups = "eth_link", "eth_mdio", "eth_rmii";
-+		function = "eth";
- 	};
- 
- 	phy1_pins: phy1 {
--		renesas,groups = "intc_irq8";
--		renesas,function = "intc";
-+		groups = "intc_irq8";
-+		function = "intc";
- 	};
- 
- 	i2c1_pins: i2c1 {
--		renesas,groups = "i2c1";
--		renesas,function = "i2c1";
-+		groups = "i2c1";
-+		function = "i2c1";
- 	};
- 
- 	mmcif0_pins: mmcif0 {
--		renesas,groups = "mmc_data8", "mmc_ctrl";
--		renesas,function = "mmc";
-+		groups = "mmc_data8", "mmc_ctrl";
-+		function = "mmc";
- 	};
- 
- 	sdhi1_pins: sd1 {
--		renesas,groups = "sdhi1_data4", "sdhi1_ctrl";
--		renesas,function = "sdhi1";
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
- 	};
- 
- 	qspi_pins: spi0 {
--		renesas,groups = "qspi_ctrl", "qspi_data4";
--		renesas,function = "qspi";
-+		groups = "qspi_ctrl", "qspi_data4";
-+		function = "qspi";
- 	};
- 
- 	vin0_pins: vin0 {
--		renesas,groups = "vin0_data8", "vin0_clk";
--		renesas,function = "vin0";
-+		groups = "vin0_data8", "vin0_clk";
-+		function = "vin0";
- 	};
- 
- 	usb0_pins: usb0 {
--		renesas,groups = "usb0";
--		renesas,function = "usb0";
-+		groups = "usb0";
-+		function = "usb0";
- 	};
- 
- 	usb1_pins: usb1 {
--		renesas,groups = "usb1";
--		renesas,function = "usb1";
-+		groups = "usb1";
-+		function = "usb1";
- 	};
- };
- 
++		/* External USB clock - can be overridden by the board */
++		usb_extal_clk: usb_extal {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <48000000>;
++		};
++
++		/* External CAN clock */
++		can_clk: can {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			/* This value must be overridden by the board. */
++			clock-frequency = <0>;
++			status = "disabled";
++		};
++
+ 		/* External SCIF clock */
+ 		scif_clk: scif {
+ 			compatible = "fixed-clock";
+@@ -853,7 +869,7 @@
+ 			compatible = "renesas,r8a7793-cpg-clocks",
+ 				     "renesas,rcar-gen2-cpg-clocks";
+ 			reg = <0 0xe6150000 0 0x1000>;
+-			clocks = <&extal_clk>;
++			clocks = <&extal_clk &usb_extal_clk>;
+ 			#clock-cells = <1>;
+ 			clock-output-names = "main", "pll0", "pll1", "pll3",
+ 					     "lb", "qspi", "sdh", "sd0", "z",
+@@ -1081,6 +1097,7 @@
+ 			reg = <0 0xe6150994 0 4>, <0 0xe61509a4 0 4>;
+ 			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
+ 				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
++				 <&p_clk>, <&p_clk>,
+ 				 <&cpg_clocks R8A7793_CLK_QSPI>, <&hp_clk>,
+ 				 <&cp_clk>, <&hp_clk>, <&hp_clk>, <&hp_clk>,
+ 				 <&hp_clk>, <&hp_clk>;
+@@ -1090,7 +1107,8 @@
+ 				R8A7793_CLK_GPIO5 R8A7793_CLK_GPIO4
+ 				R8A7793_CLK_GPIO3 R8A7793_CLK_GPIO2
+ 				R8A7793_CLK_GPIO1 R8A7793_CLK_GPIO0
+-				R8A7793_CLK_QSPI_MOD R8A7793_CLK_I2C5
++				R8A7793_CLK_QSPI_MOD R8A7793_CLK_RCAN1
++				R8A7793_CLK_RCAN0 R8A7793_CLK_I2C5
+ 				R8A7793_CLK_IICDVFS R8A7793_CLK_I2C4
+ 				R8A7793_CLK_I2C3 R8A7793_CLK_I2C2
+ 				R8A7793_CLK_I2C1 R8A7793_CLK_I2C0
+@@ -1098,8 +1116,9 @@
+ 			clock-output-names =
+ 				"gpio7", "gpio6", "gpio5", "gpio4",
+ 				"gpio3", "gpio2", "gpio1", "gpio0",
+-				"qspi_mod", "i2c5", "i2c6", "i2c4",
+-				"i2c3", "i2c2", "i2c1", "i2c0";
++				"rcan1", "rcan0", "qspi_mod", "i2c5",
++				"i2c6", "i2c4", "i2c3", "i2c2", "i2c1",
++				"i2c0";
+ 		};
+ 		mstp10_clks: mstp10_clks@e6150998 {
+ 			compatible = "renesas,r8a7793-mstp-clocks", "renesas,cpg-mstp-clocks";
 -- 
-2.1.4
+2.7.0.rc3.207.g0ac5344
