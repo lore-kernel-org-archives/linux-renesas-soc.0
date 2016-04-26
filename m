@@ -1,50 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:43738 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751170AbcDZKac (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52474 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750874AbcDZB25 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 06:30:32 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: Kill unused variable in sh_pfc_remove()
-Date: Tue, 26 Apr 2016 12:30:26 +0200
-Message-Id: <1461666626-24805-1-git-send-email-geert+renesas@glider.be>
+	Mon, 25 Apr 2016 21:28:57 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 05/11] soc: renesas: rcar-sysc: Enable Clock Domain for I/O devices
+Date: Tue, 26 Apr 2016 11:28:40 +1000
+Message-Id: <1c8c77f52d1037c61468539e1d68c44f9e710536.1461632180.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461632180.git.horms+renesas@verge.net.au>
+References: <cover.1461632180.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If CONFIG_PINCTRL_SH_PFC_GPIO=n:
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-    drivers/pinctrl/sh-pfc/core.c: In function 'sh_pfc_remove':
-    drivers/pinctrl/sh-pfc/core.c:649:17: warning: unused variable 'pfc' [-Wunused-variable]
+On R-Car H3, some power areas (e.g. A3VP) contain I/O devices, which are
+also part of the CPG/MSSR Clock Domain.
+On all R-Car SoCs, devices in the "always-on" PM Domain are part of the
+Clock Domain served by the CPG/MSSR or CPG/MSTP driver.
 
-Fixes: 67ec8d7b48463904 ("pinctrl: ish-pfc: Use devm_pinctrl_register() for pinctrl registration")
+Hook up the CPG/MSTP or CPG/MSSR Clock Domain attach/detach callbacks to
+enable power management using module clocks. Which callback to hook up
+depends on the presence of device nodes compatible with
+"renesas,cpg-mstp-clocks". This clears the path for a future migration
+from the CPG/MSTP to the CPG/MSSR driver on R-Car H1 and
+Gen2.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-I won't queue this up in sh-pfc-for-v4.7, as the offending commit is not in
-that branch.
+ drivers/soc/renesas/rcar-sysc.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
- drivers/pinctrl/sh-pfc/core.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index bde726977a3b4f02..fe931c2be38a2f3f 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -646,10 +646,8 @@ pr_info("%s:     PUD5 now is 0x%08x\n", __func__, data);
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 4e760d63f2ab..0d49a25de740 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -9,6 +9,7 @@
+  * for more details.
+  */
  
- static int sh_pfc_remove(struct platform_device *pdev)
++#include <linux/clk/renesas.h>
+ #include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/mm.h>
+@@ -217,6 +218,8 @@ static int rcar_sysc_pd_power_on(struct generic_pm_domain *genpd)
+ 	return rcar_sysc_power_up(&pd->ch);
+ }
+ 
++static bool has_cpg_mstp;
++
+ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
  {
--	struct sh_pfc *pfc = platform_get_drvdata(pdev);
--
- #ifdef CONFIG_PINCTRL_SH_PFC_GPIO
--	sh_pfc_unregister_gpiochip(pfc);
-+	sh_pfc_unregister_gpiochip(platform_get_drvdata(pdev));
- #endif
+ 	struct generic_pm_domain *genpd = &pd->genpd;
+@@ -248,6 +251,18 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
+ 		gov = &pm_domain_always_on_gov;
+ 	}
  
- 	return 0;
++	if (!(pd->flags & (PD_CPU | PD_SCU))) {
++		/* Enable Clock Domain for I/O devices */
++		genpd->flags = GENPD_FLAG_PM_CLK;
++		if (has_cpg_mstp) {
++			genpd->attach_dev = cpg_mstp_attach_dev;
++			genpd->detach_dev = cpg_mstp_detach_dev;
++		} else {
++			genpd->attach_dev = cpg_mssr_attach_dev;
++			genpd->detach_dev = cpg_mssr_detach_dev;
++		}
++	}
++
+ 	genpd->power_off = rcar_sysc_pd_power_off;
+ 	genpd->power_on = rcar_sysc_pd_power_on;
+ 
+@@ -294,6 +309,9 @@ static int __init rcar_sysc_pd_init(void)
+ 
+ 	info = match->data;
+ 
++	has_cpg_mstp = of_find_compatible_node(NULL, NULL,
++					       "renesas,cpg-mstp-clocks");
++
+ 	base = of_iomap(np, 0);
+ 	if (!base) {
+ 		pr_warn("%s: Cannot map regs\n", np->full_name);
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
