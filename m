@@ -1,93 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:37360 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964994AbcDYVgY (ORCPT
+Received: from mout.kundenserver.de ([217.72.192.73]:61069 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751101AbcDZLNp (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 17:36:24 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 04/13] v4l: vsp1: Don't handle clocks manually
-Date: Tue, 26 Apr 2016 00:36:29 +0300
-Message-Id: <1461620198-13428-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1461620198-13428-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1461620198-13428-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Tue, 26 Apr 2016 07:13:45 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Simon Horman <horms+renesas@verge.net.au>, arm@kernel.org,
+	Kevin Hilman <khilman@linaro.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC PCI Defconfig Updates for v4.7
+Date: Tue, 26 Apr 2016 13:13:04 +0200
+Message-ID: <4949462.nM0EuO7OEc@wuerfel>
+In-Reply-To: <cover.1461631445.git.horms+renesas@verge.net.au>
+References: <cover.1461631445.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The power domain performs functional clock handling when using runtime
-PM, there's no need to enable and disable the clock manually.
+On Tuesday 26 April 2016 10:50:10 Simon Horman wrote:
+> Please consider these Renesas ARM based SoC PCI defconfig updates for v4.7.
+> 
+> 
+> This pull request includes a single patch with changes that I would
+> ordinarily be inclined to split into different branches. However,
+> are most easily done atomicly and as they are rather small I have
+> kept them in one patch in its own branch. My hope is that you can find
+> an appropriate home for it.
+> 
+> The patch updates renames PCI_RCAR_GEN2_PCIE Kconfig symbol
+> as PCIE_RCAR. It includes PCI Makefile and Kconfig changes and
+> accordingly the patch has an ack from Bjorn Helgaas. It also updates
+> arm and arm64 defconfigs.
+> 
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1.h     |  1 -
- drivers/media/platform/vsp1/vsp1_drv.c | 20 ++------------------
- 2 files changed, 2 insertions(+), 19 deletions(-)
+I've merged it into next/defconfig and made sure we don't (yet) have
+any conflicts against changes in the arm64 defconfig. Thanks,
 
-diff --git a/drivers/media/platform/vsp1/vsp1.h b/drivers/media/platform/vsp1/vsp1.h
-index 9e09bce43cf3..37cc05e34de0 100644
---- a/drivers/media/platform/vsp1/vsp1.h
-+++ b/drivers/media/platform/vsp1/vsp1.h
-@@ -62,7 +62,6 @@ struct vsp1_device {
- 	const struct vsp1_device_info *info;
- 
- 	void __iomem *mmio;
--	struct clk *clock;
- 
- 	struct vsp1_bru *bru;
- 	struct vsp1_hsit *hsi;
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index d6abc7f1216a..13907d4f08af 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -514,10 +514,6 @@ static int vsp1_pm_resume(struct device *dev)
- 
- static int vsp1_pm_runtime_suspend(struct device *dev)
- {
--	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
--
--	clk_disable_unprepare(vsp1->clock);
--
- 	return 0;
- }
- 
-@@ -526,16 +522,10 @@ static int vsp1_pm_runtime_resume(struct device *dev)
- 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
- 	int ret;
- 
--	ret = clk_prepare_enable(vsp1->clock);
--	if (ret < 0)
--		return ret;
--
- 	if (vsp1->info) {
- 		ret = vsp1_device_init(vsp1);
--		if (ret < 0) {
--			clk_disable_unprepare(vsp1->clock);
-+		if (ret < 0)
- 			return ret;
--		}
- 	}
- 
- 	return 0;
-@@ -640,18 +630,12 @@ static int vsp1_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, vsp1);
- 
--	/* I/O, IRQ and clock resources */
-+	/* I/O and IRQ resources (clock managed by the clock PM domain) */
- 	io = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	vsp1->mmio = devm_ioremap_resource(&pdev->dev, io);
- 	if (IS_ERR(vsp1->mmio))
- 		return PTR_ERR(vsp1->mmio);
- 
--	vsp1->clock = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(vsp1->clock)) {
--		dev_err(&pdev->dev, "failed to get clock\n");
--		return PTR_ERR(vsp1->clock);
--	}
--
- 	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	if (!irq) {
- 		dev_err(&pdev->dev, "missing IRQ\n");
--- 
-2.7.3
+	Arnd
