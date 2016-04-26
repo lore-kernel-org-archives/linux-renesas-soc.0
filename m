@@ -1,54 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:35384 "EHLO
-	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752004AbcDZHJr (ORCPT
+Received: from mail-ig0-f196.google.com ([209.85.213.196]:35196 "EHLO
+	mail-ig0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751170AbcDZKYH convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 03:09:47 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] clk: renesas: cpg-mssr: Use always-on governor for Clock Domain
-Date: Tue, 26 Apr 2016 09:09:42 +0200
-Message-Id: <1461654582-668-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
-References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+	Tue, 26 Apr 2016 06:24:07 -0400
+MIME-Version: 1.0
+In-Reply-To: <1461584360-32547-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1461584360-32547-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+	<1461584360-32547-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Date: Tue, 26 Apr 2016 12:24:06 +0200
+Message-ID: <CAMuHMdUGvfBh5J7Or2ZiZndaHbFqM2jnqp3x8xNOgSzeAU_JoA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: shmobile: r8a7795: Add VIN clocks
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As a pure Clock Domain does not have the concept of powering the domain
-itself, the CPG/MSTP driver does not provide power_off() and power_on()
-callbacks.
-However, the genpd core may still perform a dummy power down, causing
-/sys/kernel/debug/pm_genpd/pm_genpd_summary to report the domain's
-status being "off-0".
+On Mon, Apr 25, 2016 at 1:39 PM, Niklas Söderlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Use the always-on governor to make sure the domain is never powered
-down, and always shows up as "on" in pm_genpd_summary.
+s/shmobile/renesas/, and applied to clk-renesas-for-v4.7 and renesas-drivers.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 0d595311c659a741..210cd744a7a97bbd 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -495,7 +495,7 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
- 	genpd->flags = GENPD_FLAG_PM_CLK;
- 	genpd->attach_dev = cpg_mssr_attach_dev;
- 	genpd->detach_dev = cpg_mssr_detach_dev;
--	pm_genpd_init(genpd, &simple_qos_governor, false);
-+	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
- 	cpg_mssr_clk_domain = pd;
- 
- 	of_genpd_add_provider_simple(np, genpd);
--- 
-1.9.1
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
