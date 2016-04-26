@@ -1,58 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:11826 "EHLO
-	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752392AbcDZLMg (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:43738 "EHLO
+	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751170AbcDZKac (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 07:12:36 -0400
-Message-ID: <571F4A5C.7090608@nvidia.com>
-Date: Tue, 26 Apr 2016 16:30:44 +0530
-From: Laxman Dewangan <ldewangan@nvidia.com>
-MIME-Version: 1.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>,
+	Tue, 26 Apr 2016 06:30:32 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC: <linux-gpio@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: Kill unused variable in sh_pfc_remove()
-References: <1461666626-24805-1-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461666626-24805-1-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: Kill unused variable in sh_pfc_remove()
+Date: Tue, 26 Apr 2016 12:30:26 +0200
+Message-Id: <1461666626-24805-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+If CONFIG_PINCTRL_SH_PFC_GPIO=n:
 
-On Tuesday 26 April 2016 04:00 PM, Geert Uytterhoeven wrote:
-> If CONFIG_PINCTRL_SH_PFC_GPIO=n:
->
->      drivers/pinctrl/sh-pfc/core.c: In function 'sh_pfc_remove':
->      drivers/pinctrl/sh-pfc/core.c:649:17: warning: unused variable 'pfc' [-Wunused-variable]
->
-> Fixes: 67ec8d7b48463904 ("pinctrl: ish-pfc: Use devm_pinctrl_register() for pinctrl registration")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> I won't queue this up in sh-pfc-for-v4.7, as the offending commit is not in
-> that branch.
->
+    drivers/pinctrl/sh-pfc/core.c: In function 'sh_pfc_remove':
+    drivers/pinctrl/sh-pfc/core.c:649:17: warning: unused variable 'pfc' [-Wunused-variable]
 
-Ideally, you dont need the call of sh_pfc_unregister_gpiochip() if you 
-use the devm_gpiochip_add_data() which is already available on all 
-subsystem.
+Fixes: 67ec8d7b48463904 ("pinctrl: ish-pfc: Use devm_pinctrl_register() for pinctrl registration")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+I won't queue this up in sh-pfc-for-v4.7, as the offending commit is not in
+that branch.
 
-int sh_pfc_unregister_gpiochip(struct sh_pfc *pfc)
-{
-         gpiochip_remove(&pfc->gpio->gpio_chip);
-#ifdef CONFIG_SUPERH
-         gpiochip_remove(&pfc->func->gpio_chip);
-#endif
-         return 0;
-}
+ drivers/pinctrl/sh-pfc/core.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-So you can get rid of this calls and lines.
-
-
------------------------------------------------------------------------------------
-This email message is for the sole use of the intended recipient(s) and may contain
-confidential information.  Any unauthorized review, use, disclosure or distribution
-is prohibited.  If you are not the intended recipient, please contact the sender by
-reply email and destroy all copies of the original message.
------------------------------------------------------------------------------------
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index bde726977a3b4f02..fe931c2be38a2f3f 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -646,10 +646,8 @@ pr_info("%s:     PUD5 now is 0x%08x\n", __func__, data);
+ 
+ static int sh_pfc_remove(struct platform_device *pdev)
+ {
+-	struct sh_pfc *pfc = platform_get_drvdata(pdev);
+-
+ #ifdef CONFIG_PINCTRL_SH_PFC_GPIO
+-	sh_pfc_unregister_gpiochip(pfc);
++	sh_pfc_unregister_gpiochip(platform_get_drvdata(pdev));
+ #endif
+ 
+ 	return 0;
+-- 
+1.9.1
