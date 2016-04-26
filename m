@@ -1,32 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:36392 "EHLO
-	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753265AbcD1VAp (ORCPT
+Received: from sauhun.de ([89.238.76.85]:51184 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752235AbcDZPzp (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 28 Apr 2016 17:00:45 -0400
-Received: by mail-lf0-f47.google.com with SMTP id u64so97975153lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 28 Apr 2016 14:00:44 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/4] Add TCON support to the R-Car DU driver
-Date: Fri, 29 Apr 2016 00:00:40 +0300
-Message-ID: <1787748.qAADjKK4gv@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Tue, 26 Apr 2016 11:55:45 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-mmc@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH V2 4/6] mmc: tmio: simplify irq handler
+Date: Tue, 26 Apr 2016 17:55:25 +0200
+Message-Id: <1461686127-3217-5-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1461686127-3217-1-git-send-email-wsa@the-dreams.de>
+References: <1461686127-3217-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-   Here's the set of 4 patches against David Airlie's 'linux.git' repo's
-'drm-next' branch. We're adding support for the TCON (timing controller) that
- is a part of the R-Car SoC and can directly drive a LCD.
+Having just one irq handler again, let's include the 'card_status'
+function in the main handler which is way more readable. Drop a useless
+debug output while here. It should be a dev_dbg in case we ever need it
+again.
 
-[1/4] drm_mode: add-TCON encoder connector
-[2/4] rcar-du: add TCON encoder driver
-[3/4] rcar-du: add TCON connector driver
-[4/4] rcar-du: add R8A7794 TCON support
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/tmio_mmc_pio.c | 23 ++++++++---------------
+ 1 file changed, 8 insertions(+), 15 deletions(-)
 
-MBR, Sergei
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index a7250a5fa670c5..879e0f5455ef44 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -632,19 +632,6 @@ out:
+ 	spin_unlock(&host->lock);
+ }
+ 
+-static void tmio_mmc_card_irq_status(struct tmio_mmc_host *host,
+-				       int *ireg, int *status)
+-{
+-	*status = sd_ctrl_read32(host, CTL_STATUS);
+-	*ireg = *status & TMIO_MASK_IRQ & ~host->sdcard_irq_mask;
+-
+-	pr_debug_status(*status);
+-	pr_debug_status(*ireg);
+-
+-	/* Clear the status except the interrupt status */
+-	sd_ctrl_write32(host, CTL_STATUS, TMIO_MASK_IRQ);
+-}
+-
+ static bool __tmio_mmc_card_detect_irq(struct tmio_mmc_host *host,
+ 				      int ireg, int status)
+ {
+@@ -722,9 +709,15 @@ irqreturn_t tmio_mmc_irq(int irq, void *devid)
+ 	struct tmio_mmc_host *host = devid;
+ 	unsigned int ireg, status;
+ 
+-	pr_debug("MMC IRQ begin\n");
++	status = sd_ctrl_read32(host, CTL_STATUS);
++	ireg = status & TMIO_MASK_IRQ & ~host->sdcard_irq_mask;
++
++	pr_debug_status(status);
++	pr_debug_status(ireg);
++
++	/* Clear the status except the interrupt status */
++	sd_ctrl_write32(host, CTL_STATUS, TMIO_MASK_IRQ);
+ 
+-	tmio_mmc_card_irq_status(host, &ireg, &status);
+ 	if (__tmio_mmc_card_detect_irq(host, ireg, status))
+ 		return IRQ_HANDLED;
+ 	if (__tmio_mmc_sdcard_irq(host, ireg, status))
+-- 
+2.7.0
