@@ -1,60 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:43322 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750752AbcD2HYm (ORCPT
+Received: from sauhun.de ([89.238.76.85]:51396 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751890AbcDZRAM (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 29 Apr 2016 03:24:42 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: Let gpio_chip.to_irq() return -ENXIO on error
-Date: Fri, 29 Apr 2016 09:24:37 +0200
-Message-Id: <1461914677-24899-1-git-send-email-geert+renesas@glider.be>
+	Tue, 26 Apr 2016 13:00:12 -0400
+Date: Tue, 26 Apr 2016 19:00:02 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>,
+	Linux MMC List <linux-mmc@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 2/9] mmc: tmio, sh_mobile_sdhi: Add support for
+ variable input clock frequency
+Message-ID: <20160426170001.GB3444@katana>
+References: <1459525479-20842-1-git-send-email-wsa@the-dreams.de>
+ <1459525479-20842-3-git-send-email-wsa@the-dreams.de>
+ <CAMuHMdWdJ2AoCrwC5K2QEfuf=w=q8=XnJRzoyg99EurJBDwbTg@mail.gmail.com>
+ <1460477978.32355.14.camel@codethink.co.uk>
+ <20160415202803.GA3105@katana>
+ <20160415204156.GB3105@katana>
+ <CAMuHMdUccqGDWRqKhoHO7ED7X_uOk7nX8dKGTJDzTGjLZx-7+Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pvezYHf7grwyp3Bc"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUccqGDWRqKhoHO7ED7X_uOk7nX8dKGTJDzTGjLZx-7+Q@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currrently the gpio_chip.to_irq() callback returns -ENOSYS on error,
-which causes bad interactions with the serial_mctrl_gpio helpers.
 
-mctrl_gpio_init() returns -ENOSYS if GPIOLIB is not enabled, which is
-intended to be ignored by its callers. However, ignoring -ENOSYS when it
-was caused by a gpiod_to_irq() failure will lead to a crash later:
+--pvezYHf7grwyp3Bc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-    Unable to handle kernel paging request at virtual address ffffffde
-    ...
-    PC is at mctrl_gpio_set+0x14/0x78
 
-Fix this by returning -ENXIO instead.
+> To fix this regression in the short term, can we just enable this feature in
+> the sh_mobile_sdhi driver on SoCs where we know it's safe to change the clock,
+> i.e. on R-Car Gen2 and H3?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Is -ENXIO the right error code?
+I'll try a workaround next week.
 
-  - Most drivers seem to return -ENXIO on failure, just like
-    gpiod_to_irq() does when no .to_irq() callback is provided by the
-    driver,
-  - Some drivers use -EINVAL,
-  - Drivers that call irq_find_mapping(), irq_create_mapping(), or
-    irq_create_fwspec_mapping() return zero!  This also applies to the
-    core helper gpiochip_to_irq().
----
- drivers/pinctrl/sh-pfc/gpio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
-index a6681b8b17c3b30c..2fffb9c32231adb3 100644
---- a/drivers/pinctrl/sh-pfc/gpio.c
-+++ b/drivers/pinctrl/sh-pfc/gpio.c
-@@ -212,7 +212,7 @@ static int gpio_pin_to_irq(struct gpio_chip *gc, unsigned offset)
- 		}
- 	}
- 
--	return -ENOSYS;
-+	return -ENXIO;
- 
- found:
- 	return pfc->irqs[i];
--- 
-1.9.1
+--pvezYHf7grwyp3Bc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXH56RAAoJEBQN5MwUoCm2288P/3Y+UkbuxddIamwa4IwA4ovc
+OHIzCalJyY1fxMR2U1H8wi0dYphZ9/7xZ57mef054/uml7KkEv/RvQIQKtB6aDnu
+xe8jQVTZ2Um6ZFQ/mCrFmiE2E9bH0VrZFRkFfCoysgg4oF+skkA88LOdskfbGyBm
+PxRH4H1k5Kfggcqd3ruvUV97Our0jZ2kGB5r1iZSNQ4hIj++q4purEPpPgQic4G7
+cpkV6mON72+ZtpPhyM2/nL8xBuxeHDHBgtWVw1bY6dWHCUeViZp5waNupK7xqHwp
+vN/DwIqDGgqJ8p808e9Amr+SoRwnsUVg9t/TT1DA/Kxv7hmw0JFFTSydpqKdiUlO
+V/fgxTG1yQK3+oThhlKxsHmc+X7QpKAdOgDFSVCZbvHU67SlSLezSjEjmK6PSV4n
+WvVgZfHPt2d0RBhwXvG7bjV2TNQbHNhCYHDyycsEyEHfwyA8vpdAASSfghMLUwio
+5evkAmmRsi4mfNAZNTFxtSP/lEtq+IVEgi7xb5SC5fTuCgRGWOZklTxs6VLur7bE
+zWfubPqGLzgKsXE7z4VN1I8IxOsnNsBhioB7Eo3gBos4vpc7JcH3ZrG9bMBwhWXg
+9yQnzbkekuUHZdiqgiPRIi/Hrmg/wXZ7f+j7/Hw9c+MpH4FADLSSNOCY7WrLeGSq
+FInUmtzJ6DuUKKFCTgOr
+=mSoI
+-----END PGP SIGNATURE-----
+
+--pvezYHf7grwyp3Bc--
