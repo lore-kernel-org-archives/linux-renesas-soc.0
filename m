@@ -1,119 +1,48 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:51380 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752176AbcDZQyA (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 26 Apr 2016 12:54:00 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-mmc@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
 	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 06/12] arm64: dts: r8a7795: Add SYSC PM Domains
-Date: Thu,  7 Apr 2016 14:20:29 +0200
-Message-Id: <1460031635-13452-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
-References: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 5/5] mmc: tmio: document CTL_STATUS handling
+Date: Tue, 26 Apr 2016 18:53:45 +0200
+Message-Id: <1461689625-3693-6-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1461689625-3693-1-git-send-email-wsa@the-dreams.de>
+References: <1461689625-3693-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the System Controller, and hook it up to the
-CPG/MSSR Clock Domain.
-Hook up the Cortex-A57 CPU cores and the Cortex-A57 and Cortex A53 L2
-caches/SCUs to their respective PM Domains.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Now that reading CTL_STATUS is consistent, we can remove CTL_STATUS2 and
+document how this is handled internally.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v4:
-  - Add power-domains property to the sysc node, to refer to the SoC's
-    Clock Domain,
-  - Extract using "<&sysc R8A7795_PD_ALWAYS_ON>" for devices in the
-    always-on power area into a separate patch,
+ drivers/mmc/host/tmio_mmc.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-v3:
-  - Drop power area hiearchy from DT,
-  - Switch to "#power-domain-cells = <1>",
-  - Use "<&sysc R8A7795_PD_ALWAYS_ON>" for devices in the always-on
-    power area,
-  - Drop fallback compatibility strings,
-
-v2:
-  - New.
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 11f9971a85433b7f..89c72280f9a77403 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -10,6 +10,7 @@
- 
- #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/r8a7795-sysc.h>
- 
- / {
- 	compatible = "renesas,r8a7795";
-@@ -39,6 +40,7 @@
- 			compatible = "arm,cortex-a57", "arm,armv8";
- 			reg = <0x0>;
- 			device_type = "cpu";
-+			power-domains = <&sysc R8A7795_PD_CA57_CPU0>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -47,6 +49,7 @@
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x1>;
- 			device_type = "cpu";
-+			power-domains = <&sysc R8A7795_PD_CA57_CPU1>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -54,6 +57,7 @@
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x2>;
- 			device_type = "cpu";
-+			power-domains = <&sysc R8A7795_PD_CA57_CPU2>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -61,6 +65,7 @@
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x3>;
- 			device_type = "cpu";
-+			power-domains = <&sysc R8A7795_PD_CA57_CPU3>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -68,12 +73,14 @@
- 
- 	L2_CA57: cache-controller@0 {
- 		compatible = "cache";
-+		power-domains = <&sysc R8A7795_PD_CA57_SCU>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
- 
- 	L2_CA53: cache-controller@1 {
- 		compatible = "cache";
-+		power-domains = <&sysc R8A7795_PD_CA53_SCU>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
-@@ -305,6 +312,13 @@
- 			#power-domain-cells = <0>;
- 		};
- 
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a7795-sysc";
-+			reg = <0 0xe6180000 0 0x0400>;
-+			power-domains = <&cpg>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		audma0: dma-controller@ec700000 {
- 			compatible = "renesas,rcar-dmac";
- 			reg = <0 0xec700000 0 0x10000>;
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 8dd5ea4be0a371..1aac2ad8edf265 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -30,8 +30,9 @@
+ #define CTL_STOP_INTERNAL_ACTION 0x08
+ #define CTL_XFER_BLK_COUNT 0xa
+ #define CTL_RESPONSE 0x0c
++/* driver merges STATUS and following STATUS2 */
+ #define CTL_STATUS 0x1c
+-#define CTL_STATUS2 0x1e
++/* driver merges IRQ_MASK and following IRQ_MASK2 */
+ #define CTL_IRQ_MASK 0x20
+ #define CTL_SD_CARD_CLK_CTL 0x24
+ #define CTL_SD_XFER_LEN 0x26
 -- 
-1.9.1
-
+2.7.0
