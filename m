@@ -1,48 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.134]:52117 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751115AbcDZKpc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52436 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750843AbcDZB2t (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 06:45:32 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
-	Olof Johansson <olof@lixom.net>,
+	Mon, 25 Apr 2016 21:28:49 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
 	Kevin Hilman <khilman@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
 	linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [GIT PULL] Second Round of Renesas ARM Based SoC R-Car SYSC Updates for v4.7
-Date: Tue, 26 Apr 2016 12:44:48 +0200
-Message-ID: <4754122.zMqi1lHELM@wuerfel>
-In-Reply-To: <cover.1461632180.git.horms+renesas@verge.net.au>
-References: <cover.1461632180.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Michael Turquette <mturquette@baylibre.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Second Round of Renesas ARM Based SoC R-Car SYSC Updates for v4.7
+Date: Tue, 26 Apr 2016 11:28:38 +1000
+Message-Id: <cover.1461632180.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tuesday 26 April 2016 11:28:38 Simon Horman wrote:
-> This pull request is based on a merge of:
-> 
-> * Thee previous round of such requests, tagged as renesas-rcar-sysc-for-v4.7,
->   which you have previously pulled.
-> * The clk-renesas-for-v4.7-tag2 tag of Geert Uytterhoeven's renesas-drivers
->   tree which has been accepted into clk-next by Stephen Boyd.
+Hi Olof, Hi Kevin, Hi Arnd,
 
-I've pulled it into next/drivers now.
+Please consider these second round of Renesas ARM based SoC R-Car SYSC
+updates for v4.7.
 
-> There are follow-up DT changes that depend on this driver which I plan to
-> send in a pull-request for in the near future.
+This pull request is based on a merge of:
 
-Ok, I need to revisit your earlier explanation of the exact dependencies
-here and see if we can find a way to merge this nicely. We usually
-have the next/dt branch before the next/drivers branch, so this reverse
-dependency would require a next/dt2 branch unless we can either change
-the order for the 4.7 merge window for all platforms, or find a way
-to merge (most of) the following DT changes without having the driver
-done first.
+* Thee previous round of such requests, tagged as renesas-rcar-sysc-for-v4.7,
+  which you have previously pulled.
+* The clk-renesas-for-v4.7-tag2 tag of Geert Uytterhoeven's renesas-drivers
+  tree which has been accepted into clk-next by Stephen Boyd.
 
-	Arnd
+There are follow-up DT changes that depend on this driver which I plan to
+send in a pull-request for in the near future.
+
+
+The following changes since commit a93fed0956bef9e4df420aa181198d86d347895d:
+
+  Merge tag 'clk-renesas-for-v4.7-tag2' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers into rcar-sysc-for-v4.7 (2016-04-22 17:22:21 +1000)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-rcar-sysc2-for-v4.7
+
+for you to fetch changes up to 23f1e2ecdecee9f2ec45de0a468b82bb1f7f3ca2:
+
+  soc: renesas: rcar-sysc: Add support for R-Car H3 power areas (2016-04-26 09:56:38 +1000)
+
+----------------------------------------------------------------
+Second Round of Renesas ARM Based SoC R-Car SYSC Updates for v4.7
+
+Introduce a DT-based driver for the R-Car System Controller, as found on
+Renesas R-Car H1, R-Car Gen2, and R-Car Gen3 SoCs.
+
+----------------------------------------------------------------
+Geert Uytterhoeven (11):
+      soc: renesas: Move pm-rcar to drivers/soc/renesas/rcar-sysc
+      soc: renesas: rcar-sysc: Improve rcar_sysc_power() debug info
+      soc: renesas: rcar-sysc: Add DT support for SYSC PM domains
+      soc: renesas: rcar-sysc: Make rcar_sysc_power_is_off() static
+      soc: renesas: rcar-sysc: Enable Clock Domain for I/O devices
+      soc: renesas: rcar-sysc: Add support for R-Car H1 power areas
+      soc: renesas: rcar-sysc: Add support for R-Car H2 power areas
+      soc: renesas: rcar-sysc: Add support for R-Car M2-W power areas
+      soc: renesas: rcar-sysc: Add support for R-Car M2-N power areas
+      soc: renesas: rcar-sysc: Add support for R-Car E2 power areas
+      soc: renesas: rcar-sysc: Add support for R-Car H3 power areas
+
+ MAINTAINERS                                        |   4 +
+ arch/arm/mach-shmobile/Kconfig                     |  11 +-
+ arch/arm/mach-shmobile/Makefile                    |   1 -
+ arch/arm/mach-shmobile/pm-r8a7779.c                |   3 +-
+ arch/arm/mach-shmobile/pm-rcar-gen2.c              |   2 +-
+ arch/arm/mach-shmobile/pm-rcar.c                   | 164 ---------
+ arch/arm/mach-shmobile/smp-r8a7779.c               |   2 +-
+ arch/arm/mach-shmobile/smp-r8a7790.c               |   2 +-
+ drivers/soc/Makefile                               |   3 +-
+ drivers/soc/renesas/Makefile                       |   7 +
+ drivers/soc/renesas/r8a7779-sysc.c                 |  34 ++
+ drivers/soc/renesas/r8a7790-sysc.c                 |  48 +++
+ drivers/soc/renesas/r8a7791-sysc.c                 |  33 ++
+ drivers/soc/renesas/r8a7794-sysc.c                 |  33 ++
+ drivers/soc/renesas/r8a7795-sysc.c                 |  56 +++
+ drivers/soc/renesas/rcar-sysc.c                    | 401 +++++++++++++++++++++
+ drivers/soc/renesas/rcar-sysc.h                    |  58 +++
+ .../linux/soc/renesas/rcar-sysc.h                  |   9 +-
+ 18 files changed, 690 insertions(+), 181 deletions(-)
+ delete mode 100644 arch/arm/mach-shmobile/pm-rcar.c
+ create mode 100644 drivers/soc/renesas/Makefile
+ create mode 100644 drivers/soc/renesas/r8a7779-sysc.c
+ create mode 100644 drivers/soc/renesas/r8a7790-sysc.c
+ create mode 100644 drivers/soc/renesas/r8a7791-sysc.c
+ create mode 100644 drivers/soc/renesas/r8a7794-sysc.c
+ create mode 100644 drivers/soc/renesas/r8a7795-sysc.c
+ create mode 100644 drivers/soc/renesas/rcar-sysc.c
+ create mode 100644 drivers/soc/renesas/rcar-sysc.h
+ rename arch/arm/mach-shmobile/pm-rcar.h => include/linux/soc/renesas/rcar-sysc.h (60%)
