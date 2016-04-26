@@ -1,61 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:36480 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751195AbcDZHJp (ORCPT
+Received: from shards.monkeyblade.net ([149.20.54.216]:41390 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752375AbcDZTWh (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 03:09:45 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/4] clk: renesas: Clock Domain fixes
-Date: Tue, 26 Apr 2016 09:09:38 +0200
-Message-Id: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+	Tue, 26 Apr 2016 15:22:37 -0400
+Date: Tue, 26 Apr 2016 15:22:35 -0400 (EDT)
+Message-Id: <20160426.152235.1961438040028461276.davem@davemloft.net>
+To: sergei.shtylyov@cogentembedded.com
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] sh_eth: get rid of the 2nd parameter to
+ sh_eth_dev_init()
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1615196.r6Bb3HFTJZ@wasted.cogentembedded.com>
+References: <1615196.r6Bb3HFTJZ@wasted.cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mike, Stephen,
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Sun, 24 Apr 2016 19:11:07 +0300
 
-This patch series contains fixes for the Renesas CPG/MSTP and CPG/MSSR
-Clock Domains:
-  1. Postpone calls to pm_genpd_init(), as all local setup of the
-     generic_pm_domain structure should have been completed before
-     calling pm_genpd_init(),
-  2. Use always-on governor for Clock Domains, to prevent their status
-     from being shown as "off-0" in
-     /sys/kernel/debug/pm_genpd/pm_genpd_summary.
+> sh_eth_dev_init()  is now always called with  'true' as the  2nd argument,
+> so that there's no more sense in having 2 parameters to this function...
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-I plan to queue these up with other clock updates in
-clk-renesas-for-v4.7, and send a pull request later.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (4):
-  clk: renesas: mstp: Postpone call to pm_genpd_init()
-  clk: renesas: mstp: Use always-on governor for Clock Domain
-  clk: renesas: cpg-mssr: Postpone call to pm_genpd_init()
-  clk: renesas: cpg-mssr: Use always-on governor for Clock Domain
-
- drivers/clk/renesas/clk-mstp.c         | 3 +--
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- 2 files changed, 2 insertions(+), 3 deletions(-)
-
--- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Applied.
