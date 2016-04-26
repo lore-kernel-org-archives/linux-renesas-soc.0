@@ -1,65 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:51396 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751890AbcDZRAM (ORCPT
+Received: from mail-ig0-f196.google.com ([209.85.213.196]:33497 "EHLO
+	mail-ig0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751170AbcDZKS0 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 13:00:12 -0400
-Date: Tue, 26 Apr 2016 19:00:02 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+	Tue, 26 Apr 2016 06:18:26 -0400
+MIME-Version: 1.0
+In-Reply-To: <20160415204156.GB3105@katana>
+References: <1459525479-20842-1-git-send-email-wsa@the-dreams.de>
+	<1459525479-20842-3-git-send-email-wsa@the-dreams.de>
+	<CAMuHMdWdJ2AoCrwC5K2QEfuf=w=q8=XnJRzoyg99EurJBDwbTg@mail.gmail.com>
+	<1460477978.32355.14.camel@codethink.co.uk>
+	<20160415202803.GA3105@katana>
+	<20160415204156.GB3105@katana>
+Date: Tue, 26 Apr 2016 12:18:24 +0200
+Message-ID: <CAMuHMdUccqGDWRqKhoHO7ED7X_uOk7nX8dKGTJDzTGjLZx-7+Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/9] mmc: tmio, sh_mobile_sdhi: Add support for
+ variable input clock frequency
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>,
 	Linux MMC List <linux-mmc@vger.kernel.org>,
 	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 2/9] mmc: tmio, sh_mobile_sdhi: Add support for
- variable input clock frequency
-Message-ID: <20160426170001.GB3444@katana>
-References: <1459525479-20842-1-git-send-email-wsa@the-dreams.de>
- <1459525479-20842-3-git-send-email-wsa@the-dreams.de>
- <CAMuHMdWdJ2AoCrwC5K2QEfuf=w=q8=XnJRzoyg99EurJBDwbTg@mail.gmail.com>
- <1460477978.32355.14.camel@codethink.co.uk>
- <20160415202803.GA3105@katana>
- <20160415204156.GB3105@katana>
- <CAMuHMdUccqGDWRqKhoHO7ED7X_uOk7nX8dKGTJDzTGjLZx-7+Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pvezYHf7grwyp3Bc"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUccqGDWRqKhoHO7ED7X_uOk7nX8dKGTJDzTGjLZx-7+Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---pvezYHf7grwyp3Bc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Fri, Apr 15, 2016 at 10:41 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+>> > That seems like a bug in the clock driver.  If it doesn't have
+>> > independent dividers for each clock client then it shouldn't allow any
+>> > client to change the frequency.
+>
+> So, we need MSTP clocks which do not use CLK_SET_RATE_PARENT on r8a7740.
+> Probably the best way is to use the "renesas,r8a7740-mstp-clocks"
+> compatible entry to determine the difference? Geert?
 
+To fix this regression in the short term, can we just enable this feature in
+the sh_mobile_sdhi driver on SoCs where we know it's safe to change the clock,
+i.e. on R-Car Gen2 and H3?
 
-> To fix this regression in the short term, can we just enable this feature in
-> the sh_mobile_sdhi driver on SoCs where we know it's safe to change the clock,
-> i.e. on R-Car Gen2 and H3?
+Thanks!
 
-I'll try a workaround next week.
+Gr{oetje,eeting}s,
 
+                        Geert
 
---pvezYHf7grwyp3Bc
-Content-Type: application/pgp-signature; name="signature.asc"
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXH56RAAoJEBQN5MwUoCm2288P/3Y+UkbuxddIamwa4IwA4ovc
-OHIzCalJyY1fxMR2U1H8wi0dYphZ9/7xZ57mef054/uml7KkEv/RvQIQKtB6aDnu
-xe8jQVTZ2Um6ZFQ/mCrFmiE2E9bH0VrZFRkFfCoysgg4oF+skkA88LOdskfbGyBm
-PxRH4H1k5Kfggcqd3ruvUV97Our0jZ2kGB5r1iZSNQ4hIj++q4purEPpPgQic4G7
-cpkV6mON72+ZtpPhyM2/nL8xBuxeHDHBgtWVw1bY6dWHCUeViZp5waNupK7xqHwp
-vN/DwIqDGgqJ8p808e9Amr+SoRwnsUVg9t/TT1DA/Kxv7hmw0JFFTSydpqKdiUlO
-V/fgxTG1yQK3+oThhlKxsHmc+X7QpKAdOgDFSVCZbvHU67SlSLezSjEjmK6PSV4n
-WvVgZfHPt2d0RBhwXvG7bjV2TNQbHNhCYHDyycsEyEHfwyA8vpdAASSfghMLUwio
-5evkAmmRsi4mfNAZNTFxtSP/lEtq+IVEgi7xb5SC5fTuCgRGWOZklTxs6VLur7bE
-zWfubPqGLzgKsXE7z4VN1I8IxOsnNsBhioB7Eo3gBos4vpc7JcH3ZrG9bMBwhWXg
-9yQnzbkekuUHZdiqgiPRIi/Hrmg/wXZ7f+j7/Hw9c+MpH4FADLSSNOCY7WrLeGSq
-FInUmtzJ6DuUKKFCTgOr
-=mSoI
------END PGP SIGNATURE-----
-
---pvezYHf7grwyp3Bc--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
