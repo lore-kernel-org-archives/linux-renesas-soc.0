@@ -1,42 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35993 "EHLO
-	mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752314AbcD0HOe (ORCPT
+Received: from sauhun.de ([89.238.76.85]:52209 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753738AbcDZU33 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 03:14:34 -0400
-MIME-Version: 1.0
-In-Reply-To: <1461702550-6773-1-git-send-email-wsa@the-dreams.de>
-References: <1461702550-6773-1-git-send-email-wsa@the-dreams.de>
-Date: Wed, 27 Apr 2016 09:14:33 +0200
-Message-ID: <CAMuHMdVMUAkvz2=zCSrbMTkD=a1RCSFnY5BNBdDGxuq-vm+a3A@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhi: remove obsolete support for sh7372
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
+	Tue, 26 Apr 2016 16:29:29 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-mmc@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
 	linux-renesas-soc@vger.kernel.org,
 	Ulf Hansson <ulf.hansson@linaro.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] mmc: sdhi: remove obsolete support for sh7372
+Date: Tue, 26 Apr 2016 22:29:10 +0200
+Message-Id: <1461702550-6773-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Apr 26, 2016 at 10:29 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> There is no support for this platform in the kernel anymore.
->
-> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+There is no support for this platform in the kernel anymore.
 
-Gr{oetje,eeting}s,
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/sh_mobile_sdhi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index e51d7b01d39a3b..0118d9621bebd0 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -77,7 +77,6 @@ static const struct sh_mobile_sdhi_of_data of_rcar_gen3_compatible = {
+ 
+ static const struct of_device_id sh_mobile_sdhi_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-shmobile" },
+-	{ .compatible = "renesas,sdhi-sh7372" },
+ 	{ .compatible = "renesas,sdhi-sh73a0", .data = &of_default_cfg, },
+ 	{ .compatible = "renesas,sdhi-r8a73a4", .data = &of_default_cfg, },
+ 	{ .compatible = "renesas,sdhi-r8a7740", .data = &of_default_cfg, },
+-- 
+2.7.0
