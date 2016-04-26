@@ -1,121 +1,89 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:51370 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752147AbcDZQx5 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 26 Apr 2016 12:53:57 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-mmc@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
 	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 06/12] arm64: dts: r8a7795: Add SYSC PM Domains
-Date: Wed, 13 Apr 2016 16:44:46 +0200
-Message-Id: <1460558692-10414-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460558692-10414-1-git-send-email-geert+renesas@glider.be>
-References: <1460558692-10414-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 2/5] mmc: tmio: use BIT() within defines
+Date: Tue, 26 Apr 2016 18:53:42 +0200
+Message-Id: <1461689625-3693-3-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1461689625-3693-1-git-send-email-wsa@the-dreams.de>
+References: <1461689625-3693-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the System Controller.
-Hook up the Cortex-A57 CPU cores and the Cortex-A57 and Cortex A53 L2
-caches/SCUs to their respective PM Domains.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+BIT() makes it easier to match the bits to the datasheet. This is
+especially important here, since some variants have different names in
+their datasheets (like with Renesas R-Car).
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v5:
-  - Remove "power-domains" property again from the sysc node, as the
-    System Controller itself is not part of the Clock Domain,
+ drivers/mmc/host/tmio_mmc.h | 44 +++++++++++++++++++++++---------------------
+ 1 file changed, 23 insertions(+), 21 deletions(-)
 
-v4:
-  - Add "power-domains" property to the sysc node, to refer to the SoC's
-    Clock Domain,
-  - Extract using "<&sysc R8A7795_PD_ALWAYS_ON>" for devices in the
-    always-on power area into a separate patch,
-
-v3:
-  - Drop power area hiearchy from DT,
-  - Switch to "#power-domain-cells = <1>",
-  - Use "<&sysc R8A7795_PD_ALWAYS_ON>" for devices in the always-on
-    power area,
-  - Drop fallback compatibility strings,
-
-v2:
-  - New.
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 11f9971a85433b7f..9c7424fc171fb876 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -10,6 +10,7 @@
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index e75e5ca220bc0a..74945c1a66ce81 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -49,27 +49,29 @@
+ #define CTL_RESET_SDIO 0x1e0
  
- #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/r8a7795-sysc.h>
- 
- / {
- 	compatible = "renesas,r8a7795";
-@@ -39,6 +40,7 @@
- 			compatible = "arm,cortex-a57", "arm,armv8";
- 			reg = <0x0>;
- 			device_type = "cpu";
-+			power-domains = <&sysc R8A7795_PD_CA57_CPU0>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -47,6 +49,7 @@
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x1>;
- 			device_type = "cpu";
-+			power-domains = <&sysc R8A7795_PD_CA57_CPU1>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -54,6 +57,7 @@
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x2>;
- 			device_type = "cpu";
-+			power-domains = <&sysc R8A7795_PD_CA57_CPU2>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -61,6 +65,7 @@
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x3>;
- 			device_type = "cpu";
-+			power-domains = <&sysc R8A7795_PD_CA57_CPU3>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -68,12 +73,14 @@
- 
- 	L2_CA57: cache-controller@0 {
- 		compatible = "cache";
-+		power-domains = <&sysc R8A7795_PD_CA57_SCU>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
- 
- 	L2_CA53: cache-controller@1 {
- 		compatible = "cache";
-+		power-domains = <&sysc R8A7795_PD_CA53_SCU>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
-@@ -305,6 +312,12 @@
- 			#power-domain-cells = <0>;
- 		};
- 
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a7795-sysc";
-+			reg = <0 0xe6180000 0 0x0400>;
-+			#power-domain-cells = <1>;
-+		};
+ /* Definitions for values the CTRL_STATUS register can take. */
+-#define TMIO_STAT_CMDRESPEND    0x00000001
+-#define TMIO_STAT_DATAEND       0x00000004
+-#define TMIO_STAT_CARD_REMOVE   0x00000008
+-#define TMIO_STAT_CARD_INSERT   0x00000010
+-#define TMIO_STAT_SIGSTATE      0x00000020
+-#define TMIO_STAT_WRPROTECT     0x00000080
+-#define TMIO_STAT_CARD_REMOVE_A 0x00000100
+-#define TMIO_STAT_CARD_INSERT_A 0x00000200
+-#define TMIO_STAT_SIGSTATE_A    0x00000400
+-#define TMIO_STAT_CMD_IDX_ERR   0x00010000
+-#define TMIO_STAT_CRCFAIL       0x00020000
+-#define TMIO_STAT_STOPBIT_ERR   0x00040000
+-#define TMIO_STAT_DATATIMEOUT   0x00080000
+-#define TMIO_STAT_RXOVERFLOW    0x00100000
+-#define TMIO_STAT_TXUNDERRUN    0x00200000
+-#define TMIO_STAT_CMDTIMEOUT    0x00400000
+-#define TMIO_STAT_RXRDY         0x01000000
+-#define TMIO_STAT_TXRQ          0x02000000
+-#define TMIO_STAT_ILL_FUNC      0x20000000
+-#define TMIO_STAT_CMD_BUSY      0x40000000
+-#define TMIO_STAT_ILL_ACCESS    0x80000000
++#define TMIO_STAT_CMDRESPEND    BIT(0)
++#define TMIO_STAT_DATAEND       BIT(2)
++#define TMIO_STAT_CARD_REMOVE   BIT(3)
++#define TMIO_STAT_CARD_INSERT   BIT(4)
++#define TMIO_STAT_SIGSTATE      BIT(5)
++#define TMIO_STAT_WRPROTECT     BIT(7)
++#define TMIO_STAT_CARD_REMOVE_A BIT(8)
++#define TMIO_STAT_CARD_INSERT_A BIT(9)
++#define TMIO_STAT_SIGSTATE_A    BIT(10)
 +
- 		audma0: dma-controller@ec700000 {
- 			compatible = "renesas,rcar-dmac";
- 			reg = <0 0xec700000 0 0x10000>;
++/* These belong technically to CTRL_STATUS2, but the driver merges them */
++#define TMIO_STAT_CMD_IDX_ERR   BIT(16)
++#define TMIO_STAT_CRCFAIL       BIT(17)
++#define TMIO_STAT_STOPBIT_ERR   BIT(18)
++#define TMIO_STAT_DATATIMEOUT   BIT(19)
++#define TMIO_STAT_RXOVERFLOW    BIT(20)
++#define TMIO_STAT_TXUNDERRUN    BIT(21)
++#define TMIO_STAT_CMDTIMEOUT    BIT(22)
++#define TMIO_STAT_RXRDY         BIT(24)
++#define TMIO_STAT_TXRQ          BIT(25)
++#define TMIO_STAT_ILL_FUNC      BIT(29)
++#define TMIO_STAT_CMD_BUSY      BIT(30)
++#define TMIO_STAT_ILL_ACCESS    BIT(31)
+ 
+ #define TMIO_STATUS2_DAT0	BIT(7)
+ 
 -- 
-1.9.1
-
+2.7.0
