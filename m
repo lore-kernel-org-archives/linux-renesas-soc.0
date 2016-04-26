@@ -1,65 +1,48 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH 01/13] dt-bindings: Add Renesas R-Car FCP DT bindings
-Date: Sun, 24 Apr 2016 02:49:48 +0300
-Message-Id: <1461455400-28767-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1461455400-28767-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1461455400-28767-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:51193 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752373AbcDZPzr (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 26 Apr 2016 11:55:47 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-mmc@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH V2 6/6] mmc: sh_mobile_sdhi: simplify code for voltage switching
+Date: Tue, 26 Apr 2016 17:55:27 +0200
+Message-Id: <1461686127-3217-7-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1461686127-3217-1-git-send-email-wsa@the-dreams.de>
+References: <1461686127-3217-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The FCP is a companion module of video processing modules in the Renesas
-R-Car Gen3 SoCs. It provides data compression and decompression, data
-caching, and conversion of AXI transaction in order to reduce the memory
-bandwidth.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+A last minute fix applied by Ulf made room for some simplification.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- .../devicetree/bindings/media/renesas,fcp.txt      | 31 ++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,fcp.txt
+ drivers/mmc/host/sh_mobile_sdhi.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Cc: devicetree@vger.kernel.org
-
-diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-new file mode 100644
-index 000000000000..46beec97d625
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-@@ -0,0 +1,31 @@
-+Renesas R-Car Frame Compression Processor (FCP)
-+-----------------------------------------------
-+
-+The FCP is a companion module of video processing modules in the Renesas R-Car
-+Gen3 SoCs. It provides data compression and decompression, data caching, and
-+conversion of AXI transaction in order to reduce the memory bandwidth.
-+
-+There are three types of FCP whose configuration and behaviour highly depend
-+on the module they are paired with.
-+
-+ - compatible: Must be one or more of the following
-+
-+   - "renesas,r8a7795-fcpv" for R8A7795 (R-Car H3) compatible 'FCP for VSP'
-+   - "renesas,fcpv" for generic compatible 'FCP for VSP'
-+
-+   When compatible with the generic version, nodes must list the
-+   SoC-specific version corresponding to the platform first, followed by the
-+   family-specific and/or generic versions.
-+
-+ - reg: the register base and size for the device registers
-+ - clocks: Reference to the functional clock
-+
-+
-+Device node example
-+-------------------
-+
-+	fcpvd1: fcp@fea2f000 {
-+		compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
-+		reg = <0 0xfea2f000 0 0x200>;
-+		clocks = <&cpg CPG_MOD 602>;
-+	};
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index 51d8dbd5b06a3e..b85b87eb55009f 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -237,11 +237,7 @@ static int sh_mobile_sdhi_start_signal_voltage_switch(struct mmc_host *mmc,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = pinctrl_select_state(priv->pinctrl, pin_state);
+-	if (ret)
+-		return ret;
+-
+-	return 0;
++	return pinctrl_select_state(priv->pinctrl, pin_state);
+ }
+ 
+ static int sh_mobile_sdhi_wait_idle(struct tmio_mmc_host *host)
 -- 
-2.7.3
-
+2.7.0
