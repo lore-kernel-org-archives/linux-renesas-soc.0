@@ -1,34 +1,54 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1460476853-3306-1-git-send-email-wsa@the-dreams.de>
-References: <1460476853-3306-1-git-send-email-wsa@the-dreams.de>
-Date: Fri, 15 Apr 2016 09:48:17 +0200
-Message-ID: <CACRpkdaUj5w3zkjWVf1GML3reeDnRpT8avOPkRB6_qFXB6EGjw@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: power: reset: move gpio-{poweroff|restart}
- to proper place
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Wolfram Sang <wsa@the-dreams.de>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:35384 "EHLO
+	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752004AbcDZHJr (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 26 Apr 2016 03:09:47 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/4] clk: renesas: cpg-mssr: Use always-on governor for Clock Domain
+Date: Tue, 26 Apr 2016 09:09:42 +0200
+Message-Id: <1461654582-668-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Apr 12, 2016 at 6:00 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+As a pure Clock Domain does not have the concept of powering the domain
+itself, the CPG/MSTP driver does not provide power_off() and power_on()
+callbacks.
+However, the genpd core may still perform a dummy power down, causing
+/sys/kernel/debug/pm_genpd/pm_genpd_summary to report the domain's
+status being "off-0".
 
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> I did only find them after a fuzzy search, so let them be where one
-> would expect them.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Use the always-on governor to make sure the domain is never powered
+down, and always shows up as "on" in pm_genpd_summary.
 
-I saw this the other day too I agree.
-Sebastian: are you OK that I move this by committing the patch to the GPIO tree?
-DT maintainers: OK?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 0d595311c659a741..210cd744a7a97bbd 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -495,7 +495,7 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+ 	genpd->flags = GENPD_FLAG_PM_CLK;
+ 	genpd->attach_dev = cpg_mssr_attach_dev;
+ 	genpd->detach_dev = cpg_mssr_detach_dev;
+-	pm_genpd_init(genpd, &simple_qos_governor, false);
++	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
+ 	cpg_mssr_clk_domain = pd;
+ 
+ 	of_genpd_add_provider_simple(np, genpd);
+-- 
+1.9.1
