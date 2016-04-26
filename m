@@ -1,148 +1,72 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:36884 "EHLO
+	mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752463AbcDZQZY (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 26 Apr 2016 12:25:24 -0400
+Received: by mail-wm0-f53.google.com with SMTP id n3so13458109wmn.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Apr 2016 09:25:23 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1461686127-3217-1-git-send-email-wsa@the-dreams.de>
+References: <1461686127-3217-1-git-send-email-wsa@the-dreams.de>
+Date: Tue, 26 Apr 2016 18:25:22 +0200
+Message-ID: <CAPDyKFqWYQCvM2Q__Km3R7AsUW=QAuaQ6CSD4ztmGt=ZSErhuA@mail.gmail.com>
+Subject: Re: [PATCH V2 0/6] mmc: tmio/sdhi: clean up cruft
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 02/12] ARM: dts: r8a7790: Add SYSC PM Domains
-Date: Thu,  7 Apr 2016 14:20:25 +0200
-Message-Id: <1460031635-13452-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
-References: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+	Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the System Controller, and hook it up to the
-CPG/MSTP Clock Domain.
-Hook up the Cortex-A15 and Cortex-A7 CPU cores and L2 caches/SCUs to
-their respective PM Domains.
+On 26 April 2016 at 17:55, Wolfram Sang <wsa@the-dreams.de> wrote:
+> Largely due to DT unification, some parts of the code became obsolete. Let's
+> remove that, the code is complex enough still:
+>
+> * There are no boards anymore with named interrupt support. Drop support for
+>   that (patches 2-4)
+> * No need anymore for a public mmc/tmio.h header file. Merge it into the
+>   private one (patch 5)
+>
+> Patches 1 and 6 are small cleanups found on the way :)
+>
+> Based on latest renesas-drivers which is based on v4.6-rc1 with my sdr50
+> patches on top. Tested on a Renesas Lager board and build bot is happy, too
+> (after finding some issues initially).
+>
+> Change since V1:
+>
+> * Drop a small cleanup touching SH board files, so we stay in the MMC realm.
+>   I will do this as a seperate patch so this series won't get delayed.
+>
+> Please test, comment, apply...
+>
+>    Wolfram
+>
+>
+> Wolfram Sang (6):
+>   mmc: sh_mobile_sdhi: don't use array for DT configs
+>   mmc: sh_mobile_sdhi: remove obsolete irq_by_name registration
+>   mmc: tmio: remove now unneeded seperate irq handlers
+>   mmc: tmio: simplify irq handler
+>   mmc: tmio: merge distributed include files
+>   mmc: sh_mobile_sdhi: simplify code for voltage switching
+>
+>  drivers/mmc/host/sh_mobile_sdhi.c | 75 ++++++++-------------------------------
+>  drivers/mmc/host/tmio_mmc.h       | 59 +++++++++++++++++++++++++++---
+>  drivers/mmc/host/tmio_mmc_dma.c   |  1 -
+>  drivers/mmc/host/tmio_mmc_pio.c   | 55 ++++++----------------------
+>  include/linux/mmc/tmio.h          | 73 -------------------------------------
+>  5 files changed, 79 insertions(+), 184 deletions(-)
+>  delete mode 100644 include/linux/mmc/tmio.h
+>
+> --
+> 2.7.0
+>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - Add power-domains property to the sysc node, to refer to the SoC's
-    Clock Domain,
+Thanks, applied for next!
 
-v3:
-  - Drop power area hiearchy from DT,
-  - Switch to "#power-domain-cells = <1>",
-  - Drop fallback compatibility strings,
-
-v2:
-  - Change one-line summary prefix to match current arm-soc practices,
-  - Update compatible values.
----
- arch/arm/boot/dts/r8a7790.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 50e8484511893572..952059a925650bea 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -13,6 +13,7 @@
- #include <dt-bindings/clock/r8a7790-clock.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/power/r8a7790-sysc.h>
- 
- / {
- 	compatible = "renesas,r8a7790";
-@@ -52,6 +53,7 @@
- 			voltage-tolerance = <1>; /* 1% */
- 			clocks = <&cpg_clocks R8A7790_CLK_Z>;
- 			clock-latency = <300000>; /* 300 us */
-+			power-domains = <&sysc R8A7790_PD_CA15_CPU0>;
- 			next-level-cache = <&L2_CA15>;
- 
- 			/* kHz - uV - OPPs unknown yet */
-@@ -68,6 +70,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
- 			clock-frequency = <1300000000>;
-+			power-domains = <&sysc R8A7790_PD_CA15_CPU1>;
- 			next-level-cache = <&L2_CA15>;
- 		};
- 
-@@ -76,6 +79,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <2>;
- 			clock-frequency = <1300000000>;
-+			power-domains = <&sysc R8A7790_PD_CA15_CPU2>;
- 			next-level-cache = <&L2_CA15>;
- 		};
- 
-@@ -84,6 +88,7 @@
- 			compatible = "arm,cortex-a15";
- 			reg = <3>;
- 			clock-frequency = <1300000000>;
-+			power-domains = <&sysc R8A7790_PD_CA15_CPU3>;
- 			next-level-cache = <&L2_CA15>;
- 		};
- 
-@@ -92,6 +97,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0x100>;
- 			clock-frequency = <780000000>;
-+			power-domains = <&sysc R8A7790_PD_CA7_CPU0>;
- 			next-level-cache = <&L2_CA7>;
- 		};
- 
-@@ -100,6 +106,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0x101>;
- 			clock-frequency = <780000000>;
-+			power-domains = <&sysc R8A7790_PD_CA7_CPU1>;
- 			next-level-cache = <&L2_CA7>;
- 		};
- 
-@@ -108,6 +115,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0x102>;
- 			clock-frequency = <780000000>;
-+			power-domains = <&sysc R8A7790_PD_CA7_CPU2>;
- 			next-level-cache = <&L2_CA7>;
- 		};
- 
-@@ -116,6 +124,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0x103>;
- 			clock-frequency = <780000000>;
-+			power-domains = <&sysc R8A7790_PD_CA7_CPU3>;
- 			next-level-cache = <&L2_CA7>;
- 		};
- 	};
-@@ -141,12 +150,14 @@
- 
- 	L2_CA15: cache-controller@0 {
- 		compatible = "cache";
-+		power-domains = <&sysc R8A7790_PD_CA15_SCU>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
- 
- 	L2_CA7: cache-controller@1 {
- 		compatible = "cache";
-+		power-domains = <&sysc R8A7790_PD_CA7_SCU>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
-@@ -1471,6 +1482,13 @@
- 		};
- 	};
- 
-+	sysc: system-controller@e6180000 {
-+		compatible = "renesas,r8a7790-sysc";
-+		reg = <0 0xe6180000 0 0x0200>;
-+		power-domains = <&cpg_clocks>;
-+		#power-domain-cells = <1>;
-+	};
-+
- 	qspi: spi@e6b10000 {
- 		compatible = "renesas,qspi-r8a7790", "renesas,qspi";
- 		reg = <0 0xe6b10000 0 0x2c>;
--- 
-1.9.1
-
+Kind regards
+Uffe
