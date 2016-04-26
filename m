@@ -1,65 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:37719 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751165AbcDZHch (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:36480 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751195AbcDZHJp (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 03:32:37 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Tue, 26 Apr 2016 03:09:45 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
 	Kevin Hilman <khilman@kernel.org>,
 	Ulf Hansson <ulf.hansson@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/4] clk: renesas: Clock Domain fixes
-Date: Tue, 26 Apr 2016 10:33 +0300
-Message-ID: <1849807.IPH4zQTRa3@avalon>
-In-Reply-To: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
-References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/4] clk: renesas: Clock Domain fixes
+Date: Tue, 26 Apr 2016 09:09:38 +0200
+Message-Id: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+	Hi Mike, Stephen,
 
-Thank you for the patches.
+This patch series contains fixes for the Renesas CPG/MSTP and CPG/MSSR
+Clock Domains:
+  1. Postpone calls to pm_genpd_init(), as all local setup of the
+     generic_pm_domain structure should have been completed before
+     calling pm_genpd_init(),
+  2. Use always-on governor for Clock Domains, to prevent their status
+     from being shown as "off-0" in
+     /sys/kernel/debug/pm_genpd/pm_genpd_summary.
 
-For the whole series,
+I plan to queue these up with other clock updates in
+clk-renesas-for-v4.7, and send a pull request later.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Thanks for your comments!
 
-On Tuesday 26 Apr 2016 09:09:38 Geert Uytterhoeven wrote:
-> 	Hi Mike, Stephen,
-> 
-> This patch series contains fixes for the Renesas CPG/MSTP and CPG/MSSR
-> Clock Domains:
->   1. Postpone calls to pm_genpd_init(), as all local setup of the
->      generic_pm_domain structure should have been completed before
->      calling pm_genpd_init(),
->   2. Use always-on governor for Clock Domains, to prevent their status
->      from being shown as "off-0" in
->      /sys/kernel/debug/pm_genpd/pm_genpd_summary.
-> 
-> I plan to queue these up with other clock updates in
-> clk-renesas-for-v4.7, and send a pull request later.
-> 
-> Thanks for your comments!
-> 
-> Geert Uytterhoeven (4):
->   clk: renesas: mstp: Postpone call to pm_genpd_init()
->   clk: renesas: mstp: Use always-on governor for Clock Domain
->   clk: renesas: cpg-mssr: Postpone call to pm_genpd_init()
->   clk: renesas: cpg-mssr: Use always-on governor for Clock Domain
-> 
->  drivers/clk/renesas/clk-mstp.c         | 3 +--
->  drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
->  2 files changed, 2 insertions(+), 3 deletions(-)
+Geert Uytterhoeven (4):
+  clk: renesas: mstp: Postpone call to pm_genpd_init()
+  clk: renesas: mstp: Use always-on governor for Clock Domain
+  clk: renesas: cpg-mssr: Postpone call to pm_genpd_init()
+  clk: renesas: cpg-mssr: Use always-on governor for Clock Domain
+
+ drivers/clk/renesas/clk-mstp.c         | 3 +--
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
 -- 
-Regards,
+1.9.1
 
-Laurent Pinchart
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
