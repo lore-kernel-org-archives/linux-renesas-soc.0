@@ -1,65 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41865 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750811AbcD0EUS (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:33988 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751215AbcDZHJp (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 00:20:18 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM64 Based SoC DT PM Domain Updates for v4.7
-Date: Wed, 27 Apr 2016 14:20:10 +1000
-Message-Id: <cover.1461730364.git.horms+renesas@verge.net.au>
+	Tue, 26 Apr 2016 03:09:45 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/4] clk: renesas: mstp: Postpone call to pm_genpd_init()
+Date: Tue, 26 Apr 2016 09:09:39 +0200
+Message-Id: <1461654582-668-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+All local setup of the generic_pm_domain structure should have been
+completed before calling pm_genpd_init().
 
-Please consider these Renesas ARM64 based SoC DT PM Domain updates for v4.7.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/clk-mstp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-This pull requests is based on a merge of:
-
-* "[GIT PULL] Second Round of Renesas ARM Based SoC R-Car SYSC Updates for
-  v4.7", tagged as renesas-rcar-sysc2-for-v4.7, which you have already
-  pulled
-* "[GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v4.7",
-  tagged as renesas-arm64-dt2-for-v4.7, which I have sent a pull request
-  for.
-
-The reason for the somewhat tedious base on
-renesas-rcar-sysc2-for-v4.7, which provides driver changes,
-is a hard run-time dependency.
-
-I also have a similar set of changes for ARM (32-bit) which I will send
-separately.
-
-
-The following changes since commit 3238ec7c0a821915f38095752de97a424fd1d6ce:
-
-  Merge tag 'renesas-rcar-sysc2-for-v4.7' into arm64-dt-pm-domain-for-v4.7 (2016-04-27 11:49:19 +1000)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt-pm-domain-for-v4.7
-
-for you to fetch changes up to 38dbb45ee4bc7dda4aabba2178eebff2f93380d1:
-
-  arm64: dts: r8a7795: Use SYSC "always-on" PM Domain (2016-04-27 14:10:41 +1000)
-
-----------------------------------------------------------------
-Renesas ARM64 Based SoC DT PM Domain Updates for v4.7
-
-* Add SYSC PM Domains to DT of r8a7795 SoC
-
-----------------------------------------------------------------
-Geert Uytterhoeven (2):
-      arm64: dts: r8a7795: Add SYSC PM Domains
-      arm64: dts: r8a7795: Use SYSC "always-on" PM Domain
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 123 +++++++++++++++++--------------
- 1 file changed, 68 insertions(+), 55 deletions(-)
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 8b597b9a380442e8..969fbb61ab07b9b8 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -316,11 +316,10 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
+ 		return;
+ 
+ 	pd->name = np->name;
+-
+ 	pd->flags = GENPD_FLAG_PM_CLK;
+-	pm_genpd_init(pd, &simple_qos_governor, false);
+ 	pd->attach_dev = cpg_mstp_attach_dev;
+ 	pd->detach_dev = cpg_mstp_detach_dev;
++	pm_genpd_init(pd, &simple_qos_governor, false);
+ 
+ 	of_genpd_add_provider_simple(np, pd);
+ }
+-- 
+1.9.1
