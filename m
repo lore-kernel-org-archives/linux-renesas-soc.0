@@ -1,46 +1,132 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:36407 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932497AbcDYOIk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52474 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751886AbcDZB3G (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 10:08:40 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/6] ARM: dts: r8a7779: Don't disable referenced optional clocks
-Date: Mon, 25 Apr 2016 16:08:32 +0200
-Message-Id: <1461593315-21307-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461593315-21307-1-git-send-email-geert+renesas@glider.be>
-References: <1461593315-21307-1-git-send-email-geert+renesas@glider.be>
+	Mon, 25 Apr 2016 21:29:06 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 11/11] soc: renesas: rcar-sysc: Add support for R-Car H3 power areas
+Date: Tue, 26 Apr 2016 11:28:46 +1000
+Message-Id: <23f1e2ecdecee9f2ec45de0a468b82bb1f7f3ca2.1461632180.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461632180.git.horms+renesas@verge.net.au>
+References: <cover.1461632180.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-clk_get() on a disabled clock node will return -EPROBE_DEFER, which can
-cause drivers to be deferred forever if such clocks are referenced in
-their devices' clocks properties.
-
-Update the various disabled external clock nodes to default to a
-frequency of 0, but don't disable them, to prevent this.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7779.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/soc/renesas/Makefile       |  1 +
+ drivers/soc/renesas/r8a7795-sysc.c | 56 ++++++++++++++++++++++++++++++++++++++
+ drivers/soc/renesas/rcar-sysc.c    |  3 ++
+ drivers/soc/renesas/rcar-sysc.h    |  1 +
+ 4 files changed, 61 insertions(+)
+ create mode 100644 drivers/soc/renesas/r8a7795-sysc.c
 
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index d43e3b2105aef7dc..b9bbcce69dfbd5b9 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -462,7 +462,6 @@
- 			#clock-cells = <0>;
- 			/* This value must be overridden by the board. */
- 			clock-frequency = <0>;
--			status = "disabled";
- 		};
+diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+index b328205fef36..151fcd3f025b 100644
+--- a/drivers/soc/renesas/Makefile
++++ b/drivers/soc/renesas/Makefile
+@@ -4,3 +4,4 @@ obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
+ # R-Car M2-N is identical to R-Car M2-W w.r.t. power domains.
+ obj-$(CONFIG_ARCH_R8A7793)	+= rcar-sysc.o r8a7791-sysc.o
+ obj-$(CONFIG_ARCH_R8A7794)	+= rcar-sysc.o r8a7794-sysc.o
++obj-$(CONFIG_ARCH_R8A7795)	+= rcar-sysc.o r8a7795-sysc.o
+diff --git a/drivers/soc/renesas/r8a7795-sysc.c b/drivers/soc/renesas/r8a7795-sysc.c
+new file mode 100644
+index 000000000000..5e7537c96f7b
+--- /dev/null
++++ b/drivers/soc/renesas/r8a7795-sysc.c
+@@ -0,0 +1,56 @@
++/*
++ * Renesas R-Car H3 System Controller
++ *
++ * Copyright (C) 2016 Glider bvba
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
++
++#include <linux/bug.h>
++#include <linux/kernel.h>
++
++#include <dt-bindings/power/r8a7795-sysc.h>
++
++#include "rcar-sysc.h"
++
++static const struct rcar_sysc_area r8a7795_areas[] __initconst = {
++	{ "always-on",	    0, 0, R8A7795_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
++	{ "ca57-scu",	0x1c0, 0, R8A7795_PD_CA57_SCU,	R8A7795_PD_ALWAYS_ON,
++	  PD_SCU },
++	{ "ca57-cpu0",	 0x80, 0, R8A7795_PD_CA57_CPU0,	R8A7795_PD_CA57_SCU,
++	  PD_CPU_NOCR },
++	{ "ca57-cpu1",	 0x80, 1, R8A7795_PD_CA57_CPU1,	R8A7795_PD_CA57_SCU,
++	  PD_CPU_NOCR },
++	{ "ca57-cpu2",	 0x80, 2, R8A7795_PD_CA57_CPU2,	R8A7795_PD_CA57_SCU,
++	  PD_CPU_NOCR },
++	{ "ca57-cpu3",	 0x80, 3, R8A7795_PD_CA57_CPU3,	R8A7795_PD_CA57_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-scu",	0x140, 0, R8A7795_PD_CA53_SCU,	R8A7795_PD_ALWAYS_ON,
++	  PD_SCU },
++	{ "ca53-cpu0",	0x200, 0, R8A7795_PD_CA53_CPU0,	R8A7795_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-cpu1",	0x200, 1, R8A7795_PD_CA53_CPU1,	R8A7795_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-cpu2",	0x200, 2, R8A7795_PD_CA53_CPU2,	R8A7795_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-cpu3",	0x200, 3, R8A7795_PD_CA53_CPU3,	R8A7795_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "a3vp",	0x340, 0, R8A7795_PD_A3VP,	R8A7795_PD_ALWAYS_ON },
++	{ "cr7",	0x240, 0, R8A7795_PD_CR7,	R8A7795_PD_ALWAYS_ON },
++	{ "a3vc",	0x380, 0, R8A7795_PD_A3VC,	R8A7795_PD_ALWAYS_ON },
++	{ "a2vc0",	0x3c0, 0, R8A7795_PD_A2VC0,	R8A7795_PD_A3VC },
++	{ "a2vc1",	0x3c0, 1, R8A7795_PD_A2VC1,	R8A7795_PD_A3VC },
++	{ "3dg-a",	0x100, 0, R8A7795_PD_3DG_A,	R8A7795_PD_ALWAYS_ON },
++	{ "3dg-b",	0x100, 1, R8A7795_PD_3DG_B,	R8A7795_PD_3DG_A },
++	{ "3dg-c",	0x100, 2, R8A7795_PD_3DG_C,	R8A7795_PD_3DG_B },
++	{ "3dg-d",	0x100, 3, R8A7795_PD_3DG_D,	R8A7795_PD_3DG_C },
++	{ "3dg-e",	0x100, 4, R8A7795_PD_3DG_E,	R8A7795_PD_3DG_D },
++	{ "a3ir",	0x180, 0, R8A7795_PD_A3IR,	R8A7795_PD_ALWAYS_ON },
++};
++
++const struct rcar_sysc_info r8a7795_sysc_info __initconst = {
++	.areas = r8a7795_areas,
++	.num_areas = ARRAY_SIZE(r8a7795_areas),
++};
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index e2cd99027303..79dbc770895f 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -300,6 +300,9 @@ static const struct of_device_id rcar_sysc_matches[] = {
+ #ifdef CONFIG_ARCH_R8A7794
+ 	{ .compatible = "renesas,r8a7794-sysc", .data = &r8a7794_sysc_info },
+ #endif
++#ifdef CONFIG_ARCH_R8A7795
++	{ .compatible = "renesas,r8a7795-sysc", .data = &r8a7795_sysc_info },
++#endif
+ 	{ /* sentinel */ }
+ };
  
- 		/* Special CPG clocks */
+diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
+index d64258cfaa20..5e766174c2f4 100644
+--- a/drivers/soc/renesas/rcar-sysc.h
++++ b/drivers/soc/renesas/rcar-sysc.h
+@@ -54,4 +54,5 @@ extern const struct rcar_sysc_info r8a7779_sysc_info;
+ extern const struct rcar_sysc_info r8a7790_sysc_info;
+ extern const struct rcar_sysc_info r8a7791_sysc_info;
+ extern const struct rcar_sysc_info r8a7794_sysc_info;
++extern const struct rcar_sysc_info r8a7795_sysc_info;
+ #endif /* __SOC_RENESAS_RCAR_SYSC_H__ */
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
