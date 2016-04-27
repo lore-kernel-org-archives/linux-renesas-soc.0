@@ -1,116 +1,106 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 1/7] PM / Domains: Add DT bindings for the R-Car System Controller
-Date: Wed, 13 Apr 2016 16:44:17 +0200
-Message-Id: <1460558663-10197-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460558663-10197-1-git-send-email-geert+renesas@glider.be>
-References: <1460558663-10197-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:41654 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750777AbcD0EGw (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 27 Apr 2016 00:06:52 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Phil Edworthy <Phil.Edworthy@renesas.com>,
+	Phil Edworthy <phil.edworthy@renesas.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/4] arm64: dts: r8a7795: Add PCIe nodes
+Date: Wed, 27 Apr 2016 14:06:43 +1000
+Message-Id: <9251024a6a148abd628785d53e3b7a42e8217cc9.1461723181.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461723181.git.horms+renesas@verge.net.au>
+References: <cover.1461723181.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas R-Car System Controller provides power management for the
-CPU cores and various coprocessors, following the generic PM domain
-bindings in Documentation/devicetree/bindings/power/power_domain.txt.
+From: Phil Edworthy <Phil.Edworthy@renesas.com>
 
-This supports R-Car Gen1 (H1), Gen2, and Gen3.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v5:
-  - Remove power-domains property from the sysc node again, as the
-    System Controller itself is not part of the Clock Domain,
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 57 ++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
-v4:
-  - Add Reviewed-by, Acked-by,
-  - Compatible value must contain "exactly one" instead of "one or
-    more",
-  - Add power-domains property to refer to the SoC's Clock Domain,
-
-v3:
-  - Move power area hierarchy from DT to C (cfr. DT bindings for Renesas
-    CPG/MSSR), and switch to "#power-domain-cells = <1>",
-  - Drop fallback compatibility strings, as the bindings are
-    SoC-specific,
-  - Rename from renesas,sysc-rcar.txt to renesas,rcar-sysc.txt,
-
-v2:
-  - Add R-Car H3 (r8a7795) support,
-  - Use "renesas,<type>-sysc" instead of "renesas,sysc-<type>",
-  - Add fallback compatibility strings for R-Car Gen2 and Gen3.
----
- .../bindings/power/renesas,rcar-sysc.txt           | 48 ++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-
-diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-new file mode 100644
-index 0000000000000000..b74e4d4785ab2d60
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-@@ -0,0 +1,48 @@
-+DT bindings for the Renesas R-Car System Controller
-+
-+== System Controller Node ==
-+
-+The R-Car System Controller provides power management for the CPU cores and
-+various coprocessors.
-+
-+Required properties:
-+  - compatible: Must contain exactly one of the following:
-+      - "renesas,r8a7779-sysc" (R-Car H1)
-+      - "renesas,r8a7790-sysc" (R-Car H2)
-+      - "renesas,r8a7791-sysc" (R-Car M2-W)
-+      - "renesas,r8a7792-sysc" (R-Car V2H)
-+      - "renesas,r8a7793-sysc" (R-Car M2-N)
-+      - "renesas,r8a7794-sysc" (R-Car E2)
-+      - "renesas,r8a7795-sysc" (R-Car H3)
-+  - reg: Address start and address range for the device.
-+  - #power-domain-cells: Must be 1.
-+
-+
-+Example:
-+
-+	sysc: system-controller@e6180000 {
-+		compatible = "renesas,r8a7791-sysc";
-+		reg = <0 0xe6180000 0 0x0200>;
-+		#power-domain-cells = <1>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 868c10eaea48..11f9971a8543 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -131,6 +131,14 @@
+ 		status = "disabled";
+ 	};
+ 
++	/* External PCIe clock - can be overridden by the board */
++	pcie_bus_clk: pcie_bus {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <100000000>;
++		status = "disabled";
 +	};
 +
+ 	soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&gic>;
+@@ -1156,5 +1164,54 @@
+ 			power-domains = <&cpg>;
+ 			status = "disabled";
+ 		};
++		pciec0: pcie@fe000000 {
++			compatible = "renesas,pcie-r8a7795";
++			reg = <0 0xfe000000 0 0x80000>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			bus-range = <0x00 0xff>;
++			device_type = "pci";
++			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000
++				0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000
++				0x02000000 0 0x30000000 0 0x30000000 0 0x08000000
++				0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
++			/* Map all possible DDR as inbound ranges */
++			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x40000000>;
++			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0>;
++			interrupt-map = <0 0 0 0 &gic GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 319>, <&pcie_bus_clk>;
++			clock-names = "pcie", "pcie_bus";
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
 +
-+== PM Domain Consumers ==
-+
-+Devices residing in a power area must refer to that power area, as documented
-+by the generic PM domain bindings in
-+Documentation/devicetree/bindings/power/power_domain.txt.
-+
-+Required properties:
-+  - power-domains: A phandle and symbolic PM domain specifier, as defined in
-+		   <dt-bindings/power/r8a77*-sysc.h>.
-+
-+
-+Example:
-+
-+	L2_CA15: cache-controller@0 {
-+		compatible = "cache";
-+		power-domains = <&sysc R8A7791_PD_CA15_SCU>;
-+		cache-unified;
-+		cache-level = <2>;
-+	};
++		pciec1: pcie@ee800000 {
++			compatible = "renesas,pcie-r8a7795";
++			reg = <0 0xee800000 0 0x80000>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			bus-range = <0x00 0xff>;
++			device_type = "pci";
++			ranges = <0x01000000 0 0x00000000 0 0xee900000 0 0x00100000
++				0x02000000 0 0xeea00000 0 0xeea00000 0 0x00200000
++				0x02000000 0 0xc0000000 0 0xc0000000 0 0x08000000
++				0x42000000 0 0xc8000000 0 0xc8000000 0 0x08000000>;
++			/* Map all possible DDR as inbound ranges */
++			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x40000000>;
++			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0>;
++			interrupt-map = <0 0 0 0 &gic GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 318>, <&pcie_bus_clk>;
++			clock-names = "pcie", "pcie_bus";
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
+ 	};
+ };
 -- 
-1.9.1
-
+2.7.0.rc3.207.g0ac5344
