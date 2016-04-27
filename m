@@ -1,62 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:37542 "EHLO
-	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753850AbcD2M6t (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60436 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752615AbcD0XIV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 29 Apr 2016 08:58:49 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Peter Hurley <peter@hurleysoftware.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 03/11] serial: sh-sci: Always set TIOCM_CTS in .get_mctrl() callback
-Date: Fri, 29 Apr 2016 14:58:26 +0200
-Message-Id: <1461934714-18681-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
-References: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+	Wed, 27 Apr 2016 19:08:21 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/5] ARM: dts: r8a7794: Don't disable referenced optional clocks
+Date: Thu, 28 Apr 2016 09:08:12 +1000
+Message-Id: <c9006ac628ca30dd0d06dad47677d338e243bb95.1461798352.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461798352.git.horms+renesas@verge.net.au>
+References: <cover.1461798352.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Documentation/serial/driver clearly states:
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-    If the port does not support CTS, DCD or DSR, the driver should
-    indicate that the signal is permanently active.
+clk_get() on a disabled clock node will return -EPROBE_DEFER, which can
+cause drivers to be deferred forever if such clocks are referenced in
+their devices' clocks properties.
 
-Hence always set TIOCM_CTS, as we currently don't look at the CTS
-hardware line state at all.
-
-FWIW, this fixes the transmit path when hardware-assisted flow control
-is enabled, and userspace enables CRTSCTS.
-The receive path is still broken, as RTS is never asserted.
+Update the various disabled external clock nodes to default to a
+frequency of 0, but don't disable them, to prevent this.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v2:
-  - Drop RFC status.
----
- drivers/tty/serial/sh-sci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7794.dtsi | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 0130feb069aee02f..135f836642ab1c5a 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1835,9 +1835,9 @@ static unsigned int sci_get_mctrl(struct uart_port *port)
- {
- 	/*
- 	 * CTS/RTS is handled in hardware when supported, while nothing
--	 * else is wired up. Keep it simple and simply assert DSR/CAR.
-+	 * else is wired up. Keep it simple and simply assert CTS/DSR/CAR.
- 	 */
--	return TIOCM_DSR | TIOCM_CAR;
-+	return TIOCM_CTS | TIOCM_DSR | TIOCM_CAR;
- }
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index b0bce43779f1..e45b23f31149 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -906,7 +906,6 @@
+ 			#clock-cells = <0>;
+ 			/* This value must be overridden by the board. */
+ 			clock-frequency = <0>;
+-			status = "disabled";
+ 		};
  
- static void sci_break_ctl(struct uart_port *port, int break_state)
+ 		/* External SCIF clock */
+@@ -915,7 +914,6 @@
+ 			#clock-cells = <0>;
+ 			/* This value must be overridden by the board. */
+ 			clock-frequency = <0>;
+-			status = "disabled";
+ 		};
+ 
+ 		/* Special CPG clocks */
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
