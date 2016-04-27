@@ -1,36 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.134]:54664 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965020AbcDYWMg (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41953 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750988AbcD0EUs (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 18:12:36 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Simon Horman <horms+renesas@verge.net.au>, arm@kernel.org,
-	Kevin Hilman <khilman@linaro.org>,
+	Wed, 27 Apr 2016 00:20:48 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Renesas ARM Based SoC Updates for v4.7
-Date: Tue, 26 Apr 2016 00:11:56 +0200
-Message-ID: <12649990.tBpM10TC8u@wuerfel>
-In-Reply-To: <cover.1461542941.git.horms+renesas@verge.net.au>
-References: <cover.1461542941.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/10] ARM: dts: r8a7793: Add SYSC PM Domains
+Date: Wed, 27 Apr 2016 14:20:31 +1000
+Message-Id: <a7ede1abeefd69330c5dd45b335d22af1e2baf2e.1461730638.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461730638.git.horms+renesas@verge.net.au>
+References: <cover.1461730638.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Monday 25 April 2016 14:08:11 Simon Horman wrote:
-> This pull request is based on "[GIT PULL v2] Renesas ARM Based SoC Fixes
-> for v4.6", tagged as renesas-fixes-for-v4.6, which I have previously sent
-> a pull request for.
-> 
-> The reason is that this series depends on c531fb27e969 ("ARM: shmobile:
-> timer: Fix preset_lpj leading to too short delays")
-> 
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Pulled into next/soc. I think I have everything you sent us so far now, but
-please check yourself, thanks!
+Add a device node for the System Controller.
+Hook up the first Cortex-A15 CPU core and the Cortex-A15 L2 cache/SCU to
+their respective PM Domains.
 
-	Arnd
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7793.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 6186179fd66d..53e235e3279d 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -11,6 +11,7 @@
+ #include <dt-bindings/clock/r8a7793-clock.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/power/r8a7793-sysc.h>
+ 
+ / {
+ 	compatible = "renesas,r8a7793";
+@@ -43,6 +44,7 @@
+ 			voltage-tolerance = <1>; /* 1% */
+ 			clocks = <&cpg_clocks R8A7793_CLK_Z>;
+ 			clock-latency = <300000>; /* 300 us */
++			power-domains = <&sysc R8A7793_PD_CA15_CPU0>;
+ 
+ 			/* kHz - uV - OPPs unknown yet */
+ 			operating-points = <1500000 1000000>,
+@@ -76,6 +78,7 @@
+ 
+ 	L2_CA15: cache-controller@0 {
+ 		compatible = "cache";
++		power-domains = <&sysc R8A7793_PD_CA15_SCU>;
+ 		cache-unified;
+ 		cache-level = <2>;
+ 	};
+@@ -1223,6 +1226,12 @@
+ 		};
+ 	};
+ 
++	sysc: system-controller@e6180000 {
++		compatible = "renesas,r8a7793-sysc";
++		reg = <0 0xe6180000 0 0x0200>;
++		#power-domain-cells = <1>;
++	};
++
+ 	ipmmu_sy0: mmu@e6280000 {
+ 		compatible = "renesas,ipmmu-r8a7793", "renesas,ipmmu-vmsa";
+ 		reg = <0 0xe6280000 0 0x1000>;
+-- 
+2.7.0.rc3.207.g0ac5344
