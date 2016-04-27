@@ -1,348 +1,498 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52474 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:41953 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750874AbcDZB2z (ORCPT
+	with ESMTP id S1750988AbcD0EUz (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 21:28:55 -0400
+	Wed, 27 Apr 2016 00:20:55 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/11] soc: renesas: rcar-sysc: Add DT support for SYSC PM domains
-Date: Tue, 26 Apr 2016 11:28:38 +1000
-Message-Id: <dcc09fd143bb97c2e83e443f7343c07aa0a9a6c0.1461632180.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461632180.git.horms+renesas@verge.net.au>
-References: <cover.1461632180.git.horms+renesas@verge.net.au>
+Subject: [PATCH 09/10] ARM: dts: r8a7793: Use SYSC "always-on" PM Domain
+Date: Wed, 27 Apr 2016 14:20:36 +1000
+Message-Id: <f1ba73eae71fde882dcb6ca5fa61f1b3bffb7e3e.1461730638.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461730638.git.horms+renesas@verge.net.au>
+References: <cover.1461730638.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Populate the SYSC PM domains from DT, based on the presence of a device
-node for the System Controller. The actual power area hiearchy, and
-features of specific areas are obtained from tables in the C code.
-
-The SYSCIER and SYSCIMR register values are derived from the power areas
-present, which will help to get rid of the hardcoded values in R-Car H1
-and R-Car Gen2 platform code later.
-
-Initialization is done from an early_initcall(), to make sure the PM
-Domains are initialized before secondary CPU bringup.
+Hook up all devices that are part of the CPG/MSTP Clock Domain to the
+SYSC "always-on" PM Domain, for a more consistent device-power-area
+description in DT.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/soc/renesas/rcar-sysc.c | 202 +++++++++++++++++++++++++++++++++++++++-
- drivers/soc/renesas/rcar-sysc.h |  53 +++++++++++
- 2 files changed, 254 insertions(+), 1 deletion(-)
- create mode 100644 drivers/soc/renesas/rcar-sysc.h
+ arch/arm/boot/dts/r8a7793.dtsi | 102 ++++++++++++++++++++---------------------
+ 1 file changed, 51 insertions(+), 51 deletions(-)
 
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 9ba5fd15c53b..95f2b59cbd76 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -2,6 +2,7 @@
-  * R-Car SYSC Power management support
-  *
-  * Copyright (C) 2014  Magnus Damm
-+ * Copyright (C) 2015-2016 Glider bvba
-  *
-  * This file is subject to the terms and conditions of the GNU General Public
-  * License.  See the file "COPYING" in the main directory of this archive
-@@ -11,10 +12,15 @@
- #include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/mm.h>
-+#include <linux/of_address.h>
-+#include <linux/pm_domain.h>
-+#include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/io.h>
- #include <linux/soc/renesas/rcar-sysc.h>
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 53e235e3279d..2abf2e489699 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -105,7 +105,7 @@
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+ 		clocks = <&mstp9_clks R8A7793_CLK_GPIO0>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
  
-+#include "rcar-sysc.h"
-+
- /* SYSC Common */
- #define SYSCSR			0x00	/* SYSC Status Register */
- #define SYSCISR			0x04	/* Interrupt Status Register */
-@@ -29,7 +35,8 @@
- /*
-  * Power Control Register Offsets inside the register block for each domain
-  * Note: The "CR" registers for ARM cores exist on H1 only
-- *       Use WFI to power off, CPG/APMU to resume ARM cores on R-Car Gen2
-+ *	 Use WFI to power off, CPG/APMU to resume ARM cores on R-Car Gen2
-+ *	 Use PSCI on R-Car Gen3
-  */
- #define PWRSR_OFFS		0x00	/* Power Status Register */
- #define PWROFFCR_OFFS		0x04	/* Power Shutoff Control Register */
-@@ -48,6 +55,8 @@
- #define SYSCISR_RETRIES		1000
- #define SYSCISR_DELAY_US	1
+ 	gpio1: gpio@e6051000 {
+@@ -118,7 +118,7 @@
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+ 		clocks = <&mstp9_clks R8A7793_CLK_GPIO1>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
  
-+#define RCAR_PD_ALWAYS_ON	32	/* Always-on power area */
-+
- static void __iomem *rcar_sysc_base;
- static DEFINE_SPINLOCK(rcar_sysc_lock); /* SMP CPUs + I/O devices */
+ 	gpio2: gpio@e6052000 {
+@@ -131,7 +131,7 @@
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+ 		clocks = <&mstp9_clks R8A7793_CLK_GPIO2>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
  
-@@ -162,3 +171,194 @@ void __iomem *rcar_sysc_init(phys_addr_t base)
+ 	gpio3: gpio@e6053000 {
+@@ -144,7 +144,7 @@
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+ 		clocks = <&mstp9_clks R8A7793_CLK_GPIO3>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
  
- 	return rcar_sysc_base;
- }
-+
-+struct rcar_sysc_pd {
-+	struct generic_pm_domain genpd;
-+	struct rcar_sysc_ch ch;
-+	unsigned int flags;
-+	char name[0];
-+};
-+
-+static inline struct rcar_sysc_pd *to_rcar_pd(struct generic_pm_domain *d)
-+{
-+	return container_of(d, struct rcar_sysc_pd, genpd);
-+}
-+
-+static int rcar_sysc_pd_power_off(struct generic_pm_domain *genpd)
-+{
-+	struct rcar_sysc_pd *pd = to_rcar_pd(genpd);
-+
-+	pr_debug("%s: %s\n", __func__, genpd->name);
-+
-+	if (pd->flags & PD_NO_CR) {
-+		pr_debug("%s: Cannot control %s\n", __func__, genpd->name);
-+		return -EBUSY;
-+	}
-+
-+	if (pd->flags & PD_BUSY) {
-+		pr_debug("%s: %s busy\n", __func__, genpd->name);
-+		return -EBUSY;
-+	}
-+
-+	return rcar_sysc_power_down(&pd->ch);
-+}
-+
-+static int rcar_sysc_pd_power_on(struct generic_pm_domain *genpd)
-+{
-+	struct rcar_sysc_pd *pd = to_rcar_pd(genpd);
-+
-+	pr_debug("%s: %s\n", __func__, genpd->name);
-+
-+	if (pd->flags & PD_NO_CR) {
-+		pr_debug("%s: Cannot control %s\n", __func__, genpd->name);
-+		return 0;
-+	}
-+
-+	return rcar_sysc_power_up(&pd->ch);
-+}
-+
-+static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
-+{
-+	struct generic_pm_domain *genpd = &pd->genpd;
-+	const char *name = pd->genpd.name;
-+	struct dev_power_governor *gov = &simple_qos_governor;
-+
-+	if (pd->flags & PD_CPU) {
-+		/*
-+		 * This domain contains a CPU core and therefore it should
-+		 * only be turned off if the CPU is not in use.
-+		 */
-+		pr_debug("PM domain %s contains %s\n", name, "CPU");
-+		pd->flags |= PD_BUSY;
-+		gov = &pm_domain_always_on_gov;
-+	} else if (pd->flags & PD_SCU) {
-+		/*
-+		 * This domain contains an SCU and cache-controller, and
-+		 * therefore it should only be turned off if the CPU cores are
-+		 * not in use.
-+		 */
-+		pr_debug("PM domain %s contains %s\n", name, "SCU");
-+		pd->flags |= PD_BUSY;
-+		gov = &pm_domain_always_on_gov;
-+	} else if (pd->flags & PD_NO_CR) {
-+		/*
-+		 * This domain cannot be turned off.
-+		 */
-+		pd->flags |= PD_BUSY;
-+		gov = &pm_domain_always_on_gov;
-+	}
-+
-+	genpd->power_off = rcar_sysc_pd_power_off;
-+	genpd->power_on = rcar_sysc_pd_power_on;
-+
-+	if (pd->flags & (PD_CPU | PD_NO_CR)) {
-+		/* Skip CPUs (handled by SMP code) and areas without control */
-+		pr_debug("%s: Not touching %s\n", __func__, genpd->name);
-+		goto finalize;
-+	}
-+
-+	if (!rcar_sysc_power_is_off(&pd->ch)) {
-+		pr_debug("%s: %s is already powered\n", __func__, genpd->name);
-+		goto finalize;
-+	}
-+
-+	rcar_sysc_power_up(&pd->ch);
-+
-+finalize:
-+	pm_genpd_init(genpd, gov, false);
-+}
-+
-+static const struct of_device_id rcar_sysc_matches[] = {
-+	{ /* sentinel */ }
-+};
-+
-+struct rcar_pm_domains {
-+	struct genpd_onecell_data onecell_data;
-+	struct generic_pm_domain *domains[RCAR_PD_ALWAYS_ON + 1];
-+};
-+
-+static int __init rcar_sysc_pd_init(void)
-+{
-+	const struct rcar_sysc_info *info;
-+	const struct of_device_id *match;
-+	struct rcar_pm_domains *domains;
-+	struct device_node *np;
-+	u32 syscier, syscimr;
-+	void __iomem *base;
-+	unsigned int i;
-+	int error;
-+
-+	np = of_find_matching_node_and_match(NULL, rcar_sysc_matches, &match);
-+	if (!np)
-+		return -ENODEV;
-+
-+	info = match->data;
-+
-+	base = of_iomap(np, 0);
-+	if (!base) {
-+		pr_warn("%s: Cannot map regs\n", np->full_name);
-+		error = -ENOMEM;
-+		goto out_put;
-+	}
-+
-+	rcar_sysc_base = base;
-+
-+	domains = kzalloc(sizeof(*domains), GFP_KERNEL);
-+	if (!domains) {
-+		error = -ENOMEM;
-+		goto out_put;
-+	}
-+
-+	domains->onecell_data.domains = domains->domains;
-+	domains->onecell_data.num_domains = ARRAY_SIZE(domains->domains);
-+
-+	for (i = 0, syscier = 0; i < info->num_areas; i++)
-+		syscier |= BIT(info->areas[i].isr_bit);
-+
-+	/*
-+	 * Mask all interrupt sources to prevent the CPU from receiving them.
-+	 * Make sure not to clear reserved bits that were set before.
-+	 */
-+	syscimr = ioread32(base + SYSCIMR);
-+	syscimr |= syscier;
-+	pr_debug("%s: syscimr = 0x%08x\n", np->full_name, syscimr);
-+	iowrite32(syscimr, base + SYSCIMR);
-+
-+	/*
-+	 * SYSC needs all interrupt sources enabled to control power.
-+	 */
-+	pr_debug("%s: syscier = 0x%08x\n", np->full_name, syscier);
-+	iowrite32(syscier, base + SYSCIER);
-+
-+	for (i = 0; i < info->num_areas; i++) {
-+		const struct rcar_sysc_area *area = &info->areas[i];
-+		struct rcar_sysc_pd *pd;
-+
-+		pd = kzalloc(sizeof(*pd) + strlen(area->name) + 1, GFP_KERNEL);
-+		if (!pd) {
-+			error = -ENOMEM;
-+			goto out_put;
-+		}
-+
-+		strcpy(pd->name, area->name);
-+		pd->genpd.name = pd->name;
-+		pd->ch.chan_offs = area->chan_offs;
-+		pd->ch.chan_bit = area->chan_bit;
-+		pd->ch.isr_bit = area->isr_bit;
-+		pd->flags = area->flags;
-+
-+		rcar_sysc_pd_setup(pd);
-+		if (area->parent >= 0)
-+			pm_genpd_add_subdomain(domains->domains[area->parent],
-+					       &pd->genpd);
-+
-+		domains->domains[area->isr_bit] = &pd->genpd;
-+	}
-+
-+	of_genpd_add_provider_onecell(np, &domains->onecell_data);
-+
-+out_put:
-+	of_node_put(np);
-+	return error;
-+}
-+early_initcall(rcar_sysc_pd_init);
-diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
-new file mode 100644
-index 000000000000..7bb48b4f7334
---- /dev/null
-+++ b/drivers/soc/renesas/rcar-sysc.h
-@@ -0,0 +1,53 @@
-+/*
-+ * Renesas R-Car System Controller
-+ *
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+#ifndef __SOC_RENESAS_RCAR_SYSC_H__
-+#define __SOC_RENESAS_RCAR_SYSC_H__
-+
-+#include <linux/types.h>
-+
-+
-+/*
-+ * Power Domain flags
-+ */
-+#define PD_CPU		BIT(0)	/* Area contains main CPU core */
-+#define PD_SCU		BIT(1)	/* Area contains SCU and L2 cache */
-+#define PD_NO_CR	BIT(2)	/* Area lacks PWR{ON,OFF}CR registers */
-+
-+#define PD_BUSY		BIT(3)	/* Busy, for internal use only */
-+
-+#define PD_CPU_CR	PD_CPU		  /* CPU area has CR (R-Car H1) */
-+#define PD_CPU_NOCR	PD_CPU | PD_NO_CR /* CPU area lacks CR (R-Car Gen2/3) */
-+#define PD_ALWAYS_ON	PD_NO_CR	  /* Always-on area */
-+
-+
-+/*
-+ * Description of a Power Area
-+ */
-+
-+struct rcar_sysc_area {
-+	const char *name;
-+	u16 chan_offs;		/* Offset of PWRSR register for this area */
-+	u8 chan_bit;		/* Bit in PWR* (except for PWRUP in PWRSR) */
-+	u8 isr_bit;		/* Bit in SYSCI*R */
-+	int parent;		/* -1 if none */
-+	unsigned int flags;	/* See PD_* */
-+};
-+
-+
-+/*
-+ * SoC-specific Power Area Description
-+ */
-+
-+struct rcar_sysc_info {
-+	const struct rcar_sysc_area *areas;
-+	unsigned int num_areas;
-+};
-+
-+#endif /* __SOC_RENESAS_RCAR_SYSC_H__ */
+ 	gpio4: gpio@e6054000 {
+@@ -157,7 +157,7 @@
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+ 		clocks = <&mstp9_clks R8A7793_CLK_GPIO4>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
+ 
+ 	gpio5: gpio@e6055000 {
+@@ -170,7 +170,7 @@
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+ 		clocks = <&mstp9_clks R8A7793_CLK_GPIO5>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
+ 
+ 	gpio6: gpio@e6055400 {
+@@ -183,7 +183,7 @@
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+ 		clocks = <&mstp9_clks R8A7793_CLK_GPIO6>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
+ 
+ 	gpio7: gpio@e6055800 {
+@@ -196,7 +196,7 @@
+ 		#interrupt-cells = <2>;
+ 		interrupt-controller;
+ 		clocks = <&mstp9_clks R8A7793_CLK_GPIO7>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
+ 
+ 	thermal: thermal@e61f0000 {
+@@ -206,7 +206,7 @@
+ 		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
+ 		interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp5_clks R8A7793_CLK_THERMAL>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		#thermal-sensor-cells = <0>;
+ 	};
+ 
+@@ -225,7 +225,7 @@
+ 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7793_CLK_CMT0>;
+ 		clock-names = "fck";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 
+ 		renesas,channels-mask = <0x60>;
+ 
+@@ -245,7 +245,7 @@
+ 			     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7793_CLK_CMT1>;
+ 		clock-names = "fck";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 
+ 		renesas,channels-mask = <0xff>;
+ 
+@@ -268,7 +268,7 @@
+ 			     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp4_clks R8A7793_CLK_IRQC>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 	};
+ 
+ 	dmac0: dma-controller@e6700000 {
+@@ -297,7 +297,7 @@
+ 				"ch12", "ch13", "ch14";
+ 		clocks = <&mstp2_clks R8A7793_CLK_SYS_DMAC0>;
+ 		clock-names = "fck";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		#dma-cells = <1>;
+ 		dma-channels = <15>;
+ 	};
+@@ -328,7 +328,7 @@
+ 				"ch12", "ch13", "ch14";
+ 		clocks = <&mstp2_clks R8A7793_CLK_SYS_DMAC1>;
+ 		clock-names = "fck";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		#dma-cells = <1>;
+ 		dma-channels = <15>;
+ 	};
+@@ -357,7 +357,7 @@
+ 				"ch12";
+ 		clocks = <&mstp5_clks R8A7793_CLK_AUDIO_DMAC0>;
+ 		clock-names = "fck";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		#dma-cells = <1>;
+ 		dma-channels = <13>;
+ 	};
+@@ -386,7 +386,7 @@
+ 				"ch12";
+ 		clocks = <&mstp5_clks R8A7793_CLK_AUDIO_DMAC1>;
+ 		clock-names = "fck";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		#dma-cells = <1>;
+ 		dma-channels = <13>;
+ 	};
+@@ -399,7 +399,7 @@
+ 		reg = <0 0xe6508000 0 0x40>;
+ 		interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7793_CLK_I2C0>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		i2c-scl-internal-delay-ns = <6>;
+ 		status = "disabled";
+ 	};
+@@ -411,7 +411,7 @@
+ 		reg = <0 0xe6518000 0 0x40>;
+ 		interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7793_CLK_I2C1>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		i2c-scl-internal-delay-ns = <6>;
+ 		status = "disabled";
+ 	};
+@@ -423,7 +423,7 @@
+ 		reg = <0 0xe6530000 0 0x40>;
+ 		interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7793_CLK_I2C2>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		i2c-scl-internal-delay-ns = <6>;
+ 		status = "disabled";
+ 	};
+@@ -435,7 +435,7 @@
+ 		reg = <0 0xe6540000 0 0x40>;
+ 		interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7793_CLK_I2C3>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		i2c-scl-internal-delay-ns = <6>;
+ 		status = "disabled";
+ 	};
+@@ -447,7 +447,7 @@
+ 		reg = <0 0xe6520000 0 0x40>;
+ 		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7793_CLK_I2C4>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		i2c-scl-internal-delay-ns = <6>;
+ 		status = "disabled";
+ 	};
+@@ -460,7 +460,7 @@
+ 		reg = <0 0xe6528000 0 0x40>;
+ 		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7793_CLK_I2C5>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		i2c-scl-internal-delay-ns = <110>;
+ 		status = "disabled";
+ 	};
+@@ -475,7 +475,7 @@
+ 		clocks = <&mstp9_clks R8A7793_CLK_IICDVFS>;
+ 		dmas = <&dmac0 0x77>, <&dmac0 0x78>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -488,7 +488,7 @@
+ 		clocks = <&mstp3_clks R8A7793_CLK_IIC0>;
+ 		dmas = <&dmac0 0x61>, <&dmac0 0x62>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -501,7 +501,7 @@
+ 		clocks = <&mstp3_clks R8A7793_CLK_IIC1>;
+ 		dmas = <&dmac0 0x65>, <&dmac0 0x66>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -517,7 +517,7 @@
+ 		clocks = <&mstp3_clks R8A7793_CLK_SDHI0>;
+ 		dmas = <&dmac0 0xcd>, <&dmac0 0xce>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -528,7 +528,7 @@
+ 		clocks = <&mstp3_clks R8A7793_CLK_SDHI1>;
+ 		dmas = <&dmac0 0xc1>, <&dmac0 0xc2>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -539,7 +539,7 @@
+ 		clocks = <&mstp3_clks R8A7793_CLK_SDHI2>;
+ 		dmas = <&dmac0 0xd3>, <&dmac0 0xd4>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -552,7 +552,7 @@
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -565,7 +565,7 @@
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -578,7 +578,7 @@
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -591,7 +591,7 @@
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -604,7 +604,7 @@
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x1f>, <&dmac0 0x20>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -617,7 +617,7 @@
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x23>, <&dmac0 0x24>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -630,7 +630,7 @@
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -643,7 +643,7 @@
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x19>, <&dmac0 0x1a>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -656,7 +656,7 @@
+ 		clock-names = "fck";
+ 		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -670,7 +670,7 @@
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -684,7 +684,7 @@
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -698,7 +698,7 @@
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -712,7 +712,7 @@
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x2f>, <&dmac0 0x30>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -726,7 +726,7 @@
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -740,7 +740,7 @@
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -754,7 +754,7 @@
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -768,7 +768,7 @@
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -782,7 +782,7 @@
+ 		clock-names = "fck", "brg_int", "scif_clk";
+ 		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -791,7 +791,7 @@
+ 		reg = <0 0xee700000 0 0x400>;
+ 		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp8_clks R8A7793_CLK_ETHER>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		phy-mode = "rmii";
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -805,7 +805,7 @@
+ 		clocks = <&mstp9_clks R8A7793_CLK_QSPI_MOD>;
+ 		dmas = <&dmac0 0x17>, <&dmac0 0x18>;
+ 		dma-names = "tx", "rx";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		num-cs = <1>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -849,7 +849,7 @@
+ 		clocks = <&mstp9_clks R8A7793_CLK_RCAN0>,
+ 			 <&cpg_clocks R8A7793_CLK_RCAN>, <&can_clk>;
+ 		clock-names = "clkp1", "clkp2", "can_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -860,7 +860,7 @@
+ 		clocks = <&mstp9_clks R8A7793_CLK_RCAN1>,
+ 			 <&cpg_clocks R8A7793_CLK_RCAN>, <&can_clk>;
+ 		clock-names = "clkp1", "clkp2", "can_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -1327,7 +1327,7 @@
+ 				"src.4", "src.3", "src.2", "src.1", "src.0",
+ 				"dvc.0", "dvc.1",
+ 				"clk_a", "clk_b", "clk_c", "clk_i";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+ 
+ 		status = "disabled";
+ 
 -- 
 2.7.0.rc3.207.g0ac5344
