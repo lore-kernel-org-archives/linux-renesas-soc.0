@@ -1,218 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:51188 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752270AbcDZPzq (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60044 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752615AbcD0W5H (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 11:55:46 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-mmc@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH V2 5/6] mmc: tmio: merge distributed include files
-Date: Tue, 26 Apr 2016 17:55:26 +0200
-Message-Id: <1461686127-3217-6-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1461686127-3217-1-git-send-email-wsa@the-dreams.de>
-References: <1461686127-3217-1-git-send-email-wsa@the-dreams.de>
+	Wed, 27 Apr 2016 18:57:07 -0400
+Date: Thu, 28 Apr 2016 08:57:05 +1000
+From: Simon Horman <horms@verge.net.au>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+	Olof Johansson <olof@lixom.net>,
+	Kevin Hilman <khilman@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [GIT PULL] Second Round of Renesas ARM Based SoC R-Car SYSC
+ Updates for v4.7
+Message-ID: <20160427225705.GB29115@verge.net.au>
+References: <cover.1461632180.git.horms+renesas@verge.net.au>
+ <4754122.zMqi1lHELM@wuerfel>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4754122.zMqi1lHELM@wuerfel>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Tue, Apr 26, 2016 at 12:44:48PM +0200, Arnd Bergmann wrote:
+> On Tuesday 26 April 2016 11:28:38 Simon Horman wrote:
+> > This pull request is based on a merge of:
+> > 
+> > * Thee previous round of such requests, tagged as renesas-rcar-sysc-for-v4.7,
+> >   which you have previously pulled.
+> > * The clk-renesas-for-v4.7-tag2 tag of Geert Uytterhoeven's renesas-drivers
+> >   tree which has been accepted into clk-next by Stephen Boyd.
+> 
+> I've pulled it into next/drivers now.
+> 
+> > There are follow-up DT changes that depend on this driver which I plan to
+> > send in a pull-request for in the near future.
+> 
+> Ok, I need to revisit your earlier explanation of the exact dependencies
+> here and see if we can find a way to merge this nicely. We usually
+> have the next/dt branch before the next/drivers branch, so this reverse
+> dependency would require a next/dt2 branch unless we can either change
+> the order for the 4.7 merge window for all platforms, or find a way
+> to merge (most of) the following DT changes without having the driver
+> done first.
 
-There is no reason to have a public and private header file. Merge them
-into a private one, so looking up symbols is less confusing.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/tmio_mmc.h     | 56 ++++++++++++++++++++++++++++++-
- drivers/mmc/host/tmio_mmc_dma.c |  1 -
- drivers/mmc/host/tmio_mmc_pio.c |  1 -
- include/linux/mmc/tmio.h        | 73 -----------------------------------------
- 4 files changed, 55 insertions(+), 76 deletions(-)
- delete mode 100644 include/linux/mmc/tmio.h
-
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 032188b766defd..439fdad2bad91d 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -1,6 +1,8 @@
- /*
-  * linux/drivers/mmc/host/tmio_mmc.h
-  *
-+ * Copyright (C) 2016 Sang Engineering, Wolfram Sang
-+ * Copyright (C) 2015-16 Renesas Electronics Corporation
-  * Copyright (C) 2007 Ian Molton
-  * Copyright (C) 2004 Ian Molton
-  *
-@@ -18,12 +20,64 @@
- 
- #include <linux/dmaengine.h>
- #include <linux/highmem.h>
--#include <linux/mmc/tmio.h>
- #include <linux/mutex.h>
- #include <linux/pagemap.h>
- #include <linux/scatterlist.h>
- #include <linux/spinlock.h>
- 
-+#define CTL_SD_CMD 0x00
-+#define CTL_ARG_REG 0x04
-+#define CTL_STOP_INTERNAL_ACTION 0x08
-+#define CTL_XFER_BLK_COUNT 0xa
-+#define CTL_RESPONSE 0x0c
-+#define CTL_STATUS 0x1c
-+#define CTL_STATUS2 0x1e
-+#define CTL_IRQ_MASK 0x20
-+#define CTL_SD_CARD_CLK_CTL 0x24
-+#define CTL_SD_XFER_LEN 0x26
-+#define CTL_SD_MEM_CARD_OPT 0x28
-+#define CTL_SD_ERROR_DETAIL_STATUS 0x2c
-+#define CTL_SD_DATA_PORT 0x30
-+#define CTL_TRANSACTION_CTL 0x34
-+#define CTL_SDIO_STATUS 0x36
-+#define CTL_SDIO_IRQ_MASK 0x38
-+#define CTL_DMA_ENABLE 0xd8
-+#define CTL_RESET_SD 0xe0
-+#define CTL_VERSION 0xe2
-+#define CTL_SDIO_REGS 0x100
-+#define CTL_CLK_AND_WAIT_CTL 0x138
-+#define CTL_RESET_SDIO 0x1e0
-+
-+/* Definitions for values the CTRL_STATUS register can take. */
-+#define TMIO_STAT_CMDRESPEND    0x00000001
-+#define TMIO_STAT_DATAEND       0x00000004
-+#define TMIO_STAT_CARD_REMOVE   0x00000008
-+#define TMIO_STAT_CARD_INSERT   0x00000010
-+#define TMIO_STAT_SIGSTATE      0x00000020
-+#define TMIO_STAT_WRPROTECT     0x00000080
-+#define TMIO_STAT_CARD_REMOVE_A 0x00000100
-+#define TMIO_STAT_CARD_INSERT_A 0x00000200
-+#define TMIO_STAT_SIGSTATE_A    0x00000400
-+#define TMIO_STAT_CMD_IDX_ERR   0x00010000
-+#define TMIO_STAT_CRCFAIL       0x00020000
-+#define TMIO_STAT_STOPBIT_ERR   0x00040000
-+#define TMIO_STAT_DATATIMEOUT   0x00080000
-+#define TMIO_STAT_RXOVERFLOW    0x00100000
-+#define TMIO_STAT_TXUNDERRUN    0x00200000
-+#define TMIO_STAT_CMDTIMEOUT    0x00400000
-+#define TMIO_STAT_RXRDY         0x01000000
-+#define TMIO_STAT_TXRQ          0x02000000
-+#define TMIO_STAT_ILL_FUNC      0x20000000
-+#define TMIO_STAT_CMD_BUSY      0x40000000
-+#define TMIO_STAT_ILL_ACCESS    0x80000000
-+
-+#define TMIO_STATUS2_DAT0	BIT(7)
-+
-+#define	CLK_CTL_DIV_MASK	0xff
-+#define	CLK_CTL_SCLKEN		BIT(8)
-+
-+#define TMIO_BBS		512		/* Boot block size */
-+
- /* Definitions for values the CTRL_SDIO_STATUS register can take. */
- #define TMIO_SDIO_STAT_IOIRQ	0x0001
- #define TMIO_SDIO_STAT_EXPUB52	0x4000
-diff --git a/drivers/mmc/host/tmio_mmc_dma.c b/drivers/mmc/host/tmio_mmc_dma.c
-index 67543587382312..d1573687515d2c 100644
---- a/drivers/mmc/host/tmio_mmc_dma.c
-+++ b/drivers/mmc/host/tmio_mmc_dma.c
-@@ -15,7 +15,6 @@
- #include <linux/dmaengine.h>
- #include <linux/mfd/tmio.h>
- #include <linux/mmc/host.h>
--#include <linux/mmc/tmio.h>
- #include <linux/pagemap.h>
- #include <linux/scatterlist.h>
- 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 879e0f5455ef44..15e6f6d5a42337 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -39,7 +39,6 @@
- #include <linux/mmc/host.h>
- #include <linux/mmc/mmc.h>
- #include <linux/mmc/slot-gpio.h>
--#include <linux/mmc/tmio.h>
- #include <linux/module.h>
- #include <linux/pagemap.h>
- #include <linux/platform_device.h>
-diff --git a/include/linux/mmc/tmio.h b/include/linux/mmc/tmio.h
-deleted file mode 100644
-index b2f28e99503383..00000000000000
---- a/include/linux/mmc/tmio.h
-+++ /dev/null
-@@ -1,73 +0,0 @@
--/*
-- * include/linux/mmc/tmio.h
-- *
-- * Copyright (C) 2016 Sang Engineering, Wolfram Sang
-- * Copyright (C) 2015-16 Renesas Electronics Corporation
-- * Copyright (C) 2007 Ian Molton
-- * Copyright (C) 2004 Ian Molton
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * Driver for the MMC / SD / SDIO cell found in:
-- *
-- * TC6393XB TC6391XB TC6387XB T7L66XB ASIC3
-- */
--#ifndef LINUX_MMC_TMIO_H
--#define LINUX_MMC_TMIO_H
--
--#define CTL_SD_CMD 0x00
--#define CTL_ARG_REG 0x04
--#define CTL_STOP_INTERNAL_ACTION 0x08
--#define CTL_XFER_BLK_COUNT 0xa
--#define CTL_RESPONSE 0x0c
--#define CTL_STATUS 0x1c
--#define CTL_STATUS2 0x1e
--#define CTL_IRQ_MASK 0x20
--#define CTL_SD_CARD_CLK_CTL 0x24
--#define CTL_SD_XFER_LEN 0x26
--#define CTL_SD_MEM_CARD_OPT 0x28
--#define CTL_SD_ERROR_DETAIL_STATUS 0x2c
--#define CTL_SD_DATA_PORT 0x30
--#define CTL_TRANSACTION_CTL 0x34
--#define CTL_SDIO_STATUS 0x36
--#define CTL_SDIO_IRQ_MASK 0x38
--#define CTL_DMA_ENABLE 0xd8
--#define CTL_RESET_SD 0xe0
--#define CTL_VERSION 0xe2
--#define CTL_SDIO_REGS 0x100
--#define CTL_CLK_AND_WAIT_CTL 0x138
--#define CTL_RESET_SDIO 0x1e0
--
--/* Definitions for values the CTRL_STATUS register can take. */
--#define TMIO_STAT_CMDRESPEND    0x00000001
--#define TMIO_STAT_DATAEND       0x00000004
--#define TMIO_STAT_CARD_REMOVE   0x00000008
--#define TMIO_STAT_CARD_INSERT   0x00000010
--#define TMIO_STAT_SIGSTATE      0x00000020
--#define TMIO_STAT_WRPROTECT     0x00000080
--#define TMIO_STAT_CARD_REMOVE_A 0x00000100
--#define TMIO_STAT_CARD_INSERT_A 0x00000200
--#define TMIO_STAT_SIGSTATE_A    0x00000400
--#define TMIO_STAT_CMD_IDX_ERR   0x00010000
--#define TMIO_STAT_CRCFAIL       0x00020000
--#define TMIO_STAT_STOPBIT_ERR   0x00040000
--#define TMIO_STAT_DATATIMEOUT   0x00080000
--#define TMIO_STAT_RXOVERFLOW    0x00100000
--#define TMIO_STAT_TXUNDERRUN    0x00200000
--#define TMIO_STAT_CMDTIMEOUT    0x00400000
--#define TMIO_STAT_RXRDY         0x01000000
--#define TMIO_STAT_TXRQ          0x02000000
--#define TMIO_STAT_ILL_FUNC      0x20000000
--#define TMIO_STAT_CMD_BUSY      0x40000000
--#define TMIO_STAT_ILL_ACCESS    0x80000000
--
--#define TMIO_STATUS2_DAT0	BIT(7)
--
--#define	CLK_CTL_DIV_MASK	0xff
--#define	CLK_CTL_SCLKEN		BIT(8)
--
--#define TMIO_BBS		512		/* Boot block size */
--
--#endif /* LINUX_MMC_TMIO_H */
--- 
-2.7.0
+I have sent the relevant pull-requests for you to review.
+I have tried to keep the patches contained in pull-requests
+with awkward dependencies to a minimum.
