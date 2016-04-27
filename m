@@ -1,175 +1,107 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:21644 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751122AbcD1GJ5 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41885 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750811AbcD0EU3 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 28 Apr 2016 02:09:57 -0400
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	<linux-renesas-soc@vger.kernel.org>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	Oleksij Rempel <linux@rempel-privat.de>,
-	Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>,
-	Oleksij Rempel <fixed-term.Oleksij.Rempel@de.bosch.com>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH] clk: renesas: r8a7795: Move MODEMR to DT
-Date: Thu, 28 Apr 2016 08:08:37 +0200
-Message-ID: <1461823717-22517-1-git-send-email-dirk.behme@de.bosch.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	Wed, 27 Apr 2016 00:20:29 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/2] arm64: dts: r8a7795: Add SYSC PM Domains
+Date: Wed, 27 Apr 2016 14:20:14 +1000
+Message-Id: <abbecab1a0b8c2cc07edc30c8bced855ca4e239d.1461730364.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461730364.git.horms+renesas@verge.net.au>
+References: <cover.1461730364.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Oleksij Rempel <linux@rempel-privat.de>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Map the Mode Monitor Register via the device tree instead of
-hard coding it in the code. This makes the mapping known to the
-device tree.
+Add a device node for the System Controller.
+Hook up the Cortex-A57 CPU cores and the Cortex-A57 and Cortex A53 L2
+caches/SCUs to their respective PM Domains.
 
-Signed-off-by: Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>
-Signed-off-by: Oleksij Rempel <linux@rempel-privat.de>
-Signed-off-by: Oleksij Rempel <fixed-term.Oleksij.Rempel@de.bosch.com>
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  9 ++++++---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  4 +++-
- drivers/clk/renesas/r8a7795-cpg-mssr.c             | 22 +++-------------------
- drivers/clk/renesas/renesas-cpg-mssr.c             | 19 ++++++++++++++-----
- drivers/clk/renesas/renesas-cpg-mssr.h             |  2 +-
- 5 files changed, 27 insertions(+), 29 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-index fefb802..7984485 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -15,8 +15,10 @@ Required Properties:
-   - compatible: Must be one of:
-       - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC
- 
--  - reg: Base address and length of the memory resource used by the CPG/MSSR
--    block
-+  - reg:
-+    - 0: Base address and length of the memory resource used by the CPG/MSSR
-+         block.
-+    - 1: Mode Monitor Register.
- 
-   - clocks: References to external parent clocks, one entry for each entry in
-     clock-names
-@@ -46,7 +48,8 @@ Examples
- 
- 	cpg: clock-controller@e6150000 {
- 		compatible = "renesas,r8a7795-cpg-mssr";
--		reg = <0 0xe6150000 0 0x1000>;
-+		reg = <0 0xe6150000 0 0x1000>,
-+		      <0 0xe6160060 0 0x4>;
- 		clocks = <&extal_clk>, <&extalr_clk>;
- 		clock-names = "extal", "extalr";
- 		#clock-cells = <2>;
 diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 8be9424..3e5d5b0 100644
+index 7cb2d72e7378..f96d0732b2a8 100644
 --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -305,7 +305,9 @@
+@@ -10,6 +10,7 @@
  
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a7795-cpg-mssr";
--			reg = <0 0xe6150000 0 0x1000>;
-+			reg = <0 0xe6150000 0 0x1000>,
-+			      /* MODEMR - Mode Monitor Register */
-+			      <0 0xe6160060 0 0x4>;
- 			clocks = <&extal_clk>, <&extalr_clk>;
- 			clock-names = "extal", "extalr";
- 			#clock-cells = <2>;
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 6af7f5b..ac34c11 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -612,26 +612,10 @@ struct clk * __init r8a7795_cpg_clk_register(struct device *dev,
- 					 __clk_get_name(parent), 0, mult, div);
- }
+ #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/power/r8a7795-sysc.h>
  
--/*
-- * Reset register definitions.
-- */
--#define MODEMR	0xe6160060
--
--static u32 rcar_gen3_read_mode_pins(void)
--{
--	void __iomem *modemr = ioremap_nocache(MODEMR, 4);
--	u32 mode;
--
--	BUG_ON(!modemr);
--	mode = ioread32(modemr);
--	iounmap(modemr);
--
--	return mode;
--}
--
--static int __init r8a7795_cpg_mssr_init(struct device *dev)
-+static int __init r8a7795_cpg_mssr_init(struct device *dev,
-+					void __iomem *modemr_base)
- {
--	u32 cpg_mode = rcar_gen3_read_mode_pins();
-+	u32 cpg_mode = ioread32(modemr_base);
+ / {
+ 	compatible = "renesas,r8a7795";
+@@ -39,6 +40,7 @@
+ 			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x0>;
+ 			device_type = "cpu";
++			power-domains = <&sysc R8A7795_PD_CA57_CPU0>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+ 		};
+@@ -47,6 +49,7 @@
+ 			compatible = "arm,cortex-a57","arm,armv8";
+ 			reg = <0x1>;
+ 			device_type = "cpu";
++			power-domains = <&sysc R8A7795_PD_CA57_CPU1>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+ 		};
+@@ -54,6 +57,7 @@
+ 			compatible = "arm,cortex-a57","arm,armv8";
+ 			reg = <0x2>;
+ 			device_type = "cpu";
++			power-domains = <&sysc R8A7795_PD_CA57_CPU2>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+ 		};
+@@ -61,6 +65,7 @@
+ 			compatible = "arm,cortex-a57","arm,armv8";
+ 			reg = <0x3>;
+ 			device_type = "cpu";
++			power-domains = <&sysc R8A7795_PD_CA57_CPU3>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+ 		};
+@@ -68,12 +73,14 @@
  
- 	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
- 	if (!cpg_pll_config->extal_div) {
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 1f2dc362..b455b14 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -107,6 +107,7 @@ static const u16 srcr[] = {
- struct cpg_mssr_priv {
- 	struct device *dev;
- 	void __iomem *base;
-+	void __iomem *modemr_base; /* Mode Monitor Register */
- 	spinlock_t mstp_lock;
+ 	L2_CA57: cache-controller@0 {
+ 		compatible = "cache";
++		power-domains = <&sysc R8A7795_PD_CA57_SCU>;
+ 		cache-unified;
+ 		cache-level = <2>;
+ 	};
  
- 	struct clk **clks;
-@@ -529,17 +530,25 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
- 	int error;
+ 	L2_CA53: cache-controller@1 {
+ 		compatible = "cache";
++		power-domains = <&sysc R8A7795_PD_CA53_SCU>;
+ 		cache-unified;
+ 		cache-level = <2>;
+ 	};
+@@ -302,6 +309,12 @@
+ 			#power-domain-cells = <0>;
+ 		};
  
- 	info = of_match_node(cpg_mssr_match, np)->data;
--	if (info->init) {
--		error = info->init(dev);
--		if (error)
--			return error;
--	}
- 
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
- 	priv->dev = dev;
++		sysc: system-controller@e6180000 {
++			compatible = "renesas,r8a7795-sysc";
++			reg = <0 0xe6180000 0 0x0400>;
++			#power-domain-cells = <1>;
++		};
 +
-+	if (info->init) {
-+		/* get Mode Monitor Register */
-+		res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+		priv->modemr_base = devm_ioremap_resource(dev, res);
-+		if (IS_ERR(priv->modemr_base))
-+			return PTR_ERR(priv->modemr_base);
-+
-+		error = info->init(dev, priv->modemr_base);
-+		if (error)
-+			return error;
-+	}
-+
- 	spin_lock_init(&priv->mstp_lock);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index 0d1e3e8..3ec7e2d 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -123,7 +123,7 @@ struct cpg_mssr_info {
- 	unsigned int num_core_pm_clks;
- 
- 	/* Callbacks */
--	int (*init)(struct device *dev);
-+	int (*init)(struct device *dev, void __iomem *modemr_base);
- 	struct clk *(*cpg_clk_register)(struct device *dev,
- 					const struct cpg_core_clk *core,
- 					const struct cpg_mssr_info *info,
+ 		audma0: dma-controller@ec700000 {
+ 			compatible = "renesas,rcar-dmac";
+ 			reg = <0 0xec700000 0 0x10000>;
 -- 
-2.8.0
+2.7.0.rc3.207.g0ac5344
