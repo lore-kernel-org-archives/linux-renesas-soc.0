@@ -1,107 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41885 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750811AbcD0EU3 (ORCPT
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:37247 "EHLO
+	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752469AbcD0IbW (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 00:20:29 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/2] arm64: dts: r8a7795: Add SYSC PM Domains
-Date: Wed, 27 Apr 2016 14:20:14 +1000
-Message-Id: <abbecab1a0b8c2cc07edc30c8bced855ca4e239d.1461730364.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461730364.git.horms+renesas@verge.net.au>
-References: <cover.1461730364.git.horms+renesas@verge.net.au>
+	Wed, 27 Apr 2016 04:31:22 -0400
+Received: by mail-wm0-f42.google.com with SMTP id a17so5715373wme.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Apr 2016 01:31:21 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1461702886-6873-1-git-send-email-wsa@the-dreams.de>
+References: <1461702886-6873-1-git-send-email-wsa@the-dreams.de>
+Date: Wed, 27 Apr 2016 10:31:20 +0200
+Message-ID: <CAPDyKFoPzUs3t00Yhrwdrc6Eeb-rpnh8ONb03vBk5fMAQCs47g@mail.gmail.com>
+Subject: Re: [PATCH] mmc: mmcif: remove obsolete support for sh7372
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On 26 April 2016 at 22:34, Wolfram Sang <wsa@the-dreams.de> wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> There is no support for this platform in the kernel anymore. Make the
+> Kconfig text more generic, so it won't get stale anymore.
+>
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Add a device node for the System Controller.
-Hook up the Cortex-A57 CPU cores and the Cortex-A57 and Cortex A53 L2
-caches/SCUs to their respective PM Domains.
+Thanks, applied for next!
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Kind regards
+Uffe
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 7cb2d72e7378..f96d0732b2a8 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -10,6 +10,7 @@
- 
- #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/r8a7795-sysc.h>
- 
- / {
- 	compatible = "renesas,r8a7795";
-@@ -39,6 +40,7 @@
- 			compatible = "arm,cortex-a57", "arm,armv8";
- 			reg = <0x0>;
- 			device_type = "cpu";
-+			power-domains = <&sysc R8A7795_PD_CA57_CPU0>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -47,6 +49,7 @@
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x1>;
- 			device_type = "cpu";
-+			power-domains = <&sysc R8A7795_PD_CA57_CPU1>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -54,6 +57,7 @@
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x2>;
- 			device_type = "cpu";
-+			power-domains = <&sysc R8A7795_PD_CA57_CPU2>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -61,6 +65,7 @@
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x3>;
- 			device_type = "cpu";
-+			power-domains = <&sysc R8A7795_PD_CA57_CPU3>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -68,12 +73,14 @@
- 
- 	L2_CA57: cache-controller@0 {
- 		compatible = "cache";
-+		power-domains = <&sysc R8A7795_PD_CA57_SCU>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
- 
- 	L2_CA53: cache-controller@1 {
- 		compatible = "cache";
-+		power-domains = <&sysc R8A7795_PD_CA53_SCU>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
-@@ -302,6 +309,12 @@
- 			#power-domain-cells = <0>;
- 		};
- 
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a7795-sysc";
-+			reg = <0 0xe6180000 0 0x0400>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		audma0: dma-controller@ec700000 {
- 			compatible = "renesas,rcar-dmac";
- 			reg = <0 0xec700000 0 0x10000>;
--- 
-2.7.0.rc3.207.g0ac5344
+> ---
+>  drivers/mmc/host/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 04feea8354cba7..f5be219274329d 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -676,9 +676,9 @@ config MMC_SH_MMCIF
+>         depends on HAS_DMA
+>         depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
+>         help
+> -         This selects the MMC Host Interface controller (MMCIF).
+> +         This selects the MMC Host Interface controller (MMCIF) found in various
+> +         Renesas SoCs for SH and ARM architectures.
+>
+> -         This driver supports MMCIF in sh7724/sh7757/sh7372.
+>
+>  config MMC_JZ4740
+>         tristate "JZ4740 SD/Multimedia Card Interface support"
+> --
+> 2.7.0
+>
