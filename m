@@ -1,46 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:57105 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752992AbcD0Qvm (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41865 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750811AbcD0EUS (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 12:51:42 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-mmc@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	linux-renesas-soc@vger.kernel.org,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3 0/5] mmc: tmio: make CTL_STATUS handling consistent
-Date: Wed, 27 Apr 2016 18:51:22 +0200
-Message-Id: <1461775887-12786-1-git-send-email-wsa@the-dreams.de>
+	Wed, 27 Apr 2016 00:20:18 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+	Kevin Hilman <khilman@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Renesas ARM64 Based SoC DT PM Domain Updates for v4.7
+Date: Wed, 27 Apr 2016 14:20:10 +1000
+Message-Id: <cover.1461730364.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It took me a little to discover that CTL_STATUS has a different handling than
-the other registers. CTL_STATUS and CTL_STATUS2, both u16, are merged into a
-virtual u32. However, CTL_STATUS2 was also directly accessed.
+Hi Olof, Hi Kevin, Hi Arnd,
 
-Clean this up, make this consistent, and document this. Making the driver less
-complex and easier to work with.
+Please consider these Renesas ARM64 based SoC DT PM Domain updates for v4.7.
 
-Tested on Renesas R-Car Gen2 and Gen3.
+This pull requests is based on a merge of:
 
-Changes since V2:
+* "[GIT PULL] Second Round of Renesas ARM Based SoC R-Car SYSC Updates for
+  v4.7", tagged as renesas-rcar-sysc2-for-v4.7, which you have already
+  pulled
+* "[GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v4.7",
+  tagged as renesas-arm64-dt2-for-v4.7, which I have sent a pull request
+  for.
 
-* rebased to mmc/next. Sorry Ulf, my branch had an older version of your next
-  included and I missed the update :(
+The reason for the somewhat tedious base on
+renesas-rcar-sysc2-for-v4.7, which provides driver changes,
+is a hard run-time dependency.
+
+I also have a similar set of changes for ARM (32-bit) which I will send
+separately.
 
 
-Wolfram Sang (5):
-  mmc: tmio: give read32/write32 functions more descriptive names
-  mmc: tmio: use BIT() within defines
-  mmc: tmio: use CTL_STATUS consistently
-  mmc: tmio/sdhi: distinguish between SCLKDIVEN and ILL_FUNC
-  mmc: tmio: document CTL_STATUS handling
+The following changes since commit 3238ec7c0a821915f38095752de97a424fd1d6ce:
 
- drivers/mmc/host/sh_mobile_sdhi.c |  3 ++-
- drivers/mmc/host/tmio_mmc.h       | 56 ++++++++++++++++++++-------------------
- drivers/mmc/host/tmio_mmc_pio.c   | 24 ++++++++---------
- 3 files changed, 43 insertions(+), 40 deletions(-)
+  Merge tag 'renesas-rcar-sysc2-for-v4.7' into arm64-dt-pm-domain-for-v4.7 (2016-04-27 11:49:19 +1000)
 
--- 
-2.7.0
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt-pm-domain-for-v4.7
+
+for you to fetch changes up to 38dbb45ee4bc7dda4aabba2178eebff2f93380d1:
+
+  arm64: dts: r8a7795: Use SYSC "always-on" PM Domain (2016-04-27 14:10:41 +1000)
+
+----------------------------------------------------------------
+Renesas ARM64 Based SoC DT PM Domain Updates for v4.7
+
+* Add SYSC PM Domains to DT of r8a7795 SoC
+
+----------------------------------------------------------------
+Geert Uytterhoeven (2):
+      arm64: dts: r8a7795: Add SYSC PM Domains
+      arm64: dts: r8a7795: Use SYSC "always-on" PM Domain
+
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 123 +++++++++++++++++--------------
+ 1 file changed, 68 insertions(+), 55 deletions(-)
