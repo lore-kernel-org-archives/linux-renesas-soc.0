@@ -1,49 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:36107 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752106AbcDZHJq (ORCPT
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:37172 "EHLO
+	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752409AbcD0IbQ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 03:09:46 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	Wed, 27 Apr 2016 04:31:16 -0400
+Received: by mail-wm0-f47.google.com with SMTP id a17so5711880wme.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Apr 2016 01:31:15 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1461702550-6773-1-git-send-email-wsa@the-dreams.de>
+References: <1461702550-6773-1-git-send-email-wsa@the-dreams.de>
+Date: Wed, 27 Apr 2016 10:31:14 +0200
+Message-ID: <CAPDyKFregZTqAks05+Txi5QV_d6ok1Bq4oP_NkmEM8oiXJUPeg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhi: remove obsolete support for sh7372
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/4] clk: renesas: cpg-mssr: Postpone call to pm_genpd_init()
-Date: Tue, 26 Apr 2016 09:09:41 +0200
-Message-Id: <1461654582-668-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
-References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All local setup of the generic_pm_domain structure should have been
-completed before calling pm_genpd_init().
+On 26 April 2016 at 22:29, Wolfram Sang <wsa@the-dreams.de> wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> There is no support for this platform in the kernel anymore.
+>
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks, applied for next!
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 1f2dc3629f0e02a0..0d595311c659a741 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -493,9 +493,9 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
- 	genpd = &pd->genpd;
- 	genpd->name = np->name;
- 	genpd->flags = GENPD_FLAG_PM_CLK;
--	pm_genpd_init(genpd, &simple_qos_governor, false);
- 	genpd->attach_dev = cpg_mssr_attach_dev;
- 	genpd->detach_dev = cpg_mssr_detach_dev;
-+	pm_genpd_init(genpd, &simple_qos_governor, false);
- 	cpg_mssr_clk_domain = pd;
- 
- 	of_genpd_add_provider_simple(np, genpd);
--- 
-1.9.1
+Kind regards
+Uffe
+
+> ---
+>  drivers/mmc/host/sh_mobile_sdhi.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+> index e51d7b01d39a3b..0118d9621bebd0 100644
+> --- a/drivers/mmc/host/sh_mobile_sdhi.c
+> +++ b/drivers/mmc/host/sh_mobile_sdhi.c
+> @@ -77,7 +77,6 @@ static const struct sh_mobile_sdhi_of_data of_rcar_gen3_compatible = {
+>
+>  static const struct of_device_id sh_mobile_sdhi_of_match[] = {
+>         { .compatible = "renesas,sdhi-shmobile" },
+> -       { .compatible = "renesas,sdhi-sh7372" },
+>         { .compatible = "renesas,sdhi-sh73a0", .data = &of_default_cfg, },
+>         { .compatible = "renesas,sdhi-r8a73a4", .data = &of_default_cfg, },
+>         { .compatible = "renesas,sdhi-r8a7740", .data = &of_default_cfg, },
+> --
+> 2.7.0
+>
