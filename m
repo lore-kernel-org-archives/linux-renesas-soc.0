@@ -1,22 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:35769 "EHLO
-	mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752792AbcD0OHf (ORCPT
+Received: from mail-ig0-f196.google.com ([209.85.213.196]:33580 "EHLO
+	mail-ig0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752427AbcD0OEH (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 10:07:35 -0400
-Received: by mail-wm0-f48.google.com with SMTP id e201so40656902wme.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Apr 2016 07:07:34 -0700 (PDT)
+	Wed, 27 Apr 2016 10:04:07 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWyzbd8n-3+AZ16b9HL2prYQM2YXfcm8PKa_TbJ1QDQtg@mail.gmail.com>
+In-Reply-To: <CAPDyKFqApbcY9apg7dtGh=y71607c0hPHvEGDOo-skUTwCrUCg@mail.gmail.com>
 References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
 	<1461654582-668-3-git-send-email-geert+renesas@glider.be>
 	<CAPDyKFqApbcY9apg7dtGh=y71607c0hPHvEGDOo-skUTwCrUCg@mail.gmail.com>
-	<CAMuHMdWyzbd8n-3+AZ16b9HL2prYQM2YXfcm8PKa_TbJ1QDQtg@mail.gmail.com>
-Date: Wed, 27 Apr 2016 16:07:33 +0200
-Message-ID: <CAPDyKFrSc8YdPc08eZ1usBOrNOkYxqY4BZnPTSk_1EDFpOWs-A@mail.gmail.com>
+Date: Wed, 27 Apr 2016 16:04:05 +0200
+Message-ID: <CAMuHMdWyzbd8n-3+AZ16b9HL2prYQM2YXfcm8PKa_TbJ1QDQtg@mail.gmail.com>
 Subject: Re: [PATCH 2/4] clk: renesas: mstp: Use always-on governor for Clock Domain
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
@@ -30,53 +27,44 @@ Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 27 April 2016 at 16:04, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Hi Ulf,
->
-> On Wed, Apr 27, 2016 at 3:59 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> On 26 April 2016 at 09:09, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
->>> As a pure Clock Domain does not have the concept of powering the domain
->>> itself, the CPG/MSTP driver does not provide power_off() and power_on()
->>> callbacks.
->>> However, the genpd core may still perform a dummy power down, causing
->>> /sys/kernel/debug/pm_genpd/pm_genpd_summary to report the domain's
->>> status being "off-0".
->>>
->>> Use the always-on governor to make sure the domain is never powered
->>> down, and always shows up as "on" in pm_genpd_summary.
+Hi Ulf,
+
+On Wed, Apr 27, 2016 at 3:59 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 26 April 2016 at 09:09, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+>> As a pure Clock Domain does not have the concept of powering the domain
+>> itself, the CPG/MSTP driver does not provide power_off() and power_on()
+>> callbacks.
+>> However, the genpd core may still perform a dummy power down, causing
+>> /sys/kernel/debug/pm_genpd/pm_genpd_summary to report the domain's
+>> status being "off-0".
 >>
->> Hmm.
->>
->> Hypothetically, what if the clock domain would be a subdomain, where
->> its master is able to power down? Using the always on governor would
->> prevent the master from power off as well.
+>> Use the always-on governor to make sure the domain is never powered
+>> down, and always shows up as "on" in pm_genpd_summary.
 >
-> That's correct. However, on R-Mobile/R-Car SoCs, this is not the case, so it
-> doesn't matter here.
+> Hmm.
 >
->> I am wondering whether we should introduce some similar as
->> pm_runtime_no_callbacks() but for the generic PM domain instead.
->>
->> What do you think?
->
-> In my case, the domain is not managed by its parent, to there's no such
-> analogy.
+> Hypothetically, what if the clock domain would be a subdomain, where
+> its master is able to power down? Using the always on governor would
+> prevent the master from power off as well.
 
-Ok, fair enough.
+That's correct. However, on R-Mobile/R-Car SoCs, this is not the case, so it
+doesn't matter here.
 
-This looks good to me!
+> I am wondering whether we should introduce some similar as
+> pm_runtime_no_callbacks() but for the generic PM domain instead.
+>
+> What do you think?
 
-Kind regards
-Uffe
+In my case, the domain is not managed by its parent, to there's no such
+analogy.
 
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
