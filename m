@@ -1,67 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36958 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932231AbcDYNdU (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60436 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752615AbcD0XIS (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 09:33:20 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 03/13] v4l: vsp1: Implement runtime PM support
-Date: Mon, 25 Apr 2016 16:33:42 +0300
-Message-ID: <3495523.9cqiUnevx8@avalon>
-In-Reply-To: <CAMuHMdV9WKVCm_9Yj3FhkGQyvKaz2QorjZd=X1wFcb80bJhsoA@mail.gmail.com>
-References: <1461455400-28767-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1461455400-28767-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdV9WKVCm_9Yj3FhkGQyvKaz2QorjZd=X1wFcb80bJhsoA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Wed, 27 Apr 2016 19:08:18 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/5] ARM: dts: r8a7790: Don't disable referenced optional clocks
+Date: Thu, 28 Apr 2016 09:08:10 +1000
+Message-Id: <03adc1811cefae9494deb2002c7ab44f31d782d7.1461798352.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461798352.git.horms+renesas@verge.net.au>
+References: <cover.1461798352.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thank you for the review.
+clk_get() on a disabled clock node will return -EPROBE_DEFER, which can
+cause drivers to be deferred forever if such clocks are referenced in
+their devices' clocks properties.
 
-On Monday 25 Apr 2016 10:24:22 Geert Uytterhoeven wrote:
-> On Sun, Apr 24, 2016 at 1:49 AM, Laurent Pinchart
-> 
-> <laurent.pinchart+renesas@ideasonboard.com> wrote:
-> > Replace the manual refcount and clock management code by runtime PM.
-> > 
-> > Signed-off-by: Laurent Pinchart
-> > <laurent.pinchart+renesas@ideasonboard.com>
-> > ---
-> > 
-> >  drivers/media/platform/Kconfig          |   1 +
-> >  drivers/media/platform/vsp1/vsp1.h      |   3 -
-> >  drivers/media/platform/vsp1/vsp1_drv.c  | 101 ++++++++++++---------------
-> >  drivers/media/platform/vsp1/vsp1_pipe.c |   2 +-
-> >  4 files changed, 54 insertions(+), 53 deletions(-)
-> > 
-> > diff --git a/drivers/media/platform/Kconfig
-> > b/drivers/media/platform/Kconfig index f453910050be..28d0db102c0b 100644
-> > --- a/drivers/media/platform/Kconfig
-> > +++ b/drivers/media/platform/Kconfig
-> > @@ -264,6 +264,7 @@ config VIDEO_RENESAS_VSP1
-> >         tristate "Renesas VSP1 Video Processing Engine"
-> >         depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && HAS_DMA
-> >         depends on (ARCH_RENESAS && OF) || COMPILE_TEST
-> > +       depends on PM
-> 
-> PM is always enabled since commits 2ee98234b88174f2 ("arm64: renesas: Enable
-> PM and PM_GENERIC_DOMAINS for SoCs with PM Domains") and 71d076ceb245f0d9
-> ("ARM: shmobile: Enable PM and PM_GENERIC_DOMAINS for SoCs with PM
-> Domains").
-> 
-> Even before that, drivers/sh/pm_runtime.c would have taken care of
-> enabling the clocks for you.
+Update the various disabled external clock nodes to default to a
+frequency of 0, but don't disable them, to prevent this.
 
-OK, I'll fix that. COMPILE_TEST should be handled by the pm_runtime.h stub 
-functions.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 776a2aed81d2..935064fe7b13 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1032,8 +1032,7 @@
+ 		pcie_bus_clk: pcie_bus {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+-			clock-frequency = <100000000>;
+-			status = "disabled";
++			clock-frequency = <0>;
+ 		};
+ 
+ 		/*
+@@ -1062,7 +1061,6 @@
+ 			#clock-cells = <0>;
+ 			/* This value must be overridden by the board. */
+ 			clock-frequency = <0>;
+-			status = "disabled";
+ 		};
+ 
+ 		/* External USB clock - can be overridden by the board */
+@@ -1078,7 +1076,6 @@
+ 			#clock-cells = <0>;
+ 			/* This value must be overridden by the board. */
+ 			clock-frequency = <0>;
+-			status = "disabled";
+ 		};
+ 
+ 		/* Special CPG clocks */
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
