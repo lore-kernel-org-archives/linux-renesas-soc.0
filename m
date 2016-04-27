@@ -1,96 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52474 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750874AbcDZB25 (ORCPT
+Received: from sauhun.de ([89.238.76.85]:57119 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753001AbcD0Qvm (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 21:28:57 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wed, 27 Apr 2016 12:51:42 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-mmc@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+	linux-renesas-soc@vger.kernel.org,
+	Ulf Hansson <ulf.hansson@linaro.org>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 05/11] soc: renesas: rcar-sysc: Enable Clock Domain for I/O devices
-Date: Tue, 26 Apr 2016 11:28:40 +1000
-Message-Id: <1c8c77f52d1037c61468539e1d68c44f9e710536.1461632180.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461632180.git.horms+renesas@verge.net.au>
-References: <cover.1461632180.git.horms+renesas@verge.net.au>
+Subject: [PATCH v3 5/5] mmc: tmio: document CTL_STATUS handling
+Date: Wed, 27 Apr 2016 18:51:27 +0200
+Message-Id: <1461775887-12786-6-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1461775887-12786-1-git-send-email-wsa@the-dreams.de>
+References: <1461775887-12786-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-On R-Car H3, some power areas (e.g. A3VP) contain I/O devices, which are
-also part of the CPG/MSSR Clock Domain.
-On all R-Car SoCs, devices in the "always-on" PM Domain are part of the
-Clock Domain served by the CPG/MSSR or CPG/MSTP driver.
+Now that reading CTL_STATUS is consistent, we can remove CTL_STATUS2 and
+document how this is handled internally.
 
-Hook up the CPG/MSTP or CPG/MSSR Clock Domain attach/detach callbacks to
-enable power management using module clocks. Which callback to hook up
-depends on the presence of device nodes compatible with
-"renesas,cpg-mstp-clocks". This clears the path for a future migration
-from the CPG/MSTP to the CPG/MSSR driver on R-Car H1 and
-Gen2.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/soc/renesas/rcar-sysc.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/mmc/host/tmio_mmc.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 4e760d63f2ab..0d49a25de740 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -9,6 +9,7 @@
-  * for more details.
-  */
- 
-+#include <linux/clk/renesas.h>
- #include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/mm.h>
-@@ -217,6 +218,8 @@ static int rcar_sysc_pd_power_on(struct generic_pm_domain *genpd)
- 	return rcar_sysc_power_up(&pd->ch);
- }
- 
-+static bool has_cpg_mstp;
-+
- static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
- {
- 	struct generic_pm_domain *genpd = &pd->genpd;
-@@ -248,6 +251,18 @@ static void __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
- 		gov = &pm_domain_always_on_gov;
- 	}
- 
-+	if (!(pd->flags & (PD_CPU | PD_SCU))) {
-+		/* Enable Clock Domain for I/O devices */
-+		genpd->flags = GENPD_FLAG_PM_CLK;
-+		if (has_cpg_mstp) {
-+			genpd->attach_dev = cpg_mstp_attach_dev;
-+			genpd->detach_dev = cpg_mstp_detach_dev;
-+		} else {
-+			genpd->attach_dev = cpg_mssr_attach_dev;
-+			genpd->detach_dev = cpg_mssr_detach_dev;
-+		}
-+	}
-+
- 	genpd->power_off = rcar_sysc_pd_power_off;
- 	genpd->power_on = rcar_sysc_pd_power_on;
- 
-@@ -294,6 +309,9 @@ static int __init rcar_sysc_pd_init(void)
- 
- 	info = match->data;
- 
-+	has_cpg_mstp = of_find_compatible_node(NULL, NULL,
-+					       "renesas,cpg-mstp-clocks");
-+
- 	base = of_iomap(np, 0);
- 	if (!base) {
- 		pr_warn("%s: Cannot map regs\n", np->full_name);
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 8dd5ea4be0a371..1aac2ad8edf265 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -30,8 +30,9 @@
+ #define CTL_STOP_INTERNAL_ACTION 0x08
+ #define CTL_XFER_BLK_COUNT 0xa
+ #define CTL_RESPONSE 0x0c
++/* driver merges STATUS and following STATUS2 */
+ #define CTL_STATUS 0x1c
+-#define CTL_STATUS2 0x1e
++/* driver merges IRQ_MASK and following IRQ_MASK2 */
+ #define CTL_IRQ_MASK 0x20
+ #define CTL_SD_CARD_CLK_CTL 0x24
+ #define CTL_SD_XFER_LEN 0x26
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.0
