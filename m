@@ -1,27 +1,26 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:37247 "EHLO
-	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752469AbcD0IbW (ORCPT
+Received: from mail-ig0-f193.google.com ([209.85.213.193]:34812 "EHLO
+	mail-ig0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752775AbcD0HOv (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 04:31:22 -0400
-Received: by mail-wm0-f42.google.com with SMTP id a17so5715373wme.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Apr 2016 01:31:21 -0700 (PDT)
+	Wed, 27 Apr 2016 03:14:51 -0400
 MIME-Version: 1.0
 In-Reply-To: <1461702886-6873-1-git-send-email-wsa@the-dreams.de>
 References: <1461702886-6873-1-git-send-email-wsa@the-dreams.de>
-Date: Wed, 27 Apr 2016 10:31:20 +0200
-Message-ID: <CAPDyKFoPzUs3t00Yhrwdrc6Eeb-rpnh8ONb03vBk5fMAQCs47g@mail.gmail.com>
+Date: Wed, 27 Apr 2016 09:14:51 +0200
+Message-ID: <CAMuHMdV=ZHp6gYD726Gc9quaTbq0Hmw_fH_iKeAha1rVDABhLg@mail.gmail.com>
 Subject: Re: [PATCH] mmc: mmcif: remove obsolete support for sh7372
-From: Ulf Hansson <ulf.hansson@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
+	Ulf Hansson <ulf.hansson@linaro.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 26 April 2016 at 22:34, Wolfram Sang <wsa@the-dreams.de> wrote:
+On Tue, Apr 26, 2016 at 10:34 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
 > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 >
 > There is no support for this platform in the kernel anymore. Make the
@@ -30,31 +29,15 @@ On 26 April 2016 at 22:34, Wolfram Sang <wsa@the-dreams.de> wrote:
 > Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thanks, applied for next!
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Kind regards
-Uffe
+Gr{oetje,eeting}s,
 
-> ---
->  drivers/mmc/host/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 04feea8354cba7..f5be219274329d 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -676,9 +676,9 @@ config MMC_SH_MMCIF
->         depends on HAS_DMA
->         depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
->         help
-> -         This selects the MMC Host Interface controller (MMCIF).
-> +         This selects the MMC Host Interface controller (MMCIF) found in various
-> +         Renesas SoCs for SH and ARM architectures.
->
-> -         This driver supports MMCIF in sh7724/sh7757/sh7372.
->
->  config MMC_JZ4740
->         tristate "JZ4740 SD/Multimedia Card Interface support"
-> --
-> 2.7.0
->
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
