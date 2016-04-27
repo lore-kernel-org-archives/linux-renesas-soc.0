@@ -1,111 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52474 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:41654 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751097AbcDZB27 (ORCPT
+	with ESMTP id S1751534AbcD0EG4 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 21:28:59 -0400
+	Wed, 27 Apr 2016 00:06:56 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 06/11] soc: renesas: rcar-sysc: Add support for R-Car H1 power areas
-Date: Tue, 26 Apr 2016 11:28:41 +1000
-Message-Id: <9b83ea17b0d9b5461ee46a2f5a668e6b10743f1a.1461632180.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461632180.git.horms+renesas@verge.net.au>
-References: <cover.1461632180.git.horms+renesas@verge.net.au>
+Subject: [PATCH 4/4] arm64: dts: r8a7795: Don't disable referenced optional clocks
+Date: Wed, 27 Apr 2016 14:06:46 +1000
+Message-Id: <9f33a8a9e1b7dbb0b91a58af958d1c301a6fab1a.1461723181.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461723181.git.horms+renesas@verge.net.au>
+References: <cover.1461723181.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
+clk_get() on a disabled clock node will return -EPROBE_DEFER, which can
+cause drivers to be deferred forever if such clocks are referenced in
+their devices' clocks properties.
+
+Update the various disabled external clock nodes to default to a
+frequency of 0, but don't disable them, to prevent this.
+
+Reported-by: Jürg Billeter <j@bitron.ch>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/soc/renesas/Makefile       |  2 +-
- drivers/soc/renesas/r8a7779-sysc.c | 34 ++++++++++++++++++++++++++++++++++
- drivers/soc/renesas/rcar-sysc.c    |  3 +++
- drivers/soc/renesas/rcar-sysc.h    |  1 +
- 4 files changed, 39 insertions(+), 1 deletion(-)
- create mode 100644 drivers/soc/renesas/r8a7779-sysc.c
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 1 +
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 5 +----
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index 2b64f6c94681..b8aa9db4fdd9 100644
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@ -1,4 +1,4 @@
--obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o
-+obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
- obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o
- obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o
- obj-$(CONFIG_ARCH_R8A7793)	+= rcar-sysc.o
-diff --git a/drivers/soc/renesas/r8a7779-sysc.c b/drivers/soc/renesas/r8a7779-sysc.c
-new file mode 100644
-index 000000000000..9e8e6b7faa04
---- /dev/null
-+++ b/drivers/soc/renesas/r8a7779-sysc.c
-@@ -0,0 +1,34 @@
-+/*
-+ * Renesas R-Car H1 System Controller
-+ *
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+
-+#include <linux/bug.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/power/r8a7779-sysc.h>
-+
-+#include "rcar-sysc.h"
-+
-+static const struct rcar_sysc_area r8a7779_areas[] __initconst = {
-+	{ "always-on",	    0, 0, R8A7779_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
-+	{ "arm1",	 0x40, 1, R8A7779_PD_ARM1,	R8A7779_PD_ALWAYS_ON,
-+	  PD_CPU_CR },
-+	{ "arm2",	 0x40, 2, R8A7779_PD_ARM2,	R8A7779_PD_ALWAYS_ON,
-+	  PD_CPU_CR },
-+	{ "arm3",	 0x40, 3, R8A7779_PD_ARM3,	R8A7779_PD_ALWAYS_ON,
-+	  PD_CPU_CR },
-+	{ "sgx",	 0xc0, 0, R8A7779_PD_SGX,	R8A7779_PD_ALWAYS_ON },
-+	{ "vdp",	0x100, 0, R8A7779_PD_VDP,	R8A7779_PD_ALWAYS_ON },
-+	{ "imp",	0x140, 0, R8A7779_PD_IMP,	R8A7779_PD_ALWAYS_ON },
-+};
-+
-+const struct rcar_sysc_info r8a7779_sysc_info __initconst = {
-+	.areas = r8a7779_areas,
-+	.num_areas = ARRAY_SIZE(r8a7779_areas),
-+};
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 0d49a25de740..858ad23ae03a 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -284,6 +284,9 @@ finalize:
- }
- 
- static const struct of_device_id rcar_sysc_matches[] = {
-+#ifdef CONFIG_ARCH_R8A7779
-+	{ .compatible = "renesas,r8a7779-sysc", .data = &r8a7779_sysc_info },
-+#endif
- 	{ /* sentinel */ }
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 78c02937697e..8d8de245a845 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -394,6 +394,7 @@
  };
  
-diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
-index 7bb48b4f7334..7cf58b9cd544 100644
---- a/drivers/soc/renesas/rcar-sysc.h
-+++ b/drivers/soc/renesas/rcar-sysc.h
-@@ -50,4 +50,5 @@ struct rcar_sysc_info {
- 	unsigned int num_areas;
+ &pcie_bus_clk {
++	clock-frequency = <100000000>;
+ 	status = "okay";
  };
  
-+extern const struct rcar_sysc_info r8a7779_sysc_info;
- #endif /* __SOC_RENESAS_RCAR_SYSC_H__ */
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 11f9971a8543..7cb2d72e7378 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -120,7 +120,6 @@
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <0>;
+-		status = "disabled";
+ 	};
+ 
+ 	/* External SCIF clock - to be overridden by boards that provide it */
+@@ -128,15 +127,13 @@
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <0>;
+-		status = "disabled";
+ 	};
+ 
+ 	/* External PCIe clock - can be overridden by the board */
+ 	pcie_bus_clk: pcie_bus {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+-		clock-frequency = <100000000>;
+-		status = "disabled";
++		clock-frequency = <0>;
+ 	};
+ 
+ 	soc {
 -- 
 2.7.0.rc3.207.g0ac5344
