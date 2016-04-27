@@ -1,57 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60436 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752615AbcD0XIV (ORCPT
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:35591 "EHLO
+	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752521AbcD0ISZ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 19:08:21 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 5/5] ARM: dts: r8a7794: Don't disable referenced optional clocks
-Date: Thu, 28 Apr 2016 09:08:12 +1000
-Message-Id: <c9006ac628ca30dd0d06dad47677d338e243bb95.1461798352.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461798352.git.horms+renesas@verge.net.au>
-References: <cover.1461798352.git.horms+renesas@verge.net.au>
+	Wed, 27 Apr 2016 04:18:25 -0400
+Received: by mail-wm0-f52.google.com with SMTP id e201so27368929wme.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Apr 2016 01:18:24 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <571FAD61.7000106@cogentembedded.com>
+References: <1461686127-3217-1-git-send-email-wsa@the-dreams.de>
+	<1461686127-3217-4-git-send-email-wsa@the-dreams.de>
+	<571FAD61.7000106@cogentembedded.com>
+Date: Wed, 27 Apr 2016 10:18:23 +0200
+Message-ID: <CAPDyKFrqEcFqJo8B5dn3Qo1ae9mqKmmUrT+r4xhYZJ7z=S1Vew@mail.gmail.com>
+Subject: Re: [PATCH V2 3/6] mmc: tmio: remove now unneeded seperate irq handlers
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On 26 April 2016 at 20:03, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Hello.
+>
+> On 04/26/2016 06:55 PM, Wolfram Sang wrote:
+>
+>> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>
+>> We removed installation of seperate handlers previously, so we can also
+>
+>
+>    Separate.
+>
+>> remove the seperate handlers.
+>
+>
+>    Again. :-)
+>
+>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+>
+> [...]
+>
+> MBR, Sergei
+>
 
-clk_get() on a disabled clock node will return -EPROBE_DEFER, which can
-cause drivers to be deferred forever if such clocks are referenced in
-their devices' clocks properties.
+Acutally checkpatch complains about this as well. This time I decided
+to amend the patches myself!
 
-Update the various disabled external clock nodes to default to a
-frequency of 0, but don't disable them, to prevent this.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7794.dtsi | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index b0bce43779f1..e45b23f31149 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -906,7 +906,6 @@
- 			#clock-cells = <0>;
- 			/* This value must be overridden by the board. */
- 			clock-frequency = <0>;
--			status = "disabled";
- 		};
- 
- 		/* External SCIF clock */
-@@ -915,7 +914,6 @@
- 			#clock-cells = <0>;
- 			/* This value must be overridden by the board. */
- 			clock-frequency = <0>;
--			status = "disabled";
- 		};
- 
- 		/* Special CPG clocks */
--- 
-2.7.0.rc3.207.g0ac5344
+Kind regards
+Uffe
