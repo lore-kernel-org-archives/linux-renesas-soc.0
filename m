@@ -1,59 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:36088 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753861AbcD2M6w (ORCPT
+Received: from sauhun.de ([89.238.76.85]:57110 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752555AbcD0Qvl (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 29 Apr 2016 08:58:52 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Peter Hurley <peter@hurleysoftware.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 06/11] serial: sh-sci: Add more Serial Port Register documentation
-Date: Fri, 29 Apr 2016 14:58:29 +0200
-Message-Id: <1461934714-18681-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
-References: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+	Wed, 27 Apr 2016 12:51:41 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-mmc@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+	linux-renesas-soc@vger.kernel.org,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 2/5] mmc: tmio: use BIT() within defines
+Date: Wed, 27 Apr 2016 18:51:24 +0200
+Message-Id: <1461775887-12786-3-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1461775887-12786-1-git-send-email-wsa@the-dreams.de>
+References: <1461775887-12786-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Improve documentation for the (H)SCIF Serial Port Register:
-  - Make it clear the RTS and CTS lines are active-low,
-  - Document the bits related to the serial port's clock pin.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- drivers/tty/serial/sh-sci.h | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+BIT() makes it easier to match the bits to the datasheet. This is
+especially important here, since some variants have different names in
+their datasheets (like with Renesas R-Car).
 
-diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
-index 7a4fa185b93ef307..85a2b81ba0a845e5 100644
---- a/drivers/tty/serial/sh-sci.h
-+++ b/drivers/tty/serial/sh-sci.h
-@@ -108,10 +108,12 @@ enum {
- #define SCLSR_ORER	BIT(0)	/* Overrun Error */
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/tmio_mmc.h | 44 +++++++++++++++++++++++---------------------
+ 1 file changed, 23 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index e75e5ca220bc0a..74945c1a66ce81 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -49,27 +49,29 @@
+ #define CTL_RESET_SDIO 0x1e0
  
- /* SCSPTR (Serial Port Register), optional */
--#define SCSPTR_RTSIO	BIT(7)	/* Serial Port RTS Pin Input/Output */
--#define SCSPTR_RTSDT	BIT(6)	/* Serial Port RTS Pin Data */
--#define SCSPTR_CTSIO	BIT(5)	/* Serial Port CTS Pin Input/Output */
--#define SCSPTR_CTSDT	BIT(4)	/* Serial Port CTS Pin Data */
-+#define SCSPTR_RTSIO	BIT(7)	/* Serial Port RTS# Pin Input/Output */
-+#define SCSPTR_RTSDT	BIT(6)	/* Serial Port RTS# Pin Data */
-+#define SCSPTR_CTSIO	BIT(5)	/* Serial Port CTS# Pin Input/Output */
-+#define SCSPTR_CTSDT	BIT(4)	/* Serial Port CTS# Pin Data */
-+#define SCSPTR_SCKIO	BIT(3)	/* Serial Port Clock Pin Input/Output */
-+#define SCSPTR_SCKDT	BIT(2)	/* Serial Port Clock Pin Data */
- #define SCSPTR_SPB2IO	BIT(1)	/* Serial Port Break Input/Output */
- #define SCSPTR_SPB2DT	BIT(0)	/* Serial Port Break Data */
+ /* Definitions for values the CTRL_STATUS register can take. */
+-#define TMIO_STAT_CMDRESPEND    0x00000001
+-#define TMIO_STAT_DATAEND       0x00000004
+-#define TMIO_STAT_CARD_REMOVE   0x00000008
+-#define TMIO_STAT_CARD_INSERT   0x00000010
+-#define TMIO_STAT_SIGSTATE      0x00000020
+-#define TMIO_STAT_WRPROTECT     0x00000080
+-#define TMIO_STAT_CARD_REMOVE_A 0x00000100
+-#define TMIO_STAT_CARD_INSERT_A 0x00000200
+-#define TMIO_STAT_SIGSTATE_A    0x00000400
+-#define TMIO_STAT_CMD_IDX_ERR   0x00010000
+-#define TMIO_STAT_CRCFAIL       0x00020000
+-#define TMIO_STAT_STOPBIT_ERR   0x00040000
+-#define TMIO_STAT_DATATIMEOUT   0x00080000
+-#define TMIO_STAT_RXOVERFLOW    0x00100000
+-#define TMIO_STAT_TXUNDERRUN    0x00200000
+-#define TMIO_STAT_CMDTIMEOUT    0x00400000
+-#define TMIO_STAT_RXRDY         0x01000000
+-#define TMIO_STAT_TXRQ          0x02000000
+-#define TMIO_STAT_ILL_FUNC      0x20000000
+-#define TMIO_STAT_CMD_BUSY      0x40000000
+-#define TMIO_STAT_ILL_ACCESS    0x80000000
++#define TMIO_STAT_CMDRESPEND    BIT(0)
++#define TMIO_STAT_DATAEND       BIT(2)
++#define TMIO_STAT_CARD_REMOVE   BIT(3)
++#define TMIO_STAT_CARD_INSERT   BIT(4)
++#define TMIO_STAT_SIGSTATE      BIT(5)
++#define TMIO_STAT_WRPROTECT     BIT(7)
++#define TMIO_STAT_CARD_REMOVE_A BIT(8)
++#define TMIO_STAT_CARD_INSERT_A BIT(9)
++#define TMIO_STAT_SIGSTATE_A    BIT(10)
++
++/* These belong technically to CTRL_STATUS2, but the driver merges them */
++#define TMIO_STAT_CMD_IDX_ERR   BIT(16)
++#define TMIO_STAT_CRCFAIL       BIT(17)
++#define TMIO_STAT_STOPBIT_ERR   BIT(18)
++#define TMIO_STAT_DATATIMEOUT   BIT(19)
++#define TMIO_STAT_RXOVERFLOW    BIT(20)
++#define TMIO_STAT_TXUNDERRUN    BIT(21)
++#define TMIO_STAT_CMDTIMEOUT    BIT(22)
++#define TMIO_STAT_RXRDY         BIT(24)
++#define TMIO_STAT_TXRQ          BIT(25)
++#define TMIO_STAT_ILL_FUNC      BIT(29)
++#define TMIO_STAT_CMD_BUSY      BIT(30)
++#define TMIO_STAT_ILL_ACCESS    BIT(31)
+ 
+ #define TMIO_STATUS2_DAT0	BIT(7)
  
 -- 
-1.9.1
+2.7.0
