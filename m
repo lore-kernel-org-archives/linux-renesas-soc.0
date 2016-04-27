@@ -1,70 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f196.google.com ([209.85.213.196]:33580 "EHLO
-	mail-ig0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752427AbcD0OEH (ORCPT
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:37269 "EHLO
+	mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753032AbcD0N7y (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 10:04:07 -0400
+	Wed, 27 Apr 2016 09:59:54 -0400
+Received: by mail-wm0-f45.google.com with SMTP id a17so17358631wme.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Apr 2016 06:59:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFqApbcY9apg7dtGh=y71607c0hPHvEGDOo-skUTwCrUCg@mail.gmail.com>
+In-Reply-To: <1461654582-668-3-git-send-email-geert+renesas@glider.be>
 References: <1461654582-668-1-git-send-email-geert+renesas@glider.be>
 	<1461654582-668-3-git-send-email-geert+renesas@glider.be>
-	<CAPDyKFqApbcY9apg7dtGh=y71607c0hPHvEGDOo-skUTwCrUCg@mail.gmail.com>
-Date: Wed, 27 Apr 2016 16:04:05 +0200
-Message-ID: <CAMuHMdWyzbd8n-3+AZ16b9HL2prYQM2YXfcm8PKa_TbJ1QDQtg@mail.gmail.com>
+Date: Wed, 27 Apr 2016 15:59:52 +0200
+Message-ID: <CAPDyKFqApbcY9apg7dtGh=y71607c0hPHvEGDOo-skUTwCrUCg@mail.gmail.com>
 Subject: Re: [PATCH 2/4] clk: renesas: mstp: Use always-on governor for Clock Domain
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
 	Kevin Hilman <khilman@kernel.org>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
+	linux-clk@vger.kernel.org,
 	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
 	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulf,
-
-On Wed, Apr 27, 2016 at 3:59 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 26 April 2016 at 09:09, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
->> As a pure Clock Domain does not have the concept of powering the domain
->> itself, the CPG/MSTP driver does not provide power_off() and power_on()
->> callbacks.
->> However, the genpd core may still perform a dummy power down, causing
->> /sys/kernel/debug/pm_genpd/pm_genpd_summary to report the domain's
->> status being "off-0".
->>
->> Use the always-on governor to make sure the domain is never powered
->> down, and always shows up as "on" in pm_genpd_summary.
+On 26 April 2016 at 09:09, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> As a pure Clock Domain does not have the concept of powering the domain
+> itself, the CPG/MSTP driver does not provide power_off() and power_on()
+> callbacks.
+> However, the genpd core may still perform a dummy power down, causing
+> /sys/kernel/debug/pm_genpd/pm_genpd_summary to report the domain's
+> status being "off-0".
 >
-> Hmm.
+> Use the always-on governor to make sure the domain is never powered
+> down, and always shows up as "on" in pm_genpd_summary.
+
+Hmm.
+
+Hypothetically, what if the clock domain would be a subdomain, where
+its master is able to power down? Using the always on governor would
+prevent the master from power off as well.
+
+I am wondering whether we should introduce some similar as
+pm_runtime_no_callbacks() but for the generic PM domain instead.
+
+What do you think?
+
 >
-> Hypothetically, what if the clock domain would be a subdomain, where
-> its master is able to power down? Using the always on governor would
-> prevent the master from power off as well.
-
-That's correct. However, on R-Mobile/R-Car SoCs, this is not the case, so it
-doesn't matter here.
-
-> I am wondering whether we should introduce some similar as
-> pm_runtime_no_callbacks() but for the generic PM domain instead.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/clk/renesas/clk-mstp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> What do you think?
+> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+> index 969fbb61ab07b9b8..5093a250650dad6d 100644
+> --- a/drivers/clk/renesas/clk-mstp.c
+> +++ b/drivers/clk/renesas/clk-mstp.c
+> @@ -319,7 +319,7 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
+>         pd->flags = GENPD_FLAG_PM_CLK;
+>         pd->attach_dev = cpg_mstp_attach_dev;
+>         pd->detach_dev = cpg_mstp_detach_dev;
+> -       pm_genpd_init(pd, &simple_qos_governor, false);
+> +       pm_genpd_init(pd, &pm_domain_always_on_gov, false);
+>
+>         of_genpd_add_provider_simple(np, pd);
+>  }
+> --
+> 1.9.1
+>
 
-In my case, the domain is not managed by its parent, to there's no such
-analogy.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Kind regards
+Uffe
