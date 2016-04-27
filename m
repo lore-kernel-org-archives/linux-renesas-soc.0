@@ -1,70 +1,237 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:51146 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751815AbcDZPsG (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41953 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750988AbcD0EUu (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 11:48:06 -0400
-Date: Tue, 26 Apr 2016 17:47:54 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-sh list <linux-sh@vger.kernel.org>,
-	Simon Horman <horms@verge.net.au>,
-	Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
-Subject: Re: [PATCH 2/6] mmc: sh_mobile_sdhi: remove obsolete irq_by_name
- registration
-Message-ID: <20160426154754.GA2943@katana>
-References: <1459934734-3613-1-git-send-email-wsa@the-dreams.de>
- <1459934734-3613-3-git-send-email-wsa@the-dreams.de>
- <CAPDyKFqixO2EGxdx4ERy=DSTR+KBunrYyfR26+AYN0k5_dVHiw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFqixO2EGxdx4ERy=DSTR+KBunrYyfR26+AYN0k5_dVHiw@mail.gmail.com>
+	Wed, 27 Apr 2016 00:20:50 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 06/10] ARM: dts: r8a7779: Use SYSC "always-on" PM Domain
+Date: Wed, 27 Apr 2016 14:20:33 +1000
+Message-Id: <751e29bbb64ad091c6f51704f31224aaec560f69.1461730638.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461730638.git.horms+renesas@verge.net.au>
+References: <cover.1461730638.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
---RnlQjJ0d97Da+TV1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hook up all devices that are part of the CPG/MSTP Clock Domain to the
+SYSC "always-on" PM Domain, for a more consistent device-power-area
+description in DT.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7779.dtsi | 44 +++++++++++++++++++++---------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
-> I need and ack from the Superh arch maintainer to apply this one.
->=20
-> It seems like you didn't include them on "to/cc" list, perhaps repost!?
-
-Nothing happened...
-
-So, I'll repost the series without the removal of the include file and
-not touching SH boards. It will be your realm only then.
-
-I'll repost the SH relevant parts as a seperate patch to the SH list, so
-this can have then its own timeframe.
-
-
---RnlQjJ0d97Da+TV1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXH42qAAoJEBQN5MwUoCm29KUP/3fmryHJgKn3XBqHGuM7jbc6
-A6kdr7ceU9+zL+mVaXGs31STxfXS91fsknx0dyzUZC3jjE95464QcWZL/WEuoqHo
-ioyJndEHhnL0fK6s6ahZc5zD+o1I1rIrTIfs7BQTFwO6EtQS+4m/tmAZy5s8NrGF
-yVMOVkz7p308KJJCidpi4XWs3kxad+v969E4K+doVjVA2yP48ZX5IHGQHEqUITHW
-Rnpw7WP1nkLSGxbtbpBPjsV9Bkxu3vNZQs3ooydoLsZI/jGfvqtmSjPOKr0gjcZg
-NQ9dIzzMGzMftEO9k4tjW5ltpqIRnmNFRRHkPOnHxSzQCoBNL6t/Fg8ET1XHrhUe
-4Sz1gP+DqFiFJkpe6p+radjnRcssSx4IlCRqW14KV/k8PFtyOhNwsfskIv8wGjxZ
-zNmi2QDGf/2UScq2tBHMqnVzsuURgTK7Grw1bpHX3k+KKdHBo6ySZqYUcIDp4nhf
-N28A9SV57Xt/LHENLXRBgQsWGCpYtnxhzPq3I1xsijfOEofP5usOt6fofq6fPIhp
-spusvrG/JBMDWS4aRiPSNvD/SaQQGi1MJwM/iy1snHxO835puV6L3hk9APaATrBC
-O33Ak8pWFXSkmlI3HuJ5U6lP+c7gAbNhqZDS/Kjmqs+/LuFAzNHLK3axDjJirFPG
-VUfRyhqZkXbOSI00MiZx
-=FxlG
------END PGP SIGNATURE-----
-
---RnlQjJ0d97Da+TV1--
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index e02875a8c040..d43e3b2105ae 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -177,7 +177,7 @@
+ 		reg = <0xffc70000 0x1000>;
+ 		interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C0>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -188,7 +188,7 @@
+ 		reg = <0xffc71000 0x1000>;
+ 		interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C1>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -199,7 +199,7 @@
+ 		reg = <0xffc72000 0x1000>;
+ 		interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C2>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -210,7 +210,7 @@
+ 		reg = <0xffc73000 0x1000>;
+ 		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_I2C3>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -222,7 +222,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF0>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -234,7 +234,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF1>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -246,7 +246,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF2>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -258,7 +258,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF3>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -270,7 +270,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF4>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -282,7 +282,7 @@
+ 		clocks = <&mstp0_clks R8A7779_CLK_SCIF5>,
+ 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -304,7 +304,7 @@
+ 			     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_TMU0>;
+ 		clock-names = "fck";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 
+ 		#renesas,channels = <3>;
+ 
+@@ -319,7 +319,7 @@
+ 			     <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_TMU1>;
+ 		clock-names = "fck";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 
+ 		#renesas,channels = <3>;
+ 
+@@ -334,7 +334,7 @@
+ 			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_TMU2>;
+ 		clock-names = "fck";
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 
+ 		#renesas,channels = <3>;
+ 
+@@ -346,7 +346,7 @@
+ 		reg = <0xfc600000 0x2000>;
+ 		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 	};
+ 
+ 	sdhi0: sd@ffe4c000 {
+@@ -354,7 +354,7 @@
+ 		reg = <0xffe4c000 0x100>;
+ 		interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI0>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -363,7 +363,7 @@
+ 		reg = <0xffe4d000 0x100>;
+ 		interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI1>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -372,7 +372,7 @@
+ 		reg = <0xffe4e000 0x100>;
+ 		interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI2>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -381,7 +381,7 @@
+ 		reg = <0xffe4f000 0x100>;
+ 		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7779_CLK_SDHI3>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -392,7 +392,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -403,7 +403,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -414,7 +414,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -423,7 +423,7 @@
+ 		reg = <0 0xfff80000 0 0x40000>;
+ 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7779_CLK_DU>;
+-		power-domains = <&cpg_clocks>;
++		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 
+ 		ports {
+-- 
+2.7.0.rc3.207.g0ac5344
