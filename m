@@ -1,162 +1,139 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:51367 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751815AbcDZQx5 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41953 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750973AbcD0EUq (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 12:53:57 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-mmc@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	linux-renesas-soc@vger.kernel.org,
-	Ulf Hansson <ulf.hansson@linaro.org>,
+	Wed, 27 Apr 2016 00:20:46 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 1/5] mmc: tmio: give read32/write32 functions more descriptive names
-Date: Tue, 26 Apr 2016 18:53:41 +0200
-Message-Id: <1461689625-3693-2-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1461689625-3693-1-git-send-email-wsa@the-dreams.de>
-References: <1461689625-3693-1-git-send-email-wsa@the-dreams.de>
+Subject: [PATCH 02/10] ARM: dts: r8a7790: Add SYSC PM Domains
+Date: Wed, 27 Apr 2016 14:20:29 +1000
+Message-Id: <4c8eb3c8896d842d3fb4802dc6e5f39733596733.1461730638.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461730638.git.horms+renesas@verge.net.au>
+References: <cover.1461730638.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Looking at the backlogs, I am not the only one who missed that the above
-functions do not read u32 from one register, but create a virtual u32
-from reading to adjacent u16 registers (which depending on 'bus_shift'
-can be up to 8 byte apart). Because this driver supports old hardware
-for which we don't have documentation, I first wrongly assumed there was
-a variant which had a few u32 registers. Let's give the functions more
-descriptive names to make it more obvious what is happening.
+Add a device node for the System Controller.
+Hook up the Cortex-A15 and Cortex-A7 CPU cores and L2 caches/SCUs to
+their respective PM Domains.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/mmc/host/tmio_mmc.h     |  5 ++---
- drivers/mmc/host/tmio_mmc_pio.c | 22 +++++++++++-----------
- 2 files changed, 13 insertions(+), 14 deletions(-)
+ arch/arm/boot/dts/r8a7790.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 439fdad2bad91d..e75e5ca220bc0a 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -232,7 +232,7 @@ static inline void sd_ctrl_read16_rep(struct tmio_mmc_host *host, int addr,
- 	readsw(host->ctl + (addr << host->bus_shift), buf, count);
- }
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 776a2aed81d2..36c91d921771 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -13,6 +13,7 @@
+ #include <dt-bindings/clock/r8a7790-clock.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/power/r8a7790-sysc.h>
  
--static inline u32 sd_ctrl_read32(struct tmio_mmc_host *host, int addr)
-+static inline u32 sd_ctrl_read16_and_16_as_32(struct tmio_mmc_host *host, int addr)
- {
- 	return readw(host->ctl + (addr << host->bus_shift)) |
- 	       readw(host->ctl + ((addr + 2) << host->bus_shift)) << 16;
-@@ -254,11 +254,10 @@ static inline void sd_ctrl_write16_rep(struct tmio_mmc_host *host, int addr,
- 	writesw(host->ctl + (addr << host->bus_shift), buf, count);
- }
+ / {
+ 	compatible = "renesas,r8a7790";
+@@ -52,6 +53,7 @@
+ 			voltage-tolerance = <1>; /* 1% */
+ 			clocks = <&cpg_clocks R8A7790_CLK_Z>;
+ 			clock-latency = <300000>; /* 300 us */
++			power-domains = <&sysc R8A7790_PD_CA15_CPU0>;
+ 			next-level-cache = <&L2_CA15>;
  
--static inline void sd_ctrl_write32(struct tmio_mmc_host *host, int addr, u32 val)
-+static inline void sd_ctrl_write32_as_16_and_16(struct tmio_mmc_host *host, int addr, u32 val)
- {
- 	writew(val, host->ctl + (addr << host->bus_shift));
- 	writew(val >> 16, host->ctl + ((addr + 2) << host->bus_shift));
- }
+ 			/* kHz - uV - OPPs unknown yet */
+@@ -68,6 +70,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <1>;
+ 			clock-frequency = <1300000000>;
++			power-domains = <&sysc R8A7790_PD_CA15_CPU1>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
  
--
- #endif
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 15e6f6d5a42337..dad2ebd3dc22b4 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -55,18 +55,18 @@
- void tmio_mmc_enable_mmc_irqs(struct tmio_mmc_host *host, u32 i)
- {
- 	host->sdcard_irq_mask &= ~(i & TMIO_MASK_IRQ);
--	sd_ctrl_write32(host, CTL_IRQ_MASK, host->sdcard_irq_mask);
-+	sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK, host->sdcard_irq_mask);
- }
+@@ -76,6 +79,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <2>;
+ 			clock-frequency = <1300000000>;
++			power-domains = <&sysc R8A7790_PD_CA15_CPU2>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
  
- void tmio_mmc_disable_mmc_irqs(struct tmio_mmc_host *host, u32 i)
- {
- 	host->sdcard_irq_mask |= (i & TMIO_MASK_IRQ);
--	sd_ctrl_write32(host, CTL_IRQ_MASK, host->sdcard_irq_mask);
-+	sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK, host->sdcard_irq_mask);
- }
+@@ -84,6 +88,7 @@
+ 			compatible = "arm,cortex-a15";
+ 			reg = <3>;
+ 			clock-frequency = <1300000000>;
++			power-domains = <&sysc R8A7790_PD_CA15_CPU3>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
  
- static void tmio_mmc_ack_mmc_irqs(struct tmio_mmc_host *host, u32 i)
- {
--	sd_ctrl_write32(host, CTL_STATUS, ~i);
-+	sd_ctrl_write32_as_16_and_16(host, CTL_STATUS, ~i);
- }
+@@ -92,6 +97,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x100>;
+ 			clock-frequency = <780000000>;
++			power-domains = <&sysc R8A7790_PD_CA7_CPU0>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
  
- static void tmio_mmc_init_sg(struct tmio_mmc_host *host, struct mmc_data *data)
-@@ -381,7 +381,7 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
- 	tmio_mmc_enable_mmc_irqs(host, irq_mask);
+@@ -100,6 +106,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x101>;
+ 			clock-frequency = <780000000>;
++			power-domains = <&sysc R8A7790_PD_CA7_CPU1>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
  
- 	/* Fire off the command */
--	sd_ctrl_write32(host, CTL_ARG_REG, cmd->arg);
-+	sd_ctrl_write32_as_16_and_16(host, CTL_ARG_REG, cmd->arg);
- 	sd_ctrl_write16(host, CTL_SD_CMD, c);
+@@ -108,6 +115,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x102>;
+ 			clock-frequency = <780000000>;
++			power-domains = <&sysc R8A7790_PD_CA7_CPU2>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
  
- 	return 0;
-@@ -536,7 +536,7 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host)
- 		goto out;
+@@ -116,6 +124,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			reg = <0x103>;
+ 			clock-frequency = <780000000>;
++			power-domains = <&sysc R8A7790_PD_CA7_CPU3>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+ 	};
+@@ -141,12 +150,14 @@
  
- 	if (host->chan_tx && (data->flags & MMC_DATA_WRITE) && !host->force_pio) {
--		u32 status = sd_ctrl_read32(host, CTL_STATUS);
-+		u32 status = sd_ctrl_read16_and_16_as_32(host, CTL_STATUS);
- 		bool done = false;
+ 	L2_CA15: cache-controller@0 {
+ 		compatible = "cache";
++		power-domains = <&sysc R8A7790_PD_CA15_SCU>;
+ 		cache-unified;
+ 		cache-level = <2>;
+ 	};
  
- 		/*
-@@ -591,7 +591,7 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host,
- 	 */
+ 	L2_CA7: cache-controller@1 {
+ 		compatible = "cache";
++		power-domains = <&sysc R8A7790_PD_CA7_SCU>;
+ 		cache-unified;
+ 		cache-level = <2>;
+ 	};
+@@ -1450,6 +1461,12 @@
+ 		};
+ 	};
  
- 	for (i = 3, addr = CTL_RESPONSE ; i >= 0 ; i--, addr += 4)
--		cmd->resp[i] = sd_ctrl_read32(host, addr);
-+		cmd->resp[i] = sd_ctrl_read16_and_16_as_32(host, addr);
- 
- 	if (cmd->flags &  MMC_RSP_136) {
- 		cmd->resp[0] = (cmd->resp[0] << 8) | (cmd->resp[1] >> 24);
-@@ -708,14 +708,14 @@ irqreturn_t tmio_mmc_irq(int irq, void *devid)
- 	struct tmio_mmc_host *host = devid;
- 	unsigned int ireg, status;
- 
--	status = sd_ctrl_read32(host, CTL_STATUS);
-+	status = sd_ctrl_read16_and_16_as_32(host, CTL_STATUS);
- 	ireg = status & TMIO_MASK_IRQ & ~host->sdcard_irq_mask;
- 
- 	pr_debug_status(status);
- 	pr_debug_status(ireg);
- 
- 	/* Clear the status except the interrupt status */
--	sd_ctrl_write32(host, CTL_STATUS, TMIO_MASK_IRQ);
-+	sd_ctrl_write32_as_16_and_16(host, CTL_STATUS, TMIO_MASK_IRQ);
- 
- 	if (__tmio_mmc_card_detect_irq(host, ireg, status))
- 		return IRQ_HANDLED;
-@@ -961,7 +961,7 @@ static int tmio_mmc_get_ro(struct mmc_host *mmc)
- 
- 	pm_runtime_get_sync(mmc_dev(mmc));
- 	ret = !((pdata->flags & TMIO_MMC_WRPROTECT_DISABLE) ||
--		(sd_ctrl_read32(host, CTL_STATUS) & TMIO_STAT_WRPROTECT));
-+		(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) & TMIO_STAT_WRPROTECT));
- 	pm_runtime_mark_last_busy(mmc_dev(mmc));
- 	pm_runtime_put_autosuspend(mmc_dev(mmc));
- 
-@@ -983,7 +983,7 @@ static int tmio_mmc_card_busy(struct mmc_host *mmc)
- {
- 	struct tmio_mmc_host *host = mmc_priv(mmc);
- 
--	return !(sd_ctrl_read32(host, CTL_STATUS2) & TMIO_STATUS2_DAT0);
-+	return !(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS2) & TMIO_STATUS2_DAT0);
- }
- 
- static struct mmc_host_ops tmio_mmc_ops = {
-@@ -1132,7 +1132,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 	tmio_mmc_clk_stop(_host);
- 	tmio_mmc_reset(_host);
- 
--	_host->sdcard_irq_mask = sd_ctrl_read32(_host, CTL_IRQ_MASK);
-+	_host->sdcard_irq_mask = sd_ctrl_read16_and_16_as_32(_host, CTL_IRQ_MASK);
- 	tmio_mmc_disable_mmc_irqs(_host, TMIO_MASK_ALL);
- 
- 	/* Unmask the IRQs we want to know about */
++	sysc: system-controller@e6180000 {
++		compatible = "renesas,r8a7790-sysc";
++		reg = <0 0xe6180000 0 0x0200>;
++		#power-domain-cells = <1>;
++	};
++
+ 	qspi: spi@e6b10000 {
+ 		compatible = "renesas,qspi-r8a7790", "renesas,qspi";
+ 		reg = <0 0xe6b10000 0 0x2c>;
 -- 
-2.7.0
+2.7.0.rc3.207.g0ac5344
