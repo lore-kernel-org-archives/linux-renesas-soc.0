@@ -1,96 +1,80 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 0/7] PM / Domains: Add DT bindings for the R-Car System Controller
-Date: Thu,  7 Apr 2016 14:20:13 +0200
-Message-Id: <1460031620-13240-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:41933 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750811AbcD0EUo (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 27 Apr 2016 00:20:44 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 01/10] ARM: dts: r8a7779: Add SYSC PM Domains
+Date: Wed, 27 Apr 2016 14:20:28 +1000
+Message-Id: <b2df3aa487395a1b7170b719569769bc78939dd1.1461730638.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461730638.git.horms+renesas@verge.net.au>
+References: <cover.1461730638.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch series introduces DT bindings for the R-Car System
-Controller, as found on Renesas R-Car H1, R-Car Gen2, and R-Car Gen3
-SoCs.
+Add a device node for the System Controller.
+Hook up ARM CPU cores 1-3 to their respective PM Domains.
+Note that ARM CPU core 0 cannot be shut off.
 
-Changes compared to v3:
-  - Add Reviewed-by, Acked-by,
-  - Compatible value must contain "exactly one" instead of "one or
-    more",
-  - Add power-domains property to refer to the SoC's Clock Domain,
-  - Drop R8A7779_PD_SH, as it's not documented in the datasheet,
-  - Rename R8A779*_PD_SH to R8A779*_PD_SH_4A on R-Car Gen2,
-  - Add always-on power area on R-Car H1 and R-Car Gen2,
-  - Use numbers directly on R-Car M2-N, to make the header file
-    self-contained,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7779.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Changes compared to v2:
-  - Move power area hierarchy from DT to C (cfr. DT bindings for Renesas
-    CPG/MSSR), and switch to "#power-domain-cells = <1>",
-  - Drop fallback compatibility strings, as the bindings are
-    SoC-specific,
-  - Drop power area A3SH on R-Car H3, as it's no longer
-    documented in the datasheet, and touching it seems to crash SYSC,
-  - Add an "always-on" power area on R-Car H3,
-  - Rename from renesas,sysc-rcar.txt to renesas,rcar-sysc.txt,
-  - Extract bindings into a separate series (was "[PATCH/RFC v2 00/11]
-    ARM/arm64: renesas: Add SYSC PM Domain DT Support",
-    http://www.spinics.net/lists/arm-kernel/msg483199.html).
-
-Changes compared to v1:
-  - Add R-Car H3 (r8a7795) support,
-  - Use "renesas,<type>-sysc" instead of "renesas,sysc-<type>",
-  - Add fallback compatibility strings for R-Car Gen2 and Gen3.
-
-Thanks for appplying!
-
-Geert Uytterhoeven (7):
-  PM / Domains: Add DT bindings for the R-Car System Controller
-  soc: renesas: Add r8a7779 SYSC PM Domain Binding Definitions
-  soc: renesas: Add r8a7790 SYSC PM Domain Binding Definitions
-  soc: renesas: Add r8a7791 SYSC PM Domain Binding Definitions
-  soc: renesas: Add r8a7793 SYSC PM Domain Binding Definitions
-  soc: renesas: Add r8a7794 SYSC PM Domain Binding Definitions
-  soc: renesas: Add r8a7795 SYSC PM Domain Binding Definitions
-
- .../bindings/power/renesas,rcar-sysc.txt           | 51 ++++++++++++++++++++++
- include/dt-bindings/power/r8a7779-sysc.h           | 27 ++++++++++++
- include/dt-bindings/power/r8a7790-sysc.h           | 34 +++++++++++++++
- include/dt-bindings/power/r8a7791-sysc.h           | 26 +++++++++++
- include/dt-bindings/power/r8a7793-sysc.h           | 28 ++++++++++++
- include/dt-bindings/power/r8a7794-sysc.h           | 26 +++++++++++
- include/dt-bindings/power/r8a7795-sysc.h           | 42 ++++++++++++++++++
- 7 files changed, 234 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
- create mode 100644 include/dt-bindings/power/r8a7779-sysc.h
- create mode 100644 include/dt-bindings/power/r8a7790-sysc.h
- create mode 100644 include/dt-bindings/power/r8a7791-sysc.h
- create mode 100644 include/dt-bindings/power/r8a7793-sysc.h
- create mode 100644 include/dt-bindings/power/r8a7794-sysc.h
- create mode 100644 include/dt-bindings/power/r8a7795-sysc.h
-
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 5c1d48d712a1..e02875a8c040 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -14,6 +14,7 @@
+ #include <dt-bindings/clock/r8a7779-clock.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/power/r8a7779-sysc.h>
+ 
+ / {
+ 	compatible = "renesas,r8a7779";
+@@ -34,18 +35,21 @@
+ 			compatible = "arm,cortex-a9";
+ 			reg = <1>;
+ 			clock-frequency = <1000000000>;
++			power-domains = <&sysc R8A7779_PD_ARM1>;
+ 		};
+ 		cpu@2 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <2>;
+ 			clock-frequency = <1000000000>;
++			power-domains = <&sysc R8A7779_PD_ARM2>;
+ 		};
+ 		cpu@3 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <3>;
+ 			clock-frequency = <1000000000>;
++			power-domains = <&sysc R8A7779_PD_ARM3>;
+ 		};
+ 	};
+ 
+@@ -586,4 +590,10 @@
+ 				"mmc1", "mmc0";
+ 		};
+ 	};
++
++	sysc: system-controller@ffd85000 {
++		compatible = "renesas,r8a7779-sysc";
++		reg = <0xffd85000 0x0200>;
++		#power-domain-cells = <1>;
++	};
+ };
 -- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.7.0.rc3.207.g0ac5344
