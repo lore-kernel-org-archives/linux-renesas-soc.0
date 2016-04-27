@@ -1,76 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:51376 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752250AbcDZQx6 (ORCPT
+Received: from mail2.asahi-net.or.jp ([202.224.39.198]:42281 "EHLO
+	mail2.asahi-net.or.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752646AbcD0Pt3 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 12:53:58 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-mmc@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	linux-renesas-soc@vger.kernel.org,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 4/5] mmc: tmio/sdhi: distinguish between SCLKDIVEN and ILL_FUNC
-Date: Tue, 26 Apr 2016 18:53:44 +0200
-Message-Id: <1461689625-3693-5-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1461689625-3693-1-git-send-email-wsa@the-dreams.de>
-References: <1461689625-3693-1-git-send-email-wsa@the-dreams.de>
+	Wed, 27 Apr 2016 11:49:29 -0400
+From: Yoshinori Sato <ysato@users.sourceforge.jp>
+To: linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Subject: [PATCH] sh-sci: SysRq support on EARLYCON
+Date: Thu, 28 Apr 2016 00:49:13 +0900
+Message-Id: <1461772153-6785-1-git-send-email-ysato@users.sourceforge.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Add missing flag condition.
 
-This bit has a different meaning in SDHI and original TMIO. Document
-that and use the proper naming.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
 ---
- drivers/mmc/host/sh_mobile_sdhi.c | 3 ++-
- drivers/mmc/host/tmio_mmc.h       | 3 ++-
- drivers/mmc/host/tmio_mmc_pio.c   | 2 +-
- 3 files changed, 5 insertions(+), 3 deletions(-)
+ drivers/tty/serial/sh-sci.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index b85b87eb55009f..5923ce7e0fccb3 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -244,7 +244,8 @@ static int sh_mobile_sdhi_wait_idle(struct tmio_mmc_host *host)
- {
- 	int timeout = 1000;
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 0130feb..5a73620 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -18,7 +18,9 @@
+  * License.  See the file "COPYING" in the main directory of this archive
+  * for more details.
+  */
+-#if defined(CONFIG_SERIAL_SH_SCI_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
++#if (defined(CONFIG_SERIAL_SH_SCI_CONSOLE) || \
++     defined(CONFIG_SERIAL_SH_SCI_EARLYCON)) && \
++	defined(CONFIG_MAGIC_SYSRQ)
+ #define SUPPORT_SYSRQ
+ #endif
  
--	while (--timeout && !(sd_ctrl_read16(host, CTL_STATUS2) & (1 << 13)))
-+	while (--timeout && !(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS)
-+			      & TMIO_STAT_SCLKDIVEN))
- 		udelay(1);
- 
- 	if (!timeout) {
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 55f251fdb78623..8dd5ea4be0a371 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -70,7 +70,8 @@
- #define TMIO_STAT_DAT0		BIT(23)	/* only known on R-Car so far */
- #define TMIO_STAT_RXRDY         BIT(24)
- #define TMIO_STAT_TXRQ          BIT(25)
--#define TMIO_STAT_ILL_FUNC      BIT(29)
-+#define TMIO_STAT_ILL_FUNC      BIT(29) /* only when !TMIO_MMC_HAS_IDLE_WAIT */
-+#define TMIO_STAT_SCLKDIVEN     BIT(29) /* only when TMIO_MMC_HAS_IDLE_WAIT */
- #define TMIO_STAT_CMD_BUSY      BIT(30)
- #define TMIO_STAT_ILL_ACCESS    BIT(31)
- 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index f4d8b5a741a875..e9b0271a81742a 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -548,7 +548,7 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host)
- 		 * waiting for one more interrupt fixes the problem.
- 		 */
- 		if (host->pdata->flags & TMIO_MMC_HAS_IDLE_WAIT) {
--			if (status & TMIO_STAT_ILL_FUNC)
-+			if (status & TMIO_STAT_SCLKDIVEN)
- 				done = true;
- 		} else {
- 			if (!(status & TMIO_STAT_CMD_BUSY))
 -- 
 2.7.0
