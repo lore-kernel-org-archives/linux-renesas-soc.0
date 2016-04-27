@@ -1,63 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52474 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:60436 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750874AbcDZB24 (ORCPT
+	with ESMTP id S1752615AbcD0XIP (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 25 Apr 2016 21:28:56 -0400
+	Wed, 27 Apr 2016 19:08:15 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/11] soc: renesas: rcar-sysc: Make rcar_sysc_power_is_off() static
-Date: Tue, 26 Apr 2016 11:28:39 +1000
-Message-Id: <2f024cef5b064d5498fe466dfe9492d46b5b12a4.1461632180.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461632180.git.horms+renesas@verge.net.au>
-References: <cover.1461632180.git.horms+renesas@verge.net.au>
+Subject: [PATCH 1/5] ARM: dts: r8a7778: Don't disable referenced optional clocks
+Date: Thu, 28 Apr 2016 09:08:08 +1000
+Message-Id: <7d698272f10cadcdb73f744b8642d70db1ca8fe8.1461798352.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1461798352.git.horms+renesas@verge.net.au>
+References: <cover.1461798352.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-As of commit b12ff41658171f53 ("ARM: shmobile: r8a7779: Remove legacy PM
-Domain remainings"), rcar_sysc_power_is_off() is no longer used from
-SoC-specific code.
+clk_get() on a disabled clock node will return -EPROBE_DEFER, which can
+cause drivers to be deferred forever if such clocks are referenced in
+their devices' clocks properties.
+
+Update the various disabled external clock nodes to default to a
+frequency of 0, but don't disable them, to prevent this.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/soc/renesas/rcar-sysc.c       | 2 +-
- include/linux/soc/renesas/rcar-sysc.h | 1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7778.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 95f2b59cbd76..4e760d63f2ab 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -152,7 +152,7 @@ int rcar_sysc_power_up(const struct rcar_sysc_ch *sysc_ch)
- 	return rcar_sysc_power(sysc_ch, true);
- }
+diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
+index 99c10ebbaca2..fe787b4751d2 100644
+--- a/arch/arm/boot/dts/r8a7778.dtsi
++++ b/arch/arm/boot/dts/r8a7778.dtsi
+@@ -455,7 +455,6 @@
+ 			#clock-cells = <0>;
+ 			/* This value must be overridden by the board. */
+ 			clock-frequency = <0>;
+-			status = "disabled";
+ 		};
  
--bool rcar_sysc_power_is_off(const struct rcar_sysc_ch *sysc_ch)
-+static bool rcar_sysc_power_is_off(const struct rcar_sysc_ch *sysc_ch)
- {
- 	unsigned int st;
- 
-diff --git a/include/linux/soc/renesas/rcar-sysc.h b/include/linux/soc/renesas/rcar-sysc.h
-index 96f30c288388..92fc613ab23d 100644
---- a/include/linux/soc/renesas/rcar-sysc.h
-+++ b/include/linux/soc/renesas/rcar-sysc.h
-@@ -11,7 +11,6 @@ struct rcar_sysc_ch {
- 
- int rcar_sysc_power_down(const struct rcar_sysc_ch *sysc_ch);
- int rcar_sysc_power_up(const struct rcar_sysc_ch *sysc_ch);
--bool rcar_sysc_power_is_off(const struct rcar_sysc_ch *sysc_ch);
- void __iomem *rcar_sysc_init(phys_addr_t base);
- 
- #endif /* __LINUX_SOC_RENESAS_RCAR_SYSC_H__ */
+ 		/* Special CPG clocks */
 -- 
 2.7.0.rc3.207.g0ac5344
