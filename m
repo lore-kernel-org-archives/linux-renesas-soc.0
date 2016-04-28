@@ -1,65 +1,45 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v2 01/13] dt-bindings: Add Renesas R-Car FCP DT bindings
-Date: Tue, 26 Apr 2016 00:36:26 +0300
-Message-Id: <1461620198-13428-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1461620198-13428-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1461620198-13428-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.24]:52876 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752367AbcD1OUZ (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 28 Apr 2016 10:20:25 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Kevin Hilman <khilman@linaro.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, arm@kernel.org,
+	Olof Johansson <olof@lixom.net>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: Re: [GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v4.7
+Date: Thu, 28 Apr 2016 16:19:40 +0200
+Message-ID: <4612233.87LvTVpE8A@wuerfel>
+In-Reply-To: <1813099.gFLC2Strmj@wuerfel>
+References: <cover.1461723181.git.horms+renesas@verge.net.au> <1813099.gFLC2Strmj@wuerfel>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The FCP is a companion module of video processing modules in the Renesas
-R-Car Gen3 SoCs. It provides data compression and decompression, data
-caching, and conversion of AXI transactions in order to reduce the
-memory bandwidth.
+On Thursday 28 April 2016 16:14:15 Arnd Bergmann wrote:
+> On Wednesday 27 April 2016 14:06:43 Simon Horman wrote:
+> > Second Round of Renesas ARM64 Based SoC DT Updates for v4.7
+> > 
+> > * Don't disable referenced optional clocks in DT of r8a7795 SoC
+> > * Populate EXTALR in DT of salvator-x board
+> > * Enable PCIe in DT of salvator-x board
+> > 
+> 
+> Pulled into next/dt64.
+> 
+> I briefly looked at the contents and noticed that the PCIe host
+> node you add has a dma-ranges property, but its parent node does
+> not, so you are still limited to 32-bit DMA and you should fix that.
+> 
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- .../devicetree/bindings/media/renesas,fcp.txt      | 31 ++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,fcp.txt
+On a closer look, it seems that the memory you map into the PCI
+is only 1 GB in size, so it's not really a problem, but I think
+it's cleaner to have an explicit dma-ranges property anyway.
 
-Cc: devicetree@vger.kernel.org
-
-diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-new file mode 100644
-index 000000000000..0c72ca24379f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-@@ -0,0 +1,31 @@
-+Renesas R-Car Frame Compression Processor (FCP)
-+-----------------------------------------------
-+
-+The FCP is a companion module of video processing modules in the Renesas R-Car
-+Gen3 SoCs. It provides data compression and decompression, data caching, and
-+conversion of AXI transactions in order to reduce the memory bandwidth.
-+
-+There are three types of FCP whose configuration and behaviour highly depend
-+on the module they are paired with.
-+
-+ - compatible: Must be one or more of the following
-+
-+   - "renesas,r8a7795-fcpv" for R8A7795 (R-Car H3) compatible 'FCP for VSP'
-+   - "renesas,fcpv" for generic compatible 'FCP for VSP'
-+
-+   When compatible with the generic version, nodes must list the
-+   SoC-specific version corresponding to the platform first, followed by the
-+   family-specific and/or generic versions.
-+
-+ - reg: the register base and size for the device registers
-+ - clocks: Reference to the functional clock
-+
-+
-+Device node example
-+-------------------
-+
-+	fcpvd1: fcp@fea2f000 {
-+		compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
-+		reg = <0 0xfea2f000 0 0x200>;
-+		clocks = <&cpg CPG_MOD 602>;
-+	};
--- 
-2.7.3
-
+	Arnd
