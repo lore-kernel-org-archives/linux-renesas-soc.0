@@ -1,89 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:57110 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752555AbcD0Qvl (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41592 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750943AbcD1XWD (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 12:51:41 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-mmc@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	linux-renesas-soc@vger.kernel.org,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 2/5] mmc: tmio: use BIT() within defines
-Date: Wed, 27 Apr 2016 18:51:24 +0200
-Message-Id: <1461775887-12786-3-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1461775887-12786-1-git-send-email-wsa@the-dreams.de>
-References: <1461775887-12786-1-git-send-email-wsa@the-dreams.de>
+	Thu, 28 Apr 2016 19:22:03 -0400
+Date: Fri, 29 Apr 2016 09:22:00 +1000
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, "arm@kernel.org" <arm@kernel.org>,
+	linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+	Kevin Hilman <khilman@linaro.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC DT PM Domain Updates for v4.7
+Message-ID: <20160428232159.GB18128@verge.net.au>
+References: <cover.1461730638.git.horms+renesas@verge.net.au>
+ <5702417.rnCUR69ruo@wuerfel>
+ <CAMuHMdWnt4ceLuu-eddbMQDSFvHHVgoyUNM2V=SYO9R0XrJDMQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWnt4ceLuu-eddbMQDSFvHHVgoyUNM2V=SYO9R0XrJDMQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Arnd,
 
-BIT() makes it easier to match the bits to the datasheet. This is
-especially important here, since some variants have different names in
-their datasheets (like with Renesas R-Car).
+On Thu, Apr 28, 2016 at 06:27:25PM +0200, Geert Uytterhoeven wrote:
+> Hi Arnd,
+> 
+> On Thu, Apr 28, 2016 at 5:56 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Wednesday 27 April 2016 14:20:34 Simon Horman wrote:
+> >> Please consider these Renesas ARM based SoC DT pm-domain updates for v4.7.
+> >>
+> >> This pull requests is based on a merge of:
+> >>
+> >> * "[GIT PULL] Second Round of Renesas ARM Based SoC R-Car SYSC Updates for
+> >>   v4.7", tagged as renesas-rcar-sysc2-for-v4.7, which you have already
+> >>   pulled.
+> >> * "[GIT PULL v2] Renesas ARM Based SoC DT Updates for v4.7",
+> >>   tagged as renesas-dt-for-v4.7, which you have also already pulled.
+> >>
+> >> The reason for the somewhat tedious base on
+> >> renesas-rcar-sysc2-for-v4.7, which provides driver changes,
+> >> is a hard run-time dependency.
+> >>
+> >> I also have a similar set of changes for arm64 which I will send separately.
+> >
+> > Ok, I've started a next/late branch for this now, but unless something
+> > else comes up that needs to be sent much later, I expect to submit
+> > this as the last pull request at the same time as all the other ones
+> > for 4.7.
+> 
+> Thanks!
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/tmio_mmc.h | 44 +++++++++++++++++++++++---------------------
- 1 file changed, 23 insertions(+), 21 deletions(-)
+Yes, thanks for your understanding.
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index e75e5ca220bc0a..74945c1a66ce81 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -49,27 +49,29 @@
- #define CTL_RESET_SDIO 0x1e0
- 
- /* Definitions for values the CTRL_STATUS register can take. */
--#define TMIO_STAT_CMDRESPEND    0x00000001
--#define TMIO_STAT_DATAEND       0x00000004
--#define TMIO_STAT_CARD_REMOVE   0x00000008
--#define TMIO_STAT_CARD_INSERT   0x00000010
--#define TMIO_STAT_SIGSTATE      0x00000020
--#define TMIO_STAT_WRPROTECT     0x00000080
--#define TMIO_STAT_CARD_REMOVE_A 0x00000100
--#define TMIO_STAT_CARD_INSERT_A 0x00000200
--#define TMIO_STAT_SIGSTATE_A    0x00000400
--#define TMIO_STAT_CMD_IDX_ERR   0x00010000
--#define TMIO_STAT_CRCFAIL       0x00020000
--#define TMIO_STAT_STOPBIT_ERR   0x00040000
--#define TMIO_STAT_DATATIMEOUT   0x00080000
--#define TMIO_STAT_RXOVERFLOW    0x00100000
--#define TMIO_STAT_TXUNDERRUN    0x00200000
--#define TMIO_STAT_CMDTIMEOUT    0x00400000
--#define TMIO_STAT_RXRDY         0x01000000
--#define TMIO_STAT_TXRQ          0x02000000
--#define TMIO_STAT_ILL_FUNC      0x20000000
--#define TMIO_STAT_CMD_BUSY      0x40000000
--#define TMIO_STAT_ILL_ACCESS    0x80000000
-+#define TMIO_STAT_CMDRESPEND    BIT(0)
-+#define TMIO_STAT_DATAEND       BIT(2)
-+#define TMIO_STAT_CARD_REMOVE   BIT(3)
-+#define TMIO_STAT_CARD_INSERT   BIT(4)
-+#define TMIO_STAT_SIGSTATE      BIT(5)
-+#define TMIO_STAT_WRPROTECT     BIT(7)
-+#define TMIO_STAT_CARD_REMOVE_A BIT(8)
-+#define TMIO_STAT_CARD_INSERT_A BIT(9)
-+#define TMIO_STAT_SIGSTATE_A    BIT(10)
-+
-+/* These belong technically to CTRL_STATUS2, but the driver merges them */
-+#define TMIO_STAT_CMD_IDX_ERR   BIT(16)
-+#define TMIO_STAT_CRCFAIL       BIT(17)
-+#define TMIO_STAT_STOPBIT_ERR   BIT(18)
-+#define TMIO_STAT_DATATIMEOUT   BIT(19)
-+#define TMIO_STAT_RXOVERFLOW    BIT(20)
-+#define TMIO_STAT_TXUNDERRUN    BIT(21)
-+#define TMIO_STAT_CMDTIMEOUT    BIT(22)
-+#define TMIO_STAT_RXRDY         BIT(24)
-+#define TMIO_STAT_TXRQ          BIT(25)
-+#define TMIO_STAT_ILL_FUNC      BIT(29)
-+#define TMIO_STAT_CMD_BUSY      BIT(30)
-+#define TMIO_STAT_ILL_ACCESS    BIT(31)
- 
- #define TMIO_STATUS2_DAT0	BIT(7)
- 
--- 
-2.7.0
+FWIW, I think "Renesas ARM64 Based SoC DT PM Domain Updates for v4.7" needs
+to be handled the in a similar way. Its a similar pair of changes for the
+r8a7795 SoC.
+
+Everything else I have queued up for v4.7 has been pulled and I do
+not intend to queue up any more non-fix changes for v4.7.
+
+> > For further clarification, am I right reading the above as meaning that
+> > a 4.7 kernel is expected to still work with the dts files from 4.6,
+> > but not the other way round?
+> 
+> That's correct.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
