@@ -1,54 +1,75 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: <geert+renesas@glider.be>, <linux-renesas-soc@vger.kernel.org>
-CC: <devicetree@vger.kernel.org>, <julien.grall@arm.com>,
-	Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH] arm64: dts: r8a7795: Increase the size of GIC-400 mapped registers
-Date: Tue, 19 Apr 2016 08:29:55 +0200
-Message-ID: <1461047395-6532-1-git-send-email-dirk.behme@de.bosch.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:50776 "EHLO
+	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750943AbcD1M2q (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 28 Apr 2016 08:28:46 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: mkl@pengutronix.de, wg@grandegger.com, socketcan@hartkopp.net,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-can@vger.kernel.org, netdev@vger.kernel.org,
+	chris.paterson2@renesas.com,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 0/2] Add CAN FD driver support to r8a7795 SoC
+Date: Thu, 28 Apr 2016 13:23:06 +0100
+Message-Id: <1461846188-31249-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1456824849-7987-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1456824849-7987-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>
+Hi All,
 
-There are some requirements about the GIC-400 memory layout and its
-mapping if using 64k aligned base addresses like on r8a7795.
+   This patch is based on commit "885cc17abad6" of can-next/testing branch
 
-See e.g.
+Changes since v4:
+	* Rebased to latest can-next/testing branch
+	* Addressed Marc K review comments on v2 patch
+	* Use clk_get_rate() to find ext clock availability. Refer thread
+	(https://lkml.org/lkml/2016/4/8/203)
 
-http://xenbits.xen.org/gitweb/?p=xen.git;a=commit;h=21550029f709072aacf3b9
+Changes since v3:
+	* Split v3 patch into two (Marc K)
+	  (1) Introduce rcar_canfd.c driver in drivers/net/can/rcar dir
+	  (2) Move rcar_can.c driver to new drivers/net/can/rcar dir
+	* Added Acked-by Rob H for the bindings
+	* Added comments on CAN FD only mode in driver & Kconfig (Oliver H)
 
-Map the whole memory range instead of only 0x2000. This will fix
-the issue that some hypervisors, e.g. Xen, fail to handle the
-interrupts correctly.
+Changes since v2:
+	* Rebased to latest tag (linux-can-next-for-4.6-20160310)
+	* Cleaned up leftover debugfs code (Thanks Oliver H)
+	* Revised devicetree documentation text (as suggested by Rob H)
+	  (https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg01597.html)
+	* Used new can subsystem api to set static configuration & removed check in rcar_canfd_start (as suggested by Oliver H)
+	  (Refer: http://comments.gmane.org/gmane.linux.can/9126 &
+	   https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg01867.html)
+	* Clubbed Renesas controller drivers to driver/net/can/rcar dir (as suggested by Oliver H)
+	* Updated commit message
 
-Signed-off-by: Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
----
-Note: This patch is against renesas-drivers-2016-04-12-v4.6-rc3
+Changes since v1:
+	* Removed testmodes & debugfs code (suggested by Oliver H)
+	* Fixed tx path race issue by introducing lock (suggested by Marc K)
+	* Removed __maybe_unused attribute of rcar_canfd_of_table
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Ramesh Shanmugasundaram (2):
+  can: rcar_canfd: Add Renesas R-Car CAN FD driver
+  can: rcar_can: Move Renesas CAN driver to rcar dir
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 8be9424..d880fd4 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -160,9 +160,9 @@
- 			#address-cells = <0>;
- 			interrupt-controller;
- 			reg = <0x0 0xf1010000 0 0x1000>,
--			      <0x0 0xf1020000 0 0x2000>,
-+			      <0x0 0xf1020000 0 0x20000>,
- 			      <0x0 0xf1040000 0 0x20000>,
--			      <0x0 0xf1060000 0 0x2000>;
-+			      <0x0 0xf1060000 0 0x20000>;
- 			interrupts = <GIC_PPI 9
- 					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
- 		};
+ .../devicetree/bindings/net/can/rcar_canfd.txt     |   89 ++
+ drivers/net/can/Kconfig                            |   11 +-
+ drivers/net/can/Makefile                           |    2 +-
+ drivers/net/can/rcar/Kconfig                       |   21 +
+ drivers/net/can/rcar/Makefile                      |    6 +
+ drivers/net/can/{ => rcar}/rcar_can.c              |    0
+ drivers/net/can/rcar/rcar_canfd.c                  | 1624 ++++++++++++++++++++
+ 7 files changed, 1742 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/can/rcar_canfd.txt
+ create mode 100644 drivers/net/can/rcar/Kconfig
+ create mode 100644 drivers/net/can/rcar/Makefile
+ rename drivers/net/can/{ => rcar}/rcar_can.c (100%)
+ create mode 100644 drivers/net/can/rcar/rcar_canfd.c
+
 -- 
-2.8.0
-
+1.9.1
