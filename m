@@ -1,75 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:50776 "EHLO
-	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750943AbcD1M2q (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 28 Apr 2016 08:28:46 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: mkl@pengutronix.de, wg@grandegger.com, socketcan@hartkopp.net,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	chris.paterson2@renesas.com,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 0/2] Add CAN FD driver support to r8a7795 SoC
-Date: Thu, 28 Apr 2016 13:23:06 +0100
-Message-Id: <1461846188-31249-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1456824849-7987-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456824849-7987-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <7242073.I0M81bb6ct@avalon>
+References: <1461620198-13428-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	<1461620198-13428-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	<20160428025429.GA11679@rob-hp-laptop>
+	<7242073.I0M81bb6ct@avalon>
+Date: Thu, 28 Apr 2016 10:00:10 +0200
+Message-ID: <CAMuHMdXHYGTNSV-7JAo8Fp_q3z-WPcJEB7CuenaRuhZJABxc0A@mail.gmail.com>
+Subject: Re: [PATCH v2 01/13] dt-bindings: Add Renesas R-Car FCP DT bindings
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi All,
+On Thu, Apr 28, 2016 at 8:36 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>> > diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt
+>> > b/Documentation/devicetree/bindings/media/renesas,fcp.txt new file mode
+>> > 100644
+>> > index 000000000000..0c72ca24379f
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
+>> > @@ -0,0 +1,31 @@
+>> > +Renesas R-Car Frame Compression Processor (FCP)
+>> > +-----------------------------------------------
+>> > +
+>> > +The FCP is a companion module of video processing modules in the Renesas
+>> > R-Car +Gen3 SoCs. It provides data compression and decompression, data
+>> > caching, and +conversion of AXI transactions in order to reduce the
+>> > memory bandwidth. +
+>> > +There are three types of FCP whose configuration and behaviour highly
+>> > depend +on the module they are paired with.
+>>
+>> 3 types?, but I only see one compatible and no relationship with said
+>> module described.
+>
+> The bindings currently support a single type, as that's all the driver
+> currently supports and I'm not comfortable merging bindings without at least
+> one test implementation. Should I clarify that with something as "These DT
+> bindings currently support the "FCP for Video" type only" ?
 
-   This patch is based on commit "885cc17abad6" of can-next/testing branch
+Yes please.
 
-Changes since v4:
-	* Rebased to latest can-next/testing branch
-	* Addressed Marc K review comments on v2 patch
-	* Use clk_get_rate() to find ext clock availability. Refer thread
-	(https://lkml.org/lkml/2016/4/8/203)
+Gr{oetje,eeting}s,
 
-Changes since v3:
-	* Split v3 patch into two (Marc K)
-	  (1) Introduce rcar_canfd.c driver in drivers/net/can/rcar dir
-	  (2) Move rcar_can.c driver to new drivers/net/can/rcar dir
-	* Added Acked-by Rob H for the bindings
-	* Added comments on CAN FD only mode in driver & Kconfig (Oliver H)
+                        Geert
 
-Changes since v2:
-	* Rebased to latest tag (linux-can-next-for-4.6-20160310)
-	* Cleaned up leftover debugfs code (Thanks Oliver H)
-	* Revised devicetree documentation text (as suggested by Rob H)
-	  (https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg01597.html)
-	* Used new can subsystem api to set static configuration & removed check in rcar_canfd_start (as suggested by Oliver H)
-	  (Refer: http://comments.gmane.org/gmane.linux.can/9126 &
-	   https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg01867.html)
-	* Clubbed Renesas controller drivers to driver/net/can/rcar dir (as suggested by Oliver H)
-	* Updated commit message
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Changes since v1:
-	* Removed testmodes & debugfs code (suggested by Oliver H)
-	* Fixed tx path race issue by introducing lock (suggested by Marc K)
-	* Removed __maybe_unused attribute of rcar_canfd_of_table
-
-Ramesh Shanmugasundaram (2):
-  can: rcar_canfd: Add Renesas R-Car CAN FD driver
-  can: rcar_can: Move Renesas CAN driver to rcar dir
-
- .../devicetree/bindings/net/can/rcar_canfd.txt     |   89 ++
- drivers/net/can/Kconfig                            |   11 +-
- drivers/net/can/Makefile                           |    2 +-
- drivers/net/can/rcar/Kconfig                       |   21 +
- drivers/net/can/rcar/Makefile                      |    6 +
- drivers/net/can/{ => rcar}/rcar_can.c              |    0
- drivers/net/can/rcar/rcar_canfd.c                  | 1624 ++++++++++++++++++++
- 7 files changed, 1742 insertions(+), 11 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/net/can/rcar_canfd.txt
- create mode 100644 drivers/net/can/rcar/Kconfig
- create mode 100644 drivers/net/can/rcar/Makefile
- rename drivers/net/can/{ => rcar}/rcar_can.c (100%)
- create mode 100644 drivers/net/can/rcar/rcar_canfd.c
-
--- 
-1.9.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
