@@ -1,63 +1,32 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Peter Hurley <peter@hurleysoftware.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 09/11] serial: sh-sci: Add pin initialization for SCIFA/SCIFB
-Date: Fri, 29 Apr 2016 14:58:32 +0200
-Message-Id: <1461934714-18681-10-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
-References: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.134]:62570 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752189AbcD1Prd (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 28 Apr 2016 11:47:33 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Simon Horman <horms+renesas@verge.net.au>, arm@kernel.org,
+	Kevin Hilman <khilman@linaro.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL] Second Round of Renesas ARM Based SoC Fixes for v4.6
+Date: Thu, 28 Apr 2016 17:46:54 +0200
+Message-ID: <3649963.OyPlJGsrB4@wuerfel>
+In-Reply-To: <cover.1461798058.git.horms+renesas@verge.net.au>
+References: <cover.1461798058.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Before, the driver relied on initialization by the boot loader, or by
-implicit reset state.
+On Thursday 28 April 2016 09:06:57 Simon Horman wrote:
+> Second Round of Renesas ARM Based SoC Fixes for v4.6
+> 
+> * Don't disable referenced optional scif clock
+> 
 
-Note that unlike on (H)SCIF, the RTS/CTS bits exist only if dedicated
-RTS/CTS pins are available, which depends on the SoC and UART instance.
+Pulled into fixes, thanks!
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- drivers/tty/serial/sh-sci.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index c46999f20917964e..b9d027af0f3e71f6 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -712,7 +712,21 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
- 		return;
- 	}
- 
--	if (sci_getreg(port, SCSPTR)->size) {
-+	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
-+		u16 ctrl = serial_port_in(port, SCPCR);
-+
-+		/* Enable RXD and TXD pin functions */
-+		ctrl &= ~(SCPCR_RXDC | SCPCR_TXDC);
-+		if (to_sci_port(port)->cfg->capabilities & SCIx_HAVE_RTSCTS) {
-+			/* RTS# is output, driven 1 */
-+			ctrl |= SCPCR_RTSC;
-+			serial_port_out(port, SCPDR,
-+				serial_port_in(port, SCPDR) | SCPDR_RTSD);
-+			/* Enable CTS# pin function */
-+			ctrl &= ~SCPCR_CTSC;
-+		}
-+		serial_port_out(port, SCPCR, ctrl);
-+	} else if (sci_getreg(port, SCSPTR)->size) {
- 		u16 status = serial_port_in(port, SCSPTR);
- 
- 		/* RTS# is output, driven 1 */
--- 
-1.9.1
+	Arnd
