@@ -1,70 +1,127 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-Subject: Re: [PATCH v3 09/11] i2c: rcar: revoke START request early
-To: Wolfram Sang <wsa@the-dreams.de>
-References: <1447948611-2615-1-git-send-email-wsa@the-dreams.de>
- <1447948611-2615-10-git-send-email-wsa@the-dreams.de>
- <56FD9080.4090203@cogentembedded.com> <20160331224838.GA7381@katana>
-Cc: linux-i2c@vger.kernel.org, linux-sh@vger.kernel.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms@verge.net.au>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55916 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752255AbcD1Rrq (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 28 Apr 2016 13:47:46 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Hiep Cao Minh <cm-hiep@jinso.co.jp>,
+	Mark Brown <broonie@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	NAOYA SHIIBA <naoya.shiiba.nx@renesas.com>,
+	Cao Minh Hiep <cm-hiep@jinso.co.jp>,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <56FED245.4010503@cogentembedded.com>
-Date: Fri, 1 Apr 2016 22:55:49 +0300
-MIME-Version: 1.0
-In-Reply-To: <20160331224838.GA7381@katana>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: linux-i2c-owner@vger.kernel.org
+	Ryusuke Sakato <ryusuke.sakato.bx@renesas.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Yusuke Goda <yusuke.goda.sx@renesas.com>,
+	Simon <horms@verge.net.au>,
+	"osd2@lm.renesas.com" <osd2@lm.renesas.com>,
+	h-inayoshi@jinso.co.jp, "M.Miura" <m-miura@jinso.co.jp>,
+	Nguyen Viet Dung <nv-dung@jinso.co.jp>
+In-Reply-To: <87r3dqh5i5.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1avq2M-00025X-7a@debutante>
+Date: Thu, 28 Apr 2016 18:47:38 +0100
+Subject: Applied "ASoC: rsnd: count .probe/.remove for rsnd_mod_call()" to the asoc tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+The patch
 
-On 04/01/2016 01:48 AM, Wolfram Sang wrote:
+   ASoC: rsnd: count .probe/.remove for rsnd_mod_call()
 
->>> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>>
->>> If we don't clear START generation as soon as possible, it may cause
->>> another message to be generated, e.g. when receiving NACK in address
->>> phase. To keep the race window as small as possible, we clear it right
->>> at the beginning of the interrupt. We don't need any checks since we
->>> always want to stop START and STOP generation on the next occasion after
->>> we started it.
->>>
->>> This patch improves the situation but sadly does not completely fix it.
->>> It is still to be researched if we can do better given this HW design.
->>>
->>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>
->>     Thanks for a great work, Wolfram!
->>     We need this patch in -stable kernels. The R-Car audio just doesn't work
->> without it...
+has been applied to the asoc tree at
 
-> Really only this patch?
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-    Well, my "reverse" bisection pointed at it. :-)
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-> IIRC my tests showed that if you don't remove
-> the spinlocks (patch 4), the interrupt latency will already be too high
-> again.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-    Thank you for the valuable info!
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-> In any case, you'd need to do some careful backporting to rip
-> this out of the whole refactoring series.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-    Yes, I've already figured that.
+Thanks,
+Mark
 
-> But maybe you did that already
-> and have good experiences?
+>From 1a5658c213116d56a1a38e83588f6636a57d6374 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 28 Apr 2016 01:49:48 +0000
+Subject: [PATCH] ASoC: rsnd: count .probe/.remove for rsnd_mod_call()
 
-    Not yet, I will report back after more backporting/testing.
+Current rsnd_mod_call is counting its calling count to avoid unbalanced
+function pair calling for error cases (ex init <-> quit).
+SSI parent is now controlled as "mod" on current rsnd driver. Because of
+this reason, SSI .remove function will be called twice if it was used as
+SSI parent when user tried unbind. But probe/remove pair were not
+counted. This patch counts probe/remove functions to avoid it.
+Special thans Hiep
 
-MBR, Sergei
+Reported-by: Hiep Cao Minh <cm-hiep@jinso.co.jp>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sh/rcar/rsnd.h | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
+diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
+index fc89a67258ca..a8f61d79333b 100644
+--- a/sound/soc/sh/rcar/rsnd.h
++++ b/sound/soc/sh/rcar/rsnd.h
+@@ -276,8 +276,9 @@ struct rsnd_mod {
+ /*
+  * status
+  *
+- * 0xH0000CB0
++ * 0xH0000CBA
+  *
++ * A	0: probe	1: remove
+  * B	0: init		1: quit
+  * C	0: start	1: stop
+  *
+@@ -287,19 +288,19 @@ struct rsnd_mod {
+  * H	0: fallback
+  * H	0: hw_params
+  */
++#define __rsnd_mod_shift_probe		0
++#define __rsnd_mod_shift_remove		0
+ #define __rsnd_mod_shift_init		4
+ #define __rsnd_mod_shift_quit		4
+ #define __rsnd_mod_shift_start		8
+ #define __rsnd_mod_shift_stop		8
+-#define __rsnd_mod_shift_probe		28 /* always called */
+-#define __rsnd_mod_shift_remove		28 /* always called */
+ #define __rsnd_mod_shift_irq		28 /* always called */
+ #define __rsnd_mod_shift_pcm_new	28 /* always called */
+ #define __rsnd_mod_shift_fallback	28 /* always called */
+ #define __rsnd_mod_shift_hw_params	28 /* always called */
+ 
+-#define __rsnd_mod_add_probe		0
+-#define __rsnd_mod_add_remove		0
++#define __rsnd_mod_add_probe		 1
++#define __rsnd_mod_add_remove		-1
+ #define __rsnd_mod_add_init		 1
+ #define __rsnd_mod_add_quit		-1
+ #define __rsnd_mod_add_start		 1
+@@ -310,7 +311,7 @@ struct rsnd_mod {
+ #define __rsnd_mod_add_hw_params	0
+ 
+ #define __rsnd_mod_call_probe		0
+-#define __rsnd_mod_call_remove		0
++#define __rsnd_mod_call_remove		1
+ #define __rsnd_mod_call_init		0
+ #define __rsnd_mod_call_quit		1
+ #define __rsnd_mod_call_start		0
+-- 
+2.8.0.rc3
