@@ -1,234 +1,104 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 07/12] ARM: dts: r8a7779: Use SYSC "always-on" PM Domain
-Date: Thu,  7 Apr 2016 14:20:30 +0200
-Message-Id: <1460031635-13452-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
-References: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:47473 "EHLO
+	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751571AbcD1M2x (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 28 Apr 2016 08:28:53 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: mkl@pengutronix.de, wg@grandegger.com, socketcan@hartkopp.net,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-can@vger.kernel.org, netdev@vger.kernel.org,
+	chris.paterson2@renesas.com,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 2/2] can: rcar_can: Move Renesas CAN driver to rcar dir
+Date: Thu, 28 Apr 2016 13:23:08 +0100
+Message-Id: <1461846188-31249-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1461846188-31249-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1456824849-7987-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1461846188-31249-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hook up all devices that are part of the CPG/MSTP Clock Domain to the
-SYSC "always-on" PM Domain, for a more consistent device-power-area
-description in DT.
+This patch clubs the Renesas controller drivers in one rcar dir.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
-v4:
-  - New.
----
- arch/arm/boot/dts/r8a7779.dtsi | 44 +++++++++++++++++++++---------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+ drivers/net/can/Kconfig               | 10 ----------
+ drivers/net/can/Makefile              |  1 -
+ drivers/net/can/rcar/Kconfig          | 10 ++++++++++
+ drivers/net/can/rcar/Makefile         |  3 ++-
+ drivers/net/can/{ => rcar}/rcar_can.c |  0
+ 5 files changed, 12 insertions(+), 12 deletions(-)
+ rename drivers/net/can/{ => rcar}/rcar_can.c (100%)
 
-diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index 2679ab4629d5c2b2..dacef3f02b8b9a25 100644
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -177,7 +177,7 @@
- 		reg = <0xffc70000 0x1000>;
- 		interrupts = <GIC_SPI 79 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_I2C0>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
+diff --git a/drivers/net/can/Kconfig b/drivers/net/can/Kconfig
+index 13003a9..22570ea 100644
+--- a/drivers/net/can/Kconfig
++++ b/drivers/net/can/Kconfig
+@@ -104,16 +104,6 @@ config CAN_JANZ_ICAN3
+ 	  This driver can also be built as a module. If so, the module will be
+ 	  called janz-ican3.ko.
  
-@@ -188,7 +188,7 @@
- 		reg = <0xffc71000 0x1000>;
- 		interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_I2C1>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
+-config CAN_RCAR
+-	tristate "Renesas R-Car CAN controller"
+-	depends on ARCH_RENESAS || ARM
+-	---help---
+-	  Say Y here if you want to use CAN controller found on Renesas R-Car
+-	  SoCs.
+-
+-	  To compile this driver as a module, choose M here: the module will
+-	  be called rcar_can.
+-
+ config CAN_SUN4I
+ 	tristate "Allwinner A10 CAN controller"
+ 	depends on MACH_SUN4I || MACH_SUN7I || COMPILE_TEST
+diff --git a/drivers/net/can/Makefile b/drivers/net/can/Makefile
+index 226d5b5..26ba4b7 100644
+--- a/drivers/net/can/Makefile
++++ b/drivers/net/can/Makefile
+@@ -25,7 +25,6 @@ obj-$(CONFIG_CAN_IFI_CANFD)	+= ifi_canfd/
+ obj-$(CONFIG_CAN_JANZ_ICAN3)	+= janz-ican3.o
+ obj-$(CONFIG_CAN_MSCAN)		+= mscan/
+ obj-$(CONFIG_CAN_M_CAN)		+= m_can/
+-obj-$(CONFIG_CAN_RCAR)		+= rcar_can.o
+ obj-$(CONFIG_CAN_SJA1000)	+= sja1000/
+ obj-$(CONFIG_CAN_SUN4I)		+= sun4i_can.o
+ obj-$(CONFIG_CAN_TI_HECC)	+= ti_hecc.o
+diff --git a/drivers/net/can/rcar/Kconfig b/drivers/net/can/rcar/Kconfig
+index 6ea64d1..7b03a3a 100644
+--- a/drivers/net/can/rcar/Kconfig
++++ b/drivers/net/can/rcar/Kconfig
+@@ -1,3 +1,13 @@
++config CAN_RCAR
++	tristate "Renesas R-Car CAN controller"
++	depends on ARCH_RENESAS || ARM
++	---help---
++	  Say Y here if you want to use CAN controller found on Renesas R-Car
++	  SoCs.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called rcar_can.
++
+ config CAN_RCAR_CANFD
+ 	tristate "Renesas R-Car CAN FD controller"
+ 	depends on ARCH_RENESAS || ARM
+diff --git a/drivers/net/can/rcar/Makefile b/drivers/net/can/rcar/Makefile
+index cbaf498e..08de36a 100644
+--- a/drivers/net/can/rcar/Makefile
++++ b/drivers/net/can/rcar/Makefile
+@@ -1,5 +1,6 @@
+ #
+-#  Makefile for the Renesas R-Car CAN FD controller driver
++#  Makefile for the Renesas R-Car CAN & CAN FD controller drivers
+ #
  
-@@ -199,7 +199,7 @@
- 		reg = <0xffc72000 0x1000>;
- 		interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_I2C2>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -210,7 +210,7 @@
- 		reg = <0xffc73000 0x1000>;
- 		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_I2C3>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -222,7 +222,7 @@
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF0>,
- 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -234,7 +234,7 @@
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF1>,
- 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -246,7 +246,7 @@
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF2>,
- 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -258,7 +258,7 @@
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF3>,
- 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -270,7 +270,7 @@
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF4>,
- 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -282,7 +282,7 @@
- 		clocks = <&mstp0_clks R8A7779_CLK_SCIF5>,
- 			 <&cpg_clocks R8A7779_CLK_S1>, <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -304,7 +304,7 @@
- 			     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_TMU0>;
- 		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 
- 		#renesas,channels = <3>;
- 
-@@ -319,7 +319,7 @@
- 			     <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_TMU1>;
- 		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 
- 		#renesas,channels = <3>;
- 
-@@ -334,7 +334,7 @@
- 			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7779_CLK_TMU2>;
- 		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 
- 		#renesas,channels = <3>;
- 
-@@ -346,7 +346,7 @@
- 		reg = <0xfc600000 0x2000>;
- 		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 	};
- 
- 	sdhi0: sd@ffe4c000 {
-@@ -354,7 +354,7 @@
- 		reg = <0xffe4c000 0x100>;
- 		interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7779_CLK_SDHI0>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -363,7 +363,7 @@
- 		reg = <0xffe4d000 0x100>;
- 		interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7779_CLK_SDHI1>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -372,7 +372,7 @@
- 		reg = <0xffe4e000 0x100>;
- 		interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7779_CLK_SDHI2>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -381,7 +381,7 @@
- 		reg = <0xffe4f000 0x100>;
- 		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7779_CLK_SDHI3>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -392,7 +392,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -403,7 +403,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -414,7 +414,7 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		clocks = <&mstp0_clks R8A7779_CLK_HSPI>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -423,7 +423,7 @@
- 		reg = <0 0xfff80000 0 0x40000>;
- 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7779_CLK_DU>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
- 		status = "disabled";
- 
- 		ports {
++obj-$(CONFIG_CAN_RCAR)		+= rcar_can.o
+ obj-$(CONFIG_CAN_RCAR_CANFD)	+= rcar_canfd.o
+diff --git a/drivers/net/can/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
+similarity index 100%
+rename from drivers/net/can/rcar_can.c
+rename to drivers/net/can/rcar/rcar_can.c
 -- 
 1.9.1
-
