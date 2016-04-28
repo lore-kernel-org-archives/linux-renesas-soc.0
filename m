@@ -1,57 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60436 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:41877 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752615AbcD0XIT (ORCPT
+	with ESMTP id S1752346AbcD1XfA (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 19:08:19 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+	Thu, 28 Apr 2016 19:35:00 -0400
+Date: Fri, 29 Apr 2016 09:34:57 +1000
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>, netdev@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/5] ARM: dts: r8a7793: Don't disable referenced optional clocks
-Date: Thu, 28 Apr 2016 09:08:11 +1000
-Message-Id: <15bb4bfa3a788be349ab8f8cd1e356b7925be5eb.1461798352.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461798352.git.horms+renesas@verge.net.au>
-References: <cover.1461798352.git.horms+renesas@verge.net.au>
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH net-next] ravb: Remove rx buffer ALIGN
+Message-ID: <20160428233456.GC18128@verge.net.au>
+References: <1461514567-23444-1-git-send-email-ykaneko0929@gmail.com>
+ <571FBE21.4050908@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <571FBE21.4050908@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Sergei, Hi Kaneko-san,
 
-clk_get() on a disabled clock node will return -EPROBE_DEFER, which can
-cause drivers to be deferred forever if such clocks are referenced in
-their devices' clocks properties.
+On Tue, Apr 26, 2016 at 10:14:41PM +0300, Sergei Shtylyov wrote:
+> Hello.
+> 
+> On 04/24/2016 07:16 PM, Yoshihiro Kaneko wrote:
+> 
+> >From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> >
+> >Aligning the reception data size is not required.
+> 
+>    OK, the gen 2/3 manuals indeed don't require this. I assume the patch has
+> been tested...
 
-Update the various disabled external clock nodes to default to a
-frequency of 0, but don't disable them, to prevent this.
+This morning I tested this patch applied on net-next using the
+r8a7795/salvator-x  (Gen-3). My test was to boot to a user-space prompt
+using NFS root which was successful. I can run further tests on this setup
+if it would be useful.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7793.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+Unfortunately I do not have access to hardware to allow me to test this
+on Gen-2.
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 6186179fd66d..cf6dc2aeef20 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -907,7 +907,6 @@
- 			#clock-cells = <0>;
- 			/* This value must be overridden by the board. */
- 			clock-frequency = <0>;
--			status = "disabled";
- 		};
- 
- 		/* External SCIF clock */
-@@ -916,7 +915,6 @@
- 			#clock-cells = <0>;
- 			/* This value must be overridden by the board. */
- 			clock-frequency = <0>;
--			status = "disabled";
- 		};
- 
- 		/* Special CPG clocks */
--- 
-2.7.0.rc3.207.g0ac5344
+> >Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> >Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
+
+>    I have a few comments though...
+
+[...]
