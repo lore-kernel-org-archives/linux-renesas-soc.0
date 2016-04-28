@@ -1,294 +1,1848 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:65098 "EHLO
+Received: from relmlor2.renesas.com ([210.160.252.172]:58645 "EHLO
 	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751571AbcD1Mbt (ORCPT
+	by vger.kernel.org with ESMTP id S1751411AbcD1M2u (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 28 Apr 2016 08:31:49 -0400
+	Thu, 28 Apr 2016 08:28:50 -0400
 From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: Oliver Hartkopp <socketcan@hartkopp.net>,
-	"wg@grandegger.com" <wg@grandegger.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"pawel.moll@arm.com" <pawel.moll@arm.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>,
-	"galak@codeaurora.org" <galak@codeaurora.org>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"mkl@pengutronix.de" <mkl@pengutronix.de>
-CC: "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>,
-	Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH v2] can: rcar_canfd: Add Renesas R-Car CAN FD driver
-Date: Thu, 28 Apr 2016 12:31:40 +0000
-Message-ID: <KL1PR06MB1031764F9B07005B343FB424C3650@KL1PR06MB1031.apcprd06.prod.outlook.com>
+To: mkl@pengutronix.de, wg@grandegger.com, socketcan@hartkopp.net,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-can@vger.kernel.org, netdev@vger.kernel.org,
+	chris.paterson2@renesas.com,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v5 1/2] can: rcar_canfd: Add Renesas R-Car CAN FD driver
+Date: Thu, 28 Apr 2016 13:23:07 +0100
+Message-Id: <1461846188-31249-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1461846188-31249-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 References: <1456824849-7987-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <1457019515-21158-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <56FD8DC8.4050205@pengutronix.de>
- <SG2PR06MB10389E1E68089FF900746B44C39A0@SG2PR06MB1038.apcprd06.prod.outlook.com>
- <KL1PR06MB10312B266592335D965823AFC3960@KL1PR06MB1031.apcprd06.prod.outlook.com>
- <5721AD57.8060105@hartkopp.net>
-In-Reply-To: <5721AD57.8060105@hartkopp.net>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+ <1461846188-31249-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgT2xpdmVyLA0KDQpUaGFua3MgOi0pDQpBY3R1YWxseSBpdCB3aWxsIGJlIHY1IHBhdGNoIHNl
-dCAmIEkgaGF2ZSBzZW50IGl0IG5vdy4gTWFyYyBjb21tZW50cyB3ZXJlIG9uIG9sZCB2MiBwYXRj
-aC4NCg0KVGhhbmtzLA0KUmFtZXNoDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4g
-RnJvbTogT2xpdmVyIEhhcnRrb3BwIFttYWlsdG86c29ja2V0Y2FuQGhhcnRrb3BwLm5ldF0NCj4g
-U2VudDogMjggQXByaWwgMjAxNiAwNzoyOA0KPiBUbzogUmFtZXNoIFNoYW5tdWdhc3VuZGFyYW0g
-PHJhbWVzaC5zaGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMuY29tPjsNCj4gd2dAZ3JhbmRlZ2dl
-ci5jb207IHJvYmgrZHRAa2VybmVsLm9yZzsgcGF3ZWwubW9sbEBhcm0uY29tOw0KPiBtYXJrLnJ1
-dGxhbmRAYXJtLmNvbTsgaWpjK2RldmljZXRyZWVAaGVsbGlvbi5vcmcudWs7IGdhbGFrQGNvZGVh
-dXJvcmEub3JnOw0KPiBjb3JiZXRAbHduLm5ldDsgbWtsQHBlbmd1dHJvbml4LmRlDQo+IENjOiBs
-aW51eC1yZW5lc2FzLXNvY0B2Z2VyLmtlcm5lbC5vcmc7IGRldmljZXRyZWVAdmdlci5rZXJuZWwu
-b3JnOyBsaW51eC0NCj4gY2FuQHZnZXIua2VybmVsLm9yZzsgbmV0ZGV2QHZnZXIua2VybmVsLm9y
-ZzsgbGludXgtZG9jQHZnZXIua2VybmVsLm9yZzsNCj4gZ2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU7
-IENocmlzIFBhdGVyc29uIDxDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20+DQo+IFN1YmplY3Q6
-IFJlOiBbUEFUQ0ggdjJdIGNhbjogcmNhcl9jYW5mZDogQWRkIFJlbmVzYXMgUi1DYXIgQ0FOIEZE
-IGRyaXZlcg0KPiANCj4gSGVsbG8gUmFtZXNoLA0KPiANCj4gcGxlYXNlIHNlbmQgb3V0IGEgbmV3
-IHYzIHBhdGNoc2V0IHRvIHRyaWdnZXIgdGhlIHByb2Nlc3MgYWdhaW4gOi0pDQo+IA0KPiBCZXN0
-IHJlZ2FyZHMsDQo+IE9saXZlcg0KPiANCj4gT24gMDQvMTMvMjAxNiAwODoyNSBBTSwgUmFtZXNo
-IFNoYW5tdWdhc3VuZGFyYW0gd3JvdGU6DQo+ID4gSEkgTWFyYywNCj4gPg0KPiA+IEdlbnRsZSBy
-ZW1pbmRlciENCj4gPiBBcmUgeW91IGhhcHB5IHdpdGggdGhlIG9wZW4gY29tbWVudCdzIGRpc3Bv
-c2l0aW9uPyBJIGNhbiBzZW5kIGEgbmV4dA0KPiB2ZXJzaW9uIG9mIHBhdGNoIGlmIHdlIGhhdmUg
-YSBjbG9zdXJlIG9uIGN1cnJlbnQgc2V0IG9mIGNvbW1lbnRzLg0KPiA+DQo+ID4gVGhhbmtzLA0K
-PiA+IFJhbWVzaA0KPiA+DQo+ID4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4+IEZy
-b206IFJhbWVzaCBTaGFubXVnYXN1bmRhcmFtDQo+ID4+IFNlbnQ6IDAxIEFwcmlsIDIwMTYgMTM6
-NDkNCj4gPj4gVG86IFJhbWVzaCBTaGFubXVnYXN1bmRhcmFtIDxyYW1lc2guc2hhbm11Z2FzdW5k
-YXJhbUBicC5yZW5lc2FzLmNvbT47DQo+ID4+IHdnQGdyYW5kZWdnZXIuY29tOyByb2JoK2R0QGtl
-cm5lbC5vcmc7IHBhd2VsLm1vbGxAYXJtLmNvbTsNCj4gPj4gbWFyay5ydXRsYW5kQGFybS5jb207
-IGlqYytkZXZpY2V0cmVlQGhlbGxpb24ub3JnLnVrOw0KPiA+PiBnYWxha0Bjb2RlYXVyb3JhLm9y
-ZzsgY29yYmV0QGx3bi5uZXQNCj4gPj4gQ2M6IGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVs
-Lm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4+IGxpbnV4LSBjYW5Admdlci5r
-ZXJuZWwub3JnOyBuZXRkZXZAdmdlci5rZXJuZWwub3JnOw0KPiA+PiBsaW51eC1kb2NAdmdlci5r
-ZXJuZWwub3JnOw0KPiA+PiBnZWVydCtyZW5lc2FzQGdsaWRlci5iZTsgQ2hyaXMgUGF0ZXJzb24g
-PENocmlzLlBhdGVyc29uMkByZW5lc2FzLmNvbT4NCj4gPj4gU3ViamVjdDogUkU6IFtQQVRDSCB2
-Ml0gY2FuOiByY2FyX2NhbmZkOiBBZGQgUmVuZXNhcyBSLUNhciBDQU4gRkQNCj4gPj4gZHJpdmVy
-DQo+ID4+DQo+ID4+IEhpIE1hcmMsDQo+ID4+DQo+ID4+IFRoYW5rcyBmb3IgeW91ciB0aW1lICYg
-cmV2aWV3IGNvbW1lbnRzLg0KPiA+Pg0KPiA+Pj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0N
-Cj4gPj4gKC4uLikNCj4gPj4+PiArI2RlZmluZSBSQ0FORkRfTkFQSV9XRUlHSFQJCTgJLyogUngg
-cG9sbCBxdW90YSAqLw0KPiA+Pj4+ICsNCj4gPj4+PiArI2RlZmluZSBSQ0FORkRfTlVNX0NIQU5O
-RUxTCQkyDQo+ID4+Pj4gKyNkZWZpbmUgUkNBTkZEX0NIQU5ORUxTX01BU0sJCTB4MwkvKiBUd28g
-Y2hhbm5lbHMgbWF4ICovDQo+ID4+Pg0KPiA+Pj4gKEJJVChSQ0FORkRfTlVNX0NIQU5ORUxTKSAt
-IDENCj4gPj4NCj4gPj4gT0sNCj4gPj4NCj4gPj4+DQo+ID4+Pj4gKw0KPiA+Pj4+ICsvKiBSeCBG
-SUZPIGlzIGEgZ2xvYmFsIHJlc291cmNlIG9mIHRoZSBjb250cm9sbGVyLiBUaGVyZSBhcmUgOA0K
-PiA+Pj4+ICtzdWNoDQo+ID4+PiBGSUZPcw0KPiA+Pj4+ICsgKiBhdmFpbGFibGUuIEVhY2ggY2hh
-bm5lbCBnZXRzIGEgZGVkaWNhdGVkIFJ4IEZJRk8gKGkuZS4pIHRoZQ0KPiA+Pj4+ICsgY2hhbm5l
-bA0KPiA+PiAoLi4uKQ0KPiA+Pj4+ICsjZGVmaW5lIFJDQU5GRF9DTUZJRk9fQ0ZETEMoeCkJCSgo
-KHgpICYgMHhmKSA8PCAyOCkNCj4gPj4+PiArI2RlZmluZSBSQ0FORkRfQ01GSUZPX0NGUFRSKHgp
-CQkoKCh4KSAmIDB4ZmZmKSA8PCAxNikNCj4gPj4+PiArI2RlZmluZSBSQ0FORkRfQ01GSUZPX0NG
-VFMoeCkJCSgoKHgpICYgMHhmZikgPDwgMCkNCj4gPj4+PiArDQo+ID4+Pj4gKy8qIEdsb2JhbCBU
-ZXN0IENvbmZpZyByZWdpc3RlciAqLw0KPiA+Pj4+ICsjZGVmaW5lIFJDQU5GRF9HVFNUQ0ZHX0Mw
-Q0JDRQkJQklUKDApDQo+ID4+Pj4gKyNkZWZpbmUgUkNBTkZEX0dUU1RDRkdfQzFDQkNFCQlCSVQo
-MSkNCj4gPj4+PiArDQo+ID4+Pj4gKyNkZWZpbmUgUkNBTkZEX0dUU1RDVFJfSUNCQ1RNRQkJQklU
-KDApDQo+ID4+Pj4gKw0KPiA+Pj4+ICsvKiBBRkwgUnggcnVsZXMgcmVnaXN0ZXJzICovDQo+ID4+
-Pj4gKyNkZWZpbmUgUkNBTkZEX0FGTENGR19TRVRSTkMwKHgpCSgoKHgpICYgMHhmZikgPDwgMjQp
-DQo+ID4+Pj4gKyNkZWZpbmUgUkNBTkZEX0FGTENGR19TRVRSTkMxKHgpCSgoKHgpICYgMHhmZikg
-PDwgMTYpDQo+ID4+Pg0KPiA+Pj4gV2hhdCBhYm91dCBzb21ldGhpbmcgbGlrZToNCj4gPj4+DQo+
-ID4+PiAjZGVmaW5lIFJDQU5GRF9BRkxDRkdfU0VUUk5DKG4sIHgpCSgoKHgpICYgMHhmZikgPDwg
-KDI0IC0gbiAqIDgpKQ0KPiA+Pj4NCj4gPj4+IFRoaXMgd2lsbCBzYXZlIHNvbWUgaWYoKXMgaW4g
-dGhlIGNvZGUNCj4gPj4NCj4gPj4gTmljZSA6LSkuIFdpbGwgdXBkYXRlLg0KPiA+Pg0KPiA+Pj4N
-Cj4gPj4+PiArI2RlZmluZSBSQ0FORkRfQUZMQ0ZHX0dFVFJOQzAoeCkJKCgoeCkgPj4gMjQpICYg
-MHhmZikNCj4gPj4+PiArI2RlZmluZSBSQ0FORkRfQUZMQ0ZHX0dFVFJOQzEoeCkJKCgoeCkgPj4g
-MTYpICYgMHhmZikNCj4gPj4+PiArDQo+ID4+Pj4gKyNkZWZpbmUgUkNBTkZEX0FGTF9QQUdFTlVN
-KGVudHJ5KQkoKGVudHJ5KSAvIDE2KQ0KPiA+PiAoLi4uKQ0KPiA+Pj4+ICsjZGVmaW5lIHJjYXJf
-Y2FuZmRfcmVhZChwcml2LCBvZmZzZXQpCQkJXA0KPiA+Pj4+ICsJcmVhZGwocHJpdi0+YmFzZSAr
-IChvZmZzZXQpKQ0KPiA+Pj4+ICsjZGVmaW5lIHJjYXJfY2FuZmRfd3JpdGUocHJpdiwgb2Zmc2V0
-LCB2YWwpCQlcDQo+ID4+Pj4gKwl3cml0ZWwodmFsLCBwcml2LT5iYXNlICsgKG9mZnNldCkpDQo+
-ID4+Pj4gKyNkZWZpbmUgcmNhcl9jYW5mZF9zZXRfYml0KHByaXYsIHJlZywgdmFsKQkJXA0KPiA+
-Pj4+ICsJcmNhcl9jYW5mZF91cGRhdGUodmFsLCB2YWwsIHByaXYtPmJhc2UgKyAocmVnKSkNCj4g
-Pj4+PiArI2RlZmluZSByY2FyX2NhbmZkX2NsZWFyX2JpdChwcml2LCByZWcsIHZhbCkJCVwNCj4g
-Pj4+PiArCXJjYXJfY2FuZmRfdXBkYXRlKHZhbCwgMCwgcHJpdi0+YmFzZSArIChyZWcpKQ0KPiA+
-Pj4+ICsjZGVmaW5lIHJjYXJfY2FuZmRfdXBkYXRlX2JpdChwcml2LCByZWcsIG1hc2ssIHZhbCkJ
-XA0KPiA+Pj4+ICsJcmNhcl9jYW5mZF91cGRhdGUobWFzaywgdmFsLCBwcml2LT5iYXNlICsgKHJl
-ZykpDQo+ID4+Pg0KPiA+Pj4gcGxlYXNlIHVzZSBzdGF0aWMgaW5saW5lIGZ1bmN0aW9ucyBpbnN0
-ZWFkIG9mIGRlZmluZXMuDQo+ID4+DQo+ID4+IE9LLg0KPiA+Pg0KPiA+Pj4NCj4gPj4+PiArDQo+
-ID4+Pj4gK3N0YXRpYyB2b2lkIHJjYXJfY2FuZmRfZ2V0X2RhdGEoc3RydWN0IGNhbmZkX2ZyYW1l
-ICpjZiwNCj4gPj4+PiArCQkJCXN0cnVjdCByY2FyX2NhbmZkX2NoYW5uZWwgKnByaXYsIHUzMiBv
-ZmYpDQo+ID4+Pg0KPiA+Pj4gUGxlYXNlIHVzZSAic3RydWN0IHJjYXJfY2FuZmRfY2hhbm5lbCAq
-cHJpdiIgYXMgZmlyc3QgYXJndW1lbnQsDQo+ID4+PiBzdHJ1Y3QgY2FuZmRfZnJhbWUgKmNmIGFz
-IHNlY29uZC4gUmVtb3ZlIG9mZiwgYXMgdGhlIG9mZnNldCBpcw0KPiA+Pj4gYWxyZWFkeSBkZWZp
-bmVkIGJ5IHRoZSBjaGFubmVsLg0KPiA+Pg0KPiA+PiBJJ2xsIHJlLW9yZGVyIHByaXYsIGNmIGFz
-IHlvdSBtZW50aW9uZWQuIEknbGwgbGVhdmUgIm9mZiIgYXJnIGFzIGl0DQo+ID4+IGlzIGJlY2F1
-c2UgaXQgaXMgYmFzZWQgb24gRklGTyBudW1iZXIgb2YgY2hhbm5lbCArIG1vZGUgKENBTiBvbmx5
-IG9yDQo+ID4+IENBTkZEIG9ubHkpLiBPdGhlcndpc2UsIEkgd2lsbCBoYXZlIHRvIGFkZCBhbm90
-aGVyIGNoZWNrIGluc2lkZSB0aGlzDQo+ID4+IGZ1bmN0aW9uIGZvciBtb2RlLg0KPiA+Pg0KPiA+
-Pj4+ICt7DQo+ID4+Pj4gKwl1MzIgaSwgbHdvcmRzOw0KPiA+Pj4+ICsNCj4gPj4+PiArCWx3b3Jk
-cyA9IGNmLT5sZW4gLyBzaXplb2YodTMyKTsNCj4gPj4+PiArCWlmIChjZi0+bGVuICUgc2l6ZW9m
-KHUzMikpDQo+ID4+Pj4gKwkJbHdvcmRzKys7DQo+ID4+Pg0KPiA+Pj4gVXNlIERJVl9ST1VORF9V
-UCgpIGluc3RlYWQgb2Ygb3BlbiBjb2RpbmcgaXQuDQo+ID4+DQo+ID4+IEFncmVlZC4gVGhhbmtz
-Lg0KPiA+Pg0KPiA+Pj4NCj4gPj4+PiArCWZvciAoaSA9IDA7IGkgPCBsd29yZHM7IGkrKykNCj4g
-Pj4+PiArCQkqKCh1MzIgKiljZi0+ZGF0YSArIGkpID0NCj4gPj4+PiArCQkJcmNhcl9jYW5mZF9y
-ZWFkKHByaXYsIG9mZiArIChpICogc2l6ZW9mKHUzMikpKTsgfQ0KPiA+Pj4+ICsNCj4gPj4+PiAr
-c3RhdGljIHZvaWQgcmNhcl9jYW5mZF9wdXRfZGF0YShzdHJ1Y3QgY2FuZmRfZnJhbWUgKmNmLA0K
-PiA+Pj4+ICsJCQkJc3RydWN0IHJjYXJfY2FuZmRfY2hhbm5lbCAqcHJpdiwgdTMyIG9mZikNCj4g
-Pj4+DQo+ID4+PiBzYW1lIGhlcmUNCj4gPj4NCj4gPj4gWWVzIChzYW1lIGFzIF9nZXRfZGF0YSkN
-Cj4gPj4NCj4gPj4+DQo+ID4+Pj4gK3sNCj4gPj4+PiArCXUzMiBpLCBqLCBsd29yZHMsIGxlZnRv
-dmVyOw0KPiA+Pj4+ICsJdTMyIGRhdGEgPSAwOw0KPiA+Pj4+ICsNCj4gPj4+PiArCWx3b3JkcyA9
-IGNmLT5sZW4gLyBzaXplb2YodTMyKTsNCj4gPj4+PiArCWxlZnRvdmVyID0gY2YtPmxlbiAlIHNp
-emVvZih1MzIpOw0KPiA+Pj4+ICsJZm9yIChpID0gMDsgaSA8IGx3b3JkczsgaSsrKQ0KPiA+Pj4+
-ICsJCXJjYXJfY2FuZmRfd3JpdGUocHJpdiwgb2ZmICsgKGkgKiBzaXplb2YodTMyKSksDQo+ID4+
-Pj4gKwkJCQkgKigodTMyICopY2YtPmRhdGEgKyBpKSk7DQo+ID4+Pg0KPiA+Pj4gSGVyZSB5b3Ug
-ZG9uJ3QgY29udmVydCB0aGUgZW5kaWFuZXNzLi4uDQo+ID4+DQo+ID4+IFllcw0KPiA+Pg0KPiA+
-Pj4+ICsNCj4gPj4+PiArCWlmIChsZWZ0b3Zlcikgew0KPiA+Pj4+ICsJCXU4ICpwID0gKHU4ICop
-KCh1MzIgKiljZi0+ZGF0YSArIGkpOw0KPiA+Pj4+ICsNCj4gPj4+PiArCQlmb3IgKGogPSAwOyBq
-IDwgbGVmdG92ZXI7IGorKykNCj4gPj4+PiArCQkJZGF0YSB8PSBwW2pdIDw8IChqICogOCk7DQo+
-ID4+Pg0KPiA+Pj4gLi4uaGVyZSB5b3UgZG8gYW4gaW1wbGljaXQgZW5kaWFuZXNzIGNvbnZlcnNp
-b24uICJkYXRhIiBpcyBsaXR0bGUNCj4gPj4+IGVuZGlhbiwgd2hpbGUgcFtqXSBpcyBiaWcgZW5k
-aWFuLg0KPiA+Pg0KPiA+PiBOb3Qgc3VyZSBJIGdvdCB0aGUgcXVlc3Rpb24gY29ycmVjdGx5Lg0K
-PiA+PiBDb250cm9sbGVyIGV4cGVjdGF0aW9uIG9mIGRhdGEgYnl0ZXMgaW4gMzJiaXQgcmVnaXN0
-ZXIgaXMgYml0c1s3OjBdID0NCj4gPj4gYnl0ZTAsIGJpdHNbMTU6OF0gPSBieXRlMSBhbmQgc28g
-b24gLSBsaXR0bGUgZW5kaWFuLg0KPiA+PiBGb3IgZS5nLiBpZiBjZi0+ZGF0YSBwb2ludHMgdG8g
-Ynl0ZSBzdHJlYW0gSCcxMTIyMzM0NDU1NjYNCj4gPj4gKGNmLT5kYXRhWzBdID0gMHgxMSksIGZp
-cnN0IHJjYXJfY2FuZmRfd3JpdGUgd2lsbCB3cml0ZSAweDQ0MzMyMjExDQo+ID4+IHZhbHVlIHRv
-IHJlZ2lzdGVyLiBZZXMgdGhlIGhvc3QgY3B1IGlzIGFzc3VtZWQgbGl0dGxlIGVuZGlhbi4gSW4N
-Cj4gPj4gbGVmdG92ZXIgY2FzZSwgZGF0YSB3aWxsIGJlDQo+ID4+IDB4MDAwMDY2NTUgLSBhZ2Fp
-biBsaXR0bGUgZW5kaWFuLg0KPiA+PiBJIHRoaW5rIEkgc2hvdWxkIHJlbW92ZSB0aGlzIGxlZnRv
-dmVyIGxvZ2ljIGFuZCBqdXN0IG1hc2sgdGhlIHVudXNlZA0KPiA+PiBiaXRzIHRvIHplcm8gYXMg
-Y2YtPmRhdGEgaXMgcHJlLWFsbG9jYXRlZCBmb3IgbWF4IGxlbmd0aCBhbnl3YXkuDQo+ID4+DQo+
-ID4+IHBbal0gaXMgYSBieXRlPz8gQW0gSSBtaXNzaW5nIHNvbWV0aGluZz8NCj4gPj4NCj4gPj4+
-DQo+ID4+Pj4gKwkJcmNhcl9jYW5mZF93cml0ZShwcml2LCBvZmYgKyAoaSAqIHNpemVvZih1MzIp
-KSwgZGF0YSk7DQo+ID4+Pj4gKwl9DQo+ID4+Pg0KPiA+Pj4gSGF2ZSB5b3UgdGVzdGVkIHRvIHNl
-bmQgQ0FOIGZyYW1lcyB3aXRoIGxlbiAhPSBuKjQgYWdhaW5zdCBhDQo+ID4+PiBkaWZmZXJlbnQg
-Y29udHJvbGxlcj8NCj4gPj4NCj4gPj4gWWVzLCB3aXRoIFZlY3RvciBWTjE2MzBBLg0KPiA+Pg0K
-PiA+Pj4+ICt9DQo+ID4+Pj4gKw0KPiA+Pj4+ICtzdGF0aWMgdm9pZCByY2FyX2NhbmZkX3R4X2Zh
-aWx1cmVfY2xlYW51cChzdHJ1Y3QgbmV0X2RldmljZSAqbmRldikNCj4gPj4+PiArew0KPiA+Pj4+
-ICsJdTMyIGk7DQo+ID4+Pj4gKw0KPiA+Pj4+ICsJZm9yIChpID0gMDsgaSA8IFJDQU5GRF9GSUZP
-X0RFUFRIOyBpKyspDQo+ID4+Pj4gKwkJY2FuX2ZyZWVfZWNob19za2IobmRldiwgaSk7DQo+ID4+
-Pj4gK30NCj4gPj4+PiArDQo+ID4+ICguLi4pDQo+ID4+Pj4gK3N0YXRpYyB2b2lkIHJjYXJfY2Fu
-ZmRfdHhfZG9uZShzdHJ1Y3QgbmV0X2RldmljZSAqbmRldikgew0KPiA+Pj4+ICsJc3RydWN0IHJj
-YXJfY2FuZmRfY2hhbm5lbCAqcHJpdiA9IG5ldGRldl9wcml2KG5kZXYpOw0KPiA+Pj4+ICsJc3Ry
-dWN0IG5ldF9kZXZpY2Vfc3RhdHMgKnN0YXRzID0gJm5kZXYtPnN0YXRzOw0KPiA+Pj4+ICsJdTMy
-IHN0czsNCj4gPj4+PiArCXVuc2lnbmVkIGxvbmcgZmxhZ3M7DQo+ID4+Pj4gKwl1MzIgY2ggPSBw
-cml2LT5jaGFubmVsOw0KPiA+Pj4+ICsNCj4gPj4+PiArCWRvIHsNCj4gPj4+DQo+ID4+PiBZb3Ug
-c2hvdWxkIGl0ZXJhcmUgb3ZlciBhbGwgcGVuZGluZyBDQU4gZnJhbWVzOg0KPiA+Pj4NCj4gPj4+
-PiAJZm9yICgvKiBuaXggKi87IChwcml2LT50eF9oZWFkIC0gcHJpdi0+dHhfdGFpbCkgPiAwOyBw
-cml2LQ0KPiA+Pj4+IHR4X3RhaWwrKykgew0KPiA+Pj4NCj4gPj4NCj4gPj4gWWVzLCBjdXJyZW50
-IGNvZGUgZG9lcyBpdGVyYXRlIG92ZXIgcGVuZGluZyB0eCdlZCBmcmFtZXMuIElmIHdlIHVzZQ0K
-PiA+PiB0aGlzIGZvciBsb29wIHNlbWFudGljcywgd2UgbWF5IGhhdmUgdG8gcHJvdGVjdCB0aGUg
-d2hvbGUgbG9vcCB3aXRoDQo+ID4+IG5vIHJlYWwgYmVuZWZpdC4NCj4gPj4NCj4gPj4+DQo+ID4+
-Pj4gKwkJdTggdW5zZW50LCBzZW50Ow0KPiA+Pj4+ICsNCj4gPj4+PiArCQlzZW50ID0gcHJpdi0+
-dHhfdGFpbCAlIFJDQU5GRF9GSUZPX0RFUFRIOw0KPiA+Pj4NCj4gPj4+IGFuZCBjaGVjayBoZXJl
-LCBpZiB0aGF0IHBhY2tldCBoYXMgcmVhbGx5IGJlZW4gdHJhbXNpdHRlZC4gRXhpdCB0aGUNCj4g
-Pj4+IGxvb3Agb3RoZXJ3ZWlzZS4NCj4gPj4NCj4gPj4gV2UgYXJlIGhlcmUgYmVjYXVzZSBvZiB0
-eF9kb25lIGFuZCBoZW5jZSBubyBuZWVkIHRvIGNoZWNrIHR4IGRvbmUNCj4gPj4gYWdhaW4gZm9y
-IHRoZSBmaXJzdCBpdGVyYXRpb24uIEhlbmNlIHRoZSBkby13aGlsZSBsb29wLiBDaGVja3MNCj4g
-Pj4gZnVydGhlciBkb3duIHRha2VzIGNhcmUgb2YgdGhlIG5lZWQgZm9yIG1vcmUgaXRlcmF0aW9u
-cy9wZW5kaW5nIHR4J2VkDQo+IGZyYW1lcy4NCj4gPj4NCj4gPj4+DQo+ID4+Pj4gKwkJc3RhdHMt
-PnR4X3BhY2tldHMrKzsNCj4gPj4+PiArCQlzdGF0cy0+dHhfYnl0ZXMgKz0gcHJpdi0+dHhfbGVu
-W3NlbnRdOw0KPiA+Pj4+ICsJCXByaXYtPnR4X2xlbltzZW50XSA9IDA7DQo+ID4+Pj4gKwkJY2Fu
-X2dldF9lY2hvX3NrYihuZGV2LCBzZW50KTsNCj4gPj4+PiArDQo+ID4+Pj4gKwkJc3Bpbl9sb2Nr
-X2lycXNhdmUoJnByaXYtPnR4X2xvY2ssIGZsYWdzKTsNCj4gPj4+DQo+ID4+PiBXaGF0IGRvZXMg
-dGhlIHR4X2xvY2sgcHJvdGVjdD8gVGhlIHR4IHBhdGggaXMgcGVyIGNoYW5uZWwsIGlzbid0IGl0
-Pw0KPiA+Pg0KPiA+PiBZb3UgYXJlIHJpZ2h0IC0gdHggcGF0aCBpcyBwZXIgY2hhbm5lbC4gSW4g
-dHggcGF0aCwgaGVhZCAmIHRhaWwgYXJlDQo+ID4+IGFsc28gdXNlZCB0byBkZXRlcm1pbmUgd2hl
-biB0byBzdG9wL3dha2V1cCBuZXRpZiBxdWV1ZS4gVGhleSBhcmUNCj4gPj4gaW5jcmVtZW50ZWQg
-JiBjb21wYXJlZCBpbiBkaWZmZXJlbnQgY29udGV4dHMgdG8gbWFrZSB0aGlzIGRlY2lzaW9uLg0K
-PiA+PiBQZXIgY2hhbm5lbCB0eF9sb2NrIHByb3RlY3RzIHRoaXMgY3JpdGljYWwgc2VjdGlvbi4N
-Cj4gPj4NCj4gPj4+DQo+ID4+Pj4gKwkJcHJpdi0+dHhfdGFpbCsrOw0KPiA+Pj4+ICsJCXN0cyA9
-IHJjYXJfY2FuZmRfcmVhZChwcml2LA0KPiA+Pj4+ICsJCQkJICAgICAgUkNBTkZEX0NGU1RTKGNo
-LCBSQ0FORkRfQ0ZGSUZPX0lEWCkpOw0KPiA+Pj4+ICsJCXVuc2VudCA9IFJDQU5GRF9DTUZJRk9f
-Q0ZNQyhzdHMpOw0KPiA+Pj4+ICsNCj4gPj4+PiArCQkvKiBXYWtlIHByb2R1Y2VyIG9ubHkgd2hl
-biB0aGVyZSBpcyByb29tICovDQo+ID4+Pj4gKwkJaWYgKHVuc2VudCAhPSBSQ0FORkRfRklGT19E
-RVBUSCkNCj4gPj4+PiArCQkJbmV0aWZfd2FrZV9xdWV1ZShuZGV2KTsNCj4gPj4+DQo+ID4+PiBN
-b3ZlIHRoZSBuZXRpZl93YWtlX3F1ZXVlKCkgb3V0IG9mIHRoZSBsb29wLg0KPiA+Pg0KPiA+PiBX
-aXRoIHRoZSB0eCBsb2dpYyBtZW50aW9uZWQgYWJvdmUsIEkgdGhpbmsga2VlcGluZyBpdCBpbiB0
-aGUgbG9vcA0KPiA+PiBzZWVtcyBiZXR0ZXIuIEZvciBlLmcuIHNheSBjcHUxIHB1bXBzIDggZnJh
-bWVzIGZyb20gYW4gYXBwIGxvb3AgYW5kDQo+ID4+IGNwdTAgaGFuZGxlcyB0eF9kb25lIGludGVy
-cnVwdCBoYW5kbGluZzogY3B1MSB3b3VsZCBoYXZlIHN0b3BwZWQgdGhlDQo+ID4+IHF1ZXVlIGJl
-Y2F1c2UgRklGTyBpcyBmdWxsIC0+IGNwdTAgZ2V0cyB0eF9kb25lIGludGVycnVwdCBhbmQgYnkg
-dGhlDQo+IHRpbWUgaXQgY2hlY2tzICJ1bnNlbnQiDQo+ID4+IHRoZXJlIGNvdWxkIGJlIG9uZSBv
-ciBtb3JlIGZyYW1lcyB0cmFuc21pdHRlZCBieSBkZXZpY2UgKGkuZS4pIHRoZXJlDQo+ID4+IHdv
-dWxkIGJlIG1vcmUgc3BhY2UgaW4gZmlmby4gSXQgaXMgYmV0dGVyIHRvIHdha2V1cCB0aGUgbmV0
-aWYgcXVldWUNCj4gPj4gdGhlbiBhbmQgdGhlcmUgc28gdGhhdCBhcHAgcnVubmluZyBvbiBjcHUx
-IGNhbiBwdW1wIG1vcmUuIElmIHdlIG1vdmUNCj4gPj4gaXQgb3V0IG9mIHRoZSBsb29wIHdlIHdh
-a2UgdXAgdGhlIHF1ZXVlIG9ubHkgaW4gdGhlIGVuZC4gSGF2ZSBJIG1pc3NlZA0KPiBhbnl0aGlu
-Zz8NCj4gPj4NCj4gPj4+DQo+ID4+Pj4gKw0KPiA+Pj4+ICsJCWlmIChwcml2LT50eF9oZWFkIC0g
-cHJpdi0+dHhfdGFpbCA8PSB1bnNlbnQpIHsNCj4gPj4+PiArCQkJc3Bpbl91bmxvY2tfaXJxcmVz
-dG9yZSgmcHJpdi0+dHhfbG9jaywgZmxhZ3MpOw0KPiA+Pj4+ICsJCQlicmVhazsNCj4gPj4+PiAr
-CQl9DQo+ID4+Pj4gKwkJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmcHJpdi0+dHhfbG9jaywgZmxh
-Z3MpOw0KPiA+Pj4+ICsNCj4gPj4+PiArCX0gd2hpbGUgKDEpOw0KPiA+Pj4+ICsNCj4gPj4+PiAr
-CS8qIENsZWFyIGludGVycnVwdCAqLw0KPiA+Pj4+ICsJcmNhcl9jYW5mZF93cml0ZShwcml2LCBS
-Q0FORkRfQ0ZTVFMoY2gsIFJDQU5GRF9DRkZJRk9fSURYKSwNCj4gPj4+PiArCQkJIHN0cyAmIH5S
-Q0FORkRfQ01GSUZPX0NGVFhJRik7DQo+ID4+Pj4gKwljYW5fbGVkX2V2ZW50KG5kZXYsIENBTl9M
-RURfRVZFTlRfVFgpOyB9DQo+ID4+Pj4gKw0KPiA+Pj4+ICsJaWYgKGNmLT5jYW5faWQgJiBDQU5f
-UlRSX0ZMQUcpDQo+ID4+Pj4gKwkJaWQgfD0gUkNBTkZEX0NNRklGT19DRlJUUjsNCj4gPj4+PiAr
-DQo+ID4+Pj4gKwlyY2FyX2NhbmZkX3dyaXRlKHByaXYsIFJDQU5GRF9GX0NGSUQoY2gsIFJDQU5G
-RF9DRkZJRk9fSURYKSwNCj4gPj4+PiArCQkJIGlkKTsNCj4gPj4+PiArCXB0ciA9IFJDQU5GRF9D
-TUZJRk9fQ0ZETEMoY2FuX2xlbjJkbGMoY2YtPmxlbikpOw0KPiA+Pj4NCj4gPj4+IHB0ciB1c3Vh
-bGx5IG1lYW5zIHBvaW50ZXIsIGJldHRlciBjYWxsIGl0IGRsYy4NCj4gPj4NCj4gPj4gSSB1c2Vk
-IHRoZSByZWdpc3RlciBuYW1lICJwdHIiLiBPSywgd2lsbCBjaGFuZ2UgaXQgZG8gZGxjLg0KPiA+
-Pg0KPiA+Pj4NCj4gPj4+PiArCXJjYXJfY2FuZmRfd3JpdGUocHJpdiwgUkNBTkZEX0ZfQ0ZQVFIo
-Y2gsIFJDQU5GRF9DRkZJRk9fSURYKSwNCj4gPj4+PiArCQkJIHB0cik7DQo+ID4+Pj4gKw0KPiA+
-PiAoLi4uKQ0KPiA+Pj4+ICsJY2FuX3B1dF9lY2hvX3NrYihza2IsIG5kZXYsIHByaXYtPnR4X2hl
-YWQgJQ0KPiBSQ0FORkRfRklGT19ERVBUSCk7DQo+ID4+Pj4gKw0KPiA+Pj4+ICsJc3Bpbl9sb2Nr
-X2lycXNhdmUoJnByaXYtPnR4X2xvY2ssIGZsYWdzKTsNCj4gPj4+PiArCXByaXYtPnR4X2hlYWQr
-KzsNCj4gPj4+PiArDQo+ID4+Pj4gKwkvKiBTdGFydCBUeDogV3JpdGUgMHhmZiB0byBDRlBDIHRv
-IGluY3JlbWVudCB0aGUgQ1BVLXNpZGUNCj4gPj4+PiArCSAqIHBvaW50ZXIgZm9yIHRoZSBDb21t
-b24gRklGTw0KPiA+Pj4+ICsJICovDQo+ID4+Pj4gKwlyY2FyX2NhbmZkX3dyaXRlKHByaXYsIFJD
-QU5GRF9DRlBDVFIoY2gsIFJDQU5GRF9DRkZJRk9fSURYKSwNCj4gPj4+PiArMHhmZik7DQo+ID4+
-Pj4gKw0KPiA+Pj4+ICsJLyogU3RvcCB0aGUgcXVldWUgaWYgd2UndmUgZmlsbGVkIGFsbCBGSUZP
-IGVudHJpZXMgKi8NCj4gPj4+PiArCWlmIChwcml2LT50eF9oZWFkIC0gcHJpdi0+dHhfdGFpbCA+
-PSBSQ0FORkRfRklGT19ERVBUSCkNCj4gPj4+PiArCQluZXRpZl9zdG9wX3F1ZXVlKG5kZXYpOw0K
-PiA+Pj4NCj4gPj4+IFBsZWFzZSBtb3ZlIHRoZSBjaGVjayBvZiBzdG9wX3F1ZXVlLCBiZWZvcmUg
-c3RhcnRpbmcgdGhlIHNlbmQuDQo+ID4+DQo+ID4+IE9LLg0KPiA+Pg0KPiA+Pj4NCj4gPj4+PiAr
-DQo+ID4+Pj4gKwlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZwcml2LT50eF9sb2NrLCBmbGFncyk7
-DQo+ID4+Pj4gKwlyZXR1cm4gTkVUREVWX1RYX09LOw0KPiA+Pj4+ICt9DQo+ID4+Pj4gKw0KPiA+
-PiAoLi4uKQ0KPiA+Pj4+ICt7DQo+ID4+Pj4gKwlzdHJ1Y3QgcmNhcl9jYW5mZF9jaGFubmVsICpw
-cml2ID0NCj4gPj4+PiArCQljb250YWluZXJfb2YobmFwaSwgc3RydWN0IHJjYXJfY2FuZmRfY2hh
-bm5lbCwgbmFwaSk7DQo+ID4+Pj4gKwlpbnQgbnVtX3BrdHM7DQo+ID4+Pj4gKwl1MzIgc3RzOw0K
-PiA+Pj4+ICsJdTMyIGNoID0gcHJpdi0+Y2hhbm5lbDsNCj4gPj4+PiArCXUzMiByaWR4ID0gY2gg
-KyBSQ0FORkRfUkZGSUZPX0lEWDsNCj4gPj4+PiArDQo+ID4+Pj4gKwlmb3IgKG51bV9wa3RzID0g
-MDsgbnVtX3BrdHMgPCBxdW90YTsgbnVtX3BrdHMrKykgew0KPiA+Pj4+ICsJCXN0cyA9IHJjYXJf
-Y2FuZmRfcmVhZChwcml2LCBSQ0FORkRfUkZTVFMocmlkeCkpOw0KPiA+Pj4+ICsJCS8qIENsZWFy
-IGludGVycnVwdCBiaXQgKi8NCj4gPj4+PiArCQlpZiAoc3RzICYgUkNBTkZEX1JGRklGT19SRklG
-KQ0KPiA+Pj4+ICsJCQlyY2FyX2NhbmZkX3dyaXRlKHByaXYsIFJDQU5GRF9SRlNUUyhyaWR4KSwN
-Cj4gPj4+PiArCQkJCQkgc3RzICYgflJDQU5GRF9SRkZJRk9fUkZJRik7DQo+ID4+Pj4gKw0KPiA+
-Pj4+ICsJCS8qIENoZWNrIEZJRk8gZW1wdHkgY29uZGl0aW9uICovDQo+ID4+Pj4gKwkJaWYgKHN0
-cyAmIFJDQU5GRF9SRkZJRk9fUkZFTVApDQo+ID4+Pj4gKwkJCWJyZWFrOw0KPiA+Pj4+ICsNCj4g
-Pj4+PiArCQlyY2FyX2NhbmZkX3J4X3BrdChwcml2KTsNCj4gPj4+DQo+ID4+PiBUaGlzIHNlcXVl
-bmNlIGxvb2tzIHN0cmFuZ2UuIFlvdSBmaXJzdCBjb25kaXRpb25hbGx5IGFjayB0aGUNCj4gPj4+
-IGludGVycnVwdCB0aGVuIHlvdSBjaGVjayBmb3IgZW1wdHkgZmlmbywgdGhlbiByZWFkIHRoZSBD
-QU4gZnJhbWUuIEkNCj4gPj4+IHdvdWxkIGFzc3VtZSB0aGF0IHlvdSBmaXJzdCBjaGVjayBpZiB0
-aGVyZSdzIGEgQ0FOIGZyYW1lLCByZWFkIGl0DQo+ID4+PiBhbmQgdGhlbiBjbGVhciB0aGUgaW50
-ZXJydXB0Lg0KPiA+Pg0KPiA+PiBZZXMsIEkgc2hhbGwgcmUtYXJyYW5nZSB0aGUgc2VxdWVuY2Ug
-YXMgeW91IG1lbnRpb25lZC4NCj4gPj4NCj4gPj4+DQo+ID4+Pj4gKwl9DQo+ID4+Pj4gKw0KPiA+
-Pj4+ICsJLyogQWxsIHBhY2tldHMgcHJvY2Vzc2VkICovDQo+ID4+Pj4gKwlpZiAobnVtX3BrdHMg
-PCBxdW90YSkgew0KPiA+Pj4+ICsJCW5hcGlfY29tcGxldGUobmFwaSk7DQo+ID4+Pj4gKwkJLyog
-RW5hYmxlIFJ4IEZJRk8gaW50ZXJydXB0cyAqLw0KPiA+Pj4+ICsJCXJjYXJfY2FuZmRfc2V0X2Jp
-dChwcml2LCBSQ0FORkRfUkZDQyhyaWR4KSwNCj4gPj4+IFJDQU5GRF9SRkZJRk9fUkZJRSk7DQo+
-ID4+ICguLi4pDQo+ID4+Pj4gKwlmb3JfZWFjaF9zZXRfYml0KGNoLCAmZ3ByaXYtPmNoYW5uZWxz
-X21hc2ssDQo+IFJDQU5GRF9OVU1fQ0hBTk5FTFMpIHsNCj4gPj4+PiArCQllcnIgPSByY2FyX2Nh
-bmZkX2NoYW5uZWxfcHJvYmUoZ3ByaXYsIGNoKTsNCj4gPj4+PiArCQlpZiAoZXJyKQ0KPiA+Pj4+
-ICsJCQlnb3RvIGZhaWxfY2hhbm5lbDsNCj4gPj4+PiArCX0NCj4gPj4+DQo+ID4+PiBTaG91bGQg
-dGhlIENBTiBJUCBjb3JlIGJlIGNsb2NrZWQgdGhlIHdob2xlIHRpbWU/IFdoYXQgYWJvdXQgc2h1
-dGluZw0KPiA+Pj4gZG93biB0aGUgY2xvY2sgYW5kIGVuYWJsaW5nIGl0IG9uIGlmdXA/DQo+ID4+
-DQo+ID4+IFRoZSBmQ0FOIGNsb2NrIGlzIGVuYWJsZWQgb25seSBvbiBpZnVwIG9mIG9uZSBvZiB0
-aGUgY2hhbm5lbHMuDQo+ID4+IEhvd2V2ZXIsIHRoZSBwZXJpcGhlcmFsIGNsb2NrIGlzIGVuYWJs
-ZWQgZHVyaW5nIHByb2JlIHRvIGJyaW5nIHRoZQ0KPiA+PiBjb250cm9sbGVyIHRvIEdsb2JhbCBP
-cGVyYXRpb25hbCBtb2RlLiBUaGlzIGNsb2NrIGNhbm5vdCBiZSB0dXJuZWQNCj4gPj4gb2ZmIHdp
-dGggdGhlIHJlZ2lzdGVyIHZhbHVlcyAmIG1vZGUgcmV0YWluZWQuDQo+ID4+DQo+ID4+Pj4gKw0K
-PiA+Pj4+ICsJcGxhdGZvcm1fc2V0X2RydmRhdGEocGRldiwgZ3ByaXYpOw0KPiA+Pj4+ICsJZGV2
-X2luZm8oJnBkZXYtPmRldiwgImdsb2JhbCBvcGVyYXRpb25hbCBzdGF0ZSAoY2xrICVkKVxuIiwN
-Cj4gPj4+PiArCQkgZ3ByaXYtPmNsb2NrX3NlbGVjdCk7DQo+ID4+ICguLi4pDQo+ID4+Pj4gKwly
-Y2FyX2NhbmZkX3Jlc2V0X2NvbnRyb2xsZXIoZ3ByaXYpOw0KPiA+Pj4+ICsJcmNhcl9jYW5mZF9k
-aXNhYmxlX2dsb2JhbF9pbnRlcnJ1cHRzKGdwcml2KTsNCj4gPj4+PiArDQo+ID4+Pj4gKwlmb3Jf
-ZWFjaF9zZXRfYml0KGNoLCAmZ3ByaXYtPmNoYW5uZWxzX21hc2ssDQo+IFJDQU5GRF9OVU1fQ0hB
-Tk5FTFMpIHsNCj4gPj4+PiArCQlwcml2ID0gZ3ByaXYtPmNoW2NoXTsNCj4gPj4+PiArCQlpZiAo
-cHJpdikgew0KPiA+Pj4NCj4gPj4+IFRoaXMgc2hvdWxkIGFsd2F5cyBiZSB0cnVlLg0KPiA+Pg0K
-PiA+PiBJIGFncmVlLiBJIHRob3VnaHQgSSBjbGVhbmVkIHRoaXMgdXAgYnV0IGl0J3MgaW4gbXkg
-bG9jYWwgY29tbWl0cyA6LSgNCj4gPj4NCj4gPj4+DQo+ID4+Pj4gKwkJCXJjYXJfY2FuZmRfZGlz
-YWJsZV9jaGFubmVsX2ludGVycnVwdHMocHJpdik7DQo+ID4+Pj4gKwkJCXVucmVnaXN0ZXJfY2Fu
-ZGV2KHByaXYtPm5kZXYpOw0KPiA+Pj4+ICsJCQluZXRpZl9uYXBpX2RlbCgmcHJpdi0+bmFwaSk7
-DQo+ID4+Pj4gKwkJCWZyZWVfY2FuZGV2KHByaXYtPm5kZXYpOw0KPiA+Pj4NCj4gPj4+IFBsZWFz
-ZSBtYWtlIHVzZSBvZiByY2FyX2NhbmZkX2NoYW5uZWxfcmVtb3ZlKCksIGFzIHlvdSBhbHJlYWR5
-IGhhdmUNCj4gPj4+IHRoZSBmdW5jdGlvbi4NCj4gPj4NCj4gPj4gWWVzLg0KPiA+Pg0KPiA+PiBU
-aGFua3MsDQo+ID4+IFJhbWVzaA0K
+This patch adds support for the CAN FD controller found in Renesas R-Car
+SoCs. The controller operates in CAN FD only mode by default.
+
+CAN FD mode supports both Classical CAN & CAN FD frame formats. The
+controller supports ISO 11898-1:2015 CAN FD format only.
+
+This controller supports two channels and the driver can enable either
+or both of the channels.
+
+Driver uses Rx FIFOs (one per channel) for reception & Common FIFOs (one
+per channel) for transmission. Rx filter rules are configured to the
+minimum (one per channel) and it accepts Standard, Extended, Data &
+Remote Frame combinations.
+
+Note: There are few documentation errors in R-Car Gen3 Hardware User
+Manual v0.5E with respect to CAN FD controller. They are listed below:
+
+1. CAN FD interrupt numbers 29 & 30 are listed as per channel
+interrupts. However, they are common to both channels (i.e.) they are
+global and channel interrupts respectively.
+
+2. CANFD clock is derived from PLL1. This is not documented.
+
+3. CANFD clock is further divided by (1/2) within the CAN FD controller.
+This is not documented.
+
+4. The minimum value of NTSEG1 in RSCFDnCFDCmNCFG register is 2 Tq. It
+is specified 4 Tq in the manual.
+
+5. The maximum number of message RAM area the controller can use is 3584
+bytes. It is specified 10752 bytes in the manual.
+
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ .../devicetree/bindings/net/can/rcar_canfd.txt     |   89 ++
+ drivers/net/can/Kconfig                            |    1 +
+ drivers/net/can/Makefile                           |    1 +
+ drivers/net/can/rcar/Kconfig                       |   11 +
+ drivers/net/can/rcar/Makefile                      |    5 +
+ drivers/net/can/rcar/rcar_canfd.c                  | 1624 ++++++++++++++++++++
+ 6 files changed, 1731 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/can/rcar_canfd.txt
+ create mode 100644 drivers/net/can/rcar/Kconfig
+ create mode 100644 drivers/net/can/rcar/Makefile
+ create mode 100644 drivers/net/can/rcar/rcar_canfd.c
+
+diff --git a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
+new file mode 100644
+index 0000000..d45182b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
+@@ -0,0 +1,89 @@
++Renesas R-Car CAN FD controller Device Tree Bindings
++----------------------------------------------------
++
++Required properties:
++- compatible: Must contain one or more of the following:
++  - "renesas,rcar-gen3-canfd" for R-Car Gen3 compatible controller.
++  - "renesas,r8a7795-canfd" for R8A7795 (R-Car H3) compatible controller.
++
++  When compatible with the generic version, nodes must list the
++  SoC-specific version corresponding to the platform first, followed by the
++  family-specific and/or generic versions.
++
++- reg: physical base address and size of the R-Car CAN FD register map.
++- interrupts: interrupt specifier for the Global & Channel interrupts
++- clocks: phandles and clock specifiers for 3 clock inputs.
++- clock-names: 3 clock input name strings: "fck", "canfd", "can_clk".
++- pinctrl-0: pin control group to be used for this controller.
++- pinctrl-names: must be "default".
++
++Required child nodes:
++The controller supports two channels and each is represented as a child node.
++The name of the child nodes are "channel0" and "channel1" respectively. Each
++child node supports the "status" property only, which is used to
++enable/disable the respective channel.
++
++Required properties for "renesas,r8a7795-canfd" compatible:
++In R8A7795 SoC, canfd clock is a div6 clock and can be used by both CAN
++and CAN FD controller at the same time. It needs to be scaled to maximum
++frequency if any of these controllers use it. This is done using the
++below properties.
++
++- assigned-clocks: phandle of canfd clock.
++- assigned-clock-rates: maximum frequency of this clock.
++
++Example
++-------
++
++SoC common .dtsi file:
++
++		canfd: can@e66c0000 {
++			compatible = "renesas,r8a7795-canfd",
++				     "renesas,rcar-gen3-canfd";
++			reg = <0 0xe66c0000 0 0x8000>;
++			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++				   <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 914>,
++			       <&cpg CPG_CORE R8A7795_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "fck", "canfd", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A7795_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&cpg>;
++			status = "disabled";
++
++			channel0 {
++				status = "disabled";
++			};
++
++			channel1 {
++				status = "disabled";
++			};
++		};
++
++Board specific .dts file:
++
++E.g. below enables Channel 1 alone in the board.
++
++&canfd {
++        pinctrl-0 = <&canfd1_pins>;
++        pinctrl-names = "default";
++        status = "okay";
++
++	channel1 {
++		status = "okay";
++	};
++};
++
++E.g. below enables Channel 0 alone in the board using External clock
++as fCAN clock.
++
++&canfd {
++        pinctrl-0 = <&canfd0_pins &can_clk_pins>;
++        pinctrl-names = "default";
++        status = "okay";
++
++	channel0 {
++		status = "okay";
++	};
++};
+diff --git a/drivers/net/can/Kconfig b/drivers/net/can/Kconfig
+index 0d40aef..13003a9 100644
+--- a/drivers/net/can/Kconfig
++++ b/drivers/net/can/Kconfig
+@@ -152,6 +152,7 @@ source "drivers/net/can/cc770/Kconfig"
+ source "drivers/net/can/ifi_canfd/Kconfig"
+ source "drivers/net/can/m_can/Kconfig"
+ source "drivers/net/can/mscan/Kconfig"
++source "drivers/net/can/rcar/Kconfig"
+ source "drivers/net/can/sja1000/Kconfig"
+ source "drivers/net/can/softing/Kconfig"
+ source "drivers/net/can/spi/Kconfig"
+diff --git a/drivers/net/can/Makefile b/drivers/net/can/Makefile
+index e3db0c8..226d5b5 100644
+--- a/drivers/net/can/Makefile
++++ b/drivers/net/can/Makefile
+@@ -10,6 +10,7 @@ can-dev-y			:= dev.o
+ 
+ can-dev-$(CONFIG_CAN_LEDS)	+= led.o
+ 
++obj-y				+= rcar/
+ obj-y				+= spi/
+ obj-y				+= usb/
+ obj-y				+= softing/
+diff --git a/drivers/net/can/rcar/Kconfig b/drivers/net/can/rcar/Kconfig
+new file mode 100644
+index 0000000..6ea64d1
+--- /dev/null
++++ b/drivers/net/can/rcar/Kconfig
+@@ -0,0 +1,11 @@
++config CAN_RCAR_CANFD
++	tristate "Renesas R-Car CAN FD controller"
++	depends on ARCH_RENESAS || ARM
++	---help---
++	  Say Y here if you want to use CAN FD controller found on
++	  Renesas R-Car SoCs. The driver puts the controller in CAN FD only
++	  mode, which can interoperate with CAN2.0 nodes but does not support
++	  dedicated CAN 2.0 mode.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called rcar_canfd.
+diff --git a/drivers/net/can/rcar/Makefile b/drivers/net/can/rcar/Makefile
+new file mode 100644
+index 0000000..cbaf498e
+--- /dev/null
++++ b/drivers/net/can/rcar/Makefile
+@@ -0,0 +1,5 @@
++#
++#  Makefile for the Renesas R-Car CAN FD controller driver
++#
++
++obj-$(CONFIG_CAN_RCAR_CANFD)	+= rcar_canfd.o
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+new file mode 100644
+index 0000000..e198732
+--- /dev/null
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -0,0 +1,1624 @@
++/* Renesas R-Car CAN FD device driver
++ *
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ */
++
++/* The R-Car CAN FD controller can operate in either one of the below two modes
++ *  - CAN FD only mode
++ *  - Classical CAN (CAN 2.0) only mode
++ *
++ * This driver puts the controller in CAN FD only mode by default. In this
++ * mode, the controller acts as a CAN FD node that can also interoperate with
++ * CAN 2.0 nodes.
++ *
++ * As of now, this driver does not support the Classical CAN (CAN 2.0) mode,
++ * which is handled by a different register map compared to CAN FD only mode.
++ */
++
++#include <linux/module.h>
++#include <linux/moduleparam.h>
++#include <linux/kernel.h>
++#include <linux/types.h>
++#include <linux/interrupt.h>
++#include <linux/errno.h>
++#include <linux/netdevice.h>
++#include <linux/platform_device.h>
++#include <linux/can/led.h>
++#include <linux/can/dev.h>
++#include <linux/clk.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/bitmap.h>
++#include <linux/bitops.h>
++#include <linux/iopoll.h>
++
++#define RCANFD_DRV_NAME			"rcar_canfd"
++
++#define RCANFD_FIFO_DEPTH		8	/* Tx FIFO depth */
++#define RCANFD_NAPI_WEIGHT		8	/* Rx poll quota */
++
++#define RCANFD_NUM_CHANNELS		2	/* Two channels max */
++#define RCANFD_CHANNELS_MASK		BIT((RCANFD_NUM_CHANNELS) - 1)
++
++/* Rx FIFO is a global resource of the controller. There are 8 such FIFOs
++ * available. Each channel gets a dedicated Rx FIFO (i.e.) the channel
++ * number is added to RFFIFO index.
++ */
++#define RCANFD_RFFIFO_IDX		0
++
++/* Tx/Rx or Common FIFO is a per channel resource. Each channel has 3 Common
++ * FIFOs dedicated to them. Use the first (index 0) FIFO out of the 3 for Tx.
++ */
++#define RCANFD_CFFIFO_IDX		0
++
++/* Global register bits */
++#define RCANFD_GINTF_CANFD		BIT(0)
++
++#define RCANFD_GCFG_TPRI		BIT(0)
++#define RCANFD_GCFG_DCE			BIT(1)
++#define RCANFD_GCFG_DCS			BIT(4)
++#define RCANFD_GCFG_CMPOC		BIT(5)
++#define RCANFD_GCFG_EEFE		BIT(6)
++
++#define RCANFD_GCTR_SLPR		BIT(2)
++#define RCANFD_GCTR_MODEMASK		(0x3)
++#define RCANFD_GCTR_GOPM		(0x0)
++#define RCANFD_GCTR_GRESET		(0x1)
++#define RCANFD_GCTR_GHLT		(0x2)
++
++#define RCANFD_GCTR_DEIE		BIT(8)
++#define RCANFD_GCTR_MEIE		BIT(9)
++#define RCANFD_GCTR_THLEIE		BIT(10)
++#define RCANFD_GCTR_CFMPOFIE		BIT(11)
++#define RCANFD_GCTR_TSRST		BIT(16)
++
++#define RCANFD_GSTS_RAMINIT		BIT(3)
++#define RCANFD_GSTS_SLP			BIT(2)
++#define RCANFD_GSTS_HLT			BIT(1)
++#define RCANFD_GSTS_RESET		BIT(0)
++
++#define RCANFD_GSTS_GNOPM		(BIT(0) | BIT(1) | BIT(2) | BIT(3))
++
++/* Channel register bits */
++#define RCANFD_CCTR_CSLPR		BIT(2)
++#define RCANFD_CCTR_MODEMASK		(0x3)
++#define RCANFD_CCTR_COPM		(0x0)
++#define RCANFD_CCTR_CRESET		(0x1)
++#define RCANFD_CCTR_CHLT		(0x2)
++#define RCANFD_CCTR_CTMASK		(0x3 << 25)
++#define RCANFD_CCTR_CTMS_ILB		(0x3 << 25)
++#define RCANFD_CCTR_CTME		BIT(24)
++#define RCANFD_CCTR_ERRD		BIT(23)
++#define RCANFD_CCTR_BOMMASK		(0x3 << 21)
++#define RCANFD_CCTR_BOM_ENTRY		(0x1 << 21)
++#define RCANFD_CCTR_TDCVFIE		BIT(19)
++#define RCANFD_CCTR_SOCOIE		BIT(18)
++#define RCANFD_CCTR_EOCOIE		BIT(17)
++#define RCANFD_CCTR_TAIE		BIT(16)
++#define RCANFD_CCTR_ALIE		BIT(15)
++#define RCANFD_CCTR_BLIE		BIT(14)
++#define RCANFD_CCTR_OLIE		BIT(13)
++#define RCANFD_CCTR_BORIE		BIT(12)
++#define RCANFD_CCTR_BOEIE		BIT(11)
++#define RCANFD_CCTR_EPIE		BIT(10)
++#define RCANFD_CCTR_EWIE		BIT(9)
++#define RCANFD_CCTR_BEIE		BIT(8)
++
++#define RCANFD_CSTS_COM			BIT(7)
++#define RCANFD_CSTS_REC			BIT(6)
++#define RCANFD_CSTS_TRM			BIT(5)
++#define RCANFD_CSTS_BO			BIT(4)
++#define RCANFD_CSTS_EP			BIT(3)
++#define RCANFD_CSTS_SLP			BIT(2)
++#define RCANFD_CSTS_HALT		BIT(1)
++#define RCANFD_CSTS_RESET		BIT(0)
++
++#define RCANFD_CSTS_TECCNT(x)		(((x) >> 24) & 0xff)
++#define RCANFD_CSTS_RECCNT(x)		(((x) >> 16) & 0xff)
++
++/* Bit Configuration register */
++#define RCANFD_BRP(x)			(((x) & 0x3ff) << 0)
++#define RCANFD_SJW(x)			(((x) & 0x3) << 24)
++#define RCANFD_TSEG1(x)			(((x) & 0xf) << 16)
++#define RCANFD_TSEG2(x)			(((x) & 0x7) << 20)
++
++#define RCANFD_NR_BRP(x)		(((x) & 0x3ff) << 0)
++#define RCANFD_NR_SJW(x)		(((x) & 0x1f) << 11)
++#define RCANFD_NR_TSEG1(x)		(((x) & 0x7f) << 16)
++#define RCANFD_NR_TSEG2(x)		(((x) & 0x1f) << 24)
++
++#define RCANFD_DR_BRP(x)		(((x) & 0xff) << 0)
++#define RCANFD_DR_SJW(x)		(((x) & 0x7) << 24)
++#define RCANFD_DR_TSEG1(x)		(((x) & 0xf) << 16)
++#define RCANFD_DR_TSEG2(x)		(((x) & 0x7) << 20)
++
++/* Global Error flag bits */
++#define RCANFD_GERFL_EEF1		BIT(17)
++#define RCANFD_GERFL_EEF0		BIT(16)
++#define RCANFD_GERFL_CMPOF		BIT(3)
++#define RCANFD_GERFL_THLES		BIT(2)
++#define RCANFD_GERFL_MES		BIT(1)
++#define RCANFD_GERFL_DEF		BIT(0)
++
++#define RCANFD_GERFL_ERR(x)		((x) & (RCANFD_GERFL_EEF1 |\
++						RCANFD_GERFL_EEF0 |\
++						RCANFD_GERFL_MES |\
++						RCANFD_GERFL_CMPOF))
++
++/* Channel Error flag bits */
++#define RCANFD_CERFL_ADEF		BIT(14)
++#define RCANFD_CERFL_B0EF		BIT(13)
++#define RCANFD_CERFL_B1EF		BIT(12)
++#define RCANFD_CERFL_CEF		BIT(11)
++#define RCANFD_CERFL_AEF		BIT(10)
++#define RCANFD_CERFL_FEF		BIT(9)
++#define RCANFD_CERFL_SEF		BIT(8)
++#define RCANFD_CERFL_ALEF		BIT(7)
++#define RCANFD_CERFL_BLEF		BIT(6)
++#define RCANFD_CERFL_OLEF		BIT(5)
++#define RCANFD_CERFL_BOREF		BIT(4)
++#define RCANFD_CERFL_BOEEF		BIT(3)
++#define RCANFD_CERFL_EPEF		BIT(2)
++#define RCANFD_CERFL_EWEF		BIT(1)
++#define RCANFD_CERFL_BEF		BIT(0)
++
++#define RCANFD_CERFL_ERR(x)		((x) & (0x7fff)) /* above bits 14:0 */
++
++/* CAN FD specific registers */
++#define RCANFD_DCFG_TDCE		BIT(9)
++#define RCANFD_DCFG_TDCOC		BIT(8)
++#define RCANFD_DCFG_TDCO(x)		(((x) & 0x7f) >> 16)
++
++#define RCANFD_DCSTS_TDCR(x)		(((x) >> 0) & 0x7f)
++#define RCANFD_DCSTS_SOCCNT(x)		(((x) >> 24) & 0xff)
++#define RCANFD_DCSTS_EOCCNT(x)		(((x) >> 16) & 0xff)
++
++#define RCANFD_DCSTS_TDCVF		BIT(7)
++#define RCANFD_DCSTS_EOCO		BIT(8)
++#define RCANFD_DCSTS_SOCO		BIT(9)
++
++/* Rx FIFO bits */
++#define RCANFD_RFFIFO_RFIF		BIT(3)
++#define RCANFD_RFFIFO_RFMLT		BIT(2)
++#define RCANFD_RFFIFO_RFFLL		BIT(1)
++#define RCANFD_RFFIFO_RFEMP		BIT(0)
++
++#define RCANFD_RFFIFO_RFESI		BIT(0)
++#define RCANFD_RFFIFO_RFBRS		BIT(1)
++#define RCANFD_RFFIFO_RFFDF		BIT(2)
++
++#define RCANFD_RFFIFO_RFIDE		BIT(31)
++#define RCANFD_RFFIFO_RFRTR		BIT(30)
++
++#define RCANFD_RFFIFO_RFDLC(x)		(((x) >> 28) & 0xf)
++#define RCANFD_RFFIFO_RFPTR(x)		(((x) >> 16) & 0xfff)
++#define RCANFD_RFFIFO_RFTS(x)		(((x) >> 0) & 0xff)
++
++#define RCANFD_RFFIFO_RFIM		BIT(12)
++#define RCANFD_RFFIFO_RFDC(x)		(((x) & 0x7) << 8)
++#define RCANFD_RFFIFO_RFPLS(x)		(((x) & 0x7) << 4)
++#define RCANFD_RFFIFO_RFIE		BIT(1)
++#define RCANFD_RFFIFO_RFE		BIT(0)
++
++/* Common FIFO bits */
++#define RCANFD_CMFIFO_TML(x)		(((x) & 0xf) << 20)
++#define RCANFD_CMFIFO_M(x)		(((x) & 0x3) << 16)
++#define RCANFD_CMFIFO_CFIM		BIT(12)
++#define RCANFD_CMFIFO_DC(x)		(((x) & 0x7) << 8)
++#define RCANFD_CMFIFO_PLS(x)		(((x) & 0x7) << 4)
++#define RCANFD_CMFIFO_CFTXIE		BIT(2)
++#define RCANFD_CMFIFO_CFE		BIT(0)
++
++#define RCANFD_CMFIFO_CFTXIF		BIT(4)
++#define RCANFD_CMFIFO_CFMLT		BIT(2)
++#define RCANFD_CMFIFO_CFFLL		BIT(1)
++#define RCANFD_CMFIFO_CFEMP		BIT(0)
++#define RCANFD_CMFIFO_CFMC(x)		(((x) >> 8) & 0xff)
++
++#define RCANFD_CMFIFO_CFESI		BIT(0)
++#define RCANFD_CMFIFO_CFBRS		BIT(1)
++#define RCANFD_CMFIFO_CFFDF		BIT(2)
++
++#define RCANFD_CMFIFO_CFIDE		BIT(31)
++#define RCANFD_CMFIFO_CFRTR		BIT(30)
++#define RCANFD_CMFIFO_CFID(x)		((x) & 0x1fffffff)
++
++#define RCANFD_CMFIFO_CFDLC(x)		(((x) & 0xf) << 28)
++#define RCANFD_CMFIFO_CFPTR(x)		(((x) & 0xfff) << 16)
++#define RCANFD_CMFIFO_CFTS(x)		(((x) & 0xff) << 0)
++
++/* Global Test Config register */
++#define RCANFD_GTSTCFG_C0CBCE		BIT(0)
++#define RCANFD_GTSTCFG_C1CBCE		BIT(1)
++
++#define RCANFD_GTSTCTR_ICBCTME		BIT(0)
++
++/* AFL Rx rules registers */
++#define RCANFD_AFLCFG_SETRNC(n, x)	(((x) & 0xff) << (24 - n * 8))
++#define RCANFD_AFLCFG_GETRNC(n, x)	(((x) >> (24 - n * 8)) & 0xff)
++
++#define RCANFD_AFL_PAGENUM(entry)	((entry) / 16)
++
++#define RCANFD_AFLCTR_AFLDAE		BIT(8)
++#define RCANFD_AFLCTR_AFLPN(x)		((x) & 0x1f)
++#define RCANFD_CHANNEL_NUMRULES		1	/* only one rule per channel */
++#define RCANFD_AFLID_GAFLLB		BIT(29)
++#define RCANFD_AFLPTR1_RFFIFO(x)	(1 << (x))
++
++/* Common register map offsets */
++
++/* Nominal rate registers */
++#define RCANFD_CCFG(m)			(0x0000 + (0x10 * (m)))
++#define RCANFD_CCTR(m)			(0x0004 + (0x10 * (m)))
++#define RCANFD_CSTS(m)			(0x0008 + (0x10 * (m)))
++#define RCANFD_CERFL(m)			(0x000C + (0x10 * (m)))
++
++/* Global registers */
++#define RCANFD_GCFG			(0x0084)
++#define RCANFD_GCTR			(0x0088)
++#define RCANFD_GSTS			(0x008c)
++#define RCANFD_GERFL			(0x0090)
++#define RCANFD_GTSC			(0x0094)
++#define RCANFD_GAFLECTR			(0x0098)
++#define RCANFD_GAFLCFG0			(0x009c)
++#define RCANFD_GAFLCFG1			(0x00a0)
++#define RCANFD_RMNB			(0x00a4)
++
++#define RCANFD_RMND(y)			(0x00a8 + (0x04 * (y)))
++
++/* Rx FIFO Control registers */
++#define RCANFD_RFCC(x)			(0x00b8 + (0x04 * (x)))
++#define RCANFD_RFSTS(x)			(0x00d8 + (0x04 * (x)))
++#define RCANFD_RFPCTR(x)		(0x00f8 + (0x04 * (x)))
++
++/* Common FIFO Control registers */
++#define RCANFD_CFCC(ch, idx)		(0x0118 + (0x0c * (ch)) + \
++					 (0x04 * (idx)))
++#define RCANFD_CFSTS(ch, idx)		(0x0178 + (0x0c * (ch)) + \
++					 (0x04 * (idx)))
++#define RCANFD_CFPCTR(ch, idx)		(0x01d8 + (0x0c * (ch)) + \
++					 (0x04 * (idx)))
++
++#define RCANFD_FESTS			(0x0238)
++#define RCANFD_FFSTS			(0x023c)
++#define RCANFD_FMSTS			(0x0240)
++#define RCANFD_RFISTS			(0x0244)
++#define RCANFD_CFRISTS			(0x0248)
++#define RCANFD_CFTISTS			(0x024c)
++
++#define RCANFD_TMC(p)			(0x0250 + (0x01 * (p)))
++#define RCANFD_TMSTS(p)			(0x02d0 + (0x01 * (p)))
++
++#define RCANFD_TMTRSTS(y)		(0x0350 + (0x04 * (y)))
++#define RCANFD_TMTARSTS(y)		(0x0360 + (0x04 * (y)))
++#define RCANFD_TMTCSTS(y)		(0x0370 + (0x04 * (y)))
++#define RCANFD_TMTASTS(y)		(0x0380 + (0x04 * (y)))
++#define RCANFD_TMIEC(y)			(0x0390 + (0x04 * (y)))
++
++#define RCANFD_TXQCC(m)			(0x03a0 + (0x04 * (m)))
++#define RCANFD_TXQSTS(m)		(0x03c0 + (0x04 * (m)))
++#define RCANFD_TXQPCTR(m)		(0x03e0 + (0x04 * (m)))
++
++#define RCANFD_THLCC(m)			(0x0400 + (0x04 * (m)))
++#define RCANFD_THLSTS(m)		(0x0420 + (0x04 * (m)))
++#define RCANFD_THLPCTR(m)		(0x0440 + (0x04 * (m)))
++
++#define RCANFD_GTINTSTS0		(0x0460)
++#define RCANFD_GTINTSTS1		(0x0464)
++#define RCANFD_GTSTCFG			(0x0468)
++#define RCANFD_GTSTCTR			(0x046c)
++#define RCANFD_GLOCKK			(0x047c)
++#define RCANFD_GRMCFG			(0x04fc)
++
++/* Receive rule registers */
++#define RCANFD_GAFLID(offset, j)	((offset) + (0x10 * (j)))
++#define RCANFD_GAFLM(offset, j)		((offset) + 0x04 + (0x10 * (j)))
++#define RCANFD_GAFLP0(offset, j)	((offset) + 0x08 + (0x10 * (j)))
++#define RCANFD_GAFLP1(offset, j)	((offset) + 0x0c + (0x10 * (j)))
++
++/* CAN FD mode specific regsiter map */
++
++/* Data bitrate registers */
++#define RCANFD_F_CDFG(m)		(0x0500 + (0x20 * (m)))
++#define RCANFD_F_CFDCFG(m)		(0x0504 + (0x20 * (m)))
++#define RCANFD_F_CFDCTR(m)		(0x0508 + (0x20 * (m)))
++#define RCANFD_F_CFDSTS(m)		(0x050c + (0x20 * (m)))
++#define RCANFD_F_CFDCRC(m)		(0x0510 + (0x20 * (m)))
++
++#define RCANFD_F_GAFL_OFFSET		(0x1000)
++
++#define RCANFD_F_RMID(q)		(0x2000 + (0x10 * (q)))
++#define RCANFD_F_RMPTR(q)		(0x2004 + (0x10 * (q)))
++#define RCANFD_F_RMFDSTS(q)		(0x2008 + (0x10 * (q)))
++#define RCANFD_F_RMDF(q, b)		(0x200c + (0x04 * (b)) + (0x20 * (q)))
++
++/* Rx FIFO data registers */
++#define RCANFD_F_RFOFFSET		(0x3000)
++#define RCANFD_F_RFID(x)		(RCANFD_F_RFOFFSET + (0x80 * (x)))
++#define RCANFD_F_RFPTR(x)		(RCANFD_F_RFOFFSET + 0x04 + \
++					 (0x80 * (x)))
++#define RCANFD_F_RFFDSTS(x)		(RCANFD_F_RFOFFSET + 0x08 + \
++					 (0x80 * (x)))
++#define RCANFD_F_RFDF(x, df)		(RCANFD_F_RFOFFSET + 0x0c + \
++					 (0x80 * (x)) + (0x04 * (df)))
++
++/* Common FIFO data registers */
++#define RCANFD_F_CFOFFSET		(0x3400)
++#define RCANFD_F_CFID(ch, idx)		(RCANFD_F_CFOFFSET + (0x180 * (ch)) + \
++					 (0x80 * (idx)))
++#define RCANFD_F_CFPTR(ch, idx)		(RCANFD_F_CFOFFSET + 0x04 + \
++					 (0x180 * (ch)) + (0x80 * (idx)))
++#define RCANFD_F_CFFDCSTS(ch, idx)	(RCANFD_F_CFOFFSET + 0x08 + \
++					 (0x180 * (ch)) + (0x80 * (idx)))
++#define RCANFD_F_CFDF(ch, idx, df)	(RCANFD_F_CFOFFSET + 0x0c + \
++					 (0x180 * (ch)) + (0x80 * (idx)) + \
++					 (0x04 * (df)))
++
++#define RCANFD_F_TMID(p)		(0x4000 + (0x20 * (p)))
++#define RCANFD_F_TMPTR(p)		(0x4004 + (0x20 * (p)))
++#define RCANFD_F_TMFDCTR(p)		(0x4008 + (0x20 * (p)))
++#define RCANFD_F_TMDF(p, b)		(0x400c + (0x20 * (p)) + (0x04 * (b)))
++
++#define RCANFD_F_THLACC(m)		(0x6000 + (0x04 * (m)))
++#define RCANFD_F_RPGACC(r)		(0x6400 + (0x04 * (r)))
++
++/* fCAN clock select register settings */
++enum rcar_canfd_fcanclk {
++	RCANFD_CANFDCLK = 0,		/* CANFD clock */
++	RCANFD_EXTCLK,			/* Externally input clock */
++};
++
++struct rcar_canfd_global;
++
++/* Channel priv data */
++struct rcar_canfd_channel {
++	struct can_priv can;			/* Must be the first member */
++	struct net_device *ndev;
++	struct rcar_canfd_global *gpriv;	/* Controller reference */
++	void __iomem *base;			/* Register base address */
++	struct napi_struct napi;
++	u8  tx_len[RCANFD_FIFO_DEPTH];		/* For net stats */
++	u32 tx_head;				/* Incremented on xmit */
++	u32 tx_tail;				/* Incremented on xmit done */
++	u32 channel;				/* Channel number */
++	spinlock_t tx_lock;			/* To protect tx path */
++};
++
++/* Global priv data */
++struct rcar_canfd_global {
++	struct rcar_canfd_channel *ch[RCANFD_NUM_CHANNELS];
++	void __iomem *base;		/* Register base address */
++	struct platform_device *pdev;	/* Respective platform device */
++	struct clk *clkp;		/* Peripheral clock */
++	struct clk *can_clk;		/* fCAN clock */
++	enum rcar_canfd_fcanclk fcan;	/* CANFD or Ext clock */
++	unsigned long channels_mask;	/* Enabled channels mask */
++};
++
++/* CAN FD mode nominal rate constants */
++static const struct can_bittiming_const rcar_canfd_nom_bittiming_const = {
++	.name = RCANFD_DRV_NAME,
++	.tseg1_min = 2,
++	.tseg1_max = 128,
++	.tseg2_min = 2,
++	.tseg2_max = 32,
++	.sjw_max = 32,
++	.brp_min = 1,
++	.brp_max = 1024,
++	.brp_inc = 1,
++};
++
++/* CAN FD mode data rate constants */
++static const struct can_bittiming_const rcar_canfd_data_bittiming_const = {
++	.name = RCANFD_DRV_NAME,
++	.tseg1_min = 2,
++	.tseg1_max = 16,
++	.tseg2_min = 2,
++	.tseg2_max = 8,
++	.sjw_max = 8,
++	.brp_min = 1,
++	.brp_max = 256,
++	.brp_inc = 1,
++};
++
++/* Helper functions */
++static inline void rcar_canfd_update(u32 mask, u32 val, u32 __iomem *reg)
++{
++	u32 data = readl(reg);
++
++	data &= ~mask;
++	data |= (val & mask);
++	writel(data, reg);
++}
++
++static inline u32 rcar_canfd_read(void __iomem *base, u32 offset)
++{
++	return readl(base + (offset));
++}
++
++static inline void rcar_canfd_write(void __iomem *base, u32 offset, u32 val)
++{
++	writel(val, base + (offset));
++}
++
++static void rcar_canfd_set_bit(void __iomem *base, u32 reg, u32 val)
++{
++	rcar_canfd_update(val, val, base + (reg));
++}
++
++static void rcar_canfd_clear_bit(void __iomem *base, u32 reg, u32 val)
++{
++	rcar_canfd_update(val, 0, base + (reg));
++}
++
++static void rcar_canfd_update_bit(void __iomem *base, u32 reg,
++				  u32 mask, u32 val)
++{
++	rcar_canfd_update(mask, val, base + (reg));
++}
++
++static void rcar_canfd_get_data(struct rcar_canfd_channel *priv,
++				struct canfd_frame *cf, u32 off)
++{
++	u32 i, lwords;
++
++	lwords = DIV_ROUND_UP(cf->len, sizeof(u32));
++	for (i = 0; i < lwords; i++)
++		*((u32 *)cf->data + i) =
++			rcar_canfd_read(priv->base, off + (i * sizeof(u32)));
++}
++
++static void rcar_canfd_put_data(struct rcar_canfd_channel *priv,
++				struct canfd_frame *cf, u32 off)
++{
++	u32 i, lwords;
++
++	lwords = DIV_ROUND_UP(cf->len, sizeof(u32));
++	for (i = 0; i < lwords; i++)
++		rcar_canfd_write(priv->base, off + (i * sizeof(u32)),
++				 *((u32 *)cf->data + i));
++}
++
++static void rcar_canfd_tx_failure_cleanup(struct net_device *ndev)
++{
++	u32 i;
++
++	for (i = 0; i < RCANFD_FIFO_DEPTH; i++)
++		can_free_echo_skb(ndev, i);
++}
++
++static int rcar_canfd_reset_controller(struct rcar_canfd_global *gpriv)
++{
++	u32 sts, ch;
++	int err;
++
++	/* Check RAMINIT flag as CAN RAM initialization takes place
++	 * after the MCU reset
++	 */
++	err = readl_poll_timeout((gpriv->base + RCANFD_GSTS), sts,
++				 !(sts & RCANFD_GSTS_RAMINIT), 2, 500000);
++	if (err) {
++		dev_dbg(&gpriv->pdev->dev, "global raminit failed\n");
++		return err;
++	}
++
++	/* Transition to Global Reset mode */
++	rcar_canfd_clear_bit(gpriv->base, RCANFD_GCTR, RCANFD_GCTR_SLPR);
++	rcar_canfd_update_bit(gpriv->base, RCANFD_GCTR,
++			      RCANFD_GCTR_MODEMASK, RCANFD_GCTR_GRESET);
++
++	/* Ensure Global reset mode */
++	err = readl_poll_timeout((gpriv->base + RCANFD_GSTS), sts,
++				 (sts & RCANFD_GSTS_RESET), 2, 500000);
++	if (err) {
++		dev_dbg(&gpriv->pdev->dev, "global reset failed\n");
++		return err;
++	}
++
++	/* Reset Global error flags */
++	rcar_canfd_write(gpriv->base, RCANFD_GERFL, 0x0);
++
++	/* Set the controller into FD mode */
++	rcar_canfd_set_bit(gpriv->base, RCANFD_GRMCFG, RCANFD_GINTF_CANFD);
++
++	/* Transition all Channels to reset mode */
++	for_each_set_bit(ch, &gpriv->channels_mask, RCANFD_NUM_CHANNELS) {
++		rcar_canfd_clear_bit(gpriv->base,
++				     RCANFD_CCTR(ch), RCANFD_CCTR_CSLPR);
++
++		rcar_canfd_update_bit(gpriv->base, RCANFD_CCTR(ch),
++				      RCANFD_CCTR_MODEMASK,
++				      RCANFD_CCTR_CRESET);
++
++		/* Ensure Channel reset mode */
++		err = readl_poll_timeout((gpriv->base + RCANFD_CSTS(ch)), sts,
++					 (sts & RCANFD_CSTS_RESET), 2, 500000);
++		if (err) {
++			dev_dbg(&gpriv->pdev->dev,
++				"channel %u reset failed\n", ch);
++			return err;
++		}
++	}
++	return 0;
++}
++
++static void rcar_canfd_configure_controller(struct rcar_canfd_global *gpriv)
++{
++	u32 cfg, ch;
++
++	/* Global Configuration settings */
++	cfg = RCANFD_GCFG_EEFE;		/* ECC error flag enabled */
++
++	/* Set External Clock if selected */
++	if (gpriv->fcan != RCANFD_CANFDCLK)
++		cfg |= RCANFD_GCFG_DCS;
++
++	/* Truncate payload to configured message size RFPLS */
++	cfg |= RCANFD_GCFG_CMPOC;
++
++	rcar_canfd_set_bit(gpriv->base, RCANFD_GCFG, cfg);
++
++	/* Channel configuration settings */
++	for_each_set_bit(ch, &gpriv->channels_mask, RCANFD_NUM_CHANNELS) {
++		rcar_canfd_set_bit(gpriv->base, RCANFD_CCTR(ch),
++				   RCANFD_CCTR_ERRD);
++		rcar_canfd_update_bit(gpriv->base, RCANFD_CCTR(ch),
++				      RCANFD_CCTR_BOMMASK,
++				      RCANFD_CCTR_BOM_ENTRY);
++	}
++}
++
++static void rcar_canfd_configure_afl_rules(struct rcar_canfd_global *gpriv,
++					   u32 ch)
++{
++	u32 cfg;
++	int start, page, num_rules = RCANFD_CHANNEL_NUMRULES;
++	u32 ridx = ch + RCANFD_RFFIFO_IDX;
++
++	if (ch == 0) {
++		start = 0; /* Channel 0 always starts from 0th rule */
++	} else {
++		/* Get number of Channel 0 rules and adjust */
++		cfg = rcar_canfd_read(gpriv->base, RCANFD_GAFLCFG0);
++		start = RCANFD_AFLCFG_GETRNC(0, cfg);
++	}
++
++	/* Enable write access to entry */
++	page = RCANFD_AFL_PAGENUM(start);
++	rcar_canfd_set_bit(gpriv->base, RCANFD_GAFLECTR,
++			   (RCANFD_AFLCTR_AFLPN(page) | RCANFD_AFLCTR_AFLDAE));
++
++	/* Write number of rules for channel */
++	rcar_canfd_set_bit(gpriv->base, RCANFD_GAFLCFG0,
++			   RCANFD_AFLCFG_SETRNC(ch, num_rules));
++
++	/* Accept all IDs */
++	rcar_canfd_write(gpriv->base,
++			 RCANFD_GAFLID(RCANFD_F_GAFL_OFFSET, start), 0);
++	/* IDE or RTR is not considered for matching */
++	rcar_canfd_write(gpriv->base,
++			 RCANFD_GAFLM(RCANFD_F_GAFL_OFFSET, start), 0);
++	/* Any data length accepted */
++	rcar_canfd_write(gpriv->base,
++			 RCANFD_GAFLP0(RCANFD_F_GAFL_OFFSET, start), 0);
++	/* Place the msg in corresponding Rx FIFO entry */
++	rcar_canfd_write(gpriv->base,
++			 RCANFD_GAFLP1(RCANFD_F_GAFL_OFFSET, start),
++			 RCANFD_AFLPTR1_RFFIFO(ridx));
++
++	/* Disable write access to page */
++	rcar_canfd_clear_bit(gpriv->base,
++			     RCANFD_GAFLECTR, RCANFD_AFLCTR_AFLDAE);
++}
++
++static void rcar_canfd_configure_rx(struct rcar_canfd_global *gpriv, u32 ch)
++{
++	/* Rx FIFO is used for reception */
++	u32 cfg;
++	u16 rfdc, rfpls;
++
++	/* Select Rx FIFO based on channel */
++	u32 ridx = ch + RCANFD_RFFIFO_IDX;
++
++	rfdc = 2;		/* b010 - 8 messages Rx FIFO depth */
++	rfpls = 7;		/* b111 - Max 64 bytes payload */
++
++	cfg = (RCANFD_RFFIFO_RFIM | RCANFD_RFFIFO_RFDC(rfdc) |
++		RCANFD_RFFIFO_RFPLS(rfpls) | RCANFD_RFFIFO_RFIE);
++	rcar_canfd_write(gpriv->base, RCANFD_RFCC(ridx), cfg);
++}
++
++static void rcar_canfd_configure_tx(struct rcar_canfd_global *gpriv, u32 ch)
++{
++	/* Tx/Rx(Common) FIFO configured in Tx mode is
++	 * used for transmission
++	 *
++	 * Each channel has 3 Common FIFO dedicated to them.
++	 * Use the 1st (index 0) out of 3
++	 */
++	u32 cfg;
++	u16 cftml, cfm, cfdc, cfpls;
++
++	cftml = 0;		/* 0th buffer */
++	cfm = 1;		/* b01 - Transmit mode */
++	cfdc = 2;		/* b010 - 8 messages Tx FIFO depth */
++	cfpls = 7;		/* b111 - Max 64 bytes payload */
++
++	cfg = (RCANFD_CMFIFO_TML(cftml) | RCANFD_CMFIFO_M(cfm) |
++		RCANFD_CMFIFO_CFIM | RCANFD_CMFIFO_DC(cfdc) |
++		RCANFD_CMFIFO_PLS(cfpls) | RCANFD_CMFIFO_CFTXIE);
++	rcar_canfd_write(gpriv->base, RCANFD_CFCC(ch, RCANFD_CFFIFO_IDX), cfg);
++
++	/* Clear FD mode specific control/status register */
++	rcar_canfd_write(gpriv->base,
++			 RCANFD_F_CFFDCSTS(ch, RCANFD_CFFIFO_IDX), 0);
++}
++
++static void rcar_canfd_enable_global_interrupts(struct rcar_canfd_global *gpriv)
++{
++	u32 ctr;
++
++	/* Clear any stray error interrupt flags */
++	rcar_canfd_write(gpriv->base, RCANFD_GERFL, 0);
++
++	/* Global interrupts setup */
++	ctr = RCANFD_GCTR_MEIE;
++	ctr |= RCANFD_GCTR_CFMPOFIE;
++
++	rcar_canfd_set_bit(gpriv->base, RCANFD_GCTR, ctr);
++}
++
++static void rcar_canfd_disable_global_interrupts(struct rcar_canfd_global
++						 *gpriv)
++{
++	/* Disable all interrupts */
++	rcar_canfd_write(gpriv->base, RCANFD_GCTR, 0);
++
++	/* Clear any stray error interrupt flags */
++	rcar_canfd_write(gpriv->base, RCANFD_GERFL, 0);
++}
++
++static void rcar_canfd_enable_channel_interrupts(struct rcar_canfd_channel
++						 *priv)
++{
++	u32 ctr, ch = priv->channel;
++
++	/* Clear any stray error flags */
++	rcar_canfd_write(priv->base, RCANFD_CERFL(ch), 0);
++
++	/* Channel interrupts setup */
++	ctr = (RCANFD_CCTR_TAIE |
++	       RCANFD_CCTR_ALIE | RCANFD_CCTR_BLIE |
++	       RCANFD_CCTR_OLIE | RCANFD_CCTR_BORIE |
++	       RCANFD_CCTR_BOEIE | RCANFD_CCTR_EPIE |
++	       RCANFD_CCTR_EWIE | RCANFD_CCTR_BEIE);
++	rcar_canfd_set_bit(priv->base, RCANFD_CCTR(ch), ctr);
++}
++
++static void rcar_canfd_disable_channel_interrupts(struct rcar_canfd_channel
++						  *priv)
++{
++	u32 ctr, ch = priv->channel;
++
++	ctr = (RCANFD_CCTR_TAIE |
++	       RCANFD_CCTR_ALIE | RCANFD_CCTR_BLIE |
++	       RCANFD_CCTR_OLIE | RCANFD_CCTR_BORIE |
++	       RCANFD_CCTR_BOEIE | RCANFD_CCTR_EPIE |
++	       RCANFD_CCTR_EWIE | RCANFD_CCTR_BEIE);
++	rcar_canfd_clear_bit(priv->base, RCANFD_CCTR(ch), ctr);
++
++	/* Clear any stray error flags */
++	rcar_canfd_write(priv->base, RCANFD_CERFL(ch), 0);
++}
++
++static void rcar_canfd_global_error(struct net_device *ndev)
++{
++	struct rcar_canfd_channel *priv = netdev_priv(ndev);
++	struct net_device_stats *stats = &ndev->stats;
++	u32 ch = priv->channel;
++	u32 gerfl, sts;
++	u32 ridx = ch + RCANFD_RFFIFO_IDX;
++
++	gerfl = rcar_canfd_read(priv->base, RCANFD_GERFL);
++	if ((gerfl & RCANFD_GERFL_EEF0) && (ch == 0)) {
++		netdev_dbg(ndev, "Ch0: ECC Error flag\n");
++		stats->tx_dropped++;
++	}
++	if ((gerfl & RCANFD_GERFL_EEF1) && (ch == 1)) {
++		netdev_dbg(ndev, "Ch1: ECC Error flag\n");
++		stats->tx_dropped++;
++	}
++	if (gerfl & RCANFD_GERFL_MES) {
++		sts = rcar_canfd_read(priv->base,
++				      RCANFD_CFSTS(ch, RCANFD_CFFIFO_IDX));
++		if (sts & RCANFD_CMFIFO_CFMLT) {
++			netdev_dbg(ndev, "Tx Message Lost flag\n");
++			stats->tx_dropped++;
++			rcar_canfd_write(priv->base,
++					 RCANFD_CFSTS(ch, RCANFD_CFFIFO_IDX),
++					 sts & ~RCANFD_CMFIFO_CFMLT);
++		}
++
++		sts = rcar_canfd_read(priv->base, RCANFD_RFSTS(ridx));
++		if (sts & RCANFD_RFFIFO_RFMLT) {
++			netdev_dbg(ndev, "Rx Message Lost flag\n");
++			stats->rx_dropped++;
++			rcar_canfd_write(priv->base, RCANFD_RFSTS(ridx),
++					 sts & ~RCANFD_RFFIFO_RFMLT);
++		}
++	}
++	if (gerfl & RCANFD_GERFL_CMPOF) {
++		/* Message Lost flag will be set for respective channel
++		 * when this condition happens with counters and flags
++		 * already updated.
++		 */
++		netdev_dbg(ndev, "global payload overflow interrupt\n");
++	}
++
++	/* Clear all global error interrupts. Only affected channels bits
++	 * get cleared
++	 */
++	rcar_canfd_write(priv->base, RCANFD_GERFL, 0);
++}
++
++static void rcar_canfd_error(struct net_device *ndev)
++{
++	struct rcar_canfd_channel *priv = netdev_priv(ndev);
++	struct net_device_stats *stats = &ndev->stats;
++	struct can_frame *cf;
++	struct sk_buff *skb;
++	u32 cerfl, csts;
++	u32 txerr = 0, rxerr = 0;
++	u32 ch = priv->channel;
++
++	/* Propagate the error condition to the CAN stack */
++	skb = alloc_can_err_skb(ndev, &cf);
++	if (!skb) {
++		stats->rx_dropped++;
++		return;
++	}
++
++	/* Channel error interrupt */
++	cerfl = rcar_canfd_read(priv->base, RCANFD_CERFL(ch));
++	csts = rcar_canfd_read(priv->base, RCANFD_CSTS(ch));
++	txerr = RCANFD_CSTS_TECCNT(csts);
++	rxerr = RCANFD_CSTS_RECCNT(csts);
++
++	netdev_dbg(ndev, "ch erfl %x sts %x txerr %u rxerr %u\n",
++		   cerfl, csts, txerr, rxerr);
++
++	if (cerfl & RCANFD_CERFL_BEF) {
++		netdev_dbg(ndev, "Bus error\n");
++		cf->can_id |= CAN_ERR_BUSERROR | CAN_ERR_PROT;
++		cf->data[2] = CAN_ERR_PROT_UNSPEC;
++		priv->can.can_stats.bus_error++;
++	}
++	if (cerfl & RCANFD_CERFL_ADEF) {
++		netdev_dbg(ndev, "ACK Delimiter Error\n");
++		stats->tx_errors++;
++		cf->data[3] |= CAN_ERR_PROT_LOC_ACK_DEL;
++	}
++	if (cerfl & RCANFD_CERFL_B0EF) {
++		netdev_dbg(ndev, "Bit Error (dominant)\n");
++		stats->tx_errors++;
++		cf->data[2] |= CAN_ERR_PROT_BIT0;
++	}
++	if (cerfl & RCANFD_CERFL_B1EF) {
++		netdev_dbg(ndev, "Bit Error (recessive)\n");
++		stats->tx_errors++;
++		cf->data[2] |= CAN_ERR_PROT_BIT1;
++	}
++	if (cerfl & RCANFD_CERFL_CEF) {
++		netdev_dbg(ndev, "CRC Error\n");
++		stats->rx_errors++;
++		cf->data[3] |= CAN_ERR_PROT_LOC_CRC_SEQ;
++	}
++	if (cerfl & RCANFD_CERFL_AEF) {
++		netdev_dbg(ndev, "ACK Error\n");
++		stats->tx_errors++;
++		cf->can_id |= CAN_ERR_ACK;
++		cf->data[3] |= CAN_ERR_PROT_LOC_ACK;
++	}
++	if (cerfl & RCANFD_CERFL_FEF) {
++		netdev_dbg(ndev, "Form Error\n");
++		stats->rx_errors++;
++		cf->data[2] |= CAN_ERR_PROT_FORM;
++	}
++	if (cerfl & RCANFD_CERFL_SEF) {
++		netdev_dbg(ndev, "Stuff Error\n");
++		stats->rx_errors++;
++		cf->data[2] |= CAN_ERR_PROT_STUFF;
++	}
++	if (cerfl & RCANFD_CERFL_ALEF) {
++		netdev_dbg(ndev, "Arbitration lost Error\n");
++		priv->can.can_stats.arbitration_lost++;
++		cf->can_id |= CAN_ERR_LOSTARB;
++		cf->data[0] |= CAN_ERR_LOSTARB_UNSPEC;
++	}
++	if (cerfl & RCANFD_CERFL_BLEF) {
++		netdev_dbg(ndev, "Bus Lock Error\n");
++		stats->rx_errors++;
++		cf->can_id |= CAN_ERR_BUSERROR;
++	}
++	if (cerfl & RCANFD_CERFL_EWEF) {
++		netdev_dbg(ndev, "Error warning interrupt\n");
++		priv->can.state = CAN_STATE_ERROR_WARNING;
++		priv->can.can_stats.error_warning++;
++		cf->can_id |= CAN_ERR_CRTL;
++		cf->data[1] = txerr > rxerr ? CAN_ERR_CRTL_TX_WARNING :
++			CAN_ERR_CRTL_RX_WARNING;
++		cf->data[6] = txerr;
++		cf->data[7] = rxerr;
++	}
++	if (cerfl & RCANFD_CERFL_EPEF) {
++		netdev_dbg(ndev, "Error passive interrupt\n");
++		priv->can.state = CAN_STATE_ERROR_PASSIVE;
++		priv->can.can_stats.error_passive++;
++		cf->can_id |= CAN_ERR_CRTL;
++		cf->data[1] = txerr > rxerr ? CAN_ERR_CRTL_TX_PASSIVE :
++			CAN_ERR_CRTL_RX_PASSIVE;
++		cf->data[6] = txerr;
++		cf->data[7] = rxerr;
++	}
++	if (cerfl & RCANFD_CERFL_BOEEF) {
++		netdev_dbg(ndev, "Bus-off entry interrupt\n");
++		rcar_canfd_tx_failure_cleanup(ndev);
++		priv->can.state = CAN_STATE_BUS_OFF;
++		priv->can.can_stats.bus_off++;
++		can_bus_off(ndev);
++		cf->can_id |= CAN_ERR_BUSOFF;
++	}
++	if (cerfl & RCANFD_CERFL_OLEF) {
++		netdev_dbg(ndev,
++			   "Overload Frame Transmission error interrupt\n");
++		stats->tx_errors++;
++		cf->can_id |= CAN_ERR_PROT;
++		cf->data[2] |= CAN_ERR_PROT_OVERLOAD;
++	}
++
++	/* Clear all channel error interrupts */
++	rcar_canfd_write(priv->base, RCANFD_CERFL(ch), 0);
++	stats->rx_packets++;
++	stats->rx_bytes += cf->can_dlc;
++	netif_rx(skb);
++}
++
++static void rcar_canfd_tx_done(struct net_device *ndev)
++{
++	struct rcar_canfd_channel *priv = netdev_priv(ndev);
++	struct net_device_stats *stats = &ndev->stats;
++	u32 sts;
++	unsigned long flags;
++	u32 ch = priv->channel;
++
++	do {
++		u8 unsent, sent;
++
++		sent = priv->tx_tail % RCANFD_FIFO_DEPTH;
++		stats->tx_packets++;
++		stats->tx_bytes += priv->tx_len[sent];
++		priv->tx_len[sent] = 0;
++		can_get_echo_skb(ndev, sent);
++
++		spin_lock_irqsave(&priv->tx_lock, flags);
++		priv->tx_tail++;
++		sts = rcar_canfd_read(priv->base,
++				      RCANFD_CFSTS(ch, RCANFD_CFFIFO_IDX));
++		unsent = RCANFD_CMFIFO_CFMC(sts);
++
++		/* Wake producer only when there is room */
++		if (unsent != RCANFD_FIFO_DEPTH)
++			netif_wake_queue(ndev);
++
++		if (priv->tx_head - priv->tx_tail <= unsent) {
++			spin_unlock_irqrestore(&priv->tx_lock, flags);
++			break;
++		}
++		spin_unlock_irqrestore(&priv->tx_lock, flags);
++
++	} while (1);
++
++	/* Clear interrupt */
++	rcar_canfd_write(priv->base, RCANFD_CFSTS(ch, RCANFD_CFFIFO_IDX),
++			 sts & ~RCANFD_CMFIFO_CFTXIF);
++	can_led_event(ndev, CAN_LED_EVENT_TX);
++}
++
++static irqreturn_t rcar_canfd_global_interrupt(int irq, void *dev_id)
++{
++	struct rcar_canfd_global *gpriv = dev_id;
++	struct net_device *ndev;
++	struct rcar_canfd_channel *priv;
++	u32 sts, gerfl;
++	u32 ch, ridx;
++
++	/* Global error interrupts still indicate a condition specific
++	 * to a channel. RxFIFO interrupt is a global interrupt.
++	 */
++	for_each_set_bit(ch, &gpriv->channels_mask, RCANFD_NUM_CHANNELS) {
++		priv = gpriv->ch[ch];
++		ndev = priv->ndev;
++		ridx = ch + RCANFD_RFFIFO_IDX;
++
++		/* Global error interrupts */
++		gerfl = rcar_canfd_read(priv->base, RCANFD_GERFL);
++		if (RCANFD_GERFL_ERR(gerfl))
++			rcar_canfd_global_error(ndev);
++
++		/* Handle Rx interrupts */
++		sts = rcar_canfd_read(priv->base, RCANFD_RFSTS(ridx));
++		if (sts & RCANFD_RFFIFO_RFIF) {
++			if (napi_schedule_prep(&priv->napi)) {
++				/* Disable Rx FIFO interrupts */
++				rcar_canfd_clear_bit(priv->base,
++						     RCANFD_RFCC(ridx),
++						     RCANFD_RFFIFO_RFIE);
++				__napi_schedule(&priv->napi);
++			}
++		}
++	}
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t rcar_canfd_channel_interrupt(int irq, void *dev_id)
++{
++	struct rcar_canfd_global *gpriv = dev_id;
++	struct net_device *ndev;
++	struct rcar_canfd_channel *priv;
++	u32 sts, cerfl, ch;
++
++	/* Common FIFO is a per channel resource */
++	for_each_set_bit(ch, &gpriv->channels_mask, RCANFD_NUM_CHANNELS) {
++		priv = gpriv->ch[ch];
++		ndev = priv->ndev;
++
++		/* Channel error interrupts */
++		cerfl = rcar_canfd_read(priv->base, RCANFD_CERFL(ch));
++		if (RCANFD_CERFL_ERR(cerfl))
++			rcar_canfd_error(ndev);
++
++		/* Handle Tx interrupts */
++		sts = rcar_canfd_read(priv->base,
++				      RCANFD_CFSTS(ch, RCANFD_CFFIFO_IDX));
++		if (sts & RCANFD_CMFIFO_CFTXIF)
++			rcar_canfd_tx_done(ndev);
++	}
++	return IRQ_HANDLED;
++}
++
++static void rcar_canfd_set_bittiming(struct net_device *dev)
++{
++	struct rcar_canfd_channel *priv = netdev_priv(dev);
++	const struct can_bittiming *bt = &priv->can.bittiming;
++	const struct can_bittiming *dbt = &priv->can.data_bittiming;
++	u16 brp, sjw, tseg1, tseg2;
++	u32 cfg;
++	u32 ch = priv->channel;
++
++	/* Nominal bit timing settings */
++	brp = bt->brp - 1;
++	sjw = bt->sjw - 1;
++	tseg1 = bt->prop_seg + bt->phase_seg1 - 1;
++	tseg2 = bt->phase_seg2 - 1;
++
++	cfg = (RCANFD_NR_TSEG1(tseg1) | RCANFD_NR_BRP(brp) |
++	       RCANFD_NR_SJW(sjw) | RCANFD_NR_TSEG2(tseg2));
++
++	rcar_canfd_write(priv->base, RCANFD_CCFG(ch), cfg);
++	netdev_dbg(priv->ndev, "nrate: brp %u, sjw %u, tseg1 %u, tseg2 %u\n",
++		   brp, sjw, tseg1, tseg2);
++
++	/* Data bit timing settings */
++	brp = dbt->brp - 1;
++	sjw = dbt->sjw - 1;
++	tseg1 = dbt->prop_seg + dbt->phase_seg1 - 1;
++	tseg2 = dbt->phase_seg2 - 1;
++
++	cfg = (RCANFD_DR_TSEG1(tseg1) | RCANFD_DR_BRP(brp) |
++	       RCANFD_DR_SJW(sjw) | RCANFD_DR_TSEG2(tseg2));
++
++	rcar_canfd_write(priv->base, RCANFD_F_CDFG(ch), cfg);
++	netdev_dbg(priv->ndev, "drate: brp %u, sjw %u, tseg1 %u, tseg2 %u\n",
++		   brp, sjw, tseg1, tseg2);
++}
++
++static int rcar_canfd_start(struct net_device *ndev)
++{
++	struct rcar_canfd_channel *priv = netdev_priv(ndev);
++	int err = -EOPNOTSUPP;
++	u32 sts, ch = priv->channel;
++	u32 ridx = ch + RCANFD_RFFIFO_IDX;
++
++	rcar_canfd_set_bittiming(ndev);
++
++	rcar_canfd_enable_channel_interrupts(priv);
++
++	/* Set channel to Operational mode */
++	rcar_canfd_update_bit(priv->base, RCANFD_CCTR(ch),
++			      RCANFD_CCTR_MODEMASK, RCANFD_CCTR_COPM);
++
++	/* Verify channel mode change */
++	err = readl_poll_timeout((priv->base + RCANFD_CSTS(ch)), sts,
++				 (sts & RCANFD_CSTS_COM), 2, 500000);
++	if (err) {
++		netdev_err(ndev, "channel %u communication state failed\n", ch);
++		goto fail_mode_change;
++	}
++
++	/* Enable Common & Rx FIFO */
++	rcar_canfd_set_bit(priv->base, RCANFD_CFCC(ch, RCANFD_CFFIFO_IDX),
++			   RCANFD_CMFIFO_CFE);
++	rcar_canfd_set_bit(priv->base, RCANFD_RFCC(ridx), RCANFD_RFFIFO_RFE);
++
++	priv->can.state = CAN_STATE_ERROR_ACTIVE;
++	return 0;
++
++fail_mode_change:
++	rcar_canfd_disable_channel_interrupts(priv);
++	return err;
++}
++
++static int rcar_canfd_open(struct net_device *ndev)
++{
++	struct rcar_canfd_channel *priv = netdev_priv(ndev);
++	struct rcar_canfd_global *gpriv = priv->gpriv;
++	int err;
++
++	/* Peripheral clock is already enabled in probe */
++	err = clk_prepare_enable(gpriv->can_clk);
++	if (err) {
++		netdev_err(ndev, "failed to enable CAN clock, error %d\n", err);
++		goto out_clock;
++	}
++
++	err = open_candev(ndev);
++	if (err) {
++		netdev_err(ndev, "open_candev() failed, error %d\n", err);
++		goto out_can_clock;
++	}
++
++	napi_enable(&priv->napi);
++	err = rcar_canfd_start(ndev);
++	if (err)
++		goto out_close;
++	netif_start_queue(ndev);
++	can_led_event(ndev, CAN_LED_EVENT_OPEN);
++	return 0;
++out_close:
++	napi_disable(&priv->napi);
++	close_candev(ndev);
++out_can_clock:
++	clk_disable_unprepare(gpriv->can_clk);
++out_clock:
++	return err;
++}
++
++static void rcar_canfd_stop(struct net_device *ndev)
++{
++	struct rcar_canfd_channel *priv = netdev_priv(ndev);
++	int err;
++	u32 sts, ch = priv->channel;
++	u32 ridx = ch + RCANFD_RFFIFO_IDX;
++
++	/* Transition to channel reset mode  */
++	rcar_canfd_update_bit(priv->base, RCANFD_CCTR(ch),
++			      RCANFD_CCTR_MODEMASK, RCANFD_CCTR_CRESET);
++
++	/* Check Channel reset mode */
++	err = readl_poll_timeout((priv->base + RCANFD_CSTS(ch)), sts,
++				 (sts & RCANFD_CSTS_RESET), 2, 500000);
++	if (err)
++		netdev_err(ndev, "channel %u reset failed\n", ch);
++
++	rcar_canfd_disable_channel_interrupts(priv);
++
++	/* Disable Common & Rx FIFO */
++	rcar_canfd_clear_bit(priv->base, RCANFD_CFCC(ch, RCANFD_CFFIFO_IDX),
++			     RCANFD_CMFIFO_CFE);
++	rcar_canfd_clear_bit(priv->base, RCANFD_RFCC(ridx), RCANFD_RFFIFO_RFE);
++
++	/* Set the state as STOPPED */
++	priv->can.state = CAN_STATE_STOPPED;
++}
++
++static int rcar_canfd_close(struct net_device *ndev)
++{
++	struct rcar_canfd_channel *priv = netdev_priv(ndev);
++	struct rcar_canfd_global *gpriv = priv->gpriv;
++
++	netif_stop_queue(ndev);
++	rcar_canfd_stop(ndev);
++	napi_disable(&priv->napi);
++	clk_disable_unprepare(gpriv->can_clk);
++	close_candev(ndev);
++	can_led_event(ndev, CAN_LED_EVENT_STOP);
++	return 0;
++}
++
++static netdev_tx_t rcar_canfd_start_xmit(struct sk_buff *skb,
++					 struct net_device *ndev)
++{
++	struct rcar_canfd_channel *priv = netdev_priv(ndev);
++	struct canfd_frame *cf = (struct canfd_frame *)skb->data;
++	u32 sts = 0, id, dlc;
++	unsigned long flags;
++	u32 ch = priv->channel;
++
++	if (can_dropped_invalid_skb(ndev, skb))
++		return NETDEV_TX_OK;
++
++	if (cf->can_id & CAN_EFF_FLAG) {
++		id = cf->can_id & CAN_EFF_MASK;
++		id |= RCANFD_CMFIFO_CFIDE;
++	} else {
++		id = cf->can_id & CAN_SFF_MASK;
++	}
++
++	if (cf->can_id & CAN_RTR_FLAG)
++		id |= RCANFD_CMFIFO_CFRTR;
++
++	rcar_canfd_write(priv->base,
++			 RCANFD_F_CFID(ch, RCANFD_CFFIFO_IDX), id);
++	dlc = RCANFD_CMFIFO_CFDLC(can_len2dlc(cf->len));
++	rcar_canfd_write(priv->base,
++			 RCANFD_F_CFPTR(ch, RCANFD_CFFIFO_IDX), dlc);
++
++	if (can_is_canfd_skb(skb)) {
++		/* CAN FD frame format */
++		sts |= RCANFD_CMFIFO_CFFDF;
++		if (cf->flags & CANFD_BRS)
++			sts |= RCANFD_CMFIFO_CFBRS;
++
++		if (priv->can.state == CAN_STATE_ERROR_PASSIVE)
++			sts |= RCANFD_CMFIFO_CFESI;
++	}
++
++	rcar_canfd_write(priv->base, RCANFD_F_CFFDCSTS(ch, RCANFD_CFFIFO_IDX),
++			 sts);
++
++	rcar_canfd_put_data(priv, cf,
++			    RCANFD_F_CFDF(ch, RCANFD_CFFIFO_IDX, 0));
++
++	priv->tx_len[priv->tx_head % RCANFD_FIFO_DEPTH] = cf->len;
++	can_put_echo_skb(skb, ndev, priv->tx_head % RCANFD_FIFO_DEPTH);
++
++	spin_lock_irqsave(&priv->tx_lock, flags);
++	priv->tx_head++;
++
++	/* Stop the queue if we've filled all FIFO entries */
++	if (priv->tx_head - priv->tx_tail >= RCANFD_FIFO_DEPTH)
++		netif_stop_queue(ndev);
++
++	/* Start Tx: Write 0xff to CFPC to increment the CPU-side
++	 * pointer for the Common FIFO
++	 */
++	rcar_canfd_write(priv->base,
++			 RCANFD_CFPCTR(ch, RCANFD_CFFIFO_IDX), 0xff);
++
++	spin_unlock_irqrestore(&priv->tx_lock, flags);
++	return NETDEV_TX_OK;
++}
++
++static void rcar_canfd_rx_pkt(struct rcar_canfd_channel *priv)
++{
++	struct net_device_stats *stats = &priv->ndev->stats;
++	struct canfd_frame *cf;
++	struct sk_buff *skb;
++	u32 sts = 0, id, ptr;
++	u32 ch = priv->channel;
++	u32 ridx = ch + RCANFD_RFFIFO_IDX;
++
++	id = rcar_canfd_read(priv->base, RCANFD_F_RFID(ridx));
++	ptr = rcar_canfd_read(priv->base, RCANFD_F_RFPTR(ridx));
++
++	sts = rcar_canfd_read(priv->base, RCANFD_F_RFFDSTS(ridx));
++	if (sts & RCANFD_RFFIFO_RFFDF)
++		skb = alloc_canfd_skb(priv->ndev, &cf);
++	else
++		skb = alloc_can_skb(priv->ndev,
++				    (struct can_frame **)&cf);
++
++	if (!skb) {
++		stats->rx_dropped++;
++		return;
++	}
++
++	if (sts & RCANFD_RFFIFO_RFFDF)
++		cf->len = can_dlc2len(RCANFD_RFFIFO_RFDLC(ptr));
++	else
++		cf->len = get_can_dlc(RCANFD_RFFIFO_RFDLC(ptr));
++
++	if (sts & RCANFD_RFFIFO_RFESI) {
++		cf->flags |= CANFD_ESI;
++		netdev_dbg(priv->ndev, "ESI Error\n");
++	}
++
++	if (id & RCANFD_RFFIFO_RFIDE)
++		cf->can_id = (id & CAN_EFF_MASK) | CAN_EFF_FLAG;
++	else
++		cf->can_id = id & CAN_SFF_MASK;
++
++	if (!(sts & RCANFD_RFFIFO_RFFDF) && (id & RCANFD_RFFIFO_RFRTR)) {
++		cf->can_id |= CAN_RTR_FLAG;
++	} else {
++		if (sts & RCANFD_RFFIFO_RFBRS)
++			cf->flags |= CANFD_BRS;
++
++		rcar_canfd_get_data(priv, cf, RCANFD_F_RFDF(ridx, 0));
++	}
++
++	/* Write 0xff to RFPC to increment the CPU-side
++	 * pointer of the Rx FIFO
++	 */
++	rcar_canfd_write(priv->base, RCANFD_RFPCTR(ridx), 0xff);
++
++	can_led_event(priv->ndev, CAN_LED_EVENT_RX);
++
++	stats->rx_bytes += cf->len;
++	stats->rx_packets++;
++	netif_receive_skb(skb);
++}
++
++static int rcar_canfd_rx_poll(struct napi_struct *napi, int quota)
++{
++	struct rcar_canfd_channel *priv =
++		container_of(napi, struct rcar_canfd_channel, napi);
++	int num_pkts;
++	u32 sts;
++	u32 ch = priv->channel;
++	u32 ridx = ch + RCANFD_RFFIFO_IDX;
++
++	for (num_pkts = 0; num_pkts < quota; num_pkts++) {
++		sts = rcar_canfd_read(priv->base, RCANFD_RFSTS(ridx));
++		/* Check FIFO empty condition */
++		if (sts & RCANFD_RFFIFO_RFEMP)
++			break;
++
++		rcar_canfd_rx_pkt(priv);
++
++		/* Clear interrupt bit */
++		if (sts & RCANFD_RFFIFO_RFIF)
++			rcar_canfd_write(priv->base, RCANFD_RFSTS(ridx),
++					 sts & ~RCANFD_RFFIFO_RFIF);
++	}
++
++	/* All packets processed */
++	if (num_pkts < quota) {
++		napi_complete(napi);
++		/* Enable Rx FIFO interrupts */
++		rcar_canfd_set_bit(priv->base, RCANFD_RFCC(ridx),
++				   RCANFD_RFFIFO_RFIE);
++	}
++	return num_pkts;
++}
++
++static int rcar_canfd_do_set_mode(struct net_device *ndev, enum can_mode mode)
++{
++	int err;
++
++	switch (mode) {
++	case CAN_MODE_START:
++		err = rcar_canfd_start(ndev);
++		if (err)
++			return err;
++		netif_wake_queue(ndev);
++		return 0;
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
++static int rcar_canfd_get_berr_counter(const struct net_device *dev,
++				       struct can_berr_counter *bec)
++{
++	struct rcar_canfd_channel *priv = netdev_priv(dev);
++	u32 val, ch = priv->channel;
++
++	/* Peripheral clock is already enabled in probe */
++	val = rcar_canfd_read(priv->base, RCANFD_CSTS(ch));
++	bec->txerr = RCANFD_CSTS_TECCNT(val);
++	bec->rxerr = RCANFD_CSTS_RECCNT(val);
++	return 0;
++}
++
++static const struct net_device_ops rcar_canfd_netdev_ops = {
++	.ndo_open = rcar_canfd_open,
++	.ndo_stop = rcar_canfd_close,
++	.ndo_start_xmit = rcar_canfd_start_xmit,
++	.ndo_change_mtu = can_change_mtu,
++};
++
++static int rcar_canfd_channel_probe(struct rcar_canfd_global *gpriv, u32 ch,
++				    u32 fcan_freq)
++{
++	struct platform_device *pdev = gpriv->pdev;
++	struct rcar_canfd_channel *priv;
++	struct net_device *ndev;
++	int err = -ENODEV;
++
++	ndev = alloc_candev(sizeof(*priv), RCANFD_FIFO_DEPTH);
++	if (!ndev) {
++		dev_err(&pdev->dev, "alloc_candev() failed\n");
++		err = -ENOMEM;
++		goto fail;
++	}
++	priv = netdev_priv(ndev);
++
++	ndev->netdev_ops = &rcar_canfd_netdev_ops;
++	ndev->flags |= IFF_ECHO;
++	priv->ndev = ndev;
++	priv->base = gpriv->base;
++	priv->channel = ch;
++	priv->can.clock.freq = fcan_freq;
++	dev_info(&pdev->dev, "can_clk rate is %u\n", priv->can.clock.freq);
++
++	priv->can.bittiming_const = &rcar_canfd_nom_bittiming_const;
++	priv->can.data_bittiming_const =
++		&rcar_canfd_data_bittiming_const;
++
++	/* Controller starts in CAN FD only mode */
++	can_set_static_ctrlmode(ndev, CAN_CTRLMODE_FD);
++	priv->can.ctrlmode_supported = CAN_CTRLMODE_BERR_REPORTING;
++
++	priv->can.do_set_mode = rcar_canfd_do_set_mode;
++	priv->can.do_get_berr_counter = rcar_canfd_get_berr_counter;
++	priv->gpriv = gpriv;
++	SET_NETDEV_DEV(ndev, &pdev->dev);
++
++	netif_napi_add(ndev, &priv->napi, rcar_canfd_rx_poll,
++		       RCANFD_NAPI_WEIGHT);
++	err = register_candev(ndev);
++	if (err) {
++		dev_err(&pdev->dev,
++			"register_candev() failed, error %d\n", err);
++		goto fail_candev;
++	}
++	spin_lock_init(&priv->tx_lock);
++	devm_can_led_init(ndev);
++	gpriv->ch[priv->channel] = priv;
++	dev_info(&pdev->dev, "device registered (channel %u)\n", priv->channel);
++	return 0;
++
++fail_candev:
++	netif_napi_del(&priv->napi);
++	free_candev(ndev);
++fail:
++	return err;
++}
++
++static void rcar_canfd_channel_remove(struct rcar_canfd_global *gpriv, u32 ch)
++{
++	struct rcar_canfd_channel *priv = gpriv->ch[ch];
++
++	if (priv) {
++		unregister_candev(priv->ndev);
++		netif_napi_del(&priv->napi);
++		free_candev(priv->ndev);
++	}
++}
++
++static int rcar_canfd_probe(struct platform_device *pdev)
++{
++	struct resource *mem;
++	void __iomem *addr;
++	u32 sts, ch, fcan_freq;
++	struct rcar_canfd_global *gpriv;
++	struct device_node *of_child;
++	unsigned long channels_mask = 0;
++	int err, ch_irq, g_irq;
++
++	of_child = of_get_child_by_name(pdev->dev.of_node, "channel0");
++	if (of_child && of_device_is_available(of_child))
++		channels_mask |= BIT(0);	/* Channel 0 */
++
++	of_child = of_get_child_by_name(pdev->dev.of_node, "channel1");
++	if (of_child && of_device_is_available(of_child))
++		channels_mask |= BIT(1);	/* Channel 1 */
++
++	ch_irq = platform_get_irq(pdev, 0);
++	if (ch_irq < 0) {
++		dev_err(&pdev->dev, "no Channel IRQ resource\n");
++		err = ch_irq;
++		goto fail_dev;
++	}
++
++	g_irq = platform_get_irq(pdev, 1);
++	if (g_irq < 0) {
++		dev_err(&pdev->dev, "no Global IRQ resource\n");
++		err = g_irq;
++		goto fail_dev;
++	}
++
++	/* Global controller context */
++	gpriv = devm_kzalloc(&pdev->dev, sizeof(*gpriv), GFP_KERNEL);
++	if (!gpriv) {
++		err = -ENOMEM;
++		goto fail_dev;
++	}
++	gpriv->pdev = pdev;
++	gpriv->channels_mask = channels_mask;
++
++	/* Peripheral clock */
++	gpriv->clkp = devm_clk_get(&pdev->dev, "fck");
++	if (IS_ERR(gpriv->clkp)) {
++		err = PTR_ERR(gpriv->clkp);
++		dev_err(&pdev->dev, "cannot get peripheral clock, error %d\n",
++			err);
++		goto fail_dev;
++	}
++
++	/* fCAN clock: Pick External clock. If not available fallback to
++	 * CANFD clock
++	 */
++	gpriv->can_clk = devm_clk_get(&pdev->dev, "can_clk");
++	if (IS_ERR(gpriv->can_clk) || (clk_get_rate(gpriv->can_clk) == 0)) {
++		gpriv->can_clk = devm_clk_get(&pdev->dev, "canfd");
++		if (IS_ERR(gpriv->can_clk)) {
++			err = PTR_ERR(gpriv->can_clk);
++			dev_err(&pdev->dev,
++				"cannot get canfd clock, error %d\n", err);
++			goto fail_dev;
++		}
++		gpriv->fcan = RCANFD_CANFDCLK;
++
++	} else {
++		gpriv->fcan = RCANFD_EXTCLK;
++	}
++	fcan_freq = clk_get_rate(gpriv->can_clk);
++
++	if (gpriv->fcan == RCANFD_CANFDCLK)
++		/* CANFD clock is further divided by (1/2) within the IP */
++		fcan_freq /= 2;
++
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	addr = devm_ioremap_resource(&pdev->dev, mem);
++	if (IS_ERR(addr)) {
++		err = PTR_ERR(addr);
++		goto fail_dev;
++	}
++	gpriv->base = addr;
++
++	/* Request IRQ that's common for both channels */
++	err = devm_request_irq(&pdev->dev, ch_irq,
++			       rcar_canfd_channel_interrupt, 0,
++			       "canfd.chn", gpriv);
++	if (err) {
++		dev_err(&pdev->dev, "devm_request_irq(%d) failed, error %d\n",
++			ch_irq, err);
++		goto fail_dev;
++	}
++	err = devm_request_irq(&pdev->dev, g_irq,
++			       rcar_canfd_global_interrupt, 0,
++			       "canfd.gbl", gpriv);
++	if (err) {
++		dev_err(&pdev->dev, "devm_request_irq(%d) failed, error %d\n",
++			g_irq, err);
++		goto fail_dev;
++	}
++
++	/* Enable peripheral clock for register access */
++	err = clk_prepare_enable(gpriv->clkp);
++	if (err) {
++		dev_err(&pdev->dev,
++			"failed to enable peripheral clock, error %d\n", err);
++		goto fail_dev;
++	}
++
++	err = rcar_canfd_reset_controller(gpriv);
++	if (err) {
++		dev_err(&pdev->dev, "reset controller failed\n");
++		goto fail_clk;
++	}
++
++	/* Controller in Global reset & Channel reset mode */
++	rcar_canfd_configure_controller(gpriv);
++
++	/* Configure per channel attributes */
++	for_each_set_bit(ch, &gpriv->channels_mask, RCANFD_NUM_CHANNELS) {
++		/* Configure Channel's Rx fifo */
++		rcar_canfd_configure_rx(gpriv, ch);
++
++		/* Configure Channel's Tx (Common) fifo */
++		rcar_canfd_configure_tx(gpriv, ch);
++
++		/* Configure receive rules */
++		rcar_canfd_configure_afl_rules(gpriv, ch);
++	}
++
++	/* Configure common interrupts */
++	rcar_canfd_enable_global_interrupts(gpriv);
++
++	/* Start Global operation mode */
++	rcar_canfd_update_bit(gpriv->base, RCANFD_GCTR, RCANFD_GCTR_MODEMASK,
++			      RCANFD_GCTR_GOPM);
++
++	/* Verify mode change */
++	err = readl_poll_timeout((gpriv->base + RCANFD_GSTS), sts,
++				 !(sts & RCANFD_GSTS_GNOPM), 2, 500000);
++	if (err) {
++		dev_err(&pdev->dev, "global operational mode failed\n");
++		goto fail_mode;
++	}
++
++	for_each_set_bit(ch, &gpriv->channels_mask, RCANFD_NUM_CHANNELS) {
++		err = rcar_canfd_channel_probe(gpriv, ch, fcan_freq);
++		if (err)
++			goto fail_channel;
++	}
++
++	platform_set_drvdata(pdev, gpriv);
++	dev_info(&pdev->dev, "global operational state (clk %d)\n",
++		 gpriv->fcan);
++	return 0;
++
++fail_channel:
++	for_each_set_bit(ch, &gpriv->channels_mask, RCANFD_NUM_CHANNELS)
++		rcar_canfd_channel_remove(gpriv, ch);
++fail_mode:
++	rcar_canfd_disable_global_interrupts(gpriv);
++fail_clk:
++	clk_disable_unprepare(gpriv->clkp);
++fail_dev:
++	return err;
++}
++
++static int rcar_canfd_remove(struct platform_device *pdev)
++{
++	struct rcar_canfd_global *gpriv = platform_get_drvdata(pdev);
++	u32 ch;
++
++	rcar_canfd_reset_controller(gpriv);
++	rcar_canfd_disable_global_interrupts(gpriv);
++
++	for_each_set_bit(ch, &gpriv->channels_mask, RCANFD_NUM_CHANNELS) {
++		rcar_canfd_disable_channel_interrupts(gpriv->ch[ch]);
++		rcar_canfd_channel_remove(gpriv, ch);
++	}
++
++	/* Enter global sleep mode */
++	rcar_canfd_set_bit(gpriv->base, RCANFD_GCTR, RCANFD_GCTR_SLPR);
++	clk_disable_unprepare(gpriv->clkp);
++	return 0;
++}
++
++static int __maybe_unused rcar_canfd_suspend(struct device *dev)
++{
++	return 0;
++}
++
++static int __maybe_unused rcar_canfd_resume(struct device *dev)
++{
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(rcar_canfd_pm_ops, rcar_canfd_suspend,
++			 rcar_canfd_resume);
++
++static const struct of_device_id rcar_canfd_of_table[] = {
++	{ .compatible = "renesas,rcar-gen3-canfd" },
++	{ }
++};
++
++MODULE_DEVICE_TABLE(of, rcar_canfd_of_table);
++
++static struct platform_driver rcar_canfd_driver = {
++	.driver = {
++		.name = RCANFD_DRV_NAME,
++		.of_match_table = of_match_ptr(rcar_canfd_of_table),
++		.pm = &rcar_canfd_pm_ops,
++	},
++	.probe = rcar_canfd_probe,
++	.remove = rcar_canfd_remove,
++};
++
++module_platform_driver(rcar_canfd_driver);
++
++MODULE_AUTHOR("Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>");
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("CAN FD driver for Renesas R-Car SoC");
++MODULE_ALIAS("platform:" RCANFD_DRV_NAME);
+-- 
+1.9.1
