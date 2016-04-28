@@ -1,75 +1,78 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Peter Hurley <peter@hurleysoftware.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 08/11] serial: sh-sci: Correct pin initialization on (H)SCIF
-Date: Fri, 29 Apr 2016 14:58:31 +0200
-Message-Id: <1461934714-18681-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
-References: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH] clk: renesas: r8a7795: Move MODEMR to DT
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1461823717-22517-1-git-send-email-dirk.behme@de.bosch.com>
+ <CAMuHMdVYtdr8wzm91CH-TAhpbS3E=Jzy67TcjOBC1Q4G9f2bAA@mail.gmail.com>
+ <5721B47D.9030206@de.bosch.com>
+ <CAMuHMdUNt_yyLwPwDoQwMAGgeFrL9trH=-YvZ339ObnOPPvOPQ@mail.gmail.com>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	<linux-renesas-soc@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Oleksij Rempel <linux@rempel-privat.de>,
+	Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>,
+	Oleksij Rempel <fixed-term.Oleksij.Rempel@de.bosch.com>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <5721C890.7030803@de.bosch.com>
+Date: Thu, 28 Apr 2016 10:23:44 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUNt_yyLwPwDoQwMAGgeFrL9trH=-YvZ339ObnOPPvOPQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Correct pin initialization on (H)SCIF:
-  - RTS must be deasserted (it's active low),
-  - SCK must be an input, as it may be used as the optional external
-    clock input.
+Hi Geert,
 
-Initial pin configuration must always be done:
-  - Regardless of the presence of dedicated RTS and CTS pins: if the
-    register exists, the RTS/CTS bits exist, too,
-  - Regardless of hardware flow control being enabled or not: RTS must
-    be deasserted.
+On 28.04.2016 10:07, Geert Uytterhoeven wrote:
+> Hi Dirk,
+>
+> On Thu, Apr 28, 2016 at 8:58 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>> On 28.04.2016 08:52, Geert Uytterhoeven wrote:
+>>> On Thu, Apr 28, 2016 at 8:08 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>>>> @@ -46,7 +48,8 @@ Examples
+>>>>
+>>>>           cpg: clock-controller@e6150000 {
+>>>>                   compatible = "renesas,r8a7795-cpg-mssr";
+>>>> -               reg = <0 0xe6150000 0 0x1000>;
+>>>> +               reg = <0 0xe6150000 0 0x1000>,
+>>>> +                     <0 0xe6160060 0 0x4>;
+>>>
+>>>
+>>> The MODEMR register is not part of the CPG block, but of the RST block.
+>>> So IMHO it doesn't belong in the clock-controller node.
+>>
+>> Ok, fine.
+>>
+>> So we agree hat this ugly hard coded register address stuff has to be
+>> removed and replaced by a device tree based solution. Correct?
+>
+> Yes we agree.
+>
+>>> BTW, I still prefer something like
+>>> "[PATCH 0/6] arm64: renesas: Obtain MD pin values using syscon/regmap"
+>>> (http://www.spinics.net/lists/linux-sh/msg44757.html).
+>>
+>> What's the status of this? I see there a date "1 Sep 2015" ;)
+>
+> We were considering alternative solutions, cfr. "[PATCH/RFC 0/6] boot-mode-reg:
+> Add core" (http://www.spinics.net/lists/linux-sh/msg45969.html).
+> To avoid delaying upstream r8a7795, we settled for the ugly hard coded
+> register access as an interim solution.
+>
+>> Is this available in any testing tree we could try?
+>
+> It used to be part of older renesas-drivers releases.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- drivers/tty/serial/sh-sci.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index ce7bd165929ea078..c46999f20917964e 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -712,21 +712,14 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
- 		return;
- 	}
- 
--	/*
--	 * For the generic path SCSPTR is necessary. Bail out if that's
--	 * unavailable, too.
--	 */
--	if (!sci_getreg(port, SCSPTR)->size)
--		return;
--
--	if ((s->cfg->capabilities & SCIx_HAVE_RTSCTS) &&
--	    ((!(cflag & CRTSCTS)))) {
--		unsigned short status;
--
--		status = serial_port_in(port, SCSPTR);
--		status &= ~SCSPTR_CTSIO;
--		status |= SCSPTR_RTSIO;
--		serial_port_out(port, SCSPTR, status); /* Set RTS = 1 */
-+	if (sci_getreg(port, SCSPTR)->size) {
-+		u16 status = serial_port_in(port, SCSPTR);
-+
-+		/* RTS# is output, driven 1 */
-+		status |= SCSPTR_RTSIO | SCSPTR_RTSDT;
-+		/* CTS# and SCK are inputs */
-+		status &= ~(SCSPTR_CTSIO | SCSPTR_SCKIO);
-+		serial_port_out(port, SCSPTR, status);
- 	}
- }
- 
--- 
-1.9.1
+Would it be possible to add them again then, now?
+
+
+Best regards
+
+Dirk
+
+
+
+
