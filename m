@@ -1,75 +1,60 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v3 0/2] phy: rcar-gen2, rcar-gen3-usb2: add fallback
- binding
-To: Simon Horman <horms@verge.net.au>
-References: <1457315921-30217-1-git-send-email-horms+renesas@verge.net.au>
- <20160325020948.GB31681@verge.net.au>
-CC: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	<linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <57062CB8.10101@ti.com>
-Date: Thu, 7 Apr 2016 15:17:36 +0530
-MIME-Version: 1.0
-In-Reply-To: <20160325020948.GB31681@verge.net.au>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from andre.telenet-ops.be ([195.130.132.53]:46100 "EHLO
+	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753866AbcD2M6x (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 29 Apr 2016 08:58:53 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Peter Hurley <peter@hurleysoftware.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 02/11] serial: sh-sci: Update DT binding documentation for dedicated RTS/CTS
+Date: Fri, 29 Apr 2016 14:58:25 +0200
+Message-Id: <1461934714-18681-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+References: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Some Renesas SCIF UARTs have dedicated lines for RTS/CTS hardware flow
+control.  Whether these lines exist depends on SoC and UART instance
+inside the SoC.  Whether these lines can be used for hardware flow
+control depends on board wiring.
 
-On Friday 25 March 2016 07:39 AM, Simon Horman wrote:
-> On Mon, Mar 07, 2016 at 10:58:39AM +0900, Simon Horman wrote:
->> Add fallback compatibility strings for rcar phy drivers.
->>
->> In the case of Renesas R-Car hardware we know that there are generations of
->> SoCs, e.g. Gen 2 and Gen 3. But beyond that its not clear what the
->> relationship between IP blocks might be. For example, I believe that
->> r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
->> descendant of the former or vice versa.
->>
->> We can, however, by examining the documentation and behaviour of the
->> hardware at run-time observe that the current driver implementation appears
->> to be compatible with the IP blocks on SoCs within a given generation.
->>
->> For the above reasons and convenience when enabling new SoCs a
->> per-generation fallback compatibility string scheme being adopted for
->> drivers for Renesas SoCs.
-> 
-> Hi Kishon,
-> 
-> I am wondering if you could consider applying this series.
+Amend the DT bindings with an optional property to indicate that RTS/CTS
+hardware flow control lines exist, and can be used as such, according to
+the Generic Serial DT Bindings.
 
-This doesn't appear to be a fix. So will be queuing this for the next merge window.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: devicetree@vger.kernel.org
+---
+v2:
+  - Drop RFC status,
+  - Use "uart-has-rtscts" instead of "renesas,uart-has-rtscts",
+  - Refer to the Generic Serial DT Bindings.
+---
+ Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks
-Kishon
-
-> 
-> Thanks!
-> 
->>
->> Changes in v3:
->> * Added Acks
->> * Corrected whitespace in examples
->>
->> Changes in v2:
->> * Update new compatibility strings to match the preferred scheme for
->>   ordering elements
->> * Rebase
->>
->> Simon Horman (2):
->>   phy: rcar-gen2: add fallback binding
->>   phy: rcar-gen3-usb2: add fallback binding
->>
->>  Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt      |  8 +++++++-
->>  Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 10 ++++++++--
->>  drivers/phy/phy-rcar-gen2.c                                  |  1 +
->>  drivers/phy/phy-rcar-gen3-usb2.c                             |  1 +
->>  4 files changed, 17 insertions(+), 3 deletions(-)
->>
->> -- 
->> 2.1.4
->>
+diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+index 997baeaa869baa6f..7a0e15053db97481 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
++++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+@@ -78,6 +78,8 @@ Optional properties:
+   - dma-names: Must contain a list of two DMA names, "tx" and "rx".
+   - {cts,dsr,dcd,rng,rts,dtr}-gpios: Specify GPIOs for modem lines, cfr. the
+     generic serial DT bindings in serial.txt.
++  - uart-has-rtscts: Indicates dedicated lines for RTS/CTS hardware flow
++    control, cfr. the generic serial DT bindings in serial.txt.
+ 
+ Example:
+ 	aliases {
+-- 
+1.9.1
