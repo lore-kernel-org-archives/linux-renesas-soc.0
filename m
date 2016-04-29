@@ -1,76 +1,42 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:35956 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752065AbcD2JJm (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 29 Apr 2016 05:09:42 -0400
+Received: by mail-oi0-f49.google.com with SMTP id x201so111998904oif.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Apr 2016 02:09:42 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1461666626-24805-1-git-send-email-geert+renesas@glider.be>
+References: <1461666626-24805-1-git-send-email-geert+renesas@glider.be>
+Date: Fri, 29 Apr 2016 11:09:41 +0200
+Message-ID: <CACRpkdYvK85EMaZLURrt6MqkV2kv7DTqsq6AdktOsp8dcUmJeQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: Kill unused variable in sh_pfc_remove()
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 6/7] soc: renesas: Add r8a7794 SYSC PM Domain Binding Definitions
-Date: Wed, 13 Apr 2016 16:44:22 +0200
-Message-Id: <1460558663-10197-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460558663-10197-1-git-send-email-geert+renesas@glider.be>
-References: <1460558663-10197-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-v5:
-  - No changes,
+On Tue, Apr 26, 2016 at 12:30 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-v4:
-  - Add Reviewed-by,
-  - Rename R8A7794_PD_SH to R8A7794_PD_SH_4A,
-  - Add always-on power area,
+> If CONFIG_PINCTRL_SH_PFC_GPIO=n:
+>
+>     drivers/pinctrl/sh-pfc/core.c: In function 'sh_pfc_remove':
+>     drivers/pinctrl/sh-pfc/core.c:649:17: warning: unused variable 'pfc' [-Wunused-variable]
+>
+> Fixes: 67ec8d7b48463904 ("pinctrl: ish-pfc: Use devm_pinctrl_register() for pinctrl registration")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> I won't queue this up in sh-pfc-for-v4.7, as the offending commit is not in
+> that branch.
 
-v3:
-  - New.
----
- include/dt-bindings/power/r8a7794-sysc.h | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a7794-sysc.h
+OK patch applied.
 
-diff --git a/include/dt-bindings/power/r8a7794-sysc.h b/include/dt-bindings/power/r8a7794-sysc.h
-new file mode 100644
-index 0000000000000000..862241c2d27b2fa3
---- /dev/null
-+++ b/include/dt-bindings/power/r8a7794-sysc.h
-@@ -0,0 +1,26 @@
-+/*
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7794_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7794_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A7794_PD_CA7_CPU0		 5
-+#define R8A7794_PD_CA7_CPU1		 6
-+#define R8A7794_PD_SH_4A		16
-+#define R8A7794_PD_SGX			20
-+#define R8A7794_PD_CA7_SCU		21
-+
-+/* Always-on power area */
-+#define R8A7794_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7794_SYSC_H__ */
--- 
-1.9.1
-
+Yours,
+Linus Walleij
