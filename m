@@ -1,106 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41654 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750777AbcD0EGw (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35130 "EHLO
+	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752964AbcD2QBs (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 00:06:52 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Phil Edworthy <Phil.Edworthy@renesas.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/4] arm64: dts: r8a7795: Add PCIe nodes
-Date: Wed, 27 Apr 2016 14:06:43 +1000
-Message-Id: <9251024a6a148abd628785d53e3b7a42e8217cc9.1461723181.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461723181.git.horms+renesas@verge.net.au>
-References: <cover.1461723181.git.horms+renesas@verge.net.au>
+	Fri, 29 Apr 2016 12:01:48 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: horms@verge.net.au
+Cc: linux-renesas-soc@vger.kernel.org, linux-mmc@vger.kernel.org,
+	sergei.shtylyov@cogentembedded.com, geert@linux-m68k.org,
+	magnus.damm@gmail.com,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v3] ARM: dts: r8a7793: Add MMCIF0
+Date: Fri, 29 Apr 2016 18:01:39 +0200
+Message-Id: <1461945699-21324-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Phil Edworthy <Phil.Edworthy@renesas.com>
+Same as on r8a7791.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 57 ++++++++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 868c10eaea48..11f9971a8543 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -131,6 +131,14 @@
+This version addresses the issues found by Geert and Simon (thank you):
+
+- change back to one DMA controller
+- use GIC_SPI
+- add max-frequency
+
+CU
+Uli
+
+
+ arch/arm/boot/dts/r8a7793.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 1dd6d20..f76cc4c 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -543,6 +543,19 @@
  		status = "disabled";
  	};
  
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <100000000>;
++	mmcif0: mmcif@ee200000 {
++		compatible = "renesas,mmcif-r8a7793", "renesas,sh-mmcif";
++		reg = <0 0xee200000 0 0x80>;
++		interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp3_clks R8A7793_CLK_MMCIF0>;
++		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>;
++		dma-names = "tx", "rx";
++		power-domains = <&cpg_clocks>;
++		reg-io-width = <4>;
 +		status = "disabled";
++		max-frequency = <97500000>;
 +	};
 +
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&gic>;
-@@ -1156,5 +1164,54 @@
- 			power-domains = <&cpg>;
- 			status = "disabled";
- 		};
-+		pciec0: pcie@fe000000 {
-+			compatible = "renesas,pcie-r8a7795";
-+			reg = <0 0xfe000000 0 0x80000>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			bus-range = <0x00 0xff>;
-+			device_type = "pci";
-+			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000
-+				0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000
-+				0x02000000 0 0x30000000 0 0x30000000 0 0x08000000
-+				0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
-+			/* Map all possible DDR as inbound ranges */
-+			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x40000000>;
-+			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0>;
-+			interrupt-map = <0 0 0 0 &gic GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 319>, <&pcie_bus_clk>;
-+			clock-names = "pcie", "pcie_bus";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		pciec1: pcie@ee800000 {
-+			compatible = "renesas,pcie-r8a7795";
-+			reg = <0 0xee800000 0 0x80000>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			bus-range = <0x00 0xff>;
-+			device_type = "pci";
-+			ranges = <0x01000000 0 0x00000000 0 0xee900000 0 0x00100000
-+				0x02000000 0 0xeea00000 0 0xeea00000 0 0x00200000
-+				0x02000000 0 0xc0000000 0 0xc0000000 0 0x08000000
-+				0x42000000 0 0xc8000000 0 0xc8000000 0 0x08000000>;
-+			/* Map all possible DDR as inbound ranges */
-+			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x40000000>;
-+			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0>;
-+			interrupt-map = <0 0 0 0 &gic GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 318>, <&pcie_bus_clk>;
-+			clock-names = "pcie", "pcie_bus";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
- 	};
- };
+ 	scifa0: serial@e6c40000 {
+ 		compatible = "renesas,scifa-r8a7793",
+ 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
