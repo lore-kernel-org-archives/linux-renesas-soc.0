@@ -1,513 +1,111 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Peter Hurley <peter@hurleysoftware.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 11/12] ARM: dts: r8a7794: Use SYSC "always-on" PM Domain
-Date: Thu,  7 Apr 2016 14:20:34 +0200
-Message-Id: <1460031635-13452-12-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
-References: <1460031635-13452-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH v2 00/11] serial: sh-sci: Hardware Flow Control Updates
+Date: Fri, 29 Apr 2016 14:58:23 +0200
+Message-Id: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hook up all devices that are part of the CPG/MSTP Clock Domain to the
-SYSC "always-on" PM Domain, for a more consistent device-power-area
-description in DT.
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - New.
----
- arch/arm/boot/dts/r8a7794.dtsi | 106 ++++++++++++++++++++---------------------
- 1 file changed, 53 insertions(+), 53 deletions(-)
+This patch series contains updates to the Renesas SCI UART driver,
+related to hardware flow control:
+  - Patches 1-2: Device Tree binding updates for GPIO-controlled modem
+    lines, and for dedicated RTS/CTS modem lines,
+  - Patches 3-4: Driver support for GPIO-controlled modem lines, using
+    the serial_mctrl_gpio helpers,
+  - New patches 5-11: Driver support for hardware-assisted (automatic)
+    hardware flow control using the dedicated RTS/CTS modem lines.
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 722430ee58f2b3e7..4540cb5130a29e2c 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -86,7 +86,7 @@
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
- 		clocks = <&mstp9_clks R8A7794_CLK_GPIO0>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
- 	gpio1: gpio@e6051000 {
-@@ -99,7 +99,7 @@
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
- 		clocks = <&mstp9_clks R8A7794_CLK_GPIO1>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
- 	gpio2: gpio@e6052000 {
-@@ -112,7 +112,7 @@
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
- 		clocks = <&mstp9_clks R8A7794_CLK_GPIO2>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
- 	gpio3: gpio@e6053000 {
-@@ -125,7 +125,7 @@
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
- 		clocks = <&mstp9_clks R8A7794_CLK_GPIO3>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
- 	gpio4: gpio@e6054000 {
-@@ -138,7 +138,7 @@
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
- 		clocks = <&mstp9_clks R8A7794_CLK_GPIO4>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
- 	gpio5: gpio@e6055000 {
-@@ -151,7 +151,7 @@
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
- 		clocks = <&mstp9_clks R8A7794_CLK_GPIO5>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
- 	gpio6: gpio@e6055400 {
-@@ -164,7 +164,7 @@
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
- 		clocks = <&mstp9_clks R8A7794_CLK_GPIO6>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
- 	cmt0: timer@ffca0000 {
-@@ -174,7 +174,7 @@
- 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7794_CLK_CMT0>;
- 		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 
- 		renesas,channels-mask = <0x60>;
- 
-@@ -194,7 +194,7 @@
- 			     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_CMT1>;
- 		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 
- 		renesas,channels-mask = <0xff>;
- 
-@@ -225,7 +225,7 @@
- 			     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp4_clks R8A7794_CLK_IRQC>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
- 
- 	pfc: pin-controller@e6060000 {
-@@ -259,7 +259,7 @@
- 				"ch12", "ch13", "ch14";
- 		clocks = <&mstp2_clks R8A7794_CLK_SYS_DMAC0>;
- 		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
- 	};
-@@ -290,7 +290,7 @@
- 				"ch12", "ch13", "ch14";
- 		clocks = <&mstp2_clks R8A7794_CLK_SYS_DMAC1>;
- 		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
- 	};
-@@ -305,7 +305,7 @@
- 		dmas = <&dmac0 0x21>, <&dmac0 0x22>,
- 		       <&dmac1 0x21>, <&dmac1 0x22>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -319,7 +319,7 @@
- 		dmas = <&dmac0 0x25>, <&dmac0 0x26>,
- 		       <&dmac1 0x25>, <&dmac1 0x26>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -333,7 +333,7 @@
- 		dmas = <&dmac0 0x27>, <&dmac0 0x28>,
- 		       <&dmac1 0x27>, <&dmac1 0x28>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -347,7 +347,7 @@
- 		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>,
- 		       <&dmac1 0x1b>, <&dmac1 0x1c>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -361,7 +361,7 @@
- 		dmas = <&dmac0 0x1f>, <&dmac0 0x20>,
- 		       <&dmac1 0x1f>, <&dmac1 0x20>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -375,7 +375,7 @@
- 		dmas = <&dmac0 0x23>, <&dmac0 0x24>,
- 		       <&dmac1 0x23>, <&dmac1 0x24>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -389,7 +389,7 @@
- 		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
- 		       <&dmac1 0x3d>, <&dmac1 0x3e>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -403,7 +403,7 @@
- 		dmas = <&dmac0 0x19>, <&dmac0 0x1a>,
- 		       <&dmac1 0x19>, <&dmac1 0x1a>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -417,7 +417,7 @@
- 		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>,
- 		       <&dmac1 0x1d>, <&dmac1 0x1e>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -432,7 +432,7 @@
- 		dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
- 		       <&dmac1 0x29>, <&dmac1 0x2a>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -447,7 +447,7 @@
- 		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
- 		       <&dmac1 0x2d>, <&dmac1 0x2e>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -462,7 +462,7 @@
- 		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
- 		       <&dmac1 0x2b>, <&dmac1 0x2c>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -477,7 +477,7 @@
- 		dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
- 		       <&dmac1 0x2f>, <&dmac1 0x30>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -492,7 +492,7 @@
- 		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
- 		       <&dmac1 0xfb>, <&dmac1 0xfc>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -507,7 +507,7 @@
- 		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
- 		       <&dmac1 0xfd>, <&dmac1 0xfe>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -522,7 +522,7 @@
- 		dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
- 		       <&dmac1 0x39>, <&dmac1 0x3a>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -537,7 +537,7 @@
- 		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
- 		       <&dmac1 0x4d>, <&dmac1 0x4e>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -552,7 +552,7 @@
- 		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>,
- 		       <&dmac1 0x3b>, <&dmac1 0x3c>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -561,7 +561,7 @@
- 		reg = <0 0xee700000 0 0x400>;
- 		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7794_CLK_ETHER>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		phy-mode = "rmii";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -574,7 +574,7 @@
- 		reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
- 		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7794_CLK_ETHERAVB>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		status = "disabled";
-@@ -586,7 +586,7 @@
- 		reg = <0 0xe6508000 0 0x40>;
- 		interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C0>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		i2c-scl-internal-delay-ns = <6>;
-@@ -598,7 +598,7 @@
- 		reg = <0 0xe6518000 0 0x40>;
- 		interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C1>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		i2c-scl-internal-delay-ns = <6>;
-@@ -610,7 +610,7 @@
- 		reg = <0 0xe6530000 0 0x40>;
- 		interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C2>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		i2c-scl-internal-delay-ns = <6>;
-@@ -622,7 +622,7 @@
- 		reg = <0 0xe6540000 0 0x40>;
- 		interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C3>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		i2c-scl-internal-delay-ns = <6>;
-@@ -634,7 +634,7 @@
- 		reg = <0 0xe6520000 0 0x40>;
- 		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C4>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		i2c-scl-internal-delay-ns = <6>;
-@@ -646,7 +646,7 @@
- 		reg = <0 0xe6528000 0 0x40>;
- 		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C5>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		i2c-scl-internal-delay-ns = <6>;
-@@ -660,7 +660,7 @@
- 		clocks = <&mstp3_clks R8A7794_CLK_IIC0>;
- 		dmas = <&dmac0 0x61>, <&dmac0 0x62>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		status = "disabled";
-@@ -673,7 +673,7 @@
- 		clocks = <&mstp3_clks R8A7794_CLK_IIC1>;
- 		dmas = <&dmac0 0x65>, <&dmac0 0x66>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		status = "disabled";
-@@ -687,7 +687,7 @@
- 		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
- 		       <&dmac1 0xd1>, <&dmac1 0xd2>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		reg-io-width = <4>;
- 		status = "disabled";
- 	};
-@@ -700,7 +700,7 @@
- 		dmas = <&dmac1 0xcd>, <&dmac1 0xce>,
- 		       <&dmac0 0xcd>, <&dmac0 0xce>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -712,7 +712,7 @@
- 		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>,
- 		       <&dmac0 0xc1>, <&dmac0 0xc2>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -724,7 +724,7 @@
- 		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>,
- 		       <&dmac0 0xd3>, <&dmac0 0xd4>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -736,7 +736,7 @@
- 		dmas = <&dmac0 0x17>, <&dmac0 0x18>,
- 		       <&dmac1 0x17>, <&dmac1 0x18>;
- 		dma-names = "tx", "rx", "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		num-cs = <1>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -748,7 +748,7 @@
- 		reg = <0 0xe6ef0000 0 0x1000>;
- 		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7794_CLK_VIN0>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -757,7 +757,7 @@
- 		reg = <0 0xe6ef1000 0 0x1000>;
- 		interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7794_CLK_VIN1>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -768,7 +768,7 @@
- 		      <0 0xee080000 0 0x1100>;
- 		interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_EHCI>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 
- 		bus-range = <0 0>;
-@@ -803,7 +803,7 @@
- 		      <0 0xee0c0000 0 0x1100>;
- 		interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_EHCI>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 
- 		bus-range = <1 1>;
-@@ -836,7 +836,7 @@
- 		reg = <0 0xe6590000 0 0x100>;
- 		interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_HSUSB>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		renesas,buswait = <4>;
- 		phys = <&usb0 1>;
- 		phy-names = "usb";
-@@ -850,7 +850,7 @@
- 		#size-cells = <0>;
- 		clocks = <&mstp7_clks R8A7794_CLK_HSUSB>;
- 		clock-names = "usbhs";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 
- 		usb0: usb-channel@0 {
-@@ -898,7 +898,7 @@
- 		clocks = <&mstp9_clks R8A7794_CLK_RCAN0>,
- 			 <&cpg_clocks R8A7794_CLK_RCAN>, <&can_clk>;
- 		clock-names = "clkp1", "clkp2", "can_clk";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -909,7 +909,7 @@
- 		clocks = <&mstp9_clks R8A7794_CLK_RCAN1>,
- 			 <&cpg_clocks R8A7794_CLK_RCAN>, <&can_clk>;
- 		clock-names = "clkp1", "clkp2", "can_clk";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
+Changes compared to v1 (more details in the individual patches):
+  - Add Acked-by,
+  - Refer to the Generic Serial DT Bindings,
+  - Drop out[12]-gpios,
+  - Reject combining GPIO and dedicated RTS/CTS,
+  - Drop "serial: sh-sci: Replace SCIx_HAVE_RTSCTS by standard
+    UPF_HARD_FLOW",
+  - Add support for hardware-assisted automatic RTS/CTS control on
+    (H)SCIF, SCIFA, and SCIFB.
+
+Dependencies:
+  - The patches apply to next-20160429,
+  - The DT bindings refer to the Generic Serial DT Bindings that were
+    added by "doc: DT: Add Generic Serial Device Tree Bindings", which
+    is in tty-testing.
+
+This was tested on r8a7791/koelsch and r8a7740/armadillo, using UARTs
+and GPIO pins on expansion connectors.
+
+Expected behavior, using GPIO-based RTS/CTS as a reference:
+  - When CRTSCTS is disabled:
+      - Reading from a UART asserts the RTS line,
+      - Writing to a UART asserts the RTS line.
+  - When CRTSCTS is enabled:
+      - Reading from a UART asserts the RTS line,
+      - Writing to a UART asserts the RTS line.
+      - Writing is blocked until CTS is asserted.
+
+Hardware-assisted hardware flow control with HSCIF and SCIFB on
+r8a7791/koelsch behaves as expected when dedicated RTS/CTS modem lines
+are enabled (beware the large transmission FIFOs on SCIFB ;-)
+
+For SCIFA on r8a7740/armadillo, manually overriding (asserting) the RTS
+signal doesn't seem to work. Hence when CRTSCTS is disabled, RTS is
+never asserted. When CRTSCTS is enabled, hardware-assisted RTS/CTS does
+control RTS as expected. As SCIFA on r8a7791 doesn't have dedicated
+RTS/CTS modem lines, I cannot compare.
+
+DT overlays for testing can be found in the topic/renesas-overlays
+branch of
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git.
+
+Regression testing on platforms without DT and/or GPIOLIB support
+(SuperH) would be appreciated.
+Compile-tested on ecovec24_defconfig(GPIOLIB=y) and se7780_defconfig
+(GPIOLIB=n).
+
+Thanks!
+
+Geert Uytterhoeven (11):
+  serial: sh-sci: Update DT binding documentation for GPIO modem lines
+  serial: sh-sci: Update DT binding documentation for dedicated RTS/CTS
+  serial: sh-sci: Always set TIOCM_CTS in .get_mctrl() callback
+  serial: sh-sci: Add support for GPIO-controlled modem lines
+  serial: sh-sci: Do not open-code sci_getreg()
+  serial: sh-sci: Add more Serial Port Register documentation
+  serial: sh-sci: Add more Serial Port Control/Data Register
+    documentation
+  serial: sh-sci: Correct pin initialization on (H)SCIF
+  serial: sh-sci: Add pin initialization for SCIFA/SCIFB
+  serial: sh-sci: Fix support for hardware-assisted RTS/CTS
+  serial: sh-sci: Add DT support for dedicated RTS/CTS
+
+ .../bindings/serial/renesas,sci-serial.txt         |   4 +
+ drivers/tty/serial/Kconfig                         |   1 +
+ drivers/tty/serial/sh-sci.c                        | 177 ++++++++++++++++++---
+ drivers/tty/serial/sh-sci.h                        |  24 ++-
+ 4 files changed, 173 insertions(+), 33 deletions(-)
+
 -- 
 1.9.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
