@@ -1,66 +1,91 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:35886 "EHLO
-	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752388AbcD1VFh (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 28 Apr 2016 17:05:37 -0400
-Received: by mail-lf0-f47.google.com with SMTP id u64so98105659lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 28 Apr 2016 14:05:36 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-	dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 4/4] rcar-du: add R8A7794 TCON support
-Date: Fri, 29 Apr 2016 00:05:33 +0300
-Message-ID: <3056907.Acy0t71QPW@wasted.cogentembedded.com>
-In-Reply-To: <1787748.qAADjKK4gv@wasted.cogentembedded.com>
-References: <1787748.qAADjKK4gv@wasted.cogentembedded.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 29 Apr 2016 11:35:15 +0100
+From: Marc Zyngier <marc.zyngier@arm.com>
+To: Simon Horman <horms@verge.net.au>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>, julien.grall@arm.com,
+	geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: dts: r8a7795: Increase the size of GIC-400
+ mapped registers
+Message-ID: <20160429113515.333c42ef@arm.com>
+In-Reply-To: <20160428234345.GD18128@verge.net.au>
+References: <1461047395-6532-1-git-send-email-dirk.behme@de.bosch.com>
+	<20160427233028.GA5155@verge.net.au>
+	<5721A2A5.9010908@de.bosch.com>
+	<20160428234345.GD18128@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now that we have the TCON encoder driver, we can start enabling TCON support
-for the  R-Car SoCs. We have only tested the code on R8A7794 so far, so  let
-it  be the first supported SoC...
+On Fri, 29 Apr 2016 09:43:45 +1000
+Simon Horman <horms@verge.net.au> wrote:
 
-Based on a large patch by Andrey Gusakov.
+> [Cc Mark Zyngier, linux-arm-kernel]
+> 
+> Hi Dirk,
+> 
+> On Thu, Apr 28, 2016 at 07:41:57AM +0200, Dirk Behme wrote:
+> > Hi Simon,
+> > 
+> > On 28.04.2016 01:30, Simon Horman wrote:
+> > >Hi Dirk,
+> > >
+> > >I understand that there is an issue here but I'm not yet able
+> > >to convince myself that this is the correct solution.
+> > >
+> > >In revision r0p1 of the CoreLink GIC-400 Generic Interrupt Controller
+> > >Technical Reference Manual[1] I see in Section 3.2. "GIC-400 register map"
+> > >that the size of both the CPU interfaces and Virtual CPU interfaces are
+> > >0x2000 bytes. And assuming that the hardware follows the specification it
+> > >appears that DT is correctly describing the hardware.
+> > 
+> > 
+> > I think you are missing the details described by ARM in
+> > 
+> > http://xenbits.xen.org/gitweb/?p=xen.git;a=commit;h=21550029f709072aacf3b9
+> > 
+> > 
+> > Maybe Julien could help if you have some more doubts?
+> 
+> I guess I am confused.
+> 
+> I see that there is now handling of the case where the region size is
+> 128Kbytes. But I'm still not seeing the bit which describes that the
+> GIC-400  has a region size of 128Kbytes. Perhaps the later is somehow
+> implied by the former. Or perhaps I need to check with the hw team.
 
-Signed-off-by: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Please have a look at the SBSA document, and in particular the
+Appendix-F (registration and selling your soul required - only kidding):
 
----
- drivers/gpu/drm/rcar-du/rcar_du_drv.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.den0029/index.html
 
-Index: renesas/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-===================================================================
---- renesas.orig/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ renesas/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -116,9 +116,7 @@ static const struct rcar_du_device_info
- 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
- 	.num_crtcs = 2,
- 	.routes = {
--		/* R8A7794 has two RGB outputs and one (currently unsupported)
--		 * TCON output.
--		 */
-+		/* R8A7794 has two RGB outputs and one TCON output. */
- 		[RCAR_DU_OUTPUT_DPAD0] = {
- 			.possible_crtcs = BIT(0),
- 			.encoder_type = DRM_MODE_ENCODER_NONE,
-@@ -129,8 +127,14 @@ static const struct rcar_du_device_info
- 			.encoder_type = DRM_MODE_ENCODER_NONE,
- 			.port = 1,
- 		},
-+		[RCAR_DU_OUTPUT_TCON] = {
-+			.possible_crtcs = BIT(0),
-+			.encoder_type = DRM_MODE_ENCODER_TCON,
-+			.port = 2,
-+		},
- 	},
- 	.num_lvds = 0,
-+	.num_tcon = 1,
- };
- 
- static const struct rcar_du_device_info rcar_du_r8a7795_info = {
+This requires that, in order for the two halves of GICV to be trappable
+*separately* by a hypervisor using 64kB pages at Stage-2, the two 4kB
+pages that describe that region are aliased as such:
+- the first 4kB page is aliased 16 times over a 64kB region
+- the second 4kB page is aliased 16 times over another contiguous 64kB
+  region
+
+This means that your GIC is indeed covering a 128kB region, with the
+mapping corresponding to the GICv2 memory map located at offset 0xf000
+from the base of that 128kB region. Also, this GICV requirement also
+applies to GICC (most likely because the two regions use the same
+decoding logic).
+
+The OS must of course be aware of this (see gic_check_eoimode in the
+GIC driver). Of course, almost nobody got that right (I only know of
+the APM Xgene-1 so far). If you actually did, great!
+
+Also, the ACPI spec fails to recognize this by not providing the length
+of the region, meaning that those who got it right with DT are likely
+to get it wrong with ACPI, and vice-versa.
+
+It's a wonderful world.
+
+	M.
+-- 
+Jazz is not dead. It just smells funny.
