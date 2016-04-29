@@ -1,55 +1,60 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from michel.telenet-ops.be ([195.130.137.88]:43322 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750752AbcD2HYm (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 29 Apr 2016 03:24:42 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Peter Hurley <peter@hurleysoftware.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 01/11] serial: sh-sci: Update DT binding documentation for GPIO modem lines
-Date: Fri, 29 Apr 2016 14:58:24 +0200
-Message-Id: <1461934714-18681-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
-References: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: Let gpio_chip.to_irq() return -ENXIO on error
+Date: Fri, 29 Apr 2016 09:24:37 +0200
+Message-Id: <1461914677-24899-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Amend the DT bindings for the Renesas SCI driver to allow describing
-optional GPIO-controlled modem lines, which can be used where dedicated
-modem lines are not available.
+Currrently the gpio_chip.to_irq() callback returns -ENOSYS on error,
+which causes bad interactions with the serial_mctrl_gpio helpers.
 
-The property naming is dictated by the Generic Serial DT Bindings.
+mctrl_gpio_init() returns -ENOSYS if GPIOLIB is not enabled, which is
+intended to be ignored by its callers. However, ignoring -ENOSYS when it
+was caused by a gpiod_to_irq() failure will lead to a crash later:
+
+    Unable to handle kernel paging request at virtual address ffffffde
+    ...
+    PC is at mctrl_gpio_set+0x14/0x78
+
+Fix this by returning -ENXIO instead.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
 ---
-v2:
-  - Add Acked-by,
-  - Drop RFC status,
-  - Refer to the Generic Serial DT Bindings,
-  - Drop out[12]-gpios.
----
- Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
- 1 file changed, 2 insertions(+)
+Is -ENXIO the right error code?
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index 528c3b90f23cb04b..997baeaa869baa6f 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -76,6 +76,8 @@ Optional properties:
-   - dmas: Must contain a list of two references to DMA specifiers, one for
- 	  transmission, and one for reception.
-   - dma-names: Must contain a list of two DMA names, "tx" and "rx".
-+  - {cts,dsr,dcd,rng,rts,dtr}-gpios: Specify GPIOs for modem lines, cfr. the
-+    generic serial DT bindings in serial.txt.
+  - Most drivers seem to return -ENXIO on failure, just like
+    gpiod_to_irq() does when no .to_irq() callback is provided by the
+    driver,
+  - Some drivers use -EINVAL,
+  - Drivers that call irq_find_mapping(), irq_create_mapping(), or
+    irq_create_fwspec_mapping() return zero!  This also applies to the
+    core helper gpiochip_to_irq().
+---
+ drivers/pinctrl/sh-pfc/gpio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
+index a6681b8b17c3b30c..2fffb9c32231adb3 100644
+--- a/drivers/pinctrl/sh-pfc/gpio.c
++++ b/drivers/pinctrl/sh-pfc/gpio.c
+@@ -212,7 +212,7 @@ static int gpio_pin_to_irq(struct gpio_chip *gc, unsigned offset)
+ 		}
+ 	}
  
- Example:
- 	aliases {
+-	return -ENOSYS;
++	return -ENXIO;
+ 
+ found:
+ 	return pfc->irqs[i];
 -- 
 1.9.1
