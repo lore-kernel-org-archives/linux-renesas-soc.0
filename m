@@ -1,111 +1,55 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:51182 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751772AbcDZPzo (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Apr 2016 11:55:44 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-mmc@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH V2 3/6] mmc: tmio: remove now unneeded seperate irq handlers
-Date: Tue, 26 Apr 2016 17:55:24 +0200
-Message-Id: <1461686127-3217-4-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1461686127-3217-1-git-send-email-wsa@the-dreams.de>
-References: <1461686127-3217-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Peter Hurley <peter@hurleysoftware.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 01/11] serial: sh-sci: Update DT binding documentation for GPIO modem lines
+Date: Fri, 29 Apr 2016 14:58:24 +0200
+Message-Id: <1461934714-18681-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+References: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Amend the DT bindings for the Renesas SCI driver to allow describing
+optional GPIO-controlled modem lines, which can be used where dedicated
+modem lines are not available.
 
-We removed installation of seperate handlers previously, so we can also
-remove the seperate handlers.
+The property naming is dictated by the Generic Serial DT Bindings.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
 ---
- drivers/mmc/host/tmio_mmc.h     |  3 ---
- drivers/mmc/host/tmio_mmc_pio.c | 31 ++-----------------------------
- 2 files changed, 2 insertions(+), 32 deletions(-)
+v2:
+  - Add Acked-by,
+  - Drop RFC status,
+  - Refer to the Generic Serial DT Bindings,
+  - Drop out[12]-gpios.
+---
+ Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index b1819c74965b47..032188b766defd 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -115,9 +115,6 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host);
- void tmio_mmc_enable_mmc_irqs(struct tmio_mmc_host *host, u32 i);
- void tmio_mmc_disable_mmc_irqs(struct tmio_mmc_host *host, u32 i);
- irqreturn_t tmio_mmc_irq(int irq, void *devid);
--irqreturn_t tmio_mmc_sdcard_irq(int irq, void *devid);
--irqreturn_t tmio_mmc_card_detect_irq(int irq, void *devid);
--irqreturn_t tmio_mmc_sdio_irq(int irq, void *devid);
+diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+index 528c3b90f23cb04b..997baeaa869baa6f 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
++++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+@@ -76,6 +76,8 @@ Optional properties:
+   - dmas: Must contain a list of two references to DMA specifiers, one for
+ 	  transmission, and one for reception.
+   - dma-names: Must contain a list of two DMA names, "tx" and "rx".
++  - {cts,dsr,dcd,rng,rts,dtr}-gpios: Specify GPIOs for modem lines, cfr. the
++    generic serial DT bindings in serial.txt.
  
- static inline char *tmio_mmc_kmap_atomic(struct scatterlist *sg,
- 					 unsigned long *flags)
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 8e2fef7c5e481c..a7250a5fa670c5 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -664,18 +664,6 @@ static bool __tmio_mmc_card_detect_irq(struct tmio_mmc_host *host,
- 	return false;
- }
- 
--irqreturn_t tmio_mmc_card_detect_irq(int irq, void *devid)
--{
--	unsigned int ireg, status;
--	struct tmio_mmc_host *host = devid;
--
--	tmio_mmc_card_irq_status(host, &ireg, &status);
--	__tmio_mmc_card_detect_irq(host, ireg, status);
--
--	return IRQ_HANDLED;
--}
--EXPORT_SYMBOL(tmio_mmc_card_detect_irq);
--
- static bool __tmio_mmc_sdcard_irq(struct tmio_mmc_host *host,
- 				 int ireg, int status)
- {
-@@ -705,19 +693,7 @@ static bool __tmio_mmc_sdcard_irq(struct tmio_mmc_host *host,
- 	return false;
- }
- 
--irqreturn_t tmio_mmc_sdcard_irq(int irq, void *devid)
--{
--	unsigned int ireg, status;
--	struct tmio_mmc_host *host = devid;
--
--	tmio_mmc_card_irq_status(host, &ireg, &status);
--	__tmio_mmc_sdcard_irq(host, ireg, status);
--
--	return IRQ_HANDLED;
--}
--EXPORT_SYMBOL(tmio_mmc_sdcard_irq);
--
--irqreturn_t tmio_mmc_sdio_irq(int irq, void *devid)
-+static void tmio_mmc_sdio_irq(int irq, void *devid)
- {
- 	struct tmio_mmc_host *host = devid;
- 	struct mmc_host *mmc = host->mmc;
-@@ -726,7 +702,7 @@ irqreturn_t tmio_mmc_sdio_irq(int irq, void *devid)
- 	unsigned int sdio_status;
- 
- 	if (!(pdata->flags & TMIO_MMC_SDIO_IRQ))
--		return IRQ_HANDLED;
-+		return;
- 
- 	status = sd_ctrl_read16(host, CTL_SDIO_STATUS);
- 	ireg = status & TMIO_SDIO_MASK_ALL & ~host->sdcard_irq_mask;
-@@ -739,10 +715,7 @@ irqreturn_t tmio_mmc_sdio_irq(int irq, void *devid)
- 
- 	if (mmc->caps & MMC_CAP_SDIO_IRQ && ireg & TMIO_SDIO_STAT_IOIRQ)
- 		mmc_signal_sdio_irq(mmc);
--
--	return IRQ_HANDLED;
- }
--EXPORT_SYMBOL(tmio_mmc_sdio_irq);
- 
- irqreturn_t tmio_mmc_irq(int irq, void *devid)
- {
+ Example:
+ 	aliases {
 -- 
-2.7.0
+1.9.1
