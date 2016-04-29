@@ -1,516 +1,185 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41953 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750973AbcD0EU4 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 00:20:56 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/10] ARM: dts: r8a7794: Use SYSC "always-on" PM Domain
-Date: Wed, 27 Apr 2016 14:20:37 +1000
-Message-Id: <25611e4ef5bb290805305d499715a840826462f3.1461730638.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461730638.git.horms+renesas@verge.net.au>
-References: <cover.1461730638.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Peter Hurley <peter@hurleysoftware.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 10/11] serial: sh-sci: Fix support for hardware-assisted RTS/CTS
+Date: Fri, 29 Apr 2016 14:58:33 +0200
+Message-Id: <1461934714-18681-11-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+References: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The existing support for hardware-assisted RTS/CTS is rudimentary and
+doesn't work.
 
-Hook up all devices that are part of the CPG/MSTP Clock Domain to the
-SYSC "always-on" PM Domain, for a more consistent device-power-area
-description in DT.
+Add support for hardware-assisted RTS/CTS hardware flow control for the
+(H)SCIF, SCIFA, and SCIFB variants.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 106 ++++++++++++++++++++---------------------
- 1 file changed, 53 insertions(+), 53 deletions(-)
+v2:
+  - New.
+---
+ drivers/tty/serial/sh-sci.c | 90 +++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 83 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 70eff80a813e..136911c1dc74 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -86,7 +86,7 @@
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
- 		clocks = <&mstp9_clks R8A7794_CLK_GPIO0>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index b9d027af0f3e71f6..02b240a02dc6a593 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -141,6 +141,8 @@ struct sci_port {
+ 	struct timer_list		rx_timer;
+ 	unsigned int			rx_timeout;
+ #endif
++
++	bool autorts;
+ };
  
- 	gpio1: gpio@e6051000 {
-@@ -99,7 +99,7 @@
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
- 		clocks = <&mstp9_clks R8A7794_CLK_GPIO1>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
+ #define SCI_NPORTS CONFIG_SERIAL_SH_SCI_NR_UARTS
+@@ -1811,6 +1813,46 @@ static unsigned int sci_tx_empty(struct uart_port *port)
+ 	return (status & SCxSR_TEND(port)) && !in_tx_fifo ? TIOCSER_TEMT : 0;
+ }
  
- 	gpio2: gpio@e6052000 {
-@@ -112,7 +112,7 @@
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
- 		clocks = <&mstp9_clks R8A7794_CLK_GPIO2>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
++static void sci_set_rts(struct uart_port *port, bool state)
++{
++	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
++		u16 data = serial_port_in(port, SCPDR);
++
++		/* Active low */
++		if (state)
++			data &= ~SCPDR_RTSD;
++		else
++			data |= SCPDR_RTSD;
++		serial_port_out(port, SCPDR, data);
++
++		/* RTS# is output */
++		serial_port_out(port, SCPCR,
++				serial_port_in(port, SCPCR) | SCPCR_RTSC);
++	} else if (sci_getreg(port, SCSPTR)->size) {
++		u16 ctrl = serial_port_in(port, SCSPTR);
++
++		/* Active low */
++		if (state)
++			ctrl &= ~SCSPTR_RTSDT;
++		else
++			ctrl |= SCSPTR_RTSDT;
++		serial_port_out(port, SCSPTR, ctrl);
++	}
++}
++
++static bool sci_get_cts(struct uart_port *port)
++{
++	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
++		/* Active low */
++		return !(serial_port_in(port, SCPDR) & SCPDR_CTSD);
++	} else if (sci_getreg(port, SCSPTR)->size) {
++		/* Active low */
++		return !(serial_port_in(port, SCSPTR) & SCSPTR_CTSDT);
++	}
++
++	return true;
++}
++
+ /*
+  * Modem control is a bit of a mixed bag for SCI(F) ports. Generally
+  * CTS/RTS is supported in hardware by at least one port and controlled
+@@ -1841,6 +1883,31 @@ static void sci_set_mctrl(struct uart_port *port, unsigned int mctrl)
+ 	}
  
- 	gpio3: gpio@e6053000 {
-@@ -125,7 +125,7 @@
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
- 		clocks = <&mstp9_clks R8A7794_CLK_GPIO3>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
+ 	mctrl_gpio_set(s->gpios, mctrl);
++
++	if (!(s->cfg->capabilities & SCIx_HAVE_RTSCTS))
++		return;
++
++	if (!(mctrl & TIOCM_RTS)) {
++		/* Disable Auto RTS */
++		serial_port_out(port, SCFCR,
++				serial_port_in(port, SCFCR) & ~SCFCR_MCE);
++
++		/* Clear RTS */
++		sci_set_rts(port, 0);
++	} else if (s->autorts) {
++		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
++			/* Enable RTS# pin function */
++			serial_port_out(port, SCPCR,
++				serial_port_in(port, SCPCR) & ~SCPCR_RTSC);
++		}
++
++		/* Enable Auto RTS */
++		serial_port_out(port, SCFCR,
++				serial_port_in(port, SCFCR) | SCFCR_MCE);
++	} else {
++		/* Set RTS */
++		sci_set_rts(port, 1);
++	}
+ }
  
- 	gpio4: gpio@e6054000 {
-@@ -138,7 +138,7 @@
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
- 		clocks = <&mstp9_clks R8A7794_CLK_GPIO4>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
+ static unsigned int sci_get_mctrl(struct uart_port *port)
+@@ -1853,10 +1920,14 @@ static unsigned int sci_get_mctrl(struct uart_port *port)
  
- 	gpio5: gpio@e6055000 {
-@@ -151,7 +151,7 @@
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
- 		clocks = <&mstp9_clks R8A7794_CLK_GPIO5>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
+ 	/*
+ 	 * CTS/RTS is handled in hardware when supported, while nothing
+-	 * else is wired up. Keep it simple and simply assert CTS/DSR/CAR.
++	 * else is wired up.
+ 	 */
+-	if (IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(gpios, UART_GPIO_CTS)))
++	if (s->autorts) {
++		if (sci_get_cts(port))
++			mctrl |= TIOCM_CTS;
++	} else if (IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(gpios, UART_GPIO_CTS))) {
+ 		mctrl |= TIOCM_CTS;
++	}
+ 	if (IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(gpios, UART_GPIO_DSR)))
+ 		mctrl |= TIOCM_DSR;
+ 	if (IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(gpios, UART_GPIO_DCD)))
+@@ -1927,6 +1998,7 @@ static void sci_shutdown(struct uart_port *port)
  
- 	gpio6: gpio@e6055400 {
-@@ -164,7 +164,7 @@
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
- 		clocks = <&mstp9_clks R8A7794_CLK_GPIO6>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
+ 	dev_dbg(port->dev, "%s(%d)\n", __func__, port->line);
  
- 	cmt0: timer@ffca0000 {
-@@ -174,7 +174,7 @@
- 			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7794_CLK_CMT0>;
- 		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
++	s->autorts = false;
+ 	mctrl_gpio_disable_ms(to_sci_port(port)->gpios);
  
- 		renesas,channels-mask = <0x60>;
+ 	spin_lock_irqsave(&port->lock, flags);
+@@ -2248,15 +2320,18 @@ done:
  
-@@ -194,7 +194,7 @@
- 			     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_CMT1>;
- 		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
+ 	sci_init_pins(port, termios->c_cflag);
  
- 		renesas,channels-mask = <0xff>;
++	port->status &= ~UPSTAT_AUTOCTS;
++	s->autorts = false;
+ 	reg = sci_getreg(port, SCFCR);
+ 	if (reg->size) {
+ 		unsigned short ctrl = serial_port_in(port, SCFCR);
  
-@@ -225,7 +225,7 @@
- 			     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp4_clks R8A7794_CLK_IRQC>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 	};
+-		if (s->cfg->capabilities & SCIx_HAVE_RTSCTS) {
+-			if (termios->c_cflag & CRTSCTS)
+-				ctrl |= SCFCR_MCE;
+-			else
+-				ctrl &= ~SCFCR_MCE;
++		if ((port->flags & UPF_HARD_FLOW) &&
++		    (termios->c_cflag & CRTSCTS)) {
++			/* There is no CTS interrupt to restart the hardware */
++			port->status |= UPSTAT_AUTOCTS;
++			/* MCE is enabled when RTS is raised */
++			s->autorts = true;
+ 		}
  
- 	pfc: pin-controller@e6060000 {
-@@ -259,7 +259,7 @@
- 				"ch12", "ch13", "ch14";
- 		clocks = <&mstp2_clks R8A7794_CLK_SYS_DMAC0>;
- 		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
- 	};
-@@ -290,7 +290,7 @@
- 				"ch12", "ch13", "ch14";
- 		clocks = <&mstp2_clks R8A7794_CLK_SYS_DMAC1>;
- 		clock-names = "fck";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
- 	};
-@@ -304,7 +304,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
+ 		/*
+@@ -2958,6 +3033,7 @@ static int sci_probe_single(struct platform_device *dev,
+ 			dev_err(&dev->dev, "Conflicting RTS/CTS config\n");
+ 			return -EINVAL;
+ 		}
++		sciport->port.flags |= UPF_HARD_FLOW;
+ 	}
  
-@@ -317,7 +317,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -330,7 +330,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -343,7 +343,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -356,7 +356,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x1f>, <&dmac0 0x20>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -369,7 +369,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x23>, <&dmac0 0x24>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -382,7 +382,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -395,7 +395,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x19>, <&dmac0 0x1a>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -408,7 +408,7 @@
- 		clock-names = "fck";
- 		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -422,7 +422,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -436,7 +436,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -450,7 +450,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -464,7 +464,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x2f>, <&dmac0 0x30>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -478,7 +478,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -492,7 +492,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -506,7 +506,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -520,7 +520,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -534,7 +534,7 @@
- 		clock-names = "fck", "brg_int", "scif_clk";
- 		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -543,7 +543,7 @@
- 		reg = <0 0xee700000 0 0x400>;
- 		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7794_CLK_ETHER>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		phy-mode = "rmii";
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -556,7 +556,7 @@
- 		reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
- 		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7794_CLK_ETHERAVB>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		status = "disabled";
-@@ -568,7 +568,7 @@
- 		reg = <0 0xe6508000 0 0x40>;
- 		interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C0>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		i2c-scl-internal-delay-ns = <6>;
-@@ -580,7 +580,7 @@
- 		reg = <0 0xe6518000 0 0x40>;
- 		interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C1>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		i2c-scl-internal-delay-ns = <6>;
-@@ -592,7 +592,7 @@
- 		reg = <0 0xe6530000 0 0x40>;
- 		interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C2>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		i2c-scl-internal-delay-ns = <6>;
-@@ -604,7 +604,7 @@
- 		reg = <0 0xe6540000 0 0x40>;
- 		interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C3>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		i2c-scl-internal-delay-ns = <6>;
-@@ -616,7 +616,7 @@
- 		reg = <0 0xe6520000 0 0x40>;
- 		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C4>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		i2c-scl-internal-delay-ns = <6>;
-@@ -628,7 +628,7 @@
- 		reg = <0 0xe6528000 0 0x40>;
- 		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7794_CLK_I2C5>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		i2c-scl-internal-delay-ns = <6>;
-@@ -642,7 +642,7 @@
- 		clocks = <&mstp3_clks R8A7794_CLK_IIC0>;
- 		dmas = <&dmac0 0x61>, <&dmac0 0x62>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		status = "disabled";
-@@ -655,7 +655,7 @@
- 		clocks = <&mstp3_clks R8A7794_CLK_IIC1>;
- 		dmas = <&dmac0 0x65>, <&dmac0 0x66>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		status = "disabled";
-@@ -668,7 +668,7 @@
- 		clocks = <&mstp3_clks R8A7794_CLK_MMCIF0>;
- 		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		reg-io-width = <4>;
- 		status = "disabled";
- 	};
-@@ -678,7 +678,7 @@
- 		reg = <0 0xee100000 0 0x200>;
- 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI0>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -687,7 +687,7 @@
- 		reg = <0 0xee140000 0 0x100>;
- 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI1>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -696,7 +696,7 @@
- 		reg = <0 0xee160000 0 0x100>;
- 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI2>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -707,7 +707,7 @@
- 		clocks = <&mstp9_clks R8A7794_CLK_QSPI_MOD>;
- 		dmas = <&dmac0 0x17>, <&dmac0 0x18>;
- 		dma-names = "tx", "rx";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		num-cs = <1>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -719,7 +719,7 @@
- 		reg = <0 0xe6ef0000 0 0x1000>;
- 		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7794_CLK_VIN0>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -728,7 +728,7 @@
- 		reg = <0 0xe6ef1000 0 0x1000>;
- 		interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp8_clks R8A7794_CLK_VIN1>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -739,7 +739,7 @@
- 		      <0 0xee080000 0 0x1100>;
- 		interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_EHCI>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 
- 		bus-range = <0 0>;
-@@ -774,7 +774,7 @@
- 		      <0 0xee0c0000 0 0x1100>;
- 		interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_EHCI>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 
- 		bus-range = <1 1>;
-@@ -807,7 +807,7 @@
- 		reg = <0 0xe6590000 0 0x100>;
- 		interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp7_clks R8A7794_CLK_HSUSB>;
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		renesas,buswait = <4>;
- 		phys = <&usb0 1>;
- 		phy-names = "usb";
-@@ -821,7 +821,7 @@
- 		#size-cells = <0>;
- 		clocks = <&mstp7_clks R8A7794_CLK_HSUSB>;
- 		clock-names = "usbhs";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 
- 		usb0: usb-channel@0 {
-@@ -869,7 +869,7 @@
- 		clocks = <&mstp9_clks R8A7794_CLK_RCAN0>,
- 			 <&cpg_clocks R8A7794_CLK_RCAN>, <&can_clk>;
- 		clock-names = "clkp1", "clkp2", "can_clk";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
-@@ -880,7 +880,7 @@
- 		clocks = <&mstp9_clks R8A7794_CLK_RCAN1>,
- 			 <&cpg_clocks R8A7794_CLK_RCAN>, <&can_clk>;
- 		clock-names = "clkp1", "clkp2", "can_clk";
--		power-domains = <&cpg_clocks>;
-+		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
- 
+ 	ret = uart_add_one_port(&sci_uart_driver, &sciport->port);
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
