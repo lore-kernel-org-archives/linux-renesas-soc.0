@@ -1,91 +1,83 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v6 06/12] ARM: dts: r8a7793: Add SYSC PM Domains
-Date: Fri, 22 Apr 2016 11:07:28 +0200
-Message-Id: <1461316054-27999-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1461316054-27999-1-git-send-email-geert+renesas@glider.be>
-References: <1461316054-27999-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v3 0/2] phy: rcar-gen2, rcar-gen3-usb2: add fallback
+ binding
+To: Simon Horman <horms@verge.net.au>
+References: <1457315921-30217-1-git-send-email-horms+renesas@verge.net.au>
+ <20160325020948.GB31681@verge.net.au> <57062CB8.10101@ti.com>
+CC: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	<linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <57231B19.1050902@ti.com>
+Date: Fri, 29 Apr 2016 13:58:09 +0530
+MIME-Version: 1.0
+In-Reply-To: <57062CB8.10101@ti.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the System Controller.
-Hook up the first Cortex-A15 CPU core and the Cortex-A15 L2 cache/SCU to
-their respective PM Domains.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-v6:
-  - Add Acked-by,
 
-v5:
-  - Remove "power-domains" property again from the sysc node, as the
-    System Controller itself is not part of the Clock Domain,
+On Thursday 07 April 2016 03:17 PM, Kishon Vijay Abraham I wrote:
+> Hi,
+> 
+> On Friday 25 March 2016 07:39 AM, Simon Horman wrote:
+>> On Mon, Mar 07, 2016 at 10:58:39AM +0900, Simon Horman wrote:
+>>> Add fallback compatibility strings for rcar phy drivers.
+>>>
+>>> In the case of Renesas R-Car hardware we know that there are generations of
+>>> SoCs, e.g. Gen 2 and Gen 3. But beyond that its not clear what the
+>>> relationship between IP blocks might be. For example, I believe that
+>>> r8a7790 is older than r8a7791 but that doesn't imply that the latter is a
+>>> descendant of the former or vice versa.
+>>>
+>>> We can, however, by examining the documentation and behaviour of the
+>>> hardware at run-time observe that the current driver implementation appears
+>>> to be compatible with the IP blocks on SoCs within a given generation.
+>>>
+>>> For the above reasons and convenience when enabling new SoCs a
+>>> per-generation fallback compatibility string scheme being adopted for
+>>> drivers for Renesas SoCs.
+>>
+>> Hi Kishon,
+>>
+>> I am wondering if you could consider applying this series.
+> 
+> This doesn't appear to be a fix. So will be queuing this for the next merge window.
 
-v4:
-  - Add "power-domains" property to the sysc node, to refer to the SoC's
-    Clock Domain,
+merged, thanks.
 
-v3:
-  - Drop power area hiearchy from DT,
-  - Switch to "#power-domain-cells = <1>",
-  - Drop fallback compatibility strings,
+-Kishon
 
-v2:
-  - Change one-line summary prefix to match current arm-soc practices,
-  - Update compatible values.
----
- arch/arm/boot/dts/r8a7793.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 6186179fd66db6b2..53e235e3279d08c1 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -11,6 +11,7 @@
- #include <dt-bindings/clock/r8a7793-clock.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/power/r8a7793-sysc.h>
- 
- / {
- 	compatible = "renesas,r8a7793";
-@@ -43,6 +44,7 @@
- 			voltage-tolerance = <1>; /* 1% */
- 			clocks = <&cpg_clocks R8A7793_CLK_Z>;
- 			clock-latency = <300000>; /* 300 us */
-+			power-domains = <&sysc R8A7793_PD_CA15_CPU0>;
- 
- 			/* kHz - uV - OPPs unknown yet */
- 			operating-points = <1500000 1000000>,
-@@ -76,6 +78,7 @@
- 
- 	L2_CA15: cache-controller@0 {
- 		compatible = "cache";
-+		power-domains = <&sysc R8A7793_PD_CA15_SCU>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
-@@ -1223,6 +1226,12 @@
- 		};
- 	};
- 
-+	sysc: system-controller@e6180000 {
-+		compatible = "renesas,r8a7793-sysc";
-+		reg = <0 0xe6180000 0 0x0200>;
-+		#power-domain-cells = <1>;
-+	};
-+
- 	ipmmu_sy0: mmu@e6280000 {
- 		compatible = "renesas,ipmmu-r8a7793", "renesas,ipmmu-vmsa";
- 		reg = <0 0xe6280000 0 0x1000>;
--- 
-1.9.1
-
+> 
+> Thanks
+> Kishon
+> 
+>>
+>> Thanks!
+>>
+>>>
+>>> Changes in v3:
+>>> * Added Acks
+>>> * Corrected whitespace in examples
+>>>
+>>> Changes in v2:
+>>> * Update new compatibility strings to match the preferred scheme for
+>>>   ordering elements
+>>> * Rebase
+>>>
+>>> Simon Horman (2):
+>>>   phy: rcar-gen2: add fallback binding
+>>>   phy: rcar-gen3-usb2: add fallback binding
+>>>
+>>>  Documentation/devicetree/bindings/phy/rcar-gen2-phy.txt      |  8 +++++++-
+>>>  Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 10 ++++++++--
+>>>  drivers/phy/phy-rcar-gen2.c                                  |  1 +
+>>>  drivers/phy/phy-rcar-gen3-usb2.c                             |  1 +
+>>>  4 files changed, 17 insertions(+), 3 deletions(-)
+>>>
+>>> -- 
+>>> 2.1.4
+>>>
