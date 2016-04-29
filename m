@@ -1,65 +1,107 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41626 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750777AbcD0EGt (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 00:06:49 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v4.7
-Date: Wed, 27 Apr 2016 14:06:43 +1000
-Message-Id: <cover.1461723181.git.horms+renesas@verge.net.au>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <572384E9.9060707@hurleysoftware.com>
+References: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+	<1461934714-18681-9-git-send-email-geert+renesas@glider.be>
+	<572384E9.9060707@hurleysoftware.com>
+Date: Fri, 29 Apr 2016 22:00:04 +0200
+Message-ID: <CAMuHMdWdWfGOa5iK7pFLuQUv14Yp6Oi8jhsHoSfrLDARfwCfQA@mail.gmail.com>
+Subject: Re: [PATCH v2 08/11] serial: sh-sci: Correct pin initialization on (H)SCIF
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Peter Hurley <peter@hurleysoftware.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-sh list <linux-sh@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Hi Peter,
 
-Please consider these second round of Renesas ARM64 based SoC DT updates for v4.7.
+On Fri, Apr 29, 2016 at 5:59 PM, Peter Hurley <peter@hurleysoftware.com> wrote:
+> On 04/29/2016 05:58 AM, Geert Uytterhoeven wrote:
+>> Correct pin initialization on (H)SCIF:
+>>   - RTS must be deasserted (it's active low),
+>>   - SCK must be an input, as it may be used as the optional external
+>>     clock input.
+>>
+>> Initial pin configuration must always be done:
+>>   - Regardless of the presence of dedicated RTS and CTS pins: if the
+>>     register exists, the RTS/CTS bits exist, too,
+>>   - Regardless of hardware flow control being enabled or not: RTS must
+>>     be deasserted.
+>
+> This is always setting RTS active; why?
 
-This pull request is based on the previous round of
-such requests, tagged as renesas-arm64-dt-for-v4.7,
-which I have already sent a pull-request for.
+No, it deasserts RTS. RTS is active-low, so setting the pin state to 1/high
+(setting the SCSPTR_RTSDT bit), makes RTS inactive.
 
+Before, the code didn't set the SCSPTR_RTSDT bit, so the pin might have
+been low, i.e. RTS may have been active.
 
-The following changes since commit 81ae0ac31bb90baef10850fdfdc2a9f72f36aa6f:
+> Normally you want to program RTS only in response to ->set_mctrl()
+> from serial core.  For example, this will set RTS active even though
+> baud might be set to B0.
 
-  arm64: dts: r8a7795: Use USB3.0 fallback compatibility string (2016-03-28 08:52:47 +0900)
+Yes, that's also my understanding.
 
-are available in the git repository at:
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> v2:
+>>   - New.
+>> ---
+>>  drivers/tty/serial/sh-sci.c | 23 ++++++++---------------
+>>  1 file changed, 8 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+>> index ce7bd165929ea078..c46999f20917964e 100644
+>> --- a/drivers/tty/serial/sh-sci.c
+>> +++ b/drivers/tty/serial/sh-sci.c
+>> @@ -712,21 +712,14 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
+>>               return;
+>>       }
+>>
+>> -     /*
+>> -      * For the generic path SCSPTR is necessary. Bail out if that's
+>> -      * unavailable, too.
+>> -      */
+>> -     if (!sci_getreg(port, SCSPTR)->size)
+>> -             return;
+>> -
+>> -     if ((s->cfg->capabilities & SCIx_HAVE_RTSCTS) &&
+>> -         ((!(cflag & CRTSCTS)))) {
+>> -             unsigned short status;
+>> -
+>> -             status = serial_port_in(port, SCSPTR);
+>> -             status &= ~SCSPTR_CTSIO;
+>> -             status |= SCSPTR_RTSIO;
+>> -             serial_port_out(port, SCSPTR, status); /* Set RTS = 1 */
+>> +     if (sci_getreg(port, SCSPTR)->size) {
+>> +             u16 status = serial_port_in(port, SCSPTR);
+>> +
+>> +             /* RTS# is output, driven 1 */
+>> +             status |= SCSPTR_RTSIO | SCSPTR_RTSDT;
+>> +             /* CTS# and SCK are inputs */
+>> +             status &= ~(SCSPTR_CTSIO | SCSPTR_SCKIO);
+>> +             serial_port_out(port, SCSPTR, status);
+>>       }
+>>  }
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt2-for-v4.7
+Gr{oetje,eeting}s,
 
-for you to fetch changes up to 9f33a8a9e1b7dbb0b91a58af958d1c301a6fab1a:
+                        Geert
 
-  arm64: dts: r8a7795: Don't disable referenced optional clocks (2016-04-27 11:48:34 +1000)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-----------------------------------------------------------------
-Second Round of Renesas ARM64 Based SoC DT Updates for v4.7
-
-* Don't disable referenced optional clocks in DT of r8a7795 SoC
-* Populate EXTALR in DT of salvator-x board
-* Enable PCIe in DT of salvator-x board
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      arm64: dts: r8a7795: Don't disable referenced optional clocks
-
-Phil Edworthy (2):
-      arm64: dts: r8a7795: Add PCIe nodes
-      arm64: dts: r8a7795: enable PCIe on Salvator-X
-
-Wolfram Sang (1):
-      arm64: dts: salvator-x: populate EXTALR
-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 17 +++++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 58 +++++++++++++++++++++-
- 2 files changed, 73 insertions(+), 2 deletions(-)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
