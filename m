@@ -1,33 +1,68 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f175.google.com ([209.85.192.175]:34254 "EHLO
-	mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753522AbcD2Pjs (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 29 Apr 2016 11:39:48 -0400
-Received: by mail-pf0-f175.google.com with SMTP id y69so49471500pfb.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Apr 2016 08:39:48 -0700 (PDT)
-Subject: Re: [PATCH v2 05/11] serial: sh-sci: Do not open-code sci_getreg()
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
- <1461934714-18681-6-git-send-email-geert+renesas@glider.be>
-Cc: Jiri Slaby <jslaby@suse.com>, Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Peter Hurley <peter@hurleysoftware.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Yoshinori Sato <ysato@users.sourceforge.jp>,
 	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Peter Hurley <peter@hurleysoftware.com>
-Message-ID: <5723803A.8090508@hurleysoftware.com>
-Date: Fri, 29 Apr 2016 08:39:38 -0700
-MIME-Version: 1.0
-In-Reply-To: <1461934714-18681-6-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 05/11] serial: sh-sci: Do not open-code sci_getreg()
+Date: Fri, 29 Apr 2016 14:58:28 +0200
+Message-Id: <1461934714-18681-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+References: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 04/29/2016 05:58 AM, Geert Uytterhoeven wrote:
-> Replace open-coded variants of sci_getreg() by function calls, and drop
-> intermediate variables where appropriate.
+Replace open-coded variants of sci_getreg() by function calls, and drop
+intermediate variables where appropriate.
 
-Reviewed-by: Peter Hurley <peter@hurleysoftware.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - New.
+---
+ drivers/tty/serial/sh-sci.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index bf3780a7f700cad8..ce7bd165929ea078 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -703,7 +703,6 @@ static void sci_poll_put_char(struct uart_port *port, unsigned char c)
+ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
+ {
+ 	struct sci_port *s = to_sci_port(port);
+-	const struct plat_sci_reg *reg = sci_regmap[s->cfg->regtype] + SCSPTR;
+ 
+ 	/*
+ 	 * Use port-specific handler if provided.
+@@ -717,7 +716,7 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
+ 	 * For the generic path SCSPTR is necessary. Bail out if that's
+ 	 * unavailable, too.
+ 	 */
+-	if (!reg->size)
++	if (!sci_getreg(port, SCSPTR)->size)
+ 		return;
+ 
+ 	if ((s->cfg->capabilities & SCIx_HAVE_RTSCTS) &&
+@@ -1866,12 +1865,10 @@ static void sci_enable_ms(struct uart_port *port)
+ 
+ static void sci_break_ctl(struct uart_port *port, int break_state)
+ {
+-	struct sci_port *s = to_sci_port(port);
+-	const struct plat_sci_reg *reg = sci_regmap[s->cfg->regtype] + SCSPTR;
+ 	unsigned short scscr, scsptr;
+ 
+ 	/* check wheter the port has SCSPTR */
+-	if (!reg->size) {
++	if (!sci_getreg(port, SCSPTR)->size) {
+ 		/*
+ 		 * Not supported by hardware. Most parts couple break and rx
+ 		 * interrupts together, with break detection always enabled.
+-- 
+1.9.1
