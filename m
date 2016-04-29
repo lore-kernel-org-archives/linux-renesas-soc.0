@@ -1,35 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f182.google.com ([209.85.192.182]:34585 "EHLO
-	mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753391AbcD2PlO (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:36088 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753861AbcD2M6w (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 29 Apr 2016 11:41:14 -0400
-Received: by mail-pf0-f182.google.com with SMTP id y69so49486488pfb.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Apr 2016 08:41:14 -0700 (PDT)
-Subject: Re: [PATCH v2 06/11] serial: sh-sci: Add more Serial Port Register
- documentation
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
- <1461934714-18681-7-git-send-email-geert+renesas@glider.be>
-Cc: Jiri Slaby <jslaby@suse.com>, Magnus Damm <magnus.damm@gmail.com>,
+	Fri, 29 Apr 2016 08:58:52 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Peter Hurley <peter@hurleysoftware.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Yoshinori Sato <ysato@users.sourceforge.jp>,
 	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Peter Hurley <peter@hurleysoftware.com>
-Message-ID: <57238096.6000802@hurleysoftware.com>
-Date: Fri, 29 Apr 2016 08:41:10 -0700
-MIME-Version: 1.0
-In-Reply-To: <1461934714-18681-7-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 06/11] serial: sh-sci: Add more Serial Port Register documentation
+Date: Fri, 29 Apr 2016 14:58:29 +0200
+Message-Id: <1461934714-18681-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+References: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 04/29/2016 05:58 AM, Geert Uytterhoeven wrote:
-> Improve documentation for the (H)SCIF Serial Port Register:
->   - Make it clear the RTS and CTS lines are active-low,
->   - Document the bits related to the serial port's clock pin.
+Improve documentation for the (H)SCIF Serial Port Register:
+  - Make it clear the RTS and CTS lines are active-low,
+  - Document the bits related to the serial port's clock pin.
 
-Reviewed-by: Peter Hurley <peter@hurleysoftware.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - New.
+---
+ drivers/tty/serial/sh-sci.h | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
+index 7a4fa185b93ef307..85a2b81ba0a845e5 100644
+--- a/drivers/tty/serial/sh-sci.h
++++ b/drivers/tty/serial/sh-sci.h
+@@ -108,10 +108,12 @@ enum {
+ #define SCLSR_ORER	BIT(0)	/* Overrun Error */
+ 
+ /* SCSPTR (Serial Port Register), optional */
+-#define SCSPTR_RTSIO	BIT(7)	/* Serial Port RTS Pin Input/Output */
+-#define SCSPTR_RTSDT	BIT(6)	/* Serial Port RTS Pin Data */
+-#define SCSPTR_CTSIO	BIT(5)	/* Serial Port CTS Pin Input/Output */
+-#define SCSPTR_CTSDT	BIT(4)	/* Serial Port CTS Pin Data */
++#define SCSPTR_RTSIO	BIT(7)	/* Serial Port RTS# Pin Input/Output */
++#define SCSPTR_RTSDT	BIT(6)	/* Serial Port RTS# Pin Data */
++#define SCSPTR_CTSIO	BIT(5)	/* Serial Port CTS# Pin Input/Output */
++#define SCSPTR_CTSDT	BIT(4)	/* Serial Port CTS# Pin Data */
++#define SCSPTR_SCKIO	BIT(3)	/* Serial Port Clock Pin Input/Output */
++#define SCSPTR_SCKDT	BIT(2)	/* Serial Port Clock Pin Data */
+ #define SCSPTR_SPB2IO	BIT(1)	/* Serial Port Break Input/Output */
+ #define SCSPTR_SPB2DT	BIT(0)	/* Serial Port Break Data */
+ 
+-- 
+1.9.1
