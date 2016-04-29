@@ -1,41 +1,31 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Gustavo Padovan <gustavo@padovan.org>
-To: dri-devel@lists.freedesktop.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	David Airlie <airlied@linux.ie>,
-	linux-renesas-soc@vger.kernel.org (open list:DRM DRIVERS FOR RENESAS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 10/14] drm/shmobile: use drm_crtc_send_vblank_event()
-Date: Thu, 14 Apr 2016 10:48:21 -0700
-Message-Id: <1460656118-16766-10-git-send-email-gustavo@padovan.org>
-In-Reply-To: <1460656118-16766-1-git-send-email-gustavo@padovan.org>
-References: <1460656118-16766-1-git-send-email-gustavo@padovan.org>
+Subject: Re: [PATCH v2 07/11] serial: sh-sci: Add more Serial Port
+ Control/Data Register documentation
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+ <1461934714-18681-8-git-send-email-geert+renesas@glider.be>
+Cc: Jiri Slaby <jslaby@suse.com>, Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Peter Hurley <peter@hurleysoftware.com>
+Message-ID: <572380D7.5040709@hurleysoftware.com>
+Date: Fri, 29 Apr 2016 08:42:15 -0700
+MIME-Version: 1.0
+In-Reply-To: <1461934714-18681-8-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+On 04/29/2016 05:58 AM, Geert Uytterhoeven wrote:
+> Improve documentation for the SCIFA/SCIFB Serial Port Control and Data
+> Registers:
+>   - State clearly that the RTS and CTS lines are active-low,
+>   - Document the bits related to the serial port's SCK, RXD, and TXD
+>     pins.
 
-Replace the legacy drm_send_vblank_event() with the new helper function.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/shmobile/shmob_drm_crtc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-index 88643ab..1e154fc 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-@@ -440,7 +440,7 @@ void shmob_drm_crtc_finish_page_flip(struct shmob_drm_crtc *scrtc)
- 	event = scrtc->event;
- 	scrtc->event = NULL;
- 	if (event) {
--		drm_send_vblank_event(dev, 0, event);
-+		drm_crtc_send_vblank_event(&scrtc->crtc, event);
- 		drm_vblank_put(dev, 0);
- 	}
- 	spin_unlock_irqrestore(&dev->event_lock, flags);
--- 
-2.5.5
+Reviewed-by: Peter Hurley <peter@hurleysoftware.com>
