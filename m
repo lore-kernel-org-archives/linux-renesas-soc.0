@@ -1,104 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:47473 "EHLO
-	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751571AbcD1M2x (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:32968 "EHLO
+	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751657AbcD2JNa (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 28 Apr 2016 08:28:53 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: mkl@pengutronix.de, wg@grandegger.com, socketcan@hartkopp.net,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	chris.paterson2@renesas.com,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 2/2] can: rcar_can: Move Renesas CAN driver to rcar dir
-Date: Thu, 28 Apr 2016 13:23:08 +0100
-Message-Id: <1461846188-31249-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1461846188-31249-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456824849-7987-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <1461846188-31249-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+	Fri, 29 Apr 2016 05:13:30 -0400
+Received: by mail-wm0-f66.google.com with SMTP id r12so3486305wme.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Apr 2016 02:13:29 -0700 (PDT)
+Date: Fri, 29 Apr 2016 11:13:23 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	laurent.pinchart@ideasonboard.com
+Subject: Re: [PATCH 1/4] drm_mode: add TCON encoder/connector
+Message-ID: <20160429083529.GA14148@phenom.ffwll.local>
+References: <1787748.qAADjKK4gv@wasted.cogentembedded.com>
+ <19760070.fVPA1G30uu@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19760070.fVPA1G30uu@wasted.cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch clubs the Renesas controller drivers in one rcar dir.
+On Fri, Apr 29, 2016 at 12:02:15AM +0300, Sergei Shtylyov wrote:
+> TCON (Timing  Controller) usually means  a chip that drives a LCD panel.
+> In  our case, such controller  is a part of the Renesas R-Car SoCs. Add
+> the TCON encoder/connector #define's  to be used by the TCON support code
+> in the Renesas R-Car Display Unit (DU) driver.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+>  include/uapi/drm/drm_mode.h |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> Index: linux/include/uapi/drm/drm_mode.h
+> ===================================================================
+> --- linux.orig/include/uapi/drm/drm_mode.h
+> +++ linux/include/uapi/drm/drm_mode.h
+> @@ -202,6 +202,7 @@ struct drm_mode_get_plane_res {
+>  #define DRM_MODE_ENCODER_VIRTUAL 5
+>  #define DRM_MODE_ENCODER_DSI	6
+>  #define DRM_MODE_ENCODER_DPMST	7
+> +#define DRM_MODE_ENCODER_TCON	8
+>  
+>  struct drm_mode_get_encoder {
+>  	__u32 encoder_id;
+> @@ -241,6 +242,7 @@ struct drm_mode_get_encoder {
+>  #define DRM_MODE_CONNECTOR_eDP		14
+>  #define DRM_MODE_CONNECTOR_VIRTUAL      15
+>  #define DRM_MODE_CONNECTOR_DSI		16
+> +#define DRM_MODE_CONNECTOR_TCON		17
+>  
+>  struct drm_mode_get_connector {
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- drivers/net/can/Kconfig               | 10 ----------
- drivers/net/can/Makefile              |  1 -
- drivers/net/can/rcar/Kconfig          | 10 ++++++++++
- drivers/net/can/rcar/Makefile         |  3 ++-
- drivers/net/can/{ => rcar}/rcar_can.c |  0
- 5 files changed, 12 insertions(+), 12 deletions(-)
- rename drivers/net/can/{ => rcar}/rcar_can.c (100%)
+The trouble with adding more here is that everytime you do this all the
+userspace needs to be extended to print something reasonable for this type
+of connector. For external connectors that makes sense (since users need
+to know whether it's the hdmi or DP plug), but for internal panels I'd
+honestly just go with lvds for anything that's not a more complex standard
+like eDP or DSI.
 
-diff --git a/drivers/net/can/Kconfig b/drivers/net/can/Kconfig
-index 13003a9..22570ea 100644
---- a/drivers/net/can/Kconfig
-+++ b/drivers/net/can/Kconfig
-@@ -104,16 +104,6 @@ config CAN_JANZ_ICAN3
- 	  This driver can also be built as a module. If so, the module will be
- 	  called janz-ican3.ko.
- 
--config CAN_RCAR
--	tristate "Renesas R-Car CAN controller"
--	depends on ARCH_RENESAS || ARM
--	---help---
--	  Say Y here if you want to use CAN controller found on Renesas R-Car
--	  SoCs.
--
--	  To compile this driver as a module, choose M here: the module will
--	  be called rcar_can.
--
- config CAN_SUN4I
- 	tristate "Allwinner A10 CAN controller"
- 	depends on MACH_SUN4I || MACH_SUN7I || COMPILE_TEST
-diff --git a/drivers/net/can/Makefile b/drivers/net/can/Makefile
-index 226d5b5..26ba4b7 100644
---- a/drivers/net/can/Makefile
-+++ b/drivers/net/can/Makefile
-@@ -25,7 +25,6 @@ obj-$(CONFIG_CAN_IFI_CANFD)	+= ifi_canfd/
- obj-$(CONFIG_CAN_JANZ_ICAN3)	+= janz-ican3.o
- obj-$(CONFIG_CAN_MSCAN)		+= mscan/
- obj-$(CONFIG_CAN_M_CAN)		+= m_can/
--obj-$(CONFIG_CAN_RCAR)		+= rcar_can.o
- obj-$(CONFIG_CAN_SJA1000)	+= sja1000/
- obj-$(CONFIG_CAN_SUN4I)		+= sun4i_can.o
- obj-$(CONFIG_CAN_TI_HECC)	+= ti_hecc.o
-diff --git a/drivers/net/can/rcar/Kconfig b/drivers/net/can/rcar/Kconfig
-index 6ea64d1..7b03a3a 100644
---- a/drivers/net/can/rcar/Kconfig
-+++ b/drivers/net/can/rcar/Kconfig
-@@ -1,3 +1,13 @@
-+config CAN_RCAR
-+	tristate "Renesas R-Car CAN controller"
-+	depends on ARCH_RENESAS || ARM
-+	---help---
-+	  Say Y here if you want to use CAN controller found on Renesas R-Car
-+	  SoCs.
-+
-+	  To compile this driver as a module, choose M here: the module will
-+	  be called rcar_can.
-+
- config CAN_RCAR_CANFD
- 	tristate "Renesas R-Car CAN FD controller"
- 	depends on ARCH_RENESAS || ARM
-diff --git a/drivers/net/can/rcar/Makefile b/drivers/net/can/rcar/Makefile
-index cbaf498e..08de36a 100644
---- a/drivers/net/can/rcar/Makefile
-+++ b/drivers/net/can/rcar/Makefile
-@@ -1,5 +1,6 @@
- #
--#  Makefile for the Renesas R-Car CAN FD controller driver
-+#  Makefile for the Renesas R-Car CAN & CAN FD controller drivers
- #
- 
-+obj-$(CONFIG_CAN_RCAR)		+= rcar_can.o
- obj-$(CONFIG_CAN_RCAR_CANFD)	+= rcar_canfd.o
-diff --git a/drivers/net/can/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
-similarity index 100%
-rename from drivers/net/can/rcar_can.c
-rename to drivers/net/can/rcar/rcar_can.c
+Just my 2 cents really, not strong opinion, and we'll not run out of
+connector type numbers anytime soon ;-)
+-Daniel
 -- 
-1.9.1
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
