@@ -1,83 +1,63 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41953 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750988AbcD0EUt (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Apr 2016 00:20:49 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 05/10] ARM: dts: r8a7794: Add SYSC PM Domains
-Date: Wed, 27 Apr 2016 14:20:32 +1000
-Message-Id: <0761ff2ad0c581f37067eff8c4bde65f07029fc8.1461730638.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1461730638.git.horms+renesas@verge.net.au>
-References: <cover.1461730638.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Peter Hurley <peter@hurleysoftware.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 09/11] serial: sh-sci: Add pin initialization for SCIFA/SCIFB
+Date: Fri, 29 Apr 2016 14:58:32 +0200
+Message-Id: <1461934714-18681-10-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+References: <1461934714-18681-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Before, the driver relied on initialization by the boot loader, or by
+implicit reset state.
 
-Add a device node for the System Controller.
-Hook up the Cortex-A7 CPU cores and the Cortex-A7 L2 cache/SCU to their
-respective PM Domains.
+Note that unlike on (H)SCIF, the RTS/CTS bits exist only if dedicated
+RTS/CTS pins are available, which depends on the SoC and UART instance.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+v2:
+  - New.
+---
+ drivers/tty/serial/sh-sci.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index b0bce43779f1..70eff80a813e 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -12,6 +12,7 @@
- #include <dt-bindings/clock/r8a7794-clock.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/power/r8a7794-sysc.h>
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index c46999f20917964e..b9d027af0f3e71f6 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -712,7 +712,21 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
+ 		return;
+ 	}
  
- / {
- 	compatible = "renesas,r8a7794";
-@@ -42,6 +43,7 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <0>;
- 			clock-frequency = <1000000000>;
-+			power-domains = <&sysc R8A7794_PD_CA7_CPU0>;
- 			next-level-cache = <&L2_CA7>;
- 		};
- 
-@@ -50,12 +52,14 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <1>;
- 			clock-frequency = <1000000000>;
-+			power-domains = <&sysc R8A7794_PD_CA7_CPU1>;
- 			next-level-cache = <&L2_CA7>;
- 		};
- 	};
- 
- 	L2_CA7: cache-controller@1 {
- 		compatible = "cache";
-+		power-domains = <&sysc R8A7794_PD_CA7_SCU>;
- 		cache-unified;
- 		cache-level = <2>;
- 	};
-@@ -1215,6 +1219,12 @@
- 		};
- 	};
- 
-+	sysc: system-controller@e6180000 {
-+		compatible = "renesas,r8a7794-sysc";
-+		reg = <0 0xe6180000 0 0x0200>;
-+		#power-domain-cells = <1>;
-+	};
+-	if (sci_getreg(port, SCSPTR)->size) {
++	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
++		u16 ctrl = serial_port_in(port, SCPCR);
 +
- 	ipmmu_sy0: mmu@e6280000 {
- 		compatible = "renesas,ipmmu-r8a7794", "renesas,ipmmu-vmsa";
- 		reg = <0 0xe6280000 0 0x1000>;
++		/* Enable RXD and TXD pin functions */
++		ctrl &= ~(SCPCR_RXDC | SCPCR_TXDC);
++		if (to_sci_port(port)->cfg->capabilities & SCIx_HAVE_RTSCTS) {
++			/* RTS# is output, driven 1 */
++			ctrl |= SCPCR_RTSC;
++			serial_port_out(port, SCPDR,
++				serial_port_in(port, SCPDR) | SCPDR_RTSD);
++			/* Enable CTS# pin function */
++			ctrl &= ~SCPCR_CTSC;
++		}
++		serial_port_out(port, SCPCR, ctrl);
++	} else if (sci_getreg(port, SCSPTR)->size) {
+ 		u16 status = serial_port_in(port, SCSPTR);
+ 
+ 		/* RTS# is output, driven 1 */
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
