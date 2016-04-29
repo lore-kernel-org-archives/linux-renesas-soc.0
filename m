@@ -1,20 +1,17 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v2] phy: rcar-gen3-usb2, rcar-gen2: Use ARCH_RENESAS
-To: Simon Horman <horms@verge.net.au>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1457313264-18476-1-git-send-email-horms+renesas@verge.net.au>
- <CAMuHMdXqvp4+uQzLCPpj7r29bM0__O1j5-aQ_uQ9u0-XSrC3Rw@mail.gmail.com>
- <20160325021207.GC31681@verge.net.au>
-CC: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+Subject: Re: [PATCH 0/3] phy: rcar-gen3-usb2: add vbus-supply and extcon
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+References: <1456999746-2800-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-renesas-soc@vger.kernel.org>
 From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <57231B7C.9060307@ti.com>
-Date: Fri, 29 Apr 2016 13:59:48 +0530
+Message-ID: <572320F7.7090201@ti.com>
+Date: Fri, 29 Apr 2016 14:23:11 +0530
 MIME-Version: 1.0
-In-Reply-To: <20160325021207.GC31681@verge.net.au>
+In-Reply-To: <1456999746-2800-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -22,30 +19,29 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
 
-On Friday 25 March 2016 07:42 AM, Simon Horman wrote:
-> On Mon, Mar 07, 2016 at 09:01:48AM +0100, Geert Uytterhoeven wrote:
->> On Mon, Mar 7, 2016 at 2:14 AM, Simon Horman <horms+renesas@verge.net.au> wrote:
->>> Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
->>> A now redundant dependency on OF is also dropped.
->>>
->>> This is part of an ongoing process to migrate from ARCH_SHMOBILE to
->>> ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
->>> appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
->>>
->>> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
->>> Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->>
->> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thursday 03 March 2016 03:39 PM, Yoshihiro Shimoda wrote:
+> This patch set is based on the latest linux-phy / next branch
+> (commit id = 89636adde4a05953e3bf18807ba1f6f205572f67)
+> and the following patches:
 > 
-> Hi Kishon,
+> http://thread.gmane.org/gmane.linux.kernel/2166364
+> http://thread.gmane.org/gmane.linux.kernel.renesas-soc/1512/focus=1514
 > 
-> I am wondering if you could consider applying this series too.
+> The patch "Add vbus-supply to handle VBUS on/off" has
+> Rob's Acked-by as the followings:
+> http://thread.gmane.org/gmane.linux.kernel.renesas-soc/1087/focus=1153
 
-merged now.
+merged, thanks.
 
-Thanks
-Kishon
-
+-Kishon
 > 
-> Thanks in advance!
+> Yoshihiro Shimoda (3):
+>   phy: rcar-gen3-usb2: remove unnecesary struct rcar_gen3_data
+>   phy: rcar-gen3-usb2: Add vbus-supply to handle VBUS on/off
+>   phy: rcar-gen3-usb2: add extcon support
+> 
+>  .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  2 +
+>  drivers/phy/Kconfig                                |  1 +
+>  drivers/phy/phy-rcar-gen3-usb2.c                   | 87 +++++++++++++++++-----
+>  3 files changed, 71 insertions(+), 19 deletions(-)
 > 
