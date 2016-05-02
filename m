@@ -1,146 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:57090 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751825AbcEJNy4 (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35818 "EHLO
+	mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752231AbcEBIA7 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 09:54:56 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: driverdev-devel@linuxdriverproject.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 17/27] staging: ks7010: indent ks7010_sdio.h
-Date: Tue, 10 May 2016 15:52:30 +0200
-Message-Id: <1462888360-21649-18-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
-References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+	Mon, 2 May 2016 04:00:59 -0400
+MIME-Version: 1.0
+In-Reply-To: <1461945699-21324-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1461945699-21324-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Date: Mon, 2 May 2016 10:00:58 +0200
+Message-ID: <CAMuHMdX-KbrAR1potxTEYXzPYK1vFZWRLt6dGuJTm-jv3iR-HA@mail.gmail.com>
+Subject: Re: [PATCH v3] ARM: dts: r8a7793: Add MMCIF0
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux MMC List <linux-mmc@vger.kernel.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Ulrich,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/staging/ks7010/ks7010_sdio.h | 64 +++++++++++++++++-------------------
- 1 file changed, 30 insertions(+), 34 deletions(-)
+On Fri, Apr 29, 2016 at 6:01 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> --- a/arch/arm/boot/dts/r8a7793.dtsi
+> +++ b/arch/arm/boot/dts/r8a7793.dtsi
+> @@ -543,6 +543,19 @@
+>                 status = "disabled";
+>         };
+>
+> +       mmcif0: mmcif@ee200000 {
+> +               compatible = "renesas,mmcif-r8a7793", "renesas,sh-mmcif";
+> +               reg = <0 0xee200000 0 0x80>;
+> +               interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
+> +               clocks = <&mstp3_clks R8A7793_CLK_MMCIF0>;
+> +               dmas = <&dmac0 0xd1>, <&dmac0 0xd2>;
+> +               dma-names = "tx", "rx";
+> +               power-domains = <&cpg_clocks>;
 
-diff --git a/drivers/staging/ks7010/ks7010_sdio.h b/drivers/staging/ks7010/ks7010_sdio.h
-index 1d16673e5dae02..aea3727caf483b 100644
---- a/drivers/staging/ks7010/ks7010_sdio.h
-+++ b/drivers/staging/ks7010/ks7010_sdio.h
-@@ -21,7 +21,7 @@
- #define DEVICE_ALIGNMENT 32
- 
- /*  SDIO KeyStream vendor and device */
--#define SDIO_VENDOR_ID_KS_CODE_A	0x005b 
-+#define SDIO_VENDOR_ID_KS_CODE_A	0x005b
- #define SDIO_VENDOR_ID_KS_CODE_B	0x0023
- #define SDIO_DEVICE_ID_KS_7010		0x7910
- 
-@@ -48,8 +48,8 @@
-  * for network packet (less than 2048 bytes data)
-  */
- #define WSTATUS_RSIZE		0x000014
--#define WSTATUS_MASK		0x80 /* Write Status Register value */
--#define RSIZE_MASK		0x7F /* Read Data Size Register value [10:4] */
-+#define WSTATUS_MASK		0x80	/* Write Status Register value */
-+#define RSIZE_MASK		0x7F	/* Read Data Size Register value [10:4] */
- 
- /* ARM to SD interrupt Enable */
- #define INT_ENABLE		0x000020
-@@ -88,52 +88,48 @@
- 
- #define KS7010_IRAM_ADDRESS	0x06000000
- 
--
- /* 
-  * struct define
-  */
- struct hw_info_t {
--	struct ks_sdio_card *sdio_card;	
-+	struct ks_sdio_card *sdio_card;
- 	struct completion ks7010_sdio_wait;
- 	struct workqueue_struct *ks7010sdio_wq;
- 	struct delayed_work rw_wq;
--	unsigned char	*read_buf;
-+	unsigned char *read_buf;
- 	struct tasklet_struct rx_bh_task;
- };
- 
- struct ks_sdio_packet {
--        struct ks_sdio_packet   *next;
--        u16                     nb;
--        u8                      buffer[0] __attribute__((aligned(4)));
-+	struct ks_sdio_packet *next;
-+	u16 nb;
-+	u8 buffer[0] __attribute__ ((aligned(4)));
- };
- 
--
- struct ks_sdio_card {
--	struct sdio_func	*func;
-+	struct sdio_func *func;
- 	struct ks_wlan_private *priv;
--	int			model;
--	const char		*firmware;
--        spinlock_t              lock;
-+	int model;
-+	const char *firmware;
-+	spinlock_t lock;
- };
- 
--
--
- /* Tx Device struct */
--#define	TX_DEVICE_BUFF_SIZE	1024 
-+#define	TX_DEVICE_BUFF_SIZE	1024
- 
- struct tx_device_buffer {
--        unsigned char *sendp;		/* pointer of send req data */
--        unsigned int  size;
--	void	(*complete_handler)(void *arg1, void *arg2);
--	void	*arg1;
--	void	*arg2;
-+	unsigned char *sendp;	/* pointer of send req data */
-+	unsigned int size;
-+	void (*complete_handler) (void *arg1, void *arg2);
-+	void *arg1;
-+	void *arg2;
- };
- 
--struct tx_device{
--        struct tx_device_buffer tx_dev_buff[TX_DEVICE_BUFF_SIZE];
--        unsigned int	qhead; /* tx buffer queue first pointer */
--        unsigned int	qtail; /* tx buffer queue last pointer */
--        spinlock_t  tx_dev_lock;
-+struct tx_device {
-+	struct tx_device_buffer tx_dev_buff[TX_DEVICE_BUFF_SIZE];
-+	unsigned int qhead;	/* tx buffer queue first pointer */
-+	unsigned int qtail;	/* tx buffer queue last pointer */
-+	spinlock_t tx_dev_lock;
- };
- 
- /* Rx Device struct */
-@@ -141,15 +137,15 @@ struct tx_device{
- #define	RX_DEVICE_BUFF_SIZE	32
- 
- struct rx_device_buffer {
--       unsigned char	data[RX_DATA_SIZE];
--       unsigned int	size;
-+	unsigned char data[RX_DATA_SIZE];
-+	unsigned int size;
- };
- 
--struct rx_device{
--        struct rx_device_buffer rx_dev_buff[RX_DEVICE_BUFF_SIZE];
--        unsigned int	qhead; /* rx buffer queue first pointer */
--	unsigned int	qtail; /* rx buffer queue last pointer */
--	spinlock_t  rx_dev_lock;
-+struct rx_device {
-+	struct rx_device_buffer rx_dev_buff[RX_DEVICE_BUFF_SIZE];
-+	unsigned int qhead;	/* rx buffer queue first pointer */
-+	unsigned int qtail;	/* rx buffer queue last pointer */
-+	spinlock_t rx_dev_lock;
- };
- #define	ROM_FILE "ks7010sd.rom"
- #define	CFG_FILE "ks79xx.cfg"
--- 
-2.8.1
+Although the above would still work, all other nodes have been updated to
+
+        power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+
+> +               reg-io-width = <4>;
+> +               status = "disabled";
+> +               max-frequency = <97500000>;
+> +       };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
