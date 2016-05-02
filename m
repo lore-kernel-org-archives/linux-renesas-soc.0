@@ -1,48 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34441 "EHLO
-	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932315AbcECHa3 (ORCPT
+Received: from sauhun.de ([89.238.76.85]:33992 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755066AbcEBU0D (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 3 May 2016 03:30:29 -0400
-MIME-Version: 1.0
-In-Reply-To: <1462220742-4426-1-git-send-email-wsa@the-dreams.de>
-References: <1462220742-4426-1-git-send-email-wsa@the-dreams.de>
-Date: Tue, 3 May 2016 09:30:28 +0200
-Message-ID: <CAMuHMdXWuBqwLo+SRmnQ=gfH1YkQ-xPrxNWR4gnDdgQPvC05pQ@mail.gmail.com>
-Subject: Re: [RFC 0/4] mmc: tmio/sdhi: prevent regressions when setting clock
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Linux MMC List <linux-mmc@vger.kernel.org>,
+	Mon, 2 May 2016 16:26:03 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-mmc@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
 	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
 	Ulf Hansson <ulf.hansson@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: [RFC 0/4] mmc: tmio/sdhi: prevent regressions when setting clock
+Date: Mon,  2 May 2016 22:25:38 +0200
+Message-Id: <1462220742-4426-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+Here is a small refactoring series for setting the clock for SDHI cores. This
+is to prevent regression on platforms where this feature has not been tested.
+One such regression is known on r8a7740 (patches 2+3). Patch 4 fixes an
+oversight and patch 1 is a small cleanup.
 
-On Mon, May 2, 2016 at 10:25 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> Here is a small refactoring series for setting the clock for SDHI cores. This
-> is to prevent regression on platforms where this feature has not been tested.
-> One such regression is known on r8a7740 (patches 2+3). Patch 4 fixes an
-> oversight and patch 1 is a small cleanup.
->
-> RFC for now since I can't test these patches on my hardware currently. Will do
-> so on Wednesday, probably. Posting now since because Geert may already want to
-> test on r8a7740. Branch is here:
+RFC for now since I can't test these patches on my hardware currently. Will do
+so on Wednesday, probably. Posting now since because Geert may already want to
+test on r8a7740. Branch is here:
 
-Thanks, I can confirm the HP clock is back to 99 MHz (from 12.375 MHz)
-on r8a7740/armadillo, so
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git sdhi-for-ulf
 
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks,
 
-Gr{oetje,eeting}s,
+   Wolfram
 
-                        Geert
+Wolfram Sang (4):
+  mmc: sh_mobile_sdhi: make clk_update function more compact
+  mmc: tmio/sdhi: introduce flag for RCar 2+ specific features
+  mmc: sh_mobile_sdhi: only change the clock on RCar Gen2+
+  mmc: sh_mobile_sdhi: check return value when changing clk
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ drivers/mmc/host/sh_mobile_sdhi.c | 17 +++++++++--------
+ drivers/mmc/host/tmio_mmc_pio.c   |  6 +++---
+ include/linux/mfd/tmio.h          |  4 ++--
+ 3 files changed, 14 insertions(+), 13 deletions(-)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+2.6.2
