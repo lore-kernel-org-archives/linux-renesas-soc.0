@@ -1,70 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:36030 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750937AbcEAIsp (ORCPT
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:35503 "EHLO
+	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753565AbcEBLv3 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sun, 1 May 2016 04:48:45 -0400
-Received: by mail-ob0-f175.google.com with SMTP id j9so76127263obd.3
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 01 May 2016 01:48:44 -0700 (PDT)
+	Mon, 2 May 2016 07:51:29 -0400
+Received: by mail-oi0-f45.google.com with SMTP id x19so185695173oix.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 May 2016 04:51:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1461914677-24899-1-git-send-email-geert+renesas@glider.be>
-References: <1461914677-24899-1-git-send-email-geert+renesas@glider.be>
-Date: Sun, 1 May 2016 10:48:43 +0200
-Message-ID: <CACRpkdayGoAsU2+dOg4Y9BcyOORVp4OmUUCbE_cW5gPzR=D7nw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: Let gpio_chip.to_irq() return -ENXIO on error
+In-Reply-To: <1462189726-31833-1-git-send-email-geert@linux-m68k.org>
+References: <1462189726-31833-1-git-send-email-geert@linux-m68k.org>
+Date: Mon, 2 May 2016 13:51:28 +0200
+Message-ID: <CACRpkdYpbFk-HtTQeJ7MsraU2V3-EvC+LBfxMcX97uheGM=eug@mail.gmail.com>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.7 (take two)
 From: Linus Walleij <linus.walleij@linaro.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 29, 2016 at 9:24 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Mon, May 2, 2016 at 1:48 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-> Currrently the gpio_chip.to_irq() callback returns -ENOSYS on error,
-> which causes bad interactions with the serial_mctrl_gpio helpers.
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
 >
-> mctrl_gpio_init() returns -ENOSYS if GPIOLIB is not enabled, which is
-> intended to be ignored by its callers. However, ignoring -ENOSYS when it
-> was caused by a gpiod_to_irq() failure will lead to a crash later:
+>         Hi Linus,
 >
->     Unable to handle kernel paging request at virtual address ffffffde
->     ...
->     PC is at mctrl_gpio_set+0x14/0x78
+> The following changes since commit 92e6d9a2cc827018a18885e0f3050ab9ff8c3206:
 >
-> Fix this by returning -ENXIO instead.
+>   pinctrl: sh-pfc: r8a7795: Add drive strength support (2016-03-29 09:23:01 +0200)
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Is -ENXIO the right error code?
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.7-tag2
+>
+> for you to fetch changes up to 56ed4bb984acbba9cfe080e45ac4b50ca63dd188:
+>
+>   pinctrl: sh-pfc: r8a7794: Add DU pin groups (2016-04-15 12:31:37 +0200)
 
-I would say that whatever the generic helpers in drivers/gpio/gpiolib.c
-returns should be the norm. However the guy who wrote them (me)
-isn't very smart either. It looks like so:
-
-static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
-{
-        return irq_find_mapping(chip->irqdomain, offset);
-}
-
-That returns 0 (NO_IRQ) on failure.
-
-And as you say:
-
->   - Drivers that call irq_find_mapping(), irq_create_mapping(), or
->     irq_create_fwspec_mapping() return zero!  This also applies to the
->     core helper gpiochip_to_irq().
-
-Zero means NO_IRQ.
-
-Reminder:
-http://lwn.net/Articles/470820/
-
-What we should do is patch all drivers to return 0 on failure, and
-patch any consumers like mctrl_gpio_init() to handle that correctly.
+OK I pulled it.
 
 Yours,
 Linus Walleij
