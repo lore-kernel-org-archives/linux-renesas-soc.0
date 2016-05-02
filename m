@@ -1,67 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:50917 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757797AbcEDI6F (ORCPT
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:36033 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753614AbcEBLQy (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 4 May 2016 04:58:05 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] ARM/arm64: dts: renesas: Describe RTS/CTS hardware flow control
-Date: Wed,  4 May 2016 10:57:55 +0200
-Message-Id: <1462352278-30327-1-git-send-email-geert+renesas@glider.be>
+	Mon, 2 May 2016 07:16:54 -0400
+Received: by mail-oi0-f43.google.com with SMTP id x201so185135739oif.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 May 2016 04:16:54 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWM_Y_ypisZFUXwec37Nc=8MBqWLmPSktzaNdOPbHmbow@mail.gmail.com>
+References: <1461914677-24899-1-git-send-email-geert+renesas@glider.be>
+	<CACRpkdayGoAsU2+dOg4Y9BcyOORVp4OmUUCbE_cW5gPzR=D7nw@mail.gmail.com>
+	<CAMuHMdW+O-qtrfbfpORX_dWCATZ9goTqQQa_sD9h1Jq=7H9DMA@mail.gmail.com>
+	<CACRpkdbtwSmGmCfBLBUi2w9NHkVTLhwg8Q5srMCxNLNjze6msg@mail.gmail.com>
+	<CAMuHMdX6Qrx=zjyOgag1wdYVoG-u_kmFz=Kxzs8-mriYe-2y9g@mail.gmail.com>
+	<CAMuHMdWxaPOfh-eU9ASTQmrbt74pyoiOT7oSyizvxbZ8zN0g8g@mail.gmail.com>
+	<CACRpkdZLSRQfUfc4d=uO0CtH3svN+a17HLbEQYtdy8kMAS_sUA@mail.gmail.com>
+	<CAMuHMdWiBq+rexBr_OYOStLHAQwfE2CbodxSF0RgtQZL7+Pe7g@mail.gmail.com>
+	<CACRpkdZGOe+RaO-cZ+zYSBgzen4hi=C86kLF+MLKvH3ZdNZeqg@mail.gmail.com>
+	<CAMuHMdWM_Y_ypisZFUXwec37Nc=8MBqWLmPSktzaNdOPbHmbow@mail.gmail.com>
+Date: Mon, 2 May 2016 13:16:53 +0200
+Message-ID: <CACRpkdZGAYYojRe5c-k34rUucLP1+GjDN5VtEEemQGPeOKM09w@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: Let gpio_chip.to_irq() return -ENXIO on error
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+On Mon, May 2, 2016 at 12:05 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
-This patch series updates the various Renesas DTSes to describe that
-some UARTS have dedicated lines for RTS/CTS hardware flow control, and
-that they are available for use (wired and enabled by pinmux
-configuration), by adding the "uart-has-rtscts" property to
-board-specific DTS files where appropriate.
+> gpiod_to_irq() is documented to return a negative error code on failure,
+> cfr. Documentation/gpio/consumer.txt and drivers/gpio/gpiolib.c.
+> In fact the check in mctrl_gpio_init() is the only caller that
+> considers zero as an
+> error.
+>
+> Perhaps gpiod_to_irq() should handle .to_irq() returning zero instead?
 
-While the actual DT binding updates documenting the "uart-has-rtscts"
-property for SCIF(A) UARTs ("serial: sh-sci: Update DT binding
-documentation for dedicated RTS/CTS") hasn't been accepted into tty-next
-yet, this property is part of the Generic Serial DT Bindings
-(Documentation/devicetree/bindings/serial/serial.txt), which has been
-accepted.
+OK good point, I sent a patch like so, let's see what people say.
 
-Actual enablement of RTS/CTS hardware flow control (through setting the
-CRTSCTS termios flag from userspace) depends on series "[PATCH v2 00/11]
-serial: sh-sci: Hardware Flow Control Updates"
-(http://www.spinics.net/lists/linux-serial/msg22535.html).
-Note that setting the CRTSCTS flag for a serial port that is being used
-as the kernel console is a bad idea ;-) You'll have better luck with
-UARTs on expansion connectors, cfr. the topic/renesas-overlays branch of
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+I'm a bit torn: part of me feel that since the function has *_to_irq()
+in it it should use zero for NO_IRQ if there is no translation.
 
-Thanks!
+But this works too, whatever, rough consensus and running code.
 
-Geert Uytterhoeven (3):
-  ARM: dts: bockw: SCIF0 supports RTS/CTS hardware flow control
-  ARM: dts: kzm9g: SCIFA4 supports RTS/CTS hardware flow control
-  arm64: dts: salvator-x: SCIF1 supports RTS/CTS hardware flow control
-
- arch/arm/boot/dts/r8a7778-bockw.dts                | 1 +
- arch/arm/boot/dts/sh73a0-kzm9g.dts                 | 1 +
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 1 +
- 3 files changed, 3 insertions(+)
-
--- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Yours,
+Linus Walleij
