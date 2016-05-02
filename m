@@ -1,52 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:44638 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932362AbcECAHD (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:52061 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753641AbcEBLro (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 2 May 2016 20:07:03 -0400
-Date: Mon, 2 May 2016 17:07:01 -0700
-From: Stephen Boyd <sboyd@codeaurora.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mon, 2 May 2016 07:47:44 -0400
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [git pull] clk: renesas: Updates for v4.7 (take three)
-Message-ID: <20160503000701.GD3492@codeaurora.org>
-References: <1462189654-31767-1-git-send-email-geert@linux-m68k.org>
+Subject: [git pull] clk: renesas: Updates for v4.7 (take three)
+Date: Mon,  2 May 2016 13:47:34 +0200
+Message-Id: <1462189654-31767-1-git-send-email-geert@linux-m68k.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1462189654-31767-1-git-send-email-geert@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 05/02, Geert Uytterhoeven wrote:
-> From: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> 	Hi Mike, Stephen,
-> 
-> The following changes since commit 2066390ad47b374f3d35075a32325b47d15bf735:
-> 
->   clk: renesas: cpg-mssr: Export cpg_mssr_{at,de}tach_dev() (2016-04-20 09:17:07 +0200)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.7-tag3
-> 
-> for you to fetch changes up to d04a75af450782db2937603bb6706bf6fa7c6f37:
-> 
->   clk: renesas: cpg-mssr: Use always-on governor for Clock Domain (2016-04-28 10:32:55 +0200)
-> 
-> ----------------------------------------------------------------
-> clk: renesas: Updates for v4.7 (take three)
-> 
->   - Support for CSI2 and VIN module clocks on R-Car H3,
->   - Renesas CPG/MSTP and CPG/MSSR Clock Domain fixes.
-> 
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks. Pulled.
+	Hi Mike, Stephen,
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The following changes since commit 2066390ad47b374f3d35075a32325b47d15bf735:
+
+  clk: renesas: cpg-mssr: Export cpg_mssr_{at,de}tach_dev() (2016-04-20 09:17:07 +0200)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.7-tag3
+
+for you to fetch changes up to d04a75af450782db2937603bb6706bf6fa7c6f37:
+
+  clk: renesas: cpg-mssr: Use always-on governor for Clock Domain (2016-04-28 10:32:55 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v4.7 (take three)
+
+  - Support for CSI2 and VIN module clocks on R-Car H3,
+  - Renesas CPG/MSTP and CPG/MSSR Clock Domain fixes.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Geert Uytterhoeven (4):
+      clk: renesas: mstp: Postpone call to pm_genpd_init()
+      clk: renesas: mstp: Use always-on governor for Clock Domain
+      clk: renesas: cpg-mssr: Postpone call to pm_genpd_init()
+      clk: renesas: cpg-mssr: Use always-on governor for Clock Domain
+
+Niklas Söderlund (2):
+      clk: renesas: r8a7795: Add CSI2 clocks
+      clk: renesas: r8a7795: Add VIN clocks
+
+ drivers/clk/renesas/clk-mstp.c         |  3 +--
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 13 +++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c |  2 +-
+ 3 files changed, 15 insertions(+), 3 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
