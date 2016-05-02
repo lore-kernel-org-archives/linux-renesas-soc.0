@@ -1,13 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:36033 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753614AbcEBLQy (ORCPT
+Received: from mail-ig0-f193.google.com ([209.85.213.193]:35714 "EHLO
+	mail-ig0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752805AbcEBKFH (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 2 May 2016 07:16:54 -0400
-Received: by mail-oi0-f43.google.com with SMTP id x201so185135739oif.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 02 May 2016 04:16:54 -0700 (PDT)
+	Mon, 2 May 2016 06:05:07 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWM_Y_ypisZFUXwec37Nc=8MBqWLmPSktzaNdOPbHmbow@mail.gmail.com>
+In-Reply-To: <CACRpkdZGOe+RaO-cZ+zYSBgzen4hi=C86kLF+MLKvH3ZdNZeqg@mail.gmail.com>
 References: <1461914677-24899-1-git-send-email-geert+renesas@glider.be>
 	<CACRpkdayGoAsU2+dOg4Y9BcyOORVp4OmUUCbE_cW5gPzR=D7nw@mail.gmail.com>
 	<CAMuHMdW+O-qtrfbfpORX_dWCATZ9goTqQQa_sD9h1Jq=7H9DMA@mail.gmail.com>
@@ -17,12 +15,11 @@ References: <1461914677-24899-1-git-send-email-geert+renesas@glider.be>
 	<CACRpkdZLSRQfUfc4d=uO0CtH3svN+a17HLbEQYtdy8kMAS_sUA@mail.gmail.com>
 	<CAMuHMdWiBq+rexBr_OYOStLHAQwfE2CbodxSF0RgtQZL7+Pe7g@mail.gmail.com>
 	<CACRpkdZGOe+RaO-cZ+zYSBgzen4hi=C86kLF+MLKvH3ZdNZeqg@mail.gmail.com>
-	<CAMuHMdWM_Y_ypisZFUXwec37Nc=8MBqWLmPSktzaNdOPbHmbow@mail.gmail.com>
-Date: Mon, 2 May 2016 13:16:53 +0200
-Message-ID: <CACRpkdZGAYYojRe5c-k34rUucLP1+GjDN5VtEEemQGPeOKM09w@mail.gmail.com>
+Date: Mon, 2 May 2016 12:05:06 +0200
+Message-ID: <CAMuHMdWM_Y_ypisZFUXwec37Nc=8MBqWLmPSktzaNdOPbHmbow@mail.gmail.com>
 Subject: Re: [PATCH] pinctrl: sh-pfc: Let gpio_chip.to_irq() return -ENXIO on error
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
@@ -31,23 +28,77 @@ Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, May 2, 2016 at 12:05 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
+Hi Linus,
 
-> gpiod_to_irq() is documented to return a negative error code on failure,
-> cfr. Documentation/gpio/consumer.txt and drivers/gpio/gpiolib.c.
-> In fact the check in mctrl_gpio_init() is the only caller that
-> considers zero as an
-> error.
+On Mon, May 2, 2016 at 11:25 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, May 2, 2016 at 11:10 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Mon, May 2, 2016 at 11:06 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>>> On Mon, May 2, 2016 at 11:04 AM, Geert Uytterhoeven
+>>> <geert@linux-m68k.org> wrote:
+>>>
+>>>> [silly response deleted]
+>>>>
+>>>> Scrap it.
+>>>
+>>> :D
+>>>
+>>>> The only annoying thing is that 0 cannot easily be propagated upstream as
+>>>> an error code, so it has to be tested for explicitly.
+>>>
+>>> Well with the Big Penguin's clear opinion on the matter there is not
+>>> much we can do.
+>>>
+>>> What about this?
+>>>
+>>> diff --git a/drivers/tty/serial/serial_mctrl_gpio.c
+>>> b/drivers/tty/serial/serial_mctrl_gpio.c
+>>> index 02147361eaa9..2297ec781681 100644
+>>> --- a/drivers/tty/serial/serial_mctrl_gpio.c
+>>> +++ b/drivers/tty/serial/serial_mctrl_gpio.c
+>>> @@ -172,6 +172,13 @@ struct mctrl_gpios *mctrl_gpio_init(struct
+>>> uart_port *port, unsigned int idx)
+>>>                         dev_err(port->dev,
+>>>                                 "failed to find corresponding irq for
+>>> %s (idx=%d, err=%d)\n",
+>>>                                 mctrl_gpios_desc[i].name, idx, ret);
+>>> +                       /*
+>>> +                        * Satisfy the error code semantics for a missing IRQ,
+>>> +                        * 0 means NO_IRQ, but the framework needs to return
+>>> +                        * a negative to deal with the error.
+>>> +                        */
+>>> +                       if (!ret)
+>>> +                               ret = -ENOSYS;
+>>
+>> No, not -ENOSYS, as that triggers my initial problem again (please read the
+>> deleted silly response ;-)
+>> Checkpatch says: "ENOSYS means 'invalid syscall nr' and nothing else".
+>>
+>> -EINVAL?
+
+Upon reconsideration, -ENXIO.
+
+> Sure, whatever works with your semantics.
 >
-> Perhaps gpiod_to_irq() should handle .to_irq() returning zero instead?
+> Will you test & send a patch?
 
-OK good point, I sent a patch like so, let's see what people say.
+This works fine, but I'm a bit reluctant to send out the patches...
 
-I'm a bit torn: part of me feel that since the function has *_to_irq()
-in it it should use zero for NO_IRQ if there is no translation.
+gpiod_to_irq() is documented to return a negative error code on failure,
+cfr. Documentation/gpio/consumer.txt and drivers/gpio/gpiolib.c.
+In fact the check in mctrl_gpio_init() is the only caller that
+considers zero as an
+error.
 
-But this works too, whatever, rough consensus and running code.
+Perhaps gpiod_to_irq() should handle .to_irq() returning zero instead?
 
-Yours,
-Linus Walleij
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
