@@ -1,46 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:49942 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756846AbcEaJIo (ORCPT
+Received: from sauhun.de ([89.238.76.85]:33994 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755003AbcEBU0I (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 31 May 2016 05:08:44 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mon, 2 May 2016 16:26:08 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-mmc@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
 	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] arm64: dts: r8a7796: Use SYSC "always-on" PM Domain
-Date: Tue, 31 May 2016 11:08:45 +0200
-Message-Id: <1464685726-21611-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464685726-21611-1-git-send-email-geert+renesas@glider.be>
-References: <1464685726-21611-1-git-send-email-geert+renesas@glider.be>
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [RFC 1/4] mmc: sh_mobile_sdhi: make clk_update function more compact
+Date: Mon,  2 May 2016 22:25:39 +0200
+Message-Id: <1462220742-4426-2-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1462220742-4426-1-git-send-email-wsa@the-dreams.de>
+References: <1462220742-4426-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hook up all devices that are part of the CPG/MSSR Clock Domain to the
-SYSC "always-on" PM Domain, for a more consistent device-power-area
-description in DT.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Save a few lines, the codebase is large enough.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/sh_mobile_sdhi.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 85f0843ddd874378..fab61eddede3818c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -122,7 +122,7 @@
- 				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
--			power-domains = <&cpg>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
- 	};
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index f8ea3d1d6de382..6857e4ba724415 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -165,12 +165,9 @@ static unsigned int sh_mobile_sdhi_clk_update(struct tmio_mmc_host *host,
+ 					      unsigned int new_clock)
+ {
+ 	struct sh_mobile_sdhi *priv = host_to_priv(host);
+-	unsigned int freq, best_freq, diff_min, diff;
++	unsigned int freq, diff, best_freq = 0, diff_min = ~0;
+ 	int i;
+ 
+-	diff_min = ~0;
+-	best_freq = 0;
+-
+ 	/*
+ 	 * We want the bus clock to be as close as possible to, but no
+ 	 * greater than, new_clock.  As we can divide by 1 << i for
 -- 
-1.9.1
+2.6.2
