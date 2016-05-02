@@ -1,52 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:38074 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754331AbcETG7s (ORCPT
+Received: from sauhun.de ([89.238.76.85]:34003 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755003AbcEBU0T (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 20 May 2016 02:59:48 -0400
-Received: from vsmta14.fe.internet.bosch.com (unknown [10.4.98.54])
-	by imta23.fe.bosch.de (Postfix) with ESMTP id 38A081580002
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 May 2016 08:59:47 +0200 (CEST)
-Received: from SI-HUB1000.de.bosch.com (vsgw24.fe.internet.bosch.com [10.4.98.24])
-	by vsmta14.fe.internet.bosch.com (Postfix) with ESMTP id C191EA404B1
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 May 2016 08:59:46 +0200 (CEST)
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	<linux-renesas-soc@vger.kernel.org>
-CC: Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH v3 6/6] arm64: renesas: select MFD_SYSCON
-Date: Fri, 20 May 2016 08:57:42 +0200
-Message-ID: <1463727462-16260-7-git-send-email-dirk.behme@de.bosch.com>
-In-Reply-To: <1463727462-16260-1-git-send-email-dirk.behme@de.bosch.com>
-References: <1463727462-16260-1-git-send-email-dirk.behme@de.bosch.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	Mon, 2 May 2016 16:26:19 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-mmc@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [RFC 3/4] mmc: sh_mobile_sdhi: only change the clock on RCar Gen2+
+Date: Mon,  2 May 2016 22:25:41 +0200
+Message-Id: <1462220742-4426-4-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1462220742-4426-1-git-send-email-wsa@the-dreams.de>
+References: <1462220742-4426-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-The Clock Pulse Generator (CPG) relies on syscon to obtain the values of
-the mode pins.
+We had a regression on r8a7740 where the SDHI clock was a generic
+peripheral clock, so changing its rate was not desired. This should be
+fixed in the clock driver. However, it also shows that the new clock
+calculation should only be used on tested systems. Add a check for that.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mmc/host/sh_mobile_sdhi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 2182fd5..4949b6a 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -108,6 +108,7 @@ config ARCH_SHMOBILE
- config ARCH_RENESAS
- 	bool "Renesas SoC Platforms"
- 	select ARCH_SHMOBILE
-+	select MFD_SYSCON
- 	select PINCTRL
- 	select PM
- 	select PM_GENERIC_DOMAINS
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index 19e4c29e4233b0..ac9ba36da39b5b 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -168,6 +168,10 @@ static unsigned int sh_mobile_sdhi_clk_update(struct tmio_mmc_host *host,
+ 	unsigned int freq, diff, best_freq = 0, diff_min = ~0;
+ 	int i;
+ 
++	/* tested only on RCar Gen2+ currently; may work for others */
++	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
++		return clk_get_rate(priv->clk);
++
+ 	/*
+ 	 * We want the bus clock to be as close as possible to, but no
+ 	 * greater than, new_clock.  As we can divide by 1 << i for
 -- 
-2.8.0
+2.6.2
