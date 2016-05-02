@@ -1,79 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55138 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161249AbcE3QB7 (ORCPT
+Received: from sauhun.de ([89.238.76.85]:33997 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755003AbcEBU0M (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 30 May 2016 12:01:59 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Mon, 2 May 2016 16:26:12 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-mmc@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
 	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87h9dtrs3s.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1b7PdU-0003yF-Am@debutante>
-Date: Mon, 30 May 2016 17:01:48 +0100
-Subject: Applied "ASoC: rsrc-card: remove unused dai_num" to the asoc tree
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [RFC 2/4] mmc: tmio/sdhi: introduce flag for RCar 2+ specific features
+Date: Mon,  2 May 2016 22:25:40 +0200
+Message-Id: <1462220742-4426-3-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1462220742-4426-1-git-send-email-wsa@the-dreams.de>
+References: <1462220742-4426-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-   ASoC: rsrc-card: remove unused dai_num
+RCar Gen2 and later implementations of TMIO/SDHI have their own set of
+features and additions. FAST_CLK_CHG is just one of them and I see a few
+others being added soon. Some may work on older chipsets but this needs
+to be tested case by case. Instead of adding a bunch of flags for each
+feature, add a global RCar2+ one for now. We can still break out
+features if the need arises.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 52fd98bcaf22052fc8946d36b13d5e646b7b41b0 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Fri, 20 May 2016 09:39:55 +0000
-Subject: [PATCH] ASoC: rsrc-card: remove unused dai_num
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- sound/soc/sh/rcar/rsrc-card.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/mmc/host/sh_mobile_sdhi.c | 4 ++--
+ drivers/mmc/host/tmio_mmc_pio.c   | 6 +++---
+ include/linux/mfd/tmio.h          | 4 ++--
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/rsrc-card.c b/sound/soc/sh/rcar/rsrc-card.c
-index 1bc7ecfc42a9..b85b5ee5fad4 100644
---- a/sound/soc/sh/rcar/rsrc-card.c
-+++ b/sound/soc/sh/rcar/rsrc-card.c
-@@ -64,7 +64,6 @@ struct rsrc_card_priv {
- 	struct snd_soc_codec_conf codec_conf;
- 	struct rsrc_card_dai *dai_props;
- 	struct snd_soc_dai_link *dai_link;
--	int dai_num;
- 	u32 convert_rate;
- 	u32 convert_channels;
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index 6857e4ba724415..19e4c29e4233b0 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -62,7 +62,7 @@ static const struct sh_mobile_sdhi_of_data of_rcar_gen1_compatible = {
+ 
+ static const struct sh_mobile_sdhi_of_data of_rcar_gen2_compatible = {
+ 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
+-			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_FAST_CLK_CHG,
++			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
+ 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
+ 	.dma_buswidth	= DMA_SLAVE_BUSWIDTH_4_BYTES,
+ 	.dma_rx_offset	= 0x2000,
+@@ -70,7 +70,7 @@ static const struct sh_mobile_sdhi_of_data of_rcar_gen2_compatible = {
+ 
+ static const struct sh_mobile_sdhi_of_data of_rcar_gen3_compatible = {
+ 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
+-			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_FAST_CLK_CHG,
++			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
+ 	.capabilities	= MMC_CAP_SD_HIGHSPEED,
+ 	.bus_shift	= 2,
  };
-@@ -418,7 +417,6 @@ static int rsrc_card_parse_of(struct device_node *node,
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index 95f22997f31a66..f44e2ab7aea2ba 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -157,7 +157,7 @@ static void tmio_mmc_clk_start(struct tmio_mmc_host *host)
+ {
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
+ 		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 1 : 10);
++	msleep(host->pdata->flags & TMIO_MMC_MIN_RCAR2 ? 1 : 10);
  
- 	priv->dai_props	= props;
- 	priv->dai_link	= links;
--	priv->dai_num	= num;
+ 	if (host->pdata->flags & TMIO_MMC_HAVE_HIGH_REG) {
+ 		sd_ctrl_write16(host, CTL_CLK_AND_WAIT_CTL, 0x0100);
+@@ -174,7 +174,7 @@ static void tmio_mmc_clk_stop(struct tmio_mmc_host *host)
  
- 	/* Init snd_soc_card */
- 	priv->snd_card.owner			= THIS_MODULE;
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+ 		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+-	msleep(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG ? 5 : 10);
++	msleep(host->pdata->flags & TMIO_MMC_MIN_RCAR2 ? 5 : 10);
+ }
+ 
+ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
+@@ -205,7 +205,7 @@ static void tmio_mmc_set_clock(struct tmio_mmc_host *host,
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+ 			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, clk & CLK_CTL_DIV_MASK);
+-	if (!(host->pdata->flags & TMIO_MMC_FAST_CLK_CHG))
++	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+ 		msleep(10);
+ 
+ 	tmio_mmc_clk_start(host);
+diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
+index 05d58ee5e6a78f..7a26286db895c5 100644
+--- a/include/linux/mfd/tmio.h
++++ b/include/linux/mfd/tmio.h
+@@ -66,8 +66,8 @@
+  */
+ #define TMIO_MMC_SDIO_IRQ		(1 << 2)
+ 
+-/* Some controllers don't need to wait 10ms for clock changes */
+-#define TMIO_MMC_FAST_CLK_CHG		(1 << 3)
++/* Some features are only available or tested on RCar Gen2 or later */
++#define TMIO_MMC_MIN_RCAR2		(1 << 3)
+ 
+ /*
+  * Some controllers require waiting for the SD bus to become
 -- 
-2.8.1
+2.6.2
