@@ -1,107 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:36005 "EHLO
-	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750910AbcEJNdp (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33297 "EHLO
+	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933401AbcECRsh (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 09:33:45 -0400
-MIME-Version: 1.0
-In-Reply-To: <1461047395-6532-1-git-send-email-dirk.behme@de.bosch.com>
+	Tue, 3 May 2016 13:48:37 -0400
+Subject: Re: [PATCH] arm64: dts: r8a7795: Increase the size of GIC-400 mapped
+ registers
+To: Simon Horman <horms@verge.net.au>
 References: <1461047395-6532-1-git-send-email-dirk.behme@de.bosch.com>
-Date: Tue, 10 May 2016 15:33:43 +0200
-Message-ID: <CAMuHMdV6XOSiSv-mwovnCAMEPsgOc_vEhPPu0aYCgz74EF242g@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: r8a7795: Increase the size of GIC-400 mapped registers
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	julien.grall@arm.com,
+ <20160427233028.GA5155@verge.net.au> <5721A2A5.9010908@de.bosch.com>
+ <20160428234345.GD18128@verge.net.au> <20160429113515.333c42ef@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>,
+	Dirk Behme <dirk.behme@de.bosch.com>, julien.grall@arm.com,
+	geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>,
-	Marc Zyngier <Marc.Zyngier@arm.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+	linux-arm-kernel@lists.infradead.org
+From: Dirk Behme <dirk.behme@gmail.com>
+Message-ID: <5728E470.7050408@gmail.com>
+Date: Tue, 3 May 2016 19:48:32 +0200
+MIME-Version: 1.0
+In-Reply-To: <20160429113515.333c42ef@arm.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-CC Marc, lakml
+Hi Simon,
 
-On Tue, Apr 19, 2016 at 8:29 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
-> From: Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>
+On 29.04.2016 12:35, Marc Zyngier wrote:
+> On Fri, 29 Apr 2016 09:43:45 +1000
+> Simon Horman <horms@verge.net.au> wrote:
 >
-> There are some requirements about the GIC-400 memory layout and its
-> mapping if using 64k aligned base addresses like on r8a7795.
+>> [Cc Mark Zyngier, linux-arm-kernel]
+>>
+>> Hi Dirk,
+>>
+>> On Thu, Apr 28, 2016 at 07:41:57AM +0200, Dirk Behme wrote:
+>>> Hi Simon,
+>>>
+>>> On 28.04.2016 01:30, Simon Horman wrote:
+>>>> Hi Dirk,
+>>>>
+>>>> I understand that there is an issue here but I'm not yet able
+>>>> to convince myself that this is the correct solution.
+>>>>
+>>>> In revision r0p1 of the CoreLink GIC-400 Generic Interrupt Controller
+>>>> Technical Reference Manual[1] I see in Section 3.2. "GIC-400 register map"
+>>>> that the size of both the CPU interfaces and Virtual CPU interfaces are
+>>>> 0x2000 bytes. And assuming that the hardware follows the specification it
+>>>> appears that DT is correctly describing the hardware.
+>>>
+>>>
+>>> I think you are missing the details described by ARM in
+>>>
+>>> http://xenbits.xen.org/gitweb/?p=xen.git;a=commit;h=21550029f709072aacf3b9
+>>>
+>>>
+>>> Maybe Julien could help if you have some more doubts?
+>>
+>> I guess I am confused.
+>>
+>> I see that there is now handling of the case where the region size is
+>> 128Kbytes. But I'm still not seeing the bit which describes that the
+>> GIC-400  has a region size of 128Kbytes. Perhaps the later is somehow
+>> implied by the former. Or perhaps I need to check with the hw team.
 >
-> See e.g.
+> Please have a look at the SBSA document, and in particular the
+> Appendix-F (registration and selling your soul required - only kidding):
 >
-> http://xenbits.xen.org/gitweb/?p=xen.git;a=commit;h=21550029f709072aacf3b9
+> http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.den0029/index.html
 >
-> Map the whole memory range instead of only 0x2000. This will fix
-> the issue that some hypervisors, e.g. Xen, fail to handle the
-> interrupts correctly.
+> This requires that, in order for the two halves of GICV to be trappable
+> *separately* by a hypervisor using 64kB pages at Stage-2, the two 4kB
+> pages that describe that region are aliased as such:
+> - the first 4kB page is aliased 16 times over a 64kB region
+> - the second 4kB page is aliased 16 times over another contiguous 64kB
+>    region
 >
-> Signed-off-by: Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>
-> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-
-Based on my understanding below
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> ---
-> Note: This patch is against renesas-drivers-2016-04-12-v4.6-rc3
+> This means that your GIC is indeed covering a 128kB region, with the
+> mapping corresponding to the GICv2 memory map located at offset 0xf000
+> from the base of that 128kB region. Also, this GICV requirement also
+> applies to GICC (most likely because the two regions use the same
+> decoding logic).
 >
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> The OS must of course be aware of this (see gic_check_eoimode in the
+> GIC driver). Of course, almost nobody got that right (I only know of
+> the APM Xgene-1 so far). If you actually did, great!
 >
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> index 8be9424..d880fd4 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> @@ -160,9 +160,9 @@
->                         #address-cells = <0>;
->                         interrupt-controller;
->                         reg = <0x0 0xf1010000 0 0x1000>,
-> -                             <0x0 0xf1020000 0 0x2000>,
-> +                             <0x0 0xf1020000 0 0x20000>,
->                               <0x0 0xf1040000 0 0x20000>,
-> -                             <0x0 0xf1060000 0 0x2000>;
-> +                             <0x0 0xf1060000 0 0x20000>;
->                         interrupts = <GIC_PPI 9
->                                         (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
->                 };
+> Also, the ACPI spec fails to recognize this by not providing the length
+> of the region, meaning that those who got it right with DT are likely
+> to get it wrong with ACPI, and vice-versa.
+>
+> It's a wonderful world.
 
-Region 0:
-    4 KiB-pages 0xf1011000-0xf101ffff are aliased to 0xf1010000-0xf1010fff,
-    but we need the first 4 KiB only.
 
-Region 1:
-    4 KiB-pages 0xf1021000-0xf102ffff are aliased to 0xf1020000-0xf1020fff,
-    4 KiB-pages 0xf1030000-0xf103ffff are all zeroes, probably due to
-    non-secure mode?
+Could this patch be applied, then?
 
-Region 2:
-    4 KiB-pages 0xf1041000-0xf104ffff are aliased to 0xf1040000-0xf1040fff,
-    4 KiB-pages 0xf1050000-0xf105ffff are all zeroes, probably due to
-    non-secure mode?
+Best regards
 
-Region 3:
-    4 KiB-pages 0xf1061000-0xf106ffff are aliased to 0xf1060000-0xf1060fff,
-    4 KiB-pages 0xf1070000-0xf107ffff are all zeroes, probably due to
-    non-secure mode?
-
-Region 2 already had a 128 KiB size before, which allowed to use 8 KiB at
-0xf104f000.
-
-An 8 KiB size for regions 1 and 3 indeed didn't make much sense, as this
-covered two identical (aliased) 4 KiB pages, instead of two different pages
-at offset 0xf000.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Dirk
