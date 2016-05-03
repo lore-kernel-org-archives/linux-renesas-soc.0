@@ -1,53 +1,58 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/4] arm64: dts: r8a7795: Add HSUSB device node
-Date: Tue, 24 May 2016 13:57:37 +0900
-Message-ID: <1464065860-3948-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1464065860-3948-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1464065860-3948-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:35985 "EHLO
+	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755683AbcECItE (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 3 May 2016 04:49:04 -0400
+Received: by mail-wm0-f52.google.com with SMTP id n129so137041921wmn.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 May 2016 01:49:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <1462220742-4426-1-git-send-email-wsa@the-dreams.de>
+References: <1462220742-4426-1-git-send-email-wsa@the-dreams.de>
+Date: Tue, 3 May 2016 10:49:02 +0200
+Message-ID: <CAPDyKFp_PuTBn1iD4CpMUvDciccKr1oBGmnG8rVAcvp41k=FPg@mail.gmail.com>
+Subject: Re: [RFC 0/4] mmc: tmio/sdhi: prevent regressions when setting clock
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+On 2 May 2016 at 22:25, Wolfram Sang <wsa@the-dreams.de> wrote:
+> Here is a small refactoring series for setting the clock for SDHI cores. This
+> is to prevent regression on platforms where this feature has not been tested.
+> One such regression is known on r8a7740 (patches 2+3). Patch 4 fixes an
+> oversight and patch 1 is a small cleanup.
+>
+> RFC for now since I can't test these patches on my hardware currently. Will do
+> so on Wednesday, probably. Posting now since because Geert may already want to
+> test on r8a7740. Branch is here:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git sdhi-for-ulf
+>
+> Thanks,
+>
+>    Wolfram
+>
+> Wolfram Sang (4):
+>   mmc: sh_mobile_sdhi: make clk_update function more compact
+>   mmc: tmio/sdhi: introduce flag for RCar 2+ specific features
+>   mmc: sh_mobile_sdhi: only change the clock on RCar Gen2+
+>   mmc: sh_mobile_sdhi: check return value when changing clk
+>
+>  drivers/mmc/host/sh_mobile_sdhi.c | 17 +++++++++--------
+>  drivers/mmc/host/tmio_mmc_pio.c   |  6 +++---
+>  include/linux/mfd/tmio.h          |  4 ++--
+>  3 files changed, 14 insertions(+), 13 deletions(-)
+>
+> --
+> 2.6.2
+>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 26df300..3f7d7c4 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1339,6 +1339,23 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
-+
-+		hsusb: usb@e6590000 {
-+			compatible = "renesas,usbhs-r8a7795",
-+				     "renesas,rcar-gen2-usbhs";
-+			reg = <0 0xe6590000 0 0x100>;
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 704>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
-+			renesas,buswait = <11>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
- 		pciec0: pcie@fe000000 {
- 			compatible = "renesas,pcie-r8a7795";
- 			reg = <0 0xfe000000 0 0x80000>;
--- 
-1.9.1
+This looks good to me, so thanks, applied for next!
 
+Kind regards
+Uffe
