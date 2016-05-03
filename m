@@ -1,56 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:34711 "EHLO
-	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751030AbcEGVII (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34483 "EHLO
+	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933587AbcECRqf (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sat, 7 May 2016 17:08:08 -0400
-Received: by mail-lf0-f45.google.com with SMTP id m64so164597949lfd.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 07 May 2016 14:08:08 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/2] sh_eth: call sh_eth_tsu_write() from sh_eth_chip_reset_giga()
-Date: Sun, 08 May 2016 00:08:05 +0300
-Message-ID: <4295394.ciMgKzJDnu@wasted.cogentembedded.com>
-In-Reply-To: <1808900.MGlUzc8O9C@wasted.cogentembedded.com>
-References: <1808900.MGlUzc8O9C@wasted.cogentembedded.com>
+	Tue, 3 May 2016 13:46:35 -0400
+Subject: Re: [PATCH] thermal: rcar_thermal: Fix priv->zone error handling
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Linux PM list <linux-pm@vger.kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>
+References: <1461234295-30521-1-git-send-email-dirk.behme@de.bosch.com>
+ <CAMuHMdWDnHDrf8d1nY0M6bY_z1sJfHbTM15QoP+dpfTJkCDrWA@mail.gmail.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Dirk Behme <dirk.behme@gmail.com>
+Message-ID: <5728E3EE.6030506@gmail.com>
+Date: Tue, 3 May 2016 19:46:22 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAMuHMdWDnHDrf8d1nY0M6bY_z1sJfHbTM15QoP+dpfTJkCDrWA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-sh_eth_chip_reset_giga() doesn't really need to use direct iowrite32() when
-writing  to the ARSTR register,  it can use sh_eth_tsu_write() as all other
-chip_reset() methods.
+On 21.04.2016 15:00, Geert Uytterhoeven wrote:
+> On Thu, Apr 21, 2016 at 12:24 PM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>> In case thermal_zone_xxx_register() returns an error, priv->zone
+>> isn't NULL any more, but contains the error code.
+>>
+>> This is passed to thermal_zone_device_unregister(), then. This checks
+>> for priv->zone being NULL, but the error code is != NULL. So it works
+>> with the error code as a pointer. Crashing immediately.
+>>
+>> To fix this, reset priv->zone to NULL before entering
+>> rcar_gen3_thermal_remove().
+>
+> Alternatively, you could prevent a non-valid zone pointer from ever
+> ending up in priv->zone by assigning the zone to a temporary variable,
+> and only storing that in priv->zone after the error check.
+>
+>> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+>
+> Regardless of the above
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
----
- drivers/net/ethernet/renesas/sh_eth.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Could this be applied, then?
 
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -725,8 +725,9 @@ static struct sh_eth_cpu_data sh7757_dat
- #define GIGA_MAHR(port)		(SH_GIGA_ETH_BASE + 0x800 * (port) + 0x05c0)
- static void sh_eth_chip_reset_giga(struct net_device *ndev)
- {
--	int i;
-+	struct sh_eth_private *mdp = netdev_priv(ndev);
- 	u32 mahr[2], malr[2];
-+	int i;
- 
- 	/* save MAHR and MALR */
- 	for (i = 0; i < 2; i++) {
-@@ -735,7 +736,7 @@ static void sh_eth_chip_reset_giga(struc
- 	}
- 
- 	/* reset device */
--	iowrite32(ARSTR_ARST, (void *)(SH_GIGA_ETH_BASE + 0x1800));
-+	sh_eth_tsu_write(mdp, ARSTR_ARST, ARSTR);
- 	mdelay(1);
- 
- 	/* restore MAHR and MALR */
+
+Best regards
+
+Dirk
