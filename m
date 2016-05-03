@@ -1,41 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:36148 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753324AbcERO3I (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:44638 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932362AbcECAHD (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 18 May 2016 10:29:08 -0400
-To: <linux-renesas-soc@vger.kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Subject: Hard coded register address in "drm: rcar-du: Add DPLL support"?
-Message-ID: <9fc07c0c-0760-a713-5ca0-c70861576467@de.bosch.com>
-Date: Wed, 18 May 2016 16:29:05 +0200
+	Mon, 2 May 2016 20:07:03 -0400
+Date: Mon, 2 May 2016 17:07:01 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [git pull] clk: renesas: Updates for v4.7 (take three)
+Message-ID: <20160503000701.GD3492@codeaurora.org>
+References: <1462189654-31767-1-git-send-email-geert@linux-m68k.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1462189654-31767-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On 05/02, Geert Uytterhoeven wrote:
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> 	Hi Mike, Stephen,
+> 
+> The following changes since commit 2066390ad47b374f3d35075a32325b47d15bf735:
+> 
+>   clk: renesas: cpg-mssr: Export cpg_mssr_{at,de}tach_dev() (2016-04-20 09:17:07 +0200)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.7-tag3
+> 
+> for you to fetch changes up to d04a75af450782db2937603bb6706bf6fa7c6f37:
+> 
+>   clk: renesas: cpg-mssr: Use always-on governor for Clock Domain (2016-04-28 10:32:55 +0200)
+> 
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v4.7 (take three)
+> 
+>   - Support for CSI2 and VIN module clocks on R-Car H3,
+>   - Renesas CPG/MSTP and CPG/MSSR Clock Domain fixes.
+> 
 
-I'm not sure on which mailing list this
+Thanks. Pulled.
 
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/commit/drivers/gpu/drm/rcar-du/rcar_du_crtc.c?h=topic/gen3-latest&id=e297be92f09a9e8f9a63e72b8d69440dbf5bbabe
-drm: rcar-du: Add DPLL support
-
-is discussed.
-
-But it's the same like with the hard coded MODEMR register: We don't 
-want the hard coded
-
-#define PRODUCT_REG 0xfff00044
-
-here.
-
-Are there already patches or plans to convert this to a device tree 
-based interface?
-
-Best regards
-
-Dirk
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
