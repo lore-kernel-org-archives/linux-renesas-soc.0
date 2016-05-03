@@ -1,56 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f193.google.com ([209.85.213.193]:36743 "EHLO
-	mail-ig0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755554AbcECN15 (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34577 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932825AbcECMku (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 3 May 2016 09:27:57 -0400
-MIME-Version: 1.0
-In-Reply-To: <1462279242-3475-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1462279242-3475-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Date: Tue, 3 May 2016 15:27:56 +0200
-Message-ID: <CAMuHMdU89Nic5GPH3B=mAdvqrBDctEwXEspGD_3cv7VdrG1Qfg@mail.gmail.com>
-Subject: Re: [PATCH v4] ARM: dts: r8a7793: Add MMCIF0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux MMC List <linux-mmc@vger.kernel.org>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+	Tue, 3 May 2016 08:40:50 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: horms@verge.net.au, geert@linux-m68k.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-mmc@vger.kernel.org,
+	sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v4] ARM: dts: r8a7793: Add MMCIF0
+Date: Tue,  3 May 2016 14:40:42 +0200
+Message-Id: <1462279242-3475-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, May 3, 2016 at 2:40 PM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> Same as on r8a7791.
->
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> ---
+Same as on r8a7791.
 
-> --- a/arch/arm/boot/dts/r8a7793.dtsi
-> +++ b/arch/arm/boot/dts/r8a7793.dtsi
-> @@ -543,6 +543,19 @@
->                 status = "disabled";
->         };
->
-> +       mmcif0: mmcif@ee200000 {
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+This revision updates the power-domains node.
 
-As the regular ePAPR police is on holidays, I'm assuming its duties:
+CU
+Uli
 
-mmc@ee200000
 
-With that fixed:
+Changes since v3:
+- set power-domains = <&sysc R8A7793_PD_ALWAYS_ON>
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Changes since v2:
+- change back to one DMA controller
+- use GIC_SPI
+- add max-frequency
 
-Gr{oetje,eeting}s,
 
-                        Geert
+ arch/arm/boot/dts/r8a7793.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 1dd6d20..44c01a5 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -543,6 +543,19 @@
+ 		status = "disabled";
+ 	};
+ 
++	mmcif0: mmcif@ee200000 {
++		compatible = "renesas,mmcif-r8a7793", "renesas,sh-mmcif";
++		reg = <0 0xee200000 0 0x80>;
++		interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp3_clks R8A7793_CLK_MMCIF0>;
++		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>;
++		dma-names = "tx", "rx";
++		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
++		reg-io-width = <4>;
++		status = "disabled";
++		max-frequency = <97500000>;
++	};
++
+ 	scifa0: serial@e6c40000 {
+ 		compatible = "renesas,scifa-r8a7793",
+ 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+-- 
+2.7.4
