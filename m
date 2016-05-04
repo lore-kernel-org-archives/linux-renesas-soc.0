@@ -1,26 +1,70 @@
-Return-Path: <kieranbingham@gmail.com>
-From: Kieran Bingham <kieran@bingham.xyz>
-To: linux-renesas-soc@vger.kernel.org
-Cc: kuninori.morimoto.gx@renesas.com,
-	Kieran Bingham <kieran@bingham.xyz>
-Subject: [PATCH] Provide r8a7795 FDP1 clocks
-Date: Tue, 17 May 2016 11:03:30 +0100
-Message-Id: <1463479411-10817-1-git-send-email-kieran@bingham.xyz>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:40328 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753272AbcEDOgR (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 4 May 2016 10:36:17 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/3] soc: renesas: Add r8a7796 SYSC PM Domain Binding Definitions
+Date: Wed,  4 May 2016 16:36:09 +0200
+Message-Id: <1462372570-31979-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1462372570-31979-1-git-send-email-geert+renesas@glider.be>
+References: <1462372570-31979-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi All,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ include/dt-bindings/power/r8a7796-sysc.h | 36 ++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 include/dt-bindings/power/r8a7796-sysc.h
 
-I've now got the FDP1 powered up and reading registers, and the cpg-mssr
-is updated to support this. However, we did not have a mapping to identify
-the correct clock parent. For now I have used the R8A7795_CLK_S2D1, but
-does anyone have a clock tree diagram to verify this, or identify the
-correct parent please?
-
-Kieran Bingham (1):
-  clk: renesas: Provide r8a7795 FDP1 clocks
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 3 +++
- 1 file changed, 3 insertions(+)
-
+diff --git a/include/dt-bindings/power/r8a7796-sysc.h b/include/dt-bindings/power/r8a7796-sysc.h
+new file mode 100644
+index 0000000000000000..5b4daab44daa0057
+--- /dev/null
++++ b/include/dt-bindings/power/r8a7796-sysc.h
+@@ -0,0 +1,36 @@
++/*
++ * Copyright (C) 2016 Glider bvba
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
++#ifndef __DT_BINDINGS_POWER_R8A7796_SYSC_H__
++#define __DT_BINDINGS_POWER_R8A7796_SYSC_H__
++
++/*
++ * These power domain indices match the numbers of the interrupt bits
++ * representing the power areas in the various Interrupt Registers
++ * (e.g. SYSCISR, Interrupt Status Register)
++ */
++
++#define R8A7796_PD_CA57_CPU0		 0
++#define R8A7796_PD_CA57_CPU1		 1
++#define R8A7796_PD_CA53_CPU0		 5
++#define R8A7796_PD_CA53_CPU1		 6
++#define R8A7796_PD_CA53_CPU2		 7
++#define R8A7796_PD_CA53_CPU3		 8
++#define R8A7796_PD_CA57_SCU		12
++#define R8A7796_PD_CR7			13
++#define R8A7796_PD_A3VC			14
++#define R8A7796_PD_3DG_A		17
++#define R8A7796_PD_3DG_B		18
++#define R8A7796_PD_CA53_SCU		21
++#define R8A7796_PD_A3IR			24
++#define R8A7796_PD_A2VC0		25
++#define R8A7796_PD_A2VC1		26
++
++/* Always-on power area */
++#define R8A7796_PD_ALWAYS_ON		32
++
++#endif /* __DT_BINDINGS_POWER_R8A7796_SYSC_H__ */
 -- 
-2.5.0
+1.9.1
