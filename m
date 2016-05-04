@@ -1,80 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:57390 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750879AbcEIHPn (ORCPT
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:35618 "EHLO
+	mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757197AbcEDLOB (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 9 May 2016 03:15:43 -0400
-Received: from vsmta12.fe.internet.bosch.com (unknown [10.4.98.52])
-	by imta24.fe.bosch.de (Postfix) with ESMTP id 9A3BCD80212
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  9 May 2016 09:15:41 +0200 (CEST)
-Received: from FE-HUB1000.de.bosch.com (vsgw23.fe.internet.bosch.com [10.4.98.23])
-	by vsmta12.fe.internet.bosch.com (Postfix) with ESMTP id 522221B80396
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  9 May 2016 09:15:41 +0200 (CEST)
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	<linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH 06/10] arm: renesas: rcar-gen2: Remove unused rcar_gen2_read_mode_pins()
-Date: Mon, 9 May 2016 09:13:57 +0200
-Message-ID: <1462778041-19595-7-git-send-email-dirk.behme@de.bosch.com>
-In-Reply-To: <1462778041-19595-1-git-send-email-dirk.behme@de.bosch.com>
-References: <1462778041-19595-1-git-send-email-dirk.behme@de.bosch.com>
+	Wed, 4 May 2016 07:14:01 -0400
+Received: by mail-lf0-f44.google.com with SMTP id j8so55316007lfd.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 May 2016 04:14:00 -0700 (PDT)
+Subject: Re: [PATCH net-next v2] ravb: Remove rx buffer ALIGN
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>, netdev@vger.kernel.org
+References: <1462115991-27241-1-git-send-email-ykaneko0929@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <33c6a511-3532-4dd1-9116-39792c8eb86c@cogentembedded.com>
+Date: Wed, 4 May 2016 14:13:56 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1462115991-27241-1-git-send-email-ykaneko0929@gmail.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Simon Horman <horms+renesas@verge.net.au>
+Hello.
 
-The new boot mode reg infrastructure is now used in
-place of rcar_gen2_read_mode_pins so the latter may now be removed.
+On 5/1/2016 6:19 PM, Yoshihiro Kaneko wrote:
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/rcar-gen2.h       |  1 -
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 18 ------------------
- 2 files changed, 19 deletions(-)
+> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+>
+> Aligning the reception data size is not required.
+>
+> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> Tested-by: Simon Horman <horms+renesas@verge.net.au>
 
-diff --git a/arch/arm/mach-shmobile/rcar-gen2.h b/arch/arm/mach-shmobile/rcar-gen2.h
-index 8a66b4a..4c4ec37 100644
---- a/arch/arm/mach-shmobile/rcar-gen2.h
-+++ b/arch/arm/mach-shmobile/rcar-gen2.h
-@@ -3,7 +3,6 @@
- 
- void rcar_gen2_timer_init(void);
- #define MD(nr) BIT(nr)
--u32 rcar_gen2_read_mode_pins(void);
- void rcar_gen2_reserve(void);
- void rcar_gen2_pm_init(void);
- 
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 2af84d8..5942b93 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -29,24 +29,6 @@
- #include "common.h"
- #include "rcar-gen2.h"
- 
--#define MODEMR 0xe6160060
--
--u32 rcar_gen2_read_mode_pins(void)
--{
--	static u32 mode;
--	static bool mode_valid;
--
--	if (!mode_valid) {
--		void __iomem *modemr = ioremap_nocache(MODEMR, 4);
--		BUG_ON(!modemr);
--		mode = ioread32(modemr);
--		iounmap(modemr);
--		mode_valid = true;
--	}
--
--	return mode;
--}
--
- #define CNTCR 0
- #define CNTFID0 0x20
- 
--- 
-2.8.0
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+> ---
+>
+> This patch is based on the master branch of David Miller's next networking
+> tree.
+>
+> v2 [Yoshihiro Kaneko]
+> * As suggested by Sergei Shtylyov
+>   remove re-formattings which is not related to the subject of this patch.
+>
+>  drivers/net/ethernet/renesas/ravb_main.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index 238b56f..34066e0 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -246,10 +246,9 @@ static void ravb_ring_format(struct net_device *ndev, int q)
+>  	for (i = 0; i < priv->num_rx_ring[q]; i++) {
+>  		/* RX descriptor */
+>  		rx_desc = &priv->rx_ring[q][i];
+> -		/* The size of the buffer should be on 16-byte boundary. */
+> -		rx_desc->ds_cc = cpu_to_le16(ALIGN(PKT_BUF_SZ, 16));
+> +		rx_desc->ds_cc = cpu_to_le16(PKT_BUF_SZ);
+>  		dma_addr = dma_map_single(ndev->dev.parent, priv->rx_skb[q][i]->data,
+> -					  ALIGN(PKT_BUF_SZ, 16),
+> +					  PKT_BUF_SZ,
+>  					  DMA_FROM_DEVICE);
+
+    I'd expect you to make 2 above lines a single line. Oh well...
+
+>  		/* We just set the data size to 0 for a failed mapping which
+>  		 * should prevent DMA from happening...
+> @@ -558,7 +557,7 @@ static bool ravb_rx(struct net_device *ndev, int *quota, int q)
+>  			skb = priv->rx_skb[q][entry];
+>  			priv->rx_skb[q][entry] = NULL;
+>  			dma_unmap_single(ndev->dev.parent, le32_to_cpu(desc->dptr),
+> -					 ALIGN(PKT_BUF_SZ, 16),
+> +					 PKT_BUF_SZ,
+
+    Likewise.
+
+>  					 DMA_FROM_DEVICE);
+>  			get_ts &= (q == RAVB_NC) ?
+>  					RAVB_RXTSTAMP_TYPE_V2_L2_EVENT :
+[...]
+
+MBR, Sergei
