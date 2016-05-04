@@ -1,55 +1,40 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:43396 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753330AbcEDOfy (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 4 May 2016 10:35:54 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] clk: renesas: cpg-mssr: Document r8a7796 support
-Date: Wed,  4 May 2016 16:35:40 +0200
-Message-Id: <1462372543-31835-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH 3/3] arm64: dts: salvator-x: SCIF1 supports RTS/CTS hardware flow control
+Date: Wed,  4 May 2016 10:57:58 +0200
+Message-Id: <1462352278-30327-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1462352278-30327-1-git-send-email-geert+renesas@glider.be>
+References: <1462352278-30327-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
+
+On the Salvator-X development board, the RTS and CTS pins of debug
+serial-1 port SCIF1 are wired to the CP2102 Serial-USB bridge.  Reflect
+this in the DTS by adding the "uart-has-rtscts" property to the scif1
+device node.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-index fefb8023020f1a54..394d725ac7e0baa3 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -13,7 +13,8 @@ They provide the following functionalities:
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 5232aad07062198b..c09ead3a29fb72cf 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -369,6 +369,7 @@
+ 	pinctrl-0 = <&scif1_pins>;
+ 	pinctrl-names = "default";
  
- Required Properties:
-   - compatible: Must be one of:
--      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC
-+      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
-+      - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
++	uart-has-rtscts;
+ 	status = "okay";
+ };
  
-   - reg: Base address and length of the memory resource used by the CPG/MSSR
-     block
-@@ -21,8 +22,8 @@ Required Properties:
-   - clocks: References to external parent clocks, one entry for each entry in
-     clock-names
-   - clock-names: List of external parent clock names. Valid names are:
--      - "extal" (r8a7795)
--      - "extalr" (r8a7795)
-+      - "extal" (r8a7795, r8a7796)
-+      - "extalr" (r8a7795, r8a7796)
- 
-   - #clock-cells: Must be 2
-       - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
 -- 
 1.9.1
+
