@@ -1,70 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:26241 "EHLO
-	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751171AbcEFGU3 (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:50000 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757820AbcEDI6F (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 6 May 2016 02:20:29 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>
-CC: <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	<stable@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3] usb: host: xhci-rcar: Avoid long wait in xhci_reset()
-Date: Fri, 6 May 2016 15:20:11 +0900
-Message-ID: <1462515611-6972-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	Wed, 4 May 2016 04:58:05 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/3] ARM: dts: kzm9g: SCIFA4 supports RTS/CTS hardware flow control
+Date: Wed,  4 May 2016 10:57:57 +0200
+Message-Id: <1462352278-30327-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1462352278-30327-1-git-send-email-geert+renesas@glider.be>
+References: <1462352278-30327-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The firmware of R-Car USB 3.0 host controller will control the reset.
-So, if the xhci driver doesn't do firmware downloading (e.g. kernel
-configuration is CONFIG_USB_XHCI_PLATFORM=y and CONFIG_USB_XHCI_RCAR
-is not set), the reset of USB 3.0 host controller doesn't work
-correctly. Then, the host controller will cause long wait in
-xhci_reset() because the CMD_RESET bit of op_regs->command is not
-cleared for 10 seconds.
+On the KZM-A9-GT development board, the RTS and CTS pins of the debug
+console SCIFA4 are wired to the CP2102 Serial-USB bridge.  Reflect
+this in the DTS by adding the "uart-has-rtscts" property to the scifa4
+device node.
 
-So, this patch modifies the Kconfig to enable both CONFIG_USB_XHCI_PLATFORM
-and CONFIG_USB_XHCI_RCAR.
-
-Fixes: 4ac8918f3a7 (usb: host: xhci-plat: add support for the R-Car H2 and M2 xHCI controllers)
-Cc: <stable@vger.kernel.org> # v3.17+
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Changes from v2:
-  - Modify the Kconfig instead of xhci-rcar.h
-    http://www.spinics.net/lists/linux-usb/msg139681.html
-    http://www.spinics.net/lists/linux-usb/msg139722.html
+ arch/arm/boot/dts/sh73a0-kzm9g.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
- Changes from v1:
-  - Revise the commit log.
-    http://www.spinics.net/lists/stable/msg130007.html
-
- drivers/usb/host/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index 3050b18..e9d4dde 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -35,6 +35,7 @@ config USB_XHCI_PCI
+diff --git a/arch/arm/boot/dts/sh73a0-kzm9g.dts b/arch/arm/boot/dts/sh73a0-kzm9g.dts
+index e6b2ef3785c7542a..b393b1f5bee24574 100644
+--- a/arch/arm/boot/dts/sh73a0-kzm9g.dts
++++ b/arch/arm/boot/dts/sh73a0-kzm9g.dts
+@@ -378,6 +378,7 @@
+ 	pinctrl-0 = <&scifa4_pins>;
+ 	pinctrl-names = "default";
  
- config USB_XHCI_PLATFORM
- 	tristate "Generic xHCI driver for a platform device"
-+	select USB_XHCI_RCAR if ARCH_RENESAS
- 	---help---
- 	  Adds an xHCI host driver for a generic platform device, which
- 	  provides a memory space and an irq.
-@@ -63,7 +64,7 @@ config USB_XHCI_MVEBU
++	uart-has-rtscts;
+ 	status = "okay";
+ };
  
- config USB_XHCI_RCAR
- 	tristate "xHCI support for Renesas R-Car SoCs"
--	select USB_XHCI_PLATFORM
-+	depends on USB_XHCI_PLATFORM
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	---help---
- 	  Say 'Y' to enable the support for the xHCI host controller
 -- 
 1.9.1
