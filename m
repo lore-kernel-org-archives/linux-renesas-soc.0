@@ -1,95 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41042 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751574AbcEJStZ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51059 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754614AbcEEXtN (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 14:49:25 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Nguyen Viet Dung <nv-dung@jinso.co.jp>,
-	Mark Brown <broonie@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, Simon <horms@verge.net.au>,
-	Nguyen Viet Dung <nv-dung@jinso.co.jp>
-In-Reply-To: <87d1oumzcr.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1b0Cia-0007Gr-Tb@debutante>
-Date: Tue, 10 May 2016 19:49:16 +0100
-Subject: Applied "ASoC: rsnd: don't use prohibited number to PDMACHCRn.SRS" to the asoc tree
+	Thu, 5 May 2016 19:49:13 -0400
+Date: Fri, 6 May 2016 08:49:07 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/3] ARM/arm64: dts: renesas: Describe RTS/CTS hardware
+ flow control
+Message-ID: <20160505234906.GD24999@verge.net.au>
+References: <1462352278-30327-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1462352278-30327-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hi Geert,
 
-   ASoC: rsnd: don't use prohibited number to PDMACHCRn.SRS
+On Wed, May 04, 2016 at 10:57:55AM +0200, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series updates the various Renesas DTSes to describe that
+> some UARTS have dedicated lines for RTS/CTS hardware flow control, and
+> that they are available for use (wired and enabled by pinmux
+> configuration), by adding the "uart-has-rtscts" property to
+> board-specific DTS files where appropriate.
+> 
+> While the actual DT binding updates documenting the "uart-has-rtscts"
+> property for SCIF(A) UARTs ("serial: sh-sci: Update DT binding
+> documentation for dedicated RTS/CTS") hasn't been accepted into tty-next
+> yet, this property is part of the Generic Serial DT Bindings
+> (Documentation/devicetree/bindings/serial/serial.txt), which has been
+> accepted.
 
-has been applied to the asoc tree at
+On the basis of the binding being present in the generic documentation
+I have queued up these patches. If that was not your intention please
+let me know.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From ee057d2ee73259f455cfbb7a4db808fc6b6405dd Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Tue, 10 May 2016 02:22:37 +0000
-Subject: [PATCH] ASoC: rsnd: don't use prohibited number to PDMACHCRn.SRS
-
-Current rsnd_dmapp_get_id() returns 0xFF as error code if system used
-strange connection. It will be used as PDMACHCRn.SRS, but 0xFF is
-prohibited number.
-In order not to use prohibited number, this patch indicates error message
-and returns 0x00 (same as SSI00) in error case.
-Special thanks to Dung-san.
-
-Reported-by: Nguyen Viet Dung <nv-dung@jinso.co.jp>
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sh/rcar/dma.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
-index 7658e8fd7bdc..6bc93cbb3049 100644
---- a/sound/soc/sh/rcar/dma.c
-+++ b/sound/soc/sh/rcar/dma.c
-@@ -316,11 +316,15 @@ static u32 rsnd_dmapp_get_id(struct rsnd_dai_stream *io,
- 		size = ARRAY_SIZE(gen2_id_table_cmd);
- 	}
- 
--	if (!entry)
--		return 0xFF;
-+	if ((!entry) || (size <= id)) {
-+		struct device *dev = rsnd_priv_to_dev(rsnd_io_to_priv(io));
- 
--	if (size <= id)
--		return 0xFF;
-+		dev_err(dev, "unknown connection (%s[%d])\n",
-+			rsnd_mod_name(mod), rsnd_mod_id(mod));
-+
-+		/* use non-prohibited SRS number as error */
-+		return 0x00; /* SSI00 */
-+	}
- 
- 	return entry[id];
- }
--- 
-2.8.1
+> Actual enablement of RTS/CTS hardware flow control (through setting the
+> CRTSCTS termios flag from userspace) depends on series "[PATCH v2 00/11]
+> serial: sh-sci: Hardware Flow Control Updates"
+> (http://www.spinics.net/lists/linux-serial/msg22535.html).
+> Note that setting the CRTSCTS flag for a serial port that is being used
+> as the kernel console is a bad idea ;-) You'll have better luck with
+> UARTs on expansion connectors, cfr. the topic/renesas-overlays branch of
+> https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+> 
+> Thanks!
+> 
+> Geert Uytterhoeven (3):
+>   ARM: dts: bockw: SCIF0 supports RTS/CTS hardware flow control
+>   ARM: dts: kzm9g: SCIFA4 supports RTS/CTS hardware flow control
+>   arm64: dts: salvator-x: SCIF1 supports RTS/CTS hardware flow control
+> 
+>  arch/arm/boot/dts/r8a7778-bockw.dts                | 1 +
+>  arch/arm/boot/dts/sh73a0-kzm9g.dts                 | 1 +
+>  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 1 +
+>  3 files changed, 3 insertions(+)
+> 
+> -- 
+> 1.9.1
+> 
+> Gr{oetje,eeting}s,
+> 
+> 						Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+> 							    -- Linus Torvalds
+> 
