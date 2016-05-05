@@ -1,31 +1,22 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:48975 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751330AbcELVbj (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 12 May 2016 17:31:39 -0400
-Date: Thu, 12 May 2016 23:31:27 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Thu, 5 May 2016 17:06:25 -0500
+From: Rob Herring <robh@kernel.org>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
 	<niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org
+Cc: wsa@the-dreams.de, linux-i2c@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
 Subject: Re: [PATCH] i2c: rcar: add DMA support
-Message-ID: <20160512213127.GA1860@katana>
+Message-ID: <20160505220625.GA18367@rob-hp-laptop>
 References: <1462365503-8451-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 In-Reply-To: <1462365503-8451-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
-
-thanks for the submission. I was finally able to test this change.
-
-On Wed, May 04, 2016 at 02:38:23PM +0200, Niklas Söderlund wrote:
+On Wed, May 04, 2016 at 02:38:23PM +0200, Niklas S�derlund wrote:
 > Make it possible to transfer i2c message buffers via DMA.
 > Start/Stop/Sending_Slave_Address and some data is still handled using
 > the old state machine, it is sending the bulk of the data that is done
@@ -36,38 +27,12 @@ On Wed, May 04, 2016 at 02:38:23PM +0200, Niklas Söderlund wrote:
 > first byte before DMA transmit and to be able to set the STOP condition
 > for DMA reception.
 > 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  Documentation/devicetree/bindings/i2c/i2c-rcar.txt |   3 +
+>  drivers/i2c/busses/i2c-rcar.c                      | 237 ++++++++++++++++++++-
+>  2 files changed, 236 insertions(+), 4 deletions(-)
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Is DMA actually faster or less cpu usage? I'm doubtful.
 
-I did regression tests on my Salvator-X trying to trigger previously
-known issues. Nothing bad happened. This could be expected since START
-and STOP is done in PIO mode, but one never knows :) Also did verify
-that DMA is triggered for bigger transfers.
-
-Did you have time to re-measure the threshold? Also, did you try booting
-without DMA and on Gen2? We had a bit of hazzle with !DMA with the
-sh_mobile-driver. Boot test and basic i2cdetect will suffice.
-
-Patch looks good, only minor nits:
-
-> +	/* Do not use DMA for messages shorter then 8 bytes */
-> +	if (msg->len < 8)
-> +		return;
-> +
-> +	if (IS_ERR(chan))
-> +		return;
-
-Make this one if (a || b)?
-
-> @@ -516,6 +738,7 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
->  out:
->  	pm_runtime_put(dev);
->  
-> +
-
-Unrelated change ;)
-
-Thanks,
-
-   Wolfram
+Acked-by: Rob Herring <robh@kernel.org>
