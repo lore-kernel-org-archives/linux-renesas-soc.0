@@ -1,118 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:59284 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752811AbcEDOgS (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:35691 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752471AbcEEWNo (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 4 May 2016 10:36:18 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] soc: renesas: rcar-sysc: Add support for R-Car M3-W power areas
-Date: Wed,  4 May 2016 16:36:10 +0200
-Message-Id: <1462372570-31979-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1462372570-31979-1-git-send-email-geert+renesas@glider.be>
+	Thu, 5 May 2016 18:13:44 -0400
+Date: Thu, 5 May 2016 17:13:39 -0500
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] soc: renesas: rcar-sysc: Document r8a7796 support
+Message-ID: <20160505221339.GA10595@rob-hp-laptop>
 References: <1462372570-31979-1-git-send-email-geert+renesas@glider.be>
+ <1462372570-31979-2-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1462372570-31979-2-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/soc/renesas/Makefile       |  1 +
- drivers/soc/renesas/r8a7796-sysc.c | 48 ++++++++++++++++++++++++++++++++++++++
- drivers/soc/renesas/rcar-sysc.c    |  3 +++
- drivers/soc/renesas/rcar-sysc.h    |  1 +
- 4 files changed, 53 insertions(+)
- create mode 100644 drivers/soc/renesas/r8a7796-sysc.c
+On Wed, May 04, 2016 at 04:36:08PM +0200, Geert Uytterhoeven wrote:
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index 151fcd3f025b01f3..cd85cd5e6a01517c 100644
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@ -5,3 +5,4 @@ obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
- obj-$(CONFIG_ARCH_R8A7793)	+= rcar-sysc.o r8a7791-sysc.o
- obj-$(CONFIG_ARCH_R8A7794)	+= rcar-sysc.o r8a7794-sysc.o
- obj-$(CONFIG_ARCH_R8A7795)	+= rcar-sysc.o r8a7795-sysc.o
-+obj-$(CONFIG_ARCH_R8A7796)	+= rcar-sysc.o r8a7796-sysc.o
-diff --git a/drivers/soc/renesas/r8a7796-sysc.c b/drivers/soc/renesas/r8a7796-sysc.c
-new file mode 100644
-index 0000000000000000..f700c842b9e1d010
---- /dev/null
-+++ b/drivers/soc/renesas/r8a7796-sysc.c
-@@ -0,0 +1,48 @@
-+/*
-+ * Renesas R-Car M3-W System Controller
-+ *
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+
-+#include <linux/bug.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/power/r8a7796-sysc.h>
-+
-+#include "rcar-sysc.h"
-+
-+static const struct rcar_sysc_area r8a7796_areas[] __initconst = {
-+	{ "always-on",	    0, 0, R8A7796_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
-+	{ "ca57-scu",	0x1c0, 0, R8A7796_PD_CA57_SCU,	R8A7796_PD_ALWAYS_ON,
-+	  PD_SCU },
-+	{ "ca57-cpu0",	 0x80, 0, R8A7796_PD_CA57_CPU0,	R8A7796_PD_CA57_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca57-cpu1",	 0x80, 1, R8A7796_PD_CA57_CPU1,	R8A7796_PD_CA57_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca53-scu",	0x140, 0, R8A7796_PD_CA53_SCU,	R8A7796_PD_ALWAYS_ON,
-+	  PD_SCU },
-+	{ "ca53-cpu0",	0x200, 0, R8A7796_PD_CA53_CPU0,	R8A7796_PD_CA53_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca53-cpu1",	0x200, 1, R8A7796_PD_CA53_CPU1,	R8A7796_PD_CA53_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca53-cpu2",	0x200, 2, R8A7796_PD_CA53_CPU2,	R8A7796_PD_CA53_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca53-cpu3",	0x200, 3, R8A7796_PD_CA53_CPU3,	R8A7796_PD_CA53_SCU,
-+	  PD_CPU_NOCR },
-+	{ "cr7",	0x240, 0, R8A7796_PD_CR7,	R8A7796_PD_ALWAYS_ON },
-+	{ "a3vc",	0x380, 0, R8A7796_PD_A3VC,	R8A7796_PD_ALWAYS_ON },
-+	{ "a2vc0",	0x3c0, 0, R8A7796_PD_A2VC0,	R8A7796_PD_A3VC },
-+	{ "a2vc1",	0x3c0, 1, R8A7796_PD_A2VC1,	R8A7796_PD_A3VC },
-+	{ "3dg-a",	0x100, 0, R8A7796_PD_3DG_A,	R8A7796_PD_ALWAYS_ON },
-+	{ "3dg-b",	0x100, 1, R8A7796_PD_3DG_B,	R8A7796_PD_3DG_A },
-+	{ "a3ir",	0x180, 0, R8A7796_PD_A3IR,	R8A7796_PD_ALWAYS_ON },
-+};
-+
-+const struct rcar_sysc_info r8a7796_sysc_info __initconst = {
-+	.areas = r8a7796_areas,
-+	.num_areas = ARRAY_SIZE(r8a7796_areas),
-+};
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 79dbc770895f4b6d..fc997d4d2a4afb7e 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -303,6 +303,9 @@ static const struct of_device_id rcar_sysc_matches[] = {
- #ifdef CONFIG_ARCH_R8A7795
- 	{ .compatible = "renesas,r8a7795-sysc", .data = &r8a7795_sysc_info },
- #endif
-+#ifdef CONFIG_ARCH_R8A7796
-+	{ .compatible = "renesas,r8a7796-sysc", .data = &r8a7796_sysc_info },
-+#endif
- 	{ /* sentinel */ }
- };
- 
-diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
-index 5e766174c2f47eb0..4ac3d7bf7f38043c 100644
---- a/drivers/soc/renesas/rcar-sysc.h
-+++ b/drivers/soc/renesas/rcar-sysc.h
-@@ -55,4 +55,5 @@ extern const struct rcar_sysc_info r8a7790_sysc_info;
- extern const struct rcar_sysc_info r8a7791_sysc_info;
- extern const struct rcar_sysc_info r8a7794_sysc_info;
- extern const struct rcar_sysc_info r8a7795_sysc_info;
-+extern const struct rcar_sysc_info r8a7796_sysc_info;
- #endif /* __SOC_RENESAS_RCAR_SYSC_H__ */
--- 
-1.9.1
+Acked-by: Rob Herring <robh@kernel.org>
