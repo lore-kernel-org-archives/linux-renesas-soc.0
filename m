@@ -1,62 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:57568 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751705AbcEINLX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51320 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753786AbcEFAVc (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 9 May 2016 09:11:23 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Simon Horman <horms@verge.net.au>
-Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
-	Olof Johansson <olof@lixom.net>,
+	Thu, 5 May 2016 20:21:32 -0400
+Date: Fri, 6 May 2016 09:21:25 +0900
+From: Simon Horman <horms@verge.net.au>
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
 	Kevin Hilman <khilman@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
 	linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>
 Subject: Re: [GIT PULL] Renesas ARM64 Based SoC DT PM Domain Updates for v4.7
-Date: Mon, 09 May 2016 15:10:40 +0200
-Message-ID: <41128314.QPDQXbTtHX@wuerfel>
-In-Reply-To: <20160506002125.GE24999@verge.net.au>
-References: <cover.1461730364.git.horms+renesas@verge.net.au> <20160506002125.GE24999@verge.net.au>
+Message-ID: <20160506002125.GE24999@verge.net.au>
+References: <cover.1461730364.git.horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1461730364.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Friday 06 May 2016 09:21:25 Simon Horman wrote:
-> Hi,
-> 
-> On Wed, Apr 27, 2016 at 02:20:10PM +1000, Simon Horman wrote:
-> > Hi Olof, Hi Kevin, Hi Arnd,
-> > 
-> > Please consider these Renesas ARM64 based SoC DT PM Domain updates for v4.7.
-> > 
-> > This pull requests is based on a merge of:
-> > 
-> > * "[GIT PULL] Second Round of Renesas ARM Based SoC R-Car SYSC Updates for
-> >   v4.7", tagged as renesas-rcar-sysc2-for-v4.7, which you have already
-> >   pulled
-> > * "[GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v4.7",
-> >   tagged as renesas-arm64-dt2-for-v4.7, which I have sent a pull request
-> >   for.
-> > 
-> > The reason for the somewhat tedious base on
-> > renesas-rcar-sysc2-for-v4.7, which provides driver changes,
-> > is a hard run-time dependency.
-> > 
-> > I also have a similar set of changes for ARM (32-bit) which I will send
-> > separately.
-> 
-> I am wondering if this pull-request might have slipped through the cracks.
-> 
-> FWIW, all other pull requests I have submitted for v4.7 have been pulled
-> (thanks!) including a similar pull-request for ARM (32-bit) which is
-> present in the next/late branch of the arm-soc tree.
-> 
-> I do not plan to send any more non-fix pull requests for v4.7.
-> And at this stage I am not aware of any fixes for v4.7.
-> 
+Hi,
 
-Indeed it did, thanks for the reminder! I've put it on my stack now
-and should start doing merges later today when I'm through my mail.
+On Wed, Apr 27, 2016 at 02:20:10PM +1000, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these Renesas ARM64 based SoC DT PM Domain updates for v4.7.
+> 
+> This pull requests is based on a merge of:
+> 
+> * "[GIT PULL] Second Round of Renesas ARM Based SoC R-Car SYSC Updates for
+>   v4.7", tagged as renesas-rcar-sysc2-for-v4.7, which you have already
+>   pulled
+> * "[GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v4.7",
+>   tagged as renesas-arm64-dt2-for-v4.7, which I have sent a pull request
+>   for.
+> 
+> The reason for the somewhat tedious base on
+> renesas-rcar-sysc2-for-v4.7, which provides driver changes,
+> is a hard run-time dependency.
+> 
+> I also have a similar set of changes for ARM (32-bit) which I will send
+> separately.
 
-	Arnd
+I am wondering if this pull-request might have slipped through the cracks.
+
+FWIW, all other pull requests I have submitted for v4.7 have been pulled
+(thanks!) including a similar pull-request for ARM (32-bit) which is
+present in the next/late branch of the arm-soc tree.
+
+I do not plan to send any more non-fix pull requests for v4.7.
+And at this stage I am not aware of any fixes for v4.7.
+
+> The following changes since commit 3238ec7c0a821915f38095752de97a424fd1d6ce:
+> 
+>   Merge tag 'renesas-rcar-sysc2-for-v4.7' into arm64-dt-pm-domain-for-v4.7 (2016-04-27 11:49:19 +1000)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt-pm-domain-for-v4.7
+> 
+> for you to fetch changes up to 38dbb45ee4bc7dda4aabba2178eebff2f93380d1:
+> 
+>   arm64: dts: r8a7795: Use SYSC "always-on" PM Domain (2016-04-27 14:10:41 +1000)
+> 
+> ----------------------------------------------------------------
+> Renesas ARM64 Based SoC DT PM Domain Updates for v4.7
+> 
+> * Add SYSC PM Domains to DT of r8a7795 SoC
+> 
+> ----------------------------------------------------------------
+> Geert Uytterhoeven (2):
+>       arm64: dts: r8a7795: Add SYSC PM Domains
+>       arm64: dts: r8a7795: Use SYSC "always-on" PM Domain
+> 
+>  arch/arm64/boot/dts/renesas/r8a7795.dtsi | 123 +++++++++++++++++--------------
+>  1 file changed, 68 insertions(+), 55 deletions(-)
+> 
