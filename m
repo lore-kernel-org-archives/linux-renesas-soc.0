@@ -1,79 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from spo001.leaseweb.nl ([83.149.101.17]:34779 "EHLO
-	spo001.leaseweb.nl" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752562AbcENRSR (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:36781 "EHLO
+	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750855AbcEHLC1 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sat, 14 May 2016 13:18:17 -0400
-Date: Sat, 14 May 2016 18:45:43 +0200
-From: Wim Van Sebroeck <wim@iguana.be>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] watchdog: add driver for Renesas Gen3 WDT watchdogs
-Message-ID: <20160514164543.GA20335@spo001.leaseweb.nl>
-References: <1459511786-4286-1-git-send-email-wsa@the-dreams.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1459511786-4286-1-git-send-email-wsa@the-dreams.de>
+	Sun, 8 May 2016 07:02:27 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux-foundation.org, dmaengine@vger.kernel.org
+Cc: will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/2] dma-mapping: add __dma_sync_single_for_device()
+Date: Sun,  8 May 2016 12:59:55 +0200
+Message-Id: <1462705196-10857-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1462705196-10857-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1462705196-10857-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+Some users of the DMA mapping API calls dma_sync_single_for_device()
+from the dma_map_single() call path. This will cause false warning
+printouts if CONFIG_DMA_API_DEBUG are enabled.
 
-> Here is V2 of this series with the following changes:
-> 
-> * include bitops.h
-> * s/unsigned/unsigned int/
-> * drop set_timeout() because core does it already
-> * add get_timeleft()
-> * don't make "nowayout" a readable parameter
-> * use "watchdog" instead of "wdt" in the dt bindings
-> 
-> The dts and defconfig changes should go via Simon's tree once the driver is
-> accepted.
-> 
-> To use this driver, you need a recent firmware/uboot which initializes the
-> WDTRSTCR register which can only be changed in secure mode. 'md 0xe6160054 4'
-> should give you 0x8002 or something else with bit 15 set and bit 0 cleared.
-> 
-> Also, you need the clock enablement patches which just have been posted in
-> their newest version to the renesas-soc mailing list and are also in
-> close-to-be-applied state.
-> 
-> A complete branch to test can be found here:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/v8-wdt
-> 
-> Please review, test, comment...
-> 
-> Thanks,
-> 
->    Wolfram
-> 
-> 
-> Wolfram Sang (4):
->   watchdog: renesas-wdt: add driver
->   arm64: dts: r8a7795: Add RWDT node
->   arm64: dts: salvator-x: Enable watchdog timer
->   arm64: defconfig: enable Renesas Watchdog Timer
-> 
->  .../devicetree/bindings/watchdog/renesas-wdt.txt   |  25 +++
->  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |   5 +
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi           |   8 +
->  arch/arm64/configs/defconfig                       |   2 +
->  drivers/watchdog/Kconfig                           |   8 +
->  drivers/watchdog/Makefile                          |   1 +
->  drivers/watchdog/renesas_wdt.c                     | 213 +++++++++++++++++++++
->  7 files changed, 262 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
->  create mode 100644 drivers/watchdog/renesas_wdt.c
-> 
-> -- 
-> 2.7.0
->
+The reason for the warning are that debug_dma_sync_single_for_device()
+will be called before debug_dma_map_page() so the new mapping can't be
+found and are believed to be invalid. Add __dma_sync_single_for_device()
+that don't call into debug_dma_sync_single_for_device() and can be used
+in these situations.
 
-Patch 1 and 4 have been added to linux-watchdog-next.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ include/linux/dma-mapping.h | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Kind regards,
-Wim.
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index 9ea9aba..0e4d3a6 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -224,7 +224,7 @@ static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
+ 	debug_dma_sync_single_for_cpu(dev, addr, size, dir);
+ }
  
+-static inline void dma_sync_single_for_device(struct device *dev,
++static inline void __dma_sync_single_for_device(struct device *dev,
+ 					      dma_addr_t addr, size_t size,
+ 					      enum dma_data_direction dir)
+ {
+@@ -233,6 +233,13 @@ static inline void dma_sync_single_for_device(struct device *dev,
+ 	BUG_ON(!valid_dma_direction(dir));
+ 	if (ops->sync_single_for_device)
+ 		ops->sync_single_for_device(dev, addr, size, dir);
++}
++
++static inline void dma_sync_single_for_device(struct device *dev,
++					      dma_addr_t addr, size_t size,
++					      enum dma_data_direction dir)
++{
++	__dma_sync_single_for_device(dev, addr, size, dir);
+ 	debug_dma_sync_single_for_device(dev, addr, size, dir);
+ }
+ 
+-- 
+2.8.2
