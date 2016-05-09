@@ -1,46 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:33992 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755066AbcEBU0D (ORCPT
+Received: from shards.monkeyblade.net ([149.20.54.216]:54062 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751230AbcEIEPx (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 2 May 2016 16:26:03 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-mmc@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [RFC 0/4] mmc: tmio/sdhi: prevent regressions when setting clock
-Date: Mon,  2 May 2016 22:25:38 +0200
-Message-Id: <1462220742-4426-1-git-send-email-wsa@the-dreams.de>
+	Mon, 9 May 2016 00:15:53 -0400
+Date: Mon, 09 May 2016 00:15:51 -0400 (EDT)
+Message-Id: <20160509.001551.992827306777802470.davem@davemloft.net>
+To: sergei.shtylyov@cogentembedded.com
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/2] sh_eth: couple of software reset bit cleanups
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1808900.MGlUzc8O9C@wasted.cogentembedded.com>
+References: <1808900.MGlUzc8O9C@wasted.cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Here is a small refactoring series for setting the clock for SDHI cores. This
-is to prevent regression on platforms where this feature has not been tested.
-One such regression is known on r8a7740 (patches 2+3). Patch 4 fixes an
-oversight and patch 1 is a small cleanup.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Sun, 08 May 2016 00:06:53 +0300
 
-RFC for now since I can't test these patches on my hardware currently. Will do
-so on Wednesday, probably. Posting now since because Geert may already want to
-test on r8a7740. Branch is here:
+>    Here's a set of 2 patches against DaveM's 'net-next.git' repo. We can save
+> on the repetitive chip reset code...
+> 
+> [1/2] sh_eth: call sh_eth_tsu_write() from sh_eth_chip_reset_giga()
+> [2/2] sh_eth: reuse sh_eth_chip_reset()
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git sdhi-for-ulf
-
-Thanks,
-
-   Wolfram
-
-Wolfram Sang (4):
-  mmc: sh_mobile_sdhi: make clk_update function more compact
-  mmc: tmio/sdhi: introduce flag for RCar 2+ specific features
-  mmc: sh_mobile_sdhi: only change the clock on RCar Gen2+
-  mmc: sh_mobile_sdhi: check return value when changing clk
-
- drivers/mmc/host/sh_mobile_sdhi.c | 17 +++++++++--------
- drivers/mmc/host/tmio_mmc_pio.c   |  6 +++---
- include/linux/mfd/tmio.h          |  4 ++--
- 3 files changed, 14 insertions(+), 13 deletions(-)
-
--- 
-2.6.2
+Series applied, thanks.
