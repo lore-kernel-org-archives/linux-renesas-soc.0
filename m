@@ -1,93 +1,151 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33930 "EHLO
-	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932872AbcEKODf (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:57391 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751389AbcEIHPn (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 11 May 2016 10:03:35 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-	ian.molton@codethink.co.uk, lars@metafoo.de,
-	william.towle@codethink.co.uk,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v4 6/8] media: rcar-vin: initialize EDID data
-Date: Wed, 11 May 2016 16:02:54 +0200
-Message-Id: <1462975376-491-7-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1462975376-491-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1462975376-491-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+	Mon, 9 May 2016 03:15:43 -0400
+Received: from vsmta12.fe.internet.bosch.com (unknown [10.4.98.52])
+	by imta23.fe.bosch.de (Postfix) with ESMTP id D911215801FE
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  9 May 2016 09:15:41 +0200 (CEST)
+Received: from FE-HUB1000.de.bosch.com (vsgw23.fe.internet.bosch.com [10.4.98.23])
+	by vsmta12.fe.internet.bosch.com (Postfix) with ESMTP id 932491B80398
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  9 May 2016 09:15:41 +0200 (CEST)
+From: Dirk Behme <dirk.behme@de.bosch.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	<linux-renesas-soc@vger.kernel.org>
+Subject: [PATCH 02/10] boot-mode-reg: Add R-Car driver
+Date: Mon, 9 May 2016 09:13:53 +0200
+Message-ID: <1462778041-19595-3-git-send-email-dirk.behme@de.bosch.com>
+In-Reply-To: <1462778041-19595-1-git-send-email-dirk.behme@de.bosch.com>
+References: <1462778041-19595-1-git-send-email-dirk.behme@de.bosch.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Initializes the decoder subdevice with a fixed EDID blob.
+From: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Boot mode register driver for R-Car.
+
+If running on a supported platform it reads the boot mode register and
+records it using the boot mode register infrastructure established by an
+earlier patch.
+
+rcar_init_boot_mode() is exported allow it to be explicitly called in
+cases where the boot mode register is needed before init calls are made.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 46 +++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ drivers/misc/boot-mode-reg/Kconfig  |  8 +++++
+ drivers/misc/boot-mode-reg/Makefile |  1 +
+ drivers/misc/boot-mode-reg/rcar.c   | 60 +++++++++++++++++++++++++++++++++++++
+ include/misc/boot-mode-reg.h        |  3 ++
+ 4 files changed, 72 insertions(+)
+ create mode 100644 drivers/misc/boot-mode-reg/rcar.c
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 10a5c10..5bb3c3b 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -765,6 +765,41 @@ static void rvin_notify(struct v4l2_subdev *sd,
- 	}
- }
- 
-+static u8 edid[256] = {
-+	0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00,
-+	0x48, 0xAE, 0x9C, 0x27, 0x00, 0x00, 0x00, 0x00,
-+	0x19, 0x12, 0x01, 0x03, 0x80, 0x00, 0x00, 0x78,
-+	0x0E, 0x00, 0xB2, 0xA0, 0x57, 0x49, 0x9B, 0x26,
-+	0x10, 0x48, 0x4F, 0x2F, 0xCF, 0x00, 0x31, 0x59,
-+	0x45, 0x59, 0x61, 0x59, 0x81, 0x99, 0x01, 0x01,
-+	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x3A,
-+	0x80, 0x18, 0x71, 0x38, 0x2D, 0x40, 0x58, 0x2C,
-+	0x46, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1E,
-+	0x00, 0x00, 0x00, 0xFD, 0x00, 0x31, 0x55, 0x18,
-+	0x5E, 0x11, 0x00, 0x0A, 0x20, 0x20, 0x20, 0x20,
-+	0x20, 0x20, 0x00, 0x00, 0x00, 0xFC, 0x00, 0x43,
-+	0x20, 0x39, 0x30, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A,
-+	0x0A, 0x0A, 0x0A, 0x0A, 0x00, 0x00, 0x00, 0x10,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x68,
-+	0x02, 0x03, 0x1a, 0xc0, 0x48, 0xa2, 0x10, 0x04,
-+	0x02, 0x01, 0x21, 0x14, 0x13, 0x23, 0x09, 0x07,
-+	0x07, 0x65, 0x03, 0x0c, 0x00, 0x10, 0x00, 0xe2,
-+	0x00, 0x2a, 0x01, 0x1d, 0x00, 0x80, 0x51, 0xd0,
-+	0x1c, 0x20, 0x40, 0x80, 0x35, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x1e, 0x8c, 0x0a, 0xd0, 0x8a,
-+	0x20, 0xe0, 0x2d, 0x10, 0x10, 0x3e, 0x96, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xd7
-+};
+diff --git a/drivers/misc/boot-mode-reg/Kconfig b/drivers/misc/boot-mode-reg/Kconfig
+index 3c4ddde..3868c36 100644
+--- a/drivers/misc/boot-mode-reg/Kconfig
++++ b/drivers/misc/boot-mode-reg/Kconfig
+@@ -9,3 +9,11 @@ config BOOT_MODE_REG_CORE
+ 	help
+ 	  Say Y here to allow support for drivers to read boot mode
+ 	  registers and make the value available to other subsystems.
 +
- int rvin_v4l2_probe(struct rvin_dev *vin)
- {
- 	struct v4l2_subdev_format fmt = {
-@@ -870,5 +905,16 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- 	v4l2_info(&vin->v4l2_dev, "Device registered as %s\n",
- 		  video_device_node_name(&vin->vdev));
++config BOOT_MODE_REG_RCAR
++	tristate "Boot Mode Register Driver for Renesas R-Car SoCs"
++	default n
++	select BOOT_MODE_REG_CORE
++	help
++	  Say Y here to allow support for reading the boot mode register
++	  on Renesas R-Car SoCs.
+diff --git a/drivers/misc/boot-mode-reg/Makefile b/drivers/misc/boot-mode-reg/Makefile
+index 19134b2..5469a1d 100644
+--- a/drivers/misc/boot-mode-reg/Makefile
++++ b/drivers/misc/boot-mode-reg/Makefile
+@@ -4,3 +4,4 @@
+ #
  
-+	{
-+		struct v4l2_subdev_edid rvin_edid = {
-+			.pad = 0,
-+			.start_block = 0,
-+			.blocks = 2,
-+			.edid = edid,
-+		};
-+		v4l2_subdev_call(sd, pad, set_edid,
-+				&rvin_edid);
+ obj-$(CONFIG_BOOT_MODE_REG_CORE)	+= core.o
++obj-$(CONFIG_BOOT_MODE_REG_RCAR)	+= rcar.o
+diff --git a/drivers/misc/boot-mode-reg/rcar.c b/drivers/misc/boot-mode-reg/rcar.c
+new file mode 100644
+index 0000000..c3b778fe
+--- /dev/null
++++ b/drivers/misc/boot-mode-reg/rcar.c
+@@ -0,0 +1,60 @@
++/*
++ * R-Car Boot Mode Register Driver
++ *
++ * Copyright (C) 2015 Simon Horman
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++
++#include <misc/boot-mode-reg.h>
++
++#define MODEMR 0xe6160060
++
++static int __init rcar_read_mode_pins(void)
++{
++	void __iomem *modemr;
++	int err = -ENOMEM;
++	static u32 mode;
++
++	modemr = ioremap_nocache(MODEMR, 4);
++	if (!modemr) {
++		pr_err("failed to map boot mode register");
++		goto err;
 +	}
++	mode = ioread32(modemr);
++	iounmap(modemr);
 +
- 	return ret;
- }
++	err = boot_mode_reg_set(mode);
++err:
++	if (err)
++		pr_err("failed to initialise boot mode");
++	return err;
++}
++
++int __init rcar_init_boot_mode(void)
++{
++	if (of_machine_is_compatible("renesas,r8a7790") ||
++	    of_machine_is_compatible("renesas,r8a7791") ||
++	    of_machine_is_compatible("renesas,r8a7792") ||
++	    of_machine_is_compatible("renesas,r8a7793") ||
++	    of_machine_is_compatible("renesas,r8a7794"))
++		return rcar_read_mode_pins();
++
++	return 0;
++}
++early_initcall(rcar_init_boot_mode);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Simon Horman <horms@verge.net.au>");
++MODULE_DESCRIPTION("R-Car Boot Mode Register Driver");
+diff --git a/include/misc/boot-mode-reg.h b/include/misc/boot-mode-reg.h
+index 34ee653..35d7f57 100644
+--- a/include/misc/boot-mode-reg.h
++++ b/include/misc/boot-mode-reg.h
+@@ -21,4 +21,7 @@
+ int boot_mode_reg_get(u32 *mode);
+ int boot_mode_reg_set(u32 mode);
+ 
++/* Allow explicit initialisation before initcalls */
++int rcar_init_boot_mode(void);
++
+ #endif
 -- 
-2.7.4
+2.8.0
