@@ -1,79 +1,85 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:57395 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750864AbcEIHPp (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 9 May 2016 03:15:45 -0400
-Received: from vsmta12.fe.internet.bosch.com (unknown [10.4.98.52])
-	by imta24.fe.bosch.de (Postfix) with ESMTP id E4EE4D80079
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  9 May 2016 09:15:43 +0200 (CEST)
-Received: from SI-HUB1000.de.bosch.com (vsgw24.fe.internet.bosch.com [10.4.98.24])
-	by vsmta12.fe.internet.bosch.com (Postfix) with ESMTP id 9D4911B80398
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  9 May 2016 09:15:43 +0200 (CEST)
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	<linux-renesas-soc@vger.kernel.org>
-CC: Dirk Behme <dirk.behme@gmail.com>
-Subject: [PATCH 10/10] boot-mode-reg: Convert to device tree
-Date: Mon, 9 May 2016 09:14:01 +0200
-Message-ID: <1462778041-19595-11-git-send-email-dirk.behme@de.bosch.com>
-In-Reply-To: <1462778041-19595-1-git-send-email-dirk.behme@de.bosch.com>
-References: <1462778041-19595-1-git-send-email-dirk.behme@de.bosch.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org,
+	hch@infradead.org
+Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
+	geert+renesas@glider.be, linus.walleij@linaro.org,
+	dan.j.williams@intel.com, arnd@arndb.de,
+	linux-arch@vger.kernel.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv6 8/8] ARM: dts: r8a7791: add iommus to dmac0 and dmac1
+Date: Mon,  9 May 2016 18:44:07 +0200
+Message-Id: <1462812247-3414-9-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1462812247-3414-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1462812247-3414-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Dirk Behme <dirk.behme@gmail.com>
+A unconfirmed hardware bug prevents channel 0 and 15 to be used by the
+DMAC together with the IPMMU. The DMAC driver will disable the channels
+reducing the effective number of channels to 14 per DMAC.
 
-Instead of using a hard coded address in the driver for the boot mode
-register, optain it from the device tree.
-
-Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/misc/boot-mode-reg/rcar.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/drivers/misc/boot-mode-reg/rcar.c b/drivers/misc/boot-mode-reg/rcar.c
-index e994980..2cfbf9c 100644
---- a/drivers/misc/boot-mode-reg/rcar.c
-+++ b/drivers/misc/boot-mode-reg/rcar.c
-@@ -16,24 +16,32 @@
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 4f01b64..dc81c90 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -313,6 +313,21 @@
+ 		power-domains = <&cpg_clocks>;
+ 		#dma-cells = <1>;
+ 		dma-channels = <15>;
++		iommus = <&ipmmu_ds 0>,
++			 <&ipmmu_ds 1>,
++			 <&ipmmu_ds 2>,
++			 <&ipmmu_ds 3>,
++			 <&ipmmu_ds 4>,
++			 <&ipmmu_ds 5>,
++			 <&ipmmu_ds 6>,
++			 <&ipmmu_ds 7>,
++			 <&ipmmu_ds 8>,
++			 <&ipmmu_ds 9>,
++			 <&ipmmu_ds 10>,
++			 <&ipmmu_ds 11>,
++			 <&ipmmu_ds 12>,
++			 <&ipmmu_ds 13>,
++			 <&ipmmu_ds 14>;
+ 	};
  
- #include <misc/boot-mode-reg.h>
+ 	dmac1: dma-controller@e6720000 {
+@@ -344,6 +359,21 @@
+ 		power-domains = <&cpg_clocks>;
+ 		#dma-cells = <1>;
+ 		dma-channels = <15>;
++		iommus = <&ipmmu_ds 15>,
++			 <&ipmmu_ds 16>,
++			 <&ipmmu_ds 17>,
++			 <&ipmmu_ds 18>,
++			 <&ipmmu_ds 19>,
++			 <&ipmmu_ds 20>,
++			 <&ipmmu_ds 21>,
++			 <&ipmmu_ds 22>,
++			 <&ipmmu_ds 23>,
++			 <&ipmmu_ds 24>,
++			 <&ipmmu_ds 25>,
++			 <&ipmmu_ds 26>,
++			 <&ipmmu_ds 27>,
++			 <&ipmmu_ds 28>,
++			 <&ipmmu_ds 29>;
+ 	};
  
--#define MODEMR 0xe6160060
--
- static int __init rcar_read_mode_pins(void)
- {
- 	void __iomem *modemr;
-+	struct device_node *np;
- 	int err = -ENOMEM;
- 	static u32 mode;
- 
--	modemr = ioremap_nocache(MODEMR, 4);
-+	np = of_find_compatible_node(NULL, NULL, "renesas,modemr");
-+	if (!np) {
-+		pr_err("can't find renesas,modemr device node");
-+		goto err;
-+	}
-+
-+	modemr = of_iomap(np, 0);
- 	if (!modemr) {
- 		pr_err("failed to map boot mode register");
-+		of_node_put(np);
- 		goto err;
- 	}
- 	mode = ioread32(modemr);
- 	iounmap(modemr);
-+	of_node_put(np);
- 
- 	err = boot_mode_reg_set(mode);
- err:
+ 	audma0: dma-controller@ec700000 {
 -- 
-2.8.0
+2.8.2
