@@ -1,53 +1,125 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:36788 "EHLO
-	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750863AbcEHLC1 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sun, 8 May 2016 07:02:27 -0400
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
 	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux-foundation.org, dmaengine@vger.kernel.org
-Cc: will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org,
+	hch@infradead.org
+Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
+	geert+renesas@glider.be, linus.walleij@linaro.org,
+	dan.j.williams@intel.com, arnd@arndb.de,
+	linux-arch@vger.kernel.org,
 	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
 	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/2] iommu/io-pgtable-arm: use __dma_sync_single_for_device()
-Date: Sun,  8 May 2016 12:59:56 +0200
-Message-Id: <1462705196-10857-3-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1462705196-10857-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1462705196-10857-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv6 4/8] arm: dma-mapping: add {map,unmap}_resource for iommu ops
+Date: Mon,  9 May 2016 18:44:03 +0200
+Message-Id: <1462812247-3414-5-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1462812247-3414-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1462812247-3414-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The call to dma_sync_single_for_device() can be reached from
-dma_map_single(). If CONFIG_DMA_API_DEBUG is enabled this would result
-in a check that the mapping being synced is valid. Since the call to
-dma_map_single is not yet completed the mapping is not recorded in
-dma-debug and the check fails and a warning is printed. Avoid this
-warning by calling __dma_sync_single_for_device() which don't preform
-this check.
+Add methods to map/unmap device resources addresses for dma_map_ops that
+are IOMMU aware. This is needed to map a device MMIO register from a
+physical address.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/iommu/io-pgtable-arm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mm/dma-mapping.c | 63 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-index f433b51..3da8102 100644
---- a/drivers/iommu/io-pgtable-arm.c
-+++ b/drivers/iommu/io-pgtable-arm.c
-@@ -255,7 +255,7 @@ static void __arm_lpae_set_pte(arm_lpae_iopte *ptep, arm_lpae_iopte pte,
- 	*ptep = pte;
- 
- 	if (!selftest_running)
--		dma_sync_single_for_device(cfg->iommu_dev,
-+		__dma_sync_single_for_device(cfg->iommu_dev,
- 					   __arm_lpae_dma_addr(ptep),
- 					   sizeof(pte), DMA_TO_DEVICE);
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index deac58d..d5fe32b 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -1962,6 +1962,63 @@ static void arm_iommu_unmap_page(struct device *dev, dma_addr_t handle,
+ 	__free_iova(mapping, iova, len);
  }
+ 
++/**
++ * arm_iommu_map_resource - map a device resource for DMA
++ * @dev: valid struct device pointer
++ * @phys_addr: physical address of resource
++ * @size: size of resource to map
++ * @dir: DMA transfer direction
++ */
++static dma_addr_t arm_iommu_map_resource(struct device *dev,
++		phys_addr_t phys_addr, size_t size,
++		enum dma_data_direction dir, struct dma_attrs *attrs)
++{
++	struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
++	dma_addr_t dma_addr;
++	int ret, prot;
++	phys_addr_t addr = phys_addr & PAGE_MASK;
++	int offset = phys_addr & ~PAGE_MASK;
++	int len = PAGE_ALIGN(size + offset);
++
++	dma_addr = __alloc_iova(mapping, size);
++	if (dma_addr == DMA_ERROR_CODE)
++		return dma_addr;
++
++	prot = __dma_direction_to_prot(dir) | IOMMU_MMIO;
++
++	ret = iommu_map(mapping->domain, dma_addr, addr, len, prot);
++	if (ret < 0)
++		goto fail;
++
++	return dma_addr + offset;
++fail:
++	__free_iova(mapping, dma_addr, size);
++	return DMA_ERROR_CODE;
++}
++
++/**
++ * arm_iommu_unmap_resource - unmap a device DMA resource
++ * @dev: valid struct device pointer
++ * @dma_handle: DMA address to resource
++ * @size: size of resource to map
++ * @dir: DMA transfer direction
++ */
++static void arm_iommu_unmap_resource(struct device *dev, dma_addr_t dma_handle,
++		size_t size, enum dma_data_direction dir,
++		struct dma_attrs *attrs)
++{
++	struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
++	dma_addr_t iova = dma_handle & PAGE_MASK;
++	int offset = dma_handle & ~PAGE_MASK;
++	int len = PAGE_ALIGN(size + offset);
++
++	if (!iova)
++		return;
++
++	iommu_unmap(mapping->domain, iova, len);
++	__free_iova(mapping, iova, len);
++}
++
+ static void arm_iommu_sync_single_for_cpu(struct device *dev,
+ 		dma_addr_t handle, size_t size, enum dma_data_direction dir)
+ {
+@@ -2006,6 +2063,9 @@ struct dma_map_ops iommu_ops = {
+ 	.sync_sg_for_cpu	= arm_iommu_sync_sg_for_cpu,
+ 	.sync_sg_for_device	= arm_iommu_sync_sg_for_device,
+ 
++	.map_resource		= arm_iommu_map_resource,
++	.unmap_resource		= arm_iommu_unmap_resource,
++
+ 	.set_dma_mask		= arm_dma_set_mask,
+ };
+ 
+@@ -2021,6 +2081,9 @@ struct dma_map_ops iommu_coherent_ops = {
+ 	.map_sg		= arm_coherent_iommu_map_sg,
+ 	.unmap_sg	= arm_coherent_iommu_unmap_sg,
+ 
++	.map_resource	= arm_iommu_map_resource,
++	.unmap_resource	= arm_iommu_unmap_resource,
++
+ 	.set_dma_mask	= arm_dma_set_mask,
+ };
+ 
 -- 
 2.8.2
