@@ -1,61 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:37721 "EHLO
-	mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754408AbcEPTo1 (ORCPT
+Received: from sauhun.de ([89.238.76.85]:49309 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751076AbcEIPBU (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 16 May 2016 15:44:27 -0400
-Received: by mail-wm0-f50.google.com with SMTP id a17so152766722wme.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 16 May 2016 12:44:26 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1462806067-26724-1-git-send-email-wsa@the-dreams.de>
-References: <1462806067-26724-1-git-send-email-wsa@the-dreams.de>
-Date: Mon, 16 May 2016 21:44:25 +0200
-Message-ID: <CAPDyKFqOnObYG_cK4Svg7eWdZYuO0VZuh+xLa-eo5FeDq6z=DQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sh_mobile_sdhi: enable SDIO IRQs for RCar Gen3
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+	Mon, 9 May 2016 11:01:20 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-mmc@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] mmc: sh_mobile_sdhi: enable SDIO IRQs for RCar Gen3
+Date: Mon,  9 May 2016 17:01:07 +0200
+Message-Id: <1462806067-26724-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 9 May 2016 at 17:01, Wolfram Sang <wsa@the-dreams.de> wrote:
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> Tested on a Salvator-X board with a Spectec SDW-823 WLAN card.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Just to let you know, this one was queued a while ago so it was
-included in the 4.7 pull request.
+Tested on a Salvator-X board with a Spectec SDW-823 WLAN card.
 
-Thanks!
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/sh_mobile_sdhi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Kind regards
-Uffe
-
-> ---
->  drivers/mmc/host/sh_mobile_sdhi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-> index 5309c73be1f04f..f750f9494410b0 100644
-> --- a/drivers/mmc/host/sh_mobile_sdhi.c
-> +++ b/drivers/mmc/host/sh_mobile_sdhi.c
-> @@ -71,7 +71,7 @@ static const struct sh_mobile_sdhi_of_data of_rcar_gen2_compatible = {
->  static const struct sh_mobile_sdhi_of_data of_rcar_gen3_compatible = {
->         .tmio_flags     = TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
->                           TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
-> -       .capabilities   = MMC_CAP_SD_HIGHSPEED,
-> +       .capabilities   = MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
->         .bus_shift      = 2,
->  };
->
-> --
-> 2.7.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index 5309c73be1f04f..f750f9494410b0 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -71,7 +71,7 @@ static const struct sh_mobile_sdhi_of_data of_rcar_gen2_compatible = {
+ static const struct sh_mobile_sdhi_of_data of_rcar_gen3_compatible = {
+ 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
+ 			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
+-	.capabilities	= MMC_CAP_SD_HIGHSPEED,
++	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
+ 	.bus_shift	= 2,
+ };
+ 
+-- 
+2.7.0
