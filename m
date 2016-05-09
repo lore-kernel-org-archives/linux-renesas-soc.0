@@ -1,102 +1,87 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:16406 "EHLO
-	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750858AbcEJEqK (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 00:46:10 -0400
-Subject: [RFC 4/4] arm64: dts: r8a7795: Add Z clock scaling support
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
- <573166EB.70908@rvc.renesas.com>
-CC: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms+renesas@verge.net.au>,
+Cc: Simon Horman <horms+renesas@verge.net.au>,
 	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
-	"Khiem Trong. Nguyen" <khiem.nguyen.xt@rvc.renesas.com>
-From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Message-ID: <5731678E.3080003@rvc.renesas.com>
-Date: Tue, 10 May 2016 11:46:06 +0700
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/3] soc: renesas: rcar-sysc: Add support for R-Car M3-W power areas
+Date: Mon, 09 May 2016 15:01:42 +0300
+Message-ID: <3527039.nIMxVx4mej@avalon>
+In-Reply-To: <1462372570-31979-1-git-send-email-geert+renesas@glider.be>
+References: <1462372570-31979-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <573166EB.70908@rvc.renesas.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds Z clock scaling support for CA57 in R8A7795 SoC.
-An OPP table is created with the supported frequency scaling.
+Hi Geert,
 
-Signed-off-by: Dien Pham <dien.pham.ry@rvc.renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
----
-  arch/arm64/boot/dts/renesas/r8a7795.dtsi | 26 ++++++++++++++++++++++++++
-  1 file changed, 26 insertions(+)
+Thank you for the patches.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi 
-b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 7181db0..041d0f2 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -43,6 +43,8 @@
-  			power-domains = <&sysc R8A7795_PD_CA57_CPU0>;
-  			next-level-cache = <&L2_CA57>;
-  			enable-method = "psci";
-+			clocks =<&cpg CPG_CORE R8A7795_CLK_Z>;
-+			operating-points-v2 = <&cluster0_opp_tb0>;
-  		};
+For the whole series,
 
-  		a57_1: cpu@1 {
-@@ -52,6 +54,7 @@
-  			power-domains = <&sysc R8A7795_PD_CA57_CPU1>;
-  			next-level-cache = <&L2_CA57>;
-  			enable-method = "psci";
-+			operating-points-v2 = <&cluster0_opp_tb0>;
-  		};
-  		a57_2: cpu@2 {
-  			compatible = "arm,cortex-a57","arm,armv8";
-@@ -60,6 +63,7 @@
-  			power-domains = <&sysc R8A7795_PD_CA57_CPU2>;
-  			next-level-cache = <&L2_CA57>;
-  			enable-method = "psci";
-+			operating-points-v2 = <&cluster0_opp_tb0>;
-  		};
-  		a57_3: cpu@3 {
-  			compatible = "arm,cortex-a57","arm,armv8";
-@@ -68,6 +72,28 @@
-  			power-domains = <&sysc R8A7795_PD_CA57_CPU3>;
-  			next-level-cache = <&L2_CA57>;
-  			enable-method = "psci";
-+			operating-points-v2 = <&cluster0_opp_tb0>;
-+		};
-+	};
-+
-+	cluster0_opp_tb0: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp@500000000 {
-+			opp-hz = /bits/ 64 <500000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp@1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp@1500000000 {
-+			opp-hz = /bits/ 64 <1500000000>;
-+			opp-microvolt = <820000>;
-+			clock-latency-ns = <300000>;
-  		};
-  	};
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+On Wednesday 04 May 2016 16:36:07 Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series adds support for the power areas exposed by the System
+> Controller on the Renesas R-Car M3-W SoC.
+> 
+> /sys/kernel/debug/pm_genpd/pm_genpd_summary output:
+> 
+>     domain                          status          slaves
+> 	/device                                             runtime status
+>     ----------------------------------------------------------------------
+>     clock-controller                on
+>     a3ir                            off-0
+>     3dg-b                           off-0
+>     3dg-a                           off-0           3dg-b
+>     a2vc1                           off-0
+>     a2vc0                           off-0
+>     a3vc                            off-0           a2vc0, a2vc1
+>     cr7                             off-0
+>     ca53-cpu3                       on
+>     ca53-cpu2                       on
+>     ca53-cpu1                       on
+>     ca53-cpu0                       on
+>     ca53-scu                        on              ca53-cpu0, ca53-cpu1,
+> ca53-cpu2, ca53-cpu3 ca57-cpu1                       on
+>     ca57-cpu0                       on
+>     ca57-scu                        on              ca57-cpu0, ca57-cpu1
+>     always-on                       on              ca57-scu, ca53-scu, cr7,
+> a3vc, 3dg-a, a3ir /devices/platform/soc/e6e88000.serial              
+> active
+> 
+> For your convenience, I've pushed this series to the
+> topic/r8a7796-sysc-v1 branch of
+> https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git.
+> 
+> Integration with renesas-drivers-2016-04-26-v4.6-rc5, and minimal board
+> integration for testing is available in the topic/gen3-latest branch.
+> 
+> This has received minimal testing on r8a7796/salvator-x.
+> 
+> Thanks for your comments!
+> 
+> Geert Uytterhoeven (3):
+>   soc: renesas: rcar-sysc: Document r8a7796 support
+>   soc: renesas: Add r8a7796 SYSC PM Domain Binding Definitions
+>   soc: renesas: rcar-sysc: Add support for R-Car M3-W power areas
+> 
+>  .../bindings/power/renesas,rcar-sysc.txt           |  1 +
+>  drivers/soc/renesas/Makefile                       |  1 +
+>  drivers/soc/renesas/r8a7796-sysc.c                 | 48 +++++++++++++++++++
+>  drivers/soc/renesas/rcar-sysc.c                    |  3 ++
+>  drivers/soc/renesas/rcar-sysc.h                    |  1 +
+>  include/dt-bindings/power/r8a7796-sysc.h           | 36 ++++++++++++++++
+>  6 files changed, 90 insertions(+)
+>  create mode 100644 drivers/soc/renesas/r8a7796-sysc.c
+>  create mode 100644 include/dt-bindings/power/r8a7796-sysc.h
 
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
+
