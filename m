@@ -1,47 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f195.google.com ([209.85.213.195]:36506 "EHLO
-	mail-ig0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752907AbcEIHtv (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:57388 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751382AbcEIHPn (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 9 May 2016 03:49:51 -0400
-Received: by mail-ig0-f195.google.com with SMTP id c3so10765384igl.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 May 2016 00:49:51 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1462778041-19595-1-git-send-email-dirk.behme@de.bosch.com>
-References: <1462778041-19595-1-git-send-email-dirk.behme@de.bosch.com>
-Date: Mon, 9 May 2016 09:49:50 +0200
-Message-ID: <CAMuHMdUMBZSBD9FXmOZaRz-MfFcsc-StZ0Mzry37mn6Ju_kObA@mail.gmail.com>
-Subject: Re: [PATCH 00/10] arm64: renesas: Obtain MD pin values using syscon/regmap
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Mon, 9 May 2016 03:15:43 -0400
+Received: from vsmta12.fe.internet.bosch.com (unknown [10.4.98.52])
+	by imta24.fe.bosch.de (Postfix) with ESMTP id 75D59D80226
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  9 May 2016 09:15:41 +0200 (CEST)
+Received: from SI-HUB1000.de.bosch.com (vsgw24.fe.internet.bosch.com [10.4.98.24])
+	by vsmta12.fe.internet.bosch.com (Postfix) with ESMTP id 32FA61B80398
+	for <linux-renesas-soc@vger.kernel.org>; Mon,  9 May 2016 09:15:41 +0200 (CEST)
+From: Dirk Behme <dirk.behme@de.bosch.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+	<linux-renesas-soc@vger.kernel.org>
+CC: Dirk Behme <dirk.behme@de.bosch.com>
+Subject: [PATCH 00/10] arm64: renesas: Obtain MD pin values using syscon/regmap
+Date: Mon, 9 May 2016 09:13:51 +0200
+Message-ID: <1462778041-19595-1-git-send-email-dirk.behme@de.bosch.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Dirk,
+This is a resend of
 
-Thanks for your series!
+http://www.spinics.net/lists/linux-sh/msg44757.html
 
-On Mon, May 9, 2016 at 9:13 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
-> This is a resend of
->
-> http://www.spinics.net/lists/linux-sh/msg44757.html
+Besides some minor clean up and fixes, it's rebased against
 
-I guess you meant http://www.spinics.net/lists/linux-sh/msg45969.html?
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/gen3-latest
+0ea1cc9f0c9537d3fb42722c188
+[WIP] arm64: r8a7796: Integration
 
-You do want to keep (part of) the bindings from "[PATCH 1/6] reset: Add
-renesas,rst DT bindings." from the former series, though ;-)
+and adds support for RCar Gen3. Additionally, it moves the MODEMR
+register to device tree instead of hard coding its address.
 
-Gr{oetje,eeting}s,
+These patches are available in
 
-                        Geert
+https://github.com/dirkbehme/linux-renesas-rcar-gen3/commits/geert/topic/gen3-latest-modereg
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+too.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+It's boot tested on r8a7795 Salvator-X and checked that the same
+mode value is read without and with this patch series.
+
+Dirk
