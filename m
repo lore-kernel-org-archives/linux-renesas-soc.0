@@ -1,153 +1,38 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:57086 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751726AbcEJNyu (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 09:54:50 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: driverdev-devel@linuxdriverproject.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 13/27] staging: ks7010: add example cfg file as a reference
-Date: Tue, 10 May 2016 15:52:26 +0200
-Message-Id: <1462888360-21649-14-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
-References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 9 May 2016 10:35:41 +0100
+From: Will Deacon <will.deacon@arm.com>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux-foundation.org, dmaengine@vger.kernel.org,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, robin.murphy@arm.com
+Subject: Re: [PATCH 2/2] iommu/io-pgtable-arm: use
+ __dma_sync_single_for_device()
+Message-ID: <20160509093540.GF19763@arm.com>
+References: <1462705196-10857-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+ <1462705196-10857-3-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1462705196-10857-3-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Sun, May 08, 2016 at 12:59:56PM +0200, Niklas S�derlund wrote:
+> The call to dma_sync_single_for_device() can be reached from
+> dma_map_single(). If CONFIG_DMA_API_DEBUG is enabled this would result
+> in a check that the mapping being synced is valid. Since the call to
+> dma_map_single is not yet completed the mapping is not recorded in
+> dma-debug and the check fails and a warning is printed. Avoid this
+> warning by calling __dma_sync_single_for_device() which don't preform
+> this check.
 
-We want to remove it, but to do so properly, it is good to have a
-working example. Needs to be copied to /lib/firmware in order to be
-used.
+Hmm, I don't understand why this would trigger that warning. The memory
+being sync'd here is the page table memory, not the buffer being mapped.
+The page table memory is "mapped" using dma_map_single in
+__arm_lpae_alloc_pages, so it sounds like the issue something else.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/staging/ks7010/ks79xx.cfg | 116 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 116 insertions(+)
- create mode 100644 drivers/staging/ks7010/ks79xx.cfg
-
-diff --git a/drivers/staging/ks7010/ks79xx.cfg b/drivers/staging/ks7010/ks79xx.cfg
-new file mode 100644
-index 00000000000000..0f2d24d4e66a89
---- /dev/null
-+++ b/drivers/staging/ks7010/ks79xx.cfg
-@@ -0,0 +1,116 @@
-+#ks79xx.cfg
-+#KS79xx configuration file
-+#
-+
-+#
-+#BeaconLostCount	default 20
-+BeaconLostCount=20
-+#
-+
-+#
-+#Ap List Scan Type default ACTIVE_SCAN ACTIVE_SCAN or PASSIVE_SCAN
-+ScanType=ACTIVE_SCAN
-+#
-+
-+#
-+#Channel		default 10		min 1 	max 14
-+Channel=10
-+#
-+
-+#
-+#FragmentThreshold	default 2346		min 256	max 2346
-+FragmentThreshold=2346
-+#
-+
-+#
-+#OperationMode		default Infrastructure	Pseudo-Ad-Hoc or 802.11-Ad-Hoc or Infrastructure
-+OperationMode=Infrastructure
-+#
-+
-+#
-+#PowerManagementMode	default ACTIVE     ACTIVE or SAVE1 or SAVE2
-+PowerManagementMode=ACTIVE
-+#
-+
-+#
-+#RTSThreshold		default 2347		min 0	max 2347
-+RTSThreshold=2347
-+#
-+
-+#
-+#SSID			default ""		max 32 character
-+SSID="default"
-+#
-+
-+#
-+#TxRate			default Auto		1, 2, 5.5, 11	ex. TxRate=1,2 TxRate=11 TxRate=Auto ...
-+TxRate=Auto
-+#
-+
-+#
-+#Wep			default OFF		OFF or 64bit or 128bit
-+Wep=OFF
-+#
-+
-+#
-+#WepType		default STRING		STRING or HEX
-+WepType=STRING
-+#
-+
-+#
-+#WepIndex=1
-+#
-+
-+#
-+#WepKeyValue1
-+#	character_wep_key:64bit key_length = 5;  128bit key_length = 13
-+#	      hex_wep_key:64bit key_length = 10; 128bit key_length = 26
-+#
-+
-+#
-+#WepKeyValue2
-+#	character_wep_key:64bit key_length = 5;  128bit key_length = 13
-+#	      hex_wep_key:64bit key_length = 10; 128bit key_length = 26
-+#
-+
-+#
-+#WepKeyValue3
-+#	character_wep_key:64bit key_length = 5;  128bit key_length = 13
-+#	      hex_wep_key:64bit key_length = 10; 128bit key_length = 26
-+#
-+
-+#
-+#WepKeyValue4
-+#	character_wep_key:64bit key_length = 5;  128bit key_length = 13
-+#	      hex_wep_key:64bit key_length = 10; 128bit key_length = 26
-+#
-+
-+#
-+#AuthenticationAlgorithm default OPEN_SYSTEM	OPEN_SYSTEM or  SHARED_KEY
-+AuthenticationAlgorithm=OPEN_SYSTEM
-+#
-+
-+#
-+#PREAMBLE_TYPE default LONG	LONG or  SHORT
-+PREAMBLE_TYPE=SHORT
-+#
-+
-+#
-+# PhyType default BG_MODE	B_MODE, G_MODE or BG_MODE
-+PhyType=BG_MODE
-+#
-+
-+#
-+# CtsMode defalut FALSE		TURE or FALSE
-+CtsMode=FALSE
-+#
-+
-+#
-+# PhyInformationTimer defalut 0  uint 100msec 
-+PhyInformationTimer=0
-+#
-+
-+#
-+#ROM_FILE default "ks7010sd.rom"
-+ROM_FILE="ks7010sd.rom"
-+#
--- 
-2.8.1
+Will
