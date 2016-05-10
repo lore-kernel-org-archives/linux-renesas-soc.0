@@ -1,474 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:35484 "EHLO
-	mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161220AbcE3QAu (ORCPT
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:38352 "EHLO
+	mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751329AbcEJK2g (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 30 May 2016 12:00:50 -0400
-Received: by mail-lf0-f68.google.com with SMTP id q63so4584660lfi.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 May 2016 09:00:49 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: kuninori.morimoto.gx@renesas.com,
-	laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
-	architt@codeaurora.org, vz@mleia.com, koji.matsuoka.xm@renesas.com,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [RFC 07/21] drm: rcar-du: Add dw_hdmi driver startup
-Date: Mon, 30 May 2016 18:00:06 +0200
-Message-Id: <1464624020-27709-8-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1464624020-27709-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1464624020-27709-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+	Tue, 10 May 2016 06:28:36 -0400
+Received: by mail-wm0-f45.google.com with SMTP id g17so19128791wme.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 May 2016 03:28:35 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1462782418-5908-1-git-send-email-wsa@the-dreams.de>
+References: <1462782418-5908-1-git-send-email-wsa@the-dreams.de>
+Date: Tue, 10 May 2016 12:28:34 +0200
+Message-ID: <CAPDyKFrWaCajdjTYZat=1vYYynpP89Tv=u=syb6ffYkGk8478g@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: update entry for TMIO MMC driver
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org, Ian Molton <ian@mnementh.co.uk>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+On 9 May 2016 at 10:26, Wolfram Sang <wsa@the-dreams.de> wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> I have some more additions planned for this driver, so I'd like to get
+> notified of other changes and coordinate them. Drop Ian as maintainer
+> because he hasn't been involved in development for a while. Thanks for
+> all the initial work, of course! Also, reflect the recent changes to
+> the include file layout.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: Ian Molton <ian@mnementh.co.uk>
 
-The HDMI driver in the R-Car Gen3 uses dw_hdmi driver.
+Thanks, applied for next!
 
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-[geert: Select DRM_DW_HDMI on non-r8a7795 to fix shmobile_defconfig build]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/gpu/drm/rcar-du/Kconfig           |   2 +
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c |   9 +-
- drivers/gpu/drm/rcar-du/rcar_du_encoder.h |   6 +-
- drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c | 225 +++++++++++++++++++++++++++---
- drivers/gpu/drm/rcar-du/rcar_du_kms.c     |   6 +-
- 5 files changed, 227 insertions(+), 21 deletions(-)
+> ---
+>
+> Ian: If you'd like to stay involved, please speak up and I'll change my patch
+> accordingly.
 
-diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
-index 7fc3ca5..d7c7ffa 100644
---- a/drivers/gpu/drm/rcar-du/Kconfig
-+++ b/drivers/gpu/drm/rcar-du/Kconfig
-@@ -15,6 +15,8 @@ config DRM_RCAR_DU
- config DRM_RCAR_HDMI
- 	bool "R-Car DU HDMI Encoder Support"
- 	depends on DRM_RCAR_DU
-+	depends on OF
-+	select DRM_DW_HDMI
- 	help
- 	  Enable support for external HDMI encoders.
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-index 1b16297..5d64893 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-@@ -1,7 +1,7 @@
- /*
-  * rcar_du_encoder.c  --  R-Car Display Unit Encoder
-  *
-- * Copyright (C) 2013-2014 Renesas Electronics Corporation
-+ * Copyright (C) 2013-2015 Renesas Electronics Corporation
-  *
-  * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
-  *
-@@ -118,7 +118,8 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 			 enum rcar_du_encoder_type type,
- 			 enum rcar_du_output output,
- 			 struct device_node *enc_node,
--			 struct device_node *con_node)
-+			 struct device_node *con_node,
-+			 const char *device_name)
- {
- 	struct rcar_du_encoder *renc;
- 	struct drm_encoder *encoder;
-@@ -162,8 +163,12 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 		break;
- 	}
- 
-+	renc->device_name = device_name;
-+
- 	if (type == RCAR_DU_ENCODER_HDMI) {
- 		ret = rcar_du_hdmienc_init(rcdu, renc, enc_node);
-+		if (of_device_is_compatible(enc_node, "rockchip,rcar-dw-hdmi"))
-+			goto done;
- 		if (ret < 0)
- 			goto done;
- 	} else {
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-index dde523a..51a4664 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-@@ -1,7 +1,7 @@
- /*
-  * rcar_du_encoder.h  --  R-Car Display Unit Encoder
-  *
-- * Copyright (C) 2013-2014 Renesas Electronics Corporation
-+ * Copyright (C) 2013-2015 Renesas Electronics Corporation
-  *
-  * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
-  *
-@@ -33,6 +33,7 @@ struct rcar_du_encoder {
- 	enum rcar_du_output output;
- 	struct rcar_du_hdmienc *hdmi;
- 	struct rcar_du_lvdsenc *lvds;
-+	const char *device_name;
- };
- 
- #define to_rcar_encoder(e) \
-@@ -55,6 +56,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 			 enum rcar_du_encoder_type type,
- 			 enum rcar_du_output output,
- 			 struct device_node *enc_node,
--			 struct device_node *con_node);
-+			 struct device_node *con_node,
-+			 const char *device_name);
- 
- #endif /* __RCAR_DU_ENCODER_H__ */
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c b/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
-index 15d553a..b8b89a0 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
-@@ -1,7 +1,7 @@
- /*
-  * R-Car Display Unit HDMI Encoder
-  *
-- * Copyright (C) 2014 Renesas Electronics Corporation
-+ * Copyright (C) 2014-2015 Renesas Electronics Corporation
-  *
-  * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
-  *
-@@ -13,10 +13,13 @@
- 
- #include <linux/slab.h>
- 
-+#include <drm/bridge/dw_hdmi.h>
- #include <drm/drmP.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_crtc_helper.h>
- 
-+#include <linux/of_platform.h>
-+
- #include "rcar_du_drv.h"
- #include "rcar_du_encoder.h"
- #include "rcar_du_hdmienc.h"
-@@ -24,7 +27,9 @@
- 
- struct rcar_du_hdmienc {
- 	struct rcar_du_encoder *renc;
-+	struct device *dev;
- 	bool enabled;
-+	unsigned int index;
- };
- 
- #define to_rcar_hdmienc(e)	(to_rcar_encoder(e)->hdmi)
-@@ -32,6 +37,10 @@ struct rcar_du_hdmienc {
- static void rcar_du_hdmienc_disable(struct drm_encoder *encoder)
- {
- 	struct rcar_du_hdmienc *hdmienc = to_rcar_hdmienc(encoder);
-+	const struct drm_bridge_funcs *bfuncs = encoder->bridge->funcs;
-+
-+	if ((bfuncs) && (bfuncs->post_disable))
-+		bfuncs->post_disable(encoder->bridge);
- 
- 	if (hdmienc->renc->lvds)
- 		rcar_du_lvdsenc_enable(hdmienc->renc->lvds, encoder->crtc,
-@@ -43,10 +52,13 @@ static void rcar_du_hdmienc_disable(struct drm_encoder *encoder)
- static void rcar_du_hdmienc_enable(struct drm_encoder *encoder)
- {
- 	struct rcar_du_hdmienc *hdmienc = to_rcar_hdmienc(encoder);
-+	const struct drm_bridge_funcs *bfuncs = encoder->bridge->funcs;
- 
- 	if (hdmienc->renc->lvds)
- 		rcar_du_lvdsenc_enable(hdmienc->renc->lvds, encoder->crtc,
- 				       true);
-+	if ((bfuncs) && (bfuncs->enable))
-+		bfuncs->enable(encoder->bridge);
- 
- 	hdmienc->enabled = true;
- }
-@@ -56,13 +68,19 @@ static int rcar_du_hdmienc_atomic_check(struct drm_encoder *encoder,
- 					struct drm_connector_state *conn_state)
- {
- 	struct rcar_du_hdmienc *hdmienc = to_rcar_hdmienc(encoder);
-+	const struct drm_bridge_funcs *bfuncs = encoder->bridge->funcs;
- 	struct drm_display_mode *adjusted_mode = &crtc_state->adjusted_mode;
-+	const struct drm_display_mode *mode = &crtc_state->mode;
-+	int ret = 0;
- 
- 	if (hdmienc->renc->lvds)
- 		rcar_du_lvdsenc_atomic_check(hdmienc->renc->lvds,
- 					     adjusted_mode);
- 
--	return 0;
-+	if ((bfuncs) && (bfuncs->mode_fixup))
-+		ret = bfuncs->mode_fixup(encoder->bridge, mode,
-+				 adjusted_mode) ? 0 : -EINVAL;
-+	return ret;
- }
- 
- static void rcar_du_hdmienc_mode_set(struct drm_encoder *encoder,
-@@ -70,6 +88,10 @@ static void rcar_du_hdmienc_mode_set(struct drm_encoder *encoder,
- 				     struct drm_display_mode *adjusted_mode)
- {
- 	struct rcar_du_hdmienc *hdmienc = to_rcar_hdmienc(encoder);
-+	const struct drm_bridge_funcs *bfuncs = encoder->bridge->funcs;
-+
-+	if ((bfuncs) && (bfuncs->mode_set))
-+		bfuncs->mode_set(encoder->bridge, mode, adjusted_mode);
- 
- 	rcar_du_crtc_route_output(encoder->crtc, hdmienc->renc->output);
- }
-@@ -95,24 +117,187 @@ static const struct drm_encoder_funcs encoder_funcs = {
- 	.destroy = rcar_du_hdmienc_cleanup,
- };
- 
-+static const struct dw_hdmi_mpll_config rcar_du_hdmienc_mpll_cfg[] = {
-+	{
-+		44900000, {
-+			{ 0x0003, 0x0000},
-+			{ 0x0003, 0x0000},
-+			{ 0x0003, 0x0000}
-+		},
-+	}, {
-+		90000000, {
-+			{ 0x0002, 0x0000},
-+			{ 0x0002, 0x0000},
-+			{ 0x0002, 0x0000}
-+		},
-+	}, {
-+		182750000, {
-+			{ 0x0001, 0x0000},
-+			{ 0x0001, 0x0000},
-+			{ 0x0001, 0x0000}
-+		},
-+	}, {
-+		297000000, {
-+			{ 0x0000, 0x0000},
-+			{ 0x0000, 0x0000},
-+			{ 0x0000, 0x0000}
-+		},
-+	}, {
-+		~0UL, {
-+			{ 0xFFFF, 0xFFFF },
-+			{ 0xFFFF, 0xFFFF },
-+			{ 0xFFFF, 0xFFFF },
-+		},
-+	}
-+};
-+static const struct dw_hdmi_curr_ctrl rcar_du_hdmienc_cur_ctr[] = {
-+	/*      pixelclk    bpp8    bpp10   bpp12 */
-+	{
-+		35500000,  { 0x0344, 0x0000, 0x0000 },
-+	}, {
-+		44900000,  { 0x0285, 0x0000, 0x0000 },
-+	}, {
-+		71000000,  { 0x1184, 0x0000, 0x0000 },
-+	}, {
-+		90000000,  { 0x1144, 0x0000, 0x0000 },
-+	}, {
-+		140250000, { 0x20c4, 0x0000, 0x0000 },
-+	}, {
-+		182750000, { 0x2084, 0x0000, 0x0000 },
-+	}, {
-+		297000000, { 0x0084, 0x0000, 0x0000 },
-+	}, {
-+		~0UL,      { 0x0000, 0x0000, 0x0000 },
-+	}
-+};
-+
-+static const struct dw_hdmi_multi_div rcar_du_hdmienc_multi_div[] = {
-+	/*      pixelclk    bpp8    bpp10   bpp12 */
-+	{
-+		35500000,  { 0x0328, 0x0000, 0x0000 },
-+	}, {
-+		44900000,  { 0x0128, 0x0000, 0x0000 },
-+	}, {
-+		71000000,  { 0x0314, 0x0000, 0x0000 },
-+	}, {
-+		90000000,  { 0x0114, 0x0000, 0x0000 },
-+	}, {
-+		140250000, { 0x030a, 0x0000, 0x0000 },
-+	}, {
-+		182750000, { 0x010a, 0x0000, 0x0000 },
-+	}, {
-+		281250000, { 0x0305, 0x0000, 0x0000 },
-+	}, {
-+		297000000, { 0x0105, 0x0000, 0x0000 },
-+	}, {
-+		~0UL,      { 0x0000, 0x0000, 0x0000 },
-+	}
-+};
-+
-+static const struct dw_hdmi_phy_config rcar_du_hdmienc_phy_config[] = {
-+	/*pixelclk   symbol   term   vlev*/
-+	{ 74250000,  0x8009, 0x0004, 0x0272},
-+	{ 148500000, 0x802b, 0x0004, 0x028d},
-+	{ 297000000, 0x8039, 0x0005, 0x028d},
-+	{ ~0UL,	     0x0000, 0x0000, 0x0000}
-+};
-+
-+static enum drm_mode_status
-+rcar_du_hdmienc_mode_valid(struct drm_connector *connector,
-+			    struct drm_display_mode *mode)
-+{
-+	return MODE_OK;
-+}
-+
-+static const struct dw_hdmi_plat_data rcar_du_hdmienc_hdmi0_drv_data = {
-+	.mode_valid = rcar_du_hdmienc_mode_valid,
-+	.mpll_cfg   = rcar_du_hdmienc_mpll_cfg,
-+	.cur_ctr    = rcar_du_hdmienc_cur_ctr,
-+	.multi_div  = rcar_du_hdmienc_multi_div,
-+	.phy_config = rcar_du_hdmienc_phy_config,
-+	.dev_type   = RCAR_HDMI,
-+	.index      = 0,
-+};
-+
-+static const struct dw_hdmi_plat_data rcar_du_hdmienc_hdmi1_drv_data = {
-+	.mode_valid = rcar_du_hdmienc_mode_valid,
-+	.mpll_cfg   = rcar_du_hdmienc_mpll_cfg,
-+	.cur_ctr    = rcar_du_hdmienc_cur_ctr,
-+	.multi_div  = rcar_du_hdmienc_multi_div,
-+	.phy_config = rcar_du_hdmienc_phy_config,
-+	.dev_type   = RCAR_HDMI,
-+	.index      = 1,
-+};
-+
-+static const struct of_device_id rcar_du_hdmienc_dt_ids[] = {
-+	{
-+		.data = &rcar_du_hdmienc_hdmi0_drv_data
-+	},
-+	{
-+		.data = &rcar_du_hdmienc_hdmi1_drv_data
-+	},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, rcar_du_hdmienc_dt_ids);
-+
- int rcar_du_hdmienc_init(struct rcar_du_device *rcdu,
- 			 struct rcar_du_encoder *renc, struct device_node *np)
- {
- 	struct drm_encoder *encoder = rcar_encoder_to_drm_encoder(renc);
--	struct drm_bridge *bridge;
- 	struct rcar_du_hdmienc *hdmienc;
--	int ret;
-+	struct resource *iores;
-+	struct platform_device *pdev;
-+	const struct dw_hdmi_plat_data *plat_data;
-+	int ret, irq;
-+	bool dw_hdmi_use = false;
-+	struct drm_bridge *bridge = NULL;
- 
- 	hdmienc = devm_kzalloc(rcdu->dev, sizeof(*hdmienc), GFP_KERNEL);
- 	if (hdmienc == NULL)
- 		return -ENOMEM;
- 
--	/* Locate the DRM bridge from the HDMI encoder DT node. */
--	bridge = of_drm_find_bridge(np);
--	if (!bridge) {
--		dev_dbg(rcdu->dev, "can't get bridge for %s, deferring probe\n",
--			of_node_full_name(np));
--		return -EPROBE_DEFER;
-+	if (strcmp(renc->device_name, "rockchip,rcar-dw-hdmi") == 0)
-+		dw_hdmi_use = true;
-+
-+	if (dw_hdmi_use) {
-+		if (renc->output == RCAR_DU_OUTPUT_HDMI0)
-+			hdmienc->index = 0;
-+		else if (renc->output == RCAR_DU_OUTPUT_HDMI1)
-+			hdmienc->index = 1;
-+		else
-+			return -EINVAL;
-+
-+		np = of_parse_phandle(rcdu->dev->of_node, "hdmi",
-+						 hdmienc->index);
-+		if (!np) {
-+			dev_err(rcdu->dev, "hdmi node not found\n");
-+			return -ENXIO;
-+		}
-+
-+		pdev = of_find_device_by_node(np);
-+		of_node_put(np);
-+		if (!pdev)
-+			return -ENXIO;
-+
-+		plat_data = rcar_du_hdmienc_dt_ids[hdmienc->index].data;
-+		hdmienc->dev = &pdev->dev;
-+
-+		irq = platform_get_irq(pdev, 0);
-+		if (irq < 0)
-+			return irq;
-+
-+		iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+		if (!iores)
-+			return -ENXIO;
-+
-+	} else {
-+		/* Locate the DRM bridge from the HDMI encoder DT node. */
-+		bridge = of_drm_find_bridge(np);
-+		if (!bridge) {
-+			dev_dbg(rcdu->dev, "can't get bridge for %s, deferring probe\n",
-+				of_node_full_name(np));
-+			return -EPROBE_DEFER;
-+		}
- 	}
- 
- 	ret = drm_encoder_init(rcdu->ddev, encoder, &encoder_funcs,
-@@ -126,13 +311,21 @@ int rcar_du_hdmienc_init(struct rcar_du_device *rcdu,
- 	hdmienc->renc = renc;
- 
- 	/* Link the bridge to the encoder. */
--	bridge->encoder = encoder;
--	encoder->bridge = bridge;
-+	if (bridge) {
-+		bridge->encoder = encoder;
-+		encoder->bridge = bridge;
-+	}
- 
--	ret = drm_bridge_attach(rcdu->ddev, bridge);
--	if (ret) {
--		drm_encoder_cleanup(encoder);
--		return ret;
-+	if (dw_hdmi_use)
-+		ret = dw_hdmi_bind(rcdu->dev, NULL, rcdu->ddev, encoder,
-+				iores, irq, plat_data);
-+
-+	if (bridge) {
-+		ret = drm_bridge_attach(rcdu->ddev, bridge);
-+		if (ret) {
-+			drm_encoder_cleanup(encoder);
-+			return ret;
-+		}
- 	}
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index e70a4f3..baac8c9 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -362,6 +362,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
- 	} encoders[] = {
- 		{ "adi,adv7123", RCAR_DU_ENCODER_VGA },
- 		{ "adi,adv7511w", RCAR_DU_ENCODER_HDMI },
-+		{ "rockchip,rcar-dw-hdmi", RCAR_DU_ENCODER_HDMI },
- 		{ "thine,thc63lvdm83d", RCAR_DU_ENCODER_LVDS },
- 	};
- 
-@@ -372,6 +373,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
- 	struct device_node *entity_ep_node;
- 	struct device_node *entity;
- 	int ret;
-+	const char *enc_name = NULL;
- 
- 	/*
- 	 * Locate the connected entity and infer its type from the number of
-@@ -423,6 +425,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
- 			if (of_device_is_compatible(encoder,
- 						    encoders[i].compatible)) {
- 				enc_type = encoders[i].type;
-+				enc_name = encoders[i].compatible;
- 				break;
- 			}
- 		}
-@@ -443,7 +446,8 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
- 		connector = entity;
- 	}
- 
--	ret = rcar_du_encoder_init(rcdu, enc_type, output, encoder, connector);
-+	ret = rcar_du_encoder_init(rcdu, enc_type, output, encoder, connector,
-+					enc_name);
- 	of_node_put(encoder);
- 	of_node_put(connector);
- 
--- 
-2.7.4
+As I applied this patch with quite short delay, I will instead
+recommend Ian to send a patch re-adding himself as co-maintainer. I am
+happy to apply such patch if it shows up.
+
+Kind regards
+Uffe
+
+>
+>  MAINTAINERS | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 42e65d128d015e..d22540c44b534b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11245,14 +11245,13 @@ S:    Maintained
+>  F:     drivers/media/i2c/tc358743*
+>  F:     include/media/i2c/tc358743.h
+>
+> -TMIO MMC DRIVER
+> -M:     Ian Molton <ian@mnementh.co.uk>
+> +TMIO/SDHI MMC DRIVER
+> +M:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+>  L:     linux-mmc@vger.kernel.org
+> -S:     Maintained
+> +S:     Supported
+>  F:     drivers/mmc/host/tmio_mmc*
+>  F:     drivers/mmc/host/sh_mobile_sdhi.c
+> -F:     include/linux/mmc/tmio.h
+> -F:     include/linux/mmc/sh_mobile_sdhi.h
+> +F:     include/linux/mfd/tmio.h
+>
+>  TMP401 HARDWARE MONITOR DRIVER
+>  M:     Guenter Roeck <linux@roeck-us.net>
+> --
+> 2.7.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
