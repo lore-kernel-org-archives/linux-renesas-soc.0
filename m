@@ -1,78 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:47394 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753303AbcEQPPg (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52974 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753569AbcEJADb (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 17 May 2016 11:15:36 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
+	Mon, 9 May 2016 20:03:31 -0400
+Date: Tue, 10 May 2016 09:03:48 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+	Olof Johansson <olof@lixom.net>,
+	Kevin Hilman <khilman@linaro.org>,
 	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: shmobile: rcar-gen2: Use ICRAM1 for jump stub on all SoCs
-Date: Tue, 17 May 2016 17:15:33 +0200
-Message-Id: <1463498133-23918-1-git-send-email-geert+renesas@glider.be>
+	Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM64 Based SoC DT PM Domain Updates for v4.7
+Message-ID: <20160510000348.GC4530@verge.net.au>
+References: <cover.1461730364.git.horms+renesas@verge.net.au>
+ <20160506002125.GE24999@verge.net.au>
+ <41128314.QPDQXbTtHX@wuerfel>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <41128314.QPDQXbTtHX@wuerfel>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently the different SoCs in the R-Car Gen2 family use different
-types of on-chip RAM for the jump stub:
-  - R-Car H2 uses Media RAM,
-  - R-Car M2-W uses another type of optional On-chip RAM, as it doesn't
-    have Media RAM,
-  - R-Car M2-N uses Inter Connect RAM in Magnus Damm's "ARM: shmobile:
-    r8a7793 boot address update".
+On Mon, May 09, 2016 at 03:10:40PM +0200, Arnd Bergmann wrote:
+> On Friday 06 May 2016 09:21:25 Simon Horman wrote:
+> > Hi,
+> > 
+> > On Wed, Apr 27, 2016 at 02:20:10PM +1000, Simon Horman wrote:
+> > > Hi Olof, Hi Kevin, Hi Arnd,
+> > > 
+> > > Please consider these Renesas ARM64 based SoC DT PM Domain updates for v4.7.
+> > > 
+> > > This pull requests is based on a merge of:
+> > > 
+> > > * "[GIT PULL] Second Round of Renesas ARM Based SoC R-Car SYSC Updates for
+> > >   v4.7", tagged as renesas-rcar-sysc2-for-v4.7, which you have already
+> > >   pulled
+> > > * "[GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v4.7",
+> > >   tagged as renesas-arm64-dt2-for-v4.7, which I have sent a pull request
+> > >   for.
+> > > 
+> > > The reason for the somewhat tedious base on
+> > > renesas-rcar-sysc2-for-v4.7, which provides driver changes,
+> > > is a hard run-time dependency.
+> > > 
+> > > I also have a similar set of changes for ARM (32-bit) which I will send
+> > > separately.
+> > 
+> > I am wondering if this pull-request might have slipped through the cracks.
+> > 
+> > FWIW, all other pull requests I have submitted for v4.7 have been pulled
+> > (thanks!) including a similar pull-request for ARM (32-bit) which is
+> > present in the next/late branch of the arm-soc tree.
+> > 
+> > I do not plan to send any more non-fix pull requests for v4.7.
+> > And at this stage I am not aware of any fixes for v4.7.
+> > 
+> 
+> Indeed it did, thanks for the reminder! I've put it on my stack now
+> and should start doing merges later today when I'm through my mail.
 
-As all R-Car Gen2 SoCs have 4 KiB of Inter Connect RAM, consolidate the
-code by always using that.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Tested on r8a7790/lager and r8a7791/koelsch.
----
- arch/arm/mach-shmobile/pm-rcar-gen2.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-index 691ac166a277c03f..61361dac6068210a 100644
---- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-@@ -26,8 +26,7 @@
- #define CA7RESCNT	0x0044
- 
- /* On-chip RAM */
--#define MERAM		0xe8080000
--#define RAM		0xe6300000
-+#define ICRAM1		0xe63c0000	/* Inter Connect RAM1 (4 KiB) */
- 
- /* SYSC */
- #define SYSCIER 0x0c
-@@ -58,7 +57,7 @@ void __init rcar_gen2_pm_init(void)
- 	struct device_node *np, *cpus;
- 	bool has_a7 = false;
- 	bool has_a15 = false;
--	phys_addr_t boot_vector_addr = 0;
-+	phys_addr_t boot_vector_addr = ICRAM1;
- 	u32 syscier = 0;
- 
- 	if (once++)
-@@ -75,14 +74,10 @@ void __init rcar_gen2_pm_init(void)
- 			has_a7 = true;
- 	}
- 
--	if (of_machine_is_compatible("renesas,r8a7790")) {
--		boot_vector_addr = MERAM;
-+	if (of_machine_is_compatible("renesas,r8a7790"))
- 		syscier = 0x013111ef;
--
--	} else if (of_machine_is_compatible("renesas,r8a7791")) {
--		boot_vector_addr = RAM;
-+	else if (of_machine_is_compatible("renesas,r8a7791"))
- 		syscier = 0x00111003;
--	}
- 
- 	/* RAM for jump stub, because BAR requires 256KB aligned address */
- 	p = ioremap_nocache(boot_vector_addr, shmobile_boot_size);
--- 
-1.9.1
+Great, thanks! I see that it has now been pulled.
