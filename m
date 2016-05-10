@@ -1,300 +1,123 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:34457 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752263AbcEMH4H (ORCPT
+Received: from sauhun.de ([89.238.76.85]:57041 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751648AbcEJNyn (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 13 May 2016 03:56:07 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 06/23] ARM: dts: r8a7791: Fix W=1 dtc warnings
-Date: Fri, 13 May 2016 09:55:46 +0200
-Message-Id: <1463126163-29423-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
-References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+	Tue, 10 May 2016 09:54:43 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: driverdev-devel@linuxdriverproject.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 05/27] staging: ks7010: remove code for old kernel versions
+Date: Tue, 10 May 2016 15:52:18 +0200
+Message-Id: <1462888360-21649-6-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Warning (unit_address_vs_reg): Node /cache-controller@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,dvc/dvc@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,dvc/dvc@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,mix/mix@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,mix/mix@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@3 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@4 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@5 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@6 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@7 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@3 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@4 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@5 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@6 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@7 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@8 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@9 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@3 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@4 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@5 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@6 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@7 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@8 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@9 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /cache-controller@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,dvc/dvc@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,dvc/dvc@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,mix/mix@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,mix/mix@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@3 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@4 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@5 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@6 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@7 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@3 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@4 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@5 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@6 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@7 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@8 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@9 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@3 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@4 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@5 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@6 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@7 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@8 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@9 has a unit name, but no reg property
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Move the cache-controller node under the cpus node, and make its unit
-name and reg property match the MPIDR values.
+No need to be backwards compatible.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 79 +++++++++++++++++++++---------------------
- 1 file changed, 40 insertions(+), 39 deletions(-)
+ drivers/staging/ks7010/ks_hostif.c   |  9 ---------
+ drivers/staging/ks7010/ks_wlan.h     | 28 +---------------------------
+ drivers/staging/ks7010/ks_wlan_net.c |  3 ---
+ 3 files changed, 1 insertion(+), 39 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index db67e342c58566fa..03c515e4d2d7f046 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -72,6 +72,14 @@
- 			power-domains = <&sysc R8A7791_PD_CA15_CPU1>;
- 			next-level-cache = <&L2_CA15>;
- 		};
-+
-+		L2_CA15: cache-controller@0 {
-+			compatible = "cache";
-+			reg = <0>;
-+			power-domains = <&sysc R8A7791_PD_CA15_SCU>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
- 	};
+diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
+index 6bea699655eec4..146a1357909b39 100644
+--- a/drivers/staging/ks7010/ks_hostif.c
++++ b/drivers/staging/ks7010/ks_hostif.c
+@@ -2103,11 +2103,7 @@ void hostif_sme_multicast_set(ks_wlan_private *priv)
  
- 	thermal-zones {
-@@ -93,13 +101,6 @@
- 		};
- 	};
+         struct net_device *dev = priv->net_dev;
+ 	int mc_count;
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35)
+ 	struct netdev_hw_addr *ha;
+-#else
+-	struct dev_mc_list *mclist;
+-#endif
+ 	char	set_address[NIC_MAX_MCAST_LIST*ETH_ALEN];
+ 	unsigned long filter_type;
+ 	int i;
+@@ -2131,14 +2127,9 @@ void hostif_sme_multicast_set(ks_wlan_private *priv)
+ 	else {
+ 		if (priv->sme_i.sme_flag & SME_MULTICAST){
+ 			mc_count = netdev_mc_count(dev);
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35)
+ 			netdev_for_each_mc_addr(ha, dev) {
+ 				memcpy(&set_address[i*ETH_ALEN], ha->addr, ETH_ALEN);
+ 			}
+-#else
+-			for (i = 0, mclist = dev->mc_list; mclist && i < mc_count; i++, mclist = mclist->next)
+-				memcpy(&set_address[i*ETH_ALEN], mclist->dmi_addr, ETH_ALEN);
+-#endif
+ 			priv->sme_i.sme_flag &= ~SME_MULTICAST;
+ 			hostif_mib_set_request(priv, LOCAL_MULTICAST_ADDRESS,
+ 					       (ETH_ALEN*mc_count), MIB_VALUE_TYPE_OSTRING, &set_address[0]);
+diff --git a/drivers/staging/ks7010/ks_wlan.h b/drivers/staging/ks7010/ks_wlan.h
+index 329a062419fe4a..6bd016414a4f1d 100644
+--- a/drivers/staging/ks7010/ks_wlan.h
++++ b/drivers/staging/ks7010/ks_wlan.h
+@@ -18,9 +18,6 @@
+ #define WPS
  
--	L2_CA15: cache-controller@0 {
--		compatible = "cache";
--		power-domains = <&sysc R8A7791_PD_CA15_SCU>;
--		cache-unified;
--		cache-level = <2>;
--	};
+ #include <linux/version.h>
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24)) 
+-#include <linux/config.h>
+-#endif
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -35,32 +32,9 @@
+ #include <linux/timer.h>	/* struct timer_list */
+ #include <linux/string.h>
+ #include <linux/completion.h>   /* struct completion */
 -
- 	gic: interrupt-controller@f1001000 {
- 		compatible = "arm,gic-400";
- 		#interrupt-cells = <3>;
-@@ -1737,79 +1738,79 @@
- 		status = "disabled";
+-#include <asm/io.h>
+-
+-/* Workqueue / task queue backwards compatibility stuff */
+-#if ((LINUX_VERSION_CODE > KERNEL_VERSION(2,5,41)) || (defined _MVL31_) || (defined _CELF3_))
+ #include <linux/workqueue.h>
+-#else
+-#include <linux/tqueue.h>
+-#define work_struct tq_struct
+-#define INIT_WORK INIT_TQUEUE
+-#define schedule_work schedule_task
+-#endif
  
- 		rcar_sound,dvc {
--			dvc0: dvc@0 {
-+			dvc0: dvc-0 {
- 				dmas = <&audma0 0xbc>;
- 				dma-names = "tx";
- 			};
--			dvc1: dvc@1 {
-+			dvc1: dvc-1 {
- 				dmas = <&audma0 0xbe>;
- 				dma-names = "tx";
- 			};
- 		};
+-/* Interrupt handler backwards compatibility stuff */
+-/*
+-#ifndef IRQ_NONE
+-#define IRQ_NONE
+-#define IRQ_HANDLED
+-typedef void irqreturn_t;
+-#endif
+-*/
+-
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,4,23)
+-#define free_netdev(x) kfree(x) 
+-#define pci_name(x) x->slot_name 
+-#endif
++#include <asm/io.h>
  
- 		rcar_sound,mix {
--			mix0: mix@0 { };
--			mix1: mix@1 { };
-+			mix0: mix-0 { };
-+			mix1: mix-1 { };
- 		};
+ #include "ks7010_sdio.h"
  
- 		rcar_sound,ctu {
--			ctu00: ctu@0 { };
--			ctu01: ctu@1 { };
--			ctu02: ctu@2 { };
--			ctu03: ctu@3 { };
--			ctu10: ctu@4 { };
--			ctu11: ctu@5 { };
--			ctu12: ctu@6 { };
--			ctu13: ctu@7 { };
-+			ctu00: ctu-0 { };
-+			ctu01: ctu-1 { };
-+			ctu02: ctu-2 { };
-+			ctu03: ctu-3 { };
-+			ctu10: ctu-4 { };
-+			ctu11: ctu-5 { };
-+			ctu12: ctu-6 { };
-+			ctu13: ctu-7 { };
- 		};
+diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
+index 185630cb423d5e..776a544031495f 100644
+--- a/drivers/staging/ks7010/ks_wlan_net.c
++++ b/drivers/staging/ks7010/ks_wlan_net.c
+@@ -13,9 +13,6 @@
+  */
  
- 		rcar_sound,src {
--			src0: src@0 {
-+			src0: src-0 {
- 				interrupts = <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x85>, <&audma1 0x9a>;
- 				dma-names = "rx", "tx";
- 			};
--			src1: src@1 {
-+			src1: src-1 {
- 				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x87>, <&audma1 0x9c>;
- 				dma-names = "rx", "tx";
- 			};
--			src2: src@2 {
-+			src2: src-2 {
- 				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x89>, <&audma1 0x9e>;
- 				dma-names = "rx", "tx";
- 			};
--			src3: src@3 {
-+			src3: src-3 {
- 				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x8b>, <&audma1 0xa0>;
- 				dma-names = "rx", "tx";
- 			};
--			src4: src@4 {
-+			src4: src-4 {
- 				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x8d>, <&audma1 0xb0>;
- 				dma-names = "rx", "tx";
- 			};
--			src5: src@5 {
-+			src5: src-5 {
- 				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x8f>, <&audma1 0xb2>;
- 				dma-names = "rx", "tx";
- 			};
--			src6: src@6 {
-+			src6: src-6 {
- 				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x91>, <&audma1 0xb4>;
- 				dma-names = "rx", "tx";
- 			};
--			src7: src@7 {
-+			src7: src-7 {
- 				interrupts = <GIC_SPI 359 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x93>, <&audma1 0xb6>;
- 				dma-names = "rx", "tx";
- 			};
--			src8: src@8 {
-+			src8: src-8 {
- 				interrupts = <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x95>, <&audma1 0xb8>;
- 				dma-names = "rx", "tx";
- 			};
--			src9: src@9 {
-+			src9: src-9 {
- 				interrupts = <GIC_SPI 361 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x97>, <&audma1 0xba>;
- 				dma-names = "rx", "tx";
-@@ -1817,52 +1818,52 @@
- 		};
- 
- 		rcar_sound,ssi {
--			ssi0: ssi@0 {
-+			ssi0: ssi-0 {
- 				interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x01>, <&audma1 0x02>, <&audma0 0x15>, <&audma1 0x16>;
- 				dma-names = "rx", "tx", "rxu", "txu";
- 			};
--			ssi1: ssi@1 {
-+			ssi1: ssi-1 {
- 				 interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
- 				dma-names = "rx", "tx", "rxu", "txu";
- 			};
--			ssi2: ssi@2 {
-+			ssi2: ssi-2 {
- 				interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x05>, <&audma1 0x06>, <&audma0 0x63>, <&audma1 0x64>;
- 				dma-names = "rx", "tx", "rxu", "txu";
- 			};
--			ssi3: ssi@3 {
-+			ssi3: ssi-3 {
- 				interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x07>, <&audma1 0x08>, <&audma0 0x6f>, <&audma1 0x70>;
- 				dma-names = "rx", "tx", "rxu", "txu";
- 			};
--			ssi4: ssi@4 {
-+			ssi4: ssi-4 {
- 				interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x09>, <&audma1 0x0a>, <&audma0 0x71>, <&audma1 0x72>;
- 				dma-names = "rx", "tx", "rxu", "txu";
- 			};
--			ssi5: ssi@5 {
-+			ssi5: ssi-5 {
- 				interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x0b>, <&audma1 0x0c>, <&audma0 0x73>, <&audma1 0x74>;
- 				dma-names = "rx", "tx", "rxu", "txu";
- 			};
--			ssi6: ssi@6 {
-+			ssi6: ssi-6 {
- 				interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x0d>, <&audma1 0x0e>, <&audma0 0x75>, <&audma1 0x76>;
- 				dma-names = "rx", "tx", "rxu", "txu";
- 			};
--			ssi7: ssi@7 {
-+			ssi7: ssi-7 {
- 				interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x0f>, <&audma1 0x10>, <&audma0 0x79>, <&audma1 0x7a>;
- 				dma-names = "rx", "tx", "rxu", "txu";
- 			};
--			ssi8: ssi@8 {
-+			ssi8: ssi-8 {
- 				interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x11>, <&audma1 0x12>, <&audma0 0x7b>, <&audma1 0x7c>;
- 				dma-names = "rx", "tx", "rxu", "txu";
- 			};
--			ssi9: ssi@9 {
-+			ssi9: ssi-9 {
- 				interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
- 				dmas = <&audma0 0x13>, <&audma1 0x14>, <&audma0 0x7d>, <&audma1 0x7e>;
- 				dma-names = "rx", "tx", "rxu", "txu";
+ #include <linux/version.h>
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24))
+-#include <linux/config.h>
+-#endif
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/compiler.h>
 -- 
-1.9.1
+2.8.1
