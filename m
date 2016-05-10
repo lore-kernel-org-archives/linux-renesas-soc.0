@@ -1,74 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:34464 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750990AbcEYGiS (ORCPT
+Received: from mail-pf0-f176.google.com ([209.85.192.176]:34157 "EHLO
+	mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751058AbcEJITN (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 25 May 2016 02:38:18 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/7] watchdog: softdog: use watchdog core to init timeout value
-Date: Wed, 25 May 2016 08:37:44 +0200
-Message-Id: <1464158269-2447-3-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1464158269-2447-1-git-send-email-wsa@the-dreams.de>
-References: <1464158269-2447-1-git-send-email-wsa@the-dreams.de>
+	Tue, 10 May 2016 04:19:13 -0400
+Received: by mail-pf0-f176.google.com with SMTP id y69so3202955pfb.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 May 2016 01:19:12 -0700 (PDT)
+Date: Tue, 10 May 2016 13:49:07 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] cpufreq: rcar: Add support for R8A7795 SoC
+Message-ID: <20160510081907.GB3016@vireshk-i7>
+References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+ <5731664D.1030909@rvc.renesas.com>
+ <573169CD.8050607@rvc.renesas.com>
+ <57316A4E.7040100@rvc.renesas.com>
+ <20160510050710.GC2790@vireshk-i7>
+ <CAMuHMdWYrf4oZU-8YZ-v-MxznUwJZsqLcbRhiMK=CB2+UoR6uw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWYrf4oZU-8YZ-v-MxznUwJZsqLcbRhiMK=CB2+UoR6uw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On 10-05-16, 10:17, Geert Uytterhoeven wrote:
+> Hi Viresh,
+> 
+> On Tue, May 10, 2016 at 7:07 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > On 10-05-16, 11:57, Khiem Nguyen wrote:
+> >> After the commit "a399dc9fc50 cpufreq: shmobile: Use generic platdev
+> >> driver", will use cpufreq-dt-platdev driver to enable cpufreq-dt support.
+> >> Hence, follow the implementation to support new R8A7795 SoC.
+> >>
+> >> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+> >> ---
+> >>  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >
+> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> 
+> Quoting Viresh when this file was introduced:
+> | This is going to be done once per boot and this shouldn't hurt. And for new
+> | platforms we may do things differently as they are going to use
+> opp-v2 bindings.
+> 
+> As r8a7795/r8a7796 are not arm32 "shmobile", but arm64, perhaps we should
+> use this new "opp-v2" binding instead? Has it been finalized?
 
-Error string and comment say we fall back to a default, but in reality
-we bailed out. Refactor the code to use the core helper which then
-matches the described behaviour. While updating the init message anyhow,
-shorten it while we are here; no need for versioning there as well and
-the name is already given via pr_fmt.
+Yeah, that would be preferred.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/watchdog/softdog.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/watchdog/softdog.c b/drivers/watchdog/softdog.c
-index 8bc0b164afc94b..a9ad27dd46502b 100644
---- a/drivers/watchdog/softdog.c
-+++ b/drivers/watchdog/softdog.c
-@@ -111,22 +111,15 @@ static struct watchdog_device softdog_dev = {
- 	.info = &softdog_info,
- 	.ops = &softdog_ops,
- 	.min_timeout = 1,
--	.max_timeout = 0xFFFF
-+	.max_timeout = 65535,
-+	.timeout = TIMER_MARGIN,
- };
- 
- static int __init watchdog_init(void)
- {
- 	int ret;
- 
--	/* Check that the soft_margin value is within it's range;
--	   if not reset to the default */
--	if (soft_margin < 1 || soft_margin > 65535) {
--		pr_info("soft_margin must be 0 < soft_margin < 65536, using %d\n",
--			TIMER_MARGIN);
--		return -EINVAL;
--	}
--	softdog_dev.timeout = soft_margin;
--
-+	watchdog_init_timeout(&softdog_dev, soft_margin, NULL);
- 	watchdog_set_nowayout(&softdog_dev, nowayout);
- 	watchdog_stop_on_reboot(&softdog_dev);
- 
-@@ -134,8 +127,8 @@ static int __init watchdog_init(void)
- 	if (ret)
- 		return ret;
- 
--	pr_info("Software Watchdog Timer: 0.08 initialized. soft_noboot=%d soft_margin=%d sec soft_panic=%d (nowayout=%d)\n",
--		soft_noboot, soft_margin, soft_panic, nowayout);
-+	pr_info("initialized. soft_noboot=%d soft_margin=%d sec soft_panic=%d (nowayout=%d)\n",
-+		soft_noboot, softdog_dev.timeout, soft_panic, nowayout);
- 
- 	return 0;
- }
 -- 
-2.8.1
+viresh
