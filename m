@@ -1,81 +1,132 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:51005 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755481AbcETHKV (ORCPT
+Received: from sauhun.de ([89.238.76.85]:57097 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751874AbcEJNzG (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 20 May 2016 03:10:21 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 23/23] arm64: dts: salvator-x: Fix W=1 dtc warnings
-Date: Fri, 20 May 2016 09:10:14 +0200
-Message-Id: <1463728214-13838-24-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
-References: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+	Tue, 10 May 2016 09:55:06 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: driverdev-devel@linuxdriverproject.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 23/27] staging: ks7010: indent michael_mic.c
+Date: Tue, 10 May 2016 15:52:36 +0200
+Message-Id: <1462888360-21649-24-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@3 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@4 has a unit name, but no reg property
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v2:
-  - No changes.
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/ks7010/michael_mic.c | 43 ++++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 84082922edb219ab..98f02631a0f0c66c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -62,7 +62,7 @@
- 		clock-frequency = <24576000>;
- 	};
+diff --git a/drivers/staging/ks7010/michael_mic.c b/drivers/staging/ks7010/michael_mic.c
+index ec8769a974427a..adb17df46f939b 100644
+--- a/drivers/staging/ks7010/michael_mic.c
++++ b/drivers/staging/ks7010/michael_mic.c
+@@ -34,11 +34,11 @@
+ 				A->nBytesInM = 0;
  
--	vcc_sdhi0: regulator@1 {
-+	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
+ static
+-void MichaelInitializeFunction( struct michel_mic_t *Mic, uint8_t *key )
++void MichaelInitializeFunction(struct michel_mic_t *Mic, uint8_t * key)
+ {
+ 	// Set the key
+-	Mic->K0 = getUInt32( key , 0 );
+-	Mic->K1 = getUInt32( key , 4 );
++	Mic->K0 = getUInt32(key, 0);
++	Mic->K1 = getUInt32(key, 4);
  
- 		regulator-name = "SDHI0 Vcc";
-@@ -73,7 +73,7 @@
- 		enable-active-high;
- 	};
+ 	//clear();
+ 	MichaelClear(Mic);
+@@ -56,11 +56,10 @@ do{								\
+ 	L += R;							\
+ }while(0)
  
--	vccq_sdhi0: regulator@2 {
-+	vccq_sdhi0: regulator-vccq-sdhi0 {
- 		compatible = "regulator-gpio";
+-
+ static
+-void MichaelAppend( struct michel_mic_t *Mic, uint8_t *src, int nBytes )
++void MichaelAppend(struct michel_mic_t *Mic, uint8_t * src, int nBytes)
+ {
+-	int addlen ;
++	int addlen;
+ 	if (Mic->nBytesInM) {
+ 		addlen = 4 - Mic->nBytesInM;
+ 		if (addlen > nBytes)
+@@ -73,13 +72,13 @@ void MichaelAppend( struct michel_mic_t *Mic, uint8_t *src, int nBytes )
+ 		if (Mic->nBytesInM < 4)
+ 			return;
  
- 		regulator-name = "SDHI0 VccQ";
-@@ -86,7 +86,7 @@
- 			  1800000 0>;
- 	};
+-		Mic->L ^= getUInt32(Mic->M,0);
++		Mic->L ^= getUInt32(Mic->M, 0);
+ 		MichaelBlockFunction(Mic->L, Mic->R);
+ 		Mic->nBytesInM = 0;
+ 	}
  
--	vcc_sdhi3: regulator@3 {
-+	vcc_sdhi3: regulator-vcc-sdhi3 {
- 		compatible = "regulator-fixed";
+-	while(nBytes >= 4){
+-		Mic->L ^= getUInt32(src,0);
++	while (nBytes >= 4) {
++		Mic->L ^= getUInt32(src, 0);
+ 		MichaelBlockFunction(Mic->L, Mic->R);
+ 		src += 4;
+ 		nBytes -= 4;
+@@ -92,7 +91,7 @@ void MichaelAppend( struct michel_mic_t *Mic, uint8_t *src, int nBytes )
+ }
  
- 		regulator-name = "SDHI3 Vcc";
-@@ -97,7 +97,7 @@
- 		enable-active-high;
- 	};
+ static
+-void MichaelGetMIC( struct michel_mic_t *Mic, uint8_t *dst )
++void MichaelGetMIC(struct michel_mic_t *Mic, uint8_t * dst)
+ {
+ 	uint8_t *data = Mic->M;
+ 	switch (Mic->nBytesInM) {
+@@ -107,24 +106,24 @@ void MichaelGetMIC( struct michel_mic_t *Mic, uint8_t *dst )
+ 		break;
+ 	case 3:
+ 		Mic->L ^= data[0] | (data[1] << 8) | (data[2] << 16) |
+-			0x5a000000;
++		    0x5a000000;
+ 		break;
+ 	}
+ 	MichaelBlockFunction(Mic->L, Mic->R);
+ 	MichaelBlockFunction(Mic->L, Mic->R);
+ 	// The appendByte function has already computed the result.
+-	putUInt32( dst, 0, Mic->L );
+-	putUInt32( dst, 4, Mic->R );
++	putUInt32(dst, 0, Mic->L);
++	putUInt32(dst, 4, Mic->R);
  
--	vccq_sdhi3: regulator@4 {
-+	vccq_sdhi3: regulator-vccq-sdhi3 {
- 		compatible = "regulator-gpio";
+ 	// Reset to the empty message.
+ 	MichaelClear(Mic);
+ }
  
- 		regulator-name = "SDHI3 VccQ";
+-void MichaelMICFunction( struct michel_mic_t *Mic, uint8_t *Key,
+-			 uint8_t *Data, int Len, uint8_t priority,
+-			 uint8_t *Result )
++void MichaelMICFunction(struct michel_mic_t *Mic, uint8_t * Key,
++			uint8_t * Data, int Len, uint8_t priority,
++			uint8_t * Result)
+ {
+-	uint8_t pad_data[4] = {priority,0,0,0};
++	uint8_t pad_data[4] = { priority, 0, 0, 0 };
+ 	// Compute the MIC value
+ 	/*
+ 	 * IEEE802.11i  page 47
+@@ -135,9 +134,9 @@ void MichaelMICFunction( struct michel_mic_t *Mic, uint8_t *Key,
+ 	 * |DA|SA|Priority|0 |Data|M0|M1|M2|M3|M4|M5|M6|M7|
+ 	 * +--+--+--------+--+----+--+--+--+--+--+--+--+--+
+ 	 */
+-	MichaelInitializeFunction( Mic, Key ) ;
+-	MichaelAppend( Mic, (uint8_t*)Data, 12 ); /* |DA|SA| */
+-	MichaelAppend( Mic, pad_data, 4 ); /* |Priority|0|0|0| */
+-	MichaelAppend( Mic, (uint8_t*)(Data+12), Len -12 ); /* |Data| */
+-	MichaelGetMIC( Mic, Result ) ;
++	MichaelInitializeFunction(Mic, Key);
++	MichaelAppend(Mic, (uint8_t *) Data, 12);	/* |DA|SA| */
++	MichaelAppend(Mic, pad_data, 4);	/* |Priority|0|0|0| */
++	MichaelAppend(Mic, (uint8_t *) (Data + 12), Len - 12);	/* |Data| */
++	MichaelGetMIC(Mic, Result);
+ }
 -- 
-1.9.1
+2.8.1
