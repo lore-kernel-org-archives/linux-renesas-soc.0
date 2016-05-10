@@ -1,20 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f178.google.com ([209.85.223.178]:36452 "EHLO
-	mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751407AbcEMIzt (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:31629 "EHLO
+	relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751320AbcEJEkx (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 13 May 2016 04:55:49 -0400
-MIME-Version: 1.0
-In-Reply-To: <5731664D.1030909@rvc.renesas.com>
+	Tue, 10 May 2016 00:40:53 -0400
+Subject: [RFC 0/4] Add Z clock support
+To: Geert Uytterhoeven <geert+renesas@glider.be>
 References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
-	<5731664D.1030909@rvc.renesas.com>
-Date: Fri, 13 May 2016 10:55:48 +0200
-Message-ID: <CAMuHMdXRajaf7C09mO8WKqYL8cF09i96eWdC_FXBef6XUxcasw@mail.gmail.com>
-Subject: Re: [RFC 0/4] Add Z clock support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
+CC: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	Simon Horman <horms+renesas@verge.net.au>,
 	Magnus Damm <damm+renesas@opensource.se>,
@@ -23,31 +16,39 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	"linux-renesas-soc@vger.kernel.org"
 	<linux-renesas-soc@vger.kernel.org>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Toru Oishi <toru.oishi.zj@rvc.renesas.com>
-Content-Type: text/plain; charset=UTF-8
+	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
+	"Khiem Trong. Nguyen" <khiem.nguyen.xt@rvc.renesas.com>
+From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Message-ID: <5731664D.1030909@rvc.renesas.com>
+Date: Tue, 10 May 2016 11:40:45 +0700
+MIME-Version: 1.0
+In-Reply-To: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Khiem,
+Hi Geert,
 
-On Tue, May 10, 2016 at 6:40 AM, Khiem Nguyen
-<khiem.nguyen.xt@rvc.renesas.com> wrote:
-> This series adds Z clock support for R-Car Gen3.
-> It was written on top of "[PATCH 0/4] clk: renesas: cpg-mssr: Add support
-> for R-Car M3-W" series.
+This series adds Z clock support for R-Car Gen3.
+It was written on top of "[PATCH 0/4] clk: renesas: cpg-mssr: Add 
+support for R-Car M3-W" series.
 
-Thanks for your patch series!
+Dien Pham (1):
+   arm64: dts: r8a7795: Add Z clock scaling support
 
-Unfortunately it seems to be whitespace-damaged, and can't be applied
-without manual tweaking.
+Khiem Nguyen (3):
+   clk: renesas: rcar-gen3-cpg: Add Z clock
+   clk: renesas: r8a7795: Add Z clock
+   clk: renesas: r8a7796: Add Z clock
 
-Gr{oetje,eeting}s,
+  arch/arm64/boot/dts/renesas/r8a7795.dtsi |  26 ++++++
+  drivers/clk/renesas/r8a7795-cpg-mssr.c   |   1 +
+  drivers/clk/renesas/r8a7796-cpg-mssr.c   |   2 +
+  drivers/clk/renesas/rcar-gen3-cpg.c      | 143 
++++++++++++++++++++++++++++++++
+  drivers/clk/renesas/rcar-gen3-cpg.h      |   1 +
+  5 files changed, 173 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+1.9.1
