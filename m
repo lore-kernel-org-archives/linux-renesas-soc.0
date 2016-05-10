@@ -1,103 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33947 "EHLO
-	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932896AbcEKODh (ORCPT
+Received: from sauhun.de ([89.238.76.85]:57095 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751827AbcEJNzC (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 11 May 2016 10:03:37 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-	ian.molton@codethink.co.uk, lars@metafoo.de,
-	william.towle@codethink.co.uk,
-	Rob Taylor <rob.taylor@codethink.co.uk>,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v4 7/8] ARM: dts: lager: Add entries for VIN HDMI input support
-Date: Wed, 11 May 2016 16:02:55 +0200
-Message-Id: <1462975376-491-8-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1462975376-491-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1462975376-491-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+	Tue, 10 May 2016 09:55:02 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: driverdev-devel@linuxdriverproject.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 21/27] staging: ks7010: indent ks_wlan_ioctl.h
+Date: Tue, 10 May 2016 15:52:34 +0200
+Message-Id: <1462888360-21649-22-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: William Towle <william.towle@codethink.co.uk>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Add DT entries for vin0, vin0_pins, and adv7612.
-
-Sets the 'default-input' property for ADV7612, enabling image and video
-capture without the need to have userspace specifying routing.
-
-Signed-off-by: William Towle <william.towle@codethink.co.uk>
-Signed-off-by: Rob Taylor <rob.taylor@codethink.co.uk>
-[uli: added interrupt, renamed endpoint, merged default-input]
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7790-lager.dts | 39 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ drivers/staging/ks7010/ks_wlan_ioctl.h | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 749ba02..7e53f5c 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -427,6 +427,11 @@
- 		function = "usb2";
- 	};
+diff --git a/drivers/staging/ks7010/ks_wlan_ioctl.h b/drivers/staging/ks7010/ks_wlan_ioctl.h
+index e7469f7338f7af..cc4669eddcc1f7 100644
+--- a/drivers/staging/ks7010/ks_wlan_ioctl.h
++++ b/drivers/staging/ks7010/ks_wlan_ioctl.h
+@@ -36,8 +36,8 @@
+ #define KS_WLAN_GET_SCAN_TYPE		SIOCIWFIRSTPRIV+13
+ #define KS_WLAN_SET_RX_GAIN		SIOCIWFIRSTPRIV+14
+ #define KS_WLAN_GET_RX_GAIN		SIOCIWFIRSTPRIV+15
+-#define KS_WLAN_HOSTT			SIOCIWFIRSTPRIV+16  /* unused */
+-//#define KS_WLAN_SET_REGION		SIOCIWFIRSTPRIV+17
++#define KS_WLAN_HOSTT			SIOCIWFIRSTPRIV+16	/* unused */
++//#define KS_WLAN_SET_REGION            SIOCIWFIRSTPRIV+17
+ #define KS_WLAN_SET_BEACON_LOST		SIOCIWFIRSTPRIV+18
+ #define KS_WLAN_GET_BEACON_LOST		SIOCIWFIRSTPRIV+19
  
-+	vin0_pins: vin0 {
-+		groups = "vin0_data24", "vin0_sync", "vin0_clkenb", "vin0_clk";
-+		function = "vin0";
-+	};
-+
- 	vin1_pins: vin {
- 		groups = "vin1_data8", "vin1_clk";
- 		function = "vin1";
-@@ -607,6 +612,21 @@
- 		reg = <0x12>;
- 	};
+@@ -51,8 +51,8 @@
+ #define KS_WLAN_GET_CTS_MODE		SIOCIWFIRSTPRIV+25
+ /*					SIOCIWFIRSTPRIV+26 */
+ /*					SIOCIWFIRSTPRIV+27 */
+-#define KS_WLAN_SET_SLEEP_MODE		SIOCIWFIRSTPRIV+28 /* sleep mode */
+-#define KS_WLAN_GET_SLEEP_MODE		SIOCIWFIRSTPRIV+29 /* sleep mode */
++#define KS_WLAN_SET_SLEEP_MODE		SIOCIWFIRSTPRIV+28	/* sleep mode */
++#define KS_WLAN_GET_SLEEP_MODE		SIOCIWFIRSTPRIV+29	/* sleep mode */
+ /*					SIOCIWFIRSTPRIV+30 */
+ /*					SIOCIWFIRSTPRIV+31 */
  
-+	hdmi-in@4c {
-+		compatible = "adi,adv7612";
-+		reg = <0x4c>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-+		remote = <&vin0>;
-+		default-input = <0>;
-+
-+		port {
-+			adv7612: endpoint {
-+				remote-endpoint = <&vin0ep0>;
-+			};
-+		};
-+	};
-+
- 	composite-in@20 {
- 		compatible = "adi,adv7180";
- 		reg = <0x20>;
-@@ -722,6 +742,25 @@
- 	status = "okay";
- };
+@@ -62,7 +62,8 @@
+ #include <linux/netdevice.h>
  
-+/* HDMI video input */
-+&vin0 {
-+	pinctrl-0 = <&vin0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "ok";
-+
-+	port {
-+		vin0ep0: endpoint {
-+			remote-endpoint = <&adv7612>;
-+			bus-width = <24>;
-+			hsync-active = <0>;
-+			vsync-active = <0>;
-+			pclk-sample = <1>;
-+			data-active = <1>;
-+		};
-+	};
-+};
-+
- /* composite video input */
- &vin1 {
- 	pinctrl-0 = <&vin1_pins>;
+ extern int ks_wlan_read_config_file(struct ks_wlan_private *priv);
+-extern int ks_wlan_setup_parameter(struct ks_wlan_private *priv, unsigned int commit_flag);
++extern int ks_wlan_setup_parameter(struct ks_wlan_private *priv,
++				   unsigned int commit_flag);
+ 
+ #endif /* __KERNEL__ */
+ 
 -- 
-2.7.4
+2.8.1
