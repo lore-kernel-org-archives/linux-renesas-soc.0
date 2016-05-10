@@ -1,67 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:57394 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751393AbcEIHPo (ORCPT
+Received: from sauhun.de ([89.238.76.85]:57050 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751479AbcEJNyo (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 9 May 2016 03:15:44 -0400
-Received: from vsmta13.fe.internet.bosch.com (unknown [10.4.98.53])
-	by imta24.fe.bosch.de (Postfix) with ESMTP id 1FC8ED80204
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  9 May 2016 09:15:43 +0200 (CEST)
-Received: from SI-HUB1001.de.bosch.com (vsgw22.fe.internet.bosch.com [10.4.98.11])
-	by vsmta13.fe.internet.bosch.com (Postfix) with ESMTP id CF4BF2E403FF
-	for <linux-renesas-soc@vger.kernel.org>; Mon,  9 May 2016 09:15:42 +0200 (CEST)
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	<linux-renesas-soc@vger.kernel.org>
-CC: Dirk Behme <dirk.behme@gmail.com>
-Subject: [PATCH 07/10] arm: renesas: rcar-gen3: Make boot-mode-reg Gen3 compatible
-Date: Mon, 9 May 2016 09:13:58 +0200
-Message-ID: <1462778041-19595-8-git-send-email-dirk.behme@de.bosch.com>
-In-Reply-To: <1462778041-19595-1-git-send-email-dirk.behme@de.bosch.com>
-References: <1462778041-19595-1-git-send-email-dirk.behme@de.bosch.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	Tue, 10 May 2016 09:54:44 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: driverdev-devel@linuxdriverproject.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 07/27] staging: ks7010: use long preamble as default
+Date: Tue, 10 May 2016 15:52:20 +0200
+Message-Id: <1462888360-21649-8-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Dirk Behme <dirk.behme@gmail.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-The boot mode register is available on Renesas Gen3, too.
-Use the same driver on Gen3 as on Gen2.
+I had a problem connecting to a network with a short preamble, so let's
+make the safer option the default.
 
-Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/Kconfig.platforms      | 1 +
- drivers/misc/boot-mode-reg/rcar.c | 4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/staging/ks7010/ks7010_config.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index fda93a2..591ab8f 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -106,6 +106,7 @@ config ARCH_SHMOBILE
- config ARCH_RENESAS
- 	bool "Renesas SoC Platforms"
- 	select ARCH_SHMOBILE
-+	select BOOT_MODE_REG_RCAR
- 	select PINCTRL
- 	select PM
- 	select PM_GENERIC_DOMAINS
-diff --git a/drivers/misc/boot-mode-reg/rcar.c b/drivers/misc/boot-mode-reg/rcar.c
-index c3b778fe..e994980 100644
---- a/drivers/misc/boot-mode-reg/rcar.c
-+++ b/drivers/misc/boot-mode-reg/rcar.c
-@@ -48,7 +48,9 @@ int __init rcar_init_boot_mode(void)
- 	    of_machine_is_compatible("renesas,r8a7791") ||
- 	    of_machine_is_compatible("renesas,r8a7792") ||
- 	    of_machine_is_compatible("renesas,r8a7793") ||
--	    of_machine_is_compatible("renesas,r8a7794"))
-+	    of_machine_is_compatible("renesas,r8a7794") ||
-+	    of_machine_is_compatible("renesas,r8a7795") ||
-+	    of_machine_is_compatible("renesas,r8a7796"))
- 		return rcar_read_mode_pins();
- 
- 	return 0;
+diff --git a/drivers/staging/ks7010/ks7010_config.c b/drivers/staging/ks7010/ks7010_config.c
+index 7d33070b3428e7..abe99a52ae1ad8 100644
+--- a/drivers/staging/ks7010/ks7010_config.c
++++ b/drivers/staging/ks7010/ks7010_config.c
+@@ -193,7 +193,7 @@ int ks_wlan_read_config_file(ks_wlan_private *priv)
+ 		{8,"WepIndex","1"},				/* 13 */
+ 		{7,"WepType","STRING"},				/* 14 */
+ 		{3,"Wep","OFF"},				/* 15 */
+-		{13,"PREAMBLE_TYPE","SHORT"},			/* 16 */
++		{13,"PREAMBLE_TYPE","LONG"},			/* 16 */
+ 		{8,"ScanType","ACTIVE_SCAN"},			/* 17 */
+ 		{8,"ROM_FILE", ROM_FILE},			/* 18 */
+ 		{7,"PhyType", "BG_MODE"},			/* 19 */
+@@ -216,7 +216,7 @@ int ks_wlan_read_config_file(ks_wlan_private *priv)
+ 	priv->reg.ssid.body[0] = '\0';		        /* SSID */
+ 	priv->reg.ssid.size = 0;		        /* SSID size */
+ 	priv->reg.tx_rate = TX_RATE_AUTO;		/* TxRate Fully Auto */
+-	priv->reg.preamble = SHORT_PREAMBLE;		/* Preamble = SHORT */
++	priv->reg.preamble = LONG_PREAMBLE;		/* Preamble = LONG */
+ 	priv->reg.powermgt = POWMGT_ACTIVE_MODE;        /* POWMGT_ACTIVE_MODE */
+ 	priv->reg.scan_type = ACTIVE_SCAN;              /* Active */
+ 	priv->reg.beacon_lost_count = 20;	        /* Beacon Lost Count */
 -- 
-2.8.0
+2.8.1
