@@ -1,69 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:55629 "EHLO pokefinder.org"
+Received: from comal.ext.ti.com ([198.47.26.152]:36360 "EHLO comal.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751546AbcERJir (ORCPT
+	id S1751341AbcEJIyc (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 18 May 2016 05:38:47 -0400
-Date: Wed, 18 May 2016 11:38:32 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Guenter Roeck <linux@roeck-us.net>,
-	Simon Horman <horms@verge.net.au>
-Cc: linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] arm64: dts: r8a7795: Add RWDT node
-Message-ID: <20160518093832.GA1639@katana>
-References: <1459511786-4286-1-git-send-email-wsa@the-dreams.de>
- <1459511786-4286-3-git-send-email-wsa@the-dreams.de>
- <20160404140057.GA27688@roeck-us.net>
+	Tue, 10 May 2016 04:54:32 -0400
+Subject: Re: [PATCH v2] fbdev: sh_mipi_dsi: remove driver
+To: Simon Horman <horms+renesas@verge.net.au>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+References: <1459734484-6815-1-git-send-email-horms+renesas@verge.net.au>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	<linux-fbdev@vger.kernel.org>, <linux-sh@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <5731A1BA.1000602@ti.com>
+Date: Tue, 10 May 2016 11:54:18 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
-Content-Disposition: inline
-In-Reply-To: <20160404140057.GA27688@roeck-us.net>
+In-Reply-To: <1459734484-6815-1-git-send-email-horms+renesas@verge.net.au>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="E9xUGg6RbpO11JOL16fMVMHJ1vVOCViPo"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+--E9xUGg6RbpO11JOL16fMVMHJ1vVOCViPo
+Content-Type: multipart/mixed; boundary="wAHaJWP428DCXehJsBDxVD8uCiQ64KWh5"
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+To: Simon Horman <horms+renesas@verge.net.au>,
+ Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Magnus Damm <magnus.damm@gmail.com>, linux-fbdev@vger.kernel.org,
+ linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Message-ID: <5731A1BA.1000602@ti.com>
+Subject: Re: [PATCH v2] fbdev: sh_mipi_dsi: remove driver
+References: <1459734484-6815-1-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1459734484-6815-1-git-send-email-horms+renesas@verge.net.au>
 
---HcAYCG3uE/tztfnV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--wAHaJWP428DCXehJsBDxVD8uCiQ64KWh5
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 04, 2016 at 07:00:57AM -0700, Guenter Roeck wrote:
-> On Fri, Apr 01, 2016 at 01:56:24PM +0200, Wolfram Sang wrote:
-> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >=20
-> > This patch adds the RWDT device node for r8a7795.
-> >=20
-> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+On 04/04/16 04:48, Simon Horman wrote:
+> Remove the sh_mipi_dsi driver as it appears to be unused since
+> c0bb9b302769 ("ARCH: ARM: shmobile: Remove ag5evm board support").
 >=20
-> Acked-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+> Based on v4.6-rc1
 >=20
-> I assume the dts patches will go through the an arm64 tree.
-> Is this correct ?
+> v2
+> * Update patch referred to in changelog
+> ---
+>  drivers/video/Kconfig             |   4 -
+>  drivers/video/fbdev/Kconfig       |   1 -
+>  drivers/video/fbdev/Makefile      |   1 -
+>  drivers/video/fbdev/sh_mipi_dsi.c | 587 ------------------------------=
+--------
+>  include/video/sh_mipi_dsi.h       |  59 ----
+>  5 files changed, 652 deletions(-)
+>  delete mode 100644 drivers/video/fbdev/sh_mipi_dsi.c
+>  delete mode 100644 include/video/sh_mipi_dsi.h
 
-Yes. Simon: ping :)
+Thanks, queued for 4.7.
+
+ Tomi
 
 
---HcAYCG3uE/tztfnV
+--wAHaJWP428DCXehJsBDxVD8uCiQ64KWh5--
+
+--E9xUGg6RbpO11JOL16fMVMHJ1vVOCViPo
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJXPDgYAAoJEBQN5MwUoCm27qAQAIYCAPuLenwxxs6Rjkx1lvA0
-qOH5Qdm4A5m5WdO0Cce+7svUPSl7JPNspKRaZGsvbHfFisYrPSfOdmYTz0EKgmKF
-jyw8ybjMNyPk1kzWGAIaWDqMOR4OFh6hhs3PTxfhjsXsPxW8/vLyPQrwyoXl+htj
-UkvTSQbDwMYRY7j7GXd97JI9LqmN+saeN2lChZbGxy9FnUdLgLgpzyDIaAgW1h9N
-Iq4ZcOCIfwxVlg6hYiXfGjHq3J0TnQAyaxkaewgoPwmrnlu3Sw73u2IP/Q7dak8/
-5dY61s+O02G1Ase0rL/KUUvAZEZzYwZDAfeLp+7ywhVGthCMSO6SOAEyz9itls85
-G6ew0SlrINidwKMezENY1svXcSX2ApyFqxqzudmqPHVgDgKyBurHXvlvnKGST4eo
-sQLKujBW+xUNnBR6INK828ZJJ175PbeKVTwIxAVuxdLluEx7cNQwxNHfC6ND4JdG
-ci1C7IWvxTQzrJBkBuyCMGt2p5Wr6TMwR7dU1b1eCgRoaQLqfdiRRq5JYNZcqSK/
-t5iByiwHcdnFahe9R+BAqbPIe/dy57/8IbOsfg72QtihXpki8Fm3r9olYOG/iA8s
-ItpEvPExjBtHXUqi9GvfUkF2jR5byAKGyobCWQ7DVoi7OscXUIlkHFW//GRmV/W/
-7TcvVmvjcbD/QWtxWaa0
-=9+Ex
+iQIcBAEBCAAGBQJXMaG6AAoJEPo9qoy8lh71/rAP/jlDfy+Hb91Ef/okyJo5eDMT
+y7/4g6Q2NLJCHximhLNT9SO0F6uVJGeVhVQnpcqbOLXrlbWvBUqJ1rcmzbRmmIcO
+QdzNSeh4Hxp7Pww6u4ImjbJgk+Oj3lgipp8pRetO4tAmFEHQ2lbKQefuC0ExUq6X
++FdQahPG+lvkDpw3D+z/M8RHEwc14ewCquY3ZCksUxD6w7kr4lqxW+U2/KBShwlK
+tX7oNog5+40gNtmPyQNL1Gt5Wjpxu7D3WcSRxPfDcnWNsli+iF625rkxPbc/3R0H
+8OWfm5sbz5aS2IY4MA6BlB9XA/TFAqW1zDGRaaVtrm7f/HKv250X7nn6qvrkILMd
+tzDeS12uH3sUMeOzbEjP/nSXT2iMjyG4L3VI1CSWkAah/vpHjTugfh+bS7Et7UeF
+zxPHIDRXi3km1La3vRepyTAW0tVjr70sVDIPzH4TrP9jmOOc5w03CWJ/62Btow4f
+fnp5SmCdvgBlhW46MnK4vRiWmh45GbBqOzalKJZ34NsLXytTwm+EcndoAINuDkpp
+TqPjjvM6v4Tam7LXNTrFKOmtMFXxUanHp6zcWxlLAfYkQO2dm7zBw10wD9Vd6Vsq
+7qp698ASBuBfAuYmLd1/wsLfBmkzRi0inlKlXXwnF0Ts+OBqDR4sai4WVfbz3bfL
+ITTvrBNl6Nmlsgl8sfze
+=iUC8
 -----END PGP SIGNATURE-----
 
---HcAYCG3uE/tztfnV--
+--E9xUGg6RbpO11JOL16fMVMHJ1vVOCViPo--
