@@ -1,474 +1,260 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:41989 "EHLO pokefinder.org"
+Received: from sauhun.de ([89.238.76.85]:57038 "EHLO pokefinder.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751714AbcEaK5s (ORCPT
+	id S1751628AbcEJNym (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 31 May 2016 06:57:48 -0400
+	Tue, 10 May 2016 09:54:42 -0400
 From: Wolfram Sang <wsa@the-dreams.de>
 To: driverdev-devel@linuxdriverproject.org
 Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V2 20/31] staging: ks7010: indent ks_wlan.h
-Date: Tue, 31 May 2016 12:56:32 +0200
-Message-Id: <1464692203-4180-21-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
-References: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
+Subject: [PATCH 04/27] staging: ks7010: remove checks for WIRELESS_EXT version
+Date: Tue, 10 May 2016 15:52:17 +0200
+Message-Id: <1462888360-21649-5-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+We are by far newer than that anyhow.
+
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/staging/ks7010/ks_wlan.h | 246 +++++++++++++++++++--------------------
- 1 file changed, 121 insertions(+), 125 deletions(-)
+ drivers/staging/ks7010/ks_hostif.c   | 23 -----------------------
+ drivers/staging/ks7010/ks_wlan_net.c | 14 --------------
+ 2 files changed, 37 deletions(-)
 
-diff --git a/drivers/staging/ks7010/ks_wlan.h b/drivers/staging/ks7010/ks_wlan.h
-index 58e3a5a6b44472..f0f9f8ef7d6185 100644
---- a/drivers/staging/ks7010/ks_wlan.h
-+++ b/drivers/staging/ks7010/ks_wlan.h
-@@ -22,16 +22,16 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
+diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
+index 0295bb4921fa20..6bea699655eec4 100644
+--- a/drivers/staging/ks7010/ks_hostif.c
++++ b/drivers/staging/ks7010/ks_hostif.c
+@@ -22,12 +22,7 @@
+ #include <linux/if_arp.h>
  
--#include <linux/spinlock.h>	/* spinlock_t					*/
--#include <linux/sched.h>	/* wait_queue_head_t				*/
--#include <linux/types.h>	/* pid_t					*/
--#include <linux/netdevice.h>	/* struct net_device_stats,  struct sk_buff	*/
-+#include <linux/spinlock.h>	/* spinlock_t                                   */
-+#include <linux/sched.h>	/* wait_queue_head_t                            */
-+#include <linux/types.h>	/* pid_t                                        */
-+#include <linux/netdevice.h>	/* struct net_device_stats,  struct sk_buff     */
- #include <linux/etherdevice.h>
- #include <linux/wireless.h>
--#include <asm/atomic.h> 	/* struct atmic_t				*/
-+#include <asm/atomic.h>	/* struct atmic_t                               */
- #include <linux/timer.h>	/* struct timer_list */
- #include <linux/string.h>
--#include <linux/completion.h>   /* struct completion */
-+#include <linux/completion.h>	/* struct completion */
- #include <linux/workqueue.h>
+ /* Include Wireless Extension definition and check version */
+-#ifndef WIRELESS_EXT
+-#include <linux/wireless.h>
+-#endif /* WIRELESS_EXT */
+-#if WIRELESS_EXT > 12
+ #include <net/iw_handler.h>	/* New driver API */
+-#endif	/* WIRELESS_EXT > 12 */
  
- #include <asm/io.h>
-@@ -46,37 +46,37 @@
- #endif
+ extern int ks_wlan_hw_tx(ks_wlan_private *priv, void *p, unsigned long size,
+ 			 void (*complete_handler)(void *arg1, void *arg2),
+@@ -121,10 +116,8 @@ static
+ int get_current_ap(ks_wlan_private *priv, struct link_ap_info_t *ap_info)
+ {
+ 	struct local_ap_t *ap;
+-#if WIRELESS_EXT > 13
+ 	union iwreq_data wrqu;
+ 	struct net_device *netdev=priv->net_dev;
+-#endif /* WIRELESS_EXT > 13 */
+ 	int rc=0;
  
- struct ks_wlan_parameter {
--	uint8_t		operation_mode;	   /* Operation Mode */
--	uint8_t		channel;	   /*  Channel */
--	uint8_t		tx_rate;	   /*  Transmit Rate */
-+	uint8_t operation_mode;	/* Operation Mode */
-+	uint8_t channel;	/*  Channel */
-+	uint8_t tx_rate;	/*  Transmit Rate */
- 	struct {
- 		uint8_t size;
- 		uint8_t body[16];
- 	} rate_set;
--	uint8_t		bssid[ETH_ALEN];	/* BSSID */
-+	uint8_t bssid[ETH_ALEN];	/* BSSID */
- 	struct {
- 		uint8_t size;
--		uint8_t body[32+1];
--	} ssid;				   /*  SSID */
--	uint8_t		preamble;	   /*  Preamble */
--	uint8_t		powermgt;	   /*  PowerManagementMode */
--	uint32_t	scan_type;         /*  AP List Scan Type */
-+		uint8_t body[32 + 1];
-+	} ssid;	/*  SSID */
-+	uint8_t preamble;	/*  Preamble */
-+	uint8_t powermgt;	/*  PowerManagementMode */
-+	uint32_t scan_type;	/*  AP List Scan Type */
- #define BEACON_LOST_COUNT_MIN 0
- #define BEACON_LOST_COUNT_MAX 65535
--	uint32_t	beacon_lost_count; /*  Beacon Lost Count */
--	uint32_t	rts;		   /*  RTS Threashold */
--	uint32_t	fragment;	   /*  Fragmentation Threashold */
--	uint32_t	privacy_invoked;
--	uint32_t	wep_index;
-+	uint32_t beacon_lost_count;	/*  Beacon Lost Count */
-+	uint32_t rts;	/*  RTS Threashold */
-+	uint32_t fragment;	/*  Fragmentation Threashold */
-+	uint32_t privacy_invoked;
-+	uint32_t wep_index;
- 	struct {
- 		uint8_t size;
--		uint8_t val[13*2+1];
-+		uint8_t val[13 * 2 + 1];
- 	} wep_key[4];
--	uint16_t	authenticate_type;	
--	uint16_t	phy_type; /* 11b/11g/11bg mode type*/
--	uint16_t	cts_mode; /* for 11g/11bg mode cts mode */
--	uint16_t	phy_info_timer; /* phy information timer */
--	char		rom_file[256];
-+	uint16_t authenticate_type;
-+	uint16_t phy_type;	/* 11b/11g/11bg mode type */
-+	uint16_t cts_mode;	/* for 11g/11bg mode cts mode */
-+	uint16_t phy_info_timer;	/* phy information timer */
-+	char rom_file[256];
+ 	DPRINTK(3,"\n");
+@@ -190,7 +183,6 @@ int get_current_ap(ks_wlan_private *priv, struct link_ap_info_t *ap_info)
+ 		ap->wpa_ie.size = 0;
+ 	}
+ 
+-#if WIRELESS_EXT > 13
+ 	wrqu.data.length = 0;
+ 	wrqu.data.flags = 0;
+ 	wrqu.ap_addr.sa_family = ARPHRD_ETHER;
+@@ -203,7 +195,6 @@ int get_current_ap(ks_wlan_private *priv, struct link_ap_info_t *ap_info)
+ 			(unsigned char)wrqu.ap_addr.sa_data[4],(unsigned char)wrqu.ap_addr.sa_data[5]);
+ 		wireless_send_event(netdev, SIOCGIWAP, &wrqu, NULL);
+ 	}
+-#endif
+ 	DPRINTK(4,"\n    Link AP\n");
+ 	DPRINTK(4,"    bssid=%02X:%02X:%02X:%02X:%02X:%02X\n \
+    essid=%s\n    rate_set=%02X,%02X,%02X,%02X,%02X,%02X,%02X,%02X\n    channel=%d\n \
+@@ -338,9 +329,7 @@ void hostif_data_indication(ks_wlan_private *priv)
+ 	struct ieee802_1x_hdr *aa1x_hdr;
+ 	struct wpa_eapol_key *eap_key;
+ 	struct michel_mic_t michel_mic;
+-#if WIRELESS_EXT > 14
+ 	union iwreq_data wrqu;
+-#endif /* WIRELESS_EXT > 14 */
+ 
+ 	DPRINTK(3,"\n");
+ 
+@@ -412,7 +401,6 @@ void hostif_data_indication(ks_wlan_private *priv)
+ 							mic_failure->counter = 1;
+ 					}
+ 					priv->wpa.mic_failure.last_failure_time = now;
+-#if WIRELESS_EXT > 14
+ 					/*  needed parameters: count, keyid, key type, TSC */
+ 					sprintf(buf, "MLME-MICHAELMICFAILURE.indication(keyid=%d %scast addr="
+ 						"%02x:%02x:%02x:%02x:%02x:%02x)",
+@@ -424,7 +412,6 @@ void hostif_data_indication(ks_wlan_private *priv)
+ 					wrqu.data.length = strlen(buf);
+ 					DPRINTK(4,"IWEVENT:MICHAELMICFAILURE\n");
+ 					wireless_send_event(priv->net_dev, IWEVCUSTOM, &wrqu, buf);
+-#endif /* WIRELESS_EXT > 14 */
+ 					return;
+ 				}
+ 			}
+@@ -754,9 +741,7 @@ void hostif_connect_indication(ks_wlan_private *priv)
+ 	unsigned int tmp=0;
+ 	unsigned int old_status=priv->connect_status;
+ 	struct net_device *netdev=priv->net_dev;
+-#if WIRELESS_EXT > 13
+ 	union iwreq_data wrqu0;
+-#endif /* WIRELESS_EXT > 13 */
+ 	connect_code = get_WORD(priv);
+ 
+ 	switch(connect_code){
+@@ -791,7 +776,6 @@ void hostif_connect_indication(ks_wlan_private *priv)
+ 	}
+ 	ks_wlan_do_power_save(priv);
+ 
+-#if WIRELESS_EXT > 13
+ 	wrqu0.data.length = 0;
+ 	wrqu0.data.flags = 0;
+ 	wrqu0.ap_addr.sa_family = ARPHRD_ETHER;
+@@ -802,7 +786,6 @@ void hostif_connect_indication(ks_wlan_private *priv)
+ 		DPRINTK(3,"disconnect :: scan_ind_count=%d\n",priv->scan_ind_count);
+ 		wireless_send_event(netdev, SIOCGIWAP, &wrqu0, NULL);
+ 	}
+-#endif /* WIRELESS_EXT > 13 */
+ 	priv->scan_ind_count=0;
+ }
+ 
+@@ -904,7 +887,6 @@ void hostif_adhoc_set_confirm(ks_wlan_private *priv)
+ static
+ void hostif_associate_indication(ks_wlan_private *priv)
+ {
+-#if WIRELESS_EXT > 14
+ 	struct association_request_t *assoc_req;
+ 	struct association_response_t *assoc_resp;
+ 	unsigned char *pb;
+@@ -944,29 +926,24 @@ void hostif_associate_indication(ks_wlan_private *priv)
+ 
+ 	DPRINTK(3,"IWEVENT:ASSOCINFO\n");
+ 	wireless_send_event(priv->net_dev, IWEVCUSTOM, &wrqu, buf);
+-#endif /* WIRELESS_EXT > 14 */
+ }
+ 
+ static
+ void hostif_bss_scan_confirm(ks_wlan_private *priv)
+ {
+ 	unsigned int result_code;
+-#if WIRELESS_EXT > 13
+ 	struct net_device *dev = priv->net_dev;
+ 	union iwreq_data wrqu;
+-#endif /* WIRELESS_EXT > 13 */
+ 	result_code = get_DWORD(priv);
+ 	DPRINTK(2,"result=%d :: scan_ind_count=%d\n", result_code, priv->scan_ind_count);
+ 
+ 	priv->sme_i.sme_flag &= ~SME_AP_SCAN;
+ 	hostif_sme_enqueue(priv, SME_BSS_SCAN_CONFIRM);
+ 
+-#if WIRELESS_EXT > 13
+ 	wrqu.data.length = 0;
+ 	wrqu.data.flags = 0;
+ 	DPRINTK(3,"IWEVENT: SCAN CONFIRM\n");
+ 	wireless_send_event(dev, SIOCGIWSCAN, &wrqu, NULL);
+-#endif /* WIRELESS_EXT > 13 */
+ 	priv->scan_ind_count=0;
+ }
+ 
+diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
+index 546a256093978c..185630cb423d5e 100644
+--- a/drivers/staging/ks7010/ks_wlan_net.c
++++ b/drivers/staging/ks7010/ks_wlan_net.c
+@@ -50,7 +50,6 @@ static int wep_on_off;
+ #define WIRELESS_SPY		/* enable iwspy support */
+ #include <net/iw_handler.h>	/* New driver API */
+ 
+-#ifdef WIRELESS_EXT
+ /* Frequency list (map channels to frequencies) */
+ static const long frequency_list[] = { 2412, 2417, 2422, 2427, 2432, 2437, 2442,
+ 				       2447, 2452, 2457, 2462, 2467, 2472, 2484 };
+@@ -74,7 +73,6 @@ static const struct iw_handler_def	ks_wlan_handler_def;
+ 
+ #define KSC_OPNOTSUPP /* Operation Not Support*/
+ 
+-#endif /* WIRELESS_EXT */
+ 
+ /*
+  *	function prototypes
+@@ -174,7 +172,6 @@ int ks_wlan_setup_parameter(ks_wlan_private *priv, unsigned int commit_flag)
+ 	return 0;
+ }
+ 
+-#ifdef WIRELESS_EXT
+ /*
+  * Initial Wireless Extension code for Ks_Wlannet driver by :
+  *	Jean Tourrilhes <jt@hpl.hp.com> - HPL - 17 November 00
+@@ -1090,7 +1087,6 @@ static int ks_wlan_get_range(struct net_device *dev, struct iw_request_info *inf
+ 	range->avg_qual.level = 186;	/* -70 dBm */
+ 	range->avg_qual.noise = 0;
+ 
+-#if defined(WIRELESS_EXT)
+ 	/* Event capability (kernel + driver) */
+ 	range->event_capa[0] = (IW_EVENT_CAPA_K_0 |
+ 				IW_EVENT_CAPA_MASK(SIOCGIWAP) |
+@@ -1104,7 +1100,6 @@ static int ks_wlan_get_range(struct net_device *dev, struct iw_request_info *inf
+ 			   IW_ENC_CAPA_WPA2 |
+ 			   IW_ENC_CAPA_CIPHER_TKIP |
+ 			   IW_ENC_CAPA_CIPHER_CCMP);
+-#endif
+ 	return 0;
+ }
+ 
+@@ -1229,7 +1224,6 @@ static int ks_wlan_get_aplist(struct net_device *dev, struct iw_request_info *in
+ 	return 0;
+ }
+ 
+-#if defined(WIRELESS_EXT)
+ /*------------------------------------------------------------------*/
+ /* Wireless Handler : Initiate Scan */
+ static int ks_wlan_set_scan(struct net_device *dev, struct iw_request_info *info,
+@@ -1452,7 +1446,6 @@ DPRINTK(2,"aplist 0\n");
+ 
+ 	return 0;
+ }
+-#endif	/* WIRELESS_EXT  */
+ 
+ /*------------------------------------------------------------------*/
+ /* Commit handler : called after a bunch of SET operations */
+@@ -1469,7 +1462,6 @@ static int ks_wlan_config_commit(struct net_device *dev, struct iw_request_info
+ 	return 0;
+ }
+ 
+-#ifdef WIRELESS_EXT
+ /*------------------------------------------------------------------*/
+ /* Wireless handler : set association ie params */
+ static int ks_wlan_set_genie(struct net_device *dev, struct iw_request_info *info,
+@@ -1951,7 +1943,6 @@ static int ks_wlan_set_mlme(struct net_device *dev, struct iw_request_info *info
+ 		return -EOPNOTSUPP;  /* Not Support */
+ 	}
+ }
+-#endif /* WIRELESS_EXT  */
+ 
+ /*------------------------------------------------------------------*/
+ /* Private handler : get driver version */
+@@ -2915,20 +2906,15 @@ static const struct iw_handler_def	ks_wlan_handler_def =
+ 	.get_wireless_stats = ks_get_wireless_stats,
  };
  
- enum {
-@@ -157,7 +157,6 @@ enum {
- 	SME_START_REQUEST,
- 	SME_GET_EEPROM_CKSUM,
+-#endif /* WIRELESS_EXT */
  
--
- 	SME_MIC_FAILURE_CONFIRM,
- 	SME_START_CONFIRM,
- 
-@@ -187,7 +186,7 @@ enum {
- 	SME_WEP_SET_CONFIRM,
- 	SME_TERMINATE,
- 
--	SME_EVENT_SIZE        /* end */
-+	SME_EVENT_SIZE	/* end */
- };
- 
- /* SME Status */
-@@ -200,58 +199,58 @@ enum {
- 
- #define	SME_EVENT_BUFF_SIZE	128
- 
--struct	sme_info{
--	int	sme_status;
--	int	event_buff[SME_EVENT_BUFF_SIZE];
--	unsigned int	qhead;
--	unsigned int	qtail;
-+struct sme_info {
-+	int sme_status;
-+	int event_buff[SME_EVENT_BUFF_SIZE];
-+	unsigned int qhead;
-+	unsigned int qtail;
- #ifdef KS_WLAN_DEBUG
--  /* for debug */
-+	/* for debug */
- 	unsigned int max_event_count;
- #endif
--	spinlock_t    sme_spin;
-+	spinlock_t sme_spin;
- 	unsigned long sme_flag;
- };
- 
--struct	hostt_t{
--	int	buff[SME_EVENT_BUFF_SIZE];
--	unsigned int	qhead;
--	unsigned int	qtail;
-+struct hostt_t {
-+	int buff[SME_EVENT_BUFF_SIZE];
-+	unsigned int qhead;
-+	unsigned int qtail;
- };
- 
- #define RSN_IE_BODY_MAX 64
- struct rsn_ie_t {
--	uint8_t	id; /* 0xdd = WPA or 0x30 = RSN */
--	uint8_t	size; /* max ? 255 ? */
--	uint8_t	body[RSN_IE_BODY_MAX];
--} __attribute__((packed));
-+	uint8_t id;	/* 0xdd = WPA or 0x30 = RSN */
-+	uint8_t size;	/* max ? 255 ? */
-+	uint8_t body[RSN_IE_BODY_MAX];
-+} __attribute__ ((packed));
- 
- #ifdef WPS
- #define WPS_IE_BODY_MAX 255
- struct wps_ie_t {
--	uint8_t id; /* 221 'dd <len> 00 50 F2 04' */
--	uint8_t size; /* max ? 255 ? */
-+	uint8_t id;	/* 221 'dd <len> 00 50 F2 04' */
-+	uint8_t size;	/* max ? 255 ? */
- 	uint8_t body[WPS_IE_BODY_MAX];
--} __attribute__((packed));
-+} __attribute__ ((packed));
- #endif /* WPS */
- 
- struct local_ap_t {
--	uint8_t	bssid[6];
--	uint8_t	rssi;
--	uint8_t	sq;
-+	uint8_t bssid[6];
-+	uint8_t rssi;
-+	uint8_t sq;
- 	struct {
--		uint8_t	size;
--		uint8_t	body[32];
--		uint8_t	ssid_pad;
-+		uint8_t size;
-+		uint8_t body[32];
-+		uint8_t ssid_pad;
- 	} ssid;
- 	struct {
--		uint8_t	size;
--		uint8_t	body[16];
--		uint8_t	rate_pad;
-+		uint8_t size;
-+		uint8_t body[16];
-+		uint8_t rate_pad;
- 	} rate_set;
--	uint16_t	capability;
--	uint8_t	channel;
--	uint8_t	noise;
-+	uint16_t capability;
-+	uint8_t channel;
-+	uint8_t noise;
- 	struct rsn_ie_t wpa_ie;
- 	struct rsn_ie_t rsn_ie;
- #ifdef WPS
-@@ -263,19 +262,19 @@ struct local_ap_t {
- #define LOCAL_CURRENT_AP LOCAL_APLIST_MAX
- struct local_aplist_t {
- 	int size;
--	struct local_ap_t ap[LOCAL_APLIST_MAX+1];
-+	struct local_ap_t ap[LOCAL_APLIST_MAX + 1];
- };
- 
--struct local_gain_t{
--	uint8_t	TxMode;
--	uint8_t	RxMode;
--	uint8_t	TxGain;
--	uint8_t	RxGain;
-+struct local_gain_t {
-+	uint8_t TxMode;
-+	uint8_t RxMode;
-+	uint8_t TxGain;
-+	uint8_t RxGain;
- };
- 
--struct local_eeprom_sum_t{
--	uint8_t	type;
--	uint8_t	result;
-+struct local_eeprom_sum_t {
-+	uint8_t type;
-+	uint8_t result;
- };
- 
- enum {
-@@ -285,7 +284,6 @@ enum {
- 	EEPROM_NG,
- };
- 
--
- /* Power Save Status */
- enum {
- 	PS_NONE,
-@@ -297,22 +295,22 @@ enum {
- };
- 
- struct power_save_status_t {
--        atomic_t	  status;      	/* initialvalue 0 */
-+	atomic_t status;	/* initialvalue 0 */
- 	struct completion wakeup_wait;
--	atomic_t	  confirm_wait;
--	atomic_t	  snooze_guard;
-+	atomic_t confirm_wait;
-+	atomic_t snooze_guard;
- };
- 
- struct sleep_status_t {
--        atomic_t	  status;      	/* initialvalue 0 */
--	atomic_t	  doze_request;
--	atomic_t	  wakeup_request;
-+	atomic_t status;	/* initialvalue 0 */
-+	atomic_t doze_request;
-+	atomic_t wakeup_request;
- };
- 
- /* WPA */
- struct scan_ext_t {
- 	unsigned int flag;
--	char ssid[IW_ESSID_MAX_SIZE+1];
-+	char ssid[IW_ESSID_MAX_SIZE + 1];
- };
- 
- enum {
-@@ -337,7 +335,7 @@ enum {
- 
- #define CIPHER_ID_LEN    4
- 
--enum { 
-+enum {
- 	KEY_MGMT_802_1X,
- 	KEY_MGMT_PSK,
- 	KEY_MGMT_WPANONE,
-@@ -358,26 +356,26 @@ enum {
- #define MIC_KEY_SIZE 8
- 
- struct wpa_key_t {
--	uint32_t	ext_flags; /* IW_ENCODE_EXT_xxx */
--	uint8_t	tx_seq[IW_ENCODE_SEQ_MAX_SIZE]; /* LSB first */
--	uint8_t	rx_seq[IW_ENCODE_SEQ_MAX_SIZE]; /* LSB first */
--	struct sockaddr	addr; /* ff:ff:ff:ff:ff:ff for broadcast/multicast
--			       * (group) keys or unicast address for
--			       * individual keys */
--	uint16_t	alg;
--	uint16_t	key_len; /* WEP: 5 or 13, TKIP: 32, CCMP: 16 */
--	uint8_t	key_val[IW_ENCODING_TOKEN_MAX];
--	uint8_t	tx_mic_key[MIC_KEY_SIZE];
--	uint8_t	rx_mic_key[MIC_KEY_SIZE];
-+	uint32_t ext_flags;	/* IW_ENCODE_EXT_xxx */
-+	uint8_t tx_seq[IW_ENCODE_SEQ_MAX_SIZE];	/* LSB first */
-+	uint8_t rx_seq[IW_ENCODE_SEQ_MAX_SIZE];	/* LSB first */
-+	struct sockaddr addr;	/* ff:ff:ff:ff:ff:ff for broadcast/multicast
-+				 * (group) keys or unicast address for
-+				 * individual keys */
-+	uint16_t alg;
-+	uint16_t key_len;	/* WEP: 5 or 13, TKIP: 32, CCMP: 16 */
-+	uint8_t key_val[IW_ENCODING_TOKEN_MAX];
-+	uint8_t tx_mic_key[MIC_KEY_SIZE];
-+	uint8_t rx_mic_key[MIC_KEY_SIZE];
- };
- #define WPA_KEY_INDEX_MAX 4
- #define WPA_RX_SEQ_LEN 6
- 
- struct mic_failure_t {
--	uint16_t	failure; /* MIC Failure counter 0 or 1 or 2 */
--	uint16_t	counter; /* 1sec counter 0-60 */
--	uint32_t	last_failure_time;
--	int stop; /* stop flag */
-+	uint16_t failure;	/* MIC Failure counter 0 or 1 or 2 */
-+	uint16_t counter;	/* 1sec counter 0-60 */
-+	uint32_t last_failure_time;
-+	int stop;	/* stop flag */
- };
- 
- struct wpa_status_t {
-@@ -401,36 +399,36 @@ struct pmk_list_t {
- 	struct list_head head;
- 	struct pmk_t {
- 		struct list_head list;
--		uint8_t	bssid[ETH_ALEN];
--		uint8_t	pmkid[IW_PMKID_LEN];
-+		uint8_t bssid[ETH_ALEN];
-+		uint8_t pmkid[IW_PMKID_LEN];
- 	} pmk[PMK_LIST_MAX];
- };
- 
- #ifdef WPS
- struct wps_status_t {
--       int wps_enabled;
--       int ielen;
--       uint8_t ie[255];
-+	int wps_enabled;
-+	int ielen;
-+	uint8_t ie[255];
- };
- #endif /* WPS */
- 
- struct ks_wlan_private {
- 
--	struct hw_info_t ks_wlan_hw;  /* hardware information */
-+	struct hw_info_t ks_wlan_hw;	/* hardware information */
- 
- 	struct net_device *net_dev;
--	int reg_net; /* register_netdev */
-+	int reg_net;	/* register_netdev */
- 	struct net_device_stats nstats;
- 	struct iw_statistics wstats;
- 
- 	struct completion confirm_wait;
- 
--        /* trx device & sme */
-+	/* trx device & sme */
- 	struct tx_device tx_dev;
- 	struct rx_device rx_dev;
--	struct sme_info  sme_i;
-+	struct sme_info sme_i;
- 	u8 *rxp;
--	unsigned int  rx_size;
-+	unsigned int rx_size;
- 	struct tasklet_struct sme_task;
- 	struct work_struct ks_wlan_wakeup_task;
- 	int scan_ind_count;
-@@ -443,33 +441,33 @@ struct ks_wlan_private {
- 	struct sleep_status_t sleepstatus;
- 	struct wpa_status_t wpa;
- 	struct pmk_list_t pmklist;
--        /* wireless parameter */
-+	/* wireless parameter */
- 	struct ks_wlan_parameter reg;
- 	uint8_t current_rate;
- 
--	char nick[IW_ESSID_MAX_SIZE+1];
--	
--        spinlock_t multicast_spin;
-+	char nick[IW_ESSID_MAX_SIZE + 1];
-+
-+	spinlock_t multicast_spin;
- 
- 	spinlock_t dev_read_lock;
--        wait_queue_head_t devread_wait;
-+	wait_queue_head_t devread_wait;
- 
--	unsigned int need_commit; /* for ioctl */
-+	unsigned int need_commit;	/* for ioctl */
- 
--        /* DeviceIoControl */
-+	/* DeviceIoControl */
- 	int device_open_status;
- 	atomic_t event_count;
--        atomic_t rec_count;
--        int dev_count; 
-+	atomic_t rec_count;
-+	int dev_count;
- #define DEVICE_STOCK_COUNT 20
- 	unsigned char *dev_data[DEVICE_STOCK_COUNT];
- 	int dev_size[DEVICE_STOCK_COUNT];
- 
--        /* ioctl : IOCTL_FIRMWARE_VERSION */
--	unsigned char firmware_version[128+1];
-+	/* ioctl : IOCTL_FIRMWARE_VERSION */
-+	unsigned char firmware_version[128 + 1];
- 	int version_size;
- 
--	int mac_address_valid; /* Mac Address Status */
-+	int mac_address_valid;	/* Mac Address Status */
- 
- 	int dev_state;
- 
-@@ -478,35 +476,33 @@ struct ks_wlan_private {
- 	/* spinlock_t lock; */
- #define FORCE_DISCONNECT    0x80000000
- #define CONNECT_STATUS_MASK 0x7FFFFFFF
--	uint32_t connect_status;    /* connect status */
--	int infra_status;  /* Infractructure status */
-+	uint32_t connect_status;	/* connect status */
-+	int infra_status;	/* Infractructure status */
- 
--        uint8_t data_buff[0x1000];
-+	uint8_t data_buff[0x1000];
- 
- 	uint8_t scan_ssid_len;
--	uint8_t scan_ssid[IW_ESSID_MAX_SIZE+1];
-+	uint8_t scan_ssid[IW_ESSID_MAX_SIZE + 1];
- 	struct local_gain_t gain;
- #ifdef WPS
- 	struct net_device *l2_dev;
--	int l2_fd;      
-+	int l2_fd;
- 	struct wps_status_t wps;
- #endif /* WPS */
-- 	uint8_t sleep_mode;
-+	uint8_t sleep_mode;
- 
- 	uint8_t region;
- 	struct local_eeprom_sum_t eeprom_sum;
- 	uint8_t eeprom_checksum;
- 
--	struct hostt_t  hostt;
-+	struct hostt_t hostt;
- 
- 	unsigned long last_doze;
- 	unsigned long last_wakeup;
- 
--	uint   sdio_error_count;  /* SDIO error */
--	uint   wakeup_count;      /* for detect wakeup loop */
--	
--};
--
-+	uint sdio_error_count;	/* SDIO error */
-+	uint wakeup_count;	/* for detect wakeup loop */
- 
-+};
- 
- #endif /* _KS_WLAN_H */
+ static int ks_wlan_netdev_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
+ {
+ 	int rc = 0;
+-#if defined(WIRELESS_EXT)
+ 	struct iwreq *wrq = (struct iwreq *) rq;
+-#endif /* WIRELESS_EXT */
+ 	switch (cmd) {
+-#if defined(WIRELESS_EXT)
+ 	case SIOCIWFIRSTPRIV+20: /* KS_WLAN_SET_STOP_REQ */
+ 		rc = ks_wlan_set_stop_request(dev, NULL, &(wrq->u.mode), NULL);
+ 		break;
+-#endif /* WIRELESS_EXT >17 */
+ 	// All other calls are currently unsupported
+ 	default:
+ 		rc = -EOPNOTSUPP;
 -- 
 2.8.1
