@@ -1,62 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f49.google.com ([209.85.213.49]:36216 "EHLO
-	mail-vk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751131AbcEJJN4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:58429 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751228AbcEJFwK (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 05:13:56 -0400
-MIME-Version: 1.0
-In-Reply-To: <1462859524-28522-4-git-send-email-horms+renesas@verge.net.au>
-References: <1462859524-28522-1-git-send-email-horms+renesas@verge.net.au>
-	<1462859524-28522-4-git-send-email-horms+renesas@verge.net.au>
-Date: Tue, 10 May 2016 18:13:55 +0900
-Message-ID: <CANqRtoRjZjC=uEBvJsWYwu0EMEZwO3zS0JWNwVoBR8zjakMpnA@mail.gmail.com>
-Subject: Re: [PATCH/RFC 3/3] ARM: dts: r8a7790: lager: Enable UHS-I SDR-104
-From: Magnus Damm <magnus.damm@gmail.com>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Ian Molton <ian@mnementh.co.uk>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Tue, 10 May 2016 01:52:10 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Ian Molton <ian@mnementh.co.uk>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH/RFC 3/3] ARM: dts: r8a7790: lager: Enable UHS-I SDR-104
+Date: Tue, 10 May 2016 14:52:04 +0900
+Message-Id: <1462859524-28522-4-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1462859524-28522-1-git-send-email-horms+renesas@verge.net.au>
+References: <1462859524-28522-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, May 10, 2016 at 2:52 PM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Add the sd-uhs-sdr104 property to SDHI0.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
->  arch/arm/boot/dts/r8a7790-lager.dts | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-> index 749ba02b6a53..05d1ff7acee2 100644
-> --- a/arch/arm/boot/dts/r8a7790-lager.dts
-> +++ b/arch/arm/boot/dts/r8a7790-lager.dts
-> @@ -559,6 +559,7 @@
->         vqmmc-supply = <&vccq_sdhi0>;
->         cd-gpios = <&gpio3 6 GPIO_ACTIVE_LOW>;
->         sd-uhs-sdr50;
-> +       sd-uhs-sdr104;
->         status = "okay";
+Add the sd-uhs-sdr104 property to SDHI0.
 
-Hi Simon,
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7790-lager.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks for this - interesting to see!! From what I can tell this code
-is targeting r8a7790 Lager, and based on the data sheet and the DTS
-there are four SDHI channels for the r8a7790 SoC. All R-Car Gen2 SDHI
-channels are not identical, so on r8a7790 it looks like SDHI0 and
-SDHI1 have extended capabilities for the clocks (and probably support
-SDR104) while SDHI2 and SDHI3 do not have this hardware feature. How
-is this difference handled today? In my mind it would make sense to
-have different compat strings, but I think we differentiate with
-resource size today?
-
-So with this patches I can see that you enable SDR104 on SDHI0 on
-Lager which makes sense, but is SDHI2 support still OK?
-
-Cheers,
-
-/ magnus
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 749ba02b6a53..05d1ff7acee2 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -559,6 +559,7 @@
+ 	vqmmc-supply = <&vccq_sdhi0>;
+ 	cd-gpios = <&gpio3 6 GPIO_ACTIVE_LOW>;
+ 	sd-uhs-sdr50;
++	sd-uhs-sdr104;
+ 	status = "okay";
+ };
+ 
+-- 
+2.1.4
