@@ -1,49 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:57065 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751766AbcEJNyr (ORCPT
+Received: from mail-ig0-f194.google.com ([209.85.213.194]:34077 "EHLO
+	mail-ig0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751636AbcEJHjv (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 09:54:47 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: driverdev-devel@linuxdriverproject.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 10/27] staging: ks7010: really iterate over multicast addresses
-Date: Tue, 10 May 2016 15:52:23 +0200
-Message-Id: <1462888360-21649-11-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
-References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+	Tue, 10 May 2016 03:39:51 -0400
+MIME-Version: 1.0
+In-Reply-To: <5731672B.9040204@rvc.renesas.com>
+References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+	<573166EB.70908@rvc.renesas.com>
+	<5731672B.9040204@rvc.renesas.com>
+Date: Tue, 10 May 2016 09:39:44 +0200
+Message-ID: <CAMuHMdVtw564ZQbhGPLbZoReCHmnevedEWMFj5Ndf49chkpL7Q@mail.gmail.com>
+Subject: Re: [RFC 3/4] clk: renesas: r8a7796: Add Z clock
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Toru Oishi <toru.oishi.zj@rvc.renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Khiem,
 
-The loop variable was defined but not really used. Fix this.
+On Tue, May 10, 2016 at 6:44 AM, Khiem Nguyen
+<khiem.nguyen.xt@rvc.renesas.com> wrote:
+> index c84b549..7368805 100644
+> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> @@ -94,6 +94,8 @@ static const struct cpg_core_clk r8a7796_core_clks[]
+> __initconst = {
+>
+>         DEF_FIXED("cl",         R8A7796_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
+>         DEF_FIXED("cp",         R8A7796_CLK_CP,    CLK_EXTAL,      2, 1),
+> +
+> +       DEF_BASE("z",           R8A7795_CLK_Z,   CLK_TYPE_GEN3_Z,   CLK_PLL0),
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/staging/ks7010/ks_hostif.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+R8A7796_CLK_Z?
 
-diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index 367d487cef1ba8..b0a0a53d3a00bf 100644
---- a/drivers/staging/ks7010/ks_hostif.c
-+++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -2105,7 +2105,7 @@ void hostif_sme_multicast_set(ks_wlan_private *priv)
- 	struct netdev_hw_addr *ha;
- 	char	set_address[NIC_MAX_MCAST_LIST*ETH_ALEN];
- 	unsigned long filter_type;
--	int i;
-+	int i = 0;
- 
- 	DPRINTK(3,"\n");
- 
-@@ -2128,6 +2128,7 @@ void hostif_sme_multicast_set(ks_wlan_private *priv)
- 			mc_count = netdev_mc_count(dev);
- 			netdev_for_each_mc_addr(ha, dev) {
- 				memcpy(&set_address[i*ETH_ALEN], ha->addr, ETH_ALEN);
-+				i++;
- 			}
- 			priv->sme_i.sme_flag &= ~SME_MULTICAST;
- 			hostif_mib_set_request(priv, LOCAL_MULTICAST_ADDRESS,
--- 
-2.8.1
+How could that work?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
