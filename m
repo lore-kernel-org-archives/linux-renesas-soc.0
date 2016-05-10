@@ -1,57 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:7295 "EHLO
-	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750907AbcEIJAZ convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 9 May 2016 05:00:25 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>
-Subject: V4L2 SDR compliance test?
-Date: Mon, 9 May 2016 09:00:20 +0000
-Message-ID: <SG2PR06MB1038A920EEE2D8ED6E239FB4C3700@SG2PR06MB1038.apcprd06.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+Received: from sauhun.de ([89.238.76.85]:57074 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751479AbcEJNyt (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 10 May 2016 09:54:49 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: driverdev-devel@linuxdriverproject.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 12/27] staging: ks7010: fix printk format warnings
+Date: Tue, 10 May 2016 15:52:25 +0200
+Message-Id: <1462888360-21649-13-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Maintainers, All,
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Renesas R-Car SoCs have Digital Radio Interface (DRIF) controllers. They are 
-receive only SPI slave modules that support I2S format. The targeted
-application of these controllers is SDR.
+Use proper type for size_t.
 
-While evaluating the V4L2 SDR framework for this controller, we noticed the 
-compliance test demands TUNER ioctls for SDR device. As a SoC controller,
-DRIF is independent of tuner functionality as a third party provides this
-device. The DRIF driver will support V4L2_CID_xxx & V4L2_SDR_FMT_xxx ioctls
-but not the tuner ioctls.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/staging/ks7010/ks7010_config.c | 2 +-
+ drivers/staging/ks7010/ks7010_sdio.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Two possible cases:
--------------------
-1) Third party tuner driver
-	- The framework does provide support to register tuner as a subdev
-and can be bound to the SDR device using notifier callbacks
-
-2) User space Tuner app 
-	- We also have cases where the tuner s/w logic can be a vendor
-supplied user space application or library that talks to the chip using generic
-system calls - like i2c read/writes.
-
-The DRIF driver code as such will have v4l2_async_notifier_register only to be
-informed if a tuner device attaches. But this may or may not happen
-depending on the target board.
-
->From upstream V4L2 SDR driver perspective, these DRIF patches will FAIL
-V4L2 compliance tests (a criteria needed to submit fresh driver patches).
-
-Questions are 
-1) Is this approach acceptable to the maintainers?
-2) Should the SDR compliance tests be updated for these evolving use cases?
-------------------
-
-Thanks,
-Ramesh
+diff --git a/drivers/staging/ks7010/ks7010_config.c b/drivers/staging/ks7010/ks7010_config.c
+index 06ff8852e17f33..4b00d25cd8f575 100644
+--- a/drivers/staging/ks7010/ks7010_config.c
++++ b/drivers/staging/ks7010/ks7010_config.c
+@@ -257,7 +257,7 @@ int ks_wlan_read_config_file(ks_wlan_private *priv)
+ 	if (request_firmware_direct(&fw_entry, cfg_file, dev))
+ 		return 0;
+ 
+-	DPRINTK(4, "success request_firmware() file=%s size=%d\n", cfg_file, fw_entry->size);
++	DPRINTK(4, "success request_firmware() file=%s size=%zu\n", cfg_file, fw_entry->size);
+ 	cur_p = fw_entry->data;
+ 	end_p = cur_p + fw_entry->size;
+ 	*end_p = '\0';
+diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
+index 3fb432c9dd314d..50364909449aec 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.c
++++ b/drivers/staging/ks7010/ks7010_sdio.c
+@@ -750,7 +750,7 @@ static int ks79xx_upload_firmware(ks_wlan_private *priv, struct ks_sdio_card *ca
+ 		DPRINTK(1,"error request_firmware() file=%s\n", priv->reg.rom_file);
+ 		return 1;
+ 	}
+-	DPRINTK(4,"success request_firmware() file=%s size=%d\n", priv->reg.rom_file, fw_entry->size);
++	DPRINTK(4,"success request_firmware() file=%s size=%zu\n", priv->reg.rom_file, fw_entry->size);
+ 	length = fw_entry->size;
+ 
+ 	/* Load Program */
+-- 
+2.8.1
