@@ -1,890 +1,135 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:43388 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754017AbcEDOfz (ORCPT
+Received: from sauhun.de ([89.238.76.85]:57088 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751692AbcEJNyy (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 4 May 2016 10:35:55 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/4] clk: renesas: cpg-mssr: Extract common R-Car Gen3 support code
-Date: Wed,  4 May 2016 16:35:42 +0200
-Message-Id: <1462372543-31835-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+	Tue, 10 May 2016 09:54:54 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: driverdev-devel@linuxdriverproject.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 15/27] staging: ks7010: indent eap_packet.h
+Date: Tue, 10 May 2016 15:52:28 +0200
+Message-Id: <1462888360-21649-16-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Extract the code to support parts common to all members of the R-Car
-Gen3 SoC family into a separate file, to ease sharing among SoC-specific
-drivers.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Note that while the cpg_pll_configs[] arrays and the selection of the
-config based on the MODE bits are identical on R-Car H3 and R-Car M3-W,
-they are not common, and may be different on other R-Car Gen3 SoCs.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/clk/renesas/Makefile           |   2 +-
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 360 +--------------------------------
- drivers/clk/renesas/rcar-gen3-cpg.c    | 359 ++++++++++++++++++++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.h    |  43 ++++
- 4 files changed, 408 insertions(+), 356 deletions(-)
- create mode 100644 drivers/clk/renesas/rcar-gen3-cpg.c
- create mode 100644 drivers/clk/renesas/rcar-gen3-cpg.h
+ drivers/staging/ks7010/eap_packet.h | 49 ++++++++++++++++++-------------------
+ 1 file changed, 24 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index ead8bb8435249493..88924c95808c3b2e 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -8,7 +8,7 @@ obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
--obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o
-+obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o rcar-gen3-cpg.o
- obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-div6.o
+diff --git a/drivers/staging/ks7010/eap_packet.h b/drivers/staging/ks7010/eap_packet.h
+index b664bdd8c961db..88384fb19d9580 100644
+--- a/drivers/staging/ks7010/eap_packet.h
++++ b/drivers/staging/ks7010/eap_packet.h
+@@ -14,13 +14,13 @@
+ #endif
  
- obj-$(CONFIG_CLK_RENESAS_CPG_MSSR)	+= renesas-cpg-mssr.o clk-div6.o
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index ca5519c583d4bf57..e53aff5b23ad4967 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -12,22 +12,14 @@
-  * the Free Software Foundation; version 2 of the License.
-  */
+ struct ether_hdr {
+-	unsigned char	h_dest[ETH_ALEN];	/* destination eth addr	*/
+-	unsigned char	h_source[ETH_ALEN];	/* source ether addr	*/
+-	unsigned char   h_dest_snap;
+-	unsigned char   h_source_snap;
+-	unsigned char   h_command;
+-	unsigned char   h_vendor_id[3];
+-	unsigned short	h_proto;		/* packet type ID field	*/
++	unsigned char h_dest[ETH_ALEN];	/* destination eth addr */
++	unsigned char h_source[ETH_ALEN];	/* source ether addr    */
++	unsigned char h_dest_snap;
++	unsigned char h_source_snap;
++	unsigned char h_command;
++	unsigned char h_vendor_id[3];
++	unsigned short h_proto;	/* packet type ID field */
+ #define ETHER_PROTOCOL_TYPE_EAP		0x888e
+ #define ETHER_PROTOCOL_TYPE_IP		0x0800
+ #define ETHER_PROTOCOL_TYPE_ARP		0x0806
+@@ -37,15 +37,15 @@ struct ieee802_1x_hdr {
+ #define EAPOL_VERSION 2
  
--#include <linux/bug.h>
--#include <linux/clk.h>
--#include <linux/clk-provider.h>
- #include <linux/device.h>
--#include <linux/err.h>
- #include <linux/init.h>
--#include <linux/io.h>
- #include <linux/kernel.h>
--#include <linux/of.h>
--#include <linux/slab.h>
- 
- #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
- 
- #include "renesas-cpg-mssr.h"
--
--#define CPG_RCKCR	0x240
-+#include "rcar-gen3-cpg.h"
- 
- enum clk_ids {
- 	/* Core Clock Outputs exported to DT */
-@@ -58,20 +50,6 @@ enum clk_ids {
- 	MOD_CLK_BASE
+ enum { IEEE802_1X_TYPE_EAP_PACKET = 0,
+-       IEEE802_1X_TYPE_EAPOL_START = 1,
+-       IEEE802_1X_TYPE_EAPOL_LOGOFF = 2,
+-       IEEE802_1X_TYPE_EAPOL_KEY = 3,
+-       IEEE802_1X_TYPE_EAPOL_ENCAPSULATED_ASF_ALERT = 4
++	IEEE802_1X_TYPE_EAPOL_START = 1,
++	IEEE802_1X_TYPE_EAPOL_LOGOFF = 2,
++	IEEE802_1X_TYPE_EAPOL_KEY = 3,
++	IEEE802_1X_TYPE_EAPOL_ENCAPSULATED_ASF_ALERT = 4
  };
  
--enum r8a7795_clk_types {
--	CLK_TYPE_GEN3_MAIN = CLK_TYPE_CUSTOM,
--	CLK_TYPE_GEN3_PLL0,
--	CLK_TYPE_GEN3_PLL1,
--	CLK_TYPE_GEN3_PLL2,
--	CLK_TYPE_GEN3_PLL3,
--	CLK_TYPE_GEN3_PLL4,
--	CLK_TYPE_GEN3_SD,
--	CLK_TYPE_GEN3_R,
--};
+ enum { EAPOL_KEY_TYPE_RC4 = 1, EAPOL_KEY_TYPE_RSN = 2,
+-       EAPOL_KEY_TYPE_WPA = 254 };
 -
--#define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
--	DEF_BASE(_name, _id, CLK_TYPE_GEN3_SD, _parent, .offset = _offset)
--
- static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
- 	/* External Clock Inputs */
- 	DEF_INPUT("extal",  CLK_EXTAL),
-@@ -262,225 +240,6 @@ static const unsigned int r8a7795_crit_mod_clks[] __initconst = {
- 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
- };
- 
--/* -----------------------------------------------------------------------------
-- * SDn Clock
-- *
-- */
--#define CPG_SD_STP_HCK		BIT(9)
--#define CPG_SD_STP_CK		BIT(8)
--
--#define CPG_SD_STP_MASK		(CPG_SD_STP_HCK | CPG_SD_STP_CK)
--#define CPG_SD_FC_MASK		(0x7 << 2 | 0x3 << 0)
--
--#define CPG_SD_DIV_TABLE_DATA(stp_hck, stp_ck, sd_srcfc, sd_fc, sd_div) \
--{ \
--	.val = ((stp_hck) ? CPG_SD_STP_HCK : 0) | \
--	       ((stp_ck) ? CPG_SD_STP_CK : 0) | \
--	       ((sd_srcfc) << 2) | \
--	       ((sd_fc) << 0), \
--	.div = (sd_div), \
--}
--
--struct sd_div_table {
--	u32 val;
--	unsigned int div;
--};
--
--struct sd_clock {
--	struct clk_hw hw;
--	void __iomem *reg;
--	const struct sd_div_table *div_table;
--	unsigned int div_num;
--	unsigned int div_min;
--	unsigned int div_max;
--};
--
--/* SDn divider
-- *                     sd_srcfc   sd_fc   div
-- * stp_hck   stp_ck    (div)      (div)     = sd_srcfc x sd_fc
-- *-------------------------------------------------------------------
-- *  0         0         0 (1)      1 (4)      4
-- *  0         0         1 (2)      1 (4)      8
-- *  1         0         2 (4)      1 (4)     16
-- *  1         0         3 (8)      1 (4)     32
-- *  1         0         4 (16)     1 (4)     64
-- *  0         0         0 (1)      0 (2)      2
-- *  0         0         1 (2)      0 (2)      4
-- *  1         0         2 (4)      0 (2)      8
-- *  1         0         3 (8)      0 (2)     16
-- *  1         0         4 (16)     0 (2)     32
-- */
--static const struct sd_div_table cpg_sd_div_table[] = {
--/*	CPG_SD_DIV_TABLE_DATA(stp_hck,  stp_ck,   sd_srcfc,   sd_fc,  sd_div) */
--	CPG_SD_DIV_TABLE_DATA(0,        0,        0,          1,        4),
--	CPG_SD_DIV_TABLE_DATA(0,        0,        1,          1,        8),
--	CPG_SD_DIV_TABLE_DATA(1,        0,        2,          1,       16),
--	CPG_SD_DIV_TABLE_DATA(1,        0,        3,          1,       32),
--	CPG_SD_DIV_TABLE_DATA(1,        0,        4,          1,       64),
--	CPG_SD_DIV_TABLE_DATA(0,        0,        0,          0,        2),
--	CPG_SD_DIV_TABLE_DATA(0,        0,        1,          0,        4),
--	CPG_SD_DIV_TABLE_DATA(1,        0,        2,          0,        8),
--	CPG_SD_DIV_TABLE_DATA(1,        0,        3,          0,       16),
--	CPG_SD_DIV_TABLE_DATA(1,        0,        4,          0,       32),
--};
--
--#define to_sd_clock(_hw) container_of(_hw, struct sd_clock, hw)
--
--static int cpg_sd_clock_enable(struct clk_hw *hw)
--{
--	struct sd_clock *clock = to_sd_clock(hw);
--	u32 val, sd_fc;
--	unsigned int i;
--
--	val = clk_readl(clock->reg);
--
--	sd_fc = val & CPG_SD_FC_MASK;
--	for (i = 0; i < clock->div_num; i++)
--		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
--			break;
--
--	if (i >= clock->div_num)
--		return -EINVAL;
--
--	val &= ~(CPG_SD_STP_MASK);
--	val |= clock->div_table[i].val & CPG_SD_STP_MASK;
--
--	clk_writel(val, clock->reg);
--
--	return 0;
--}
--
--static void cpg_sd_clock_disable(struct clk_hw *hw)
--{
--	struct sd_clock *clock = to_sd_clock(hw);
--
--	clk_writel(clk_readl(clock->reg) | CPG_SD_STP_MASK, clock->reg);
--}
--
--static int cpg_sd_clock_is_enabled(struct clk_hw *hw)
--{
--	struct sd_clock *clock = to_sd_clock(hw);
--
--	return !(clk_readl(clock->reg) & CPG_SD_STP_MASK);
--}
--
--static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
--						unsigned long parent_rate)
--{
--	struct sd_clock *clock = to_sd_clock(hw);
--	unsigned long rate = parent_rate;
--	u32 val, sd_fc;
--	unsigned int i;
--
--	val = clk_readl(clock->reg);
--
--	sd_fc = val & CPG_SD_FC_MASK;
--	for (i = 0; i < clock->div_num; i++)
--		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
--			break;
--
--	if (i >= clock->div_num)
--		return -EINVAL;
--
--	return DIV_ROUND_CLOSEST(rate, clock->div_table[i].div);
--}
--
--static unsigned int cpg_sd_clock_calc_div(struct sd_clock *clock,
--					  unsigned long rate,
--					  unsigned long parent_rate)
--{
--	unsigned int div;
--
--	if (!rate)
--		rate = 1;
--
--	div = DIV_ROUND_CLOSEST(parent_rate, rate);
--
--	return clamp_t(unsigned int, div, clock->div_min, clock->div_max);
--}
--
--static long cpg_sd_clock_round_rate(struct clk_hw *hw, unsigned long rate,
--				      unsigned long *parent_rate)
--{
--	struct sd_clock *clock = to_sd_clock(hw);
--	unsigned int div = cpg_sd_clock_calc_div(clock, rate, *parent_rate);
--
--	return DIV_ROUND_CLOSEST(*parent_rate, div);
--}
--
--static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
--				   unsigned long parent_rate)
--{
--	struct sd_clock *clock = to_sd_clock(hw);
--	unsigned int div = cpg_sd_clock_calc_div(clock, rate, parent_rate);
--	u32 val;
--	unsigned int i;
--
--	for (i = 0; i < clock->div_num; i++)
--		if (div == clock->div_table[i].div)
--			break;
--
--	if (i >= clock->div_num)
--		return -EINVAL;
--
--	val = clk_readl(clock->reg);
--	val &= ~(CPG_SD_STP_MASK | CPG_SD_FC_MASK);
--	val |= clock->div_table[i].val & (CPG_SD_STP_MASK | CPG_SD_FC_MASK);
--	clk_writel(val, clock->reg);
--
--	return 0;
--}
--
--static const struct clk_ops cpg_sd_clock_ops = {
--	.enable = cpg_sd_clock_enable,
--	.disable = cpg_sd_clock_disable,
--	.is_enabled = cpg_sd_clock_is_enabled,
--	.recalc_rate = cpg_sd_clock_recalc_rate,
--	.round_rate = cpg_sd_clock_round_rate,
--	.set_rate = cpg_sd_clock_set_rate,
--};
--
--static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
--					       void __iomem *base,
--					       const char *parent_name)
--{
--	struct clk_init_data init;
--	struct sd_clock *clock;
--	struct clk *clk;
--	unsigned int i;
--
--	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
--	if (!clock)
--		return ERR_PTR(-ENOMEM);
--
--	init.name = core->name;
--	init.ops = &cpg_sd_clock_ops;
--	init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
--	init.parent_names = &parent_name;
--	init.num_parents = 1;
--
--	clock->reg = base + core->offset;
--	clock->hw.init = &init;
--	clock->div_table = cpg_sd_div_table;
--	clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
--
--	clock->div_max = clock->div_table[0].div;
--	clock->div_min = clock->div_max;
--	for (i = 1; i < clock->div_num; i++) {
--		clock->div_max = max(clock->div_max, clock->div_table[i].div);
--		clock->div_min = min(clock->div_min, clock->div_table[i].div);
--	}
--
--	clk = clk_register(NULL, &clock->hw);
--	if (IS_ERR(clk))
--		kfree(clock);
--
--	return clk;
--}
--
--#define CPG_PLL0CR	0x00d8
--#define CPG_PLL2CR	0x002c
--#define CPG_PLL4CR	0x01f4
- 
- /*
-  * CPG Clock Data
-@@ -512,13 +271,7 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
- 					 (((md) & BIT(19)) >> 18) | \
- 					 (((md) & BIT(17)) >> 17))
- 
--struct cpg_pll_config {
--	unsigned int extal_div;
--	unsigned int pll1_mult;
--	unsigned int pll3_mult;
--};
--
--static const struct cpg_pll_config cpg_pll_configs[16] __initconst = {
-+static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
- 	/* EXTAL div	PLL1 mult	PLL3 mult */
- 	{ 1,		192,		192,	},
- 	{ 1,		192,		128,	},
-@@ -538,112 +291,9 @@ static const struct cpg_pll_config cpg_pll_configs[16] __initconst = {
- 	{ 2,		192,		192,	},
- };
- 
--static const struct cpg_pll_config *cpg_pll_config __initdata;
--
--static
--struct clk * __init r8a7795_cpg_clk_register(struct device *dev,
--					     const struct cpg_core_clk *core,
--					     const struct cpg_mssr_info *info,
--					     struct clk **clks,
--					     void __iomem *base)
--{
--	const struct clk *parent;
--	unsigned int mult = 1;
--	unsigned int div = 1;
--	u32 value;
--
--	parent = clks[core->parent];
--	if (IS_ERR(parent))
--		return ERR_CAST(parent);
--
--	switch (core->type) {
--	case CLK_TYPE_GEN3_MAIN:
--		div = cpg_pll_config->extal_div;
--		break;
--
--	case CLK_TYPE_GEN3_PLL0:
--		/*
--		 * PLL0 is a configurable multiplier clock. Register it as a
--		 * fixed factor clock for now as there's no generic multiplier
--		 * clock implementation and we currently have no need to change
--		 * the multiplier value.
--		 */
--		value = readl(base + CPG_PLL0CR);
--		mult = (((value >> 24) & 0x7f) + 1) * 2;
--		break;
--
--	case CLK_TYPE_GEN3_PLL1:
--		mult = cpg_pll_config->pll1_mult;
--		break;
--
--	case CLK_TYPE_GEN3_PLL2:
--		/*
--		 * PLL2 is a configurable multiplier clock. Register it as a
--		 * fixed factor clock for now as there's no generic multiplier
--		 * clock implementation and we currently have no need to change
--		 * the multiplier value.
--		 */
--		value = readl(base + CPG_PLL2CR);
--		mult = (((value >> 24) & 0x7f) + 1) * 2;
--		break;
--
--	case CLK_TYPE_GEN3_PLL3:
--		mult = cpg_pll_config->pll3_mult;
--		break;
--
--	case CLK_TYPE_GEN3_PLL4:
--		/*
--		 * PLL4 is a configurable multiplier clock. Register it as a
--		 * fixed factor clock for now as there's no generic multiplier
--		 * clock implementation and we currently have no need to change
--		 * the multiplier value.
--		 */
--		value = readl(base + CPG_PLL4CR);
--		mult = (((value >> 24) & 0x7f) + 1) * 2;
--		break;
--
--	case CLK_TYPE_GEN3_SD:
--		return cpg_sd_clk_register(core, base, __clk_get_name(parent));
--
--	case CLK_TYPE_GEN3_R:
--		/* RINT is default. Only if EXTALR is populated, we switch to it */
--		value = readl(base + CPG_RCKCR) & 0x3f;
--
--		if (clk_get_rate(clks[CLK_EXTALR])) {
--			parent = clks[CLK_EXTALR];
--			value |= BIT(15);
--		}
--
--		writel(value, base + CPG_RCKCR);
--		break;
--
--	default:
--		return ERR_PTR(-EINVAL);
--	}
--
--	return clk_register_fixed_factor(NULL, core->name,
--					 __clk_get_name(parent), 0, mult, div);
--}
--
--/*
-- * Reset register definitions.
-- */
--#define MODEMR	0xe6160060
--
--static u32 rcar_gen3_read_mode_pins(void)
--{
--	void __iomem *modemr = ioremap_nocache(MODEMR, 4);
--	u32 mode;
--
--	BUG_ON(!modemr);
--	mode = ioread32(modemr);
--	iounmap(modemr);
--
--	return mode;
--}
--
- static int __init r8a7795_cpg_mssr_init(struct device *dev)
- {
-+	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
- 	u32 cpg_mode = rcar_gen3_read_mode_pins();
- 
- 	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
-@@ -652,7 +302,7 @@ static int __init r8a7795_cpg_mssr_init(struct device *dev)
- 		return -EINVAL;
- 	}
- 
--	return 0;
-+	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR);
- }
- 
- const struct cpg_mssr_info r8a7795_cpg_mssr_info __initconst = {
-@@ -673,5 +323,5 @@ const struct cpg_mssr_info r8a7795_cpg_mssr_info __initconst = {
- 
- 	/* Callbacks */
- 	.init = r8a7795_cpg_mssr_init,
--	.cpg_clk_register = r8a7795_cpg_clk_register,
-+	.cpg_clk_register = rcar_gen3_cpg_clk_register,
- };
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-new file mode 100644
-index 0000000000000000..bb4f2f9a8c2f5ba8
---- /dev/null
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -0,0 +1,359 @@
-+/*
-+ * R-Car Gen3 Clock Pulse Generator
-+ *
-+ * Copyright (C) 2015-2016 Glider bvba
-+ *
-+ * Based on clk-rcar-gen3.c
-+ *
-+ * Copyright (C) 2015 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+
-+#include <linux/bug.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/io.h>
-+#include <linux/slab.h>
-+
-+#include "renesas-cpg-mssr.h"
-+#include "rcar-gen3-cpg.h"
-+
-+#define CPG_PLL0CR		0x00d8
-+#define CPG_PLL2CR		0x002c
-+#define CPG_PLL4CR		0x01f4
-+
-+
-+/*
-+ * SDn Clock
-+ */
-+#define CPG_SD_STP_HCK		BIT(9)
-+#define CPG_SD_STP_CK		BIT(8)
-+
-+#define CPG_SD_STP_MASK		(CPG_SD_STP_HCK | CPG_SD_STP_CK)
-+#define CPG_SD_FC_MASK		(0x7 << 2 | 0x3 << 0)
-+
-+#define CPG_SD_DIV_TABLE_DATA(stp_hck, stp_ck, sd_srcfc, sd_fc, sd_div) \
-+{ \
-+	.val = ((stp_hck) ? CPG_SD_STP_HCK : 0) | \
-+	       ((stp_ck) ? CPG_SD_STP_CK : 0) | \
-+	       ((sd_srcfc) << 2) | \
-+	       ((sd_fc) << 0), \
-+	.div = (sd_div), \
-+}
-+
-+struct sd_div_table {
-+	u32 val;
-+	unsigned int div;
++	EAPOL_KEY_TYPE_WPA = 254
 +};
-+
-+struct sd_clock {
-+	struct clk_hw hw;
-+	void __iomem *reg;
-+	const struct sd_div_table *div_table;
-+	unsigned int div_num;
-+	unsigned int div_min;
-+	unsigned int div_max;
-+};
-+
-+/* SDn divider
-+ *                     sd_srcfc   sd_fc   div
-+ * stp_hck   stp_ck    (div)      (div)     = sd_srcfc x sd_fc
-+ *-------------------------------------------------------------------
-+ *  0         0         0 (1)      1 (4)      4
-+ *  0         0         1 (2)      1 (4)      8
-+ *  1         0         2 (4)      1 (4)     16
-+ *  1         0         3 (8)      1 (4)     32
-+ *  1         0         4 (16)     1 (4)     64
-+ *  0         0         0 (1)      0 (2)      2
-+ *  0         0         1 (2)      0 (2)      4
-+ *  1         0         2 (4)      0 (2)      8
-+ *  1         0         3 (8)      0 (2)     16
-+ *  1         0         4 (16)     0 (2)     32
-+ */
-+static const struct sd_div_table cpg_sd_div_table[] = {
-+/*	CPG_SD_DIV_TABLE_DATA(stp_hck,  stp_ck,   sd_srcfc,   sd_fc,  sd_div) */
-+	CPG_SD_DIV_TABLE_DATA(0,        0,        0,          1,        4),
-+	CPG_SD_DIV_TABLE_DATA(0,        0,        1,          1,        8),
-+	CPG_SD_DIV_TABLE_DATA(1,        0,        2,          1,       16),
-+	CPG_SD_DIV_TABLE_DATA(1,        0,        3,          1,       32),
-+	CPG_SD_DIV_TABLE_DATA(1,        0,        4,          1,       64),
-+	CPG_SD_DIV_TABLE_DATA(0,        0,        0,          0,        2),
-+	CPG_SD_DIV_TABLE_DATA(0,        0,        1,          0,        4),
-+	CPG_SD_DIV_TABLE_DATA(1,        0,        2,          0,        8),
-+	CPG_SD_DIV_TABLE_DATA(1,        0,        3,          0,       16),
-+	CPG_SD_DIV_TABLE_DATA(1,        0,        4,          0,       32),
-+};
-+
-+#define to_sd_clock(_hw) container_of(_hw, struct sd_clock, hw)
-+
-+static int cpg_sd_clock_enable(struct clk_hw *hw)
-+{
-+	struct sd_clock *clock = to_sd_clock(hw);
-+	u32 val, sd_fc;
-+	unsigned int i;
-+
-+	val = clk_readl(clock->reg);
-+
-+	sd_fc = val & CPG_SD_FC_MASK;
-+	for (i = 0; i < clock->div_num; i++)
-+		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
-+			break;
-+
-+	if (i >= clock->div_num)
-+		return -EINVAL;
-+
-+	val &= ~(CPG_SD_STP_MASK);
-+	val |= clock->div_table[i].val & CPG_SD_STP_MASK;
-+
-+	clk_writel(val, clock->reg);
-+
-+	return 0;
-+}
-+
-+static void cpg_sd_clock_disable(struct clk_hw *hw)
-+{
-+	struct sd_clock *clock = to_sd_clock(hw);
-+
-+	clk_writel(clk_readl(clock->reg) | CPG_SD_STP_MASK, clock->reg);
-+}
-+
-+static int cpg_sd_clock_is_enabled(struct clk_hw *hw)
-+{
-+	struct sd_clock *clock = to_sd_clock(hw);
-+
-+	return !(clk_readl(clock->reg) & CPG_SD_STP_MASK);
-+}
-+
-+static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
-+						unsigned long parent_rate)
-+{
-+	struct sd_clock *clock = to_sd_clock(hw);
-+	unsigned long rate = parent_rate;
-+	u32 val, sd_fc;
-+	unsigned int i;
-+
-+	val = clk_readl(clock->reg);
-+
-+	sd_fc = val & CPG_SD_FC_MASK;
-+	for (i = 0; i < clock->div_num; i++)
-+		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
-+			break;
-+
-+	if (i >= clock->div_num)
-+		return -EINVAL;
-+
-+	return DIV_ROUND_CLOSEST(rate, clock->div_table[i].div);
-+}
-+
-+static unsigned int cpg_sd_clock_calc_div(struct sd_clock *clock,
-+					  unsigned long rate,
-+					  unsigned long parent_rate)
-+{
-+	unsigned int div;
-+
-+	if (!rate)
-+		rate = 1;
-+
-+	div = DIV_ROUND_CLOSEST(parent_rate, rate);
-+
-+	return clamp_t(unsigned int, div, clock->div_min, clock->div_max);
-+}
-+
-+static long cpg_sd_clock_round_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long *parent_rate)
-+{
-+	struct sd_clock *clock = to_sd_clock(hw);
-+	unsigned int div = cpg_sd_clock_calc_div(clock, rate, *parent_rate);
-+
-+	return DIV_ROUND_CLOSEST(*parent_rate, div);
-+}
-+
-+static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
-+				   unsigned long parent_rate)
-+{
-+	struct sd_clock *clock = to_sd_clock(hw);
-+	unsigned int div = cpg_sd_clock_calc_div(clock, rate, parent_rate);
-+	u32 val;
-+	unsigned int i;
-+
-+	for (i = 0; i < clock->div_num; i++)
-+		if (div == clock->div_table[i].div)
-+			break;
-+
-+	if (i >= clock->div_num)
-+		return -EINVAL;
-+
-+	val = clk_readl(clock->reg);
-+	val &= ~(CPG_SD_STP_MASK | CPG_SD_FC_MASK);
-+	val |= clock->div_table[i].val & (CPG_SD_STP_MASK | CPG_SD_FC_MASK);
-+	clk_writel(val, clock->reg);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops cpg_sd_clock_ops = {
-+	.enable = cpg_sd_clock_enable,
-+	.disable = cpg_sd_clock_disable,
-+	.is_enabled = cpg_sd_clock_is_enabled,
-+	.recalc_rate = cpg_sd_clock_recalc_rate,
-+	.round_rate = cpg_sd_clock_round_rate,
-+	.set_rate = cpg_sd_clock_set_rate,
-+};
-+
-+static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
-+					       void __iomem *base,
-+					       const char *parent_name)
-+{
-+	struct clk_init_data init;
-+	struct sd_clock *clock;
-+	struct clk *clk;
-+	unsigned int i;
-+
-+	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
-+	if (!clock)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = core->name;
-+	init.ops = &cpg_sd_clock_ops;
-+	init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	clock->reg = base + core->offset;
-+	clock->hw.init = &init;
-+	clock->div_table = cpg_sd_div_table;
-+	clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
-+
-+	clock->div_max = clock->div_table[0].div;
-+	clock->div_min = clock->div_max;
-+	for (i = 1; i < clock->div_num; i++) {
-+		clock->div_max = max(clock->div_max, clock->div_table[i].div);
-+		clock->div_min = min(clock->div_min, clock->div_table[i].div);
-+	}
-+
-+	clk = clk_register(NULL, &clock->hw);
-+	if (IS_ERR(clk))
-+		kfree(clock);
-+
-+	return clk;
-+}
-+
-+
-+static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
-+static unsigned int cpg_clk_extalr __initdata;
-+
-+struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
-+	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
-+	struct clk **clks, void __iomem *base)
-+{
-+	const struct clk *parent;
-+	unsigned int mult = 1;
-+	unsigned int div = 1;
-+	u32 value;
-+
-+	parent = clks[core->parent];
-+	if (IS_ERR(parent))
-+		return ERR_CAST(parent);
-+
-+	switch (core->type) {
-+	case CLK_TYPE_GEN3_MAIN:
-+		div = cpg_pll_config->extal_div;
-+		break;
-+
-+	case CLK_TYPE_GEN3_PLL0:
-+		/*
-+		 * PLL0 is a configurable multiplier clock. Register it as a
-+		 * fixed factor clock for now as there's no generic multiplier
-+		 * clock implementation and we currently have no need to change
-+		 * the multiplier value.
-+		 */
-+		value = readl(base + CPG_PLL0CR);
-+		mult = (((value >> 24) & 0x7f) + 1) * 2;
-+		break;
-+
-+	case CLK_TYPE_GEN3_PLL1:
-+		mult = cpg_pll_config->pll1_mult;
-+		break;
-+
-+	case CLK_TYPE_GEN3_PLL2:
-+		/*
-+		 * PLL2 is a configurable multiplier clock. Register it as a
-+		 * fixed factor clock for now as there's no generic multiplier
-+		 * clock implementation and we currently have no need to change
-+		 * the multiplier value.
-+		 */
-+		value = readl(base + CPG_PLL2CR);
-+		mult = (((value >> 24) & 0x7f) + 1) * 2;
-+		break;
-+
-+	case CLK_TYPE_GEN3_PLL3:
-+		mult = cpg_pll_config->pll3_mult;
-+		break;
-+
-+	case CLK_TYPE_GEN3_PLL4:
-+		/*
-+		 * PLL4 is a configurable multiplier clock. Register it as a
-+		 * fixed factor clock for now as there's no generic multiplier
-+		 * clock implementation and we currently have no need to change
-+		 * the multiplier value.
-+		 */
-+		value = readl(base + CPG_PLL4CR);
-+		mult = (((value >> 24) & 0x7f) + 1) * 2;
-+		break;
-+
-+	case CLK_TYPE_GEN3_SD:
-+		return cpg_sd_clk_register(core, base, __clk_get_name(parent));
-+
-+	case CLK_TYPE_GEN3_R:
-+		/*
-+		 * RINT is default.
-+		 * Only if EXTALR is populated, we switch to it.
-+		 */
-+		value = readl(base + CPG_RCKCR) & 0x3f;
-+
-+		if (clk_get_rate(clks[cpg_clk_extalr])) {
-+			parent = clks[cpg_clk_extalr];
-+			value |= BIT(15);
-+		}
-+
-+		writel(value, base + CPG_RCKCR);
-+		break;
-+
-+	default:
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return clk_register_fixed_factor(NULL, core->name,
-+					 __clk_get_name(parent), 0, mult, div);
-+}
-+
-+/*
-+ * Reset register definitions.
-+ */
-+#define MODEMR	0xe6160060
-+
-+u32 __init rcar_gen3_read_mode_pins(void)
-+{
-+	void __iomem *modemr = ioremap_nocache(MODEMR, 4);
-+	u32 mode;
-+
-+	BUG_ON(!modemr);
-+	mode = ioread32(modemr);
-+	iounmap(modemr);
-+
-+	return mode;
-+}
-+
-+int __init rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
-+			      unsigned int clk_extalr)
-+{
-+	cpg_pll_config = config;
-+	cpg_clk_extalr = clk_extalr;
-+	return 0;
-+}
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-new file mode 100644
-index 0000000000000000..f699085147d1aece
---- /dev/null
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -0,0 +1,43 @@
-+/*
-+ * R-Car Gen3 Clock Pulse Generator
-+ *
-+ * Copyright (C) 2015-2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+
-+#ifndef __CLK_RENESAS_RCAR_GEN3_CPG_H__
-+#define __CLK_RENESAS_RCAR_GEN3_CPG_H__
-+
-+enum rcar_gen3_clk_types {
-+	CLK_TYPE_GEN3_MAIN = CLK_TYPE_CUSTOM,
-+	CLK_TYPE_GEN3_PLL0,
-+	CLK_TYPE_GEN3_PLL1,
-+	CLK_TYPE_GEN3_PLL2,
-+	CLK_TYPE_GEN3_PLL3,
-+	CLK_TYPE_GEN3_PLL4,
-+	CLK_TYPE_GEN3_SD,
-+	CLK_TYPE_GEN3_R,
-+};
-+
-+#define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
-+	DEF_BASE(_name, _id, CLK_TYPE_GEN3_SD, _parent, .offset = _offset)
-+
-+struct rcar_gen3_cpg_pll_config {
-+	unsigned int extal_div;
-+	unsigned int pll1_mult;
-+	unsigned int pll3_mult;
-+};
-+
-+#define CPG_RCKCR	0x240
-+
-+u32 rcar_gen3_read_mode_pins(void);
-+struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
-+	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
-+	struct clk **clks, void __iomem *base);
-+int rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
-+		       unsigned int clk_extalr);
-+
-+#endif
+ 
+ #define IEEE8021X_REPLAY_COUNTER_LEN 8
+ #define IEEE8021X_KEY_SIGN_LEN 16
+@@ -60,11 +60,11 @@ struct ieee802_1x_eapol_key {
+ 	/* does not repeat within the life of the keying material used to
+ 	 * encrypt the Key field; 64-bit NTP timestamp MAY be used here */
+ 	unsigned char replay_counter[IEEE8021X_REPLAY_COUNTER_LEN];
+-	unsigned char key_iv[IEEE8021X_KEY_IV_LEN]; /* cryptographically random number */
+-	unsigned char key_index; /* key flag in the most significant bit:
+-		       * 0 = broadcast (default key),
+-		       * 1 = unicast (key mapping key); key index is in the
+-		       * 7 least significant bits */
++	unsigned char key_iv[IEEE8021X_KEY_IV_LEN];	/* cryptographically random number */
++	unsigned char key_index;	/* key flag in the most significant bit:
++					 * 0 = broadcast (default key),
++					 * 1 = unicast (key mapping key); key index is in the
++					 * 7 least significant bits */
+ 	/* HMAC-MD5 message integrity check computed with MS-MPPE-Send-Key as
+ 	 * the key */
+ 	unsigned char key_signature[IEEE8021X_KEY_SIGN_LEN];
+@@ -77,19 +77,18 @@ struct ieee802_1x_eapol_key {
+ 	 * RC4 key used in encryption = Key-IV + MS-MPPE-Recv-Key */
+ } __attribute__ ((packed));
+ 
+-
+ #define WPA_NONCE_LEN 32
+ #define WPA_REPLAY_COUNTER_LEN 8
+ 
+ struct wpa_eapol_key {
+ 	unsigned char type;
+- 	unsigned short key_info;
++	unsigned short key_info;
+ 	unsigned short key_length;
+ 	unsigned char replay_counter[WPA_REPLAY_COUNTER_LEN];
+ 	unsigned char key_nonce[WPA_NONCE_LEN];
+ 	unsigned char key_iv[16];
+ 	unsigned char key_rsc[8];
+-	unsigned char key_id[8]; /* Reserved in IEEE 802.11i/RSN */
++	unsigned char key_id[8];	/* Reserved in IEEE 802.11i/RSN */
+ 	unsigned char key_mic[16];
+ 	unsigned short key_data_length;
+ 	/* followed by key_data_length bytes of key_data */
+@@ -98,18 +97,18 @@ struct wpa_eapol_key {
+ #define WPA_KEY_INFO_TYPE_MASK (WBIT(0) | WBIT(1) | WBIT(2))
+ #define WPA_KEY_INFO_TYPE_HMAC_MD5_RC4 WBIT(0)
+ #define WPA_KEY_INFO_TYPE_HMAC_SHA1_AES WBIT(1)
+-#define WPA_KEY_INFO_KEY_TYPE WBIT(3) /* 1 = Pairwise, 0 = Group key */
++#define WPA_KEY_INFO_KEY_TYPE WBIT(3)	/* 1 = Pairwise, 0 = Group key */
+ /* bit4..5 is used in WPA, but is reserved in IEEE 802.11i/RSN */
+ #define WPA_KEY_INFO_KEY_INDEX_MASK (WBIT(4) | WBIT(5))
+ #define WPA_KEY_INFO_KEY_INDEX_SHIFT 4
+-#define WPA_KEY_INFO_INSTALL WBIT(6) /* pairwise */
+-#define WPA_KEY_INFO_TXRX WBIT(6) /* group */
++#define WPA_KEY_INFO_INSTALL WBIT(6)	/* pairwise */
++#define WPA_KEY_INFO_TXRX WBIT(6)	/* group */
+ #define WPA_KEY_INFO_ACK WBIT(7)
+ #define WPA_KEY_INFO_MIC WBIT(8)
+ #define WPA_KEY_INFO_SECURE WBIT(9)
+ #define WPA_KEY_INFO_ERROR WBIT(10)
+ #define WPA_KEY_INFO_REQUEST WBIT(11)
+-#define WPA_KEY_INFO_ENCR_KEY_DATA WBIT(12) /* IEEE 802.11i/RSN only */
++#define WPA_KEY_INFO_ENCR_KEY_DATA WBIT(12)	/* IEEE 802.11i/RSN only */
+ 
+ #define WPA_CAPABILITY_PREAUTH WBIT(0)
+ 
 -- 
-1.9.1
+2.8.1
