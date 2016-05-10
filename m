@@ -1,40 +1,146 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:10016 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752266AbcEYI6f (ORCPT
+Received: from sauhun.de ([89.238.76.85]:57090 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751825AbcEJNy4 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 25 May 2016 04:58:35 -0400
-Received: from vsmta11.fe.internet.bosch.com (unknown [10.4.98.51])
-	by imta24.fe.bosch.de (Postfix) with ESMTP id E0584D80204
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 May 2016 10:58:32 +0200 (CEST)
-Received: from SI-HUB1001.de.bosch.com (vsgw24.fe.internet.bosch.com [10.4.98.24])
-	by vsmta11.fe.internet.bosch.com (Postfix) with ESMTP id A0AF723804EC
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 May 2016 10:58:32 +0200 (CEST)
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	<linux-renesas-soc@vger.kernel.org>,
-	Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-CC: Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH 0/4] ARM: Renesas: R-Car3: Add product register support
-Date: Wed, 25 May 2016 10:58:24 +0200
-Message-ID: <1464166708-18320-1-git-send-email-dirk.behme@de.bosch.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	Tue, 10 May 2016 09:54:56 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: driverdev-devel@linuxdriverproject.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 17/27] staging: ks7010: indent ks7010_sdio.h
+Date: Tue, 10 May 2016 15:52:30 +0200
+Message-Id: <1462888360-21649-18-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Instead of hard coding the product register in rcar_du_crtc.c,
-read it based on the device tree.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-This patch series is based on
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/staging/ks7010/ks7010_sdio.h | 64 +++++++++++++++++-------------------
+ 1 file changed, 30 insertions(+), 34 deletions(-)
 
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/gen3-latest
-renesas-drivers-2016-05-17-v4.6
-4717ef6d59c3204e385c
-Revert "ASoC: simple-card: Add pm callbacks to platform driver"
-
-It's boot tested on r8a7795 Salvator-X and checked that the same
-product register value is read without and with this patch series.
-
-Dirk
+diff --git a/drivers/staging/ks7010/ks7010_sdio.h b/drivers/staging/ks7010/ks7010_sdio.h
+index 1d16673e5dae02..aea3727caf483b 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.h
++++ b/drivers/staging/ks7010/ks7010_sdio.h
+@@ -21,7 +21,7 @@
+ #define DEVICE_ALIGNMENT 32
+ 
+ /*  SDIO KeyStream vendor and device */
+-#define SDIO_VENDOR_ID_KS_CODE_A	0x005b 
++#define SDIO_VENDOR_ID_KS_CODE_A	0x005b
+ #define SDIO_VENDOR_ID_KS_CODE_B	0x0023
+ #define SDIO_DEVICE_ID_KS_7010		0x7910
+ 
+@@ -48,8 +48,8 @@
+  * for network packet (less than 2048 bytes data)
+  */
+ #define WSTATUS_RSIZE		0x000014
+-#define WSTATUS_MASK		0x80 /* Write Status Register value */
+-#define RSIZE_MASK		0x7F /* Read Data Size Register value [10:4] */
++#define WSTATUS_MASK		0x80	/* Write Status Register value */
++#define RSIZE_MASK		0x7F	/* Read Data Size Register value [10:4] */
+ 
+ /* ARM to SD interrupt Enable */
+ #define INT_ENABLE		0x000020
+@@ -88,52 +88,48 @@
+ 
+ #define KS7010_IRAM_ADDRESS	0x06000000
+ 
+-
+ /* 
+  * struct define
+  */
+ struct hw_info_t {
+-	struct ks_sdio_card *sdio_card;	
++	struct ks_sdio_card *sdio_card;
+ 	struct completion ks7010_sdio_wait;
+ 	struct workqueue_struct *ks7010sdio_wq;
+ 	struct delayed_work rw_wq;
+-	unsigned char	*read_buf;
++	unsigned char *read_buf;
+ 	struct tasklet_struct rx_bh_task;
+ };
+ 
+ struct ks_sdio_packet {
+-        struct ks_sdio_packet   *next;
+-        u16                     nb;
+-        u8                      buffer[0] __attribute__((aligned(4)));
++	struct ks_sdio_packet *next;
++	u16 nb;
++	u8 buffer[0] __attribute__ ((aligned(4)));
+ };
+ 
+-
+ struct ks_sdio_card {
+-	struct sdio_func	*func;
++	struct sdio_func *func;
+ 	struct ks_wlan_private *priv;
+-	int			model;
+-	const char		*firmware;
+-        spinlock_t              lock;
++	int model;
++	const char *firmware;
++	spinlock_t lock;
+ };
+ 
+-
+-
+ /* Tx Device struct */
+-#define	TX_DEVICE_BUFF_SIZE	1024 
++#define	TX_DEVICE_BUFF_SIZE	1024
+ 
+ struct tx_device_buffer {
+-        unsigned char *sendp;		/* pointer of send req data */
+-        unsigned int  size;
+-	void	(*complete_handler)(void *arg1, void *arg2);
+-	void	*arg1;
+-	void	*arg2;
++	unsigned char *sendp;	/* pointer of send req data */
++	unsigned int size;
++	void (*complete_handler) (void *arg1, void *arg2);
++	void *arg1;
++	void *arg2;
+ };
+ 
+-struct tx_device{
+-        struct tx_device_buffer tx_dev_buff[TX_DEVICE_BUFF_SIZE];
+-        unsigned int	qhead; /* tx buffer queue first pointer */
+-        unsigned int	qtail; /* tx buffer queue last pointer */
+-        spinlock_t  tx_dev_lock;
++struct tx_device {
++	struct tx_device_buffer tx_dev_buff[TX_DEVICE_BUFF_SIZE];
++	unsigned int qhead;	/* tx buffer queue first pointer */
++	unsigned int qtail;	/* tx buffer queue last pointer */
++	spinlock_t tx_dev_lock;
+ };
+ 
+ /* Rx Device struct */
+@@ -141,15 +137,15 @@ struct tx_device{
+ #define	RX_DEVICE_BUFF_SIZE	32
+ 
+ struct rx_device_buffer {
+-       unsigned char	data[RX_DATA_SIZE];
+-       unsigned int	size;
++	unsigned char data[RX_DATA_SIZE];
++	unsigned int size;
+ };
+ 
+-struct rx_device{
+-        struct rx_device_buffer rx_dev_buff[RX_DEVICE_BUFF_SIZE];
+-        unsigned int	qhead; /* rx buffer queue first pointer */
+-	unsigned int	qtail; /* rx buffer queue last pointer */
+-	spinlock_t  rx_dev_lock;
++struct rx_device {
++	struct rx_device_buffer rx_dev_buff[RX_DEVICE_BUFF_SIZE];
++	unsigned int qhead;	/* rx buffer queue first pointer */
++	unsigned int qtail;	/* rx buffer queue last pointer */
++	spinlock_t rx_dev_lock;
+ };
+ #define	ROM_FILE "ks7010sd.rom"
+ #define	CFG_FILE "ks79xx.cfg"
+-- 
+2.8.1
