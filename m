@@ -1,73 +1,134 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: dan.j.williams@intel.com, vinod.koul@intel.com,
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-	arnd@arndb.de
-Cc: linux-renesas-soc@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] dmaengine: of_dma: approximate an average distribution
-Date: Wed, 11 May 2016 15:15:11 +0200
-Message-Id: <1462972511-20927-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:57058 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751700AbcEJNyq (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 10 May 2016 09:54:46 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: driverdev-devel@linuxdriverproject.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 09/27] staging: ks7010: delete seperate debug header
+Date: Tue, 10 May 2016 15:52:22 +0200
+Message-Id: <1462888360-21649-10-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently the following DT description would result in dmac0 always
-being tried first and dmac1 second if dmac0 was unavailable. This
-results in heavier use of dmac0 then of dmac1. This patch adds an
-approximate average distribution over the two nodes lessening the load
-of anyone of them.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-   i2c6: i2c@e60b0000 {
-           ...
-           dmas = <&dmac0 0x77>, <&dmac0 0x78>,
-                  <&dmac1 0x77>, <&dmac1 0x78>;
-           dma-names = "tx", "rx", "tx", "rx";
-           ...
-   };
+Move the one debug macro to the generic wlan header.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/dma/of-dma.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/staging/ks7010/ks7010_config.c |  1 -
+ drivers/staging/ks7010/ks7010_sdio.c   |  1 -
+ drivers/staging/ks7010/ks_debug.h      | 28 ----------------------------
+ drivers/staging/ks7010/ks_hostif.c     |  1 -
+ drivers/staging/ks7010/ks_wlan.h       |  7 +++++++
+ drivers/staging/ks7010/ks_wlan_net.c   |  1 -
+ 6 files changed, 7 insertions(+), 32 deletions(-)
+ delete mode 100644 drivers/staging/ks7010/ks_debug.h
 
-diff --git a/drivers/dma/of-dma.c b/drivers/dma/of-dma.c
-index 1e1f298..faae0bf 100644
---- a/drivers/dma/of-dma.c
-+++ b/drivers/dma/of-dma.c
-@@ -240,8 +240,9 @@ struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
- 	struct of_phandle_args	dma_spec;
- 	struct of_dma		*ofdma;
- 	struct dma_chan		*chan;
--	int			count, i;
-+	int			count, i, start;
- 	int			ret_no_channel = -ENODEV;
-+	static atomic_t		last_index;
+diff --git a/drivers/staging/ks7010/ks7010_config.c b/drivers/staging/ks7010/ks7010_config.c
+index abe99a52ae1ad8..7f273dafaf3583 100644
+--- a/drivers/staging/ks7010/ks7010_config.c
++++ b/drivers/staging/ks7010/ks7010_config.c
+@@ -4,7 +4,6 @@
+ #include "ks_wlan.h"
+ #include "ks_hostif.h"
+ #include "ks_wlan_ioctl.h"
+-#include "ks_debug.h"
  
- 	if (!np || !name) {
- 		pr_err("%s: not enough information provided\n", __func__);
-@@ -259,8 +260,15 @@ struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
- 		return ERR_PTR(-ENODEV);
- 	}
+ static int wep_on_off;
+ #define	WEP_OFF		0
+diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
+index 1a1a43ff306aae..3fb432c9dd314d 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.c
++++ b/drivers/staging/ks7010/ks7010_sdio.c
+@@ -19,7 +19,6 @@
  
-+	/*
-+	 * approximate an average distribution across multiple
-+	 * entries with the same name
-+	 */
-+	start = atomic_inc_return(&last_index);
- 	for (i = 0; i < count; i++) {
--		if (of_dma_match_channel(np, name, i, &dma_spec))
-+		if (of_dma_match_channel(np, name,
-+					 (i + start) % count,
-+					 &dma_spec))
- 			continue;
+ #include "ks_wlan.h"
+ #include "ks_wlan_ioctl.h"
+-#include "ks_debug.h"
+ #include "ks_hostif.h"
  
- 		mutex_lock(&of_dma_lock);
+ #include "ks7010_sdio.h"
+diff --git a/drivers/staging/ks7010/ks_debug.h b/drivers/staging/ks7010/ks_debug.h
+deleted file mode 100644
+index adad5f927dfda9..00000000000000
+--- a/drivers/staging/ks7010/ks_debug.h
++++ /dev/null
+@@ -1,28 +0,0 @@
+-/*
+- *   Driver for KeyStream 11b/g wireless LAN cards.
+- *   
+- *   ks_debug.h
+- *   $Id: ks_debug.h 991 2009-09-14 01:38:58Z sekine $
+- *
+- *   Copyright (C) 2005-2008 KeyStream Corp.
+- *   Copyright (C) 2009 Renesas Technology Corp.
+- *
+- *   This program is free software; you can redistribute it and/or modify
+- *   it undr the terms of the GNU General Public License version 2 as
+- *   published by the Free Sotware Foundation.
+- */
+-
+-#ifndef _KS_DEBUG_H
+-#define _KS_DEBUG_H
+-
+-#include <linux/kernel.h>
+-
+-
+-#ifdef KS_WLAN_DEBUG
+-#define DPRINTK(n, fmt, args...) \
+-                 if (KS_WLAN_DEBUG>(n)) printk(KERN_NOTICE "%s: "fmt, __FUNCTION__, ## args)
+-#else
+-#define DPRINTK(n, fmt, args...)
+-#endif
+-
+-#endif /* _KS_DEBUG_H */
+diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
+index 146a1357909b39..367d487cef1ba8 100644
+--- a/drivers/staging/ks7010/ks_hostif.c
++++ b/drivers/staging/ks7010/ks_hostif.c
+@@ -13,7 +13,6 @@
+  */
+ 
+ #include "ks_wlan.h"
+-#include "ks_debug.h"
+ #include "ks_hostif.h"
+ #include "eap_packet.h"
+ #include "michael_mic.h"
+diff --git a/drivers/staging/ks7010/ks_wlan.h b/drivers/staging/ks7010/ks_wlan.h
+index 6bd016414a4f1d..c460741c6606ee 100644
+--- a/drivers/staging/ks7010/ks_wlan.h
++++ b/drivers/staging/ks7010/ks_wlan.h
+@@ -38,6 +38,13 @@
+ 
+ #include "ks7010_sdio.h"
+ 
++#ifdef KS_WLAN_DEBUG
++#define DPRINTK(n, fmt, args...) \
++                 if (KS_WLAN_DEBUG>(n)) printk(KERN_NOTICE "%s: "fmt, __FUNCTION__, ## args)
++#else
++#define DPRINTK(n, fmt, args...)
++#endif
++
+ struct ks_wlan_parameter {
+ 	uint8_t		operation_mode;	   /* Operation Mode */
+ 	uint8_t		channel;	   /*  Channel */
+diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
+index 776a544031495f..1da2768ea9f31b 100644
+--- a/drivers/staging/ks7010/ks_wlan_net.c
++++ b/drivers/staging/ks7010/ks_wlan_net.c
+@@ -40,7 +40,6 @@ static int wep_on_off;
+ #include "ks_wlan.h"
+ #include "ks_hostif.h"
+ #include "ks_wlan_ioctl.h"
+-#include "ks_debug.h"
+ 
+ /* Include Wireless Extension definition and check version */
+ #include <linux/wireless.h>
 -- 
-2.8.2
+2.8.1
