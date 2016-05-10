@@ -1,67 +1,283 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:12986 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751315AbcEKFbY (ORCPT
+Received: from sauhun.de ([89.238.76.85]:57033 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751614AbcEJNyl (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 11 May 2016 01:31:24 -0400
-Received: from vsmta14.fe.internet.bosch.com (unknown [10.4.98.54])
-	by imta23.fe.bosch.de (Postfix) with ESMTP id 88A8415801DC
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 May 2016 07:31:23 +0200 (CEST)
-Received: from FE-HUB1001.de.bosch.com (vsgw22.fe.internet.bosch.com [10.4.98.11])
-	by vsmta14.fe.internet.bosch.com (Postfix) with ESMTP id 2FC0DA4023E
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 May 2016 07:31:23 +0200 (CEST)
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	<linux-renesas-soc@vger.kernel.org>
-CC: Dirk Behme <dirk.behme@gmail.com>
-Subject: [PATCH v2 07/10] arm: renesas: rcar-gen3: Make boot-mode-reg Gen3 compatible
-Date: Wed, 11 May 2016 07:29:35 +0200
-Message-ID: <1462944578-1220-8-git-send-email-dirk.behme@de.bosch.com>
-In-Reply-To: <1462944578-1220-1-git-send-email-dirk.behme@de.bosch.com>
-References: <1462944578-1220-1-git-send-email-dirk.behme@de.bosch.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	Tue, 10 May 2016 09:54:41 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: driverdev-devel@linuxdriverproject.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 03/27] staging: ks7010: remove custom firmware loader
+Date: Tue, 10 May 2016 15:52:16 +0200
+Message-Id: <1462888360-21649-4-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Dirk Behme <dirk.behme@gmail.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-The boot mode register is available on Renesas Gen3, too.
-Use the same driver on Gen3 as on Gen2.
+FW_LOADER works fine, no need for a open coded fallback.
 
-Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/Kconfig.platforms      | 1 +
- drivers/misc/boot-mode-reg/rcar.c | 4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/staging/ks7010/Kconfig         |  1 +
+ drivers/staging/ks7010/ks7010_config.c | 62 ----------------------------------
+ drivers/staging/ks7010/ks7010_sdio.c   | 56 ------------------------------
+ drivers/staging/ks7010/ks7010_sdio.h   |  5 ---
+ 4 files changed, 1 insertion(+), 123 deletions(-)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index fda93a2..591ab8f 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -106,6 +106,7 @@ config ARCH_SHMOBILE
- config ARCH_RENESAS
- 	bool "Renesas SoC Platforms"
- 	select ARCH_SHMOBILE
-+	select BOOT_MODE_REG_RCAR
- 	select PINCTRL
- 	select PM
- 	select PM_GENERIC_DOMAINS
-diff --git a/drivers/misc/boot-mode-reg/rcar.c b/drivers/misc/boot-mode-reg/rcar.c
-index c3b778fe..e994980 100644
---- a/drivers/misc/boot-mode-reg/rcar.c
-+++ b/drivers/misc/boot-mode-reg/rcar.c
-@@ -48,7 +48,9 @@ int __init rcar_init_boot_mode(void)
- 	    of_machine_is_compatible("renesas,r8a7791") ||
- 	    of_machine_is_compatible("renesas,r8a7792") ||
- 	    of_machine_is_compatible("renesas,r8a7793") ||
--	    of_machine_is_compatible("renesas,r8a7794"))
-+	    of_machine_is_compatible("renesas,r8a7794") ||
-+	    of_machine_is_compatible("renesas,r8a7795") ||
-+	    of_machine_is_compatible("renesas,r8a7796"))
- 		return rcar_read_mode_pins();
+diff --git a/drivers/staging/ks7010/Kconfig b/drivers/staging/ks7010/Kconfig
+index dfd4eed539bebc..0b9217674d5b54 100644
+--- a/drivers/staging/ks7010/Kconfig
++++ b/drivers/staging/ks7010/Kconfig
+@@ -3,6 +3,7 @@ config KS7010
+ 	depends on MMC && WIRELESS
+ 	select WIRELESS_EXT
+ 	select WEXT_PRIV
++	select FW_LOADER
+ 	help
+ 	  This is a driver for KeyStream KS7010 based SDIO WIFI cards. It is
+ 	  found on at least later Spectec SDW-821 (FCC-ID "S2Y-WLAN-11G-K" only,
+diff --git a/drivers/staging/ks7010/ks7010_config.c b/drivers/staging/ks7010/ks7010_config.c
+index e8a42077a4b381..7d33070b3428e7 100644
+--- a/drivers/staging/ks7010/ks7010_config.c
++++ b/drivers/staging/ks7010/ks7010_config.c
+@@ -169,11 +169,7 @@ int rate_set_configuration(ks_wlan_private *priv, char *value)
+ 	return rc;
+ }
  
- 	return 0;
+-#ifndef NO_FIRMWARE_CLASS
+ #include <linux/firmware.h>
+-#else
+-#define MAX_CONFIG_FILE_SIZE (1024*10)
+-#endif
+ int ks_wlan_read_config_file(ks_wlan_private *priv)
+ {
+ 	struct {
+@@ -206,18 +202,9 @@ int ks_wlan_read_config_file(ks_wlan_private *priv)
+ 		{0,"",""},
+ 	};
+ 
+-#ifndef NO_FIRMWARE_CLASS
+ 	const struct firmware *fw_entry;
+ 	struct device *dev = NULL;
+ 	int retval;
+-#else
+-	struct file     *srcf;
+-	int nr_read ;
+-	int retval;
+-	char *cfg_buf=NULL;
+-	int orgfsuid, orgfsgid;
+-	mm_segment_t orgfs;
+-#endif
+ 	char cfg_file[]=CFG_FILE;
+ 	char *cur_p, *end_p;
+ 	char wk_buff[256], *wk_p;
+@@ -267,7 +254,6 @@ int ks_wlan_read_config_file(ks_wlan_private *priv)
+ 	priv->reg.tx_rate = TX_RATE_FULL_AUTO;
+ 	priv->reg.rate_set.size = 12;
+ 
+-#ifndef NO_FIRMWARE_CLASS
+ 	dev = &priv->ks_wlan_hw.sdio_card->func->dev;
+ 	if((retval = request_firmware(&fw_entry, cfg_file, dev)) !=0 ){
+ 		DPRINTK(1, "error request_firmware() file=%s ret=%d\n", cfg_file, retval);
+@@ -277,46 +263,6 @@ int ks_wlan_read_config_file(ks_wlan_private *priv)
+ 	DPRINTK(4, "success request_firmware() file=%s size=%d\n", cfg_file, fw_entry->size);
+ 	cur_p = fw_entry->data;
+ 	end_p = cur_p + fw_entry->size;
+-#else
+-	orgfsuid=current->fsuid;
+-	orgfsgid=current->fsgid;
+-	orgfs=get_fs();
+-	set_fs(KERNEL_DS);
+-
+-	srcf = filp_open(cfg_file, O_RDONLY, 0);
+-	if (IS_ERR(srcf)) {
+-		printk(KERN_ERR "error %ld opening %s\n", -PTR_ERR(srcf),cfg_file);
+-		goto no_config_file;
+-	}
+-
+-		if (!(srcf->f_op && srcf->f_op->read)) {
+-				printk(KERN_ERR "%s does not have a read method\n", cfg_file);
+-		goto no_config_file;
+-		}
+-
+-	cfg_buf = (char *)kzalloc(MAX_CONFIG_FILE_SIZE, GFP_ATOMIC);
+-		if (!cfg_buf) {
+-				printk(KERN_ERR "%s does not read : out of memory \n", cfg_file);
+-		goto no_config_file;
+-		}
+-
+-		nr_read = srcf->f_op->read(srcf, (unsigned char *)cfg_buf, MAX_CONFIG_FILE_SIZE, &srcf->f_pos);
+-
+-	DPRINTK(1, "read retval=%d  file=%s\n", nr_read, priv->reg.cfg_file);
+-	retval=filp_close(srcf ,NULL);
+-	if (retval)
+-		DPRINTK(1, "error %d closing %s\n", -retval,priv->reg.cfg_file);
+-
+-		if (nr_read < 1) {
+-				printk(KERN_ERR "%s does not read : file is empty  num=%d\n", cfg_file, nr_read);
+-		goto no_config_file;
+-		}else if(nr_read > MAX_CONFIG_FILE_SIZE){
+-				printk(KERN_ERR "%s does not read : file is too big \n", cfg_file);
+-		goto no_config_file;
+-	}
+-	cur_p = cfg_buf;
+-	end_p = cur_p + nr_read;
+-#endif
+ 	*end_p = '\0';
+ 
+ 	while (cur_p < end_p) {
+@@ -524,15 +470,7 @@ int ks_wlan_read_config_file(ks_wlan_private *priv)
+ 		}
+ 
+ 	}
+-#ifndef NO_FIRMWARE_CLASS
+ 	release_firmware(fw_entry);
+-#else
+-no_config_file:
+-	kfree(cfg_buf);
+-	set_fs(orgfs);
+-	current->fsuid=orgfsuid;
+-	current->fsgid=orgfsgid;
+-#endif
+ 
+ 	DPRINTK(3,"\n    operation_mode = %d\n    channel = %d\n    ssid = %s\n    tx_rate = %d\n \
+    preamble = %d\n    powermgt = %d\n    scan_type = %d\n    beacon_lost_count = %d\n    rts = %d\n \
+diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
+index 7cc49a4ccac549..9300658c4aed8d 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.c
++++ b/drivers/staging/ks7010/ks7010_sdio.c
+@@ -56,10 +56,6 @@ static int ks7010_sdio_read( ks_wlan_private *priv, unsigned int address,
+ 			     unsigned char *buffer, int length );
+ static int ks7010_sdio_write( ks_wlan_private *priv, unsigned int address,
+ 			      unsigned char *buffer, int length );
+-#ifdef NO_FIRMWARE_CLASS
+-static char *romfile = ROM_FILE;
+-module_param(romfile, charp, S_IRUGO);
+-#endif
+ /* macro */
+ 
+ #define inc_txqhead(priv) \
+@@ -723,23 +719,15 @@ error_out:
+ 	if(read_buf) kfree(read_buf);
+ 	return rc;
+ }
+-#ifndef NO_FIRMWARE_CLASS
+ #include <linux/firmware.h>
+-#endif
+ static int ks79xx_upload_firmware(ks_wlan_private *priv, struct ks_sdio_card *card)
+ {
+ 	unsigned int	size, offset,  n = 0;
+ 	unsigned char	*rom_buf;
+ 	unsigned char rw_data =0;
+ 	int retval, rc=0;
+-#ifndef NO_FIRMWARE_CLASS
+ 	int length;
+ 	const struct firmware *fw_entry = NULL;
+-#else
+-	int orgfsuid, orgfsgid;
+-	struct file     *srcf;
+-	mm_segment_t orgfs;
+-#endif
+ 
+ 	rom_buf = NULL;
+ 
+@@ -758,38 +746,16 @@ static int ks79xx_upload_firmware(ks_wlan_private *priv, struct ks_sdio_card *ca
+ 		goto error_out0;
+ 	}
+ 
+-#ifndef NO_FIRMWARE_CLASS
+ 	if(request_firmware(&fw_entry, priv->reg.rom_file, &priv->ks_wlan_hw.sdio_card->func->dev)!=0){
+ 		DPRINTK(1,"error request_firmware() file=%s\n", priv->reg.rom_file);
+ 		return 1;
+ 	}
+ 	DPRINTK(4,"success request_firmware() file=%s size=%d\n", priv->reg.rom_file, fw_entry->size);
+ 	length = fw_entry->size;
+-#else
+-	orgfsuid=current->fsuid;
+-	orgfsgid=current->fsgid;
+-	current->fsuid=current->fsgid=0;
+-	orgfs=get_fs();
+-	set_fs(KERNEL_DS);
+-
+-	srcf = filp_open(romfile, O_RDONLY, 0);
+-	if (IS_ERR(srcf)) {
+-		DPRINTK(1, "error %ld opening %s\n", -PTR_ERR(srcf),romfile);
+-		rc = 1;
+-		goto error_out1;
+-	}
+-
+-        if (!(srcf->f_op && srcf->f_op->read)) {
+-                DPRINTK(1, "%s does not have a read method\n", romfile);
+-                rc = 2;
+-                goto error_out2;
+-        }
+-#endif
+ 
+ 	/* Load Program */
+ 	n = 0;
+         do {
+-#ifndef NO_FIRMWARE_CLASS
+ 		if(length >= ROM_BUFF_SIZE){
+ 			size = ROM_BUFF_SIZE;
+ 			length = length - ROM_BUFF_SIZE;
+@@ -801,16 +767,6 @@ static int ks79xx_upload_firmware(ks_wlan_private *priv, struct ks_sdio_card *ca
+ 		DPRINTK(4, "size = %d\n",size);
+ 		if(size == 0) break;
+ 		memcpy(rom_buf,fw_entry->data+n,size);
+-#else
+-		/* The object must have a read method */
+-		size = srcf->f_op->read(srcf, rom_buf, ROM_BUFF_SIZE, &srcf->f_pos);
+-		if (size < 0) {
+-			DPRINTK(1, "Read %s error %d\n", priv->reg.rom_file, -retval);
+-			rc = 5;
+-			goto error_out2;
+-		}
+-		else if (size == 0) break;
+-#endif
+ 		/* Update write index */
+ 		offset = n;
+ 		retval = ks7010_sdio_update_index(priv, KS7010_IRAM_ADDRESS+offset);
+@@ -852,20 +808,8 @@ static int ks79xx_upload_firmware(ks_wlan_private *priv, struct ks_sdio_card *ca
+ 
+ 	rc = 0;
+ 
+-#ifdef NO_FIRMWARE_CLASS
+- error_out2:
+-	retval=filp_close(srcf ,NULL);
+-	if (retval)
+-		DPRINTK(1, "error %d closing %s\n", -retval,priv->reg.rom_file);
+-
+- error_out1:
+-	set_fs(orgfs);
+-	current->fsuid=orgfsuid;
+-	current->fsgid=orgfsgid;
+-#else
+  error_out1:
+ 	release_firmware(fw_entry);
+-#endif
+  error_out0:
+ 	sdio_release_host(card->func);
+ 	if(rom_buf)
+diff --git a/drivers/staging/ks7010/ks7010_sdio.h b/drivers/staging/ks7010/ks7010_sdio.h
+index 3af742f1b79f93..5bf01abbf2ab6c 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.h
++++ b/drivers/staging/ks7010/ks7010_sdio.h
+@@ -153,13 +153,8 @@ struct rx_device{
+ 	unsigned int	qtail; /* rx buffer queue last pointer */
+ 	spinlock_t  rx_dev_lock;
+ };
+-#ifndef NO_FIRMWARE_CLASS
+ #define	ROM_FILE "ks7010sd.rom"
+ #define	CFG_FILE "ks79xx.cfg"
+-#else
+-#define	ROM_FILE "/lib/firmware/ks7010sd.rom"
+-#define	CFG_FILE "/lib/firmware/ks79xx.cfg"
+-#endif
+ #define	KS_WLAN_DRIVER_VERSION_INFO  "ks7010 sdio linux 007"
+ 
+ #endif /* _KS7010_SDIO_H */
 -- 
-2.8.0
+2.8.1
