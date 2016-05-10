@@ -1,108 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35212 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750892AbcEXCnY (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36004 "EHLO
+	mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751384AbcEJSk6 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 23 May 2016 22:43:24 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Ai Kyuse <ai.kyuse.uw@renesas.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 1/4] mmc: tmio: enhance illegal sequence handling
-Date: Tue, 24 May 2016 11:43:14 +0900
-Message-Id: <1464057797-29951-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1464057797-29951-1-git-send-email-horms+renesas@verge.net.au>
-References: <1464057797-29951-1-git-send-email-horms+renesas@verge.net.au>
+	Tue, 10 May 2016 14:40:58 -0400
+MIME-Version: 1.0
+In-Reply-To: <5731A229.7010307@ti.com>
+References: <1457663298-31973-1-git-send-email-horms+renesas@verge.net.au>
+	<5731A229.7010307@ti.com>
+Date: Tue, 10 May 2016 20:40:57 +0200
+Message-ID: <CAMuHMdWV+yNvhiN2dR=Fc7Lzh4DKLtsN4=bdC7dWHw06KSPtww@mail.gmail.com>
+Subject: Re: [PATCH 0/2] fbdev: sh_mobile_meram: use ARCH_RENESAS
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ai Kyuse <ai.kyuse.uw@renesas.com>
+Hi Tomi,
 
-An illegal sequence command error may occur if there is a stopbit or
-cmd_index error as well as a CRC error. The correct course of action
-is to re-enable IRQs
+On Tue, May 10, 2016 at 10:56 AM, Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
+> On 11/03/16 04:28, Simon Horman wrote:
+>> Use ARCH_RENESAS in place of ARCH_SHMOBILE.
+>>
+>> This is part of an ongoing process to migrate from ARCH_SHMOBILE to
+>> ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
+>> appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
+>>
+>> As a follow-up also depend on COMPILE_TEST to provided for increased
+>> compile testing.
+>>
+>> Based on v4.5-rc1
+>>
+>> Simon Horman (2):
+>>   fbdev: sh_mobile_meram: use ARCH_RENESAS
+>>   fbdev: sh_mobile_meram: depend on COMPILE_TEST
+>>
+>>  drivers/video/fbdev/Kconfig | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> What was the conclusion in this thread? Should I apply these?
 
-An illegal sequence data error may occur if there is a CRC or stopbit
-error,  or underrun. In this case set data->error correctly.
+I think the conclusion was "changes requested".
 
-This is in preparation for enabling tuning support which relies on
-differentiating between illegal sequence and other errors.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-[simon: broken out of a larger patch]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v3 [Simon Horman]
-* No change
+                        Geert
 
-v2 [Simon Horman]
-* Broken out of a larger patch (but forgot to post)
----
- drivers/mmc/host/tmio_mmc_pio.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index f44e2ab7aea2..12dc0440a487 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -520,7 +520,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 	schedule_work(&host->done);
- }
- 
--static void tmio_mmc_data_irq(struct tmio_mmc_host *host)
-+static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
- {
- 	struct mmc_data *data;
- 	spin_lock(&host->lock);
-@@ -529,6 +529,9 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host)
- 	if (!data)
- 		goto out;
- 
-+	if (stat & TMIO_STAT_CRCFAIL || stat & TMIO_STAT_STOPBIT_ERR ||
-+	    stat & TMIO_STAT_TXUNDERRUN)
-+		data->error = -EILSEQ;
- 	if (host->chan_tx && (data->flags & MMC_DATA_WRITE) && !host->force_pio) {
- 		u32 status = sd_ctrl_read16_and_16_as_32(host, CTL_STATUS);
- 		bool done = false;
-@@ -577,8 +580,6 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host,
- 		goto out;
- 	}
- 
--	host->cmd = NULL;
--
- 	/* This controller is sicker than the PXA one. Not only do we need to
- 	 * drop the top 8 bits of the first response word, we also need to
- 	 * modify the order of the response for short response command types.
-@@ -598,14 +599,16 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host,
- 
- 	if (stat & TMIO_STAT_CMDTIMEOUT)
- 		cmd->error = -ETIMEDOUT;
--	else if (stat & TMIO_STAT_CRCFAIL && cmd->flags & MMC_RSP_CRC)
-+	else if ((stat & TMIO_STAT_CRCFAIL && cmd->flags & MMC_RSP_CRC) ||
-+		 stat & TMIO_STAT_STOPBIT_ERR ||
-+		 stat & TMIO_STAT_CMD_IDX_ERR)
- 		cmd->error = -EILSEQ;
- 
- 	/* If there is data to handle we enable data IRQs here, and
- 	 * we will ultimatley finish the request in the data_end handler.
- 	 * If theres no data or we encountered an error, finish now.
- 	 */
--	if (host->data && !cmd->error) {
-+	if (host->data && (!cmd->error || cmd->error == -EILSEQ)) {
- 		if (host->data->flags & MMC_DATA_READ) {
- 			if (host->force_pio || !host->chan_rx)
- 				tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_READOP);
-@@ -666,7 +669,7 @@ static bool __tmio_mmc_sdcard_irq(struct tmio_mmc_host *host,
- 	/* Data transfer completion */
- 	if (ireg & TMIO_STAT_DATAEND) {
- 		tmio_mmc_ack_mmc_irqs(host, TMIO_STAT_DATAEND);
--		tmio_mmc_data_irq(host);
-+		tmio_mmc_data_irq(host, status);
- 		return true;
- 	}
- 
--- 
-2.1.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
