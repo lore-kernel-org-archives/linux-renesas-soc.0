@@ -1,106 +1,141 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56003 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752049AbcEPINY (ORCPT
+Received: from foss.arm.com ([217.140.101.70]:46346 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751544AbcEJQDu (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 16 May 2016 04:13:24 -0400
-Date: Mon, 16 May 2016 17:12:57 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Dirk Behme <dirk.behme@gmail.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>,
-	Dirk Behme <dirk.behme@de.bosch.com>, julien.grall@arm.com,
-	geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>,
-	linux-arm-kernel@lists.infradead.org
+	Tue, 10 May 2016 12:03:50 -0400
 Subject: Re: [PATCH] arm64: dts: r8a7795: Increase the size of GIC-400 mapped
  registers
-Message-ID: <20160516081257.GC4955@verge.net.au>
+To: Dirk Behme <dirk.behme@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
 References: <1461047395-6532-1-git-send-email-dirk.behme@de.bosch.com>
- <20160427233028.GA5155@verge.net.au>
- <5721A2A5.9010908@de.bosch.com>
- <20160428234345.GD18128@verge.net.au>
- <20160429113515.333c42ef@arm.com>
- <5728E470.7050408@gmail.com>
+ <CAMuHMdV6XOSiSv-mwovnCAMEPsgOc_vEhPPu0aYCgz74EF242g@mail.gmail.com>
+ <5731ED92.6080804@arm.com> <5731FE44.8010906@gmail.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	julien.grall@arm.com,
+	Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <57320662.9010807@arm.com>
+Date: Tue, 10 May 2016 17:03:46 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5728E470.7050408@gmail.com>
+In-Reply-To: <5731FE44.8010906@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Dirk,
+On 10/05/16 16:29, Dirk Behme wrote:
+> On 10.05.2016 16:17, Marc Zyngier wrote:
+>> On 10/05/16 14:33, Geert Uytterhoeven wrote:
+>>> CC Marc, lakml
+>>>
+>>> On Tue, Apr 19, 2016 at 8:29 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>>>> From: Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>
+>>>>
+>>>> There are some requirements about the GIC-400 memory layout and its
+>>>> mapping if using 64k aligned base addresses like on r8a7795.
+>>>>
+>>>> See e.g.
+>>>>
+>>>> http://xenbits.xen.org/gitweb/?p=xen.git;a=commit;h=21550029f709072aacf3b9
+>>>>
+>>>> Map the whole memory range instead of only 0x2000. This will fix
+>>>> the issue that some hypervisors, e.g. Xen, fail to handle the
+>>>> interrupts correctly.
+>>>>
+>>>> Signed-off-by: Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>
+>>>> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+>>>
+>>> Based on my understanding below
+>>> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>
+>>>> ---
+>>>> Note: This patch is against renesas-drivers-2016-04-12-v4.6-rc3
+>>>>
+>>>>   arch/arm64/boot/dts/renesas/r8a7795.dtsi | 4 ++--
+>>>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>>>> index 8be9424..d880fd4 100644
+>>>> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>>>> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+>>>> @@ -160,9 +160,9 @@
+>>>>                          #address-cells = <0>;
+>>>>                          interrupt-controller;
+>>>>                          reg = <0x0 0xf1010000 0 0x1000>,
+>>>> -                             <0x0 0xf1020000 0 0x2000>,
+>>>> +                             <0x0 0xf1020000 0 0x20000>,
+>>>>                                <0x0 0xf1040000 0 0x20000>,
+>>>> -                             <0x0 0xf1060000 0 0x2000>;
+>>>> +                             <0x0 0xf1060000 0 0x20000>;
+>>>>                          interrupts = <GIC_PPI 9
+>>>>                                          (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+>>>>                  };
+>>>
+>>> Region 0:
+>>>      4 KiB-pages 0xf1011000-0xf101ffff are aliased to 0xf1010000-0xf1010fff,
+>>>      but we need the first 4 KiB only.
+>>>
+>>> Region 1:
+>>>      4 KiB-pages 0xf1021000-0xf102ffff are aliased to 0xf1020000-0xf1020fff,
+>>>      4 KiB-pages 0xf1030000-0xf103ffff are all zeroes, probably due to
+>>>      non-secure mode?
+>>
+>> No. This 4kB page only contain a single register (GICC_DIR), which is
+>> WO/RAZ.
+>>
+>>>
+>>> Region 2:
+>>>      4 KiB-pages 0xf1041000-0xf104ffff are aliased to 0xf1040000-0xf1040fff,
+>>>      4 KiB-pages 0xf1050000-0xf105ffff are all zeroes, probably due to
+>>>      non-secure mode?
+>>
+>> Neither. The aliases are an unused feature of GIC400 exposing the other
+>> CPUs view of the same registers...
+>>
+>>>
+>>> Region 3:
+>>>      4 KiB-pages 0xf1061000-0xf106ffff are aliased to 0xf1060000-0xf1060fff,
+>>>      4 KiB-pages 0xf1070000-0xf107ffff are all zeroes, probably due to
+>>>      non-secure mode?
+>>
+>> Same as region 1.
+>>
+>>>
+>>> Region 2 already had a 128 KiB size before, which allowed to use 8 KiB at
+>>> 0xf104f000.
+>>
+>> No. This region (GICH) only needs the first 256 bytes or so. The rest is
+>> either RAZ/WI or useless stuff.
+>>
+>>>
+>>> An 8 KiB size for regions 1 and 3 indeed didn't make much sense, as this
+>>> covered two identical (aliased) 4 KiB pages, instead of two different pages
+>>> at offset 0xf000.
+>>
+>> While we're at it, adding a pointer to the documentation (GIC400 and
+>> SBSA) would be tremendously useful, as it'd avoid misinterpreting the
+>> various bits.
+> 
+> 
+> If anybody could give a short description I could copy & paste into 
+> the commit message that would be quite helpful :)
 
-On Tue, May 03, 2016 at 07:48:32PM +0200, Dirk Behme wrote:
-> Hi Simon,
-> 
-> On 29.04.2016 12:35, Marc Zyngier wrote:
-> >On Fri, 29 Apr 2016 09:43:45 +1000
-> >Simon Horman <horms@verge.net.au> wrote:
-> >
-> >>[Cc Mark Zyngier, linux-arm-kernel]
-> >>
-> >>Hi Dirk,
-> >>
-> >>On Thu, Apr 28, 2016 at 07:41:57AM +0200, Dirk Behme wrote:
-> >>>Hi Simon,
-> >>>
-> >>>On 28.04.2016 01:30, Simon Horman wrote:
-> >>>>Hi Dirk,
-> >>>>
-> >>>>I understand that there is an issue here but I'm not yet able
-> >>>>to convince myself that this is the correct solution.
-> >>>>
-> >>>>In revision r0p1 of the CoreLink GIC-400 Generic Interrupt Controller
-> >>>>Technical Reference Manual[1] I see in Section 3.2. "GIC-400 register map"
-> >>>>that the size of both the CPU interfaces and Virtual CPU interfaces are
-> >>>>0x2000 bytes. And assuming that the hardware follows the specification it
-> >>>>appears that DT is correctly describing the hardware.
-> >>>
-> >>>
-> >>>I think you are missing the details described by ARM in
-> >>>
-> >>>http://xenbits.xen.org/gitweb/?p=xen.git;a=commit;h=21550029f709072aacf3b9
-> >>>
-> >>>
-> >>>Maybe Julien could help if you have some more doubts?
-> >>
-> >>I guess I am confused.
-> >>
-> >>I see that there is now handling of the case where the region size is
-> >>128Kbytes. But I'm still not seeing the bit which describes that the
-> >>GIC-400  has a region size of 128Kbytes. Perhaps the later is somehow
-> >>implied by the former. Or perhaps I need to check with the hw team.
-> >
-> >Please have a look at the SBSA document, and in particular the
-> >Appendix-F (registration and selling your soul required - only kidding):
-> >
-> >http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.den0029/index.html
-> >
-> >This requires that, in order for the two halves of GICV to be trappable
-> >*separately* by a hypervisor using 64kB pages at Stage-2, the two 4kB
-> >pages that describe that region are aliased as such:
-> >- the first 4kB page is aliased 16 times over a 64kB region
-> >- the second 4kB page is aliased 16 times over another contiguous 64kB
-> >   region
-> >
-> >This means that your GIC is indeed covering a 128kB region, with the
-> >mapping corresponding to the GICv2 memory map located at offset 0xf000
-> >from the base of that 128kB region. Also, this GICV requirement also
-> >applies to GICC (most likely because the two regions use the same
-> >decoding logic).
-> >
-> >The OS must of course be aware of this (see gic_check_eoimode in the
-> >GIC driver). Of course, almost nobody got that right (I only know of
-> >the APM Xgene-1 so far). If you actually did, great!
-> >
-> >Also, the ACPI spec fails to recognize this by not providing the length
-> >of the region, meaning that those who got it right with DT are likely
-> >to get it wrong with ACPI, and vice-versa.
-> >
-> >It's a wonderful world.
-> 
-> 
-> Could this patch be applied, then?
+Well, there is my reply to an earlier email in this very thread, as well
+as the xen commit which quotes my original commit (which you could also
+refer to).
 
-Yes I have now done so :)
+I'll leave it to you to eradicate the swear words (or to leave them in
+place as a testimony of what 4 years of GIC hacking can do to an
+otherwise sane person).
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
