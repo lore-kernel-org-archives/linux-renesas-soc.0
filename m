@@ -1,73 +1,59 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 2 May 2016 17:06:01 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Gustavo Padovan <gustavo@padovan.org>,
-	"open list:DRM DRIVERS FOR RENESAS"
-	<linux-renesas-soc@vger.kernel.org>,
-	Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
-	open list <linux-kernel@vger.kernel.org>,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 10/14] drm/shmobile: use drm_crtc_send_vblank_event()
-Message-ID: <20160502150601.GU14148@phenom.ffwll.local>
-References: <1460656118-16766-1-git-send-email-gustavo@padovan.org>
- <1460656118-16766-10-git-send-email-gustavo@padovan.org>
- <1613192.Vg6X4UTTAB@avalon>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35564 "EHLO
+	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751721AbcEKNqJ convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 11 May 2016 09:46:09 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1613192.Vg6X4UTTAB@avalon>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1462972438-20797-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1462972438-20797-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Date: Wed, 11 May 2016 15:46:07 +0200
+Message-ID: <CAMuHMdWdfJMn+GzEQxpaMW3xYKZQYGK4v_tS_4ZiYjeRNQqGXA@mail.gmail.com>
+Subject: Re: [PATCHv3 0/4] ARM: dts: r8a779[0-4]: Reference both DMA controllers
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-renesas-soc@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Apr 15, 2016 at 12:59:26AM +0300, Laurent Pinchart wrote:
-> Hi Gustavo,
-> 
-> Thank you for the patch.
-> 
-> On Thursday 14 Apr 2016 10:48:21 Gustavo Padovan wrote:
-> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> > 
-> > Replace the legacy drm_send_vblank_event() with the new helper function.
-> > 
-> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> 
-> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Hi Niklas,
 
-Both patches you acked applied to drm-misc, thanks.
--Daniel
+On Wed, May 11, 2016 at 3:13 PM, Niklas Söderlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> R-Car Gen2 have two DMA controllers, which are equivalent. However DMA
+> slaves were tied only to a single DMA controller in .dtsi. This series
+> add references to to both DMA controllers for all nodes that previously
+> only referenced one of them. It also adds dma references to the SDHI
+> nodes for r8a7794 which according to the datasheet should work but I
+> have not access to HW to verify.
 
-> 
-> > ---
-> >  drivers/gpu/drm/shmobile/shmob_drm_crtc.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-> > b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c index 88643ab..1e154fc 100644
-> > --- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-> > +++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-> > @@ -440,7 +440,7 @@ void shmob_drm_crtc_finish_page_flip(struct
-> > shmob_drm_crtc *scrtc) event = scrtc->event;
-> >  	scrtc->event = NULL;
-> >  	if (event) {
-> > -		drm_send_vblank_event(dev, 0, event);
-> > +		drm_crtc_send_vblank_event(&scrtc->crtc, event);
-> >  		drm_vblank_put(dev, 0);
-> >  	}
-> >  	spin_unlock_irqrestore(&dev->event_lock, flags);
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Thanks for your series!
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> Niklas Söderlund (4):
+>   ARM: dts: r8a7790: Reference both DMA controllers
+>   ARM: dts: r8a7791: Reference both DMA controllers
+>   ARM: dts: r8a7793: Reference both DMA controllers
+>   ARM: dts: r8a7794: Reference both DMA controllers
+
+For patches 2-4:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
