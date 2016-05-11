@@ -1,149 +1,151 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:54507 "EHLO
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:12989 "EHLO
 	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752518AbcELI3N (ORCPT
+	with ESMTP id S1751271AbcEKFb0 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 12 May 2016 04:29:13 -0400
-Received: from vsmta11.fe.internet.bosch.com (unknown [10.4.98.51])
-	by imta24.fe.bosch.de (Postfix) with ESMTP id 9510DD8021B
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 May 2016 10:29:11 +0200 (CEST)
-Received: from SI-HUB1000.de.bosch.com (vsgw24.fe.internet.bosch.com [10.4.98.24])
-	by vsmta11.fe.internet.bosch.com (Postfix) with ESMTP id 55A3D23802C3
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 May 2016 10:29:11 +0200 (CEST)
+	Wed, 11 May 2016 01:31:26 -0400
+Received: from vsmta13.fe.internet.bosch.com (unknown [10.4.98.53])
+	by imta23.fe.bosch.de (Postfix) with ESMTP id 79D9A158020A
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 May 2016 07:31:24 +0200 (CEST)
+Received: from SI-HUB1001.de.bosch.com (vsgw22.fe.internet.bosch.com [10.4.98.11])
+	by vsmta13.fe.internet.bosch.com (Postfix) with ESMTP id 226982E402BB
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 May 2016 07:31:24 +0200 (CEST)
 From: Dirk Behme <dirk.behme@de.bosch.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>,
 	<linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH 3/6] clk: renesas: rcar-gen3: Obtain MD pin values using syscon/regmap
-Date: Thu, 12 May 2016 10:27:18 +0200
-Message-ID: <1463041641-27485-4-git-send-email-dirk.behme@de.bosch.com>
-In-Reply-To: <1463041641-27485-1-git-send-email-dirk.behme@de.bosch.com>
-References: <1463041641-27485-1-git-send-email-dirk.behme@de.bosch.com>
+Subject: [PATCH v2 02/10] boot-mode-reg: Add R-Car driver
+Date: Wed, 11 May 2016 07:29:30 +0200
+Message-ID: <1462944578-1220-3-git-send-email-dirk.behme@de.bosch.com>
+In-Reply-To: <1462944578-1220-1-git-send-email-dirk.behme@de.bosch.com>
+References: <1462944578-1220-1-git-send-email-dirk.behme@de.bosch.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Simon Horman <horms+renesas@verge.net.au>
 
-Obtain the values of the mode pins by reading the Mode Monitoring
-Register (MODEMR) using syscon and regmap. The syscon device and
-register offset to use are obtained from the "renesas,modemr" property
-in DT.
+Boot mode register driver for R-Car.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+If running on a supported platform it reads the boot mode register and
+records it using the boot mode register infrastructure established by an
+earlier patch.
+
+rcar_init_boot_mode() is exported allow it to be explicitly called in
+cases where the boot mode register is needed before init calls are made.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 15 ++++++++++++++-
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 15 ++++++++++++++-
- drivers/clk/renesas/rcar-gen3-cpg.c    | 17 -----------------
- drivers/clk/renesas/rcar-gen3-cpg.h    |  1 -
- 4 files changed, 28 insertions(+), 20 deletions(-)
+ drivers/misc/boot-mode-reg/Kconfig  |  8 +++++
+ drivers/misc/boot-mode-reg/Makefile |  1 +
+ drivers/misc/boot-mode-reg/rcar.c   | 60 +++++++++++++++++++++++++++++++++++++
+ include/misc/boot-mode-reg.h        |  3 ++
+ 4 files changed, 72 insertions(+)
+ create mode 100644 drivers/misc/boot-mode-reg/rcar.c
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index e53aff5..f956a1b 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -15,6 +15,9 @@
- #include <linux/device.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
- 
- #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
- 
-@@ -294,7 +297,17 @@ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
- static int __init r8a7795_cpg_mssr_init(struct device *dev)
- {
- 	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
--	u32 cpg_mode = rcar_gen3_read_mode_pins();
-+	struct device_node *np = dev->of_node;
-+	struct regmap *regmap;
-+	u32 cpg_mode, reg;
+diff --git a/drivers/misc/boot-mode-reg/Kconfig b/drivers/misc/boot-mode-reg/Kconfig
+index 3c4ddde..3868c36 100644
+--- a/drivers/misc/boot-mode-reg/Kconfig
++++ b/drivers/misc/boot-mode-reg/Kconfig
+@@ -9,3 +9,11 @@ config BOOT_MODE_REG_CORE
+ 	help
+ 	  Say Y here to allow support for drivers to read boot mode
+ 	  registers and make the value available to other subsystems.
 +
-+	regmap = syscon_regmap_lookup_by_phandle(np, "renesas,modemr");
-+	if (IS_ERR(regmap) ||
-+	    of_property_read_u32_index(np, "renesas,modemr", 1, &reg) ||
-+	    regmap_read(regmap, reg, &cpg_mode)) {
-+		dev_err(dev, "Failed to parse renesas,modemr\n");
-+		return -EINVAL;
-+	}
++config BOOT_MODE_REG_RCAR
++	tristate "Boot Mode Register Driver for Renesas R-Car SoCs"
++	default n
++	select BOOT_MODE_REG_CORE
++	help
++	  Say Y here to allow support for reading the boot mode register
++	  on Renesas R-Car SoCs.
+diff --git a/drivers/misc/boot-mode-reg/Makefile b/drivers/misc/boot-mode-reg/Makefile
+index 19134b2..5469a1d 100644
+--- a/drivers/misc/boot-mode-reg/Makefile
++++ b/drivers/misc/boot-mode-reg/Makefile
+@@ -4,3 +4,4 @@
+ #
  
- 	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
- 	if (!cpg_pll_config->extal_div) {
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index c84b549..2a0375d 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -16,6 +16,9 @@
- #include <linux/device.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
- 
- #include <dt-bindings/clock/r8a7796-cpg-mssr.h>
- 
-@@ -159,7 +162,17 @@ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
- static int __init r8a7796_cpg_mssr_init(struct device *dev)
- {
- 	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
--	u32 cpg_mode = rcar_gen3_read_mode_pins();
-+	struct device_node *np = dev->of_node;
-+	struct regmap *regmap;
-+	u32 cpg_mode, reg;
+ obj-$(CONFIG_BOOT_MODE_REG_CORE)	+= core.o
++obj-$(CONFIG_BOOT_MODE_REG_RCAR)	+= rcar.o
+diff --git a/drivers/misc/boot-mode-reg/rcar.c b/drivers/misc/boot-mode-reg/rcar.c
+new file mode 100644
+index 0000000..c3b778fe
+--- /dev/null
++++ b/drivers/misc/boot-mode-reg/rcar.c
+@@ -0,0 +1,60 @@
++/*
++ * R-Car Boot Mode Register Driver
++ *
++ * Copyright (C) 2015 Simon Horman
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+	regmap = syscon_regmap_lookup_by_phandle(np, "renesas,modemr");
-+	if (IS_ERR(regmap) ||
-+	    of_property_read_u32_index(np, "renesas,modemr", 1, &reg) ||
-+	    regmap_read(regmap, reg, &cpg_mode)) {
-+		dev_err(dev, "Failed to parse renesas,modemr\n");
-+		return -EINVAL;
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++
++#include <misc/boot-mode-reg.h>
++
++#define MODEMR 0xe6160060
++
++static int __init rcar_read_mode_pins(void)
++{
++	void __iomem *modemr;
++	int err = -ENOMEM;
++	static u32 mode;
++
++	modemr = ioremap_nocache(MODEMR, 4);
++	if (!modemr) {
++		pr_err("failed to map boot mode register");
++		goto err;
 +	}
++	mode = ioread32(modemr);
++	iounmap(modemr);
++
++	err = boot_mode_reg_set(mode);
++err:
++	if (err)
++		pr_err("failed to initialise boot mode");
++	return err;
++}
++
++int __init rcar_init_boot_mode(void)
++{
++	if (of_machine_is_compatible("renesas,r8a7790") ||
++	    of_machine_is_compatible("renesas,r8a7791") ||
++	    of_machine_is_compatible("renesas,r8a7792") ||
++	    of_machine_is_compatible("renesas,r8a7793") ||
++	    of_machine_is_compatible("renesas,r8a7794"))
++		return rcar_read_mode_pins();
++
++	return 0;
++}
++early_initcall(rcar_init_boot_mode);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Simon Horman <horms@verge.net.au>");
++MODULE_DESCRIPTION("R-Car Boot Mode Register Driver");
+diff --git a/include/misc/boot-mode-reg.h b/include/misc/boot-mode-reg.h
+index 34ee653..35d7f57 100644
+--- a/include/misc/boot-mode-reg.h
++++ b/include/misc/boot-mode-reg.h
+@@ -21,4 +21,7 @@
+ int boot_mode_reg_get(u32 *mode);
+ int boot_mode_reg_set(u32 mode);
  
- 	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
- 	if (!cpg_pll_config->extal_div) {
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index bb4f2f9..9d76076 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -333,23 +333,6 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 					 __clk_get_name(parent), 0, mult, div);
- }
- 
--/*
-- * Reset register definitions.
-- */
--#define MODEMR	0xe6160060
--
--u32 __init rcar_gen3_read_mode_pins(void)
--{
--	void __iomem *modemr = ioremap_nocache(MODEMR, 4);
--	u32 mode;
--
--	BUG_ON(!modemr);
--	mode = ioread32(modemr);
--	iounmap(modemr);
--
--	return mode;
--}
--
- int __init rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
- 			      unsigned int clk_extalr)
- {
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index f699085..f788f48 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -33,7 +33,6 @@ struct rcar_gen3_cpg_pll_config {
- 
- #define CPG_RCKCR	0x240
- 
--u32 rcar_gen3_read_mode_pins(void);
- struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
- 	struct clk **clks, void __iomem *base);
++/* Allow explicit initialisation before initcalls */
++int rcar_init_boot_mode(void);
++
+ #endif
 -- 
 2.8.0
