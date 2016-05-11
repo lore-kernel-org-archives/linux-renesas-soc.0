@@ -1,62 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:57211 "EHLO
-	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751400AbcEKNPO (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35125 "EHLO
+	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932739AbcEKODC (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 11 May 2016 09:15:14 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	arnd@arndb.de
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv3 0/4] ARM: dts: r8a779[0-4]: Reference both DMA controllers
-Date: Wed, 11 May 2016 15:13:54 +0200
-Message-Id: <1462972438-20797-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+	Wed, 11 May 2016 10:03:02 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+	ian.molton@codethink.co.uk, lars@metafoo.de,
+	william.towle@codethink.co.uk,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v4 0/8] Lager/Koelsch board HDMI input support
+Date: Wed, 11 May 2016 16:02:48 +0200
+Message-Id: <1462975376-491-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Hi!
 
-R-Car Gen2 have two DMA controllers, which are equivalent. However DMA
-slaves were tied only to a single DMA controller in .dtsi. This series
-add references to to both DMA controllers for all nodes that previously
-only referenced one of them. It also adds dma references to the SDHI
-nodes for r8a7794 which according to the datasheet should work but I
-have not access to HW to verify.
+This series implements Lager/Koelsch HDMI input support on top of version 6
+of Niklas's rcar-vin rewrite ("[PATCHv6] [media] rcar-vin: add Renesas R-Car
+VIN driver").
 
-Tested on Koelsch (r8a7791) by altering the compatible value of either
-dmac0 or dmac1 and verifying that the DMA slaves pick the DMA controller
-that is available.
+This revision addresses the issues found in Hans Verkuil's review of the series
+(except for the EDID intialization, which I have left in), and adds his Koelsch
+support patch.
 
-* Changes since v2
-- Squash a rather large series to one patch per SoC
-- Rebase on top of renesas-devel-20160509-v4.6-rc7
-- Always reference dmac0 before dmac1
-
-* Changes since v1
-- Rebase on top of renesas-devel-20160315-v4.5 and add dmas references
-  new nodes (r8a7790: scif2 r8a7793: i2c6,i2c7,i2c8).
-- Correct error in commit message 31/31 (s/QSPI/MMCIF).
-- Collect Ack and Reviewed tags from Geert.
+CU
+Uli
 
 
-Niklas Söderlund (4):
-  ARM: dts: r8a7790: Reference both DMA controllers
-  ARM: dts: r8a7791: Reference both DMA controllers
-  ARM: dts: r8a7793: Reference both DMA controllers
-  ARM: dts: r8a7794: Reference both DMA controllers
+Changes since v3:
+- rvin_enum_dv_timings(): use vin->src_pad_idx
+- rvin_dv_timings_cap(): likewise
+- rvin_s_dv_timings(): update vin->format
+- add Koelsch support
 
- arch/arm/boot/dts/r8a7790.dtsi | 131 ++++++++++++++++++++++---------------
- arch/arm/boot/dts/r8a7791.dtsi | 145 ++++++++++++++++++++++++-----------------
- arch/arm/boot/dts/r8a7793.dtsi | 130 +++++++++++++++++++++---------------
- arch/arm/boot/dts/r8a7794.dtsi | 119 ++++++++++++++++++++-------------
- 4 files changed, 318 insertions(+), 207 deletions(-)
+Changes since v2:
+- rebased on top of rcar-vin driver v4
+- removed "adv7604: fix SPA register location for ADV7612" (picked up)
+- changed prefix of dts patch to "ARM: dts: lager: "
 
---
-2.8.2
+
+Hans Verkuil (1):
+  r8a7791-koelsch.dts: add HDMI input
+
+Laurent Pinchart (1):
+  v4l: subdev: Add pad config allocator and init
+
+Ulrich Hecht (4):
+  media: rcar_vin: Use correct pad number in try_fmt
+  media: rcar-vin: pad-aware driver initialisation
+  media: rcar-vin: add DV timings support
+  media: rcar-vin: initialize EDID data
+
+William Towle (2):
+  media: adv7604: automatic "default-input" selection
+  ARM: dts: lager: Add entries for VIN HDMI input support
+
+ arch/arm/boot/dts/r8a7790-lager.dts         |  39 +++++++
+ arch/arm/boot/dts/r8a7791-koelsch.dts       |  41 ++++++++
+ drivers/media/i2c/adv7604.c                 |  18 +++-
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 158 +++++++++++++++++++++++++++-
+ drivers/media/platform/rcar-vin/rcar-vin.h  |   2 +
+ drivers/media/v4l2-core/v4l2-subdev.c       |  19 +++-
+ include/media/v4l2-subdev.h                 |  10 ++
+ 7 files changed, 282 insertions(+), 5 deletions(-)
+
+-- 
+2.7.4
