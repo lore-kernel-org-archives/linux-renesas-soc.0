@@ -1,44 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:32905 "EHLO
-	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750954AbcEKMit (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49322 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751605AbcEKMgl (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 11 May 2016 08:38:49 -0400
-MIME-Version: 1.0
-In-Reply-To: <1462970190-588-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Wed, 11 May 2016 08:36:41 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v2.1] dt-bindings: Add Renesas R-Car FCP DT bindings
+Date: Wed, 11 May 2016 15:36:30 +0300
+Message-Id: <1462970190-588-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1461620198-13428-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 References: <1461620198-13428-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-	<1462970190-588-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Date: Wed, 11 May 2016 14:38:48 +0200
-Message-ID: <CAMuHMdV07YFMf4z-pBv-xzMMteH49OKKEgYD7tMRWUWT8Zv7+A@mail.gmail.com>
-Subject: Re: [PATCH v2.1] dt-bindings: Add Renesas R-Car FCP DT bindings
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, May 11, 2016 at 2:36 PM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> The FCP is a companion module of video processing modules in the Renesas
-> R-Car Gen3 SoCs. It provides data compression and decompression, data
-> caching, and conversion of AXI transactions in order to reduce the
-> memory bandwidth.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+The FCP is a companion module of video processing modules in the Renesas
+R-Car Gen3 SoCs. It provides data compression and decompression, data
+caching, and conversion of AXI transactions in order to reduce the
+memory bandwidth.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ .../devicetree/bindings/media/renesas,fcp.txt      | 32 ++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/renesas,fcp.txt
 
-Gr{oetje,eeting}s,
+diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt b/Documentation/devicetree/bindings/media/renesas,fcp.txt
+new file mode 100644
+index 000000000000..6a12960609d8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
+@@ -0,0 +1,32 @@
++Renesas R-Car Frame Compression Processor (FCP)
++-----------------------------------------------
++
++The FCP is a companion module of video processing modules in the Renesas R-Car
++Gen3 SoCs. It provides data compression and decompression, data caching, and
++conversion of AXI transactions in order to reduce the memory bandwidth.
++
++There are three types of FCP: FCP for Codec (FCPC), FCP for VSP (FCPV) and FCP
++for FDP (FCPF). Their configuration and behaviour depend on the module they
++are paired with. These DT bindings currently support the FCPV only.
++
++ - compatible: Must be one or more of the following
++
++   - "renesas,r8a7795-fcpv" for R8A7795 (R-Car H3) compatible 'FCP for VSP'
++   - "renesas,fcpv" for generic compatible 'FCP for VSP'
++
++   When compatible with the generic version, nodes must list the
++   SoC-specific version corresponding to the platform first, followed by the
++   family-specific and/or generic versions.
++
++ - reg: the register base and size for the device registers
++ - clocks: Reference to the functional clock
++
++
++Device node example
++-------------------
++
++	fcpvd1: fcp@fea2f000 {
++		compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++		reg = <0 0xfea2f000 0 0x200>;
++		clocks = <&cpg CPG_MOD 602>;
++	};
+-- 
+Regards,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
