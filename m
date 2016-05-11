@@ -1,12 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:47618 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752588AbcELQuY (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39955 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751580AbcEKXNb (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 12 May 2016 12:50:24 -0400
-Date: Thu, 12 May 2016 18:50:13 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
+	Wed, 11 May 2016 19:13:31 -0400
+Date: Thu, 12 May 2016 08:13:27 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Ian Molton <ian@mnementh.co.uk>,
 	Ulf Hansson <ulf.hansson@linaro.org>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -14,110 +14,114 @@ Cc: Ian Molton <ian@mnementh.co.uk>,
 	linux-renesas-soc@vger.kernel.org,
 	Ben Hutchings <ben.hutchings@codethink.co.uk>
 Subject: Re: [PATCH/RFC 2/3] mmc: sh_mobile_sdhi: Add tuning support
-Message-ID: <20160512165013.GD13121@katana>
+Message-ID: <20160511231327.GB15521@verge.net.au>
 References: <1462859524-28522-1-git-send-email-horms+renesas@verge.net.au>
  <1462859524-28522-3-git-send-email-horms+renesas@verge.net.au>
+ <8760ummo36.wl%kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NklN7DEeGtkPCoo3"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1462859524-28522-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <8760ummo36.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Tue, May 10, 2016 at 06:25:58AM +0000, Kuninori Morimoto wrote:
+> 
+> Hi Simon
+> 
+> Some question/comment from me
+> 
+> about new flags "TMIO_MMC_HAS_UHS_SCC",
+> you added it on [1/3] patch with this comment
+> "Remove unused TMIO_MMC_HAS_UHS_SCC define"
+> but, [1/3] patch adds it, not removed ?
 
---NklN7DEeGtkPCoo3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks, the comment got out of sync with the code at some point.
 
+> > +static void sh_mobile_sdhi_hw_reset(struct tmio_mmc_host *host)
+> > +{
+> > +	struct tmio_mmc_data *pdata = host->pdata;
+> > +
+> > +	if (pdata->flags & TMIO_MMC_HAS_UHS_SCC) {
+> > +		/* Reset SCC */
+> (snip)
+> > +	if (mmc_data->capabilities & MMC_CAP_UHS_SDR104) {
+> > +		mmc_data->capabilities |= MMC_CAP_HW_RESET;
+> > +		mmc_data->flags |= TMIO_MMC_HAS_UHS_SCC;
+> > +	}
+> 
+> And, how about this on sh_mobile_sdhi_hw_reset() ?
+> We can avoid to add new flags TMIO_MMC_HAS_UHS_SCC ?
+> 
+> static void sh_mobile_sdhi_hw_reset(struct tmio_mmc_host *host)
+> {
+> 	...
+> 
+> 	if (pdata->capabilities & MMC_CAP_UHS_SDR104) {
+> 		...
+> 	}
 
-> +struct sh_mobile_sdhi_scc {
-> +	unsigned long clk;	/* clock for SDR104 */
+That seems reasonable, I'll see if I can get it to work.
 
-'clk_rate' please. clk is too often used with struct clk *.
+> > +static inline void sd_scc_write32(struct tmio_mmc_host *host, int addr,
+> > +				  u32 val)
+> > +{
+> > +	struct platform_device *pdev = host->pdev;
+> > +	const struct of_device_id *of_id =
+> > +		of_match_device(sh_mobile_sdhi_of_match, &pdev->dev);
+> > +	const struct sh_mobile_sdhi_of_data *of_data = of_id->data;
+> > +
+> > +	writel(val, host->ctl + of_data->scc_offset +
+> > +	       (addr << host->bus_shift));
+> > +}
+> (snip)
+> >  static const struct sh_mobile_sdhi_of_data of_rcar_gen2_compatible = {
+> >  	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_WRPROTECT_DISABLE |
+> >  			  TMIO_MMC_CLK_ACTUAL | TMIO_MMC_MIN_RCAR2,
+> >  	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
+> >  	.dma_buswidth	= DMA_SLAVE_BUSWIDTH_4_BYTES,
+> >  	.dma_rx_offset	= 0x2000,
+> > +	.scc_offset	= 0x0300,
+> > +	.taps		= rcar_gen2_scc_taps,
+> > +	.taps_num	= ARRAY_SIZE(rcar_gen2_scc_taps),
+> >  };
+> (snip)
+> > +	host->set_clk_div	= sh_mobile_sdhi_set_clk_div;
+> >  	host->dma		= dma_priv;
+> >  	host->write16_hook	= sh_mobile_sdhi_write16_hook;
+> >  	host->clk_enable	= sh_mobile_sdhi_clk_enable;
+> > @@ -364,6 +596,12 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+> >  	host->clk_disable	= sh_mobile_sdhi_clk_disable;
+> >  	host->multi_io_quirk	= sh_mobile_sdhi_multi_io_quirk;
+> >  	host->start_signal_voltage_switch = sh_mobile_sdhi_start_signal_voltage_switch;
+> > +	host->inquiry_tuning	= sh_mobile_sdhi_inquiry_tuning;
+> > +	host->init_tuning	= sh_mobile_sdhi_init_tuning;
+> > +	host->prepare_tuning	= sh_mobile_sdhi_prepare_tuning;
+> > +	host->select_tuning	= sh_mobile_sdhi_select_tuning;
+> > +	host->retuning		= sh_mobile_sdhi_retuning;
+> > +	host->hw_reset		= sh_mobile_sdhi_hw_reset;
+> 
+> You registered new callback functions on this driver,
+> and it is using sd_scc_read/write function, and it is based on "scc_offset".
+> This driver is used from not only Gen2, but also Gen1/Gen3/SH-Mobile.
+> But you added .scc_offset only on of_rcar_gen2_compatible.
+> What's happen on Gen1/Gen3/SH-Mobile ?
 
-> +static void sh_mobile_sdhi_set_clk_div(struct platform_device *pdev, int=
- state)
-> +{
-> +	struct mmc_host *mmc =3D platform_get_drvdata(pdev);
-> +	struct tmio_mmc_host *host =3D mmc_priv(mmc);
-> +
-> +	if (state) {
-> +		sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~0x0100 &
-> +				sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
-> +		sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, 0x00ff);
-> +	}
-> +}
+Probably not much good :(
 
-Left over? Doesn't seemt to get used in patch 1?
+I'll work on correcting that.
 
-> +static inline u32 sd_scc_read32(struct tmio_mmc_host *host, int addr)
-> +{
-> +	struct platform_device *pdev =3D host->pdev;
-> +	const struct of_device_id *of_id =3D
-> +		of_match_device(sh_mobile_sdhi_of_match, &pdev->dev);
-> +	const struct sh_mobile_sdhi_of_data *of_data =3D of_id->data;
-> +
-> +	return readl(host->ctl + of_data->scc_offset +
-> +		     (addr << host->bus_shift));
-> +}
-> +
-> +static inline void sd_scc_write32(struct tmio_mmc_host *host, int addr,
-> +				  u32 val)
-> +{
-> +	struct platform_device *pdev =3D host->pdev;
-> +	const struct of_device_id *of_id =3D
-> +		of_match_device(sh_mobile_sdhi_of_match, &pdev->dev);
-> +	const struct sh_mobile_sdhi_of_data *of_data =3D of_id->data;
-> +
-> +	writel(val, host->ctl + of_data->scc_offset +
-> +	       (addr << host->bus_shift));
+> > +static bool sh_mobile_sdhi_inquiry_tuning(struct tmio_mmc_host *host)
+> > +{
+> > +	/* SDHI should be tuning only SDR104 */
+> > +	if (host->mmc->ios.timing == MMC_TIMING_UHS_SDR104)
+> > +		return true;
+> > +	else
+> > +		return false;
+> > +}
+> 
+> How about this ?
+> 
+> 	return (host->mmc->ios.timing == MMC_TIMING_UHS_SDR104);
 
-It probably makes sense to store the SCC base pointer somewhere to
-prevent all these lookups with every read/write.
-
-> +static bool sh_mobile_sdhi_inquiry_tuning(struct tmio_mmc_host *host)
-> +{
-> +	/* SDHI should be tuning only SDR104 */
-> +	if (host->mmc->ios.timing =3D=3D MMC_TIMING_UHS_SDR104)
-> +		return true;
-> +	else
-> +		return false;
-> +}
-
-Really needed? See patch 1.
-
->  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> @@ -357,6 +588,7 @@ static int sh_mobile_sdhi_probe(struct platform_devic=
-e *pdev)
->  		host->bus_shift =3D of_data->bus_shift;
->  	}
-> =20
-> +	host->set_clk_div	=3D sh_mobile_sdhi_set_clk_div;
-
-Left over?
-
-
---NklN7DEeGtkPCoo3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXNLRFAAoJEBQN5MwUoCm26HkP/A4FSJZzL57zp3FM6k4qw6Dh
-ChtFUJd8Sc4cXWfOvJ1HfmyQYUKaVvUt5LVpKFaYgorsh2ZGkhhw8sFTWpWtiJq5
-QO3w4wyfaAryH1S9oR2Ca2K4SHdj8ClTBalNM8OxoHHJpqWehuMHQM4LF00p3zOn
-xm2Ra7L1dLcmpOJuu32vQsjUyFE1hh3FdVU3ngC9wSGFsD94W/YSetqzqGtgOTzp
-T2HQLwYAssF5sbaZVaCzJ3DkcfytPGzBIGZUM2oXBIx/9a76XZM1+EWZWe4Eg3t6
-SlE9WnLi4t6tgfMlSvfT4bzbGdqneQcg8DSCErITzTllJaMP7VNPb78juvmv6iqY
-LMPSIqUKtx36oxhv9XVIw/6VlyTjlpRVxackI6lrhvpnEkOqCkSL3FpaGLkAxC+d
-qUr2HMtDE6OvC2XTF4QTMrecoxyCL8aZb2iyzfRxD/pKTID+ht90/aWp2rzjXIo1
-RJIzd1AFBPh+UYL1J0hiynTFKEgXtv5+GGV0OEYC50JAZLbC1zZfU4gQQkG9e7Tp
-v9jP4CRHJaO3+D1xXCUnwKfOiqFuazstZDLQQVGPCkb7xcvz6/CAnk2kofwDSAfa
-VwaLl79Vl5G3OWl22VLoTx7l5xdBvg08CFrD5BsWNr3CbmJJQfnG4+cMjLzqsBOU
-KiSIyh61b16A32iK+klv
-=qocS
------END PGP SIGNATURE-----
-
---NklN7DEeGtkPCoo3--
+Sure, thanks for the suggestion.
