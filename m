@@ -1,53 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:57098 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751941AbcEJNzH (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33947 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932896AbcEKODh (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 09:55:07 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: driverdev-devel@linuxdriverproject.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 24/27] staging: ks7010: indent michael_mic.h
-Date: Tue, 10 May 2016 15:52:37 +0200
-Message-Id: <1462888360-21649-25-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
-References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+	Wed, 11 May 2016 10:03:37 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+	ian.molton@codethink.co.uk, lars@metafoo.de,
+	william.towle@codethink.co.uk,
+	Rob Taylor <rob.taylor@codethink.co.uk>,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v4 7/8] ARM: dts: lager: Add entries for VIN HDMI input support
+Date: Wed, 11 May 2016 16:02:55 +0200
+Message-Id: <1462975376-491-8-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1462975376-491-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1462975376-491-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: William Towle <william.towle@codethink.co.uk>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Add DT entries for vin0, vin0_pins, and adv7612.
+
+Sets the 'default-input' property for ADV7612, enabling image and video
+capture without the need to have userspace specifying routing.
+
+Signed-off-by: William Towle <william.towle@codethink.co.uk>
+Signed-off-by: Rob Taylor <rob.taylor@codethink.co.uk>
+[uli: added interrupt, renamed endpoint, merged default-input]
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
- drivers/staging/ks7010/michael_mic.h | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/r8a7790-lager.dts | 39 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-diff --git a/drivers/staging/ks7010/michael_mic.h b/drivers/staging/ks7010/michael_mic.h
-index f14f160ad46549..57ecbe34153202 100644
---- a/drivers/staging/ks7010/michael_mic.h
-+++ b/drivers/staging/ks7010/michael_mic.h
-@@ -16,14 +16,14 @@
- struct michel_mic_t {
- 	uint32_t K0;	// Key 
- 	uint32_t K1;	// Key 
--	uint32_t L;		// Current state 
--	uint32_t R;		// Current state 
--	uint8_t M[4];		// Message accumulator (single word) 
--	int		nBytesInM; 	// # bytes in M 
--	uint8_t 	Result[8];
-+	uint32_t L;	// Current state 
-+	uint32_t R;	// Current state 
-+	uint8_t M[4];	// Message accumulator (single word) 
-+	int nBytesInM;	// # bytes in M 
-+	uint8_t Result[8];
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 749ba02..7e53f5c 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -427,6 +427,11 @@
+ 		function = "usb2";
+ 	};
+ 
++	vin0_pins: vin0 {
++		groups = "vin0_data24", "vin0_sync", "vin0_clkenb", "vin0_clk";
++		function = "vin0";
++	};
++
+ 	vin1_pins: vin {
+ 		groups = "vin1_data8", "vin1_clk";
+ 		function = "vin1";
+@@ -607,6 +612,21 @@
+ 		reg = <0x12>;
+ 	};
+ 
++	hdmi-in@4c {
++		compatible = "adi,adv7612";
++		reg = <0x4c>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
++		remote = <&vin0>;
++		default-input = <0>;
++
++		port {
++			adv7612: endpoint {
++				remote-endpoint = <&vin0ep0>;
++			};
++		};
++	};
++
+ 	composite-in@20 {
+ 		compatible = "adi,adv7180";
+ 		reg = <0x20>;
+@@ -722,6 +742,25 @@
+ 	status = "okay";
  };
  
- extern
--void MichaelMICFunction( struct michel_mic_t *Mic, uint8_t *Key, 
--			 uint8_t *Data, int Len, uint8_t priority, 
--			 uint8_t *Result );
-+void MichaelMICFunction(struct michel_mic_t *Mic, uint8_t * Key,
-+			uint8_t * Data, int Len, uint8_t priority,
-+			uint8_t * Result);
++/* HDMI video input */
++&vin0 {
++	pinctrl-0 = <&vin0_pins>;
++	pinctrl-names = "default";
++
++	status = "ok";
++
++	port {
++		vin0ep0: endpoint {
++			remote-endpoint = <&adv7612>;
++			bus-width = <24>;
++			hsync-active = <0>;
++			vsync-active = <0>;
++			pclk-sample = <1>;
++			data-active = <1>;
++		};
++	};
++};
++
+ /* composite video input */
+ &vin1 {
+ 	pinctrl-0 = <&vin1_pins>;
 -- 
-2.8.1
+2.7.4
