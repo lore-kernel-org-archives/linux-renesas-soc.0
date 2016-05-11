@@ -1,59 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:35564 "EHLO
-	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751721AbcEKNqJ convert rfc822-to-8bit (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:57211 "EHLO
+	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751400AbcEKNPO (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 11 May 2016 09:46:09 -0400
-MIME-Version: 1.0
-In-Reply-To: <1462972438-20797-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1462972438-20797-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-Date: Wed, 11 May 2016 15:46:07 +0200
-Message-ID: <CAMuHMdWdfJMn+GzEQxpaMW3xYKZQYGK4v_tS_4ZiYjeRNQqGXA@mail.gmail.com>
-Subject: Re: [PATCHv3 0/4] ARM: dts: r8a779[0-4]: Reference both DMA controllers
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+	Wed, 11 May 2016 09:15:14 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
 	<niklas.soderlund+renesas@ragnatech.se>
-Cc: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-renesas-soc@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+	arnd@arndb.de
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv3 0/4] ARM: dts: r8a779[0-4]: Reference both DMA controllers
+Date: Wed, 11 May 2016 15:13:54 +0200
+Message-Id: <1462972438-20797-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+Hi,
 
-On Wed, May 11, 2016 at 3:13 PM, Niklas Söderlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> R-Car Gen2 have two DMA controllers, which are equivalent. However DMA
-> slaves were tied only to a single DMA controller in .dtsi. This series
-> add references to to both DMA controllers for all nodes that previously
-> only referenced one of them. It also adds dma references to the SDHI
-> nodes for r8a7794 which according to the datasheet should work but I
-> have not access to HW to verify.
+R-Car Gen2 have two DMA controllers, which are equivalent. However DMA
+slaves were tied only to a single DMA controller in .dtsi. This series
+add references to to both DMA controllers for all nodes that previously
+only referenced one of them. It also adds dma references to the SDHI
+nodes for r8a7794 which according to the datasheet should work but I
+have not access to HW to verify.
 
-Thanks for your series!
+Tested on Koelsch (r8a7791) by altering the compatible value of either
+dmac0 or dmac1 and verifying that the DMA slaves pick the DMA controller
+that is available.
 
-> Niklas Söderlund (4):
->   ARM: dts: r8a7790: Reference both DMA controllers
->   ARM: dts: r8a7791: Reference both DMA controllers
->   ARM: dts: r8a7793: Reference both DMA controllers
->   ARM: dts: r8a7794: Reference both DMA controllers
+* Changes since v2
+- Squash a rather large series to one patch per SoC
+- Rebase on top of renesas-devel-20160509-v4.6-rc7
+- Always reference dmac0 before dmac1
 
-For patches 2-4:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+* Changes since v1
+- Rebase on top of renesas-devel-20160315-v4.5 and add dmas references
+  new nodes (r8a7790: scif2 r8a7793: i2c6,i2c7,i2c8).
+- Correct error in commit message 31/31 (s/QSPI/MMCIF).
+- Collect Ack and Reviewed tags from Geert.
 
-Gr{oetje,eeting}s,
 
-                        Geert
+Niklas Söderlund (4):
+  ARM: dts: r8a7790: Reference both DMA controllers
+  ARM: dts: r8a7791: Reference both DMA controllers
+  ARM: dts: r8a7793: Reference both DMA controllers
+  ARM: dts: r8a7794: Reference both DMA controllers
+
+ arch/arm/boot/dts/r8a7790.dtsi | 131 ++++++++++++++++++++++---------------
+ arch/arm/boot/dts/r8a7791.dtsi | 145 ++++++++++++++++++++++++-----------------
+ arch/arm/boot/dts/r8a7793.dtsi | 130 +++++++++++++++++++++---------------
+ arch/arm/boot/dts/r8a7794.dtsi | 119 ++++++++++++++++++++-------------
+ 4 files changed, 318 insertions(+), 207 deletions(-)
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.8.2
