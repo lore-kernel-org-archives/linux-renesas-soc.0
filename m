@@ -1,64 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:57083 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751018AbcEGLRS (ORCPT
+Received: from sauhun.de ([89.238.76.85]:36957 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751769AbcEKMzJ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sat, 7 May 2016 07:17:18 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: "David S. Miller" <davem@davemloft.net>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/2 -net] ravb: Add missing free_irq() call to ravb_close()
-Date: Sat,  7 May 2016 13:17:11 +0200
-Message-Id: <1462619832-5177-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1462619832-5177-1-git-send-email-geert+renesas@glider.be>
-References: <1462619832-5177-1-git-send-email-geert+renesas@glider.be>
+	Wed, 11 May 2016 08:55:09 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: driverdev-devel@linuxdriverproject.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] staging: ks7010: adapt to new trans_start handling
+Date: Wed, 11 May 2016 14:54:58 +0200
+Message-Id: <1462971298-4042-1-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When reopening the network device on ra7795/salvator-x, e.g. after a
-DHCP timeout:
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-    IP-Config: Reopening network devices...
-    genirq: Flags mismatch irq 139. 00000000 (eth0:ch24:emac) vs. 00000000 (eth0:ch24:emac)
-    ravb e6800000.ethernet eth0: cannot request IRQ eth0:ch24:emac
-    IP-Config: Failed to open eth0
-    IP-Config: No network devices available
+trans_start is gone from netdevice, so use the new helper function to
+set the mark.
 
-The "mismatch" is due to requesting an IRQ that is already in use,
-while IRQF_PROBE_SHARED wasn't set.
-
-However, the real cause is that ravb_close() doesn't release the R-Car
-Gen3-specific secondary IRQ.
-
-Add the missing free_irq() call to fix this.
-
-Fixes: 22d4df8ff3a3cc72 ("ravb: Add support for r8a7795 SoC")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-This version is against net.git.
 
-v2:
-  - New.
----
- drivers/net/ethernet/renesas/ravb_main.c | 2 ++
- 1 file changed, 2 insertions(+)
+This fixup is needed to build with linux/next because it contains a patch
+dropping trans_start. But the new helper is not there in current linux master.
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 9e2a0bd8f5a88803..4277d0c12101fef7 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1506,6 +1506,8 @@ static int ravb_close(struct net_device *ndev)
- 		priv->phydev = NULL;
- 	}
+ drivers/staging/ks7010/ks_wlan_net.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
+index 3e282833372305..ac3354bf6f8c8a 100644
+--- a/drivers/staging/ks7010/ks_wlan_net.c
++++ b/drivers/staging/ks7010/ks_wlan_net.c
+@@ -3398,7 +3398,7 @@ int ks_wlan_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		netif_stop_queue(dev);
  
-+	if (priv->chip_id == RCAR_GEN3)
-+		free_irq(priv->emac_irq, ndev);
- 	free_irq(ndev->irq, ndev);
+ 	rc = hostif_data_request(priv, skb);
+-	dev->trans_start = jiffies;
++	netif_trans_update(dev);
  
- 	napi_disable(&priv->napi[RAVB_NC]);
+ 	DPRINTK(4, "rc=%d\n", rc);
+ 	if (rc) {
 -- 
-1.9.1
+2.8.1
