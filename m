@@ -1,100 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:34155 "EHLO
-	mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752935AbcEaWSZ (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:12988 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751397AbcEKFbZ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 31 May 2016 18:18:25 -0400
-Received: by mail-lf0-f41.google.com with SMTP id k98so898923lfi.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 31 May 2016 15:18:25 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 04/13] ARM: shmobile: r8a7792: basic SoC support
-Date: Wed, 01 Jun 2016 01:18:22 +0300
-Message-ID: <2352834.cNFKgiQiVO@wasted.cogentembedded.com>
-In-Reply-To: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
-References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+	Wed, 11 May 2016 01:31:25 -0400
+Received: from vsmta12.fe.internet.bosch.com (unknown [10.4.98.52])
+	by imta24.fe.bosch.de (Postfix) with ESMTP id 538ACD8021B
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 May 2016 07:31:24 +0200 (CEST)
+Received: from SI-HUB1000.de.bosch.com (vsgw23.fe.internet.bosch.com [10.4.98.23])
+	by vsmta12.fe.internet.bosch.com (Postfix) with ESMTP id ED2AE1B80420
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 May 2016 07:31:23 +0200 (CEST)
+From: Dirk Behme <dirk.behme@de.bosch.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	<linux-renesas-soc@vger.kernel.org>
+Subject: [PATCH v2 06/10] arm: renesas: rcar-gen2: Remove unused rcar_gen2_read_mode_pins()
+Date: Wed, 11 May 2016 07:29:34 +0200
+Message-ID: <1462944578-1220-7-git-send-email-dirk.behme@de.bosch.com>
+In-Reply-To: <1462944578-1220-1-git-send-email-dirk.behme@de.bosch.com>
+References: <1462944578-1220-1-git-send-email-dirk.behme@de.bosch.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add minimal support for the R-Car V2H (R8A7792) SoC.
+From: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The new boot mode reg infrastructure is now used in
+place of rcar_gen2_read_mode_pins so the latter may now be removed.
 
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/Kconfig         |    5 ++++
- arch/arm/mach-shmobile/Makefile        |    1 
- arch/arm/mach-shmobile/setup-r8a7792.c |   34 +++++++++++++++++++++++++++++++++
- 3 files changed, 40 insertions(+)
+ arch/arm/mach-shmobile/rcar-gen2.h       |  1 -
+ arch/arm/mach-shmobile/setup-rcar-gen2.c | 18 ------------------
+ 2 files changed, 19 deletions(-)
 
-Index: renesas/arch/arm/mach-shmobile/Kconfig
-===================================================================
---- renesas.orig/arch/arm/mach-shmobile/Kconfig
-+++ renesas/arch/arm/mach-shmobile/Kconfig
-@@ -86,6 +86,11 @@ config ARCH_R8A7791
- 	select ARCH_RCAR_GEN2
- 	select I2C
+diff --git a/arch/arm/mach-shmobile/rcar-gen2.h b/arch/arm/mach-shmobile/rcar-gen2.h
+index 8a66b4a..4c4ec37 100644
+--- a/arch/arm/mach-shmobile/rcar-gen2.h
++++ b/arch/arm/mach-shmobile/rcar-gen2.h
+@@ -3,7 +3,6 @@
  
-+config ARCH_R8A7792
-+	bool "R-Car V2H (R8A77920)"
-+	select ARCH_RCAR_GEN2
-+	select I2C
-+
- config ARCH_R8A7793
- 	bool "R-Car M2-N (R8A7793)"
- 	select ARCH_RCAR_GEN2
-Index: renesas/arch/arm/mach-shmobile/Makefile
-===================================================================
---- renesas.orig/arch/arm/mach-shmobile/Makefile
-+++ renesas/arch/arm/mach-shmobile/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7
- obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
- obj-$(CONFIG_ARCH_R8A7790)	+= setup-r8a7790.o
- obj-$(CONFIG_ARCH_R8A7791)	+= setup-r8a7791.o
-+obj-$(CONFIG_ARCH_R8A7792)	+= setup-r8a7792.o
- obj-$(CONFIG_ARCH_R8A7793)	+= setup-r8a7793.o
- obj-$(CONFIG_ARCH_R8A7794)	+= setup-r8a7794.o
- obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
-Index: renesas/arch/arm/mach-shmobile/setup-r8a7792.c
-===================================================================
---- /dev/null
-+++ renesas/arch/arm/mach-shmobile/setup-r8a7792.c
-@@ -0,0 +1,34 @@
-+/*
-+ * r8a7792 processor support
-+ *
-+ * Copyright (C) 2014  Renesas Electronics Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/of_platform.h>
-+
-+#include <asm/mach/arch.h>
-+
-+#include "common.h"
-+#include "rcar-gen2.h"
-+
-+static const char * const r8a7792_boards_compat_dt[] __initconst = {
-+	"renesas,r8a7792",
-+	NULL,
-+};
-+
-+DT_MACHINE_START(R8A7792_DT, "Generic R8A7792 (Flattened Device Tree)")
-+	.init_early	= shmobile_init_delay,
-+	.init_late	= shmobile_init_late,
-+	.init_time	= rcar_gen2_timer_init,
-+	.reserve	= rcar_gen2_reserve,
-+	.dt_compat	= r8a7792_boards_compat_dt,
-+MACHINE_END
+ void rcar_gen2_timer_init(void);
+ #define MD(nr) BIT(nr)
+-u32 rcar_gen2_read_mode_pins(void);
+ void rcar_gen2_reserve(void);
+ void rcar_gen2_pm_init(void);
+ 
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index 2af84d8..5942b93 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -29,24 +29,6 @@
+ #include "common.h"
+ #include "rcar-gen2.h"
+ 
+-#define MODEMR 0xe6160060
+-
+-u32 rcar_gen2_read_mode_pins(void)
+-{
+-	static u32 mode;
+-	static bool mode_valid;
+-
+-	if (!mode_valid) {
+-		void __iomem *modemr = ioremap_nocache(MODEMR, 4);
+-		BUG_ON(!modemr);
+-		mode = ioread32(modemr);
+-		iounmap(modemr);
+-		mode_valid = true;
+-	}
+-
+-	return mode;
+-}
+-
+ #define CNTCR 0
+ #define CNTFID0 0x20
+ 
+-- 
+2.8.0
