@@ -1,59 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:33792 "EHLO
-	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752369AbcELRrE (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:54508 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752532AbcELI3N (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 12 May 2016 13:47:04 -0400
-Received: by mail-io0-f195.google.com with SMTP id d62so206074iof.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 May 2016 10:47:03 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1463041641-27485-5-git-send-email-dirk.behme@de.bosch.com>
-References: <1463041641-27485-1-git-send-email-dirk.behme@de.bosch.com>
-	<1463041641-27485-5-git-send-email-dirk.behme@de.bosch.com>
-Date: Thu, 12 May 2016 19:47:02 +0200
-Message-ID: <CAMuHMdVBdrfTPZ_4LofH4wS7KNyiA59s4Z0+42A3DCMuh_Qa8A@mail.gmail.com>
-Subject: Re: [PATCH 4/6] arm64: dts: renesas: Add device node for RST module
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Thu, 12 May 2016 04:29:13 -0400
+Received: from vsmta14.fe.internet.bosch.com (unknown [10.4.98.54])
+	by imta23.fe.bosch.de (Postfix) with ESMTP id A84E2158022E
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 May 2016 10:29:11 +0200 (CEST)
+Received: from FE-HUB1000.de.bosch.com (vsgw24.fe.internet.bosch.com [10.4.98.24])
+	by vsmta14.fe.internet.bosch.com (Postfix) with ESMTP id 5EB9AA402D4
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 May 2016 10:29:11 +0200 (CEST)
+From: Dirk Behme <dirk.behme@de.bosch.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+	<linux-renesas-soc@vger.kernel.org>
+Subject: [PATCH 4/6] arm64: dts: renesas: Add device node for RST module
+Date: Thu, 12 May 2016 10:27:19 +0200
+Message-ID: <1463041641-27485-5-git-send-email-dirk.behme@de.bosch.com>
+In-Reply-To: <1463041641-27485-1-git-send-email-dirk.behme@de.bosch.com>
+References: <1463041641-27485-1-git-send-email-dirk.behme@de.bosch.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, May 12, 2016 at 10:27 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
-> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> @@ -526,6 +526,11 @@
->                         #iommu-cells = <1>;
->                 };
->
-> +               rst: reset-controller@e6160000 {
-> +                       compatible = "renesas,rst-r8a7795", "syscon";
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-"renesas,r8a7795-rst", to match current practices.
+Add a device node for the RST module, which provides reset control.
+Declare it to be a system controller (syscon), so other device nodes can
+refer to its registers.
 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> index 1389528..30d05e7 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> @@ -115,6 +115,11 @@
->                         #power-domain-cells = <1>;
->                 };
->
-> +               rst: reset-controller@e6160000 {
-> +                       compatible = "renesas,rst-r8a7795", "syscon";
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 5 +++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 5 +++++
+ 2 files changed, 10 insertions(+)
 
-"renesas,r8a7796-rst" (not '95 ;-).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 7181db0..36da31f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -526,6 +526,11 @@
+ 			#iommu-cells = <1>;
+ 		};
+ 
++		rst: reset-controller@e6160000 {
++			compatible = "renesas,rst-r8a7795", "syscon";
++			reg = <0 0xe6160000 0 0x0200>;
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a7795",
+ 				     "renesas,rcar-dmac";
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 1389528..30d05e7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -115,6 +115,11 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		rst: reset-controller@e6160000 {
++			compatible = "renesas,rst-r8a7795", "syscon";
++			reg = <0 0xe6160000 0 0x0200>;
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			/* Empty node for now */
+ 		};
+-- 
+2.8.0
