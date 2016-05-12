@@ -1,101 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:36133 "EHLO
-	mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751502AbcEAO3a (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34389 "EHLO
+	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751963AbcELGqg (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sun, 1 May 2016 10:29:30 -0400
+	Thu, 12 May 2016 02:46:36 -0400
 MIME-Version: 1.0
-In-Reply-To: <571FBE21.4050908@cogentembedded.com>
-References: <1461514567-23444-1-git-send-email-ykaneko0929@gmail.com>
-	<571FBE21.4050908@cogentembedded.com>
-Date: Sun, 1 May 2016 23:29:29 +0900
-Message-ID: <CAH1o70L+Dy845CZ4rP7AbFL779o6YtrWu9jp0nVRfWVmkWb93w@mail.gmail.com>
-Subject: Re: [PATCH net-next] ravb: Remove rx buffer ALIGN
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@verge.net.au>,
+In-Reply-To: <1463034838-13322-1-git-send-email-horms+renesas@verge.net.au>
+References: <1463034838-13322-1-git-send-email-horms+renesas@verge.net.au>
+Date: Thu, 12 May 2016 08:46:35 +0200
+Message-ID: <CAMuHMdXzE-JryJoUORk0zHHrprJMjx-ih2ocnoKX5rs2crTYEA@mail.gmail.com>
+Subject: Re: [PATCH] serial: sh-sci: Document SoC specific bindings for r8a7796
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+On Thu, May 12, 2016 at 8:33 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+>
+> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Sorry for the late reply.
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-2016-04-27 4:14 GMT+09:00 Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>:
-> Hello.
->
-> On 04/24/2016 07:16 PM, Yoshihiro Kaneko wrote:
->
->> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
->>
->> Aligning the reception data size is not required.
->
->
->    OK, the gen 2/3 manuals indeed don't require this. I assume the patch has
-> been tested...
->
->> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
->> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->
->
->    I have a few comments though...
->
->> diff --git a/drivers/net/ethernet/renesas/ravb_main.c
->> b/drivers/net/ethernet/renesas/ravb_main.c
->> index 238b56f..66ed80c 100644
->> --- a/drivers/net/ethernet/renesas/ravb_main.c
->> +++ b/drivers/net/ethernet/renesas/ravb_main.c
->> @@ -246,10 +246,10 @@ static void ravb_ring_format(struct net_device
->> *ndev, int q)
->>         for (i = 0; i < priv->num_rx_ring[q]; i++) {
->>                 /* RX descriptor */
->>                 rx_desc = &priv->rx_ring[q][i];
->> -               /* The size of the buffer should be on 16-byte boundary.
->> */
->> -               rx_desc->ds_cc = cpu_to_le16(ALIGN(PKT_BUF_SZ, 16));
->> -               dma_addr = dma_map_single(ndev->dev.parent,
->> priv->rx_skb[q][i]->data,
->> -                                         ALIGN(PKT_BUF_SZ, 16),
->> +               rx_desc->ds_cc = cpu_to_le16(PKT_BUF_SZ);
->> +               dma_addr = dma_map_single(ndev->dev.parent,
->> +                                         priv->rx_skb[q][i]->data,
->
->
->    Please don't reformat the lines above.
+Gr{oetje,eeting}s,
 
-Got it.
+                        Geert
 
->
->> +                                         PKT_BUF_SZ,
->>                                           DMA_FROM_DEVICE);
->>                 /* We just set the data size to 0 for a failed mapping
->> which
->>                  * should prevent DMA from happening...
->> @@ -557,8 +557,9 @@ static bool ravb_rx(struct net_device *ndev, int
->> *quota, int q)
->>
->>                         skb = priv->rx_skb[q][entry];
->>                         priv->rx_skb[q][entry] = NULL;
->> -                       dma_unmap_single(ndev->dev.parent,
->> le32_to_cpu(desc->dptr),
->> -                                        ALIGN(PKT_BUF_SZ, 16),
->> +                       dma_unmap_single(ndev->dev.parent,
->> +                                        le32_to_cpu(desc->dptr),
->
->
->   Same here.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Likewise.
-
->
-> [...]
->
-> MBR, Sergei
->
-
-Thanks,
-kaneko
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
