@@ -1,123 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:57041 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751648AbcEJNyn (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:44636 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751424AbcELEVy (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 09:54:43 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: driverdev-devel@linuxdriverproject.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 05/27] staging: ks7010: remove code for old kernel versions
-Date: Tue, 10 May 2016 15:52:18 +0200
-Message-Id: <1462888360-21649-6-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
-References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+	Thu, 12 May 2016 00:21:54 -0400
+Date: Thu, 12 May 2016 13:21:51 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org,
+	Dirk Behme <dirk.behme@gmail.com>
+Subject: Re: [PATCH 09/10] ARM: r8a779x: Add boot mode reg support
+Message-ID: <20160512042150.GD10868@verge.net.au>
+References: <1462778041-19595-1-git-send-email-dirk.behme@de.bosch.com>
+ <1462778041-19595-10-git-send-email-dirk.behme@de.bosch.com>
+ <CAMuHMdWHmu0WQSeU8oHwUhm20ZGqzmLGXG1tz8suuGqY=b49Vg@mail.gmail.com>
+ <c75e9eda-642d-c1f8-5a10-68e27aa49ae3@de.bosch.com>
+ <CAMuHMdVr8r5D72BiF6__gfZOJkNxmPcykB0pNeJq7zcdsVpN-A@mail.gmail.com>
+ <0d331be5-9540-86f6-406e-ec5647551e73@de.bosch.com>
+ <CAMuHMdWpDkmWe01s53LU4SX3s1tnHdd5EF1wxm6Gy8VJOd_K1Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWpDkmWe01s53LU4SX3s1tnHdd5EF1wxm6Gy8VJOd_K1Q@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Mon, May 09, 2016 at 09:58:32AM +0200, Geert Uytterhoeven wrote:
+> On Mon, May 9, 2016 at 9:57 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+> >>         reset-controller@e6160000 {
+> >>                 compatible = "renesas,r8a7795-rst";
+> >
+> > Hmm, do we really want the r8a7795 here? Then we would need
+> >
+> > r8a7790-rst
+> > r8a7791-rst
+> > r8a7792-rst
+> > r8a7793-rst
+> > r8a7794-rst
+> > r8a7795-rst
+> > r8a7796-rst
+> 
+> We can add fallback values "renesas,rcar-gen2-rst" and "renesas,rcar-gen3-rst".
 
-No need to be backwards compatible.
++1
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/staging/ks7010/ks_hostif.c   |  9 ---------
- drivers/staging/ks7010/ks_wlan.h     | 28 +---------------------------
- drivers/staging/ks7010/ks_wlan_net.c |  3 ---
- 3 files changed, 1 insertion(+), 39 deletions(-)
-
-diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index 6bea699655eec4..146a1357909b39 100644
---- a/drivers/staging/ks7010/ks_hostif.c
-+++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -2103,11 +2103,7 @@ void hostif_sme_multicast_set(ks_wlan_private *priv)
- 
-         struct net_device *dev = priv->net_dev;
- 	int mc_count;
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35)
- 	struct netdev_hw_addr *ha;
--#else
--	struct dev_mc_list *mclist;
--#endif
- 	char	set_address[NIC_MAX_MCAST_LIST*ETH_ALEN];
- 	unsigned long filter_type;
- 	int i;
-@@ -2131,14 +2127,9 @@ void hostif_sme_multicast_set(ks_wlan_private *priv)
- 	else {
- 		if (priv->sme_i.sme_flag & SME_MULTICAST){
- 			mc_count = netdev_mc_count(dev);
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,35)
- 			netdev_for_each_mc_addr(ha, dev) {
- 				memcpy(&set_address[i*ETH_ALEN], ha->addr, ETH_ALEN);
- 			}
--#else
--			for (i = 0, mclist = dev->mc_list; mclist && i < mc_count; i++, mclist = mclist->next)
--				memcpy(&set_address[i*ETH_ALEN], mclist->dmi_addr, ETH_ALEN);
--#endif
- 			priv->sme_i.sme_flag &= ~SME_MULTICAST;
- 			hostif_mib_set_request(priv, LOCAL_MULTICAST_ADDRESS,
- 					       (ETH_ALEN*mc_count), MIB_VALUE_TYPE_OSTRING, &set_address[0]);
-diff --git a/drivers/staging/ks7010/ks_wlan.h b/drivers/staging/ks7010/ks_wlan.h
-index 329a062419fe4a..6bd016414a4f1d 100644
---- a/drivers/staging/ks7010/ks_wlan.h
-+++ b/drivers/staging/ks7010/ks_wlan.h
-@@ -18,9 +18,6 @@
- #define WPS
- 
- #include <linux/version.h>
--#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24)) 
--#include <linux/config.h>
--#endif
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-@@ -35,32 +32,9 @@
- #include <linux/timer.h>	/* struct timer_list */
- #include <linux/string.h>
- #include <linux/completion.h>   /* struct completion */
--
--#include <asm/io.h>
--
--/* Workqueue / task queue backwards compatibility stuff */
--#if ((LINUX_VERSION_CODE > KERNEL_VERSION(2,5,41)) || (defined _MVL31_) || (defined _CELF3_))
- #include <linux/workqueue.h>
--#else
--#include <linux/tqueue.h>
--#define work_struct tq_struct
--#define INIT_WORK INIT_TQUEUE
--#define schedule_work schedule_task
--#endif
- 
--/* Interrupt handler backwards compatibility stuff */
--/*
--#ifndef IRQ_NONE
--#define IRQ_NONE
--#define IRQ_HANDLED
--typedef void irqreturn_t;
--#endif
--*/
--
--#if LINUX_VERSION_CODE < KERNEL_VERSION(2,4,23)
--#define free_netdev(x) kfree(x) 
--#define pci_name(x) x->slot_name 
--#endif
-+#include <asm/io.h>
- 
- #include "ks7010_sdio.h"
- 
-diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
-index 185630cb423d5e..776a544031495f 100644
---- a/drivers/staging/ks7010/ks_wlan_net.c
-+++ b/drivers/staging/ks7010/ks_wlan_net.c
-@@ -13,9 +13,6 @@
-  */
- 
- #include <linux/version.h>
--#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24))
--#include <linux/config.h>
--#endif
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/compiler.h>
--- 
-2.8.1
+This is the scheme we have been using (more and more) consistently
+for Renesas hardware.
