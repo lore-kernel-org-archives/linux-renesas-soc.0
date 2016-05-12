@@ -1,85 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:10020 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754008AbcEYI6g (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:34857 "EHLO
+	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751836AbcELVQW (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 25 May 2016 04:58:36 -0400
-Received: from vsmta12.fe.internet.bosch.com (unknown [10.4.98.52])
-	by imta24.fe.bosch.de (Postfix) with ESMTP id 0B865D80239
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 May 2016 10:58:35 +0200 (CEST)
-Received: from FE-HUB1001.de.bosch.com (vsgw23.fe.internet.bosch.com [10.4.98.23])
-	by vsmta12.fe.internet.bosch.com (Postfix) with ESMTP id BD09D1B80522
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 May 2016 10:58:34 +0200 (CEST)
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	<linux-renesas-soc@vger.kernel.org>,
-	Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-CC: Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH 4/4] drm: rcar-du: Use product register framework
-Date: Wed, 25 May 2016 10:58:28 +0200
-Message-ID: <1464166708-18320-5-git-send-email-dirk.behme@de.bosch.com>
-In-Reply-To: <1464166708-18320-1-git-send-email-dirk.behme@de.bosch.com>
-References: <1464166708-18320-1-git-send-email-dirk.behme@de.bosch.com>
+	Thu, 12 May 2016 17:16:22 -0400
+Received: by mail-lf0-f53.google.com with SMTP id j8so78417899lfd.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 May 2016 14:16:21 -0700 (PDT)
+Subject: Re: [PATCH v3 0/6] Add R8A7794/SILK sound DT support
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+References: <2378837.cigT3tNQPe@wasted.cogentembedded.com>
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <7d19e749-8264-9004-64f4-aefabda699c6@cogentembedded.com>
+Date: Fri, 13 May 2016 00:16:17 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <2378837.cigT3tNQPe@wasted.cogentembedded.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Instead of hard coding the product register in the rcar-du, use
-the framework for it to get the SoC version and the revision needed
-for the enabling the workaround.
+Hello.
 
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+On 05/12/2016 11:38 PM, Sergei Shtylyov wrote:
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index e10943b..ee639a6 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -13,6 +13,7 @@
- 
- #include <linux/clk.h>
- #include <linux/mutex.h>
-+#include <linux/soc/renesas/rcar3-prr.h>
- 
- #include <drm/drmP.h>
- #include <drm/drm_atomic.h>
-@@ -30,12 +31,6 @@
- #include "rcar_du_regs.h"
- #include "rcar_du_vsp.h"
- 
--#define PRODUCT_REG	0xfff00044
--#define PRODUCT_H3_BIT	(0x4f << 8)
--#define PRODUCT_MASK	(0x7f << 8)
--#define CUT_ES1		(0x00)
--#define CUT_ES1_MASK	(0x000000ff)
--
- static u32 rcar_du_crtc_read(struct rcar_du_crtc *rcrtc, u32 reg)
- {
- 	struct rcar_du_device *rcdu = rcrtc->group->dev;
-@@ -167,7 +162,6 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	u32 div;
- 	u32 dpll_reg = 0;
- 	struct dpll_info *dpll;
--	void __iomem *product_reg;
- 	bool h3_es1_workaround = false;
- 
- 	dpll = kzalloc(sizeof(*dpll), GFP_KERNEL);
-@@ -175,11 +169,8 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 		return;
- 
- 	/* DU2 DPLL Clock Select bit workaround in R-Car H3(ES1.0) */
--	product_reg = ioremap(PRODUCT_REG, 0x04);
--	if (((readl(product_reg) & PRODUCT_MASK) == PRODUCT_H3_BIT)
--		&& ((readl(product_reg) & CUT_ES1_MASK) == CUT_ES1))
-+	if (cpu_is_rcar3_h3() && revision_is_rcar3_es1())
- 		h3_es1_workaround = true;
--	iounmap(product_reg);
- 
- 	/* Compute the clock divisor and select the internal or external dot
- 	 * clock based on the requested frequency.
--- 
-2.8.0
+>    Here's the set of 6 patches against Simon Horman's 'renesas.git' repo,
+> 'renesas-devel-20160509-v4.6-rc7' tag. I'm adding the sound device tree support
+> for the R8A7794 SoC based SILK board.
+>
+> [1/6] ARM: dts: r8a7794: add audio clocks
+> [2/6] ARM: dts: r8a7794: add MSTP5 clocks
+> [3/6] ARM: dts: r8a7794: add MSTP10 clocks
+> [4/6] ARM: dts: r8a7794: add Audio-DMAC support
+> [5/6] ARM: dts: r8a7794: add sound support
+> [6/6] ARM: dts: silk: add sound support
+
+    Oops, forgot to mention that patch #5 depends on the R-Car sound patch 
+posted yesterday in order to get interpreted as intended (it uses a disabled 
+SRC node).
+
+WBR, Sergei
