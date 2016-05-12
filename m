@@ -1,56 +1,156 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:57070 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751656AbcEJNys (ORCPT
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:36016 "EHLO
+	mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751917AbcELUvg (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 09:54:48 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: driverdev-devel@linuxdriverproject.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 11/27] staging: ks7010: make loading config file optional
-Date: Tue, 10 May 2016 15:52:24 +0200
-Message-Id: <1462888360-21649-12-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
-References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+	Thu, 12 May 2016 16:51:36 -0400
+Received: by mail-lf0-f41.google.com with SMTP id u64so78648070lff.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 May 2016 13:51:35 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 6/6] ARM: dts: silk: add sound support
+Date: Thu, 12 May 2016 23:51:32 +0300
+Message-ID: <9205499.bquhjWrlAH@wasted.cogentembedded.com>
+In-Reply-To: <2378837.cigT3tNQPe@wasted.cogentembedded.com>
+References: <2378837.cigT3tNQPe@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Define the SILK board dependent part of the R8A7794 sound  device node.
+Add device node for Asahi Kasei AK4643 stereo codec to the I2C1 bus.
+Add the "simple-audio-card" device node to interconnect the SoC sound
+device  and the codec.
 
-We have sane defaults, so we don't need to bail out if there is no
-config file. Note that the config file should go away completely in
-favour of configuration mechanisms already upstream.
+This patch is based on the commit 493b4da7c10c ("ARM: dts: porter: add
+sound support").
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- drivers/staging/ks7010/ks7010_config.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+This patch is against  the 'renesas-devel-20160509-v4.6-rc7' tag of Simon
+Horman's 'renesas.git' repo. It depends on the 5 R8A7794 sound support patches
+posted earlier in order to build...
 
-diff --git a/drivers/staging/ks7010/ks7010_config.c b/drivers/staging/ks7010/ks7010_config.c
-index 7f273dafaf3583..06ff8852e17f33 100644
---- a/drivers/staging/ks7010/ks7010_config.c
-+++ b/drivers/staging/ks7010/ks7010_config.c
-@@ -203,7 +203,6 @@ int ks_wlan_read_config_file(ks_wlan_private *priv)
+Changes in version 3:
+- new patch in this series;
+- renamed the X9 clock node, getting rid of the "clock-output-names" property;
+- removed the "renesas," prefix from the pin properties;
+- refreshed the patch.
+
+ arch/arm/boot/dts/r8a7794-silk.dts |   70 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7794-silk.dts
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7794-silk.dts
++++ renesas/arch/arm/boot/dts/r8a7794-silk.dts
+@@ -10,6 +10,17 @@
+  * kind, whether express or implied.
+  */
  
- 	const struct firmware *fw_entry;
- 	struct device *dev = NULL;
--	int retval;
- 	char cfg_file[]=CFG_FILE;
- 	char *cur_p, *end_p;
- 	char wk_buff[256], *wk_p;
-@@ -254,10 +253,9 @@ int ks_wlan_read_config_file(ks_wlan_private *priv)
- 	priv->reg.rate_set.size = 12;
++/*
++ * SSI-AK4643
++ *
++ * SW1: 2-1: AK4643
++ *      2-3: ADV7511
++ *
++ * This command is required before playback/capture:
++ *
++ *	amixer set "LINEOUT Mixer DACL" on
++ */
++
+ /dts-v1/;
+ #include "r8a7794.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
+@@ -119,6 +130,29 @@
+ 		#clock-cells = <0>;
+ 		clock-frequency = <74250000>;
+ 	};
++
++	x9_clk: audio_clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <12288000>;
++	};
++
++	sound {
++		compatible = "simple-audio-card";
++
++		simple-audio-card,format = "left_j";
++		simple-audio-card,bitclock-master = <&soundcodec>;
++		simple-audio-card,frame-master = <&soundcodec>;
++
++		simple-audio-card,cpu {
++			sound-dai = <&rcar_sound>;
++		};
++
++		soundcodec: simple-audio-card,codec {
++			sound-dai = <&ak4643>;
++			clocks = <&x9_clk>;
++		};
++	};
+ };
  
- 	dev = &priv->ks_wlan_hw.sdio_card->func->dev;
--	if((retval = request_firmware(&fw_entry, cfg_file, dev)) !=0 ){
--		DPRINTK(1, "error request_firmware() file=%s ret=%d\n", cfg_file, retval);
--		return 1;
--	}
-+	/* If no cfg file, stay with the defaults */
-+	if (request_firmware_direct(&fw_entry, cfg_file, dev))
-+		return 0;
+ &extal_clk {
+@@ -193,6 +227,16 @@
+ 		groups = "du1_rgb666", "du1_sync", "du1_disp", "du1_clk0_out";
+ 		function = "du1";
+ 	};
++
++	ssi_pins: sound {
++		groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data";
++		function = "ssi";
++	};
++
++	audio_clk_pins: audio_clk {
++		groups = "audio_clkc";
++		function = "audio_clk";
++	};
+ };
  
- 	DPRINTK(4, "success request_firmware() file=%s size=%d\n", cfg_file, fw_entry->size);
- 	cur_p = fw_entry->data;
--- 
-2.8.1
+ &scif2 {
+@@ -230,6 +274,12 @@
+ 	status = "okay";
+ 	clock-frequency = <400000>;
+ 
++	ak4643: codec@12 {
++		compatible = "asahi-kasei,ak4643";
++		#sound-dai-cells = <0>;
++		reg = <0x12>;
++	};
++
+ 	composite-in@20 {
+ 		compatible = "adi,adv7180";
+ 		reg = <0x20>;
+@@ -392,3 +442,23 @@
+ 		};
+ 	};
+ };
++
++&rcar_sound {
++	pinctrl-0 = <&ssi_pins &audio_clk_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	/* Single DAI */
++	#sound-dai-cells = <0>;
++
++	rcar_sound,dai {
++		dai0 {
++			playback = <&ssi0>;
++			capture  = <&ssi1>;
++		};
++	};
++};
++
++&ssi1 {
++	shared-pin;
++};
