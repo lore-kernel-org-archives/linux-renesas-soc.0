@@ -1,39 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55938 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751013AbcEPILJ (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:35857 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752061AbcELIzf (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 16 May 2016 04:11:09 -0400
-Date: Mon, 16 May 2016 17:11:08 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+	Thu, 12 May 2016 04:55:35 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
 	<niklas.soderlund+renesas@ragnatech.se>
-Cc: magnus.damm@gmail.com, geert@linux-m68k.org, arnd@arndb.de,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCHv4 0/4] Reference both DMA controllers
-Message-ID: <20160516081108.GB4955@verge.net.au>
-References: <1463043285-14702-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+	arnd@arndb.de
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv4 0/4] Reference both DMA controllers
+Date: Thu, 12 May 2016 10:54:41 +0200
+Message-Id: <1463043285-14702-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1463043285-14702-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, May 12, 2016 at 10:54:41AM +0200, Niklas Söderlund wrote:
-> Hi,
-> 
-> R-Car Gen2 have two DMA controllers, which are equivalent. However DMA
-> slaves were tied only to a single DMA controller in .dtsi. This series
-> add references to to both DMA controllers for all nodes that previously
-> only referenced one of them. It also adds dma references to the SDHI
-> nodes for r8a7794 which according to the datasheet should work but I
-> have not access to HW to verify.
-> 
-> Tested on Koelsch (r8a7791) by altering the compatible value of either
-> dmac0 or dmac1 and verifying that the DMA slaves pick the DMA controller
-> that is available.
+Hi,
 
-Thanks, I have queued these up.
+R-Car Gen2 have two DMA controllers, which are equivalent. However DMA
+slaves were tied only to a single DMA controller in .dtsi. This series
+add references to to both DMA controllers for all nodes that previously
+only referenced one of them. It also adds dma references to the SDHI
+nodes for r8a7794 which according to the datasheet should work but I
+have not access to HW to verify.
+
+Tested on Koelsch (r8a7791) by altering the compatible value of either
+dmac0 or dmac1 and verifying that the DMA slaves pick the DMA controller
+that is available.
+
+* Changes since v3
+- Fix accidentally deleted line, thanks Geert for spotting my error. I
+  have now learnt the virtue of 'git diff --color-words'.
+- Add Reviewed-by from Geert for patch 2-4.
+
+* Changes since v2
+- Squash a rather large series to one patch per SoC
+- Rebase on top of renesas-devel-20160509-v4.6-rc7
+- Always reference dmac0 before dmac1
+
+* Changes since v1
+- Rebase on top of renesas-devel-20160315-v4.5 and add dmas references
+  new nodes (r8a7790: scif2 r8a7793: i2c6,i2c7,i2c8).
+- Correct error in commit message 31/31 (s/QSPI/MMCIF).
+- Collect Ack and Reviewed tags from Geert.
+
+Niklas Söderlund (4):
+  ARM: dts: r8a7790: Reference both DMA controllers
+  ARM: dts: r8a7791: Reference both DMA controllers
+  ARM: dts: r8a7793: Reference both DMA controllers
+  ARM: dts: r8a7794: Reference both DMA controllers
+
+ arch/arm/boot/dts/r8a7790.dtsi | 130 +++++++++++++++++++++---------------
+ arch/arm/boot/dts/r8a7791.dtsi | 145 ++++++++++++++++++++++++-----------------
+ arch/arm/boot/dts/r8a7793.dtsi | 130 +++++++++++++++++++++---------------
+ arch/arm/boot/dts/r8a7794.dtsi | 119 ++++++++++++++++++++-------------
+ 4 files changed, 318 insertions(+), 206 deletions(-)
+
+--
+2.8.2
