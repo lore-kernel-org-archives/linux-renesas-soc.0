@@ -1,118 +1,123 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:46559 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755370AbcETHKT (ORCPT
+Received: from sauhun.de ([89.238.76.85]:47618 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752588AbcELQuY (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 20 May 2016 03:10:19 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Thu, 12 May 2016 12:50:24 -0400
+Date: Thu, 12 May 2016 18:50:13 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Ian Molton <ian@mnementh.co.uk>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 16/23] ARM: dts: kzm9d: Fix W=1 dtc warnings
-Date: Fri, 20 May 2016 09:10:07 +0200
-Message-Id: <1463728214-13838-17-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
-References: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+	Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: Re: [PATCH/RFC 2/3] mmc: sh_mobile_sdhi: Add tuning support
+Message-ID: <20160512165013.GD13121@katana>
+References: <1462859524-28522-1-git-send-email-horms+renesas@verge.net.au>
+ <1462859524-28522-3-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="NklN7DEeGtkPCoo3"
+Content-Disposition: inline
+In-Reply-To: <1462859524-28522-3-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /pfc@e0140200/serial@e1030000 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /gpio_keys/button@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /gpio_keys/button@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /gpio_keys/button@3 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /gpio_keys/button@4 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - No changes.
----
- arch/arm/boot/dts/emev2-kzm9d.dts | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+--NklN7DEeGtkPCoo3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/boot/dts/emev2-kzm9d.dts b/arch/arm/boot/dts/emev2-kzm9d.dts
-index a35b851e1cd7678a..9eb86f8f32c5afc0 100644
---- a/arch/arm/boot/dts/emev2-kzm9d.dts
-+++ b/arch/arm/boot/dts/emev2-kzm9d.dts
-@@ -18,7 +18,7 @@
- 	model = "EMEV2 KZM9D Board";
- 	compatible = "renesas,kzm9d", "renesas,emev2";
- 
--	memory {
-+	memory@40000000 {
- 		device_type = "memory";
- 		reg = <0x40000000 0x8000000>;
- 	};
-@@ -33,28 +33,28 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		button@1 {
-+		one {
- 			debounce_interval = <50>;
- 			wakeup-source;
- 			label = "DSW2-1";
- 			linux,code = <KEY_1>;
- 			gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
- 		};
--		button@2 {
-+		two {
- 			debounce_interval = <50>;
- 			wakeup-source;
- 			label = "DSW2-2";
- 			linux,code = <KEY_2>;
- 			gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
- 		};
--		button@3 {
-+		three {
- 			debounce_interval = <50>;
- 			wakeup-source;
- 			label = "DSW2-3";
- 			linux,code = <KEY_3>;
- 			gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
- 		};
--		button@4 {
-+		four {
- 			debounce_interval = <50>;
- 			wakeup-source;
- 			label = "DSW2-4";
-@@ -63,7 +63,7 @@
- 		};
- 	};
- 
--	reg_1p8v: regulator@0 {
-+	reg_1p8v: regulator-1p8v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
- 		regulator-min-microvolt = <1800000>;
-@@ -72,7 +72,7 @@
- 		regulator-boot-on;
- 	};
- 
--	reg_3p3v: regulator@1 {
-+	reg_3p3v: regulator-3p3v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-3.3V";
- 		regulator-min-microvolt = <3300000>;
-@@ -104,7 +104,7 @@
- };
- 
- &pfc {
--	uart1_pins: serial@e1030000 {
-+	uart1_pins: uart1 {
- 		groups = "uart1_ctrl", "uart1_data";
- 		function = "uart1";
- 	};
--- 
-1.9.1
+
+> +struct sh_mobile_sdhi_scc {
+> +	unsigned long clk;	/* clock for SDR104 */
+
+'clk_rate' please. clk is too often used with struct clk *.
+
+> +static void sh_mobile_sdhi_set_clk_div(struct platform_device *pdev, int=
+ state)
+> +{
+> +	struct mmc_host *mmc =3D platform_get_drvdata(pdev);
+> +	struct tmio_mmc_host *host =3D mmc_priv(mmc);
+> +
+> +	if (state) {
+> +		sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~0x0100 &
+> +				sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+> +		sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, 0x00ff);
+> +	}
+> +}
+
+Left over? Doesn't seemt to get used in patch 1?
+
+> +static inline u32 sd_scc_read32(struct tmio_mmc_host *host, int addr)
+> +{
+> +	struct platform_device *pdev =3D host->pdev;
+> +	const struct of_device_id *of_id =3D
+> +		of_match_device(sh_mobile_sdhi_of_match, &pdev->dev);
+> +	const struct sh_mobile_sdhi_of_data *of_data =3D of_id->data;
+> +
+> +	return readl(host->ctl + of_data->scc_offset +
+> +		     (addr << host->bus_shift));
+> +}
+> +
+> +static inline void sd_scc_write32(struct tmio_mmc_host *host, int addr,
+> +				  u32 val)
+> +{
+> +	struct platform_device *pdev =3D host->pdev;
+> +	const struct of_device_id *of_id =3D
+> +		of_match_device(sh_mobile_sdhi_of_match, &pdev->dev);
+> +	const struct sh_mobile_sdhi_of_data *of_data =3D of_id->data;
+> +
+> +	writel(val, host->ctl + of_data->scc_offset +
+> +	       (addr << host->bus_shift));
+
+It probably makes sense to store the SCC base pointer somewhere to
+prevent all these lookups with every read/write.
+
+> +static bool sh_mobile_sdhi_inquiry_tuning(struct tmio_mmc_host *host)
+> +{
+> +	/* SDHI should be tuning only SDR104 */
+> +	if (host->mmc->ios.timing =3D=3D MMC_TIMING_UHS_SDR104)
+> +		return true;
+> +	else
+> +		return false;
+> +}
+
+Really needed? See patch 1.
+
+>  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> @@ -357,6 +588,7 @@ static int sh_mobile_sdhi_probe(struct platform_devic=
+e *pdev)
+>  		host->bus_shift =3D of_data->bus_shift;
+>  	}
+> =20
+> +	host->set_clk_div	=3D sh_mobile_sdhi_set_clk_div;
+
+Left over?
+
+
+--NklN7DEeGtkPCoo3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXNLRFAAoJEBQN5MwUoCm26HkP/A4FSJZzL57zp3FM6k4qw6Dh
+ChtFUJd8Sc4cXWfOvJ1HfmyQYUKaVvUt5LVpKFaYgorsh2ZGkhhw8sFTWpWtiJq5
+QO3w4wyfaAryH1S9oR2Ca2K4SHdj8ClTBalNM8OxoHHJpqWehuMHQM4LF00p3zOn
+xm2Ra7L1dLcmpOJuu32vQsjUyFE1hh3FdVU3ngC9wSGFsD94W/YSetqzqGtgOTzp
+T2HQLwYAssF5sbaZVaCzJ3DkcfytPGzBIGZUM2oXBIx/9a76XZM1+EWZWe4Eg3t6
+SlE9WnLi4t6tgfMlSvfT4bzbGdqneQcg8DSCErITzTllJaMP7VNPb78juvmv6iqY
+LMPSIqUKtx36oxhv9XVIw/6VlyTjlpRVxackI6lrhvpnEkOqCkSL3FpaGLkAxC+d
+qUr2HMtDE6OvC2XTF4QTMrecoxyCL8aZb2iyzfRxD/pKTID+ht90/aWp2rzjXIo1
+RJIzd1AFBPh+UYL1J0hiynTFKEgXtv5+GGV0OEYC50JAZLbC1zZfU4gQQkG9e7Tp
+v9jP4CRHJaO3+D1xXCUnwKfOiqFuazstZDLQQVGPCkb7xcvz6/CAnk2kofwDSAfa
+VwaLl79Vl5G3OWl22VLoTx7l5xdBvg08CFrD5BsWNr3CbmJJQfnG4+cMjLzqsBOU
+KiSIyh61b16A32iK+klv
+=qocS
+-----END PGP SIGNATURE-----
+
+--NklN7DEeGtkPCoo3--
