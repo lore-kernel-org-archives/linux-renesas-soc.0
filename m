@@ -1,114 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:53675 "EHLO
-	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753484AbcEDOft (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33792 "EHLO
+	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752369AbcELRrE (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 4 May 2016 10:35:49 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] clk: renesas: Add r8a7796 CPG Core Clock Definitions
-Date: Wed,  4 May 2016 16:35:41 +0200
-Message-Id: <1462372543-31835-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+	Thu, 12 May 2016 13:47:04 -0400
+Received: by mail-io0-f195.google.com with SMTP id d62so206074iof.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 May 2016 10:47:03 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1463041641-27485-5-git-send-email-dirk.behme@de.bosch.com>
+References: <1463041641-27485-1-git-send-email-dirk.behme@de.bosch.com>
+	<1463041641-27485-5-git-send-email-dirk.behme@de.bosch.com>
+Date: Thu, 12 May 2016 19:47:02 +0200
+Message-ID: <CAMuHMdVBdrfTPZ_4LofH4wS7KNyiA59s4Z0+42A3DCMuh_Qa8A@mail.gmail.com>
+Subject: Re: [PATCH 4/6] arm64: dts: renesas: Add device node for RST module
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add all R-Car M3-W Clock Pulse Generator Core Clock Outputs, as listed
-in Table 8.2b ("List of Clocks [R-Car M3-W]") of the R-Car Gen3
-datasheet (rev. 0.51 + Errata for Rev051 Mar 31 2016).
+On Thu, May 12, 2016 at 10:27 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> @@ -526,6 +526,11 @@
+>                         #iommu-cells = <1>;
+>                 };
+>
+> +               rst: reset-controller@e6160000 {
+> +                       compatible = "renesas,rst-r8a7795", "syscon";
 
-Note that internal CPG clocks (S0, S1, S2, S3, SDSRC, and SSPSRC) are
-not included, as they are used as internal clock sources only, and never
-referenced from DT.
+"renesas,r8a7795-rst", to match current practices.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- include/dt-bindings/clock/r8a7796-cpg-mssr.h | 69 ++++++++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a7796-cpg-mssr.h
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> index 1389528..30d05e7 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> @@ -115,6 +115,11 @@
+>                         #power-domain-cells = <1>;
+>                 };
+>
+> +               rst: reset-controller@e6160000 {
+> +                       compatible = "renesas,rst-r8a7795", "syscon";
 
-diff --git a/include/dt-bindings/clock/r8a7796-cpg-mssr.h b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..1e5942695f0dd057
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
-@@ -0,0 +1,69 @@
-+/*
-+ * Copyright (C) 2016 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7796 CPG Core Clocks */
-+#define R8A7796_CLK_Z			0
-+#define R8A7796_CLK_Z2			1
-+#define R8A7796_CLK_ZR			2
-+#define R8A7796_CLK_ZG			3
-+#define R8A7796_CLK_ZTR			4
-+#define R8A7796_CLK_ZTRD2		5
-+#define R8A7796_CLK_ZT			6
-+#define R8A7796_CLK_ZX			7
-+#define R8A7796_CLK_S0D1		8
-+#define R8A7796_CLK_S0D2		9
-+#define R8A7796_CLK_S0D3		10
-+#define R8A7796_CLK_S0D4		11
-+#define R8A7796_CLK_S0D6		12
-+#define R8A7796_CLK_S0D8		13
-+#define R8A7796_CLK_S0D12		14
-+#define R8A7796_CLK_S1D1		15
-+#define R8A7796_CLK_S1D2		16
-+#define R8A7796_CLK_S1D4		17
-+#define R8A7796_CLK_S2D1		18
-+#define R8A7796_CLK_S2D2		19
-+#define R8A7796_CLK_S2D4		20
-+#define R8A7796_CLK_S3D1		21
-+#define R8A7796_CLK_S3D2		22
-+#define R8A7796_CLK_S3D4		23
-+#define R8A7796_CLK_LB			24
-+#define R8A7796_CLK_CL			25
-+#define R8A7796_CLK_ZB3			26
-+#define R8A7796_CLK_ZB3D2		27
-+#define R8A7796_CLK_ZB3D4		28
-+#define R8A7796_CLK_CR			29
-+#define R8A7796_CLK_CRD2		30
-+#define R8A7796_CLK_SD0H		31
-+#define R8A7796_CLK_SD0			32
-+#define R8A7796_CLK_SD1H		33
-+#define R8A7796_CLK_SD1			34
-+#define R8A7796_CLK_SD2H		35
-+#define R8A7796_CLK_SD2			36
-+#define R8A7796_CLK_SD3H		37
-+#define R8A7796_CLK_SD3			38
-+#define R8A7796_CLK_SSP2		39
-+#define R8A7796_CLK_SSP1		40
-+#define R8A7796_CLK_SSPRS		41
-+#define R8A7796_CLK_RPC			42
-+#define R8A7796_CLK_RPCD2		43
-+#define R8A7796_CLK_MSO			44
-+#define R8A7796_CLK_CANFD		45
-+#define R8A7796_CLK_HDMI		46
-+#define R8A7796_CLK_CSI0		47
-+#define R8A7796_CLK_CSIREF		48
-+#define R8A7796_CLK_CP			49
-+#define R8A7796_CLK_CPEX		50
-+#define R8A7796_CLK_R			51
-+#define R8A7796_CLK_OSC			52
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__ */
--- 
-1.9.1
+"renesas,r8a7796-rst" (not '95 ;-).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
