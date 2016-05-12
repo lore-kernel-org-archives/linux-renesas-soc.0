@@ -1,62 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:36424 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752136AbcEMH4H (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:54509 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752169AbcELI3N (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 13 May 2016 03:56:07 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 08/23] ARM: dts: r8a7794: Fix W=1 dtc warnings
-Date: Fri, 13 May 2016 09:55:48 +0200
-Message-Id: <1463126163-29423-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
-References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+	Thu, 12 May 2016 04:29:13 -0400
+Received: from vsmta14.fe.internet.bosch.com (unknown [10.4.98.54])
+	by imta24.fe.bosch.de (Postfix) with ESMTP id EB439D80235
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 May 2016 10:29:11 +0200 (CEST)
+Received: from FE-HUB1000.de.bosch.com (vsgw24.fe.internet.bosch.com [10.4.98.24])
+	by vsmta14.fe.internet.bosch.com (Postfix) with ESMTP id 9EB9CA407A8
+	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 May 2016 10:29:11 +0200 (CEST)
+From: Dirk Behme <dirk.behme@de.bosch.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	<linux-renesas-soc@vger.kernel.org>
+Subject: [PATCH 6/6] arm64: renesas: select MFD_SYSCON
+Date: Thu, 12 May 2016 10:27:21 +0200
+Message-ID: <1463041641-27485-7-git-send-email-dirk.behme@de.bosch.com>
+In-Reply-To: <1463041641-27485-1-git-send-email-dirk.behme@de.bosch.com>
+References: <1463041641-27485-1-git-send-email-dirk.behme@de.bosch.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Warning (unit_address_vs_reg): Node /cache-controller@1 has a unit name, but no reg property
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Move the cache-controller node under the cpus node, and make its unit
-name and reg property match the MPIDR value.
+The Clock Pulse Generator (CPG) relies on syscon to obtain the values of
+the mode pins.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ arch/arm64/Kconfig.platforms | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index f334a3a715f27d12..cff1c5aa0ec48950 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -55,13 +55,14 @@
- 			power-domains = <&sysc R8A7794_PD_CA7_CPU1>;
- 			next-level-cache = <&L2_CA7>;
- 		};
--	};
- 
--	L2_CA7: cache-controller@1 {
--		compatible = "cache";
--		power-domains = <&sysc R8A7794_PD_CA7_SCU>;
--		cache-unified;
--		cache-level = <2>;
-+		L2_CA7: cache-controller@0 {
-+			compatible = "cache";
-+			reg = <0>;
-+			power-domains = <&sysc R8A7794_PD_CA7_SCU>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
- 	};
- 
- 	gic: interrupt-controller@f1001000 {
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index fda93a2..9bd88d1 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -106,6 +106,7 @@ config ARCH_SHMOBILE
+ config ARCH_RENESAS
+ 	bool "Renesas SoC Platforms"
+ 	select ARCH_SHMOBILE
++	select MFD_SYSCON
+ 	select PINCTRL
+ 	select PM
+ 	select PM_GENERIC_DOMAINS
 -- 
-1.9.1
+2.8.0
