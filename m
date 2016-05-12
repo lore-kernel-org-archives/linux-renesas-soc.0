@@ -1,98 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f169.google.com ([209.85.223.169]:33816 "EHLO
-	mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751760AbcESQZD (ORCPT
+Received: from mail-lb0-f172.google.com ([209.85.217.172]:35703 "EHLO
+	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751151AbcELUpM (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 19 May 2016 12:25:03 -0400
-MIME-Version: 1.0
-In-Reply-To: <1576909.nm8MtQ2Ln5@wasted.cogentembedded.com>
+	Thu, 12 May 2016 16:45:12 -0400
+Received: by mail-lb0-f172.google.com with SMTP id ww9so8418701lbc.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 May 2016 13:45:11 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org, magnus.damm@gmail.com,
+	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 2/6] ARM: dts: r8a7794: add MSTP5 clocks
+Date: Thu, 12 May 2016 23:45:08 +0300
+Message-ID: <1576909.nm8MtQ2Ln5@wasted.cogentembedded.com>
+In-Reply-To: <2378837.cigT3tNQPe@wasted.cogentembedded.com>
 References: <2378837.cigT3tNQPe@wasted.cogentembedded.com>
-	<1576909.nm8MtQ2Ln5@wasted.cogentembedded.com>
-Date: Thu, 19 May 2016 18:25:02 +0200
-Message-ID: <CAMuHMdXaUNwOTQ7827+iTTfuRne_Z1F=-qgxu2cs07==AeqzCA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/6] ARM: dts: r8a7794: add MSTP5 clocks
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+Add some MSTP5 clocks to the R8A7794 device tree.
 
-On Thu, May 12, 2016 at 10:45 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add some MSTP5 clocks to the R8A7794 device tree.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
-> ---
-> Changes in version 3:
-> - refreshed the patch.
->
-> Changes in version 2:
-> - added "the" article to the change log.
->
->  arch/arm/boot/dts/r8a7794.dtsi            |    9 +++++++++
->  include/dt-bindings/clock/r8a7794-clock.h |    1 +
->  2 files changed, 10 insertions(+)
->
-> Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
-> ===================================================================
-> --- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
-> +++ renesas/arch/arm/boot/dts/r8a7794.dtsi
-> @@ -1172,6 +1172,15 @@
->                         clock-indices = <R8A7794_CLK_IRQC>;
->                         clock-output-names = "irqc";
->                 };
-> +               mstp5_clks: mstp5_clks@e6150144 {
-> +                       compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
-> +                       reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
-> +                       clocks = <&hp_clk>, <&extal_clk>, <&p_clk>;
-> +                       #clock-cells = <1>;
-> +                       clock-indices = <R8A7794_CLK_AUDIO_DMAC0
-> +                                        R8A7794_CLK_THERMAL R8A7794_CLK_PWM>;
-> +                       clock-output-names = "audmac0", "thermal", "pwm";
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-R-Car E2 does not have the thermal module.
+---
+Changes in version 3:
+- refreshed the patch.
 
-> +               };
->                 mstp7_clks: mstp7_clks@e615014c {
->                         compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
->                         reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
-> Index: renesas/include/dt-bindings/clock/r8a7794-clock.h
-> ===================================================================
-> --- renesas.orig/include/dt-bindings/clock/r8a7794-clock.h
-> +++ renesas/include/dt-bindings/clock/r8a7794-clock.h
-> @@ -67,6 +67,7 @@
->  #define R8A7794_CLK_IRQC               7
->
->  /* MSTP5 */
-> +#define R8A7794_CLK_AUDIO_DMAC0                2
->  #define R8A7794_CLK_THERMAL            22
+Changes in version 2:
+- added "the" article to the change log.
 
-Hence R8A7794_CLK_THERMAL should be removed.
+ arch/arm/boot/dts/r8a7794.dtsi            |    9 +++++++++
+ include/dt-bindings/clock/r8a7794-clock.h |    1 +
+ 2 files changed, 10 insertions(+)
 
->  #define R8A7794_CLK_PWM                        23
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
++++ renesas/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1172,6 +1172,15 @@
+ 			clock-indices = <R8A7794_CLK_IRQC>;
+ 			clock-output-names = "irqc";
+ 		};
++		mstp5_clks: mstp5_clks@e6150144 {
++			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
++			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
++			clocks = <&hp_clk>, <&extal_clk>, <&p_clk>;
++			#clock-cells = <1>;
++			clock-indices = <R8A7794_CLK_AUDIO_DMAC0
++					 R8A7794_CLK_THERMAL R8A7794_CLK_PWM>;
++			clock-output-names = "audmac0", "thermal", "pwm";
++		};
+ 		mstp7_clks: mstp7_clks@e615014c {
+ 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
+Index: renesas/include/dt-bindings/clock/r8a7794-clock.h
+===================================================================
+--- renesas.orig/include/dt-bindings/clock/r8a7794-clock.h
++++ renesas/include/dt-bindings/clock/r8a7794-clock.h
+@@ -67,6 +67,7 @@
+ #define R8A7794_CLK_IRQC		7
+ 
+ /* MSTP5 */
++#define R8A7794_CLK_AUDIO_DMAC0		2
+ #define R8A7794_CLK_THERMAL		22
+ #define R8A7794_CLK_PWM			23
+ 
