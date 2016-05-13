@@ -1,64 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f194.google.com ([209.85.213.194]:35596 "EHLO
-	mail-ig0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752500AbcEPIPx (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:34441 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752249AbcEMH4H (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 16 May 2016 04:15:53 -0400
-MIME-Version: 1.0
-In-Reply-To: <1463126163-29423-3-git-send-email-geert+renesas@glider.be>
-References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
-	<1463126163-29423-3-git-send-email-geert+renesas@glider.be>
-Date: Mon, 16 May 2016 10:15:52 +0200
-Message-ID: <CAMuHMdVvQGgdfT+ddu7gun7awkm0P4C85cBJq6SZQxoY7ua4XQ@mail.gmail.com>
-Subject: Re: [PATCH 02/23] ARM: dts: r8a73a4: Fix W=1 dtc warnings
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
+	Fri, 13 May 2016 03:56:07 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Rob Herring <robh+dt@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
 	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	linux-renesas-soc@vger.kernel.org,
 	Kumar Gala <galak@codeaurora.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 02/23] ARM: dts: r8a73a4: Fix W=1 dtc warnings
+Date: Fri, 13 May 2016 09:55:42 +0200
+Message-Id: <1463126163-29423-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, May 13, 2016 at 9:55 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> --- a/arch/arm/boot/dts/r8a73a4.dtsi
-> +++ b/arch/arm/boot/dts/r8a73a4.dtsi
-> @@ -31,6 +31,24 @@
->                         power-domains = <&pd_a2sl>;
->                         next-level-cache = <&L2_CA15>;
->                 };
-> +
-> +               L2_CA15: cache-controller@0 {
-> +                       compatible = "cache";
-> +                       reg = <0>;
-> +                       clocks = <&cpg_clocks R8A73A4_CLK_Z>;
-> +                       power-domains = <&pd_a3sm>;
-> +                       cache-unified;
-> +                       cache-level = <2>;
-> +               };
-> +
-> +               L2_CA7: cache-controller@100 {
-> +                       compatible = "cache";
-> +                       reg = <100>;
+Warning (unit_address_vs_reg): Node /cache-controller@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /cache-controller@1 has a unit name, but no reg property
 
-Oops, <0x100>
+Move the cache-controller nodes under the cpus node, and make their
+unit names and reg properties match the MPIDR values.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a73a4.dtsi | 34 ++++++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 16 deletions(-)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
+index 6954912a37537939..357d29d2c04b4c08 100644
+--- a/arch/arm/boot/dts/r8a73a4.dtsi
++++ b/arch/arm/boot/dts/r8a73a4.dtsi
+@@ -31,6 +31,24 @@
+ 			power-domains = <&pd_a2sl>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
++
++		L2_CA15: cache-controller@0 {
++			compatible = "cache";
++			reg = <0>;
++			clocks = <&cpg_clocks R8A73A4_CLK_Z>;
++			power-domains = <&pd_a3sm>;
++			cache-unified;
++			cache-level = <2>;
++		};
++
++		L2_CA7: cache-controller@100 {
++			compatible = "cache";
++			reg = <100>;
++			clocks = <&cpg_clocks R8A73A4_CLK_Z2>;
++			power-domains = <&pd_a3km>;
++			cache-unified;
++			cache-level = <2>;
++		};
+ 	};
+ 
+ 	ptm {
+@@ -46,22 +64,6 @@
+ 			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
+ 
+-	L2_CA15: cache-controller@0 {
+-		compatible = "cache";
+-		clocks = <&cpg_clocks R8A73A4_CLK_Z>;
+-		power-domains = <&pd_a3sm>;
+-		cache-unified;
+-		cache-level = <2>;
+-	};
+-
+-	L2_CA7: cache-controller@1 {
+-		compatible = "cache";
+-		clocks = <&cpg_clocks R8A73A4_CLK_Z2>;
+-		power-domains = <&pd_a3km>;
+-		cache-unified;
+-		cache-level = <2>;
+-	};
+-
+ 	dbsc1: memory-controller@e6790000 {
+ 		compatible = "renesas,dbsc-r8a73a4";
+ 		reg = <0 0xe6790000 0 0x10000>;
+-- 
+1.9.1
