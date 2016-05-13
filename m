@@ -1,109 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:57100 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751594AbcEJNzK (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:41571 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752100AbcEMH4H (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 09:55:10 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: driverdev-devel@linuxdriverproject.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 26/27] staging: ks7010: remove supported card table with one element
-Date: Tue, 10 May 2016 15:52:39 +0200
-Message-Id: <1462888360-21649-27-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
-References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+	Fri, 13 May 2016 03:56:07 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 03/23] ARM: dts: r8a7740: Fix W=1 dtc warnings
+Date: Fri, 13 May 2016 09:55:43 +0200
+Message-Id: <1463126163-29423-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Warning (unit_address_vs_reg): Node /cache-controller has a reg or ranges property, but no unit name
 
-There is only this card supported, no need to iterate over the table.
-The resulting firmware filename wasn't used anyway, but came from the
-config file or hardcoded default.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/staging/ks7010/ks7010_sdio.c | 31 ++-----------------------------
- drivers/staging/ks7010/ks7010_sdio.h |  2 --
- 2 files changed, 2 insertions(+), 31 deletions(-)
+ arch/arm/boot/dts/r8a7740.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
-index ed4d579300ad96..8e8476b52cedbc 100644
---- a/drivers/staging/ks7010/ks7010_sdio.c
-+++ b/drivers/staging/ks7010/ks7010_sdio.c
-@@ -35,19 +35,6 @@ static const struct sdio_device_id if_sdio_ids[] = {
- 	{ /* all zero */ }
- };
+diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
+index 39b2f88ad151e434..159e04eb1b9e55da 100644
+--- a/arch/arm/boot/dts/r8a7740.dtsi
++++ b/arch/arm/boot/dts/r8a7740.dtsi
+@@ -39,7 +39,7 @@
+ 		      <0xc2000000 0x1000>;
+ 	};
  
--struct ks_sdio_model {
--	int model;
--	const char *firmware;
--};
--
--static struct ks_sdio_model ks_sdio_models[] = {
--	{
--		/* ks7010 */
--		.model = 0x10,
--		.firmware = "ks7010sd.rom",
--	},
--};
--
- static int ks7910_sdio_probe(struct sdio_func *function,
- 			     const struct sdio_device_id *device);
- static void ks7910_sdio_remove(struct sdio_func *function);
-@@ -996,7 +983,7 @@ static int ks7910_sdio_probe(struct sdio_func *func,
- 	struct ks_sdio_card *card;
- 	struct net_device *netdev;
- 	unsigned char rw_data;
--	int i = 0, ret;
-+	int ret;
- 
- 	DPRINTK(5, "ks7910_sdio_probe()\n");
- 
-@@ -1009,22 +996,8 @@ static int ks7910_sdio_probe(struct sdio_func *func,
- 		return -ENOMEM;
- 
- 	card->func = func;
--	card->model = 0x10;
- 	spin_lock_init(&card->lock);
- 
--	/* select model */
--	for (i = 0; i < ARRAY_SIZE(ks_sdio_models); i++) {
--		if (card->model == ks_sdio_models[i].model)
--			break;
--	}
--
--	if (i == ARRAY_SIZE(ks_sdio_models)) {
--		DPRINTK(5, "unkown card model 0x%x\n", card->model);
--		goto error;
--	}
--
--	card->firmware = ks_sdio_models[i].firmware;
--
- 	/*** Initialize  SDIO ***/
- 	sdio_claim_host(func);
- 
-@@ -1172,7 +1145,7 @@ static int ks7910_sdio_probe(struct sdio_func *func,
- 	sdio_release_host(func);
- 	sdio_set_drvdata(func, NULL);
- 	kfree(card);
-- error:
-+
- 	return -ENODEV;
- }
- 
-diff --git a/drivers/staging/ks7010/ks7010_sdio.h b/drivers/staging/ks7010/ks7010_sdio.h
-index aea3727caf483b..2d7be5dae157c7 100644
---- a/drivers/staging/ks7010/ks7010_sdio.h
-+++ b/drivers/staging/ks7010/ks7010_sdio.h
-@@ -109,8 +109,6 @@ struct ks_sdio_packet {
- struct ks_sdio_card {
- 	struct sdio_func *func;
- 	struct ks_wlan_private *priv;
--	int model;
--	const char *firmware;
- 	spinlock_t lock;
- };
- 
+-	L2: cache-controller {
++	L2: cache-controller@f0100000 {
+ 		compatible = "arm,pl310-cache";
+ 		reg = <0xf0100000 0x1000>;
+ 		interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
 -- 
-2.8.1
+1.9.1
