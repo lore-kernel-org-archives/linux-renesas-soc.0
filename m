@@ -1,133 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:46016 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752058AbcEMH4H (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35214 "EHLO
+	mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750750AbcEMGN3 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 13 May 2016 03:56:07 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
+	Fri, 13 May 2016 02:13:29 -0400
+MIME-Version: 1.0
+In-Reply-To: <38505966.asxJl6Sq91@wasted.cogentembedded.com>
+References: <2378837.cigT3tNQPe@wasted.cogentembedded.com>
+	<38505966.asxJl6Sq91@wasted.cogentembedded.com>
+Date: Fri, 13 May 2016 08:13:28 +0200
+Message-ID: <CAMuHMdXdN+nf+_scyDA7yW2NgNiFhK8a1Vt1-uA+FEymoFiPNw@mail.gmail.com>
+Subject: Re: [PATCH v3 5/6] ARM: dts: r8a7794: add sound support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	linux-renesas-soc@vger.kernel.org,
 	Rob Herring <robh+dt@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
 	Ian Campbell <ijc+devicetree@hellion.org.uk>,
 	Kumar Gala <galak@codeaurora.org>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 00/23] ARM/arm64: dts: renesas: Fix W=1 dtc warnings
-Date: Fri, 13 May 2016 09:55:40 +0200
-Message-Id: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus, Morimoto-san, Rob,
+On Thu, May 12, 2016 at 10:49 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> --- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
+> +++ renesas/arch/arm/boot/dts/r8a7794.dtsi
+> @@ -1385,4 +1385,189 @@
+>                 #iommu-cells = <1>;
+>                 status = "disabled";
+>         };
+> +
+> +       rcar_sound: sound@ec500000 {
+> +               /*
+> +                * #sound-dai-cells is required
+> +                *
+> +                * Single DAI : #sound-dai-cells = <0>;         <&rcar_sound>;
+> +                * Multi  DAI : #sound-dai-cells = <1>;         <&rcar_sound N>;
+> +                */
+> +               compatible = "renesas,rcar_sound-r8a7794",
+> +                            "renesas,rcar_sound-gen2";
+> +               reg =   <0 0xec500000 0 0x1000>, /* SCU */
+> +                       <0 0xec5a0000 0 0x100>,  /* ADG */
+> +                       <0 0xec540000 0 0x1000>, /* SSIU */
+> +                       <0 0xec541000 0 0x280>,  /* SSI */
+> +                       <0 0xec740000 0 0x200>;  /* Audio DMAC peri peri */
+> +               reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
+> +
+> +               clocks = <&mstp10_clks R8A7794_CLK_SSI_ALL>,
+> +                        <&mstp10_clks R8A7794_CLK_SSI9>,
+> +                        <&mstp10_clks R8A7794_CLK_SSI8>,
+> +                        <&mstp10_clks R8A7794_CLK_SSI7>,
+> +                        <&mstp10_clks R8A7794_CLK_SSI6>,
+> +                        <&mstp10_clks R8A7794_CLK_SSI5>,
+> +                        <&mstp10_clks R8A7794_CLK_SSI4>,
+> +                        <&mstp10_clks R8A7794_CLK_SSI3>,
+> +                        <&mstp10_clks R8A7794_CLK_SSI2>,
+> +                        <&mstp10_clks R8A7794_CLK_SSI1>,
+> +                        <&mstp10_clks R8A7794_CLK_SSI0>,
+> +                        <&mstp10_clks R8A7794_CLK_SCU_SRC9>,
+> +                        <&mstp10_clks R8A7794_CLK_SCU_SRC8>,
+> +                        <&mstp10_clks R8A7794_CLK_SCU_SRC7>,
+> +                        <&mstp10_clks R8A7794_CLK_SCU_SRC6>,
+> +                        <&mstp10_clks R8A7794_CLK_SCU_SRC5>,
+> +                        <&mstp10_clks R8A7794_CLK_SCU_SRC4>,
+> +                        <&mstp10_clks R8A7794_CLK_SCU_SRC3>,
+> +                        <&mstp10_clks R8A7794_CLK_SCU_SRC2>,
+> +                        <&mstp10_clks R8A7794_CLK_SCU_SRC1>,
+> +                        <&mstp10_clks R8A7794_CLK_SCU_SRC0>,
+> +                        <&mstp10_clks R8A7794_CLK_SCU_CTU0_MIX0>,
+> +                        <&mstp10_clks R8A7794_CLK_SCU_CTU1_MIX1>,
+> +                        <&mstp10_clks R8A7794_CLK_SCU_CTU0_MIX0>,
+> +                        <&mstp10_clks R8A7794_CLK_SCU_CTU1_MIX1>,
+> +                        <&mstp10_clks R8A7794_CLK_SCU_DVC0>,
+> +                        <&mstp10_clks R8A7794_CLK_SCU_DVC1>,
+> +                        <&audio_clka>, <&audio_clkb>, <&audio_clkc>,
+> +                        <&m2_clk>;
+> +               clock-names = "ssi-all",
+> +                             "ssi.9", "ssi.8", "ssi.7", "ssi.6", "ssi.5",
+> +                             "ssi.4", "ssi.3", "ssi.2", "ssi.1", "ssi.0",
+> +                             "src.9", "src.8", "src.7", "src.6", "src.5",
+> +                             "src.4", "src.3", "src.2", "src.1", "src.0",
+> +                             "ctu.0", "ctu.1",
+> +                             "mix.0", "mix.1",
+> +                             "dvc.0", "dvc.1",
+> +                             "clk_a", "clk_b", "clk_c", "clk_i";
+> +               power-domains = <&cpg_clocks>;
 
-This patch series fixes the new warnings related to Renesas arm32/arm64
-DTSes that can be seen in -next using "make W=1 dtbs", courtesy of
-commit b993734718c01064 ("scripts/dtc: Update to upstream version
-53bf130b1cdd") in Rob herring's for-next branch. They're all of the
-form:
+In renesas-devel-20160509-v4.6-rc7, that should be
 
-    Warning (unit_address_vs_reg): Node /cache-controller@0 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /cache-controller has a reg or ranges property, but no unit name
-    Warning (unit_address_vs_reg): Node /clocks@e0110000/iic0_sclkdiv has a reg or ranges property, but no unit name
-    Warning (unit_address_vs_reg): Node /i2c@2 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /keyboard/button@1 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
-    Warning (unit_address_vs_reg): Node /pfc@e0140200/serial@e1030000 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /regulator@0 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@0 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,dvc/dvc@0 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,mix/mix@0 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@0 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@0 has a unit name, but no reg property
-
-Fixes:
-  - For cache-controllers of Cortex A7, A15, A53, and A57, I moved them
-    inside the /cpus node, and made their unit names and reg properties
-    match the MPIDR values,
-  - For clocks, I added the missing unit names,
-  - For regulators, i2c-gpios buses, and sound nodes, I (more-or-less)
-    replaced the '@' by a dash,
-  - For buttons, I changed the node name to match the key events,
-  - For pinctrl, I changed the node name to the device name.
-
-Note that to get rid of all warnings for the /memory node,
-arch/arm/boot/dts/skeleton.dtsi should be fixed, too.
-
-Morimoto-san: If this is accepted, the examples in
-Documentation/devicetree/bindings/sound/renesas,rsnd.txt should be
-updated, too.
-
-Boot-tested on r8a73a4/ape6evm, r8a7740/armadillo, r8a7791/koelsch,
-sh73a0/kzm9g, r8a7795/salvator-x. I didn't test sound, but the kernel
-log didn't show any failures.
-
-The patches are against renesas-devel-20160509-v4.6-rc7.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (23):
-  ARM: dts: emev2: Fix W=1 dtc warnings
-  ARM: dts: r8a73a4: Fix W=1 dtc warnings
-  ARM: dts: r8a7740: Fix W=1 dtc warnings
-  ARM: dts: r8a7778: Fix W=1 dtc warnings
-  ARM: dts: r8a7790: Fix W=1 dtc warnings
-  ARM: dts: r8a7791: Fix W=1 dtc warnings
-  ARM: dts: r8a7793: Fix W=1 dtc warnings
-  ARM: dts: r8a7794: Fix W=1 dtc warnings
-  ARM: dts: sh73a0: Fix W=1 dtc warnings
-  ARM: dts: ape6evm: Fix W=1 dtc warnings
-  ARM: dts: armadillo800eva: Fix W=1 dtc warnings
-  ARM: dts: bockw: Fix W=1 dtc warnings
-  ARM: dts: genmai: Fix W=1 dtc warnings
-  ARM: dts: gose: Fix W=1 dtc warnings
-  ARM: dts: koelsch: Fix W=1 dtc warnings
-  ARM: dts: kzm9d: Fix W=1 dtc warnings
-  ARM: dts: kzm9g: Fix W=1 dtc warnings
-  ARM: dts: lager: Fix W=1 dtc warnings
-  ARM: dts: marzen: Fix W=1 dtc warnings
-  ARM: dts: porter: Fix W=1 dtc warnings
-  ARM: dts: silk: Fix W=1 dtc warnings
-  arm64: dts: r8a7795: Fix W=1 dtc warnings
-  arm64: dts: salvator-x: Fix W=1 dtc warnings
-
- arch/arm/boot/dts/emev2-kzm9d.dts                  | 16 ++--
- arch/arm/boot/dts/emev2.dtsi                       | 26 +++---
- arch/arm/boot/dts/r7s72100-genmai.dts              |  2 +-
- arch/arm/boot/dts/r8a73a4-ape6evm.dts              |  8 +-
- arch/arm/boot/dts/r8a73a4.dtsi                     | 34 ++++----
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts      | 12 +--
- arch/arm/boot/dts/r8a7740.dtsi                     |  2 +-
- arch/arm/boot/dts/r8a7778-bockw.dts                |  4 +-
- arch/arm/boot/dts/r8a7778.dtsi                     | 28 +++----
- arch/arm/boot/dts/r8a7779-marzen.dts               |  4 +-
- arch/arm/boot/dts/r8a7790-lager.dts                | 20 ++---
- arch/arm/boot/dts/r8a7790.dtsi                     | 94 +++++++++++-----------
- arch/arm/boot/dts/r8a7791-koelsch.dts              | 12 +--
- arch/arm/boot/dts/r8a7791-porter.dts               |  8 +-
- arch/arm/boot/dts/r8a7791.dtsi                     | 79 +++++++++---------
- arch/arm/boot/dts/r8a7793-gose.dts                 | 12 +--
- arch/arm/boot/dts/r8a7793.dtsi                     | 59 +++++++-------
- arch/arm/boot/dts/r8a7794-silk.dts                 |  6 +-
- arch/arm/boot/dts/r8a7794.dtsi                     | 13 +--
- arch/arm/boot/dts/sh73a0-kzm9g.dts                 | 10 +--
- arch/arm/boot/dts/sh73a0.dtsi                      |  2 +-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  8 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 70 ++++++++--------
- 23 files changed, 269 insertions(+), 260 deletions(-)
-
--- 
-1.9.1
+        power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
 
 Gr{oetje,eeting}s,
 
-						Geert
+                        Geert
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+                                -- Linus Torvalds
