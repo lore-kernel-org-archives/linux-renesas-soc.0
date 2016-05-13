@@ -1,94 +1,145 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f195.google.com ([209.85.213.195]:35417 "EHLO
-	mail-ig0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750758AbcEQKzC (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:60625 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752148AbcEMH4H (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 17 May 2016 06:55:02 -0400
-Received: by mail-ig0-f195.google.com with SMTP id jn6so1257827igb.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 May 2016 03:55:01 -0700 (PDT)
-MIME-Version: 1.0
-Date: Tue, 17 May 2016 12:55:01 +0200
-Message-ID: <CAMuHMdX6veYCvRdJjui3J0oPUKLhZB1Y8_AROnqhtZS9=HyNTg@mail.gmail.com>
-Subject: BUG since "ASoC: simple-card: Add pm callbacks to platform driver"
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>
-Cc: ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+	Fri, 13 May 2016 03:56:07 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 01/23] ARM: dts: emev2: Fix W=1 dtc warnings
+Date: Fri, 13 May 2016 09:55:41 +0200
+Message-Id: <1463126163-29423-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Peter, Mark, Liam,
+Warning (unit_address_vs_reg): Node /clocks@e0110000/iic0_sclkdiv has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /clocks@e0110000/iic0_sclk has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /clocks@e0110000/iic1_sclkdiv has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /clocks@e0110000/iic1_sclk has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /clocks@e0110000/usia_u0_sclkdiv has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u1_sclkdiv has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u2_sclkdiv has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u3_sclkdiv has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /clocks@e0110000/usia_u0_sclk has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u1_sclk has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u2_sclk has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u3_sclk has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /clocks@e0110000/sti_sclk has a reg or ranges property, but no unit name
 
-With today's sound-asoc/for-next, I'm seeing on r8a7791/koelsch and
-sh73a0/kzm9g:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/emev2.dtsi | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-    kernel BUG at drivers/base/regmap/regcache.c:347!
-    Internal error: Oops - BUG: 0 [#1] SMP ARM
-    Modules linked in:
-    CPU: 0 PID: 20 Comm: kworker/0:1 Not tainted
-4.6.0-koelsch-07135-g1481dd77fa7d01cb #2621
-    Hardware name: Generic R8A7791 (Flattened Device Tree)
-    Workqueue: events soc_resume_deferred
-    task: ef512100 ti: ef5a6000 task.ti: ef5a6000
-    PC is at regcache_sync+0xc/0x118
-    LR is at ak4642_resume+0x20/0x28
-    pc : [<c04932a4>]    lr : [<c05bd34c>]    psr: 60000153
-    sp : ef5a7ee0  ip : ee7ea62c  fp : 00000008
-    r10: 00000000  r9 : ee7ebd0c  r8 : ee7ebd18
-    r7 : ee7ebc10  r6 : ee7ebcb8  r5 : ee7ebd08  r4 : eefc5800
-    r3 : 00000000  r2 : eefc5814  r1 : 001c001b  r0 : eefc5800
-    Flags: nZCv  IRQs on  FIQs off  Mode SVC_32  ISA ARM  Segment kernel
-    Control: 30c5387d  Table: 6eaee540  DAC: fffffffd
-    Process kworker/0:1 (pid: 20, stack limit = 0xef5a6210)
-    Stack: (0xef5a7ee0 to 0xef5a8000)
-    7ee0: eefc5600 c05ae878 ef588100 ee7ebd08 ef9bdf00 00000000
-ef9c4400 c023341c
-    7f00: ef588100 ee7ebd08 ef588100 ef9bdf00 ef9bdf00 ef5a6000
-ef9bdf24 c0e02100
-    7f20: ef588118 c0233ae0 ef512100 ef59ae00 00000000 ef588100
-c0233838 00000000
-    7f40: 00000000 00000000 00000000 c0237b58 00000001 00000000
-ef43b040 ef588100
-    7f60: 00000000 00000000 dead4ead ffffffff ffffffff ef5a7f74
-ef5a7f74 00000000
-    7f80: 00000000 dead4ead ffffffff ffffffff ef5a7f90 ef5a7f90
-ef5a7fac ef59ae00
-    7fa0: c0237a80 00000000 00000000 c0206b68 00000000 00000000
-00000000 00000000
-    7fc0: 00000000 00000000 00000000 00000000 00000000 00000000
-00000000 00000000
-    7fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-ef5a7ff4 00000000
-    [<c04932a4>] (regcache_sync) from [<ee7ebd08>] (0xee7ebd08)
-    Code: c0978f0f e590312c e3530000 1a000000 (e7f001f2)
-
-I've bisected this to
-
-commit 7c3767115a04bc7aa87bdbd3352d1801d4bbeea4
-Author: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Date:   Mon May 9 13:38:10 2016 +0300
-
-    ASoC: simple-card: Add pm callbacks to platform driver
-
-    Set snd_soc_pm_ops for the pm ops to make sure that the ASoC level of PM
-    operations are going to happen. This is needed to get suspend/resume
-    working correctly when the audio is using simple-card.
-
-    Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-    Signed-off-by: Mark Brown <broonie@kernel.org>
-
-Reverting it fixes the problem for me.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/emev2.dtsi b/arch/arm/boot/dts/emev2.dtsi
+index bcce6f50c93d9d25..cd119400f440bb5a 100644
+--- a/arch/arm/boot/dts/emev2.dtsi
++++ b/arch/arm/boot/dts/emev2.dtsi
+@@ -69,25 +69,25 @@
+ 			clock-frequency = <32768>;
+ 			#clock-cells = <0>;
+ 		};
+-		iic0_sclkdiv: iic0_sclkdiv {
++		iic0_sclkdiv: iic0_sclkdiv@624,0 {
+ 			compatible = "renesas,emev2-smu-clkdiv";
+ 			reg = <0x624 0>;
+ 			clocks = <&pll3_fo>;
+ 			#clock-cells = <0>;
+ 		};
+-		iic0_sclk: iic0_sclk {
++		iic0_sclk: iic0_sclk@48c,1 {
+ 			compatible = "renesas,emev2-smu-gclk";
+ 			reg = <0x48c 1>;
+ 			clocks = <&iic0_sclkdiv>;
+ 			#clock-cells = <0>;
+ 		};
+-		iic1_sclkdiv: iic1_sclkdiv {
++		iic1_sclkdiv: iic1_sclkdiv@624,16 {
+ 			compatible = "renesas,emev2-smu-clkdiv";
+ 			reg = <0x624 16>;
+ 			clocks = <&pll3_fo>;
+ 			#clock-cells = <0>;
+ 		};
+-		iic1_sclk: iic1_sclk {
++		iic1_sclk: iic1_sclk@490,1 {
+ 			compatible = "renesas,emev2-smu-gclk";
+ 			reg = <0x490 1>;
+ 			clocks = <&iic1_sclkdiv>;
+@@ -100,55 +100,55 @@
+ 			clock-mult = <7000>;
+ 			#clock-cells = <0>;
+ 		};
+-		usia_u0_sclkdiv: usia_u0_sclkdiv {
++		usia_u0_sclkdiv: usia_u0_sclkdiv@610,0 {
+ 			compatible = "renesas,emev2-smu-clkdiv";
+ 			reg = <0x610 0>;
+ 			clocks = <&pll3_fo>;
+ 			#clock-cells = <0>;
+ 		};
+-		usib_u1_sclkdiv: usib_u1_sclkdiv {
++		usib_u1_sclkdiv: usib_u1_sclkdiv@65c,0 {
+ 			compatible = "renesas,emev2-smu-clkdiv";
+ 			reg = <0x65c 0>;
+ 			clocks = <&pll3_fo>;
+ 			#clock-cells = <0>;
+ 		};
+-		usib_u2_sclkdiv: usib_u2_sclkdiv {
++		usib_u2_sclkdiv: usib_u2_sclkdiv@65c,16 {
+ 			compatible = "renesas,emev2-smu-clkdiv";
+ 			reg = <0x65c 16>;
+ 			clocks = <&pll3_fo>;
+ 			#clock-cells = <0>;
+ 		};
+-		usib_u3_sclkdiv: usib_u3_sclkdiv {
++		usib_u3_sclkdiv: usib_u3_sclkdiv@660,0 {
+ 			compatible = "renesas,emev2-smu-clkdiv";
+ 			reg = <0x660 0>;
+ 			clocks = <&pll3_fo>;
+ 			#clock-cells = <0>;
+ 		};
+-		usia_u0_sclk: usia_u0_sclk {
++		usia_u0_sclk: usia_u0_sclk@4a0,1 {
+ 			compatible = "renesas,emev2-smu-gclk";
+ 			reg = <0x4a0 1>;
+ 			clocks = <&usia_u0_sclkdiv>;
+ 			#clock-cells = <0>;
+ 		};
+-		usib_u1_sclk: usib_u1_sclk {
++		usib_u1_sclk: usib_u1_sclk@4b8,1 {
+ 			compatible = "renesas,emev2-smu-gclk";
+ 			reg = <0x4b8 1>;
+ 			clocks = <&usib_u1_sclkdiv>;
+ 			#clock-cells = <0>;
+ 		};
+-		usib_u2_sclk: usib_u2_sclk {
++		usib_u2_sclk: usib_u2_sclk@4bc,1 {
+ 			compatible = "renesas,emev2-smu-gclk";
+ 			reg = <0x4bc 1>;
+ 			clocks = <&usib_u2_sclkdiv>;
+ 			#clock-cells = <0>;
+ 		};
+-		usib_u3_sclk: usib_u3_sclk {
++		usib_u3_sclk: usib_u3_sclk@4c0,1 {
+ 			compatible = "renesas,emev2-smu-gclk";
+ 			reg = <0x4c0 1>;
+ 			clocks = <&usib_u3_sclkdiv>;
+ 			#clock-cells = <0>;
+ 		};
+-		sti_sclk: sti_sclk {
++		sti_sclk: sti_sclk@528,1 {
+ 			compatible = "renesas,emev2-smu-gclk";
+ 			reg = <0x528 1>;
+ 			clocks = <&c32ki>;
+-- 
+1.9.1
