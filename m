@@ -1,43 +1,37 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 09/23] ARM: dts: sh73a0: Fix W=1 dtc warnings
-Date: Fri, 13 May 2016 09:55:49 +0200
-Message-Id: <1463126163-29423-10-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
-References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from lb1-smtp-cloud3.xs4all.net ([194.109.24.22]:34806 "EHLO
+	lb1-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752191AbcEMI2O (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 13 May 2016 04:28:14 -0400
+Subject: Re: [PATCH v4 1/8] v4l: subdev: Add pad config allocator and init
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
+References: <1462975376-491-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1462975376-491-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+	ian.molton@codethink.co.uk, lars@metafoo.de,
+	william.towle@codethink.co.uk,
+	Laurent Pinchart <laurent.pinchart@linaro.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <57359017.7080706@xs4all.nl>
+Date: Fri, 13 May 2016 10:28:07 +0200
+MIME-Version: 1.0
+In-Reply-To: <1462975376-491-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Warning (unit_address_vs_reg): Node /cache-controller has a reg or ranges property, but no unit name
+On 05/11/2016 04:02 PM, Ulrich Hecht wrote:
+> From: Laurent Pinchart <laurent.pinchart@linaro.org>
+> 
+> Add a new subdev operation to initialize a subdev pad config array, and
+> a helper function to allocate and initialize the array. This can be used
+> by bridge drivers to implement try format based on subdev pad
+> operations.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/sh73a0.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch has already been merged and can be dropped.
 
-diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
-index c4f434cdec60f075..032fe2f14b16998f 100644
---- a/arch/arm/boot/dts/sh73a0.dtsi
-+++ b/arch/arm/boot/dts/sh73a0.dtsi
-@@ -55,7 +55,7 @@
- 		      <0xf0000100 0x100>;
- 	};
- 
--	L2: cache-controller {
-+	L2: cache-controller@f0100000 {
- 		compatible = "arm,pl310-cache";
- 		reg = <0xf0100000 0x1000>;
- 		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
--- 
-1.9.1
-
+	Hans
