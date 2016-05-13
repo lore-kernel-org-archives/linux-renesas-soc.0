@@ -1,67 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:56797 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753557AbcEMWRe (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34617 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751481AbcEMNhQ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 13 May 2016 18:17:34 -0400
-Date: Sat, 14 May 2016 00:17:26 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: Re: [PULL REQUEST] renesas/topic/gen3-sdio for renesas-drivers
-Message-ID: <20160513221726.GA1720@katana>
-References: <20160513123045.GA12309@katana>
- <CAMuHMdW13P=EbkukgNCt+OENqpH0LJY3L-F9N=y5zEhiyjhfpw@mail.gmail.com>
+	Fri, 13 May 2016 09:37:16 -0400
+Received: by mail-io0-f196.google.com with SMTP id d62so3657470iof.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 May 2016 06:37:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="X1bOJ3K7DJ5YkBrT"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdW13P=EbkukgNCt+OENqpH0LJY3L-F9N=y5zEhiyjhfpw@mail.gmail.com>
+In-Reply-To: <20160513123045.GA12309@katana>
+References: <20160513123045.GA12309@katana>
+Date: Fri, 13 May 2016 15:37:15 +0200
+Message-ID: <CAMuHMdW13P=EbkukgNCt+OENqpH0LJY3L-F9N=y5zEhiyjhfpw@mail.gmail.com>
+Subject: Re: [PULL REQUEST] renesas/topic/gen3-sdio for renesas-drivers
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---X1bOJ3K7DJ5YkBrT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Fri, May 13, 2016 at 2:30 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> here is the SDIO topic branch for you. Please pull.
+>
+> Kind regards,
+>
+>    Wolfram
+>
+> The following changes since commit 7c5c9675da24be9e0a4313c50de69338cf8c7577:
+>
+>   Merge branch 'topic/salvator-x-hdmi-prototype-v1-rebased4' into renesas-drivers (2016-05-10 12:05:24 +0200)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/gen3-sdio
 
+Thanks, pulled into topic/gen3-latest, and pushed out.
 
-> BTW, for renesas-drivers, please don't base pull requests on the previous
-> version, as that may cause massive conflicts when creating the next version
-> (many for-next trees may be rebased).
+BTW, for renesas-drivers, please don't base pull requests on the previous
+version, as that may cause massive conflicts when creating the next version
+(many for-next trees may be rebased).
 
-Rebased for-next trees? Uhhh...
+I'd rather merge your staging/ks7010 branch (which is based on non-changing
+v4.6-rc7) and a branch containing the two mmc commits (based on a stable
+commit, too, or Ulf's mmc/next if everything else fails).
 
-> I'd rather merge your staging/ks7010 branch (which is based on non-changing
-> v4.6-rc7) and a branch containing the two mmc commits (based on a stable
-> commit, too, or Ulf's mmc/next if everything else fails).
+> for you to fetch changes up to 78f877498f4f8d3bf9b78c84ffc87b5936fa4c47:
+>
+>   Merge branch 'staging/ks7010' into renesas/topic/gen3-sdio (2016-05-13 14:24:07 +0200)
+>
+> ----------------------------------------------------------------
+> Wolfram Sang (32):
+>       staging: ks7010: add driver from Nanonote extra-repository
+>       staging: ks7010: remove non-SDIO code and #ifdefs
+>       staging: ks7010: remove custom firmware loader
+>       staging: ks7010: remove checks for WIRELESS_EXT version
+>       staging: ks7010: remove code for old kernel versions
+>       staging: ks7010: avoid workqueue races
+>       staging: ks7010: use long preamble as default
+>       staging: ks7010: use kernel helper to print buffer
+>       staging: ks7010: delete seperate debug header
+>       staging: ks7010: really iterate over multicast addresses
+>       staging: ks7010: make loading config file optional
+>       staging: ks7010: fix printk format warnings
+>       staging: ks7010: add example cfg file as a reference
+>       staging: ks7010: remove unecessary typedef
+>       staging: ks7010: indent eap_packet.h
+>       staging: ks7010: indent ks7010_config.c
+>       staging: ks7010: indent ks7010_sdio.h
+>       staging: ks7010: indent ks_hostif.c
+>       staging: ks7010: indent ks_hostif.h
+>       staging: ks7010: indent ks_wlan.h
+>       staging: ks7010: indent ks_wlan_ioctl.h
+>       staging: ks7010: indent ks_wlan_net.c
+>       staging: ks7010: indent michael_mic.c
+>       staging: ks7010: indent michael_mic.h
+>       staging: ks7010: indent ks7010_sdio.c
+>       staging: ks7010: remove supported card table with one element
+>       mmc: sdio: fall back to SDIO 1.0 for broken 1.1 cards
+>       mmc: sh_mobile_sdhi: enable SDIO IRQs for RCar Gen3
+>       staging: ks7010: fix module annotations
+>       staging: ks7010: rename README to TODO
+>       staging: ks7010: adapt to new trans_start handling
+>       Merge branch 'staging/ks7010' into renesas/topic/gen3-sdio
 
-Understood. Will do next time!
+Gr{oetje,eeting}s,
 
-Thanks and have a nice weekend,
+                        Geert
 
-   Wolfram
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
---X1bOJ3K7DJ5YkBrT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXNlJ2AAoJEBQN5MwUoCm2PooP/3Zu/085ve5/ZWDgcweI7GtO
-PiCvtbBCnU/vquOX8dAvx3BGAD2V8cEc2wzriXAm21boF1o+TY7wipyEjo0iGgD8
-JSBWEq7Dl3CWj96/lMZw/qg2Qd0PIEicumcFDxBZjJ0420six/v7rVuAwuPwnrkr
-/bZHlB2ftDkz9lypq8jDcbwHro5ClITOBiuCgl156lfJdDZc+kP9jHtxOMQ0mZpS
-EUNH0btAgq2C3obsvRjvEzbbmpGi3JjZwTw9yrbWOMXmB4fG+B3J6HI+XOF88bzW
-YFBJz7PTBUBoIBcmuK+fUZFW1jyBMacTPsrp2X0jtuuFvcS6mspBrHClhQQwufAa
-wf27bj7JtGpVCul9Zrm9wSwly7iMG0jrT4V5RCKVYPut4zJPQO59a1yqnfcYLlVX
-s8CSZ05Xg8KLOpX4XI75orvMxbp3zHeQxJ7GCEVeaMsCqGtflCabPlOsxrpyk5wM
-XK3GkV3D76QhoiyiXitNr8eYVMO52540HHsBs3DcPi9F34+tf3GH32FgHtYL9P6Z
-M7MY6wLePD66+8KwYnmJkauQAB/9oSl/ul9h/eOrZjloSh0q/yYAcu+knBSGMnEg
-BSkQu0bkToru1Q59SjahCNpWpTklJzI2ReBT32vvqQ/vtFQmV3Y7IOSqkjx/GGCJ
-l5gmSXBWGL5m66bO4cSX
-=/jQh
------END PGP SIGNATURE-----
-
---X1bOJ3K7DJ5YkBrT--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
