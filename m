@@ -1,49 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:47676 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752332AbcEIIAR (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:60634 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751481AbcEMH4H (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 9 May 2016 04:00:17 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-mmc@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] mmc: sdio: fall back to SDIO 1.0 for broken 1.1 cards
-Date: Mon,  9 May 2016 09:59:59 +0200
-Message-Id: <1462780799-5366-1-git-send-email-wsa@the-dreams.de>
+	Fri, 13 May 2016 03:56:07 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 15/23] ARM: dts: koelsch: Fix W=1 dtc warnings
+Date: Fri, 13 May 2016 09:55:55 +0200
+Message-Id: <1463126163-29423-16-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Warning (unit_address_vs_reg): Node /regulator@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@4 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@5 has a unit name, but no reg property
 
-I have two SDIO WLAN cards which specify being SDIO Rev. 1.1 cards but
-their FUNCE tuple reports the smaller size of a Rev 1.0 card. So,
-enforce 1.0 on these cards to avoid reading the not present registers.
-They are not really used anyhow. My cards initialize properly after this
-patch.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/mmc/core/sdio_cis.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mmc/core/sdio_cis.c b/drivers/mmc/core/sdio_cis.c
-index 6f6fc527a26338..dcb3dee59fa5f2 100644
---- a/drivers/mmc/core/sdio_cis.c
-+++ b/drivers/mmc/core/sdio_cis.c
-@@ -177,8 +177,13 @@ static int cistpl_funce_func(struct mmc_card *card, struct sdio_func *func,
- 	vsn = func->card->cccr.sdio_vsn;
- 	min_size = (vsn == SDIO_SDIO_REV_1_00) ? 28 : 42;
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index da59c2844b8ad1c3..20fbc8c36a785bd3 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -170,7 +170,7 @@
+ 		};
+ 	};
  
--	if (size < min_size)
-+	if (size == 28 && vsn == SDIO_SDIO_REV_1_10) {
-+		pr_warn("%s: card has broken SDIO 1.1 CIS, forcing SDIO 1.0\n",
-+			mmc_hostname(card->host));
-+		vsn = SDIO_SDIO_REV_1_00;
-+	} else if (size < min_size) {
- 		return -EINVAL;
-+	}
+-	vcc_sdhi0: regulator@0 {
++	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
  
- 	/* TPLFE_MAX_BLK_SIZE */
- 	func->max_blksize = buf[12] | (buf[13] << 8);
+ 		regulator-name = "SDHI0 Vcc";
+@@ -181,7 +181,7 @@
+ 		enable-active-high;
+ 	};
+ 
+-	vccq_sdhi0: regulator@1 {
++	vccq_sdhi0: regulator-vccq-sdhi0 {
+ 		compatible = "regulator-gpio";
+ 
+ 		regulator-name = "SDHI0 VccQ";
+@@ -194,7 +194,7 @@
+ 			  1800000 0>;
+ 	};
+ 
+-	vcc_sdhi1: regulator@2 {
++	vcc_sdhi1: regulator-vcc-sdhi1 {
+ 		compatible = "regulator-fixed";
+ 
+ 		regulator-name = "SDHI1 Vcc";
+@@ -205,7 +205,7 @@
+ 		enable-active-high;
+ 	};
+ 
+-	vccq_sdhi1: regulator@3 {
++	vccq_sdhi1: regulator-vccq-sdhi1 {
+ 		compatible = "regulator-gpio";
+ 
+ 		regulator-name = "SDHI1 VccQ";
+@@ -218,7 +218,7 @@
+ 			  1800000 0>;
+ 	};
+ 
+-	vcc_sdhi2: regulator@4 {
++	vcc_sdhi2: regulator-vcc-sdhi2 {
+ 		compatible = "regulator-fixed";
+ 
+ 		regulator-name = "SDHI2 Vcc";
+@@ -229,7 +229,7 @@
+ 		enable-active-high;
+ 	};
+ 
+-	vccq_sdhi2: regulator@5 {
++	vccq_sdhi2: regulator-vccq-sdhi2 {
+ 		compatible = "regulator-gpio";
+ 
+ 		regulator-name = "SDHI2 VccQ";
 -- 
-2.7.0
+1.9.1
