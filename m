@@ -1,159 +1,62 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org,
-	hch@infradead.org
-Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	geert+renesas@glider.be, linus.walleij@linaro.org,
-	dan.j.williams@intel.com, arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv6 2/8] dma-debug: add support for resource mappings
-Date: Mon,  9 May 2016 18:44:01 +0200
-Message-Id: <1462812247-3414-3-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1462812247-3414-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1462812247-3414-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from laurent.telenet-ops.be ([195.130.137.89]:36424 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752136AbcEMH4H (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 13 May 2016 03:56:07 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 08/23] ARM: dts: r8a7794: Fix W=1 dtc warnings
+Date: Fri, 13 May 2016 09:55:48 +0200
+Message-Id: <1463126163-29423-9-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-A MMIO mapped resource can not be represented by a struct page so a new
-debug type is needed to handle this. This patch add such type and
-functionality to add/remove entries and how to translate them to a
-physical address.
+Warning (unit_address_vs_reg): Node /cache-controller@1 has a unit name, but no reg property
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Move the cache-controller node under the cpus node, and make its unit
+name and reg property match the MPIDR value.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/linux/dma-debug.h | 19 +++++++++++++++++
- lib/dma-debug.c           | 52 +++++++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 69 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7794.dtsi | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/dma-debug.h b/include/linux/dma-debug.h
-index fe8cb61..c7d844f 100644
---- a/include/linux/dma-debug.h
-+++ b/include/linux/dma-debug.h
-@@ -56,6 +56,13 @@ extern void debug_dma_alloc_coherent(struct device *dev, size_t size,
- extern void debug_dma_free_coherent(struct device *dev, size_t size,
- 				    void *virt, dma_addr_t addr);
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index f334a3a715f27d12..cff1c5aa0ec48950 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -55,13 +55,14 @@
+ 			power-domains = <&sysc R8A7794_PD_CA7_CPU1>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+-	};
  
-+extern void debug_dma_map_resource(struct device *dev, phys_addr_t addr,
-+				   size_t size, int direction,
-+				   dma_addr_t dma_addr);
-+
-+extern void debug_dma_unmap_resource(struct device *dev, dma_addr_t dma_addr,
-+				     size_t size, int direction);
-+
- extern void debug_dma_sync_single_for_cpu(struct device *dev,
- 					  dma_addr_t dma_handle, size_t size,
- 					  int direction);
-@@ -141,6 +148,18 @@ static inline void debug_dma_free_coherent(struct device *dev, size_t size,
- {
- }
+-	L2_CA7: cache-controller@1 {
+-		compatible = "cache";
+-		power-domains = <&sysc R8A7794_PD_CA7_SCU>;
+-		cache-unified;
+-		cache-level = <2>;
++		L2_CA7: cache-controller@0 {
++			compatible = "cache";
++			reg = <0>;
++			power-domains = <&sysc R8A7794_PD_CA7_SCU>;
++			cache-unified;
++			cache-level = <2>;
++		};
+ 	};
  
-+static inline void debug_dma_map_resource(struct device *dev, phys_addr_t addr,
-+					  size_t size, int direction,
-+					  dma_addr_t dma_addr)
-+{
-+}
-+
-+static inline void debug_dma_unmap_resource(struct device *dev,
-+					    dma_addr_t dma_addr, size_t size,
-+					    int direction)
-+{
-+}
-+
- static inline void debug_dma_sync_single_for_cpu(struct device *dev,
- 						 dma_addr_t dma_handle,
- 						 size_t size, int direction)
-diff --git a/lib/dma-debug.c b/lib/dma-debug.c
-index 4a1515f..fb12d5c 100644
---- a/lib/dma-debug.c
-+++ b/lib/dma-debug.c
-@@ -43,6 +43,7 @@ enum {
- 	dma_debug_page,
- 	dma_debug_sg,
- 	dma_debug_coherent,
-+	dma_debug_resource,
- };
- 
- enum map_err_types {
-@@ -150,8 +151,9 @@ static const char *const maperr2str[] = {
- 	[MAP_ERR_CHECKED] = "dma map error checked",
- };
- 
--static const char *type2name[4] = { "single", "page",
--				    "scather-gather", "coherent" };
-+static const char *type2name[5] = { "single", "page",
-+				    "scather-gather", "coherent",
-+				    "resource" };
- 
- static const char *dir2name[4] = { "DMA_BIDIRECTIONAL", "DMA_TO_DEVICE",
- 				   "DMA_FROM_DEVICE", "DMA_NONE" };
-@@ -397,6 +399,9 @@ static void hash_bucket_del(struct dma_debug_entry *entry)
- 
- static unsigned long long phys_addr(struct dma_debug_entry *entry)
- {
-+	if (entry->type == dma_debug_resource)
-+		return PHYS_PFN(entry->pfn) + entry->offset;
-+
- 	return page_to_phys(pfn_to_page(entry->pfn)) + entry->offset;
- }
- 
-@@ -1493,6 +1498,49 @@ void debug_dma_free_coherent(struct device *dev, size_t size,
- }
- EXPORT_SYMBOL(debug_dma_free_coherent);
- 
-+void debug_dma_map_resource(struct device *dev, phys_addr_t addr, size_t size,
-+			    int direction, dma_addr_t dma_addr)
-+{
-+	struct dma_debug_entry *entry;
-+
-+	if (unlikely(dma_debug_disabled()))
-+		return;
-+
-+	entry = dma_entry_alloc();
-+	if (!entry)
-+		return;
-+
-+	entry->type		= dma_debug_resource;
-+	entry->dev		= dev;
-+	entry->pfn		= __phys_to_pfn(addr);
-+	entry->offset		= addr - PHYS_PFN(entry->pfn);
-+	entry->size		= size;
-+	entry->dev_addr		= dma_addr;
-+	entry->direction	= direction;
-+	entry->map_err_type	= MAP_ERR_NOT_CHECKED;
-+
-+	add_dma_entry(entry);
-+}
-+EXPORT_SYMBOL(debug_dma_map_resource);
-+
-+void debug_dma_unmap_resource(struct device *dev, dma_addr_t dma_addr,
-+			      size_t size, int direction)
-+{
-+	struct dma_debug_entry ref = {
-+		.type           = dma_debug_resource,
-+		.dev            = dev,
-+		.dev_addr       = dma_addr,
-+		.size           = size,
-+		.direction      = direction,
-+	};
-+
-+	if (unlikely(dma_debug_disabled()))
-+		return;
-+
-+	check_unmap(&ref);
-+}
-+EXPORT_SYMBOL(debug_dma_unmap_resource);
-+
- void debug_dma_sync_single_for_cpu(struct device *dev, dma_addr_t dma_handle,
- 				   size_t size, int direction)
- {
+ 	gic: interrupt-controller@f1001000 {
 -- 
-2.8.2
+1.9.1
