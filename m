@@ -1,140 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:12991 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751255AbcEKFb0 (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:46019 "EHLO
+	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751501AbcEMH4G (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 11 May 2016 01:31:26 -0400
-Received: from vsmta13.fe.internet.bosch.com (unknown [10.4.98.53])
-	by imta24.fe.bosch.de (Postfix) with ESMTP id 14FDCD80220
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 May 2016 07:31:25 +0200 (CEST)
-Received: from SI-HUB1001.de.bosch.com (vsgw22.fe.internet.bosch.com [10.4.98.11])
-	by vsmta13.fe.internet.bosch.com (Postfix) with ESMTP id B52772E406AB
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 11 May 2016 07:31:24 +0200 (CEST)
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	<linux-renesas-soc@vger.kernel.org>
-CC: Dirk Behme <dirk.behme@gmail.com>
-Subject: [PATCH v2 08/10] clk: renesas: rcar-gen3: Obtain MD pin value using boot-mode-reg
-Date: Wed, 11 May 2016 07:29:36 +0200
-Message-ID: <1462944578-1220-9-git-send-email-dirk.behme@de.bosch.com>
-In-Reply-To: <1462944578-1220-1-git-send-email-dirk.behme@de.bosch.com>
-References: <1462944578-1220-1-git-send-email-dirk.behme@de.bosch.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	Fri, 13 May 2016 03:56:06 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 13/23] ARM: dts: genmai: Fix W=1 dtc warnings
+Date: Fri, 13 May 2016 09:55:53 +0200
+Message-Id: <1463126163-29423-14-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Dirk Behme <dirk.behme@gmail.com>
+Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
 
-Use new boot mode reg infrastructure to obtain the mode pin
-value for initialising clocks for for R-Car Gen3 SoCs.
-
-Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 11 ++++++++++-
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 11 ++++++++++-
- drivers/clk/renesas/rcar-gen3-cpg.c    | 17 -----------------
- drivers/clk/renesas/rcar-gen3-cpg.h    |  1 -
- 4 files changed, 20 insertions(+), 20 deletions(-)
+ arch/arm/boot/dts/r7s72100-genmai.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index e53aff5..23bd58f 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -18,6 +18,8 @@
+diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
+index a9da7a89fc4ba65a..05ba9953b4d8d9ec 100644
+--- a/arch/arm/boot/dts/r7s72100-genmai.dts
++++ b/arch/arm/boot/dts/r7s72100-genmai.dts
+@@ -25,7 +25,7 @@
+ 		stdout-path = &scif2;
+ 	};
  
- #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
- 
-+#include <misc/boot-mode-reg.h>
-+
- #include "renesas-cpg-mssr.h"
- #include "rcar-gen3-cpg.h"
- 
-@@ -294,7 +296,14 @@ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
- static int __init r8a7795_cpg_mssr_init(struct device *dev)
- {
- 	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
--	u32 cpg_mode = rcar_gen3_read_mode_pins();
-+	u32 cpg_mode;
-+	int err;
-+
-+	err = boot_mode_reg_get(&cpg_mode);
-+	if (err) {
-+		dev_err(dev, "Failed obtain boot mode: %i\n", err);
-+		return err;
-+	}
- 
- 	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
- 	if (!cpg_pll_config->extal_div) {
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index c84b549..2ecb135 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -19,6 +19,8 @@
- 
- #include <dt-bindings/clock/r8a7796-cpg-mssr.h>
- 
-+#include <misc/boot-mode-reg.h>
-+
- #include "renesas-cpg-mssr.h"
- #include "rcar-gen3-cpg.h"
- 
-@@ -159,7 +161,14 @@ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
- static int __init r8a7796_cpg_mssr_init(struct device *dev)
- {
- 	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
--	u32 cpg_mode = rcar_gen3_read_mode_pins();
-+	u32 cpg_mode;
-+	int err;
-+
-+	err = boot_mode_reg_get(&cpg_mode);
-+	if (err) {
-+		dev_err(dev, "Failed obtain boot mode: %i\n", err);
-+		return err;
-+	}
- 
- 	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
- 	if (!cpg_pll_config->extal_div) {
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index bb4f2f9..9d76076 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -333,23 +333,6 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 					 __clk_get_name(parent), 0, mult, div);
- }
- 
--/*
-- * Reset register definitions.
-- */
--#define MODEMR	0xe6160060
--
--u32 __init rcar_gen3_read_mode_pins(void)
--{
--	void __iomem *modemr = ioremap_nocache(MODEMR, 4);
--	u32 mode;
--
--	BUG_ON(!modemr);
--	mode = ioread32(modemr);
--	iounmap(modemr);
--
--	return mode;
--}
--
- int __init rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
- 			      unsigned int clk_extalr)
- {
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index f699085..f788f48 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -33,7 +33,6 @@ struct rcar_gen3_cpg_pll_config {
- 
- #define CPG_RCKCR	0x240
- 
--u32 rcar_gen3_read_mode_pins(void);
- struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
- 	struct clk **clks, void __iomem *base);
+-	memory {
++	memory@8000000 {
+ 		device_type = "memory";
+ 		reg = <0x08000000 0x08000000>;
+ 	};
 -- 
-2.8.0
+1.9.1
