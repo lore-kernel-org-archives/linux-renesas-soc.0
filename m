@@ -1,42 +1,120 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58429 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751228AbcEJFwK (ORCPT
+Received: from lb1-smtp-cloud3.xs4all.net ([194.109.24.22]:59000 "EHLO
+	lb1-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752484AbcEMIgM (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 01:52:10 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Ian Molton <ian@mnementh.co.uk>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH/RFC 3/3] ARM: dts: r8a7790: lager: Enable UHS-I SDR-104
-Date: Tue, 10 May 2016 14:52:04 +0900
-Message-Id: <1462859524-28522-4-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1462859524-28522-1-git-send-email-horms+renesas@verge.net.au>
-References: <1462859524-28522-1-git-send-email-horms+renesas@verge.net.au>
+	Fri, 13 May 2016 04:36:12 -0400
+Subject: Re: [PATCH v4 6/8] media: rcar-vin: initialize EDID data
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
+References: <1462975376-491-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1462975376-491-7-git-send-email-ulrich.hecht+renesas@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+	ian.molton@codethink.co.uk, lars@metafoo.de,
+	william.towle@codethink.co.uk
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <573591F4.4050901@xs4all.nl>
+Date: Fri, 13 May 2016 10:36:04 +0200
+MIME-Version: 1.0
+In-Reply-To: <1462975376-491-7-git-send-email-ulrich.hecht+renesas@gmail.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the sd-uhs-sdr104 property to SDHI0.
+On 05/11/2016 04:02 PM, Ulrich Hecht wrote:
+> Initializes the decoder subdevice with a fixed EDID blob.
+> 
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7790-lager.dts | 1 +
- 1 file changed, 1 insertion(+)
+Nacked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 749ba02b6a53..05d1ff7acee2 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -559,6 +559,7 @@
- 	vqmmc-supply = <&vccq_sdhi0>;
- 	cd-gpios = <&gpio3 6 GPIO_ACTIVE_LOW>;
- 	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
- 	status = "okay";
- };
- 
--- 
-2.1.4
+Instead implement the g/s_edid ioctls.
+
+You truly cannot default to an EDID. When an EDID is set the HPD will go high.
+But you don't know the EDID here, the contents of the EDID is something that
+only userspace will know depending on the type of device you're building.
+
+In practice userspace will overwrite the EDID with the real one and so the HPD
+will go down and up again. And while transmitters are supposed to handle that
+cleanly, in reality this is a different story.
+
+Just add the g/s_edid ioctls and you can use 'v4l2-ctl --set-edid=edid=hdmi' to
+fill in a default EDID.
+
+I won't accept this patch since I know from my own experience that this doesn't
+work.
+
+Regards,
+
+	Hans
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 46 +++++++++++++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index 10a5c10..5bb3c3b 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -765,6 +765,41 @@ static void rvin_notify(struct v4l2_subdev *sd,
+>  	}
+>  }
+>  
+> +static u8 edid[256] = {
+> +	0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00,
+> +	0x48, 0xAE, 0x9C, 0x27, 0x00, 0x00, 0x00, 0x00,
+> +	0x19, 0x12, 0x01, 0x03, 0x80, 0x00, 0x00, 0x78,
+> +	0x0E, 0x00, 0xB2, 0xA0, 0x57, 0x49, 0x9B, 0x26,
+> +	0x10, 0x48, 0x4F, 0x2F, 0xCF, 0x00, 0x31, 0x59,
+> +	0x45, 0x59, 0x61, 0x59, 0x81, 0x99, 0x01, 0x01,
+> +	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x3A,
+> +	0x80, 0x18, 0x71, 0x38, 0x2D, 0x40, 0x58, 0x2C,
+> +	0x46, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1E,
+> +	0x00, 0x00, 0x00, 0xFD, 0x00, 0x31, 0x55, 0x18,
+> +	0x5E, 0x11, 0x00, 0x0A, 0x20, 0x20, 0x20, 0x20,
+> +	0x20, 0x20, 0x00, 0x00, 0x00, 0xFC, 0x00, 0x43,
+> +	0x20, 0x39, 0x30, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A,
+> +	0x0A, 0x0A, 0x0A, 0x0A, 0x00, 0x00, 0x00, 0x10,
+> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x68,
+> +	0x02, 0x03, 0x1a, 0xc0, 0x48, 0xa2, 0x10, 0x04,
+> +	0x02, 0x01, 0x21, 0x14, 0x13, 0x23, 0x09, 0x07,
+> +	0x07, 0x65, 0x03, 0x0c, 0x00, 0x10, 0x00, 0xe2,
+> +	0x00, 0x2a, 0x01, 0x1d, 0x00, 0x80, 0x51, 0xd0,
+> +	0x1c, 0x20, 0x40, 0x80, 0x35, 0x00, 0x00, 0x00,
+> +	0x00, 0x00, 0x00, 0x1e, 0x8c, 0x0a, 0xd0, 0x8a,
+> +	0x20, 0xe0, 0x2d, 0x10, 0x10, 0x3e, 0x96, 0x00,
+> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x00, 0x00,
+> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xd7
+> +};
+> +
+>  int rvin_v4l2_probe(struct rvin_dev *vin)
+>  {
+>  	struct v4l2_subdev_format fmt = {
+> @@ -870,5 +905,16 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+>  	v4l2_info(&vin->v4l2_dev, "Device registered as %s\n",
+>  		  video_device_node_name(&vin->vdev));
+>  
+> +	{
+> +		struct v4l2_subdev_edid rvin_edid = {
+> +			.pad = 0,
+> +			.start_block = 0,
+> +			.blocks = 2,
+> +			.edid = edid,
+> +		};
+> +		v4l2_subdev_call(sd, pad, set_edid,
+> +				&rvin_edid);
+> +	}
+> +
+>  	return ret;
+>  }
+> 
