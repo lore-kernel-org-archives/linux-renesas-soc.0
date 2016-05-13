@@ -1,71 +1,77 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from andre.telenet-ops.be ([195.130.132.53]:46053 "EHLO
+	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752208AbcEMH4H (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 13 May 2016 03:56:07 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/3] soc: renesas: Add r8a7796 SYSC PM Domain Binding Definitions
-Date: Mon, 30 May 2016 19:05:10 +0200
-Message-Id: <1464627911-8126-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464627911-8126-1-git-send-email-geert+renesas@glider.be>
-References: <1464627911-8126-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH 23/23] arm64: dts: salvator-x: Fix W=1 dtc warnings
+Date: Fri, 13 May 2016 09:56:03 +0200
+Message-Id: <1463126163-29423-24-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-v2:
-  - Add Acked-by.
----
- include/dt-bindings/power/r8a7796-sysc.h | 36 ++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 include/dt-bindings/power/r8a7796-sysc.h
+Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@4 has a unit name, but no reg property
 
-diff --git a/include/dt-bindings/power/r8a7796-sysc.h b/include/dt-bindings/power/r8a7796-sysc.h
-new file mode 100644
-index 0000000000000000..5b4daab44daa0057
---- /dev/null
-+++ b/include/dt-bindings/power/r8a7796-sysc.h
-@@ -0,0 +1,36 @@
-+/*
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7796_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7796_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A7796_PD_CA57_CPU0		 0
-+#define R8A7796_PD_CA57_CPU1		 1
-+#define R8A7796_PD_CA53_CPU0		 5
-+#define R8A7796_PD_CA53_CPU1		 6
-+#define R8A7796_PD_CA53_CPU2		 7
-+#define R8A7796_PD_CA53_CPU3		 8
-+#define R8A7796_PD_CA57_SCU		12
-+#define R8A7796_PD_CR7			13
-+#define R8A7796_PD_A3VC			14
-+#define R8A7796_PD_3DG_A		17
-+#define R8A7796_PD_3DG_B		18
-+#define R8A7796_PD_CA53_SCU		21
-+#define R8A7796_PD_A3IR			24
-+#define R8A7796_PD_A2VC0		25
-+#define R8A7796_PD_A2VC1		26
-+
-+/* Always-on power area */
-+#define R8A7796_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7796_SYSC_H__ */
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 76bc94a528aab23c..b2437a90925065fe 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -62,7 +62,7 @@
+ 		clock-frequency = <24576000>;
+ 	};
+ 
+-	vcc_sdhi0: regulator@1 {
++	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
+ 
+ 		regulator-name = "SDHI0 Vcc";
+@@ -73,7 +73,7 @@
+ 		enable-active-high;
+ 	};
+ 
+-	vccq_sdhi0: regulator@2 {
++	vccq_sdhi0: regulator-vccq-sdhi0 {
+ 		compatible = "regulator-gpio";
+ 
+ 		regulator-name = "SDHI0 VccQ";
+@@ -86,7 +86,7 @@
+ 			  1800000 0>;
+ 	};
+ 
+-	vcc_sdhi3: regulator@3 {
++	vcc_sdhi3: regulator-vcc-sdhi3 {
+ 		compatible = "regulator-fixed";
+ 
+ 		regulator-name = "SDHI3 Vcc";
+@@ -97,7 +97,7 @@
+ 		enable-active-high;
+ 	};
+ 
+-	vccq_sdhi3: regulator@4 {
++	vccq_sdhi3: regulator-vccq-sdhi3 {
+ 		compatible = "regulator-gpio";
+ 
+ 		regulator-name = "SDHI3 VccQ";
 -- 
 1.9.1
-
