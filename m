@@ -1,108 +1,204 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:36767 "EHLO
-	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750791AbcEHLCX (ORCPT
+Received: from mail-ig0-f196.google.com ([209.85.213.196]:36157 "EHLO
+	mail-ig0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751739AbcEMIyF (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sun, 8 May 2016 07:02:23 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux-foundation.org, dmaengine@vger.kernel.org
-Cc: will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/2] Fix incorrect warning from dma-debug
-Date: Sun,  8 May 2016 12:59:54 +0200
-Message-Id: <1462705196-10857-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+	Fri, 13 May 2016 04:54:05 -0400
 MIME-Version: 1.0
+In-Reply-To: <573166A8.1030101@rvc.renesas.com>
+References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
+	<573166A8.1030101@rvc.renesas.com>
+Date: Fri, 13 May 2016 10:54:03 +0200
+Message-ID: <CAMuHMdV-N1WNju+n3ErQVKHqiofm+0RWUx+MQZZ8qjDr-q1w3g@mail.gmail.com>
+Subject: Re: [RFC 1/4] clk: renesas: rcar-gen3-cpg: Add Z clock
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Toru Oishi <toru.oishi.zj@rvc.renesas.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Hi Khiem,
 
-While using CONFIG_DMA_API_DEBUG i came across this warning which I
-think is a false positive. As shown dma_sync_single_for_device() are
-called from the dma_map_single() call path. This triggers the warning
-since the dma-debug code have not yet been made aware of the mapping.
+On Tue, May 10, 2016 at 6:42 AM, Khiem Nguyen
+<khiem.nguyen.xt@rvc.renesas.com> wrote:
+> Base on Dien Pham work.
+>
+> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
 
-I try to solve this by introducing __dma_sync_single_for_device() which
-do not call into the dma-debug code. I'm no expert and this might be a
-bad way of solving the problem but it allowed me to keep working.
+Thanks for your patch!
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1 at lib/dma-debug.c:1209 check_sync+0x154/0x5e4
-ipmmu-vmsa e6740000.mmu: DMA-API: device driver tries to sync DMA memory it has not allocated [device address=0x000000006e89b008] [size=8 bytes]
-CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.6.0-rc5-00012-g52e78c1-dirty #1
-Hardware name: Generic R8A7791 (Flattened Device Tree)
-Backtrace:
-[<c020a0a4>] (dump_backtrace) from [<c020a250>] (show_stack+0x18/0x1c)
- r7:c03ebad0 r6:00000009 r5:60000093 r4:00000000
-[<c020a238>] (show_stack) from [<c03cb7e4>] (dump_stack+0x84/0xa4)
-[<c03cb760>] (dump_stack) from [<c021e3ac>] (__warn+0xd0/0x100)
- r5:00000000 r4:ef05dac8
-[<c021e2dc>] (__warn) from [<c021e41c>] (warn_slowpath_fmt+0x40/0x48)
- r9:00010000 r8:00000000 r7:c0c69c40 r6:c0c02754 r5:ef05db78 r4:ef222810
-[<c021e3e0>] (warn_slowpath_fmt) from [<c03ebad0>] (check_sync+0x154/0x5e4)
- r3:c0945b6f r2:c0936e85
-[<c03eb97c>] (check_sync) from [<c03ed594>] (debug_dma_sync_single_for_device+0x64/0x70)
- r10:00000009 r9:0000000c r8:ee89b008 r7:00000000 r6:6e89b008 r5:00000000
- r4:6e89b008
-[<c03ed530>] (debug_dma_sync_single_for_device) from [<c0465298>] (__arm_lpae_set_pte.part.0+0x80/0x8c)
- r5:00000001 r4:ef222810
-[<c0465218>] (__arm_lpae_set_pte.part.0) from [<c046553c>] (__arm_lpae_map+0x298/0x2f0)
- r7:00000008 r6:ef25e000 r4:ee898500
-[<c04652a4>] (__arm_lpae_map) from [<c0465b18>] (arm_lpae_map+0xcc/0xe4)
- r10:c0465f40 r9:00001000 r8:40000000 r7:00000000 r6:6f25c000 r5:00000000
- r4:000008c0
-[<c0465a4c>] (arm_lpae_map) from [<c0465f78>] (ipmmu_map+0x38/0x40)
- r7:40000000 r6:00000000 r5:00001000 r4:c0465a4c
-[<c0465f40>] (ipmmu_map) from [<c0463d90>] (iommu_map+0xf8/0x15c)
- r4:ee895608
-[<c0463c98>] (iommu_map) from [<c0213524>] (arm_coherent_iommu_map_page+0x1d4/0x2d4)
- r10:ef386940 r9:00001000 r8:00000000 r7:00000000 r6:40000000 r5:00000000
- r4:00000000
-[<c0213350>] (arm_coherent_iommu_map_page) from [<c0213690>] (arm_iommu_map_page+0x6c/0x74)
- r10:c0c61f44 r9:ef19d210 r8:00000001 r7:00001000 r6:00000000 r5:ec5ddb80
- r4:00000000
-[<c0213624>] (arm_iommu_map_page) from [<c04f7d64>] (sh_msiof_spi_probe+0x430/0x7b0)
- r9:00000000 r8:c0213624 r7:ef19d210 r6:ef242800 r5:ef1b4010 r4:ef242af0
-[<c04f7934>] (sh_msiof_spi_probe) from [<c049fd3c>] (platform_drv_probe+0x58/0xa8)
- r10:00000000 r9:00000000 r8:c0c1f8d4 r7:c0c7e910 r6:c0c1f8d4 r5:ef1b4010
- r4:c04f7934
-[<c049fce4>] (platform_drv_probe) from [<c049e788>] (driver_probe_device+0x13c/0x2a4)
- r7:c0c7e910 r6:00000000 r5:c0c7e900 r4:ef1b4010
-[<c049e64c>] (driver_probe_device) from [<c049e978>] (__driver_attach+0x88/0xac)
- r9:c0c34000 r8:c0a3c010 r7:c0c1cf08 r6:c0c1f8d4 r5:ef1b4044 r4:ef1b4010
-[<c049e8f0>] (__driver_attach) from [<c049ce44>] (bus_for_each_dev+0x74/0x98)
- r7:c0c1cf08 r6:c049e8f0 r5:c0c1f8d4 r4:00000000
-[<c049cdd0>] (bus_for_each_dev) from [<c049ebd0>] (driver_attach+0x20/0x28)
- r6:ef1cc200 r5:00000000 r4:c0c1f8d4
-[<c049ebb0>] (driver_attach) from [<c049d5d8>] (bus_add_driver+0xd4/0x1e4)
-[<c049d504>] (bus_add_driver) from [<c049f2dc>] (driver_register+0xa4/0xe8)
- r7:c0a3c010 r6:00000000 r5:c0a1e400 r4:c0c1f8d4
-[<c049f238>] (driver_register) from [<c04a0778>] (__platform_driver_register+0x38/0x4c)
- r5:c0a1e400 r4:ee958fc0
-[<c04a0740>] (__platform_driver_register) from [<c0a1e418>] (sh_msiof_spi_drv_init+0x18/0x20)
-[<c0a1e400>] (sh_msiof_spi_drv_init) from [<c0a00e1c>] (do_one_initcall+0x10c/0x1c0)
-[<c0a00d10>] (do_one_initcall) from [<c0a00ff8>] (kernel_init_freeable+0x128/0x1f4)
- r9:c0c34000 r8:c0c34000 r7:c0a47e60 r6:c0a3c83c r5:000000bd r4:00000006
-[<c0a00ed0>] (kernel_init_freeable) from [<c071067c>] (kernel_init+0x10/0x118)
- r9:00000000[    1.879529] ata1: link resume succeeded after 1 retries
- r8:00000000 r7:00000000 r6:00000000 r5:c071066c r4:00000000
-[<c071066c>] (kernel_init) from [<c0206e08>] (ret_from_fork+0x14/0x2c)
- r5:c071066c r4:00000000
----[ end trace 6eb9a3df3009d491 ]---
+> ---
+>  drivers/clk/renesas/rcar-gen3-cpg.c | 143
+> ++++++++++++++++++++++++++++++++++++
+>  drivers/clk/renesas/rcar-gen3-cpg.h |   1 +
+>  2 files changed, 144 insertions(+)
+>
+> diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c
+> b/drivers/clk/renesas/rcar-gen3-cpg.c
+> index bb4f2f9..45209ac 100644
+> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> @@ -28,6 +28,146 @@
+>  #define CPG_PLL2CR             0x002c
+>  #define CPG_PLL4CR             0x01f4
+>
+> +/** Modify for Z-clock
 
-Niklas Söderlund (2):
-  dma-mapping: add __dma_sync_single_for_device()
-  iommu/io-pgtable-arm: use __dma_sync_single_for_device()
+Please drop this comment
 
- drivers/iommu/io-pgtable-arm.c | 2 +-
- include/linux/dma-mapping.h    | 9 ++++++++-
- 2 files changed, 9 insertions(+), 2 deletions(-)
+> + *
+> -----------------------------------------------------------------------------
+> + * Z Clock
+> + *
+> + * Traits of this clock:
+> + * prepare - clk_prepare only ensures that parents are prepared
+> + * enable - clk_enable only ensures that parents are enabled
+> + * rate - rate is adjustable.  clk->rate = parent->rate * mult / 32
+> + * parent - fixed parent.  No clk_set_parent support
+> + */
+> +#define CPG_FRQCRB                     0x00000004
+> +#define CPG_FRQCRB_KICK                        BIT(31)
+> +#define CPG_FRQCRC                     0x000000e0
+> +#define CPG_FRQCRC_ZFC_MASK            (0x1f << 8)
+> +#define CPG_FRQCRC_ZFC_SHIFT           8
+> +
+> +
+> +struct cpg_z_clk {
+> +       struct clk_hw hw;
+> +       void __iomem *reg;
+> +       void __iomem *kick_reg;
+
+I would just store the base address, and always use "zclk->base + CPG_FRQCRB"
+or "zclk->base + CPG_FRQCRC".
+
+> +};
+> +
+> +#define to_z_clk(_hw)  container_of(_hw, struct cpg_z_clk, hw)
+> +
+> +static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
+> +                                          unsigned long parent_rate)
+> +{
+> +       struct cpg_z_clk *zclk = to_z_clk(hw);
+> +       unsigned int mult;
+> +       unsigned int val;
+> +       unsigned long rate;
+> +
+> +       val = (clk_readl(zclk->reg) & CPG_FRQCRC_ZFC_MASK)
+> +           >> CPG_FRQCRC_ZFC_SHIFT;
+> +       mult = 32 - val;
+> +
+> +       rate = div_u64((u64)parent_rate * mult + 16, 32);
+
+The above also does rounding.
+
+> +       /* Round to closest value at 100MHz unit */
+> +       rate = 100000000*DIV_ROUND_CLOSEST(rate, 100000000);
+
+Why rounding to the closest 100MHz unit?
+
+> +       return rate;
+> +}
+> +
+> +static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                                unsigned long *parent_rate)
+> +{
+> +       unsigned long prate  = *parent_rate;
+> +       unsigned int mult;
+> +
+> +       if (!prate)
+> +               prate = 1;
+> +
+> +       mult = div_u64((u64)rate * 32 + prate/2, prate);
+
+DIV_ROUND_CLOSEST_ULL()
+
+> +       mult = clamp(mult, 1U, 32U);
+> +
+> +       return *parent_rate / 32 * mult;
+
+Doing the division first reduces accuracy.
+Please do the multiplication first (in 64-bit arithmetic).
+
+> +}
+> +
+> +static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                             unsigned long parent_rate)
+> +{
+> +       struct cpg_z_clk *zclk = to_z_clk(hw);
+> +       unsigned int mult;
+> +       u32 val, kick;
+> +       unsigned int i;
+> +
+> +       mult = div_u64((u64)rate * 32 + parent_rate/2, parent_rate);
+
+DIV_ROUND_CLOSEST_ULL()
+
+> +}
+> +
+> +static const struct clk_ops cpg_z_clk_ops = {
+> +       .recalc_rate = cpg_z_clk_recalc_rate,
+> +       .round_rate = cpg_z_clk_round_rate,
+> +       .set_rate = cpg_z_clk_set_rate,
+> +};
+> +
+> +static struct clk * __init cpg_z_clk_register(const struct cpg_core_clk
+> *core,
+> +                                             void __iomem *base,
+> +                                             const char *parent_name)
+> +{
+> +       struct clk_init_data init;
+> +       struct cpg_z_clk *zclk;
+> +       struct clk *clk;
+> +
+> +       zclk = kzalloc(sizeof(*zclk), GFP_KERNEL);
+> +       if (!zclk)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       init.name = core->name;
+> +       init.ops = &cpg_z_clk_ops;
+> +       init.flags = CLK_SET_RATE_GATE;
+
+#define CLK_SET_RATE_GATE       BIT(0) /* must be gated across rate change */
+
+Given you don't implement clk_ops.disable() and clk_ops.unprepare(),
+CLK_SET_RATE_GATE doesn't sound like the right flag to use.
+
+> +       init.parent_names = &parent_name;
+> +       init.num_parents = 1;
+> +
+> +       zclk->reg = base + CPG_FRQCRC;
+> +       zclk->kick_reg = base + CPG_FRQCRB;
+> +       zclk->hw.init = &init;
+> +
+> +       clk = clk_register(NULL, &zclk->hw);
+> +       if (IS_ERR(clk))
+> +               kfree(zclk);
+> +
+> +       return clk;
+> +}
+> +
+> +/** End of modifying for Z-clock */
+
+Please drop this comment
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 --
-2.8.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
