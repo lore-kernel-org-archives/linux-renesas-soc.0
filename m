@@ -1,352 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:35873 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752858AbcELIzh (ORCPT
+Received: from spo001.leaseweb.nl ([83.149.101.17]:34779 "EHLO
+	spo001.leaseweb.nl" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752562AbcENRSR (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 12 May 2016 04:55:37 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	arnd@arndb.de
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv4 1/4] ARM: dts: r8a7790: Reference both DMA controllers
-Date: Thu, 12 May 2016 10:54:42 +0200
-Message-Id: <1463043285-14702-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1463043285-14702-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1463043285-14702-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+	Sat, 14 May 2016 13:18:17 -0400
+Date: Sat, 14 May 2016 18:45:43 +0200
+From: Wim Van Sebroeck <wim@iguana.be>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] watchdog: add driver for Renesas Gen3 WDT watchdogs
+Message-ID: <20160514164543.GA20335@spo001.leaseweb.nl>
+References: <1459511786-4286-1-git-send-email-wsa@the-dreams.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1459511786-4286-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can choose which one to
-use.
+Hi Wolfram,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm/boot/dts/r8a7790.dtsi | 130 ++++++++++++++++++++++++-----------------
- 1 file changed, 78 insertions(+), 52 deletions(-)
+> Here is V2 of this series with the following changes:
+> 
+> * include bitops.h
+> * s/unsigned/unsigned int/
+> * drop set_timeout() because core does it already
+> * add get_timeleft()
+> * don't make "nowayout" a readable parameter
+> * use "watchdog" instead of "wdt" in the dt bindings
+> 
+> The dts and defconfig changes should go via Simon's tree once the driver is
+> accepted.
+> 
+> To use this driver, you need a recent firmware/uboot which initializes the
+> WDTRSTCR register which can only be changed in secure mode. 'md 0xe6160054 4'
+> should give you 0x8002 or something else with bit 15 set and bit 0 cleared.
+> 
+> Also, you need the clock enablement patches which just have been posted in
+> their newest version to the renesas-soc mailing list and are also in
+> close-to-be-applied state.
+> 
+> A complete branch to test can be found here:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/v8-wdt
+> 
+> Please review, test, comment...
+> 
+> Thanks,
+> 
+>    Wolfram
+> 
+> 
+> Wolfram Sang (4):
+>   watchdog: renesas-wdt: add driver
+>   arm64: dts: r8a7795: Add RWDT node
+>   arm64: dts: salvator-x: Enable watchdog timer
+>   arm64: defconfig: enable Renesas Watchdog Timer
+> 
+>  .../devicetree/bindings/watchdog/renesas-wdt.txt   |  25 +++
+>  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |   5 +
+>  arch/arm64/boot/dts/renesas/r8a7795.dtsi           |   8 +
+>  arch/arm64/configs/defconfig                       |   2 +
+>  drivers/watchdog/Kconfig                           |   8 +
+>  drivers/watchdog/Makefile                          |   1 +
+>  drivers/watchdog/renesas_wdt.c                     | 213 +++++++++++++++++++++
+>  7 files changed, 262 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+>  create mode 100644 drivers/watchdog/renesas_wdt.c
+> 
+> -- 
+> 2.7.0
+>
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 83cf23c..ac80db4 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -517,8 +517,9 @@
- 		reg = <0 0xe6500000 0 0x425>;
- 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_IIC0>;
--		dmas = <&dmac0 0x61>, <&dmac0 0x62>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x61>, <&dmac0 0x62>,
-+		       <&dmac1 0x61>, <&dmac1 0x62>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -530,8 +531,9 @@
- 		reg = <0 0xe6510000 0 0x425>;
- 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_IIC1>;
--		dmas = <&dmac0 0x65>, <&dmac0 0x66>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x65>, <&dmac0 0x66>,
-+		       <&dmac1 0x65>, <&dmac1 0x66>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -543,8 +545,9 @@
- 		reg = <0 0xe6520000 0 0x425>;
- 		interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_IIC2>;
--		dmas = <&dmac0 0x69>, <&dmac0 0x6a>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x69>, <&dmac0 0x6a>,
-+		       <&dmac1 0x69>, <&dmac1 0x6a>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -556,8 +559,9 @@
- 		reg = <0 0xe60b0000 0 0x425>;
- 		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7790_CLK_IICDVFS>;
--		dmas = <&dmac0 0x77>, <&dmac0 0x78>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x77>, <&dmac0 0x78>,
-+		       <&dmac1 0x77>, <&dmac1 0x78>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -567,8 +571,9 @@
- 		reg = <0 0xee200000 0 0x80>;
- 		interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_MMCIF0>;
--		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
-+		       <&dmac1 0xd1>, <&dmac1 0xd2>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		reg-io-width = <4>;
- 		status = "disabled";
-@@ -580,8 +585,9 @@
- 		reg = <0 0xee220000 0 0x80>;
- 		interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_MMCIF1>;
--		dmas = <&dmac0 0xe1>, <&dmac0 0xe2>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xe1>, <&dmac0 0xe2>,
-+		       <&dmac1 0xe1>, <&dmac1 0xe2>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		reg-io-width = <4>;
- 		status = "disabled";
-@@ -598,8 +604,9 @@
- 		reg = <0 0xee100000 0 0x328>;
- 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_SDHI0>;
--		dmas = <&dmac1 0xcd>, <&dmac1 0xce>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
-+		       <&dmac1 0xcd>, <&dmac1 0xce>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		max-frequency = <195000000>;
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
-@@ -610,8 +617,9 @@
- 		reg = <0 0xee120000 0 0x328>;
- 		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_SDHI1>;
--		dmas = <&dmac1 0xc9>, <&dmac1 0xca>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xc9>, <&dmac0 0xca>,
-+		       <&dmac1 0xc9>, <&dmac1 0xca>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		max-frequency = <195000000>;
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
-@@ -622,8 +630,9 @@
- 		reg = <0 0xee140000 0 0x100>;
- 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_SDHI2>;
--		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xc1>, <&dmac0 0xc2>,
-+		       <&dmac1 0xc1>, <&dmac1 0xc2>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		max-frequency = <97500000>;
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
-@@ -634,8 +643,9 @@
- 		reg = <0 0xee160000 0 0x100>;
- 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7790_CLK_SDHI3>;
--		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
-+		       <&dmac1 0xd3>, <&dmac1 0xd4>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		max-frequency = <97500000>;
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
-@@ -648,8 +658,9 @@
- 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFA0>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x21>, <&dmac0 0x22>,
-+		       <&dmac1 0x21>, <&dmac1 0x22>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -661,8 +672,9 @@
- 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFA1>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x25>, <&dmac0 0x26>,
-+		       <&dmac1 0x25>, <&dmac1 0x26>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -674,8 +686,9 @@
- 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFA2>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x27>, <&dmac0 0x28>,
-+		       <&dmac1 0x27>, <&dmac1 0x28>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -687,8 +700,9 @@
- 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFB0>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
-+		       <&dmac1 0x3d>, <&dmac1 0x3e>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -700,8 +714,9 @@
- 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFB1>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x19>, <&dmac0 0x1a>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x19>, <&dmac0 0x1a>,
-+		       <&dmac1 0x19>, <&dmac1 0x1a>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -713,8 +728,9 @@
- 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFB2>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>,
-+		       <&dmac1 0x1d>, <&dmac1 0x1e>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -727,8 +743,9 @@
- 		clocks = <&mstp7_clks R8A7790_CLK_SCIF0>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
-+		       <&dmac1 0x29>, <&dmac1 0x2a>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -741,8 +758,9 @@
- 		clocks = <&mstp7_clks R8A7790_CLK_SCIF1>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
-+		       <&dmac1 0x2d>, <&dmac1 0x2e>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -755,8 +773,9 @@
- 		clocks = <&mstp3_clks R8A7790_CLK_SCIF2>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
-+		       <&dmac1 0x2b>, <&dmac1 0x2c>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -769,8 +788,9 @@
- 		clocks = <&mstp7_clks R8A7790_CLK_HSCIF0>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
-+		       <&dmac1 0x39>, <&dmac1 0x3a>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -783,8 +803,9 @@
- 		clocks = <&mstp7_clks R8A7790_CLK_HSCIF1>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
-+		       <&dmac1 0x4d>, <&dmac1 0x4e>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -1469,8 +1490,9 @@
- 		reg = <0 0xe6b10000 0 0x2c>;
- 		interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7790_CLK_QSPI_MOD>;
--		dmas = <&dmac0 0x17>, <&dmac0 0x18>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x17>, <&dmac0 0x18>,
-+		       <&dmac1 0x17>, <&dmac1 0x18>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		num-cs = <1>;
- 		#address-cells = <1>;
-@@ -1483,8 +1505,9 @@
- 		reg = <0 0xe6e20000 0 0x0064>;
- 		interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7790_CLK_MSIOF0>;
--		dmas = <&dmac0 0x51>, <&dmac0 0x52>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x51>, <&dmac0 0x52>,
-+		       <&dmac1 0x51>, <&dmac1 0x52>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -1496,8 +1519,9 @@
- 		reg = <0 0xe6e10000 0 0x0064>;
- 		interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_MSIOF1>;
--		dmas = <&dmac0 0x55>, <&dmac0 0x56>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x55>, <&dmac0 0x56>,
-+		       <&dmac1 0x55>, <&dmac1 0x56>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -1509,8 +1533,9 @@
- 		reg = <0 0xe6e00000 0 0x0064>;
- 		interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_MSIOF2>;
--		dmas = <&dmac0 0x41>, <&dmac0 0x42>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x41>, <&dmac0 0x42>,
-+		       <&dmac1 0x41>, <&dmac1 0x42>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -1522,8 +1547,9 @@
- 		reg = <0 0xe6c90000 0 0x0064>;
- 		interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_MSIOF3>;
--		dmas = <&dmac0 0x45>, <&dmac0 0x46>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x45>, <&dmac0 0x46>,
-+		       <&dmac1 0x45>, <&dmac1 0x46>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--- 
-2.8.2
+Patch 1 and 4 have been added to linux-watchdog-next.
+
+Kind regards,
+Wim.
+ 
