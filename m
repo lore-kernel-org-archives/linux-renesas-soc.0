@@ -1,34 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:56481 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755342AbcESXl7 (ORCPT
+Received: from spo001.leaseweb.nl ([83.149.101.17]:34773 "EHLO
+	spo001.leaseweb.nl" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752304AbcENRLE (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 19 May 2016 19:41:59 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/3] R-Car VSP miscellaneous fixes
-Date: Fri, 20 May 2016 02:41:55 +0300
-Message-Id: <1463701318-22081-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Sat, 14 May 2016 13:11:04 -0400
+Date: Sat, 14 May 2016 18:42:55 +0200
+From: Wim Van Sebroeck <wim@iguana.be>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] watchdog: core: fix trivial typo in a comment
+Message-ID: <20160514164255.GA20279@spo001.leaseweb.nl>
+References: <1460476571-2351-1-git-send-email-wsa@the-dreams.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1460476571-2351-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Hi Wolfram,
 
-This series fixes three unrelated issues in the R-Car VSP driver. Please see
-individual patches for details.
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> Let's have balanced round brackets.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  drivers/watchdog/watchdog_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/watchdog_core.c b/drivers/watchdog/watchdog_core.c
+> index c1658fe73d58a1..6249ed34214a9f 100644
+> --- a/drivers/watchdog/watchdog_core.c
+> +++ b/drivers/watchdog/watchdog_core.c
+> @@ -104,7 +104,7 @@ static void watchdog_check_min_max_timeout(struct watchdog_device *wdd)
+>   * timeout module parameter (if it is valid value) or the timeout-sec property
+>   * (only if it is a valid value and the timeout_parm is out of bounds).
+>   * If none of them are valid then we keep the old value (which should normally
+> - * be the default timeout value.
+> + * be the default timeout value).
+>   *
+>   * A zero is returned on success and -EINVAL for failure.
+>   */
+> -- 
+> 2.7.0
+> 
 
-Laurent Pinchart (3):
-  v4l: vsp1: Fix typo in register field names
-  v4l: vsp1: Fix descriptions of Gen2 VSP instances
-  v4l: vsp1: Fix crash when resetting pipeline
+This patch has been added to linux-watchdog-next.
 
- drivers/media/platform/vsp1/vsp1_drv.c  |  6 +++---
- drivers/media/platform/vsp1/vsp1_pipe.c | 14 +++++++++-----
- drivers/media/platform/vsp1/vsp1_regs.h |  8 ++++----
- 3 files changed, 16 insertions(+), 12 deletions(-)
-
--- 
-Regards,
-
-Laurent Pinchart
+Kind regards,
+Wim.
