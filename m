@@ -1,66 +1,58 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:35857 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752061AbcELIzf (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 12 May 2016 04:55:35 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-	arnd@arndb.de
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv4 0/4] Reference both DMA controllers
-Date: Thu, 12 May 2016 10:54:41 +0200
-Message-Id: <1463043285-14702-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <1463126163-29423-6-git-send-email-geert+renesas@glider.be>
+References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+	<1463126163-29423-6-git-send-email-geert+renesas@glider.be>
+Date: Mon, 16 May 2016 10:15:33 +0200
+Message-ID: <CAMuHMdXxNS309-wB3tsuBzps9vqYDvqq2bd=9H_XXemELvcFSA@mail.gmail.com>
+Subject: Re: [PATCH 05/23] ARM: dts: r8a7790: Fix W=1 dtc warnings
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	linux-renesas-soc@vger.kernel.org,
+	Kumar Gala <galak@codeaurora.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Fri, May 13, 2016 at 9:55 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> --- a/arch/arm/boot/dts/r8a7790.dtsi
+> +++ b/arch/arm/boot/dts/r8a7790.dtsi
+> @@ -127,6 +127,22 @@
+>                         power-domains = <&sysc R8A7790_PD_CA7_CPU3>;
+>                         next-level-cache = <&L2_CA7>;
+>                 };
+> +
+> +               L2_CA15: cache-controller@0 {
+> +                       compatible = "cache";
+> +                       reg = <0>;
+> +                       power-domains = <&sysc R8A7790_PD_CA15_SCU>;
+> +                       cache-unified;
+> +                       cache-level = <2>;
+> +               };
+> +
+> +               L2_CA7: cache-controller@100 {
+> +                       compatible = "cache";
+> +                       reg = <100>;
 
-R-Car Gen2 have two DMA controllers, which are equivalent. However DMA
-slaves were tied only to a single DMA controller in .dtsi. This series
-add references to to both DMA controllers for all nodes that previously
-only referenced one of them. It also adds dma references to the SDHI
-nodes for r8a7794 which according to the datasheet should work but I
-have not access to HW to verify.
+Oops, <0x100>
 
-Tested on Koelsch (r8a7791) by altering the compatible value of either
-dmac0 or dmac1 and verifying that the DMA slaves pick the DMA controller
-that is available.
+Gr{oetje,eeting}s,
 
-* Changes since v3
-- Fix accidentally deleted line, thanks Geert for spotting my error. I
-  have now learnt the virtue of 'git diff --color-words'.
-- Add Reviewed-by from Geert for patch 2-4.
-
-* Changes since v2
-- Squash a rather large series to one patch per SoC
-- Rebase on top of renesas-devel-20160509-v4.6-rc7
-- Always reference dmac0 before dmac1
-
-* Changes since v1
-- Rebase on top of renesas-devel-20160315-v4.5 and add dmas references
-  new nodes (r8a7790: scif2 r8a7793: i2c6,i2c7,i2c8).
-- Correct error in commit message 31/31 (s/QSPI/MMCIF).
-- Collect Ack and Reviewed tags from Geert.
-
-Niklas Söderlund (4):
-  ARM: dts: r8a7790: Reference both DMA controllers
-  ARM: dts: r8a7791: Reference both DMA controllers
-  ARM: dts: r8a7793: Reference both DMA controllers
-  ARM: dts: r8a7794: Reference both DMA controllers
-
- arch/arm/boot/dts/r8a7790.dtsi | 130 +++++++++++++++++++++---------------
- arch/arm/boot/dts/r8a7791.dtsi | 145 ++++++++++++++++++++++++-----------------
- arch/arm/boot/dts/r8a7793.dtsi | 130 +++++++++++++++++++++---------------
- arch/arm/boot/dts/r8a7794.dtsi | 119 ++++++++++++++++++++-------------
- 4 files changed, 318 insertions(+), 206 deletions(-)
+                        Geert
 
 --
-2.8.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
