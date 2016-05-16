@@ -1,50 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:59675 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757712AbcEDI1w (ORCPT
+Received: from mail-ig0-f194.google.com ([209.85.213.194]:35596 "EHLO
+	mail-ig0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752500AbcEPIPx (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 4 May 2016 04:27:52 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: shmobile: pm-rmobile: Postpone call to pm_genpd_init()
-Date: Wed,  4 May 2016 10:27:46 +0200
-Message-Id: <1462350466-20466-1-git-send-email-geert+renesas@glider.be>
+	Mon, 16 May 2016 04:15:53 -0400
+MIME-Version: 1.0
+In-Reply-To: <1463126163-29423-3-git-send-email-geert+renesas@glider.be>
+References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+	<1463126163-29423-3-git-send-email-geert+renesas@glider.be>
+Date: Mon, 16 May 2016 10:15:52 +0200
+Message-ID: <CAMuHMdVvQGgdfT+ddu7gun7awkm0P4C85cBJq6SZQxoY7ua4XQ@mail.gmail.com>
+Subject: Re: [PATCH 02/23] ARM: dts: r8a73a4: Fix W=1 dtc warnings
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	linux-renesas-soc@vger.kernel.org,
+	Kumar Gala <galak@codeaurora.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All local setup of the generic_pm_domain structure should have been
-completed before calling pm_genpd_init().
+On Fri, May 13, 2016 at 9:55 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> --- a/arch/arm/boot/dts/r8a73a4.dtsi
+> +++ b/arch/arm/boot/dts/r8a73a4.dtsi
+> @@ -31,6 +31,24 @@
+>                         power-domains = <&pd_a2sl>;
+>                         next-level-cache = <&L2_CA15>;
+>                 };
+> +
+> +               L2_CA15: cache-controller@0 {
+> +                       compatible = "cache";
+> +                       reg = <0>;
+> +                       clocks = <&cpg_clocks R8A73A4_CLK_Z>;
+> +                       power-domains = <&pd_a3sm>;
+> +                       cache-unified;
+> +                       cache-level = <2>;
+> +               };
+> +
+> +               L2_CA7: cache-controller@100 {
+> +                       compatible = "cache";
+> +                       reg = <100>;
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/mach-shmobile/pm-rmobile.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Oops, <0x100>
 
-diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
-index ecc92bad3500c1c1..175bd3d91ebcbcb4 100644
---- a/arch/arm/mach-shmobile/pm-rmobile.c
-+++ b/arch/arm/mach-shmobile/pm-rmobile.c
-@@ -131,13 +131,13 @@ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
- 	struct dev_power_governor *gov = rmobile_pd->gov;
- 
- 	genpd->flags = GENPD_FLAG_PM_CLK;
--	pm_genpd_init(genpd, gov ? : &simple_qos_governor, false);
- 	genpd->dev_ops.active_wakeup	= rmobile_pd_active_wakeup;
- 	genpd->power_off		= rmobile_pd_power_down;
- 	genpd->power_on			= rmobile_pd_power_up;
- 	genpd->attach_dev		= cpg_mstp_attach_dev;
- 	genpd->detach_dev		= cpg_mstp_detach_dev;
- 	__rmobile_pd_power_up(rmobile_pd, false);
-+	pm_genpd_init(genpd, gov ? : &simple_qos_governor, false);
- }
- 
- static int rmobile_pd_suspend_busy(void)
--- 
-1.9.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
