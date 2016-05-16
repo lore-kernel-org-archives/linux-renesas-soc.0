@@ -1,127 +1,29 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1462365303-1664-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1462365303-1664-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-Date: Tue, 17 May 2016 10:52:08 +0200
-Message-ID: <CAMuHMdUqkodEsmOwzwv_PNVgqxkxG3bmjGTDYY5pC7g6tLciFg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: r8a7795: enable DMA for I2C
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56156 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752230AbcEPIT7 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 16 May 2016 04:19:59 -0400
+Date: Mon, 16 May 2016 17:19:58 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
 	<niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-renesas-soc@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Sender: devicetree-owner@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	magnus.damm@gmail.com, geert+renesas@glider.be
+Subject: Re: [PATCH] arm64: dts: r8a7795: enable DMA for I2C
+Message-ID: <20160516081958.GD4955@verge.net.au>
+References: <1462365303-1664-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1462365303-1664-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, May 4, 2016 at 2:35 PM, Niklas Söderlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
+On Wed, May 04, 2016 at 02:35:03PM +0200, Niklas Söderlund wrote:
 > Add DMA properties to the I2C nodes.
->
+> 
 > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> index a7315eb..49896e4 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> @@ -693,6 +693,8 @@
->                         interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
->                         clocks = <&cpg CPG_MOD 931>;
->                         power-domains = <&cpg>;
-> +                       dmas = <&dmac1 0x91>, <&dmac1 0x90>;
-> +                       dma-names = "tx", "rx";
->                         i2c-scl-internal-delay-ns = <110>;
->                         status = "disabled";
->                 };
-> @@ -705,6 +707,8 @@
->                         interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
->                         clocks = <&cpg CPG_MOD 930>;
->                         power-domains = <&cpg>;
-> +                       dmas = <&dmac1 0x93>, <&dmac1 0x92>;
-> +                       dma-names = "tx", "rx";
->                         i2c-scl-internal-delay-ns = <6>;
->                         status = "disabled";
->                 };
-> @@ -717,6 +721,8 @@
->                         interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
->                         clocks = <&cpg CPG_MOD 929>;
->                         power-domains = <&cpg>;
-> +                       dmas = <&dmac1 0x95>, <&dmac1 0x94>;
-> +                       dma-names = "tx", "rx";
->                         i2c-scl-internal-delay-ns = <6>;
->                         status = "disabled";
->                 };
 
-The three above can be used with SYS-DMAC1 (channels 16-31) or with SYS-DMAC2
-(channels 32-47).
-It should be tested with the latter before adding the corresponding dmas, as
-we had issue with SYS-DMAC2 before (they may have been fixed in firmware in the
-mean time).
-
-> @@ -729,6 +735,8 @@
->                         interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
->                         clocks = <&cpg CPG_MOD 928>;
->                         power-domains = <&cpg>;
-> +                       dmas = <&dmac1 0x97>, <&dmac1 0x96>;
-
-The two phandles above should reference "dmac0", as this i2c module can only be
-used with SYS-DMAC0 (channels 0-15), according to the datasheet.
-
-> +                       dma-names = "tx", "rx";
->                         i2c-scl-internal-delay-ns = <110>;
->                         status = "disabled";
->                 };
-> @@ -741,6 +749,8 @@
->                         interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
->                         clocks = <&cpg CPG_MOD 927>;
->                         power-domains = <&cpg>;
-> +                       dmas = <&dmac1 0x99>, <&dmac1 0x98>;
-
-dmac0
-
-> +                       dma-names = "tx", "rx";
->                         i2c-scl-internal-delay-ns = <110>;
->                         status = "disabled";
->                 };
-> @@ -753,6 +763,8 @@
->                         interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
->                         clocks = <&cpg CPG_MOD 919>;
->                         power-domains = <&cpg>;
-> +                       dmas = <&dmac1 0x9b>, <&dmac1 0x9a>;
-
-dmac0
-
-> +                       dma-names = "tx", "rx";
->                         i2c-scl-internal-delay-ns = <110>;
->                         status = "disabled";
->                 };
-> @@ -765,6 +777,8 @@
->                         interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
->                         clocks = <&cpg CPG_MOD 918>;
->                         power-domains = <&cpg>;
-> +                       dmas = <&dmac1 0x9d>, <&dmac1 0x9c>;
-
-dmac0
-
-> +                       dma-names = "tx", "rx";
->                         i2c-scl-internal-delay-ns = <6>;
->                         status = "disabled";
->                 };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks, I have queued this up.
