@@ -1,126 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55564 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161249AbcE3Rja (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 30 May 2016 13:39:30 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87futdrs2g.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1b7R9x-0000qH-ET@debutante>
-Date: Mon, 30 May 2016 18:39:25 +0100
-Subject: Applied "ASoC: simple-card: platform also uses asoc_simple_card_sub_parse_of()" to the asoc tree
+Received: from relmlor3.renesas.com ([210.160.252.173]:42208 "EHLO
+	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752812AbcEPPwr convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 16 May 2016 11:52:47 -0400
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+CC: "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+	Rob Herring <robh@kernel.org>,
+	Oliver Hartkopp <socketcan@hartkopp.net>,
+	Wolfgang Grandegger <wg@grandegger.com>
+Subject: RE: [PATCH v5 0/2] Add CAN FD driver support to r8a7795 SoC
+Date: Mon, 16 May 2016 15:52:40 +0000
+Message-ID: <HK2PR0601MB1329C6D0F81CBF1E5F4640BBB7770@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+References: <1456824849-7987-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1461846188-31249-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1461846188-31249-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hello Marc.
 
-   ASoC: simple-card: platform also uses asoc_simple_card_sub_parse_of()
+This patch series has been waiting for a response for a while now and we are keen to see it included upstream.
 
-has been applied to the asoc tree at
+Are there any blocking points to it being accepted?
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Kind regards, Chris
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 5fb9cb165130cdb67fb3ac42b4510ed7677a077d Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Fri, 20 May 2016 09:40:41 +0000
-Subject: [PATCH] ASoC: simple-card: platform also uses
- asoc_simple_card_sub_parse_of()
-
-In current simple-card, platform is handled as special case,
-but, the code is not readable.
-This patch makes platform to use asoc_simple_card_sub_parse_of()
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/generic/simple-card.c | 31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
-
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 466492b7d4f5..4e39c0fa78c9 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -223,6 +223,9 @@ asoc_simple_card_sub_parse_of(struct device_node *np,
- 	u32 val;
- 	int ret;
- 
-+	if (!np)
-+		return 0;
-+
- 	/*
- 	 * Get node via "sound-dai = <&phandle port>"
- 	 * it will be used as xxx_of_node on soc_bind_dai_link()
-@@ -238,9 +241,14 @@ asoc_simple_card_sub_parse_of(struct device_node *np,
- 		*args_count = args.args_count;
- 
- 	/* Get dai->name */
--	ret = snd_soc_of_get_dai_name(np, name);
--	if (ret < 0)
--		return ret;
-+	if (name) {
-+		ret = snd_soc_of_get_dai_name(np, name);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	if (!dai)
-+		return 0;
- 
- 	/* Parse TDM slot */
- 	ret = snd_soc_of_parse_tdm_slot(np, &dai->tx_slot_mask,
-@@ -374,21 +382,20 @@ static int asoc_simple_card_dai_link_of(struct device_node *node,
- 	if (ret < 0)
- 		goto dai_link_of_err;
- 
-+	ret = asoc_simple_card_sub_parse_of(plat, NULL,
-+					    &dai_link->platform_of_node,
-+					    NULL, NULL);
-+	if (ret < 0)
-+		goto dai_link_of_err;
-+
- 	if (!dai_link->cpu_dai_name || !dai_link->codec_dai_name) {
- 		ret = -EINVAL;
- 		goto dai_link_of_err;
- 	}
- 
--	if (plat) {
--		struct of_phandle_args args;
--
--		ret = of_parse_phandle_with_args(plat, "sound-dai",
--						 "#sound-dai-cells", 0, &args);
--		dai_link->platform_of_node = args.np;
--	} else {
--		/* Assumes platform == cpu */
-+	/* Assumes platform == cpu */
-+	if (!dai_link->platform_of_node)
- 		dai_link->platform_of_node = dai_link->cpu_of_node;
--	}
- 
- 	/* DAI link name is created from CPU/CODEC dai name */
- 	name = devm_kzalloc(dev,
--- 
-2.8.1
+> -----Original Message-----
+> From: Ramesh Shanmugasundaram
+> [mailto:ramesh.shanmugasundaram@bp.renesas.com]
+> Sent: 28 April 2016 13:23
+> To: mkl@pengutronix.de; wg@grandegger.com; socketcan@hartkopp.net;
+> robh+dt@kernel.org; pawel.moll@arm.com; mark.rutland@arm.com;
+> ijc+devicetree@hellion.org.uk; galak@codeaurora.org
+> Cc: linux-renesas-soc@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> can@vger.kernel.org; netdev@vger.kernel.org; Chris Paterson
+> <Chris.Paterson2@renesas.com>; Ramesh Shanmugasundaram
+> <ramesh.shanmugasundaram@bp.renesas.com>
+> Subject: [PATCH v5 0/2] Add CAN FD driver support to r8a7795 SoC
+> 
+> Hi All,
+> 
+>    This patch is based on commit "885cc17abad6" of can-next/testing branch
+> 
+> Changes since v4:
+> 	* Rebased to latest can-next/testing branch
+> 	* Addressed Marc K review comments on v2 patch
+> 	* Use clk_get_rate() to find ext clock availability. Refer thread
+> 	(https://lkml.org/lkml/2016/4/8/203)
+> 
+> Changes since v3:
+> 	* Split v3 patch into two (Marc K)
+> 	  (1) Introduce rcar_canfd.c driver in drivers/net/can/rcar dir
+> 	  (2) Move rcar_can.c driver to new drivers/net/can/rcar dir
+> 	* Added Acked-by Rob H for the bindings
+> 	* Added comments on CAN FD only mode in driver & Kconfig (Oliver
+> H)
+> 
+> Changes since v2:
+> 	* Rebased to latest tag (linux-can-next-for-4.6-20160310)
+> 	* Cleaned up leftover debugfs code (Thanks Oliver H)
+> 	* Revised devicetree documentation text (as suggested by Rob H)
+> 	  (https://www.mail-archive.com/linux-renesas-
+> soc@vger.kernel.org/msg01597.html)
+> 	* Used new can subsystem api to set static configuration & removed
+> check in rcar_canfd_start (as suggested by Oliver H)
+> 	  (Refer: http://comments.gmane.org/gmane.linux.can/9126 &
+> 	   https://www.mail-archive.com/linux-renesas-
+> soc@vger.kernel.org/msg01867.html)
+> 	* Clubbed Renesas controller drivers to driver/net/can/rcar dir (as
+> suggested by Oliver H)
+> 	* Updated commit message
+> 
+> Changes since v1:
+> 	* Removed testmodes & debugfs code (suggested by Oliver H)
+> 	* Fixed tx path race issue by introducing lock (suggested by Marc K)
+> 	* Removed __maybe_unused attribute of rcar_canfd_of_table
+> 
+> Ramesh Shanmugasundaram (2):
+>   can: rcar_canfd: Add Renesas R-Car CAN FD driver
+>   can: rcar_can: Move Renesas CAN driver to rcar dir
+> 
+>  .../devicetree/bindings/net/can/rcar_canfd.txt     |   89 ++
+>  drivers/net/can/Kconfig                            |   11 +-
+>  drivers/net/can/Makefile                           |    2 +-
+>  drivers/net/can/rcar/Kconfig                       |   21 +
+>  drivers/net/can/rcar/Makefile                      |    6 +
+>  drivers/net/can/{ => rcar}/rcar_can.c              |    0
+>  drivers/net/can/rcar/rcar_canfd.c                  | 1624 ++++++++++++++++++++
+>  7 files changed, 1742 insertions(+), 11 deletions(-)  create mode 100644
+> Documentation/devicetree/bindings/net/can/rcar_canfd.txt
+>  create mode 100644 drivers/net/can/rcar/Kconfig  create mode 100644
+> drivers/net/can/rcar/Makefile  rename drivers/net/can/{ => rcar}/rcar_can.c
+> (100%)  create mode 100644 drivers/net/can/rcar/rcar_canfd.c
+> 
+> --
+> 1.9.1
