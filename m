@@ -1,48 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f194.google.com ([209.85.213.194]:34674 "EHLO
-	mail-ig0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753242AbcEQKjd convert rfc822-to-8bit (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:44888 "EHLO
+	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751553AbcEQKaO (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 17 May 2016 06:39:33 -0400
-Received: by mail-ig0-f194.google.com with SMTP id kj7so1220211igb.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 May 2016 03:39:32 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1463480881-2864-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1463480881-2864-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-Date: Tue, 17 May 2016 12:39:32 +0200
-Message-ID: <CAMuHMdXXejH-_6ZcxyfmkA1yBtFc0NGyan8MCb-vomJ+zGhxag@mail.gmail.com>
-Subject: Re: [PATCHv2] arm64: dts: r8a7795: enable DMA for I2C
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+	Tue, 17 May 2016 06:30:14 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
 	<niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
+	magnus.damm@gmail.com
+Cc: geert+renesas@glider.be,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2] arm64: dts: r8a7795: enable DMA for I2C
+Date: Tue, 17 May 2016 12:28:01 +0200
+Message-Id: <1463480881-2864-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+Add DMA properties to the I2C nodes.
 
-On Tue, May 17, 2016 at 12:28 PM, Niklas Söderlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> Add DMA properties to the I2C nodes.
->
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
 
-Thanks for the update!
+Changes since v1
+- Use correct phandle dmac0 for i2c3, i2c4, i2c5 and i2c6. Not all dmacX 
+  instances are equal as they where on Gen2. Thanks Geert for pointing 
+  this out.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index a7315eb..80049d8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -693,6 +693,8 @@
+ 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 931>;
+ 			power-domains = <&cpg>;
++			dmas = <&dmac1 0x91>, <&dmac1 0x90>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -705,6 +707,8 @@
+ 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 930>;
+ 			power-domains = <&cpg>;
++			dmas = <&dmac1 0x93>, <&dmac1 0x92>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -717,6 +721,8 @@
+ 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 929>;
+ 			power-domains = <&cpg>;
++			dmas = <&dmac1 0x95>, <&dmac1 0x94>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -729,6 +735,8 @@
+ 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 928>;
+ 			power-domains = <&cpg>;
++			dmas = <&dmac0 0x97>, <&dmac0 0x96>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -741,6 +749,8 @@
+ 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 927>;
+ 			power-domains = <&cpg>;
++			dmas = <&dmac0 0x99>, <&dmac0 0x98>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -753,6 +763,8 @@
+ 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 919>;
+ 			power-domains = <&cpg>;
++			dmas = <&dmac0 0x9b>, <&dmac0 0x9a>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -765,6 +777,8 @@
+ 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 918>;
+ 			power-domains = <&cpg>;
++			dmas = <&dmac0 0x9d>, <&dmac0 0x9c>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+-- 
+2.8.2
