@@ -1,47 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:48151 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752573AbcEQQ2u (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:58956 "EHLO
+	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752069AbcEQJFj (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 17 May 2016 12:28:50 -0400
-Date: Tue, 17 May 2016 12:28:47 -0400 (EDT)
-Message-Id: <20160517.122847.2276488826673799483.davem@davemloft.net>
-To: geert+renesas@glider.be
-Cc: sergei.shtylyov@cogentembedded.com, horms+renesas@verge.net.au,
-	ykaneko0929@gmail.com, netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 -net-next] ravb: Add missing free_irq() calls to
- ravb_close()
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1463475934-3062-1-git-send-email-geert+renesas@glider.be>
-References: <1463475934-3062-1-git-send-email-geert+renesas@glider.be>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+	Tue, 17 May 2016 05:05:39 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 -net-next] ravb: Add missing free_irq() calls to ravb_close()
+Date: Tue, 17 May 2016 11:05:34 +0200
+Message-Id: <1463475934-3062-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Tue, 17 May 2016 11:05:34 +0200
+When reopening the network device on ra7795/salvator-x, e.g. after a
+DHCP timeout:
 
-> When reopening the network device on ra7795/salvator-x, e.g. after a
-> DHCP timeout:
-> 
->     IP-Config: Reopening network devices...
->     genirq: Flags mismatch irq 139. 00000000 (eth0:ch0:rx_be) vs. 00000000 (ravb e6800000.ethernet eth0: cannot request IRQ eth0:ch0:rx_be
->     IP-Config: Failed to open eth0
->     IP-Config: No network devices available
-> 
-> The "mismatch" is due to requesting an IRQ that is already in use,
-> while IRQF_PROBE_SHARED wasn't set.
-> 
-> However, the real cause is that ravb_close() doesn't release any of the
-> R-Car Gen3-specific secondary IRQs.
-> 
-> Add the missing free_irq() calls to fix this.
-> 
-> Fixes: f51bdc236b6c5835 ("ravb: Add dma queue interrupt support")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+    IP-Config: Reopening network devices...
+    genirq: Flags mismatch irq 139. 00000000 (eth0:ch0:rx_be) vs. 00000000 (ravb e6800000.ethernet eth0: cannot request IRQ eth0:ch0:rx_be
+    IP-Config: Failed to open eth0
+    IP-Config: No network devices available
 
-Applied.
+The "mismatch" is due to requesting an IRQ that is already in use,
+while IRQF_PROBE_SHARED wasn't set.
+
+However, the real cause is that ravb_close() doesn't release any of the
+R-Car Gen3-specific secondary IRQs.
+
+Add the missing free_irq() calls to fix this.
+
+Fixes: f51bdc236b6c5835 ("ravb: Add dma queue interrupt support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+---
+This version is against today's net-next.git.
+
+v3:
+  - Add Acked-by,
+  - Rebase against net-next.git, which has received a partial fix
+    through net.git,
+
+v2:
+  - Clearly state which version this patch is against,
+  - Add Fixes tags.
+---
+ drivers/net/ethernet/renesas/ravb_main.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index bcebafd780234f96..867caf6e7a5a65ad 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -1667,8 +1667,13 @@ static int ravb_close(struct net_device *ndev)
+ 		priv->phydev = NULL;
+ 	}
+ 
+-	if (priv->chip_id == RCAR_GEN3)
++	if (priv->chip_id != RCAR_GEN2) {
++		free_irq(priv->tx_irqs[RAVB_NC], ndev);
++		free_irq(priv->rx_irqs[RAVB_NC], ndev);
++		free_irq(priv->tx_irqs[RAVB_BE], ndev);
++		free_irq(priv->rx_irqs[RAVB_BE], ndev);
+ 		free_irq(priv->emac_irq, ndev);
++	}
+ 	free_irq(ndev->irq, ndev);
+ 
+ 	napi_disable(&priv->napi[RAVB_NC]);
+-- 
+1.9.1
