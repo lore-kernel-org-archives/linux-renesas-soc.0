@@ -1,97 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:60629 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752063AbcEMH4H (ORCPT
+Received: from shards.monkeyblade.net ([149.20.54.216]:48151 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752573AbcEQQ2u (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 13 May 2016 03:56:07 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 14/23] ARM: dts: gose: Fix W=1 dtc warnings
-Date: Fri, 13 May 2016 09:55:54 +0200
-Message-Id: <1463126163-29423-15-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
-References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+	Tue, 17 May 2016 12:28:50 -0400
+Date: Tue, 17 May 2016 12:28:47 -0400 (EDT)
+Message-Id: <20160517.122847.2276488826673799483.davem@davemloft.net>
+To: geert+renesas@glider.be
+Cc: sergei.shtylyov@cogentembedded.com, horms+renesas@verge.net.au,
+	ykaneko0929@gmail.com, netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 -net-next] ravb: Add missing free_irq() calls to
+ ravb_close()
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1463475934-3062-1-git-send-email-geert+renesas@glider.be>
+References: <1463475934-3062-1-git-send-email-geert+renesas@glider.be>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Warning (unit_address_vs_reg): Node /regulator@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@3 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@4 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@5 has a unit name, but no reg property
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Tue, 17 May 2016 11:05:34 +0200
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7793-gose.dts | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+> When reopening the network device on ra7795/salvator-x, e.g. after a
+> DHCP timeout:
+> 
+>     IP-Config: Reopening network devices...
+>     genirq: Flags mismatch irq 139. 00000000 (eth0:ch0:rx_be) vs. 00000000 (ravb e6800000.ethernet eth0: cannot request IRQ eth0:ch0:rx_be
+>     IP-Config: Failed to open eth0
+>     IP-Config: No network devices available
+> 
+> The "mismatch" is due to requesting an IRQ that is already in use,
+> while IRQF_PROBE_SHARED wasn't set.
+> 
+> However, the real cause is that ravb_close() doesn't release any of the
+> R-Car Gen3-specific secondary IRQs.
+> 
+> Add the missing free_irq() calls to fix this.
+> 
+> Fixes: f51bdc236b6c5835 ("ravb: Add dma queue interrupt support")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 0ebc3ee34923f5fa..f748360ee85712f1 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -158,7 +158,7 @@
- 		};
- 	};
- 
--	vcc_sdhi0: regulator@0 {
-+	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
- 
- 		regulator-name = "SDHI0 Vcc";
-@@ -169,7 +169,7 @@
- 		enable-active-high;
- 	};
- 
--	vccq_sdhi0: regulator@1 {
-+	vccq_sdhi0: regulator-vccq-sdhi0 {
- 		compatible = "regulator-gpio";
- 
- 		regulator-name = "SDHI0 VccQ";
-@@ -182,7 +182,7 @@
- 			  1800000 0>;
- 	};
- 
--	vcc_sdhi1: regulator@2 {
-+	vcc_sdhi1: regulator-vcc-sdhi1 {
- 		compatible = "regulator-fixed";
- 
- 		regulator-name = "SDHI1 Vcc";
-@@ -193,7 +193,7 @@
- 		enable-active-high;
- 	};
- 
--	vccq_sdhi1: regulator@3 {
-+	vccq_sdhi1: regulator-vccq-sdhi1 {
- 		compatible = "regulator-gpio";
- 
- 		regulator-name = "SDHI1 VccQ";
-@@ -206,7 +206,7 @@
- 			  1800000 0>;
- 	};
- 
--	vcc_sdhi2: regulator@4 {
-+	vcc_sdhi2: regulator-vcc-sdhi2 {
- 		compatible = "regulator-fixed";
- 
- 		regulator-name = "SDHI2 Vcc";
-@@ -217,7 +217,7 @@
- 		enable-active-high;
- 	};
- 
--	vccq_sdhi2: regulator@5 {
-+	vccq_sdhi2: regulator-vccq-sdhi2 {
- 		compatible = "regulator-gpio";
- 
- 		regulator-name = "SDHI2 VccQ";
--- 
-1.9.1
+Applied.
