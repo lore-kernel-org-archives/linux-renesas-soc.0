@@ -1,60 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:60027 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754842AbcEZSSo (ORCPT
+Received: from comal.ext.ti.com ([198.47.26.152]:53805 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751627AbcEQLkK (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 26 May 2016 14:18:44 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] serial: sh-sci: Clear (H)SCIF timeout and overrun during reset
-Date: Thu, 26 May 2016 20:18:38 +0200
-Message-Id: <1464286718-10745-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464286718-10745-1-git-send-email-geert+renesas@glider.be>
-References: <1464286718-10745-1-git-send-email-geert+renesas@glider.be>
+	Tue, 17 May 2016 07:40:10 -0400
+Subject: Re: BUG since "ASoC: simple-card: Add pm callbacks to platform
+ driver"
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>
+References: <CAMuHMdX6veYCvRdJjui3J0oPUKLhZB1Y8_AROnqhtZS9=HyNTg@mail.gmail.com>
+ <CAMuHMdWfHiaJzvSE5XARcgUPWiJR4ZJ82TdCA53vZ=rQ5wD7EQ@mail.gmail.com>
+ <9ff733b5-6a17-9c1b-c47f-bd6cd2acb877@ti.com>
+CC: ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+	<linux-renesas-soc@vger.kernel.org>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <159493cd-eec2-d84c-2cd0-f9a90c301a45@ti.com>
+Date: Tue, 17 May 2016 14:40:00 +0300
+MIME-Version: 1.0
+In-Reply-To: <9ff733b5-6a17-9c1b-c47f-bd6cd2acb877@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the missing timeout bit definition for (H)SCIF.
-Clear the timeout and overrun flag bits during UART reset, cfr. the
-initialization flowchart in the datasheet.
+On 05/17/16 14:08, Peter Ujfalusi wrote:
+> On 05/17/16 14:02, Geert Uytterhoeven wrote:
+>> On Tue, May 17, 2016 at 12:55 PM, Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>>> With today's sound-asoc/for-next, I'm seeing on r8a7791/koelsch and
+>>> sh73a0/kzm9g:
+>>>
+>>>     kernel BUG at drivers/base/regmap/regcache.c:347!
+>>>     Internal error: Oops - BUG: 0 [#1] SMP ARM
+>>>     Modules linked in:
+>>>     CPU: 0 PID: 20 Comm: kworker/0:1 Not tainted
+>>> 4.6.0-koelsch-07135-g1481dd77fa7d01cb #2621
+>>>     Hardware name: Generic R8A7791 (Flattened Device Tree)
+>>>     Workqueue: events soc_resume_deferred
+>>>     task: ef512100 ti: ef5a6000 task.ti: ef5a6000
+>>>     PC is at regcache_sync+0xc/0x118
+>>>     LR is at ak4642_resume+0x20/0x28
+>>
+>> This is during resume from s2ram.
+> 
+> if you revert the patch does the ak4642_resume() is called at all, I think not.
+> But in the driver does not implement the .suspend callback, probably this
+> never worked correctly in ak4642?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/sh-sci.c | 5 +++++
- drivers/tty/serial/sh-sci.h | 1 +
- 2 files changed, 6 insertions(+)
+The reason is different, the bug is caused by:
+	BUG_ON(!map->cache_ops);
+in regcache.c
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 549d799cb18fafe7..fe9ad1b56420876a 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2056,6 +2056,11 @@ static void sci_reset(struct uart_port *port)
- 	sci_clear_SCxSR(port,
- 			SCxSR_RDxF_CLEAR(port) & SCxSR_ERROR_CLEAR(port) &
- 			SCxSR_BREAK_CLEAR(port));
-+	if (sci_getreg(port, SCLSR)->size) {
-+		status = serial_port_in(port, SCLSR);
-+		status &= ~(SCLSR_TO | SCLSR_ORER);
-+		serial_port_out(port, SCLSR, status);
-+	}
- }
- 
- static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
-diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
-index 7a4fa185b93ef307..c590418d2a40d78b 100644
---- a/drivers/tty/serial/sh-sci.h
-+++ b/drivers/tty/serial/sh-sci.h
-@@ -105,6 +105,7 @@ enum {
- #define SCFCR_LOOP	BIT(0)	/* Loopback Test */
- 
- /* SCLSR (Line Status Register) on (H)SCIF */
-+#define SCLSR_TO	BIT(2)	/* Timeout */
- #define SCLSR_ORER	BIT(0)	/* Overrun Error */
- 
- /* SCSPTR (Serial Port Register), optional */
+None of the regmap_config have set the .cache_type, so they do not have cache,
+so sync is not available for them -> regmap_sync() BUGs out.
+
+It can be fixed by either setting .cache_type for the regmap_config structures
+or by removing the resume callback, as it is broken.
+
 -- 
-1.9.1
+Péter
