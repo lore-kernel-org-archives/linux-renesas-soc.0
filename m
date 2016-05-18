@@ -1,57 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:56204 "EHLO
-	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750991AbcEJE5x (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:44490 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751895AbcERBVA (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 00:57:53 -0400
-Subject: [PATCH 1/2] cpufreq: rcar: Add support for R8A7795 SoC
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be>
- <5731664D.1030909@rvc.renesas.com> <573169CD.8050607@rvc.renesas.com>
-CC: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Khiem Trong. Nguyen" <khiem.nguyen.xt@rvc.renesas.com>
-From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Message-ID: <57316A4E.7040100@rvc.renesas.com>
-Date: Tue, 10 May 2016 11:57:50 +0700
+	Tue, 17 May 2016 21:21:00 -0400
+Date: Wed, 18 May 2016 10:20:56 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>,
+	linux-renesas-soc@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCHv2] arm64: dts: r8a7795: enable DMA for I2C
+Message-ID: <20160518012055.GA24922@verge.net.au>
+References: <1463480881-2864-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdXXejH-_6ZcxyfmkA1yBtFc0NGyan8MCb-vomJ+zGhxag@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <573169CD.8050607@rvc.renesas.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdXXejH-_6ZcxyfmkA1yBtFc0NGyan8MCb-vomJ+zGhxag@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-After the commit "a399dc9fc50 cpufreq: shmobile: Use generic platdev
-driver", will use cpufreq-dt-platdev driver to enable cpufreq-dt support.
-Hence, follow the implementation to support new R8A7795 SoC.
+On Tue, May 17, 2016 at 12:39:32PM +0200, Geert Uytterhoeven wrote:
+> Hi Niklas,
+> 
+> On Tue, May 17, 2016 at 12:28 PM, Niklas Söderlund
+> <niklas.soderlund+renesas@ragnatech.se> wrote:
+> > Add DMA properties to the I2C nodes.
+> >
+> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> Thanks for the update!
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
----
-  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
-  1 file changed, 1 insertion(+)
-
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c 
-b/drivers/cpufreq/cpufreq-dt-platdev.c
-index ac4a0ba..32f6dda 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -53,6 +53,7 @@ static const struct of_device_id machines[] 
-__initconst = {
-  	{ .compatible = "renesas,r8a7791", },
-  	{ .compatible = "renesas,r8a7793", },
-  	{ .compatible = "renesas,r8a7794", },
-+	{ .compatible = "renesas,r8a7795", },
-  	{ .compatible = "renesas,sh73a0", },
-
-  	{ .compatible = "rockchip,rk2928", },
--- 
-1.9.1
+Thanks, I have queued this up.
