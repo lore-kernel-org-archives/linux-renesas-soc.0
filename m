@@ -1,39 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f175.google.com ([209.85.223.175]:36455 "EHLO
-	mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754561AbcESQrE (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:28551 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751112AbcERLVJ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 19 May 2016 12:47:04 -0400
-Received: by mail-io0-f175.google.com with SMTP id i75so114834228ioa.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 May 2016 09:46:58 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1463570348-32349-2-git-send-email-dirk.behme@de.bosch.com>
-References: <1463570348-32349-1-git-send-email-dirk.behme@de.bosch.com>
-	<1463570348-32349-2-git-send-email-dirk.behme@de.bosch.com>
-Date: Thu, 19 May 2016 18:46:56 +0200
-Message-ID: <CAMuHMdVC=MwF0WO5xd1B7etyfz+deXyxDXhVkqmH7PC4vBFh8Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] reset: Add renesas,rst DT bindings.
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wed, 18 May 2016 07:21:09 -0400
+Received: from vsmta11.fe.internet.bosch.com (unknown [10.4.98.51])
+	by imta24.fe.bosch.de (Postfix) with ESMTP id A11FCD8020B
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 18 May 2016 13:21:07 +0200 (CEST)
+Received: from FE-HUB1000.de.bosch.com (vsgw22.fe.internet.bosch.com [10.4.98.11])
+	by vsmta11.fe.internet.bosch.com (Postfix) with ESMTP id 13017238035C
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 18 May 2016 13:21:07 +0200 (CEST)
+From: Dirk Behme <dirk.behme@de.bosch.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+	<linux-renesas-soc@vger.kernel.org>
+CC: Dirk Behme <dirk.behme@de.bosch.com>
+Subject: [PATCH v2 1/6] reset: Add renesas,rst DT bindings.
+Date: Wed, 18 May 2016 13:19:03 +0200
+Message-ID: <1463570348-32349-2-git-send-email-dirk.behme@de.bosch.com>
+In-Reply-To: <1463570348-32349-1-git-send-email-dirk.behme@de.bosch.com>
+References: <1463570348-32349-1-git-send-email-dirk.behme@de.bosch.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, May 18, 2016 at 1:19 PM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
-> +                 - "renesas,r8a7796-rst" (R-Car M3)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-R-Car M3-W
+Add DT bindings for the Renesas R-Car Reset Controller
 
-Gr{oetje,eeting}s,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+---
+ .../devicetree/bindings/reset/renesas,rst.txt      | 29 ++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/renesas,rst.txt
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+new file mode 100644
+index 0000000..5171fca
+--- /dev/null
++++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+@@ -0,0 +1,29 @@
++DT bindings for the Renesas R-Car Reset Controller
++
++The R-Car Reset Controller provides reset control, and implements the following
++functions:
++  - Register-based reset control for the various CPU cores,
++  - Latching of the levels on mode pins when PRESET# is negated,
++  - Mode monitoring register,
++  - Boot address registers for the various CPU cores.
++
++
++Required properties:
++  - compatible: Should be "renesas,<soctype>-rst", and "syscon".
++		Examples with soctypes are:
++		  - "renesas,r8a7790-rst" (R-Car H2)
++		  - "renesas,r8a7791-rst" (R-Car M2-W)
++		  - "renesas,r8a7792-rst" (R-Car V2H
++		  - "renesas,r8a7793-rst" (R-Car M2-N)
++		  - "renesas,r8a7794-rst" (R-Car E2)
++		  - "renesas,r8a7795-rst" (R-Car H3)
++		  - "renesas,r8a7796-rst" (R-Car M3)
++  - reg: Address start and address range for the device.
++
++
++Example:
++
++	rst: reset-controller@e6160000 {
++		compatible = "renesas,r8a7795-rst", "syscon";
++		reg = <0 0xe6160000 0 0x0200>;
++	};
+-- 
+2.8.0
