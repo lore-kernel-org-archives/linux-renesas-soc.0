@@ -1,69 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:36806 "EHLO
-	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753786AbcEEPcA (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:28556 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752407AbcERLVK (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 5 May 2016 11:32:00 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: horms@verge.net.au, geert@linux-m68k.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-mmc@vger.kernel.org,
-	sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v5] ARM: dts: r8a7793: Add MMCIF0
-Date: Thu,  5 May 2016 17:31:45 +0200
-Message-Id: <1462462305-27890-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+	Wed, 18 May 2016 07:21:10 -0400
+Received: from vsmta14.fe.internet.bosch.com (unknown [10.4.98.54])
+	by imta23.fe.bosch.de (Postfix) with ESMTP id E6D2D1580159
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 18 May 2016 13:21:08 +0200 (CEST)
+Received: from SI-HUB1000.de.bosch.com (vsgw24.fe.internet.bosch.com [10.4.98.24])
+	by vsmta14.fe.internet.bosch.com (Postfix) with ESMTP id 8FB8FA40829
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 18 May 2016 13:21:08 +0200 (CEST)
+From: Dirk Behme <dirk.behme@de.bosch.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	<linux-renesas-soc@vger.kernel.org>
+CC: Dirk Behme <dirk.behme@de.bosch.com>
+Subject: [PATCH v2 5/6] arm64: dts: renesas: Link CPG to RST using "renesas,modemr"
+Date: Wed, 18 May 2016 13:19:07 +0200
+Message-ID: <1463570348-32349-6-git-send-email-dirk.behme@de.bosch.com>
+In-Reply-To: <1463570348-32349-1-git-send-email-dirk.behme@de.bosch.com>
+References: <1463570348-32349-1-git-send-email-dirk.behme@de.bosch.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Same as on r8a7791.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add a link from the Clock Pulse Generator node to the Reset Controller
+node, so the CPG can read the Mode Monitoring Register (MODEMR) to
+obtain the mode pin values.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
 ---
-Now with enhanced ePAPR compliance and Acked-by.
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1 +
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 1 +
+ 2 files changed, 2 insertions(+)
 
-CU
-Uli
-
-
-Changes since v4:
-- ePAPR compliance
-
-Changes since v3:
-- set power-domains = <&sysc R8A7793_PD_ALWAYS_ON>
-
-Changes since v2:
-- change back to one DMA controller
-- use GIC_SPI
-- add max-frequency
-
-
- arch/arm/boot/dts/r8a7793.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 1dd6d20..76c8435 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -543,6 +543,19 @@
- 		status = "disabled";
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 7be6ae0..4e05fcc 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -307,6 +307,7 @@
+ 			clock-names = "extal", "extalr";
+ 			#clock-cells = <2>;
+ 			#power-domain-cells = <0>;
++			renesas,modemr = <&rst 0x60>;
+ 		};
  
-+	mmcif0: mmc@ee200000 {
-+		compatible = "renesas,mmcif-r8a7793", "renesas,sh-mmcif";
-+		reg = <0 0xee200000 0 0x80>;
-+		interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp3_clks R8A7793_CLK_MMCIF0>;
-+		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>;
-+		dma-names = "tx", "rx";
-+		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		reg-io-width = <4>;
-+		status = "disabled";
-+		max-frequency = <97500000>;
-+	};
-+
- 	scifa0: serial@e6c40000 {
- 		compatible = "renesas,scifa-r8a7793",
- 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
+ 		sysc: system-controller@e6180000 {
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 75ac18d..13d714d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -107,6 +107,7 @@
+ 			clock-names = "extal", "extalr";
+ 			#clock-cells = <2>;
+ 			#power-domain-cells = <0>;
++			renesas,modemr = <&rst 0x60>;
+ 		};
+ 
+ 		sysc: system-controller@e6180000 {
 -- 
-2.7.4
+2.8.0
