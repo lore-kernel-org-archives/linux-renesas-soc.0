@@ -1,55 +1,43 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:60239 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753303AbcESIJk (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 19 May 2016 04:09:40 -0400
-Date: Thu, 19 May 2016 10:09:35 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Arnd Bergmann <arnd@arndb.de>, linux-i2c@vger.kernel.org,
+Return-Path: <linux-i2c-owner@vger.kernel.org>
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Thu, 19 May 2016 10:01:07 +0200
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: wsa@the-dreams.de, linux-i2c@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
 Subject: Re: [PATCHv2] i2c: rcar: add DMA support
-Message-ID: <20160519080934.GE1668@katana>
+Message-ID: <20160519080107.GM29375@bigcity.dyn.berto.se>
 References: <1463228228-32560-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
  <6110679.RmWR1Poicp@wuerfel>
- <20160519080107.GM29375@bigcity.dyn.berto.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="RpqchZ26BWispMcB"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20160519080107.GM29375@bigcity.dyn.berto.se>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6110679.RmWR1Poicp@wuerfel>
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Arnd,
 
---RpqchZ26BWispMcB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks for your feedback.
 
-> Will fix and resend.
+On 2016-05-18 15:23:07 +0200, Arnd Bergmann wrote:
+> On Saturday 14 May 2016 14:17:08 Niklas S�derlund wrote:
+> > +       chan = dma_request_slave_channel_reason(dev, chan_name);
+> > +       if (IS_ERR(chan)) {
+> > +               ret = PTR_ERR(chan);
+> > +               dev_dbg(dev, "request_channel failed for %s (%d)\n",
+> > +                       chan_name, ret);
+> > +               return chan;
+> > +       }
+> > 
+> 
+> I think you should now use dma_request_chan() for new drivers.
 
-Please an incremental patch.
+Will fix and resend.
 
+> 
+> 	Arnd
 
---RpqchZ26BWispMcB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXPXS+AAoJEBQN5MwUoCm2tH4QAJdXZb4OOZn9j4J/4PPiR6XR
-r5MXTKZPoFxjbPSa9tNTNQ90RgMDUa6x/bLPrSACIiKoKi1X2WBemNuAZMJ6eeK2
-RbPEHA+fQB+E0Qrmu2IqZuNerEzzmJlTywSmJDnusc7vrMFsQKyOD2Xukd5tWLEy
-qhixumFDPd9PCYVozhETbHJBxcQBO86Dq/hHylK7kGIpbm6Xjb/AfEyvibRs1Ydh
-cRb2o4ntLoz3hB50AaIei4jF7QNDTX9ziMmHSI7RJU912OuC0mkYvuDYOfPuREl+
-O3cLLCWf0wDSXaIE/Kf0IKfikFtsqRgJ0Yz3OKahyxJTrFrfSg6nphajpmzjp/KG
-PZbRssV0eigXFcEq50ETZkayZjC3fBnADs94YE7FwbR/kYO8S1t8wpfieulsFgdV
-d8THFWddWP++PJn++LMe0cJnJBp4VDl3+kHIvqx6/1Yy/b8+yMZoMspa2bJB5hIN
-Hpv1rQoa4UUBMJ7ED80mFdI/URZdlFmk6sOipSmA9+V6OPJkv6GZ+VPifhOhZObv
-6dgU7nrCz4uGq5ZtNby5IdE729Tl5JBxUICGFxoQZWv/bv7NupvtUCy2Mq0QKiEC
-WOArxUOMDtHQU9486WTsoMWIbhMhgTA+VO9QHkQ5pHDz9Ei7RKfsq8loqHqt8eRc
-ncA+wgkT2rsq90SgVpEl
-=QY6Y
------END PGP SIGNATURE-----
-
---RpqchZ26BWispMcB--
+-- 
+Regards,
+Niklas S�derlund
