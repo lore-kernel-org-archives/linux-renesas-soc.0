@@ -1,126 +1,57 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 00/23] ARM/arm64: dts: renesas: Fix W=1 dtc warnings
-Date: Fri, 20 May 2016 09:09:51 +0200
-Message-Id: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:56483 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755342AbcESXmB (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 19 May 2016 19:42:01 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 2/3] v4l: vsp1: Fix descriptions of Gen2 VSP instances
+Date: Fri, 20 May 2016 02:41:57 +0300
+Message-Id: <1463701318-22081-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1463701318-22081-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1463701318-22081-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus, Morimoto-san, Rob,
+The number of UDS and WPF are set to incorrect values, fix them.
 
-This patch series fixes the new warnings related to Renesas arm32/arm64
-DTSes that can be seen in -next using "make W=1 dtbs", courtesy of
-commit b993734718c01064 ("scripts/dtc: Update to upstream version
-53bf130b1cdd") in Rob herring's for-next branch. For testing, you can just
-cherry-pick that commit (showing the warning for W=1 only was a separate
-commit).
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_drv.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-All warnings were of the form:
-
-    Warning (unit_address_vs_reg): Node /cache-controller@0 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /cache-controller has a reg or ranges property, but no unit name
-    Warning (unit_address_vs_reg): Node /clocks@e0110000/iic0_sclkdiv has a reg or ranges property, but no unit name
-    Warning (unit_address_vs_reg): Node /i2c@2 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /keyboard/button@1 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
-    Warning (unit_address_vs_reg): Node /pfc@e0140200/serial@e1030000 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /regulator@0 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@0 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,dvc/dvc@0 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,mix/mix@0 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@0 has a unit name, but no reg property
-    Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@0 has a unit name, but no reg property
-
-Fixes:
-  - For cache-controllers of Cortex A7, A15, A53, and A57, I moved them
-    inside the /cpus node, and made their unit names and reg properties
-    match the MPIDR values,
-  - For clocks, I added the missing unit names,
-  - For regulators, i2c-gpios buses, and sound nodes, I (more-or-less)
-    replaced the '@' by a dash,
-  - For buttons, I changed the node name to match the key events,
-  - For pinctrl, I changed the node name to the device name.
-
-Note that to get rid of all warnings for the /memory node,
-arch/arm/boot/dts/skeleton.dtsi should be fixed, too.
-
-Changes compared to v1:
-  - Add missing 0x-prefix to non-zero cache-controller reg properties,
-  - Change regulator names from fixedregulator3v3 to regulator-3v3.
-
-Morimoto-san: If this is accepted, the examples in
-Documentation/devicetree/bindings/sound/renesas,rsnd.txt should be
-updated, too.
-
-Boot-tested on r8a73a4/ape6evm, r8a7740/armadillo, r8a7791/koelsch,
-sh73a0/kzm9g, r8a7795/salvator-x. I didn't test sound, but the kernel
-log didn't show any failures.
-
-The patches are against renesas-devel-20160509-v4.6-rc7.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (23):
-  ARM: dts: emev2: Fix W=1 dtc warnings
-  ARM: dts: r8a73a4: Fix W=1 dtc warnings
-  ARM: dts: r8a7740: Fix W=1 dtc warnings
-  ARM: dts: r8a7778: Fix W=1 dtc warnings
-  ARM: dts: r8a7790: Fix W=1 dtc warnings
-  ARM: dts: r8a7791: Fix W=1 dtc warnings
-  ARM: dts: r8a7793: Fix W=1 dtc warnings
-  ARM: dts: r8a7794: Fix W=1 dtc warnings
-  ARM: dts: sh73a0: Fix W=1 dtc warnings
-  ARM: dts: ape6evm: Fix W=1 dtc warnings
-  ARM: dts: armadillo800eva: Fix W=1 dtc warnings
-  ARM: dts: bockw: Fix W=1 dtc warnings
-  ARM: dts: genmai: Fix W=1 dtc warnings
-  ARM: dts: gose: Fix W=1 dtc warnings
-  ARM: dts: koelsch: Fix W=1 dtc warnings
-  ARM: dts: kzm9d: Fix W=1 dtc warnings
-  ARM: dts: kzm9g: Fix W=1 dtc warnings
-  ARM: dts: lager: Fix W=1 dtc warnings
-  ARM: dts: marzen: Fix W=1 dtc warnings
-  ARM: dts: porter: Fix W=1 dtc warnings
-  ARM: dts: silk: Fix W=1 dtc warnings
-  arm64: dts: r8a7795: Fix W=1 dtc warnings
-  arm64: dts: salvator-x: Fix W=1 dtc warnings
-
- arch/arm/boot/dts/emev2-kzm9d.dts                  | 16 ++--
- arch/arm/boot/dts/emev2.dtsi                       | 26 +++---
- arch/arm/boot/dts/r7s72100-genmai.dts              |  2 +-
- arch/arm/boot/dts/r8a73a4-ape6evm.dts              |  8 +-
- arch/arm/boot/dts/r8a73a4.dtsi                     | 34 ++++----
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts      | 12 +--
- arch/arm/boot/dts/r8a7740.dtsi                     |  2 +-
- arch/arm/boot/dts/r8a7778-bockw.dts                |  4 +-
- arch/arm/boot/dts/r8a7778.dtsi                     | 28 +++----
- arch/arm/boot/dts/r8a7779-marzen.dts               |  4 +-
- arch/arm/boot/dts/r8a7790-lager.dts                | 20 ++---
- arch/arm/boot/dts/r8a7790.dtsi                     | 94 +++++++++++-----------
- arch/arm/boot/dts/r8a7791-koelsch.dts              | 12 +--
- arch/arm/boot/dts/r8a7791-porter.dts               |  8 +-
- arch/arm/boot/dts/r8a7791.dtsi                     | 79 +++++++++---------
- arch/arm/boot/dts/r8a7793-gose.dts                 | 12 +--
- arch/arm/boot/dts/r8a7793.dtsi                     | 59 +++++++-------
- arch/arm/boot/dts/r8a7794-silk.dts                 |  6 +-
- arch/arm/boot/dts/r8a7794.dtsi                     | 13 +--
- arch/arm/boot/dts/sh73a0-kzm9g.dts                 | 10 +--
- arch/arm/boot/dts/sh73a0.dtsi                      |  2 +-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  8 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 70 ++++++++--------
- 23 files changed, 269 insertions(+), 260 deletions(-)
-
+diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
+index e655639af7e2..70e7a81e8255 100644
+--- a/drivers/media/platform/vsp1/vsp1_drv.c
++++ b/drivers/media/platform/vsp1/vsp1_drv.c
+@@ -560,7 +560,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
+ 		.gen = 2,
+ 		.features = VSP1_HAS_BRU | VSP1_HAS_SRU,
+ 		.rpf_count = 5,
+-		.uds_count = 1,
++		.uds_count = 3,
+ 		.wpf_count = 4,
+ 		.num_bru_inputs = 4,
+ 		.uapi = true,
+@@ -570,7 +570,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
+ 		.features = VSP1_HAS_BRU | VSP1_HAS_LIF | VSP1_HAS_LUT,
+ 		.rpf_count = 4,
+ 		.uds_count = 1,
+-		.wpf_count = 4,
++		.wpf_count = 1,
+ 		.num_bru_inputs = 4,
+ 		.uapi = true,
+ 	}, {
+@@ -578,7 +578,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
+ 		.gen = 2,
+ 		.features = VSP1_HAS_BRU | VSP1_HAS_LUT | VSP1_HAS_SRU,
+ 		.rpf_count = 5,
+-		.uds_count = 3,
++		.uds_count = 1,
+ 		.wpf_count = 4,
+ 		.num_bru_inputs = 4,
+ 		.uapi = true,
 -- 
-1.9.1
-
+2.7.3
