@@ -1,62 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:38075 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754422AbcETG7s (ORCPT
+Received: from mail-io0-f175.google.com ([209.85.223.175]:36455 "EHLO
+	mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754561AbcESQrE (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 20 May 2016 02:59:48 -0400
-Received: from vsmta13.fe.internet.bosch.com (unknown [10.4.98.53])
-	by imta23.fe.bosch.de (Postfix) with ESMTP id 587B115800EB
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 May 2016 08:59:47 +0200 (CEST)
-Received: from FE-HUB1000.de.bosch.com (vsgw22.fe.internet.bosch.com [10.4.98.11])
-	by vsmta13.fe.internet.bosch.com (Postfix) with ESMTP id 0C3CC2E404BC
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 May 2016 08:59:47 +0200 (CEST)
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	<linux-renesas-soc@vger.kernel.org>
-CC: Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH v3 2/6] clk: renesas: cpg-mssr: Document renesas,modemr
-Date: Fri, 20 May 2016 08:57:38 +0200
-Message-ID: <1463727462-16260-3-git-send-email-dirk.behme@de.bosch.com>
-In-Reply-To: <1463727462-16260-1-git-send-email-dirk.behme@de.bosch.com>
-References: <1463727462-16260-1-git-send-email-dirk.behme@de.bosch.com>
+	Thu, 19 May 2016 12:47:04 -0400
+Received: by mail-io0-f175.google.com with SMTP id i75so114834228ioa.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 May 2016 09:46:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1463570348-32349-2-git-send-email-dirk.behme@de.bosch.com>
+References: <1463570348-32349-1-git-send-email-dirk.behme@de.bosch.com>
+	<1463570348-32349-2-git-send-email-dirk.behme@de.bosch.com>
+Date: Thu, 19 May 2016 18:46:56 +0200
+Message-ID: <CAMuHMdVC=MwF0WO5xd1B7etyfz+deXyxDXhVkqmH7PC4vBFh8Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] reset: Add renesas,rst DT bindings.
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, May 18, 2016 at 1:19 PM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+> +                 - "renesas,r8a7796-rst" (R-Car M3)
 
-Document the "renesas,modemr" property, which allows the Clock Pulse
-Generator driver to obtain the values of the mode pin using syscon and
-regmap.
+R-Car M3-W
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
----
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 3 +++
- 1 file changed, 3 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-index 394d725..31182f0 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -39,6 +39,8 @@ Required Properties:
- 	Domain bindings in
- 	Documentation/devicetree/bindings/power/power_domain.txt.
- 
-+  - renesas,modemr: Reference to the RST module node, and register offset of
-+		    the Mode Monitor Register (MODEMR) inside the RST module
- 
- Examples
- --------
-@@ -52,6 +54,7 @@ Examples
- 		clock-names = "extal", "extalr";
- 		#clock-cells = <2>;
- 		#power-domain-cells = <0>;
-+		renesas,modemr = <&rst 0x60>;
- 	};
- 
- 
--- 
-2.8.0
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
