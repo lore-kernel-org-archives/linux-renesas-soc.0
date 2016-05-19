@@ -1,66 +1,80 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:38078 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751903AbcETG7u (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 20 May 2016 02:59:50 -0400
-Received: from vsmta13.fe.internet.bosch.com (unknown [10.4.98.53])
-	by imta24.fe.bosch.de (Postfix) with ESMTP id AD5AAD80231
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 May 2016 08:59:48 +0200 (CEST)
-Received: from FE-HUB1000.de.bosch.com (vsgw22.fe.internet.bosch.com [10.4.98.11])
-	by vsmta13.fe.internet.bosch.com (Postfix) with ESMTP id 60CE52E40266
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 May 2016 08:59:48 +0200 (CEST)
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	<linux-renesas-soc@vger.kernel.org>
-CC: Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH v3 5/6] arm64: dts: renesas: Link CPG to RST using "renesas,modemr"
-Date: Fri, 20 May 2016 08:57:41 +0200
-Message-ID: <1463727462-16260-6-git-send-email-dirk.behme@de.bosch.com>
-In-Reply-To: <1463727462-16260-1-git-send-email-dirk.behme@de.bosch.com>
-References: <1463727462-16260-1-git-send-email-dirk.behme@de.bosch.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCHv6 2/8] dma-debug: add support for resource mappings
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org,
+	hch@infradead.org, linux-arch@vger.kernel.org,
+	geert+renesas@glider.be, arnd@arndb.de, linus.walleij@linaro.org,
+	laurent.pinchart@ideasonboard.com, dan.j.williams@intel.com
+References: <1462812247-3414-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+ <1462812247-3414-3-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+ <20160517145002.GD4074@char.us.oracle.com>
+ <20160519112122.GN29375@bigcity.dyn.berto.se>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <573DA68C.3060304@arm.com>
+Date: Thu, 19 May 2016 12:42:04 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <20160519112122.GN29375@bigcity.dyn.berto.se>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On 19/05/16 12:21, Niklas S�derlund wrote:
+> Hi Konrad,
+>
+> Thanks for your feedback.
+>
+> On 2016-05-17 10:50:02 -0400, Konrad Rzeszutek Wilk wrote:
+>>> +void debug_dma_map_resource(struct device *dev, phys_addr_t addr, size_t size,
+>>> +			    int direction, dma_addr_t dma_addr)
+>>> +{
+>>> +	struct dma_debug_entry *entry;
+>>> +
+>>> +	if (unlikely(dma_debug_disabled()))
+>>> +		return;
+>>> +
+>>> +	entry = dma_entry_alloc();
+>>> +	if (!entry)
+>>> +		return;
+>>> +
+>>> +	entry->type		= dma_debug_resource;
+>>> +	entry->dev		= dev;
+>>> +	entry->pfn		= __phys_to_pfn(addr);
+>>> +	entry->offset		= addr - PHYS_PFN(entry->pfn);
+>>
+>> Is that right?
+>
+> You are correct that should be:
+>
+>     entry->offset = addr - PFN_PHYS(entry->pfn);
+>
+> Or even better:
+>
+>     entry->offset = addr - __pfn_to_phys(entry->pfn);
 
-Add a link from the Clock Pulse Generator node to the Reset Controller
-node, so the CPG can read the Mode Monitoring Register (MODEMR) to
-obtain the mode pin values.
+Better still, simply offset_in_page(addr) (as per dma_map_single()).
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1 +
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 1 +
- 2 files changed, 2 insertions(+)
+Robin.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 7be6ae0..4e05fcc 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -307,6 +307,7 @@
- 			clock-names = "extal", "extalr";
- 			#clock-cells = <2>;
- 			#power-domain-cells = <0>;
-+			renesas,modemr = <&rst 0x60>;
- 		};
- 
- 		sysc: system-controller@e6180000 {
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 75ac18d..13d714d 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -107,6 +107,7 @@
- 			clock-names = "extal", "extalr";
- 			#clock-cells = <2>;
- 			#power-domain-cells = <0>;
-+			renesas,modemr = <&rst 0x60>;
- 		};
- 
- 		sysc: system-controller@e6180000 {
--- 
-2.8.0
+> I will address this and resend late next week, still hoping for some
+> more feedback.
+>
+>>
+>> __phys_to_pfn(addr) is PHYS_PFN(addr), so what you get here is
+>>
+>> addr - PHYS_PFN(PHYS_PFN(addr)) ?
+>>
+>>
+>>> +	entry->size		= size;
+>>> +	entry->dev_addr		= dma_addr;
+>>> +	entry->direction	= direction;
+>>> +	entry->map_err_type	= MAP_ERR_NOT_CHECKED;
+>>> +
+>>> +	add_dma_entry(entry);
+>>> +}
+>>> +EXPORT_SYMBOL(debug_dma_map_resource);
+>>> +
+>
