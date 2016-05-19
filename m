@@ -1,112 +1,197 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f182.google.com ([209.85.223.182]:36026 "EHLO
-	mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754484AbcESQyl (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56127 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751937AbcESDvB (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 19 May 2016 12:54:41 -0400
-Received: by mail-io0-f182.google.com with SMTP id i75so115123123ioa.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 May 2016 09:54:41 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1463629845-7115-2-git-send-email-horms+renesas@verge.net.au>
-References: <1463629845-7115-1-git-send-email-horms+renesas@verge.net.au>
-	<1463629845-7115-2-git-send-email-horms+renesas@verge.net.au>
-Date: Thu, 19 May 2016 18:54:40 +0200
-Message-ID: <CAMuHMdV0tvAPvCQ3NjXVar6fykOwWzGs9fzks-0eEqk8-ZsTKQ@mail.gmail.com>
-Subject: Re: [PATCH/RFC 1/3] arm64: dts: r8a7796: Add Renesas R8A7796 SoC support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
+	Wed, 18 May 2016 23:51:01 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH/RFC 1/3] arm64: dts: r8a7796: Add Renesas R8A7796 SoC support
+Date: Thu, 19 May 2016 12:50:43 +0900
+Message-Id: <1463629845-7115-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1463629845-7115-1-git-send-email-horms+renesas@verge.net.au>
+References: <1463629845-7115-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+Basic support for the Gen 3 R-Car M3-W SoC.
 
-On Thu, May 19, 2016 at 5:50 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Basic support for the Gen 3 R-Car M3-W SoC.
->
-> Based on work for the r8a7795 and r8a7796 SoCs by
-> Takeshi Kihara, Dirk Behme and Geert Uytterhoeven.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Based on work for the r8a7795 and r8a7796 SoCs by
+Takeshi Kihara, Dirk Behme and Geert Uytterhoeven.
 
-Thanks for your patch!
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt |   4 +
+ arch/arm64/Kconfig.platforms                       |   6 ++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 120 +++++++++++++++++++++
+ 3 files changed, 130 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7796.dtsi
 
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-> @@ -0,0 +1,120 @@
-> +/*
-> + * Device Tree Source for the r8a7796 SoC
-> + *
-> + * Copyright (C) 2016 Renesas Electronics Corp.
-> + *
-> + * This file is licensed under the terms of the GNU General Public License
-> + * version 2.  This program is licensed "as is" without any warranty of any
-> + * kind, whether express or implied.
-> + */
-> +
-> +#include <dt-bindings/clock/r8a7796-cpg-mssr.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +/ {
-> +       compatible = "renesas,r8a7796";
-> +       #address-cells = <2>;
-> +       #size-cells = <2>;
-> +
-> +       psci {
-> +               compatible = "arm,psci-1.0";
-> +               method = "smc";
-> +       };
-> +
-> +       cpus {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               /* 1 core only at this point */
-> +               a57_0: cpu@0 {
-> +                       compatible = "arm,cortex-a57", "arm,armv8";
-> +                       reg = <0x0>;
-> +                       device_type = "cpu";
-> +                       next-level-cache = <&L2_CA57>;
-> +                       enable-method = "psci";
-> +               };
-> +       };
-> +
-> +       L2_CA57: cache-controller@0 {
-> +               compatible = "cache";
-
-With W=1:
-
-Warning (unit_address_vs_reg): Node /cache-controller@0 has a unit
-name, but no reg property
-
-> +               cache-unified;
-> +               cache-level = <2>;
-> +       };
-
-Please add the missing "reg = <0>;>, and move this node under the cpus node
-so he reg property matches #address-cells/#size-cells.
-
-> +       /* External SCIF clock - to be overridden by boards that provide it */
-> +       scif_clk: scif {
-> +               compatible = "fixed-clock";
-> +               #clock-cells = <0>;
-> +               clock-frequency = <0>;
-> +               status = "disabled";
-
-Please drop the disabled status.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 9cf67e48f222..d5ed554830d7 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -29,6 +29,8 @@ SoCs:
+     compatible = "renesas,r8a7794"
+   - R-Car H3 (R8A77950)
+     compatible = "renesas,r8a7795"
++  - R-Car M3-W (R8A77960)
++    compatible = "renesas,r8a7796"
+ 
+ 
+ Boards:
+@@ -61,5 +63,7 @@ Boards:
+     compatible = "renesas,porter", "renesas,r8a7791"
+   - Salvator-X (RTP0RC7795SIPB0010S)
+     compatible = "renesas,salvator-x", "renesas,r8a7795";
++  - Salvator-X
++    compatible = "renesas,salvator-x", "renesas,r8a7796";
+   - SILK (RTP0RC7794LCB00011S)
+     compatible = "renesas,silk", "renesas,r8a7794"
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index efa77c146415..16d8d26839ea 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -114,6 +114,12 @@ config ARCH_R8A7795
+ 	help
+ 	  This enables support for the Renesas R-Car H3 SoC.
+ 
++config ARCH_R8A7796
++	bool "Renesas R-Car M3-W SoC Platform"
++	depends on ARCH_RENESAS
++	help
++	  This enables support for the Renesas R-Car M3-W SoC.
++
+ config ARCH_STRATIX10
+ 	bool "Altera's Stratix 10 SoCFPGA Family"
+ 	help
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+new file mode 100644
+index 000000000000..db4a128adf57
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -0,0 +1,120 @@
++/*
++ * Device Tree Source for the r8a7796 SoC
++ *
++ * Copyright (C) 2016 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include <dt-bindings/clock/r8a7796-cpg-mssr.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++	compatible = "renesas,r8a7796";
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	psci {
++		compatible = "arm,psci-1.0";
++		method = "smc";
++	};
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		/* 1 core only at this point */
++		a57_0: cpu@0 {
++			compatible = "arm,cortex-a57", "arm,armv8";
++			reg = <0x0>;
++			device_type = "cpu";
++			next-level-cache = <&L2_CA57>;
++			enable-method = "psci";
++		};
++	};
++
++	L2_CA57: cache-controller@0 {
++		compatible = "cache";
++		cache-unified;
++		cache-level = <2>;
++	};
++
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	extalr_clk: extalr {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	/* External SCIF clock - to be overridden by boards that provide it */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++		status = "disabled";
++	};
++
++	soc {
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		gic: interrupt-controller@0xf1010000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0x0 0xf1010000 0 0x1000>,
++			      <0x0 0xf1020000 0 0x20000>,
++			      <0x0 0xf1040000 0 0x20000>,
++			      <0x0 0xf1060000 0 0x20000>;
++			interrupts = <GIC_PPI 9
++					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
++		};
++
++		timer {
++			compatible = "arm,armv8-timer";
++			interrupts = <GIC_PPI 13
++					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 14
++					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 11
++					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 10
++					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
++		};
++
++		cpg: clock-controller@e6150000 {
++			compatible = "renesas,r8a7796-cpg-mssr";
++			reg = <0 0xe6150000 0 0x1000>;
++			clocks = <&extal_clk>, <&extalr_clk>;
++			clock-names = "extal", "extalr";
++			#clock-cells = <2>;
++			#power-domain-cells = <0>;
++		};
++
++		scif2: serial@e6e88000 {
++			compatible = "renesas,scif-r8a7796",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6e88000 0 64>;
++			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 310>,
++				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++	};
++};
+-- 
+2.1.4
