@@ -1,44 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:50000 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757820AbcEDI6F (ORCPT
+Received: from sauhun.de ([89.238.76.85]:60239 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753303AbcESIJk (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 4 May 2016 04:58:05 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] ARM: dts: kzm9g: SCIFA4 supports RTS/CTS hardware flow control
-Date: Wed,  4 May 2016 10:57:57 +0200
-Message-Id: <1462352278-30327-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1462352278-30327-1-git-send-email-geert+renesas@glider.be>
-References: <1462352278-30327-1-git-send-email-geert+renesas@glider.be>
+	Thu, 19 May 2016 04:09:40 -0400
+Date: Thu, 19 May 2016 10:09:35 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Arnd Bergmann <arnd@arndb.de>, linux-i2c@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCHv2] i2c: rcar: add DMA support
+Message-ID: <20160519080934.GE1668@katana>
+References: <1463228228-32560-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+ <6110679.RmWR1Poicp@wuerfel>
+ <20160519080107.GM29375@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="RpqchZ26BWispMcB"
+Content-Disposition: inline
+In-Reply-To: <20160519080107.GM29375@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On the KZM-A9-GT development board, the RTS and CTS pins of the debug
-console SCIFA4 are wired to the CP2102 Serial-USB bridge.  Reflect
-this in the DTS by adding the "uart-has-rtscts" property to the scifa4
-device node.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/sh73a0-kzm9g.dts | 1 +
- 1 file changed, 1 insertion(+)
+--RpqchZ26BWispMcB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm/boot/dts/sh73a0-kzm9g.dts b/arch/arm/boot/dts/sh73a0-kzm9g.dts
-index e6b2ef3785c7542a..b393b1f5bee24574 100644
---- a/arch/arm/boot/dts/sh73a0-kzm9g.dts
-+++ b/arch/arm/boot/dts/sh73a0-kzm9g.dts
-@@ -378,6 +378,7 @@
- 	pinctrl-0 = <&scifa4_pins>;
- 	pinctrl-names = "default";
- 
-+	uart-has-rtscts;
- 	status = "okay";
- };
- 
--- 
-1.9.1
+> Will fix and resend.
+
+Please an incremental patch.
+
+
+--RpqchZ26BWispMcB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXPXS+AAoJEBQN5MwUoCm2tH4QAJdXZb4OOZn9j4J/4PPiR6XR
+r5MXTKZPoFxjbPSa9tNTNQ90RgMDUa6x/bLPrSACIiKoKi1X2WBemNuAZMJ6eeK2
+RbPEHA+fQB+E0Qrmu2IqZuNerEzzmJlTywSmJDnusc7vrMFsQKyOD2Xukd5tWLEy
+qhixumFDPd9PCYVozhETbHJBxcQBO86Dq/hHylK7kGIpbm6Xjb/AfEyvibRs1Ydh
+cRb2o4ntLoz3hB50AaIei4jF7QNDTX9ziMmHSI7RJU912OuC0mkYvuDYOfPuREl+
+O3cLLCWf0wDSXaIE/Kf0IKfikFtsqRgJ0Yz3OKahyxJTrFrfSg6nphajpmzjp/KG
+PZbRssV0eigXFcEq50ETZkayZjC3fBnADs94YE7FwbR/kYO8S1t8wpfieulsFgdV
+d8THFWddWP++PJn++LMe0cJnJBp4VDl3+kHIvqx6/1Yy/b8+yMZoMspa2bJB5hIN
+Hpv1rQoa4UUBMJ7ED80mFdI/URZdlFmk6sOipSmA9+V6OPJkv6GZ+VPifhOhZObv
+6dgU7nrCz4uGq5ZtNby5IdE729Tl5JBxUICGFxoQZWv/bv7NupvtUCy2Mq0QKiEC
+WOArxUOMDtHQU9486WTsoMWIbhMhgTA+VO9QHkQ5pHDz9Ei7RKfsq8loqHqt8eRc
+ncA+wgkT2rsq90SgVpEl
+=QY6Y
+-----END PGP SIGNATURE-----
+
+--RpqchZ26BWispMcB--
