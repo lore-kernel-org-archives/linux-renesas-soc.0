@@ -1,15 +1,16 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <f0700315-af43-b208-cd91-8ca510bf5da9@cogentembedded.com>
-References: <2378837.cigT3tNQPe@wasted.cogentembedded.com>
-	<3321354.LNTkVAhXvF@wasted.cogentembedded.com>
-	<CAMuHMdVjrVFpEZPukWiLQK473R+7CTqVHc1jj8fktAD9RpH_sw@mail.gmail.com>
-	<f0700315-af43-b208-cd91-8ca510bf5da9@cogentembedded.com>
-Date: Thu, 19 May 2016 19:41:29 +0200
-Message-ID: <CAMuHMdWSfx_Q9xopidpLCbwHhuPKwfokiUXYPpHxf3B2tC+-dw@mail.gmail.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:32780 "EHLO
+	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754063AbcESRhn (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 19 May 2016 13:37:43 -0400
+Received: by mail-lf0-f48.google.com with SMTP id y84so40333208lfc.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 May 2016 10:37:43 -0700 (PDT)
 Subject: Re: [PATCH v3 3/6] ARM: dts: r8a7794: add MSTP10 clocks
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <2378837.cigT3tNQPe@wasted.cogentembedded.com>
+ <3321354.LNTkVAhXvF@wasted.cogentembedded.com>
+ <CAMuHMdVjrVFpEZPukWiLQK473R+7CTqVHc1jj8fktAD9RpH_sw@mail.gmail.com>
 Cc: Simon Horman <horms@verge.net.au>,
 	linux-renesas-soc@vger.kernel.org,
 	Rob Herring <robh+dt@kernel.org>,
@@ -22,67 +23,69 @@ Cc: Simon Horman <horms@verge.net.au>,
 	Russell King <linux@arm.linux.org.uk>,
 	"linux-arm-kernel@lists.infradead.org"
 	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: devicetree-owner@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <f0700315-af43-b208-cd91-8ca510bf5da9@cogentembedded.com>
+Date: Thu, 19 May 2016 20:37:39 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVjrVFpEZPukWiLQK473R+7CTqVHc1jj8fktAD9RpH_sw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, May 19, 2016 at 7:37 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
->>> --- renesas.orig/include/dt-bindings/clock/r8a7794-clock.h
->>> +++ renesas/include/dt-bindings/clock/r8a7794-clock.h
->>> @@ -109,6 +109,34 @@
->>>  #define R8A7794_CLK_I2C1               30
->>>  #define R8A7794_CLK_I2C0               31
->>>
->>> +/* MSTP10 */
->>> +#define R8A7794_CLK_SSI_ALL            5
->>> +#define R8A7794_CLK_SSI9               6
->>> +#define R8A7794_CLK_SSI8               7
->>> +#define R8A7794_CLK_SSI7               8
->>> +#define R8A7794_CLK_SSI6               9
->>> +#define R8A7794_CLK_SSI5               10
->>> +#define R8A7794_CLK_SSI4               11
->>> +#define R8A7794_CLK_SSI3               12
->>> +#define R8A7794_CLK_SSI2               13
->>> +#define R8A7794_CLK_SSI1               14
->>> +#define R8A7794_CLK_SSI0               15
->>> +#define R8A7794_CLK_SCU_ALL            17
->>> +#define R8A7794_CLK_SCU_DVC1           18
->>> +#define R8A7794_CLK_SCU_DVC0           19
->>> +#define R8A7794_CLK_SCU_CTU1_MIX1      20
->>> +#define R8A7794_CLK_SCU_CTU0_MIX0      21
->>> +#define R8A7794_CLK_SCU_SRC9           22
->>> +#define R8A7794_CLK_SCU_SRC8           23
->>> +#define R8A7794_CLK_SCU_SRC7           24
+Hello.
+
+On 05/19/2016 07:44 PM, Geert Uytterhoeven wrote:
+
+>> Add MSTP10 clocks to the R8A7794 device tree.
 >>
+>> This patch is based on the commit ee9141522dcf ("ARM: shmobile: r8a7791:
+>> add MSTP10 support on DTSI").
 >>
->> R-Car E2 does not have SRC7, SRC8, SRC9, ...
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 >>
->>> +#define R8A7794_CLK_SCU_SRC6           25
->>> +#define R8A7794_CLK_SCU_SRC5           26
->>> +#define R8A7794_CLK_SCU_SRC4           27
->>> +#define R8A7794_CLK_SCU_SRC3           28
->>> +#define R8A7794_CLK_SCU_SRC2           29
->>> +#define R8A7794_CLK_SCU_SRC1           30
->>> +#define R8A7794_CLK_SCU_SRC0           31
+[...]
+>> Index: renesas/include/dt-bindings/clock/r8a7794-clock.h
+>> ===================================================================
+>> --- renesas.orig/include/dt-bindings/clock/r8a7794-clock.h
+>> +++ renesas/include/dt-bindings/clock/r8a7794-clock.h
+>> @@ -109,6 +109,34 @@
+>>  #define R8A7794_CLK_I2C1               30
+>>  #define R8A7794_CLK_I2C0               31
 >>
->>
->> ... and SRC0.
+>> +/* MSTP10 */
+>> +#define R8A7794_CLK_SSI_ALL            5
+>> +#define R8A7794_CLK_SSI9               6
+>> +#define R8A7794_CLK_SSI8               7
+>> +#define R8A7794_CLK_SSI7               8
+>> +#define R8A7794_CLK_SSI6               9
+>> +#define R8A7794_CLK_SSI5               10
+>> +#define R8A7794_CLK_SSI4               11
+>> +#define R8A7794_CLK_SSI3               12
+>> +#define R8A7794_CLK_SSI2               13
+>> +#define R8A7794_CLK_SSI1               14
+>> +#define R8A7794_CLK_SSI0               15
+>> +#define R8A7794_CLK_SCU_ALL            17
+>> +#define R8A7794_CLK_SCU_DVC1           18
+>> +#define R8A7794_CLK_SCU_DVC0           19
+>> +#define R8A7794_CLK_SCU_CTU1_MIX1      20
+>> +#define R8A7794_CLK_SCU_CTU0_MIX0      21
+>> +#define R8A7794_CLK_SCU_SRC9           22
+>> +#define R8A7794_CLK_SCU_SRC8           23
+>> +#define R8A7794_CLK_SCU_SRC7           24
 >
+> R-Car E2 does not have SRC7, SRC8, SRC9, ...
 >
->    Yet table 7A.12 in the rev1.02 manual lists them all. Your manual
-> doesn't?
+>> +#define R8A7794_CLK_SCU_SRC6           25
+>> +#define R8A7794_CLK_SCU_SRC5           26
+>> +#define R8A7794_CLK_SCU_SRC4           27
+>> +#define R8A7794_CLK_SCU_SRC3           28
+>> +#define R8A7794_CLK_SCU_SRC2           29
+>> +#define R8A7794_CLK_SCU_SRC1           30
+>> +#define R8A7794_CLK_SCU_SRC0           31
+>
+> ... and SRC0.
 
-I thought you were aware of this, cfr. your "[PATCH] rcar: src: skip
-disabled-SRC nodes"?
+    Yet table 7A.12 in the rev1.02 manual lists them all. Your manual doesn't?
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MBR, Sergei
