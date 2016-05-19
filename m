@@ -1,60 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:41311 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161641AbcE3Q24 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 30 May 2016 12:28:56 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/4] clk: renesas: cpg-mssr: Document r8a7796 support
-Date: Mon, 30 May 2016 18:28:54 +0200
-Message-Id: <1464625737-6646-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
-References: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 19 May 2016 10:22:48 -0400
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org,
+	hch@infradead.org, linux-arch@vger.kernel.org,
+	geert+renesas@glider.be, arnd@arndb.de, linus.walleij@linaro.org,
+	laurent.pinchart@ideasonboard.com, dan.j.williams@intel.com
+Subject: Re: [PATCHv6 3/8] dma-mapping: add dma_{map,unmap}_resource
+Message-ID: <20160519142248.GB21691@localhost.localdomain>
+References: <1462812247-3414-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+ <1462812247-3414-4-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+ <20160517145445.GE4074@char.us.oracle.com>
+ <20160519112926.GO29375@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20160519112926.GO29375@bigcity.dyn.berto.se>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
-Tested-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2:
-  - Add Acked-by, Tested-by.
----
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+On Thu, May 19, 2016 at 01:29:26PM +0200, Niklas S�derlund wrote:
+> Hi Konrad,
+> 
+> Thanks for your feedback.
+> 
+> On 2016-05-17 10:54:45 -0400, Konrad Rzeszutek Wilk wrote:
+> > >  
+> > > -In some circumstances dma_map_single() and dma_map_page() will fail to create
+> > > -a mapping. A driver can check for these errors by testing the returned
+> > > -DMA address with dma_mapping_error(). A non-zero return value means the mapping
+> > > -could not be created and the driver should take appropriate action (e.g.
+> > > -reduce current DMA mapping usage or delay and try again later).
+> > > +In some circumstances dma_map_single(), dma_map_page() and dma_map_resource()
+> > > +will fail to create a mapping. A driver can check for these errors by testing
+> > > +the returned DMA address with dma_mapping_error(). A non-zero return value
+> > > +means the mapping could not be created and the driver should take appropriate
+> > > +action (e.g. reduce current DMA mapping usage or delay and try again later).
+> > 
+> > This looks like it belongs to another patch?
+> 
+> No it is correct (at least intended to be in this patch). All it really 
+> do is inject dma_map_resource() (which is added in this patch) as one of 
+> the calls which return dma_addr_t should be checked for error using 
+> dma_mapping_error().  But yes the change effect all lines in the 
+> paragraph due to line wrapping.
+> 
+> Hum or maybe I'm misunderstanding your question.
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-index fefb8023020f1a54..394d725ac7e0baa3 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -13,7 +13,8 @@ They provide the following functionalities:
- 
- Required Properties:
-   - compatible: Must be one of:
--      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC
-+      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
-+      - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
- 
-   - reg: Base address and length of the memory resource used by the CPG/MSSR
-     block
-@@ -21,8 +22,8 @@ Required Properties:
-   - clocks: References to external parent clocks, one entry for each entry in
-     clock-names
-   - clock-names: List of external parent clock names. Valid names are:
--      - "extal" (r8a7795)
--      - "extalr" (r8a7795)
-+      - "extal" (r8a7795, r8a7796)
-+      - "extalr" (r8a7795, r8a7796)
- 
-   - #clock-cells: Must be 2
-       - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
--- 
-1.9.1
+I totally missed the 'dma_map_resource' in there and just read
+'dma_mapping_error'!
+
+<sigh> Thanks.
+> 
+> -- 
+> Regards,
+> Niklas S�derlund
