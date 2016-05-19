@@ -1,16 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:32780 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754063AbcESRhn (ORCPT
+Received: from mail-io0-f171.google.com ([209.85.223.171]:33980 "EHLO
+	mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755093AbcESQoV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 19 May 2016 13:37:43 -0400
-Received: by mail-lf0-f48.google.com with SMTP id y84so40333208lfc.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 19 May 2016 10:37:43 -0700 (PDT)
-Subject: Re: [PATCH v3 3/6] ARM: dts: r8a7794: add MSTP10 clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+	Thu, 19 May 2016 12:44:21 -0400
+MIME-Version: 1.0
+In-Reply-To: <3321354.LNTkVAhXvF@wasted.cogentembedded.com>
 References: <2378837.cigT3tNQPe@wasted.cogentembedded.com>
- <3321354.LNTkVAhXvF@wasted.cogentembedded.com>
- <CAMuHMdVjrVFpEZPukWiLQK473R+7CTqVHc1jj8fktAD9RpH_sw@mail.gmail.com>
+	<3321354.LNTkVAhXvF@wasted.cogentembedded.com>
+Date: Thu, 19 May 2016 18:44:19 +0200
+Message-ID: <CAMuHMdVjrVFpEZPukWiLQK473R+7CTqVHc1jj8fktAD9RpH_sw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] ARM: dts: r8a7794: add MSTP10 clocks
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Simon Horman <horms@verge.net.au>,
 	linux-renesas-soc@vger.kernel.org,
 	Rob Herring <robh+dt@kernel.org>,
@@ -23,69 +25,143 @@ Cc: Simon Horman <horms@verge.net.au>,
 	Russell King <linux@arm.linux.org.uk>,
 	"linux-arm-kernel@lists.infradead.org"
 	<linux-arm-kernel@lists.infradead.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <f0700315-af43-b208-cd91-8ca510bf5da9@cogentembedded.com>
-Date: Thu, 19 May 2016 20:37:39 +0300
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVjrVFpEZPukWiLQK473R+7CTqVHc1jj8fktAD9RpH_sw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
-
-On 05/19/2016 07:44 PM, Geert Uytterhoeven wrote:
-
->> Add MSTP10 clocks to the R8A7794 device tree.
->>
->> This patch is based on the commit ee9141522dcf ("ARM: shmobile: r8a7791:
->> add MSTP10 support on DTSI").
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>
-[...]
->> Index: renesas/include/dt-bindings/clock/r8a7794-clock.h
->> ===================================================================
->> --- renesas.orig/include/dt-bindings/clock/r8a7794-clock.h
->> +++ renesas/include/dt-bindings/clock/r8a7794-clock.h
->> @@ -109,6 +109,34 @@
->>  #define R8A7794_CLK_I2C1               30
->>  #define R8A7794_CLK_I2C0               31
->>
->> +/* MSTP10 */
->> +#define R8A7794_CLK_SSI_ALL            5
->> +#define R8A7794_CLK_SSI9               6
->> +#define R8A7794_CLK_SSI8               7
->> +#define R8A7794_CLK_SSI7               8
->> +#define R8A7794_CLK_SSI6               9
->> +#define R8A7794_CLK_SSI5               10
->> +#define R8A7794_CLK_SSI4               11
->> +#define R8A7794_CLK_SSI3               12
->> +#define R8A7794_CLK_SSI2               13
->> +#define R8A7794_CLK_SSI1               14
->> +#define R8A7794_CLK_SSI0               15
->> +#define R8A7794_CLK_SCU_ALL            17
->> +#define R8A7794_CLK_SCU_DVC1           18
->> +#define R8A7794_CLK_SCU_DVC0           19
->> +#define R8A7794_CLK_SCU_CTU1_MIX1      20
->> +#define R8A7794_CLK_SCU_CTU0_MIX0      21
->> +#define R8A7794_CLK_SCU_SRC9           22
->> +#define R8A7794_CLK_SCU_SRC8           23
->> +#define R8A7794_CLK_SCU_SRC7           24
+On Thu, May 12, 2016 at 10:46 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add MSTP10 clocks to the R8A7794 device tree.
 >
-> R-Car E2 does not have SRC7, SRC8, SRC9, ...
+> This patch is based on the commit ee9141522dcf ("ARM: shmobile: r8a7791:
+> add MSTP10 support on DTSI").
 >
->> +#define R8A7794_CLK_SCU_SRC6           25
->> +#define R8A7794_CLK_SCU_SRC5           26
->> +#define R8A7794_CLK_SCU_SRC4           27
->> +#define R8A7794_CLK_SCU_SRC3           28
->> +#define R8A7794_CLK_SCU_SRC2           29
->> +#define R8A7794_CLK_SCU_SRC1           30
->> +#define R8A7794_CLK_SCU_SRC0           31
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 >
-> ... and SRC0.
+> ---
+> Changes in version 3:
+> - refreshed the patch.
+>
+> Changes in version 2:
+> - fixed the SoC model in the change log;
+> - added "the" article to the change log.
+>
+>  arch/arm/boot/dts/r8a7794.dtsi            |   53 ++++++++++++++++++++++++++++++
+>  include/dt-bindings/clock/r8a7794-clock.h |   28 +++++++++++++++
+>  2 files changed, 81 insertions(+)
+>
+> Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
+> ===================================================================
+> --- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
+> +++ renesas/arch/arm/boot/dts/r8a7794.dtsi
+> @@ -1235,6 +1235,59 @@
+>                                 "gpio1", "gpio0", "rcan1", "rcan0", "qspi_mod",
+>                                 "i2c5", "i2c4", "i2c3", "i2c2", "i2c1", "i2c0";
+>                 };
+> +               mstp10_clks: mstp10_clks@e6150998 {
+> +                       compatible = "renesas,r8a7794-mstp-clocks",
+> +                                    "renesas,cpg-mstp-clocks";
+> +                       reg = <0 0xe6150998 0 4>, <0 0xe61509a8 0 4>;
+> +                       clocks = <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
+> +                                <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
+> +                                <&p_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
+> +                                <&mstp10_clks R8A7794_CLK_SCU_ALL>,
+> +                                <&mstp10_clks R8A7794_CLK_SCU_ALL>,
+> +                                <&mstp10_clks R8A7794_CLK_SCU_ALL>,
+> +                                <&mstp10_clks R8A7794_CLK_SCU_ALL>,
+> +                                <&mstp10_clks R8A7794_CLK_SCU_ALL>,
+> +                                <&mstp10_clks R8A7794_CLK_SCU_ALL>,
+> +                                <&mstp10_clks R8A7794_CLK_SCU_ALL>,
+> +                                <&mstp10_clks R8A7794_CLK_SCU_ALL>,
+> +                                <&mstp10_clks R8A7794_CLK_SCU_ALL>,
+> +                                <&mstp10_clks R8A7794_CLK_SCU_ALL>,
+> +                                <&mstp10_clks R8A7794_CLK_SCU_ALL>,
+> +                                <&mstp10_clks R8A7794_CLK_SCU_ALL>,
+> +                                <&mstp10_clks R8A7794_CLK_SCU_ALL>,
+> +                                <&mstp10_clks R8A7794_CLK_SCU_ALL>;
+> +                       #clock-cells = <1>;
+> +                       clock-indices = <R8A7794_CLK_SSI_ALL
+> +                                        R8A7794_CLK_SSI9 R8A7794_CLK_SSI8
+> +                                        R8A7794_CLK_SSI7 R8A7794_CLK_SSI6
+> +                                        R8A7794_CLK_SSI5 R8A7794_CLK_SSI4
+> +                                        R8A7794_CLK_SSI3 R8A7794_CLK_SSI2
+> +                                        R8A7794_CLK_SSI1 R8A7794_CLK_SSI0
+> +                                        R8A7794_CLK_SCU_ALL
+> +                                        R8A7794_CLK_SCU_DVC1
+> +                                        R8A7794_CLK_SCU_DVC0
+> +                                        R8A7794_CLK_SCU_CTU1_MIX1
+> +                                        R8A7794_CLK_SCU_CTU0_MIX0
+> +                                        R8A7794_CLK_SCU_SRC9
+> +                                        R8A7794_CLK_SCU_SRC8
+> +                                        R8A7794_CLK_SCU_SRC7
+> +                                        R8A7794_CLK_SCU_SRC6
+> +                                        R8A7794_CLK_SCU_SRC5
+> +                                        R8A7794_CLK_SCU_SRC4
+> +                                        R8A7794_CLK_SCU_SRC3
+> +                                        R8A7794_CLK_SCU_SRC2
+> +                                        R8A7794_CLK_SCU_SRC1
+> +                                        R8A7794_CLK_SCU_SRC0>;
+> +                       clock-output-names = "ssi-all", "ssi9", "ssi8", "ssi7",
+> +                                            "ssi6", "ssi5", "ssi4", "ssi3",
+> +                                            "ssi2", "ssi1", "ssi0",
+> +                                            "scu-all", "scu-dvc1", "scu-dvc0",
+> +                                            "scu-ctu1-mix1", "scu-ctu0-mix0",
+> +                                            "scu-src9", "scu-src8", "scu-src7",
+> +                                            "scu-src6", "scu-src5", "scu-src4",
+> +                                            "scu-src3", "scu-src2", "scu-src1",
+> +                                            "scu-src0";
+> +               };
+>                 mstp11_clks: mstp11_clks@e615099c {
+>                         compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+>                         reg = <0 0xe615099c 0 4>, <0 0xe61509ac 0 4>;
+> Index: renesas/include/dt-bindings/clock/r8a7794-clock.h
+> ===================================================================
+> --- renesas.orig/include/dt-bindings/clock/r8a7794-clock.h
+> +++ renesas/include/dt-bindings/clock/r8a7794-clock.h
+> @@ -109,6 +109,34 @@
+>  #define R8A7794_CLK_I2C1               30
+>  #define R8A7794_CLK_I2C0               31
+>
+> +/* MSTP10 */
+> +#define R8A7794_CLK_SSI_ALL            5
+> +#define R8A7794_CLK_SSI9               6
+> +#define R8A7794_CLK_SSI8               7
+> +#define R8A7794_CLK_SSI7               8
+> +#define R8A7794_CLK_SSI6               9
+> +#define R8A7794_CLK_SSI5               10
+> +#define R8A7794_CLK_SSI4               11
+> +#define R8A7794_CLK_SSI3               12
+> +#define R8A7794_CLK_SSI2               13
+> +#define R8A7794_CLK_SSI1               14
+> +#define R8A7794_CLK_SSI0               15
+> +#define R8A7794_CLK_SCU_ALL            17
+> +#define R8A7794_CLK_SCU_DVC1           18
+> +#define R8A7794_CLK_SCU_DVC0           19
+> +#define R8A7794_CLK_SCU_CTU1_MIX1      20
+> +#define R8A7794_CLK_SCU_CTU0_MIX0      21
+> +#define R8A7794_CLK_SCU_SRC9           22
+> +#define R8A7794_CLK_SCU_SRC8           23
+> +#define R8A7794_CLK_SCU_SRC7           24
 
-    Yet table 7A.12 in the rev1.02 manual lists them all. Your manual doesn't?
+R-Car E2 does not have SRC7, SRC8, SRC9, ...
 
-MBR, Sergei
+> +#define R8A7794_CLK_SCU_SRC6           25
+> +#define R8A7794_CLK_SCU_SRC5           26
+> +#define R8A7794_CLK_SCU_SRC4           27
+> +#define R8A7794_CLK_SCU_SRC3           28
+> +#define R8A7794_CLK_SCU_SRC2           29
+> +#define R8A7794_CLK_SCU_SRC1           30
+> +#define R8A7794_CLK_SCU_SRC0           31
+
+... and SRC0.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
