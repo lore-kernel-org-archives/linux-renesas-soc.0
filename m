@@ -1,74 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:38077 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754586AbcETG7t (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:40788 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755475AbcETHKV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 20 May 2016 02:59:49 -0400
-Received: from vsmta13.fe.internet.bosch.com (unknown [10.4.98.53])
-	by imta23.fe.bosch.de (Postfix) with ESMTP id 69F03158021E
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 May 2016 08:59:48 +0200 (CEST)
-Received: from FE-HUB1000.de.bosch.com (vsgw22.fe.internet.bosch.com [10.4.98.11])
-	by vsmta13.fe.internet.bosch.com (Postfix) with ESMTP id 0FC7B2E40262
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 May 2016 08:59:48 +0200 (CEST)
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	<linux-renesas-soc@vger.kernel.org>
-CC: Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH v3 4/6] arm64: dts: renesas: Add device node for RST module
-Date: Fri, 20 May 2016 08:57:40 +0200
-Message-ID: <1463727462-16260-5-git-send-email-dirk.behme@de.bosch.com>
-In-Reply-To: <1463727462-16260-1-git-send-email-dirk.behme@de.bosch.com>
-References: <1463727462-16260-1-git-send-email-dirk.behme@de.bosch.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	Fri, 20 May 2016 03:10:21 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 19/23] ARM: dts: marzen: Fix W=1 dtc warnings
+Date: Fri, 20 May 2016 09:10:10 +0200
+Message-Id: <1463728214-13838-20-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+References: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Add a device node for the RST module, which provides reset control.
-Declare it to be a system controller (syscon), so other device nodes can
-refer to its registers.
+Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /fixedregulator@0 has a unit name, but no reg property
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 5 +++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 5 +++++
- 2 files changed, 10 insertions(+)
+v2:
+  - Change regulator name from fixedregulator3v3 to regulator-3v3.
+---
+ arch/arm/boot/dts/r8a7779-marzen.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 26df300..7be6ae0 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -526,6 +526,11 @@
- 			#iommu-cells = <1>;
- 		};
+diff --git a/arch/arm/boot/dts/r8a7779-marzen.dts b/arch/arm/boot/dts/r8a7779-marzen.dts
+index b795da6f5503d224..cec79a6347c036f7 100644
+--- a/arch/arm/boot/dts/r8a7779-marzen.dts
++++ b/arch/arm/boot/dts/r8a7779-marzen.dts
+@@ -28,12 +28,12 @@
+ 		stdout-path = &scif2;
+ 	};
  
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a7795-rst", "syscon";
-+			reg = <0 0xe6160000 0 0x0200>;
-+		};
-+
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a7795",
- 				     "renesas,rcar-dmac";
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 1389528..75ac18d 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -115,6 +115,11 @@
- 			#power-domain-cells = <1>;
- 		};
+-	memory {
++	memory@60000000 {
+ 		device_type = "memory";
+ 		reg = <0x60000000 0x40000000>;
+ 	};
  
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a7796-rst", "syscon";
-+			reg = <0 0xe6160000 0 0x0200>;
-+		};
-+
- 		dmac0: dma-controller@e6700000 {
- 			/* Empty node for now */
- 		};
+-	fixedregulator3v3: fixedregulator@0 {
++	fixedregulator3v3: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-3.3V";
+ 		regulator-min-microvolt = <3300000>;
 -- 
-2.8.0
+1.9.1
