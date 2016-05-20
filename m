@@ -1,42 +1,62 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:42006 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751340AbcEaK6A (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 31 May 2016 06:58:00 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: driverdev-devel@linuxdriverproject.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V2 28/31] staging: ks7010: adapt to new trans_start handling
-Date: Tue, 31 May 2016 12:56:40 +0200
-Message-Id: <1464692203-4180-29-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
-References: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 08/23] ARM: dts: r8a7794: Fix W=1 dtc warnings
+Date: Fri, 20 May 2016 09:09:59 +0200
+Message-Id: <1463728214-13838-9-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+References: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Warning (unit_address_vs_reg): Node /cache-controller@1 has a unit name, but no reg property
 
-trans_start is gone from netdevice, so use the new helper function to
-set the mark.
+Move the cache-controller node under the cpus node, and make its unit
+name and reg property match the MPIDR value.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/staging/ks7010/ks_wlan_net.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2:
+  - No changes.
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/ks7010/ks_wlan_net.c b/drivers/staging/ks7010/ks_wlan_net.c
-index 3e282833372305..ac3354bf6f8c8a 100644
---- a/drivers/staging/ks7010/ks_wlan_net.c
-+++ b/drivers/staging/ks7010/ks_wlan_net.c
-@@ -3398,7 +3398,7 @@ int ks_wlan_start_xmit(struct sk_buff *skb, struct net_device *dev)
- 		netif_stop_queue(dev);
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index ad1df8317575011d..685f986cf962752f 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -55,13 +55,14 @@
+ 			power-domains = <&sysc R8A7794_PD_CA7_CPU1>;
+ 			next-level-cache = <&L2_CA7>;
+ 		};
+-	};
  
- 	rc = hostif_data_request(priv, skb);
--	dev->trans_start = jiffies;
-+	netif_trans_update(dev);
+-	L2_CA7: cache-controller@1 {
+-		compatible = "cache";
+-		power-domains = <&sysc R8A7794_PD_CA7_SCU>;
+-		cache-unified;
+-		cache-level = <2>;
++		L2_CA7: cache-controller@0 {
++			compatible = "cache";
++			reg = <0>;
++			power-domains = <&sysc R8A7794_PD_CA7_SCU>;
++			cache-unified;
++			cache-level = <2>;
++		};
+ 	};
  
- 	DPRINTK(4, "rc=%d\n", rc);
- 	if (rc) {
+ 	gic: interrupt-controller@f1001000 {
 -- 
-2.8.1
+1.9.1
+
