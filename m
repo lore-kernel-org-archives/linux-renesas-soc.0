@@ -1,57 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:56483 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755342AbcESXmB (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34287 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751903AbcETEXX (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 19 May 2016 19:42:01 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/3] v4l: vsp1: Fix descriptions of Gen2 VSP instances
-Date: Fri, 20 May 2016 02:41:57 +0300
-Message-Id: <1463701318-22081-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1463701318-22081-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1463701318-22081-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Fri, 20 May 2016 00:23:23 -0400
+Date: Fri, 20 May 2016 13:23:20 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: r8a7794: Remove nonexistent thermal sensor
+ clock
+Message-ID: <20160520042319.GF25184@verge.net.au>
+References: <1463679959-30414-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1463679959-30414-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The number of UDS and WPF are set to incorrect values, fix them.
+On Thu, May 19, 2016 at 07:45:59PM +0200, Geert Uytterhoeven wrote:
+> According to the latest information, there is no thermal IP block
+> present on the r8a7794 SoC.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_drv.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index e655639af7e2..70e7a81e8255 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -560,7 +560,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.gen = 2,
- 		.features = VSP1_HAS_BRU | VSP1_HAS_SRU,
- 		.rpf_count = 5,
--		.uds_count = 1,
-+		.uds_count = 3,
- 		.wpf_count = 4,
- 		.num_bru_inputs = 4,
- 		.uapi = true,
-@@ -570,7 +570,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.features = VSP1_HAS_BRU | VSP1_HAS_LIF | VSP1_HAS_LUT,
- 		.rpf_count = 4,
- 		.uds_count = 1,
--		.wpf_count = 4,
-+		.wpf_count = 1,
- 		.num_bru_inputs = 4,
- 		.uapi = true,
- 	}, {
-@@ -578,7 +578,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.gen = 2,
- 		.features = VSP1_HAS_BRU | VSP1_HAS_LUT | VSP1_HAS_SRU,
- 		.rpf_count = 5,
--		.uds_count = 3,
-+		.uds_count = 1,
- 		.wpf_count = 4,
- 		.num_bru_inputs = 4,
- 		.uapi = true,
--- 
-2.7.3
+Thanks, I have queued this up.
