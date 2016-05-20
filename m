@@ -1,102 +1,107 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33297 "EHLO
-	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933401AbcECRsh (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34227 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751034AbcETEUa (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 3 May 2016 13:48:37 -0400
-Subject: Re: [PATCH] arm64: dts: r8a7795: Increase the size of GIC-400 mapped
- registers
-To: Simon Horman <horms@verge.net.au>
-References: <1461047395-6532-1-git-send-email-dirk.behme@de.bosch.com>
- <20160427233028.GA5155@verge.net.au> <5721A2A5.9010908@de.bosch.com>
- <20160428234345.GD18128@verge.net.au> <20160429113515.333c42ef@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>,
-	Dirk Behme <dirk.behme@de.bosch.com>, julien.grall@arm.com,
-	geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>,
-	linux-arm-kernel@lists.infradead.org
-From: Dirk Behme <dirk.behme@gmail.com>
-Message-ID: <5728E470.7050408@gmail.com>
-Date: Tue, 3 May 2016 19:48:32 +0200
+	Fri, 20 May 2016 00:20:30 -0400
+Date: Fri, 20 May 2016 13:20:27 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 2/6] ARM: dts: r8a7794: add MSTP5 clocks
+Message-ID: <20160520042027.GD25184@verge.net.au>
+References: <2378837.cigT3tNQPe@wasted.cogentembedded.com>
+ <1576909.nm8MtQ2Ln5@wasted.cogentembedded.com>
+ <CAMuHMdXaUNwOTQ7827+iTTfuRne_Z1F=-qgxu2cs07==AeqzCA@mail.gmail.com>
+ <23a35d91-7ba3-be23-c8ee-5a056e6a627b@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <20160429113515.333c42ef@arm.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <23a35d91-7ba3-be23-c8ee-5a056e6a627b@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Thu, May 19, 2016 at 08:30:12PM +0300, Sergei Shtylyov wrote:
+> On 05/19/2016 07:25 PM, Geert Uytterhoeven wrote:
+> 
+> >>Add some MSTP5 clocks to the R8A7794 device tree.
+> >>
+> >>Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>
+> >>---
+> >>Changes in version 3:
+> >>- refreshed the patch.
+> >>
+> >>Changes in version 2:
+> >>- added "the" article to the change log.
+> >>
+> >> arch/arm/boot/dts/r8a7794.dtsi            |    9 +++++++++
+> >> include/dt-bindings/clock/r8a7794-clock.h |    1 +
+> >> 2 files changed, 10 insertions(+)
+> >>
+> >>Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
+> >>===================================================================
+> >>--- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
+> >>+++ renesas/arch/arm/boot/dts/r8a7794.dtsi
+> >>@@ -1172,6 +1172,15 @@
+> >>                        clock-indices = <R8A7794_CLK_IRQC>;
+> >>                        clock-output-names = "irqc";
+> >>                };
+> >>+               mstp5_clks: mstp5_clks@e6150144 {
+> >>+                       compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+> >>+                       reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
+> >>+                       clocks = <&hp_clk>, <&extal_clk>, <&p_clk>;
+> >>+                       #clock-cells = <1>;
+> >>+                       clock-indices = <R8A7794_CLK_AUDIO_DMAC0
+> >>+                                        R8A7794_CLK_THERMAL R8A7794_CLK_PWM>;
+> >>+                       clock-output-names = "audmac0", "thermal", "pwm";
+> >
+> >R-Car E2 does not have the thermal module.
+> 
+>    My "R-Car Series, 2nd Generation User’s Manual: Hardware, Rev.1.02 Oct
+> 2014" says it does. What's your source?
 
-On 29.04.2016 12:35, Marc Zyngier wrote:
-> On Fri, 29 Apr 2016 09:43:45 +1000
-> Simon Horman <horms@verge.net.au> wrote:
->
->> [Cc Mark Zyngier, linux-arm-kernel]
->>
->> Hi Dirk,
->>
->> On Thu, Apr 28, 2016 at 07:41:57AM +0200, Dirk Behme wrote:
->>> Hi Simon,
->>>
->>> On 28.04.2016 01:30, Simon Horman wrote:
->>>> Hi Dirk,
->>>>
->>>> I understand that there is an issue here but I'm not yet able
->>>> to convince myself that this is the correct solution.
->>>>
->>>> In revision r0p1 of the CoreLink GIC-400 Generic Interrupt Controller
->>>> Technical Reference Manual[1] I see in Section 3.2. "GIC-400 register map"
->>>> that the size of both the CPU interfaces and Virtual CPU interfaces are
->>>> 0x2000 bytes. And assuming that the hardware follows the specification it
->>>> appears that DT is correctly describing the hardware.
->>>
->>>
->>> I think you are missing the details described by ARM in
->>>
->>> http://xenbits.xen.org/gitweb/?p=xen.git;a=commit;h=21550029f709072aacf3b9
->>>
->>>
->>> Maybe Julien could help if you have some more doubts?
->>
->> I guess I am confused.
->>
->> I see that there is now handling of the case where the region size is
->> 128Kbytes. But I'm still not seeing the bit which describes that the
->> GIC-400  has a region size of 128Kbytes. Perhaps the later is somehow
->> implied by the former. Or perhaps I need to check with the hw team.
->
-> Please have a look at the SBSA document, and in particular the
-> Appendix-F (registration and selling your soul required - only kidding):
->
-> http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.den0029/index.html
->
-> This requires that, in order for the two halves of GICV to be trappable
-> *separately* by a hypervisor using 64kB pages at Stage-2, the two 4kB
-> pages that describe that region are aliased as such:
-> - the first 4kB page is aliased 16 times over a 64kB region
-> - the second 4kB page is aliased 16 times over another contiguous 64kB
->    region
->
-> This means that your GIC is indeed covering a 128kB region, with the
-> mapping corresponding to the GICv2 memory map located at offset 0xf000
-> from the base of that 128kB region. Also, this GICV requirement also
-> applies to GICC (most likely because the two regions use the same
-> decoding logic).
->
-> The OS must of course be aware of this (see gic_check_eoimode in the
-> GIC driver). Of course, almost nobody got that right (I only know of
-> the APM Xgene-1 so far). If you actually did, great!
->
-> Also, the ACPI spec fails to recognize this by not providing the length
-> of the region, meaning that those who got it right with DT are likely
-> to get it wrong with ACPI, and vice-versa.
->
-> It's a wonderful world.
+Please see chapter 80 of v2.00.
+I have also confirmed with the hw team that the thermal sensor is not present.
 
+FWIW until recently I was also going off the older documentation in this
+regards and the absence of the thermal block was a bit of a revelation to
+me.
 
-Could this patch be applied, then?
-
-Best regards
-
-Dirk
+> >>+               };
+> >>                mstp7_clks: mstp7_clks@e615014c {
+> >>                        compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+> >>                        reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
+> >>Index: renesas/include/dt-bindings/clock/r8a7794-clock.h
+> >>===================================================================
+> >>--- renesas.orig/include/dt-bindings/clock/r8a7794-clock.h
+> >>+++ renesas/include/dt-bindings/clock/r8a7794-clock.h
+> >>@@ -67,6 +67,7 @@
+> >> #define R8A7794_CLK_IRQC               7
+> >>
+> >> /* MSTP5 */
+> >>+#define R8A7794_CLK_AUDIO_DMAC0                2
+> >> #define R8A7794_CLK_THERMAL            22
+> >
+> >Hence R8A7794_CLK_THERMAL should be removed.
+> 
+>    Well, remove it then. ;-)
+> 
+> >> #define R8A7794_CLK_PWM                        23
+> >
+> >Gr{oetje,eeting}s,
+> 
+> MBR, Sergei
+> 
