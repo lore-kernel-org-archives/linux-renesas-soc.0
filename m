@@ -1,107 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:57024 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751076AbcEJNyc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34307 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751199AbcETEYj (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 09:54:32 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: driverdev-devel@linuxdriverproject.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 00/27] staging: add driver for KS7010 based SDIO cards
-Date: Tue, 10 May 2016 15:52:13 +0200
-Message-Id: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+	Fri, 20 May 2016 00:24:39 -0400
+Date: Fri, 20 May 2016 13:24:37 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH] ARM: shmobile: pm-rmobile: Postpone call to
+ pm_genpd_init()
+Message-ID: <20160520042437.GG25184@verge.net.au>
+References: <1462350466-20466-1-git-send-email-geert+renesas@glider.be>
+ <CAPDyKFp=wB7aEtQ8R=p7NLQ+jbouACMazgdXLNXF7U0s+eoJQg@mail.gmail.com>
+ <20160510000133.GA4530@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160510000133.GA4530@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This driver can be used with later Spectec SDW-821 and all SDW-823 cards.
-See patch 1 and README for more details about its origin. To have the card
-working, you need another patch which is already in mmc/next:
+On Tue, May 10, 2016 at 09:01:35AM +0900, Simon Horman wrote:
+> On Mon, May 09, 2016 at 09:51:05AM +0200, Ulf Hansson wrote:
+> > On 4 May 2016 at 10:27, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> > > All local setup of the generic_pm_domain structure should have been
+> > > completed before calling pm_genpd_init().
+> > >
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > 
+> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> 
+> Hi Geert,
+> 
+> I have it in mind to queue this up for v4.8.
+> Please let me know if you have other ideas.
 
-https://patchwork.kernel.org/patch/9043341/
-
-A working topic branch for the Renesas H3 can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/gen3-sdio
-
-This series only can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git staging/ks7010
-
-Note: I needed this driver to verify SDIO capabilities for the new Renesas H3
-SoC. The fact that the original KS7010 driver also comes from Renesas is a
-coincidence. It does not mean official support for this driver. Parts of this
-work were backed by the above mentioned SDIO verification task while other
-parts were my personal interest. Future patches and reviews will also done by
-me as a private person (unless something very surprising happens ;))
-
-Please comment, review, apply...
-
-Thanks,
-
-   Wolfram
-
-Wolfram Sang (27):
-  staging: ks7010: add driver from Nanonote extra-repository
-  staging: ks7010: remove non-SDIO code and #ifdefs
-  staging: ks7010: remove custom firmware loader
-  staging: ks7010: remove checks for WIRELESS_EXT version
-  staging: ks7010: remove code for old kernel versions
-  staging: ks7010: avoid workqueue races
-  staging: ks7010: use long preamble as default
-  staging: ks7010: use kernel helper to print buffer
-  staging: ks7010: delete seperate debug header
-  staging: ks7010: really iterate over multicast addresses
-  staging: ks7010: make loading config file optional
-  staging: ks7010: fix printk format warnings
-  staging: ks7010: add example cfg file as a reference
-  staging: ks7010: remove unecessary typedef
-  staging: ks7010: indent eap_packet.h
-  staging: ks7010: indent ks7010_config.c
-  staging: ks7010: indent ks7010_sdio.h
-  staging: ks7010: indent ks_hostif.c
-  staging: ks7010: indent ks_hostif.h
-  staging: ks7010: indent ks_wlan.h
-  staging: ks7010: indent ks_wlan_ioctl.h
-  staging: ks7010: indent ks_wlan_net.c
-  staging: ks7010: indent michael_mic.c
-  staging: ks7010: indent michael_mic.h
-  staging: ks7010: indent ks7010_sdio.c
-  staging: ks7010: remove supported card table with one element
-  staging: ks7010: fix module annotations
-
- drivers/staging/Kconfig                |    2 +
- drivers/staging/Makefile               |    1 +
- drivers/staging/ks7010/Kconfig         |   10 +
- drivers/staging/ks7010/Makefile        |    5 +
- drivers/staging/ks7010/README          |   37 +
- drivers/staging/ks7010/eap_packet.h    |  135 ++
- drivers/staging/ks7010/ks7010_config.c |  500 +++++
- drivers/staging/ks7010/ks7010_sdio.c   | 1267 ++++++++++++
- drivers/staging/ks7010/ks7010_sdio.h   |  152 ++
- drivers/staging/ks7010/ks79xx.cfg      |  116 ++
- drivers/staging/ks7010/ks_hostif.c     | 2763 +++++++++++++++++++++++++
- drivers/staging/ks7010/ks_hostif.h     |  647 ++++++
- drivers/staging/ks7010/ks_wlan.h       |  508 +++++
- drivers/staging/ks7010/ks_wlan_ioctl.h |   70 +
- drivers/staging/ks7010/ks_wlan_net.c   | 3547 ++++++++++++++++++++++++++++++++
- drivers/staging/ks7010/michael_mic.c   |  142 ++
- drivers/staging/ks7010/michael_mic.h   |   29 +
- 17 files changed, 9931 insertions(+)
- create mode 100644 drivers/staging/ks7010/Kconfig
- create mode 100644 drivers/staging/ks7010/Makefile
- create mode 100644 drivers/staging/ks7010/README
- create mode 100644 drivers/staging/ks7010/eap_packet.h
- create mode 100644 drivers/staging/ks7010/ks7010_config.c
- create mode 100644 drivers/staging/ks7010/ks7010_sdio.c
- create mode 100644 drivers/staging/ks7010/ks7010_sdio.h
- create mode 100644 drivers/staging/ks7010/ks79xx.cfg
- create mode 100644 drivers/staging/ks7010/ks_hostif.c
- create mode 100644 drivers/staging/ks7010/ks_hostif.h
- create mode 100644 drivers/staging/ks7010/ks_wlan.h
- create mode 100644 drivers/staging/ks7010/ks_wlan_ioctl.h
- create mode 100644 drivers/staging/ks7010/ks_wlan_net.c
- create mode 100644 drivers/staging/ks7010/michael_mic.c
- create mode 100644 drivers/staging/ks7010/michael_mic.h
-
--- 
-2.8.1
+I have queued this up for v4.8.
