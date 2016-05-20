@@ -1,71 +1,51 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 3 May 2016 11:47:28 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: mkl@pengutronix.de, wg@grandegger.com, socketcan@hartkopp.net,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	chris.paterson2@renesas.com
-Subject: Re: [PATCH v5 1/2] can: rcar_canfd: Add Renesas R-Car CAN FD driver
-Message-ID: <20160503164728.GA32640@rob-hp-laptop>
-References: <1456824849-7987-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <1461846188-31249-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <1461846188-31249-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1461846188-31249-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:33028 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755367AbcETHKT (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 20 May 2016 03:10:19 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 03/23] ARM: dts: r8a7740: Fix W=1 dtc warnings
+Date: Fri, 20 May 2016 09:09:54 +0200
+Message-Id: <1463728214-13838-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+References: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Apr 28, 2016 at 01:23:07PM +0100, Ramesh Shanmugasundaram wrote:
-> This patch adds support for the CAN FD controller found in Renesas R-Car
-> SoCs. The controller operates in CAN FD only mode by default.
-> 
-> CAN FD mode supports both Classical CAN & CAN FD frame formats. The
-> controller supports ISO 11898-1:2015 CAN FD format only.
-> 
-> This controller supports two channels and the driver can enable either
-> or both of the channels.
-> 
-> Driver uses Rx FIFOs (one per channel) for reception & Common FIFOs (one
-> per channel) for transmission. Rx filter rules are configured to the
-> minimum (one per channel) and it accepts Standard, Extended, Data &
-> Remote Frame combinations.
-> 
-> Note: There are few documentation errors in R-Car Gen3 Hardware User
-> Manual v0.5E with respect to CAN FD controller. They are listed below:
-> 
-> 1. CAN FD interrupt numbers 29 & 30 are listed as per channel
-> interrupts. However, they are common to both channels (i.e.) they are
-> global and channel interrupts respectively.
-> 
-> 2. CANFD clock is derived from PLL1. This is not documented.
-> 
-> 3. CANFD clock is further divided by (1/2) within the CAN FD controller.
-> This is not documented.
-> 
-> 4. The minimum value of NTSEG1 in RSCFDnCFDCmNCFG register is 2 Tq. It
-> is specified 4 Tq in the manual.
-> 
-> 5. The maximum number of message RAM area the controller can use is 3584
-> bytes. It is specified 10752 bytes in the manual.
-> 
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-> ---
->  .../devicetree/bindings/net/can/rcar_canfd.txt     |   89 ++
+Warning (unit_address_vs_reg): Node /cache-controller has a reg or ranges property, but no unit name
 
-What happened to my ack?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - No changes.
+---
+ arch/arm/boot/dts/r8a7740.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  drivers/net/can/Kconfig                            |    1 +
->  drivers/net/can/Makefile                           |    1 +
->  drivers/net/can/rcar/Kconfig                       |   11 +
->  drivers/net/can/rcar/Makefile                      |    5 +
->  drivers/net/can/rcar/rcar_canfd.c                  | 1624 ++++++++++++++++++++
->  6 files changed, 1731 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/can/rcar_canfd.txt
->  create mode 100644 drivers/net/can/rcar/Kconfig
->  create mode 100644 drivers/net/can/rcar/Makefile
->  create mode 100644 drivers/net/can/rcar/rcar_canfd.c
+diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
+index 39b2f88ad151e434..159e04eb1b9e55da 100644
+--- a/arch/arm/boot/dts/r8a7740.dtsi
++++ b/arch/arm/boot/dts/r8a7740.dtsi
+@@ -39,7 +39,7 @@
+ 		      <0xc2000000 0x1000>;
+ 	};
+ 
+-	L2: cache-controller {
++	L2: cache-controller@f0100000 {
+ 		compatible = "arm,pl310-cache";
+ 		reg = <0xf0100000 0x1000>;
+ 		interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
+-- 
+1.9.1
