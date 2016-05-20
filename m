@@ -1,150 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:36460 "EHLO pokefinder.org"
+Received: from sauhun.de ([89.238.76.85]:37021 "EHLO pokefinder.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754366AbcEYNsJ (ORCPT
+	id S1751043AbcETGcW (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 25 May 2016 09:48:09 -0400
+	Fri, 20 May 2016 02:32:22 -0400
+Date: Fri, 20 May 2016 08:32:01 +0200
 From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-watchdog@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	linux-renesas-soc@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [RFC 2/2] watchdog: pretimeout: add userspace notifier pretimeout governor
-Date: Wed, 25 May 2016 15:47:42 +0200
-Message-Id: <1464184062-5230-3-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1464184062-5230-1-git-send-email-wsa@the-dreams.de>
-References: <1464184062-5230-1-git-send-email-wsa@the-dreams.de>
+To: Greg KH <greg@kroah.com>
+Cc: driverdev-devel@linuxdriverproject.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 00/27] staging: add driver for KS7010 based SDIO cards
+Message-ID: <20160520063200.GA1663@katana>
+References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+ <20160510210534.GB17923@kroah.com>
+ <20160511060614.GA1637@katana>
+ <20160511083711.GA29556@kroah.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
+Content-Disposition: inline
+In-Reply-To: <20160511083711.GA29556@kroah.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-Userspace notifier watchdog pretimeout governor, on watchdog
-pretimeout event sends a notification to userspace for further
-handling.
+--a8Wt8u1KmwUX3Y2C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/watchdog/Kconfig                | 16 +++++++++++
- drivers/watchdog/Makefile               |  1 +
- drivers/watchdog/pretimeout_userspace.c | 47 +++++++++++++++++++++++++++++++++
- drivers/watchdog/watchdog_pretimeout.h  |  2 ++
- 4 files changed, 66 insertions(+)
- create mode 100644 drivers/watchdog/pretimeout_userspace.c
+Hi Greg,
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 3682ae9d8a50ca..e69c17f518ef43 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -1800,6 +1800,15 @@ config WATCHDOG_PRETIMEOUT_DEFAULT_GOV_NOOP
- 	  governor is selected by a user, write a short message to
- 	  the kernel log buffer and don't do any system changes.
- 
-+config WATCHDOG_PRETIMEOUT_DEFAULT_GOV_USERSPACE
-+	bool "userspace"
-+	select WATCHDOG_PRETIMEOUT_GOV_USERSPACE
-+	help
-+	  Use userspace watchdog pretimeout governor by default,
-+	  the governor sends a device state change uevent
-+	  notification, if a pretimeout event a reported by a
-+	  watchdog.
-+
- endchoice
- 
- config WATCHDOG_PRETIMEOUT_GOV_PANIC
-@@ -1816,6 +1825,13 @@ config WATCHDOG_PRETIMEOUT_GOV_NOOP
- 	  governor, only an informational message is added to the
- 	  kernel log buffer, if watchdog pretimeout is happened.
- 
-+config WATCHDOG_PRETIMEOUT_GOV_USERSPACE
-+	tristate "Userspace notifier watchdog pretimeout governor"
-+	help
-+	  Userspace notifier watchdog pretimeout governor, on watchdog
-+	  pretimeout event send a notification to userspace for
-+	  further handling.
-+
- endif # WATCHDOG_PRETIMEOUT_GOV
- 
- endif # WATCHDOG
-diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-index 9330e4cabd8f9c..23423b8b73620c 100644
---- a/drivers/watchdog/Makefile
-+++ b/drivers/watchdog/Makefile
-@@ -10,6 +10,7 @@ watchdog-$(CONFIG_WATCHDOG_PRETIMEOUT_GOV) += watchdog_pretimeout.o
- 
- obj-$(CONFIG_WATCHDOG_PRETIMEOUT_GOV_PANIC) += pretimeout_panic.o
- obj-$(CONFIG_WATCHDOG_PRETIMEOUT_GOV_NOOP) += pretimeout_noop.o
-+obj-$(CONFIG_WATCHDOG_PRETIMEOUT_GOV_USERSPACE) += pretimeout_userspace.o
- 
- # Only one watchdog can succeed. We probe the ISA/PCI/USB based
- # watchdog-cards first, then the architecture specific watchdog
-diff --git a/drivers/watchdog/pretimeout_userspace.c b/drivers/watchdog/pretimeout_userspace.c
-new file mode 100644
-index 00000000000000..cf7b03765f3254
---- /dev/null
-+++ b/drivers/watchdog/pretimeout_userspace.c
-@@ -0,0 +1,47 @@
-+/*
-+ * Copyright (C) 2015 Mentor Graphics
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/watchdog.h>
-+
-+#include "watchdog_pretimeout.h"
-+
-+/**
-+ * pretimeout_userspace - Notify userspace on watchdog pretimeout event
-+ * @wdd - watchdog_device
-+ *
-+ * Send watchdog device uevent to userspace to handle pretimeout event
-+ */
-+static void pretimeout_userspace(struct watchdog_device *wdd)
-+{
-+	watchdog_dev_uevent(wdd);
-+}
-+
-+static struct watchdog_governor watchdog_gov_userspace = {
-+	.name		= "userspace",
-+	.pretimeout	= pretimeout_userspace,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static int __init watchdog_gov_userspace_register(void)
-+{
-+	return watchdog_register_governor(&watchdog_gov_userspace);
-+}
-+module_init(watchdog_gov_userspace_register);
-+
-+static void __exit watchdog_gov_userspace_unregister(void)
-+{
-+	watchdog_unregister_governor(&watchdog_gov_userspace);
-+}
-+module_exit(watchdog_gov_userspace_unregister);
-+
-+MODULE_AUTHOR("Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>");
-+MODULE_DESCRIPTION("Userspace notifier watchdog pretimeout governor");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/watchdog/watchdog_pretimeout.h b/drivers/watchdog/watchdog_pretimeout.h
-index 2e60450a2be64e..8365cd78f2507b 100644
---- a/drivers/watchdog/watchdog_pretimeout.h
-+++ b/drivers/watchdog/watchdog_pretimeout.h
-@@ -23,6 +23,8 @@ void watchdog_unregister_governor(struct watchdog_governor *gov);
- #define WATCHDOG_PRETIMEOUT_DEFAULT_GOV	"panic"
- #elif IS_ENABLED(CONFIG_WATCHDOG_PRETIMEOUT_DEFAULT_GOV_NOOP)
- #define WATCHDOG_PRETIMEOUT_DEFAULT_GOV	"noop"
-+#elif IS_ENABLED(CONFIG_WATCHDOG_PRETIMEOUT_DEFAULT_GOV_USERSPACE)
-+#define WATCHDOG_PRETIMEOUT_DEFAULT_GOV	"userspace"
- #else
- #error "Default watchdog pretimeout governor is not set."
- #endif
--- 
-2.8.1
+> An add-on patch is probably easiest for everyone involved here.
+
+Any chance for the new-driver-rule for this one?
+
+Thanks,
+
+   Wolfram
+
+
+--a8Wt8u1KmwUX3Y2C
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXPq9gAAoJEBQN5MwUoCm2cF4P/3MgqVQ6Nqu0dAG34KG1ul0N
+1mjoYz3XvxxRBipoKNgySMZ3OTNwCY6QYEu8pwXT6xeDd5sXUkTLeD9P8M5374xG
+59pvt2qYFwT5T2taD5wTtUEik6wSTiMO/OHoYvceP/kBssEMFrqQ3rST9BZLxLJK
+58iRdAfe8DFtY7qT4a4tn7fldInmNSqxZ1wMq0APAViPJMaSZLepDGJPi+ummRMg
+ahZOVqdJq+zSeSyiPrgvNES3kneUtpuCnDRDdqBPe52GK/Nam2c0NGvPbJERB/Oh
+t7VIS/H6f/jeKILVHXz75Qy3H25quFcgliN6FmCu21yQqrZpCzYfpFKZKiQZW5Wo
+baWZMu6L1q3r5UIgErwtHfzGGtNzmQGgy5zv7aFF7JxeTfpUFqMae87V6cjFUvOV
+1qyrXUsDXk/YogyMeLPR4nhR8R3zb3oVCBnfzDu/c4f3EFw2mZ4TA8/m9vyXJb1C
+52EdfKckWyzGVicETl1LGgX8+E0/vHlkVuL8UCD3x68lgaOLRqOmly0bCGHKjX+H
+r8QFFiUy+gU6hEK3MR72VX7FMPtkY1WjhhrDzNmjjgyhK3WE8z3INxN6K4pnf9fn
+2bkCtY3L4egtN1utQO25kspBTy8J1jxeLC5OGR3CZvoBWjXXOUxb5aEdHcDtvug9
+t5aMYsT+4ulphKvU3Eul
+=0vqY
+-----END PGP SIGNATURE-----
+
+--a8Wt8u1KmwUX3Y2C--
