@@ -1,51 +1,118 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:57050 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751479AbcEJNyo (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:46559 "EHLO
+	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755370AbcETHKT (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 09:54:44 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: driverdev-devel@linuxdriverproject.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 07/27] staging: ks7010: use long preamble as default
-Date: Tue, 10 May 2016 15:52:20 +0200
-Message-Id: <1462888360-21649-8-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
-References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+	Fri, 20 May 2016 03:10:19 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 16/23] ARM: dts: kzm9d: Fix W=1 dtc warnings
+Date: Fri, 20 May 2016 09:10:07 +0200
+Message-Id: <1463728214-13838-17-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+References: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /pfc@e0140200/serial@e1030000 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /gpio_keys/button@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /gpio_keys/button@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /gpio_keys/button@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /gpio_keys/button@4 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
 
-I had a problem connecting to a network with a short preamble, so let's
-make the safer option the default.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/staging/ks7010/ks7010_config.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v2:
+  - No changes.
+---
+ arch/arm/boot/dts/emev2-kzm9d.dts | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/staging/ks7010/ks7010_config.c b/drivers/staging/ks7010/ks7010_config.c
-index 7d33070b3428e7..abe99a52ae1ad8 100644
---- a/drivers/staging/ks7010/ks7010_config.c
-+++ b/drivers/staging/ks7010/ks7010_config.c
-@@ -193,7 +193,7 @@ int ks_wlan_read_config_file(ks_wlan_private *priv)
- 		{8,"WepIndex","1"},				/* 13 */
- 		{7,"WepType","STRING"},				/* 14 */
- 		{3,"Wep","OFF"},				/* 15 */
--		{13,"PREAMBLE_TYPE","SHORT"},			/* 16 */
-+		{13,"PREAMBLE_TYPE","LONG"},			/* 16 */
- 		{8,"ScanType","ACTIVE_SCAN"},			/* 17 */
- 		{8,"ROM_FILE", ROM_FILE},			/* 18 */
- 		{7,"PhyType", "BG_MODE"},			/* 19 */
-@@ -216,7 +216,7 @@ int ks_wlan_read_config_file(ks_wlan_private *priv)
- 	priv->reg.ssid.body[0] = '\0';		        /* SSID */
- 	priv->reg.ssid.size = 0;		        /* SSID size */
- 	priv->reg.tx_rate = TX_RATE_AUTO;		/* TxRate Fully Auto */
--	priv->reg.preamble = SHORT_PREAMBLE;		/* Preamble = SHORT */
-+	priv->reg.preamble = LONG_PREAMBLE;		/* Preamble = LONG */
- 	priv->reg.powermgt = POWMGT_ACTIVE_MODE;        /* POWMGT_ACTIVE_MODE */
- 	priv->reg.scan_type = ACTIVE_SCAN;              /* Active */
- 	priv->reg.beacon_lost_count = 20;	        /* Beacon Lost Count */
+diff --git a/arch/arm/boot/dts/emev2-kzm9d.dts b/arch/arm/boot/dts/emev2-kzm9d.dts
+index a35b851e1cd7678a..9eb86f8f32c5afc0 100644
+--- a/arch/arm/boot/dts/emev2-kzm9d.dts
++++ b/arch/arm/boot/dts/emev2-kzm9d.dts
+@@ -18,7 +18,7 @@
+ 	model = "EMEV2 KZM9D Board";
+ 	compatible = "renesas,kzm9d", "renesas,emev2";
+ 
+-	memory {
++	memory@40000000 {
+ 		device_type = "memory";
+ 		reg = <0x40000000 0x8000000>;
+ 	};
+@@ -33,28 +33,28 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		button@1 {
++		one {
+ 			debounce_interval = <50>;
+ 			wakeup-source;
+ 			label = "DSW2-1";
+ 			linux,code = <KEY_1>;
+ 			gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
+ 		};
+-		button@2 {
++		two {
+ 			debounce_interval = <50>;
+ 			wakeup-source;
+ 			label = "DSW2-2";
+ 			linux,code = <KEY_2>;
+ 			gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
+ 		};
+-		button@3 {
++		three {
+ 			debounce_interval = <50>;
+ 			wakeup-source;
+ 			label = "DSW2-3";
+ 			linux,code = <KEY_3>;
+ 			gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
+ 		};
+-		button@4 {
++		four {
+ 			debounce_interval = <50>;
+ 			wakeup-source;
+ 			label = "DSW2-4";
+@@ -63,7 +63,7 @@
+ 		};
+ 	};
+ 
+-	reg_1p8v: regulator@0 {
++	reg_1p8v: regulator-1p8v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-1.8V";
+ 		regulator-min-microvolt = <1800000>;
+@@ -72,7 +72,7 @@
+ 		regulator-boot-on;
+ 	};
+ 
+-	reg_3p3v: regulator@1 {
++	reg_3p3v: regulator-3p3v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-3.3V";
+ 		regulator-min-microvolt = <3300000>;
+@@ -104,7 +104,7 @@
+ };
+ 
+ &pfc {
+-	uart1_pins: serial@e1030000 {
++	uart1_pins: uart1 {
+ 		groups = "uart1_ctrl", "uart1_data";
+ 		function = "uart1";
+ 	};
 -- 
-2.8.1
+1.9.1
