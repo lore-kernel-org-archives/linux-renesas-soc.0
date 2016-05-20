@@ -1,115 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58421 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751119AbcEJFwD (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:40697 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751903AbcETHKT (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 01:52:03 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Ian Molton <ian@mnementh.co.uk>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	Fri, 20 May 2016 03:10:19 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org,
-	Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH/RFC 0/3] UHS-I SDR-104 support for sh_mobile_sdhi
-Date: Tue, 10 May 2016 14:52:01 +0900
-Message-Id: <1462859524-28522-1-git-send-email-horms+renesas@verge.net.au>
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 04/23] ARM: dts: r8a7778: Fix W=1 dtc warnings
+Date: Fri, 20 May 2016 09:09:55 +0200
+Message-Id: <1463728214-13838-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+References: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Warning (unit_address_vs_reg): Node /sound@ffd90000/rcar_sound,src/src@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ffd90000/rcar_sound,src/src@4 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ffd90000/rcar_sound,src/src@5 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ffd90000/rcar_sound,src/src@6 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ffd90000/rcar_sound,src/src@7 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ffd90000/rcar_sound,src/src@8 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ffd90000/rcar_sound,src/src@9 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ffd90000/rcar_sound,ssi/ssi@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ffd90000/rcar_sound,ssi/ssi@4 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ffd90000/rcar_sound,ssi/ssi@5 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ffd90000/rcar_sound,ssi/ssi@6 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ffd90000/rcar_sound,ssi/ssi@7 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ffd90000/rcar_sound,ssi/ssi@8 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ffd90000/rcar_sound,ssi/ssi@9 has a unit name, but no reg property
 
-this series is based on work by Ai Kyuse to add UHS-I SDR-104 support for
-sh_mobile_sdhi. It builds on work by Shinobu Uehara, Rob Taylor, William
-Towle and Ian Molton, Ben Hutchings, Wolfram Sang and others to add UHS-I
-SDR-50 support to the same driver.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - No changes.
+---
+ arch/arm/boot/dts/r8a7778.dtsi | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-This series enables UHS-I SDR-104 on the r8a7790/Lager where
-UHS-I SDR-50 is already enabled.
-
-It is based on a merge of:
-* The next branch of the mmc tree
-* The renesas-next-20160427v2-v4.6-rc1 tag of the renesas tree
-* The sh-pfc-for-v4.7-tag1 tag of the renesas-drivers tree
-
-The first two mmc driver patches are targeted at the next branch of the mmc
-tree. The last DT patch is targeted at the devel branch of the renesas tree.
-
-To aid review this series is provided in the _temporary_ topic/sdr104 branch
-of the renesas tree.
-
-A description of testing performed follows:
-
-* Environment
-
-  SoC/Board: r8a7790/Lager
-  SanDisk Card: SanDisk Ultra 64Gb microSDXC UHS-1
-                Identifier on Packaging: SDSQUNC-064G-GN6MA
-  Samsung Card: Samsung 32Gb microSDHC Card Class 10 UHS-1 U3
-                ModelCode: MB-MG32EA/FFP
-
-* Wit these patches (topic/sdr104 branch)
-
-  # mount -t debugfs none /sys/kernel/debug
-  # cat /sys/kernel/debug/mmc1/ios
-
-  clock:          195000000 Hz
-  vdd:            21 (3.3 ~ 3.4 V)
-  bus mode:       2 (push-pull)
-  chip select:    0 (don't care)
-  power mode:     2 (on)
-  bus width:      2 (4 bits)
-  timing spec:    6 (sd uhs SDR104)
-  signal voltage: 1 (1.80 V)
-  driver type:    0 (driver type B)
-
-  SanDisk Card:
-  # dd bs=1M count=512 iflag=direct if=/dev/mmcblk1 of=/dev/null
-  536870912 bytes (537 MB) copied, 13.6713 s, 39.3 MB/s
-
-  Samsung Card:
-  # dd bs=1M count=512 iflag=direct if=/dev/mmcblk1 of=/dev/null
-  536870912 bytes (537 MB) copied, 16.4952 s, 32.5 MB/s
-
-
-* Without these patches (base of topic/sdr104 branch)
-
-  # mount -t debugfs none /sys/kernel/debug
-  # cat /sys/kernel/debug/mmc1/ios
-
-  clock:          100000000 Hz
-  vdd:            21 (3.3 ~ 3.4 V)
-  bus mode:       2 (push-pull)
-  chip select:    0 (don't care)
-  power mode:     2 (on)
-  bus width:      2 (4 bits)
-  timing spec:    5 (sd uhs SDR50)
-  signal voltage: 1 (1.80 V)
-  driver type:    0 (driver type B)
-
-  SanDisk Card:
-  # dd bs=1M count=512 iflag=direct if=/dev/mmcblk1 of=/dev/null
-  536870912 bytes (537 MB) copied, 17.7253 s, 30.3 MB/s
-
-  Samsung Card:
-  # dd bs=1M count=512 iflag=direct if=/dev/mmcblk1 of=/dev/null
-  536870912 bytes (537 MB) copied, 20.7866 s, 25.8 MB/s
-
-
-
-Ai Kyuse (2):
-  mmc: tmio: Add tuning support
-  mmc: sh_mobile_sdhi: Add tuning support
-
-Simon Horman (1):
-  ARM: dts: r8a7790: lager: Enable UHS-I SDR-104
-
- arch/arm/boot/dts/r8a7790-lager.dts |   1 +
- drivers/mmc/host/sh_mobile_sdhi.c   | 264 +++++++++++++++++++++++++++++++++++-
- drivers/mmc/host/tmio_mmc.h         |  10 ++
- drivers/mmc/host/tmio_mmc_pio.c     | 249 ++++++++++++++++++++++++++++++++--
- include/linux/mfd/tmio.h            |   3 +
- 5 files changed, 518 insertions(+), 9 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
+index fe787b4751d2cf05..e571d66ea0fe1721 100644
+--- a/arch/arm/boot/dts/r8a7778.dtsi
++++ b/arch/arm/boot/dts/r8a7778.dtsi
+@@ -276,23 +276,23 @@
+ 		status = "disabled";
+ 
+ 		rcar_sound,src {
+-			src3: src@3 { };
+-			src4: src@4 { };
+-			src5: src@5 { };
+-			src6: src@6 { };
+-			src7: src@7 { };
+-			src8: src@8 { };
+-			src9: src@9 { };
++			src3: src-3 { };
++			src4: src-4 { };
++			src5: src-5 { };
++			src6: src-6 { };
++			src7: src-7 { };
++			src8: src-8 { };
++			src9: src-9 { };
+ 		};
+ 
+ 		rcar_sound,ssi {
+-			ssi3: ssi@3 { interrupts = <GIC_SPI 0x85 IRQ_TYPE_LEVEL_HIGH>; };
+-			ssi4: ssi@4 { interrupts = <GIC_SPI 0x85 IRQ_TYPE_LEVEL_HIGH>; };
+-			ssi5: ssi@5 { interrupts = <GIC_SPI 0x86 IRQ_TYPE_LEVEL_HIGH>; };
+-			ssi6: ssi@6 { interrupts = <GIC_SPI 0x86 IRQ_TYPE_LEVEL_HIGH>; };
+-			ssi7: ssi@7 { interrupts = <GIC_SPI 0x86 IRQ_TYPE_LEVEL_HIGH>; };
+-			ssi8: ssi@8 { interrupts = <GIC_SPI 0x86 IRQ_TYPE_LEVEL_HIGH>; };
+-			ssi9: ssi@9 { interrupts = <GIC_SPI 0x86 IRQ_TYPE_LEVEL_HIGH>; };
++			ssi3: ssi-3 { interrupts = <GIC_SPI 0x85 IRQ_TYPE_LEVEL_HIGH>; };
++			ssi4: ssi-4 { interrupts = <GIC_SPI 0x85 IRQ_TYPE_LEVEL_HIGH>; };
++			ssi5: ssi-5 { interrupts = <GIC_SPI 0x86 IRQ_TYPE_LEVEL_HIGH>; };
++			ssi6: ssi-6 { interrupts = <GIC_SPI 0x86 IRQ_TYPE_LEVEL_HIGH>; };
++			ssi7: ssi-7 { interrupts = <GIC_SPI 0x86 IRQ_TYPE_LEVEL_HIGH>; };
++			ssi8: ssi-8 { interrupts = <GIC_SPI 0x86 IRQ_TYPE_LEVEL_HIGH>; };
++			ssi9: ssi-9 { interrupts = <GIC_SPI 0x86 IRQ_TYPE_LEVEL_HIGH>; };
+ 		};
+ 	};
+ 
 -- 
-2.1.4
+1.9.1
