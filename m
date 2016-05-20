@@ -1,110 +1,90 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:35496 "EHLO
-	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750730AbcEaWP5 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 31 May 2016 18:15:57 -0400
-Received: by mail-lf0-f53.google.com with SMTP id w16so842467lfd.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 31 May 2016 15:15:56 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	magnus.damm@gmail.com
-Subject: [PATCH 03/13] soc: renesas: rcar-sysc: add R8A7792 support
-Date: Wed, 01 Jun 2016 01:15:53 +0300
-Message-ID: <5578588.eXCR2ytE51@wasted.cogentembedded.com>
-In-Reply-To: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
-References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 02/23] ARM: dts: r8a73a4: Fix W=1 dtc warnings
+Date: Fri, 20 May 2016 09:09:53 +0200
+Message-Id: <1463728214-13838-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+References: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for R-Car V2H (R8A7792) SoC power areas to the SYSC driver.
+Warning (unit_address_vs_reg): Node /cache-controller@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /cache-controller@1 has a unit name, but no reg property
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Move the cache-controller nodes under the cpus node, and make their
+unit names and reg properties match the MPIDR values.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/soc/renesas/Makefile       |    1 +
- drivers/soc/renesas/r8a7792-sysc.c |   34 ++++++++++++++++++++++++++++++++++
- drivers/soc/renesas/rcar-sysc.c    |    3 +++
- drivers/soc/renesas/rcar-sysc.h    |    1 +
- 4 files changed, 39 insertions(+)
+v2:
+  - Add missing 0x-prefix to cache-controller reg property.
+---
+ arch/arm/boot/dts/r8a73a4.dtsi | 34 ++++++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 16 deletions(-)
 
-Index: renesas/drivers/soc/renesas/Makefile
-===================================================================
---- renesas.orig/drivers/soc/renesas/Makefile
-+++ renesas/drivers/soc/renesas/Makefile
-@@ -1,6 +1,7 @@
- obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
- obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
- obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
-+obj-$(CONFIG_ARCH_R8A7792)	+= rcar-sysc.o r8a7792-sysc.o
- # R-Car M2-N is identical to R-Car M2-W w.r.t. power domains.
- obj-$(CONFIG_ARCH_R8A7793)	+= rcar-sysc.o r8a7791-sysc.o
- obj-$(CONFIG_ARCH_R8A7794)	+= rcar-sysc.o r8a7794-sysc.o
-Index: renesas/drivers/soc/renesas/r8a7792-sysc.c
-===================================================================
---- /dev/null
-+++ renesas/drivers/soc/renesas/r8a7792-sysc.c
-@@ -0,0 +1,34 @@
-+/*
-+ * Renesas R-Car V2H (R8A7792) System Controller
-+ *
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
+diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
+index 6954912a37537939..ca8672778fe067e1 100644
+--- a/arch/arm/boot/dts/r8a73a4.dtsi
++++ b/arch/arm/boot/dts/r8a73a4.dtsi
+@@ -31,6 +31,24 @@
+ 			power-domains = <&pd_a2sl>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
 +
-+#include <linux/bug.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
++		L2_CA15: cache-controller@0 {
++			compatible = "cache";
++			reg = <0>;
++			clocks = <&cpg_clocks R8A73A4_CLK_Z>;
++			power-domains = <&pd_a3sm>;
++			cache-unified;
++			cache-level = <2>;
++		};
 +
-+#include <dt-bindings/power/r8a7792-sysc.h>
-+
-+#include "rcar-sysc.h"
-+
-+static const struct rcar_sysc_area r8a7792_areas[] __initconst = {
-+	{ "always-on",	    0, 0, R8A7792_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
-+	{ "ca15-scu",	0x180, 0, R8A7792_PD_CA15_SCU,	R8A7792_PD_ALWAYS_ON,
-+	  PD_SCU },
-+	{ "ca15-cpu0",	 0x40, 0, R8A7792_PD_CA15_CPU0,	R8A7792_PD_CA15_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca15-cpu1",	 0x40, 1, R8A7792_PD_CA15_CPU1,	R8A7792_PD_CA15_SCU,
-+	  PD_CPU_NOCR },
-+	{ "sgx",	 0xc0, 0, R8A7792_PD_SGX,	R8A7792_PD_ALWAYS_ON },
-+	{ "imp",	0x140, 0, R8A7792_PD_IMP,	R8A7792_PD_ALWAYS_ON },
-+};
-+
-+const struct rcar_sysc_info r8a7792_sysc_info __initconst = {
-+	.areas = r8a7792_areas,
-+	.num_areas = ARRAY_SIZE(r8a7792_areas),
-+};
-Index: renesas/drivers/soc/renesas/rcar-sysc.c
-===================================================================
---- renesas.orig/drivers/soc/renesas/rcar-sysc.c
-+++ renesas/drivers/soc/renesas/rcar-sysc.c
-@@ -293,6 +293,9 @@ static const struct of_device_id rcar_sy
- #ifdef CONFIG_ARCH_R8A7791
- 	{ .compatible = "renesas,r8a7791-sysc", .data = &r8a7791_sysc_info },
- #endif
-+#ifdef CONFIG_ARCH_R8A7792
-+	{ .compatible = "renesas,r8a7792-sysc", .data = &r8a7792_sysc_info },
-+#endif
- #ifdef CONFIG_ARCH_R8A7793
- 	/* R-Car M2-N is identical to R-Car M2-W w.r.t. power domains. */
- 	{ .compatible = "renesas,r8a7793-sysc", .data = &r8a7791_sysc_info },
-Index: renesas/drivers/soc/renesas/rcar-sysc.h
-===================================================================
---- renesas.orig/drivers/soc/renesas/rcar-sysc.h
-+++ renesas/drivers/soc/renesas/rcar-sysc.h
-@@ -53,6 +53,7 @@ struct rcar_sysc_info {
- extern const struct rcar_sysc_info r8a7779_sysc_info;
- extern const struct rcar_sysc_info r8a7790_sysc_info;
- extern const struct rcar_sysc_info r8a7791_sysc_info;
-+extern const struct rcar_sysc_info r8a7792_sysc_info;
- extern const struct rcar_sysc_info r8a7794_sysc_info;
- extern const struct rcar_sysc_info r8a7795_sysc_info;
- #endif /* __SOC_RENESAS_RCAR_SYSC_H__ */
++		L2_CA7: cache-controller@100 {
++			compatible = "cache";
++			reg = <0x100>;
++			clocks = <&cpg_clocks R8A73A4_CLK_Z2>;
++			power-domains = <&pd_a3km>;
++			cache-unified;
++			cache-level = <2>;
++		};
+ 	};
+ 
+ 	ptm {
+@@ -46,22 +64,6 @@
+ 			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+ 	};
+ 
+-	L2_CA15: cache-controller@0 {
+-		compatible = "cache";
+-		clocks = <&cpg_clocks R8A73A4_CLK_Z>;
+-		power-domains = <&pd_a3sm>;
+-		cache-unified;
+-		cache-level = <2>;
+-	};
+-
+-	L2_CA7: cache-controller@1 {
+-		compatible = "cache";
+-		clocks = <&cpg_clocks R8A73A4_CLK_Z2>;
+-		power-domains = <&pd_a3km>;
+-		cache-unified;
+-		cache-level = <2>;
+-	};
+-
+ 	dbsc1: memory-controller@e6790000 {
+ 		compatible = "renesas,dbsc-r8a73a4";
+ 		reg = <0 0xe6790000 0 0x10000>;
+-- 
+1.9.1
+
