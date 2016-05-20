@@ -1,73 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:54504 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751833AbcELI3M (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:58006 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755488AbcETHKV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 12 May 2016 04:29:12 -0400
-Received: from vsmta11.fe.internet.bosch.com (unknown [10.4.98.51])
-	by imta24.fe.bosch.de (Postfix) with ESMTP id CA128D80231
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 May 2016 10:29:10 +0200 (CEST)
-Received: from SI-HUB1000.de.bosch.com (vsgw24.fe.internet.bosch.com [10.4.98.24])
-	by vsmta11.fe.internet.bosch.com (Postfix) with ESMTP id 7262B23802C2
-	for <linux-renesas-soc@vger.kernel.org>; Thu, 12 May 2016 10:29:10 +0200 (CEST)
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	<linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH 1/6] reset: Add renesas,rst DT bindings.
-Date: Thu, 12 May 2016 10:27:16 +0200
-Message-ID: <1463041641-27485-2-git-send-email-dirk.behme@de.bosch.com>
-In-Reply-To: <1463041641-27485-1-git-send-email-dirk.behme@de.bosch.com>
-References: <1463041641-27485-1-git-send-email-dirk.behme@de.bosch.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	Fri, 20 May 2016 03:10:21 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 17/23] ARM: dts: kzm9g: Fix W=1 dtc warnings
+Date: Fri, 20 May 2016 09:10:08 +0200
+Message-Id: <1463728214-13838-18-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+References: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Add DT bindings for the Renesas R-Car Reset Controller
+Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /regulator@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@3 has a unit name, but no reg property
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../devicetree/bindings/reset/renesas,rst.txt      | 29 ++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/renesas,rst.txt
+v2:
+  - No changes.
+---
+ arch/arm/boot/dts/sh73a0-kzm9g.dts | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-new file mode 100644
-index 0000000..f84fd0d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-@@ -0,0 +1,29 @@
-+DT bindings for the Renesas R-Car Reset Controller
-+
-+The R-Car Reset Controller provides reset control, and implements the following
-+functions:
-+  - Register-based reset control for the various CPU cores,
-+  - Latching of the levels on mode pins when PRESET# is negated,
-+  - Mode monitoring register,
-+  - Boot address registers for the various CPU cores.
-+
-+
-+Required properties:
-+  - compatible: Should be "renesas,rst-<soctype>", and "syscon".
-+		Examples with soctypes are:
-+		  - "renesas,rst-r8a7790" (R-Car H2)
-+		  - "renesas,rst-r8a7791" (R-Car M2-W)
-+		  - "renesas,rst-r8a7792" (R-Car V2H
-+		  - "renesas,rst-r8a7793" (R-Car M2-N)
-+		  - "renesas,rst-r8a7794" (R-Car E2)
-+		  - "renesas,rst-r8a7795" (R-Car H3)
-+		  - "renesas,rst-r8a7796" (R-Car M3)
-+  - reg: Address start and address range for the device.
-+
-+
-+Example:
-+
-+	rst: reset-controller@e6160000 {
-+		compatible = "renesas,rst-r8a7795", "syscon";
-+		reg = <0 0xe6160000 0 0x0200>;
-+	};
+diff --git a/arch/arm/boot/dts/sh73a0-kzm9g.dts b/arch/arm/boot/dts/sh73a0-kzm9g.dts
+index 9881adf1734e2b0c..36567cbf2e1c32dd 100644
+--- a/arch/arm/boot/dts/sh73a0-kzm9g.dts
++++ b/arch/arm/boot/dts/sh73a0-kzm9g.dts
+@@ -43,12 +43,12 @@
+ 		stdout-path = &scifa4;
+ 	};
+ 
+-	memory {
++	memory@40000000 {
+ 		device_type = "memory";
+ 		reg = <0x40000000 0x20000000>;
+ 	};
+ 
+-	reg_1p8v: regulator@0 {
++	reg_1p8v: regulator-1p8v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-1.8V";
+ 		regulator-min-microvolt = <1800000>;
+@@ -57,7 +57,7 @@
+ 		regulator-boot-on;
+ 	};
+ 
+-	reg_3p3v: regulator@1 {
++	reg_3p3v: regulator-3p3v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-3.3V";
+ 		regulator-min-microvolt = <3300000>;
+@@ -66,7 +66,7 @@
+ 		regulator-boot-on;
+ 	};
+ 
+-	vmmc_sdhi0: regulator@2 {
++	vmmc_sdhi0: regulator-vmmc-sdhi0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "SDHI0 Vcc";
+ 		regulator-min-microvolt = <3300000>;
+@@ -75,7 +75,7 @@
+ 		enable-active-high;
+ 	};
+ 
+-	vmmc_sdhi2: regulator@3 {
++	vmmc_sdhi2: regulator-vmmc-sdhi2 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "SDHI2 Vcc";
+ 		regulator-min-microvolt = <3300000>;
 -- 
-2.8.0
+1.9.1
