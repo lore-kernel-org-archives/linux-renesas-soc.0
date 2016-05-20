@@ -1,47 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:46019 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751501AbcEMH4G (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35623 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754760AbcETHCl (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 13 May 2016 03:56:06 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 13/23] ARM: dts: genmai: Fix W=1 dtc warnings
-Date: Fri, 13 May 2016 09:55:53 +0200
-Message-Id: <1463126163-29423-14-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
-References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+	Fri, 20 May 2016 03:02:41 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH/RFC v2 3/3] ARM: dts: r8a7790: lager: Enable UHS-I SDR-104
+Date: Fri, 20 May 2016 16:02:23 +0900
+Message-Id: <1463727743-7567-4-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1463727743-7567-1-git-send-email-horms+renesas@verge.net.au>
+References: <1463727743-7567-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
+Add the sd-uhs-sdr104 property to SDHI0.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r7s72100-genmai.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7790-lager.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index a9da7a89fc4ba65a..05ba9953b4d8d9ec 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -25,7 +25,7 @@
- 		stdout-path = &scif2;
- 	};
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 749ba02b6a53..05d1ff7acee2 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -559,6 +559,7 @@
+ 	vqmmc-supply = <&vccq_sdhi0>;
+ 	cd-gpios = <&gpio3 6 GPIO_ACTIVE_LOW>;
+ 	sd-uhs-sdr50;
++	sd-uhs-sdr104;
+ 	status = "okay";
+ };
  
--	memory {
-+	memory@8000000 {
- 		device_type = "memory";
- 		reg = <0x08000000 0x08000000>;
- 	};
 -- 
-1.9.1
+2.1.4
