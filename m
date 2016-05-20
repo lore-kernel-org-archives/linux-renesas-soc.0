@@ -1,59 +1,54 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:58863 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750993AbcEDIV7 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 4 May 2016 04:21:59 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Alexandre Courbot <gnurou@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] pinctrl: sh-pfc: Let gpio_chip.to_irq() return zero on error
-Date: Wed,  4 May 2016 10:21:53 +0200
-Message-Id: <1462350113-20216-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH v2 12/23] ARM: dts: bockw: Fix W=1 dtc warnings
+Date: Fri, 20 May 2016 09:10:03 +0200
+Message-Id: <1463728214-13838-13-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+References: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currrently the gpio_chip.to_irq() callback returns -ENOSYS on error,
-which causes bad interactions with the serial_mctrl_gpio helpers.
-
-mctrl_gpio_init() returns -ENOSYS if GPIOLIB is not enabled, which is
-intended to be ignored by its callers. However, ignoring -ENOSYS when it
-was caused by a gpiod_to_irq() failure will lead to a crash later:
-
-    Unable to handle kernel paging request at virtual address ffffffde
-    ...
-    PC is at mctrl_gpio_set+0x14/0x78
-
-Fix this by returning zero instead, like gpiochip_to_irq() does.
+Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /fixedregulator@0 has a unit name, but no reg property
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-This depends on "gpio: make gpiod_to_irq() return negative for NO_IRQ"
-for proper handling by callers of mctrl_gpio_init().
-Hence I think it's best to take this through the GPIO tree, after the
-above has been applied.
-
 v2:
-  - Return zero instead of -ENXIO.
+  - Change regulator name from fixedregulator3v3 to regulator-3v3.
 ---
- drivers/pinctrl/sh-pfc/gpio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7778-bockw.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
-index a6681b8b17c3b30c..97dff6a09ff08115 100644
---- a/drivers/pinctrl/sh-pfc/gpio.c
-+++ b/drivers/pinctrl/sh-pfc/gpio.c
-@@ -212,7 +212,7 @@ static int gpio_pin_to_irq(struct gpio_chip *gc, unsigned offset)
- 		}
- 	}
+diff --git a/arch/arm/boot/dts/r8a7778-bockw.dts b/arch/arm/boot/dts/r8a7778-bockw.dts
+index 982a237ea6222a59..0a0bd3b6bb401ce2 100644
+--- a/arch/arm/boot/dts/r8a7778-bockw.dts
++++ b/arch/arm/boot/dts/r8a7778-bockw.dts
+@@ -32,12 +32,12 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
--	return -ENOSYS;
-+	return 0;
+-	memory {
++	memory@60000000 {
+ 		device_type = "memory";
+ 		reg = <0x60000000 0x10000000>;
+ 	};
  
- found:
- 	return pfc->irqs[i];
+-	fixedregulator3v3: fixedregulator@0 {
++	fixedregulator3v3: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-3.3V";
+ 		regulator-min-microvolt = <3300000>;
 -- 
 1.9.1
+
