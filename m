@@ -1,45 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:56482 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755345AbcESXl7 (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:33097 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755484AbcETHKV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 19 May 2016 19:41:59 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/3] v4l: vsp1: Fix typo in register field names
-Date: Fri, 20 May 2016 02:41:56 +0300
-Message-Id: <1463701318-22081-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1463701318-22081-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1463701318-22081-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Fri, 20 May 2016 03:10:21 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 15/23] ARM: dts: koelsch: Fix W=1 dtc warnings
+Date: Fri, 20 May 2016 09:10:06 +0200
+Message-Id: <1463728214-13838-16-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+References: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The VI6_RPF_ALPH_SEL ALPHA0 and ALPHA1 fields are inverted, swap them.
+Warning (unit_address_vs_reg): Node /regulator@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@4 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@5 has a unit name, but no reg property
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/vsp1/vsp1_regs.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+v2:
+  - No changes.
+---
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
-index 927b5fb94c48..7657545a75ed 100644
---- a/drivers/media/platform/vsp1/vsp1_regs.h
-+++ b/drivers/media/platform/vsp1/vsp1_regs.h
-@@ -154,10 +154,10 @@
- #define VI6_RPF_ALPH_SEL_AEXT_EXT	(1 << 18)
- #define VI6_RPF_ALPH_SEL_AEXT_ONE	(2 << 18)
- #define VI6_RPF_ALPH_SEL_AEXT_MASK	(3 << 18)
--#define VI6_RPF_ALPH_SEL_ALPHA0_MASK	(0xff << 8)
--#define VI6_RPF_ALPH_SEL_ALPHA0_SHIFT	8
--#define VI6_RPF_ALPH_SEL_ALPHA1_MASK	(0xff << 0)
--#define VI6_RPF_ALPH_SEL_ALPHA1_SHIFT	0
-+#define VI6_RPF_ALPH_SEL_ALPHA1_MASK	(0xff << 8)
-+#define VI6_RPF_ALPH_SEL_ALPHA1_SHIFT	8
-+#define VI6_RPF_ALPH_SEL_ALPHA0_MASK	(0xff << 0)
-+#define VI6_RPF_ALPH_SEL_ALPHA0_SHIFT	0
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index da59c2844b8ad1c3..20fbc8c36a785bd3 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -170,7 +170,7 @@
+ 		};
+ 	};
  
- #define VI6_RPF_VRTCOL_SET		0x0318
- #define VI6_RPF_VRTCOL_SET_LAYA_MASK	(0xff << 24)
+-	vcc_sdhi0: regulator@0 {
++	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
+ 
+ 		regulator-name = "SDHI0 Vcc";
+@@ -181,7 +181,7 @@
+ 		enable-active-high;
+ 	};
+ 
+-	vccq_sdhi0: regulator@1 {
++	vccq_sdhi0: regulator-vccq-sdhi0 {
+ 		compatible = "regulator-gpio";
+ 
+ 		regulator-name = "SDHI0 VccQ";
+@@ -194,7 +194,7 @@
+ 			  1800000 0>;
+ 	};
+ 
+-	vcc_sdhi1: regulator@2 {
++	vcc_sdhi1: regulator-vcc-sdhi1 {
+ 		compatible = "regulator-fixed";
+ 
+ 		regulator-name = "SDHI1 Vcc";
+@@ -205,7 +205,7 @@
+ 		enable-active-high;
+ 	};
+ 
+-	vccq_sdhi1: regulator@3 {
++	vccq_sdhi1: regulator-vccq-sdhi1 {
+ 		compatible = "regulator-gpio";
+ 
+ 		regulator-name = "SDHI1 VccQ";
+@@ -218,7 +218,7 @@
+ 			  1800000 0>;
+ 	};
+ 
+-	vcc_sdhi2: regulator@4 {
++	vcc_sdhi2: regulator-vcc-sdhi2 {
+ 		compatible = "regulator-fixed";
+ 
+ 		regulator-name = "SDHI2 Vcc";
+@@ -229,7 +229,7 @@
+ 		enable-active-high;
+ 	};
+ 
+-	vccq_sdhi2: regulator@5 {
++	vccq_sdhi2: regulator-vccq-sdhi2 {
+ 		compatible = "regulator-gpio";
+ 
+ 		regulator-name = "SDHI2 VccQ";
 -- 
-2.7.3
+1.9.1
