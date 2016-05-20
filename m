@@ -1,94 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:34465 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751022AbcEYGiS (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:40814 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755467AbcETHKV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 25 May 2016 02:38:18 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 3/7] watchdog: softdog: consistently use softdog_ prefix
-Date: Wed, 25 May 2016 08:37:45 +0200
-Message-Id: <1464158269-2447-4-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1464158269-2447-1-git-send-email-wsa@the-dreams.de>
-References: <1464158269-2447-1-git-send-email-wsa@the-dreams.de>
+	Fri, 20 May 2016 03:10:21 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 21/23] ARM: dts: silk: Fix W=1 dtc warnings
+Date: Fri, 20 May 2016 09:10:12 +0200
+Message-Id: <1463728214-13838-22-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+References: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Warning (unit_address_vs_reg): Node /regulator@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@4 has a unit name, but no reg property
 
-And move module_init/exit to the proper place while here.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/watchdog/softdog.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+v2:
+  - No changes.
+---
+ arch/arm/boot/dts/r8a7794-silk.dts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/watchdog/softdog.c b/drivers/watchdog/softdog.c
-index a9ad27dd46502b..0a29f5a0833787 100644
---- a/drivers/watchdog/softdog.c
-+++ b/drivers/watchdog/softdog.c
-@@ -54,12 +54,12 @@ module_param(soft_panic, int, 0);
- MODULE_PARM_DESC(soft_panic,
- 	"Softdog action, set to 1 to panic, 0 to reboot (default=0)");
+diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
+index 56d98d5b21850cd2..b8c7a63c5ec456bc 100644
+--- a/arch/arm/boot/dts/r8a7794-silk.dts
++++ b/arch/arm/boot/dts/r8a7794-silk.dts
+@@ -32,7 +32,7 @@
+ 		reg = <0 0x40000000 0 0x40000000>;
+ 	};
  
--static void watchdog_fire(unsigned long);
-+static void softdog_fire(unsigned long);
+-	d3_3v: regulator@0 {
++	d3_3v: regulator-d3-3v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "D3.3V";
+ 		regulator-min-microvolt = <3300000>;
+@@ -41,7 +41,7 @@
+ 		regulator-always-on;
+ 	};
  
--static struct timer_list watchdog_ticktock =
--		TIMER_INITIALIZER(watchdog_fire, 0, 0);
-+static struct timer_list softdog_ticktock =
-+		TIMER_INITIALIZER(softdog_fire, 0, 0);
+-	vcc_sdhi1: regulator@3 {
++	vcc_sdhi1: regulator-vcc-sdhi1 {
+ 		compatible = "regulator-fixed";
  
--static void watchdog_fire(unsigned long data)
-+static void softdog_fire(unsigned long data)
- {
- 	module_put(THIS_MODULE);
- 	if (soft_noboot)
-@@ -76,14 +76,14 @@ static void watchdog_fire(unsigned long data)
+ 		regulator-name = "SDHI1 Vcc";
+@@ -52,7 +52,7 @@
+ 		enable-active-high;
+ 	};
  
- static int softdog_ping(struct watchdog_device *w)
- {
--	if (!mod_timer(&watchdog_ticktock, jiffies+(w->timeout*HZ)))
-+	if (!mod_timer(&softdog_ticktock, jiffies+(w->timeout*HZ)))
- 		__module_get(THIS_MODULE);
- 	return 0;
- }
+-	vccq_sdhi1: regulator@4 {
++	vccq_sdhi1: regulator-vccq-sdhi1 {
+ 		compatible = "regulator-gpio";
  
- static int softdog_stop(struct watchdog_device *w)
- {
--	if (del_timer(&watchdog_ticktock))
-+	if (del_timer(&softdog_ticktock))
- 		module_put(THIS_MODULE);
- 
- 	return 0;
-@@ -115,7 +115,7 @@ static struct watchdog_device softdog_dev = {
- 	.timeout = TIMER_MARGIN,
- };
- 
--static int __init watchdog_init(void)
-+static int __init softdog_init(void)
- {
- 	int ret;
- 
-@@ -132,14 +132,13 @@ static int __init watchdog_init(void)
- 
- 	return 0;
- }
-+module_init(softdog_init);
- 
--static void __exit watchdog_exit(void)
-+static void __exit softdog_exit(void)
- {
- 	watchdog_unregister_device(&softdog_dev);
- }
--
--module_init(watchdog_init);
--module_exit(watchdog_exit);
-+module_exit(softdog_exit);
- 
- MODULE_AUTHOR("Alan Cox");
- MODULE_DESCRIPTION("Software Watchdog Device Driver");
+ 		regulator-name = "SDHI1 VccQ";
 -- 
-2.8.1
+1.9.1
