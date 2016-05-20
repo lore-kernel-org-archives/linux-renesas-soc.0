@@ -1,62 +1,66 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 08/23] ARM: dts: r8a7794: Fix W=1 dtc warnings
-Date: Fri, 20 May 2016 09:09:59 +0200
-Message-Id: <1463728214-13838-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
-References: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:38078 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751903AbcETG7u (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 20 May 2016 02:59:50 -0400
+Received: from vsmta13.fe.internet.bosch.com (unknown [10.4.98.53])
+	by imta24.fe.bosch.de (Postfix) with ESMTP id AD5AAD80231
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 May 2016 08:59:48 +0200 (CEST)
+Received: from FE-HUB1000.de.bosch.com (vsgw22.fe.internet.bosch.com [10.4.98.11])
+	by vsmta13.fe.internet.bosch.com (Postfix) with ESMTP id 60CE52E40266
+	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 May 2016 08:59:48 +0200 (CEST)
+From: Dirk Behme <dirk.behme@de.bosch.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	<linux-renesas-soc@vger.kernel.org>
+CC: Dirk Behme <dirk.behme@de.bosch.com>
+Subject: [PATCH v3 5/6] arm64: dts: renesas: Link CPG to RST using "renesas,modemr"
+Date: Fri, 20 May 2016 08:57:41 +0200
+Message-ID: <1463727462-16260-6-git-send-email-dirk.behme@de.bosch.com>
+In-Reply-To: <1463727462-16260-1-git-send-email-dirk.behme@de.bosch.com>
+References: <1463727462-16260-1-git-send-email-dirk.behme@de.bosch.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Warning (unit_address_vs_reg): Node /cache-controller@1 has a unit name, but no reg property
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Move the cache-controller node under the cpus node, and make its unit
-name and reg property match the MPIDR value.
+Add a link from the Clock Pulse Generator node to the Reset Controller
+node, so the CPG can read the Mode Monitoring Register (MODEMR) to
+obtain the mode pin values.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
 ---
-v2:
-  - No changes.
----
- arch/arm/boot/dts/r8a7794.dtsi | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 1 +
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index ad1df8317575011d..685f986cf962752f 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -55,13 +55,14 @@
- 			power-domains = <&sysc R8A7794_PD_CA7_CPU1>;
- 			next-level-cache = <&L2_CA7>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 7be6ae0..4e05fcc 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -307,6 +307,7 @@
+ 			clock-names = "extal", "extalr";
+ 			#clock-cells = <2>;
+ 			#power-domain-cells = <0>;
++			renesas,modemr = <&rst 0x60>;
  		};
--	};
  
--	L2_CA7: cache-controller@1 {
--		compatible = "cache";
--		power-domains = <&sysc R8A7794_PD_CA7_SCU>;
--		cache-unified;
--		cache-level = <2>;
-+		L2_CA7: cache-controller@0 {
-+			compatible = "cache";
-+			reg = <0>;
-+			power-domains = <&sysc R8A7794_PD_CA7_SCU>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
- 	};
+ 		sysc: system-controller@e6180000 {
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 75ac18d..13d714d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -107,6 +107,7 @@
+ 			clock-names = "extal", "extalr";
+ 			#clock-cells = <2>;
+ 			#power-domain-cells = <0>;
++			renesas,modemr = <&rst 0x60>;
+ 		};
  
- 	gic: interrupt-controller@f1001000 {
+ 		sysc: system-controller@e6180000 {
 -- 
-1.9.1
-
+2.8.0
