@@ -1,138 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www1246.sakura.ne.jp ([219.94.162.56]:43109 "EHLO
-	www1246.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751552AbcELDgk (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:51005 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755481AbcETHKV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 11 May 2016 23:36:40 -0400
-Subject: Re: Applied "ASoC: rsnd: count .probe/.remove for rsnd_mod_call()" to
- the asoc tree
-To: Mark Brown <broonie@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-References: <E1avq2M-00025X-7a@debutante>
-Cc: Hiep Cao Minh <cm-hiep@jinso.co.jp>,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	NAOYA SHIIBA <naoya.shiiba.nx@renesas.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Ryusuke Sakato <ryusuke.sakato.bx@renesas.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
+	Fri, 20 May 2016 03:10:21 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org,
-	Yusuke Goda <yusuke.goda.sx@renesas.com>,
-	Simon <horms@verge.net.au>,
-	"osd2@lm.renesas.com" <osd2@lm.renesas.com>,
-	h-inayoshi@jinso.co.jp, "M.Miura" <m-miura@jinso.co.jp>
-From: Nguyen Viet Dung <nv-dung@jinso.co.jp>
-Message-ID: <5733F2FF.7010004@jinso.co.jp>
-Date: Thu, 12 May 2016 12:05:35 +0900
-MIME-Version: 1.0
-In-Reply-To: <E1avq2M-00025X-7a@debutante>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 23/23] arm64: dts: salvator-x: Fix W=1 dtc warnings
+Date: Fri, 20 May 2016 09:10:14 +0200
+Message-Id: <1463728214-13838-24-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
+References: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Mr Mark Brown,  Mr Morimoto
+Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@4 has a unit name, but no reg property
 
-I have used this patch for testting Rcar-sound unbind/rebind on the 
-RcarH3 board.
-result is good(Rcar-sound can unbind/rebind without error warning )
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - No changes.
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Testted-by: Nguyen Viet dung <nv-dung@jinso.co.jp>
-
-Best regards,
-
-On 2016年04月29日 02:47, Mark Brown wrote:
-> The patch
->
->     ASoC: rsnd: count .probe/.remove for rsnd_mod_call()
->
-> has been applied to the asoc tree at
->
->     git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git
->
-> All being well this means that it will be integrated into the linux-next
-> tree (usually sometime in the next 24 hours) and sent to Linus during
-> the next merge window (or sooner if it is a bug fix), however if
-> problems are discovered then the patch may be dropped or reverted.
->
-> You may get further e-mails resulting from automated or manual testing
-> and review of the tree, please engage with people reporting problems and
-> send followup patches addressing any issues that are reported if needed.
->
-> If any updates are required or you are submitting further changes they
-> should be sent as incremental updates against current git, existing
-> patches will not be replaced.
->
-> Please add any relevant lists and maintainers to the CCs when replying
-> to this mail.
->
-> Thanks,
-> Mark
->
-> >From 1a5658c213116d56a1a38e83588f6636a57d6374 Mon Sep 17 00:00:00 2001
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Date: Thu, 28 Apr 2016 01:49:48 +0000
-> Subject: [PATCH] ASoC: rsnd: count .probe/.remove for rsnd_mod_call()
->
-> Current rsnd_mod_call is counting its calling count to avoid unbalanced
-> function pair calling for error cases (ex init <-> quit).
-> SSI parent is now controlled as "mod" on current rsnd driver. Because of
-> this reason, SSI .remove function will be called twice if it was used as
-> SSI parent when user tried unbind. But probe/remove pair were not
-> counted. This patch counts probe/remove functions to avoid it.
-> Special thans Hiep
->
-> Reported-by: Hiep Cao Minh <cm-hiep@jinso.co.jp>
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->   sound/soc/sh/rcar/rsnd.h | 13 +++++++------
->   1 file changed, 7 insertions(+), 6 deletions(-)
->
-> diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-> index fc89a67258ca..a8f61d79333b 100644
-> --- a/sound/soc/sh/rcar/rsnd.h
-> +++ b/sound/soc/sh/rcar/rsnd.h
-> @@ -276,8 +276,9 @@ struct rsnd_mod {
->   /*
->    * status
->    *
-> - * 0xH0000CB0
-> + * 0xH0000CBA
->    *
-> + * A	0: probe	1: remove
->    * B	0: init		1: quit
->    * C	0: start	1: stop
->    *
-> @@ -287,19 +288,19 @@ struct rsnd_mod {
->    * H	0: fallback
->    * H	0: hw_params
->    */
-> +#define __rsnd_mod_shift_probe		0
-> +#define __rsnd_mod_shift_remove		0
->   #define __rsnd_mod_shift_init		4
->   #define __rsnd_mod_shift_quit		4
->   #define __rsnd_mod_shift_start		8
->   #define __rsnd_mod_shift_stop		8
-> -#define __rsnd_mod_shift_probe		28 /* always called */
-> -#define __rsnd_mod_shift_remove		28 /* always called */
->   #define __rsnd_mod_shift_irq		28 /* always called */
->   #define __rsnd_mod_shift_pcm_new	28 /* always called */
->   #define __rsnd_mod_shift_fallback	28 /* always called */
->   #define __rsnd_mod_shift_hw_params	28 /* always called */
->   
-> -#define __rsnd_mod_add_probe		0
-> -#define __rsnd_mod_add_remove		0
-> +#define __rsnd_mod_add_probe		 1
-> +#define __rsnd_mod_add_remove		-1
->   #define __rsnd_mod_add_init		 1
->   #define __rsnd_mod_add_quit		-1
->   #define __rsnd_mod_add_start		 1
-> @@ -310,7 +311,7 @@ struct rsnd_mod {
->   #define __rsnd_mod_add_hw_params	0
->   
->   #define __rsnd_mod_call_probe		0
-> -#define __rsnd_mod_call_remove		0
-> +#define __rsnd_mod_call_remove		1
->   #define __rsnd_mod_call_init		0
->   #define __rsnd_mod_call_quit		1
->   #define __rsnd_mod_call_start		0
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 84082922edb219ab..98f02631a0f0c66c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -62,7 +62,7 @@
+ 		clock-frequency = <24576000>;
+ 	};
+ 
+-	vcc_sdhi0: regulator@1 {
++	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
+ 
+ 		regulator-name = "SDHI0 Vcc";
+@@ -73,7 +73,7 @@
+ 		enable-active-high;
+ 	};
+ 
+-	vccq_sdhi0: regulator@2 {
++	vccq_sdhi0: regulator-vccq-sdhi0 {
+ 		compatible = "regulator-gpio";
+ 
+ 		regulator-name = "SDHI0 VccQ";
+@@ -86,7 +86,7 @@
+ 			  1800000 0>;
+ 	};
+ 
+-	vcc_sdhi3: regulator@3 {
++	vcc_sdhi3: regulator-vcc-sdhi3 {
+ 		compatible = "regulator-fixed";
+ 
+ 		regulator-name = "SDHI3 Vcc";
+@@ -97,7 +97,7 @@
+ 		enable-active-high;
+ 	};
+ 
+-	vccq_sdhi3: regulator@4 {
++	vccq_sdhi3: regulator-vccq-sdhi3 {
+ 		compatible = "regulator-gpio";
+ 
+ 		regulator-name = "SDHI3 VccQ";
+-- 
+1.9.1
