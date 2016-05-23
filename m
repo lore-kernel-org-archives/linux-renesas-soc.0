@@ -1,101 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:34460 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750797AbcEYGiS (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39536 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752694AbcEWB2g (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 25 May 2016 02:38:18 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/7] watchdog: softdog: remove obsolete comments
-Date: Wed, 25 May 2016 08:37:43 +0200
-Message-Id: <1464158269-2447-2-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1464158269-2447-1-git-send-email-wsa@the-dreams.de>
-References: <1464158269-2447-1-git-send-email-wsa@the-dreams.de>
+	Sun, 22 May 2016 21:28:36 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 2/3] arm64: dts: salvator-x: add Salvator-X board on R8A7796 SoC
+Date: Mon, 23 May 2016 10:28:25 +0900
+Message-Id: <1463966906-15129-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1463966906-15129-1-git-send-email-horms+renesas@verge.net.au>
+References: <1463966906-15129-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-The history is obsolete, especially since we switched to watchdog
-framework. The section markers also don't make sense anymore given
-the small size of the driver.
+This patch adds initial board support for R8A7796 Salvator-X.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+--
+v2 [Simon Horman]
+* Added Reviewed-by tag from Geert Uytterhoeven
+
+v1 [Simon Horman]
+* Drop use of pfc, that can be added once pfc support is present in mainline
+* Set size of memory (bank 0) to 2GiB instead of 1GiB
+* Omit scif0
+* Add scif_clk, from patch by Hiromitsu Yamasaki
+
+v0 [Takeshi Kihara]
 ---
- drivers/watchdog/softdog.c | 33 ---------------------------------
- 1 file changed, 33 deletions(-)
+ arch/arm64/boot/dts/renesas/Makefile               |  1 +
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 45 ++++++++++++++++++++++
+ 2 files changed, 46 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
 
-diff --git a/drivers/watchdog/softdog.c b/drivers/watchdog/softdog.c
-index 99a06f9e393064..8bc0b164afc94b 100644
---- a/drivers/watchdog/softdog.c
-+++ b/drivers/watchdog/softdog.c
-@@ -17,23 +17,6 @@
-  *
-  *	Software only watchdog driver. Unlike its big brother the WDT501P
-  *	driver this won't always recover a failed machine.
-- *
-- *  03/96: Angelo Haritsis <ah@doc.ic.ac.uk> :
-- *	Modularised.
-- *	Added soft_margin; use upon insmod to change the timer delay.
-- *	NB: uses same minor as wdt (WATCHDOG_MINOR); we could use separate
-- *	    minors.
-- *
-- *  19980911 Alan Cox
-- *	Made SMP safe for 2.3.x
-- *
-- *  20011127 Joel Becker (jlbec@evilplan.org>
-- *	Added soft_noboot; Allows testing the softdog trigger without
-- *	requiring a recompile.
-- *	Added WDIOC_GETTIMEOUT and WDIOC_SETTIMOUT.
-- *
-- *  20020530 Joel Becker <joel.becker@oracle.com>
-- *	Added Matt Domsch's nowayout module option.
-  */
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 9ce1890a650e..17139f7003a6 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -1,4 +1,5 @@
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb
++dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb
  
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-@@ -71,19 +54,11 @@ module_param(soft_panic, int, 0);
- MODULE_PARM_DESC(soft_panic,
- 	"Softdog action, set to 1 to panic, 0 to reboot (default=0)");
- 
--/*
-- *	Our timer
-- */
--
- static void watchdog_fire(unsigned long);
- 
- static struct timer_list watchdog_ticktock =
- 		TIMER_INITIALIZER(watchdog_fire, 0, 0);
- 
--/*
-- *	If the timer expires..
-- */
--
- static void watchdog_fire(unsigned long data)
- {
- 	module_put(THIS_MODULE);
-@@ -99,10 +74,6 @@ static void watchdog_fire(unsigned long data)
- 	}
- }
- 
--/*
-- *	Softdog operations
-- */
--
- static int softdog_ping(struct watchdog_device *w)
- {
- 	if (!mod_timer(&watchdog_ticktock, jiffies+(w->timeout*HZ)))
-@@ -124,10 +95,6 @@ static int softdog_set_timeout(struct watchdog_device *w, unsigned int t)
- 	return 0;
- }
- 
--/*
-- *	Kernel Interfaces
-- */
--
- static struct watchdog_info softdog_info = {
- 	.identity = "Software Watchdog",
- 	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
+ always		:= $(dtb-y)
+ clean-files	:= *.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+new file mode 100644
+index 000000000000..9c52613fb88c
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -0,0 +1,45 @@
++/*
++ * Device Tree Source for the Salvator-X board
++ *
++ * Copyright (C) 2016 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r8a7796.dtsi"
++
++/ {
++	model = "Renesas Salvator-X board based on r8a7796";
++	compatible = "renesas,salvator-x", "renesas,r8a7796";
++
++	aliases {
++		serial0 = &scif2;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x78000000>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <16666666>;
++};
++
++&scif2 {
++	status = "okay";
++};
++
++&scif_clk {
++	clock-frequency = <14745600>;
++	status = "okay";
++};
 -- 
-2.8.1
+2.1.4
