@@ -1,72 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35201 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750892AbcEXCnV (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:45463 "EHLO
+	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S932262AbcEXKfJ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 23 May 2016 22:43:21 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 0/4] UHS-I SDR-104 support for sh_mobile_sdhi
-Date: Tue, 24 May 2016 11:43:13 +0900
-Message-Id: <1464057797-29951-1-git-send-email-horms+renesas@verge.net.au>
+	Tue, 24 May 2016 06:35:09 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 4/4] arm64: dts: salvator-x: enable HSUSB
+Date: Tue, 24 May 2016 19:34:18 +0900
+Message-ID: <1464086058-1276-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1464086058-1276-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1464086058-1276-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Since related drivers doesn't support OTG framework yet, the renesas_usbhs
+driver cannot detect VBUS in particular situations. And then a gadget
+driver doesn't work correctly (even if a USB cable is connected to a USB
+host, nothing happens).
+However, we can avoid such a situation if we operate the followings:
 
-Hi,
+ 1) rmmod/unbind all gadget drivers
+ 2) rmmod/unbind the renesas_usbhs driver
+  e.g. # echo e6590000.usb > /sys/bus/platform/drivers/renesas_usbhs/unbind
+ 3) connect the USB cable of CN9 to a USB host
+ 4) insmod/bind the renesas_usbhs driver
+  e.g. # echo e6590000.usb > /sys/bus/platform/drivers/renesas_usbhs/bind
+ 5) insmod/bind a gadget driver
 
-this series is based on work by Ai Kyuse to add UHS-I SDR-104 support for
-sh_mobile_sdhi. It builds on work by Shinobu Uehara, Rob Taylor, William
-Towle and Ian Molton, Ben Hutchings, Wolfram Sang and others to add UHS-I
-SDR-50 support to the same driver.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-This series enables UHS-I SDR-104 on the r8a7790/Lager where
-UHS-I SDR-50 is already enabled.
-
-It is based on a merge of:
-* The next branch of the mmc tree
-* The renesas-next-20160427v2-v4.6-rc1 tag of the renesas tree
-* The sh-pfc-for-v4.7-tag1 tag of the renesas-drivers tree
-
-The first two mmc driver patches are targeted at the next branch of the mmc
-tree. The last DT patch is targeted at the devel branch of the renesas tree.
-
-To aid review this series is provided in the _temporary_ topic/sdr104-v3 branch
-of the renesas tree.
-
-
-Changes since v1 and v2 are described in individual patches.
-
-
-Please see http://elinux.org/Tests:SD-SDHI-SDR104 for indicative tests
-results. Highlights follow:
-
-* Currently I am seeing speeds of up to 48MB/s with these patches and
-  30MB/s without using a SanDisk Extreme Pro 8Gb microSDHC UHS-1 card.
-  I have not previously reported results for this card.
-
-* I am also seeing 45MB/s with these patches and 34MB/s without using
-  a SanDisk Ultra 64Gb microSDXC UHS-1 card.  In conjunction with v1 of
-  this patchset I reported a speed of 39MB/s for this card with those patches.
-
-
-Ai Kyuse (3):
-  mmc: tmio: enhance illegal sequence handling
-  mmc: tmio: Add tuning support
-  mmc: sh_mobile_sdhi: Add tuning support
-
-Simon Horman (1):
-  ARM: dts: r8a7790: lager: Enable UHS-I SDR-104
-
- arch/arm/boot/dts/r8a7790-lager.dts |   1 +
- drivers/mmc/host/sh_mobile_sdhi.c   | 203 +++++++++++++++++++++++++++++++++++-
- drivers/mmc/host/tmio_mmc.h         |   6 ++
- drivers/mmc/host/tmio_mmc_pio.c     | 100 ++++++++++++++++--
- 4 files changed, 302 insertions(+), 8 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 23bc06b..7dc3ca6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -603,6 +603,10 @@
+ 	status = "okay";
+ };
+ 
++&hsusb {
++	status = "okay";
++};
++
+ &pcie_bus_clk {
+ 	clock-frequency = <100000000>;
+ 	status = "okay";
 -- 
-2.1.4
+1.9.1
