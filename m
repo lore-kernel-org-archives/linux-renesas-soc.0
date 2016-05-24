@@ -1,70 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35607 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:34717 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754760AbcETHCc (ORCPT
+	with ESMTP id S1751357AbcEXBy4 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 20 May 2016 03:02:32 -0400
+	Mon, 23 May 2016 21:54:56 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFC v2 0/3] UHS-I SDR-104 support for sh_mobile_sdhi
-Date: Fri, 20 May 2016 16:02:20 +0900
-Message-Id: <1463727743-7567-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH v3 2/3] arm64: dts: salvator-x: add Salvator-X board on R8A7796 SoC
+Date: Tue, 24 May 2016 10:54:39 +0900
+Message-Id: <1464054880-25843-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1464054880-25843-1-git-send-email-horms+renesas@verge.net.au>
+References: <1464054880-25843-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Hi,
+This patch adds initial board support for R8A7796 Salvator-X.
 
-this series is based on work by Ai Kyuse to add UHS-I SDR-104 support for
-sh_mobile_sdhi. It builds on work by Shinobu Uehara, Rob Taylor, William
-Towle and Ian Molton, Ben Hutchings, Wolfram Sang and others to add UHS-I
-SDR-50 support to the same driver.
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+--
+v2 [Simon Horman]
+* Added Reviewed-by tag from Geert Uytterhoeven
 
-This series enables UHS-I SDR-104 on the r8a7790/Lager where
-UHS-I SDR-50 is already enabled.
+v1 [Simon Horman]
+* Drop use of pfc, that can be added once pfc support is present in mainline
+* Set size of memory (bank 0) to 2GiB instead of 1GiB
+* Omit scif0
+* Add scif_clk, from patch by Hiromitsu Yamasaki
 
-It is based on a merge of:
-* The next branch of the mmc tree  
-* The renesas-next-20160427v2-v4.6-rc1 tag of the renesas tree
-* The sh-pfc-for-v4.7-tag1 tag of the renesas-drivers tree
+v0 [Takeshi Kihara]
+---
+ arch/arm64/boot/dts/renesas/Makefile               |  1 +
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 45 ++++++++++++++++++++++
+ 2 files changed, 46 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
 
-The first two mmc driver patches are targeted at the next branch of the mmc
-tree. The last DT patch is targeted at the devel branch of the renesas tree.
-
-To aid review this series is provided in the _temporary_ topic/sdr104-v2 branch
-of the renesas tree.
-
-
-I received somewhat extensive review of v1 of this series and I have
-attempted to rework, correspondingly extensively, these patches to reflect
-that review. I apologise if I missed anything noted in v1. And given the
-extent of the changes since then I fully expect to need to follow-up with v3.
-
-A pleasant side effect of the above mentioned changes is
-that v2 has roughly 40% fewer lines of code than v1 :)
-
-
-Please see "[PATCH/RFC 0/3] UHS-I SDR-104 support for sh_mobile_sdhi" for
-indicative test results: I do not believe the numbers have not changed
-in a material way since then.
-
-
-Ai Kyuse (2):
-  mmc: tmio: Add tuning support
-  mmc: sh_mobile_sdhi: Add tuning support
-
-Simon Horman (1):
-  ARM: dts: r8a7790: lager: Enable UHS-I SDR-104
-
- arch/arm/boot/dts/r8a7790-lager.dts |   1 +
- drivers/mmc/host/sh_mobile_sdhi.c   | 216 +++++++++++++++++++++++++++++++++++-
- drivers/mmc/host/tmio_mmc.h         |   6 +
- drivers/mmc/host/tmio_mmc_pio.c     |  85 +++++++++++++-
- 4 files changed, 306 insertions(+), 2 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 9ce1890a650e..17139f7003a6 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -1,4 +1,5 @@
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb
++dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb
+ 
+ always		:= $(dtb-y)
+ clean-files	:= *.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+new file mode 100644
+index 000000000000..9c52613fb88c
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -0,0 +1,45 @@
++/*
++ * Device Tree Source for the Salvator-X board
++ *
++ * Copyright (C) 2016 Renesas Electronics Corp.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r8a7796.dtsi"
++
++/ {
++	model = "Renesas Salvator-X board based on r8a7796";
++	compatible = "renesas,salvator-x", "renesas,r8a7796";
++
++	aliases {
++		serial0 = &scif2;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x78000000>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <16666666>;
++};
++
++&scif2 {
++	status = "okay";
++};
++
++&scif_clk {
++	clock-frequency = <14745600>;
++	status = "okay";
++};
 -- 
 2.1.4
