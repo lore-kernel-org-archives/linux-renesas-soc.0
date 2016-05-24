@@ -1,65 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55742 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754786AbcEYAs3 (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:20919 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753466AbcEXFaV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 24 May 2016 20:48:29 -0400
-Date: Wed, 25 May 2016 09:48:25 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	Tue, 24 May 2016 01:30:21 -0400
+Subject: Re: [PATCH v3 1/3] arm64: dts: r8a7796: Add Renesas R8A7796 SoC
+ support
+To: Simon Horman <horms+renesas@verge.net.au>,
+	<linux-renesas-soc@vger.kernel.org>
+References: <1464054880-25843-1-git-send-email-horms+renesas@verge.net.au>
+ <1464054880-25843-2-git-send-email-horms+renesas@verge.net.au>
+CC: <linux-arm-kernel@lists.infradead.org>,
 	Geert Uytterhoeven <geert@linux-m68k.org>,
 	Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>,
 	Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH v3 1/3] arm64: dts: r8a7796: Add Renesas R8A7796 SoC
- support
-Message-ID: <20160525004825.GC7292@verge.net.au>
-References: <1464054880-25843-1-git-send-email-horms+renesas@verge.net.au>
- <1464054880-25843-2-git-send-email-horms+renesas@verge.net.au>
- <b30c9c84-23b6-b088-4983-b2498317492b@de.bosch.com>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <b30c9c84-23b6-b088-4983-b2498317492b@de.bosch.com>
+Date: Tue, 24 May 2016 07:30:17 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b30c9c84-23b6-b088-4983-b2498317492b@de.bosch.com>
+In-Reply-To: <1464054880-25843-2-git-send-email-horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Dirk,
+Hi Simon,
 
-On Tue, May 24, 2016 at 07:30:17AM +0200, Dirk Behme wrote:
-> Hi Simon,
+On 24.05.2016 03:54, Simon Horman wrote:
+> Basic support for the Gen 3 R-Car M3-W SoC.
+>
+> Based on work for the r8a7795 and r8a7796 SoCs by
+> Takeshi Kihara, Dirk Behme and Geert Uytterhoeven.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3
+> * As suggested by Geert Uytterhoeven:
+>   - Drop 0x from unit address of gic
+> * As suggested by Khiem Nguyen:
+>   - Use psci-0.2
+> * Added Reviewed-by tag from Geert Uytterhoeven
+>
+> v2
+> * As suggested by Geert Uytterhoeven:
+>   - Move L2_CA57 node under cpus node and include reg property
+>   - Omit status = "disabled" from scif_clk node
+> ---
+>  Documentation/devicetree/bindings/arm/shmobile.txt |   4 +
+>  arch/arm64/Kconfig.platforms                       |   6 ++
+>  arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 120 +++++++++++++++++++++
+>  3 files changed, 130 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/renesas/r8a7796.dtsi
+>
+> diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+> index 9cf67e48f222..d5ed554830d7 100644
+> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
+> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+> @@ -29,6 +29,8 @@ SoCs:
+>      compatible = "renesas,r8a7794"
+>    - R-Car H3 (R8A77950)
+>      compatible = "renesas,r8a7795"
+> +  - R-Car M3-W (R8A77960)
+> +    compatible = "renesas,r8a7796"
+>
+>
+>  Boards:
+> @@ -61,5 +63,7 @@ Boards:
+>      compatible = "renesas,porter", "renesas,r8a7791"
+>    - Salvator-X (RTP0RC7795SIPB0010S)
+>      compatible = "renesas,salvator-x", "renesas,r8a7795";
+> +  - Salvator-X
+> +    compatible = "renesas,salvator-x", "renesas,r8a7796";
+>    - SILK (RTP0RC7794LCB00011S)
+>      compatible = "renesas,silk", "renesas,r8a7794"
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index efa77c146415..16d8d26839ea 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -114,6 +114,12 @@ config ARCH_R8A7795
+>  	help
+>  	  This enables support for the Renesas R-Car H3 SoC.
+>
+> +config ARCH_R8A7796
+> +	bool "Renesas R-Car M3-W SoC Platform"
+> +	depends on ARCH_RENESAS
+> +	help
+> +	  This enables support for the Renesas R-Car M3-W SoC.
+> +
+>  config ARCH_STRATIX10
+>  	bool "Altera's Stratix 10 SoCFPGA Family"
+>  	help
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> new file mode 100644
+> index 000000000000..178debf68318
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> @@ -0,0 +1,120 @@
+> +/*
+> + * Device Tree Source for the r8a7796 SoC
+> + *
+> + * Copyright (C) 2016 Renesas Electronics Corp.
+> + *
+> + * This file is licensed under the terms of the GNU General Public License
+> + * version 2.  This program is licensed "as is" without any warranty of any
+> + * kind, whether express or implied.
+> + */
+> +
+> +#include <dt-bindings/clock/r8a7796-cpg-mssr.h>
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
 
-[...]
 
-> With Renesas R-Car3 we will get a whole family of SoCs. I.e. different
-> computing power (e.g. different number of Cores) with more or less similar
-> peripherals.
-> 
-> I would think that we want to reflect this in the device tree, too.
-> Therefore I think what we want is a hierarchy of device trees. Similar
-> what's done with other SoC families (compare e.g. i.MX6).
-> 
-> E.g. we want an initial rcar3.dtsi, which contains all common parts of all
-> R-Car3 SoCs. E.g. one CA57 core, the SCIF where its common etc.
-> 
-> Then you will have the r8a779x.dtsi which includes the rcar3.dtsi and
-> extends it for SoC specific parts. Which then will be included by the board
-> device trees, as already done, now.
-> 
-> Or in other words: As soon as you have similar parts in the r8a779x.dtsi's,
-> it's time to think about moving the parts one hierarchy level up into the
-> rcar3.dtsi. Else you will end up in a maintenance hell once you have to
-> change/fix anything.
+With Renesas R-Car3 we will get a whole family of SoCs. I.e. different 
+computing power (e.g. different number of Cores) with more or less 
+similar peripherals.
 
-Thanks for raising this issue.
+I would think that we want to reflect this in the device tree, too. 
+Therefore I think what we want is a hierarchy of device trees. Similar 
+what's done with other SoC families (compare e.g. i.MX6).
 
-I agree entirely that we should work towards a situation where maintenance
-is as easy as it can be. However, due to the per-SoC binding scheme that
-we are using for IP related to Renesas SoCs I suspect that very few DT nodes
-can be shared between SoCs verbatim.
+E.g. we want an initial rcar3.dtsi, which contains all common parts of 
+all R-Car3 SoCs. E.g. one CA57 core, the SCIF where its common etc.
 
-Probably some sort of scheme can be cooked up using preprocessor macros.
-And probably there are other ways to resolve this problem. But I would
-prefer if we worked towards resolving this maintenance problem in parallel
-with rather than as a dependency of merging r8a7796 support into mainline.
+Then you will have the r8a779x.dtsi which includes the rcar3.dtsi and 
+extends it for SoC specific parts. Which then will be included by the 
+board device trees, as already done, now.
+
+Or in other words: As soon as you have similar parts in the 
+r8a779x.dtsi's, it's time to think about moving the parts one hierarchy 
+level up into the rcar3.dtsi. Else you will end up in a maintenance hell 
+once you have to change/fix anything.
+
+Best regards
+
+Dirk
