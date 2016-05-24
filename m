@@ -1,28 +1,24 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:29086 "EHLO
+Received: from relmlor2.renesas.com ([210.160.252.172]:15132 "EHLO
 	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S932262AbcEXKee (ORCPT
+	by vger.kernel.org with ESMTP id S1751154AbcEXE56 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 24 May 2016 06:34:34 -0400
+	Tue, 24 May 2016 00:57:58 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
 	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
 	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
 CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 0/4] arm64: dts: r8a7795: Add HSUSB device node and enable channel 0 of USB2.0
-Date: Tue, 24 May 2016 19:34:14 +0900
-Message-ID: <1464086058-1276-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/4] arm64: dts: r8a7795: Add HSUSB device node and enable channel 0 of USB2.0
+Date: Tue, 24 May 2016 13:57:36 +0900
+Message-ID: <1464065860-3948-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 This patch is based on the renesas-drivers / renesas-drivers-2016-05-17-v4.6 tag.
-
-Changes from v1:
- - fix compatible string of hsusb in patch 1.
- - fix patch 2 for "make dtbs W=1" warning.
 
 Yoshihiro Shimoda (4):
   arm64: dts: r8a7795: Add HSUSB device node
