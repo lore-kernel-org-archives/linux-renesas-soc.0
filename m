@@ -1,125 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:48195 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161668AbcE3Q25 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:60908 "EHLO
+	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S932262AbcEXKen (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 30 May 2016 12:28:57 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/4] clk: renesas: cpg-mssr: Add support for R-Car M3-W
-Date: Mon, 30 May 2016 18:28:53 +0200
-Message-Id: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
+	Tue, 24 May 2016 06:34:43 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 1/4] arm64: dts: r8a7795: Add HSUSB device node
+Date: Tue, 24 May 2016 19:34:15 +0900
+Message-ID: <1464086058-1276-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1464086058-1276-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1464086058-1276-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mike, Stephen,
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-This patch series adds initial support for the Clock Pulse Generator and
-Module Standby and Software Reset modules on the Renesas R-Car M3-W
-SoC:
-  - Basic core clocks,
-  - SCIF2 (console) module clock,
-  - INTC-AP (GIC) module clock (disabled pending CLK_ENABLE_HAND_OFF).
-
-Support for more core and module clocks will be added incrementally.
-
-/sys/kernel/debug/clk/clk_summary output:
-
-       clock            enable_cnt  prepare_cnt        rate   accuracy   phase
-    ---------------------------------------------------------------------------
-     scif                        1            1    14745600          0 0
-     extalr                      0            0           0          0 0
-     extal                       1            1    16666666          0 0
-	cp                       0            0     8333333          0 0
-	.main                    1            1    16666666          0 0
-	   .pll4                 0            0  2399999904          0 0
-	   .pll3                 0            0  3199999872          0 0
-	   .pll2                 0            0  2399999904          0 0
-	   .pll1                 1            1  3199999872          0 0
-	      .pll1_div2         1            1  1599999936          0 0
-		 cl              0            0    33333332          0 0
-		 zx              0            0   799999968          0 0
-		 zt              0            0   399999984          0 0
-		 ztrd2           0            0   133333328          0 0
-		 ztr             0            0   266666656          0 0
-		 .s3             2            2   266666656          0 0
-		    s3d4         1            1    66666664          0 0
-		       scif2     2            2    66666664          0 0
-		    s3d2         0            0   133333328          0 0
-		    s3d1         2            2   266666656          0 0
-		       intc-ap   1            1   266666656          0 0
-		 .s2             0            0   399999984          0 0
-		    s2d4         0            0    99999996          0 0
-		    s2d2         0            0   199999992          0 0
-		    s2d1         0            0   399999984          0 0
-		 .s1             0            0   533333312          0 0
-		    s1d4         0            0   133333328          0 0
-		    s1d2         0            0   266666656          0 0
-		    s1d1         0            0   533333312          0 0
-		 .s0             0            0   799999968          0 0
-		    s0d12        0            0    66666664          0 0
-		    s0d8         0            0    99999996          0 0
-		    s0d6         0            0   133333328          0 0
-		    s0d4         0            0   199999992          0 0
-		    s0d3         0            0   266666656          0 0
-		    s0d2         0            0   399999984          0 0
-		    s0d1         0            0   799999968          0 0
-		 .pll1_div4      0            0   799999968          0 0
-	   .pll0                 0            0  2999999880          0 0
-
-Changes compared to v1:
-  - Add Acked-by, Tested-by.
-
-For your convenience, I've pushed this series to the
-topic/r8a7796-clk-v2 branch of
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git.
-This has been tested on r8a7796/salvator-x, and the code (minus the
-acks, i.e. v1), has been part of renesas-drivers since 2016-05-10.
-
-I plan to queue this in my clk-renesas-for-v4.8 branch, and send a pull
-request later.
-
-Thanks!
-
-Geert Uytterhoeven (4):
-  clk: renesas: cpg-mssr: Document r8a7796 support
-  clk: renesas: Add r8a7796 CPG Core Clock Definitions
-  clk: renesas: cpg-mssr: Extract common R-Car Gen3 support code
-  clk: renesas: cpg-mssr: Add support for R-Car M3-W
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   7 +-
- drivers/clk/renesas/Kconfig                        |   1 +
- drivers/clk/renesas/Makefile                       |   3 +-
- drivers/clk/renesas/r8a7795-cpg-mssr.c             | 360 +--------------------
- drivers/clk/renesas/r8a7796-cpg-mssr.c             | 192 +++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.c                | 359 ++++++++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.h                |  43 +++
- drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
- include/dt-bindings/clock/r8a7796-cpg-mssr.h       |  69 ++++
- 10 files changed, 682 insertions(+), 359 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a7796-cpg-mssr.c
- create mode 100644 drivers/clk/renesas/rcar-gen3-cpg.c
- create mode 100644 drivers/clk/renesas/rcar-gen3-cpg.h
- create mode 100644 include/dt-bindings/clock/r8a7796-cpg-mssr.h
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 26df300..a4f9170 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1339,6 +1339,23 @@
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
++
++		hsusb: usb@e6590000 {
++			compatible = "renesas,usbhs-r8a7795",
++				     "renesas,rcar-gen3-usbhs";
++			reg = <0 0xe6590000 0 0x100>;
++			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 704>;
++			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
++			       <&usb_dmac1 0>, <&usb_dmac1 1>;
++			dma-names = "ch0", "ch1", "ch2", "ch3";
++			renesas,buswait = <11>;
++			phys = <&usb2_phy0>;
++			phy-names = "usb";
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
+ 		pciec0: pcie@fe000000 {
+ 			compatible = "renesas,pcie-r8a7795";
+ 			reg = <0 0xfe000000 0 0x80000>;
 -- 
 1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
