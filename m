@@ -1,57 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:54724 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755486AbcETHu6 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:45934 "EHLO
+	relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S932262AbcEXKfA (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 20 May 2016 03:50:58 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/2] ARM/arm64: renesas: Stop using drivers/sh/
-Date: Fri, 20 May 2016 09:50:53 +0200
-Message-Id: <1463730655-16199-1-git-send-email-geert+renesas@glider.be>
+	Tue, 24 May 2016 06:35:00 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
+	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
+CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 3/4] arm64: dts: salvator-x: enable USB 2.0 Host channel 0
+Date: Tue, 24 May 2016 19:34:17 +0900
+Message-ID: <1464086058-1276-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1464086058-1276-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1464086058-1276-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+We have to set SW15 to pin 2-3 side on the board before we use CN9
+as USB host or peripheral.
 
-Now CONFIG_PM and CONFIG_PM_GENERIC_DOMAINS are enabled unconditionally
-for Renesas ARM-based SoCs, the legacy clock domain is no longer used on
-these SoCs, and we can return drivers/sh/ to SuperH.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Both patches were extracted from series "[PATCH 0/4] Enable PM and
-PM_GENERIC_DOMAINS for SoCs with PM Domains", and updated, hence the
-v2.
-
-Note that this does break booting R-Car Gen2 boards using pre-v4.3 DTSes
-that don't have power-domains properties, as this relied on the legacy
-clock domain.
-
-Thanks!
-
-Geert Uytterhoeven (2):
-  drivers: sh: Stop using the legacy clock domain on ARM
-  MAINTAINERS: Drop drivers/sh/ for Renesas ARM
-
- MAINTAINERS             | 1 -
- drivers/Makefile        | 1 -
- drivers/sh/pm_runtime.c | 9 ---------
- 3 files changed, 11 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 684f5e3..23bc06b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -579,6 +579,10 @@
+ 	status = "okay";
+ };
+ 
++&ehci0 {
++	status = "okay";
++};
++
+ &ehci1 {
+ 	status = "okay";
+ };
+@@ -587,6 +591,10 @@
+ 	status = "okay";
+ };
+ 
++&ohci0 {
++	status = "okay";
++};
++
+ &ohci1 {
+ 	status = "okay";
+ };
 -- 
 1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
