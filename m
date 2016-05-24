@@ -1,58 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f195.google.com ([209.85.213.195]:36296 "EHLO
-	mail-ig0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751448AbcEXGfO (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34607 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752141AbcEXBoa (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 24 May 2016 02:35:14 -0400
-Received: by mail-ig0-f195.google.com with SMTP id c3so1051478igl.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 May 2016 23:35:14 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <5742B66C.7080102@rvc.renesas.com>
-References: <1463966906-15129-1-git-send-email-horms+renesas@verge.net.au>
-	<1463966906-15129-2-git-send-email-horms+renesas@verge.net.au>
-	<CAMuHMdXsu=O13rLysob1Xp+5vWcp7gq6byCffR-6hGc+W-837A@mail.gmail.com>
-	<5742B66C.7080102@rvc.renesas.com>
-Date: Tue, 24 May 2016 08:35:13 +0200
-Message-ID: <CAMuHMdV+atFKJjxcH7RkBCdabsBqk5Y3TTHCPN+sprDaM1xj_w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] arm64: dts: r8a7796: Add Renesas R8A7796 SoC support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
+	Mon, 23 May 2016 21:44:30 -0400
+Date: Tue, 24 May 2016 10:44:28 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-renesas-soc@vger.kernel.org,
 	"linux-arm-kernel@lists.infradead.org"
 	<linux-arm-kernel@lists.infradead.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Toru Oishi <toru.oishi.zj@rvc.renesas.com>
-Content-Type: text/plain; charset=UTF-8
+	Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v2 1/3] arm64: dts: r8a7796: Add Renesas R8A7796 SoC
+ support
+Message-ID: <20160524014427.GB22751@verge.net.au>
+References: <1463966906-15129-1-git-send-email-horms+renesas@verge.net.au>
+ <1463966906-15129-2-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdXsu=O13rLysob1Xp+5vWcp7gq6byCffR-6hGc+W-837A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXsu=O13rLysob1Xp+5vWcp7gq6byCffR-6hGc+W-837A@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Khiem,
+On Mon, May 23, 2016 at 09:07:20AM +0200, Geert Uytterhoeven wrote:
+> On Mon, May 23, 2016 at 3:28 AM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Basic support for the Gen 3 R-Car M3-W SoC.
+> >
+> > Based on work for the r8a7795 and r8a7796 SoCs by
+> > Takeshi Kihara, Dirk Behme and Geert Uytterhoeven.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> > @@ -0,0 +1,120 @@
+> > +       psci {
+> > +               compatible = "arm,psci-1.0";
+> 
+> Do we want to use 1.0 on r8a7795, too?
+> 
+> > +               method = "smc";
+> > +       };
+> 
+> > +       soc {
+> > +               compatible = "simple-bus";
+> > +               interrupt-parent = <&gic>;
+> > +               #address-cells = <2>;
+> > +               #size-cells = <2>;
+> > +               ranges;
+> > +
+> > +               gic: interrupt-controller@0xf1010000 {
+> 
+> If you drop the "0x" (which is BTW also present in r8a7795.dtsi), you can add
+> my
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Mon, May 23, 2016 at 9:51 AM, Khiem Nguyen
-<khiem.nguyen.xt@rvc.renesas.com> wrote:
-> Using 1.0 will open Suspend-to-RAM support if secure firmware supports that
-> feature.
-> However, we might need additional work in drivers to support suspend/resume
-> handlers.
-> So, I suggest that we keep using 0.2 until Suspend-to-RAM feature is
-> confirmed in r8a7795/r8a7796.
-
-Note that we do have suspend/resume support on R-Car Gen2, albeit some
-drivers may lack code to save/restore state when their devices are powered
-down, as R-Car Gen2 doesn't have power domains for devices.
-
-So I'd expect everything to work fine, as long as no R-Car Gen3-specific
-drivers or devices residing in multimedia power domains are involved.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Deal :)
