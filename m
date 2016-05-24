@@ -1,20 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:45463 "EHLO
-	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S932262AbcEXKfJ (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:11228 "EHLO
+	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751154AbcEXE6b (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 24 May 2016 06:35:09 -0400
+	Tue, 24 May 2016 00:58:31 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
 	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
 	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
 CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 4/4] arm64: dts: salvator-x: enable HSUSB
-Date: Tue, 24 May 2016 19:34:18 +0900
-Message-ID: <1464086058-1276-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1464086058-1276-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1464086058-1276-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 4/4] arm64: dts: salvator-x: enable HSUSB
+Date: Tue, 24 May 2016 13:57:40 +0900
+Message-ID: <1464065860-3948-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1464065860-3948-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1464065860-3948-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -40,7 +40,7 @@ Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
  1 file changed, 4 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 23bc06b..7dc3ca6 100644
+index 3367f9c..b2852e7 100644
 --- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
 +++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
 @@ -603,6 +603,10 @@
