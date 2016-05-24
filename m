@@ -1,61 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:47508 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750927AbcE0MDg (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35201 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750892AbcEXCnV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 27 May 2016 08:03:36 -0400
-Date: Fri, 27 May 2016 14:03:30 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] UHS-I SDR-104 support for sh_mobile_sdhi
-Message-ID: <20160527120329.GE1663@katana>
-References: <1464057797-29951-1-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3O1VwFp74L81IIeR"
-Content-Disposition: inline
-In-Reply-To: <1464057797-29951-1-git-send-email-horms+renesas@verge.net.au>
+	Mon, 23 May 2016 22:43:21 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 0/4] UHS-I SDR-104 support for sh_mobile_sdhi
+Date: Tue, 24 May 2016 11:43:13 +0900
+Message-Id: <1464057797-29951-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---3O1VwFp74L81IIeR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi,
+
+this series is based on work by Ai Kyuse to add UHS-I SDR-104 support for
+sh_mobile_sdhi. It builds on work by Shinobu Uehara, Rob Taylor, William
+Towle and Ian Molton, Ben Hutchings, Wolfram Sang and others to add UHS-I
+SDR-50 support to the same driver.
+
+This series enables UHS-I SDR-104 on the r8a7790/Lager where
+UHS-I SDR-50 is already enabled.
+
+It is based on a merge of:
+* The next branch of the mmc tree
+* The renesas-next-20160427v2-v4.6-rc1 tag of the renesas tree
+* The sh-pfc-for-v4.7-tag1 tag of the renesas-drivers tree
+
+The first two mmc driver patches are targeted at the next branch of the mmc
+tree. The last DT patch is targeted at the devel branch of the renesas tree.
+
+To aid review this series is provided in the _temporary_ topic/sdr104-v3 branch
+of the renesas tree.
 
 
-> * I am also seeing 45MB/s with these patches and 34MB/s without using
->   a SanDisk Ultra 64Gb microSDXC UHS-1 card.  In conjunction with v1 of
->   this patchset I reported a speed of 39MB/s for this card with those patches.
-
-I get similar numbers for my Samsung card with this series.
-
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Changes since v1 and v2 are described in individual patches.
 
 
---3O1VwFp74L81IIeR
-Content-Type: application/pgp-signature; name="signature.asc"
+Please see http://elinux.org/Tests:SD-SDHI-SDR104 for indicative tests
+results. Highlights follow:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+* Currently I am seeing speeds of up to 48MB/s with these patches and
+  30MB/s without using a SanDisk Extreme Pro 8Gb microSDHC UHS-1 card.
+  I have not previously reported results for this card.
 
-iQIcBAEBAgAGBQJXSDeRAAoJEBQN5MwUoCm2mzsP/065/HzRWAMmg96+RWVZiOeh
-ev/JhwK5TDGl7JkbjFCSkaLQvTsa1Iw7Ky8haSJqhaaj1kLMUpO71LKNX5PMF5OA
-HpJQ3Nad2U9R8fFx2pcN4p/yNs2gUNjViZDIYTlPTN13XpD/rZFD1l7R2yC2w2ij
-hivBC0d4ChhOaK2heSatisln/KRqMCGLTgRlYyxRax02y59kZ8rQhsNFemotBtKU
-eO/wgzOcqwDQTp2jvdi4eQQ9ME8aNT422D8gPigDsfTBLuGujkEKA3DYt7RzjTId
-+iFvDVN2ssGirX463Maifyvc6xMLJ0C2BXtLYgpHtGM0WhU6kH3tpMdVyIJtyLJy
-fiPxv2smIrrJhdFadw7k6aV+B0Ff0NlGlcoInQSjQ/t7e4xGhzvFEKq0Q1KTsZID
-hXosBQjW3PjN8E/AoPE46EYha7t2L62tu4j+j1cm3iv+XcsQEyc3jW6ggxwja8Je
-dIuR/wHS1N049OAmfCgNd5Ab9hsZnY8jSDDvVka2swBIibo9Fw4n3MsATxCJF9zx
-cBiYlyDYqXh1X5G+PkLexHN167WujVPCQADr4UnmIORUz5izX3PBcONeteyKwbdU
-hg+zhh5ruXD+d95zclyfxJ4l4ZYCRghLLn+T9G+1u5tMUf89qEjKOUnhiiBkmA3+
-2lPWL69npohhGT2QDfPG
-=0pPM
------END PGP SIGNATURE-----
+* I am also seeing 45MB/s with these patches and 34MB/s without using
+  a SanDisk Ultra 64Gb microSDXC UHS-1 card.  In conjunction with v1 of
+  this patchset I reported a speed of 39MB/s for this card with those patches.
 
---3O1VwFp74L81IIeR--
+
+Ai Kyuse (3):
+  mmc: tmio: enhance illegal sequence handling
+  mmc: tmio: Add tuning support
+  mmc: sh_mobile_sdhi: Add tuning support
+
+Simon Horman (1):
+  ARM: dts: r8a7790: lager: Enable UHS-I SDR-104
+
+ arch/arm/boot/dts/r8a7790-lager.dts |   1 +
+ drivers/mmc/host/sh_mobile_sdhi.c   | 203 +++++++++++++++++++++++++++++++++++-
+ drivers/mmc/host/tmio_mmc.h         |   6 ++
+ drivers/mmc/host/tmio_mmc_pio.c     | 100 ++++++++++++++++--
+ 4 files changed, 302 insertions(+), 8 deletions(-)
+
+-- 
+2.1.4
