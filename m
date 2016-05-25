@@ -1,80 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:54723 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754795AbcETHu6 (ORCPT
+Received: from bh-25.webhostbox.net ([208.91.199.152]:57559 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932808AbcEYRbb (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 20 May 2016 03:50:58 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/2] drivers: sh: Stop using the legacy clock domain on ARM
-Date: Fri, 20 May 2016 09:50:54 +0200
-Message-Id: <1463730655-16199-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1463730655-16199-1-git-send-email-geert+renesas@glider.be>
-References: <1463730655-16199-1-git-send-email-geert+renesas@glider.be>
+	Wed, 25 May 2016 13:31:31 -0400
+Date: Wed, 25 May 2016 10:31:26 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH 6/7] watchdog: softdog: drop superfluous set_timeout
+ callback
+Message-ID: <20160525173126.GH19545@roeck-us.net>
+References: <1464158269-2447-1-git-send-email-wsa@the-dreams.de>
+ <1464158269-2447-7-git-send-email-wsa@the-dreams.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1464158269-2447-7-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since commits 71d076ceb245f0d9 ("ARM: shmobile: Enable PM and
-PM_GENERIC_DOMAINS for SoCs with PM Domains") and 2ee98234b88174f2
-("arm64: renesas: Enable PM and PM_GENERIC_DOMAINS for SoCs with PM
-Domains"), CONFIG_PM and CONFIG_PM_GENERIC_DOMAINS are enabled
-unconditionally for Renesas ARM-based SoCs. Hence the legacy clock
-domain is no longer used on these SoCs.
+On Wed, May 25, 2016 at 08:37:48AM +0200, Wolfram Sang wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> If we leave set_timeout empty, the core will do exactly what is
+> implemented here anyway.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Remove the related support code, and stop entering drivers/sh/ on ARM.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Extracted from series "[PATCH 0/4] Enable PM and PM_GENERIC_DOMAINS
-    for SoCs with PM Domains",
-  - Rebased,
-  - Updated patch description with commit IDs.
-
-Notes:
-  - This does break booting R-Car Gen2 boards using pre-v4.3 DTSes that
-    don't have power-domains properties,
----
- drivers/Makefile        | 1 -
- drivers/sh/pm_runtime.c | 9 ---------
- 2 files changed, 10 deletions(-)
-
-diff --git a/drivers/Makefile b/drivers/Makefile
-index 8f5d076baeb0e832..6afdb78e21382538 100644
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@ -127,7 +127,6 @@ obj-$(CONFIG_SGI_SN)		+= sn/
- obj-y				+= firmware/
- obj-$(CONFIG_CRYPTO)		+= crypto/
- obj-$(CONFIG_SUPERH)		+= sh/
--obj-$(CONFIG_ARCH_SHMOBILE)	+= sh/
- ifndef CONFIG_ARCH_USES_GETTIMEOFFSET
- obj-y				+= clocksource/
- endif
-diff --git a/drivers/sh/pm_runtime.c b/drivers/sh/pm_runtime.c
-index a9bac3bf20de14e5..c887ecdaf19b7c10 100644
---- a/drivers/sh/pm_runtime.c
-+++ b/drivers/sh/pm_runtime.c
-@@ -34,15 +34,6 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
- 
- static int __init sh_pm_runtime_init(void)
- {
--	if (IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_ARCH_SHMOBILE)) {
--		if (!of_find_compatible_node(NULL, NULL,
--					     "renesas,cpg-mstp-clocks"))
--			return 0;
--		if (IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS_OF) &&
--		    of_find_node_with_property(NULL, "#power-domain-cells"))
--			return 0;
--	}
--
- 	pm_clk_add_notifier(&platform_bus_type, &platform_bus_notifier);
- 	return 0;
- }
--- 
-1.9.1
+> ---
+>  drivers/watchdog/softdog.c | 7 -------
+>  1 file changed, 7 deletions(-)
+> 
+> diff --git a/drivers/watchdog/softdog.c b/drivers/watchdog/softdog.c
+> index ab0e02fc81a276..5e3a30b99d4415 100644
+> --- a/drivers/watchdog/softdog.c
+> +++ b/drivers/watchdog/softdog.c
+> @@ -87,12 +87,6 @@ static int softdog_stop(struct watchdog_device *w)
+>  	return 0;
+>  }
+>  
+> -static int softdog_set_timeout(struct watchdog_device *w, unsigned int t)
+> -{
+> -	w->timeout = t;
+> -	return 0;
+> -}
+> -
+>  static struct watchdog_info softdog_info = {
+>  	.identity = "Software Watchdog",
+>  	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
+> @@ -102,7 +96,6 @@ static struct watchdog_ops softdog_ops = {
+>  	.owner = THIS_MODULE,
+>  	.start = softdog_ping,
+>  	.stop = softdog_stop,
+> -	.set_timeout = softdog_set_timeout,
+>  };
+>  
+>  static struct watchdog_device softdog_dev = {
+> -- 
+> 2.8.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
