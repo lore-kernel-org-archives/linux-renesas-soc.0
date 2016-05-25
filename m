@@ -1,55 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:34470 "EHLO pokefinder.org"
+Received: from sauhun.de ([89.238.76.85]:36455 "EHLO pokefinder.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751022AbcEYGiV (ORCPT
+	id S1754305AbcEYNsD (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 25 May 2016 02:38:21 -0400
+	Wed, 25 May 2016 09:48:03 -0400
 From: Wolfram Sang <wsa@the-dreams.de>
 To: linux-watchdog@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 6/7] watchdog: softdog: drop superfluous set_timeout callback
-Date: Wed, 25 May 2016 08:37:48 +0200
-Message-Id: <1464158269-2447-7-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1464158269-2447-1-git-send-email-wsa@the-dreams.de>
-References: <1464158269-2447-1-git-send-email-wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+	linux-renesas-soc@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: [RFC 0/2] watchdog: pretimeout: userspace governor
+Date: Wed, 25 May 2016 15:47:40 +0200
+Message-Id: <1464184062-5230-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+So, here is the RFC series implementing the userspace governor. This is merely
+meant as a proof-of-concept, so my patch series will have the same capabilities
+as Vladimir's series. It does work (for me (tm)) and shows how the bottom half
+handling can be better put to the watchdog device code, making the pretimeout
+code a lot simpler.
 
-If we leave set_timeout empty, the core will do exactly what is
-implemented here anyway.
+However, I am not sure if a uevent on the watchdog device is a good userspace
+notification. Setting the governor is done vis sysfs, okay. But setting the
+pretimeout is done via the character device, so I wonder if the response
+shouldn't go there as well? But do we want to introduce select/poll support
+only for pretimeouts?
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/watchdog/softdog.c | 7 -------
- 1 file changed, 7 deletions(-)
+Other ideas?
 
-diff --git a/drivers/watchdog/softdog.c b/drivers/watchdog/softdog.c
-index ab0e02fc81a276..5e3a30b99d4415 100644
---- a/drivers/watchdog/softdog.c
-+++ b/drivers/watchdog/softdog.c
-@@ -87,12 +87,6 @@ static int softdog_stop(struct watchdog_device *w)
- 	return 0;
- }
- 
--static int softdog_set_timeout(struct watchdog_device *w, unsigned int t)
--{
--	w->timeout = t;
--	return 0;
--}
--
- static struct watchdog_info softdog_info = {
- 	.identity = "Software Watchdog",
- 	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
-@@ -102,7 +96,6 @@ static struct watchdog_ops softdog_ops = {
- 	.owner = THIS_MODULE,
- 	.start = softdog_ping,
- 	.stop = softdog_stop,
--	.set_timeout = softdog_set_timeout,
- };
- 
- static struct watchdog_device softdog_dev = {
+Thanks,
+
+   Wolfram
+
+Vladimir Zapolskiy (1):
+  watchdog: pretimeout: add userspace notifier pretimeout governor
+
+Wolfram Sang (1):
+  watchdog: dev: add helper for creating uevent on dev
+
+ drivers/watchdog/Kconfig                | 16 +++++++++++
+ drivers/watchdog/Makefile               |  1 +
+ drivers/watchdog/pretimeout_userspace.c | 47 +++++++++++++++++++++++++++++++++
+ drivers/watchdog/watchdog_dev.c         | 20 ++++++++++++++
+ drivers/watchdog/watchdog_pretimeout.h  |  2 ++
+ include/linux/watchdog.h                |  3 +++
+ 6 files changed, 89 insertions(+)
+ create mode 100644 drivers/watchdog/pretimeout_userspace.c
+
 -- 
 2.8.1
