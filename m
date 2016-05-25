@@ -1,107 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:35905 "EHLO
-	mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933116AbcE3QAs (ORCPT
+Received: from bh-25.webhostbox.net ([208.91.199.152]:56763 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932112AbcEYRam (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 30 May 2016 12:00:48 -0400
-Received: by mail-lf0-f67.google.com with SMTP id h68so7203354lfh.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 May 2016 09:00:47 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: kuninori.morimoto.gx@renesas.com,
-	laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
-	architt@codeaurora.org, vz@mleia.com, koji.matsuoka.xm@renesas.com,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [RFC 06/21] drm: rcar-du: Add R8A7795 device support
-Date: Mon, 30 May 2016 18:00:05 +0200
-Message-Id: <1464624020-27709-7-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1464624020-27709-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1464624020-27709-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+	Wed, 25 May 2016 13:30:42 -0400
+Date: Wed, 25 May 2016 10:30:36 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH 1/7] watchdog: softdog: remove obsolete comments
+Message-ID: <20160525173036.GC19545@roeck-us.net>
+References: <1464158269-2447-1-git-send-email-wsa@the-dreams.de>
+ <1464158269-2447-2-git-send-email-wsa@the-dreams.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1464158269-2447-2-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+On Wed, May 25, 2016 at 08:37:43AM +0200, Wolfram Sang wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> The history is obsolete, especially since we switched to watchdog
+> framework. The section markers also don't make sense anymore given
+> the small size of the driver.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  4 +++-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c  | 14 ++++++++++++--
- drivers/gpu/drm/rcar-du/rcar_du_drv.h  |  2 ++
- 3 files changed, 17 insertions(+), 3 deletions(-)
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-index 6f08b7e..459e539 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-@@ -1,7 +1,7 @@
- /*
-  * rcar_du_crtc.h  --  R-Car Display Unit CRTCs
-  *
-- * Copyright (C) 2013-2014 Renesas Electronics Corporation
-+ * Copyright (C) 2013-2015 Renesas Electronics Corporation
-  *
-  * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
-  *
-@@ -61,6 +61,8 @@ enum rcar_du_output {
- 	RCAR_DU_OUTPUT_DPAD1,
- 	RCAR_DU_OUTPUT_LVDS0,
- 	RCAR_DU_OUTPUT_LVDS1,
-+	RCAR_DU_OUTPUT_HDMI0,
-+	RCAR_DU_OUTPUT_HDMI1,
- 	RCAR_DU_OUTPUT_TCON,
- 	RCAR_DU_OUTPUT_MAX,
- };
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index fb9242d..0a93d2a 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -140,14 +140,24 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
- 		  | RCAR_DU_FEATURE_VSP1_SOURCE,
- 	.num_crtcs = 4,
- 	.routes = {
--		/* R8A7795 has one RGB output, one LVDS output and two
--		 * (currently unsupported) HDMI outputs.
-+		/* R8A7795 has one RGB output, two HDMI outputs and one
-+		 * LVDS output.
- 		 */
- 		[RCAR_DU_OUTPUT_DPAD0] = {
- 			.possible_crtcs = BIT(3),
- 			.encoder_type = DRM_MODE_ENCODER_NONE,
- 			.port = 0,
- 		},
-+		[RCAR_DU_OUTPUT_HDMI0] = {
-+			.possible_crtcs = BIT(1),
-+			.encoder_type = RCAR_DU_ENCODER_HDMI,
-+			.port = 1,
-+		},
-+		[RCAR_DU_OUTPUT_HDMI1] = {
-+			.possible_crtcs = BIT(2),
-+			.encoder_type = RCAR_DU_ENCODER_HDMI,
-+			.port = 2,
-+		},
- 		[RCAR_DU_OUTPUT_LVDS0] = {
- 			.possible_crtcs = BIT(0),
- 			.encoder_type = DRM_MODE_ENCODER_LVDS,
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index ed35467..d1d1d8d 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -20,6 +20,7 @@
- #include "rcar_du_crtc.h"
- #include "rcar_du_group.h"
- #include "rcar_du_vsp.h"
-+#include "rcar_du_encoder.h"
- 
- struct clk;
- struct device;
-@@ -31,6 +32,7 @@ struct rcar_du_lvdsenc;
- #define RCAR_DU_FEATURE_CRTC_IRQ_CLOCK	(1 << 0)	/* Per-CRTC IRQ and clock */
- #define RCAR_DU_FEATURE_EXT_CTRL_REGS	(1 << 1)	/* Has extended control registers */
- #define RCAR_DU_FEATURE_VSP1_SOURCE	(1 << 2)	/* Has inputs from VSP1 */
-+#define RCAR_DU_FEATURE_GEN3_REGS	(1 << 3)	/* Use Gen3 registers */
- 
- #define RCAR_DU_QUIRK_ALIGN_128B	(1 << 0)	/* Align pitches to 128 bytes */
- #define RCAR_DU_QUIRK_LVDS_LANES	(1 << 1)	/* LVDS lanes 1 and 3 inverted */
--- 
-2.7.4
+> ---
+>  drivers/watchdog/softdog.c | 33 ---------------------------------
+>  1 file changed, 33 deletions(-)
+> 
+> diff --git a/drivers/watchdog/softdog.c b/drivers/watchdog/softdog.c
+> index 99a06f9e393064..8bc0b164afc94b 100644
+> --- a/drivers/watchdog/softdog.c
+> +++ b/drivers/watchdog/softdog.c
+> @@ -17,23 +17,6 @@
+>   *
+>   *	Software only watchdog driver. Unlike its big brother the WDT501P
+>   *	driver this won't always recover a failed machine.
+> - *
+> - *  03/96: Angelo Haritsis <ah@doc.ic.ac.uk> :
+> - *	Modularised.
+> - *	Added soft_margin; use upon insmod to change the timer delay.
+> - *	NB: uses same minor as wdt (WATCHDOG_MINOR); we could use separate
+> - *	    minors.
+> - *
+> - *  19980911 Alan Cox
+> - *	Made SMP safe for 2.3.x
+> - *
+> - *  20011127 Joel Becker (jlbec@evilplan.org>
+> - *	Added soft_noboot; Allows testing the softdog trigger without
+> - *	requiring a recompile.
+> - *	Added WDIOC_GETTIMEOUT and WDIOC_SETTIMOUT.
+> - *
+> - *  20020530 Joel Becker <joel.becker@oracle.com>
+> - *	Added Matt Domsch's nowayout module option.
+>   */
+>  
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> @@ -71,19 +54,11 @@ module_param(soft_panic, int, 0);
+>  MODULE_PARM_DESC(soft_panic,
+>  	"Softdog action, set to 1 to panic, 0 to reboot (default=0)");
+>  
+> -/*
+> - *	Our timer
+> - */
+> -
+>  static void watchdog_fire(unsigned long);
+>  
+>  static struct timer_list watchdog_ticktock =
+>  		TIMER_INITIALIZER(watchdog_fire, 0, 0);
+>  
+> -/*
+> - *	If the timer expires..
+> - */
+> -
+>  static void watchdog_fire(unsigned long data)
+>  {
+>  	module_put(THIS_MODULE);
+> @@ -99,10 +74,6 @@ static void watchdog_fire(unsigned long data)
+>  	}
+>  }
+>  
+> -/*
+> - *	Softdog operations
+> - */
+> -
+>  static int softdog_ping(struct watchdog_device *w)
+>  {
+>  	if (!mod_timer(&watchdog_ticktock, jiffies+(w->timeout*HZ)))
+> @@ -124,10 +95,6 @@ static int softdog_set_timeout(struct watchdog_device *w, unsigned int t)
+>  	return 0;
+>  }
+>  
+> -/*
+> - *	Kernel Interfaces
+> - */
+> -
+>  static struct watchdog_info softdog_info = {
+>  	.identity = "Software Watchdog",
+>  	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
+> -- 
+> 2.8.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
