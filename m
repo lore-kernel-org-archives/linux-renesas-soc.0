@@ -1,47 +1,54 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Sender: Kieran Bingham <kieran@ksquared.org.uk>
-From: Kieran Bingham <kieran@bingham.xyz>
-To: laurent.pinchart@ideasonboard.com,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:36382 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752364AbcEYNcx (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 25 May 2016 09:32:53 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-watchdog@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
 	linux-renesas-soc@vger.kernel.org,
-	kieran@bingham.xyz
-Cc: linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 3/4] dt-bindings: Document Renesas R-Car FCP power-domains usage
-Date: Fri, 27 May 2016 18:19:24 +0100
-Message-Id: <1464369565-12259-5-git-send-email-kieran@bingham.xyz>
-In-Reply-To: <1464369565-12259-1-git-send-email-kieran@bingham.xyz>
-References: <1464369565-12259-1-git-send-email-kieran@bingham.xyz>
+	Guenter Roeck <linux@roeck-us.net>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	Robin Gong <b38343@freescale.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 6/7] fs: compat_ioctl: add pretimeout functions for watchdogs
+Date: Wed, 25 May 2016 15:32:30 +0200
+Message-Id: <1464183151-4912-7-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1464183151-4912-1-git-send-email-wsa@the-dreams.de>
+References: <1464183151-4912-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The example misses the power-domains usage, and documentation that the
-property is used by the node.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+Watchdog core now handles those ioctls centrally, so we want 64 bit
+support, too.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
 ---
- Documentation/devicetree/bindings/media/renesas,fcp.txt | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-index 1c0718b501ef..464bb7ae4b92 100644
---- a/Documentation/devicetree/bindings/media/renesas,fcp.txt
-+++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-@@ -21,6 +21,8 @@ are paired with. These DT bindings currently support the FCPV and FCPF.
- 
-  - reg: the register base and size for the device registers
-  - clocks: Reference to the functional clock
-+ - power-domains : power-domain property defined with a phandle
-+                           to respective power domain.
- 
- 
- Device node example
-@@ -30,4 +32,5 @@ Device node example
- 		compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
- 		reg = <0 0xfea2f000 0 0x200>;
- 		clocks = <&cpg CPG_MOD 602>;
-+		power-domains = <&sysc R8A7795_PD_A3VP>;
- 	};
+I think it would make sense to let this go in via the watchdog tree with the
+rest of the series moving the IOCTL support into the core?
+
+ fs/compat_ioctl.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+index bd01b92aad98eb..914bfc5f3d4bd3 100644
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -1208,6 +1208,8 @@ COMPATIBLE_IOCTL(WDIOC_SETOPTIONS)
+ COMPATIBLE_IOCTL(WDIOC_KEEPALIVE)
+ COMPATIBLE_IOCTL(WDIOC_SETTIMEOUT)
+ COMPATIBLE_IOCTL(WDIOC_GETTIMEOUT)
++COMPATIBLE_IOCTL(WDIOC_SETPRETIMEOUT)
++COMPATIBLE_IOCTL(WDIOC_GETPRETIMEOUT)
+ /* Big R */
+ COMPATIBLE_IOCTL(RNDGETENTCNT)
+ COMPATIBLE_IOCTL(RNDADDTOENTCNT)
 -- 
-2.5.0
+2.8.1
