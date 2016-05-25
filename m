@@ -1,110 +1,97 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 16/23] ARM: dts: kzm9d: Fix W=1 dtc warnings
-Date: Fri, 13 May 2016 09:55:56 +0200
-Message-Id: <1463126163-29423-17-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
-References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:10019 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754002AbcEYI6f (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 25 May 2016 04:58:35 -0400
+Received: from vsmta11.fe.internet.bosch.com (unknown [10.4.98.51])
+	by imta23.fe.bosch.de (Postfix) with ESMTP id 1C9361580207
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 May 2016 10:58:34 +0200 (CEST)
+Received: from SI-HUB1001.de.bosch.com (vsgw24.fe.internet.bosch.com [10.4.98.24])
+	by vsmta11.fe.internet.bosch.com (Postfix) with ESMTP id 72F7C23803E9
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 25 May 2016 10:58:33 +0200 (CEST)
+From: Dirk Behme <dirk.behme@de.bosch.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	<linux-renesas-soc@vger.kernel.org>,
+	Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+CC: Dirk Behme <dirk.behme@de.bosch.com>
+Subject: [PATCH 3/4] ARM: Renesas: R-Car3: Add cpu and revision handlers
+Date: Wed, 25 May 2016 10:58:27 +0200
+Message-ID: <1464166708-18320-4-git-send-email-dirk.behme@de.bosch.com>
+In-Reply-To: <1464166708-18320-1-git-send-email-dirk.behme@de.bosch.com>
+References: <1464166708-18320-1-git-send-email-dirk.behme@de.bosch.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /pfc@e0140200/serial@e1030000 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /gpio_keys/button@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /gpio_keys/button@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /gpio_keys/button@3 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /gpio_keys/button@4 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
+The Renesas R-Car3 product register (PRR) helps us to identify the
+SoC and revision we are running on. Add helper functions to check
+for this easily in code where it's needed.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
 ---
- arch/arm/boot/dts/emev2-kzm9d.dts | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ include/linux/soc/renesas/rcar3-prr.h | 51 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+ create mode 100644 include/linux/soc/renesas/rcar3-prr.h
 
-diff --git a/arch/arm/boot/dts/emev2-kzm9d.dts b/arch/arm/boot/dts/emev2-kzm9d.dts
-index a35b851e1cd7678a..9eb86f8f32c5afc0 100644
---- a/arch/arm/boot/dts/emev2-kzm9d.dts
-+++ b/arch/arm/boot/dts/emev2-kzm9d.dts
-@@ -18,7 +18,7 @@
- 	model = "EMEV2 KZM9D Board";
- 	compatible = "renesas,kzm9d", "renesas,emev2";
- 
--	memory {
-+	memory@40000000 {
- 		device_type = "memory";
- 		reg = <0x40000000 0x8000000>;
- 	};
-@@ -33,28 +33,28 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		button@1 {
-+		one {
- 			debounce_interval = <50>;
- 			wakeup-source;
- 			label = "DSW2-1";
- 			linux,code = <KEY_1>;
- 			gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
- 		};
--		button@2 {
-+		two {
- 			debounce_interval = <50>;
- 			wakeup-source;
- 			label = "DSW2-2";
- 			linux,code = <KEY_2>;
- 			gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
- 		};
--		button@3 {
-+		three {
- 			debounce_interval = <50>;
- 			wakeup-source;
- 			label = "DSW2-3";
- 			linux,code = <KEY_3>;
- 			gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
- 		};
--		button@4 {
-+		four {
- 			debounce_interval = <50>;
- 			wakeup-source;
- 			label = "DSW2-4";
-@@ -63,7 +63,7 @@
- 		};
- 	};
- 
--	reg_1p8v: regulator@0 {
-+	reg_1p8v: regulator-1p8v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
- 		regulator-min-microvolt = <1800000>;
-@@ -72,7 +72,7 @@
- 		regulator-boot-on;
- 	};
- 
--	reg_3p3v: regulator@1 {
-+	reg_3p3v: regulator-3p3v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-3.3V";
- 		regulator-min-microvolt = <3300000>;
-@@ -104,7 +104,7 @@
- };
- 
- &pfc {
--	uart1_pins: serial@e1030000 {
-+	uart1_pins: uart1 {
- 		groups = "uart1_ctrl", "uart1_data";
- 		function = "uart1";
- 	};
+diff --git a/include/linux/soc/renesas/rcar3-prr.h b/include/linux/soc/renesas/rcar3-prr.h
+new file mode 100644
+index 0000000..9bbe369
+--- /dev/null
++++ b/include/linux/soc/renesas/rcar3-prr.h
+@@ -0,0 +1,51 @@
++/*
++ * R-Car3 Product Register (PRR) support
++ *
++ * Copyright (C) 2016 Robert Bosch Car Multimedia GmbH
++ *               Dirk Behme <dirk.behme@de.bosch.com>
++ *
++ * This file is subject to the terms and conditions of the GNU General Public
++ * License.  See the file "COPYING" in the main directory of this archive
++ * for more details.
++ */
++
++#ifndef __SOC_RENESAS_RCAR3_PRR_H__
++#define __SOC_RENESAS_RCAR3_PRR_H__
++
++#define PRODUCT_MASK	(0x7f << 8)
++#define PRODUCT_H3	(0x4f << 8)
++#define PRODUCT_M3W	(0x52 << 8)
++
++#define CUT_MASK	(0x000000ff)
++#define CUT_ES1		(0x0 << 0)
++#define CUT_ES2		(0x1 << 4)
++#define CUT_ES3		(0x1 << 5)
++
++extern unsigned int __rcar3_prr;
++
++static inline bool cpu_is_rcar3_h3(void)
++{
++	return (__rcar3_prr & PRODUCT_MASK) == PRODUCT_H3;
++}
++
++static inline bool cpu_is_rcar3_m3w(void)
++{
++	return (__rcar3_prr & PRODUCT_MASK) == PRODUCT_M3W;
++}
++
++static inline bool revision_is_rcar3_es1(void)
++{
++	return (__rcar3_prr & CUT_MASK) == CUT_ES1;
++}
++
++static inline bool revision_is_rcar3_es2(void)
++{
++	return (__rcar3_prr & CUT_MASK) == CUT_ES2;
++}
++
++static inline bool revision_is_rcar3_es3(void)
++{
++	return (__rcar3_prr & CUT_MASK) == CUT_ES3;
++}
++
++#endif /* __SOC_RENESAS_RCAR3_PRR_H__ */
 -- 
-1.9.1
-
+2.8.0
