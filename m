@@ -1,145 +1,123 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:36367 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750765AbcEYNct (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 25 May 2016 09:32:49 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-watchdog@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
 	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 01/23] ARM: dts: emev2: Fix W=1 dtc warnings
-Date: Fri, 20 May 2016 09:09:52 +0200
-Message-Id: <1463728214-13838-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
-References: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+	Guenter Roeck <linux@roeck-us.net>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	Robin Gong <b38343@freescale.com>
+Subject: [PATCH 0/7] watchdog: add pretimeout support
+Date: Wed, 25 May 2016 15:32:24 +0200
+Message-Id: <1464183151-4912-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Warning (unit_address_vs_reg): Node /clocks@e0110000/iic0_sclkdiv has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/iic0_sclk has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/iic1_sclkdiv has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/iic1_sclk has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/usia_u0_sclkdiv has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u1_sclkdiv has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u2_sclkdiv has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u3_sclkdiv has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/usia_u0_sclk has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u1_sclk has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u2_sclk has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u3_sclk has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/sti_sclk has a reg or ranges property, but no unit name
+Okay, here is my approach of adding pretimeout support to the watchdog core. It
+is based on work of Vladimir Zapolskiy and Robin Gong (Thanks!) yet rebased
+(quite some core changes since then) and reworked significantly. Check the
+patch descriptions for changes. I also added pretimeout support to the softdog
+because the board in question did not have hardware support for pretimeouts.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - No changes.
----
- arch/arm/boot/dts/emev2.dtsi | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+Note that in this series the userspace governor is not included. I will send
+out an RFC series with it after this one. I expect more discussion on my
+approach there while I think these patches could be ready to go. They work fine
+here, so the rest may done incrementally?
 
-diff --git a/arch/arm/boot/dts/emev2.dtsi b/arch/arm/boot/dts/emev2.dtsi
-index bcce6f50c93d9d25..cd119400f440bb5a 100644
---- a/arch/arm/boot/dts/emev2.dtsi
-+++ b/arch/arm/boot/dts/emev2.dtsi
-@@ -69,25 +69,25 @@
- 			clock-frequency = <32768>;
- 			#clock-cells = <0>;
- 		};
--		iic0_sclkdiv: iic0_sclkdiv {
-+		iic0_sclkdiv: iic0_sclkdiv@624,0 {
- 			compatible = "renesas,emev2-smu-clkdiv";
- 			reg = <0x624 0>;
- 			clocks = <&pll3_fo>;
- 			#clock-cells = <0>;
- 		};
--		iic0_sclk: iic0_sclk {
-+		iic0_sclk: iic0_sclk@48c,1 {
- 			compatible = "renesas,emev2-smu-gclk";
- 			reg = <0x48c 1>;
- 			clocks = <&iic0_sclkdiv>;
- 			#clock-cells = <0>;
- 		};
--		iic1_sclkdiv: iic1_sclkdiv {
-+		iic1_sclkdiv: iic1_sclkdiv@624,16 {
- 			compatible = "renesas,emev2-smu-clkdiv";
- 			reg = <0x624 16>;
- 			clocks = <&pll3_fo>;
- 			#clock-cells = <0>;
- 		};
--		iic1_sclk: iic1_sclk {
-+		iic1_sclk: iic1_sclk@490,1 {
- 			compatible = "renesas,emev2-smu-gclk";
- 			reg = <0x490 1>;
- 			clocks = <&iic1_sclkdiv>;
-@@ -100,55 +100,55 @@
- 			clock-mult = <7000>;
- 			#clock-cells = <0>;
- 		};
--		usia_u0_sclkdiv: usia_u0_sclkdiv {
-+		usia_u0_sclkdiv: usia_u0_sclkdiv@610,0 {
- 			compatible = "renesas,emev2-smu-clkdiv";
- 			reg = <0x610 0>;
- 			clocks = <&pll3_fo>;
- 			#clock-cells = <0>;
- 		};
--		usib_u1_sclkdiv: usib_u1_sclkdiv {
-+		usib_u1_sclkdiv: usib_u1_sclkdiv@65c,0 {
- 			compatible = "renesas,emev2-smu-clkdiv";
- 			reg = <0x65c 0>;
- 			clocks = <&pll3_fo>;
- 			#clock-cells = <0>;
- 		};
--		usib_u2_sclkdiv: usib_u2_sclkdiv {
-+		usib_u2_sclkdiv: usib_u2_sclkdiv@65c,16 {
- 			compatible = "renesas,emev2-smu-clkdiv";
- 			reg = <0x65c 16>;
- 			clocks = <&pll3_fo>;
- 			#clock-cells = <0>;
- 		};
--		usib_u3_sclkdiv: usib_u3_sclkdiv {
-+		usib_u3_sclkdiv: usib_u3_sclkdiv@660,0 {
- 			compatible = "renesas,emev2-smu-clkdiv";
- 			reg = <0x660 0>;
- 			clocks = <&pll3_fo>;
- 			#clock-cells = <0>;
- 		};
--		usia_u0_sclk: usia_u0_sclk {
-+		usia_u0_sclk: usia_u0_sclk@4a0,1 {
- 			compatible = "renesas,emev2-smu-gclk";
- 			reg = <0x4a0 1>;
- 			clocks = <&usia_u0_sclkdiv>;
- 			#clock-cells = <0>;
- 		};
--		usib_u1_sclk: usib_u1_sclk {
-+		usib_u1_sclk: usib_u1_sclk@4b8,1 {
- 			compatible = "renesas,emev2-smu-gclk";
- 			reg = <0x4b8 1>;
- 			clocks = <&usib_u1_sclkdiv>;
- 			#clock-cells = <0>;
- 		};
--		usib_u2_sclk: usib_u2_sclk {
-+		usib_u2_sclk: usib_u2_sclk@4bc,1 {
- 			compatible = "renesas,emev2-smu-gclk";
- 			reg = <0x4bc 1>;
- 			clocks = <&usib_u2_sclkdiv>;
- 			#clock-cells = <0>;
- 		};
--		usib_u3_sclk: usib_u3_sclk {
-+		usib_u3_sclk: usib_u3_sclk@4c0,1 {
- 			compatible = "renesas,emev2-smu-gclk";
- 			reg = <0x4c0 1>;
- 			clocks = <&usib_u3_sclkdiv>;
- 			#clock-cells = <0>;
- 		};
--		sti_sclk: sti_sclk {
-+		sti_sclk: sti_sclk@528,1 {
- 			compatible = "renesas,emev2-smu-gclk";
- 			reg = <0x528 1>;
- 			clocks = <&c32ki>;
+Here is a q'n'd patch for the busybox 'watchdog' command for easier testing:
+
+Index: b/miscutils/watchdog.c
+===================================================================
+--- a/miscutils/watchdog.c
++++ b/miscutils/watchdog.c
+@@ -10,11 +10,12 @@
+  */
+ 
+ //usage:#define watchdog_trivial_usage
+-//usage:       "[-t N[ms]] [-T N[ms]] [-F] DEV"
++//usage:       "[-t N[ms]] [-T N[ms]] [-P N[ms]] [-F] DEV"
+ //usage:#define watchdog_full_usage "\n\n"
+ //usage:       "Periodically write to watchdog device DEV\n"
+ //usage:     "\n	-T N	Reboot after N seconds if not reset (default 60)"
+ //usage:     "\n	-t N	Reset every N seconds (default 30)"
++//usage:     "\n	-P N	Pretimeout warning N seconds before reboot (default 0)"
+ //usage:     "\n	-F	Run in foreground"
+ //usage:     "\n"
+ //usage:     "\nUse 500ms to specify period in milliseconds"
+@@ -26,6 +27,7 @@
+ #define OPT_FOREGROUND  (1 << 0)
+ #define OPT_STIMER      (1 << 1)
+ #define OPT_HTIMER      (1 << 2)
++#define OPT_PTIMER      (1 << 3)
+ 
+ static void watchdog_shutdown(int sig UNUSED_PARAM)
+ {
+@@ -50,11 +52,13 @@ int watchdog_main(int argc, char **argv)
+ 	unsigned opts;
+ 	unsigned stimer_duration; /* how often to restart */
+ 	unsigned htimer_duration = 60000; /* reboots after N ms if not restarted */
++	unsigned ptimer_duration = 0; /* pre-timeout notification N ms before reboot */
+ 	char *st_arg;
+ 	char *ht_arg;
++	char *pt_arg;
+ 
+ 	opt_complementary = "=1"; /* must have exactly 1 argument */
+-	opts = getopt32(argv, "Ft:T:", &st_arg, &ht_arg);
++	opts = getopt32(argv, "Ft:T:P:", &st_arg, &ht_arg, &pt_arg);
+ 
+ 	/* We need to daemonize *before* opening the watchdog as many drivers
+ 	 * will only allow one process at a time to do so.  Since daemonizing
+@@ -88,6 +92,10 @@ int watchdog_main(int argc, char **argv)
+ 	}
+ # endif
+ 	ioctl_or_warn(3, WDIOC_SETTIMEOUT, &htimer_duration);
++	if (opts & OPT_PTIMER) {
++		ptimer_duration = xatou_sfx(pt_arg, suffixes) / 1000;
++		ioctl_or_warn(3, WDIOC_SETPRETIMEOUT, &ptimer_duration);
++	}
+ #endif
+ 
+ #if 0
+
+
+
+Please test, review, comment, apply...
+
+Thanks,
+
+   Wolfram
+
+Vladimir Zapolskiy (2):
+  watchdog: pretimeout: add panic pretimeout governor
+  watchdog: pretimeout: add noop pretimeout governor
+
+Wolfram Sang (5):
+  watchdog: add watchdog pretimeout framework
+  watchdog: documentation: squash paragraphs about 'no set_timeout'
+  watchdog: add WDIOC_SETPRETIMEOUT and WDIOC_GETPRETIMEOUT
+  fs: compat_ioctl: add pretimeout functions for watchdogs
+  watchdog: softdog: implement pretimeout support
+
+ Documentation/watchdog/watchdog-kernel-api.txt |  24 ++-
+ drivers/watchdog/Kconfig                       |  52 +++++
+ drivers/watchdog/Makefile                      |   9 +-
+ drivers/watchdog/pretimeout_noop.c             |  47 +++++
+ drivers/watchdog/pretimeout_panic.c            |  47 +++++
+ drivers/watchdog/softdog.c                     |  20 +-
+ drivers/watchdog/watchdog_dev.c                |  61 +++++-
+ drivers/watchdog/watchdog_pretimeout.c         | 269 +++++++++++++++++++++++++
+ drivers/watchdog/watchdog_pretimeout.h         |  41 ++++
+ fs/compat_ioctl.c                              |   2 +
+ include/linux/watchdog.h                       |  21 ++
+ 11 files changed, 586 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/watchdog/pretimeout_noop.c
+ create mode 100644 drivers/watchdog/pretimeout_panic.c
+ create mode 100644 drivers/watchdog/watchdog_pretimeout.c
+ create mode 100644 drivers/watchdog/watchdog_pretimeout.h
+
 -- 
-1.9.1
-
+2.8.1
