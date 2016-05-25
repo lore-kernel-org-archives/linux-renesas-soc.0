@@ -1,94 +1,80 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:36389 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753041AbcEYNc6 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 25 May 2016 09:32:58 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-watchdog@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
 	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 11/23] ARM: dts: armadillo800eva: Fix W=1 dtc warnings
-Date: Fri, 20 May 2016 09:10:02 +0200
-Message-Id: <1463728214-13838-12-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
-References: <1463728214-13838-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+	Guenter Roeck <linux@roeck-us.net>,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+	Robin Gong <b38343@freescale.com>
+Subject: [PATCH 7/7] watchdog: softdog: implement pretimeout support
+Date: Wed, 25 May 2016 15:32:31 +0200
+Message-Id: <1464183151-4912-8-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1464183151-4912-1-git-send-email-wsa@the-dreams.de>
+References: <1464183151-4912-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /regulator@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@3 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /i2c@2 has a unit name, but no reg property
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - No changes.
----
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Give devices which do not have hardware support for pretimeout at least a
+software version of it.
 
-diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-index 2c82dab2b6f45f9c..b3f0ac4b99bd5a3d 100644
---- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-+++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-@@ -28,12 +28,12 @@
- 		stdout-path = &scifa1;
- 	};
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/watchdog/softdog.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/watchdog/softdog.c b/drivers/watchdog/softdog.c
+index b067edf246dff2..adfb3899296f0f 100644
+--- a/drivers/watchdog/softdog.c
++++ b/drivers/watchdog/softdog.c
+@@ -72,10 +72,25 @@ static void softdog_fire(unsigned long data)
+ static struct timer_list softdog_ticktock =
+ 		TIMER_INITIALIZER(softdog_fire, 0, 0);
  
--	memory {
-+	memory@40000000 {
- 		device_type = "memory";
- 		reg = <0x40000000 0x20000000>;
- 	};
++static struct watchdog_device softdog_dev;
++
++static void softdog_pretimeout(unsigned long data)
++{
++	watchdog_notify_pretimeout(&softdog_dev);
++}
++
++static struct timer_list softdog_preticktock =
++		TIMER_INITIALIZER(softdog_pretimeout, 0, 0);
++
+ static int softdog_ping(struct watchdog_device *w)
+ {
+ 	if (!mod_timer(&softdog_ticktock, jiffies + (w->timeout * HZ)))
+ 		__module_get(THIS_MODULE);
++
++	if (w->pretimeout)
++		mod_timer(&softdog_preticktock, jiffies +
++		          (w->timeout - w->pretimeout) * HZ);
++
+ 	return 0;
+ }
  
--	reg_3p3v: regulator@0 {
-+	reg_3p3v: regulator-3p3v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-3.3V";
- 		regulator-min-microvolt = <3300000>;
-@@ -42,7 +42,7 @@
- 		regulator-boot-on;
- 	};
+@@ -84,12 +99,15 @@ static int softdog_stop(struct watchdog_device *w)
+ 	if (del_timer(&softdog_ticktock))
+ 		module_put(THIS_MODULE);
  
--	vcc_sdhi0: regulator@1 {
-+	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
++	del_timer(&softdog_preticktock);
++
+ 	return 0;
+ }
  
- 		regulator-name = "SDHI0 Vcc";
-@@ -53,7 +53,7 @@
- 		enable-active-high;
- 	};
+ static struct watchdog_info softdog_info = {
+ 	.identity = "Software Watchdog",
+-	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
++	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE |
++		   WDIOF_PRETIMEOUT,
+ };
  
--	vccq_sdhi0: regulator@2 {
-+	vccq_sdhi0: regulator-vccq-sdhi0 {
- 		compatible = "regulator-gpio";
- 
- 		regulator-name = "SDHI0 VccQ";
-@@ -69,7 +69,7 @@
- 		enable-active-high;
- 	};
- 
--	reg_5p0v: regulator@3 {
-+	reg_5p0v: regulator-5p0v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-5.0V";
- 		regulator-min-microvolt = <5000000>;
-@@ -127,7 +127,7 @@
- 		};
- 	};
- 
--	i2c2: i2c@2 {
-+	i2c2: i2c2 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		compatible = "i2c-gpio";
+ static struct watchdog_ops softdog_ops = {
 -- 
-1.9.1
-
+2.8.1
