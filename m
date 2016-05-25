@@ -1,118 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:36333 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161672AbcE3Q25 (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:35803 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751838AbcEYTTv (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 30 May 2016 12:28:57 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/4] clk: renesas: Add r8a7796 CPG Core Clock Definitions
-Date: Mon, 30 May 2016 18:28:55 +0200
-Message-Id: <1464625737-6646-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
-References: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
+	Wed, 25 May 2016 15:19:51 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
+	hverkuil@xs4all.nl
+Cc: linux-renesas-soc@vger.kernel.org,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	William Towle <william.towle@codethink.co.uk>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/8] media: rcar_vin: Use correct pad number in try_fmt
+Date: Wed, 25 May 2016 21:10:03 +0200
+Message-Id: <1464203409-1279-3-git-send-email-niklas.soderlund@ragnatech.se>
+In-Reply-To: <1464203409-1279-1-git-send-email-niklas.soderlund@ragnatech.se>
+References: <1464203409-1279-1-git-send-email-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add all R-Car M3-W Clock Pulse Generator Core Clock Outputs, as listed
-in Table 8.2b ("List of Clocks [R-Car M3-W]") of the R-Car Gen3
-datasheet (rev. 0.51 + Errata for Rev051 Mar 31 2016).
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Note that internal CPG clocks (S0, S1, S2, S3, SDSRC, and SSPSRC) are
-not included, as they are used as internal clock sources only, and never
-referenced from DT.
+Fix rcar_vin_try_fmt's use of an inappropriate pad number when calling
+the subdev set_fmt function - for the ADV7612, IDs should be non-zero.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: William Towle <william.towle@codethink.co.uk>
+Reviewed-by: Rob Taylor <rob.taylor@codethink.co.uk>
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+[uli: adapted to rcar-vin rewrite]
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-v2:
-  - Add Tested-by.
----
- include/dt-bindings/clock/r8a7796-cpg-mssr.h | 69 ++++++++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a7796-cpg-mssr.h
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/include/dt-bindings/clock/r8a7796-cpg-mssr.h b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..1e5942695f0dd057
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
-@@ -0,0 +1,69 @@
-+/*
-+ * Copyright (C) 2016 Renesas Electronics Corp.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 929816b..3788f8a 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -98,7 +98,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 					struct rvin_source_fmt *source)
+ {
+ 	struct v4l2_subdev *sd;
+-	struct v4l2_subdev_pad_config pad_cfg;
++	struct v4l2_subdev_pad_config *pad_cfg;
+ 	struct v4l2_subdev_format format = {
+ 		.which = which,
+ 	};
+@@ -108,10 +108,16 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 
+ 	v4l2_fill_mbus_format(&format.format, pix, vin->source.code);
+ 
++	pad_cfg = v4l2_subdev_alloc_pad_config(sd);
++	if (pad_cfg == NULL)
++		return -ENOMEM;
 +
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
++	format.pad = vin->src_pad_idx;
 +
-+/* r8a7796 CPG Core Clocks */
-+#define R8A7796_CLK_Z			0
-+#define R8A7796_CLK_Z2			1
-+#define R8A7796_CLK_ZR			2
-+#define R8A7796_CLK_ZG			3
-+#define R8A7796_CLK_ZTR			4
-+#define R8A7796_CLK_ZTRD2		5
-+#define R8A7796_CLK_ZT			6
-+#define R8A7796_CLK_ZX			7
-+#define R8A7796_CLK_S0D1		8
-+#define R8A7796_CLK_S0D2		9
-+#define R8A7796_CLK_S0D3		10
-+#define R8A7796_CLK_S0D4		11
-+#define R8A7796_CLK_S0D6		12
-+#define R8A7796_CLK_S0D8		13
-+#define R8A7796_CLK_S0D12		14
-+#define R8A7796_CLK_S1D1		15
-+#define R8A7796_CLK_S1D2		16
-+#define R8A7796_CLK_S1D4		17
-+#define R8A7796_CLK_S2D1		18
-+#define R8A7796_CLK_S2D2		19
-+#define R8A7796_CLK_S2D4		20
-+#define R8A7796_CLK_S3D1		21
-+#define R8A7796_CLK_S3D2		22
-+#define R8A7796_CLK_S3D4		23
-+#define R8A7796_CLK_LB			24
-+#define R8A7796_CLK_CL			25
-+#define R8A7796_CLK_ZB3			26
-+#define R8A7796_CLK_ZB3D2		27
-+#define R8A7796_CLK_ZB3D4		28
-+#define R8A7796_CLK_CR			29
-+#define R8A7796_CLK_CRD2		30
-+#define R8A7796_CLK_SD0H		31
-+#define R8A7796_CLK_SD0			32
-+#define R8A7796_CLK_SD1H		33
-+#define R8A7796_CLK_SD1			34
-+#define R8A7796_CLK_SD2H		35
-+#define R8A7796_CLK_SD2			36
-+#define R8A7796_CLK_SD3H		37
-+#define R8A7796_CLK_SD3			38
-+#define R8A7796_CLK_SSP2		39
-+#define R8A7796_CLK_SSP1		40
-+#define R8A7796_CLK_SSPRS		41
-+#define R8A7796_CLK_RPC			42
-+#define R8A7796_CLK_RPCD2		43
-+#define R8A7796_CLK_MSO			44
-+#define R8A7796_CLK_CANFD		45
-+#define R8A7796_CLK_HDMI		46
-+#define R8A7796_CLK_CSI0		47
-+#define R8A7796_CLK_CSIREF		48
-+#define R8A7796_CLK_CP			49
-+#define R8A7796_CLK_CPEX		50
-+#define R8A7796_CLK_R			51
-+#define R8A7796_CLK_OSC			52
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__ */
+ 	ret = v4l2_device_call_until_err(sd->v4l2_dev, 0, pad, set_fmt,
+-					 &pad_cfg, &format);
++					 pad_cfg, &format);
+ 	if (ret < 0)
+-		return ret;
++		goto cleanup;
+ 
+ 	v4l2_fill_pix_format(pix, &format.format);
+ 
+@@ -121,6 +127,8 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 	vin_dbg(vin, "Source resolution: %ux%u\n", source->width,
+ 		source->height);
+ 
++cleanup:
++	v4l2_subdev_free_pad_config(pad_cfg);
+ 	return 0;
+ }
+ 
 -- 
-1.9.1
+2.8.2
