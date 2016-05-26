@@ -1,81 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:34534 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754821AbcE0VdJ (ORCPT
+Received: from sauhun.de ([89.238.76.85]:43732 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753268AbcEZSoa (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 27 May 2016 17:33:09 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org,
+	Thu, 26 May 2016 14:44:30 -0400
+Date: Thu, 26 May 2016 20:44:25 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>, linux-i2c@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 4/4] rcar-du: add R8A7794 TCON support
-Date: Sat, 28 May 2016 00:33:10 +0300
-Message-ID: <2917760.oKZGhZUS1H@avalon>
-In-Reply-To: <3056907.Acy0t71QPW@wasted.cogentembedded.com>
-References: <1787748.qAADjKK4gv@wasted.cogentembedded.com> <3056907.Acy0t71QPW@wasted.cogentembedded.com>
+Subject: Re: [PATCH] i2c: I2C_RCAR should depend on HAS_DMA
+Message-ID: <20160526184425.GB1614@katana>
+References: <1463902715-12680-1-git-send-email-geert@linux-m68k.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="0eh6TmSyL6TZE2Uz"
+Content-Disposition: inline
+In-Reply-To: <1463902715-12680-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
 
-Thank you for the patch.
+--0eh6TmSyL6TZE2Uz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Friday 29 Apr 2016 00:05:33 Sergei Shtylyov wrote:
-> Now that we have the TCON encoder driver, we can start enabling TCON support
-> for the  R-Car SoCs. We have only tested the code on R8A7794 so far, so 
-> let it  be the first supported SoC...
+On Sun, May 22, 2016 at 09:38:35AM +0200, Geert Uytterhoeven wrote:
+> If NO_DMA=3Dy:
+>=20
+>     drivers/built-in.o: In function `rcar_i2c_dma_unmap':
+>     i2c-rcar.c:(.text+0x6f06c6): undefined reference to `bad_dma_ops'
+>     drivers/built-in.o: In function `rcar_i2c_dma':
+>     i2c-rcar.c:(.text+0x6f07e2): undefined reference to `bad_dma_ops'
+>     i2c-rcar.c:(.text+0x6f0838): undefined reference to `bad_dma_ops'
+>=20
+> Add a dependency on HAS_DMA to fix this.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Please also update the DT bindings.
+Applied to for-next, thanks!
 
-> Based on a large patch by Andrey Gusakov.
-> 
-> Signed-off-by: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c |   10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> Index: renesas/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> ===================================================================
-> --- renesas.orig/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> +++ renesas/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> @@ -116,9 +116,7 @@ static const struct rcar_du_device_info
-> 
->  		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-> 
->  	.num_crtcs = 2,
->  	.routes = {
-> -		/* R8A7794 has two RGB outputs and one (currently unsupported)
-> -		 * TCON output.
-> -		 */
-> +		/* R8A7794 has two RGB outputs and one TCON output. */
->  		[RCAR_DU_OUTPUT_DPAD0] = {
->  			.possible_crtcs = BIT(0),
->  			.encoder_type = DRM_MODE_ENCODER_NONE,
-> @@ -129,8 +127,14 @@ static const struct rcar_du_device_info
->  			.encoder_type = DRM_MODE_ENCODER_NONE,
->  			.port = 1,
->  		},
-> +		[RCAR_DU_OUTPUT_TCON] = {
-> +			.possible_crtcs = BIT(0),
 
-According to the datasheet TCON can be connected to both DU0 and DU1.
+--0eh6TmSyL6TZE2Uz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +			.encoder_type = DRM_MODE_ENCODER_TCON,
-> +			.port = 2,
-> +		},
->  	},
->  	.num_lvds = 0,
-> +	.num_tcon = 1,
->  };
-> 
->  static const struct rcar_du_device_info rcar_du_r8a7795_info = {
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
--- 
-Regards,
+iQIcBAEBAgAGBQJXR0QJAAoJEBQN5MwUoCm2aroP/iE6g6Bse9EC93SQs2nivJMY
+fN4yivezRU+Wz3O0Cx/7AadyXBYZAJzEUZyBQKiYYhxgErhYCa9nlbQPe1xC0toJ
+aLR9e9tyWzKeXv2imQ1z1kpVqDo+x7DoJWK8jKB9DpGHjn6vfmZuepSvjpI2JBP7
+M2/X2qvh//Dq2DDtl5abCceA/sPnB1OuNWYhA+vMfF2gBV+3mwu+dJ6guMR18JLd
+bjB3h8mFNMdTDvoqvBlAk2le7KXBloKVxPM68t5LRpImF5HqKdsKlweYHOkwEy01
+iquEsk8WZb/O+18gPFGKDn2ZaE3glRyFLk92RwtqAT4vySUtVFnUko1/R7uTW9Of
+DK0C3U2Ig5J3KwXjeRx8h3WrLfv6kYkpRIcnhjPbXhG52yrqprcjk5NnA/rUrtm0
+pP6K5AokzJZpVwTH2VHQ/oDoGFLv3Jidy5u7oxj89FQDf6MEe64f5RcZoTzH9AYL
+PDIqFkZM1Th93f58M8/J2hHjz7bpC50nmoRyysXIXOvE9DcxUwwDOzXRCnFwvhRV
+zs3ZroG8BSWsjRaRsypst2SaOLB2j3ykLCc/CVh19GcoTCOM+GfxNBwSEfGriOQK
+kRlDHrDJTkBkwb7umErLPme8DNS3SPDuoMuitI0DPAzKbymlcTI8aJF+mByXtpjX
+PEDRY2jqlrrg1u5ub+0K
+=iERY
+-----END PGP SIGNATURE-----
 
-Laurent Pinchart
+--0eh6TmSyL6TZE2Uz--
