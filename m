@@ -1,62 +1,152 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:33503 "EHLO
-	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750762AbcEZHDe (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51916 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752745AbcEZCbf (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 26 May 2016 03:03:34 -0400
-Received: by mail-io0-f195.google.com with SMTP id s67so979414ios.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 May 2016 00:03:34 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <edee7345-280a-0d7c-7e5a-798215fbd2b9@de.bosch.com>
-References: <1464054880-25843-1-git-send-email-horms+renesas@verge.net.au>
-	<1464054880-25843-2-git-send-email-horms+renesas@verge.net.au>
-	<b30c9c84-23b6-b088-4983-b2498317492b@de.bosch.com>
-	<20160525004825.GC7292@verge.net.au>
-	<c0fd13d5-c5c4-579b-6fad-c637bda92398@de.bosch.com>
-	<edee7345-280a-0d7c-7e5a-798215fbd2b9@de.bosch.com>
-Date: Thu, 26 May 2016 09:03:33 +0200
-Message-ID: <CAMuHMdXnN-GTN4crXeWRvtWT4E2kYFvMdPPcH8z+gJb-B4PbYA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] arm64: dts: r8a7796: Add Renesas R8A7796 SoC support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+	Wed, 25 May 2016 22:31:35 -0400
+Date: Thu, 26 May 2016 11:31:32 +0900
+From: Simon Horman <horms@verge.net.au>
 To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
 	Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>,
 	Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v3 1/3] arm64: dts: r8a7796: Add Renesas R8A7796 SoC
+ support
+Message-ID: <20160526023132.GF18393@verge.net.au>
+References: <1464054880-25843-1-git-send-email-horms+renesas@verge.net.au>
+ <1464054880-25843-2-git-send-email-horms+renesas@verge.net.au>
+ <25947777-9871-ccc4-011b-0775c2b88d8b@de.bosch.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <25947777-9871-ccc4-011b-0775c2b88d8b@de.bosch.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Dirk,
+On Wed, May 25, 2016 at 09:38:23AM +0200, Dirk Behme wrote:
+> On 24.05.2016 03:54, Simon Horman wrote:
+> >Basic support for the Gen 3 R-Car M3-W SoC.
+> >
+> >Based on work for the r8a7795 and r8a7796 SoCs by
+> >Takeshi Kihara, Dirk Behme and Geert Uytterhoeven.
+> >
+> >Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> >Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >---
+> >v3
+> >* As suggested by Geert Uytterhoeven:
+> >  - Drop 0x from unit address of gic
+> >* As suggested by Khiem Nguyen:
+> >  - Use psci-0.2
+> >* Added Reviewed-by tag from Geert Uytterhoeven
+> >
+> >v2
+> >* As suggested by Geert Uytterhoeven:
+> >  - Move L2_CA57 node under cpus node and include reg property
+> >  - Omit status = "disabled" from scif_clk node
+> >---
+> > Documentation/devicetree/bindings/arm/shmobile.txt |   4 +
+> > arch/arm64/Kconfig.platforms                       |   6 ++
+> > arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 120 +++++++++++++++++++++
+> > 3 files changed, 130 insertions(+)
+> > create mode 100644 arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> >
+> >diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+> >index 9cf67e48f222..d5ed554830d7 100644
+> >--- a/Documentation/devicetree/bindings/arm/shmobile.txt
+> >+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+> >@@ -29,6 +29,8 @@ SoCs:
+> >     compatible = "renesas,r8a7794"
+> >   - R-Car H3 (R8A77950)
+> >     compatible = "renesas,r8a7795"
+> >+  - R-Car M3-W (R8A77960)
+> >+    compatible = "renesas,r8a7796"
+> >
+> >
+> > Boards:
+> >@@ -61,5 +63,7 @@ Boards:
+> >     compatible = "renesas,porter", "renesas,r8a7791"
+> >   - Salvator-X (RTP0RC7795SIPB0010S)
+> >     compatible = "renesas,salvator-x", "renesas,r8a7795";
+> >+  - Salvator-X
+> >+    compatible = "renesas,salvator-x", "renesas,r8a7796";
+> >   - SILK (RTP0RC7794LCB00011S)
+> >     compatible = "renesas,silk", "renesas,r8a7794"
+> >diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> >index efa77c146415..16d8d26839ea 100644
+> >--- a/arch/arm64/Kconfig.platforms
+> >+++ b/arch/arm64/Kconfig.platforms
+> >@@ -114,6 +114,12 @@ config ARCH_R8A7795
+> > 	help
+> > 	  This enables support for the Renesas R-Car H3 SoC.
+> >
+> >+config ARCH_R8A7796
+> >+	bool "Renesas R-Car M3-W SoC Platform"
+> >+	depends on ARCH_RENESAS
+> >+	help
+> >+	  This enables support for the Renesas R-Car M3-W SoC.
+> >+
+> > config ARCH_STRATIX10
+> > 	bool "Altera's Stratix 10 SoCFPGA Family"
+> > 	help
+> >diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> >new file mode 100644
+> >index 000000000000..178debf68318
+> >--- /dev/null
+> >+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> >@@ -0,0 +1,120 @@
+> >+/*
+> >+ * Device Tree Source for the r8a7796 SoC
+> >+ *
+> >+ * Copyright (C) 2016 Renesas Electronics Corp.
+> >+ *
+> >+ * This file is licensed under the terms of the GNU General Public License
+> >+ * version 2.  This program is licensed "as is" without any warranty of any
+> >+ * kind, whether express or implied.
+> >+ */
+> >+
+> >+#include <dt-bindings/clock/r8a7796-cpg-mssr.h>
+> >+#include <dt-bindings/interrupt-controller/arm-gic.h>
+> >+
+> >+/ {
+> >+	compatible = "renesas,r8a7796";
+> >+	#address-cells = <2>;
+> >+	#size-cells = <2>;
+> >+
+> >+	psci {
+> >+		compatible = "arm,psci-0.2";
+> >+		method = "smc";
+> >+	};
+> >+
+> >+	cpus {
+> >+		#address-cells = <1>;
+> >+		#size-cells = <0>;
+> >+
+> >+		/* 1 core only at this point */
+> >+		a57_0: cpu@0 {
+> >+			compatible = "arm,cortex-a57", "arm,armv8";
+> >+			reg = <0x0>;
+> >+			device_type = "cpu";
+> >+			next-level-cache = <&L2_CA57>;
+> >+			enable-method = "psci";
+> >+		};
+> >+
+> >+		L2_CA57: cache-controller@0 {
+> >+			compatible = "cache";
+> >+			reg = <0>;
+> >+			cache-unified;
+> >+			cache-level = <2>;
+> >+		};
+> >+	};
+> 
+> 
+> It looks to me that in the r8a7795.dtsi the cache-controller node is outside
+> the cpus node? I'd think that we should keep is consistent.
 
-On Wed, May 25, 2016 at 9:32 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
-> P.S.: This also results in the question why we need similar
-> r8a7795-cpg-mssr.h and r8a7796-cpg-mssr.h with just different "numbers" for
-> the same clocks. Can't we use the same numbers on all SoCs, with just having
-> wholes in the list where the clocks don't exist on a SoC? I haven't looked
+As of c10cdf93a119 ("arm64: dts: r8a7795: Fix W=1 dtc warnings"),
+which was recently added to the devel branch of the renesas tree,
+the cache-controller is inside the cpu node on the r8a7795.dtsi.
 
-The CPG and MSSR block are the IP blocks that differ most among SoCs of the
-same family. Some clocks are present on H3 only, others on M3-W only.
-
-Having a shared driver core, but different defines, is a compromise between
-reusability and avoiding mistakes in DTSes (e.g. pointing to a nonexisting
-clock due to copy and paste from another SoC).
-
-> into the manual if these numbers are given by the hardware, though.
-
-The actual numbers don't map to numbers in the datasheet, just to an unordered
-list in a table. The list of number is considered part of the DT bindings, and
-thus append-only (to be considered in case the datasheet is updated).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+This patch aims to be consistent with that change.
