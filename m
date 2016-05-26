@@ -1,58 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:11228 "EHLO
-	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751154AbcEXE6b (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:57694 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754847AbcEZSSo (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 24 May 2016 00:58:31 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-	<ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 4/4] arm64: dts: salvator-x: enable HSUSB
-Date: Tue, 24 May 2016 13:57:40 +0900
-Message-ID: <1464065860-3948-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1464065860-3948-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1464065860-3948-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	Thu, 26 May 2016 14:18:44 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/4] serial: sh-sci: FIFO initialization fixes
+Date: Thu, 26 May 2016 20:18:34 +0200
+Message-Id: <1464286718-10745-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since related drivers doesn't support OTG framework yet, the renesas_usbhs
-driver cannot detect VBUS in particular situations. And then a gadget
-driver doesn't work correctly (even if a USB cable is connected to a USB
-host, nothing happens).
-However, we can avoid such a situation if we operate the followings:
+	Hi Greg, Jiri, Magnus,
 
- 1) rmmod/unbind all gadget drivers
- 2) rmmod/unbind the renesas_usbhs driver
-  e.g. # echo e6590000.usb > /sys/bus/platform/drivers/renesas_usbhs/unbind
- 3) connect the USB cable of CN9 to a USB host
- 4) insmod/bind the renesas_usbhs driver
-  e.g. # echo e6590000.usb > /sys/bus/platform/drivers/renesas_usbhs/bind
- 5) insmod/bind a gadget driver
+When opening a Renesas SCIF serial port after it has been used before,
+stale data may be read.  This has been observed on R-Car Gen2 and R-Car
+Gen3, with all SCIF variants present (SCIF, SCIFA, SCIFB, and HSCIF). It
+is much more likely to happen when DMA is enabled, although it has been
+seen with PIO, too.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+There are actually two reasons why stale data is received:
+  1. Transfers are started, or are still activated, before the FIFO is
+     reset, causing one or more (up to the RX FIFO size) stale bytes
+     (fixed by patches 1 and 2),
+  2. FIFO reset lacked clearing the RDF flag, causing one byte of stale
+     data (fixed by patch 3).
+While at it, patch 4 adds the missing clearing of two other flags in the
+initialization sequence on (H)SCIF.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 3367f9c..b2852e7 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -603,6 +603,10 @@
- 	status = "okay";
- };
- 
-+&hsusb {
-+	status = "okay";
-+};
-+
- &pcie_bus_clk {
- 	clock-frequency = <100000000>;
- 	status = "okay";
+While the issue can be reproduced using subsequent runs of sertest[1],
+I wrote a new test program, fifotest[2], to trigger it more easily.
+More detailed test information can be found on the eLinux wiki[3].
+
+I have verified that this series fixes the issue on SCIF, SCIFA, SCIFB,
+and HSCIF, on R-Car Gen2 (r8a7791/koelsch) and R-Car Gen3
+(r8a7795/salvator-x).
+Basic regression testing has been done with SCIFA on sh73a0/kzm9g.
+Regression testing on other variants (notably SCI) would be appreciated.
+
+This series applies against both v4.6 and next-20160526. It's also
+available in a topic branch at
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/scif-fifo-v1.
+
+Thanks!
+
+[1] https://github.com/geertu/sertest
+[2] https://github.com/geertu/fifotest
+[3] http://elinux.org/Tests:SCIF-FIFO
+
+
+Geert Uytterhoeven (4):
+  serial: sh-sci: Do not start transfers from sci_startup()
+  serial: sh-sci: Stop transfers in sci_shutdown()
+  serial: sh-sci: Clear RX, error, and break flags during reset
+  serial: sh-sci: Clear (H)SCIF timeout and overrun during reset
+
+ drivers/tty/serial/sh-sci.c | 17 +++++++++++------
+ drivers/tty/serial/sh-sci.h |  1 +
+ 2 files changed, 12 insertions(+), 6 deletions(-)
+
 -- 
 1.9.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
