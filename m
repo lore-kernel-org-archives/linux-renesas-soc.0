@@ -1,52 +1,62 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:60025 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754476AbcEZSSo (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 26 May 2016 14:18:44 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] arm64: dts: r8a7796: Add SYSC PM Domains
-Date: Tue, 31 May 2016 11:08:43 +0200
-Message-Id: <1464685726-21611-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH 2/4] serial: sh-sci: Stop transfers in sci_shutdown()
+Date: Thu, 26 May 2016 20:18:36 +0200
+Message-Id: <1464286718-10745-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464286718-10745-1-git-send-email-geert+renesas@glider.be>
+References: <1464286718-10745-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+Make sure the transmitter and receiver are stopped when shutting down
+the port, and related interrupts are disabled.
 
-This patch series adds support for the power areas exposed by the System
-Controller on the Renesas R-Car M3-W SoC to the DTS.
+Without this:
+  - New input data may be received into the RX FIFO, possibly
+    triggering a new RX DMA completion,
+  - Transfers will still be enabled on a subsequent startup of the UART,
+    before the UART's FIFOs have been reset, causing reading of stale
+    data.
 
-This series is against Simon's "[PATCH v3 0/3] arm64: Add Renesas
-R8A7796 SoC support".  It has a build and runtime dependency on my series
-"[PATCH v2 0/3] soc: renesas: rcar-sysc: Add support for R-Car M3-W power
-areas".
+Inspired by a patch in the BSP by Koji Matsuoka
+<koji.matsuoka.xm@renesas.com>.
 
-For your convenience, I've pushed this series to the
-topic/r8a7796-sysc-dt-v1 branch of
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git.
-This has been tested on r8a7796/salvator-x.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Extracted from "[PATCH/RFC v3 0/4] serial: sh-sci: Add DT DMA support".
+The issues with the serial console seen before on r8a7740/armadillo and
+sh73a0/kzm9g seem to be gone.
 
-Thanks!
+Changes after resurrection:
+  - Write zero to also disable related interrupts, as suggested by
+    Laurent Pinchart,
+  - Enhanced patch description.
+---
+ drivers/tty/serial/sh-sci.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Geert Uytterhoeven (2):
-  arm64: dts: r8a7796: Add SYSC PM Domains
-  arm64: dts: r8a7796: Use SYSC "always-on" PM Domain
-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index d6ba90c572f7475c..4d2f916f45277e20 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1896,6 +1896,8 @@ static void sci_shutdown(struct uart_port *port)
+ 	spin_lock_irqsave(&port->lock, flags);
+ 	sci_stop_rx(port);
+ 	sci_stop_tx(port);
++	/* Stop RX and TX, disable related interrupts */
++	serial_port_out(port, SCSCR, 0);
+ 	spin_unlock_irqrestore(&port->lock, flags);
+ 
+ #ifdef CONFIG_SERIAL_SH_SCI_DMA
 -- 
 1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
