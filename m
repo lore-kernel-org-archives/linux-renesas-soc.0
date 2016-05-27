@@ -1,46 +1,40 @@
 Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1464369565-12259-1-git-send-email-kieran@bingham.xyz>
-References: <1464369565-12259-1-git-send-email-kieran@bingham.xyz>
-Date: Tue, 31 May 2016 11:10:45 +0200
-Message-ID: <CAMuHMdVW56-g8F9SqO8UP62Q9nvFawwL+GgHP2Wni-a8q5YMRw@mail.gmail.com>
-Subject: Re: [PATCH 0/4] RCar r8a7795 FCPF support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Kieran Bingham <kieran@ksquared.org.uk>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-renesas-soc@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <kieran@ksquared.org.uk>
+Return-Path: <kieran@ksquared.org.uk>
+Sender: Kieran Bingham <kieran@ksquared.org.uk>
+From: Kieran Bingham <kieran@bingham.xyz>
+To: laurent.pinchart@ideasonboard.com,
+	linux-renesas-soc@vger.kernel.org,
+	kieran@bingham.xyz
+Cc: linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 0/4] RCar r8a7795 FCPF support
+Date: Fri, 27 May 2016 18:19:20 +0100
+Message-Id: <1464369565-12259-1-git-send-email-kieran@bingham.xyz>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+An RCar FCP driver is available with support for the FCPV module for VSP.
+This series updates that driver to support the FCPF and then provide the
+relevant nodes in the r8a7795 device tree.
 
-On Fri, May 27, 2016 at 7:19 PM, Kieran Bingham <kieran@ksquared.org.uk> wrote:
-> An RCar FCP driver is available with support for the FCPV module for VSP.
-> This series updates that driver to support the FCPF and then provide the
-> relevant nodes in the r8a7795 device tree.
->
-> Checkpatch generates a warning on these DT references but they are
-> documented under Documentation/devicetree/bindings/media/renesas,fcp.txt
->
-> These patches are based on Geert's renesas-drivers tree, and are pushed
-> to a branch at git@github.com:kbingham/linux.git renesas/fcpf for
-> convenience.
+Checkpatch generates a warning on these DT references but they are
+documented under Documentation/devicetree/bindings/media/renesas,fcp.txt
 
-As this is based on previous renesas-drivers release, which included the
-Salvator-X HDMI prototype, I created a topic branch topic/fcpf-v1 just
-containing your changes.
+These patches are based on Geert's renesas-drivers tree, and are pushed
+to a branch at git@github.com:kbingham/linux.git renesas/fcpf for
+convenience.
 
-Gr{oetje,eeting}s,
+Kieran Bingham (4):
+  v4l: Extend FCP compatible list to support the FDP
+  dt-bindings: Update Renesas R-Car FCP DT binding
+  dt-bindings: Document Renesas R-Car FCP power-domains usage
+  arm64: dts: r8a7795: add FCPF device nodes
 
-                        Geert
+ .../devicetree/bindings/media/renesas,fcp.txt       |  6 +++++-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi            | 21 +++++++++++++++++++++
+ drivers/media/platform/rcar-fcp.c                   |  1 +
+ 3 files changed, 27 insertions(+), 1 deletion(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+2.5.0
