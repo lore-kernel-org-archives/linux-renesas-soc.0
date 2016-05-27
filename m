@@ -1,153 +1,176 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:41974 "EHLO pokefinder.org"
+Received: from sauhun.de ([89.238.76.85]:47448 "EHLO pokefinder.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752561AbcEaK5f (ORCPT
+	id S1751803AbcE0LrX (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 31 May 2016 06:57:35 -0400
+	Fri, 27 May 2016 07:47:23 -0400
+Date: Fri, 27 May 2016 13:47:15 +0200
 From: Wolfram Sang <wsa@the-dreams.de>
-To: driverdev-devel@linuxdriverproject.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V2 13/31] staging: ks7010: add example cfg file as a reference
-Date: Tue, 31 May 2016 12:56:25 +0200
-Message-Id: <1464692203-4180-14-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
-References: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Ai Kyuse <ai.kyuse.uw@renesas.com>
+Subject: Re: [PATCH v3 2/4] mmc: tmio: Add tuning support
+Message-ID: <20160527114715.GC1663@katana>
+References: <1464057797-29951-1-git-send-email-horms+renesas@verge.net.au>
+ <1464057797-29951-3-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pAwQNkOnpTn9IO2O"
+Content-Disposition: inline
+In-Reply-To: <1464057797-29951-3-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-We want to remove it, but to do so properly, it is good to have a
-working example. Needs to be copied to /lib/firmware in order to be
-used.
+--pAwQNkOnpTn9IO2O
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/staging/ks7010/ks79xx.cfg | 116 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 116 insertions(+)
- create mode 100644 drivers/staging/ks7010/ks79xx.cfg
 
-diff --git a/drivers/staging/ks7010/ks79xx.cfg b/drivers/staging/ks7010/ks79xx.cfg
-new file mode 100644
-index 00000000000000..0f2d24d4e66a89
---- /dev/null
-+++ b/drivers/staging/ks7010/ks79xx.cfg
-@@ -0,0 +1,116 @@
-+#ks79xx.cfg
-+#KS79xx configuration file
-+#
-+
-+#
-+#BeaconLostCount	default 20
-+BeaconLostCount=20
-+#
-+
-+#
-+#Ap List Scan Type default ACTIVE_SCAN ACTIVE_SCAN or PASSIVE_SCAN
-+ScanType=ACTIVE_SCAN
-+#
-+
-+#
-+#Channel		default 10		min 1 	max 14
-+Channel=10
-+#
-+
-+#
-+#FragmentThreshold	default 2346		min 256	max 2346
-+FragmentThreshold=2346
-+#
-+
-+#
-+#OperationMode		default Infrastructure	Pseudo-Ad-Hoc or 802.11-Ad-Hoc or Infrastructure
-+OperationMode=Infrastructure
-+#
-+
-+#
-+#PowerManagementMode	default ACTIVE     ACTIVE or SAVE1 or SAVE2
-+PowerManagementMode=ACTIVE
-+#
-+
-+#
-+#RTSThreshold		default 2347		min 0	max 2347
-+RTSThreshold=2347
-+#
-+
-+#
-+#SSID			default ""		max 32 character
-+SSID="default"
-+#
-+
-+#
-+#TxRate			default Auto		1, 2, 5.5, 11	ex. TxRate=1,2 TxRate=11 TxRate=Auto ...
-+TxRate=Auto
-+#
-+
-+#
-+#Wep			default OFF		OFF or 64bit or 128bit
-+Wep=OFF
-+#
-+
-+#
-+#WepType		default STRING		STRING or HEX
-+WepType=STRING
-+#
-+
-+#
-+#WepIndex=1
-+#
-+
-+#
-+#WepKeyValue1
-+#	character_wep_key:64bit key_length = 5;  128bit key_length = 13
-+#	      hex_wep_key:64bit key_length = 10; 128bit key_length = 26
-+#
-+
-+#
-+#WepKeyValue2
-+#	character_wep_key:64bit key_length = 5;  128bit key_length = 13
-+#	      hex_wep_key:64bit key_length = 10; 128bit key_length = 26
-+#
-+
-+#
-+#WepKeyValue3
-+#	character_wep_key:64bit key_length = 5;  128bit key_length = 13
-+#	      hex_wep_key:64bit key_length = 10; 128bit key_length = 26
-+#
-+
-+#
-+#WepKeyValue4
-+#	character_wep_key:64bit key_length = 5;  128bit key_length = 13
-+#	      hex_wep_key:64bit key_length = 10; 128bit key_length = 26
-+#
-+
-+#
-+#AuthenticationAlgorithm default OPEN_SYSTEM	OPEN_SYSTEM or  SHARED_KEY
-+AuthenticationAlgorithm=OPEN_SYSTEM
-+#
-+
-+#
-+#PREAMBLE_TYPE default LONG	LONG or  SHORT
-+PREAMBLE_TYPE=SHORT
-+#
-+
-+#
-+# PhyType default BG_MODE	B_MODE, G_MODE or BG_MODE
-+PhyType=BG_MODE
-+#
-+
-+#
-+# CtsMode defalut FALSE		TURE or FALSE
-+CtsMode=FALSE
-+#
-+
-+#
-+# PhyInformationTimer defalut 0  uint 100msec 
-+PhyInformationTimer=0
-+#
-+
-+#
-+#ROM_FILE default "ks7010sd.rom"
-+ROM_FILE="ks7010sd.rom"
-+#
--- 
-2.8.1
+> +static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
+> +{
+> +	struct tmio_mmc_host *host =3D mmc_priv(mmc);
+> +	unsigned int num =3D 0;
+> +	int i, ret =3D 0;
+> +	bool *tap;
+> +
+> +	if (host->init_tuning)
+> +		num =3D host->init_tuning(host);
+> +	if (!num) {
+> +		/* Tuning is not supported */
+> +		ret =3D 0;
+
+ret is already 0 here. Not sure to remove the redundancy, though. This
+is clearer and easier to read.
+
+> +		goto out;
+> +	}
+> +
+> +	tap =3D kmalloc(num * 2, GFP_KERNEL);
+> +	if (!tap) {
+> +		ret =3D -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	/*
+> +	 * Issue CMD19 twice for each tap
+> +	 */
+> +	for (i =3D 0; i < 2 * num; i++) {
+> +		int err;
+
+Maybe drop err here...
+
+> +
+> +		if (host->prepare_tuning)
+> +			host->prepare_tuning(host, i);
+> +
+> +		err =3D mmc_send_tuning(host->mmc, opcode, NULL);
+> +		if (err && err !=3D -EILSEQ) {
+> +			ret =3D err;
+> +			goto err_free;
+
+=2E.. use ret here directly ...
+
+> +		}
+> +		tap[i] =3D (err =3D=3D 0);
+> +
+> +		mdelay(1);
+> +	}
+
+=2E.. and set ret =3D 0 here ?
+
+> +
+> +	if (host->select_tuning)
+> +		ret =3D host->select_tuning(host, tap, num * 2);
+
+I wonder if we shouldn't check the validity of the function pointers
+together at the beginning of the function and bail out if some pointer
+is missing? The above block skips the OOPS but it doesn't make sense to
+not select something, or?
+
+> +
+> +err_free:
+> +	kfree(tap);
+> +out:
+> +	if (ret < 0) {
+> +		dev_warn(&host->pdev->dev, "Tuning procedure failed\n");
+> +		tmio_mmc_hw_reset(mmc);
+> +	} else {
+> +		host->mmc->retune_period =3D 0;
+> +	}
+> +
+> +	return ret;
+> +
+> +}
+> +
+>  /* Process requests from the MMC layer */
+>  static void tmio_mmc_request(struct mmc_host *mmc, struct mmc_request *m=
+rq)
+>  {
+> @@ -781,6 +851,14 @@ static void tmio_mmc_request(struct mmc_host *mmc, s=
+truct mmc_request *mrq)
+> =20
+>  	spin_unlock_irqrestore(&host->lock, flags);
+> =20
+> +	if (mrq->sbc) {
+> +		ret =3D tmio_mmc_start_command(host, mrq->sbc);
+> +		if (ret)
+> +			goto fail;
+> +		host->last_req_ts =3D jiffies;
+> +		host->mrq =3D mrq;
+> +	}
+
+Is this related? Maybe a comment would help?
+
+> +
+>  	if (mrq->data) {
+>  		ret =3D tmio_mmc_start_data(host, mrq->data);
+>  		if (ret)
+> @@ -978,6 +1056,8 @@ static struct mmc_host_ops tmio_mmc_ops =3D {
+>  	.enable_sdio_irq =3D tmio_mmc_enable_sdio_irq,
+>  	.card_busy	=3D tmio_mmc_card_busy,
+>  	.multi_io_quirk	=3D tmio_multi_io_quirk,
+> +	.execute_tuning =3D tmio_mmc_execute_tuning,
+> +	.hw_reset	=3D tmio_mmc_hw_reset,
+>  };
+> =20
+>  static int tmio_mmc_init_ocr(struct tmio_mmc_host *host)
+> @@ -1202,6 +1282,9 @@ int tmio_mmc_host_runtime_suspend(struct device *de=
+v)
+>  	struct mmc_host *mmc =3D dev_get_drvdata(dev);
+>  	struct tmio_mmc_host *host =3D mmc_priv(mmc);
+> =20
+> +	mmc_retune_timer_stop(host->mmc);
+> +	mmc_retune_needed(host->mmc);
+> +
+>  	tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_ALL);
+
+All in all, this looks way better now. Thanks!
+
+
+--pAwQNkOnpTn9IO2O
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXSDPDAAoJEBQN5MwUoCm2jPYP/2UigwnTOYS6yu7oXN4ZSsJo
+qxEKBAeMMtwSsbYU3Afqs4n580ONKAAKslfcNdQgOu3YtZ49YYGXZiZWEFwJdbSi
+PF/hSHPGDWIwhseXqNDULMIc3GHCWchwVlhPx2utWcW72jB4zBm6EEliJ1IQ6w7h
+m5w2Gdphi9LUBTCpd/RsG/rECZTaasPEYUM3QEO9RRTNyEpM2muRQptSpsloIliS
+8U/8T8MP0XRm5nmiWXsgla0kv/c+9w5eck+rlb1N30yDYAMpwDBLztPFhCsvY3Va
+N0kSKvFfuSYummraQHcoLagDZAliE7usVdjSWTAeQhFDL1GGRNKjtU0W4tutZT8d
+c8LhHmqQ9u1G1xb5Z/5vTXKZawDU0P6nEr43WNPObRibYeLVChkmkL6b79K2JeMO
+MxKOa5O4EyYaryNgFSqMPbtgTf2IC+51t1z20xXUXsH/pixJCqX/0z3iBXF3iIGH
+XSvoJ1jaPLH4yIj4EkfGNHRYe0iZw3+0FKuRtgXNFzp6Tt1fUikyzTtYRJ40nCkl
+Kyd+YHvQb1ICtxKnN8XKyPb2UwBzb9OSxT4YFpOpb4eJ5kmgaYBgsZu5lN+k5uQH
+EaGzN2vMkPgytm8FZYQns5+2MQ9VeMDmQqHfFKdFGLBOMmgnYlas4FIDcSte/XKs
+iHzqqzkesuBQDpJUHxfV
+=SvER
+-----END PGP SIGNATURE-----
+
+--pAwQNkOnpTn9IO2O--
