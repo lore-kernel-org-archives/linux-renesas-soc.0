@@ -1,61 +1,124 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f194.google.com ([209.85.213.194]:36686 "EHLO
-	mail-ig0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932722AbcE0IjW (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:22150 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932338AbcE0H4V (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 27 May 2016 04:39:22 -0400
-Received: by mail-ig0-f194.google.com with SMTP id q9so4179401igc.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 27 May 2016 01:39:22 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <eccba76d-465c-ca86-bda2-1f0ededc6918@de.bosch.com>
-References: <1464166708-18320-1-git-send-email-dirk.behme@de.bosch.com>
-	<CAMuHMdWoBv-13eNMr_ymtmRo-LPdznarRMyXFw0pG7xF_07A6A@mail.gmail.com>
-	<c0890925-f003-8aa5-22fd-315229593037@de.bosch.com>
-	<CANqRtoSHkH2N6_UJ_mjij9k3GaAsSBDuUxjTTLZryHzy74Sh1Q@mail.gmail.com>
-	<eccba76d-465c-ca86-bda2-1f0ededc6918@de.bosch.com>
-Date: Fri, 27 May 2016 10:39:21 +0200
-Message-ID: <CAMuHMdWHwu3V6-QtrQdNm-b3Wu4_r15mv9Lpi487cEZxWUvwLg@mail.gmail.com>
+	Fri, 27 May 2016 03:56:21 -0400
 Subject: Re: [PATCH 0/4] ARM: Renesas: R-Car3: Add product register support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+To: Magnus Damm <magnus.damm@gmail.com>
+References: <1464166708-18320-1-git-send-email-dirk.behme@de.bosch.com>
+ <CAMuHMdWoBv-13eNMr_ymtmRo-LPdznarRMyXFw0pG7xF_07A6A@mail.gmail.com>
+ <c0890925-f003-8aa5-22fd-315229593037@de.bosch.com>
+ <CANqRtoSHkH2N6_UJ_mjij9k3GaAsSBDuUxjTTLZryHzy74Sh1Q@mail.gmail.com>
+CC: Geert Uytterhoeven <geert@linux-m68k.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
+	<linux-renesas-soc@vger.kernel.org>,
 	Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Content-Type: text/plain; charset=UTF-8
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <eccba76d-465c-ca86-bda2-1f0ededc6918@de.bosch.com>
+Date: Fri, 27 May 2016 09:56:18 +0200
+MIME-Version: 1.0
+In-Reply-To: <CANqRtoSHkH2N6_UJ_mjij9k3GaAsSBDuUxjTTLZryHzy74Sh1Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, May 27, 2016 at 9:56 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
->>>> Given the use of PRR you saw is in a patch that's definitely not ready for
->>>> upstream, I think adding a full-fledged PRR driver is a bit premature.
+Hi Magnus,
 
->> I don't think anyone disagrees that it makes sense to be able to
->> determine ES version during runtime. The questions in my mind are how
->> to do it
+On 27.05.2016 05:13, Magnus Damm wrote:
+> Hi Dirk,
 >
-> I've made a proposal ;) And I'm happy to discuss technically about it.
+> On Thu, May 26, 2016 at 4:48 PM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>> Hi Geert,
+>>
+>> On 26.05.2016 09:14, Geert Uytterhoeven wrote:
+>>>
+>>> Hi Dirk,
+>>>
+>>> On Wed, May 25, 2016 at 10:58 AM, Dirk Behme <dirk.behme@de.bosch.com>
+>>> wrote:
+>>>>
+>>>> Instead of hard coding the product register in rcar_du_crtc.c,
+>>>> read it based on the device tree.
+>>>>
+>>>> This patch series is based on
+>>>>
+>>>>
+>>>> https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/gen3-latest
+>>>> renesas-drivers-2016-05-17-v4.6
+>>>> 4717ef6d59c3204e385c
+>>>> Revert "ASoC: simple-card: Add pm callbacks to platform driver"
+>>>>
+>>>> It's boot tested on r8a7795 Salvator-X and checked that the same
+>>>> product register value is read without and with this patch series.
+>>>
+>>>
+>>> Thanks for your series!
+>>>
+>>> Given the use of PRR you saw is in a patch that's definitely not ready for
+>>> upstream, I think adding a full-fledged PRR driver is a bit premature.
+>>>
+>>> So far we've always planned to handle differences in ES versions using the
+>>> compatible value, cfr. "renesas,sata-r8a7790-es1".
+>>> But in general we target the latest (production) version in upstream.
+>>
+>> Well, there are several issues ;)
+>>
+>> First, regarding "handle differences in ES versions using the compatible
+>> value, cfr. "renesas,sata-r8a7790-es1": I can't talk about r8a7790. But for
+>> r8a7795 & r8a7796 we are able to auto-detect this by the PRR. And I'd think
+>> what can be auto detected, should be auto detected. And not handled via the
+>> device tree.
+>>
+>> Second: Other SoCs families show us that we definitely need such kind of
+>> cpu_is() and revision_is() logic.
 >
->> and the urgency.
->
-> Regarding the urgency: Someone has accepted the hard coded PRODUCT register
-> (and MODEMR) being in renesas-drivers, now:
->
-> https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/tree/drivers/gpu/drm/rcar-du/rcar_du_crtc.c?h=topic/gen3-latest#n177
+> I don't think anyone disagrees that it makes sense to be able to
+> determine ES version during runtime. The questions in my mind are how
+> to do it
 
-I will drop the topic branch topic/salvator-x-hdmi-prototype-v2-rebased1
-from next renesas-drivers release, as it's definitely not ready.
 
-People who want to use that branch can still merge it themselves.
+I've made a proposal ;) And I'm happy to discuss technically about it.
 
-Gr{oetje,eeting}s,
 
-                        Geert
+> and the urgency.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regarding the urgency: Someone has accepted the hard coded PRODUCT 
+register (and MODEMR) being in renesas-drivers, now:
+
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/tree/drivers/gpu/drm/rcar-du/rcar_du_crtc.c?h=topic/gen3-latest#n177
+
+This does really hurts us.
+
+Therefore, I try to get this removed as soon as possible to hopefully 
+get a Renesas BSP without this, the next time.
+
+If anybody finds an other way to remove that, that would be fine, too.
+
+
+> So far we have decided to use the compatible string since it is a
+> common driver model abstraction already used by device drivers and
+> hardware description in DT. Using DT compat string matching we can
+> have logic in the drivers to handle ES differences if needed. As for
+> how to enable the workaround, my opinion is that the missing piece
+> consists of ES workaround code that appends ES suffix information to
+> the DT compat strings automatically during boot.
+
+
+Technically this sounds slightly too complicated to me. As I have to 
+advocate my proposal (inspired from an other mainline SoC family) I'd 
+think that my proposal is easier.
+
+
+> I suppose the workaround is not yet implemented because no one has
+> deemed this topic as particularly urgent. Until it becomes urgent or a
+> new ES version appears the affected users can simply adjust the DT
+> binding themselves. This is what happened to the "sata-r8a7790-es1"
+> case above.
+
+Best regards
+
+Dirk
