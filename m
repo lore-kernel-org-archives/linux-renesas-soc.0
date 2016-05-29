@@ -1,107 +1,128 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:58948 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932315AbcE2Ppi (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35447 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752862AbcE2WJK (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sun, 29 May 2016 11:45:38 -0400
-Date: Sun, 29 May 2016 17:45:31 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PULL REQUEST] renesas/topic/pretimeout for renesas drivers
-Message-ID: <20160529154528.GA6451@katana>
+	Sun, 29 May 2016 18:09:10 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@glider.be>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [GIT PULL FOR renesas-drivers] VSP HGO support and assorted fixes
+Date: Mon, 30 May 2016 01:09:11 +0300
+Message-ID: <1500003.sLylZGEauQ@avalon>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
-Content-Disposition: inline
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---MGYHOYXEY6WxJCY8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
 Hi Geert,
 
-here is a topic branch for renesas-drivers. Please pull.
+The following changes since commit aff093d4bbca91f543e24cde2135f393b8130f4b:
 
-Kind regards,
-
-   Wolfram
-
-
-The following changes since commit 2dcd0af568b0cf583645c8a317dd12e344b1c72a:
-
-  Linux 4.6 (2016-05-15 15:43:13 -0700)
+  [media] exynos-gsc: avoid build warning without CONFIG_OF (2016-05-09 
+18:38:33 -0300)
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/pretimeout
+  git://linuxtv.org/pinchartl/media.git vsp1/functions
 
-for you to fetch changes up to 192d88ad087a1f20505c3249c6d51992d9f3caa8:
+for you to fetch changes up to f2d1880aa12bcf6b9d78bbba15ec9df14f3802fd:
 
-  watchdog: pretimeout: add userspace notifier pretimeout governor (2016-05-25 15:35:15 +0200)
+  v4l: vsp1: Set entities functions (2016-05-23 17:01:49 +0300)
+
+The branch contains patches that have been posted to the linux-media mailing 
+list (as well as the dri-devel mailing list for the rcar-du patches) and 
+reviewed. Some of them will need to be resubmitted, and I hope to get them all 
+merged upstream in v4.8.
 
 ----------------------------------------------------------------
-Vladimir Zapolskiy (3):
-      watchdog: pretimeout: add panic pretimeout governor
-      watchdog: pretimeout: add noop pretimeout governor
-      watchdog: pretimeout: add userspace notifier pretimeout governor
+Laurent Pinchart (26):
+      dt-bindings: Add Renesas R-Car FCP DT bindings
+      v4l: Add Renesas R-Car FCP driver
+      v4l: vsp1: Implement runtime PM support
+      v4l: vsp1: Don't handle clocks manually
+      v4l: vsp1: Add FCP support
+      v4l: vsp1: Add output node value to routing table
+      v4l: vsp1: Replace container_of() with dedicated macro
+      v4l: vsp1: Make vsp1_entity_get_pad_compose() more generic
+      v4l: vsp1: Move frame sequence number from video node to pipeline
+      v4l: vsp1: Group DRM RPF parameters in a structure
+      drm: rcar-du: Add alpha support for VSP planes
+      drm: rcar-du: Add Z-order support for VSP planes
+      v4l: vsp1: Remove deprecated DRM API
+      v4l: vsp1: Fix typo in register field names
+      v4l: vsp1: Fix descriptions of Gen2 VSP instances
+      v4l: vsp1: Fix crash when resetting pipeline
+      v4l: Add metadata buffer type and format
+      v4l: Add metadata video device type
+      v4l: Define a pixel format for the R-Car VSP1 1-D histogram engine
+      v4l: vsp1: Add HGO support
+      media: Add video processing entity functions
+      media: Add video statistics computation functions
+      v4l: vsp1: Base link creation on availability of entities
+      v4l: vsp1: Don't register media device when userspace API is disabled
+      v4l: vsp1: Don't create LIF entity when the userspace API is enabled
+      v4l: vsp1: Set entities functions
 
-Wolfram Sang (13):
-      watchdog: softdog: remove obsolete comments
-      watchdog: softdog: use watchdog core to init timeout value
-      watchdog: softdog: consistently use softdog_ prefix
-      watchdog: softdog: remove forward declaration
-      watchdog: softdog: sort includes to avoid duplicates
-      watchdog: softdog: drop superfluous set_timeout callback
-      watchdog: softdog: improve coding style
-      watchdog: add watchdog pretimeout framework
-      watchdog: documentation: squash paragraphs about 'no set_timeout'
-      watchdog: add pretimeout support to the core
-      fs: compat_ioctl: add pretimeout functions for watchdogs
-      watchdog: softdog: implement pretimeout support
-      watchdog: dev: add helper for creating uevent on dev
+ Documentation/DocBook/media/v4l/dev-meta.xml            |  97 +++++
+ Documentation/DocBook/media/v4l/media-types.xml         |  64 +++
+ .../DocBook/media/v4l/pixfmt-meta-vsp1-hgo.xml          | 307 +++++++++++++++
+ Documentation/DocBook/media/v4l/pixfmt.xml              |   9 +
+ Documentation/DocBook/media/v4l/v4l2.xml                |   1 +
+ Documentation/devicetree/bindings/media/renesas,fcp.txt |  32 ++
+ .../devicetree/bindings/media/renesas,vsp1.txt          |   5 +
+ MAINTAINERS                                             |  10 +
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c                   |  45 ++-
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.h                   |   2 +
+ drivers/media/platform/Kconfig                          |  15 +
+ drivers/media/platform/Makefile                         |   1 +
+ drivers/media/platform/rcar-fcp.c                       | 181 +++++++++
+ drivers/media/platform/vsp1/Makefile                    |   2 +
+ drivers/media/platform/vsp1/vsp1.h                      |   9 +-
+ drivers/media/platform/vsp1/vsp1_bru.c                  |   3 +-
+ drivers/media/platform/vsp1/vsp1_drm.c                  |  70 ++--
+ drivers/media/platform/vsp1/vsp1_drv.c                  | 197 ++++++----
+ drivers/media/platform/vsp1/vsp1_entity.c               | 225 +++++++++--
+ drivers/media/platform/vsp1/vsp1_entity.h               |  21 +-
+ drivers/media/platform/vsp1/vsp1_hgo.c                  | 497 +++++++++++++++
+ drivers/media/platform/vsp1/vsp1_hgo.h                  |  50 +++
+ drivers/media/platform/vsp1/vsp1_histo.c                | 307 +++++++++++++++
+ drivers/media/platform/vsp1/vsp1_histo.h                |  68 ++++
+ drivers/media/platform/vsp1/vsp1_hsit.c                 |   5 +-
+ drivers/media/platform/vsp1/vsp1_lif.c                  |   7 +-
+ drivers/media/platform/vsp1/vsp1_lut.c                  |   3 +-
+ drivers/media/platform/vsp1/vsp1_pipe.c                 |  48 ++-
+ drivers/media/platform/vsp1/vsp1_pipe.h                 |   4 +
+ drivers/media/platform/vsp1/vsp1_regs.h                 |  32 +-
+ drivers/media/platform/vsp1/vsp1_rpf.c                  |  10 +-
+ drivers/media/platform/vsp1/vsp1_sru.c                  |   3 +-
+ drivers/media/platform/vsp1/vsp1_uds.c                  |   3 +-
+ drivers/media/platform/vsp1/vsp1_video.c                |  26 +-
+ drivers/media/platform/vsp1/vsp1_video.h                |   1 -
+ drivers/media/platform/vsp1/vsp1_wpf.c                  |   3 +-
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c           |  19 +
+ drivers/media/v4l2-core/v4l2-dev.c                      |  37 +-
+ drivers/media/v4l2-core/v4l2-ioctl.c                    |  40 ++
+ drivers/media/v4l2-core/videobuf2-v4l2.c                |   3 +
+ include/media/rcar-fcp.h                                |  37 ++
+ include/media/v4l2-dev.h                                |   3 +-
+ include/media/v4l2-ioctl.h                              |   8 +
+ include/media/vsp1.h                                    |  29 +-
+ include/uapi/linux/media.h                              |  12 +
+ include/uapi/linux/videodev2.h                          |  17 +
+ 46 files changed, 2312 insertions(+), 256 deletions(-)
+ create mode 100644 Documentation/DocBook/media/v4l/dev-meta.xml
+ create mode 100644 Documentation/DocBook/media/v4l/pixfmt-meta-vsp1-hgo.xml
+ create mode 100644 Documentation/devicetree/bindings/media/renesas,fcp.txt
+ create mode 100644 drivers/media/platform/rcar-fcp.c
+ create mode 100644 drivers/media/platform/vsp1/vsp1_hgo.c
+ create mode 100644 drivers/media/platform/vsp1/vsp1_hgo.h
+ create mode 100644 drivers/media/platform/vsp1/vsp1_histo.c
+ create mode 100644 drivers/media/platform/vsp1/vsp1_histo.h
+ create mode 100644 include/media/rcar-fcp.h
 
- Documentation/watchdog/watchdog-kernel-api.txt |  24 ++-
- drivers/watchdog/Kconfig                       |  68 +++++++
- drivers/watchdog/Makefile                      |  10 +-
- drivers/watchdog/pretimeout_noop.c             |  47 +++++
- drivers/watchdog/pretimeout_panic.c            |  47 +++++
- drivers/watchdog/pretimeout_userspace.c        |  47 +++++
- drivers/watchdog/softdog.c                     | 110 ++++------
- drivers/watchdog/watchdog_dev.c                |  81 +++++++-
- drivers/watchdog/watchdog_pretimeout.c         | 269 +++++++++++++++++++++++++
- drivers/watchdog/watchdog_pretimeout.h         |  43 ++++
- fs/compat_ioctl.c                              |   2 +
- include/linux/watchdog.h                       |  24 +++
- 12 files changed, 695 insertions(+), 77 deletions(-)
- create mode 100644 drivers/watchdog/pretimeout_noop.c
- create mode 100644 drivers/watchdog/pretimeout_panic.c
- create mode 100644 drivers/watchdog/pretimeout_userspace.c
- create mode 100644 drivers/watchdog/watchdog_pretimeout.c
- create mode 100644 drivers/watchdog/watchdog_pretimeout.h
+-- 
+Regards,
 
---MGYHOYXEY6WxJCY8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXSw6YAAoJEBQN5MwUoCm2zvAQAI4WRWCiH4nRT2okFmDlt9md
-/NHYgM2KsMi9oh0pHeTLJxlMvfp+MuajLHYPDzzwTdrh88Gepw0F8ocO8jLRi74P
-bup1ifbbLC2ucXQLWg11G9dhiJ8/EywhnnnjKw8aUOSF8nAepJ/GUudLp9xkPPi7
-7hHjYykuHmcA1ouf9R12i6LOmSPkZyeUM5m92zbXQn22VL6Yuju0v+ocj45nKRDz
-zr+5d1JA0Kk19HSFKm2LEpZ0VDPn9ix3lPBmMP+0sdEzRLDQNgNyeaDjr19AKvdM
-woJDX8az5iuCsfZa4NdSOaCblYL76VRZSFCDFMkxpaNeMSfA9I3G7bW6YcOHzVdL
-KzPBVhVEtG6OfrvhLopiAoy24ttvI+ZdW3+e30WdIjMza+WuwpsThAGUYRfrv7p6
-ao+d+4qr6Z6sJanucl23anhDqj9BknzjYPymqONMDi/2Eqc1WhBTS8EDXP89fLyx
-+MQ+CYbXSYqhYcRFBocJrgvlpWW83C0s8wT4DsCgkW3JI5U+sveHcFUx8VS6WLtL
-Wk7lFQREJrYiXrAVHzt/bYVJKgzKmNiYmpevu3Ko2APYUODHs6ru32MyiA3zpNF6
-QerciT48orutpgjKX4eSGX9OFXw5hlbSFMzjVwaeBjs7NDX/KbY6N+TunBJodhaR
-lvGJWfeteLi1NHDqacbR
-=iNXL
------END PGP SIGNATURE-----
-
---MGYHOYXEY6WxJCY8--
+Laurent Pinchart
