@@ -1,220 +1,890 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35623 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754760AbcETHCf (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 20 May 2016 03:02:35 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Ai Kyuse <ai.kyuse.uw@renesas.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFC v2 1/3] mmc: tmio: Add tuning support
-Date: Fri, 20 May 2016 16:02:21 +0900
-Message-Id: <1463727743-7567-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1463727743-7567-1-git-send-email-horms+renesas@verge.net.au>
-References: <1463727743-7567-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 3/4] clk: renesas: cpg-mssr: Extract common R-Car Gen3 support code
+Date: Mon, 30 May 2016 18:28:56 +0200
+Message-Id: <1464625737-6646-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
+References: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ai Kyuse <ai.kyuse.uw@renesas.com>
+Extract the code to support parts common to all members of the R-Car
+Gen3 SoC family into a separate file, to ease sharing among SoC-specific
+drivers.
 
-Add tuning support for use with SDR104 mode
+Note that while the cpg_pll_configs[] arrays and the selection of the
+config based on the MODE bits are identical on R-Car H3 and R-Car M3-W,
+they are not common, and may be different on other R-Car Gen3 SoCs.
 
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v2 [Simon Horman]
-* As suggested by Kuninori Morimoto
-  - Actually remove unnecessary TMIO_MMC_HAS_UHS_SCC define
-* As suggested by Wolfram Sang
-  - Rely on core to call tuning. This simplifies things somewhat.
-  - Use mmc_send_tuning()
-    - A side affect of this appears to be that we now see some recoverable
-      errors logged during tuning. These are typically corrected by
-      subsequent tuning. It is the logging that is the apparent side effect
-      of this change.
-      e.g.
-      sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19)
-      sh_mobile_sdhi ee100000.sd: Tuning procedure failed
-* Use bool rather than unsigned long to pass test status
-  to select_tuning() callback
-* Do not retune if init_tuning callback is not present or
-  indicates that there are no taps present
-* Retune on hardware reset
-
-v1 [Simon Horman]
-* Omit start_signal_voltage_switch and tmio_mmc_card_busy changes which are
-  already present in mainline in a different form
-* Return num from init_tuning rather than passing an extra parameter
-  to hold the return value
-* Only call host->init_tuning if it is non-NULL
-* Place tmio_mmc_execute_tuning() such that no new forward declarations are
-  required
-* Remove unused TMIO_MMC_HAS_UHS_SCC define
-
-v0 [Ai Kyuse]
+v2:
+  - Add Tested-by.
 ---
- drivers/mmc/host/tmio_mmc.h     |  6 +++
- drivers/mmc/host/tmio_mmc_pio.c | 85 ++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 90 insertions(+), 1 deletion(-)
+ drivers/clk/renesas/Makefile           |   2 +-
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 360 +--------------------------------
+ drivers/clk/renesas/rcar-gen3-cpg.c    | 359 ++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/rcar-gen3-cpg.h    |  43 ++++
+ 4 files changed, 408 insertions(+), 356 deletions(-)
+ create mode 100644 drivers/clk/renesas/rcar-gen3-cpg.c
+ create mode 100644 drivers/clk/renesas/rcar-gen3-cpg.h
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 1aac2ad8edf2..b2168370af22 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -150,6 +150,7 @@ struct tmio_mmc_host {
- 	struct mutex		ios_lock;	/* protect set_ios() context */
- 	bool			native_hotplug;
- 	bool			sdio_irq_enabled;
-+	u32			scc_tappos;
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index ead8bb8435249493..88924c95808c3b2e 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -8,7 +8,7 @@ obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o
++obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o rcar-gen3-cpg.o
+ obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-div6.o
  
- 	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
- 	int (*clk_enable)(struct tmio_mmc_host *host);
-@@ -160,6 +161,11 @@ struct tmio_mmc_host {
- 			      unsigned int direction, int blk_size);
- 	int (*start_signal_voltage_switch)(struct mmc_host *mmc,
- 					   struct mmc_ios *ios);
-+	unsigned int (*init_tuning)(struct tmio_mmc_host *host);
-+	int (*prepare_tuning)(struct tmio_mmc_host *host, unsigned long tap);
-+	int (*select_tuning)(struct tmio_mmc_host *host, bool *tap);
-+	bool (*retuning)(struct tmio_mmc_host *host);
-+	void (*hw_reset)(struct tmio_mmc_host *host);
+ obj-$(CONFIG_CLK_RENESAS_CPG_MSSR)	+= renesas-cpg-mssr.o clk-div6.o
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index ca5519c583d4bf57..e53aff5b23ad4967 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -12,22 +12,14 @@
+  * the Free Software Foundation; version 2 of the License.
+  */
+ 
+-#include <linux/bug.h>
+-#include <linux/clk.h>
+-#include <linux/clk-provider.h>
+ #include <linux/device.h>
+-#include <linux/err.h>
+ #include <linux/init.h>
+-#include <linux/io.h>
+ #include <linux/kernel.h>
+-#include <linux/of.h>
+-#include <linux/slab.h>
+ 
+ #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
+ 
+ #include "renesas-cpg-mssr.h"
+-
+-#define CPG_RCKCR	0x240
++#include "rcar-gen3-cpg.h"
+ 
+ enum clk_ids {
+ 	/* Core Clock Outputs exported to DT */
+@@ -58,20 +50,6 @@ enum clk_ids {
+ 	MOD_CLK_BASE
  };
  
- struct tmio_mmc_host *tmio_mmc_host_alloc(struct platform_device *pdev);
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 12dc0440a487..e20f6522c9f9 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -36,6 +36,7 @@
- #include <linux/io.h>
- #include <linux/irq.h>
- #include <linux/mfd/tmio.h>
-+#include <linux/mmc/card.h>
- #include <linux/mmc/host.h>
- #include <linux/mmc/mmc.h>
- #include <linux/mmc/slot-gpio.h>
-@@ -363,7 +364,8 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
- 			 * multiple block transfer
- 			 */
- 			if ((host->pdata->flags & TMIO_MMC_HAVE_CMD12_CTRL) &&
--			    (cmd->opcode == SD_IO_RW_EXTENDED))
-+			    ((cmd->opcode == SD_IO_RW_EXTENDED) ||
-+			     host->mrq->sbc))
- 				c |= NO_CMD12_ISSUE;
- 		}
- 		if (data->flags & MMC_DATA_READ)
-@@ -756,6 +758,74 @@ static int tmio_mmc_start_data(struct tmio_mmc_host *host,
- 	return 0;
+-enum r8a7795_clk_types {
+-	CLK_TYPE_GEN3_MAIN = CLK_TYPE_CUSTOM,
+-	CLK_TYPE_GEN3_PLL0,
+-	CLK_TYPE_GEN3_PLL1,
+-	CLK_TYPE_GEN3_PLL2,
+-	CLK_TYPE_GEN3_PLL3,
+-	CLK_TYPE_GEN3_PLL4,
+-	CLK_TYPE_GEN3_SD,
+-	CLK_TYPE_GEN3_R,
+-};
+-
+-#define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
+-	DEF_BASE(_name, _id, CLK_TYPE_GEN3_SD, _parent, .offset = _offset)
+-
+ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
+ 	/* External Clock Inputs */
+ 	DEF_INPUT("extal",  CLK_EXTAL),
+@@ -262,225 +240,6 @@ static const unsigned int r8a7795_crit_mod_clks[] __initconst = {
+ 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
+ };
+ 
+-/* -----------------------------------------------------------------------------
+- * SDn Clock
+- *
+- */
+-#define CPG_SD_STP_HCK		BIT(9)
+-#define CPG_SD_STP_CK		BIT(8)
+-
+-#define CPG_SD_STP_MASK		(CPG_SD_STP_HCK | CPG_SD_STP_CK)
+-#define CPG_SD_FC_MASK		(0x7 << 2 | 0x3 << 0)
+-
+-#define CPG_SD_DIV_TABLE_DATA(stp_hck, stp_ck, sd_srcfc, sd_fc, sd_div) \
+-{ \
+-	.val = ((stp_hck) ? CPG_SD_STP_HCK : 0) | \
+-	       ((stp_ck) ? CPG_SD_STP_CK : 0) | \
+-	       ((sd_srcfc) << 2) | \
+-	       ((sd_fc) << 0), \
+-	.div = (sd_div), \
+-}
+-
+-struct sd_div_table {
+-	u32 val;
+-	unsigned int div;
+-};
+-
+-struct sd_clock {
+-	struct clk_hw hw;
+-	void __iomem *reg;
+-	const struct sd_div_table *div_table;
+-	unsigned int div_num;
+-	unsigned int div_min;
+-	unsigned int div_max;
+-};
+-
+-/* SDn divider
+- *                     sd_srcfc   sd_fc   div
+- * stp_hck   stp_ck    (div)      (div)     = sd_srcfc x sd_fc
+- *-------------------------------------------------------------------
+- *  0         0         0 (1)      1 (4)      4
+- *  0         0         1 (2)      1 (4)      8
+- *  1         0         2 (4)      1 (4)     16
+- *  1         0         3 (8)      1 (4)     32
+- *  1         0         4 (16)     1 (4)     64
+- *  0         0         0 (1)      0 (2)      2
+- *  0         0         1 (2)      0 (2)      4
+- *  1         0         2 (4)      0 (2)      8
+- *  1         0         3 (8)      0 (2)     16
+- *  1         0         4 (16)     0 (2)     32
+- */
+-static const struct sd_div_table cpg_sd_div_table[] = {
+-/*	CPG_SD_DIV_TABLE_DATA(stp_hck,  stp_ck,   sd_srcfc,   sd_fc,  sd_div) */
+-	CPG_SD_DIV_TABLE_DATA(0,        0,        0,          1,        4),
+-	CPG_SD_DIV_TABLE_DATA(0,        0,        1,          1,        8),
+-	CPG_SD_DIV_TABLE_DATA(1,        0,        2,          1,       16),
+-	CPG_SD_DIV_TABLE_DATA(1,        0,        3,          1,       32),
+-	CPG_SD_DIV_TABLE_DATA(1,        0,        4,          1,       64),
+-	CPG_SD_DIV_TABLE_DATA(0,        0,        0,          0,        2),
+-	CPG_SD_DIV_TABLE_DATA(0,        0,        1,          0,        4),
+-	CPG_SD_DIV_TABLE_DATA(1,        0,        2,          0,        8),
+-	CPG_SD_DIV_TABLE_DATA(1,        0,        3,          0,       16),
+-	CPG_SD_DIV_TABLE_DATA(1,        0,        4,          0,       32),
+-};
+-
+-#define to_sd_clock(_hw) container_of(_hw, struct sd_clock, hw)
+-
+-static int cpg_sd_clock_enable(struct clk_hw *hw)
+-{
+-	struct sd_clock *clock = to_sd_clock(hw);
+-	u32 val, sd_fc;
+-	unsigned int i;
+-
+-	val = clk_readl(clock->reg);
+-
+-	sd_fc = val & CPG_SD_FC_MASK;
+-	for (i = 0; i < clock->div_num; i++)
+-		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
+-			break;
+-
+-	if (i >= clock->div_num)
+-		return -EINVAL;
+-
+-	val &= ~(CPG_SD_STP_MASK);
+-	val |= clock->div_table[i].val & CPG_SD_STP_MASK;
+-
+-	clk_writel(val, clock->reg);
+-
+-	return 0;
+-}
+-
+-static void cpg_sd_clock_disable(struct clk_hw *hw)
+-{
+-	struct sd_clock *clock = to_sd_clock(hw);
+-
+-	clk_writel(clk_readl(clock->reg) | CPG_SD_STP_MASK, clock->reg);
+-}
+-
+-static int cpg_sd_clock_is_enabled(struct clk_hw *hw)
+-{
+-	struct sd_clock *clock = to_sd_clock(hw);
+-
+-	return !(clk_readl(clock->reg) & CPG_SD_STP_MASK);
+-}
+-
+-static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
+-						unsigned long parent_rate)
+-{
+-	struct sd_clock *clock = to_sd_clock(hw);
+-	unsigned long rate = parent_rate;
+-	u32 val, sd_fc;
+-	unsigned int i;
+-
+-	val = clk_readl(clock->reg);
+-
+-	sd_fc = val & CPG_SD_FC_MASK;
+-	for (i = 0; i < clock->div_num; i++)
+-		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
+-			break;
+-
+-	if (i >= clock->div_num)
+-		return -EINVAL;
+-
+-	return DIV_ROUND_CLOSEST(rate, clock->div_table[i].div);
+-}
+-
+-static unsigned int cpg_sd_clock_calc_div(struct sd_clock *clock,
+-					  unsigned long rate,
+-					  unsigned long parent_rate)
+-{
+-	unsigned int div;
+-
+-	if (!rate)
+-		rate = 1;
+-
+-	div = DIV_ROUND_CLOSEST(parent_rate, rate);
+-
+-	return clamp_t(unsigned int, div, clock->div_min, clock->div_max);
+-}
+-
+-static long cpg_sd_clock_round_rate(struct clk_hw *hw, unsigned long rate,
+-				      unsigned long *parent_rate)
+-{
+-	struct sd_clock *clock = to_sd_clock(hw);
+-	unsigned int div = cpg_sd_clock_calc_div(clock, rate, *parent_rate);
+-
+-	return DIV_ROUND_CLOSEST(*parent_rate, div);
+-}
+-
+-static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
+-				   unsigned long parent_rate)
+-{
+-	struct sd_clock *clock = to_sd_clock(hw);
+-	unsigned int div = cpg_sd_clock_calc_div(clock, rate, parent_rate);
+-	u32 val;
+-	unsigned int i;
+-
+-	for (i = 0; i < clock->div_num; i++)
+-		if (div == clock->div_table[i].div)
+-			break;
+-
+-	if (i >= clock->div_num)
+-		return -EINVAL;
+-
+-	val = clk_readl(clock->reg);
+-	val &= ~(CPG_SD_STP_MASK | CPG_SD_FC_MASK);
+-	val |= clock->div_table[i].val & (CPG_SD_STP_MASK | CPG_SD_FC_MASK);
+-	clk_writel(val, clock->reg);
+-
+-	return 0;
+-}
+-
+-static const struct clk_ops cpg_sd_clock_ops = {
+-	.enable = cpg_sd_clock_enable,
+-	.disable = cpg_sd_clock_disable,
+-	.is_enabled = cpg_sd_clock_is_enabled,
+-	.recalc_rate = cpg_sd_clock_recalc_rate,
+-	.round_rate = cpg_sd_clock_round_rate,
+-	.set_rate = cpg_sd_clock_set_rate,
+-};
+-
+-static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+-					       void __iomem *base,
+-					       const char *parent_name)
+-{
+-	struct clk_init_data init;
+-	struct sd_clock *clock;
+-	struct clk *clk;
+-	unsigned int i;
+-
+-	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
+-	if (!clock)
+-		return ERR_PTR(-ENOMEM);
+-
+-	init.name = core->name;
+-	init.ops = &cpg_sd_clock_ops;
+-	init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
+-	init.parent_names = &parent_name;
+-	init.num_parents = 1;
+-
+-	clock->reg = base + core->offset;
+-	clock->hw.init = &init;
+-	clock->div_table = cpg_sd_div_table;
+-	clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
+-
+-	clock->div_max = clock->div_table[0].div;
+-	clock->div_min = clock->div_max;
+-	for (i = 1; i < clock->div_num; i++) {
+-		clock->div_max = max(clock->div_max, clock->div_table[i].div);
+-		clock->div_min = min(clock->div_min, clock->div_table[i].div);
+-	}
+-
+-	clk = clk_register(NULL, &clock->hw);
+-	if (IS_ERR(clk))
+-		kfree(clock);
+-
+-	return clk;
+-}
+-
+-#define CPG_PLL0CR	0x00d8
+-#define CPG_PLL2CR	0x002c
+-#define CPG_PLL4CR	0x01f4
+ 
+ /*
+  * CPG Clock Data
+@@ -512,13 +271,7 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+ 					 (((md) & BIT(19)) >> 18) | \
+ 					 (((md) & BIT(17)) >> 17))
+ 
+-struct cpg_pll_config {
+-	unsigned int extal_div;
+-	unsigned int pll1_mult;
+-	unsigned int pll3_mult;
+-};
+-
+-static const struct cpg_pll_config cpg_pll_configs[16] __initconst = {
++static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
+ 	/* EXTAL div	PLL1 mult	PLL3 mult */
+ 	{ 1,		192,		192,	},
+ 	{ 1,		192,		128,	},
+@@ -538,112 +291,9 @@ static const struct cpg_pll_config cpg_pll_configs[16] __initconst = {
+ 	{ 2,		192,		192,	},
+ };
+ 
+-static const struct cpg_pll_config *cpg_pll_config __initdata;
+-
+-static
+-struct clk * __init r8a7795_cpg_clk_register(struct device *dev,
+-					     const struct cpg_core_clk *core,
+-					     const struct cpg_mssr_info *info,
+-					     struct clk **clks,
+-					     void __iomem *base)
+-{
+-	const struct clk *parent;
+-	unsigned int mult = 1;
+-	unsigned int div = 1;
+-	u32 value;
+-
+-	parent = clks[core->parent];
+-	if (IS_ERR(parent))
+-		return ERR_CAST(parent);
+-
+-	switch (core->type) {
+-	case CLK_TYPE_GEN3_MAIN:
+-		div = cpg_pll_config->extal_div;
+-		break;
+-
+-	case CLK_TYPE_GEN3_PLL0:
+-		/*
+-		 * PLL0 is a configurable multiplier clock. Register it as a
+-		 * fixed factor clock for now as there's no generic multiplier
+-		 * clock implementation and we currently have no need to change
+-		 * the multiplier value.
+-		 */
+-		value = readl(base + CPG_PLL0CR);
+-		mult = (((value >> 24) & 0x7f) + 1) * 2;
+-		break;
+-
+-	case CLK_TYPE_GEN3_PLL1:
+-		mult = cpg_pll_config->pll1_mult;
+-		break;
+-
+-	case CLK_TYPE_GEN3_PLL2:
+-		/*
+-		 * PLL2 is a configurable multiplier clock. Register it as a
+-		 * fixed factor clock for now as there's no generic multiplier
+-		 * clock implementation and we currently have no need to change
+-		 * the multiplier value.
+-		 */
+-		value = readl(base + CPG_PLL2CR);
+-		mult = (((value >> 24) & 0x7f) + 1) * 2;
+-		break;
+-
+-	case CLK_TYPE_GEN3_PLL3:
+-		mult = cpg_pll_config->pll3_mult;
+-		break;
+-
+-	case CLK_TYPE_GEN3_PLL4:
+-		/*
+-		 * PLL4 is a configurable multiplier clock. Register it as a
+-		 * fixed factor clock for now as there's no generic multiplier
+-		 * clock implementation and we currently have no need to change
+-		 * the multiplier value.
+-		 */
+-		value = readl(base + CPG_PLL4CR);
+-		mult = (((value >> 24) & 0x7f) + 1) * 2;
+-		break;
+-
+-	case CLK_TYPE_GEN3_SD:
+-		return cpg_sd_clk_register(core, base, __clk_get_name(parent));
+-
+-	case CLK_TYPE_GEN3_R:
+-		/* RINT is default. Only if EXTALR is populated, we switch to it */
+-		value = readl(base + CPG_RCKCR) & 0x3f;
+-
+-		if (clk_get_rate(clks[CLK_EXTALR])) {
+-			parent = clks[CLK_EXTALR];
+-			value |= BIT(15);
+-		}
+-
+-		writel(value, base + CPG_RCKCR);
+-		break;
+-
+-	default:
+-		return ERR_PTR(-EINVAL);
+-	}
+-
+-	return clk_register_fixed_factor(NULL, core->name,
+-					 __clk_get_name(parent), 0, mult, div);
+-}
+-
+-/*
+- * Reset register definitions.
+- */
+-#define MODEMR	0xe6160060
+-
+-static u32 rcar_gen3_read_mode_pins(void)
+-{
+-	void __iomem *modemr = ioremap_nocache(MODEMR, 4);
+-	u32 mode;
+-
+-	BUG_ON(!modemr);
+-	mode = ioread32(modemr);
+-	iounmap(modemr);
+-
+-	return mode;
+-}
+-
+ static int __init r8a7795_cpg_mssr_init(struct device *dev)
+ {
++	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
+ 	u32 cpg_mode = rcar_gen3_read_mode_pins();
+ 
+ 	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
+@@ -652,7 +302,7 @@ static int __init r8a7795_cpg_mssr_init(struct device *dev)
+ 		return -EINVAL;
+ 	}
+ 
+-	return 0;
++	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR);
  }
  
-+static void tmio_mmc_hw_reset(struct mmc_host *mmc)
-+{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
-+
-+	if (host->hw_reset)
-+		host->hw_reset(host);
-+
-+	mmc_retune_timer_stop(host->mmc);
-+	mmc_retune_needed(host->mmc);
-+}
-+
-+static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
-+{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
-+	unsigned int num = 0;
-+	int i, ret = 0;
-+	bool *tap;
-+
-+	if (host->init_tuning)
-+		num = host->init_tuning(host);
-+	if (!num) {
-+		/* Tuning is not supported */
-+		ret = 0;
-+		goto out;
-+	}
-+
-+	tap = kmalloc(num * 2, GFP_KERNEL);
-+	if (tap == NULL) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	/*
-+	 * Issue CMD19 twice for each tap
-+	 */
-+	for (i = 0; i < 2 * num; i++) {
-+		int err;
-+
-+		if (host->prepare_tuning)
-+			host->prepare_tuning(host, i);
-+
-+		err = mmc_send_tuning(host->mmc, opcode, NULL);
-+		if (err && err != -EILSEQ) {
-+			ret = err;
-+			goto err_free;
-+		}
-+		tap[i] = (err == 0);
-+
-+		mdelay(1);
-+	}
-+
-+	if (host->select_tuning)
-+		ret = host->select_tuning(host, tap);
-+
-+err_free:
-+	kfree(tap);
-+out:
-+	if (ret < 0) {
-+		dev_warn(&host->pdev->dev, "Tuning procedure failed\n");
-+		tmio_mmc_hw_reset(mmc);
-+	} else {
-+		host->mmc->retune_period = 0;
-+	}
-+
-+	return ret;
-+
-+}
-+
- /* Process requests from the MMC layer */
- static void tmio_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
- {
-@@ -781,6 +851,14 @@ static void tmio_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ const struct cpg_mssr_info r8a7795_cpg_mssr_info __initconst = {
+@@ -673,5 +323,5 @@ const struct cpg_mssr_info r8a7795_cpg_mssr_info __initconst = {
  
- 	spin_unlock_irqrestore(&host->lock, flags);
- 
-+	if (mrq->sbc) {
-+		ret = tmio_mmc_start_command(host, mrq->sbc);
-+		if (ret)
-+			goto fail;
-+		host->last_req_ts = jiffies;
-+		host->mrq = mrq;
-+	}
-+
- 	if (mrq->data) {
- 		ret = tmio_mmc_start_data(host, mrq->data);
- 		if (ret)
-@@ -978,6 +1056,8 @@ static struct mmc_host_ops tmio_mmc_ops = {
- 	.enable_sdio_irq = tmio_mmc_enable_sdio_irq,
- 	.card_busy	= tmio_mmc_card_busy,
- 	.multi_io_quirk	= tmio_multi_io_quirk,
-+	.execute_tuning = tmio_mmc_execute_tuning,
-+	.hw_reset	= tmio_mmc_hw_reset,
+ 	/* Callbacks */
+ 	.init = r8a7795_cpg_mssr_init,
+-	.cpg_clk_register = r8a7795_cpg_clk_register,
++	.cpg_clk_register = rcar_gen3_cpg_clk_register,
  };
- 
- static int tmio_mmc_init_ocr(struct tmio_mmc_host *host)
-@@ -1202,6 +1282,9 @@ int tmio_mmc_host_runtime_suspend(struct device *dev)
- 	struct mmc_host *mmc = dev_get_drvdata(dev);
- 	struct tmio_mmc_host *host = mmc_priv(mmc);
- 
-+	mmc_retune_timer_stop(host->mmc);
-+	mmc_retune_needed(host->mmc);
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+new file mode 100644
+index 0000000000000000..bb4f2f9a8c2f5ba8
+--- /dev/null
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -0,0 +1,359 @@
++/*
++ * R-Car Gen3 Clock Pulse Generator
++ *
++ * Copyright (C) 2015-2016 Glider bvba
++ *
++ * Based on clk-rcar-gen3.c
++ *
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
 +
- 	tmio_mmc_disable_mmc_irqs(host, TMIO_MASK_ALL);
- 
- 	if (host->clk_cache)
++#include <linux/bug.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++
++#include "renesas-cpg-mssr.h"
++#include "rcar-gen3-cpg.h"
++
++#define CPG_PLL0CR		0x00d8
++#define CPG_PLL2CR		0x002c
++#define CPG_PLL4CR		0x01f4
++
++
++/*
++ * SDn Clock
++ */
++#define CPG_SD_STP_HCK		BIT(9)
++#define CPG_SD_STP_CK		BIT(8)
++
++#define CPG_SD_STP_MASK		(CPG_SD_STP_HCK | CPG_SD_STP_CK)
++#define CPG_SD_FC_MASK		(0x7 << 2 | 0x3 << 0)
++
++#define CPG_SD_DIV_TABLE_DATA(stp_hck, stp_ck, sd_srcfc, sd_fc, sd_div) \
++{ \
++	.val = ((stp_hck) ? CPG_SD_STP_HCK : 0) | \
++	       ((stp_ck) ? CPG_SD_STP_CK : 0) | \
++	       ((sd_srcfc) << 2) | \
++	       ((sd_fc) << 0), \
++	.div = (sd_div), \
++}
++
++struct sd_div_table {
++	u32 val;
++	unsigned int div;
++};
++
++struct sd_clock {
++	struct clk_hw hw;
++	void __iomem *reg;
++	const struct sd_div_table *div_table;
++	unsigned int div_num;
++	unsigned int div_min;
++	unsigned int div_max;
++};
++
++/* SDn divider
++ *                     sd_srcfc   sd_fc   div
++ * stp_hck   stp_ck    (div)      (div)     = sd_srcfc x sd_fc
++ *-------------------------------------------------------------------
++ *  0         0         0 (1)      1 (4)      4
++ *  0         0         1 (2)      1 (4)      8
++ *  1         0         2 (4)      1 (4)     16
++ *  1         0         3 (8)      1 (4)     32
++ *  1         0         4 (16)     1 (4)     64
++ *  0         0         0 (1)      0 (2)      2
++ *  0         0         1 (2)      0 (2)      4
++ *  1         0         2 (4)      0 (2)      8
++ *  1         0         3 (8)      0 (2)     16
++ *  1         0         4 (16)     0 (2)     32
++ */
++static const struct sd_div_table cpg_sd_div_table[] = {
++/*	CPG_SD_DIV_TABLE_DATA(stp_hck,  stp_ck,   sd_srcfc,   sd_fc,  sd_div) */
++	CPG_SD_DIV_TABLE_DATA(0,        0,        0,          1,        4),
++	CPG_SD_DIV_TABLE_DATA(0,        0,        1,          1,        8),
++	CPG_SD_DIV_TABLE_DATA(1,        0,        2,          1,       16),
++	CPG_SD_DIV_TABLE_DATA(1,        0,        3,          1,       32),
++	CPG_SD_DIV_TABLE_DATA(1,        0,        4,          1,       64),
++	CPG_SD_DIV_TABLE_DATA(0,        0,        0,          0,        2),
++	CPG_SD_DIV_TABLE_DATA(0,        0,        1,          0,        4),
++	CPG_SD_DIV_TABLE_DATA(1,        0,        2,          0,        8),
++	CPG_SD_DIV_TABLE_DATA(1,        0,        3,          0,       16),
++	CPG_SD_DIV_TABLE_DATA(1,        0,        4,          0,       32),
++};
++
++#define to_sd_clock(_hw) container_of(_hw, struct sd_clock, hw)
++
++static int cpg_sd_clock_enable(struct clk_hw *hw)
++{
++	struct sd_clock *clock = to_sd_clock(hw);
++	u32 val, sd_fc;
++	unsigned int i;
++
++	val = clk_readl(clock->reg);
++
++	sd_fc = val & CPG_SD_FC_MASK;
++	for (i = 0; i < clock->div_num; i++)
++		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
++			break;
++
++	if (i >= clock->div_num)
++		return -EINVAL;
++
++	val &= ~(CPG_SD_STP_MASK);
++	val |= clock->div_table[i].val & CPG_SD_STP_MASK;
++
++	clk_writel(val, clock->reg);
++
++	return 0;
++}
++
++static void cpg_sd_clock_disable(struct clk_hw *hw)
++{
++	struct sd_clock *clock = to_sd_clock(hw);
++
++	clk_writel(clk_readl(clock->reg) | CPG_SD_STP_MASK, clock->reg);
++}
++
++static int cpg_sd_clock_is_enabled(struct clk_hw *hw)
++{
++	struct sd_clock *clock = to_sd_clock(hw);
++
++	return !(clk_readl(clock->reg) & CPG_SD_STP_MASK);
++}
++
++static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
++						unsigned long parent_rate)
++{
++	struct sd_clock *clock = to_sd_clock(hw);
++	unsigned long rate = parent_rate;
++	u32 val, sd_fc;
++	unsigned int i;
++
++	val = clk_readl(clock->reg);
++
++	sd_fc = val & CPG_SD_FC_MASK;
++	for (i = 0; i < clock->div_num; i++)
++		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
++			break;
++
++	if (i >= clock->div_num)
++		return -EINVAL;
++
++	return DIV_ROUND_CLOSEST(rate, clock->div_table[i].div);
++}
++
++static unsigned int cpg_sd_clock_calc_div(struct sd_clock *clock,
++					  unsigned long rate,
++					  unsigned long parent_rate)
++{
++	unsigned int div;
++
++	if (!rate)
++		rate = 1;
++
++	div = DIV_ROUND_CLOSEST(parent_rate, rate);
++
++	return clamp_t(unsigned int, div, clock->div_min, clock->div_max);
++}
++
++static long cpg_sd_clock_round_rate(struct clk_hw *hw, unsigned long rate,
++				      unsigned long *parent_rate)
++{
++	struct sd_clock *clock = to_sd_clock(hw);
++	unsigned int div = cpg_sd_clock_calc_div(clock, rate, *parent_rate);
++
++	return DIV_ROUND_CLOSEST(*parent_rate, div);
++}
++
++static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
++				   unsigned long parent_rate)
++{
++	struct sd_clock *clock = to_sd_clock(hw);
++	unsigned int div = cpg_sd_clock_calc_div(clock, rate, parent_rate);
++	u32 val;
++	unsigned int i;
++
++	for (i = 0; i < clock->div_num; i++)
++		if (div == clock->div_table[i].div)
++			break;
++
++	if (i >= clock->div_num)
++		return -EINVAL;
++
++	val = clk_readl(clock->reg);
++	val &= ~(CPG_SD_STP_MASK | CPG_SD_FC_MASK);
++	val |= clock->div_table[i].val & (CPG_SD_STP_MASK | CPG_SD_FC_MASK);
++	clk_writel(val, clock->reg);
++
++	return 0;
++}
++
++static const struct clk_ops cpg_sd_clock_ops = {
++	.enable = cpg_sd_clock_enable,
++	.disable = cpg_sd_clock_disable,
++	.is_enabled = cpg_sd_clock_is_enabled,
++	.recalc_rate = cpg_sd_clock_recalc_rate,
++	.round_rate = cpg_sd_clock_round_rate,
++	.set_rate = cpg_sd_clock_set_rate,
++};
++
++static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
++					       void __iomem *base,
++					       const char *parent_name)
++{
++	struct clk_init_data init;
++	struct sd_clock *clock;
++	struct clk *clk;
++	unsigned int i;
++
++	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
++	if (!clock)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = core->name;
++	init.ops = &cpg_sd_clock_ops;
++	init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	clock->reg = base + core->offset;
++	clock->hw.init = &init;
++	clock->div_table = cpg_sd_div_table;
++	clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
++
++	clock->div_max = clock->div_table[0].div;
++	clock->div_min = clock->div_max;
++	for (i = 1; i < clock->div_num; i++) {
++		clock->div_max = max(clock->div_max, clock->div_table[i].div);
++		clock->div_min = min(clock->div_min, clock->div_table[i].div);
++	}
++
++	clk = clk_register(NULL, &clock->hw);
++	if (IS_ERR(clk))
++		kfree(clock);
++
++	return clk;
++}
++
++
++static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
++static unsigned int cpg_clk_extalr __initdata;
++
++struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
++	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
++	struct clk **clks, void __iomem *base)
++{
++	const struct clk *parent;
++	unsigned int mult = 1;
++	unsigned int div = 1;
++	u32 value;
++
++	parent = clks[core->parent];
++	if (IS_ERR(parent))
++		return ERR_CAST(parent);
++
++	switch (core->type) {
++	case CLK_TYPE_GEN3_MAIN:
++		div = cpg_pll_config->extal_div;
++		break;
++
++	case CLK_TYPE_GEN3_PLL0:
++		/*
++		 * PLL0 is a configurable multiplier clock. Register it as a
++		 * fixed factor clock for now as there's no generic multiplier
++		 * clock implementation and we currently have no need to change
++		 * the multiplier value.
++		 */
++		value = readl(base + CPG_PLL0CR);
++		mult = (((value >> 24) & 0x7f) + 1) * 2;
++		break;
++
++	case CLK_TYPE_GEN3_PLL1:
++		mult = cpg_pll_config->pll1_mult;
++		break;
++
++	case CLK_TYPE_GEN3_PLL2:
++		/*
++		 * PLL2 is a configurable multiplier clock. Register it as a
++		 * fixed factor clock for now as there's no generic multiplier
++		 * clock implementation and we currently have no need to change
++		 * the multiplier value.
++		 */
++		value = readl(base + CPG_PLL2CR);
++		mult = (((value >> 24) & 0x7f) + 1) * 2;
++		break;
++
++	case CLK_TYPE_GEN3_PLL3:
++		mult = cpg_pll_config->pll3_mult;
++		break;
++
++	case CLK_TYPE_GEN3_PLL4:
++		/*
++		 * PLL4 is a configurable multiplier clock. Register it as a
++		 * fixed factor clock for now as there's no generic multiplier
++		 * clock implementation and we currently have no need to change
++		 * the multiplier value.
++		 */
++		value = readl(base + CPG_PLL4CR);
++		mult = (((value >> 24) & 0x7f) + 1) * 2;
++		break;
++
++	case CLK_TYPE_GEN3_SD:
++		return cpg_sd_clk_register(core, base, __clk_get_name(parent));
++
++	case CLK_TYPE_GEN3_R:
++		/*
++		 * RINT is default.
++		 * Only if EXTALR is populated, we switch to it.
++		 */
++		value = readl(base + CPG_RCKCR) & 0x3f;
++
++		if (clk_get_rate(clks[cpg_clk_extalr])) {
++			parent = clks[cpg_clk_extalr];
++			value |= BIT(15);
++		}
++
++		writel(value, base + CPG_RCKCR);
++		break;
++
++	default:
++		return ERR_PTR(-EINVAL);
++	}
++
++	return clk_register_fixed_factor(NULL, core->name,
++					 __clk_get_name(parent), 0, mult, div);
++}
++
++/*
++ * Reset register definitions.
++ */
++#define MODEMR	0xe6160060
++
++u32 __init rcar_gen3_read_mode_pins(void)
++{
++	void __iomem *modemr = ioremap_nocache(MODEMR, 4);
++	u32 mode;
++
++	BUG_ON(!modemr);
++	mode = ioread32(modemr);
++	iounmap(modemr);
++
++	return mode;
++}
++
++int __init rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
++			      unsigned int clk_extalr)
++{
++	cpg_pll_config = config;
++	cpg_clk_extalr = clk_extalr;
++	return 0;
++}
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+new file mode 100644
+index 0000000000000000..f699085147d1aece
+--- /dev/null
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -0,0 +1,43 @@
++/*
++ * R-Car Gen3 Clock Pulse Generator
++ *
++ * Copyright (C) 2015-2016 Glider bvba
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
++
++#ifndef __CLK_RENESAS_RCAR_GEN3_CPG_H__
++#define __CLK_RENESAS_RCAR_GEN3_CPG_H__
++
++enum rcar_gen3_clk_types {
++	CLK_TYPE_GEN3_MAIN = CLK_TYPE_CUSTOM,
++	CLK_TYPE_GEN3_PLL0,
++	CLK_TYPE_GEN3_PLL1,
++	CLK_TYPE_GEN3_PLL2,
++	CLK_TYPE_GEN3_PLL3,
++	CLK_TYPE_GEN3_PLL4,
++	CLK_TYPE_GEN3_SD,
++	CLK_TYPE_GEN3_R,
++};
++
++#define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
++	DEF_BASE(_name, _id, CLK_TYPE_GEN3_SD, _parent, .offset = _offset)
++
++struct rcar_gen3_cpg_pll_config {
++	unsigned int extal_div;
++	unsigned int pll1_mult;
++	unsigned int pll3_mult;
++};
++
++#define CPG_RCKCR	0x240
++
++u32 rcar_gen3_read_mode_pins(void);
++struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
++	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
++	struct clk **clks, void __iomem *base);
++int rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
++		       unsigned int clk_extalr);
++
++#endif
 -- 
-2.1.4
+1.9.1
+
