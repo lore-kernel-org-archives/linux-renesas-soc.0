@@ -1,119 +1,294 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org,
-	hch@infradead.org
-Cc: robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	geert+renesas@glider.be, linus.walleij@linaro.org,
-	dan.j.williams@intel.com, arnd@arndb.de,
-	linux-arch@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv6 3/8] dma-mapping: add dma_{map,unmap}_resource
-Date: Mon,  9 May 2016 18:44:02 +0200
-Message-Id: <1462812247-3414-4-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1462812247-3414-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1462812247-3414-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35928 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933000AbcE3QMr (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 30 May 2016 12:12:47 -0400
+Received: by mail-wm0-f65.google.com with SMTP id q62so24149652wmg.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 May 2016 09:12:46 -0700 (PDT)
+Subject: Re: [RFC 08/21] drm: rcar-du: Add DPLL support
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
+References: <1464624020-27709-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1464624020-27709-9-git-send-email-ulrich.hecht+renesas@gmail.com>
+Cc: kuninori.morimoto.gx@renesas.com,
+	laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
+	architt@codeaurora.org, vz@mleia.com, koji.matsuoka.xm@renesas.com,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+From: Dirk Behme <dirk.behme@gmail.com>
+Message-ID: <574C6677.8060500@gmail.com>
+Date: Mon, 30 May 2016 18:12:39 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1464624020-27709-9-git-send-email-ulrich.hecht+renesas@gmail.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Map/Unmap a device MMIO resource from a physical address. If no dma_map_ops
-method is available the operation is a no-op.
+On 30.05.2016 18:00, Ulrich Hecht wrote:
+> From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+>
+> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>   drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 97 ++++++++++++++++++++++++++++++++-
+>   drivers/gpu/drm/rcar-du/rcar_du_crtc.h  |  8 +++
+>   drivers/gpu/drm/rcar-du/rcar_du_drv.c   |  1 +
+>   drivers/gpu/drm/rcar-du/rcar_du_drv.h   |  1 +
+>   drivers/gpu/drm/rcar-du/rcar_du_plane.h |  7 ++-
+>   drivers/gpu/drm/rcar-du/rcar_du_regs.h  | 19 +++++++
+>   6 files changed, 131 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> index 0d8bdda..e10943b 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -30,6 +30,12 @@
+>   #include "rcar_du_regs.h"
+>   #include "rcar_du_vsp.h"
+>
+> +#define PRODUCT_REG	0xfff00044
+> +#define PRODUCT_H3_BIT	(0x4f << 8)
+> +#define PRODUCT_MASK	(0x7f << 8)
+> +#define CUT_ES1		(0x00)
+> +#define CUT_ES1_MASK	(0x000000ff)
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- Documentation/DMA-API.txt   | 22 +++++++++++++++++-----
- include/linux/dma-mapping.h | 36 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 53 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/DMA-API.txt b/Documentation/DMA-API.txt
-index 45ef3f2..c7e5f99 100644
---- a/Documentation/DMA-API.txt
-+++ b/Documentation/DMA-API.txt
-@@ -277,14 +277,26 @@ and <size> parameters are provided to do partial page mapping, it is
- recommended that you never use these unless you really know what the
- cache width is.
- 
-+dma_addr_t
-+dma_map_resource(struct device *dev, phys_addr_t phys_addr, size_t size,
-+		 enum dma_data_direction dir, struct dma_attrs *attrs)
-+
-+void
-+dma_unmap_resource(struct device *dev, dma_addr_t addr, size_t size,
-+		   enum dma_data_direction dir, struct dma_attrs *attrs)
-+
-+API for mapping and unmapping for MMIO resources. All the notes and
-+warnings for the other mapping APIs apply here. The API should only be
-+used to map device MMIO resources, mapping of RAM is not permitted.
-+
- int
- dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
- 
--In some circumstances dma_map_single() and dma_map_page() will fail to create
--a mapping. A driver can check for these errors by testing the returned
--DMA address with dma_mapping_error(). A non-zero return value means the mapping
--could not be created and the driver should take appropriate action (e.g.
--reduce current DMA mapping usage or delay and try again later).
-+In some circumstances dma_map_single(), dma_map_page() and dma_map_resource()
-+will fail to create a mapping. A driver can check for these errors by testing
-+the returned DMA address with dma_mapping_error(). A non-zero return value
-+means the mapping could not be created and the driver should take appropriate
-+action (e.g. reduce current DMA mapping usage or delay and try again later).
- 
- 	int
- 	dma_map_sg(struct device *dev, struct scatterlist *sg,
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 8617fa1..dd228ce 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -218,6 +218,42 @@ static inline void dma_unmap_page(struct device *dev, dma_addr_t addr,
- 	debug_dma_unmap_page(dev, addr, size, dir, false);
- }
- 
-+static inline dma_addr_t dma_map_resource(struct device *dev,
-+					  phys_addr_t phys_addr,
-+					  size_t size,
-+					  enum dma_data_direction dir,
-+					  struct dma_attrs *attrs)
-+{
-+	struct dma_map_ops *ops = get_dma_ops(dev);
-+	unsigned long pfn = __phys_to_pfn(phys_addr);
-+	dma_addr_t addr;
-+
-+	BUG_ON(!valid_dma_direction(dir));
-+
-+	/* Don't allow RAM to be mapped */
-+	BUG_ON(pfn_valid(pfn));
-+
-+	addr = phys_addr;
-+	if (ops->map_resource)
-+		addr = ops->map_resource(dev, phys_addr, size, dir, attrs);
-+
-+	debug_dma_map_resource(dev, phys_addr, size, dir, addr);
-+
-+	return addr;
-+}
-+
-+static inline void dma_unmap_resource(struct device *dev, dma_addr_t addr,
-+				      size_t size, enum dma_data_direction dir,
-+				      struct dma_attrs *attrs)
-+{
-+	struct dma_map_ops *ops = get_dma_ops(dev);
-+
-+	BUG_ON(!valid_dma_direction(dir));
-+	if (ops->unmap_resource)
-+		ops->unmap_resource(dev, addr, size, dir, attrs);
-+	debug_dma_unmap_resource(dev, addr, size, dir);
-+}
-+
- static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
- 					   size_t size,
- 					   enum dma_data_direction dir)
--- 
-2.8.2
+NACK for the hard coded register.
+
+We've already discussed this in the thread
+
+https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg04008.html
+
+and found that this isn't ready this way:
+
+https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg04079.html
+
+Best regards
+
+Dirk
+
+
+
+>   static u32 rcar_du_crtc_read(struct rcar_du_crtc *rcrtc, u32 reg)
+>   {
+>   	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> @@ -106,14 +112,74 @@ static void rcar_du_crtc_put(struct rcar_du_crtc *rcrtc)
+>    * Hardware Setup
+>    */
+>
+> +static void rcar_du_dpll_divider(struct dpll_info *dpll, unsigned int extclk,
+> +				 unsigned int mode_clock)
+> +{
+> +	unsigned long dpllclk;
+> +	unsigned long diff;
+> +	unsigned long n, m, fdpll;
+> +	bool match_flag = false;
+> +	bool clk_diff_set = true;
+> +
+> +	for (n = 39; n < 120; n++) {
+> +		for (m = 0; m < 4; m++) {
+> +			for (fdpll = 1; fdpll < 32; fdpll++) {
+> +				/* 1/2 (FRQSEL=1) for duty rate 50% */
+> +				dpllclk = extclk * (n + 1) / (m + 1)
+> +						 / (fdpll + 1) / 2;
+> +				if (dpllclk >= 400000000)
+> +					continue;
+> +
+> +				diff = abs((long)dpllclk - (long)mode_clock);
+> +				if (clk_diff_set ||
+> +					((diff == 0) || (dpll->diff > diff))) {
+> +					dpll->diff = diff;
+> +					dpll->n = n;
+> +					dpll->m = m;
+> +					dpll->fdpll = fdpll;
+> +					dpll->dpllclk = dpllclk;
+> +
+> +					if (clk_diff_set)
+> +						clk_diff_set = false;
+> +
+> +					if (diff == 0) {
+> +						match_flag = true;
+> +						break;
+> +					}
+> +				}
+> +			}
+> +			if (match_flag)
+> +				break;
+> +		}
+> +		if (match_flag)
+> +			break;
+> +	}
+> +}
+> +
+>   static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+>   {
+>   	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
+> +	struct rcar_du_device *rcdu = rcrtc->group->dev;
+>   	unsigned long mode_clock = mode->clock * 1000;
+>   	unsigned long clk;
+>   	u32 value;
+>   	u32 escr;
+>   	u32 div;
+> +	u32 dpll_reg = 0;
+> +	struct dpll_info *dpll;
+> +	void __iomem *product_reg;
+> +	bool h3_es1_workaround = false;
+> +
+> +	dpll = kzalloc(sizeof(*dpll), GFP_KERNEL);
+> +	if (dpll == NULL)
+> +		return;
+> +
+> +	/* DU2 DPLL Clock Select bit workaround in R-Car H3(ES1.0) */
+> +	product_reg = ioremap(PRODUCT_REG, 0x04);
+> +	if (((readl(product_reg) & PRODUCT_MASK) == PRODUCT_H3_BIT)
+> +		&& ((readl(product_reg) & CUT_ES1_MASK) == CUT_ES1))
+> +		h3_es1_workaround = true;
+> +	iounmap(product_reg);
+>
+>   	/* Compute the clock divisor and select the internal or external dot
+>   	 * clock based on the requested frequency.
+> @@ -130,6 +196,15 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+>   		u32 extdiv;
+>
+>   		extclk = clk_get_rate(rcrtc->extclock);
+> +
+> +		if (rcdu->info->dpll_ch & (0x01 << rcrtc->index)) {
+> +			rcar_du_dpll_divider(dpll, extclk, mode_clock);
+> +			extclk = dpll->dpllclk;
+> +			dev_dbg(rcrtc->group->dev->dev,
+> +				"dpllclk:%d, fdpll:%d, n:%d, m:%d, diff:%d\n",
+> +				 dpll->dpllclk, dpll->fdpll, dpll->n, dpll->m,
+> +				 dpll->diff);
+> +		}
+>   		extdiv = DIV_ROUND_CLOSEST(extclk, mode_clock);
+>   		extdiv = clamp(extdiv, 1U, 64U) - 1;
+>
+> @@ -140,7 +215,27 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+>   		    abs((long)rate - (long)mode_clock)) {
+>   			dev_dbg(rcrtc->group->dev->dev,
+>   				"crtc%u: using external clock\n", rcrtc->index);
+> -			escr = extdiv | ESCR_DCLKSEL_DCLKIN;
+> +			if (rcdu->info->dpll_ch & (0x01 << rcrtc->index)) {
+> +				escr = ESCR_DCLKSEL_DCLKIN | 0x01;
+> +				dpll_reg =  DPLLCR_CODE | DPLLCR_M(dpll->m) |
+> +					DPLLCR_FDPLL(dpll->fdpll) |
+> +					DPLLCR_CLKE | DPLLCR_N(dpll->n) |
+> +					DPLLCR_STBY;
+> +
+> +				if (rcrtc->index == DU_CH_1)
+> +					dpll_reg |= (DPLLCR_PLCS1 |
+> +						 DPLLCR_INCS_DPLL01_DOTCLKIN13);
+> +				if (rcrtc->index == DU_CH_2) {
+> +					dpll_reg |= (DPLLCR_PLCS0 |
+> +						 DPLLCR_INCS_DPLL01_DOTCLKIN02);
+> +					if (h3_es1_workaround)
+> +						dpll_reg |=  (0x01 << 21);
+> +				}
+> +
+> +				rcar_du_group_write(rcrtc->group, DPLLCR,
+> +								  dpll_reg);
+> +			} else
+> +				escr = extdiv | ESCR_DCLKSEL_DCLKIN;
+>   		}
+>   	}
+>
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+> index 459e539..9a56cc7 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+> @@ -54,6 +54,14 @@ struct rcar_du_crtc {
+>   	struct rcar_du_vsp *vsp;
+>   };
+>
+> +struct dpll_info {
+> +	unsigned int dpllclk;
+> +	unsigned int diff;
+> +	unsigned int fdpll;
+> +	unsigned int n;
+> +	unsigned int m;
+> +};
+> +
+>   #define to_rcar_crtc(c)	container_of(c, struct rcar_du_crtc, crtc)
+>
+>   enum rcar_du_output {
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> index 0a93d2a..5ed0d61 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -165,6 +165,7 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
+>   		},
+>   	},
+>   	.num_lvds = 1,
+> +	.dpll_ch =  BIT(1) | BIT(2),
+>   };
+>
+>   static const struct of_device_id rcar_du_of_table[] = {
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> index d1d1d8d..790829b 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+> @@ -69,6 +69,7 @@ struct rcar_du_device_info {
+>   	unsigned int num_crtcs;
+>   	struct rcar_du_output_routing routes[RCAR_DU_OUTPUT_MAX];
+>   	unsigned int num_lvds;
+> +	unsigned int dpll_ch;
+>   };
+>
+>   #define RCAR_DU_MAX_CRTCS		4
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
+> index b18b7b2..47fad23 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
+> @@ -1,7 +1,7 @@
+>   /*
+>    * rcar_du_plane.h  --  R-Car Display Unit Planes
+>    *
+> - * Copyright (C) 2013-2014 Renesas Electronics Corporation
+> + * Copyright (C) 2013-2015 Renesas Electronics Corporation
+>    *
+>    * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+>    *
+> @@ -34,6 +34,11 @@ enum rcar_du_plane_source {
+>   	RCAR_DU_PLANE_VSPD1,
+>   };
+>
+> +#define DU_CH_0		0
+> +#define DU_CH_1		1
+> +#define DU_CH_2		2
+> +#define DU_CH_3		3
+> +
+>   struct rcar_du_plane {
+>   	struct drm_plane plane;
+>   	struct rcar_du_group *group;
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_regs.h b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
+> index fedb016..7a34bf3 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_regs.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
+> @@ -277,6 +277,25 @@
+>   #define DEFR10_TSEL_H3_TCON1	(0 << 1) /* DEFR102 register only (DU2/DU3) */
+>   #define DEFR10_DEFE10		(1 << 0)
+>
+> +#define DPLLCR			0x20044
+> +#define DPLLCR_CODE		(0x95 << 24)
+> +#define DPLLCR_PLCS1		(1 << 23)
+> +#define DPLLCR_PLCS0		(1 << 20)
+> +#define DPLLCR_CLKE		(1 << 18)
+> +#define DPLLCR_FDPLL(n)		((n) << 12)	/* n=0 Setting prohibited */
+> +/* H'00 to H'26, H'78 to H'7F: Setting prohibited.*/
+> +#define DPLLCR_N(n)		((n) << 5)
+> +#define DPLLCR_M(n)		((n) << 3)
+> +#define DPLLCR_STBY		(1 << 2)
+> +#define DPLLCR_INCS_DPLL01_DOTCLKIN02	(0 << 0)
+> +#define DPLLCR_INCS_DPLL01_DOTCLKIN13	(1 << 1)
+> +
+> +#define DPLLC2R			0x20048
+> +#define DPLLC2R_CODE		(0x95 << 24)
+> +#define DPLLC2R_SELC		(1 << 12)
+> +#define DPLLC2R_M(n)		((n) << 8)
+> +#define DPLLC2R_FDPLL(n)	((n) << 0)	/* n=0 Setting prohibited */
+> +
+>   /* -----------------------------------------------------------------------------
+>    * Display Timing Generation Registers
+>    */
+>
