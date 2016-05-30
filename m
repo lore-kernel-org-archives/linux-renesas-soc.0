@@ -1,53 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:38072 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751903AbcETG7s (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55138 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161249AbcE3QB7 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 20 May 2016 02:59:48 -0400
-Received: from vsmta14.fe.internet.bosch.com (unknown [10.4.98.54])
-	by imta23.fe.bosch.de (Postfix) with ESMTP id 9083B15800A8
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 May 2016 08:59:46 +0200 (CEST)
-Received: from SI-HUB1000.de.bosch.com (vsgw24.fe.internet.bosch.com [10.4.98.24])
-	by vsmta14.fe.internet.bosch.com (Postfix) with ESMTP id E559EA40267
-	for <linux-renesas-soc@vger.kernel.org>; Fri, 20 May 2016 08:59:45 +0200 (CEST)
-From: Dirk Behme <dirk.behme@de.bosch.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	<linux-renesas-soc@vger.kernel.org>
-CC: Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH v3 0/6] arm64: renesas: Obtain MD pin values using syscon/regmap
-Date: Fri, 20 May 2016 08:57:36 +0200
-Message-ID: <1463727462-16260-1-git-send-email-dirk.behme@de.bosch.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	Mon, 30 May 2016 12:01:59 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87h9dtrs3s.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1b7PdU-0003yF-Am@debutante>
+Date: Mon, 30 May 2016 17:01:48 +0100
+Subject: Applied "ASoC: rsrc-card: remove unused dai_num" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This is a resend of
+The patch
 
-http://www.spinics.net/lists/linux-sh/msg44757.html
+   ASoC: rsrc-card: remove unused dai_num
 
-It's rebased against
+has been applied to the asoc tree at
 
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/gen3-latest
-renesas-drivers-2016-05-17-v4.6
-4717ef6d59c3204e385c
-Revert "ASoC: simple-card: Add pm callbacks to platform driver"
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-and adds support for r8a7796, too.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-It's boot tested on r8a7795 Salvator-X and checked that the same
-mode value is read without and with this patch series.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Dirk
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Changes in v3:
-- Rename R-Car M3 -> R-Car M3-W
-- Fix subject of patch 2/6
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Changes in v2:
-- rebase against renesas-drivers-2016-05-17-v4.6
-- switch renesas,rst-<soctype> to renesas,<soctype>-rst
-- Fix typo in r8a7796-rst
-- Move rcar_gen3_read_mode_pins() to renesas-cpg-mssr.c, as we're gonna need it for
-  R-Car Gen2 too, if/when that is converted to cpg-mssr.c.
+Thanks,
+Mark
+
+>From 52fd98bcaf22052fc8946d36b13d5e646b7b41b0 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Fri, 20 May 2016 09:39:55 +0000
+Subject: [PATCH] ASoC: rsrc-card: remove unused dai_num
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sh/rcar/rsrc-card.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/sound/soc/sh/rcar/rsrc-card.c b/sound/soc/sh/rcar/rsrc-card.c
+index 1bc7ecfc42a9..b85b5ee5fad4 100644
+--- a/sound/soc/sh/rcar/rsrc-card.c
++++ b/sound/soc/sh/rcar/rsrc-card.c
+@@ -64,7 +64,6 @@ struct rsrc_card_priv {
+ 	struct snd_soc_codec_conf codec_conf;
+ 	struct rsrc_card_dai *dai_props;
+ 	struct snd_soc_dai_link *dai_link;
+-	int dai_num;
+ 	u32 convert_rate;
+ 	u32 convert_channels;
+ };
+@@ -418,7 +417,6 @@ static int rsrc_card_parse_of(struct device_node *node,
+ 
+ 	priv->dai_props	= props;
+ 	priv->dai_link	= links;
+-	priv->dai_num	= num;
+ 
+ 	/* Init snd_soc_card */
+ 	priv->snd_card.owner			= THIS_MODULE;
+-- 
+2.8.1
