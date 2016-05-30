@@ -1,40 +1,56 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Sender: Kieran Bingham <kieran@ksquared.org.uk>
-From: Kieran Bingham <kieran@bingham.xyz>
-To: laurent.pinchart@ideasonboard.com,
-	linux-renesas-soc@vger.kernel.org,
-	kieran@bingham.xyz
-Cc: linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 0/4] RCar r8a7795 FCPF support
-Date: Fri, 27 May 2016 18:19:20 +0100
-Message-Id: <1464369565-12259-1-git-send-email-kieran@bingham.xyz>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34348 "EHLO
+	mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161418AbcE3QBF (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 30 May 2016 12:01:05 -0400
+Received: by mail-lf0-f67.google.com with SMTP id 65so14284868lfq.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 May 2016 09:01:04 -0700 (PDT)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
+Cc: kuninori.morimoto.gx@renesas.com,
+	laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
+	architt@codeaurora.org, vz@mleia.com, koji.matsuoka.xm@renesas.com,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	Takashi Saito <takashi.saitou.ry@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [RFC 14/21] v4l: vsp1: Change VSP1 LIF linebuffer FIFO
+Date: Mon, 30 May 2016 18:00:13 +0200
+Message-Id: <1464624020-27709-15-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1464624020-27709-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1464624020-27709-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-An RCar FCP driver is available with support for the FCPV module for VSP.
-This series updates that driver to support the FCPF and then provide the
-relevant nodes in the r8a7795 device tree.
+This patch changes to VSPD hardware recommended value.
+Purpose is highest pixel clock without underruns.
+In the default R-Car Linux BSP config this value is
+wrong and therefore there are many underruns.
 
-Checkpatch generates a warning on these DT references but they are
-documented under Documentation/devicetree/bindings/media/renesas,fcp.txt
+Signed-off-by: Takashi Saito <takashi.saitou.ry@renesas.com>
+Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/media/platform/vsp1/vsp1_lif.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-These patches are based on Geert's renesas-drivers tree, and are pushed
-to a branch at git@github.com:kbingham/linux.git renesas/fcpf for
-convenience.
-
-Kieran Bingham (4):
-  v4l: Extend FCP compatible list to support the FDP
-  dt-bindings: Update Renesas R-Car FCP DT binding
-  dt-bindings: Document Renesas R-Car FCP power-domains usage
-  arm64: dts: r8a7795: add FCPF device nodes
-
- .../devicetree/bindings/media/renesas,fcp.txt       |  6 +++++-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi            | 21 +++++++++++++++++++++
- drivers/media/platform/rcar-fcp.c                   |  1 +
- 3 files changed, 27 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/media/platform/vsp1/vsp1_lif.c b/drivers/media/platform/vsp1/vsp1_lif.c
+index 60d26b6..b34e80f 100644
+--- a/drivers/media/platform/vsp1/vsp1_lif.c
++++ b/drivers/media/platform/vsp1/vsp1_lif.c
+@@ -126,9 +126,9 @@ static void lif_configure(struct vsp1_entity *entity,
+ {
+ 	const struct v4l2_mbus_framefmt *format;
+ 	struct vsp1_lif *lif = to_lif(&entity->subdev);
+-	unsigned int hbth = 1300;
+-	unsigned int obth = 400;
+-	unsigned int lbth = 200;
++	unsigned int hbth = 0;
++	unsigned int obth = 3000;
++	unsigned int lbth = 0;
+ 
+ 	format = vsp1_entity_get_pad_format(&lif->entity, lif->entity.config,
+ 					    LIF_PAD_SOURCE);
 -- 
-2.5.0
+2.7.4
