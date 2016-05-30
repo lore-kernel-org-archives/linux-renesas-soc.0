@@ -1,41 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:39215 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932577AbcESRqD (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:44785 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161641AbcE3RFK (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 19 May 2016 13:46:03 -0400
+	Mon, 30 May 2016 13:05:10 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
+To: Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: dts: r8a7794: Remove nonexistent thermal sensor clock
-Date: Thu, 19 May 2016 19:45:59 +0200
-Message-Id: <1463679959-30414-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 1/3] soc: renesas: rcar-sysc: Document r8a7796 support
+Date: Mon, 30 May 2016 19:05:09 +0200
+Message-Id: <1464627911-8126-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464627911-8126-1-git-send-email-geert+renesas@glider.be>
+References: <1464627911-8126-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-According to the latest information, there is no thermal IP block
-present on the r8a7794 SoC.
-
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- include/dt-bindings/clock/r8a7794-clock.h | 1 -
- 1 file changed, 1 deletion(-)
+v2:
+  - Add Acked-by.
+---
+ Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/dt-bindings/clock/r8a7794-clock.h b/include/dt-bindings/clock/r8a7794-clock.h
-index 4d3ecd626c1fe0a3..a3491ba2f6ecbf25 100644
---- a/include/dt-bindings/clock/r8a7794-clock.h
-+++ b/include/dt-bindings/clock/r8a7794-clock.h
-@@ -67,7 +67,6 @@
- #define R8A7794_CLK_IRQC		7
+diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+index b74e4d4785ab2d60..0725fb37a973d8eb 100644
+--- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
++++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+@@ -14,6 +14,7 @@ Required properties:
+       - "renesas,r8a7793-sysc" (R-Car M2-N)
+       - "renesas,r8a7794-sysc" (R-Car E2)
+       - "renesas,r8a7795-sysc" (R-Car H3)
++      - "renesas,r8a7796-sysc" (R-Car M3-W)
+   - reg: Address start and address range for the device.
+   - #power-domain-cells: Must be 1.
  
- /* MSTP5 */
--#define R8A7794_CLK_THERMAL		22
- #define R8A7794_CLK_PWM			23
- 
- /* MSTP7 */
 -- 
 1.9.1
