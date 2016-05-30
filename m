@@ -1,106 +1,135 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:35735 "EHLO
-	mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754676AbcFADmB (ORCPT
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36634 "EHLO
+	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161220AbcE3Qgn (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 31 May 2016 23:42:01 -0400
-MIME-Version: 1.0
-In-Reply-To: <574C6C16.3020703@gmail.com>
-References: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
-	<1464625737-6646-3-git-send-email-geert+renesas@glider.be>
-	<574C6C16.3020703@gmail.com>
-Date: Wed, 1 Jun 2016 12:42:00 +0900
-Message-ID: <CANqRtoTkQSoqPc_EaS7AUtvW+5U3-OiSc8SxufQYMpUrWLySGw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] clk: renesas: Add r8a7796 CPG Core Clock Definitions
-From: Magnus Damm <magnus.damm@gmail.com>
-To: Dirk Behme <dirk.behme@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Mon, 30 May 2016 12:36:43 -0400
+Subject: Re: [PATCH v2 2/4] clk: renesas: Add r8a7796 CPG Core Clock
+ Definitions
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms+renesas@verge.net.au>,
+	Stephen Boyd <sboyd@codeaurora.org>
+References: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
+ <1464625737-6646-3-git-send-email-geert+renesas@glider.be>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
 	Magnus Damm <damm+renesas@opensource.se>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org
+From: Dirk Behme <dirk.behme@gmail.com>
+Message-ID: <574C6C16.3020703@gmail.com>
+Date: Mon, 30 May 2016 18:36:38 +0200
+MIME-Version: 1.0
+In-Reply-To: <1464625737-6646-3-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Dirk,
+Hi Geert,
 
-On Tue, May 31, 2016 at 1:36 AM, Dirk Behme <dirk.behme@gmail.com> wrote:
-> Hi Geert,
+On 30.05.2016 18:28, Geert Uytterhoeven wrote:
+> Add all R-Car M3-W Clock Pulse Generator Core Clock Outputs, as listed
+> in Table 8.2b ("List of Clocks [R-Car M3-W]") of the R-Car Gen3
+> datasheet (rev. 0.51 + Errata for Rev051 Mar 31 2016).
 >
+> Note that internal CPG clocks (S0, S1, S2, S3, SDSRC, and SSPSRC) are
+> not included, as they are used as internal clock sources only, and never
+> referenced from DT.
 >
-> On 30.05.2016 18:28, Geert Uytterhoeven wrote:
->>
->> Add all R-Car M3-W Clock Pulse Generator Core Clock Outputs, as listed
->> in Table 8.2b ("List of Clocks [R-Car M3-W]") of the R-Car Gen3
->> datasheet (rev. 0.51 + Errata for Rev051 Mar 31 2016).
->>
->> Note that internal CPG clocks (S0, S1, S2, S3, SDSRC, and SSPSRC) are
->> not included, as they are used as internal clock sources only, and never
->> referenced from DT.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> Tested-by: Simon Horman <horms+renesas@verge.net.au>
->> ---
->> v2:
->>    - Add Tested-by.
->> ---
-[snip]
->> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
->> +
->> +/* r8a7796 CPG Core Clocks */
->> +#define R8A7796_CLK_Z                  0
->> +#define R8A7796_CLK_Z2                 1
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Tested-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+> v2:
+>    - Add Tested-by.
+> ---
+>   include/dt-bindings/clock/r8a7796-cpg-mssr.h | 69 ++++++++++++++++++++++++++++
+>   1 file changed, 69 insertions(+)
+>   create mode 100644 include/dt-bindings/clock/r8a7796-cpg-mssr.h
 >
-> I think we recently started a discussion to find a more clever way to avoid
-> re-defining (copy & paste) all this R-Car3 clocks  (compare [1]) where they
-> are the same over the R-Car3 family while still being able to deal with the
-> differences.
->
-> [1]
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/include/dt-bindings/clock/r8a7795-cpg-mssr.h
+> diff --git a/include/dt-bindings/clock/r8a7796-cpg-mssr.h b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
+> new file mode 100644
+> index 0000000000000000..1e5942695f0dd057
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
+> @@ -0,0 +1,69 @@
+> +/*
+> + * Copyright (C) 2016 Renesas Electronics Corp.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +#ifndef __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__
+> +#define __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__
+> +
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +
+> +/* r8a7796 CPG Core Clocks */
+> +#define R8A7796_CLK_Z			0
+> +#define R8A7796_CLK_Z2			1
+> +#define R8A7796_CLK_ZR			2
+> +#define R8A7796_CLK_ZG			3
+> +#define R8A7796_CLK_ZTR			4
+> +#define R8A7796_CLK_ZTRD2		5
+> +#define R8A7796_CLK_ZT			6
+> +#define R8A7796_CLK_ZX			7
+> +#define R8A7796_CLK_S0D1		8
+> +#define R8A7796_CLK_S0D2		9
+> +#define R8A7796_CLK_S0D3		10
+> +#define R8A7796_CLK_S0D4		11
+> +#define R8A7796_CLK_S0D6		12
+> +#define R8A7796_CLK_S0D8		13
+> +#define R8A7796_CLK_S0D12		14
+> +#define R8A7796_CLK_S1D1		15
+> +#define R8A7796_CLK_S1D2		16
+> +#define R8A7796_CLK_S1D4		17
+> +#define R8A7796_CLK_S2D1		18
+> +#define R8A7796_CLK_S2D2		19
+> +#define R8A7796_CLK_S2D4		20
+> +#define R8A7796_CLK_S3D1		21
+> +#define R8A7796_CLK_S3D2		22
+> +#define R8A7796_CLK_S3D4		23
+> +#define R8A7796_CLK_LB			24
+> +#define R8A7796_CLK_CL			25
+> +#define R8A7796_CLK_ZB3			26
+> +#define R8A7796_CLK_ZB3D2		27
+> +#define R8A7796_CLK_ZB3D4		28
+> +#define R8A7796_CLK_CR			29
+> +#define R8A7796_CLK_CRD2		30
+> +#define R8A7796_CLK_SD0H		31
+> +#define R8A7796_CLK_SD0			32
+> +#define R8A7796_CLK_SD1H		33
+> +#define R8A7796_CLK_SD1			34
+> +#define R8A7796_CLK_SD2H		35
+> +#define R8A7796_CLK_SD2			36
+> +#define R8A7796_CLK_SD3H		37
+> +#define R8A7796_CLK_SD3			38
+> +#define R8A7796_CLK_SSP2		39
+> +#define R8A7796_CLK_SSP1		40
+> +#define R8A7796_CLK_SSPRS		41
+> +#define R8A7796_CLK_RPC			42
+> +#define R8A7796_CLK_RPCD2		43
+> +#define R8A7796_CLK_MSO			44
+> +#define R8A7796_CLK_CANFD		45
+> +#define R8A7796_CLK_HDMI		46
+> +#define R8A7796_CLK_CSI0		47
+> +#define R8A7796_CLK_CSIREF		48
+> +#define R8A7796_CLK_CP			49
+> +#define R8A7796_CLK_CPEX		50
+> +#define R8A7796_CLK_R			51
+> +#define R8A7796_CLK_OSC			52
 
-This topic is related to the rather fixed DT ABI for the CPG device.
-Please see the interface described in the following upstream commits:
 
-$ git log --oneline
-Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | cat
-ca00c38 clk: shmobile: cpg-mssr: Update serial port clock in example
-3686d3e clk: shmobile: Add new Renesas CPG/MSSR DT bindings
-$
+I think we recently started a discussion to find a more clever way to 
+avoid re-defining (copy & paste) all this R-Car3 clocks  (compare [1]) 
+where they are the same over the R-Car3 family while still being able 
+to deal with the differences.
 
-Some years ago we discussed this consolidation topic for R-Car Gen2
-and we revisited when doing various iterations for the R-Car Gen3 CPGs
-last year. Using a single per-family shared range of clocks was
-considered both times, however when comparing the pros and cons it
-became evident that best practice with DT tends to be to not speculate
-and go with what we know based on existing documentation.
+Best regards
 
-Like you may have experienced, the SoC documentation is slightly
-changing over time. Also the number of SoCs in a certain family is
-clearly being extended over time. The direction where things are going
-is not known during initial design phase. Because of this we make use
-of known-to-be-fixed ids such as SoC-specific part numbers instead of
-speculating with family DT strings where the meaning tend to change
-over time.
+Dirk
 
-If we would go with consolidating the clock indices from per-SoC to
-per-family then please note that this does not affect the run time
-size of the DTB. In the kernel source code we have some level of
-agreed duplication where DT compat strings and such are chosen to be
-duplicated per-device instead of trying to make the code more compact.
-I believe our build machines are snappy enough to handle a couple of
-KiB of strings worst case.
-
-Because of the unchanged DTB size this discussion is purely a matter
-of how to maintain the code. So the maintainers need to decide what
-level of duplication is needed. Perhaps this topic should be
-revisited, and maybe meeting face-to-face would help?
-
-Thanks,
-
-/ magnus
+[1] 
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/include/dt-bindings/clock/r8a7795-cpg-mssr.h
