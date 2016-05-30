@@ -1,58 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:34630 "EHLO
-	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751287AbcEaW3J (ORCPT
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:35505 "EHLO
+	mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161220AbcE3QAy (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 31 May 2016 18:29:09 -0400
-Received: by mail-lf0-f53.google.com with SMTP id k98so1030333lfi.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 31 May 2016 15:29:08 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 10/13] ARM: dts: r8a7792: add IRQC support
-Date: Wed, 01 Jun 2016 01:29:05 +0300
-Message-ID: <3573091.BUvyGW3hVt@wasted.cogentembedded.com>
-In-Reply-To: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
-References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Mon, 30 May 2016 12:00:54 -0400
+Received: by mail-lf0-f66.google.com with SMTP id q63so4584844lfi.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 May 2016 09:00:53 -0700 (PDT)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
+Cc: kuninori.morimoto.gx@renesas.com,
+	laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
+	architt@codeaurora.org, vz@mleia.com, koji.matsuoka.xm@renesas.com,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [RFC 09/21] drm: rcar-du: Fix display registers for R-Car Gen3
+Date: Mon, 30 May 2016 18:00:08 +0200
+Message-Id: <1464624020-27709-10-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1464624020-27709-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1464624020-27709-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the IRQC interrupt controller in the R8A7792 device tree.
+From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7792.dtsi |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c   | 3 ++-
+ drivers/gpu/drm/rcar-du/rcar_du_group.c | 5 +++++
+ drivers/gpu/drm/rcar-du/rcar_du_plane.c | 4 +++-
+ 3 files changed, 10 insertions(+), 2 deletions(-)
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -62,6 +62,19 @@
- 			      IRQ_TYPE_LEVEL_HIGH)>;
- 	};
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index 5ed0d61..3907461 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -137,7 +137,8 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
+ 	.gen = 3,
+ 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+ 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
+-		  | RCAR_DU_FEATURE_VSP1_SOURCE,
++		  | RCAR_DU_FEATURE_VSP1_SOURCE
++		  | RCAR_DU_FEATURE_GEN3_REGS,
+ 	.num_crtcs = 4,
+ 	.routes = {
+ 		/* R8A7795 has one RGB output, two HDMI outputs and one
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+index 33b2fc5..55dd3bd 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+@@ -101,6 +101,11 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
+ 	rcar_du_group_write(rgrp, DEFR5, DEFR5_CODE | DEFR5_DEFE5);
  
-+	irqc: interrupt-controller@e61c0000 {
-+		compatible = "renesas,irqc-r8a7792", "renesas,irqc";
-+		#interrupt-cells = <2>;
-+		interrupt-controller;
-+		reg = <0 0xe61c0000 0 0x200>;
-+		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp4_clks R8A7792_CLK_IRQC>;
-+		power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts = <GIC_PPI 13
+ 	rcar_du_group_setup_pins(rgrp);
++	if (rcdu->info->gen == 3) {
++		rcar_du_group_write(rgrp, DEFR6, DEFR6_CODE |
++					  DEFR6_ODPM22_DISP);
++		rcar_du_group_write(rgrp, DEFR10, DEFR10_CODE | DEFR10_DEFE10);
++	}
+ 
+ 	if (rcar_du_has(rgrp->dev, RCAR_DU_FEATURE_EXT_CTRL_REGS)) {
+ 		rcar_du_group_setup_defr8(rgrp);
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+index 8460ae1..8d5e59b 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+@@ -458,6 +458,7 @@ static void rcar_du_plane_setup_format_gen2(struct rcar_du_group *rgrp,
+ 					    unsigned int index,
+ 					    const struct rcar_du_plane_state *state)
+ {
++	struct rcar_du_device *rcdu = rgrp->dev;
+ 	u32 ddcr2 = PnDDCR2_CODE;
+ 	u32 ddcr4;
+ 
+@@ -484,7 +485,8 @@ static void rcar_du_plane_setup_format_gen2(struct rcar_du_group *rgrp,
+ 		}
+ 	}
+ 
+-	rcar_du_plane_write(rgrp, index, PnDDCR2, ddcr2);
++	if (!rcar_du_has(rcdu, RCAR_DU_FEATURE_GEN3_REGS))
++		rcar_du_plane_write(rgrp, index, PnDDCR2, ddcr2);
+ 
+ 	ddcr4 = state->format->edf | PnDDCR4_CODE;
+ 	if (state->source != RCAR_DU_PLANE_MEMORY)
+-- 
+2.7.4
