@@ -1,59 +1,463 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:52398 "EHLO
-	relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161249AbcE3R0Z (ORCPT
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:34239 "EHLO
+	mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161301AbcE3QAn (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 30 May 2016 13:26:25 -0400
-Subject: Re: [RFC 04/21] drm: bridge/dw_hdmi: add dw hdmi i2c bus adapter
- support
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-	<linux-renesas-soc@vger.kernel.org>, <geert@linux-m68k.org>
-References: <1464624020-27709-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1464624020-27709-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-CC: <kuninori.morimoto.gx@renesas.com>,
-	<laurent.pinchart@ideasonboard.com>,
-	<dri-devel@lists.freedesktop.org>, <architt@codeaurora.org>,
-	<vz@mleia.com>, <koji.matsuoka.xm@renesas.com>,
+	Mon, 30 May 2016 12:00:43 -0400
+Received: by mail-lf0-f68.google.com with SMTP id 65so14283947lfq.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 May 2016 09:00:42 -0700 (PDT)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
+Cc: kuninori.morimoto.gx@renesas.com,
+	laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
+	architt@codeaurora.org, vz@mleia.com, koji.matsuoka.xm@renesas.com,
+	Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <574C77BB.1070302@mentor.com>
-Date: Mon, 30 May 2016 20:26:19 +0300
-MIME-Version: 1.0
-In-Reply-To: <1464624020-27709-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Subject: [RFC 04/21] drm: bridge/dw_hdmi: add dw hdmi i2c bus adapter support
+Date: Mon, 30 May 2016 18:00:03 +0200
+Message-Id: <1464624020-27709-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1464624020-27709-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1464624020-27709-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulrich,
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-On 30.05.2016 19:00, Ulrich Hecht wrote:
-> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> 
-> The change adds support of internal HDMI I2C master controller, this
-> subdevice is used by default, if "ddc-i2c-bus" DT property is omitted.
-> 
-> The main purpose of this functionality is to support reading EDID from
-> an HDMI monitor on boards, which don't have an I2C bus connected to
-> DDC pins.
-> 
-> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+The change adds support of internal HDMI I2C master controller, this
+subdevice is used by default, if "ddc-i2c-bus" DT property is omitted.
 
-thank you for pushing it, this is v3 of the change, right?
+The main purpose of this functionality is to support reading EDID from
+an HDMI monitor on boards, which don't have an I2C bus connected to
+DDC pins.
 
-I think it might be better to consider to take the latest v5, it has
-updated documentation notes, various improvements based on review from
-Russell King, Doug Anderson and Philipp Zabel:
+Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/gpu/drm/bridge/dw-hdmi.c | 331 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 325 insertions(+), 6 deletions(-)
 
-  http://www.spinics.net/lists/arm-kernel/msg447954.html
-
-Still you may find it a bit outdated and it may require rebase, the change
-was based on v4.3.0-rc3. Please let me know, if I can provide you support
-of any kind regarding the change.
-
---
-With best wishes,
-Vladimir
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index c9d9412..1cfff2f 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1,14 +1,15 @@
+ /*
++ * DesignWare High-Definition Multimedia Interface (HDMI) driver
++ *
++ * Copyright (C) 2013-2015 Mentor Graphics Inc.
+  * Copyright (C) 2011-2013 Freescale Semiconductor, Inc.
++ * Copyright (C) 2010, Guennadi Liakhovetski <g.liakhovetski at gmx.de>
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation; either version 2 of the License, or
+  * (at your option) any later version.
+  *
+- * Designware High-Definition Multimedia Interface (HDMI) driver
+- *
+- * Copyright (C) 2010, Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+  */
+ #include <linux/module.h>
+ #include <linux/irq.h>
+@@ -31,6 +32,26 @@
+ #include "dw-hdmi.h"
+ #include "dw-hdmi-audio.h"
+ 
++/* HDMI_IH_I2CM_STAT0 and HDMI_IH_MUTE_I2CM_STAT0 register bits */
++#define HDMI_IH_I2CM_STAT0_ERROR		BIT(0)
++#define HDMI_IH_I2CM_STAT0_DONE			BIT(1)
++
++/* HDMI_I2CM_OPERATION register bits */
++#define HDMI_I2CM_OPERATION_READ		BIT(0)
++#define HDMI_I2CM_OPERATION_READ_EXT		BIT(1)
++#define HDMI_I2CM_OPERATION_WRITE		BIT(4)
++
++/* HDMI_I2CM_INT register bits */
++#define HDMI_I2CM_INT_DONE_MASK			BIT(2)
++#define HDMI_I2CM_INT_DONE_POL			BIT(3)
++
++/* HDMI_I2CM_CTLINT register bits */
++#define HDMI_I2CM_CTLINT_ARB_MASK		BIT(2)
++#define HDMI_I2CM_CTLINT_ARB_POL		BIT(3)
++#define HDMI_I2CM_CTLINT_NAC_MASK		BIT(6)
++#define HDMI_I2CM_CTLINT_NAC_POL		BIT(7)
++
++
+ #define HDMI_EDID_LEN		512
+ 
+ #define RGB			0
+@@ -101,6 +122,17 @@ struct hdmi_data_info {
+ 	struct hdmi_vmode video_mode;
+ };
+ 
++struct dw_hdmi_i2c {
++	struct i2c_adapter	adap;
++
++	spinlock_t		lock;
++	struct completion	cmp;
++	u8			stat;
++
++	u8			slave_reg;
++	bool			is_regaddr;
++};
++
+ struct dw_hdmi {
+ 	struct drm_connector connector;
+ 	struct drm_encoder *encoder;
+@@ -111,6 +143,7 @@ struct dw_hdmi {
+ 	struct device *dev;
+ 	struct clk *isfr_clk;
+ 	struct clk *iahb_clk;
++	struct dw_hdmi_i2c *i2c;
+ 
+ 	struct hdmi_data_info hdmi_data;
+ 	const struct dw_hdmi_plat_data *plat_data;
+@@ -198,6 +231,242 @@ static void hdmi_mask_writeb(struct dw_hdmi *hdmi, u8 data, unsigned int reg,
+ 	hdmi_modb(hdmi, data << shift, mask, reg);
+ }
+ 
++static void dw_hdmi_i2c_init(struct dw_hdmi *hdmi)
++{
++	unsigned long flags;
++
++	spin_lock_irqsave(&hdmi->i2c->lock, flags);
++
++	/* Set Fast Mode speed */
++	hdmi_writeb(hdmi, 0x0b, HDMI_I2CM_DIV);
++
++	/* Software reset */
++	hdmi_writeb(hdmi, 0x00, HDMI_I2CM_SOFTRSTZ);
++
++	/* Set done, not acknowledged and arbitration interrupt polarities */
++	hdmi_writeb(hdmi, HDMI_I2CM_INT_DONE_POL, HDMI_I2CM_INT);
++	hdmi_writeb(hdmi, HDMI_I2CM_CTLINT_NAC_POL | HDMI_I2CM_CTLINT_ARB_POL,
++		    HDMI_I2CM_CTLINT);
++
++	/* Clear DONE and ERROR interrupts */
++	hdmi_writeb(hdmi, HDMI_IH_I2CM_STAT0_ERROR | HDMI_IH_I2CM_STAT0_DONE,
++		    HDMI_IH_I2CM_STAT0);
++
++	/* Mute DONE and ERROR interrupts */
++	hdmi_writeb(hdmi, HDMI_IH_I2CM_STAT0_ERROR | HDMI_IH_I2CM_STAT0_DONE,
++		    HDMI_IH_MUTE_I2CM_STAT0);
++
++	spin_unlock_irqrestore(&hdmi->i2c->lock, flags);
++}
++
++static int dw_hdmi_i2c_read(struct dw_hdmi *hdmi,
++			    unsigned char *buf, int length)
++{
++	int stat;
++	unsigned long flags;
++	struct dw_hdmi_i2c *i2c = hdmi->i2c;
++
++	spin_lock_irqsave(&i2c->lock, flags);
++
++	if (!i2c->is_regaddr) {
++		dev_dbg(hdmi->dev, "set read register address to 0\n");
++		i2c->slave_reg = 0x00;
++		i2c->is_regaddr = true;
++	}
++
++	while (length--) {
++		hdmi_writeb(hdmi, i2c->slave_reg++, HDMI_I2CM_ADDRESS);
++		hdmi_writeb(hdmi,
++			    HDMI_I2CM_OPERATION_READ, HDMI_I2CM_OPERATION);
++		i2c->stat = 0;
++
++		spin_unlock_irqrestore(&i2c->lock, flags);
++
++		stat = wait_for_completion_interruptible_timeout(&i2c->cmp,
++								 HZ / 10);
++		if (!stat)
++			return -ETIMEDOUT;
++		if (stat < 0)
++			return stat;
++
++		spin_lock_irqsave(&i2c->lock, flags);
++
++		/* Check for error condition on the bus */
++		if (i2c->stat & HDMI_IH_I2CM_STAT0_ERROR) {
++			spin_unlock_irqrestore(&i2c->lock, flags);
++			return -EIO;
++		}
++
++		*buf++ = hdmi_readb(hdmi, HDMI_I2CM_DATAI);
++	}
++
++	spin_unlock_irqrestore(&i2c->lock, flags);
++
++	return 0;
++}
++
++static int dw_hdmi_i2c_write(struct dw_hdmi *hdmi,
++				  unsigned char *buf, int length)
++{
++	int stat;
++	unsigned long flags;
++	struct dw_hdmi_i2c *i2c = hdmi->i2c;
++
++	spin_lock_irqsave(&i2c->lock, flags);
++
++	if (!i2c->is_regaddr) {
++		if (length) {
++			/* Use the first write byte as register address */
++			i2c->slave_reg = buf[0];
++			length--;
++			buf++;
++		} else {
++			dev_dbg(hdmi->dev, "set write register address to 0\n");
++			i2c->slave_reg = 0x00;
++		}
++		i2c->is_regaddr = true;
++	}
++
++	while (length--) {
++		hdmi_writeb(hdmi, *buf++, HDMI_I2CM_DATAO);
++		hdmi_writeb(hdmi, i2c->slave_reg++, HDMI_I2CM_ADDRESS);
++		hdmi_writeb(hdmi,
++			    HDMI_I2CM_OPERATION_WRITE, HDMI_I2CM_OPERATION);
++		i2c->stat = 0;
++
++		spin_unlock_irqrestore(&i2c->lock, flags);
++
++		stat = wait_for_completion_interruptible_timeout(&i2c->cmp,
++								 HZ / 10);
++		if (!stat)
++			return -ETIMEDOUT;
++		if (stat < 0)
++			return stat;
++
++		spin_lock_irqsave(&i2c->lock, flags);
++
++		/* Check for error condition on the bus */
++		if (i2c->stat & HDMI_IH_I2CM_STAT0_ERROR) {
++			spin_unlock_irqrestore(&i2c->lock, flags);
++			return -EIO;
++		}
++	}
++
++	spin_unlock_irqrestore(&i2c->lock, flags);
++
++	return 0;
++}
++
++static int dw_hdmi_i2c_xfer(struct i2c_adapter *adap,
++			    struct i2c_msg *msgs, int num)
++{
++	struct dw_hdmi *hdmi = i2c_get_adapdata(adap);
++	struct dw_hdmi_i2c *i2c = hdmi->i2c;
++
++	int i, ret;
++	u8 addr;
++	unsigned long flags;
++
++	dev_dbg(hdmi->dev, "xfer: num: %d, addr: 0x%x\n", num, msgs[0].addr);
++
++	spin_lock_irqsave(&i2c->lock, flags);
++
++	hdmi_writeb(hdmi, 0x00, HDMI_IH_MUTE_I2CM_STAT0);
++
++	/* Set slave device address from the first transaction */
++	addr = msgs[0].addr;
++	hdmi_writeb(hdmi, addr, HDMI_I2CM_SLAVE);
++
++	/* Set slave device register address on transfer */
++	i2c->is_regaddr = false;
++
++	spin_unlock_irqrestore(&i2c->lock, flags);
++
++	for (i = 0; i < num; i++) {
++		dev_dbg(hdmi->dev, "xfer: num: %d/%d, len: %d, flags: 0x%x\n",
++			i + 1, num, msgs[i].len, msgs[i].flags);
++
++		if (msgs[i].addr != addr) {
++			dev_warn(hdmi->dev,
++				 "unsupported transaction, changed slave address\n");
++			ret = -EOPNOTSUPP;
++			break;
++		}
++
++		if (msgs[i].len == 0) {
++			dev_dbg(hdmi->dev,
++				 "unsupported transaction %d/%d, no data\n",
++				 i + 1, num);
++			ret = -EOPNOTSUPP;
++			break;
++		}
++
++		if (msgs[i].flags & I2C_M_RD)
++			ret = dw_hdmi_i2c_read(hdmi, msgs[i].buf, msgs[i].len);
++		else
++			ret = dw_hdmi_i2c_write(hdmi, msgs[i].buf, msgs[i].len);
++
++		if (ret < 0)
++			break;
++	}
++
++	if (!ret)
++		ret = num;
++
++	spin_lock_irqsave(&i2c->lock, flags);
++
++	/* Mute DONE and ERROR interrupts */
++	hdmi_writeb(hdmi, HDMI_IH_I2CM_STAT0_ERROR | HDMI_IH_I2CM_STAT0_DONE,
++		    HDMI_IH_MUTE_I2CM_STAT0);
++
++	spin_unlock_irqrestore(&i2c->lock, flags);
++
++	return ret;
++}
++
++static u32 dw_hdmi_i2c_func(struct i2c_adapter *adapter)
++{
++	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
++}
++
++static struct i2c_algorithm dw_hdmi_algorithm = {
++	.master_xfer	= dw_hdmi_i2c_xfer,
++	.functionality	= dw_hdmi_i2c_func,
++};
++
++static struct i2c_adapter *dw_hdmi_i2c_adapter(struct dw_hdmi *hdmi)
++{
++	struct i2c_adapter *adap;
++	int ret;
++
++	hdmi->i2c = devm_kzalloc(hdmi->dev, sizeof(*hdmi->i2c), GFP_KERNEL);
++	if (!hdmi->i2c)
++		return ERR_PTR(-ENOMEM);
++
++	spin_lock_init(&hdmi->i2c->lock);
++	init_completion(&hdmi->i2c->cmp);
++
++	adap = &hdmi->i2c->adap;
++	adap->class = I2C_CLASS_DDC;
++	adap->owner = THIS_MODULE;
++	adap->dev.parent = hdmi->dev;
++	adap->algo = &dw_hdmi_algorithm;
++	strlcpy(adap->name, "DesignWare HDMI", sizeof(adap->name));
++	i2c_set_adapdata(adap, hdmi);
++
++	ret = i2c_add_adapter(adap);
++	if (ret) {
++		dev_warn(hdmi->dev, "cannot add %s I2C adapter\n", adap->name);
++		devm_kfree(hdmi->dev, hdmi->i2c);
++		hdmi->i2c = NULL;
++		return ERR_PTR(ret);
++	}
++
++	dev_info(hdmi->dev, "registered %s I2C bus driver\n", adap->name);
++
++	return adap;
++}
++
+ static void hdmi_set_cts_n(struct dw_hdmi *hdmi, unsigned int cts,
+ 			   unsigned int n)
+ {
+@@ -1534,16 +1803,47 @@ static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
+ 	.mode_set = dw_hdmi_bridge_mode_set,
+ };
+ 
++static irqreturn_t dw_hdmi_i2c_irq(struct dw_hdmi *hdmi)
++{
++	struct dw_hdmi_i2c *i2c = hdmi->i2c;
++	unsigned long flags;
++
++	spin_lock_irqsave(&i2c->lock, flags);
++
++	i2c->stat = hdmi_readb(hdmi, HDMI_IH_I2CM_STAT0);
++	if (!i2c->stat) {
++		spin_unlock_irqrestore(&i2c->lock, flags);
++		return IRQ_NONE;
++	}
++
++	hdmi_writeb(hdmi, i2c->stat, HDMI_IH_I2CM_STAT0);
++	complete(&i2c->cmp);
++
++	dev_dbg(hdmi->dev, "i2cm_stat: 0x%02x, addr: 0x%02x, reg: 0x%02x\n",
++		i2c->stat, hdmi_readb(hdmi, HDMI_I2CM_SLAVE),
++		hdmi_readb(hdmi, HDMI_I2CM_ADDRESS));
++
++	spin_unlock_irqrestore(&i2c->lock, flags);
++
++	return IRQ_HANDLED;
++}
++
+ static irqreturn_t dw_hdmi_hardirq(int irq, void *dev_id)
+ {
+ 	struct dw_hdmi *hdmi = dev_id;
+ 	u8 intr_stat;
++	irqreturn_t ret = IRQ_NONE;
++
++	if (hdmi->i2c)
++		ret = dw_hdmi_i2c_irq(hdmi);
+ 
+ 	intr_stat = hdmi_readb(hdmi, HDMI_IH_PHY_STAT0);
+-	if (intr_stat)
++	if (intr_stat) {
+ 		hdmi_writeb(hdmi, ~0, HDMI_IH_MUTE_PHY_STAT0);
++		return IRQ_WAKE_THREAD;
++	}
+ 
+-	return intr_stat ? IRQ_WAKE_THREAD : IRQ_NONE;
++	return ret;
+ }
+ 
+ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
+@@ -1771,6 +2071,13 @@ int dw_hdmi_bind(struct device *dev, struct device *master,
+ 	 */
+ 	hdmi_init_clk_regenerator(hdmi);
+ 
++	/* If DDC bus is not specified, try to register HDMI I2C bus */
++	if (!hdmi->ddc) {
++		hdmi->ddc = dw_hdmi_i2c_adapter(hdmi);
++		if (IS_ERR(hdmi->ddc))
++			hdmi->ddc = NULL;
++	}
++
+ 	/*
+ 	 * Configure registers related to HDMI interrupt
+ 	 * generation before registering IRQ.
+@@ -1811,11 +2118,18 @@ int dw_hdmi_bind(struct device *dev, struct device *master,
+ 		hdmi->audio = platform_device_register_full(&pdevinfo);
+ 	}
+ 
++	/* Unmute I2CM interrupts and reset HDMI DDC I2C master controller */
++	if (hdmi->i2c)
++		dw_hdmi_i2c_init(hdmi);
++
+ 	dev_set_drvdata(dev, hdmi);
+ 
+ 	return 0;
+ 
+ err_iahb:
++	if (hdmi->i2c)
++		i2c_del_adapter(&hdmi->i2c->adap);
++
+ 	clk_disable_unprepare(hdmi->iahb_clk);
+ err_isfr:
+ 	clk_disable_unprepare(hdmi->isfr_clk);
+@@ -1839,13 +2153,18 @@ void dw_hdmi_unbind(struct device *dev, struct device *master, void *data)
+ 
+ 	clk_disable_unprepare(hdmi->iahb_clk);
+ 	clk_disable_unprepare(hdmi->isfr_clk);
+-	i2c_put_adapter(hdmi->ddc);
++
++	if (hdmi->i2c)
++		i2c_del_adapter(&hdmi->i2c->adap);
++	else
++		i2c_put_adapter(hdmi->ddc);
+ }
+ EXPORT_SYMBOL_GPL(dw_hdmi_unbind);
+ 
+ MODULE_AUTHOR("Sascha Hauer <s.hauer@pengutronix.de>");
+ MODULE_AUTHOR("Andy Yan <andy.yan@rock-chips.com>");
+ MODULE_AUTHOR("Yakir Yang <ykk@rock-chips.com>");
++MODULE_AUTHOR("Vladimir Zapolskiy <vladimir_zapolskiy at mentor.com>");
+ MODULE_DESCRIPTION("DW HDMI transmitter driver");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:dw-hdmi");
+-- 
+2.7.4
