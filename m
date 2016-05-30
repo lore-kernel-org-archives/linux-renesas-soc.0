@@ -1,54 +1,126 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:41569 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752131AbcEMH4H (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55564 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161249AbcE3Rja (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 13 May 2016 03:56:07 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 19/23] ARM: dts: marzen: Fix W=1 dtc warnings
-Date: Fri, 13 May 2016 09:55:59 +0200
-Message-Id: <1463126163-29423-20-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
-References: <1463126163-29423-1-git-send-email-geert+renesas@glider.be>
+	Mon, 30 May 2016 13:39:30 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87futdrs2g.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1b7R9x-0000qH-ET@debutante>
+Date: Mon, 30 May 2016 18:39:25 +0100
+Subject: Applied "ASoC: simple-card: platform also uses asoc_simple_card_sub_parse_of()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /fixedregulator@0 has a unit name, but no reg property
+The patch
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+   ASoC: simple-card: platform also uses asoc_simple_card_sub_parse_of()
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 5fb9cb165130cdb67fb3ac42b4510ed7677a077d Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Fri, 20 May 2016 09:40:41 +0000
+Subject: [PATCH] ASoC: simple-card: platform also uses
+ asoc_simple_card_sub_parse_of()
+
+In current simple-card, platform is handled as special case,
+but, the code is not readable.
+This patch makes platform to use asoc_simple_card_sub_parse_of()
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7779-marzen.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/generic/simple-card.c | 31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7779-marzen.dts b/arch/arm/boot/dts/r8a7779-marzen.dts
-index b795da6f5503d224..d9f3dba882f01181 100644
---- a/arch/arm/boot/dts/r8a7779-marzen.dts
-+++ b/arch/arm/boot/dts/r8a7779-marzen.dts
-@@ -28,12 +28,12 @@
- 		stdout-path = &scif2;
- 	};
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index 466492b7d4f5..4e39c0fa78c9 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -223,6 +223,9 @@ asoc_simple_card_sub_parse_of(struct device_node *np,
+ 	u32 val;
+ 	int ret;
  
--	memory {
-+	memory@60000000 {
- 		device_type = "memory";
- 		reg = <0x60000000 0x40000000>;
- 	};
++	if (!np)
++		return 0;
++
+ 	/*
+ 	 * Get node via "sound-dai = <&phandle port>"
+ 	 * it will be used as xxx_of_node on soc_bind_dai_link()
+@@ -238,9 +241,14 @@ asoc_simple_card_sub_parse_of(struct device_node *np,
+ 		*args_count = args.args_count;
  
--	fixedregulator3v3: fixedregulator@0 {
-+	fixedregulator3v3: fixedregulator3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-3.3V";
- 		regulator-min-microvolt = <3300000>;
+ 	/* Get dai->name */
+-	ret = snd_soc_of_get_dai_name(np, name);
+-	if (ret < 0)
+-		return ret;
++	if (name) {
++		ret = snd_soc_of_get_dai_name(np, name);
++		if (ret < 0)
++			return ret;
++	}
++
++	if (!dai)
++		return 0;
+ 
+ 	/* Parse TDM slot */
+ 	ret = snd_soc_of_parse_tdm_slot(np, &dai->tx_slot_mask,
+@@ -374,21 +382,20 @@ static int asoc_simple_card_dai_link_of(struct device_node *node,
+ 	if (ret < 0)
+ 		goto dai_link_of_err;
+ 
++	ret = asoc_simple_card_sub_parse_of(plat, NULL,
++					    &dai_link->platform_of_node,
++					    NULL, NULL);
++	if (ret < 0)
++		goto dai_link_of_err;
++
+ 	if (!dai_link->cpu_dai_name || !dai_link->codec_dai_name) {
+ 		ret = -EINVAL;
+ 		goto dai_link_of_err;
+ 	}
+ 
+-	if (plat) {
+-		struct of_phandle_args args;
+-
+-		ret = of_parse_phandle_with_args(plat, "sound-dai",
+-						 "#sound-dai-cells", 0, &args);
+-		dai_link->platform_of_node = args.np;
+-	} else {
+-		/* Assumes platform == cpu */
++	/* Assumes platform == cpu */
++	if (!dai_link->platform_of_node)
+ 		dai_link->platform_of_node = dai_link->cpu_of_node;
+-	}
+ 
+ 	/* DAI link name is created from CPU/CODEC dai name */
+ 	name = devm_kzalloc(dev,
 -- 
-1.9.1
+2.8.1
