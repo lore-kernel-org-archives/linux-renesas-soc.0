@@ -1,45 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:44785 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161641AbcE3RFK (ORCPT
+Received: from sauhun.de ([89.238.76.85]:42004 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751340AbcEaK57 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 30 May 2016 13:05:10 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/3] soc: renesas: rcar-sysc: Document r8a7796 support
-Date: Mon, 30 May 2016 19:05:09 +0200
-Message-Id: <1464627911-8126-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464627911-8126-1-git-send-email-geert+renesas@glider.be>
-References: <1464627911-8126-1-git-send-email-geert+renesas@glider.be>
+	Tue, 31 May 2016 06:57:59 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: driverdev-devel@linuxdriverproject.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V2 27/31] staging: ks7010: fix module annotations
+Date: Tue, 31 May 2016 12:56:39 +0200
+Message-Id: <1464692203-4180-28-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
+References: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
-v2:
-  - Add Acked-by.
----
- Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt | 1 +
- 1 file changed, 1 insertion(+)
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-index b74e4d4785ab2d60..0725fb37a973d8eb 100644
---- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-+++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-@@ -14,6 +14,7 @@ Required properties:
-       - "renesas,r8a7793-sysc" (R-Car M2-N)
-       - "renesas,r8a7794-sysc" (R-Car E2)
-       - "renesas,r8a7795-sysc" (R-Car H3)
-+      - "renesas,r8a7796-sysc" (R-Car M3-W)
-   - reg: Address start and address range for the device.
-   - #power-domain-cells: Must be 1.
+List all authors, beautify description, match license to what is stated
+in file headers, add firmware information.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/staging/ks7010/ks7010_sdio.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
+index 8e8476b52cedbc..8c0d1bb58dcd9c 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.c
++++ b/drivers/staging/ks7010/ks7010_sdio.c
+@@ -1261,9 +1261,7 @@ static void __exit ks7010_sdio_exit(void)
+ module_init(ks7010_sdio_init);
+ module_exit(ks7010_sdio_exit);
  
+-MODULE_AUTHOR("Qi-Hardware based on KeyStream driver");
+-MODULE_DESCRIPTION("Driver for KeyStream, KS7010 based SDIO cards. ");
+-#ifdef MODULE_LICENSE
+-MODULE_LICENSE("GPL");
+-#endif
+-MODULE_SUPPORTED_DEVICE("KS7910");
++MODULE_AUTHOR("Sang Engineering, Qi-Hardware, KeyStream");
++MODULE_DESCRIPTION("Driver for KeyStream KS7010 based SDIO cards");
++MODULE_LICENSE("GPL v2");
++MODULE_FIRMWARE(ROM_FILE);
 -- 
-1.9.1
+2.8.1
