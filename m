@@ -1,86 +1,153 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35505 "EHLO
-	mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161220AbcE3QAy (ORCPT
+Received: from sauhun.de ([89.238.76.85]:41974 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752561AbcEaK5f (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 30 May 2016 12:00:54 -0400
-Received: by mail-lf0-f66.google.com with SMTP id q63so4584844lfi.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 May 2016 09:00:53 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: kuninori.morimoto.gx@renesas.com,
-	laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
-	architt@codeaurora.org, vz@mleia.com, koji.matsuoka.xm@renesas.com,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [RFC 09/21] drm: rcar-du: Fix display registers for R-Car Gen3
-Date: Mon, 30 May 2016 18:00:08 +0200
-Message-Id: <1464624020-27709-10-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1464624020-27709-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1464624020-27709-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+	Tue, 31 May 2016 06:57:35 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: driverdev-devel@linuxdriverproject.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V2 13/31] staging: ks7010: add example cfg file as a reference
+Date: Tue, 31 May 2016 12:56:25 +0200
+Message-Id: <1464692203-4180-14-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
+References: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+We want to remove it, but to do so properly, it is good to have a
+working example. Needs to be copied to /lib/firmware in order to be
+used.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_drv.c   | 3 ++-
- drivers/gpu/drm/rcar-du/rcar_du_group.c | 5 +++++
- drivers/gpu/drm/rcar-du/rcar_du_plane.c | 4 +++-
- 3 files changed, 10 insertions(+), 2 deletions(-)
+ drivers/staging/ks7010/ks79xx.cfg | 116 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 116 insertions(+)
+ create mode 100644 drivers/staging/ks7010/ks79xx.cfg
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 5ed0d61..3907461 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -137,7 +137,8 @@ static const struct rcar_du_device_info rcar_du_r8a7795_info = {
- 	.gen = 3,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
- 		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
--		  | RCAR_DU_FEATURE_VSP1_SOURCE,
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE
-+		  | RCAR_DU_FEATURE_GEN3_REGS,
- 	.num_crtcs = 4,
- 	.routes = {
- 		/* R8A7795 has one RGB output, two HDMI outputs and one
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-index 33b2fc5..55dd3bd 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-@@ -101,6 +101,11 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
- 	rcar_du_group_write(rgrp, DEFR5, DEFR5_CODE | DEFR5_DEFE5);
- 
- 	rcar_du_group_setup_pins(rgrp);
-+	if (rcdu->info->gen == 3) {
-+		rcar_du_group_write(rgrp, DEFR6, DEFR6_CODE |
-+					  DEFR6_ODPM22_DISP);
-+		rcar_du_group_write(rgrp, DEFR10, DEFR10_CODE | DEFR10_DEFE10);
-+	}
- 
- 	if (rcar_du_has(rgrp->dev, RCAR_DU_FEATURE_EXT_CTRL_REGS)) {
- 		rcar_du_group_setup_defr8(rgrp);
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-index 8460ae1..8d5e59b 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-@@ -458,6 +458,7 @@ static void rcar_du_plane_setup_format_gen2(struct rcar_du_group *rgrp,
- 					    unsigned int index,
- 					    const struct rcar_du_plane_state *state)
- {
-+	struct rcar_du_device *rcdu = rgrp->dev;
- 	u32 ddcr2 = PnDDCR2_CODE;
- 	u32 ddcr4;
- 
-@@ -484,7 +485,8 @@ static void rcar_du_plane_setup_format_gen2(struct rcar_du_group *rgrp,
- 		}
- 	}
- 
--	rcar_du_plane_write(rgrp, index, PnDDCR2, ddcr2);
-+	if (!rcar_du_has(rcdu, RCAR_DU_FEATURE_GEN3_REGS))
-+		rcar_du_plane_write(rgrp, index, PnDDCR2, ddcr2);
- 
- 	ddcr4 = state->format->edf | PnDDCR4_CODE;
- 	if (state->source != RCAR_DU_PLANE_MEMORY)
+diff --git a/drivers/staging/ks7010/ks79xx.cfg b/drivers/staging/ks7010/ks79xx.cfg
+new file mode 100644
+index 00000000000000..0f2d24d4e66a89
+--- /dev/null
++++ b/drivers/staging/ks7010/ks79xx.cfg
+@@ -0,0 +1,116 @@
++#ks79xx.cfg
++#KS79xx configuration file
++#
++
++#
++#BeaconLostCount	default 20
++BeaconLostCount=20
++#
++
++#
++#Ap List Scan Type default ACTIVE_SCAN ACTIVE_SCAN or PASSIVE_SCAN
++ScanType=ACTIVE_SCAN
++#
++
++#
++#Channel		default 10		min 1 	max 14
++Channel=10
++#
++
++#
++#FragmentThreshold	default 2346		min 256	max 2346
++FragmentThreshold=2346
++#
++
++#
++#OperationMode		default Infrastructure	Pseudo-Ad-Hoc or 802.11-Ad-Hoc or Infrastructure
++OperationMode=Infrastructure
++#
++
++#
++#PowerManagementMode	default ACTIVE     ACTIVE or SAVE1 or SAVE2
++PowerManagementMode=ACTIVE
++#
++
++#
++#RTSThreshold		default 2347		min 0	max 2347
++RTSThreshold=2347
++#
++
++#
++#SSID			default ""		max 32 character
++SSID="default"
++#
++
++#
++#TxRate			default Auto		1, 2, 5.5, 11	ex. TxRate=1,2 TxRate=11 TxRate=Auto ...
++TxRate=Auto
++#
++
++#
++#Wep			default OFF		OFF or 64bit or 128bit
++Wep=OFF
++#
++
++#
++#WepType		default STRING		STRING or HEX
++WepType=STRING
++#
++
++#
++#WepIndex=1
++#
++
++#
++#WepKeyValue1
++#	character_wep_key:64bit key_length = 5;  128bit key_length = 13
++#	      hex_wep_key:64bit key_length = 10; 128bit key_length = 26
++#
++
++#
++#WepKeyValue2
++#	character_wep_key:64bit key_length = 5;  128bit key_length = 13
++#	      hex_wep_key:64bit key_length = 10; 128bit key_length = 26
++#
++
++#
++#WepKeyValue3
++#	character_wep_key:64bit key_length = 5;  128bit key_length = 13
++#	      hex_wep_key:64bit key_length = 10; 128bit key_length = 26
++#
++
++#
++#WepKeyValue4
++#	character_wep_key:64bit key_length = 5;  128bit key_length = 13
++#	      hex_wep_key:64bit key_length = 10; 128bit key_length = 26
++#
++
++#
++#AuthenticationAlgorithm default OPEN_SYSTEM	OPEN_SYSTEM or  SHARED_KEY
++AuthenticationAlgorithm=OPEN_SYSTEM
++#
++
++#
++#PREAMBLE_TYPE default LONG	LONG or  SHORT
++PREAMBLE_TYPE=SHORT
++#
++
++#
++# PhyType default BG_MODE	B_MODE, G_MODE or BG_MODE
++PhyType=BG_MODE
++#
++
++#
++# CtsMode defalut FALSE		TURE or FALSE
++CtsMode=FALSE
++#
++
++#
++# PhyInformationTimer defalut 0  uint 100msec 
++PhyInformationTimer=0
++#
++
++#
++#ROM_FILE default "ks7010sd.rom"
++ROM_FILE="ks7010sd.rom"
++#
 -- 
-2.7.4
+2.8.1
