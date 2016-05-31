@@ -1,81 +1,109 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51320 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753786AbcEFAVc (ORCPT
+Received: from sauhun.de ([89.238.76.85]:42003 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751745AbcEaK56 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 5 May 2016 20:21:32 -0400
-Date: Fri, 6 May 2016 09:21:25 +0900
-From: Simon Horman <horms@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [GIT PULL] Renesas ARM64 Based SoC DT PM Domain Updates for v4.7
-Message-ID: <20160506002125.GE24999@verge.net.au>
-References: <cover.1461730364.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1461730364.git.horms+renesas@verge.net.au>
+	Tue, 31 May 2016 06:57:58 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: driverdev-devel@linuxdriverproject.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V2 26/31] staging: ks7010: remove supported card table with one element
+Date: Tue, 31 May 2016 12:56:38 +0200
+Message-Id: <1464692203-4180-27-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
+References: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-On Wed, Apr 27, 2016 at 02:20:10PM +1000, Simon Horman wrote:
-> Hi Olof, Hi Kevin, Hi Arnd,
-> 
-> Please consider these Renesas ARM64 based SoC DT PM Domain updates for v4.7.
-> 
-> This pull requests is based on a merge of:
-> 
-> * "[GIT PULL] Second Round of Renesas ARM Based SoC R-Car SYSC Updates for
->   v4.7", tagged as renesas-rcar-sysc2-for-v4.7, which you have already
->   pulled
-> * "[GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v4.7",
->   tagged as renesas-arm64-dt2-for-v4.7, which I have sent a pull request
->   for.
-> 
-> The reason for the somewhat tedious base on
-> renesas-rcar-sysc2-for-v4.7, which provides driver changes,
-> is a hard run-time dependency.
-> 
-> I also have a similar set of changes for ARM (32-bit) which I will send
-> separately.
+There is only this card supported, no need to iterate over the table.
+The resulting firmware filename wasn't used anyway, but came from the
+config file or hardcoded default.
 
-I am wondering if this pull-request might have slipped through the cracks.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/staging/ks7010/ks7010_sdio.c | 31 ++-----------------------------
+ drivers/staging/ks7010/ks7010_sdio.h |  2 --
+ 2 files changed, 2 insertions(+), 31 deletions(-)
 
-FWIW, all other pull requests I have submitted for v4.7 have been pulled
-(thanks!) including a similar pull-request for ARM (32-bit) which is
-present in the next/late branch of the arm-soc tree.
-
-I do not plan to send any more non-fix pull requests for v4.7.
-And at this stage I am not aware of any fixes for v4.7.
-
-> The following changes since commit 3238ec7c0a821915f38095752de97a424fd1d6ce:
-> 
->   Merge tag 'renesas-rcar-sysc2-for-v4.7' into arm64-dt-pm-domain-for-v4.7 (2016-04-27 11:49:19 +1000)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt-pm-domain-for-v4.7
-> 
-> for you to fetch changes up to 38dbb45ee4bc7dda4aabba2178eebff2f93380d1:
-> 
->   arm64: dts: r8a7795: Use SYSC "always-on" PM Domain (2016-04-27 14:10:41 +1000)
-> 
-> ----------------------------------------------------------------
-> Renesas ARM64 Based SoC DT PM Domain Updates for v4.7
-> 
-> * Add SYSC PM Domains to DT of r8a7795 SoC
-> 
-> ----------------------------------------------------------------
-> Geert Uytterhoeven (2):
->       arm64: dts: r8a7795: Add SYSC PM Domains
->       arm64: dts: r8a7795: Use SYSC "always-on" PM Domain
-> 
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi | 123 +++++++++++++++++--------------
->  1 file changed, 68 insertions(+), 55 deletions(-)
-> 
+diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
+index ed4d579300ad96..8e8476b52cedbc 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.c
++++ b/drivers/staging/ks7010/ks7010_sdio.c
+@@ -35,19 +35,6 @@ static const struct sdio_device_id if_sdio_ids[] = {
+ 	{ /* all zero */ }
+ };
+ 
+-struct ks_sdio_model {
+-	int model;
+-	const char *firmware;
+-};
+-
+-static struct ks_sdio_model ks_sdio_models[] = {
+-	{
+-		/* ks7010 */
+-		.model = 0x10,
+-		.firmware = "ks7010sd.rom",
+-	},
+-};
+-
+ static int ks7910_sdio_probe(struct sdio_func *function,
+ 			     const struct sdio_device_id *device);
+ static void ks7910_sdio_remove(struct sdio_func *function);
+@@ -996,7 +983,7 @@ static int ks7910_sdio_probe(struct sdio_func *func,
+ 	struct ks_sdio_card *card;
+ 	struct net_device *netdev;
+ 	unsigned char rw_data;
+-	int i = 0, ret;
++	int ret;
+ 
+ 	DPRINTK(5, "ks7910_sdio_probe()\n");
+ 
+@@ -1009,22 +996,8 @@ static int ks7910_sdio_probe(struct sdio_func *func,
+ 		return -ENOMEM;
+ 
+ 	card->func = func;
+-	card->model = 0x10;
+ 	spin_lock_init(&card->lock);
+ 
+-	/* select model */
+-	for (i = 0; i < ARRAY_SIZE(ks_sdio_models); i++) {
+-		if (card->model == ks_sdio_models[i].model)
+-			break;
+-	}
+-
+-	if (i == ARRAY_SIZE(ks_sdio_models)) {
+-		DPRINTK(5, "unkown card model 0x%x\n", card->model);
+-		goto error;
+-	}
+-
+-	card->firmware = ks_sdio_models[i].firmware;
+-
+ 	/*** Initialize  SDIO ***/
+ 	sdio_claim_host(func);
+ 
+@@ -1172,7 +1145,7 @@ static int ks7910_sdio_probe(struct sdio_func *func,
+ 	sdio_release_host(func);
+ 	sdio_set_drvdata(func, NULL);
+ 	kfree(card);
+- error:
++
+ 	return -ENODEV;
+ }
+ 
+diff --git a/drivers/staging/ks7010/ks7010_sdio.h b/drivers/staging/ks7010/ks7010_sdio.h
+index aea3727caf483b..2d7be5dae157c7 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.h
++++ b/drivers/staging/ks7010/ks7010_sdio.h
+@@ -109,8 +109,6 @@ struct ks_sdio_packet {
+ struct ks_sdio_card {
+ 	struct sdio_func *func;
+ 	struct ks_wlan_private *priv;
+-	int model;
+-	const char *firmware;
+ 	spinlock_t lock;
+ };
+ 
+-- 
+2.8.1
