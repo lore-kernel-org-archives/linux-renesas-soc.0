@@ -1,57 +1,46 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:34389 "EHLO
-	mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161249AbcE3QBO (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 30 May 2016 12:01:14 -0400
-Received: by mail-lf0-f65.google.com with SMTP id 65so14285250lfq.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 30 May 2016 09:01:14 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: kuninori.morimoto.gx@renesas.com,
-	laurent.pinchart@ideasonboard.com, dri-devel@lists.freedesktop.org,
-	architt@codeaurora.org, vz@mleia.com, koji.matsuoka.xm@renesas.com,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [RFC 19/21] arm64: configs: Enable R-Car DU related config
-Date: Mon, 30 May 2016 18:00:18 +0200
-Message-Id: <1464624020-27709-20-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1464624020-27709-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1464624020-27709-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1464369565-12259-1-git-send-email-kieran@bingham.xyz>
+References: <1464369565-12259-1-git-send-email-kieran@bingham.xyz>
+Date: Tue, 31 May 2016 11:10:45 +0200
+Message-ID: <CAMuHMdVW56-g8F9SqO8UP62Q9nvFawwL+GgHP2Wni-a8q5YMRw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] RCar r8a7795 FCPF support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Kieran Bingham <kieran@ksquared.org.uk>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-renesas-soc@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Hi Kieran,
 
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/configs/defconfig | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+On Fri, May 27, 2016 at 7:19 PM, Kieran Bingham <kieran@ksquared.org.uk> wrote:
+> An RCar FCP driver is available with support for the FCPV module for VSP.
+> This series updates that driver to support the FCPF and then provide the
+> relevant nodes in the r8a7795 device tree.
+>
+> Checkpatch generates a warning on these DT references but they are
+> documented under Documentation/devicetree/bindings/media/renesas,fcp.txt
+>
+> These patches are based on Geert's renesas-drivers tree, and are pushed
+> to a branch at git@github.com:kbingham/linux.git renesas/fcpf for
+> convenience.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index aa47366..fc10983 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -212,6 +212,20 @@ CONFIG_REGULATOR_HI655X=y
- CONFIG_REGULATOR_QCOM_SMD_RPM=y
- CONFIG_REGULATOR_QCOM_SPMI=y
- CONFIG_REGULATOR_S2MPS11=y
-+CONFIG_MEDIA_SUPPORT=y
-+CONFIG_MEDIA_CAMERA_SUPPORT=y
-+CONFIG_MEDIA_CONTROLLER=y
-+CONFIG_VIDEO_V4L2_SUBDEV_API=y
-+CONFIG_V4L_PLATFORM_DRIVERS=y
-+CONFIG_SOC_CAMERA=y
-+CONFIG_SOC_CAMERA_PLATFORM=y
-+CONFIG_V4L_MEM2MEM_DRIVERS=y
-+CONFIG_VIDEO_RENESAS_VSP1=y
-+CONFIG_DRM=y
-+CONFIG_DRM_RCAR_DU=y
-+CONFIG_DRM_RCAR_HDMI=y
-+CONFIG_DRM_RCAR_LVDS=y
-+CONFIG_DRM_RCAR_VSP=y
- CONFIG_FB=y
- CONFIG_FB_ARMCLCD=y
- CONFIG_FRAMEBUFFER_CONSOLE=y
--- 
-2.7.4
+As this is based on previous renesas-drivers release, which included the
+Salvator-X HDMI prototype, I created a topic branch topic/fcpf-v1 just
+containing your changes.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
