@@ -1,41 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52737 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751375AbcFABYw (ORCPT
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:35571 "EHLO
+	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752896AbcEaWdw (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 31 May 2016 21:24:52 -0400
-Date: Wed, 1 Jun 2016 10:24:51 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
+	Tue, 31 May 2016 18:33:52 -0400
+Received: by mail-lf0-f47.google.com with SMTP id w16so1060291lfd.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 31 May 2016 15:33:51 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
 	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org, magnus.damm@gmail.com,
-	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 13/13] ARM: dts: blanche: add Ethernet support
-Message-ID: <20160601012451.GL20527@verge.net.au>
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 13/13] ARM: dts: blanche: add Ethernet support
+Date: Wed, 01 Jun 2016 01:33:49 +0300
+Message-ID: <1669958.qjJ7i3NBPv@wasted.cogentembedded.com>
+In-Reply-To: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
 References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
- <1669958.qjJ7i3NBPv@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1669958.qjJ7i3NBPv@wasted.cogentembedded.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 01, 2016 at 01:33:49AM +0300, Sergei Shtylyov wrote:
-> R8A7792  SoC  doesn't have the EtherMAC core, so SMSC  LAN89218  Ethernet
-> chip was used instead on the Blanche board; this chip  is compatible with
-> SMSC LAN9115  for  which there's a (device tree aware) driver. Describe
-> the  chip in  the  Blanche device tree;  enable DHCP and NFS root in the
-> kernel command line for the kernel booting.
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+R8A7792  SoC  doesn't have the EtherMAC core, so SMSC  LAN89218  Ethernet
+chip was used instead on the Blanche board; this chip  is compatible with
+SMSC LAN9115  for  which there's a (device tree aware) driver. Describe
+the  chip in  the  Blanche device tree;  enable DHCP and NFS root in the
+kernel command line for the kernel booting.
 
-At this time I do not have access to documentation or hardware for this
-board. So I am relying on you to test this and make sure it complies
-with the spec.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-What you have looks reasonable to me:
+---
+ arch/arm/boot/dts/r8a7792-blanche.dts |   23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
++++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -21,7 +21,7 @@
+ 	};
+ 
+ 	chosen {
+-		bootargs = "ignore_loglevel";
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+@@ -29,6 +29,27 @@
+ 		device_type = "memory";
+ 		reg = <0 0x40000000 0 0x40000000>;
+ 	};
++
++	d3_3v: regulator-3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "D3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	ethernet@18000000 {
++		compatible = "smsc,lan89218", "smsc,lan9115";
++		reg = <0 0x18000000 0 0x100>;
++		phy-mode = "mii";
++		interrupt-parent = <&irqc>;
++		interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
++		smsc,irq-push-pull;
++		reg-io-width = <4>;
++		vddvario-supply = <&d3_3v>;
++		vdd33a-supply = <&d3_3v>;
++	};
+ };
+ 
+ &extal_clk {
