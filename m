@@ -1,88 +1,135 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50196 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752312AbcEMH7V (ORCPT
+Received: from sauhun.de ([89.238.76.85]:41978 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752454AbcEaK5i (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 13 May 2016 03:59:21 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
-	broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-	alsa-devel@alsa-project.org, linux-renesas-soc@vger.kernel.org
-In-Reply-To: <2350728.BUGJNqvVzR@wasted.cogentembedded.com>
-Message-Id: <E1b17zz-0004io-IY@debutante>
-Date: Fri, 13 May 2016 08:59:03 +0100
-Subject: Applied "rcar: src: skip disabled-SRC nodes" to the asoc tree
+	Tue, 31 May 2016 06:57:38 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: driverdev-devel@linuxdriverproject.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V2 15/31] staging: ks7010: indent eap_packet.h
+Date: Tue, 31 May 2016 12:56:27 +0200
+Message-Id: <1464692203-4180-16-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
+References: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-   rcar: src: skip disabled-SRC nodes
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From de1965159a34951a86267d13db4f2a67234139d3 Mon Sep 17 00:00:00 2001
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Date: Thu, 12 May 2016 01:36:40 +0300
-Subject: [PATCH] rcar: src: skip disabled-SRC nodes
-
-The current device tree representation of the R-Car Sample Rate Converters
-(SRC) assumes that they are numbered consecutively, starting from 0. Alas,
-this  is not  the case with the R8A7794 SoC where SRC0 isn't present.  In
-order to keep the existing  device trees working, I'm suggesting to use a
-disabled node for SRC0.  Teach the SRC probe  to just skip disabled nodes.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- sound/soc/sh/rcar/src.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/staging/ks7010/eap_packet.h | 49 ++++++++++++++++++-------------------
+ 1 file changed, 24 insertions(+), 25 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/src.c b/sound/soc/sh/rcar/src.c
-index 15d6ffe8be74..e39f916d0f2f 100644
---- a/sound/soc/sh/rcar/src.c
-+++ b/sound/soc/sh/rcar/src.c
-@@ -572,6 +572,9 @@ int rsnd_src_probe(struct rsnd_priv *priv)
+diff --git a/drivers/staging/ks7010/eap_packet.h b/drivers/staging/ks7010/eap_packet.h
+index b664bdd8c961db..88384fb19d9580 100644
+--- a/drivers/staging/ks7010/eap_packet.h
++++ b/drivers/staging/ks7010/eap_packet.h
+@@ -14,13 +14,13 @@
+ #endif
  
- 	i = 0;
- 	for_each_child_of_node(node, np) {
-+		if (!of_device_is_available(np))
-+			goto skip;
-+
- 		src = rsnd_src_get(priv, i);
+ struct ether_hdr {
+-	unsigned char	h_dest[ETH_ALEN];	/* destination eth addr	*/
+-	unsigned char	h_source[ETH_ALEN];	/* source ether addr	*/
+-	unsigned char   h_dest_snap;
+-	unsigned char   h_source_snap;
+-	unsigned char   h_command;
+-	unsigned char   h_vendor_id[3];
+-	unsigned short	h_proto;		/* packet type ID field	*/
++	unsigned char h_dest[ETH_ALEN];	/* destination eth addr */
++	unsigned char h_source[ETH_ALEN];	/* source ether addr    */
++	unsigned char h_dest_snap;
++	unsigned char h_source_snap;
++	unsigned char h_command;
++	unsigned char h_vendor_id[3];
++	unsigned short h_proto;	/* packet type ID field */
+ #define ETHER_PROTOCOL_TYPE_EAP		0x888e
+ #define ETHER_PROTOCOL_TYPE_IP		0x0800
+ #define ETHER_PROTOCOL_TYPE_ARP		0x0806
+@@ -37,15 +37,15 @@ struct ieee802_1x_hdr {
+ #define EAPOL_VERSION 2
  
- 		snprintf(name, RSND_SRC_NAME_SIZE, "%s.%d",
-@@ -595,6 +598,7 @@ int rsnd_src_probe(struct rsnd_priv *priv)
- 		if (ret)
- 			goto rsnd_src_probe_done;
+ enum { IEEE802_1X_TYPE_EAP_PACKET = 0,
+-       IEEE802_1X_TYPE_EAPOL_START = 1,
+-       IEEE802_1X_TYPE_EAPOL_LOGOFF = 2,
+-       IEEE802_1X_TYPE_EAPOL_KEY = 3,
+-       IEEE802_1X_TYPE_EAPOL_ENCAPSULATED_ASF_ALERT = 4
++	IEEE802_1X_TYPE_EAPOL_START = 1,
++	IEEE802_1X_TYPE_EAPOL_LOGOFF = 2,
++	IEEE802_1X_TYPE_EAPOL_KEY = 3,
++	IEEE802_1X_TYPE_EAPOL_ENCAPSULATED_ASF_ALERT = 4
+ };
  
-+skip:
- 		i++;
- 	}
+ enum { EAPOL_KEY_TYPE_RC4 = 1, EAPOL_KEY_TYPE_RSN = 2,
+-       EAPOL_KEY_TYPE_WPA = 254 };
+-
++	EAPOL_KEY_TYPE_WPA = 254
++};
+ 
+ #define IEEE8021X_REPLAY_COUNTER_LEN 8
+ #define IEEE8021X_KEY_SIGN_LEN 16
+@@ -60,11 +60,11 @@ struct ieee802_1x_eapol_key {
+ 	/* does not repeat within the life of the keying material used to
+ 	 * encrypt the Key field; 64-bit NTP timestamp MAY be used here */
+ 	unsigned char replay_counter[IEEE8021X_REPLAY_COUNTER_LEN];
+-	unsigned char key_iv[IEEE8021X_KEY_IV_LEN]; /* cryptographically random number */
+-	unsigned char key_index; /* key flag in the most significant bit:
+-		       * 0 = broadcast (default key),
+-		       * 1 = unicast (key mapping key); key index is in the
+-		       * 7 least significant bits */
++	unsigned char key_iv[IEEE8021X_KEY_IV_LEN];	/* cryptographically random number */
++	unsigned char key_index;	/* key flag in the most significant bit:
++					 * 0 = broadcast (default key),
++					 * 1 = unicast (key mapping key); key index is in the
++					 * 7 least significant bits */
+ 	/* HMAC-MD5 message integrity check computed with MS-MPPE-Send-Key as
+ 	 * the key */
+ 	unsigned char key_signature[IEEE8021X_KEY_SIGN_LEN];
+@@ -77,19 +77,18 @@ struct ieee802_1x_eapol_key {
+ 	 * RC4 key used in encryption = Key-IV + MS-MPPE-Recv-Key */
+ } __attribute__ ((packed));
+ 
+-
+ #define WPA_NONCE_LEN 32
+ #define WPA_REPLAY_COUNTER_LEN 8
+ 
+ struct wpa_eapol_key {
+ 	unsigned char type;
+- 	unsigned short key_info;
++	unsigned short key_info;
+ 	unsigned short key_length;
+ 	unsigned char replay_counter[WPA_REPLAY_COUNTER_LEN];
+ 	unsigned char key_nonce[WPA_NONCE_LEN];
+ 	unsigned char key_iv[16];
+ 	unsigned char key_rsc[8];
+-	unsigned char key_id[8]; /* Reserved in IEEE 802.11i/RSN */
++	unsigned char key_id[8];	/* Reserved in IEEE 802.11i/RSN */
+ 	unsigned char key_mic[16];
+ 	unsigned short key_data_length;
+ 	/* followed by key_data_length bytes of key_data */
+@@ -98,18 +97,18 @@ struct wpa_eapol_key {
+ #define WPA_KEY_INFO_TYPE_MASK (WBIT(0) | WBIT(1) | WBIT(2))
+ #define WPA_KEY_INFO_TYPE_HMAC_MD5_RC4 WBIT(0)
+ #define WPA_KEY_INFO_TYPE_HMAC_SHA1_AES WBIT(1)
+-#define WPA_KEY_INFO_KEY_TYPE WBIT(3) /* 1 = Pairwise, 0 = Group key */
++#define WPA_KEY_INFO_KEY_TYPE WBIT(3)	/* 1 = Pairwise, 0 = Group key */
+ /* bit4..5 is used in WPA, but is reserved in IEEE 802.11i/RSN */
+ #define WPA_KEY_INFO_KEY_INDEX_MASK (WBIT(4) | WBIT(5))
+ #define WPA_KEY_INFO_KEY_INDEX_SHIFT 4
+-#define WPA_KEY_INFO_INSTALL WBIT(6) /* pairwise */
+-#define WPA_KEY_INFO_TXRX WBIT(6) /* group */
++#define WPA_KEY_INFO_INSTALL WBIT(6)	/* pairwise */
++#define WPA_KEY_INFO_TXRX WBIT(6)	/* group */
+ #define WPA_KEY_INFO_ACK WBIT(7)
+ #define WPA_KEY_INFO_MIC WBIT(8)
+ #define WPA_KEY_INFO_SECURE WBIT(9)
+ #define WPA_KEY_INFO_ERROR WBIT(10)
+ #define WPA_KEY_INFO_REQUEST WBIT(11)
+-#define WPA_KEY_INFO_ENCR_KEY_DATA WBIT(12) /* IEEE 802.11i/RSN only */
++#define WPA_KEY_INFO_ENCR_KEY_DATA WBIT(12)	/* IEEE 802.11i/RSN only */
+ 
+ #define WPA_CAPABILITY_PREAUTH WBIT(0)
  
 -- 
 2.8.1
