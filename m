@@ -1,135 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:34149 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751287AbcEaW1A (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50523 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750884AbcEaXvX (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 31 May 2016 18:27:00 -0400
-Received: by mail-lf0-f48.google.com with SMTP id k98so1005323lfi.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 31 May 2016 15:26:59 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	Tue, 31 May 2016 19:51:23 -0400
+Date: Wed, 1 Jun 2016 08:51:20 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
 	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
 	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 09/13] ARM: dts: r8a7792: add [H]SCIF support
-Date: Wed, 01 Jun 2016 01:26:56 +0300
-Message-ID: <1493287.pGnW6U6caN@wasted.cogentembedded.com>
-In-Reply-To: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+Subject: Re: [PATCH 11/13] DT: arm: shmobile: document Blanche board
+Message-ID: <20160531235119.GA20527@verge.net.au>
 References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+ <52321184.HGKDRaDOBe@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <52321184.HGKDRaDOBe@wasted.cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe [H]SCIFs in the R8A7792 device tree.
+On Wed, Jun 01, 2016 at 01:30:39AM +0300, Sergei Shtylyov wrote:
+> Document the Blanche device tree bindings, listing it as a supported board.
+> 
+> This allows to use checkpatch.pl to validate .dts files referring to the
+> Blanche board.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+I think the prefix for patch 11 should be: "ARM: dts: blanche: "
+It also looks like it could be squashed into patch 12 but I don't
+feel strongly about that.
 
----
- arch/arm/boot/dts/r8a7792.dtsi |   90 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -140,6 +140,96 @@
- 		dma-channels = <15>;
- 	};
- 
-+	scif0: serial@e6e60000 {
-+		compatible = "renesas,scif-r8a7792", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
-+		reg = <0 0xe6e60000 0 64>;
-+		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp7_clks R8A7792_CLK_SCIF0>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
-+		dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
-+		       <&dmac1 0x29>, <&dmac1 0x2a>;
-+		dma-names = "tx", "rx", "tx", "rx";
-+		power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		status = "disabled";
-+	};
-+
-+	scif1: serial@e6e68000 {
-+		compatible = "renesas,scif-r8a7792", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
-+		reg = <0 0xe6e68000 0 64>;
-+		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp7_clks R8A7792_CLK_SCIF1>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
-+		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
-+		       <&dmac1 0x2d>, <&dmac1 0x2e>;
-+		dma-names = "tx", "rx", "tx", "rx";
-+		power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		status = "disabled";
-+	};
-+
-+	scif2: serial@e6e58000 {
-+		compatible = "renesas,scif-r8a7792", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
-+		reg = <0 0xe6e58000 0 64>;
-+		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp7_clks R8A7792_CLK_SCIF2>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
-+		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
-+		       <&dmac1 0x2b>, <&dmac1 0x2c>;
-+		dma-names = "tx", "rx", "tx", "rx";
-+		power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		status = "disabled";
-+	};
-+
-+	scif3: serial@e6ea8000 {
-+		compatible = "renesas,scif-r8a7792", "renesas,rcar-gen2-scif",
-+			     "renesas,scif";
-+		reg = <0 0xe6ea8000 0 64>;
-+		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp7_clks R8A7792_CLK_SCIF3>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
-+		dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
-+		       <&dmac1 0x2f>, <&dmac1 0x30>;
-+		dma-names = "tx", "rx", "tx", "rx";
-+		power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		status = "disabled";
-+	};
-+
-+	hscif0: serial@e62c0000 {
-+		compatible = "renesas,hscif-r8a7792", "renesas,rcar-gen2-hscif",
-+			     "renesas,hscif";
-+		reg = <0 0xe62c0000 0 96>;
-+		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp7_clks R8A7792_CLK_HSCIF0>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
-+		dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
-+		       <&dmac1 0x39>, <&dmac1 0x3a>;
-+		dma-names = "tx", "rx", "tx", "rx";
-+		power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		status = "disabled";
-+	};
-+
-+	hscif1: serial@e62c8000 {
-+		compatible = "renesas,hscif-r8a7792", "renesas,rcar-gen2-hscif",
-+			     "renesas,hscif";
-+		reg = <0 0xe62c8000 0 96>;
-+		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp7_clks R8A7792_CLK_HSCIF1>, <&zs_clk>,
-+			 <&scif_clk>;
-+		clock-names = "fck", "brg_int", "scif_clk";
-+		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
-+		       <&dmac1 0x4d>, <&dmac1 0x4e>;
-+		dma-names = "tx", "rx", "tx", "rx";
-+		power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		status = "disabled";
-+	};
-+
- 	clocks {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
+> ---
+>  Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> Index: renesas/Documentation/devicetree/bindings/arm/shmobile.txt
+> ===================================================================
+> --- renesas.orig/Documentation/devicetree/bindings/arm/shmobile.txt
+> +++ renesas/Documentation/devicetree/bindings/arm/shmobile.txt
+> @@ -39,6 +39,8 @@ Boards:
+>      compatible = "renesas,ape6evm", "renesas,r8a73a4"
+>    - Atmark Techno Armadillo-800 EVA
+>      compatible = "renesas,armadillo800eva"
+> +  - Blanche (RTP0RC7792SEB00010S)
+> +    compatible = "renesas,blanche", "renesas,r8a7792"
+>    - BOCK-W
+>      compatible = "renesas,bockw", "renesas,r8a7778"
+>    - Genmai (RTK772100BC00000BR)
+> 
