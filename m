@@ -1,110 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:57053 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751669AbcEJNyp (ORCPT
+Received: from mail-pf0-f177.google.com ([209.85.192.177]:34294 "EHLO
+	mail-pf0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751929AbcEaMjv (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 09:54:45 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: driverdev-devel@linuxdriverproject.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 08/27] staging: ks7010: use kernel helper to print buffer
-Date: Tue, 10 May 2016 15:52:21 +0200
-Message-Id: <1462888360-21649-9-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
-References: <1462888360-21649-1-git-send-email-wsa@the-dreams.de>
+	Tue, 31 May 2016 08:39:51 -0400
+Received: by mail-pf0-f177.google.com with SMTP id 62so29907720pfd.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 31 May 2016 05:39:50 -0700 (PDT)
+MIME-Version: 1.0
+Date: Tue, 31 May 2016 14:39:50 +0200
+Message-ID: <CAO3366zQRg--imvRLUTtdUa-0O3n_fZCq=gmgELpO9aNcttWUA@mail.gmail.com>
+Subject: DRM/KMS automated tests
+From: Ulrich Hecht <ulrich.hecht@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi!
 
-No need for an open coded one.
+I have cobbled together a bunch of scripts to test the atomic updates
+API, based around kms++; see here:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/staging/ks7010/Makefile      |  2 +-
- drivers/staging/ks7010/ks7010_sdio.c |  9 +++++----
- drivers/staging/ks7010/ks_debug.c    | 30 ------------------------------
- drivers/staging/ks7010/ks_debug.h    |  2 --
- 4 files changed, 6 insertions(+), 37 deletions(-)
- delete mode 100644 drivers/staging/ks7010/ks_debug.c
+https://github.com/uli/kmsxx/tree/autotest
 
-diff --git a/drivers/staging/ks7010/Makefile b/drivers/staging/ks7010/Makefile
-index 32b0efc7bd00e8..f6a2cc8fd0276d 100644
---- a/drivers/staging/ks7010/Makefile
-+++ b/drivers/staging/ks7010/Makefile
-@@ -1,5 +1,5 @@
- obj-$(CONFIG_KS7010) += ks7010.o
- 
- ccflags-y 	     += -DKS_WLAN_DEBUG=0
--ks7010-y	     := michael_mic.o ks_hostif.o ks_wlan_net.o ks_debug.o \
-+ks7010-y	     := michael_mic.o ks_hostif.o ks_wlan_net.o \
- 					ks7010_sdio.o ks7010_config.o
-diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
-index 5b78522fad1ec1..1a1a43ff306aae 100644
---- a/drivers/staging/ks7010/ks7010_sdio.c
-+++ b/drivers/staging/ks7010/ks7010_sdio.c
-@@ -441,10 +441,11 @@ static void ks_wlan_hw_rx(void *dev, uint16_t size)
- 
- 	/* length check */
- 	if(size > 2046 || size == 0){
--
--		DPRINTK(5,"-INVAILED DATA dump\n");
--		print_buffer(&rx_buffer->data[0],32);
--
-+#ifdef KS_WLAN_DEBUG
-+		if (KS_WLAN_DEBUG > 5)
-+			print_hex_dump_bytes("INVALID DATA dump: ", DUMP_PREFIX_OFFSET,
-+					     rx_buffer->data, 32);
-+#endif
- 		/* rx_status update */
- 		read_status = READ_STATUS_IDLE;
- 		retval = ks7010_sdio_write(priv, READ_STATUS, &read_status, sizeof(read_status));
-diff --git a/drivers/staging/ks7010/ks_debug.c b/drivers/staging/ks7010/ks_debug.c
-deleted file mode 100644
-index 009f5f6df8f4e6..00000000000000
---- a/drivers/staging/ks7010/ks_debug.c
-+++ /dev/null
-@@ -1,30 +0,0 @@
--/*
-- *   Driver for KeyStream 11b/g wireless LAN cards.
-- *   
-- *   ks_debug.c
-- *   $Id: ks_debug.c 991 2009-09-14 01:38:58Z sekine $
-- *
-- *   Copyright (C) 2005-2008 KeyStream Corp.
-- *   Copyright (C) 2009 Renesas Technology Corp.
-- *
-- *   This program is free software; you can redistribute it and/or modify
-- *   it undr the terms of the GNU General Public License version 2 as
-- *   published by the Free Sotware Foundation.
-- */
--#include "ks_wlan.h"
--#include "ks_debug.h"
--
--void print_buffer(unsigned char *p, int length)
--{
--#ifdef KS_WLAN_DEBUG
--        int i;
--#define HEX_OFFSET "\
--           +0 +1 +2 +3 +4 +5 +6 +7 +8 +9 +A +B +C +D +E +F"
--        printk(HEX_OFFSET);
--        for (i=0; i<length; i++) {
--                if (i % 16 == 0) printk("\n%04X-%04X:", i, i+15);
--                printk(" %02X", *(p+i));
--        }
--        printk("\n");
--#endif
--}
-diff --git a/drivers/staging/ks7010/ks_debug.h b/drivers/staging/ks7010/ks_debug.h
-index 2fd5d8484b7f04..adad5f927dfda9 100644
---- a/drivers/staging/ks7010/ks_debug.h
-+++ b/drivers/staging/ks7010/ks_debug.h
-@@ -25,6 +25,4 @@
- #define DPRINTK(n, fmt, args...)
- #endif
- 
--extern void print_buffer(unsigned char *p, int size);
--
- #endif /* _KS_DEBUG_H */
--- 
-2.8.1
+Instructions on how to set up the environment can be found here:
+
+http://elinux.org/User:Uli/Tests:KMS
+
+Currently, tests try various sensible and nonsensical combinations of
+source and destination properties and check if the driver behaves
+reasonably.
+
+Test results look like this:
+
+1. Lager:
+# bash run_tests.sh
+aaa_sanity.py
+Testing connector VGA-1
+PASS
+atomic_flip.py  PASS
+atomic_set_plane.py  PASS
+atomic_small_dest.py  PASS
+atomic_small_fb.py  PASS
+fb_large.py  PASS
+fb_small.py  PASS
+mode_invalid.py  PASS
+mode_reset.py  PASS
+mode_set_all.py  PASS
+
+10 passed, 0 failed, 0 skipped
+
+2. Salvator-X:
+# bash run_tests.sh
+aaa_sanity.py
+Testing connector VGA-1
+PASS
+atomic_flip.py  PASS
+atomic_set_plane.py  FAIL
+atomic_small_dest.py  PASS
+atomic_small_fb.py  PASS
+fb_large.py  PASS
+fb_small.py  PASS
+mode_invalid.py  PASS
+mode_reset.py  PASS
+mode_set_all.py  PASS
+
+9 passed, 1 failed, 0 skipped
+
+I have not yet looked at the FAIL on Salvator-X (might well be that
+the test is bogus) because there is a bigger issue there. After
+running the tests a couple of times, framebuffer allocation starts to
+fail:
+
+[  956.562285] rcar-du feb00000.display: failed to allocate buffer
+with size 3145728
+[  957.130012] rcar-du feb00000.display: failed to allocate buffer
+with size 3145728
+[  957.689012] rcar-du feb00000.display: failed to allocate buffer
+with size 3194880
+[  959.926459] rcar-du feb00000.display: failed to allocate buffer
+with size 1921024
+[...]
+
+This does not happen on Lager, and I use the same 32-bit userspace for
+both platforms. I guess there must be a memory leak in the driver
+somewhere. Is this a known issue?
+
+CU
+Uli
