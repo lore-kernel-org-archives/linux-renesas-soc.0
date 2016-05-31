@@ -1,65 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:51932 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754848AbcEZSSo (ORCPT
+Received: from sauhun.de ([89.238.76.85]:41991 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751249AbcEaK5t (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 26 May 2016 14:18:44 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] serial: sh-sci: Do not start transfers from sci_startup()
-Date: Thu, 26 May 2016 20:18:35 +0200
-Message-Id: <1464286718-10745-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464286718-10745-1-git-send-email-geert+renesas@glider.be>
-References: <1464286718-10745-1-git-send-email-geert+renesas@glider.be>
+	Tue, 31 May 2016 06:57:49 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: driverdev-devel@linuxdriverproject.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V2 21/31] staging: ks7010: indent ks_wlan_ioctl.h
+Date: Tue, 31 May 2016 12:56:33 +0200
+Message-Id: <1464692203-4180-22-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
+References: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-FIFO reset is done in sci_reset(), called from sci_set_termios(), while
-sci_start_tx() and sci_start_rx() are called before, from sci_startup().
-However, starting transfers before the UART's FIFOs have been reset may
-cause reading of stale data.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Remove the calls to sci_start_tx() and sci_start_rx() from sci_startup()
-to fix this.
-
-Transfers are still started when needed:
-  - sci_start_rx() is called from sci_set_termios() after FIFO reset, if
-    the CREAD flag is set,
-  - sci_start_tx() is called from uart_change_speed() immediately
-    thereafter, if transmission is enabled.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/tty/serial/sh-sci.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/staging/ks7010/ks_wlan_ioctl.h | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 0130feb069aee02f..d6ba90c572f7475c 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1873,7 +1873,6 @@ static void sci_break_ctl(struct uart_port *port, int break_state)
- static int sci_startup(struct uart_port *port)
- {
- 	struct sci_port *s = to_sci_port(port);
--	unsigned long flags;
- 	int ret;
+diff --git a/drivers/staging/ks7010/ks_wlan_ioctl.h b/drivers/staging/ks7010/ks_wlan_ioctl.h
+index e7469f7338f7af..cc4669eddcc1f7 100644
+--- a/drivers/staging/ks7010/ks_wlan_ioctl.h
++++ b/drivers/staging/ks7010/ks_wlan_ioctl.h
+@@ -36,8 +36,8 @@
+ #define KS_WLAN_GET_SCAN_TYPE		SIOCIWFIRSTPRIV+13
+ #define KS_WLAN_SET_RX_GAIN		SIOCIWFIRSTPRIV+14
+ #define KS_WLAN_GET_RX_GAIN		SIOCIWFIRSTPRIV+15
+-#define KS_WLAN_HOSTT			SIOCIWFIRSTPRIV+16  /* unused */
+-//#define KS_WLAN_SET_REGION		SIOCIWFIRSTPRIV+17
++#define KS_WLAN_HOSTT			SIOCIWFIRSTPRIV+16	/* unused */
++//#define KS_WLAN_SET_REGION            SIOCIWFIRSTPRIV+17
+ #define KS_WLAN_SET_BEACON_LOST		SIOCIWFIRSTPRIV+18
+ #define KS_WLAN_GET_BEACON_LOST		SIOCIWFIRSTPRIV+19
  
- 	dev_dbg(port->dev, "%s(%d)\n", __func__, port->line);
-@@ -1884,11 +1883,6 @@ static int sci_startup(struct uart_port *port)
+@@ -51,8 +51,8 @@
+ #define KS_WLAN_GET_CTS_MODE		SIOCIWFIRSTPRIV+25
+ /*					SIOCIWFIRSTPRIV+26 */
+ /*					SIOCIWFIRSTPRIV+27 */
+-#define KS_WLAN_SET_SLEEP_MODE		SIOCIWFIRSTPRIV+28 /* sleep mode */
+-#define KS_WLAN_GET_SLEEP_MODE		SIOCIWFIRSTPRIV+29 /* sleep mode */
++#define KS_WLAN_SET_SLEEP_MODE		SIOCIWFIRSTPRIV+28	/* sleep mode */
++#define KS_WLAN_GET_SLEEP_MODE		SIOCIWFIRSTPRIV+29	/* sleep mode */
+ /*					SIOCIWFIRSTPRIV+30 */
+ /*					SIOCIWFIRSTPRIV+31 */
  
- 	sci_request_dma(port);
+@@ -62,7 +62,8 @@
+ #include <linux/netdevice.h>
  
--	spin_lock_irqsave(&port->lock, flags);
--	sci_start_tx(port);
--	sci_start_rx(port);
--	spin_unlock_irqrestore(&port->lock, flags);
--
- 	return 0;
- }
+ extern int ks_wlan_read_config_file(struct ks_wlan_private *priv);
+-extern int ks_wlan_setup_parameter(struct ks_wlan_private *priv, unsigned int commit_flag);
++extern int ks_wlan_setup_parameter(struct ks_wlan_private *priv,
++				   unsigned int commit_flag);
+ 
+ #endif /* __KERNEL__ */
  
 -- 
-1.9.1
+2.8.1
