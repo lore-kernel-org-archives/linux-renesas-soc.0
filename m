@@ -1,47 +1,40 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:42004 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751340AbcEaK57 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 31 May 2016 06:57:59 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: driverdev-devel@linuxdriverproject.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V2 27/31] staging: ks7010: fix module annotations
-Date: Tue, 31 May 2016 12:56:39 +0200
-Message-Id: <1464692203-4180-28-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
-References: <1464692203-4180-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 00/13] Add R8A7794/SILK board eMMC DT support
+Date: Wed, 01 Jun 2016 01:06:37 +0300
+Message-ID: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hello.
 
-List all authors, beautify description, match license to what is stated
-in file headers, add firmware information.
+   Here's the set of 13 patches against Simon Horman's 'renesas.git' repo,
+'renesas-devel-20160530-v4.7-rc1' tag. We add the device tree support for
+the R8A7792-based Blanche board. The R-Car 'clk' driver patch was posted last
+week separately...
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/staging/ks7010/ks7010_sdio.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+[01/13] ARM: shmobile: r8a7792: add clock index macros
+[02/13] ARM: shmobile: r8a7792: add power domain index macros
+[03/13] soc: renesas: rcar-sysc: add R8A7792 support
+[04/13] ARM: shmobile: r8a7792: basic SoC support
+[05/13] DT: clock: rcar-gen2-cpg-clocks: document R8A7792 support
+[06/13] DT: clock: cpg-mstp-clocks: document-R8A7792-support
+[07/13] ARM: dts: r8a7792: initial SoC device tree
+[08/13] ARM: dts: r8a7792: add SYS-DMAC support
+[09/13] ARM: dts: r8a7792: add [H]SCIF support
+[10/13] ARM dts: r8a7792: add IRQC support
+[11/13] DT: arm: shmobile: document Blanche board
+[12/13] ARM: dts: blanche: initial device tree
+[13/13] ARM: dts: blanche: add Ethernet support
 
-diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
-index 8e8476b52cedbc..8c0d1bb58dcd9c 100644
---- a/drivers/staging/ks7010/ks7010_sdio.c
-+++ b/drivers/staging/ks7010/ks7010_sdio.c
-@@ -1261,9 +1261,7 @@ static void __exit ks7010_sdio_exit(void)
- module_init(ks7010_sdio_init);
- module_exit(ks7010_sdio_exit);
- 
--MODULE_AUTHOR("Qi-Hardware based on KeyStream driver");
--MODULE_DESCRIPTION("Driver for KeyStream, KS7010 based SDIO cards. ");
--#ifdef MODULE_LICENSE
--MODULE_LICENSE("GPL");
--#endif
--MODULE_SUPPORTED_DEVICE("KS7910");
-+MODULE_AUTHOR("Sang Engineering, Qi-Hardware, KeyStream");
-+MODULE_DESCRIPTION("Driver for KeyStream KS7010 based SDIO cards");
-+MODULE_LICENSE("GPL v2");
-+MODULE_FIRMWARE(ROM_FILE);
--- 
-2.8.1
+WBR, Sergei
+
