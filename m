@@ -1,61 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f66.google.com ([209.85.220.66]:35068 "EHLO
-	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755659AbcEaSBx (ORCPT
+Received: from mail-yw0-f170.google.com ([209.85.161.170]:34008 "EHLO
+	mail-yw0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753804AbcEaQ2I (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 31 May 2016 14:01:53 -0400
+	Tue, 31 May 2016 12:28:08 -0400
+MIME-Version: 1.0
+In-Reply-To: <a1d8aeea-2e62-ef2b-fd01-a219e4863785@cogentembedded.com>
+References: <1464553500-19043-1-git-send-email-ykaneko0929@gmail.com>
+	<ac6ed5e5-0adf-3147-2bd6-1752cf31d587@cogentembedded.com>
+	<a1d8aeea-2e62-ef2b-fd01-a219e4863785@cogentembedded.com>
+Date: Wed, 1 Jun 2016 01:28:07 +0900
+Message-ID: <CAH1o70J+KM+sTh2jyiCOf1pYK=h7S++uHnqEO7Q4=Vug+BiwgA@mail.gmail.com>
+Subject: Re: [PATCH net-next] ravb: Add ESF in RCR for enabling separation filter
 From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To: netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
 	Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH net-next v2] ravb: Add ESF in RCR for enabling separation filter
-Date: Wed,  1 Jun 2016 03:01:28 +0900
-Message-Id: <1464717688-28146-1-git-send-email-ykaneko0929@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Masaru Nagai <masaru.nagai.vx@renesas.com>
+Hi Sergei,
 
-The H/W manual recommends B'10 or B'11 in a value of the separation
-filtering select bits in the receive configuration register (RCR.ESF).
-When B'10 is set, frames from non-matching streams are discarded.
-When B'11 is set, frames from non-matching streams are processed in
-reception queue 0 (best effort).
-This patch sets B'11 in ESF.
+2016-05-31 6:19 GMT+09:00 Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>:
+> On 05/30/2016 05:30 PM, Sergei Shtylyov wrote:
+>
+>>> From: Masaru Nagai <masaru.nagai.vx@renesas.com>
+>>>
+>>> This patch adds enabling separation filter(ESF) is setting value of B'11.
+>>> This setting filter for separating AVB stream frames from non-AVB stream
+>>> frames is enabled. Non-matching frames from a stream are processed in
+>>> queue 0(best effort). H/W manual recommends B'11 or B'10.
+>>> When B'10 is setting, Non-mating frames are discarded.
+>>
+>>
+>>    It was somewhat hard for me to parse that...
+>
+>
+>    Forgot about s/Non-mating/Non-matching/.
 
-[ykaneko0929@gmail.com: revised this commit message]
-Signed-off-by: Masaru Nagai <masaru.nagai.vx@renesas.com>
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
----
+Thanks for your review.
+I will revise the commit message.
 
-This patch is based on the master branch of David Miller's next networking
-tree.
+Thanks,
+kaneko
 
-v2 [Yoshihiro Kaneko]
-  - Revised the commit message
-  - Added Acked-by
-
- drivers/net/ethernet/renesas/ravb_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 867caf6..1ceadbf 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -402,7 +402,8 @@ static int ravb_dmac_init(struct net_device *ndev)
- #endif
- 
- 	/* Set AVB RX */
--	ravb_write(ndev, RCR_EFFS | RCR_ENCF | RCR_ETS0 | 0x18000000, RCR);
-+	ravb_write(ndev,
-+		   RCR_EFFS | RCR_ENCF | RCR_ETS0 | RCR_ESF | 0x18000000, RCR);
- 
- 	/* Set FIFO size */
- 	ravb_write(ndev, TGC_TQP_AVBMODE1 | 0x00222200, TGC);
--- 
-1.9.1
+>
+>
+>>> Signed-off-by: Masaru Nagai <masaru.nagai.vx@renesas.com>
+>>> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+>>> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+>>
+>>
+>> Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+>
+> MBR, Sergei
+>
