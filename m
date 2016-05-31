@@ -1,97 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:36569 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751474AbcEJI4X (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:49942 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756846AbcEaJIo (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 10 May 2016 04:56:23 -0400
-Subject: Re: [PATCH 0/2] fbdev: sh_mobile_meram: use ARCH_RENESAS
+	Tue, 31 May 2016 05:08:44 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms+renesas@verge.net.au>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-References: <1457663298-31973-1-git-send-email-horms+renesas@verge.net.au>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	<linux-fbdev@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <5731A229.7010307@ti.com>
-Date: Tue, 10 May 2016 11:56:09 +0300
-MIME-Version: 1.0
-In-Reply-To: <1457663298-31973-1-git-send-email-horms+renesas@verge.net.au>
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="CMmG3AJNd2wVRHI8vp0BQsBr9m4uHA6qC"
+	Magnus Damm <damm+renesas@opensource.se>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] arm64: dts: r8a7796: Use SYSC "always-on" PM Domain
+Date: Tue, 31 May 2016 11:08:45 +0200
+Message-Id: <1464685726-21611-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464685726-21611-1-git-send-email-geert+renesas@glider.be>
+References: <1464685726-21611-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
---CMmG3AJNd2wVRHI8vp0BQsBr9m4uHA6qC
-Content-Type: multipart/mixed; boundary="1dn961SD8DMFHI2SlOL3842C5n1tm0X3N"
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-To: Simon Horman <horms+renesas@verge.net.au>,
- Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Magnus Damm <magnus.damm@gmail.com>, linux-fbdev@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org
-Message-ID: <5731A229.7010307@ti.com>
-Subject: Re: [PATCH 0/2] fbdev: sh_mobile_meram: use ARCH_RENESAS
-References: <1457663298-31973-1-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1457663298-31973-1-git-send-email-horms+renesas@verge.net.au>
+Hook up all devices that are part of the CPG/MSSR Clock Domain to the
+SYSC "always-on" PM Domain, for a more consistent device-power-area
+description in DT.
 
---1dn961SD8DMFHI2SlOL3842C5n1tm0X3N
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-On 11/03/16 04:28, Simon Horman wrote:
-> Use ARCH_RENESAS in place of ARCH_SHMOBILE.
->=20
-> This is part of an ongoing process to migrate from ARCH_SHMOBILE to
-> ARCH_RENESAS the motivation for which being that RENESAS seems to be a =
-more
-> appropriate name than SHMOBILE for the majority of Renesas ARM based So=
-Cs.
->=20
-> As a follow-up also depend on COMPILE_TEST to provided for increased
-> compile testing.
->=20
-> Based on v4.5-rc1
->=20
-> Simon Horman (2):
->   fbdev: sh_mobile_meram: use ARCH_RENESAS
->   fbdev: sh_mobile_meram: depend on COMPILE_TEST
->=20
->  drivers/video/fbdev/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-
-What was the conclusion in this thread? Should I apply these?
-
- Tomi
-
-
---1dn961SD8DMFHI2SlOL3842C5n1tm0X3N--
-
---CMmG3AJNd2wVRHI8vp0BQsBr9m4uHA6qC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJXMaIpAAoJEPo9qoy8lh7137EP/iwwHMI6JI81ontEplVMxL+z
-CpX2SpSS+HeeCXiKoiNy4fM9OFc3h1pselGd8FA5fFv2yV41E9OMfCdz3RhZWcnB
-cbS9TT1Tn8PB9K7m168SOqee9FIprxe8oDROGIVVYKmEHDKrLYcDif3hV9MOII6K
-F1meinSDO2ECIinyVs0JjNOxC5bEIPBm1lKyOowr5tgQwSaT8RTz5JubZYlGS0pE
-BuZmSqKbQdNf2ZxZ9b2e3oBZQypLCjRiVy9IhmGocN+JwtkDIQLZhykuiopr5KFs
-u+fmLXEIne3oLiwQ9S2PQ4ylSRZgGfln+3oyd9m2dyMP5HURWeyfT/bibgqv+jx9
-zVeFmfXfZaI9kjsbgzvjlLZfJhZGCg8Dr14K1W7V6qHK+MFjh5TFxwKdOGSHl/XK
-xl2zXcEPMLPHtjOSG1i+R0AWynS2gWISv71lckNyNoX5/jBtZHgYw7+vt2b6hLdZ
-ZrHzG1tnkYgU8F1gMXp5ZjZA/3ERktTbUOVTLCM4XAez8KoQae/2d5MpoaW52HEY
-kkq0q2YQTWt405zFK4XAH/WYBiNudDnl2jWDqSdL+ADLu3LDmoIlTlF9kLVEVs1A
-dIZjSUJQzcbG6qSuVD60NYQ8+9E+mSxF9BRlsCoD18P9LlHlok8dNyy5dGEuNXFi
-ovvL3kbMuJADZaHIFg0o
-=iIRh
------END PGP SIGNATURE-----
-
---CMmG3AJNd2wVRHI8vp0BQsBr9m4uHA6qC--
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 85f0843ddd874378..fab61eddede3818c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -122,7 +122,7 @@
+ 				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
+ 				 <&scif_clk>;
+ 			clock-names = "fck", "brg_int", "scif_clk";
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+ 	};
+-- 
+1.9.1
