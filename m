@@ -1,69 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:36781 "EHLO
-	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750855AbcEHLC1 (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:35496 "EHLO
+	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750730AbcEaWP5 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sun, 8 May 2016 07:02:27 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux-foundation.org, dmaengine@vger.kernel.org
-Cc: will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/2] dma-mapping: add __dma_sync_single_for_device()
-Date: Sun,  8 May 2016 12:59:55 +0200
-Message-Id: <1462705196-10857-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1462705196-10857-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1462705196-10857-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+	Tue, 31 May 2016 18:15:57 -0400
+Received: by mail-lf0-f53.google.com with SMTP id w16so842467lfd.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 31 May 2016 15:15:56 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	magnus.damm@gmail.com
+Subject: [PATCH 03/13] soc: renesas: rcar-sysc: add R8A7792 support
+Date: Wed, 01 Jun 2016 01:15:53 +0300
+Message-ID: <5578588.eXCR2ytE51@wasted.cogentembedded.com>
+In-Reply-To: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some users of the DMA mapping API calls dma_sync_single_for_device()
-from the dma_map_single() call path. This will cause false warning
-printouts if CONFIG_DMA_API_DEBUG are enabled.
+Add support for R-Car V2H (R8A7792) SoC power areas to the SYSC driver.
 
-The reason for the warning are that debug_dma_sync_single_for_device()
-will be called before debug_dma_map_page() so the new mapping can't be
-found and are believed to be invalid. Add __dma_sync_single_for_device()
-that don't call into debug_dma_sync_single_for_device() and can be used
-in these situations.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- include/linux/dma-mapping.h | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/soc/renesas/Makefile       |    1 +
+ drivers/soc/renesas/r8a7792-sysc.c |   34 ++++++++++++++++++++++++++++++++++
+ drivers/soc/renesas/rcar-sysc.c    |    3 +++
+ drivers/soc/renesas/rcar-sysc.h    |    1 +
+ 4 files changed, 39 insertions(+)
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 9ea9aba..0e4d3a6 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -224,7 +224,7 @@ static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
- 	debug_dma_sync_single_for_cpu(dev, addr, size, dir);
- }
- 
--static inline void dma_sync_single_for_device(struct device *dev,
-+static inline void __dma_sync_single_for_device(struct device *dev,
- 					      dma_addr_t addr, size_t size,
- 					      enum dma_data_direction dir)
- {
-@@ -233,6 +233,13 @@ static inline void dma_sync_single_for_device(struct device *dev,
- 	BUG_ON(!valid_dma_direction(dir));
- 	if (ops->sync_single_for_device)
- 		ops->sync_single_for_device(dev, addr, size, dir);
-+}
+Index: renesas/drivers/soc/renesas/Makefile
+===================================================================
+--- renesas.orig/drivers/soc/renesas/Makefile
++++ renesas/drivers/soc/renesas/Makefile
+@@ -1,6 +1,7 @@
+ obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
+ obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
+ obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
++obj-$(CONFIG_ARCH_R8A7792)	+= rcar-sysc.o r8a7792-sysc.o
+ # R-Car M2-N is identical to R-Car M2-W w.r.t. power domains.
+ obj-$(CONFIG_ARCH_R8A7793)	+= rcar-sysc.o r8a7791-sysc.o
+ obj-$(CONFIG_ARCH_R8A7794)	+= rcar-sysc.o r8a7794-sysc.o
+Index: renesas/drivers/soc/renesas/r8a7792-sysc.c
+===================================================================
+--- /dev/null
++++ renesas/drivers/soc/renesas/r8a7792-sysc.c
+@@ -0,0 +1,34 @@
++/*
++ * Renesas R-Car V2H (R8A7792) System Controller
++ *
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
 +
-+static inline void dma_sync_single_for_device(struct device *dev,
-+					      dma_addr_t addr, size_t size,
-+					      enum dma_data_direction dir)
-+{
-+	__dma_sync_single_for_device(dev, addr, size, dir);
- 	debug_dma_sync_single_for_device(dev, addr, size, dir);
- }
- 
--- 
-2.8.2
++#include <linux/bug.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++
++#include <dt-bindings/power/r8a7792-sysc.h>
++
++#include "rcar-sysc.h"
++
++static const struct rcar_sysc_area r8a7792_areas[] __initconst = {
++	{ "always-on",	    0, 0, R8A7792_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
++	{ "ca15-scu",	0x180, 0, R8A7792_PD_CA15_SCU,	R8A7792_PD_ALWAYS_ON,
++	  PD_SCU },
++	{ "ca15-cpu0",	 0x40, 0, R8A7792_PD_CA15_CPU0,	R8A7792_PD_CA15_SCU,
++	  PD_CPU_NOCR },
++	{ "ca15-cpu1",	 0x40, 1, R8A7792_PD_CA15_CPU1,	R8A7792_PD_CA15_SCU,
++	  PD_CPU_NOCR },
++	{ "sgx",	 0xc0, 0, R8A7792_PD_SGX,	R8A7792_PD_ALWAYS_ON },
++	{ "imp",	0x140, 0, R8A7792_PD_IMP,	R8A7792_PD_ALWAYS_ON },
++};
++
++const struct rcar_sysc_info r8a7792_sysc_info __initconst = {
++	.areas = r8a7792_areas,
++	.num_areas = ARRAY_SIZE(r8a7792_areas),
++};
+Index: renesas/drivers/soc/renesas/rcar-sysc.c
+===================================================================
+--- renesas.orig/drivers/soc/renesas/rcar-sysc.c
++++ renesas/drivers/soc/renesas/rcar-sysc.c
+@@ -293,6 +293,9 @@ static const struct of_device_id rcar_sy
+ #ifdef CONFIG_ARCH_R8A7791
+ 	{ .compatible = "renesas,r8a7791-sysc", .data = &r8a7791_sysc_info },
+ #endif
++#ifdef CONFIG_ARCH_R8A7792
++	{ .compatible = "renesas,r8a7792-sysc", .data = &r8a7792_sysc_info },
++#endif
+ #ifdef CONFIG_ARCH_R8A7793
+ 	/* R-Car M2-N is identical to R-Car M2-W w.r.t. power domains. */
+ 	{ .compatible = "renesas,r8a7793-sysc", .data = &r8a7791_sysc_info },
+Index: renesas/drivers/soc/renesas/rcar-sysc.h
+===================================================================
+--- renesas.orig/drivers/soc/renesas/rcar-sysc.h
++++ renesas/drivers/soc/renesas/rcar-sysc.h
+@@ -53,6 +53,7 @@ struct rcar_sysc_info {
+ extern const struct rcar_sysc_info r8a7779_sysc_info;
+ extern const struct rcar_sysc_info r8a7790_sysc_info;
+ extern const struct rcar_sysc_info r8a7791_sysc_info;
++extern const struct rcar_sysc_info r8a7792_sysc_info;
+ extern const struct rcar_sysc_info r8a7794_sysc_info;
+ extern const struct rcar_sysc_info r8a7795_sysc_info;
+ #endif /* __SOC_RENESAS_RCAR_SYSC_H__ */
