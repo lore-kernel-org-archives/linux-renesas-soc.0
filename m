@@ -1,18 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:42990 "EHLO
-	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1757336AbcFAGo7 (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:50974 "EHLO
+	relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1757160AbcFACk1 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 02:44:59 -0400
+	Tue, 31 May 2016 22:40:27 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>
 CC: <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 1/2] usb: host: xhci: plat: add ->quirks value for platform-specific
-Date: Wed, 1 Jun 2016 15:44:42 +0900
-Message-ID: <1464763483-6224-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1464763483-6224-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1464763483-6224-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/2] usb: host: xhci: plat: add ->quirks value for platform-specific
+Date: Wed, 1 Jun 2016 11:40:05 +0900
+Message-ID: <1464748806-7932-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1464748806-7932-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1464748806-7932-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
