@@ -1,58 +1,60 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Sender: Kieran Bingham <kieran@ksquared.org.uk>
-From: Kieran Bingham <kieran@bingham.xyz>
-To: laurent.pinchart@ideasonboard.com,
-	linux-renesas-soc@vger.kernel.org,
-	kieran@bingham.xyz
-Cc: linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 4/4] arm64: dts: r8a7795: add FCPF device nodes
-Date: Fri, 27 May 2016 18:19:25 +0100
-Message-Id: <1464369565-12259-6-git-send-email-kieran@bingham.xyz>
-In-Reply-To: <1464369565-12259-1-git-send-email-kieran@bingham.xyz>
-References: <1464369565-12259-1-git-send-email-kieran@bingham.xyz>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 1 Jun 2016 10:18:13 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org, magnus.damm@gmail.com,
+	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 10/13] ARM: dts: r8a7792: add IRQC support
+Message-ID: <20160601011813.GJ20527@verge.net.au>
+References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+ <3573091.BUvyGW3hVt@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3573091.BUvyGW3hVt@wasted.cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Provide nodes for the FCP devices dedicated to the FDP device channels.
+On Wed, Jun 01, 2016 at 01:29:05AM +0300, Sergei Shtylyov wrote:
+> Describe the IRQC interrupt controller in the R8A7792 device tree.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+>  arch/arm/boot/dts/r8a7792.dtsi |   13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+> ===================================================================
+> --- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
+> +++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+> @@ -62,6 +62,19 @@
+>  			      IRQ_TYPE_LEVEL_HIGH)>;
+>  	};
+>  
+> +	irqc: interrupt-controller@e61c0000 {
 
-Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Could you consider using irqc0 as the node name for consistency with the
+DT of other R-Car Gen2 SoCs?
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 26df3001617e..14f086b9036d 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1610,5 +1610,26 @@
- 			interrupts = <0 436 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 728>;
- 		};
-+
-+		fcpf0: fcp@fe950000 {
-+			compatible = "renesas,r8a7795-fcpf", "renesas,fcpf";
-+			reg = <0 0xfe950000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 615>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+		};
-+
-+		fcpf1: fcp@fe951000 {
-+			compatible = "renesas,r8a7795-fcpf", "renesas,fcpf";
-+			reg = <0 0xfe951000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 614>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+		};
-+
-+		fcpf2: fcp@fe952000 {
-+			compatible = "renesas,r8a7795-fcpf", "renesas,fcpf";
-+			reg = <0 0xfe952000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 613>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+		};
- 	};
- };
--- 
-2.5.0
+What follows looks correct to me.
+
+> +		compatible = "renesas,irqc-r8a7792", "renesas,irqc";
+> +		#interrupt-cells = <2>;
+> +		interrupt-controller;
+> +		reg = <0 0xe61c0000 0 0x200>;
+> +		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&mstp4_clks R8A7792_CLK_IRQC>;
+> +		power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
+> +	};
+> +
+>  	timer {
+>  		compatible = "arm,armv7-timer";
+>  		interrupts = <GIC_PPI 13
+> 
