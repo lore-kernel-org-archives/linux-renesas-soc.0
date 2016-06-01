@@ -1,7 +1,7 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:45481 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751726AbcFATV1 (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:46849 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751177AbcFATV1 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
 	Wed, 1 Jun 2016 15:21:27 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -15,9 +15,9 @@ To: Simon Horman <horms@verge.net.au>,
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v3 08/22] ARM: dts: r8a7794: Add device node for RST module
-Date: Wed,  1 Jun 2016 21:21:06 +0200
-Message-Id: <1464808880-343-9-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH/RFC v3 06/22] ARM: dts: r8a7791: Add device node for RST module
+Date: Wed,  1 Jun 2016 21:21:04 +0200
+Message-Id: <1464808880-343-7-git-send-email-geert+renesas@glider.be>
 In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
 References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -37,24 +37,24 @@ v2:
   - Drop RFC status and TODO,
   - Change one-line summary prefix to match current arm-soc practices.
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 5 +++++
+ arch/arm/boot/dts/r8a7791.dtsi | 5 +++++
  1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 685f986cf962752f..ce98f358ce731798 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1249,6 +1249,11 @@
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 1985bd0dc32ce738..f8f1371f3621d1a3 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1493,6 +1493,11 @@
  		};
  	};
  
 +	rst: reset-controller@e6160000 {
-+		compatible = "renesas,r8a7794-rst";
++		compatible = "renesas,r8a7791-rst";
 +		reg = <0 0xe6160000 0 0x0100>;
 +	};
 +
  	sysc: system-controller@e6180000 {
- 		compatible = "renesas,r8a7794-sysc";
+ 		compatible = "renesas,r8a7791-sysc";
  		reg = <0 0xe6180000 0 0x0200>;
 -- 
 1.9.1
