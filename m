@@ -1,20 +1,16 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:36341 "EHLO
-	mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750716AbcFAM16 (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:35853 "EHLO
+	mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751651AbcFAMQe (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 08:27:58 -0400
-MIME-Version: 1.0
-In-Reply-To: <a60346f2-2abb-342b-dd20-38d401c4ceb3@cogentembedded.com>
-References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
-	<1669958.qjJ7i3NBPv@wasted.cogentembedded.com>
-	<CAMuHMdU2P6VKXNpEHGOKpyuM45Pk0CuHWngxwu5AYGqYfduXXg@mail.gmail.com>
-	<a60346f2-2abb-342b-dd20-38d401c4ceb3@cogentembedded.com>
-Date: Wed, 1 Jun 2016 14:27:57 +0200
-Message-ID: <CAMuHMdXUdg8+ux2j5SsthZS6DWZnHfan0jL=PpYEwfnS7fbRkQ@mail.gmail.com>
+	Wed, 1 Jun 2016 08:16:34 -0400
+Received: by mail-lf0-f52.google.com with SMTP id b73so11441491lfb.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 01 Jun 2016 05:16:33 -0700 (PDT)
 Subject: Re: [PATCH 13/13] ARM: dts: blanche: add Ethernet support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+ <1669958.qjJ7i3NBPv@wasted.cogentembedded.com>
+ <CAMuHMdU2P6VKXNpEHGOKpyuM45Pk0CuHWngxwu5AYGqYfduXXg@mail.gmail.com>
 Cc: Simon Horman <horms@verge.net.au>,
 	linux-renesas-soc@vger.kernel.org,
 	Rob Herring <robh+dt@kernel.org>,
@@ -27,44 +23,36 @@ Cc: Simon Horman <horms@verge.net.au>,
 	Russell King <linux@arm.linux.org.uk>,
 	"linux-arm-kernel@lists.infradead.org"
 	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <a60346f2-2abb-342b-dd20-38d401c4ceb3@cogentembedded.com>
+Date: Wed, 1 Jun 2016 15:16:30 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdU2P6VKXNpEHGOKpyuM45Pk0CuHWngxwu5AYGqYfduXXg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+Hello.
 
-On Wed, Jun 1, 2016 at 2:16 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 6/1/2016 11:22 AM, Geert Uytterhoeven wrote:
->>> --- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
->>> +++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
->>
->>> +       ethernet@18000000 {
->>> +               compatible = "smsc,lan89218", "smsc,lan9115";
->>
->>
->> The "smsc,lan89218" needs to be documented in the device tree bindings.
+On 6/1/2016 11:22 AM, Geert Uytterhoeven wrote:
+
+>> --- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
+>> +++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
 >
->    Have you looked at those bindings?
-
-Now I did.
-
->> Google couldn't find any evidence you submitted a patch for that.
+>> +       ethernet@18000000 {
+>> +               compatible = "smsc,lan89218", "smsc,lan9115";
 >
->    Because the bindings document *any* LAN9115 compatible chip already.
+> The "smsc,lan89218" needs to be documented in the device tree bindings.
 
-Ah, generic wildcard, not listing valid values. Hence checkpatch complained...
+    Have you looked at those bindings?
 
-Google predict-while-you-type suggests "lan89218aq"? Should you use that?
-BTW, that's why we always want to document all valid values...
+> Google couldn't find any evidence you submitted a patch for that.
 
-Gr{oetje,eeting}s,
+    Because the bindings document *any* LAN9115 compatible chip already.
 
-                        Geert
+> Gr{oetje,eeting}s,
+>
+>                         Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MBR, Sergei
