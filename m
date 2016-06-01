@@ -1,46 +1,42 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1923946.Jvi0TDUXFC@wasted.cogentembedded.com>
-References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
-	<1923946.Jvi0TDUXFC@wasted.cogentembedded.com>
-Date: Wed, 1 Jun 2016 10:36:58 +0200
-Message-ID: <CAMuHMdVnZUC69SoVp4_+BDmMv6hRm-+7jZXwtzeJbKxh0M21Mw@mail.gmail.com>
-Subject: Re: [PATCH 12/13] ARM: dts: blanche: initial device tree
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([149.20.54.216]:49042 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751125AbcFAXBR (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 1 Jun 2016 19:01:17 -0400
+Date: Wed, 01 Jun 2016 16:01:15 -0700 (PDT)
+Message-Id: <20160601.160115.1723237636581037081.davem@davemloft.net>
+To: ykaneko0929@gmail.com
+Cc: netdev@vger.kernel.org, sergei.shtylyov@cogentembedded.com,
+	horms@verge.net.au, magnus.damm@gmail.com,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH net-next v2] ravb: Add ESF in RCR for enabling
+ separation filter
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1464717688-28146-1-git-send-email-ykaneko0929@gmail.com>
+References: <1464717688-28146-1-git-send-email-ykaneko0929@gmail.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 1, 2016 at 12:32 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add the initial device  tree for the R8A7792 SoC based Blanche board.
-> The board has 2 debug serial ports: SCIF0 and SCIF3; include support for
-> them,  so that  the serial console  can  work.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Date: Wed,  1 Jun 2016 03:01:28 +0900
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> From: Masaru Nagai <masaru.nagai.vx@renesas.com>
+> 
+> The H/W manual recommends B'10 or B'11 in a value of the separation
+> filtering select bits in the receive configuration register (RCR.ESF).
+> When B'10 is set, frames from non-matching streams are discarded.
+> When B'11 is set, frames from non-matching streams are processed in
+> reception queue 0 (best effort).
+> This patch sets B'11 in ESF.
+> 
+> [ykaneko0929@gmail.com: revised this commit message]
+> Signed-off-by: Masaru Nagai <masaru.nagai.vx@renesas.com>
+> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Applied.
