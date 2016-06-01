@@ -1,52 +1,132 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:58553 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751642AbcFATV1 (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:51090 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753789AbcFAPXX (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 15:21:27 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v3 03/22] ARM: dts: r8a7778: Add device node for RESET/WDT module
-Date: Wed,  1 Jun 2016 21:21:01 +0200
-Message-Id: <1464808880-343-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+	Wed, 1 Jun 2016 11:23:23 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: hch@infradead.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+	iommu@lists.linux-foundation.org
+Cc: dan.j.williams@intel.com, vinod.koul@intel.com,
+	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
+	linus.walleij@linaro.org, arnd@arndb.de,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv7 5/6] dmaengine: rcar-dmac: group slave configuration
+Date: Wed,  1 Jun 2016 17:22:28 +0200
+Message-Id: <1464794549-6601-6-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1464794549-6601-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1464794549-6601-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the RESET/WDT module, which provides a.o. reset
-control, mode pin monitoring, and watchdog control.
+Group slave address and transfer size in own structs for source and
+destination. This is in preparation for hooking up the dma-mapping API
+to the slave addresses.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-v3:
-  - New.
----
- arch/arm/boot/dts/r8a7778.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/dma/sh/rcar-dmac.c | 38 ++++++++++++++++++++++----------------
+ 1 file changed, 22 insertions(+), 16 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
-index e571d66ea0fe1721..3d0a18abd408c76d 100644
---- a/arch/arm/boot/dts/r8a7778.dtsi
-+++ b/arch/arm/boot/dts/r8a7778.dtsi
-@@ -626,4 +626,9 @@
- 				"sru-src6", "sru-src7", "sru-src8";
- 		};
- 	};
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index dfb1792..b0c3bb2 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -118,14 +118,22 @@ struct rcar_dmac_desc_page {
+ 	sizeof(struct rcar_dmac_xfer_chunk))
+ 
+ /*
++ * struct rcar_dmac_chan_slave - Slave configuration
++ * @slave_addr: slave memory address
++ * @xfer_size: size (in bytes) of hardware transfers
++ */
++struct rcar_dmac_chan_slave {
++	phys_addr_t slave_addr;
++	unsigned int xfer_size;
++};
 +
-+	rst: reset-controller@ffcc0000 {
-+		compatible = "renesas,r8a7778-reset-wdt";
-+		reg = <0xffcc0000 0x40>;
-+	};
- };
++/*
+  * struct rcar_dmac_chan - R-Car Gen2 DMA Controller Channel
+  * @chan: base DMA channel object
+  * @iomem: channel I/O memory base
+  * @index: index of this channel in the controller
+- * @src_xfer_size: size (in bytes) of hardware transfers on the source side
+- * @dst_xfer_size: size (in bytes) of hardware transfers on the destination side
+- * @src_slave_addr: slave source memory address
+- * @dst_slave_addr: slave destination memory address
++ * @src: slave memory address and size on the source side
++ * @dst: slave memory address and size on the destination side
+  * @mid_rid: hardware MID/RID for the DMA client using this channel
+  * @lock: protects the channel CHCR register and the desc members
+  * @desc.free: list of free descriptors
+@@ -142,10 +150,8 @@ struct rcar_dmac_chan {
+ 	void __iomem *iomem;
+ 	unsigned int index;
+ 
+-	unsigned int src_xfer_size;
+-	unsigned int dst_xfer_size;
+-	dma_addr_t src_slave_addr;
+-	dma_addr_t dst_slave_addr;
++	struct rcar_dmac_chan_slave src;
++	struct rcar_dmac_chan_slave dst;
+ 	int mid_rid;
+ 
+ 	spinlock_t lock;
+@@ -793,13 +799,13 @@ static void rcar_dmac_chan_configure_desc(struct rcar_dmac_chan *chan,
+ 	case DMA_DEV_TO_MEM:
+ 		chcr = RCAR_DMACHCR_DM_INC | RCAR_DMACHCR_SM_FIXED
+ 		     | RCAR_DMACHCR_RS_DMARS;
+-		xfer_size = chan->src_xfer_size;
++		xfer_size = chan->src.xfer_size;
+ 		break;
+ 
+ 	case DMA_MEM_TO_DEV:
+ 		chcr = RCAR_DMACHCR_DM_FIXED | RCAR_DMACHCR_SM_INC
+ 		     | RCAR_DMACHCR_RS_DMARS;
+-		xfer_size = chan->dst_xfer_size;
++		xfer_size = chan->dst.xfer_size;
+ 		break;
+ 
+ 	case DMA_MEM_TO_MEM:
+@@ -1038,7 +1044,7 @@ rcar_dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+ 	}
+ 
+ 	dev_addr = dir == DMA_DEV_TO_MEM
+-		 ? rchan->src_slave_addr : rchan->dst_slave_addr;
++		 ? rchan->src.slave_addr : rchan->dst.slave_addr;
+ 	return rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, dev_addr,
+ 				      dir, flags, false);
+ }
+@@ -1093,7 +1099,7 @@ rcar_dmac_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t buf_addr,
+ 	}
+ 
+ 	dev_addr = dir == DMA_DEV_TO_MEM
+-		 ? rchan->src_slave_addr : rchan->dst_slave_addr;
++		 ? rchan->src.slave_addr : rchan->dst.slave_addr;
+ 	desc = rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, dev_addr,
+ 				      dir, flags, true);
+ 
+@@ -1110,10 +1116,10 @@ static int rcar_dmac_device_config(struct dma_chan *chan,
+ 	 * We could lock this, but you shouldn't be configuring the
+ 	 * channel, while using it...
+ 	 */
+-	rchan->src_slave_addr = cfg->src_addr;
+-	rchan->dst_slave_addr = cfg->dst_addr;
+-	rchan->src_xfer_size = cfg->src_addr_width;
+-	rchan->dst_xfer_size = cfg->dst_addr_width;
++	rchan->src.slave_addr = cfg->src_addr;
++	rchan->dst.slave_addr = cfg->dst_addr;
++	rchan->src.xfer_size = cfg->src_addr_width;
++	rchan->dst.xfer_size = cfg->dst_addr_width;
+ 
+ 	return 0;
+ }
 -- 
-1.9.1
+2.8.2
