@@ -1,49 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35207 "EHLO
-	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751001AbcFAITU (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:46853 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751704AbcFATV1 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 04:19:20 -0400
-MIME-Version: 1.0
-In-Reply-To: <52321184.HGKDRaDOBe@wasted.cogentembedded.com>
-References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
-	<52321184.HGKDRaDOBe@wasted.cogentembedded.com>
-Date: Wed, 1 Jun 2016 10:19:19 +0200
-Message-ID: <CAMuHMdWLRD4=--Gs1Qmn5mfDw_sNrHOefyj2_C2Ds1us9ip7NQ@mail.gmail.com>
-Subject: Re: [PATCH 11/13] DT: arm: shmobile: document Blanche board
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+	Wed, 1 Jun 2016 15:21:27 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v3 17/22] ARM: shmobile: r8a7778: Stop passing mode pins state to clock driver
+Date: Wed,  1 Jun 2016 21:21:15 +0200
+Message-Id: <1464808880-343-18-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 1, 2016 at 12:30 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Document the Blanche device tree bindings, listing it as a supported board.
->
-> This allows to use checkpatch.pl to validate .dts files referring to the
-> Blanche board.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Now the R-Car M1A CPG clock driver obtains the state of the mode pins
+from the R-Car RST driver, there's no longer a need to pass this state
+explicitly. Hence we can just remove the .init_time() callback, the
+generic ARM code will take care of calling of_clk_init().
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - New.
+---
+ arch/arm/mach-shmobile/setup-r8a7778.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-I can't verify the correctness of the board product ID, though.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/mach-shmobile/setup-r8a7778.c b/arch/arm/mach-shmobile/setup-r8a7778.c
+index cf236db686a9dd47..7fa4a0b5f6549287 100644
+--- a/arch/arm/mach-shmobile/setup-r8a7778.c
++++ b/arch/arm/mach-shmobile/setup-r8a7778.c
+@@ -15,7 +15,6 @@
+  * GNU General Public License for more details.
+  */
+ 
+-#include <linux/clk/renesas.h>
+ #include <linux/io.h>
+ #include <linux/irqchip.h>
+ 
+@@ -23,19 +22,6 @@
+ 
+ #include "common.h"
+ 
+-#define MODEMR 0xffcc0020
+-
+-static void __init r8a7778_timer_init(void)
+-{
+-	u32 mode;
+-	void __iomem *modemr = ioremap_nocache(MODEMR, 4);
+-
+-	BUG_ON(!modemr);
+-	mode = ioread32(modemr);
+-	iounmap(modemr);
+-	r8a7778_clocks_init(mode);
+-}
+-
+ #define INT2SMSKCR0	0x82288 /* 0xfe782288 */
+ #define INT2SMSKCR1	0x8228c /* 0xfe78228c */
+ 
+@@ -70,6 +56,5 @@ DT_MACHINE_START(R8A7778_DT, "Generic R8A7778 (Flattened Device Tree)")
+ 	.init_early	= shmobile_init_delay,
+ 	.init_irq	= r8a7778_init_irq_dt,
+ 	.init_late	= shmobile_init_late,
+-	.init_time	= r8a7778_timer_init,
+ 	.dt_compat	= r8a7778_compat_dt,
+ MACHINE_END
+-- 
+1.9.1
