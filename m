@@ -1,142 +1,56 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 13/20] drm: tegra: Rely on the default ->best_encoder() behavior
-Date: Tue,  7 Jun 2016 13:48:08 +0200
-Message-Id: <1465300095-16971-14-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:51028 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758613AbcFAPXP (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 1 Jun 2016 11:23:15 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: hch@infradead.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+	iommu@lists.linux-foundation.org
+Cc: dan.j.williams@intel.com, vinod.koul@intel.com,
+	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
+	linus.walleij@linaro.org, arnd@arndb.de,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv7 1/6] dma-mapping: add {map,unmap}_resource to dma_map_ops
+Date: Wed,  1 Jun 2016 17:22:24 +0200
+Message-Id: <1464794549-6601-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1464794549-6601-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1464794549-6601-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All outputs have a 1:1 relationship between connectors and encoders
-and the driver is relying on the atomic helpers: we can drop the custom
-->best_encoder() implementation and let the core call
-drm_atomic_helper_best_encoder() for us.
+Add methods to handle mapping of device resources from a physical
+address. This is needed for example to be able to map MMIO FIFO
+registers to a IOMMU.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/gpu/drm/tegra/drm.h    | 2 --
- drivers/gpu/drm/tegra/dsi.c    | 1 -
- drivers/gpu/drm/tegra/hdmi.c   | 1 -
- drivers/gpu/drm/tegra/output.c | 8 --------
- drivers/gpu/drm/tegra/rgb.c    | 1 -
- drivers/gpu/drm/tegra/sor.c    | 1 -
- 6 files changed, 14 deletions(-)
+ include/linux/dma-mapping.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index f52d6cb2..0ddcce1 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -239,8 +239,6 @@ int tegra_output_init(struct drm_device *drm, struct tegra_output *output);
- void tegra_output_exit(struct tegra_output *output);
- 
- int tegra_output_connector_get_modes(struct drm_connector *connector);
--struct drm_encoder *
--tegra_output_connector_best_encoder(struct drm_connector *connector);
- enum drm_connector_status
- tegra_output_connector_detect(struct drm_connector *connector, bool force);
- void tegra_output_connector_destroy(struct drm_connector *connector);
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index d1239eb..099cccb 100644
---- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -794,7 +794,6 @@ tegra_dsi_connector_mode_valid(struct drm_connector *connector,
- static const struct drm_connector_helper_funcs tegra_dsi_connector_helper_funcs = {
- 	.get_modes = tegra_output_connector_get_modes,
- 	.mode_valid = tegra_dsi_connector_mode_valid,
--	.best_encoder = tegra_output_connector_best_encoder,
- };
- 
- static const struct drm_encoder_funcs tegra_dsi_encoder_funcs = {
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index b7ef492..2fdb879 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -806,7 +806,6 @@ static const struct drm_connector_helper_funcs
- tegra_hdmi_connector_helper_funcs = {
- 	.get_modes = tegra_output_connector_get_modes,
- 	.mode_valid = tegra_hdmi_connector_mode_valid,
--	.best_encoder = tegra_output_connector_best_encoder,
- };
- 
- static const struct drm_encoder_funcs tegra_hdmi_encoder_funcs = {
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index 46664b6..1480f6a 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -42,14 +42,6 @@ int tegra_output_connector_get_modes(struct drm_connector *connector)
- 	return err;
- }
- 
--struct drm_encoder *
--tegra_output_connector_best_encoder(struct drm_connector *connector)
--{
--	struct tegra_output *output = connector_to_output(connector);
--
--	return &output->encoder;
--}
--
- enum drm_connector_status
- tegra_output_connector_detect(struct drm_connector *connector, bool force)
- {
-diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
-index e246334..a131b44 100644
---- a/drivers/gpu/drm/tegra/rgb.c
-+++ b/drivers/gpu/drm/tegra/rgb.c
-@@ -112,7 +112,6 @@ tegra_rgb_connector_mode_valid(struct drm_connector *connector,
- static const struct drm_connector_helper_funcs tegra_rgb_connector_helper_funcs = {
- 	.get_modes = tegra_output_connector_get_modes,
- 	.mode_valid = tegra_rgb_connector_mode_valid,
--	.best_encoder = tegra_output_connector_best_encoder,
- };
- 
- static const struct drm_encoder_funcs tegra_rgb_encoder_funcs = {
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 757c6e8..34958d7 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -1087,7 +1087,6 @@ tegra_sor_connector_mode_valid(struct drm_connector *connector,
- static const struct drm_connector_helper_funcs tegra_sor_connector_helper_funcs = {
- 	.get_modes = tegra_sor_connector_get_modes,
- 	.mode_valid = tegra_sor_connector_mode_valid,
--	.best_encoder = tegra_output_connector_best_encoder,
- };
- 
- static const struct drm_encoder_funcs tegra_sor_encoder_funcs = {
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index c980a92..a11ff9d 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -49,6 +49,12 @@ struct dma_map_ops {
+ 			 struct scatterlist *sg, int nents,
+ 			 enum dma_data_direction dir,
+ 			 struct dma_attrs *attrs);
++	dma_addr_t (*map_resource)(struct device *dev, phys_addr_t phys_addr,
++			       size_t size, enum dma_data_direction dir,
++			       struct dma_attrs *attrs);
++	void (*unmap_resource)(struct device *dev, dma_addr_t dma_handle,
++			   size_t size, enum dma_data_direction dir,
++			   struct dma_attrs *attrs);
+ 	void (*sync_single_for_cpu)(struct device *dev,
+ 				    dma_addr_t dma_handle, size_t size,
+ 				    enum dma_data_direction dir);
 -- 
-2.7.4
+2.8.2
