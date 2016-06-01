@@ -1,78 +1,137 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33054 "EHLO
-	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932933AbcEKODV (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 11 May 2016 10:03:21 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-	ian.molton@codethink.co.uk, lars@metafoo.de,
-	william.towle@codethink.co.uk,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v4 2/8] media: adv7604: automatic "default-input" selection
-Date: Wed, 11 May 2016 16:02:50 +0200
-Message-Id: <1462975376-491-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1462975376-491-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1462975376-491-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 1 Jun 2016 10:13:49 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org, magnus.damm@gmail.com,
+	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 09/13] ARM: dts: r8a7792: add [H]SCIF support
+Message-ID: <20160601011348.GI20527@verge.net.au>
+References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+ <1493287.pGnW6U6caN@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1493287.pGnW6U6caN@wasted.cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: William Towle <william.towle@codethink.co.uk>
+On Wed, Jun 01, 2016 at 01:26:56AM +0300, Sergei Shtylyov wrote:
+> Describe [H]SCIFs in the R8A7792 device tree.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Add logic such that the "default-input" property becomes unnecessary
-for chips that only have one suitable input (ADV7611 by design, and
-ADV7612 due to commit 7111cddd518f ("[media] media: adv7604: reduce
-support to first (digital) input").
+This looks correct to me.
 
-Additionally, Ian's documentation in commit bf9c82278c34 ("[media]
-media: adv7604: ability to read default input port from DT") states
-that the "default-input" property should reside directly in the node
-for adv7612. Hence, also adjust the parsing to make the implementation
-consistent with this.
+I am wondering if you have been able to confirm DMA operation of the
+devices enabled later on in the series.
 
-Signed-off-by: William Towle <william.towle@codethink.co.uk>
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/media/i2c/adv7604.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
-index 41a1bfc..d722c16 100644
---- a/drivers/media/i2c/adv7604.c
-+++ b/drivers/media/i2c/adv7604.c
-@@ -2788,7 +2788,7 @@ static int adv76xx_parse_dt(struct adv76xx_state *state)
- 	struct device_node *np;
- 	unsigned int flags;
- 	int ret;
--	u32 v;
-+	u32 v = -1;
- 
- 	np = state->i2c_clients[ADV76XX_PAGE_IO]->dev.of_node;
- 
-@@ -2810,6 +2810,22 @@ static int adv76xx_parse_dt(struct adv76xx_state *state)
- 
- 	of_node_put(endpoint);
- 
-+	if (of_property_read_u32(np, "default-input", &v)) {
-+		/* not specified ... can we choose automatically? */
-+		switch (state->info->type) {
-+		case ADV7611:
-+			v = 0;
-+			break;
-+		case ADV7612:
-+			if (state->info->max_port == ADV76XX_PAD_HDMI_PORT_A)
-+				v = 0;
-+			/* else is unhobbled, leave unspecified */
-+		default:
-+			break;
-+		}
-+	}
-+	state->pdata.default_input = v;
-+
- 	flags = bus_cfg.bus.parallel.flags;
- 
- 	if (flags & V4L2_MBUS_HSYNC_ACTIVE_HIGH)
--- 
-2.7.4
+> 
+> ---
+>  arch/arm/boot/dts/r8a7792.dtsi |   90 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 90 insertions(+)
+> 
+> Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+> ===================================================================
+> --- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
+> +++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+> @@ -140,6 +140,96 @@
+>  		dma-channels = <15>;
+>  	};
+>  
+> +	scif0: serial@e6e60000 {
+> +		compatible = "renesas,scif-r8a7792", "renesas,rcar-gen2-scif",
+> +			     "renesas,scif";
+> +		reg = <0 0xe6e60000 0 64>;
+> +		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&mstp7_clks R8A7792_CLK_SCIF0>, <&zs_clk>,
+> +			 <&scif_clk>;
+> +		clock-names = "fck", "brg_int", "scif_clk";
+> +		dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
+> +		       <&dmac1 0x29>, <&dmac1 0x2a>;
+> +		dma-names = "tx", "rx", "tx", "rx";
+> +		power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
+> +		status = "disabled";
+> +	};
+> +
+> +	scif1: serial@e6e68000 {
+> +		compatible = "renesas,scif-r8a7792", "renesas,rcar-gen2-scif",
+> +			     "renesas,scif";
+> +		reg = <0 0xe6e68000 0 64>;
+> +		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&mstp7_clks R8A7792_CLK_SCIF1>, <&zs_clk>,
+> +			 <&scif_clk>;
+> +		clock-names = "fck", "brg_int", "scif_clk";
+> +		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
+> +		       <&dmac1 0x2d>, <&dmac1 0x2e>;
+> +		dma-names = "tx", "rx", "tx", "rx";
+> +		power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
+> +		status = "disabled";
+> +	};
+> +
+> +	scif2: serial@e6e58000 {
+> +		compatible = "renesas,scif-r8a7792", "renesas,rcar-gen2-scif",
+> +			     "renesas,scif";
+> +		reg = <0 0xe6e58000 0 64>;
+> +		interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&mstp7_clks R8A7792_CLK_SCIF2>, <&zs_clk>,
+> +			 <&scif_clk>;
+> +		clock-names = "fck", "brg_int", "scif_clk";
+> +		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
+> +		       <&dmac1 0x2b>, <&dmac1 0x2c>;
+> +		dma-names = "tx", "rx", "tx", "rx";
+> +		power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
+> +		status = "disabled";
+> +	};
+> +
+> +	scif3: serial@e6ea8000 {
+> +		compatible = "renesas,scif-r8a7792", "renesas,rcar-gen2-scif",
+> +			     "renesas,scif";
+> +		reg = <0 0xe6ea8000 0 64>;
+> +		interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&mstp7_clks R8A7792_CLK_SCIF3>, <&zs_clk>,
+> +			 <&scif_clk>;
+> +		clock-names = "fck", "brg_int", "scif_clk";
+> +		dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
+> +		       <&dmac1 0x2f>, <&dmac1 0x30>;
+> +		dma-names = "tx", "rx", "tx", "rx";
+> +		power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
+> +		status = "disabled";
+> +	};
+> +
+> +	hscif0: serial@e62c0000 {
+> +		compatible = "renesas,hscif-r8a7792", "renesas,rcar-gen2-hscif",
+> +			     "renesas,hscif";
+> +		reg = <0 0xe62c0000 0 96>;
+> +		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&mstp7_clks R8A7792_CLK_HSCIF0>, <&zs_clk>,
+> +			 <&scif_clk>;
+> +		clock-names = "fck", "brg_int", "scif_clk";
+> +		dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
+> +		       <&dmac1 0x39>, <&dmac1 0x3a>;
+> +		dma-names = "tx", "rx", "tx", "rx";
+> +		power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
+> +		status = "disabled";
+> +	};
+> +
+> +	hscif1: serial@e62c8000 {
+> +		compatible = "renesas,hscif-r8a7792", "renesas,rcar-gen2-hscif",
+> +			     "renesas,hscif";
+> +		reg = <0 0xe62c8000 0 96>;
+> +		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&mstp7_clks R8A7792_CLK_HSCIF1>, <&zs_clk>,
+> +			 <&scif_clk>;
+> +		clock-names = "fck", "brg_int", "scif_clk";
+> +		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
+> +		       <&dmac1 0x4d>, <&dmac1 0x4e>;
+> +		dma-names = "tx", "rx", "tx", "rx";
+> +		power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
+> +		status = "disabled";
+> +	};
+> +
+>  	clocks {
+>  		#address-cells = <2>;
+>  		#size-cells = <2>;
+> 
