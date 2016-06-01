@@ -1,50 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:35749 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753010AbcFANe7 (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35207 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751001AbcFAITU (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 09:34:59 -0400
-Received: by mail-lf0-f49.google.com with SMTP id w16so12986241lfd.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 01 Jun 2016 06:34:58 -0700 (PDT)
-Subject: Re: [PATCH 11/13] DT: arm: shmobile: document Blanche board
-To: Simon Horman <horms@verge.net.au>
-References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
- <52321184.HGKDRaDOBe@wasted.cogentembedded.com>
- <20160531235119.GA20527@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <757fa28c-00d0-f17b-e335-658a0b993791@cogentembedded.com>
-Date: Wed, 1 Jun 2016 16:34:54 +0300
+	Wed, 1 Jun 2016 04:19:20 -0400
 MIME-Version: 1.0
-In-Reply-To: <20160531235119.GA20527@verge.net.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <52321184.HGKDRaDOBe@wasted.cogentembedded.com>
+References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+	<52321184.HGKDRaDOBe@wasted.cogentembedded.com>
+Date: Wed, 1 Jun 2016 10:19:19 +0200
+Message-ID: <CAMuHMdWLRD4=--Gs1Qmn5mfDw_sNrHOefyj2_C2Ds1us9ip7NQ@mail.gmail.com>
+Subject: Re: [PATCH 11/13] DT: arm: shmobile: document Blanche board
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
-
-On 06/01/2016 02:51 AM, Simon Horman wrote:
-
->> Document the Blanche device tree bindings, listing it as a supported board.
->>
->> This allows to use checkpatch.pl to validate .dts files referring to the
->> Blanche board.
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Wed, Jun 1, 2016 at 12:30 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Document the Blanche device tree bindings, listing it as a supported board.
 >
-> I think the prefix for patch 11 should be: "ARM: dts: blanche: "
+> This allows to use checkpatch.pl to validate .dts files referring to the
+> Blanche board.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-     Hm... why?
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> It also looks like it could be squashed into patch 12 but I don't
-> feel strongly about that.
+I can't verify the correctness of the board product ID, though.
 
-    I'd prefer not to merge them.
+Gr{oetje,eeting}s,
 
-[...]
+                        Geert
 
-MBR, Sergei
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
