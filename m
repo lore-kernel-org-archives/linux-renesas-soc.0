@@ -1,109 +1,54 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 10/20] drm: rockchip: Rely on the default ->best_encoder() behavior
-Date: Tue,  7 Jun 2016 13:48:05 +0200
-Message-Id: <1465300095-16971-11-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:50193 "EHLO
+	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751701AbcFATV1 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 1 Jun 2016 15:21:27 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v3 10/22] arm64: renesas: r8a7796 dtsi: Add device node for RST module
+Date: Wed,  1 Jun 2016 21:21:08 +0200
+Message-Id: <1464808880-343-11-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All outputs have a 1:1 relationship between connectors and encoders
-and the driver is relying on the atomic helpers: we can drop the custom
-->best_encoder() implementations  and let the core call
-drm_atomic_helper_best_encoder() for us.
+Add a device node for the RST module, which provides a.o. reset control
+and mode pin monitoring.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Acked-by: Mark Yao <mark.yao@rock-chips.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/rockchip/dw-mipi-dsi.c | 9 ---------
- drivers/gpu/drm/rockchip/inno_hdmi.c   | 9 ---------
- 2 files changed, 18 deletions(-)
+v3:
+  - New.
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
-index dedc65b..ca22e5e 100644
---- a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
-+++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
-@@ -964,18 +964,9 @@ static enum drm_mode_status dw_mipi_dsi_mode_valid(
- 	return mode_status;
- }
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index fab61eddede3818c..cb7cd9dceafe4c40 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -107,6 +107,11 @@
+ 			#power-domain-cells = <0>;
+ 		};
  
--static struct drm_encoder *dw_mipi_dsi_connector_best_encoder(
--					struct drm_connector *connector)
--{
--	struct dw_mipi_dsi *dsi = con_to_dsi(connector);
--
--	return &dsi->encoder;
--}
--
- static struct drm_connector_helper_funcs dw_mipi_dsi_connector_helper_funcs = {
- 	.get_modes = dw_mipi_dsi_connector_get_modes,
- 	.mode_valid = dw_mipi_dsi_mode_valid,
--	.best_encoder = dw_mipi_dsi_connector_best_encoder,
- };
- 
- static enum drm_connector_status
-diff --git a/drivers/gpu/drm/rockchip/inno_hdmi.c b/drivers/gpu/drm/rockchip/inno_hdmi.c
-index f8b4feb..006260d 100644
---- a/drivers/gpu/drm/rockchip/inno_hdmi.c
-+++ b/drivers/gpu/drm/rockchip/inno_hdmi.c
-@@ -579,14 +579,6 @@ inno_hdmi_connector_mode_valid(struct drm_connector *connector,
- 	return MODE_OK;
- }
- 
--static struct drm_encoder *
--inno_hdmi_connector_best_encoder(struct drm_connector *connector)
--{
--	struct inno_hdmi *hdmi = to_inno_hdmi(connector);
--
--	return &hdmi->encoder;
--}
--
- static int
- inno_hdmi_probe_single_connector_modes(struct drm_connector *connector,
- 				       uint32_t maxX, uint32_t maxY)
-@@ -613,7 +605,6 @@ static struct drm_connector_funcs inno_hdmi_connector_funcs = {
- static struct drm_connector_helper_funcs inno_hdmi_connector_helper_funcs = {
- 	.get_modes = inno_hdmi_connector_get_modes,
- 	.mode_valid = inno_hdmi_connector_mode_valid,
--	.best_encoder = inno_hdmi_connector_best_encoder,
- };
- 
- static int inno_hdmi_register(struct drm_device *drm, struct inno_hdmi *hdmi)
++		rst: reset-controller@e6160000 {
++			compatible = "renesas,r8a7796-rst";
++			reg = <0 0xe6160000 0 0x0200>;
++		};
++
+ 		sysc: system-controller@e6180000 {
+ 			compatible = "renesas,r8a7796-sysc";
+ 			reg = <0 0xe6180000 0 0x0400>;
 -- 
-2.7.4
+1.9.1
