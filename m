@@ -1,133 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:42990 "EHLO
-	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1757336AbcFAGpG (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:64901 "EHLO
+	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1757331AbcFAGo6 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 02:45:06 -0400
+	Wed, 1 Jun 2016 02:44:58 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>
 CC: <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 2/2] usb: host: xhci: rcar: fix the quirks setting of XHCI_NO_64BIT_SUPPORT
-Date: Wed, 1 Jun 2016 15:44:43 +0900
-Message-ID: <1464763483-6224-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1464763483-6224-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1464763483-6224-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 0/2] usb: host: xhci: rcar: fix the quirks setting of XHCI_NO_64BIT_SUPPORT
+Date: Wed, 1 Jun 2016 15:44:41 +0900
+Message-ID: <1464763483-6224-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since the commit b1c127ae990b ("usb: host: xhci: plat: make use of new
-methods in xhci_plat_priv") changed the setting timing of xhci->quirks to
-xhci_rcar_init_quirk(), the quirks was overwritten by xhci_gen_setup().
+I'm afraid but I found a regression of xhci-rcar in v4.7-rc1.
+This regression is caused by the following commit:
 
-So, this patch fixes the issue using a "quirks" of struct xhci_plat_priv.
+commit b1c127ae990bccf0187d741c1695a61e54de1943
+Author: Felipe Balbi <felipe.balbi@linux.intel.com>
+Date:   Fri Apr 22 13:17:16 2016 +0300
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
+    usb: host: xhci: plat: make use of new methods in xhci_plat_priv
+    
+    Now that the code has been refactored enough,
+    switching over to using ->plat_start() and
+    ->init_quirk() becomes a very simple patch.
+    
+    After this patch, there are no further uses for
+    xhci_plat_type_is() which will be removed in a
+    follow-up patch.
+    
+    Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+    Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+    Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+< Overview >
+The regression is the quirks flag "XHCI_NO_64BIT_SUPPORT" will be overwritten
+by xhci_gen_setup(). Then, the driver will not work correctly.
+
+< Detail >
+Since the previous code will do the following, the quirks flag can be set:
+
+xhci_plat_setup()
+ -> xhci_gen_setup(hcd, xhci_plat_quirks);
+  -> xhci->quirks = quirks;
+   -> get_quirks() [This is xhci_plat_quirks]
+    -> xhci->quirks |= XHCI_NO_64BIT_SUPPORT
+
+However, after we applied the patch above, the quirks will disappear:
+
+xhci_plat_setup()
+ -> xhci_priv_init_quirk();
+  -> xhci_rcar_init_quirk();
+   -> xhci->quirks |= XHCI_NO_64BIT_SUPPORT
+  -> xhci_gen_setup(hcd, xhci_plat_quirks);
+   -> xhci->quirks = quirks; <----------------- here
+    -> get_quirks() [This is xhci_plat_quirks]
+
+So, I submitted incremental patches to resolve this issue like the followings:
+
+xhci_plat_setup()
+ -> xhci_priv_init_quirk();
+  -> xhci_rcar_init_quirk();
+  -> xhci_gen_setup(hcd, xhci_plat_quirks);
+   -> xhci->quirks = quirks;
+    -> get_quirks() [This is xhci_plat_quirks]
+     -> xhci->quirks |= priv->quirks (XHCI_NO_64BIT_SUPPORT)
+
+Changes from v1:
+ - Revise the commit log in patch 2 because checkpatch.pl said the patch
+   has ERRROR.
+
+Yoshihiro Shimoda (2):
+  usb: host: xhci: plat: add ->quirks value for platform-specific
+  usb: host: xhci: rcar: fix the quirks setting of XHCI_NO_64BIT_SUPPORT
+
  drivers/usb/host/xhci-plat.c | 12 +++++++++++-
- drivers/usb/host/xhci-plat.h |  1 +
+ drivers/usb/host/xhci-plat.h |  2 ++
  drivers/usb/host/xhci-rcar.c | 21 ---------------------
- 3 files changed, 12 insertions(+), 22 deletions(-)
+ 3 files changed, 13 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 676ea45..7f03608 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -57,12 +57,14 @@ static int xhci_priv_init_quirk(struct usb_hcd *hcd)
- 
- static void xhci_plat_quirks(struct device *dev, struct xhci_hcd *xhci)
- {
-+	struct xhci_plat_priv *priv = xhci_to_priv(xhci);
-+
- 	/*
- 	 * As of now platform drivers don't provide MSI support so we ensure
- 	 * here that the generic code does not try to make a pci_dev from our
- 	 * dev struct in order to setup MSI
- 	 */
--	xhci->quirks |= XHCI_PLAT;
-+	xhci->quirks |= XHCI_PLAT | priv->quirks;
- }
- 
- /* called during probe() after chip reset completes */
-@@ -89,16 +91,24 @@ static const struct xhci_plat_priv xhci_plat_marvell_armada = {
- 	.init_quirk = xhci_mvebu_mbus_init_quirk,
- };
- 
-+/*
-+ * On R-Car Gen2 and Gen3, the AC64 bit (bit 0) of HCCPARAMS1 is set to 1.
-+ * However, these SoCs don't support 64-bit address memory pointers. So, this
-+ * driver clears the AC64 bit of xhci->hcc_params to call
-+ * dma_set_coherent_mask(dev, DMA_BIT_MASK(32)) in xhci_gen_setup().
-+ */
- static const struct xhci_plat_priv xhci_plat_renesas_rcar_gen2 = {
- 	.firmware_name = XHCI_RCAR_FIRMWARE_NAME_V1,
- 	.init_quirk = xhci_rcar_init_quirk,
- 	.plat_start = xhci_rcar_start,
-+	.quirks = XHCI_NO_64BIT_SUPPORT,
- };
- 
- static const struct xhci_plat_priv xhci_plat_renesas_rcar_gen3 = {
- 	.firmware_name = XHCI_RCAR_FIRMWARE_NAME_V2,
- 	.init_quirk = xhci_rcar_init_quirk,
- 	.plat_start = xhci_rcar_start,
-+	.quirks = XHCI_NO_64BIT_SUPPORT,
- };
- 
- static const struct of_device_id usb_xhci_of_match[] = {
-diff --git a/drivers/usb/host/xhci-plat.h b/drivers/usb/host/xhci-plat.h
-index c652f33..15144c9 100644
---- a/drivers/usb/host/xhci-plat.h
-+++ b/drivers/usb/host/xhci-plat.h
-@@ -20,5 +20,6 @@ struct xhci_plat_priv {
- 	unsigned int quirks;
- };
- 
-+#define xhci_to_priv(x) ((struct xhci_plat_priv *)(x)->priv)
- #define hcd_to_xhci_priv(h) ((struct xhci_plat_priv *)hcd_to_xhci(h)->priv)
- #endif	/* _XHCI_PLAT_H */
-diff --git a/drivers/usb/host/xhci-rcar.c b/drivers/usb/host/xhci-rcar.c
-index 0e4535e..2617cd7 100644
---- a/drivers/usb/host/xhci-rcar.c
-+++ b/drivers/usb/host/xhci-rcar.c
-@@ -87,14 +87,6 @@ static int xhci_rcar_is_gen2(struct device *dev)
- 		of_device_is_compatible(node, "renensas,rcar-gen2-xhci");
- }
- 
--static int xhci_rcar_is_gen3(struct device *dev)
--{
--	struct device_node *node = dev->of_node;
--
--	return of_device_is_compatible(node, "renesas,xhci-r8a7795") ||
--		of_device_is_compatible(node, "renesas,rcar-gen3-xhci");
--}
--
- void xhci_rcar_start(struct usb_hcd *hcd)
- {
- 	u32 temp;
-@@ -175,22 +167,9 @@ static int xhci_rcar_download_firmware(struct usb_hcd *hcd)
- /* This function needs to initialize a "phy" of usb before */
- int xhci_rcar_init_quirk(struct usb_hcd *hcd)
- {
--	struct xhci_hcd *xhci = hcd_to_xhci(hcd);
--
- 	/* If hcd->regs is NULL, we don't just call the following function */
- 	if (!hcd->regs)
- 		return 0;
- 
--	/*
--	 * On R-Car Gen2 and Gen3, the AC64 bit (bit 0) of HCCPARAMS1 is set
--	 * to 1. However, these SoCs don't support 64-bit address memory
--	 * pointers. So, this driver clears the AC64 bit of xhci->hcc_params
--	 * to call dma_set_coherent_mask(dev, DMA_BIT_MASK(32)) in
--	 * xhci_gen_setup().
--	 */
--	if (xhci_rcar_is_gen2(hcd->self.controller) ||
--			xhci_rcar_is_gen3(hcd->self.controller))
--		xhci->quirks |= XHCI_NO_64BIT_SUPPORT;
--
- 	return xhci_rcar_download_firmware(hcd);
- }
 -- 
 1.9.1
