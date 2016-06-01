@@ -1,45 +1,65 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:59394 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933296AbcFJNBQ (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 09:01:16 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 03/19] ARM: dts: armadillo800eva: Name serial port pfc subnode after device name
-Date: Fri, 10 Jun 2016 15:00:49 +0200
-Message-Id: <1465563665-2231-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
-References: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH/RFC v3 11/22] clk: renesas: r8a7778: Obtain mode pin values using R-Car RST driver
+Date: Wed,  1 Jun 2016 21:21:09 +0200
+Message-Id: <1464808880-343-12-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Name the Pin Function Controller subnode for SCIFA1 after its device
-name, instead of after the serial port alias.
-
-This avoids conflicts when enabling support for more serial ports later,
-either here or in a DT overlay.
+Obtain the values of the mode pins from the R-Car RST driver, which
+relies on the presence in DT of a device node for the RESET/WDT module.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v3:
+  - New.
+---
+ drivers/clk/renesas/clk-r8a7778.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-index 1620495166851971..6866f61a350c7cc3 100644
---- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-+++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-@@ -232,7 +232,7 @@
- 		function = "gether";
- 	};
+diff --git a/drivers/clk/renesas/clk-r8a7778.c b/drivers/clk/renesas/clk-r8a7778.c
+index 40e3a501a50e200f..07ea411098a75ad1 100644
+--- a/drivers/clk/renesas/clk-r8a7778.c
++++ b/drivers/clk/renesas/clk-r8a7778.c
+@@ -12,6 +12,7 @@
+ #include <linux/clk/renesas.h>
+ #include <linux/of_address.h>
+ #include <linux/slab.h>
++#include <linux/soc/renesas/rcar-rst.h>
  
--	scifa1_pins: serial1 {
-+	scifa1_pins: scifa1 {
- 		groups = "scifa1_data";
- 		function = "scifa1";
- 	};
+ struct r8a7778_cpg {
+ 	struct clk_onecell_data data;
+@@ -83,6 +84,18 @@ static void __init r8a7778_cpg_clocks_init(struct device_node *np)
+ 	struct clk **clks;
+ 	unsigned int i;
+ 	int num_clks;
++	u32 mode;
++
++	if (rcar_rst_read_mode_pins(&mode))
++		return;
++
++	BUG_ON(!(mode & BIT(19)));
++
++	cpg_mode_rates = (!!(mode & BIT(18)) << 2) |
++			 (!!(mode & BIT(12)) << 1) |
++			 (!!(mode & BIT(11)));
++	cpg_mode_divs = (!!(mode & BIT(2)) << 1) |
++			(!!(mode & BIT(1)));
+ 
+ 	num_clks = of_property_count_strings(np, "clock-output-names");
+ 	if (num_clks < 0) {
 -- 
 1.9.1
+
