@@ -1,84 +1,49 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 05/20] drm: fsl-dcu: Rely on the default ->best_encoder() behavior
-Date: Tue,  7 Jun 2016 13:48:00 +0200
-Message-Id: <1465300095-16971-6-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:32938 "EHLO
+	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750835AbcFAIPb (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 1 Jun 2016 04:15:31 -0400
+MIME-Version: 1.0
+In-Reply-To: <5621267.GpvUaW18zI@wasted.cogentembedded.com>
+References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+	<5621267.GpvUaW18zI@wasted.cogentembedded.com>
+Date: Wed, 1 Jun 2016 10:15:30 +0200
+Message-ID: <CAMuHMdWajU_rM3wS0mSsoW32NNeWVA1gFR4jNq-h=5oEnBrBXA@mail.gmail.com>
+Subject: Re: [PATCH 08/13] ARM: dts: r8a7792: add SYS-DMAC support
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	linux-renesas-soc@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We have a 1:1 relationship between connectors and encoders and the
-driver is relying on the atomic helpers: we can drop the custom
-->best_encoder() and let the core call drm_atomic_helper_best_encoder()
-for us.
+On Wed, Jun 1, 2016 at 12:25 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Describe SYS-DMAC0/1 in the R8A7792 device tree.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c | 9 ---------
- 1 file changed, 9 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c
-index 98c998d..0b0989e 100644
---- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c
-+++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c
-@@ -102,14 +102,6 @@ static const struct drm_connector_funcs fsl_dcu_drm_connector_funcs = {
- 	.reset = drm_atomic_helper_connector_reset,
- };
- 
--static struct drm_encoder *
--fsl_dcu_drm_connector_best_encoder(struct drm_connector *connector)
--{
--	struct fsl_dcu_drm_connector *fsl_con = to_fsl_dcu_connector(connector);
--
--	return fsl_con->encoder;
--}
--
- static int fsl_dcu_drm_connector_get_modes(struct drm_connector *connector)
- {
- 	struct fsl_dcu_drm_connector *fsl_connector;
-@@ -136,7 +128,6 @@ static int fsl_dcu_drm_connector_mode_valid(struct drm_connector *connector,
- }
- 
- static const struct drm_connector_helper_funcs connector_helper_funcs = {
--	.best_encoder = fsl_dcu_drm_connector_best_encoder,
- 	.get_modes = fsl_dcu_drm_connector_get_modes,
- 	.mode_valid = fsl_dcu_drm_connector_mode_valid,
- };
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
