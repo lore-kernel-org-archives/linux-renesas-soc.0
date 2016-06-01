@@ -1,80 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38945 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932259AbcFBWCS (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 2 Jun 2016 18:02:18 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Philipp Zabel <p.zabel@pengutronix.de>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH/RFC v3 15/22] clk: renesas: r8a7796: Obtain mode pin values from R-Car RST driver
-Date: Fri, 03 Jun 2016 01:02:21 +0300
-Message-ID: <1606406.2DcGx2H7dc@avalon>
-In-Reply-To: <1464808880-343-16-git-send-email-geert+renesas@glider.be>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be> <1464808880-343-16-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	Dirk Behme <dirk.behme@de.bosch.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v3 15/22] clk: renesas: r8a7796: Obtain mode pin values from R-Car RST driver
+Date: Wed,  1 Jun 2016 21:21:13 +0200
+Message-Id: <1464808880-343-16-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Obtain the values of the mode pins from the R-Car RST driver, which
+relies on the presence in DT of a device node for the RST module.
 
-Thank you for the patch.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - New.
+---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-On Wednesday 01 Jun 2016 21:21:13 Geert Uytterhoeven wrote:
-> Obtain the values of the mode pins from the R-Car RST driver, which
-> relies on the presence in DT of a device node for the RST module.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
-> v3:
->   - New.
-> ---
->  drivers/clk/renesas/r8a7796-cpg-mssr.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> b/drivers/clk/renesas/r8a7796-cpg-mssr.c index
-> c84b549c14d2e57d..3db2d1cfc8cd788e 100644
-> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-> @@ -16,6 +16,7 @@
->  #include <linux/device.h>
->  #include <linux/init.h>
->  #include <linux/kernel.h>
-> +#include <linux/soc/renesas/rcar-rst.h>
-> 
->  #include <dt-bindings/clock/r8a7796-cpg-mssr.h>
-> 
-> @@ -159,7 +160,12 @@ static const struct rcar_gen3_cpg_pll_config
-> cpg_pll_configs[16] __initconst = { static int __init
-> r8a7796_cpg_mssr_init(struct device *dev)
->  {
->  	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
-> -	u32 cpg_mode = rcar_gen3_read_mode_pins();
-> +	u32 cpg_mode;
-> +	int error;
-> +
-> +	error = rcar_rst_read_mode_pins(&cpg_mode);
-> +	if (error)
-> +		return error;
-> 
->  	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
->  	if (!cpg_pll_config->extal_div) {
-
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index c84b549c14d2e57d..3db2d1cfc8cd788e 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -16,6 +16,7 @@
+ #include <linux/device.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
++#include <linux/soc/renesas/rcar-rst.h>
+ 
+ #include <dt-bindings/clock/r8a7796-cpg-mssr.h>
+ 
+@@ -159,7 +160,12 @@ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
+ static int __init r8a7796_cpg_mssr_init(struct device *dev)
+ {
+ 	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
+-	u32 cpg_mode = rcar_gen3_read_mode_pins();
++	u32 cpg_mode;
++	int error;
++
++	error = rcar_rst_read_mode_pins(&cpg_mode);
++	if (error)
++		return error;
+ 
+ 	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
+ 	if (!cpg_pll_config->extal_div) {
 -- 
-Regards,
+1.9.1
 
-Laurent Pinchart
