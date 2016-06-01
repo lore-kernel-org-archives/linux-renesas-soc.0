@@ -1,41 +1,60 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:45481 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751726AbcFATV1 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 1 Jun 2016 15:21:27 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 16/19] ARM: dts: alt: Name spi pfc subnode after device name
-Date: Fri, 10 Jun 2016 15:01:02 +0200
-Message-Id: <1465563665-2231-17-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
-References: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Subject: [PATCH/RFC v3 08/22] ARM: dts: r8a7794: Add device node for RST module
+Date: Wed,  1 Jun 2016 21:21:06 +0200
+Message-Id: <1464808880-343-9-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Name the Pin Function Controller subnode for QSPI after its device name,
-instead of after the spi interface alias.
-
-This avoids conflicts when enabl support for more spi interfaces later,
-either here or in a DT overlay.
+Add a device node for the RST module, which provides a.o. reset control
+and mode pin monitoring.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7794-alt.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v3:
+  - Use "renesas,<soctype>-rst" instead of "renesas,rst-<soctype>",
+  - Drop "syscon" compatible value,
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 1335664b2f886a17..1ad37d431a2a3bfc 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -147,7 +147,7 @@
- };
- 
- &pfc {
--	qspi_pins: spi0 {
-+	qspi_pins: qspi {
- 		groups = "qspi_ctrl", "qspi_data4";
- 		function = "qspi";
+v2:
+  - Correct unit address,
+  - Drop RFC status and TODO,
+  - Change one-line summary prefix to match current arm-soc practices.
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 685f986cf962752f..ce98f358ce731798 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1249,6 +1249,11 @@
+ 		};
  	};
+ 
++	rst: reset-controller@e6160000 {
++		compatible = "renesas,r8a7794-rst";
++		reg = <0 0xe6160000 0 0x0100>;
++	};
++
+ 	sysc: system-controller@e6180000 {
+ 		compatible = "renesas,r8a7794-sysc";
+ 		reg = <0 0xe6180000 0 0x0200>;
 -- 
 1.9.1
-
