@@ -1,134 +1,74 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 11/20] drm: sti: Rely on the default ->best_encoder() behavior
-Date: Tue,  7 Jun 2016 13:48:06 +0200
-Message-Id: <1465300095-16971-12-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from michel.telenet-ops.be ([195.130.137.88]:58557 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750744AbcFATV1 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 1 Jun 2016 15:21:27 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v3 19/22] ARM: shmobile: rcar-gen2: Stop passing mode pins state to clock driver
+Date: Wed,  1 Jun 2016 21:21:17 +0200
+Message-Id: <1464808880-343-20-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All outputs have a 1:1 relationship between connectors and encoders
-and the driver is relying on the atomic helpers: we can drop the custom
-->best_encoder() implementations and let the core call
-drm_atomic_helper_best_encoder() for us.
+Now the R-Car Gen2 CPG clock driver obtains the state of the mode pins
+from the R-Car RST driver, there's no longer a need to pass this state
+explicitly. Hence we can just call of_clk_init() instead.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/sti/sti_dvo.c  | 10 ----------
- drivers/gpu/drm/sti/sti_hda.c  | 10 ----------
- drivers/gpu/drm/sti/sti_hdmi.c | 10 ----------
- 3 files changed, 30 deletions(-)
+v3:
+  - Drop "select MFD_SYSCON", as the clock driver no longer uses syscon,
 
-diff --git a/drivers/gpu/drm/sti/sti_dvo.c b/drivers/gpu/drm/sti/sti_dvo.c
-index 25f7663..d5627d1 100644
---- a/drivers/gpu/drm/sti/sti_dvo.c
-+++ b/drivers/gpu/drm/sti/sti_dvo.c
-@@ -384,20 +384,10 @@ static int sti_dvo_connector_mode_valid(struct drm_connector *connector,
- 	return MODE_OK;
+v2:
+  - Kill compiler warning if CONFIG_ARM_ARCH_TIMER is not enabled.
+---
+ arch/arm/mach-shmobile/setup-rcar-gen2.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index 1c6fd11c2f824019..755ce7a940c11848 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -15,7 +15,7 @@
+  * GNU General Public License for more details.
+  */
+ 
+-#include <linux/clk/renesas.h>
++#include <linux/clk-provider.h>
+ #include <linux/clocksource.h>
+ #include <linux/device.h>
+ #include <linux/dma-contiguous.h>
+@@ -51,8 +51,8 @@ u32 rcar_gen2_read_mode_pins(void)
+ 
+ void __init rcar_gen2_timer_init(void)
+ {
+-	u32 mode = rcar_gen2_read_mode_pins();
+ #ifdef CONFIG_ARM_ARCH_TIMER
++	u32 mode = rcar_gen2_read_mode_pins();
+ 	void __iomem *base;
+ 	int extal_mhz = 0;
+ 	u32 freq;
+@@ -127,7 +127,7 @@ void __init rcar_gen2_timer_init(void)
+ 	iounmap(base);
+ #endif /* CONFIG_ARM_ARCH_TIMER */
+ 
+-	rcar_gen2_clocks_init(mode);
++	of_clk_init(NULL);
+ 	clocksource_probe();
  }
  
--struct drm_encoder *sti_dvo_best_encoder(struct drm_connector *connector)
--{
--	struct sti_dvo_connector *dvo_connector
--		= to_sti_dvo_connector(connector);
--
--	/* Best encoder is the one associated during connector creation */
--	return dvo_connector->encoder;
--}
--
- static const
- struct drm_connector_helper_funcs sti_dvo_connector_helper_funcs = {
- 	.get_modes = sti_dvo_connector_get_modes,
- 	.mode_valid = sti_dvo_connector_mode_valid,
--	.best_encoder = sti_dvo_best_encoder,
- };
- 
- static enum drm_connector_status
-diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
-index f7d3464..c4649f5 100644
---- a/drivers/gpu/drm/sti/sti_hda.c
-+++ b/drivers/gpu/drm/sti/sti_hda.c
-@@ -676,20 +676,10 @@ static int sti_hda_connector_mode_valid(struct drm_connector *connector,
- 	return MODE_OK;
- }
- 
--struct drm_encoder *sti_hda_best_encoder(struct drm_connector *connector)
--{
--	struct sti_hda_connector *hda_connector
--		= to_sti_hda_connector(connector);
--
--	/* Best encoder is the one associated during connector creation */
--	return hda_connector->encoder;
--}
--
- static const
- struct drm_connector_helper_funcs sti_hda_connector_helper_funcs = {
- 	.get_modes = sti_hda_connector_get_modes,
- 	.mode_valid = sti_hda_connector_mode_valid,
--	.best_encoder = sti_hda_best_encoder,
- };
- 
- static enum drm_connector_status
-diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
-index 6ef0715..dc9ab6e 100644
---- a/drivers/gpu/drm/sti/sti_hdmi.c
-+++ b/drivers/gpu/drm/sti/sti_hdmi.c
-@@ -897,20 +897,10 @@ static int sti_hdmi_connector_mode_valid(struct drm_connector *connector,
- 	return MODE_OK;
- }
- 
--struct drm_encoder *sti_hdmi_best_encoder(struct drm_connector *connector)
--{
--	struct sti_hdmi_connector *hdmi_connector
--		= to_sti_hdmi_connector(connector);
--
--	/* Best encoder is the one associated during connector creation */
--	return hdmi_connector->encoder;
--}
--
- static const
- struct drm_connector_helper_funcs sti_hdmi_connector_helper_funcs = {
- 	.get_modes = sti_hdmi_connector_get_modes,
- 	.mode_valid = sti_hdmi_connector_mode_valid,
--	.best_encoder = sti_hdmi_best_encoder,
- };
- 
- /* get detection status of display device */
 -- 
-2.7.4
+1.9.1
