@@ -1,7 +1,7 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:58557 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750744AbcFATV1 (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:46855 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751579AbcFATV1 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
 	Wed, 1 Jun 2016 15:21:27 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -15,60 +15,58 @@ To: Simon Horman <horms@verge.net.au>,
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v3 19/22] ARM: shmobile: rcar-gen2: Stop passing mode pins state to clock driver
-Date: Wed,  1 Jun 2016 21:21:17 +0200
-Message-Id: <1464808880-343-20-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH/RFC v3 12/22] clk: renesas: r8a7779: Obtain mode pin values from R-Car RST driver
+Date: Wed,  1 Jun 2016 21:21:10 +0200
+Message-Id: <1464808880-343-13-git-send-email-geert+renesas@glider.be>
 In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
 References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now the R-Car Gen2 CPG clock driver obtains the state of the mode pins
-from the R-Car RST driver, there's no longer a need to pass this state
-explicitly. Hence we can just call of_clk_init() instead.
+Obtain the values of the mode pins from the R-Car RST driver, which
+relies on the presence in DT of a device node for the RESET/WDT module.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v3:
-  - Drop "select MFD_SYSCON", as the clock driver no longer uses syscon,
-
-v2:
-  - Kill compiler warning if CONFIG_ARM_ARCH_TIMER is not enabled.
+  - New.
 ---
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/renesas/clk-r8a7779.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 1c6fd11c2f824019..755ce7a940c11848 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -15,7 +15,7 @@
-  * GNU General Public License for more details.
-  */
+diff --git a/drivers/clk/renesas/clk-r8a7779.c b/drivers/clk/renesas/clk-r8a7779.c
+index cf2a37df03b15e60..ca7551bcb1153c3d 100644
+--- a/drivers/clk/renesas/clk-r8a7779.c
++++ b/drivers/clk/renesas/clk-r8a7779.c
+@@ -18,6 +18,7 @@
+ #include <linux/of_address.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
++#include <linux/soc/renesas/rcar-rst.h>
  
--#include <linux/clk/renesas.h>
-+#include <linux/clk-provider.h>
- #include <linux/clocksource.h>
- #include <linux/device.h>
- #include <linux/dma-contiguous.h>
-@@ -51,8 +51,8 @@ u32 rcar_gen2_read_mode_pins(void)
+ #include <dt-bindings/clock/r8a7779-clock.h>
  
- void __init rcar_gen2_timer_init(void)
- {
--	u32 mode = rcar_gen2_read_mode_pins();
- #ifdef CONFIG_ARM_ARCH_TIMER
-+	u32 mode = rcar_gen2_read_mode_pins();
- 	void __iomem *base;
- 	int extal_mhz = 0;
- 	u32 freq;
-@@ -127,7 +127,7 @@ void __init rcar_gen2_timer_init(void)
- 	iounmap(base);
- #endif /* CONFIG_ARM_ARCH_TIMER */
+@@ -127,6 +128,10 @@ static void __init r8a7779_cpg_clocks_init(struct device_node *np)
+ 	struct clk **clks;
+ 	unsigned int i, plla_mult;
+ 	int num_clks;
++	u32 mode;
++
++	if (rcar_rst_read_mode_pins(&mode))
++		return;
  
--	rcar_gen2_clocks_init(mode);
-+	of_clk_init(NULL);
- 	clocksource_probe();
- }
+ 	num_clks = of_property_count_strings(np, "clock-output-names");
+ 	if (num_clks < 0) {
+@@ -148,8 +153,8 @@ static void __init r8a7779_cpg_clocks_init(struct device_node *np)
+ 	cpg->data.clks = clks;
+ 	cpg->data.clk_num = num_clks;
  
+-	config = &cpg_clk_configs[CPG_CLK_CONFIG_INDEX(cpg_mode)];
+-	plla_mult = cpg_plla_mult[CPG_PLLA_MULT_INDEX(cpg_mode)];
++	config = &cpg_clk_configs[CPG_CLK_CONFIG_INDEX(mode)];
++	plla_mult = cpg_plla_mult[CPG_PLLA_MULT_INDEX(mode)];
+ 
+ 	for (i = 0; i < num_clks; ++i) {
+ 		const char *name;
 -- 
 1.9.1
