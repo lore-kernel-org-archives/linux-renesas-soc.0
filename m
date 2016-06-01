@@ -1,38 +1,48 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:36782 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751148AbcELUiM (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 12 May 2016 16:38:12 -0400
-Received: by mail-lf0-f48.google.com with SMTP id u64so78485317lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 May 2016 13:38:11 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 1 Jun 2016 09:28:07 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
 	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
 	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 0/6] Add R8A7794/SILK sound DT support
-Date: Thu, 12 May 2016 23:38:08 +0300
-Message-ID: <2378837.cigT3tNQPe@wasted.cogentembedded.com>
+Subject: Re: [PATCH 06/13] DT: clock: cpg-mstp-clocks:
+ document-R8A7792-support
+Message-ID: <20160601002807.GD20527@verge.net.au>
+References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+ <1627751.dcAYzyCZSM@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1627751.dcAYzyCZSM@wasted.cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+On Wed, Jun 01, 2016 at 01:21:26AM +0300, Sergei Shtylyov wrote:
+> Renesas R8A7792 SoC also has the CPG MSTP clocks...
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-   Here's the set of 6 patches against Simon Horman's 'renesas.git' repo,
-'renesas-devel-20160509-v4.6-rc7' tag. I'm adding the sound device tree support
-for the R8A7794 SoC based SILK board.
+I think the prefix of this patch should be "clk: shmobile: mstp: "
 
-[1/6] ARM: dts: r8a7794: add audio clocks
-[2/6] ARM: dts: r8a7794: add MSTP5 clocks
-[3/6] ARM: dts: r8a7794: add MSTP10 clocks
-[4/6] ARM: dts: r8a7794: add Audio-DMAC support
-[5/6] ARM: dts: r8a7794: add sound support
-[6/6] ARM: dts: silk: add sound support
+With that change feel free to add:
 
-WBR, Sergei
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+
+> ---
+>  Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> Index: renesas/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
+> ===================================================================
+> --- renesas.orig/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
+> +++ renesas/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
+> @@ -17,6 +17,7 @@ Required Properties:
+>      - "renesas,r8a7779-mstp-clocks" for R8A7779 (R-Car H1) MSTP gate clocks
+>      - "renesas,r8a7790-mstp-clocks" for R8A7790 (R-Car H2) MSTP gate clocks
+>      - "renesas,r8a7791-mstp-clocks" for R8A7791 (R-Car M2-W) MSTP gate clocks
+> +    - "renesas,r8a7792-mstp-clocks" for R8A7792 (R-Car V2H) MSTP gate clocks
+>      - "renesas,r8a7793-mstp-clocks" for R8A7793 (R-Car M2-N) MSTP gate clocks
+>      - "renesas,r8a7794-mstp-clocks" for R8A7794 (R-Car E2) MSTP gate clocks
+>      - "renesas,sh73a0-mstp-clocks" for SH73A0 (SH-MobileAG5) MSTP gate clocks
+> 
