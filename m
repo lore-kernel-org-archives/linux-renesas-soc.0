@@ -1,76 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:34908 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932250AbcFCKAO (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:46857 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751572AbcFATV1 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 3 Jun 2016 06:00:14 -0400
+	Wed, 1 Jun 2016 15:21:27 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Peter Hurley <peter@hurleysoftware.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 05/11] serial: sh-sci: Do not open-code sci_getreg()
-Date: Fri,  3 Jun 2016 12:00:05 +0200
-Message-Id: <1464948011-377-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
-References: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH/RFC v3 13/22] clk: renesas: rcar-gen2: Obtain mode pin values using RST driver
+Date: Wed,  1 Jun 2016 21:21:11 +0200
+Message-Id: <1464808880-343-14-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Replace open-coded variants of sci_getreg() by function calls, and drop
-intermediate variables where appropriate.
+Obtain the values of the mode pins from the R-Car RST driver, which
+relies on the presence in DT of a device node for the RST module.
+
+Fall back to calling rcar_gen2_read_mode_pins() in the R-Car Gen2
+platform code for backward-compatibility with old DTs.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Peter Hurley <peter@hurleysoftware.com>
 ---
 v3:
-  - Add Reviewed-by,
+  -  Use the R-Car RST driver instead of syscon/regmap and the
+     "renesas,modemr" property in DT,
 
 v2:
-  - New.
+  - drivers/clk/shmobile/ was renamed to drivers/clk/renesas/.
 ---
- drivers/tty/serial/sh-sci.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/clk/renesas/clk-rcar-gen2.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index bf3780a7f700cad8..ce7bd165929ea078 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -703,7 +703,6 @@ static void sci_poll_put_char(struct uart_port *port, unsigned char c)
- static void sci_init_pins(struct uart_port *port, unsigned int cflag)
- {
- 	struct sci_port *s = to_sci_port(port);
--	const struct plat_sci_reg *reg = sci_regmap[s->cfg->regtype] + SCSPTR;
+diff --git a/drivers/clk/renesas/clk-rcar-gen2.c b/drivers/clk/renesas/clk-rcar-gen2.c
+index 00e6aba4b9c09596..436fc7a7714e4bd7 100644
+--- a/drivers/clk/renesas/clk-rcar-gen2.c
++++ b/drivers/clk/renesas/clk-rcar-gen2.c
+@@ -19,6 +19,7 @@
+ #include <linux/of_address.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
++#include <linux/soc/renesas/rcar-rst.h>
  
- 	/*
- 	 * Use port-specific handler if provided.
-@@ -717,7 +716,7 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
- 	 * For the generic path SCSPTR is necessary. Bail out if that's
- 	 * unavailable, too.
- 	 */
--	if (!reg->size)
-+	if (!sci_getreg(port, SCSPTR)->size)
- 		return;
+ struct rcar_gen2_cpg {
+ 	struct clk_onecell_data data;
+@@ -372,6 +373,15 @@ static void __init rcar_gen2_cpg_clocks_init(struct device_node *np)
+ 	unsigned int i;
+ 	int num_clks;
  
- 	if ((s->cfg->capabilities & SCIx_HAVE_RTSCTS) &&
-@@ -1866,12 +1865,10 @@ static void sci_enable_ms(struct uart_port *port)
- 
- static void sci_break_ctl(struct uart_port *port, int break_state)
- {
--	struct sci_port *s = to_sci_port(port);
--	const struct plat_sci_reg *reg = sci_regmap[s->cfg->regtype] + SCSPTR;
- 	unsigned short scscr, scsptr;
- 
- 	/* check wheter the port has SCSPTR */
--	if (!reg->size) {
-+	if (!sci_getreg(port, SCSPTR)->size) {
- 		/*
- 		 * Not supported by hardware. Most parts couple break and rx
- 		 * interrupts together, with break detection always enabled.
++	if (rcar_rst_read_mode_pins(&cpg_mode)) {
++		/* Backward-compatibility with old DT */
++		extern u32 rcar_gen2_read_mode_pins(void);
++
++		pr_warn("%s: failed to obtain mode pins from RST\n",
++			np->full_name);
++		cpg_mode = rcar_gen2_read_mode_pins();
++	}
++
+ 	num_clks = of_property_count_strings(np, "clock-output-names");
+ 	if (num_clks < 0) {
+ 		pr_err("%s: failed to count clocks\n", __func__);
 -- 
 1.9.1
