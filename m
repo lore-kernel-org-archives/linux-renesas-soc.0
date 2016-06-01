@@ -1,66 +1,84 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:36911 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751360AbcEKMqJ (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 11 May 2016 08:46:09 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-mmc@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH] mmc: sh_mobile_sdhi: properly document R-Car versions
-Date: Wed, 11 May 2016 14:46:00 +0200
-Message-Id: <1462970760-3471-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Wed, 1 Jun 2016 09:30:16 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH 05/13] DT: clock: rcar-gen2-cpg-clocks: document R8A7792
+ support
+Message-ID: <20160601003016.GE20527@verge.net.au>
+References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+ <4688920.9Ektl04hDh@wasted.cogentembedded.com>
+ <20160601002535.GB20527@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20160601002535.GB20527@verge.net.au>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Wed, Jun 01, 2016 at 09:25:35AM +0900, Simon Horman wrote:
+> [Cc: Geert]
+> 
+> On Wed, Jun 01, 2016 at 01:20:11AM +0300, Sergei Shtylyov wrote:
+> > Renesas R8A7792 SoC is a member of the R-Car gen2 family and so has CPG...
+> > 
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Hi Sergei,
+> 
+> I think the prefix of this patch should be "clk: shmobile: rcar-gen2: "
+> 
+> Hi Geert,
+> 
+> I apologise if I have missed a discussion of this topic or if my analysis
+> is wrong for some reason but I am curious to know what the intended way
+> is for the rcar-gen2 CPG driver to handle differences in the availability
+> of clocks across different SoCs.
+> 
+> My possibly naïve expectation is that the implementation would use compat
+> strings. But as it stands it appears that all clocks supported by the
+> driver are available for all SoCs. This does not seem to reflect the
+> documentation (v2.00).
+> 
+> FWIW my quick analysis of clocks supported by the driver present in
+> renesas-drivers-2016-05-31-v4.7-rc1 but not present on one or more SoCs
+> is as follows:
+> 
+> Not present on V2H: sdh, sd0
+> Not present on V2H or E2: sd1
+> Not present on H2, M2-W, M2-N, E2: rcan
 
-Replace hardcoded values with meaningful names and document what we
-know.
+Thinking about a little more, which I obviously should have done
+before hitting send:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/sh_mobile_sdhi.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+There does not seem to be any conflict in the implementation of individual
+clocks between SoCs at least so far as clocks supported by the driver goes.
+Its just that some of them aren't present on all SoCs. But in that case
+they shouldn't be used in DT: the DT describes the HW. So I think I'm ok
+with this patch. Sorry for the noise!
 
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index f750f9494410b0..c3b651bf89cb4a 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -39,6 +39,12 @@
- 
- #define EXT_ACC           0xe4
- 
-+#define SDHI_VER_GEN2_SDR50	0x490c
-+/* very old datasheets said 0x490c for SDR104, too. They are wrong! */
-+#define SDHI_VER_GEN2_SDR104	0xcb0d
-+#define SDHI_VER_GEN3_SD	0xcc10
-+#define SDHI_VER_GEN3_SDMMC	0xcd10
-+
- #define host_to_priv(host) container_of((host)->pdata, struct sh_mobile_sdhi, mmc_data)
- 
- struct sh_mobile_sdhi_of_data {
-@@ -109,14 +115,14 @@ static void sh_mobile_sdhi_sdbuf_width(struct tmio_mmc_host *host, int width)
- 	 *	sh_mobile_sdhi_of_data :: dma_buswidth
- 	 */
- 	switch (sd_ctrl_read16(host, CTL_VERSION)) {
--	case 0x490C:
-+	case SDHI_VER_GEN2_SDR50:
- 		val = (width == 32) ? 0x0001 : 0x0000;
- 		break;
--	case 0xCB0D:
-+	case SDHI_VER_GEN2_SDR104:
- 		val = (width == 32) ? 0x0000 : 0x0001;
- 		break;
--	case 0xCC10: /* Gen3, SD only */
--	case 0xCD10: /* Gen3, SD + MMC */
-+	case SDHI_VER_GEN3_SD:
-+	case SDHI_VER_GEN3_SDMMC:
- 		if (width == 64)
- 			val = 0x0000;
- 		else if (width == 32)
--- 
-2.8.1
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+
+> > ---
+> >  Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt |    1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > Index: renesas/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
+> > ===================================================================
+> > --- renesas.orig/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
+> > +++ renesas/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
+> > @@ -10,6 +10,7 @@ Required Properties:
+> >    - compatible: Must be one of
+> >      - "renesas,r8a7790-cpg-clocks" for the r8a7790 CPG
+> >      - "renesas,r8a7791-cpg-clocks" for the r8a7791 CPG
+> > +    - "renesas,r8a7792-cpg-clocks" for the r8a7792 CPG
+> >      - "renesas,r8a7793-cpg-clocks" for the r8a7793 CPG
+> >      - "renesas,r8a7794-cpg-clocks" for the r8a7794 CPG
+> >      and "renesas,rcar-gen2-cpg-clocks" as a fallback.
+> > 
+> 
