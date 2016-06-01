@@ -1,78 +1,70 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Peter Hurley <peter@hurleysoftware.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 08/11] serial: sh-sci: Correct pin initialization on (H)SCIF
-Date: Fri,  3 Jun 2016 12:00:08 +0200
-Message-Id: <1464948011-377-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
-References: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH/RFC v3 21/22] clk: renesas: r8a7779: Remove obsolete r8a7779_clocks_init()
+Date: Wed,  1 Jun 2016 21:21:19 +0200
+Message-Id: <1464808880-343-22-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Correct pin initialization on (H)SCIF:
-  - RTS must be deasserted (it's active low),
-  - SCK must be an input, as it may be used as the optional external
-    clock input.
-
-Initial pin configuration must always be done:
-  - Regardless of the presence of dedicated RTS and CTS pins: if the
-    register exists, the RTS/CTS bits exist, too,
-  - Regardless of hardware flow control being enabled or not: RTS must
-    be deasserted.
+The R-Car H1 board code no longer calls r8a7779_clocks_init().
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v3:
-  - No changes,
-
-v2:
   - New.
 ---
- drivers/tty/serial/sh-sci.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+ drivers/clk/renesas/clk-r8a7779.c | 9 ---------
+ include/linux/clk/renesas.h       | 1 -
+ 2 files changed, 10 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index ce7bd165929ea078..c46999f20917964e 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -712,21 +712,14 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
- 		return;
- 	}
+diff --git a/drivers/clk/renesas/clk-r8a7779.c b/drivers/clk/renesas/clk-r8a7779.c
+index ca7551bcb1153c3d..27fbfafaf2cd0353 100644
+--- a/drivers/clk/renesas/clk-r8a7779.c
++++ b/drivers/clk/renesas/clk-r8a7779.c
+@@ -89,8 +89,6 @@ static const unsigned int cpg_plla_mult[4] __initconst = { 42, 48, 56, 64 };
+  * Initialization
+  */
  
--	/*
--	 * For the generic path SCSPTR is necessary. Bail out if that's
--	 * unavailable, too.
--	 */
--	if (!sci_getreg(port, SCSPTR)->size)
--		return;
+-static u32 cpg_mode __initdata;
 -
--	if ((s->cfg->capabilities & SCIx_HAVE_RTSCTS) &&
--	    ((!(cflag & CRTSCTS)))) {
--		unsigned short status;
--
--		status = serial_port_in(port, SCSPTR);
--		status &= ~SCSPTR_CTSIO;
--		status |= SCSPTR_RTSIO;
--		serial_port_out(port, SCSPTR, status); /* Set RTS = 1 */
-+	if (sci_getreg(port, SCSPTR)->size) {
-+		u16 status = serial_port_in(port, SCSPTR);
-+
-+		/* RTS# is output, driven 1 */
-+		status |= SCSPTR_RTSIO | SCSPTR_RTSDT;
-+		/* CTS# and SCK are inputs */
-+		status &= ~(SCSPTR_CTSIO | SCSPTR_SCKIO);
-+		serial_port_out(port, SCSPTR, status);
- 	}
+ static struct clk * __init
+ r8a7779_cpg_register_clock(struct device_node *np, struct r8a7779_cpg *cpg,
+ 			   const struct cpg_clk_config *config,
+@@ -178,10 +176,3 @@ static void __init r8a7779_cpg_clocks_init(struct device_node *np)
  }
+ CLK_OF_DECLARE(r8a7779_cpg_clks, "renesas,r8a7779-cpg-clocks",
+ 	       r8a7779_cpg_clocks_init);
+-
+-void __init r8a7779_clocks_init(u32 mode)
+-{
+-	cpg_mode = mode;
+-
+-	of_clk_init(NULL);
+-}
+diff --git a/include/linux/clk/renesas.h b/include/linux/clk/renesas.h
+index 2b663bba1adcc7c1..9e969941f3f62878 100644
+--- a/include/linux/clk/renesas.h
++++ b/include/linux/clk/renesas.h
+@@ -20,7 +20,6 @@ struct device;
+ struct device_node;
+ struct generic_pm_domain;
  
+-void r8a7779_clocks_init(u32 mode);
+ void rcar_gen2_clocks_init(u32 mode);
+ 
+ void cpg_mstp_add_clk_domain(struct device_node *np);
 -- 
 1.9.1
+
