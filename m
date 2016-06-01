@@ -1,56 +1,133 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:34021 "EHLO
-	mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751043AbcEYVkv (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:42990 "EHLO
+	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1757336AbcFAGpG (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 25 May 2016 17:40:51 -0400
-Received: by mail-lf0-f46.google.com with SMTP id k98so24698726lfi.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 25 May 2016 14:40:51 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	sboyd@codeaurora.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: renesas: add R8A7792 support
-Date: Thu, 26 May 2016 00:40:44 +0300
-Message-ID: <9904764.Bsg49gKsuS@wasted.cogentembedded.com>
+	Wed, 1 Jun 2016 02:45:06 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>
+CC: <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 2/2] usb: host: xhci: rcar: fix the quirks setting of XHCI_NO_64BIT_SUPPORT
+Date: Wed, 1 Jun 2016 15:44:43 +0900
+Message-ID: <1464763483-6224-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1464763483-6224-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1464763483-6224-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renesas R-Car V2H (R8A7792) clocks are handled by R-Car gen2 clock driver.
+Since the commit b1c127ae990b ("usb: host: xhci: plat: make use of new
+methods in xhci_plat_priv") changed the setting timing of xhci->quirks to
+xhci_rcar_init_quirk(), the quirks was overwritten by xhci_gen_setup().
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+So, this patch fixes the issue using a "quirks" of struct xhci_plat_priv.
 
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-The patch is against the 'clk-next' branch of CLK group's 'linux.git' repo.
+ drivers/usb/host/xhci-plat.c | 12 +++++++++++-
+ drivers/usb/host/xhci-plat.h |  1 +
+ drivers/usb/host/xhci-rcar.c | 21 ---------------------
+ 3 files changed, 12 insertions(+), 22 deletions(-)
 
- drivers/clk/renesas/Kconfig  |    1 +
- drivers/clk/renesas/Makefile |    1 +
- 2 files changed, 2 insertions(+)
-
-Index: linux/drivers/clk/renesas/Kconfig
-===================================================================
---- linux.orig/drivers/clk/renesas/Kconfig
-+++ linux/drivers/clk/renesas/Kconfig
-@@ -11,6 +11,7 @@ config CLK_RENESAS_CPG_MSTP
- 	default y if ARCH_R8A7779
- 	default y if ARCH_R8A7790
- 	default y if ARCH_R8A7791
-+	default y if ARCH_R8A7792
- 	default y if ARCH_R8A7793
- 	default y if ARCH_R8A7794
- 	default y if ARCH_SH73A0
-Index: linux/drivers/clk/renesas/Makefile
-===================================================================
---- linux.orig/drivers/clk/renesas/Makefile
-+++ linux/drivers/clk/renesas/Makefile
-@@ -6,6 +6,7 @@ obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a77
- obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
- obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
-+obj-$(CONFIG_ARCH_R8A7792)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
- obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 676ea45..7f03608 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -57,12 +57,14 @@ static int xhci_priv_init_quirk(struct usb_hcd *hcd)
+ 
+ static void xhci_plat_quirks(struct device *dev, struct xhci_hcd *xhci)
+ {
++	struct xhci_plat_priv *priv = xhci_to_priv(xhci);
++
+ 	/*
+ 	 * As of now platform drivers don't provide MSI support so we ensure
+ 	 * here that the generic code does not try to make a pci_dev from our
+ 	 * dev struct in order to setup MSI
+ 	 */
+-	xhci->quirks |= XHCI_PLAT;
++	xhci->quirks |= XHCI_PLAT | priv->quirks;
+ }
+ 
+ /* called during probe() after chip reset completes */
+@@ -89,16 +91,24 @@ static const struct xhci_plat_priv xhci_plat_marvell_armada = {
+ 	.init_quirk = xhci_mvebu_mbus_init_quirk,
+ };
+ 
++/*
++ * On R-Car Gen2 and Gen3, the AC64 bit (bit 0) of HCCPARAMS1 is set to 1.
++ * However, these SoCs don't support 64-bit address memory pointers. So, this
++ * driver clears the AC64 bit of xhci->hcc_params to call
++ * dma_set_coherent_mask(dev, DMA_BIT_MASK(32)) in xhci_gen_setup().
++ */
+ static const struct xhci_plat_priv xhci_plat_renesas_rcar_gen2 = {
+ 	.firmware_name = XHCI_RCAR_FIRMWARE_NAME_V1,
+ 	.init_quirk = xhci_rcar_init_quirk,
+ 	.plat_start = xhci_rcar_start,
++	.quirks = XHCI_NO_64BIT_SUPPORT,
+ };
+ 
+ static const struct xhci_plat_priv xhci_plat_renesas_rcar_gen3 = {
+ 	.firmware_name = XHCI_RCAR_FIRMWARE_NAME_V2,
+ 	.init_quirk = xhci_rcar_init_quirk,
+ 	.plat_start = xhci_rcar_start,
++	.quirks = XHCI_NO_64BIT_SUPPORT,
+ };
+ 
+ static const struct of_device_id usb_xhci_of_match[] = {
+diff --git a/drivers/usb/host/xhci-plat.h b/drivers/usb/host/xhci-plat.h
+index c652f33..15144c9 100644
+--- a/drivers/usb/host/xhci-plat.h
++++ b/drivers/usb/host/xhci-plat.h
+@@ -20,5 +20,6 @@ struct xhci_plat_priv {
+ 	unsigned int quirks;
+ };
+ 
++#define xhci_to_priv(x) ((struct xhci_plat_priv *)(x)->priv)
+ #define hcd_to_xhci_priv(h) ((struct xhci_plat_priv *)hcd_to_xhci(h)->priv)
+ #endif	/* _XHCI_PLAT_H */
+diff --git a/drivers/usb/host/xhci-rcar.c b/drivers/usb/host/xhci-rcar.c
+index 0e4535e..2617cd7 100644
+--- a/drivers/usb/host/xhci-rcar.c
++++ b/drivers/usb/host/xhci-rcar.c
+@@ -87,14 +87,6 @@ static int xhci_rcar_is_gen2(struct device *dev)
+ 		of_device_is_compatible(node, "renensas,rcar-gen2-xhci");
+ }
+ 
+-static int xhci_rcar_is_gen3(struct device *dev)
+-{
+-	struct device_node *node = dev->of_node;
+-
+-	return of_device_is_compatible(node, "renesas,xhci-r8a7795") ||
+-		of_device_is_compatible(node, "renesas,rcar-gen3-xhci");
+-}
+-
+ void xhci_rcar_start(struct usb_hcd *hcd)
+ {
+ 	u32 temp;
+@@ -175,22 +167,9 @@ static int xhci_rcar_download_firmware(struct usb_hcd *hcd)
+ /* This function needs to initialize a "phy" of usb before */
+ int xhci_rcar_init_quirk(struct usb_hcd *hcd)
+ {
+-	struct xhci_hcd *xhci = hcd_to_xhci(hcd);
+-
+ 	/* If hcd->regs is NULL, we don't just call the following function */
+ 	if (!hcd->regs)
+ 		return 0;
+ 
+-	/*
+-	 * On R-Car Gen2 and Gen3, the AC64 bit (bit 0) of HCCPARAMS1 is set
+-	 * to 1. However, these SoCs don't support 64-bit address memory
+-	 * pointers. So, this driver clears the AC64 bit of xhci->hcc_params
+-	 * to call dma_set_coherent_mask(dev, DMA_BIT_MASK(32)) in
+-	 * xhci_gen_setup().
+-	 */
+-	if (xhci_rcar_is_gen2(hcd->self.controller) ||
+-			xhci_rcar_is_gen3(hcd->self.controller))
+-		xhci->quirks |= XHCI_NO_64BIT_SUPPORT;
+-
+ 	return xhci_rcar_download_firmware(hcd);
+ }
+-- 
+1.9.1
