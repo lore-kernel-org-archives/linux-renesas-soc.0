@@ -1,132 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752368AbcFHBAq (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:45485 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751694AbcFATV1 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 21:00:46 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+	Wed, 1 Jun 2016 15:21:27 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 27/30] ARM: dts: lager: Fix W=1 dtc warnings
-Date: Wed,  8 Jun 2016 09:59:57 +0900
-Message-Id: <affe802c391ff99dcc26baa2bd479905f72b7fdc.1465346599.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1465346599.git.horms+renesas@verge.net.au>
-References: <cover.1465346599.git.horms+renesas@verge.net.au>
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v3 07/22] ARM: dts: r8a7793: Add device node for RST module
+Date: Wed,  1 Jun 2016 21:21:05 +0200
+Message-Id: <1464808880-343-8-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Warning (unit_address_vs_reg): Node /keyboard/button@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /keyboard/button@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /keyboard/button@3 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /keyboard/button@4 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /fixedregulator@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@3 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@4 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /i2c@8 has a unit name, but no reg property
+Add a device node for the RST module, which provides a.o. reset control
+and mode pin monitoring.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790-lager.dts | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+v3:
+  - Use "renesas,<soctype>-rst" instead of "renesas,rst-<soctype>",
+  - Drop "syscon" compatible value,
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 749ba02b6a53..9d20ace33b01 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -76,28 +76,28 @@
- 	keyboard {
- 		compatible = "gpio-keys";
- 
--		button@1 {
-+		one {
- 			linux,code = <KEY_1>;
- 			label = "SW2-1";
- 			wakeup-source;
- 			debounce-interval = <20>;
- 			gpios = <&gpio1 14 GPIO_ACTIVE_LOW>;
- 		};
--		button@2 {
-+		two {
- 			linux,code = <KEY_2>;
- 			label = "SW2-2";
- 			wakeup-source;
- 			debounce-interval = <20>;
- 			gpios = <&gpio1 24 GPIO_ACTIVE_LOW>;
- 		};
--		button@3 {
-+		three {
- 			linux,code = <KEY_3>;
- 			label = "SW2-3";
- 			wakeup-source;
- 			debounce-interval = <20>;
- 			gpios = <&gpio1 26 GPIO_ACTIVE_LOW>;
- 		};
--		button@4 {
-+		four {
- 			linux,code = <KEY_4>;
- 			label = "SW2-4";
- 			wakeup-source;
-@@ -119,7 +119,7 @@
+v2:
+  - Correct unit address,
+  - Drop RFC status and TODO,
+  - Change one-line summary prefix to match current arm-soc practices.
+---
+ arch/arm/boot/dts/r8a7793.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 9b55c1c6ee31a49d..5a6c9808410761ce 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -1264,6 +1264,11 @@
  		};
  	};
  
--	fixedregulator3v3: fixedregulator@0 {
-+	fixedregulator3v3: regulator-3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-3.3V";
- 		regulator-min-microvolt = <3300000>;
-@@ -128,7 +128,7 @@
- 		regulator-always-on;
- 	};
- 
--	vcc_sdhi0: regulator@1 {
-+	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
- 
- 		regulator-name = "SDHI0 Vcc";
-@@ -139,7 +139,7 @@
- 		enable-active-high;
- 	};
- 
--	vccq_sdhi0: regulator@2 {
-+	vccq_sdhi0: regulator-vccq-sdhi0 {
- 		compatible = "regulator-gpio";
- 
- 		regulator-name = "SDHI0 VccQ";
-@@ -152,7 +152,7 @@
- 			  1800000 0>;
- 	};
- 
--	vcc_sdhi2: regulator@3 {
-+	vcc_sdhi2: regulator-vcc-sdhi2 {
- 		compatible = "regulator-fixed";
- 
- 		regulator-name = "SDHI2 Vcc";
-@@ -163,7 +163,7 @@
- 		enable-active-high;
- 	};
- 
--	vccq_sdhi2: regulator@4 {
-+	vccq_sdhi2: regulator-vccq-sdhi2 {
- 		compatible = "regulator-gpio";
- 
- 		regulator-name = "SDHI2 VccQ";
-@@ -263,7 +263,7 @@
- 	 * instantiate the slave device at runtime according to the documentation.
- 	 * You can then communicate with the slave via IIC3.
- 	 */
--	i2cexio: i2c@8 {
-+	i2cexio: i2c-8 {
- 		compatible = "i2c-demux-pinctrl";
- 		i2c-parent = <&iic0>, <&i2c0>;
- 		i2c-bus-name = "i2c-exio";
++	rst: reset-controller@e6160000 {
++		compatible = "renesas,r8a7793-rst";
++		reg = <0 0xe6160000 0 0x0100>;
++	};
++
+ 	sysc: system-controller@e6180000 {
+ 		compatible = "renesas,r8a7793-sysc";
+ 		reg = <0 0xe6180000 0 0x0200>;
 -- 
-2.1.4
+1.9.1
