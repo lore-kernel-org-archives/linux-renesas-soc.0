@@ -1,143 +1,121 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752368AbcFHBAh (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:51057 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758640AbcFAPXR (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 21:00:37 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/30] ARM: dts: emev2: Fix W=1 dtc warnings
-Date: Wed,  8 Jun 2016 09:59:40 +0900
-Message-Id: <33df2753637b2d59adcfd13c35761ff13ff1c673.1465346599.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1465346599.git.horms+renesas@verge.net.au>
-References: <cover.1465346599.git.horms+renesas@verge.net.au>
+	Wed, 1 Jun 2016 11:23:17 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: hch@infradead.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+	iommu@lists.linux-foundation.org
+Cc: dan.j.williams@intel.com, vinod.koul@intel.com,
+	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
+	linus.walleij@linaro.org, arnd@arndb.de,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv7 3/6] dma-mapping: add dma_{map,unmap}_resource
+Date: Wed,  1 Jun 2016 17:22:26 +0200
+Message-Id: <1464794549-6601-4-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1464794549-6601-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1464794549-6601-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Map/Unmap a device MMIO resource from a physical address. If no dma_map_ops
+method is available the operation is a no-op.
 
-Warning (unit_address_vs_reg): Node /clocks@e0110000/iic0_sclkdiv has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/iic0_sclk has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/iic1_sclkdiv has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/iic1_sclk has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/usia_u0_sclkdiv has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u1_sclkdiv has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u2_sclkdiv has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u3_sclkdiv has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/usia_u0_sclk has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u1_sclk has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u2_sclk has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/usib_u3_sclk has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /clocks@e0110000/sti_sclk has a reg or ranges property, but no unit name
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/emev2.dtsi | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ Documentation/DMA-API.txt   | 22 +++++++++++++++++-----
+ include/linux/dma-mapping.h | 36 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/emev2.dtsi b/arch/arm/boot/dts/emev2.dtsi
-index bcce6f50c93d..cd119400f440 100644
---- a/arch/arm/boot/dts/emev2.dtsi
-+++ b/arch/arm/boot/dts/emev2.dtsi
-@@ -69,25 +69,25 @@
- 			clock-frequency = <32768>;
- 			#clock-cells = <0>;
- 		};
--		iic0_sclkdiv: iic0_sclkdiv {
-+		iic0_sclkdiv: iic0_sclkdiv@624,0 {
- 			compatible = "renesas,emev2-smu-clkdiv";
- 			reg = <0x624 0>;
- 			clocks = <&pll3_fo>;
- 			#clock-cells = <0>;
- 		};
--		iic0_sclk: iic0_sclk {
-+		iic0_sclk: iic0_sclk@48c,1 {
- 			compatible = "renesas,emev2-smu-gclk";
- 			reg = <0x48c 1>;
- 			clocks = <&iic0_sclkdiv>;
- 			#clock-cells = <0>;
- 		};
--		iic1_sclkdiv: iic1_sclkdiv {
-+		iic1_sclkdiv: iic1_sclkdiv@624,16 {
- 			compatible = "renesas,emev2-smu-clkdiv";
- 			reg = <0x624 16>;
- 			clocks = <&pll3_fo>;
- 			#clock-cells = <0>;
- 		};
--		iic1_sclk: iic1_sclk {
-+		iic1_sclk: iic1_sclk@490,1 {
- 			compatible = "renesas,emev2-smu-gclk";
- 			reg = <0x490 1>;
- 			clocks = <&iic1_sclkdiv>;
-@@ -100,55 +100,55 @@
- 			clock-mult = <7000>;
- 			#clock-cells = <0>;
- 		};
--		usia_u0_sclkdiv: usia_u0_sclkdiv {
-+		usia_u0_sclkdiv: usia_u0_sclkdiv@610,0 {
- 			compatible = "renesas,emev2-smu-clkdiv";
- 			reg = <0x610 0>;
- 			clocks = <&pll3_fo>;
- 			#clock-cells = <0>;
- 		};
--		usib_u1_sclkdiv: usib_u1_sclkdiv {
-+		usib_u1_sclkdiv: usib_u1_sclkdiv@65c,0 {
- 			compatible = "renesas,emev2-smu-clkdiv";
- 			reg = <0x65c 0>;
- 			clocks = <&pll3_fo>;
- 			#clock-cells = <0>;
- 		};
--		usib_u2_sclkdiv: usib_u2_sclkdiv {
-+		usib_u2_sclkdiv: usib_u2_sclkdiv@65c,16 {
- 			compatible = "renesas,emev2-smu-clkdiv";
- 			reg = <0x65c 16>;
- 			clocks = <&pll3_fo>;
- 			#clock-cells = <0>;
- 		};
--		usib_u3_sclkdiv: usib_u3_sclkdiv {
-+		usib_u3_sclkdiv: usib_u3_sclkdiv@660,0 {
- 			compatible = "renesas,emev2-smu-clkdiv";
- 			reg = <0x660 0>;
- 			clocks = <&pll3_fo>;
- 			#clock-cells = <0>;
- 		};
--		usia_u0_sclk: usia_u0_sclk {
-+		usia_u0_sclk: usia_u0_sclk@4a0,1 {
- 			compatible = "renesas,emev2-smu-gclk";
- 			reg = <0x4a0 1>;
- 			clocks = <&usia_u0_sclkdiv>;
- 			#clock-cells = <0>;
- 		};
--		usib_u1_sclk: usib_u1_sclk {
-+		usib_u1_sclk: usib_u1_sclk@4b8,1 {
- 			compatible = "renesas,emev2-smu-gclk";
- 			reg = <0x4b8 1>;
- 			clocks = <&usib_u1_sclkdiv>;
- 			#clock-cells = <0>;
- 		};
--		usib_u2_sclk: usib_u2_sclk {
-+		usib_u2_sclk: usib_u2_sclk@4bc,1 {
- 			compatible = "renesas,emev2-smu-gclk";
- 			reg = <0x4bc 1>;
- 			clocks = <&usib_u2_sclkdiv>;
- 			#clock-cells = <0>;
- 		};
--		usib_u3_sclk: usib_u3_sclk {
-+		usib_u3_sclk: usib_u3_sclk@4c0,1 {
- 			compatible = "renesas,emev2-smu-gclk";
- 			reg = <0x4c0 1>;
- 			clocks = <&usib_u3_sclkdiv>;
- 			#clock-cells = <0>;
- 		};
--		sti_sclk: sti_sclk {
-+		sti_sclk: sti_sclk@528,1 {
- 			compatible = "renesas,emev2-smu-gclk";
- 			reg = <0x528 1>;
- 			clocks = <&c32ki>;
+diff --git a/Documentation/DMA-API.txt b/Documentation/DMA-API.txt
+index 45ef3f2..c7e5f99 100644
+--- a/Documentation/DMA-API.txt
++++ b/Documentation/DMA-API.txt
+@@ -277,14 +277,26 @@ and <size> parameters are provided to do partial page mapping, it is
+ recommended that you never use these unless you really know what the
+ cache width is.
+ 
++dma_addr_t
++dma_map_resource(struct device *dev, phys_addr_t phys_addr, size_t size,
++		 enum dma_data_direction dir, struct dma_attrs *attrs)
++
++void
++dma_unmap_resource(struct device *dev, dma_addr_t addr, size_t size,
++		   enum dma_data_direction dir, struct dma_attrs *attrs)
++
++API for mapping and unmapping for MMIO resources. All the notes and
++warnings for the other mapping APIs apply here. The API should only be
++used to map device MMIO resources, mapping of RAM is not permitted.
++
+ int
+ dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
+ 
+-In some circumstances dma_map_single() and dma_map_page() will fail to create
+-a mapping. A driver can check for these errors by testing the returned
+-DMA address with dma_mapping_error(). A non-zero return value means the mapping
+-could not be created and the driver should take appropriate action (e.g.
+-reduce current DMA mapping usage or delay and try again later).
++In some circumstances dma_map_single(), dma_map_page() and dma_map_resource()
++will fail to create a mapping. A driver can check for these errors by testing
++the returned DMA address with dma_mapping_error(). A non-zero return value
++means the mapping could not be created and the driver should take appropriate
++action (e.g. reduce current DMA mapping usage or delay and try again later).
+ 
+ 	int
+ 	dma_map_sg(struct device *dev, struct scatterlist *sg,
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index a11ff9d..4c381ba 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -218,6 +218,42 @@ static inline void dma_unmap_page(struct device *dev, dma_addr_t addr,
+ 	debug_dma_unmap_page(dev, addr, size, dir, false);
+ }
+ 
++static inline dma_addr_t dma_map_resource(struct device *dev,
++					  phys_addr_t phys_addr,
++					  size_t size,
++					  enum dma_data_direction dir,
++					  struct dma_attrs *attrs)
++{
++	struct dma_map_ops *ops = get_dma_ops(dev);
++	unsigned long pfn = __phys_to_pfn(phys_addr);
++	dma_addr_t addr;
++
++	BUG_ON(!valid_dma_direction(dir));
++
++	/* Don't allow RAM to be mapped */
++	BUG_ON(pfn_valid(pfn));
++
++	addr = phys_addr;
++	if (ops->map_resource)
++		addr = ops->map_resource(dev, phys_addr, size, dir, attrs);
++
++	debug_dma_map_resource(dev, phys_addr, size, dir, addr);
++
++	return addr;
++}
++
++static inline void dma_unmap_resource(struct device *dev, dma_addr_t addr,
++				      size_t size, enum dma_data_direction dir,
++				      struct dma_attrs *attrs)
++{
++	struct dma_map_ops *ops = get_dma_ops(dev);
++
++	BUG_ON(!valid_dma_direction(dir));
++	if (ops->unmap_resource)
++		ops->unmap_resource(dev, addr, size, dir, attrs);
++	debug_dma_unmap_resource(dev, addr, size, dir);
++}
++
+ static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
+ 					   size_t size,
+ 					   enum dma_data_direction dir)
 -- 
-2.1.4
+2.8.2
