@@ -1,85 +1,48 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:49243 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752421AbcF1OKt (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 10:10:49 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 03/13] soc: renesas: rcar-sysc: Make rcar_sysc_init() init the PM domains
-Date: Tue, 28 Jun 2016 16:10:32 +0200
-Message-Id: <1467123042-8468-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
-References: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH/RFC v3 04/22] ARM: dts: r8a7779: Add device node for RESET/WDT module
+Date: Wed,  1 Jun 2016 21:21:02 +0200
+Message-Id: <1464808880-343-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Let rcar_sysc_init() trigger initialization of the SYSC PM domains from
-DT if called before the early_initcall.
-On failure, it falls back to mapping the passed register block, as
-before.
+Add a device node for the RESET/WDT module, which provides a.o. reset
+control, mode pin monitoring, and watchdog control.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v5:
-  - No changes,
-
-v4:
+v3:
   - New.
 ---
- drivers/soc/renesas/rcar-sysc.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/r8a7779.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 59a8152681a59a5c..68d6856c9d3cd192 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -164,15 +164,6 @@ static bool rcar_sysc_power_is_off(const struct rcar_sysc_ch *sysc_ch)
- 	return false;
- }
- 
--void __iomem *rcar_sysc_init(phys_addr_t base)
--{
--	rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
--	if (!rcar_sysc_base)
--		panic("unable to ioremap R-Car SYSC hardware block\n");
--
--	return rcar_sysc_base;
--}
--
- struct rcar_sysc_pd {
- 	struct generic_pm_domain genpd;
- 	struct rcar_sysc_ch ch;
-@@ -328,6 +319,9 @@ static int __init rcar_sysc_pd_init(void)
- 	unsigned int i;
- 	int error;
- 
-+	if (rcar_sysc_base)
-+		return 0;
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index b9bbcce69dfbd5b9..4a30b232624e1d24 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -595,4 +595,9 @@
+ 		reg = <0xffd85000 0x0200>;
+ 		#power-domain-cells = <1>;
+ 	};
 +
- 	np = of_find_matching_node_and_match(NULL, rcar_sysc_matches, &match);
- 	if (!np)
- 		return -ENODEV;
-@@ -405,3 +399,11 @@ out_put:
- 	return error;
- }
- early_initcall(rcar_sysc_pd_init);
-+
-+void __iomem * __init rcar_sysc_init(phys_addr_t base)
-+{
-+	if (rcar_sysc_pd_init())
-+		rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
-+
-+	return rcar_sysc_base;
-+}
++	rst: reset-controller@ffcc0000 {
++		compatible = "renesas,r8a7779-reset-wdt";
++		reg = <0xffcc0000 0x48>;
++	};
+ };
 -- 
 1.9.1
+
