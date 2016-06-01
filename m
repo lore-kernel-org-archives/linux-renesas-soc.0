@@ -1,108 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:33350 "EHLO
-	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758250AbcFAIkd (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:42905 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757743AbcFAIn1 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 04:40:33 -0400
-Received: by mail-io0-f194.google.com with SMTP id p194so2084508iod.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 01 Jun 2016 01:40:33 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <d5c7a87c-c945-73dc-7bea-f59d15481beb@de.bosch.com>
-References: <1464166708-18320-1-git-send-email-dirk.behme@de.bosch.com>
-	<CAMuHMdWoBv-13eNMr_ymtmRo-LPdznarRMyXFw0pG7xF_07A6A@mail.gmail.com>
-	<c0890925-f003-8aa5-22fd-315229593037@de.bosch.com>
-	<CANqRtoSHkH2N6_UJ_mjij9k3GaAsSBDuUxjTTLZryHzy74Sh1Q@mail.gmail.com>
-	<eccba76d-465c-ca86-bda2-1f0ededc6918@de.bosch.com>
-	<CANqRtoR5008j-W2wbz2oVkYZv=-P4j6OZMQGz2fTXO1PwSeCtw@mail.gmail.com>
-	<426527f7-d1fe-8574-7f25-66298bb55eab@de.bosch.com>
-	<CAMuHMdVFZcb0VnM6E971q08c5qzJn2+dOhqv9VL9zvb0T9ocAQ@mail.gmail.com>
-	<653cbab7-e7d7-476f-62b1-e9479827cfbb@de.bosch.com>
-	<CAMuHMdWVM7dD90wcJQyx6d39DOoRmXUHGXwY54du6Ypm3qEejw@mail.gmail.com>
-	<d5c7a87c-c945-73dc-7bea-f59d15481beb@de.bosch.com>
-Date: Wed, 1 Jun 2016 10:40:27 +0200
-Message-ID: <CAMuHMdVZCca9A06rFtbSWcX29QvqwSMZ1rn_-M9fGseRd-AQBg@mail.gmail.com>
+	Wed, 1 Jun 2016 04:43:27 -0400
 Subject: Re: [PATCH 0/4] ARM: Renesas: R-Car3: Add product register support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1464166708-18320-1-git-send-email-dirk.behme@de.bosch.com>
+ <CAMuHMdWoBv-13eNMr_ymtmRo-LPdznarRMyXFw0pG7xF_07A6A@mail.gmail.com>
+ <c0890925-f003-8aa5-22fd-315229593037@de.bosch.com>
+ <CANqRtoSHkH2N6_UJ_mjij9k3GaAsSBDuUxjTTLZryHzy74Sh1Q@mail.gmail.com>
+ <eccba76d-465c-ca86-bda2-1f0ededc6918@de.bosch.com>
+ <CANqRtoR5008j-W2wbz2oVkYZv=-P4j6OZMQGz2fTXO1PwSeCtw@mail.gmail.com>
+ <426527f7-d1fe-8574-7f25-66298bb55eab@de.bosch.com>
+ <CAMuHMdVFZcb0VnM6E971q08c5qzJn2+dOhqv9VL9zvb0T9ocAQ@mail.gmail.com>
+ <653cbab7-e7d7-476f-62b1-e9479827cfbb@de.bosch.com>
+ <CAMuHMdWVM7dD90wcJQyx6d39DOoRmXUHGXwY54du6Ypm3qEejw@mail.gmail.com>
+ <d5c7a87c-c945-73dc-7bea-f59d15481beb@de.bosch.com>
+ <CAMuHMdVZCca9A06rFtbSWcX29QvqwSMZ1rn_-M9fGseRd-AQBg@mail.gmail.com>
+CC: Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
+	<linux-renesas-soc@vger.kernel.org>,
 	Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Content-Type: text/plain; charset=UTF-8
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <81d06a41-ebe0-857c-ab5b-f6696464d4f3@de.bosch.com>
+Date: Wed, 1 Jun 2016 10:43:24 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVZCca9A06rFtbSWcX29QvqwSMZ1rn_-M9fGseRd-AQBg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Dirk,
-
-On Wed, Jun 1, 2016 at 10:36 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
-> On 01.06.2016 10:26, Geert Uytterhoeven wrote:
->> On Wed, Jun 1, 2016 at 9:38 AM, Dirk Behme <dirk.behme@de.bosch.com>
->> wrote:
->>> Sorry, if that was unclear. I took the example and transferred it to
->>> R-Car3
->>> where we have ES1 - ES3.
+On 01.06.2016 10:40, Geert Uytterhoeven wrote:
+> Hi Dirk,
+>
+> On Wed, Jun 1, 2016 at 10:36 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>> On 01.06.2016 10:26, Geert Uytterhoeven wrote:
+>>> On Wed, Jun 1, 2016 at 9:38 AM, Dirk Behme <dirk.behme@de.bosch.com>
+>>> wrote:
+>>>> Sorry, if that was unclear. I took the example and transferred it to
+>>>> R-Car3
+>>>> where we have ES1 - ES3.
+>>>>
+>>>> So, taking this example, on R-Car3 we might end up with
+>>>>
+>>>>         {
+>>>>                 .compatible = "renesas,sata-r8a7795",
+>>>>                 .data = (void *)RCAR_GEN2_SATA
+>>>>         },
+>>>>         {
+>>>>                 .compatible = "renesas,sata-r8a7795-es1",
+>>>>                 .data = (void *)RCAR_R8A7795_ES1_SATA
+>>>>         },
+>>>>         {
+>>>>                 .compatible = "renesas,sata-r8a7795-es2",
+>>>>                 .data = (void *)RCAR_R8A7795_ES2_SATA
+>>>>         },
+>>>>         {
+>>>>                 .compatible = "renesas,sata-r8a7795-es3",
+>>>>                 .data = (void *)RCAR_R8A7795_ES3_SATA
+>>>>         },
 >>>
->>> So, taking this example, on R-Car3 we might end up with
->>>
->>>         {
->>>                 .compatible = "renesas,sata-r8a7795",
->>>                 .data = (void *)RCAR_GEN2_SATA
->>>         },
->>>         {
->>>                 .compatible = "renesas,sata-r8a7795-es1",
->>>                 .data = (void *)RCAR_R8A7795_ES1_SATA
->>>         },
->>>         {
->>>                 .compatible = "renesas,sata-r8a7795-es2",
->>>                 .data = (void *)RCAR_R8A7795_ES2_SATA
->>>         },
->>>         {
->>>                 .compatible = "renesas,sata-r8a7795-es3",
->>>                 .data = (void *)RCAR_R8A7795_ES3_SATA
->>>         },
+>>> Are there known differences in the SATA implementations on R-Car H3 ES1,
+>>> ES2,
+>>> and ES3?
 >>
->> Are there known differences in the SATA implementations on R-Car H3 ES1,
->> ES2,
->> and ES3?
+>> It's just an *example* what *might* happen.
+>>
+>>> BTW having different compatible values in the driver makes it much easier
+>>> to
+>>> audit kernel sources for support for ESx deviations.
+>>
+>> Why?
+>>
+>> Having these compatible values in the driver doesn't tell you if the drivers
+>> uses them at all. No?
 >
-> It's just an *example* what *might* happen.
+> The clue is that we do not add "renesas,*-es%u" compatible values to
+> drivers, unless ES%u needs to be handled specially.
 >
->> BTW having different compatible values in the driver makes it much easier
->> to
->> audit kernel sources for support for ESx deviations.
+>> So you have to look into the driver code (not the compatible values) if and
+>> how the ESx are handled. And there, I don't think it makes any difference if
+>> you look for
+>>
+>> if (priv->type == RCAR_R8A7790_ES1_SATA)
+>>         ap->flags       |= ATA_FLAG_NO_DIPM;
+>>
+>> or
+>>
+>> if (revision_is_rcar2_es1)
+>>         ap->flags       |= ATA_FLAG_NO_DIPM;
+>>
+>> ?
 >
-> Why?
->
-> Having these compatible values in the driver doesn't tell you if the drivers
-> uses them at all. No?
+> ... so 'git grep "renesas,.*-es[0-9]"' is all you need.
 
-The clue is that we do not add "renesas,*-es%u" compatible values to
-drivers, unless ES%u needs to be handled specially.
 
-> So you have to look into the driver code (not the compatible values) if and
-> how the ESx are handled. And there, I don't think it makes any difference if
-> you look for
->
-> if (priv->type == RCAR_R8A7790_ES1_SATA)
->         ap->flags       |= ATA_FLAG_NO_DIPM;
->
-> or
->
-> if (revision_is_rcar2_es1)
->         ap->flags       |= ATA_FLAG_NO_DIPM;
->
-> ?
+'git grep "revision_is_rcar2_es[0-9]"'
 
-... so 'git grep "renesas,.*-es[0-9]"' is all you need.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+;)
