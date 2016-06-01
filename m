@@ -1,43 +1,46 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [PATCH 12/13] ARM: dts: blanche: initial device tree
-To: Simon Horman <horms@verge.net.au>
-References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
- <1923946.Jvi0TDUXFC@wasted.cogentembedded.com>
- <20160601012153.GK20527@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org, magnus.damm@gmail.com,
-	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <149347f1-f636-cd65-6c6d-509f7c3306f0@cogentembedded.com>
-Date: Fri, 3 Jun 2016 00:34:26 +0300
 MIME-Version: 1.0
-In-Reply-To: <20160601012153.GK20527@verge.net.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1923946.Jvi0TDUXFC@wasted.cogentembedded.com>
+References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+	<1923946.Jvi0TDUXFC@wasted.cogentembedded.com>
+Date: Wed, 1 Jun 2016 10:36:58 +0200
+Message-ID: <CAMuHMdVnZUC69SoVp4_+BDmMv6hRm-+7jZXwtzeJbKxh0M21Mw@mail.gmail.com>
+Subject: Re: [PATCH 12/13] ARM: dts: blanche: initial device tree
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	linux-renesas-soc@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 06/01/2016 04:21 AM, Simon Horman wrote:
-
->> Add the initial device  tree for the R8A7792 SoC based Blanche board.
->> The board has 2 debug serial ports: SCIF0 and SCIF3; include support for
->> them,  so that  the serial console  can  work.
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Wed, Jun 1, 2016 at 12:32 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the initial device  tree for the R8A7792 SoC based Blanche board.
+> The board has 2 debug serial ports: SCIF0 and SCIF3; include support for
+> them,  so that  the serial console  can  work.
 >
-> At this time I do not have access to documentation or hardware for this
-> board. So I am relying on you to test this and make sure it complies
-> with the spec.
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-    Don't worry, the patches have been tested on the real hardware.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> What you have looks reasonable to me:
->
-> Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Gr{oetje,eeting}s,
 
-    Thank you. :-)
+                        Geert
 
-MBR, Sergei
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
