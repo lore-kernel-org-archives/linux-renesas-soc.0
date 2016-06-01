@@ -1,91 +1,45 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: [PATCH v1 14/25] PCI: altera: Simplify host bridge window iteration
-To: linux-pci@vger.kernel.org
-From: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Herring <robh@kernel.org>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Pratyush Anand <pratyush.anand@gmail.com>,
-	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
-	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
-	Michal Simek <michal.simek@xilinx.com>,
-	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
-	linux-arm-kernel@lists.infradead.org
-Date: Mon, 06 Jun 2016 18:06:29 -0500
-Message-ID: <20160606230629.20936.61795.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34986 "EHLO
+	mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751197AbcFAHcc (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 1 Jun 2016 03:32:32 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <2701785.yYTs7puE3Y@wasted.cogentembedded.com>
+References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+	<2701785.yYTs7puE3Y@wasted.cogentembedded.com>
+Date: Wed, 1 Jun 2016 09:32:31 +0200
+Message-ID: <CAMuHMdW1mQshWm2TZcWwX6Dmp4fGTx0rBYRB_S=uj87TkdtOPw@mail.gmail.com>
+Subject: Re: [PATCH 02/13] ARM: shmobile: r8a7792: add power domain index macros
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The switch is the only statement in the resource_list_for_each_entry()
-loop, so remove unnecessary "continue" statements in the switch.  Simplify
-checking for the required non-prefetchable memory aperture.  Inline
-altera_pcie_release_of_pci_ranges(), which is only called once.
+On Wed, Jun 1, 2016 at 12:11 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add macros usable by the device tree sources to reference R8A7792 SYSC power
+> domains by index.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-No functional change intended.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/host/pcie-altera.c |   24 ++++++------------------
- 1 file changed, 6 insertions(+), 18 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/pci/host/pcie-altera.c b/drivers/pci/host/pcie-altera.c
-index b97abbc..cf20c67 100644
---- a/drivers/pci/host/pcie-altera.c
-+++ b/drivers/pci/host/pcie-altera.c
-@@ -415,11 +415,6 @@ static void altera_pcie_isr(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
--static void altera_pcie_release_of_pci_ranges(struct altera_pcie *pcie)
--{
--	pci_free_resource_list(&pcie->resources);
--}
--
- static int altera_pcie_parse_request_of_pci_ranges(struct altera_pcie *pcie)
- {
- 	int err, res_valid = 0;
-@@ -439,25 +434,18 @@ static int altera_pcie_parse_request_of_pci_ranges(struct altera_pcie *pcie)
- 	resource_list_for_each_entry(win, &pcie->resources) {
- 		struct resource *res = win->res;
- 
--		switch (resource_type(res)) {
--		case IORESOURCE_MEM:
-+		if (resource_type(res) == IORESOURCE_MEM)
- 			res_valid |= !(res->flags & IORESOURCE_PREFETCH);
--			break;
--		default:
--			continue;
--		}
- 	}
- 
--	if (!res_valid) {
--		dev_err(dev, "non-prefetchable memory resource required\n");
--		err = -EINVAL;
--		goto out_release_res;
--	}
-+	if (res_valid)
-+		return 0;
- 
--	return 0;
-+	dev_err(dev, "non-prefetchable memory resource required\n");
-+	err = -EINVAL;
- 
- out_release_res:
--	altera_pcie_release_of_pci_ranges(pcie);
-+	pci_free_resource_list(&pcie->resources);
- 	return err;
- }
- 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
