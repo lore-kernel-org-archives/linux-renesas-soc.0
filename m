@@ -1,5 +1,10 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 1 Jun 2016 09:30:16 +0900
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:51819 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751364AbcFAAZg (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 31 May 2016 20:25:36 -0400
+Date: Wed, 1 Jun 2016 09:25:35 +0900
 From: Simon Horman <horms@verge.net.au>
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
@@ -9,76 +14,63 @@ Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
 Subject: Re: [PATCH 05/13] DT: clock: rcar-gen2-cpg-clocks: document R8A7792
  support
-Message-ID: <20160601003016.GE20527@verge.net.au>
+Message-ID: <20160601002535.GB20527@verge.net.au>
 References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
  <4688920.9Ektl04hDh@wasted.cogentembedded.com>
- <20160601002535.GB20527@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20160601002535.GB20527@verge.net.au>
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <4688920.9Ektl04hDh@wasted.cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 01, 2016 at 09:25:35AM +0900, Simon Horman wrote:
-> [Cc: Geert]
-> 
-> On Wed, Jun 01, 2016 at 01:20:11AM +0300, Sergei Shtylyov wrote:
-> > Renesas R8A7792 SoC is a member of the R-Car gen2 family and so has CPG...
-> > 
-> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> Hi Sergei,
-> 
-> I think the prefix of this patch should be "clk: shmobile: rcar-gen2: "
-> 
-> Hi Geert,
-> 
-> I apologise if I have missed a discussion of this topic or if my analysis
-> is wrong for some reason but I am curious to know what the intended way
-> is for the rcar-gen2 CPG driver to handle differences in the availability
-> of clocks across different SoCs.
-> 
-> My possibly naïve expectation is that the implementation would use compat
-> strings. But as it stands it appears that all clocks supported by the
-> driver are available for all SoCs. This does not seem to reflect the
-> documentation (v2.00).
-> 
-> FWIW my quick analysis of clocks supported by the driver present in
-> renesas-drivers-2016-05-31-v4.7-rc1 but not present on one or more SoCs
-> is as follows:
-> 
-> Not present on V2H: sdh, sd0
-> Not present on V2H or E2: sd1
-> Not present on H2, M2-W, M2-N, E2: rcan
+[Cc: Geert]
 
-Thinking about a little more, which I obviously should have done
-before hitting send:
+On Wed, Jun 01, 2016 at 01:20:11AM +0300, Sergei Shtylyov wrote:
+> Renesas R8A7792 SoC is a member of the R-Car gen2 family and so has CPG...
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-There does not seem to be any conflict in the implementation of individual
-clocks between SoCs at least so far as clocks supported by the driver goes.
-Its just that some of them aren't present on all SoCs. But in that case
-they shouldn't be used in DT: the DT describes the HW. So I think I'm ok
-with this patch. Sorry for the noise!
+Hi Sergei,
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+I think the prefix of this patch should be "clk: shmobile: rcar-gen2: "
 
-> > ---
-> >  Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt |    1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > Index: renesas/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
-> > ===================================================================
-> > --- renesas.orig/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
-> > +++ renesas/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
-> > @@ -10,6 +10,7 @@ Required Properties:
-> >    - compatible: Must be one of
-> >      - "renesas,r8a7790-cpg-clocks" for the r8a7790 CPG
-> >      - "renesas,r8a7791-cpg-clocks" for the r8a7791 CPG
-> > +    - "renesas,r8a7792-cpg-clocks" for the r8a7792 CPG
-> >      - "renesas,r8a7793-cpg-clocks" for the r8a7793 CPG
-> >      - "renesas,r8a7794-cpg-clocks" for the r8a7794 CPG
-> >      and "renesas,rcar-gen2-cpg-clocks" as a fallback.
-> > 
+Hi Geert,
+
+I apologise if I have missed a discussion of this topic or if my analysis
+is wrong for some reason but I am curious to know what the intended way
+is for the rcar-gen2 CPG driver to handle differences in the availability
+of clocks across different SoCs.
+
+My possibly naïve expectation is that the implementation would use compat
+strings. But as it stands it appears that all clocks supported by the
+driver are available for all SoCs. This does not seem to reflect the
+documentation (v2.00).
+
+FWIW my quick analysis of clocks supported by the driver present in
+renesas-drivers-2016-05-31-v4.7-rc1 but not present on one or more SoCs
+is as follows:
+
+Not present on V2H: sdh, sd0
+Not present on V2H or E2: sd1
+Not present on H2, M2-W, M2-N, E2: rcan
+
+> 
+> ---
+>  Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> Index: renesas/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
+> ===================================================================
+> --- renesas.orig/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
+> +++ renesas/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
+> @@ -10,6 +10,7 @@ Required Properties:
+>    - compatible: Must be one of
+>      - "renesas,r8a7790-cpg-clocks" for the r8a7790 CPG
+>      - "renesas,r8a7791-cpg-clocks" for the r8a7791 CPG
+> +    - "renesas,r8a7792-cpg-clocks" for the r8a7792 CPG
+>      - "renesas,r8a7793-cpg-clocks" for the r8a7793 CPG
+>      - "renesas,r8a7794-cpg-clocks" for the r8a7794 CPG
+>      and "renesas,rcar-gen2-cpg-clocks" as a fallback.
 > 
