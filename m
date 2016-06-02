@@ -1,93 +1,193 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:37789 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751669AbcFATV1 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 15:21:27 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v3 18/22] ARM: shmobile: r8a7779: Stop passing mode pins state to clock driver
-Date: Wed,  1 Jun 2016 21:21:16 +0200
-Message-Id: <1464808880-343-19-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 06/20] drm: i915: Rely on the default ->best_encoder() behavior where appropriate
+Date: Thu,  2 Jun 2016 16:31:33 +0200
+Message-Id: <1464877907-27723-7-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now the R-Car H1 CPG clock driver obtains the state of the mode pins
-from the R-Car RST driver, there's no longer a need to pass this state
-explicitly. Hence we can just remove the .init_time() callback, the
-generic ARM code will take care of calling of_clk_init() and
-clocksource_probe().
+For all outputs except dp_mst, we have a 1:1 relationship between
+connectors and encoders and the driver is relying on the atomic helpers:
+we can drop the custom ->best_encoder() implementation and let the core
+call drm_atomic_helper_best_encoder() for us.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
-v3:
-  - New.
----
- arch/arm/mach-shmobile/setup-r8a7779.c | 27 ---------------------------
- 1 file changed, 27 deletions(-)
+ drivers/gpu/drm/i915/intel_crt.c     | 1 -
+ drivers/gpu/drm/i915/intel_display.c | 8 --------
+ drivers/gpu/drm/i915/intel_dp.c      | 1 -
+ drivers/gpu/drm/i915/intel_drv.h     | 1 -
+ drivers/gpu/drm/i915/intel_dsi.c     | 1 -
+ drivers/gpu/drm/i915/intel_dvo.c     | 1 -
+ drivers/gpu/drm/i915/intel_hdmi.c    | 1 -
+ drivers/gpu/drm/i915/intel_lvds.c    | 1 -
+ drivers/gpu/drm/i915/intel_sdvo.c    | 1 -
+ drivers/gpu/drm/i915/intel_tv.c      | 1 -
+ 10 files changed, 17 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/setup-r8a7779.c b/arch/arm/mach-shmobile/setup-r8a7779.c
-index 0007ff51d180379f..0686112f243525b6 100644
---- a/arch/arm/mach-shmobile/setup-r8a7779.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7779.c
-@@ -14,8 +14,6 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  */
--#include <linux/clk/renesas.h>
--#include <linux/clocksource.h>
- #include <linux/init.h>
- #include <linux/irq.h>
- #include <linux/irqchip.h>
-@@ -76,30 +74,6 @@ static void __init r8a7779_init_irq_dt(void)
- 	__raw_writel(0x003fee3f, INT2SMSKCR4);
+diff --git a/drivers/gpu/drm/i915/intel_crt.c b/drivers/gpu/drm/i915/intel_crt.c
+index 3fbb6fc..bd0cd68 100644
+--- a/drivers/gpu/drm/i915/intel_crt.c
++++ b/drivers/gpu/drm/i915/intel_crt.c
+@@ -753,7 +753,6 @@ static const struct drm_connector_funcs intel_crt_connector_funcs = {
+ static const struct drm_connector_helper_funcs intel_crt_connector_helper_funcs = {
+ 	.mode_valid = intel_crt_mode_valid,
+ 	.get_modes = intel_crt_get_modes,
+-	.best_encoder = intel_best_encoder,
+ };
+ 
+ static const struct drm_encoder_funcs intel_crt_enc_funcs = {
+diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+index 2113f40..77026ce 100644
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -16113,14 +16113,6 @@ void intel_modeset_cleanup(struct drm_device *dev)
+ 	intel_teardown_gmbus(dev);
  }
  
--#define MODEMR		0xffcc0020
--
--static u32 __init r8a7779_read_mode_pins(void)
+-/*
+- * Return which encoder is currently attached for connector.
+- */
+-struct drm_encoder *intel_best_encoder(struct drm_connector *connector)
 -{
--	static u32 mode;
--	static bool mode_valid;
--
--	if (!mode_valid) {
--		void __iomem *modemr = ioremap_nocache(MODEMR, PAGE_SIZE);
--		BUG_ON(!modemr);
--		mode = ioread32(modemr);
--		iounmap(modemr);
--		mode_valid = true;
--	}
--
--	return mode;
+-	return &intel_attached_encoder(connector)->base;
 -}
 -
--static void __init r8a7779_init_time(void)
--{
--	r8a7779_clocks_init(r8a7779_read_mode_pins());
--	clocksource_probe();
--}
--
- static const char *const r8a7779_compat_dt[] __initconst = {
- 	"renesas,r8a7779",
- 	NULL,
-@@ -109,7 +83,6 @@ DT_MACHINE_START(R8A7779_DT, "Generic R8A7779 (Flattened Device Tree)")
- 	.smp		= smp_ops(r8a7779_smp_ops),
- 	.map_io		= r8a7779_map_io,
- 	.init_early	= shmobile_init_delay,
--	.init_time	= r8a7779_init_time,
- 	.init_irq	= r8a7779_init_irq_dt,
- 	.init_late	= shmobile_init_late,
- 	.dt_compat	= r8a7779_compat_dt,
+ void intel_connector_attach_encoder(struct intel_connector *connector,
+ 				    struct intel_encoder *encoder)
+ {
+diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+index f192f58..21b2833 100644
+--- a/drivers/gpu/drm/i915/intel_dp.c
++++ b/drivers/gpu/drm/i915/intel_dp.c
+@@ -4935,7 +4935,6 @@ static const struct drm_connector_funcs intel_dp_connector_funcs = {
+ static const struct drm_connector_helper_funcs intel_dp_connector_helper_funcs = {
+ 	.get_modes = intel_dp_get_modes,
+ 	.mode_valid = intel_dp_mode_valid,
+-	.best_encoder = intel_best_encoder,
+ };
+ 
+ static const struct drm_encoder_funcs intel_dp_enc_funcs = {
+diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
+index a28b4aa..79a4d6b 100644
+--- a/drivers/gpu/drm/i915/intel_drv.h
++++ b/drivers/gpu/drm/i915/intel_drv.h
+@@ -1128,7 +1128,6 @@ struct intel_connector *intel_connector_alloc(void);
+ bool intel_connector_get_hw_state(struct intel_connector *connector);
+ void intel_connector_attach_encoder(struct intel_connector *connector,
+ 				    struct intel_encoder *encoder);
+-struct drm_encoder *intel_best_encoder(struct drm_connector *connector);
+ struct drm_display_mode *intel_crtc_mode_get(struct drm_device *dev,
+ 					     struct drm_crtc *crtc);
+ enum pipe intel_get_pipe_from_connector(struct intel_connector *connector);
+diff --git a/drivers/gpu/drm/i915/intel_dsi.c b/drivers/gpu/drm/i915/intel_dsi.c
+index 366ad6c..ec51952 100644
+--- a/drivers/gpu/drm/i915/intel_dsi.c
++++ b/drivers/gpu/drm/i915/intel_dsi.c
+@@ -1378,7 +1378,6 @@ static const struct drm_encoder_funcs intel_dsi_funcs = {
+ static const struct drm_connector_helper_funcs intel_dsi_connector_helper_funcs = {
+ 	.get_modes = intel_dsi_get_modes,
+ 	.mode_valid = intel_dsi_mode_valid,
+-	.best_encoder = intel_best_encoder,
+ };
+ 
+ static const struct drm_connector_funcs intel_dsi_connector_funcs = {
+diff --git a/drivers/gpu/drm/i915/intel_dvo.c b/drivers/gpu/drm/i915/intel_dvo.c
+index 286baec..34b7e3f 100644
+--- a/drivers/gpu/drm/i915/intel_dvo.c
++++ b/drivers/gpu/drm/i915/intel_dvo.c
+@@ -351,7 +351,6 @@ static const struct drm_connector_funcs intel_dvo_connector_funcs = {
+ static const struct drm_connector_helper_funcs intel_dvo_connector_helper_funcs = {
+ 	.mode_valid = intel_dvo_mode_valid,
+ 	.get_modes = intel_dvo_get_modes,
+-	.best_encoder = intel_best_encoder,
+ };
+ 
+ static void intel_dvo_enc_destroy(struct drm_encoder *encoder)
+diff --git a/drivers/gpu/drm/i915/intel_hdmi.c b/drivers/gpu/drm/i915/intel_hdmi.c
+index 2c3bd9c..aef4bc8 100644
+--- a/drivers/gpu/drm/i915/intel_hdmi.c
++++ b/drivers/gpu/drm/i915/intel_hdmi.c
+@@ -2114,7 +2114,6 @@ static const struct drm_connector_funcs intel_hdmi_connector_funcs = {
+ static const struct drm_connector_helper_funcs intel_hdmi_connector_helper_funcs = {
+ 	.get_modes = intel_hdmi_get_modes,
+ 	.mode_valid = intel_hdmi_mode_valid,
+-	.best_encoder = intel_best_encoder,
+ };
+ 
+ static const struct drm_encoder_funcs intel_hdmi_enc_funcs = {
+diff --git a/drivers/gpu/drm/i915/intel_lvds.c b/drivers/gpu/drm/i915/intel_lvds.c
+index bc53c0d..d4faa5a 100644
+--- a/drivers/gpu/drm/i915/intel_lvds.c
++++ b/drivers/gpu/drm/i915/intel_lvds.c
+@@ -547,7 +547,6 @@ static int intel_lvds_set_property(struct drm_connector *connector,
+ static const struct drm_connector_helper_funcs intel_lvds_connector_helper_funcs = {
+ 	.get_modes = intel_lvds_get_modes,
+ 	.mode_valid = intel_lvds_mode_valid,
+-	.best_encoder = intel_best_encoder,
+ };
+ 
+ static const struct drm_connector_funcs intel_lvds_connector_funcs = {
+diff --git a/drivers/gpu/drm/i915/intel_sdvo.c b/drivers/gpu/drm/i915/intel_sdvo.c
+index 2128fae..5cd48ff 100644
+--- a/drivers/gpu/drm/i915/intel_sdvo.c
++++ b/drivers/gpu/drm/i915/intel_sdvo.c
+@@ -2191,7 +2191,6 @@ static const struct drm_connector_funcs intel_sdvo_connector_funcs = {
+ static const struct drm_connector_helper_funcs intel_sdvo_connector_helper_funcs = {
+ 	.get_modes = intel_sdvo_get_modes,
+ 	.mode_valid = intel_sdvo_mode_valid,
+-	.best_encoder = intel_best_encoder,
+ };
+ 
+ static void intel_sdvo_enc_destroy(struct drm_encoder *encoder)
+diff --git a/drivers/gpu/drm/i915/intel_tv.c b/drivers/gpu/drm/i915/intel_tv.c
+index 223129d..47fe241 100644
+--- a/drivers/gpu/drm/i915/intel_tv.c
++++ b/drivers/gpu/drm/i915/intel_tv.c
+@@ -1512,7 +1512,6 @@ static const struct drm_connector_funcs intel_tv_connector_funcs = {
+ static const struct drm_connector_helper_funcs intel_tv_connector_helper_funcs = {
+ 	.mode_valid = intel_tv_mode_valid,
+ 	.get_modes = intel_tv_get_modes,
+-	.best_encoder = intel_best_encoder,
+ };
+ 
+ static const struct drm_encoder_funcs intel_tv_enc_funcs = {
 -- 
-1.9.1
+2.7.4
