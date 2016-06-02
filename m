@@ -1,46 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38917 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932462AbcFBVrB (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:16709 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750958AbcFBFkI (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 2 Jun 2016 17:47:01 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
+	Thu, 2 Jun 2016 01:40:08 -0400
+Subject: Re: [PATCH/RFC v3 01/22] reset: Add renesas,rst DT bindings
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Philipp Zabel <p.zabel@pengutronix.de>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH/RFC v3 01/22] reset: Add renesas,rst DT bindings
-Date: Fri, 03 Jun 2016 00:47:03 +0300
-Message-ID: <10393056.BKo7UTPXFi@avalon>
-In-Reply-To: <1464808880-343-2-git-send-email-geert+renesas@glider.be>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be> <1464808880-343-2-git-send-email-geert+renesas@glider.be>
+	Stephen Boyd <sboyd@codeaurora.org>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+ <1464808880-343-2-git-send-email-geert+renesas@glider.be>
+CC: <linux-renesas-soc@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <64a3f52f-0107-2592-3129-c4a40f830829@de.bosch.com>
+Date: Thu, 2 Jun 2016 07:40:05 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1464808880-343-2-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
-
-Thank you for the patch.
-
-On Wednesday 01 Jun 2016 21:20:59 Geert Uytterhoeven wrote:
+On 01.06.2016 21:20, Geert Uytterhoeven wrote:
 > Add DT bindings for the Renesas R-Car Reset Controller (R-Car Gen1
 > RESET/WDT and R-Car Gen2/Gen3 RST).
-> 
+>
 > As the features provided by the hardware module differ a lot across the
 > various SoC families and members, only SoC-specific compatible values
 > are defined.
-> 
+>
 > For now we use the RST only for providing access to the state of the
 > mode pins.
-> 
+>
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Acked-by: Magnus Damm <damm+renesas@opensource.se>
 > ---
@@ -50,70 +47,38 @@ On Wednesday 01 Jun 2016 21:20:59 Geert Uytterhoeven wrote:
 >   - Drop "syscon" compatible value,
 >   - Add R-Car M3-W,
 >   - Add R-Car Gen1,
-> 
+>
 > v2:
 >   - Add Acked-by.
 > ---
->  .../devicetree/bindings/reset/renesas,rst.txt      | 35 +++++++++++++++++++
+>  .../devicetree/bindings/reset/renesas,rst.txt      | 35 ++++++++++++++++++++++
 >  1 file changed, 35 insertions(+)
 >  create mode 100644 Documentation/devicetree/bindings/reset/renesas,rst.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt
-> b/Documentation/devicetree/bindings/reset/renesas,rst.txt new file mode
-> 100644
+>
+> diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+> new file mode 100644
 > index 0000000000000000..488c72e1ee849cd3
 > --- /dev/null
 > +++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
 > @@ -0,0 +1,35 @@
 > +DT bindings for the Renesas R-Car Reset Controller
 > +
-> +The R-Car Reset Controller provides reset control, and implements the
-> following
+> +The R-Car Reset Controller provides reset control, and implements the following
 > +functions:
 > +  - Latching of the levels on mode pins when PRESET# is negated,
 > +  - Mode monitoring register,
 > +  - Reset control of peripheral devices (on R-Car Gen1),
 > +  - Watchdog timer (on R-Car Gen1).
-> +  - Register-based reset control and boot address registers for the various
-> CPU
+
+
+Quite minor nit: s/./,/
+
+Or drop all the ',' completely?
+
+
+> +  - Register-based reset control and boot address registers for the various CPU
 > +    cores (on R-Car Gen2/Gen3),
-> +
-> +
-> +Required properties:
-> +  - compatible: Should be
-> +		  - "renesas,<soctype>-reset-wdt" for R-Car Gen1,
-> +		  - "renesas,<soctype>-rst" for R-Car Gen2/Gen3.
-> +		Examples with soctypes are:
-> +		  - "renesas,r8a7778-reset-wdt" (R-Car M1A)
-> +		  - "renesas,r8a7779-reset-wdt" (R-Car H1)
-> +		  - "renesas,r8a7790-rst" (R-Car H2)
-> +		  - "renesas,r8a7791-rst" (R-Car M2-W)
-> +		  - "renesas,r8a7792-rst" (R-Car V2H
-> +		  - "renesas,r8a7793-rst" (R-Car M2-N)
-> +		  - "renesas,r8a7794-rst" (R-Car E2)
-> +		  - "renesas,r8a7795-rst" (R-Car H3)
-> +		  - "renesas,r8a7796-rst" (R-Car M3-W)
 
-Any specific reason for such a large indentation ? (I know this is really 
-nitpicking)
+Best regards
 
-Apart from that, it's just a bit of a shame we can't have generic compatible 
-strings, but that would require additional DT properties to describe the reset 
-controller features, and I assume that's not a path we want to take.
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +  - reg: Address start and address range for the device.
-> +
-> +
-> +Example:
-> +
-> +	rst: reset-controller@e6160000 {
-> +		compatible = "renesas,r8a7795-rst";
-> +		reg = <0 0xe6160000 0 0x0200>;
-> +	};
-
--- 
-Regards,
-
-Laurent Pinchart
+Dirk
