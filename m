@@ -1,11 +1,10 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
 	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Daniel Vetter <daniel.vetter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	Kukjin Kim <kgene@kernel.org>,
 	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
 	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
@@ -19,13 +18,14 @@ Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
 	Alison Wang <alison.wang@freescale.com>,
 	Matthias Brugger <matthias.bgg@gmail.com>,
 	Rob Clark <robdclark@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Mark Yao <mark.yao@rock-chips.com>,
 	Heiko Stuebner <heiko@sntech.de>,
 	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
 	Vincent Abriou <vincent.abriou@st.com>,
 	Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Re ding <thierry.reding@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
 	Stephen Warren <swarren@wwwdotorg.org>,
 	Alexandre Courbot <gnurou@gmail.com>,
 	Eric Anholt <eric@anholt.net>,
@@ -33,69 +33,51 @@ Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
 	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
 	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH 16/20] drm: omap: Rely on the default ->best_encoder() behavior
-Date: Fri, 03 Jun 2016 00:00:07 +0300
-Message-ID: <3702911.4V6efqXNem@avalon>
-In-Reply-To: <1464877907-27723-17-git-send-email-boris.brezillon@free-electrons.com>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com> <1464877907-27723-17-git-send-email-boris.brezillon@free-electrons.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	virtualization@lists.linux-foundation.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 16/20] drm: omap: Rely on the default ->best_encoder() behavior
+Date: Thu,  2 Jun 2016 16:31:43 +0200
+Message-Id: <1464877907-27723-17-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Boris,
+We have a 1:1 relationship between connectors and encoders and the
+driver is relying on the atomic helpers: we can drop the custom
+->best_encoder() implementation and let the core call
+drm_atomic_helper_best_encoder() for us.
 
-Thank you for the patch.
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/gpu/drm/omapdrm/omap_connector.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-On Thursday 02 Jun 2016 16:31:43 Boris Brezillon wrote:
-> We have a 1:1 relationship between connectors and encoders and the
-> driver is relying on the atomic helpers: we can drop the custom
-> ->best_encoder() implementation and let the core call
-> drm_atomic_helper_best_encoder() for us.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> ---
->  drivers/gpu/drm/omapdrm/omap_connector.c | 8 --------
->  1 file changed, 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/omapdrm/omap_connector.c
-> b/drivers/gpu/drm/omapdrm/omap_connector.c index ce2d67b..80af5e1 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_connector.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_connector.c
-> @@ -256,13 +256,6 @@ static int omap_connector_mode_valid(struct
-> drm_connector *connector, return ret;
->  }
-> 
-> -struct drm_encoder *omap_connector_attached_encoder(
-> -		struct drm_connector *connector)
-> -{
-> -	struct omap_connector *omap_connector = to_omap_connector(connector);
-> -	return omap_connector->encoder;
-
-The omap_connector::encoder field is assigned but not used anymore, you can 
-remove it.
-
-With that fixed,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> -}
-> -
->  static const struct drm_connector_funcs omap_connector_funcs = {
->  	.dpms = drm_atomic_helper_connector_dpms,
->  	.reset = drm_atomic_helper_connector_reset,
-> @@ -276,7 +269,6 @@ static const struct drm_connector_funcs
-> omap_connector_funcs = { static const struct drm_connector_helper_funcs
-> omap_connector_helper_funcs = { .get_modes = omap_connector_get_modes,
->  	.mode_valid = omap_connector_mode_valid,
-> -	.best_encoder = omap_connector_attached_encoder,
->  };
-> 
->  /* initialize connector */
-
+diff --git a/drivers/gpu/drm/omapdrm/omap_connector.c b/drivers/gpu/drm/omapdrm/omap_connector.c
+index ce2d67b..80af5e1 100644
+--- a/drivers/gpu/drm/omapdrm/omap_connector.c
++++ b/drivers/gpu/drm/omapdrm/omap_connector.c
+@@ -256,13 +256,6 @@ static int omap_connector_mode_valid(struct drm_connector *connector,
+ 	return ret;
+ }
+ 
+-struct drm_encoder *omap_connector_attached_encoder(
+-		struct drm_connector *connector)
+-{
+-	struct omap_connector *omap_connector = to_omap_connector(connector);
+-	return omap_connector->encoder;
+-}
+-
+ static const struct drm_connector_funcs omap_connector_funcs = {
+ 	.dpms = drm_atomic_helper_connector_dpms,
+ 	.reset = drm_atomic_helper_connector_reset,
+@@ -276,7 +269,6 @@ static const struct drm_connector_funcs omap_connector_funcs = {
+ static const struct drm_connector_helper_funcs omap_connector_helper_funcs = {
+ 	.get_modes = omap_connector_get_modes,
+ 	.mode_valid = omap_connector_mode_valid,
+-	.best_encoder = omap_connector_attached_encoder,
+ };
+ 
+ /* initialize connector */
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
