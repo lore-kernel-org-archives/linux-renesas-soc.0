@@ -1,84 +1,192 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 07/20] drm: mediatek: Rely on the default ->best_encoder() behavior
-Date: Thu,  2 Jun 2016 16:31:34 +0200
-Message-Id: <1464877907-27723-8-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+	m.szyprowski@samsung.com
+Date: Fri, 03 Jun 2016 00:55:40 +0900
+Message-Id: <20160602155540.31018.29838.sendpatchset@little-apple>
+In-Reply-To: <20160602155519.31018.59925.sendpatchset@little-apple>
+References: <20160602155519.31018.59925.sendpatchset@little-apple>
+Subject: [PATCH v3 02/06] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We have a 1:1 relationship between connectors and encoders and the
-driver is relying on the atomic helpers: we can drop the custom
-->best_encoder() implementation and let the core call
-drm_atomic_helper_best_encoder() for us.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Introduce a bitmap for context handing and convert the
+interrupt routine to handle all registered contexts.
+
+At this point the number of contexts are still limited.
+
+Also remove the use of the ARM specific mapping variable
+from ipmmu_irq() to allow compile on ARM64.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/gpu/drm/mediatek/mtk_dsi.c | 9 ---------
- 1 file changed, 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index 2d808e5..7343ffc 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -575,14 +575,6 @@ static int mtk_dsi_connector_get_modes(struct drm_connector *connector)
- 	return drm_panel_get_modes(dsi->panel);
+ Changes since V2: (Thanks again to Laurent!)
+ - Introduce a spinlock together with the bitmap and domain array.
+ - Break out code into separate functions for alloc and free.
+ - Perform free after (instead of before) configuring hardware registers.
+ - Use the spinlock to protect the domain array in the interrupt handler.
+
+ Changes since V1: (Thanks to Laurent for feedback!)
+ - Use simple find_first_zero()/set_bit()/clear_bit() for context management.
+ - For allocation rely on spinlock held when calling ipmmu_domain_init_context()
+ - For test/free use atomic bitops
+ - Return IRQ_HANDLED if any of the contexts generated interrupts
+
+ drivers/iommu/ipmmu-vmsa.c |   76 ++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 66 insertions(+), 10 deletions(-)
+
+--- 0002/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-02 21:10:37.350607110 +0900
+@@ -8,6 +8,7 @@
+  * the Free Software Foundation; version 2 of the License.
+  */
+ 
++#include <linux/bitmap.h>
+ #include <linux/delay.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/err.h>
+@@ -26,12 +27,17 @@
+ 
+ #include "io-pgtable.h"
+ 
++#define IPMMU_CTX_MAX 1
++
+ struct ipmmu_vmsa_device {
+ 	struct device *dev;
+ 	void __iomem *base;
+ 	struct list_head list;
+ 
+ 	unsigned int num_utlbs;
++	spinlock_t lock;			/* Protects ctx and domains[] */
++	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
++	struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
+ 
+ 	struct dma_iommu_mapping *mapping;
+ };
+@@ -293,9 +299,29 @@ static struct iommu_gather_ops ipmmu_gat
+  * Domain/Context Management
+  */
+ 
++static int ipmmu_domain_allocate_context(struct ipmmu_vmsa_device *mmu,
++					 struct ipmmu_vmsa_domain *domain)
++{
++	unsigned long flags;
++	int ret;
++
++	spin_lock_irqsave(&mmu->lock, flags);
++
++	ret = find_first_zero_bit(mmu->ctx, IPMMU_CTX_MAX);
++	if (ret != IPMMU_CTX_MAX) {
++		mmu->domains[ret] = domain;
++		set_bit(ret, mmu->ctx);
++	}
++
++	spin_unlock_irqrestore(&mmu->lock, flags);
++
++	return ret;
++}
++
+ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+ {
+ 	u64 ttbr;
++	int ret;
+ 
+ 	/*
+ 	 * Allocate the page table operations.
+@@ -325,10 +351,15 @@ static int ipmmu_domain_init_context(str
+ 		return -EINVAL;
+ 
+ 	/*
+-	 * TODO: When adding support for multiple contexts, find an unused
+-	 * context.
++	 * Find an unused context.
+ 	 */
+-	domain->context_id = 0;
++	ret = ipmmu_domain_allocate_context(domain->mmu, domain);
++	if (ret == IPMMU_CTX_MAX) {
++		free_io_pgtable_ops(domain->iop);
++		return -EBUSY;
++	}
++
++	domain->context_id = ret;
+ 
+ 	/* TTBR0 */
+ 	ttbr = domain->cfg.arm_lpae_s1_cfg.ttbr[0];
+@@ -370,6 +401,19 @@ static int ipmmu_domain_init_context(str
+ 	return 0;
  }
  
--static struct drm_encoder *mtk_dsi_connector_best_encoder(
--		struct drm_connector *connector)
--{
--	struct mtk_dsi *dsi = connector_to_dsi(connector);
--
--	return &dsi->encoder;
--}
--
- static const struct drm_encoder_helper_funcs mtk_dsi_encoder_helper_funcs = {
- 	.mode_fixup = mtk_dsi_encoder_mode_fixup,
- 	.mode_set = mtk_dsi_encoder_mode_set,
-@@ -603,7 +595,6 @@ static const struct drm_connector_funcs mtk_dsi_connector_funcs = {
- static const struct drm_connector_helper_funcs
- 	mtk_dsi_connector_helper_funcs = {
- 	.get_modes = mtk_dsi_connector_get_modes,
--	.best_encoder = mtk_dsi_connector_best_encoder,
- };
++static void ipmmu_domain_free_context(struct ipmmu_vmsa_device *mmu,
++				      unsigned int context_id)
++{
++	unsigned long flags;
++
++	spin_lock_irqsave(&mmu->lock, flags);
++
++	clear_bit(context_id, mmu->ctx);
++	mmu->domains[context_id] = NULL;
++
++	spin_unlock_irqrestore(&mmu->lock, flags);
++}
++
+ static void ipmmu_domain_destroy_context(struct ipmmu_vmsa_domain *domain)
+ {
+ 	/*
+@@ -380,6 +424,7 @@ static void ipmmu_domain_destroy_context
+ 	 */
+ 	ipmmu_ctx_write(domain, IMCTR, IMCTR_FLUSH);
+ 	ipmmu_tlb_sync(domain);
++	ipmmu_domain_free_context(domain->mmu, domain->context_id);
+ }
  
- static int mtk_drm_attach_bridge(struct drm_bridge *bridge,
--- 
-2.7.4
+ /* -----------------------------------------------------------------------------
+@@ -437,16 +482,25 @@ static irqreturn_t ipmmu_domain_irq(stru
+ static irqreturn_t ipmmu_irq(int irq, void *dev)
+ {
+ 	struct ipmmu_vmsa_device *mmu = dev;
+-	struct iommu_domain *io_domain;
+-	struct ipmmu_vmsa_domain *domain;
++	irqreturn_t status = IRQ_NONE;
++	unsigned int i;
++	unsigned long flags;
+ 
+-	if (!mmu->mapping)
+-		return IRQ_NONE;
++	spin_lock_irqsave(&mmu->lock, flags);
++
++	/*
++	 * Check interrupts for all active contexts.
++	 */
++	for (i = 0; i < IPMMU_CTX_MAX; i++) {
++		if (!mmu->domains[i])
++			continue;
++		if (ipmmu_domain_irq(mmu->domains[i]) == IRQ_HANDLED)
++			status = IRQ_HANDLED;
++	}
+ 
+-	io_domain = mmu->mapping->domain;
+-	domain = to_vmsa_domain(io_domain);
++	spin_unlock_irqrestore(&mmu->lock, flags);
+ 
+-	return ipmmu_domain_irq(domain);
++	return status;
+ }
+ 
+ /* -----------------------------------------------------------------------------
+@@ -774,6 +828,8 @@ static int ipmmu_probe(struct platform_d
+ 
+ 	mmu->dev = &pdev->dev;
+ 	mmu->num_utlbs = 32;
++	spin_lock_init(&mmu->lock);
++	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
+ 
+ 	/* Map I/O memory and request IRQ. */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
