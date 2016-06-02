@@ -1,62 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38934 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932368AbcFBV6w (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:16754 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750731AbcFBFmP (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 2 Jun 2016 17:58:52 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
+	Thu, 2 Jun 2016 01:42:15 -0400
+Subject: Re: [PATCH/RFC v3 02/22] soc: renesas: Add R-Car RST driver
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Philipp Zabel <p.zabel@pengutronix.de>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH/RFC v3 02/22] soc: renesas: Add R-Car RST driver
-Date: Fri, 03 Jun 2016 00:58:53 +0300
-Message-ID: <6849015.bJCuAeaMgZ@avalon>
-In-Reply-To: <1464808880-343-3-git-send-email-geert+renesas@glider.be>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be> <1464808880-343-3-git-send-email-geert+renesas@glider.be>
+	Stephen Boyd <sboyd@codeaurora.org>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+ <1464808880-343-3-git-send-email-geert+renesas@glider.be>
+CC: <linux-renesas-soc@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <d38d97fb-5b96-0773-abf6-c737b4f2fef1@de.bosch.com>
+Date: Thu, 2 Jun 2016 07:42:12 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1464808880-343-3-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
-
-Thank you for the patch.
-
-On Wednesday 01 Jun 2016 21:21:00 Geert Uytterhoeven wrote:
+On 01.06.2016 21:21, Geert Uytterhoeven wrote:
 > Add a driver for the Renesas R-Car Gen1 RESET/WDT and R-Car Gen2/Gen3
 > RST module.
-> 
+>
 > For now this driver just provides an API to obtain the state of the mode
 > pins, as latched at reset time.  As this is typically called from the
 > probe function of a clock driver, which can run much earlier than any
 > initcall, calling rcar_rst_read_mode_pins() may force an early
 > initialization of the driver.
-> 
+>
 > Despite the current simple and almost identical handling for all
 > supported SoCs, the driver matches against SoC-specific compatible
 > values only, as the features provided by the hardware module differ a
 > lot across the various SoC families and members.
-> 
+>
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
 > v3:
 >   - New.
 > ---
 >  drivers/soc/renesas/Makefile         |  5 ++
->  drivers/soc/renesas/rcar-rst.c       | 94 +++++++++++++++++++++++++++++++++
+>  drivers/soc/renesas/rcar-rst.c       | 94 ++++++++++++++++++++++++++++++++++++
 >  include/linux/soc/renesas/rcar-rst.h |  6 +++
 >  3 files changed, 105 insertions(+)
 >  create mode 100644 drivers/soc/renesas/rcar-rst.c
 >  create mode 100644 include/linux/soc/renesas/rcar-rst.h
-> 
+>
 > diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
 > index f32a001c65c3ab44..0d732ff893dd8fba 100644
 > --- a/drivers/soc/renesas/Makefile
@@ -81,8 +78,7 @@ On Wednesday 01 Jun 2016 21:21:00 Geert Uytterhoeven wrote:
 > + *
 > + * Copyright (C) 2016 Glider bvba
 > + *
-> + * This file is subject to the terms and conditions of the GNU General
-> Public
+> + * This file is subject to the terms and conditions of the GNU General Public
 > + * License.  See the file "COPYING" in the main directory of this archive
 > + * for more details.
 > + */
@@ -157,37 +153,14 @@ On Wednesday 01 Jun 2016 21:21:00 Geert Uytterhoeven wrote:
 > +	return error;
 > +}
 > +arch_initcall(rcar_rst_init);
-
-Given that rcar_rst_init() is only used as a support function for 
-rcar_rst_read_mode_pins(), how about removing the initcall ?
-
+> +
 > +int __init rcar_rst_read_mode_pins(u32 *mode)
-> +{
-> +	int error;
-> +
-> +	if (!rcar_rst_base) {
-> +		error = rcar_rst_init();
-> +		if (error)
-> +			return error;
-> +	}
-> +
-> +	*mode = saved_mode;
-> +	return 0;
-> +}
-> diff --git a/include/linux/soc/renesas/rcar-rst.h
-> b/include/linux/soc/renesas/rcar-rst.h new file mode 100644
-> index 0000000000000000..a18e0783946b66ec
-> --- /dev/null
-> +++ b/include/linux/soc/renesas/rcar-rst.h
-> @@ -0,0 +1,6 @@
-> +#ifndef __LINUX_SOC_RENESAS_RCAR_RST_H__
-> +#define __LINUX_SOC_RENESAS_RCAR_RST_H__
-> +
-> +int rcar_rst_read_mode_pins(u32 *mode);
-> +
-> +#endif /* __LINUX_SOC_RENESAS_RCAR_RST_H__ */
 
--- 
-Regards,
 
-Laurent Pinchart
+Just a style issue: Is the string 'pins' in the function name still 
+relevant? I.e. what's about just 'rcar_rst_read_mode()'?
+
+
+Best regards
+
+Dirk
