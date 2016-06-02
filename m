@@ -1,20 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35447 "EHLO
-	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751339AbcFJHyY (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38934 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932368AbcFBV6w (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 03:54:24 -0400
-MIME-Version: 1.0
-In-Reply-To: <6849015.bJCuAeaMgZ@avalon>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
- <1464808880-343-3-git-send-email-geert+renesas@glider.be> <6849015.bJCuAeaMgZ@avalon>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 10 Jun 2016 09:54:22 +0200
-Message-ID: <CAMuHMdUX+DqPyo4cTJnNyinc2zgB-0CtUBmyjQjFEKWmV_Y-Fg@mail.gmail.com>
-Subject: Re: [PATCH/RFC v3 02/22] soc: renesas: Add R-Car RST driver
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
+	Thu, 2 Jun 2016 17:58:52 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Philipp Zabel <p.zabel@pengutronix.de>,
@@ -22,40 +14,180 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Stephen Boyd <sboyd@codeaurora.org>,
 	Dirk Behme <dirk.behme@de.bosch.com>,
 	linux-renesas-soc@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH/RFC v3 02/22] soc: renesas: Add R-Car RST driver
+Date: Fri, 03 Jun 2016 00:58:53 +0300
+Message-ID: <6849015.bJCuAeaMgZ@avalon>
+In-Reply-To: <1464808880-343-3-git-send-email-geert+renesas@glider.be>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be> <1464808880-343-3-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hi Geert,
 
-On Thu, Jun 2, 2016 at 11:58 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->> --- /dev/null
->> +++ b/drivers/soc/renesas/rcar-rst.c
+Thank you for the patch.
 
->> +static int __init rcar_rst_init(void)
->> +{
+On Wednesday 01 Jun 2016 21:21:00 Geert Uytterhoeven wrote:
+> Add a driver for the Renesas R-Car Gen1 RESET/WDT and R-Car Gen2/Gen3
+> RST module.
+> 
+> For now this driver just provides an API to obtain the state of the mode
+> pins, as latched at reset time.  As this is typically called from the
+> probe function of a clock driver, which can run much earlier than any
+> initcall, calling rcar_rst_read_mode_pins() may force an early
+> initialization of the driver.
+> 
+> Despite the current simple and almost identical handling for all
+> supported SoCs, the driver matches against SoC-specific compatible
+> values only, as the features provided by the hardware module differ a
+> lot across the various SoC families and members.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3:
+>   - New.
+> ---
+>  drivers/soc/renesas/Makefile         |  5 ++
+>  drivers/soc/renesas/rcar-rst.c       | 94 +++++++++++++++++++++++++++++++++
+>  include/linux/soc/renesas/rcar-rst.h |  6 +++
+>  3 files changed, 105 insertions(+)
+>  create mode 100644 drivers/soc/renesas/rcar-rst.c
+>  create mode 100644 include/linux/soc/renesas/rcar-rst.h
+> 
+> diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+> index f32a001c65c3ab44..0d732ff893dd8fba 100644
+> --- a/drivers/soc/renesas/Makefile
+> +++ b/drivers/soc/renesas/Makefile
+> @@ -1,3 +1,8 @@
+> +obj-$(CONFIG_ARCH_RCAR_GEN1)	+= rcar-rst.o
+> +obj-$(CONFIG_ARCH_RCAR_GEN2)	+= rcar-rst.o
+> +obj-$(CONFIG_ARCH_R8A7795)	+= rcar-rst.o
+> +obj-$(CONFIG_ARCH_R8A7796)	+= rcar-rst.o
+> +
+>  obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
+>  obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
+>  obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
+> diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
+> new file mode 100644
+> index 0000000000000000..1997c348c0853254
+> --- /dev/null
+> +++ b/drivers/soc/renesas/rcar-rst.c
+> @@ -0,0 +1,94 @@
+> +/*
+> + * R-Car Gen1 RESET/WDT and R-Car Gen2/Gen3 RST Driver
+> + *
+> + * Copyright (C) 2016 Glider bvba
+> + *
+> + * This file is subject to the terms and conditions of the GNU General
+> Public
+> + * License.  See the file "COPYING" in the main directory of this archive
+> + * for more details.
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/of_address.h>
+> +#include <linux/soc/renesas/rcar-rst.h>
+> +
+> +struct rst_config {
+> +	unsigned int modemr;	/* Mode Monitoring Register Offset */
+> +};
+> +
+> +static const struct rst_config rcar_rst_gen1 __initconst = {
+> +	.modemr = 0x20,
+> +};
+> +
+> +static const struct rst_config rcar_rst_gen2 __initconst = {
+> +	.modemr = 0x60,
+> +};
+> +
+> +static const struct rst_config rcar_rst_gen3 __initconst = {
+> +	.modemr = 0x60,
+> +};
+> +
+> +static const struct of_device_id rcar_rst_matches[] __initconst = {
+> +	{ .compatible = "renesas,r8a7778-reset-wdt", .data = &rcar_rst_gen1 },
+> +	{ .compatible = "renesas,r8a7779-reset-wdt", .data = &rcar_rst_gen1 },
+> +	{ .compatible = "renesas,r8a7790-rst", .data = &rcar_rst_gen2 },
+> +	{ .compatible = "renesas,r8a7791-rst", .data = &rcar_rst_gen2 },
+> +	{ .compatible = "renesas,r8a7792-rst", .data = &rcar_rst_gen2 },
+> +	{ .compatible = "renesas,r8a7793-rst", .data = &rcar_rst_gen2 },
+> +	{ .compatible = "renesas,r8a7794-rst", .data = &rcar_rst_gen2 },
+> +	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen3 },
+> +	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen3 },
+> +	{ /* sentinel */ }
+> +};
+> +
+> +static void __iomem *rcar_rst_base __initdata;
+> +static u32 saved_mode __initdata;
+> +
+> +static int __init rcar_rst_init(void)
+> +{
+> +	const struct of_device_id *match;
+> +	const struct rst_config *cfg;
+> +	struct device_node *np;
+> +	void __iomem *base;
+> +	int error = 0;
+> +
+> +	if (rcar_rst_base)
+> +		return 0;
+> +
+> +	np = of_find_matching_node_and_match(NULL, rcar_rst_matches, &match);
+> +	if (!np)
+> +		return -ENODEV;
+> +
+> +	base = of_iomap(np, 0);
+> +	if (!base) {
+> +		pr_warn("%s: Cannot map regs\n", np->full_name);
+> +		error = -ENOMEM;
+> +		goto out_put;
+> +	}
+> +
+> +	rcar_rst_base = base;
+> +	cfg = match->data;
+> +	saved_mode = ioread32(base + cfg->modemr);
+> +
+> +	pr_debug("%s: MODE = 0x%08x\n", np->full_name, saved_mode);
+> +
+> +out_put:
+> +	of_node_put(np);
+> +	return error;
+> +}
+> +arch_initcall(rcar_rst_init);
 
-[...]
+Given that rcar_rst_init() is only used as a support function for 
+rcar_rst_read_mode_pins(), how about removing the initcall ?
 
->> +}
->> +arch_initcall(rcar_rst_init);
->
-> Given that rcar_rst_init() is only used as a support function for
-> rcar_rst_read_mode_pins(), how about removing the initcall ?
+> +int __init rcar_rst_read_mode_pins(u32 *mode)
+> +{
+> +	int error;
+> +
+> +	if (!rcar_rst_base) {
+> +		error = rcar_rst_init();
+> +		if (error)
+> +			return error;
+> +	}
+> +
+> +	*mode = saved_mode;
+> +	return 0;
+> +}
+> diff --git a/include/linux/soc/renesas/rcar-rst.h
+> b/include/linux/soc/renesas/rcar-rst.h new file mode 100644
+> index 0000000000000000..a18e0783946b66ec
+> --- /dev/null
+> +++ b/include/linux/soc/renesas/rcar-rst.h
+> @@ -0,0 +1,6 @@
+> +#ifndef __LINUX_SOC_RENESAS_RCAR_RST_H__
+> +#define __LINUX_SOC_RENESAS_RCAR_RST_H__
+> +
+> +int rcar_rst_read_mode_pins(u32 *mode);
+> +
+> +#endif /* __LINUX_SOC_RENESAS_RCAR_RST_H__ */
 
-Thanks, good idea!
+-- 
+Regards,
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
