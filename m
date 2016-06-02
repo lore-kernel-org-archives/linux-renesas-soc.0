@@ -1,69 +1,153 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 2 Jun 2016 23:40:04 +0100
-From: Chris Wilson <chris@chris-wilson.co.uk>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Heiko Stuebner <heiko@sntech.de>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:32796 "EHLO
+	mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932977AbcFBV5E (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 2 Jun 2016 17:57:04 -0400
+Received: by mail-oi0-f67.google.com with SMTP id m198so13670695oig.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 02 Jun 2016 14:57:03 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <8671722.LHaiaBNqfE@avalon>
+References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
+	<8671722.LHaiaBNqfE@avalon>
+Date: Thu, 2 Jun 2016 23:57:02 +0200
+Message-ID: <CAKMK7uHyqNbA8Scw2fE0geAyNt0a0XVtzf81nwWjEhbZ-gAvKw@mail.gmail.com>
+Subject: Re: [PATCH 01/20] drm/atomic: Fix remaining places where
+ !funcs->best_encoder is valid
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
 	David Airlie <airlied@linux.ie>,
 	dri-devel <dri-devel@lists.freedesktop.org>,
-	"open list:VIRTIO CORE, NET..."
-	<virtualization@lists.linux-foundation.org>,
-	Thierry Re ding <thierry.reding@gmail.com>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
 	Daniel Vetter <daniel.vetter@intel.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-	intel-gfx <intel-gfx@lists.freedesktop.org>,
-	Inki Dae <inki.dae@samsung.com>,
-	linux-mediatek@lists.infradead.org, Stefan Agner <stefan@agner.ch>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Vincent Abriou <vincent.abriou@st.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	"linux-arm-kernel@lists.infradead.org"
 	<linux-arm-kernel@lists.infradead.org>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Alison Wang <alison.wang@freescale.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	intel-gfx <intel-gfx@lists.freedesktop.org>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
 	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Re ding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+	freedreno@lists.freedesktop.org,
 	"open list:DRM DRIVERS FOR RENESAS"
 	<linux-renesas-soc@vger.kernel.org>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	freedreno@lists.freedesktop.org,
-	Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [Intel-gfx] [PATCH 01/20] drm/atomic: Fix remaining places where
- !funcs->best_encoder is valid
-Message-ID: <20160602224004.GA1819@nuc-i3427.alporthouse.com>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
- <1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
- <8671722.LHaiaBNqfE@avalon>
- <CAKMK7uHyqNbA8Scw2fE0geAyNt0a0XVtzf81nwWjEhbZ-gAvKw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uHyqNbA8Scw2fE0geAyNt0a0XVtzf81nwWjEhbZ-gAvKw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"open list:VIRTIO CORE, NET..."
+	<virtualization@lists.linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jun 02, 2016 at 11:57:02PM +0200, Daniel Vetter wrote:
-> drm_encoder_find is an idr lookup. That should be plenty fast,
-> especially for modeset code. Usually what's too expensive even for
-> modeset code is linear list walks. But Chris just submitted patches to
-> convert most of them into simple lookups.
+On Thu, Jun 2, 2016 at 11:05 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> Hi Boris,
+>
+> Thank you for the patch.
+>
+> On Thursday 02 Jun 2016 16:31:28 Boris Brezillon wrote:
+>> Adapt drm_pick_crtcs() and update_connector_routing() to fallback to
+>> drm_atomic_helper_best_encoder() if funcs->best_encoder() is NULL so
+>> that DRM drivers can leave this hook unassigned if they know they want
+>> to use drm_atomic_helper_best_encoder().
+>
+> Could you please update include/drm/drm_modeset_helper_vtables.h to document
+> this new behaviour ?
 
-For the idr_find, I'm tempted to replace the mutex with a rwlock. It
-helps pathological cases, but in reality there are more crucial
-locks around the hw that limit concurrency. ;-)
--Chris
+Thanks for reminding me. Please update hooks for both
+atomic_best_encoder and best_encoder. Also mention that it's only
+optional for atomic drivers. There's lots of examples in that file for
+the wording usually used.
+
+> The only drawback I see in this patch is the additional object lookup
+> performed by drm_atomic_helper_best_encoder() at runtime. I wonder if we could
+> somehow cache the information, as the assignment can't change when there's a
+> 1:1 correspondence between encoders and connectors.
+
+drm_encoder_find is an idr lookup. That should be plenty fast,
+especially for modeset code. Usually what's too expensive even for
+modeset code is linear list walks. But Chris just submitted patches to
+convert most of them into simple lookups.
+-Daniel
+
+>>> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+>> ---
+>>  drivers/gpu/drm/drm_atomic_helper.c |  4 +++-
+>>  drivers/gpu/drm/drm_fb_helper.c     | 13 ++++++++++++-
+>>  2 files changed, 15 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/drm_atomic_helper.c
+>> b/drivers/gpu/drm/drm_atomic_helper.c index f6a3350..849d029 100644
+>> --- a/drivers/gpu/drm/drm_atomic_helper.c
+>> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+>> @@ -300,8 +300,10 @@ update_connector_routing(struct drm_atomic_state
+>> *state, if (funcs->atomic_best_encoder)
+>>               new_encoder = funcs->atomic_best_encoder(connector,
+>>                                                        connector_state);
+>> -     else
+>> +     else if (funcs->best_encoder)
+>>               new_encoder = funcs->best_encoder(connector);
+>> +     else
+>> +             new_encoder = drm_atomic_helper_best_encoder(connector);
+>>
+>>       if (!new_encoder) {
+>>               DRM_DEBUG_ATOMIC("No suitable encoder found for [CONNECTOR:%d:%s]\n",
+>> diff --git a/drivers/gpu/drm/drm_fb_helper.c
+>> b/drivers/gpu/drm/drm_fb_helper.c index 7c2eb75..d44389a 100644
+>> --- a/drivers/gpu/drm/drm_fb_helper.c
+>> +++ b/drivers/gpu/drm/drm_fb_helper.c
+>> @@ -2000,7 +2000,18 @@ static int drm_pick_crtcs(struct drm_fb_helper
+>> *fb_helper, my_score++;
+>>
+>>       connector_funcs = connector->helper_private;
+>> -     encoder = connector_funcs->best_encoder(connector);
+>> +
+>> +     /*
+>> +      * If the DRM device implements atomic hooks and ->best_encoder() is
+>> +      * NULL we fallback to the default drm_atomic_helper_best_encoder()
+>> +      * helper.
+>> +      */
+>> +     if (fb_helper->dev->mode_config.funcs->atomic_commit &&
+>> +         !connector_funcs->best_encoder)
+>> +             encoder = drm_atomic_helper_best_encoder(connector);
+>> +     else
+>> +             encoder = connector_funcs->best_encoder(connector);
+>> +
+>>       if (!encoder)
+>>               goto out;
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
+
+
 
 -- 
-Chris Wilson, Intel Open Source Technology Centre
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
