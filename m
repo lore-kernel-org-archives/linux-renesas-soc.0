@@ -1,64 +1,80 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 06 Jun 2016 12:58:49 +0900
-Message-Id: <20160606035849.31763.15348.sendpatchset@little-apple>
-In-Reply-To: <20160606035723.31763.66500.sendpatchset@little-apple>
-References: <20160606035723.31763.66500.sendpatchset@little-apple>
-Subject: [PATCH v2 09/11] iommu/ipmmu-vmsa: Make IMBUSCTR setup optional
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38945 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932259AbcFBWCS (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 2 Jun 2016 18:02:18 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH/RFC v3 15/22] clk: renesas: r8a7796: Obtain mode pin values from R-Car RST driver
+Date: Fri, 03 Jun 2016 01:02:21 +0300
+Message-ID: <1606406.2DcGx2H7dc@avalon>
+In-Reply-To: <1464808880-343-16-git-send-email-geert+renesas@glider.be>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be> <1464808880-343-16-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Geert,
 
-Introduce a feature to allow opt-out of setting up
-IMBUSCR. The default case is unchanged.
+Thank you for the patch.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+On Wednesday 01 Jun 2016 21:21:13 Geert Uytterhoeven wrote:
+> Obtain the values of the mode pins from the R-Car RST driver, which
+> relies on the presence in DT of a device node for the RST module.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
- Changes since V1:
- - Updated the commit message
- - Reworked patch to coexist with the multi context feature
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
- drivers/iommu/ipmmu-vmsa.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+> ---
+> v3:
+>   - New.
+> ---
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> b/drivers/clk/renesas/r8a7796-cpg-mssr.c index
+> c84b549c14d2e57d..3db2d1cfc8cd788e 100644
+> --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/device.h>
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+> +#include <linux/soc/renesas/rcar-rst.h>
+> 
+>  #include <dt-bindings/clock/r8a7796-cpg-mssr.h>
+> 
+> @@ -159,7 +160,12 @@ static const struct rcar_gen3_cpg_pll_config
+> cpg_pll_configs[16] __initconst = { static int __init
+> r8a7796_cpg_mssr_init(struct device *dev)
+>  {
+>  	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
+> -	u32 cpg_mode = rcar_gen3_read_mode_pins();
+> +	u32 cpg_mode;
+> +	int error;
+> +
+> +	error = rcar_rst_read_mode_pins(&cpg_mode);
+> +	if (error)
+> +		return error;
+> 
+>  	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
+>  	if (!cpg_pll_config->extal_div) {
 
---- 0023/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-06 11:04:39.800607110 +0900
-@@ -37,6 +37,7 @@ struct ipmmu_features {
- 	bool use_ns_alias_offset;
- 	bool has_cache_leaf_nodes;
- 	bool has_eight_ctx;
-+	bool setup_imbuscr;
- };
- 
- struct ipmmu_vmsa_device {
-@@ -438,10 +439,10 @@ static int ipmmu_domain_init_context(str
- 	ipmmu_ctx_write(domain, IMMAIR0, domain->cfg.arm_lpae_s1_cfg.mair[0]);
- 
- 	/* IMBUSCR */
--	ipmmu_ctx_write(domain, IMBUSCR,
--			ipmmu_ctx_read(domain, IMBUSCR) &
--			~(IMBUSCR_DVM | IMBUSCR_BUSSEL_MASK));
--
-+	if (domain->root->features->setup_imbuscr)
-+		ipmmu_ctx_write(domain, IMBUSCR,
-+				ipmmu_ctx_read(domain, IMBUSCR) &
-+				~(IMBUSCR_DVM | IMBUSCR_BUSSEL_MASK));
- 	/*
- 	 * IMSTR
- 	 * Clear all interrupt flags.
-@@ -1057,6 +1058,7 @@ static const struct ipmmu_features ipmmu
- 	.use_ns_alias_offset = true,
- 	.has_cache_leaf_nodes = false,
- 	.has_eight_ctx = false,
-+	.setup_imbuscr = true,
- };
- 
- static const struct of_device_id ipmmu_of_ids[] = {
+-- 
+Regards,
+
+Laurent Pinchart
