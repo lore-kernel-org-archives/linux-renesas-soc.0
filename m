@@ -1,104 +1,94 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <9f19c6e5-54d1-abd8-b666-bdf1a502d9c4@de.bosch.com>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-	<1464808880-343-21-git-send-email-geert+renesas@glider.be>
-	<9f19c6e5-54d1-abd8-b666-bdf1a502d9c4@de.bosch.com>
-Date: Thu, 2 Jun 2016 09:13:36 +0200
-Message-ID: <CAMuHMdWNZ8tV1Tc6HGL4qqs-hg6G5f1M5AYuB05Mb-JQPrPf4A@mail.gmail.com>
-Subject: Re: [PATCH/RFC v3 20/22] clk: renesas: r8a7778: Remove obsolete r8a7778_clocks_init()
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:17013 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751121AbcFBFyc (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 2 Jun 2016 01:54:32 -0400
+Subject: Re: [PATCH/RFC v3 20/22] clk: renesas: r8a7778: Remove obsolete
+ r8a7778_clocks_init()
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Philipp Zabel <p.zabel@pengutronix.de>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-renesas-soc@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
+	Stephen Boyd <sboyd@codeaurora.org>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+ <1464808880-343-21-git-send-email-geert+renesas@glider.be>
+CC: <linux-renesas-soc@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: devicetree-owner@vger.kernel.org
+	<devicetree@vger.kernel.org>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <9f19c6e5-54d1-abd8-b666-bdf1a502d9c4@de.bosch.com>
+Date: Thu, 2 Jun 2016 07:54:28 +0200
+MIME-Version: 1.0
+In-Reply-To: <1464808880-343-21-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Dirk,
+On 01.06.2016 21:21, Geert Uytterhoeven wrote:
+> The R-Car M1A board code no longer calls r8a7778_clocks_init().
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3:
+>   - New.
+> ---
+>  drivers/clk/renesas/clk-r8a7778.c | 13 -------------
+>  include/linux/clk/renesas.h       |  1 -
+>  2 files changed, 14 deletions(-)
+>
+> diff --git a/drivers/clk/renesas/clk-r8a7778.c b/drivers/clk/renesas/clk-r8a7778.c
+> index 07ea411098a75ad1..886a8380e91247a1 100644
+> --- a/drivers/clk/renesas/clk-r8a7778.c
+> +++ b/drivers/clk/renesas/clk-r8a7778.c
+> @@ -143,16 +143,3 @@ static void __init r8a7778_cpg_clocks_init(struct device_node *np)
+>
+>  CLK_OF_DECLARE(r8a7778_cpg_clks, "renesas,r8a7778-cpg-clocks",
+>  	       r8a7778_cpg_clocks_init);
+> -
+> -void __init r8a7778_clocks_init(u32 mode)
+> -{
+> -	BUG_ON(!(mode & BIT(19)));
+> -
+> -	cpg_mode_rates = (!!(mode & BIT(18)) << 2) |
+> -			 (!!(mode & BIT(12)) << 1) |
+> -			 (!!(mode & BIT(11)));
+> -	cpg_mode_divs = (!!(mode & BIT(2)) << 1) |
+> -			(!!(mode & BIT(1)));
+> -
+> -	of_clk_init(NULL);
+> -}
 
-On Thu, Jun 2, 2016 at 7:54 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
-> On 01.06.2016 21:21, Geert Uytterhoeven wrote:
->> The R-Car M1A board code no longer calls r8a7778_clocks_init().
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> v3:
->>   - New.
->> ---
->>  drivers/clk/renesas/clk-r8a7778.c | 13 -------------
->>  include/linux/clk/renesas.h       |  1 -
->>  2 files changed, 14 deletions(-)
->>
->> diff --git a/drivers/clk/renesas/clk-r8a7778.c
->> b/drivers/clk/renesas/clk-r8a7778.c
->> index 07ea411098a75ad1..886a8380e91247a1 100644
->> --- a/drivers/clk/renesas/clk-r8a7778.c
->> +++ b/drivers/clk/renesas/clk-r8a7778.c
->> @@ -143,16 +143,3 @@ static void __init r8a7778_cpg_clocks_init(struct
->> device_node *np)
->>
->>  CLK_OF_DECLARE(r8a7778_cpg_clks, "renesas,r8a7778-cpg-clocks",
->>                r8a7778_cpg_clocks_init);
->> -
->> -void __init r8a7778_clocks_init(u32 mode)
->> -{
->> -       BUG_ON(!(mode & BIT(19)));
->> -
->> -       cpg_mode_rates = (!!(mode & BIT(18)) << 2) |
->> -                        (!!(mode & BIT(12)) << 1) |
->> -                        (!!(mode & BIT(11)));
->> -       cpg_mode_divs = (!!(mode & BIT(2)) << 1) |
->> -                       (!!(mode & BIT(1)));
->> -
->> -       of_clk_init(NULL);
->> -}
->
-> Just a question on how you structured the patches: Is there a special reason
-> why you do the adding of new code and the removal of dead code in two
-> patches?
->
-> Having both in one patch normally makes it more obvious which old code is
-> replaced by which new code.
->
-> An example: In patch
->
-> [PATCH/RFC v3 11/22] clk: renesas: r8a7778: Obtain mode pin values using
-> R-Car RST driver
->
-> I wondered where the section
->
-> +       BUG_ON(!(mode & BIT(19)));
-> +
-> +       cpg_mode_rates = (!!(mode & BIT(18)) << 2) |
-> +                        (!!(mode & BIT(12)) << 1) |
-> +                        (!!(mode & BIT(11)));
-> +       cpg_mode_divs = (!!(mode & BIT(2)) << 1) |
-> +                       (!!(mode & BIT(1)));
->
-> comes from. This becomes obvious with this patch 20/22. But it's 9 patches
-> later ;) So why don't make the whole replacement visible in one patch?
 
-Because that would break bisection.
-Path 20 depends on patch 17, which depends on patch 11.
-These three can't be a single patch because they touch multiple subsystems.
+Just a question on how you structured the patches: Is there a special 
+reason why you do the adding of new code and the removal of dead code in 
+two patches?
 
-Gr{oetje,eeting}s,
+Having both in one patch normally makes it more obvious which old code 
+is replaced by which new code.
 
-                        Geert
+An example: In patch
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+[PATCH/RFC v3 11/22] clk: renesas: r8a7778: Obtain mode pin values using 
+R-Car RST driver
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I wondered where the section
+
++	BUG_ON(!(mode & BIT(19)));
++
++	cpg_mode_rates = (!!(mode & BIT(18)) << 2) |
++			 (!!(mode & BIT(12)) << 1) |
++			 (!!(mode & BIT(11)));
++	cpg_mode_divs = (!!(mode & BIT(2)) << 1) |
++			(!!(mode & BIT(1)));
+
+comes from. This becomes obvious with this patch 20/22. But it's 9 
+patches later ;) So why don't make the whole replacement visible in one 
+patch?
+
+Best regards
+
+Dirk
