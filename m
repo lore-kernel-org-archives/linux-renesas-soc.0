@@ -1,81 +1,56 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36799 "EHLO
-	mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932133AbcFCJEF (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 3 Jun 2016 05:04:05 -0400
-MIME-Version: 1.0
-In-Reply-To: <20160602155519.31018.59925.sendpatchset@little-apple>
-References: <20160602155519.31018.59925.sendpatchset@little-apple>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 3 Jun 2016 11:04:03 +0200
-Message-ID: <CAMuHMdWO4VVXPJTSyzukHeJNdm_JNsdDmRqjCBcTuB3bYb=XJA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/06] iommu/ipmmu-vmsa: IPMMU multi-arch update V3
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: iommu@lists.linux-foundation.org,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Joerg Roedel <joro@8bytes.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+	m.szyprowski@samsung.com
+Date: Fri, 03 Jun 2016 00:55:19 +0900
+Message-Id: <20160602155519.31018.59925.sendpatchset@little-apple>
+Subject: [PATCH v3 00/06] iommu/ipmmu-vmsa: IPMMU multi-arch update V3
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Magnus,
+iommu/ipmmu-vmsa: IPMMU multi-arch update V3
 
-On Thu, Jun 2, 2016 at 5:55 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> iommu/ipmmu-vmsa: IPMMU multi-arch update V3
->
-> [PATCH v3 01/06] iommu/ipmmu-vmsa: Remove platform data handling
-> [PATCH v3 02/06] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
-> [PATCH v3 03/06] iommu/ipmmu-vmsa: Break out utlb parsing code
-> [PATCH v3 04/06] iommu/ipmmu-vmsa: Break out domain allocation code
-> [PATCH v3 05/06] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
-> [PATCH v3 06/06] iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
->
-> These patches update the IPMMU driver with a couple of changes
-> to support build on multiple architectures. In the process of
-> doing so the interrupt code gets reworked and the foundation
-> for supporting multiple contexts are added.
->
-> In this version of the series the patch order has been reworked
-> to make simplify review. Thanks to Laurent for his suggestions!
->
-> The 32-bit ARM logic has intentionally been changed as little as possible
-> to avoid breakage. Once CONFIG_IOMMU_DMA can be used it may be good time
-> to revisit the init ordering for the 32-bit SoCs. There is room for
-> improvement for sure like Robin Murphy kindly pointed out.
->
-> Changes since V2:
->  - Got rid of patch 3 from the V2 however patch 1, 2 and 4 are kept.
->  - V3 patch 3, 4 and 5 come from
->    [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
->  - Patch 5 has been reworked to include patch 3 of the V1 of this series
->
-> Changes since V1:
->  - Got rid of patch 2 and 3 from initial series
->  - Updated bitmap code locking and also used lighter bitop functions
->  - Updated the Kconfig bits to apply on top of ARCH_RENESAS
->
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+[PATCH v3 01/06] iommu/ipmmu-vmsa: Remove platform data handling
+[PATCH v3 02/06] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
+[PATCH v3 03/06] iommu/ipmmu-vmsa: Break out utlb parsing code
+[PATCH v3 04/06] iommu/ipmmu-vmsa: Break out domain allocation code
+[PATCH v3 05/06] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
+[PATCH v3 06/06] iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
 
-Thanks for your series!
+These patches update the IPMMU driver with a couple of changes
+to support build on multiple architectures. In the process of
+doing so the interrupt code gets reworked and the foundation
+for supporting multiple contexts are added.
 
-For your convenience, I've queued it up in topic/ipmmu-multi-arch-v3 at
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git, and
-will include it in next renesas-drivers release.
+In this version of the series the patch order has been reworked
+to make simplify review. Thanks to Laurent for his suggestions!
 
-Gr{oetje,eeting}s,
+The 32-bit ARM logic has intentionally been changed as little as possible
+to avoid breakage. Once CONFIG_IOMMU_DMA can be used it may be good time
+to revisit the init ordering for the 32-bit SoCs. There is room for
+improvement for sure like Robin Murphy kindly pointed out.
 
-                        Geert
+Changes since V2:
+ - Got rid of patch 3 from the V2 however patch 1, 2 and 4 are kept.
+ - V3 patch 3, 4 and 5 come from
+   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
+ - Patch 5 has been reworked to include patch 3 of the V1 of this series 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Changes since V1:
+ - Got rid of patch 2 and 3 from initial series
+ - Updated bitmap code locking and also used lighter bitop functions
+ - Updated the Kconfig bits to apply on top of ARCH_RENESAS
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
+
+ Built on top of next-20160602
+
+ drivers/iommu/Kconfig      |    1 
+ drivers/iommu/ipmmu-vmsa.c |  263 ++++++++++++++++++++++++++++++++++++--------
+ 2 files changed, 216 insertions(+), 48 deletions(-)
