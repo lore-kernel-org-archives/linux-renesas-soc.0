@@ -1,11 +1,10 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
 	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Daniel Vetter <daniel.vetter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	Kukjin Kim <kgene@kernel.org>,
 	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
 	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
@@ -19,13 +18,14 @@ Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
 	Alison Wang <alison.wang@freescale.com>,
 	Matthias Brugger <matthias.bgg@gmail.com>,
 	Rob Clark <robdclark@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Mark Yao <mark.yao@rock-chips.com>,
 	Heiko Stuebner <heiko@sntech.de>,
 	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
 	Vincent Abriou <vincent.abriou@st.com>,
 	Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Re ding <thierry.reding@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
 	Stephen Warren <swarren@wwwdotorg.org>,
 	Alexandre Courbot <gnurou@gmail.com>,
 	Eric Anholt <eric@anholt.net>,
@@ -33,83 +33,66 @@ Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
 	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
 	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
 	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH 01/20] drm/atomic: Fix remaining places where !funcs->best_encoder is valid
-Date: Fri, 03 Jun 2016 00:05:46 +0300
-Message-ID: <8671722.LHaiaBNqfE@avalon>
-In-Reply-To: <1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com> <1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	virtualization@lists.linux-foundation.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 01/20] drm/atomic: Fix remaining places where !funcs->best_encoder is valid
+Date: Thu,  2 Jun 2016 16:31:28 +0200
+Message-Id: <1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Boris,
+Adapt drm_pick_crtcs() and update_connector_routing() to fallback to
+drm_atomic_helper_best_encoder() if funcs->best_encoder() is NULL so
+that DRM drivers can leave this hook unassigned if they know they want
+to use drm_atomic_helper_best_encoder().
 
-Thank you for the patch.
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/gpu/drm/drm_atomic_helper.c |  4 +++-
+ drivers/gpu/drm/drm_fb_helper.c     | 13 ++++++++++++-
+ 2 files changed, 15 insertions(+), 2 deletions(-)
 
-On Thursday 02 Jun 2016 16:31:28 Boris Brezillon wrote:
-> Adapt drm_pick_crtcs() and update_connector_routing() to fallback to
-> drm_atomic_helper_best_encoder() if funcs->best_encoder() is NULL so
-> that DRM drivers can leave this hook unassigned if they know they want
-> to use drm_atomic_helper_best_encoder().
-
-Could you please update include/drm/drm_modeset_helper_vtables.h to document 
-this new behaviour ?
-
-The only drawback I see in this patch is the additional object lookup 
-performed by drm_atomic_helper_best_encoder() at runtime. I wonder if we could 
-somehow cache the information, as the assignment can't change when there's a 
-1:1 correspondence between encoders and connectors.
-
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> ---
->  drivers/gpu/drm/drm_atomic_helper.c |  4 +++-
->  drivers/gpu/drm/drm_fb_helper.c     | 13 ++++++++++++-
->  2 files changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c
-> b/drivers/gpu/drm/drm_atomic_helper.c index f6a3350..849d029 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -300,8 +300,10 @@ update_connector_routing(struct drm_atomic_state
-> *state, if (funcs->atomic_best_encoder)
->  		new_encoder = funcs->atomic_best_encoder(connector,
->  							 connector_state);
-> -	else
-> +	else if (funcs->best_encoder)
->  		new_encoder = funcs->best_encoder(connector);
-> +	else
-> +		new_encoder = drm_atomic_helper_best_encoder(connector);
-> 
->  	if (!new_encoder) {
->  		DRM_DEBUG_ATOMIC("No suitable encoder found for [CONNECTOR:%d:%s]\n",
-> diff --git a/drivers/gpu/drm/drm_fb_helper.c
-> b/drivers/gpu/drm/drm_fb_helper.c index 7c2eb75..d44389a 100644
-> --- a/drivers/gpu/drm/drm_fb_helper.c
-> +++ b/drivers/gpu/drm/drm_fb_helper.c
-> @@ -2000,7 +2000,18 @@ static int drm_pick_crtcs(struct drm_fb_helper
-> *fb_helper, my_score++;
-> 
->  	connector_funcs = connector->helper_private;
-> -	encoder = connector_funcs->best_encoder(connector);
-> +
-> +	/*
-> +	 * If the DRM device implements atomic hooks and ->best_encoder() is
-> +	 * NULL we fallback to the default drm_atomic_helper_best_encoder()
-> +	 * helper.
-> +	 */
-> +	if (fb_helper->dev->mode_config.funcs->atomic_commit &&
-> +	    !connector_funcs->best_encoder)
-> +		encoder = drm_atomic_helper_best_encoder(connector);
-> +	else
-> +		encoder = connector_funcs->best_encoder(connector);
-> +
->  	if (!encoder)
->  		goto out;
-
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index f6a3350..849d029 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -300,8 +300,10 @@ update_connector_routing(struct drm_atomic_state *state,
+ 	if (funcs->atomic_best_encoder)
+ 		new_encoder = funcs->atomic_best_encoder(connector,
+ 							 connector_state);
+-	else
++	else if (funcs->best_encoder)
+ 		new_encoder = funcs->best_encoder(connector);
++	else
++		new_encoder = drm_atomic_helper_best_encoder(connector);
+ 
+ 	if (!new_encoder) {
+ 		DRM_DEBUG_ATOMIC("No suitable encoder found for [CONNECTOR:%d:%s]\n",
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index 7c2eb75..d44389a 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -2000,7 +2000,18 @@ static int drm_pick_crtcs(struct drm_fb_helper *fb_helper,
+ 		my_score++;
+ 
+ 	connector_funcs = connector->helper_private;
+-	encoder = connector_funcs->best_encoder(connector);
++
++	/*
++	 * If the DRM device implements atomic hooks and ->best_encoder() is
++	 * NULL we fallback to the default drm_atomic_helper_best_encoder()
++	 * helper.
++	 */
++	if (fb_helper->dev->mode_config.funcs->atomic_commit &&
++	    !connector_funcs->best_encoder)
++		encoder = drm_atomic_helper_best_encoder(connector);
++	else
++		encoder = connector_funcs->best_encoder(connector);
++
+ 	if (!encoder)
+ 		goto out;
+ 
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
