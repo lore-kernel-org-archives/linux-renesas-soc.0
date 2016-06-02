@@ -1,201 +1,66 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-	m.szyprowski@samsung.com
-Date: Fri, 03 Jun 2016 00:56:09 +0900
-Message-Id: <20160602155609.31018.31070.sendpatchset@little-apple>
-In-Reply-To: <20160602155519.31018.59925.sendpatchset@little-apple>
-References: <20160602155519.31018.59925.sendpatchset@little-apple>
-Subject: [PATCH v3 05/06] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:39646 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751840AbcFBQkl (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 2 Jun 2016 12:40:41 -0400
+Date: Thu, 2 Jun 2016 22:17:11 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: hch@infradead.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+	iommu@lists.linux-foundation.org, dan.j.williams@intel.com,
+	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
+	linus.walleij@linaro.org, arnd@arndb.de
+Subject: Re: [PATCHv7 0/6] dmaengine: rcar-dmac: add iommu support for slave
+ transfers
+Message-ID: <20160602164711.GS16910@localhost>
+References: <1464794549-6601-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+ <20160601180610.GV16910@localhost>
+ <20160602125807.GN8307@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20160602125807.GN8307@bigcity.dyn.berto.se>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Thu, Jun 02, 2016 at 02:58:07PM +0200, Niklas S�derlund wrote:
+> Hi Vinod,
+> 
+> On 2016-06-01 23:36:11 +0530, Vinod Koul wrote:
+> > On Wed, Jun 01, 2016 at 05:22:23PM +0200, Niklas S�derlund wrote:
+> > > Hi,
+> > > 
+> > > [In this v7 series I have tried to address the questions raised by Christoph 
+> > > Hellwig and I hope it can awnser your concernes regarding dma-debug.]
+> > > 
+> > > This series tries to solve the problem with DMA with device registers
+> > > (MMIO registers) that are behind an IOMMU for the rcar-dmac driver. A
+> > > recent patch '9575632 (dmaengine: make slave address physical)'
+> > > clarifies that DMA slave address provided by clients is the physical
+> > > address. This puts the task of mapping the DMA slave address from a
+> > > phys_addr_t to a dma_addr_t on the DMA engine.
+> > > 
+> > > Without an IOMMU this is easy since the phys_addr_t and dma_addr_t are
+> > > the same and no special care is needed. However if you have a IOMMU you
+> > > need to map the DMA slave phys_addr_t to a dma_addr_t using something
+> > > like this.
+> > > 
+> > > This series is based on top of v4.7-rc1.
+> > 
+> > The dmanegine bits looks okay to me. Btw how is the merge planned for this?
+> > Do you wnat this to be merged thru dmaengine tree or something else?
+> 
+> Yes, since the arm specific patch are depending on other parts of the 
+> series I was hoping to be able to get Russells Ack on it and then try to 
+> get it all in through the dmaengine tree.
 
-Introduce an alternative set of iommu_ops suitable for 64-bit ARM
-as well as 32-bit ARM when CONFIG_IOMMU_DMA=y.
+Sounds good to me..
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+> If you see a better way I'm happy to do it that way, let me know what 
+> you think. I hold off v8 that adresses the issues Russell brought up a 
+> few days untill I know what you think is best.
 
- Changes since V2:
- - Included this new patch from the following series:
-   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
- - Use only a single iommu_ops structure with #ifdef CONFIG_IOMMU_DMA
- - Folded in #ifdefs to handle CONFIG_ARM and CONFIG_IOMMU_DMA
- - of_xlate() is now used without #ifdefs
- - Made sure code compiles on both 32-bit and 64-bit ARM.
- 
- drivers/iommu/ipmmu-vmsa.c |  111 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 103 insertions(+), 8 deletions(-)
-
---- 0008/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-02 22:15:52.090607110 +0900
-@@ -10,6 +10,7 @@
- 
- #include <linux/bitmap.h>
- #include <linux/delay.h>
-+#include <linux/dma-iommu.h>
- #include <linux/dma-mapping.h>
- #include <linux/err.h>
- #include <linux/export.h>
-@@ -22,8 +23,10 @@
- #include <linux/sizes.h>
- #include <linux/slab.h>
- 
-+#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
- #include <asm/dma-iommu.h>
- #include <asm/pgalloc.h>
-+#endif
- 
- #include "io-pgtable.h"
- 
-@@ -520,14 +523,6 @@ static struct iommu_domain *__ipmmu_doma
- 	return &domain->io_domain;
- }
- 
--static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
--{
--	if (type != IOMMU_DOMAIN_UNMANAGED)
--		return NULL;
--
--	return __ipmmu_domain_alloc(type);
--}
--
- static void ipmmu_domain_free(struct iommu_domain *io_domain)
- {
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
-@@ -715,6 +710,8 @@ error:
- 	return ret;
- }
- 
-+#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
-+
- static int ipmmu_add_device(struct device *dev)
- {
- 	struct ipmmu_vmsa_archdata *archdata;
-@@ -809,6 +806,14 @@ static void ipmmu_remove_device(struct d
- 	dev->archdata.iommu = NULL;
- }
- 
-+static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
-+{
-+	if (type != IOMMU_DOMAIN_UNMANAGED)
-+		return NULL;
-+
-+	return __ipmmu_domain_alloc(type);
-+}
-+
- static const struct iommu_ops ipmmu_ops = {
- 	.domain_alloc = ipmmu_domain_alloc,
- 	.domain_free = ipmmu_domain_free,
-@@ -823,6 +828,94 @@ static const struct iommu_ops ipmmu_ops
- 	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
- };
- 
-+#endif /* !CONFIG_ARM && CONFIG_IOMMU_DMA */
-+
-+#ifdef CONFIG_IOMMU_DMA
-+
-+static struct iommu_domain *ipmmu_domain_alloc_dma(unsigned type)
-+{
-+	struct iommu_domain *io_domain;
-+
-+	if (type != IOMMU_DOMAIN_DMA)
-+		return NULL;
-+
-+	io_domain = __ipmmu_domain_alloc(type);
-+	if (io_domain)
-+		iommu_get_dma_cookie(io_domain);
-+
-+	return io_domain;
-+}
-+
-+static void ipmmu_domain_free_dma(struct iommu_domain *io_domain)
-+{
-+	iommu_put_dma_cookie(io_domain);
-+	ipmmu_domain_free(io_domain);
-+}
-+
-+static int ipmmu_add_device_dma(struct device *dev)
-+{
-+	struct iommu_group *group;
-+
-+	/* only accept devices with iommus property */
-+	if (of_count_phandle_with_args(dev->of_node, "iommus",
-+				       "#iommu-cells") < 0)
-+		return -ENODEV;
-+
-+	group = iommu_group_get_for_dev(dev);
-+	if (IS_ERR(group))
-+		return PTR_ERR(group);
-+
-+	return 0;
-+}
-+
-+static void ipmmu_remove_device_dma(struct device *dev)
-+{
-+	iommu_group_remove_device(dev);
-+}
-+
-+static struct iommu_group *ipmmu_device_group_dma(struct device *dev)
-+{
-+	struct iommu_group *group;
-+	int ret;
-+
-+	group = generic_device_group(dev);
-+	if (IS_ERR(group))
-+		return group;
-+
-+	ret = ipmmu_init_platform_device(dev, group);
-+	if (ret) {
-+		iommu_group_put(group);
-+		group = ERR_PTR(ret);
-+	}
-+
-+	return group;
-+}
-+
-+static int ipmmu_of_xlate_dma(struct device *dev,
-+			      struct of_phandle_args *spec)
-+{
-+	/* dummy callback to satisfy of_iommu_configure() */
-+	return 0;
-+}
-+
-+static const struct iommu_ops ipmmu_ops = {
-+	.domain_alloc = ipmmu_domain_alloc_dma,
-+	.domain_free = ipmmu_domain_free_dma,
-+	.attach_dev = ipmmu_attach_device,
-+	.detach_dev = ipmmu_detach_device,
-+	.map = ipmmu_map,
-+	.unmap = ipmmu_unmap,
-+	.map_sg = default_iommu_map_sg,
-+	.iova_to_phys = ipmmu_iova_to_phys,
-+	.add_device = ipmmu_add_device_dma,
-+	.remove_device = ipmmu_remove_device_dma,
-+	.device_group = ipmmu_device_group_dma,
-+	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
-+	.of_xlate = ipmmu_of_xlate_dma,
-+};
-+
-+#endif /* CONFIG_IOMMU_DMA */
-+
- /* -----------------------------------------------------------------------------
-  * Probe/remove and init
-  */
-@@ -912,7 +1005,9 @@ static int ipmmu_remove(struct platform_
- 	list_del(&mmu->list);
- 	spin_unlock(&ipmmu_devices_lock);
- 
-+#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
- 	arm_iommu_release_mapping(mmu->mapping);
-+#endif
- 
- 	ipmmu_device_reset(mmu);
- 
+-- 
+~Vinod
