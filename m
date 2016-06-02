@@ -1,52 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:54541 "EHLO
-	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932451AbcF3PZJ (ORCPT
+Received: from down.free-electrons.com ([37.187.137.238]:52114 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932752AbcFBOcG (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 11:25:09 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: vinod.koul@intel.com, geert+renesas@glider.be,
-	laurent.pinchart+renesas@ideasonboard.com, mfarooq@visteon.com,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 2/4] dmaengine: rcar-dmac: warn if transfer cannot start as TE = 1
-Date: Thu, 30 Jun 2016 17:15:16 +0200
-Message-Id: <20160630151518.32329-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160630151518.32329-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160630151518.32329-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+	Thu, 2 Jun 2016 10:32:06 -0400
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 02/20] drm: arc: Rely on the default ->best_encoder() behavior
+Date: Thu,  2 Jun 2016 16:31:29 +0200
+Message-Id: <1464877907-27723-3-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The documentation states one should make sure both DE and TE are cleared
-before starting a transaction. This patch extends the current warning to
-look at both DE and TE.
+We have a 1:1 relationship between connectors and encoders and the
+driver is relying on the atomic helpers: we can drop the custom
+->best_encoder(), and let the core call drm_atomic_helper_best_encoder()
+for us.
 
-Based on previous work from Muhammad Hamza Farooq.
-
-Suggested-by: Muhammad Hamza Farooq <mfarooq@visteon.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
- drivers/dma/sh/rcar-dmac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/arc/arcpgu_hdmi.c | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 791a064..7f26576 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -311,7 +311,7 @@ static bool rcar_dmac_chan_is_busy(struct rcar_dmac_chan *chan)
- {
- 	u32 chcr = rcar_dmac_chan_read(chan, RCAR_DMACHCR);
- 
--	return (chcr & (RCAR_DMACHCR_DE | RCAR_DMACHCR_TE)) == RCAR_DMACHCR_DE;
-+	return !!(chcr & (RCAR_DMACHCR_DE | RCAR_DMACHCR_TE));
+diff --git a/drivers/gpu/drm/arc/arcpgu_hdmi.c b/drivers/gpu/drm/arc/arcpgu_hdmi.c
+index 08b6bae..b7a8b2a 100644
+--- a/drivers/gpu/drm/arc/arcpgu_hdmi.c
++++ b/drivers/gpu/drm/arc/arcpgu_hdmi.c
+@@ -46,23 +46,6 @@ static int arcpgu_drm_connector_get_modes(struct drm_connector *connector)
+ 	return sfuncs->get_modes(&slave->base, connector);
  }
  
- static void rcar_dmac_chan_start_xfer(struct rcar_dmac_chan *chan)
+-struct drm_encoder *
+-arcpgu_drm_connector_best_encoder(struct drm_connector *connector)
+-{
+-	struct drm_encoder_slave *slave;
+-	struct arcpgu_drm_connector *con =
+-		container_of(connector, struct arcpgu_drm_connector, connector);
+-
+-	slave = con->encoder_slave;
+-	if (slave == NULL) {
+-		dev_err(connector->dev->dev,
+-			"connector_best_encoder: cannot find slave encoder for connector\n");
+-		return NULL;
+-	}
+-
+-	return &slave->base;
+-}
+-
+ static enum drm_connector_status
+ arcpgu_drm_connector_detect(struct drm_connector *connector, bool force)
+ {
+@@ -97,7 +80,6 @@ static void arcpgu_drm_connector_destroy(struct drm_connector *connector)
+ static const struct drm_connector_helper_funcs
+ arcpgu_drm_connector_helper_funcs = {
+ 	.get_modes = arcpgu_drm_connector_get_modes,
+-	.best_encoder = arcpgu_drm_connector_best_encoder,
+ };
+ 
+ static const struct drm_connector_funcs arcpgu_drm_connector_funcs = {
 -- 
-2.9.0
+2.7.4
