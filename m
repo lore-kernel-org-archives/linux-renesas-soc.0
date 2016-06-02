@@ -1,101 +1,101 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 11/12] ARM: dts: blanche: initial device tree
-Date: Mon, 13 Jun 2016 00:15:55 +0300
-Message-ID: <1845407.R5taI3Tpvj@wasted.cogentembedded.com>
-In-Reply-To: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
-References: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Re ding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 16/20] drm: omap: Rely on the default ->best_encoder() behavior
+Date: Fri, 03 Jun 2016 00:00:07 +0300
+Message-ID: <3702911.4V6efqXNem@avalon>
+In-Reply-To: <1464877907-27723-17-git-send-email-boris.brezillon@free-electrons.com>
+References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com> <1464877907-27723-17-git-send-email-boris.brezillon@free-electrons.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the initial device  tree for the R8A7792 SoC based Blanche board.
-The board has 2 debug serial ports: SCIF0 and SCIF3; include support for
-them,  so that  the serial console  can  work.
+Hi Boris,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thank you for the patch.
 
----
-Changes in version 3:
-- added Renesas Electronics' copyright.
+On Thursday 02 Jun 2016 16:31:43 Boris Brezillon wrote:
+> We have a 1:1 relationship between connectors and encoders and the
+> driver is relying on the atomic helpers: we can drop the custom
+> ->best_encoder() implementation and let the core call
+> drm_atomic_helper_best_encoder() for us.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> ---
+>  drivers/gpu/drm/omapdrm/omap_connector.c | 8 --------
+>  1 file changed, 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/omapdrm/omap_connector.c
+> b/drivers/gpu/drm/omapdrm/omap_connector.c index ce2d67b..80af5e1 100644
+> --- a/drivers/gpu/drm/omapdrm/omap_connector.c
+> +++ b/drivers/gpu/drm/omapdrm/omap_connector.c
+> @@ -256,13 +256,6 @@ static int omap_connector_mode_valid(struct
+> drm_connector *connector, return ret;
+>  }
+> 
+> -struct drm_encoder *omap_connector_attached_encoder(
+> -		struct drm_connector *connector)
+> -{
+> -	struct omap_connector *omap_connector = to_omap_connector(connector);
+> -	return omap_connector->encoder;
 
-Changes in version 2:
-- added Simon's ACK and Geert's tag too.
+The omap_connector::encoder field is assigned but not used anymore, you can 
+remove it.
 
- arch/arm/boot/dts/Makefile            |    1 
- arch/arm/boot/dts/r8a7792-blanche.dts |   45 ++++++++++++++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
+With that fixed,
 
-Index: renesas/arch/arm/boot/dts/Makefile
-===================================================================
---- renesas.orig/arch/arm/boot/dts/Makefile
-+++ renesas/arch/arm/boot/dts/Makefile
-@@ -638,6 +638,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
- 	r8a7790-lager.dtb \
- 	r8a7791-koelsch.dtb \
- 	r8a7791-porter.dtb \
-+	r8a7792-blanche.dtb \
- 	r8a7793-gose.dtb \
- 	r8a7794-alt.dtb \
- 	r8a7794-silk.dtb \
-Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-===================================================================
---- /dev/null
-+++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-@@ -0,0 +1,45 @@
-+/*
-+ * Device Tree Source for the Blanche board
-+ *
-+ * Copyright (C) 2014 Renesas Electronics Corporation
-+ * Copyright (C) 2016 Cogent  Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r8a7792.dtsi"
-+
-+/ {
-+	model = "Blanche";
-+	compatible = "renesas,blanche", "renesas,r8a7792";
-+
-+	aliases {
-+		serial0 = &scif0;
-+		serial1 = &scif3;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x40000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
-+
-+&scif0 {
-+	status = "okay";
-+};
-+
-+&scif3 {
-+	status = "okay";
-+};
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
+> -}
+> -
+>  static const struct drm_connector_funcs omap_connector_funcs = {
+>  	.dpms = drm_atomic_helper_connector_dpms,
+>  	.reset = drm_atomic_helper_connector_reset,
+> @@ -276,7 +269,6 @@ static const struct drm_connector_funcs
+> omap_connector_funcs = { static const struct drm_connector_helper_funcs
+> omap_connector_helper_funcs = { .get_modes = omap_connector_get_modes,
+>  	.mode_valid = omap_connector_mode_valid,
+> -	.best_encoder = omap_connector_attached_encoder,
+>  };
+> 
+>  /* initialize connector */
+
+-- 
+Regards,
+
+Laurent Pinchart
