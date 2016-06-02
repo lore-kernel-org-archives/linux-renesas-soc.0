@@ -1,46 +1,147 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:36193 "EHLO
-	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751197AbcFAHvV (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 03:51:21 -0400
-MIME-Version: 1.0
-In-Reply-To: <1627751.dcAYzyCZSM@wasted.cogentembedded.com>
-References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
-	<1627751.dcAYzyCZSM@wasted.cogentembedded.com>
-Date: Wed, 1 Jun 2016 09:51:20 +0200
-Message-ID: <CAMuHMdW2TTROPRk71F8LRFZDXOAXYZJKZyjM01nWtpSEGFW_3w@mail.gmail.com>
-Subject: Re: [PATCH 06/13] DT: clock: cpg-mstp-clocks: document-R8A7792-support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 04/20] drm: exynos: Rely on the default ->best_encoder() behavior
+Date: Thu,  2 Jun 2016 16:31:31 +0200
+Message-Id: <1464877907-27723-5-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 1, 2016 at 12:21 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Renesas R8A7792 SoC also has the CPG MSTP clocks...
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+We have 1:1 relationship between connectors and encoders and the driver
+is relying on the atomic helpers: we can drop the custom ->best_encoder()
+implementations and let the core call drm_atomic_helper_best_encoder()
+for us.
 
-If you use "clk: renesas: smtp: ..."
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c  | 9 ---------
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c  | 9 ---------
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 8 --------
+ drivers/gpu/drm/exynos/exynos_hdmi.c     | 8 --------
+ 4 files changed, 34 deletions(-)
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+index 5e38e74..ad6b73c 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+@@ -93,17 +93,8 @@ static int exynos_dpi_get_modes(struct drm_connector *connector)
+ 	return 0;
+ }
+ 
+-static struct drm_encoder *
+-exynos_dpi_best_encoder(struct drm_connector *connector)
+-{
+-	struct exynos_dpi *ctx = connector_to_dpi(connector);
+-
+-	return &ctx->encoder;
+-}
+-
+ static const struct drm_connector_helper_funcs exynos_dpi_connector_helper_funcs = {
+ 	.get_modes = exynos_dpi_get_modes,
+-	.best_encoder = exynos_dpi_best_encoder,
+ };
+ 
+ static int exynos_dpi_create_connector(struct drm_encoder *encoder)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 601ecf8..e07cb1f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1566,17 +1566,8 @@ static int exynos_dsi_get_modes(struct drm_connector *connector)
+ 	return 0;
+ }
+ 
+-static struct drm_encoder *
+-exynos_dsi_best_encoder(struct drm_connector *connector)
+-{
+-	struct exynos_dsi *dsi = connector_to_dsi(connector);
+-
+-	return &dsi->encoder;
+-}
+-
+ static const struct drm_connector_helper_funcs exynos_dsi_connector_helper_funcs = {
+ 	.get_modes = exynos_dsi_get_modes,
+-	.best_encoder = exynos_dsi_best_encoder,
+ };
+ 
+ static int exynos_dsi_create_connector(struct drm_encoder *encoder)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index 608b0af..e8f6c92 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -378,16 +378,8 @@ static int vidi_get_modes(struct drm_connector *connector)
+ 	return drm_add_edid_modes(connector, edid);
+ }
+ 
+-static struct drm_encoder *vidi_best_encoder(struct drm_connector *connector)
+-{
+-	struct vidi_context *ctx = ctx_from_connector(connector);
+-
+-	return &ctx->encoder;
+-}
+-
+ static const struct drm_connector_helper_funcs vidi_connector_helper_funcs = {
+ 	.get_modes = vidi_get_modes,
+-	.best_encoder = vidi_best_encoder,
+ };
+ 
+ static int vidi_create_connector(struct drm_encoder *encoder)
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 58de5a4..1625d7c 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -937,17 +937,9 @@ static int hdmi_mode_valid(struct drm_connector *connector,
+ 	return MODE_OK;
+ }
+ 
+-static struct drm_encoder *hdmi_best_encoder(struct drm_connector *connector)
+-{
+-	struct hdmi_context *hdata = connector_to_hdmi(connector);
+-
+-	return &hdata->encoder;
+-}
+-
+ static const struct drm_connector_helper_funcs hdmi_connector_helper_funcs = {
+ 	.get_modes = hdmi_get_modes,
+ 	.mode_valid = hdmi_mode_valid,
+-	.best_encoder = hdmi_best_encoder,
+ };
+ 
+ static int hdmi_create_connector(struct drm_encoder *encoder)
+-- 
+2.7.4
