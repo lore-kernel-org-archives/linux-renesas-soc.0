@@ -1,76 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:46851 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751684AbcFATV1 (ORCPT
+Received: from down.free-electrons.com ([37.187.137.238]:52165 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932752AbcFBOcW (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 15:21:27 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v3 16/22] clk: renesas: rcar-gen3-cpg: Remove obsolete rcar_gen3_read_mode_pins()
-Date: Wed,  1 Jun 2016 21:21:14 +0200
-Message-Id: <1464808880-343-17-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+	Thu, 2 Jun 2016 10:32:22 -0400
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 20/20] drm/bridge: dw-hdmi: Use drm_atomic_helper_best_encoder()
+Date: Thu,  2 Jun 2016 16:31:47 +0200
+Message-Id: <1464877907-27723-21-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All R-Car Gen3 clock drivers now obtain the values of the mode pins from
-the R-Car RST driver.
+We have a 1:1 relationship between connectors and encoders, which means
+we can rely on the drm_atomic_helper_best_encoder() behavior.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+We still have to explicitly assign ->best_encoder() to
+drm_atomic_helper_best_encoder(), because the automated fallback to
+drm_atomic_helper_best_encoder() when ->best_encoder() is NULL is only
+available when the DRM device is using the atomic helpers, and this bridge
+is compatible with non-atomic and atomic devices.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
- drivers/clk/renesas/rcar-gen3-cpg.c | 17 -----------------
- drivers/clk/renesas/rcar-gen3-cpg.h |  1 -
- 2 files changed, 18 deletions(-)
+ drivers/gpu/drm/bridge/dw-hdmi.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index bb4f2f9a8c2f5ba8..9d76076da4948fc4 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -333,23 +333,6 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 					 __clk_get_name(parent), 0, mult, div);
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index c9d9412..70b1f7d 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1476,15 +1476,6 @@ dw_hdmi_connector_mode_valid(struct drm_connector *connector,
+ 	return mode_status;
  }
  
--/*
-- * Reset register definitions.
-- */
--#define MODEMR	0xe6160060
--
--u32 __init rcar_gen3_read_mode_pins(void)
+-static struct drm_encoder *dw_hdmi_connector_best_encoder(struct drm_connector
+-							   *connector)
 -{
--	void __iomem *modemr = ioremap_nocache(MODEMR, 4);
--	u32 mode;
+-	struct dw_hdmi *hdmi = container_of(connector, struct dw_hdmi,
+-					     connector);
 -
--	BUG_ON(!modemr);
--	mode = ioread32(modemr);
--	iounmap(modemr);
--
--	return mode;
+-	return hdmi->encoder;
 -}
 -
- int __init rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
- 			      unsigned int clk_extalr)
+ static void dw_hdmi_connector_destroy(struct drm_connector *connector)
  {
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index f699085147d1aece..f788f481dd42cdf6 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -33,7 +33,6 @@ struct rcar_gen3_cpg_pll_config {
+ 	drm_connector_unregister(connector);
+@@ -1525,7 +1516,7 @@ static const struct drm_connector_funcs dw_hdmi_atomic_connector_funcs = {
+ static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs = {
+ 	.get_modes = dw_hdmi_connector_get_modes,
+ 	.mode_valid = dw_hdmi_connector_mode_valid,
+-	.best_encoder = dw_hdmi_connector_best_encoder,
++	.best_encoder = drm_atomic_helper_best_encoder,
+ };
  
- #define CPG_RCKCR	0x240
- 
--u32 rcar_gen3_read_mode_pins(void);
- struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
- 	struct clk **clks, void __iomem *base);
+ static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
 -- 
-1.9.1
+2.7.4
