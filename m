@@ -1,50 +1,77 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:34258 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752038AbcF3XHq (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 19:07:46 -0400
-Received: by mail-lf0-f49.google.com with SMTP id h129so65891770lfh.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Jun 2016 16:07:01 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/3] ARM: dts: r8a7792: add PFC support
-Date: Fri, 01 Jul 2016 02:06:58 +0300
-Message-ID: <7894702.b5qeLxoHdo@wasted.cogentembedded.com>
-In-Reply-To: <2144803.0K8qXzjIFq@wasted.cogentembedded.com>
-References: <2144803.0K8qXzjIFq@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 17/20] drm/bridge: anx78xx: Rely on the default ->best_encoder() behavior
+Date: Thu,  2 Jun 2016 16:31:44 +0200
+Message-Id: <1464877907-27723-18-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A7792 part of the PFC device node.
+We have a 1:1 relationship between connectors and encoders, and the driver
+is relying on the atomic helpers: we can drop the custom ->best_encoder(),
+and let the core call drm_atomic_helper_best_encoder() for us.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
- arch/arm/boot/dts/r8a7792.dtsi |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/gpu/drm/bridge/analogix-anx78xx.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -108,6 +108,12 @@
- 			#power-domain-cells = <1>;
- 		};
+diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix-anx78xx.c
+index d087b05..f9f03bc 100644
+--- a/drivers/gpu/drm/bridge/analogix-anx78xx.c
++++ b/drivers/gpu/drm/bridge/analogix-anx78xx.c
+@@ -986,16 +986,8 @@ unlock:
+ 	return num_modes;
+ }
  
-+
-+		pfc: pin-controller@e6060000 {
-+			compatible = "renesas,pfc-r8a7792";
-+			reg = <0 0xe6060000 0 0x144>;
-+		};
-+
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a7792",
- 				     "renesas,rcar-dmac";
+-static struct drm_encoder *anx78xx_best_encoder(struct drm_connector *connector)
+-{
+-	struct anx78xx *anx78xx = connector_to_anx78xx(connector);
+-
+-	return anx78xx->bridge.encoder;
+-}
+-
+ static const struct drm_connector_helper_funcs anx78xx_connector_helper_funcs = {
+ 	.get_modes = anx78xx_get_modes,
+-	.best_encoder = anx78xx_best_encoder,
+ };
+ 
+ static enum drm_connector_status anx78xx_detect(struct drm_connector *connector,
+-- 
+2.7.4
