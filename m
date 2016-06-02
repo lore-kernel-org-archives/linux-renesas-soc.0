@@ -1,63 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:58620 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932188AbcFCKAN (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38943 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932259AbcFBWBp (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 3 Jun 2016 06:00:13 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Peter Hurley <peter@hurleysoftware.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
+	Thu, 2 Jun 2016 18:01:45 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 06/11] serial: sh-sci: Add more Serial Port Register documentation
-Date: Fri,  3 Jun 2016 12:00:06 +0200
-Message-Id: <1464948011-377-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
-References: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH/RFC v3 14/22] clk: renesas: r8a7795: Obtain mode pin values from R-Car RST driver
+Date: Fri, 03 Jun 2016 01:01:48 +0300
+Message-ID: <4553060.NE6q0PIF0B@avalon>
+In-Reply-To: <1464808880-343-15-git-send-email-geert+renesas@glider.be>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be> <1464808880-343-15-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Improve documentation for the (H)SCIF Serial Port Register:
-  - Make it clear the RTS and CTS lines are active-low,
-  - Document the bits related to the serial port's clock pin.
+Hi Geert,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Peter Hurley <peter@hurleysoftware.com>
----
-v3:
-  - Add Reviewed-by,
+Thank you for the patch.
 
-v2:
-  - New.
----
- drivers/tty/serial/sh-sci.h | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+On Wednesday 01 Jun 2016 21:21:12 Geert Uytterhoeven wrote:
+> Obtain the values of the mode pins from the R-Car RST driver, which
+> relies on the presence in DT of a device node for the RST module.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
-index 7a4fa185b93ef307..85a2b81ba0a845e5 100644
---- a/drivers/tty/serial/sh-sci.h
-+++ b/drivers/tty/serial/sh-sci.h
-@@ -108,10 +108,12 @@ enum {
- #define SCLSR_ORER	BIT(0)	/* Overrun Error */
- 
- /* SCSPTR (Serial Port Register), optional */
--#define SCSPTR_RTSIO	BIT(7)	/* Serial Port RTS Pin Input/Output */
--#define SCSPTR_RTSDT	BIT(6)	/* Serial Port RTS Pin Data */
--#define SCSPTR_CTSIO	BIT(5)	/* Serial Port CTS Pin Input/Output */
--#define SCSPTR_CTSDT	BIT(4)	/* Serial Port CTS Pin Data */
-+#define SCSPTR_RTSIO	BIT(7)	/* Serial Port RTS# Pin Input/Output */
-+#define SCSPTR_RTSDT	BIT(6)	/* Serial Port RTS# Pin Data */
-+#define SCSPTR_CTSIO	BIT(5)	/* Serial Port CTS# Pin Input/Output */
-+#define SCSPTR_CTSDT	BIT(4)	/* Serial Port CTS# Pin Data */
-+#define SCSPTR_SCKIO	BIT(3)	/* Serial Port Clock Pin Input/Output */
-+#define SCSPTR_SCKDT	BIT(2)	/* Serial Port Clock Pin Data */
- #define SCSPTR_SPB2IO	BIT(1)	/* Serial Port Break Input/Output */
- #define SCSPTR_SPB2DT	BIT(0)	/* Serial Port Break Data */
- 
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+> v3:
+>   - New.
+> ---
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> b/drivers/clk/renesas/r8a7795-cpg-mssr.c index
+> e53aff5b23ad4967..e1f2359a59feee7e 100644
+> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/device.h>
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+> +#include <linux/soc/renesas/rcar-rst.h>
+> 
+>  #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
+> 
+> @@ -294,7 +295,12 @@ static const struct rcar_gen3_cpg_pll_config
+> cpg_pll_configs[16] __initconst = { static int __init
+> r8a7795_cpg_mssr_init(struct device *dev)
+>  {
+>  	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
+> -	u32 cpg_mode = rcar_gen3_read_mode_pins();
+> +	u32 cpg_mode;
+> +	int error;
+> +
+> +	error = rcar_rst_read_mode_pins(&cpg_mode);
+> +	if (error)
+> +		return error;
+> 
+>  	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
+>  	if (!cpg_pll_config->extal_div) {
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
