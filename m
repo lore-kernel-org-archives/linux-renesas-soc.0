@@ -1,70 +1,43 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v3 21/22] clk: renesas: r8a7779: Remove obsolete r8a7779_clocks_init()
-Date: Wed,  1 Jun 2016 21:21:19 +0200
-Message-Id: <1464808880-343-22-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH 12/13] ARM: dts: blanche: initial device tree
+To: Simon Horman <horms@verge.net.au>
+References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+ <1923946.Jvi0TDUXFC@wasted.cogentembedded.com>
+ <20160601012153.GK20527@verge.net.au>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org, magnus.damm@gmail.com,
+	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <149347f1-f636-cd65-6c6d-509f7c3306f0@cogentembedded.com>
+Date: Fri, 3 Jun 2016 00:34:26 +0300
+MIME-Version: 1.0
+In-Reply-To: <20160601012153.GK20527@verge.net.au>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car H1 board code no longer calls r8a7779_clocks_init().
+On 06/01/2016 04:21 AM, Simon Horman wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - New.
----
- drivers/clk/renesas/clk-r8a7779.c | 9 ---------
- include/linux/clk/renesas.h       | 1 -
- 2 files changed, 10 deletions(-)
+>> Add the initial device  tree for the R8A7792 SoC based Blanche board.
+>> The board has 2 debug serial ports: SCIF0 and SCIF3; include support for
+>> them,  so that  the serial console  can  work.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> At this time I do not have access to documentation or hardware for this
+> board. So I am relying on you to test this and make sure it complies
+> with the spec.
 
-diff --git a/drivers/clk/renesas/clk-r8a7779.c b/drivers/clk/renesas/clk-r8a7779.c
-index ca7551bcb1153c3d..27fbfafaf2cd0353 100644
---- a/drivers/clk/renesas/clk-r8a7779.c
-+++ b/drivers/clk/renesas/clk-r8a7779.c
-@@ -89,8 +89,6 @@ static const unsigned int cpg_plla_mult[4] __initconst = { 42, 48, 56, 64 };
-  * Initialization
-  */
- 
--static u32 cpg_mode __initdata;
--
- static struct clk * __init
- r8a7779_cpg_register_clock(struct device_node *np, struct r8a7779_cpg *cpg,
- 			   const struct cpg_clk_config *config,
-@@ -178,10 +176,3 @@ static void __init r8a7779_cpg_clocks_init(struct device_node *np)
- }
- CLK_OF_DECLARE(r8a7779_cpg_clks, "renesas,r8a7779-cpg-clocks",
- 	       r8a7779_cpg_clocks_init);
--
--void __init r8a7779_clocks_init(u32 mode)
--{
--	cpg_mode = mode;
--
--	of_clk_init(NULL);
--}
-diff --git a/include/linux/clk/renesas.h b/include/linux/clk/renesas.h
-index 2b663bba1adcc7c1..9e969941f3f62878 100644
---- a/include/linux/clk/renesas.h
-+++ b/include/linux/clk/renesas.h
-@@ -20,7 +20,6 @@ struct device;
- struct device_node;
- struct generic_pm_domain;
- 
--void r8a7779_clocks_init(u32 mode);
- void rcar_gen2_clocks_init(u32 mode);
- 
- void cpg_mstp_add_clk_domain(struct device_node *np);
--- 
-1.9.1
+    Don't worry, the patches have been tested on the real hardware.
+
+> What you have looks reasonable to me:
+>
+> Acked-by: Simon Horman <horms+renesas@verge.net.au>
+
+    Thank you. :-)
+
+MBR, Sergei
 
