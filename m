@@ -1,77 +1,36 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 18/20] drm/bridge: ptn3460: Rely on the default ->best_encoder() behavior
-Date: Tue,  7 Jun 2016 13:48:13 +0200
-Message-Id: <1465300095-16971-19-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([149.20.54.216]:51741 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752409AbcFBGdx (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 2 Jun 2016 02:33:53 -0400
+Date: Wed, 01 Jun 2016 23:33:47 -0700 (PDT)
+Message-Id: <20160601.233347.1221263727235695028.davem@davemloft.net>
+To: ykaneko0929@gmail.com
+Cc: netdev@vger.kernel.org, sergei.shtylyov@cogentembedded.com,
+	horms@verge.net.au, magnus.damm@gmail.com,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH net-next] ravb: Remove manual pause frame transmit
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1464799265-27431-1-git-send-email-ykaneko0929@gmail.com>
+References: <1464799265-27431-1-git-send-email-ykaneko0929@gmail.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We have a 1:1 relationship between connectors and encoders, and the driver
-is relying on the atomic helpers: we can drop the custom ->best_encoder(),
-and let the core call drm_atomic_helper_best_encoder() for us.
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Date: Thu,  2 Jun 2016 01:41:05 +0900
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/gpu/drm/bridge/nxp-ptn3460.c | 8 --------
- 1 file changed, 8 deletions(-)
+> From: Masaru Nagai <masaru.nagai.vx@renesas.com>
+> 
+> Writing a non-zero value to the manual PAUSE frame register (MPR) starts
+> the transmission of a PAUSE frame.
+> A PAUSE frame is sent in ravb_emac_init(), but it is not expected behavior.
+> 
+> Signed-off-by: Masaru Nagai <masaru.nagai.vx@renesas.com>
+> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-diff --git a/drivers/gpu/drm/bridge/nxp-ptn3460.c b/drivers/gpu/drm/bridge/nxp-ptn3460.c
-index 7ecd59f..93f3dac 100644
---- a/drivers/gpu/drm/bridge/nxp-ptn3460.c
-+++ b/drivers/gpu/drm/bridge/nxp-ptn3460.c
-@@ -235,16 +235,8 @@ out:
- 	return num_modes;
- }
- 
--static struct drm_encoder *ptn3460_best_encoder(struct drm_connector *connector)
--{
--	struct ptn3460_bridge *ptn_bridge = connector_to_ptn3460(connector);
--
--	return ptn_bridge->bridge.encoder;
--}
--
- static const struct drm_connector_helper_funcs ptn3460_connector_helper_funcs = {
- 	.get_modes = ptn3460_get_modes,
--	.best_encoder = ptn3460_best_encoder,
- };
- 
- static enum drm_connector_status ptn3460_detect(struct drm_connector *connector,
--- 
-2.7.4
+Applied, thanks.
