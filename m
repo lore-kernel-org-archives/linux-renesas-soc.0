@@ -1,143 +1,146 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932115AbcF3ORQ (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:17:16 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 20/41] ARM: dts: r8a7792: add clock index macros
-Date: Thu, 30 Jun 2016 16:15:40 +0200
-Message-Id: <de0fae60b35d405d3aa2e9acf5914770cd328338.1467294011.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
-References: <cover.1467294011.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+	m.szyprowski@samsung.com
+Date: Fri, 03 Jun 2016 00:55:50 +0900
+Message-Id: <20160602155550.31018.5799.sendpatchset@little-apple>
+In-Reply-To: <20160602155519.31018.59925.sendpatchset@little-apple>
+References: <20160602155519.31018.59925.sendpatchset@little-apple>
+Subject: [PATCH v3 03/06] iommu/ipmmu-vmsa: Break out utlb parsing code
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Add macros usable by the device tree sources to reference the R8A7792
-clocks  by index.
+Break out the utlb parsing code and dev_data allocation into a
+separate function. This is preparation for future code sharing.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- include/dt-bindings/clock/r8a7792-clock.h | 102 ++++++++++++++++++++++++++++++
- 1 file changed, 102 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a7792-clock.h
 
-diff --git a/include/dt-bindings/clock/r8a7792-clock.h b/include/dt-bindings/clock/r8a7792-clock.h
-new file mode 100644
-index 000000000000..949801eb0652
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a7792-clock.h
-@@ -0,0 +1,102 @@
-+/*
-+ * Copyright (C) 2016 Cogent Embedded, Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
+ Changes since V2:
+ - Included this new patch from the following series:
+   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
+ - Reworked code to fit on top on previous two patches in current series.
+
+ drivers/iommu/ipmmu-vmsa.c |   58 ++++++++++++++++++++++++++++----------------
+ 1 file changed, 38 insertions(+), 20 deletions(-)
+
+--- 0004/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-02 21:23:51.700607110 +0900
+@@ -647,22 +647,16 @@ static int ipmmu_find_utlbs(struct ipmmu
+ 	return 0;
+ }
+ 
+-static int ipmmu_add_device(struct device *dev)
++static int ipmmu_init_platform_device(struct device *dev,
++				      struct iommu_group *group)
+ {
+ 	struct ipmmu_vmsa_archdata *archdata;
+ 	struct ipmmu_vmsa_device *mmu;
+-	struct iommu_group *group = NULL;
+ 	unsigned int *utlbs;
+ 	unsigned int i;
+ 	int num_utlbs;
+ 	int ret = -ENODEV;
+ 
+-	if (dev->archdata.iommu) {
+-		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
+-			 dev_name(dev));
+-		return -EINVAL;
+-	}
+-
+ 	/* Find the master corresponding to the device. */
+ 
+ 	num_utlbs = of_count_phandle_with_args(dev->of_node, "iommus",
+@@ -690,7 +684,7 @@ static int ipmmu_add_device(struct devic
+ 	spin_unlock(&ipmmu_devices_lock);
+ 
+ 	if (ret < 0)
+-		return -ENODEV;
++		goto error;
+ 
+ 	for (i = 0; i < num_utlbs; ++i) {
+ 		if (utlbs[i] >= mmu->num_utlbs) {
+@@ -699,6 +693,36 @@ static int ipmmu_add_device(struct devic
+ 		}
+ 	}
+ 
++	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
++	if (!archdata) {
++		ret = -ENOMEM;
++		goto error;
++	}
 +
-+#ifndef __DT_BINDINGS_CLOCK_R8A7792_H__
-+#define __DT_BINDINGS_CLOCK_R8A7792_H__
++	archdata->mmu = mmu;
++	archdata->utlbs = utlbs;
++	archdata->num_utlbs = num_utlbs;
++	dev->archdata.iommu = archdata;
++	return 0;
 +
-+/* CPG */
-+#define R8A7792_CLK_MAIN		0
-+#define R8A7792_CLK_PLL0		1
-+#define R8A7792_CLK_PLL1		2
-+#define R8A7792_CLK_PLL3		3
-+#define R8A7792_CLK_LB			4
-+#define R8A7792_CLK_QSPI		5
-+#define R8A7792_CLK_Z			6
-+#define R8A7792_CLK_ADSP		7
++error:
++	kfree(utlbs);
++	return ret;
++}
 +
-+/* MSTP0 */
-+#define R8A7792_CLK_MSIOF0		0
++static int ipmmu_add_device(struct device *dev)
++{
++	struct ipmmu_vmsa_archdata *archdata;
++	struct ipmmu_vmsa_device *mmu;
++	struct iommu_group *group;
++	int ret;
 +
-+/* MSTP1 */
-+#define R8A7792_CLK_TMU1		11
-+#define R8A7792_CLK_TMU3		21
-+#define R8A7792_CLK_TMU2		22
-+#define R8A7792_CLK_CMT0		24
-+#define R8A7792_CLK_TMU0		25
-+#define R8A7792_CLK_VSP1DU1		27
-+#define R8A7792_CLK_VSP1DU0		28
-+#define R8A7792_CLK_VSP1_SY		31
++	if (dev->archdata.iommu) {
++		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
++			 dev_name(dev));
++		return -EINVAL;
++	}
 +
-+/* MSTP2 */
-+#define R8A7792_CLK_MSIOF1		8
-+#define R8A7792_CLK_SYS_DMAC1		18
-+#define R8A7792_CLK_SYS_DMAC0		19
-+
-+/* MSTP3 */
-+#define R8A7792_CLK_TPU0		4
-+#define R8A7792_CLK_SDHI0		14
-+#define R8A7792_CLK_CMT1		29
-+
-+/* MSTP4 */
-+#define R8A7792_CLK_IRQC		7
-+
-+/* MSTP5 */
-+#define R8A7792_CLK_AUDIO_DMAC0		2
-+#define R8A7792_CLK_THERMAL		22
-+#define R8A7792_CLK_PWM			23
-+
-+/* MSTP7 */
-+#define R8A7792_CLK_HSCIF1		16
-+#define R8A7792_CLK_HSCIF0		17
-+#define R8A7792_CLK_SCIF3		18
-+#define R8A7792_CLK_SCIF2		19
-+#define R8A7792_CLK_SCIF1		20
-+#define R8A7792_CLK_SCIF0		21
-+#define R8A7792_CLK_DU1			23
-+#define R8A7792_CLK_DU0			24
-+
-+/* MSTP8 */
-+#define R8A7792_CLK_VIN5		4
-+#define R8A7792_CLK_VIN4		5
-+#define R8A7792_CLK_VIN3		8
-+#define R8A7792_CLK_VIN2		9
-+#define R8A7792_CLK_VIN1		10
-+#define R8A7792_CLK_VIN0		11
-+#define R8A7792_CLK_ETHERAVB		12
-+
-+/* MSTP9 */
-+#define R8A7792_CLK_GPIO7		4
-+#define R8A7792_CLK_GPIO6		5
-+#define R8A7792_CLK_GPIO5		7
-+#define R8A7792_CLK_GPIO4		8
-+#define R8A7792_CLK_GPIO3		9
-+#define R8A7792_CLK_GPIO2		10
-+#define R8A7792_CLK_GPIO1		11
-+#define R8A7792_CLK_GPIO0		12
-+#define R8A7792_CLK_GPIO11		13
-+#define R8A7792_CLK_GPIO10		14
-+#define R8A7792_CLK_CAN1		15
-+#define R8A7792_CLK_CAN0		16
-+#define R8A7792_CLK_QSPI_MOD		17
-+#define R8A7792_CLK_GPIO9		19
-+#define R8A7792_CLK_GPIO8		21
-+#define R8A7792_CLK_I2C5		25
-+#define R8A7792_CLK_IICDVFS		26
-+#define R8A7792_CLK_I2C4		27
-+#define R8A7792_CLK_I2C3		28
-+#define R8A7792_CLK_I2C2		29
-+#define R8A7792_CLK_I2C1		30
-+#define R8A7792_CLK_I2C0		31
-+
-+/* MSTP10 */
-+#define R8A7792_CLK_SSI_ALL		5
-+#define R8A7792_CLK_SSI4		11
-+#define R8A7792_CLK_SSI3		12
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7792_H__ */
--- 
-2.7.0.rc3.207.g0ac5344
+ 	/* Create a device group and add the device to it. */
+ 	group = iommu_group_alloc();
+ 	if (IS_ERR(group)) {
+@@ -716,17 +740,12 @@ static int ipmmu_add_device(struct devic
+ 		goto error;
+ 	}
+ 
+-	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
+-	if (!archdata) {
+-		ret = -ENOMEM;
++	ret = ipmmu_init_platform_device(dev, group);
++	if (ret < 0) {
++		dev_err(dev, "Failed to init platform device\n");
+ 		goto error;
+ 	}
+ 
+-	archdata->mmu = mmu;
+-	archdata->utlbs = utlbs;
+-	archdata->num_utlbs = num_utlbs;
+-	dev->archdata.iommu = archdata;
+-
+ 	/*
+ 	 * Create the ARM mapping, used by the ARM DMA mapping core to allocate
+ 	 * VAs. This will allocate a corresponding IOMMU domain.
+@@ -736,6 +755,8 @@ static int ipmmu_add_device(struct devic
+ 	 * - Make the mapping size configurable ? We currently use a 2GB mapping
+ 	 *   at a 1GB offset to ensure that NULL VAs will fault.
+ 	 */
++	archdata = dev->archdata.iommu;
++	mmu = archdata->mmu;
+ 	if (!mmu->mapping) {
+ 		struct dma_iommu_mapping *mapping;
+ 
+@@ -762,9 +783,6 @@ static int ipmmu_add_device(struct devic
+ error:
+ 	arm_iommu_release_mapping(mmu->mapping);
+ 
+-	kfree(dev->archdata.iommu);
+-	kfree(utlbs);
+-
+ 	dev->archdata.iommu = NULL;
+ 
+ 	if (!IS_ERR_OR_NULL(group))
