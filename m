@@ -1,39 +1,142 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <4688920.9Ektl04hDh@wasted.cogentembedded.com>
-References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
-	<4688920.9Ektl04hDh@wasted.cogentembedded.com>
-Date: Wed, 1 Jun 2016 09:48:03 +0200
-Message-ID: <CAMuHMdXTiEQSz9_n7r9Z5jW+FMH1Duu56n5AtaW-WyW46J3Qiw@mail.gmail.com>
-Subject: Re: [PATCH 05/13] DT: clock: rcar-gen2-cpg-clocks: document R8A7792 support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 13/20] drm: tegra: Rely on the default ->best_encoder() behavior
+Date: Thu,  2 Jun 2016 16:31:40 +0200
+Message-Id: <1464877907-27723-14-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 1, 2016 at 12:20 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Renesas R8A7792 SoC is a member of the R-Car gen2 family and so has CPG...
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+All outputs have a 1:1 relationship between connectors and encoders
+and the driver is relying on the atomic helpers: we can drop the custom
+->best_encoder() implementation and let the core call
+drm_atomic_helper_best_encoder() for us.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/gpu/drm/tegra/drm.h    | 2 --
+ drivers/gpu/drm/tegra/dsi.c    | 1 -
+ drivers/gpu/drm/tegra/hdmi.c   | 1 -
+ drivers/gpu/drm/tegra/output.c | 8 --------
+ drivers/gpu/drm/tegra/rgb.c    | 1 -
+ drivers/gpu/drm/tegra/sor.c    | 1 -
+ 6 files changed, 14 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+index f52d6cb2..0ddcce1 100644
+--- a/drivers/gpu/drm/tegra/drm.h
++++ b/drivers/gpu/drm/tegra/drm.h
+@@ -239,8 +239,6 @@ int tegra_output_init(struct drm_device *drm, struct tegra_output *output);
+ void tegra_output_exit(struct tegra_output *output);
+ 
+ int tegra_output_connector_get_modes(struct drm_connector *connector);
+-struct drm_encoder *
+-tegra_output_connector_best_encoder(struct drm_connector *connector);
+ enum drm_connector_status
+ tegra_output_connector_detect(struct drm_connector *connector, bool force);
+ void tegra_output_connector_destroy(struct drm_connector *connector);
+diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+index d1239eb..099cccb 100644
+--- a/drivers/gpu/drm/tegra/dsi.c
++++ b/drivers/gpu/drm/tegra/dsi.c
+@@ -794,7 +794,6 @@ tegra_dsi_connector_mode_valid(struct drm_connector *connector,
+ static const struct drm_connector_helper_funcs tegra_dsi_connector_helper_funcs = {
+ 	.get_modes = tegra_output_connector_get_modes,
+ 	.mode_valid = tegra_dsi_connector_mode_valid,
+-	.best_encoder = tegra_output_connector_best_encoder,
+ };
+ 
+ static const struct drm_encoder_funcs tegra_dsi_encoder_funcs = {
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index b7ef492..2fdb879 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -806,7 +806,6 @@ static const struct drm_connector_helper_funcs
+ tegra_hdmi_connector_helper_funcs = {
+ 	.get_modes = tegra_output_connector_get_modes,
+ 	.mode_valid = tegra_hdmi_connector_mode_valid,
+-	.best_encoder = tegra_output_connector_best_encoder,
+ };
+ 
+ static const struct drm_encoder_funcs tegra_hdmi_encoder_funcs = {
+diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+index 46664b6..1480f6a 100644
+--- a/drivers/gpu/drm/tegra/output.c
++++ b/drivers/gpu/drm/tegra/output.c
+@@ -42,14 +42,6 @@ int tegra_output_connector_get_modes(struct drm_connector *connector)
+ 	return err;
+ }
+ 
+-struct drm_encoder *
+-tegra_output_connector_best_encoder(struct drm_connector *connector)
+-{
+-	struct tegra_output *output = connector_to_output(connector);
+-
+-	return &output->encoder;
+-}
+-
+ enum drm_connector_status
+ tegra_output_connector_detect(struct drm_connector *connector, bool force)
+ {
+diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
+index e246334..a131b44 100644
+--- a/drivers/gpu/drm/tegra/rgb.c
++++ b/drivers/gpu/drm/tegra/rgb.c
+@@ -112,7 +112,6 @@ tegra_rgb_connector_mode_valid(struct drm_connector *connector,
+ static const struct drm_connector_helper_funcs tegra_rgb_connector_helper_funcs = {
+ 	.get_modes = tegra_output_connector_get_modes,
+ 	.mode_valid = tegra_rgb_connector_mode_valid,
+-	.best_encoder = tegra_output_connector_best_encoder,
+ };
+ 
+ static const struct drm_encoder_funcs tegra_rgb_encoder_funcs = {
+diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+index 757c6e8..34958d7 100644
+--- a/drivers/gpu/drm/tegra/sor.c
++++ b/drivers/gpu/drm/tegra/sor.c
+@@ -1087,7 +1087,6 @@ tegra_sor_connector_mode_valid(struct drm_connector *connector,
+ static const struct drm_connector_helper_funcs tegra_sor_connector_helper_funcs = {
+ 	.get_modes = tegra_sor_connector_get_modes,
+ 	.mode_valid = tegra_sor_connector_mode_valid,
+-	.best_encoder = tegra_output_connector_best_encoder,
+ };
+ 
+ static const struct drm_encoder_funcs tegra_sor_encoder_funcs = {
+-- 
+2.7.4
