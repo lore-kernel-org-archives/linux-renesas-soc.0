@@ -1,60 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:45477 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751693AbcFATV1 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 15:21:27 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v3 05/22] ARM: dts: r8a7790: Add device node for RST module
-Date: Wed,  1 Jun 2016 21:21:03 +0200
-Message-Id: <1464808880-343-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+	m.szyprowski@samsung.com
+Date: Fri, 03 Jun 2016 00:56:18 +0900
+Message-Id: <20160602155618.31018.67078.sendpatchset@little-apple>
+In-Reply-To: <20160602155519.31018.59925.sendpatchset@little-apple>
+References: <20160602155519.31018.59925.sendpatchset@little-apple>
+Subject: [PATCH v3 06/06] iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the RST module, which provides a.o. reset control
-and mode pin monitoring.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Neither the ARM page table code enabled by IOMMU_IO_PGTABLE_LPAE
+nor the IPMMU_VMSA driver actually depends on ARM_LPAE, so get
+rid of the dependency.
+
+Tested with ipmmu-vmsa on r8a7794 ALT and a kernel config using:
+ # CONFIG_ARM_LPAE is not set
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-v3:
-  - Use "renesas,<soctype>-rst" instead of "renesas,rst-<soctype>",
-  - Drop "syscon" compatible value,
 
-v2:
-  - Correct unit address,
-  - Drop RFC status and TODO,
-  - Change one-line summary prefix to match current arm-soc practices.
----
- arch/arm/boot/dts/r8a7790.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ Changes since V2:
+ - None
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 9997e7dfabe2250c..0c548e9b180b6c1d 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1481,6 +1481,11 @@
- 		};
- 	};
+ Changes since V1:
+ - Rebased on top of ARCH_RENESAS change
+ - Added Acked-by from Laurent
+
+ drivers/iommu/Kconfig |    1 -
+ 1 file changed, 1 deletion(-)
+
+--- 0001/drivers/iommu/Kconfig
++++ work/drivers/iommu/Kconfig	2016-06-02 22:17:14.950607110 +0900
+@@ -273,7 +273,6 @@ config EXYNOS_IOMMU_DEBUG
  
-+	rst: reset-controller@e6160000 {
-+		compatible = "renesas,r8a7790-rst";
-+		reg = <0 0xe6160000 0 0x0100>;
-+	};
-+
- 	sysc: system-controller@e6180000 {
- 		compatible = "renesas,r8a7790-sysc";
- 		reg = <0 0xe6180000 0 0x0200>;
--- 
-1.9.1
+ config IPMMU_VMSA
+ 	bool "Renesas VMSA-compatible IPMMU"
+-	depends on ARM_LPAE
+ 	depends on ARCH_RENESAS || COMPILE_TEST
+ 	select IOMMU_API
+ 	select IOMMU_IO_PGTABLE_LPAE
