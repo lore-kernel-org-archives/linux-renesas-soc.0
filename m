@@ -1,43 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33477 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757505AbcFAIc1 (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:34908 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932250AbcFCKAO (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 04:32:27 -0400
-Date: Wed, 1 Jun 2016 17:32:26 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [RFC 0/4] ARM: dts: r8a7790: lager: use demuxer for I2C
-Message-ID: <20160601083226.GA4163@verge.net.au>
-References: <1464665528-11398-1-git-send-email-horms+renesas@verge.net.au>
- <CANqRtoTRRNQGk-gy1NrQhXNB0fzvkHDxwJGxyQHTYAgHUXm9ZA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANqRtoTRRNQGk-gy1NrQhXNB0fzvkHDxwJGxyQHTYAgHUXm9ZA@mail.gmail.com>
+	Fri, 3 Jun 2016 06:00:14 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Peter Hurley <peter@hurleysoftware.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 05/11] serial: sh-sci: Do not open-code sci_getreg()
+Date: Fri,  3 Jun 2016 12:00:05 +0200
+Message-Id: <1464948011-377-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
+References: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 01, 2016 at 12:17:29PM +0900, Magnus Damm wrote:
-> Hi Simon,
-> 
-> On Tue, May 31, 2016 at 12:32 PM, Simon Horman
-> <horms+renesas@verge.net.au> wrote:
-> > the intention of this series is to extend use of the demuxer for I2C
-> > on the lager/r8a7790 to cover all I2C IP blocks.
-> >
-> > This is based on work by Wolfram Sang.
-> >
-> > I have not included GPIO in the demux configuration. This is in keeping
-> > with the existing usage for IIC0/I2C0.
-> 
-> Thanks for your efforts! Can you please include GPIO support in next
-> version? This way we should in the future be able to use
-> distro-kernels out of the box that may only have GPIO bitbang support
-> enabled.
+Replace open-coded variants of sci_getreg() by function calls, and drop
+intermediate variables where appropriate.
 
-Sure, will do.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Peter Hurley <peter@hurleysoftware.com>
+---
+v3:
+  - Add Reviewed-by,
+
+v2:
+  - New.
+---
+ drivers/tty/serial/sh-sci.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index bf3780a7f700cad8..ce7bd165929ea078 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -703,7 +703,6 @@ static void sci_poll_put_char(struct uart_port *port, unsigned char c)
+ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
+ {
+ 	struct sci_port *s = to_sci_port(port);
+-	const struct plat_sci_reg *reg = sci_regmap[s->cfg->regtype] + SCSPTR;
+ 
+ 	/*
+ 	 * Use port-specific handler if provided.
+@@ -717,7 +716,7 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
+ 	 * For the generic path SCSPTR is necessary. Bail out if that's
+ 	 * unavailable, too.
+ 	 */
+-	if (!reg->size)
++	if (!sci_getreg(port, SCSPTR)->size)
+ 		return;
+ 
+ 	if ((s->cfg->capabilities & SCIx_HAVE_RTSCTS) &&
+@@ -1866,12 +1865,10 @@ static void sci_enable_ms(struct uart_port *port)
+ 
+ static void sci_break_ctl(struct uart_port *port, int break_state)
+ {
+-	struct sci_port *s = to_sci_port(port);
+-	const struct plat_sci_reg *reg = sci_regmap[s->cfg->regtype] + SCSPTR;
+ 	unsigned short scscr, scsptr;
+ 
+ 	/* check wheter the port has SCSPTR */
+-	if (!reg->size) {
++	if (!sci_getreg(port, SCSPTR)->size) {
+ 		/*
+ 		 * Not supported by hardware. Most parts couple break and rx
+ 		 * interrupts together, with break detection always enabled.
+-- 
+1.9.1
