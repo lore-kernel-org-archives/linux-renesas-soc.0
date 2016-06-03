@@ -1,52 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:35383 "EHLO
-	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751085AbcFFTDM (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:34203 "EHLO
+	mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932975AbcFCVgA (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 6 Jun 2016 15:03:12 -0400
-Received: by mail-lf0-f47.google.com with SMTP id j198so280605lfe.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Jun 2016 12:03:11 -0700 (PDT)
-Subject: Re: [PATCH v2 10/11] ARM: dts: blanche: initial device tree
+	Fri, 3 Jun 2016 17:36:00 -0400
+Received: by mail-lf0-f52.google.com with SMTP id k98so62449718lfi.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Jun 2016 14:35:59 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
 	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
 	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
 	devicetree@vger.kernel.org
-References: <3446154.oZ24315zaL@wasted.cogentembedded.com>
- <13571934.l66Gg7Cpm9@wasted.cogentembedded.com>
 Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
 	linux-arm-kernel@lists.infradead.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <4fe5c4ec-11a0-7e8a-cad1-91c0c30702df@cogentembedded.com>
-Date: Mon, 6 Jun 2016 22:03:07 +0300
+Subject: [PATCH v2 10/11] ARM: dts: blanche: initial device tree
+Date: Sat, 04 Jun 2016 00:35:56 +0300
+Message-ID: <13571934.l66Gg7Cpm9@wasted.cogentembedded.com>
+In-Reply-To: <3446154.oZ24315zaL@wasted.cogentembedded.com>
+References: <3446154.oZ24315zaL@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <13571934.l66Gg7Cpm9@wasted.cogentembedded.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 06/04/2016 12:35 AM, Sergei Shtylyov wrote:
+Add the initial device  tree for the R8A7792 SoC based Blanche board.
+The board has 2 debug serial ports: SCIF0 and SCIF3; include support for
+them,  so that  the serial console  can  work.
 
-> Add the initial device  tree for the R8A7792 SoC based Blanche board.
-> The board has 2 debug serial ports: SCIF0 and SCIF3; include support for
-> them,  so that  the serial console  can  work.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Acked-by: Simon Horman <horms+renesas@verge.net.au>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[...]
-> Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-> ===================================================================
-> --- /dev/null
-> +++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-> @@ -0,0 +1,44 @@
-> +/*
-> + * Device Tree Source for the Blanche board
-> + *
-> + * Copyright (C) 2016 Cogent Embedded, Inc.
+---
+Changes in version 2:
+- added Simon's ACK and Geert's tag too.
 
-    Looks like I need to add the Renesas Electronics copyright here. Pleae 
-hold one merging this patch as well.
+ arch/arm/boot/dts/Makefile            |    1 
+ arch/arm/boot/dts/r8a7792-blanche.dts |   44 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 45 insertions(+)
 
-MBR, Sergei
+Index: renesas/arch/arm/boot/dts/Makefile
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/Makefile
++++ renesas/arch/arm/boot/dts/Makefile
+@@ -638,6 +638,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
+ 	r8a7790-lager.dtb \
+ 	r8a7791-koelsch.dtb \
+ 	r8a7791-porter.dtb \
++	r8a7792-blanche.dtb \
+ 	r8a7793-gose.dtb \
+ 	r8a7794-alt.dtb \
+ 	r8a7794-silk.dtb \
+Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+===================================================================
+--- /dev/null
++++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -0,0 +1,44 @@
++/*
++ * Device Tree Source for the Blanche board
++ *
++ * Copyright (C) 2016 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r8a7792.dtsi"
++
++/ {
++	model = "Blanche";
++	compatible = "renesas,blanche", "renesas,r8a7792";
++
++	aliases {
++		serial0 = &scif0;
++		serial1 = &scif3;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0 0x40000000 0 0x40000000>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <20000000>;
++};
++
++&scif0 {
++	status = "okay";
++};
++
++&scif3 {
++	status = "okay";
++};
