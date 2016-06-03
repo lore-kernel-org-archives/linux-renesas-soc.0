@@ -1,83 +1,46 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 03/20] drm: atmel-hlcdc: Rely on the default ->best_encoder() behavior
-Date: Thu,  2 Jun 2016 16:31:30 +0200
-Message-Id: <1464877907-27723-4-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 2/2] clk: renesas: mstp: document R8A7792 support
+Date: Fri, 03 Jun 2016 23:59:07 +0300
+Message-ID: <6111329.VScVCF4Z1u@wasted.cogentembedded.com>
+In-Reply-To: <2432690.FBaBKRolRm@wasted.cogentembedded.com>
+References: <2432690.FBaBKRolRm@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We have a 1:1 relationship between connectors and encoders and the
-driver is relying on the atomic helpers: we can drop the custom
-->best_encoder() and let the core call drm_atomic_helper_best_encoder()
-for us.
+Renesas R8A7792 SoC also has the CPG MSTP clocks...
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
+
 ---
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c | 12 ------------
- 1 file changed, 12 deletions(-)
+Changes in version 2:
+- added Simon's, Geert's and Rob's ACKs;
+- renamed the patch.
 
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-index 39802c0..473a475 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-@@ -113,21 +113,9 @@ static int atmel_hlcdc_rgb_mode_valid(struct drm_connector *connector,
- 	return atmel_hlcdc_dc_mode_valid(rgb->dc, mode);
- }
- 
--
--
--static struct drm_encoder *
--atmel_hlcdc_rgb_best_encoder(struct drm_connector *connector)
--{
--	struct atmel_hlcdc_rgb_output *rgb =
--			drm_connector_to_atmel_hlcdc_rgb_output(connector);
--
--	return &rgb->encoder;
--}
--
- static const struct drm_connector_helper_funcs atmel_hlcdc_panel_connector_helper_funcs = {
- 	.get_modes = atmel_hlcdc_panel_get_modes,
- 	.mode_valid = atmel_hlcdc_rgb_mode_valid,
--	.best_encoder = atmel_hlcdc_rgb_best_encoder,
- };
- 
- static enum drm_connector_status
--- 
-2.7.4
+ Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt |    1 +
+ 1 file changed, 1 insertion(+)
+
+Index: linux/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
+===================================================================
+--- linux.orig/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
++++ linux/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
+@@ -17,6 +17,7 @@ Required Properties:
+     - "renesas,r8a7779-mstp-clocks" for R8A7779 (R-Car H1) MSTP gate clocks
+     - "renesas,r8a7790-mstp-clocks" for R8A7790 (R-Car H2) MSTP gate clocks
+     - "renesas,r8a7791-mstp-clocks" for R8A7791 (R-Car M2-W) MSTP gate clocks
++    - "renesas,r8a7792-mstp-clocks" for R8A7792 (R-Car V2H) MSTP gate clocks
+     - "renesas,r8a7793-mstp-clocks" for R8A7793 (R-Car M2-N) MSTP gate clocks
+     - "renesas,r8a7794-mstp-clocks" for R8A7794 (R-Car E2) MSTP gate clocks
+     - "renesas,sh73a0-mstp-clocks" for SH73A0 (SH-MobileAG5) MSTP gate clocks
+
