@@ -1,192 +1,110 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-	m.szyprowski@samsung.com
-Date: Fri, 03 Jun 2016 00:55:40 +0900
-Message-Id: <20160602155540.31018.29838.sendpatchset@little-apple>
-In-Reply-To: <20160602155519.31018.59925.sendpatchset@little-apple>
-References: <20160602155519.31018.59925.sendpatchset@little-apple>
-Subject: [PATCH v3 02/06] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 06/11] ARM: dts: r8a7792: add SYS-DMAC support
+Date: Sat, 04 Jun 2016 00:28:48 +0300
+Message-ID: <6950292.YGuaLkhiYD@wasted.cogentembedded.com>
+In-Reply-To: <3446154.oZ24315zaL@wasted.cogentembedded.com>
+References: <3446154.oZ24315zaL@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Describe SYS-DMAC0/1 in the R8A7792 device tree.
 
-Introduce a bitmap for context handing and convert the
-interrupt routine to handle all registered contexts.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-At this point the number of contexts are still limited.
-
-Also remove the use of the ARM specific mapping variable
-from ipmmu_irq() to allow compile on ARM64.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
+Changes in version 2:
+- resolved reject, indenting the device nodes that are now under the "soc" node;
+- added Simon's ACK and Geert's tag too.
 
- Changes since V2: (Thanks again to Laurent!)
- - Introduce a spinlock together with the bitmap and domain array.
- - Break out code into separate functions for alloc and free.
- - Perform free after (instead of before) configuring hardware registers.
- - Use the spinlock to protect the domain array in the interrupt handler.
+ arch/arm/boot/dts/r8a7792.dtsi |   64 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
- Changes since V1: (Thanks to Laurent for feedback!)
- - Use simple find_first_zero()/set_bit()/clear_bit() for context management.
- - For allocation rely on spinlock held when calling ipmmu_domain_init_context()
- - For test/free use atomic bitops
- - Return IRQ_HANDLED if any of the contexts generated interrupts
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -79,6 +79,70 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		dmac0: dma-controller@e6700000 {
++			compatible = "renesas,dmac-r8a7792",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe6700000 0 0x20000>;
++			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14";
++			clocks = <&mstp2_clks R8A7792_CLK_SYS_DMAC0>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			#dma-cells = <1>;
++			dma-channels = <15>;
++		};
++
++		dmac1: dma-controller@e6720000 {
++			compatible = "renesas,dmac-r8a7792",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe6720000 0 0x20000>;
++			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14";
++			clocks = <&mstp2_clks R8A7792_CLK_SYS_DMAC1>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			#dma-cells = <1>;
++			dma-channels = <15>;
++		};
++
+ 		/* Special CPG clocks */
+ 		cpg_clocks: cpg_clocks@e6150000 {
+ 			compatible = "renesas,r8a7792-cpg-clocks",
 
- drivers/iommu/ipmmu-vmsa.c |   76 ++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 66 insertions(+), 10 deletions(-)
 
---- 0002/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-02 21:10:37.350607110 +0900
-@@ -8,6 +8,7 @@
-  * the Free Software Foundation; version 2 of the License.
-  */
- 
-+#include <linux/bitmap.h>
- #include <linux/delay.h>
- #include <linux/dma-mapping.h>
- #include <linux/err.h>
-@@ -26,12 +27,17 @@
- 
- #include "io-pgtable.h"
- 
-+#define IPMMU_CTX_MAX 1
-+
- struct ipmmu_vmsa_device {
- 	struct device *dev;
- 	void __iomem *base;
- 	struct list_head list;
- 
- 	unsigned int num_utlbs;
-+	spinlock_t lock;			/* Protects ctx and domains[] */
-+	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
-+	struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
- 
- 	struct dma_iommu_mapping *mapping;
- };
-@@ -293,9 +299,29 @@ static struct iommu_gather_ops ipmmu_gat
-  * Domain/Context Management
-  */
- 
-+static int ipmmu_domain_allocate_context(struct ipmmu_vmsa_device *mmu,
-+					 struct ipmmu_vmsa_domain *domain)
-+{
-+	unsigned long flags;
-+	int ret;
-+
-+	spin_lock_irqsave(&mmu->lock, flags);
-+
-+	ret = find_first_zero_bit(mmu->ctx, IPMMU_CTX_MAX);
-+	if (ret != IPMMU_CTX_MAX) {
-+		mmu->domains[ret] = domain;
-+		set_bit(ret, mmu->ctx);
-+	}
-+
-+	spin_unlock_irqrestore(&mmu->lock, flags);
-+
-+	return ret;
-+}
-+
- static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
- {
- 	u64 ttbr;
-+	int ret;
- 
- 	/*
- 	 * Allocate the page table operations.
-@@ -325,10 +351,15 @@ static int ipmmu_domain_init_context(str
- 		return -EINVAL;
- 
- 	/*
--	 * TODO: When adding support for multiple contexts, find an unused
--	 * context.
-+	 * Find an unused context.
- 	 */
--	domain->context_id = 0;
-+	ret = ipmmu_domain_allocate_context(domain->mmu, domain);
-+	if (ret == IPMMU_CTX_MAX) {
-+		free_io_pgtable_ops(domain->iop);
-+		return -EBUSY;
-+	}
-+
-+	domain->context_id = ret;
- 
- 	/* TTBR0 */
- 	ttbr = domain->cfg.arm_lpae_s1_cfg.ttbr[0];
-@@ -370,6 +401,19 @@ static int ipmmu_domain_init_context(str
- 	return 0;
- }
- 
-+static void ipmmu_domain_free_context(struct ipmmu_vmsa_device *mmu,
-+				      unsigned int context_id)
-+{
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&mmu->lock, flags);
-+
-+	clear_bit(context_id, mmu->ctx);
-+	mmu->domains[context_id] = NULL;
-+
-+	spin_unlock_irqrestore(&mmu->lock, flags);
-+}
-+
- static void ipmmu_domain_destroy_context(struct ipmmu_vmsa_domain *domain)
- {
- 	/*
-@@ -380,6 +424,7 @@ static void ipmmu_domain_destroy_context
- 	 */
- 	ipmmu_ctx_write(domain, IMCTR, IMCTR_FLUSH);
- 	ipmmu_tlb_sync(domain);
-+	ipmmu_domain_free_context(domain->mmu, domain->context_id);
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -437,16 +482,25 @@ static irqreturn_t ipmmu_domain_irq(stru
- static irqreturn_t ipmmu_irq(int irq, void *dev)
- {
- 	struct ipmmu_vmsa_device *mmu = dev;
--	struct iommu_domain *io_domain;
--	struct ipmmu_vmsa_domain *domain;
-+	irqreturn_t status = IRQ_NONE;
-+	unsigned int i;
-+	unsigned long flags;
- 
--	if (!mmu->mapping)
--		return IRQ_NONE;
-+	spin_lock_irqsave(&mmu->lock, flags);
-+
-+	/*
-+	 * Check interrupts for all active contexts.
-+	 */
-+	for (i = 0; i < IPMMU_CTX_MAX; i++) {
-+		if (!mmu->domains[i])
-+			continue;
-+		if (ipmmu_domain_irq(mmu->domains[i]) == IRQ_HANDLED)
-+			status = IRQ_HANDLED;
-+	}
- 
--	io_domain = mmu->mapping->domain;
--	domain = to_vmsa_domain(io_domain);
-+	spin_unlock_irqrestore(&mmu->lock, flags);
- 
--	return ipmmu_domain_irq(domain);
-+	return status;
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -774,6 +828,8 @@ static int ipmmu_probe(struct platform_d
- 
- 	mmu->dev = &pdev->dev;
- 	mmu->num_utlbs = 32;
-+	spin_lock_init(&mmu->lock);
-+	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
- 
- 	/* Map I/O memory and request IRQ. */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
