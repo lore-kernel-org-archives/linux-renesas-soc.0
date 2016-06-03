@@ -1,37 +1,62 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>
-Date: Tue, 07 Jun 2016 12:39:27 +0900
-Message-Id: <20160607033927.28687.67122.sendpatchset@little-apple>
-In-Reply-To: <20160607033918.28687.98260.sendpatchset@little-apple>
-References: <20160607033918.28687.98260.sendpatchset@little-apple>
-Subject: [PATCH 1/3] iommu/ipmmu-vmsa: Add r8a7796 DT binding
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 02/11] ARM: shmobile: r8a7792: add power domain index macros
+Date: Sat, 04 Jun 2016 00:16:32 +0300
+Message-ID: <22897661.eL6I1cBFiy@wasted.cogentembedded.com>
+In-Reply-To: <3446154.oZ24315zaL@wasted.cogentembedded.com>
+References: <3446154.oZ24315zaL@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Add macros usable by the device tree sources to reference R8A7792 SYSC power
+domains by index.
 
-Update the IPMMU DT binding documentation to include the r8a7796 compat
-string for R-Car M3-W.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
+Changes in version 2:
+- added Geert's tag.
 
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |    1 +
- 1 file changed, 1 insertion(+)
+ include/dt-bindings/power/r8a7792-sysc.h |   26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
---- 0001/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-+++ work/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt	2016-06-06 11:27:37.560607110 +0900
-@@ -16,6 +16,7 @@ Required Properties:
-     - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
-     - "renesas,ipmmu-r8a7794" for the R8A7794 (R-Car E2) IPMMU.
-     - "renesas,ipmmu-r8a7795" for the R8A7795 (R-Car H3) IPMMU.
-+    - "renesas,ipmmu-r8a7796" for the R8A7796 (R-Car M3-W) IPMMU.
-     - "renesas,ipmmu-vmsa" for generic R-Car Gen2 VMSA-compatible IPMMU.
- 
-   - reg: Base address and size of the IPMMU registers.
+Index: renesas/include/dt-bindings/power/r8a7792-sysc.h
+===================================================================
+--- /dev/null
++++ renesas/include/dt-bindings/power/r8a7792-sysc.h
+@@ -0,0 +1,26 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
++#ifndef __DT_BINDINGS_POWER_R8A7792_SYSC_H__
++#define __DT_BINDINGS_POWER_R8A7792_SYSC_H__
++
++/*
++ * These power domain indices match the numbers of the interrupt bits
++ * representing the power areas in the various Interrupt Registers
++ * (e.g. SYSCISR, Interrupt Status Register)
++ */
++
++#define R8A7792_PD_CA15_CPU0		0
++#define R8A7792_PD_CA15_CPU1		1
++#define R8A7792_PD_CA15_SCU		12
++#define R8A7792_PD_SGX			20
++#define R8A7792_PD_IMP			24
++
++/* Always-on power area */
++#define R8A7792_PD_ALWAYS_ON		32
++
++#endif /* __DT_BINDINGS_POWER_R8A7792_SYSC_H__ */
+
