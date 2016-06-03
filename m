@@ -1,72 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752073AbcFHBAR (ORCPT
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:34459 "EHLO
+	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751678AbcFCVX0 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 21:00:17 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/30] ARM: dts: r8a7790: Correct unit names for cpu nodes
-Date: Wed,  8 Jun 2016 09:59:34 +0900
-Message-Id: <1eed15e411527e058ca6c4b4f5b691aacb608a5e.1465346599.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1465346599.git.horms+renesas@verge.net.au>
-References: <cover.1465346599.git.horms+renesas@verge.net.au>
+	Fri, 3 Jun 2016 17:23:26 -0400
+Received: by mail-lf0-f47.google.com with SMTP id k98so62302790lfi.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Jun 2016 14:23:25 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	magnus.damm@gmail.com
+Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 04/11] ARM: shmobile: r8a7792: basic SoC support
+Date: Sat, 04 Jun 2016 00:23:22 +0300
+Message-ID: <2184018.VuMqgqkuBr@wasted.cogentembedded.com>
+In-Reply-To: <3446154.oZ24315zaL@wasted.cogentembedded.com>
+References: <3446154.oZ24315zaL@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Add minimal support for the R-Car V2H (R8A7792) SoC.
 
-Make the unit names for the cpu nodes match their reg properties.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Changes in version 2:
+- removed 'select I2C';
+- added Simon's ACK and Geert's tag too.
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 83cf23cd26bb..3b9e98be2f7b 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -92,7 +92,7 @@
- 			next-level-cache = <&L2_CA15>;
- 		};
+ arch/arm/mach-shmobile/Kconfig         |    4 +++
+ arch/arm/mach-shmobile/Makefile        |    1 
+ arch/arm/mach-shmobile/setup-r8a7792.c |   34 +++++++++++++++++++++++++++++++++
+ 3 files changed, 39 insertions(+)
+
+Index: renesas/arch/arm/mach-shmobile/Kconfig
+===================================================================
+--- renesas.orig/arch/arm/mach-shmobile/Kconfig
++++ renesas/arch/arm/mach-shmobile/Kconfig
+@@ -86,6 +86,10 @@ config ARCH_R8A7791
+ 	select ARCH_RCAR_GEN2
+ 	select I2C
  
--		cpu4: cpu@4 {
-+		cpu4: cpu@100 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a7";
- 			reg = <0x100>;
-@@ -101,7 +101,7 @@
- 			next-level-cache = <&L2_CA7>;
- 		};
- 
--		cpu5: cpu@5 {
-+		cpu5: cpu@101 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a7";
- 			reg = <0x101>;
-@@ -110,7 +110,7 @@
- 			next-level-cache = <&L2_CA7>;
- 		};
- 
--		cpu6: cpu@6 {
-+		cpu6: cpu@102 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a7";
- 			reg = <0x102>;
-@@ -119,7 +119,7 @@
- 			next-level-cache = <&L2_CA7>;
- 		};
- 
--		cpu7: cpu@7 {
-+		cpu7: cpu@103 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a7";
- 			reg = <0x103>;
--- 
-2.1.4
++config ARCH_R8A7792
++	bool "R-Car V2H (R8A77920)"
++	select ARCH_RCAR_GEN2
++
+ config ARCH_R8A7793
+ 	bool "R-Car M2-N (R8A7793)"
+ 	select ARCH_RCAR_GEN2
+Index: renesas/arch/arm/mach-shmobile/Makefile
+===================================================================
+--- renesas.orig/arch/arm/mach-shmobile/Makefile
++++ renesas/arch/arm/mach-shmobile/Makefile
+@@ -13,6 +13,7 @@ obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7
+ obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
+ obj-$(CONFIG_ARCH_R8A7790)	+= setup-r8a7790.o
+ obj-$(CONFIG_ARCH_R8A7791)	+= setup-r8a7791.o
++obj-$(CONFIG_ARCH_R8A7792)	+= setup-r8a7792.o
+ obj-$(CONFIG_ARCH_R8A7793)	+= setup-r8a7793.o
+ obj-$(CONFIG_ARCH_R8A7794)	+= setup-r8a7794.o
+ obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
+Index: renesas/arch/arm/mach-shmobile/setup-r8a7792.c
+===================================================================
+--- /dev/null
++++ renesas/arch/arm/mach-shmobile/setup-r8a7792.c
+@@ -0,0 +1,34 @@
++/*
++ * r8a7792 processor support
++ *
++ * Copyright (C) 2014  Renesas Electronics Corporation
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/of_platform.h>
++
++#include <asm/mach/arch.h>
++
++#include "common.h"
++#include "rcar-gen2.h"
++
++static const char * const r8a7792_boards_compat_dt[] __initconst = {
++	"renesas,r8a7792",
++	NULL,
++};
++
++DT_MACHINE_START(R8A7792_DT, "Generic R8A7792 (Flattened Device Tree)")
++	.init_early	= shmobile_init_delay,
++	.init_late	= shmobile_init_late,
++	.init_time	= rcar_gen2_timer_init,
++	.reserve	= rcar_gen2_reserve,
++	.dt_compat	= r8a7792_boards_compat_dt,
++MACHINE_END
