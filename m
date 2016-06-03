@@ -1,78 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:49369 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752049AbcFFQIh (ORCPT
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:33507 "EHLO
+	mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751175AbcFCBtY (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 6 Jun 2016 12:08:37 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] pinctrl: sh-pfc: r8a7795: add support for voltage switching
-Date: Mon,  6 Jun 2016 18:08:26 +0200
-Message-Id: <1465229307-1961-3-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
-References: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
+	Thu, 2 Jun 2016 21:49:24 -0400
+Date: Thu, 2 Jun 2016 20:49:22 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 05/13] DT: clock: rcar-gen2-cpg-clocks: document R8A7792
+ support
+Message-ID: <20160603014922.GA16194@rob-hp-laptop>
+References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+ <4688920.9Ektl04hDh@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4688920.9Ektl04hDh@wasted.cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Wed, Jun 01, 2016 at 01:20:11AM +0300, Sergei Shtylyov wrote:
+> Renesas R8A7792 SoC is a member of the R-Car gen2 family and so has CPG...
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+>  Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt |    1 +
+>  1 file changed, 1 insertion(+)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 44632b1a5c978c..33be5d56e3162a 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -17,8 +17,12 @@
- 	PORT_GP_CFG_16(0, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
- 	PORT_GP_CFG_28(1, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
- 	PORT_GP_CFG_15(2, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
--	PORT_GP_CFG_16(3, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
--	PORT_GP_CFG_18(4, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_12(3, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_IO_VOLTAGE),	\
-+	PORT_GP_CFG_1(3, 12, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_1(3, 13, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_1(3, 14, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_1(3, 15, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
-+	PORT_GP_CFG_18(4, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_IO_VOLTAGE),	\
- 	PORT_GP_CFG_26(5, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
- 	PORT_GP_CFG_32(6, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
- 	PORT_GP_CFG_4(7, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH)
-@@ -4765,8 +4769,28 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
- 	{ },
- };
- 
-+static int r8a7795_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *pocctrl)
-+{
-+	int bit = -EINVAL;
-+
-+	*pocctrl = 0xe6060380;
-+
-+	if (pin >= RCAR_GP_PIN(3, 0) && pin <= RCAR_GP_PIN(3, 11))
-+		bit = pin & 0x1f;
-+
-+	if (pin >= RCAR_GP_PIN(4, 0) && pin <= RCAR_GP_PIN(4, 17))
-+		bit = (pin & 0x1f) + 12;
-+
-+	return bit;
-+}
-+
-+static const struct sh_pfc_soc_operations r8a7795_pinmux_ops = {
-+	.pin_to_pocctrl = r8a7795_pin_to_pocctrl,
-+};
-+
- const struct sh_pfc_soc_info r8a7795_pinmux_info = {
- 	.name = "r8a77950_pfc",
-+	.ops = &r8a7795_pinmux_ops,
- 	.unlock_reg = 0xe6060000, /* PMMR */
- 
- 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
--- 
-2.8.1
+Acked-by: Rob Herring <robh@kernel.org>
