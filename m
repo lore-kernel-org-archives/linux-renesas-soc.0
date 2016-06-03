@@ -1,64 +1,63 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-	m.szyprowski@samsung.com
-Date: Fri, 03 Jun 2016 00:55:59 +0900
-Message-Id: <20160602155559.31018.23972.sendpatchset@little-apple>
-In-Reply-To: <20160602155519.31018.59925.sendpatchset@little-apple>
-References: <20160602155519.31018.59925.sendpatchset@little-apple>
-Subject: [PATCH v3 04/06] iommu/ipmmu-vmsa: Break out domain allocation code
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:34295 "EHLO
+	mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932593AbcFCVbq (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 3 Jun 2016 17:31:46 -0400
+Received: by mail-lf0-f46.google.com with SMTP id k98so62401005lfi.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Jun 2016 14:31:45 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 08/11] ARM: dts: r8a7792: add IRQC support
+Date: Sat, 04 Jun 2016 00:31:42 +0300
+Message-ID: <2351198.0dCaheG0XQ@wasted.cogentembedded.com>
+In-Reply-To: <3446154.oZ24315zaL@wasted.cogentembedded.com>
+References: <3446154.oZ24315zaL@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Describe the IRQC interrupt controller in the R8A7792 device tree.
 
-Break out the domain allocation code into a separate function.
-This is preparation for future code sharing.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
+Changes in version 2:
+- resolved reject, indenting the IRQC node that is now under the "soc" node;
+- added Geert's tag.
 
- Changes since V2:
- - Included this new patch as-is from the following series:
-   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
+ arch/arm/boot/dts/r8a7792.dtsi |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
- drivers/iommu/ipmmu-vmsa.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
---- 0005/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-02 20:58:41.820607110 +0900
-@@ -506,13 +506,10 @@ static irqreturn_t ipmmu_irq(int irq, vo
-  * IOMMU Operations
-  */
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -61,6 +61,19 @@
+ 				      IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
  
--static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
-+static struct iommu_domain *__ipmmu_domain_alloc(unsigned type)
- {
- 	struct ipmmu_vmsa_domain *domain;
- 
--	if (type != IOMMU_DOMAIN_UNMANAGED)
--		return NULL;
--
- 	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
- 	if (!domain)
- 		return NULL;
-@@ -522,6 +519,14 @@ static struct iommu_domain *ipmmu_domain
- 	return &domain->io_domain;
- }
- 
-+static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
-+{
-+	if (type != IOMMU_DOMAIN_UNMANAGED)
-+		return NULL;
++		irqc: interrupt-controller@e61c0000 {
++			compatible = "renesas,irqc-r8a7792", "renesas,irqc";
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			reg = <0 0xe61c0000 0 0x200>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp4_clks R8A7792_CLK_IRQC>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++		};
 +
-+	return __ipmmu_domain_alloc(type);
-+}
-+
- static void ipmmu_domain_free(struct iommu_domain *io_domain)
- {
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+ 		timer {
+ 			compatible = "arm,armv7-timer";
+ 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
