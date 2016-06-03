@@ -1,36 +1,146 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:34203 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752043AbcF3XLO (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:36407 "EHLO
+	mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932593AbcFCVMK (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 19:11:14 -0400
-Received: by mail-lf0-f49.google.com with SMTP id h129so65942120lfh.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Jun 2016 16:11:13 -0700 (PDT)
+	Fri, 3 Jun 2016 17:12:10 -0400
+Received: by mail-lf0-f54.google.com with SMTP id b73so62050104lfb.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Jun 2016 14:12:08 -0700 (PDT)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
+To: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
 	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/3] Add R8A7792/Blanche PFC support
-Date: Fri, 01 Jul 2016 02:05:15 +0300
-Message-ID: <2144803.0K8qXzjIFq@wasted.cogentembedded.com>
+Subject: [PATCH v2 01/11] ARM: shmobile: r8a7792: add clock index macros
+Date: Sat, 04 Jun 2016 00:12:05 +0300
+Message-ID: <16467757.WJ9YPI9AuE@wasted.cogentembedded.com>
+In-Reply-To: <3446154.oZ24315zaL@wasted.cogentembedded.com>
+References: <3446154.oZ24315zaL@wasted.cogentembedded.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+Add macros usable by the device tree sources to reference the R8A7792
+clocks  by index.
 
-   Here's the set of 3 patches against Simon Horman's 'renesas.git' repo,
-'renesas-devel-20160630-v4.7-rc5' tag. We're adding the R8A7792 PFC node and
-the describe the pins for the SCIFs and SMSC LAN89218 Ethernet chip found on
-the Blanche board). These patches depend on the R8A7792 PFC driver patchset
-in order to work properly.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-[1/3] ARM: dts: r8a7792: add PFC support
-[2/3] ARM: dts: blanche: add SCIF pins
-[3/3] ARM: dts: blanche: add Ethernet pins
+---
+Changes in version 2:
+- removed the SDH, SD0, and SD1 clocks;
+- added RCAN and ADSP clock indeces;
+- fixed SYS-DMAC0/1 clock indeces.
 
-WBR, Sergei
+ include/dt-bindings/clock/r8a7792-clock.h |  103 ++++++++++++++++++++++++++++++
+ 1 file changed, 103 insertions(+)
+
+Index: renesas/include/dt-bindings/clock/r8a7792-clock.h
+===================================================================
+--- /dev/null
++++ renesas/include/dt-bindings/clock/r8a7792-clock.h
+@@ -0,0 +1,103 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_R8A7792_H__
++#define __DT_BINDINGS_CLOCK_R8A7792_H__
++
++/* CPG */
++#define R8A7792_CLK_MAIN		0
++#define R8A7792_CLK_PLL0		1
++#define R8A7792_CLK_PLL1		2
++#define R8A7792_CLK_PLL3		3
++#define R8A7792_CLK_LB			4
++#define R8A7792_CLK_QSPI		5
++#define R8A7792_CLK_Z			6
++#define R8A7792_CLK_RCAN		7
++#define R8A7792_CLK_ADSP		8
++
++/* MSTP0 */
++#define R8A7792_CLK_MSIOF0		0
++
++/* MSTP1 */
++#define R8A7792_CLK_TMU1		11
++#define R8A7792_CLK_TMU3		21
++#define R8A7792_CLK_TMU2		22
++#define R8A7792_CLK_CMT0		24
++#define R8A7792_CLK_TMU0		25
++#define R8A7792_CLK_VSP1DU1		27
++#define R8A7792_CLK_VSP1DU0		28
++#define R8A7792_CLK_VSP1_SY		31
++
++/* MSTP2 */
++#define R8A7792_CLK_MSIOF1		8
++#define R8A7792_CLK_SYS_DMAC1		18
++#define R8A7792_CLK_SYS_DMAC0		19
++
++/* MSTP3 */
++#define R8A7792_CLK_TPU0		4
++#define R8A7792_CLK_SDHI0		14
++#define R8A7792_CLK_CMT1		29
++
++/* MSTP4 */
++#define R8A7792_CLK_IRQC		7
++
++/* MSTP5 */
++#define R8A7792_CLK_AUDIO_DMAC0		2
++#define R8A7792_CLK_THERMAL		22
++#define R8A7792_CLK_PWM			23
++
++/* MSTP7 */
++#define R8A7792_CLK_HSCIF1		16
++#define R8A7792_CLK_HSCIF0		17
++#define R8A7792_CLK_SCIF3		18
++#define R8A7792_CLK_SCIF2		19
++#define R8A7792_CLK_SCIF1		20
++#define R8A7792_CLK_SCIF0		21
++#define R8A7792_CLK_DU1			23
++#define R8A7792_CLK_DU0			24
++
++/* MSTP8 */
++#define R8A7792_CLK_VIN5		4
++#define R8A7792_CLK_VIN4		5
++#define R8A7792_CLK_VIN3		8
++#define R8A7792_CLK_VIN2		9
++#define R8A7792_CLK_VIN1		10
++#define R8A7792_CLK_VIN0		11
++#define R8A7792_CLK_ETHERAVB		12
++
++/* MSTP9 */
++#define R8A7792_CLK_GPIO7		4
++#define R8A7792_CLK_GPIO6		5
++#define R8A7792_CLK_GPIO5		7
++#define R8A7792_CLK_GPIO4		8
++#define R8A7792_CLK_GPIO3		9
++#define R8A7792_CLK_GPIO2		10
++#define R8A7792_CLK_GPIO1		11
++#define R8A7792_CLK_GPIO0		12
++#define R8A7792_CLK_GPIO11		13
++#define R8A7792_CLK_GPIO10		14
++#define R8A7792_CLK_CAN1		15
++#define R8A7792_CLK_CAN0		16
++#define R8A7792_CLK_QSPI_MOD		17
++#define R8A7792_CLK_GPIO9		19
++#define R8A7792_CLK_GPIO8		21
++#define R8A7792_CLK_I2C5		25
++#define R8A7792_CLK_IICDVFS		26
++#define R8A7792_CLK_I2C4		27
++#define R8A7792_CLK_I2C3		28
++#define R8A7792_CLK_I2C2		29
++#define R8A7792_CLK_I2C1		30
++#define R8A7792_CLK_I2C0		31
++
++/* MSTP10 */
++#define R8A7792_CLK_SSI_ALL		5
++#define R8A7792_CLK_SSI4		11
++#define R8A7792_CLK_SSI3		12
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7792_H__ */
