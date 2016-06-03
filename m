@@ -1,79 +1,70 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 19/20] drm/bridge: ps8622: Rely on the default ->best_encoder() behavior
-Date: Thu,  2 Jun 2016 16:31:46 +0200
-Message-Id: <1464877907-27723-20-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from michel.telenet-ops.be ([195.130.137.88]:54145 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932348AbcFCKAO (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 3 Jun 2016 06:00:14 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Peter Hurley <peter@hurleysoftware.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 09/11] serial: sh-sci: Add pin initialization for SCIFA/SCIFB
+Date: Fri,  3 Jun 2016 12:00:09 +0200
+Message-Id: <1464948011-377-10-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
+References: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We have a 1:1 relationship between connectors and encoders, and the driver
-is relying on the atomic helpers: we can drop the custom ->best_encoder(),
-and let the core call drm_atomic_helper_best_encoder() for us.
+Before, the driver relied on initialization by the boot loader, or by
+implicit reset state.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Note that unlike on (H)SCIF, the RTS/CTS bits exist only if dedicated
+RTS/CTS pins are available, which depends on the SoC and UART instance.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/bridge/parade-ps8622.c | 10 ----------
- 1 file changed, 10 deletions(-)
+v3:
+  - No changes,
 
-diff --git a/drivers/gpu/drm/bridge/parade-ps8622.c b/drivers/gpu/drm/bridge/parade-ps8622.c
-index be881e9..5cd8dd7 100644
---- a/drivers/gpu/drm/bridge/parade-ps8622.c
-+++ b/drivers/gpu/drm/bridge/parade-ps8622.c
-@@ -474,18 +474,8 @@ static int ps8622_get_modes(struct drm_connector *connector)
- 	return drm_panel_get_modes(ps8622->panel);
- }
+v2:
+  - New.
+---
+ drivers/tty/serial/sh-sci.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index c46999f20917964e..b9d027af0f3e71f6 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -712,7 +712,21 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
+ 		return;
+ 	}
  
--static struct drm_encoder *ps8622_best_encoder(struct drm_connector *connector)
--{
--	struct ps8622_bridge *ps8622;
--
--	ps8622 = connector_to_ps8622(connector);
--
--	return ps8622->bridge.encoder;
--}
--
- static const struct drm_connector_helper_funcs ps8622_connector_helper_funcs = {
- 	.get_modes = ps8622_get_modes,
--	.best_encoder = ps8622_best_encoder,
- };
+-	if (sci_getreg(port, SCSPTR)->size) {
++	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
++		u16 ctrl = serial_port_in(port, SCPCR);
++
++		/* Enable RXD and TXD pin functions */
++		ctrl &= ~(SCPCR_RXDC | SCPCR_TXDC);
++		if (to_sci_port(port)->cfg->capabilities & SCIx_HAVE_RTSCTS) {
++			/* RTS# is output, driven 1 */
++			ctrl |= SCPCR_RTSC;
++			serial_port_out(port, SCPDR,
++				serial_port_in(port, SCPDR) | SCPDR_RTSD);
++			/* Enable CTS# pin function */
++			ctrl &= ~SCPCR_CTSC;
++		}
++		serial_port_out(port, SCPCR, ctrl);
++	} else if (sci_getreg(port, SCSPTR)->size) {
+ 		u16 status = serial_port_in(port, SCSPTR);
  
- static enum drm_connector_status ps8622_detect(struct drm_connector *connector,
+ 		/* RTS# is output, driven 1 */
 -- 
-2.7.4
+1.9.1
