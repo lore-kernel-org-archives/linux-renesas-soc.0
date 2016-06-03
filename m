@@ -1,49 +1,46 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34380 "EHLO
-	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751037AbcFAIRF (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 04:17:05 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	sboyd@codeaurora.org, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 1/2] clk: renesas: rcar-gen2: document R8A7792 support
+Date: Fri, 03 Jun 2016 23:58:03 +0300
+Message-ID: <4065352.p9EIad1BPG@wasted.cogentembedded.com>
+In-Reply-To: <2432690.FBaBKRolRm@wasted.cogentembedded.com>
+References: <2432690.FBaBKRolRm@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <1493287.pGnW6U6caN@wasted.cogentembedded.com>
-References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
-	<1493287.pGnW6U6caN@wasted.cogentembedded.com>
-Date: Wed, 1 Jun 2016 10:17:04 +0200
-Message-ID: <CAMuHMdVhAqjMY+sG+=qajrTKuGivWj2Lnm3b8Kfjpe-WyHzC=w@mail.gmail.com>
-Subject: Re: [PATCH 09/13] ARM: dts: r8a7792: add [H]SCIF support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 1, 2016 at 12:26 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Describe [H]SCIFs in the R8A7792 device tree.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Renesas R8A7792 SoC is a member of the R-Car gen2 family and so has CPG...
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
 
-Gr{oetje,eeting}s,
+---
+Changes in version 2:
+- added Simon's, Geert's, and Rob's ACKs;
+- renamed the patch.
 
-                        Geert
+ Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt |    1 +
+ 1 file changed, 1 insertion(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Index: linux/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
+===================================================================
+--- linux.orig/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
++++ linux/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
+@@ -10,6 +10,7 @@ Required Properties:
+   - compatible: Must be one of
+     - "renesas,r8a7790-cpg-clocks" for the r8a7790 CPG
+     - "renesas,r8a7791-cpg-clocks" for the r8a7791 CPG
++    - "renesas,r8a7792-cpg-clocks" for the r8a7792 CPG
+     - "renesas,r8a7793-cpg-clocks" for the r8a7793 CPG
+     - "renesas,r8a7794-cpg-clocks" for the r8a7794 CPG
+     and "renesas,rcar-gen2-cpg-clocks" as a fallback.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
