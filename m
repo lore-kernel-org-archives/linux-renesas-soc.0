@@ -1,62 +1,78 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 02/11] ARM: shmobile: r8a7792: add power domain index macros
-Date: Sat, 04 Jun 2016 00:16:32 +0300
-Message-ID: <22897661.eL6I1cBFiy@wasted.cogentembedded.com>
-In-Reply-To: <3446154.oZ24315zaL@wasted.cogentembedded.com>
-References: <3446154.oZ24315zaL@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Peter Hurley <peter@hurleysoftware.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 08/11] serial: sh-sci: Correct pin initialization on (H)SCIF
+Date: Fri,  3 Jun 2016 12:00:08 +0200
+Message-Id: <1464948011-377-9-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
+References: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by the device tree sources to reference R8A7792 SYSC power
-domains by index.
+Correct pin initialization on (H)SCIF:
+  - RTS must be deasserted (it's active low),
+  - SCK must be an input, as it may be used as the optional external
+    clock input.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Initial pin configuration must always be done:
+  - Regardless of the presence of dedicated RTS and CTS pins: if the
+    register exists, the RTS/CTS bits exist, too,
+  - Regardless of hardware flow control being enabled or not: RTS must
+    be deasserted.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes in version 2:
-- added Geert's tag.
+v3:
+  - No changes,
 
- include/dt-bindings/power/r8a7792-sysc.h |   26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+v2:
+  - New.
+---
+ drivers/tty/serial/sh-sci.c | 23 ++++++++---------------
+ 1 file changed, 8 insertions(+), 15 deletions(-)
 
-Index: renesas/include/dt-bindings/power/r8a7792-sysc.h
-===================================================================
---- /dev/null
-+++ renesas/include/dt-bindings/power/r8a7792-sysc.h
-@@ -0,0 +1,26 @@
-+/*
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7792_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7792_SYSC_H__
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index ce7bd165929ea078..c46999f20917964e 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -712,21 +712,14 @@ static void sci_init_pins(struct uart_port *port, unsigned int cflag)
+ 		return;
+ 	}
+ 
+-	/*
+-	 * For the generic path SCSPTR is necessary. Bail out if that's
+-	 * unavailable, too.
+-	 */
+-	if (!sci_getreg(port, SCSPTR)->size)
+-		return;
+-
+-	if ((s->cfg->capabilities & SCIx_HAVE_RTSCTS) &&
+-	    ((!(cflag & CRTSCTS)))) {
+-		unsigned short status;
+-
+-		status = serial_port_in(port, SCSPTR);
+-		status &= ~SCSPTR_CTSIO;
+-		status |= SCSPTR_RTSIO;
+-		serial_port_out(port, SCSPTR, status); /* Set RTS = 1 */
++	if (sci_getreg(port, SCSPTR)->size) {
++		u16 status = serial_port_in(port, SCSPTR);
 +
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A7792_PD_CA15_CPU0		0
-+#define R8A7792_PD_CA15_CPU1		1
-+#define R8A7792_PD_CA15_SCU		12
-+#define R8A7792_PD_SGX			20
-+#define R8A7792_PD_IMP			24
-+
-+/* Always-on power area */
-+#define R8A7792_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7792_SYSC_H__ */
-
++		/* RTS# is output, driven 1 */
++		status |= SCSPTR_RTSIO | SCSPTR_RTSDT;
++		/* CTS# and SCK are inputs */
++		status &= ~(SCSPTR_CTSIO | SCSPTR_SCKIO);
++		serial_port_out(port, SCSPTR, status);
+ 	}
+ }
+ 
+-- 
+1.9.1
