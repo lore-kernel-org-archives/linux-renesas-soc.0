@@ -1,88 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752069AbcF3ORc (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:17:32 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 37/41] devicetree: bindings: Renesas APMU and SMP Enable method
-Date: Thu, 30 Jun 2016 16:15:57 +0200
-Message-Id: <e454b359b7a0a6f59e3d83394e6d4e598554cb33.1467294011.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
-References: <cover.1467294011.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Peter Hurley <peter@hurleysoftware.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 07/11] serial: sh-sci: Add more Serial Port Control/Data Register documentation
+Date: Fri,  3 Jun 2016 12:00:07 +0200
+Message-Id: <1464948011-377-8-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
+References: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Improve documentation for the SCIFA/SCIFB Serial Port Control and Data
+Registers:
+  - State clearly that the RTS and CTS lines are active-low,
+  - Document the bits related to the serial port's SCK, RXD, and TXD
+    pins.
 
-Add DT binding documentation for the APMU hardware and add "renesas,apmu"
-to the list of enable methods for the ARM cpus.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Peter Hurley <peter@hurleysoftware.com>
 ---
- Documentation/devicetree/bindings/arm/cpus.txt     |  1 +
- .../devicetree/bindings/power/renesas,apmu.txt     | 31 ++++++++++++++++++++++
- 2 files changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/renesas,apmu.txt
+v3:
+  - Add Reviewed-by,
 
-diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
-index 3f0cbbb8395f..fa7520eb6387 100644
---- a/Documentation/devicetree/bindings/arm/cpus.txt
-+++ b/Documentation/devicetree/bindings/arm/cpus.txt
-@@ -204,6 +204,7 @@ nodes to be present and contain the properties described below.
- 			    "qcom,gcc-msm8660"
- 			    "qcom,kpss-acc-v1"
- 			    "qcom,kpss-acc-v2"
-+			    "renesas,apmu"
- 			    "rockchip,rk3036-smp"
- 			    "rockchip,rk3066-smp"
- 			    "ste,dbx500-smp"
-diff --git a/Documentation/devicetree/bindings/power/renesas,apmu.txt b/Documentation/devicetree/bindings/power/renesas,apmu.txt
-new file mode 100644
-index 000000000000..84404c9edff7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/renesas,apmu.txt
-@@ -0,0 +1,31 @@
-+DT bindings for the Renesas Advanced Power Management Unit
-+
-+Renesas R-Car line of SoCs utilize one or more APMU hardware units
-+for CPU core power domain control including SMP boot and CPU Hotplug.
-+
-+Required properties:
-+
-+- compatible: Should be "renesas,<soctype>-apmu", "renesas,apmu" as fallback.
-+	      Examples with soctypes are:
-+		- "renesas,r8a7790-apmu" (R-Car H2)
-+		- "renesas,r8a7791-apmu" (R-Car M2-W)
-+		- "renesas,r8a7792-apmu" (R-Car V2H)
-+		- "renesas,r8a7793-apmu" (R-Car M2-N)
-+		- "renesas,r8a7794-apmu" (R-Car E2)
-+
-+- reg: Base address and length of the I/O registers used by the APMU.
-+
-+- cpus: This node contains a list of CPU cores, which should match the order
-+  of CPU cores used by the WUPCR and PSTR registers in the Advanced Power
-+  Management Unit section of the device's datasheet.
-+
-+
-+Example:
-+
-+This shows the r8a7791 APMU that can control CPU0 and CPU1.
-+
-+	apmu@e6152000 {
-+		compatible = "renesas,r8a7791-apmu", "renesas,apmu";
-+		reg = <0 0xe6152000 0 0x188>;
-+		cpus = <&cpu0 &cpu1>;
-+	};
+v2:
+  - New.
+---
+ drivers/tty/serial/sh-sci.h | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
+index 85a2b81ba0a845e5..e7d2bc692a581e9e 100644
+--- a/drivers/tty/serial/sh-sci.h
++++ b/drivers/tty/serial/sh-sci.h
+@@ -121,12 +121,18 @@ enum {
+ #define HSCIF_SRE	BIT(15)	/* Sampling Rate Register Enable */
+ 
+ /* SCPCR (Serial Port Control Register), SCIFA/SCIFB only */
+-#define SCPCR_RTSC	BIT(4)	/* Serial Port RTS Pin / Output Pin */
+-#define SCPCR_CTSC	BIT(3)	/* Serial Port CTS Pin / Input Pin */
++#define SCPCR_RTSC	BIT(4)	/* Serial Port RTS# Pin / Output Pin */
++#define SCPCR_CTSC	BIT(3)	/* Serial Port CTS# Pin / Input Pin */
++#define SCPCR_SCKC	BIT(2)	/* Serial Port SCK Pin / Output Pin */
++#define SCPCR_RXDC	BIT(1)	/* Serial Port RXD Pin / Input Pin */
++#define SCPCR_TXDC	BIT(0)	/* Serial Port TXD Pin / Output Pin */
+ 
+ /* SCPDR (Serial Port Data Register), SCIFA/SCIFB only */
+-#define SCPDR_RTSD	BIT(4)	/* Serial Port RTS Output Pin Data */
+-#define SCPDR_CTSD	BIT(3)	/* Serial Port CTS Input Pin Data */
++#define SCPDR_RTSD	BIT(4)	/* Serial Port RTS# Output Pin Data */
++#define SCPDR_CTSD	BIT(3)	/* Serial Port CTS# Input Pin Data */
++#define SCPDR_SCKD	BIT(2)	/* Serial Port SCK Output Pin Data */
++#define SCPDR_RXDD	BIT(1)	/* Serial Port RXD Input Pin Data */
++#define SCPDR_TXDD	BIT(0)	/* Serial Port TXD Output Pin Data */
+ 
+ /*
+  * BRG Clock Select Register (Some SCIF and HSCIF)
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
