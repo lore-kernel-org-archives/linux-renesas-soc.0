@@ -1,11 +1,15 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36799 "EHLO
+	mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932133AbcFCJEF (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 3 Jun 2016 05:04:05 -0400
 MIME-Version: 1.0
 In-Reply-To: <20160602155519.31018.59925.sendpatchset@little-apple>
 References: <20160602155519.31018.59925.sendpatchset@little-apple>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Jun 2016 23:00:16 +0200
-Message-ID: <CAMuHMdUjgqp3NkFC8RSOTvnsREB_b=Cj=DgYyBy--63JO=rzxg@mail.gmail.com>
+Date: Fri, 3 Jun 2016 11:04:03 +0200
+Message-ID: <CAMuHMdWO4VVXPJTSyzukHeJNdm_JNsdDmRqjCBcTuB3bYb=XJA@mail.gmail.com>
 Subject: Re: [PATCH v3 00/06] iommu/ipmmu-vmsa: IPMMU multi-arch update V3
 To: Magnus Damm <magnus.damm@gmail.com>
 Cc: iommu@lists.linux-foundation.org,
@@ -18,7 +22,7 @@ Cc: iommu@lists.linux-foundation.org,
 	Robin Murphy <robin.murphy@arm.com>,
 	Marek Szyprowski <m.szyprowski@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Magnus,
@@ -45,18 +49,25 @@ On Thu, Jun 2, 2016 at 5:55 PM, Magnus Damm <magnus.damm@gmail.com> wrote:
 > to avoid breakage. Once CONFIG_IOMMU_DMA can be used it may be good time
 > to revisit the init ordering for the 32-bit SoCs. There is room for
 > improvement for sure like Robin Murphy kindly pointed out.
+>
+> Changes since V2:
+>  - Got rid of patch 3 from the V2 however patch 1, 2 and 4 are kept.
+>  - V3 patch 3, 4 and 5 come from
+>    [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
+>  - Patch 5 has been reworked to include patch 3 of the V1 of this series
+>
+> Changes since V1:
+>  - Got rid of patch 2 and 3 from initial series
+>  - Updated bitmap code locking and also used lighter bitop functions
+>  - Updated the Kconfig bits to apply on top of ARCH_RENESAS
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-When IPMMU_VMSA is enabled on 32-bit ARM, the system crashes during boot.
-I saw this first on r8a73a4/ape6evm, where my local config had it enabled.
-After enabling IOMMU support and IPMMU_VMSA in my config for r8a7791/koelsch,
-koelsch crashes during boot, too, although the failure mode is different.
+Thanks for your series!
 
-Unfortunately I've lost all collected crash logs in a power failure due to the
-bad weather. So you may beat me to reproduce this.
-
-I did verify in time that the crashes do not happen with a similar config on
-renesas-drivers-2016-05-31-v4.7-rc1, which contained the previous version of
-your patch set.
+For your convenience, I've queued it up in topic/ipmmu-multi-arch-v3 at
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git, and
+will include it in next renesas-drivers release.
 
 Gr{oetje,eeting}s,
 
