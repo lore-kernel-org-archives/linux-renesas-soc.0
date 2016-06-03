@@ -1,49 +1,173 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:32938 "EHLO
-	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750835AbcFAIPb (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 04:15:31 -0400
-MIME-Version: 1.0
-In-Reply-To: <5621267.GpvUaW18zI@wasted.cogentembedded.com>
-References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
-	<5621267.GpvUaW18zI@wasted.cogentembedded.com>
-Date: Wed, 1 Jun 2016 10:15:30 +0200
-Message-ID: <CAMuHMdWajU_rM3wS0mSsoW32NNeWVA1gFR4jNq-h=5oEnBrBXA@mail.gmail.com>
-Subject: Re: [PATCH 08/13] ARM: dts: r8a7792: add SYS-DMAC support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 3 Jun 2016 21:01:51 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	<linux-arm-kernel@lists.infradead.org>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	intel-gfx <intel-gfx@lists.freedesktop.org>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Re ding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+	freedreno@lists.freedesktop.org,
+	"open list:DRM DRIVERS FOR RENESAS"
+	<linux-renesas-soc@vger.kernel.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"open list:VIRTIO CORE, NET..."
+	<virtualization@lists.linux-foundation.org>
+Subject: Re: [PATCH 01/20] drm/atomic: Fix remaining places where
+ !funcs->best_encoder is valid
+Message-ID: <20160603190151.GD7231@phenom.ffwll.local>
+References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
+ <8671722.LHaiaBNqfE@avalon>
+ <CAKMK7uHyqNbA8Scw2fE0geAyNt0a0XVtzf81nwWjEhbZ-gAvKw@mail.gmail.com>
+ <20160603093743.000ef95b@bbrezillon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160603093743.000ef95b@bbrezillon>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 1, 2016 at 12:25 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Describe SYS-DMAC0/1 in the R8A7792 device tree.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Fri, Jun 03, 2016 at 09:37:43AM +0200, Boris Brezillon wrote:
+> On Thu, 2 Jun 2016 23:57:02 +0200
+> Daniel Vetter <daniel@ffwll.ch> wrote:
+> 
+> > On Thu, Jun 2, 2016 at 11:05 PM, Laurent Pinchart
+> > <laurent.pinchart@ideasonboard.com> wrote:
+> > > Hi Boris,
+> > >
+> > > Thank you for the patch.
+> > >
+> > > On Thursday 02 Jun 2016 16:31:28 Boris Brezillon wrote:  
+> > >> Adapt drm_pick_crtcs() and update_connector_routing() to fallback to
+> > >> drm_atomic_helper_best_encoder() if funcs->best_encoder() is NULL so
+> > >> that DRM drivers can leave this hook unassigned if they know they want
+> > >> to use drm_atomic_helper_best_encoder().  
+> > >
+> > > Could you please update include/drm/drm_modeset_helper_vtables.h to document
+> > > this new behaviour ?  
+> > 
+> > Thanks for reminding me. Please update hooks for both
+> > atomic_best_encoder and best_encoder. Also mention that it's only
+> > optional for atomic drivers. There's lots of examples in that file for
+> > the wording usually used.
+> 
+> Hm, I haven't changed anything for the ->atomic_best_encoder() hook, or
+> am I missing something?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Before you needed atomic_best_encoder or best_encoder (well that's the
+idea at least), now both are optional. Kerneldoc needs to be adjusted in
+both places to match new reality after your patch.
+-Daniel
 
-Gr{oetje,eeting}s,
+> 
+> > 
+> > > The only drawback I see in this patch is the additional object lookup
+> > > performed by drm_atomic_helper_best_encoder() at runtime. I wonder if we could
+> > > somehow cache the information, as the assignment can't change when there's a
+> > > 1:1 correspondence between encoders and connectors.  
+> > 
+> > drm_encoder_find is an idr lookup. That should be plenty fast,
+> > especially for modeset code. Usually what's too expensive even for
+> > modeset code is linear list walks. But Chris just submitted patches to
+> > convert most of them into simple lookups.
+> > -Daniel
+> > 
+> > >>> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>  
+> > >> ---
+> > >>  drivers/gpu/drm/drm_atomic_helper.c |  4 +++-
+> > >>  drivers/gpu/drm/drm_fb_helper.c     | 13 ++++++++++++-
+> > >>  2 files changed, 15 insertions(+), 2 deletions(-)
+> > >>
+> > >> diff --git a/drivers/gpu/drm/drm_atomic_helper.c
+> > >> b/drivers/gpu/drm/drm_atomic_helper.c index f6a3350..849d029 100644
+> > >> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> > >> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> > >> @@ -300,8 +300,10 @@ update_connector_routing(struct drm_atomic_state
+> > >> *state, if (funcs->atomic_best_encoder)
+> > >>               new_encoder = funcs->atomic_best_encoder(connector,
+> > >>                                                        connector_state);
+> > >> -     else
+> > >> +     else if (funcs->best_encoder)
+> > >>               new_encoder = funcs->best_encoder(connector);
+> > >> +     else
+> > >> +             new_encoder = drm_atomic_helper_best_encoder(connector);
+> > >>
+> > >>       if (!new_encoder) {
+> > >>               DRM_DEBUG_ATOMIC("No suitable encoder found for [CONNECTOR:%d:%s]\n",
+> > >> diff --git a/drivers/gpu/drm/drm_fb_helper.c
+> > >> b/drivers/gpu/drm/drm_fb_helper.c index 7c2eb75..d44389a 100644
+> > >> --- a/drivers/gpu/drm/drm_fb_helper.c
+> > >> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> > >> @@ -2000,7 +2000,18 @@ static int drm_pick_crtcs(struct drm_fb_helper
+> > >> *fb_helper, my_score++;
+> > >>
+> > >>       connector_funcs = connector->helper_private;
+> > >> -     encoder = connector_funcs->best_encoder(connector);
+> > >> +
+> > >> +     /*
+> > >> +      * If the DRM device implements atomic hooks and ->best_encoder() is
+> > >> +      * NULL we fallback to the default drm_atomic_helper_best_encoder()
+> > >> +      * helper.
+> > >> +      */
+> > >> +     if (fb_helper->dev->mode_config.funcs->atomic_commit &&
+> > >> +         !connector_funcs->best_encoder)
+> > >> +             encoder = drm_atomic_helper_best_encoder(connector);
+> > >> +     else
+> > >> +             encoder = connector_funcs->best_encoder(connector);
+> > >> +
+> > >>       if (!encoder)
+> > >>               goto out;  
+> > >
+> > > --
+> > > Regards,
+> > >
+> > > Laurent Pinchart
+> > >  
+> > 
+> > 
+> > 
+> 
+> 
+> 
+> -- 
+> Boris Brezillon, Free Electrons
+> Embedded Linux and Kernel engineering
+> http://free-electrons.com
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
