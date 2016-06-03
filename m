@@ -1,64 +1,58 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Sender: Kieran Bingham <kieran@ksquared.org.uk>
-From: Kieran Bingham <kieran@bingham.xyz>
-To: horms@verge.net.au,
-	linux-renesas-soc@vger.kernel.org
-Cc: magnus.damm@gmail.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kieran@bingham.xyz
-Subject: [PATCH 1/2] arm64: dts: r8a7795: add FCPF device nodes
-Date: Thu, 30 Jun 2016 14:32:42 +0100
-Message-Id: <1467293563-940-2-git-send-email-kieran@bingham.xyz>
-In-Reply-To: <1467293563-940-1-git-send-email-kieran@bingham.xyz>
-References: <1467293563-940-1-git-send-email-kieran@bingham.xyz>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Peter Hurley <peter@hurleysoftware.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org
+Subject: [PATCH v3 01/11] serial: sh-sci: Update DT binding documentation for GPIO modem lines
+Date: Fri,  3 Jun 2016 12:00:01 +0200
+Message-Id: <1464948011-377-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
+References: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Provide nodes for the FCP devices dedicated to the FDP device channels.
+Amend the DT bindings for the Renesas SCI driver to allow describing
+optional GPIO-controlled modem lines, which can be used where dedicated
+modem lines are not available.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+The property naming is dictated by the Generic Serial DT Bindings.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+v3:
+  - No changes,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index fff92acc5d2e..a451bd217f05 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1422,5 +1422,26 @@
- 				};
- 			};
- 		};
-+
-+		fcpf0: fcp@fe950000 {
-+			compatible = "renesas,r8a7795-fcpf", "renesas,fcpf";
-+			reg = <0 0xfe950000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 615>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+		};
-+
-+		fcpf1: fcp@fe951000 {
-+			compatible = "renesas,r8a7795-fcpf", "renesas,fcpf";
-+			reg = <0 0xfe951000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 614>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+		};
-+
-+		fcpf2: fcp@fe952000 {
-+			compatible = "renesas,r8a7795-fcpf", "renesas,fcpf";
-+			reg = <0 0xfe952000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 613>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+		};
- 	};
- };
+v2:
+  - Add Acked-by,
+  - Drop RFC status,
+  - Refer to the Generic Serial DT Bindings,
+  - Drop out[12]-gpios.
+---
+ Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+index 528c3b90f23cb04b..997baeaa869baa6f 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
++++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+@@ -76,6 +76,8 @@ Optional properties:
+   - dmas: Must contain a list of two references to DMA specifiers, one for
+ 	  transmission, and one for reception.
+   - dma-names: Must contain a list of two DMA names, "tx" and "rx".
++  - {cts,dsr,dcd,rng,rts,dtr}-gpios: Specify GPIOs for modem lines, cfr. the
++    generic serial DT bindings in serial.txt.
+ 
+ Example:
+ 	aliases {
 -- 
-2.7.4
+1.9.1
