@@ -1,121 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:51057 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758640AbcFAPXR (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 11:23:17 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: hch@infradead.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-	iommu@lists.linux-foundation.org
-Cc: dan.j.williams@intel.com, vinod.koul@intel.com,
-	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	linus.walleij@linaro.org, arnd@arndb.de,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv7 3/6] dma-mapping: add dma_{map,unmap}_resource
-Date: Wed,  1 Jun 2016 17:22:26 +0200
-Message-Id: <1464794549-6601-4-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1464794549-6601-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1464794549-6601-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Peter Hurley <peter@hurleysoftware.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org
+Subject: [PATCH v3 02/11] serial: sh-sci: Update DT binding documentation for dedicated RTS/CTS
+Date: Fri,  3 Jun 2016 12:00:02 +0200
+Message-Id: <1464948011-377-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
+References: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Map/Unmap a device MMIO resource from a physical address. If no dma_map_ops
-method is available the operation is a no-op.
+Some Renesas SCIF UARTs have dedicated lines for RTS/CTS hardware flow
+control.  Whether these lines exist depends on SoC and UART instance
+inside the SoC.  Whether these lines can be used for hardware flow
+control depends on board wiring.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Amend the DT bindings with an optional property to indicate that RTS/CTS
+hardware flow control lines exist, and can be used as such, according to
+the Generic Serial DT Bindings.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
 ---
- Documentation/DMA-API.txt   | 22 +++++++++++++++++-----
- include/linux/dma-mapping.h | 36 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 53 insertions(+), 5 deletions(-)
+v3:
+  - Add Acked-by,
 
-diff --git a/Documentation/DMA-API.txt b/Documentation/DMA-API.txt
-index 45ef3f2..c7e5f99 100644
---- a/Documentation/DMA-API.txt
-+++ b/Documentation/DMA-API.txt
-@@ -277,14 +277,26 @@ and <size> parameters are provided to do partial page mapping, it is
- recommended that you never use these unless you really know what the
- cache width is.
+v2:
+  - Drop RFC status,
+  - Use "uart-has-rtscts" instead of "renesas,uart-has-rtscts",
+  - Refer to the Generic Serial DT Bindings.
+---
+ Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+index 997baeaa869baa6f..7a0e15053db97481 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
++++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+@@ -78,6 +78,8 @@ Optional properties:
+   - dma-names: Must contain a list of two DMA names, "tx" and "rx".
+   - {cts,dsr,dcd,rng,rts,dtr}-gpios: Specify GPIOs for modem lines, cfr. the
+     generic serial DT bindings in serial.txt.
++  - uart-has-rtscts: Indicates dedicated lines for RTS/CTS hardware flow
++    control, cfr. the generic serial DT bindings in serial.txt.
  
-+dma_addr_t
-+dma_map_resource(struct device *dev, phys_addr_t phys_addr, size_t size,
-+		 enum dma_data_direction dir, struct dma_attrs *attrs)
-+
-+void
-+dma_unmap_resource(struct device *dev, dma_addr_t addr, size_t size,
-+		   enum dma_data_direction dir, struct dma_attrs *attrs)
-+
-+API for mapping and unmapping for MMIO resources. All the notes and
-+warnings for the other mapping APIs apply here. The API should only be
-+used to map device MMIO resources, mapping of RAM is not permitted.
-+
- int
- dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
- 
--In some circumstances dma_map_single() and dma_map_page() will fail to create
--a mapping. A driver can check for these errors by testing the returned
--DMA address with dma_mapping_error(). A non-zero return value means the mapping
--could not be created and the driver should take appropriate action (e.g.
--reduce current DMA mapping usage or delay and try again later).
-+In some circumstances dma_map_single(), dma_map_page() and dma_map_resource()
-+will fail to create a mapping. A driver can check for these errors by testing
-+the returned DMA address with dma_mapping_error(). A non-zero return value
-+means the mapping could not be created and the driver should take appropriate
-+action (e.g. reduce current DMA mapping usage or delay and try again later).
- 
- 	int
- 	dma_map_sg(struct device *dev, struct scatterlist *sg,
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index a11ff9d..4c381ba 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -218,6 +218,42 @@ static inline void dma_unmap_page(struct device *dev, dma_addr_t addr,
- 	debug_dma_unmap_page(dev, addr, size, dir, false);
- }
- 
-+static inline dma_addr_t dma_map_resource(struct device *dev,
-+					  phys_addr_t phys_addr,
-+					  size_t size,
-+					  enum dma_data_direction dir,
-+					  struct dma_attrs *attrs)
-+{
-+	struct dma_map_ops *ops = get_dma_ops(dev);
-+	unsigned long pfn = __phys_to_pfn(phys_addr);
-+	dma_addr_t addr;
-+
-+	BUG_ON(!valid_dma_direction(dir));
-+
-+	/* Don't allow RAM to be mapped */
-+	BUG_ON(pfn_valid(pfn));
-+
-+	addr = phys_addr;
-+	if (ops->map_resource)
-+		addr = ops->map_resource(dev, phys_addr, size, dir, attrs);
-+
-+	debug_dma_map_resource(dev, phys_addr, size, dir, addr);
-+
-+	return addr;
-+}
-+
-+static inline void dma_unmap_resource(struct device *dev, dma_addr_t addr,
-+				      size_t size, enum dma_data_direction dir,
-+				      struct dma_attrs *attrs)
-+{
-+	struct dma_map_ops *ops = get_dma_ops(dev);
-+
-+	BUG_ON(!valid_dma_direction(dir));
-+	if (ops->unmap_resource)
-+		ops->unmap_resource(dev, addr, size, dir, attrs);
-+	debug_dma_unmap_resource(dev, addr, size, dir);
-+}
-+
- static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
- 					   size_t size,
- 					   enum dma_data_direction dir)
+ Example:
+ 	aliases {
 -- 
-2.8.2
+1.9.1
