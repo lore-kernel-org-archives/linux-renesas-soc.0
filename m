@@ -1,61 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:40732 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752685AbcFJKFI (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:35523 "EHLO
+	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752873AbcFCVU7 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 06:05:08 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] pinctrl: sh-pfc: Cleanups
-Date: Fri, 10 Jun 2016 12:05:00 +0200
-Message-Id: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
+	Fri, 3 Jun 2016 17:20:59 -0400
+Received: by mail-lf0-f53.google.com with SMTP id w16so62164320lfd.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Jun 2016 14:20:58 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org
+Cc: magnus.damm@gmail.com
+Subject: [PATCH v2 03/11] soc: renesas: rcar-sysc: add R8A7792 support
+Date: Sat, 04 Jun 2016 00:20:56 +0300
+Message-ID: <1804747.guPt6uMETd@wasted.cogentembedded.com>
+In-Reply-To: <3446154.oZ24315zaL@wasted.cogentembedded.com>
+References: <3446154.oZ24315zaL@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi,
+Add support for R-Car V2H (R8A7792) SoC power areas to the SYSC driver.
 
-This series contains various cleanups for the Renesas Pin Function
-Controller driver subsystem.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This has been tested on r8a7791/koelsch, and compile-tested for other
-ARM and SH platforms.
+---
+Changes in version 2:
+- added Geert's tag.
 
-I plan to queue this in sh-pfc-for-v4.8.
+ drivers/soc/renesas/Makefile       |    1 +
+ drivers/soc/renesas/r8a7792-sysc.c |   34 ++++++++++++++++++++++++++++++++++
+ drivers/soc/renesas/rcar-sysc.c    |    3 +++
+ drivers/soc/renesas/rcar-sysc.h    |    1 +
+ 4 files changed, 39 insertions(+)
 
-Thanks for your comments!
-
-Geert Uytterhoeven (3):
-  pinctrl: sh-pfc: Move SoC-specific forward declarations to sh_pfc.h
-  pinctrl: sh-pfc: Improve core and user separation
-  pinctrl: sh-pfc: Convert to devm_gpiochip_add_data()
-
- drivers/pinctrl/sh-pfc/core.c        | 10 -------
- drivers/pinctrl/sh-pfc/core.h        | 58 ------------------------------------
- drivers/pinctrl/sh-pfc/gpio.c        | 13 +-------
- drivers/pinctrl/sh-pfc/pfc-r8a73a4.c |  1 -
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c |  1 -
- drivers/pinctrl/sh-pfc/pfc-r8a7778.c |  2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c |  1 -
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c |  1 -
- drivers/pinctrl/sh-pfc/sh_pfc.h      | 51 ++++++++++++++++++++++++++++++-
- 9 files changed, 52 insertions(+), 86 deletions(-)
-
--- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Index: renesas/drivers/soc/renesas/Makefile
+===================================================================
+--- renesas.orig/drivers/soc/renesas/Makefile
++++ renesas/drivers/soc/renesas/Makefile
+@@ -1,6 +1,7 @@
+ obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
+ obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
+ obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
++obj-$(CONFIG_ARCH_R8A7792)	+= rcar-sysc.o r8a7792-sysc.o
+ # R-Car M2-N is identical to R-Car M2-W w.r.t. power domains.
+ obj-$(CONFIG_ARCH_R8A7793)	+= rcar-sysc.o r8a7791-sysc.o
+ obj-$(CONFIG_ARCH_R8A7794)	+= rcar-sysc.o r8a7794-sysc.o
+Index: renesas/drivers/soc/renesas/r8a7792-sysc.c
+===================================================================
+--- /dev/null
++++ renesas/drivers/soc/renesas/r8a7792-sysc.c
+@@ -0,0 +1,34 @@
++/*
++ * Renesas R-Car V2H (R8A7792) System Controller
++ *
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
++
++#include <linux/bug.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++
++#include <dt-bindings/power/r8a7792-sysc.h>
++
++#include "rcar-sysc.h"
++
++static const struct rcar_sysc_area r8a7792_areas[] __initconst = {
++	{ "always-on",	    0, 0, R8A7792_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
++	{ "ca15-scu",	0x180, 0, R8A7792_PD_CA15_SCU,	R8A7792_PD_ALWAYS_ON,
++	  PD_SCU },
++	{ "ca15-cpu0",	 0x40, 0, R8A7792_PD_CA15_CPU0,	R8A7792_PD_CA15_SCU,
++	  PD_CPU_NOCR },
++	{ "ca15-cpu1",	 0x40, 1, R8A7792_PD_CA15_CPU1,	R8A7792_PD_CA15_SCU,
++	  PD_CPU_NOCR },
++	{ "sgx",	 0xc0, 0, R8A7792_PD_SGX,	R8A7792_PD_ALWAYS_ON },
++	{ "imp",	0x140, 0, R8A7792_PD_IMP,	R8A7792_PD_ALWAYS_ON },
++};
++
++const struct rcar_sysc_info r8a7792_sysc_info __initconst = {
++	.areas = r8a7792_areas,
++	.num_areas = ARRAY_SIZE(r8a7792_areas),
++};
+Index: renesas/drivers/soc/renesas/rcar-sysc.c
+===================================================================
+--- renesas.orig/drivers/soc/renesas/rcar-sysc.c
++++ renesas/drivers/soc/renesas/rcar-sysc.c
+@@ -293,6 +293,9 @@ static const struct of_device_id rcar_sy
+ #ifdef CONFIG_ARCH_R8A7791
+ 	{ .compatible = "renesas,r8a7791-sysc", .data = &r8a7791_sysc_info },
+ #endif
++#ifdef CONFIG_ARCH_R8A7792
++	{ .compatible = "renesas,r8a7792-sysc", .data = &r8a7792_sysc_info },
++#endif
+ #ifdef CONFIG_ARCH_R8A7793
+ 	/* R-Car M2-N is identical to R-Car M2-W w.r.t. power domains. */
+ 	{ .compatible = "renesas,r8a7793-sysc", .data = &r8a7791_sysc_info },
+Index: renesas/drivers/soc/renesas/rcar-sysc.h
+===================================================================
+--- renesas.orig/drivers/soc/renesas/rcar-sysc.h
++++ renesas/drivers/soc/renesas/rcar-sysc.h
+@@ -53,6 +53,7 @@ struct rcar_sysc_info {
+ extern const struct rcar_sysc_info r8a7779_sysc_info;
+ extern const struct rcar_sysc_info r8a7790_sysc_info;
+ extern const struct rcar_sysc_info r8a7791_sysc_info;
++extern const struct rcar_sysc_info r8a7792_sysc_info;
+ extern const struct rcar_sysc_info r8a7794_sysc_info;
+ extern const struct rcar_sysc_info r8a7795_sysc_info;
+ #endif /* __SOC_RENESAS_RCAR_SYSC_H__ */
