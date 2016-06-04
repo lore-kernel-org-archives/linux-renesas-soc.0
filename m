@@ -1,43 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34783 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:34771 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750866AbcFDArY (ORCPT
+	with ESMTP id S1750726AbcFDApq (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 3 Jun 2016 20:47:24 -0400
-Date: Sat, 4 Jun 2016 09:47:19 +0900
+	Fri, 3 Jun 2016 20:45:46 -0400
+Date: Sat, 4 Jun 2016 09:45:40 +0900
 From: Simon Horman <horms@verge.net.au>
 To: Sasha Levin <sasha.levin@oracle.com>
 Cc: stable@vger.kernel.org, stable-commits@vger.kernel.org,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-renesas-soc@vger.kernel.org
-Subject: Re: [added to the 4.1 stable tree] usb: host: xhci-rcar: Use
+Subject: Re: [added to the 3.18 stable tree] usb: host: xhci-rcar: Use
  ARCH_RENESAS
-Message-ID: <20160604004717.GB469@verge.net.au>
-References: <1464989831-16666-1-git-send-email-sasha.levin@oracle.com>
- <1464989831-16666-66-git-send-email-sasha.levin@oracle.com>
+Message-ID: <20160604004540.GA469@verge.net.au>
+References: <1464990398-17381-1-git-send-email-sasha.levin@oracle.com>
+ <1464990398-17381-49-git-send-email-sasha.levin@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1464989831-16666-66-git-send-email-sasha.levin@oracle.com>
+In-Reply-To: <1464990398-17381-49-git-send-email-sasha.levin@oracle.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+[Cc linux-renesas-soc@vger.kernel.org]
 
 Hi,
 
-I do not believe this patch is suitable for v4.1 stable.
+I do not believe this patch is suitable for v3.18 stable.
 
 ARCH_RENESAS is not otherwise present there and thus the driver in question
 will stop being compiled where it was previously compiled.
 
-Moreover, the transition to ARCH_RENESAS is (so far) being handled in such
+Moreoever, the transition to ARCH_RENESAS is (so far) being handled in such
 a way that there have not been any regressions that would necessitate a
 backport to -stable.
 
-On Fri, Jun 03, 2016 at 05:36:01PM -0400, Sasha Levin wrote:
+On Fri, Jun 03, 2016 at 05:45:39PM -0400, Sasha Levin wrote:
 > From: Simon Horman <horms+renesas@verge.net.au>
 > 
-> This patch has been added to the 4.1 stable tree. If you have any
+> This patch has been added to the 3.18 stable tree. If you have any
 > objections, please let us know.
 > 
 > ===============
@@ -58,7 +59,7 @@ On Fri, Jun 03, 2016 at 05:36:01PM -0400, Sasha Levin wrote:
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-> index 197a6a3..2379773 100644
+> index a3ca137..506da03 100644
 > --- a/drivers/usb/host/Kconfig
 > +++ b/drivers/usb/host/Kconfig
 > @@ -45,7 +45,7 @@ config USB_XHCI_MVEBU
