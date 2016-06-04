@@ -1,58 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:32187 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750727AbcFDBO1 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:34783 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750866AbcFDArY (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 3 Jun 2016 21:14:27 -0400
-Subject: Re: [added to the 4.1 stable tree] usb: host: xhci-rcar: Use
- ARCH_RENESAS
-To: Simon Horman <horms@verge.net.au>
-References: <1464989831-16666-1-git-send-email-sasha.levin@oracle.com>
- <1464989831-16666-66-git-send-email-sasha.levin@oracle.com>
- <20160604004717.GB469@verge.net.au>
+	Fri, 3 Jun 2016 20:47:24 -0400
+Date: Sat, 4 Jun 2016 09:47:19 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sasha Levin <sasha.levin@oracle.com>
 Cc: stable@vger.kernel.org, stable-commits@vger.kernel.org,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-renesas-soc@vger.kernel.org
-From: Sasha Levin <sasha.levin@oracle.com>
-Message-ID: <57522B69.3070105@oracle.com>
-Date: Fri, 3 Jun 2016 21:14:17 -0400
+Subject: Re: [added to the 4.1 stable tree] usb: host: xhci-rcar: Use
+ ARCH_RENESAS
+Message-ID: <20160604004717.GB469@verge.net.au>
+References: <1464989831-16666-1-git-send-email-sasha.levin@oracle.com>
+ <1464989831-16666-66-git-send-email-sasha.levin@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20160604004717.GB469@verge.net.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1464989831-16666-66-git-send-email-sasha.levin@oracle.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 06/03/2016 08:47 PM, Simon Horman wrote:
-> Hi,
+
+Hi,
+
+I do not believe this patch is suitable for v4.1 stable.
+
+ARCH_RENESAS is not otherwise present there and thus the driver in question
+will stop being compiled where it was previously compiled.
+
+Moreover, the transition to ARCH_RENESAS is (so far) being handled in such
+a way that there have not been any regressions that would necessitate a
+backport to -stable.
+
+On Fri, Jun 03, 2016 at 05:36:01PM -0400, Sasha Levin wrote:
+> From: Simon Horman <horms+renesas@verge.net.au>
 > 
-> I do not believe this patch is suitable for v4.1 stable.
+> This patch has been added to the 4.1 stable tree. If you have any
+> objections, please let us know.
 > 
-> ARCH_RENESAS is not otherwise present there and thus the driver in question
-> will stop being compiled where it was previously compiled.
+> ===============
 > 
-> Moreover, the transition to ARCH_RENESAS is (so far) being handled in such
-> a way that there have not been any regressions that would necessitate a
-> backport to -stable.
-
-Hey Simon,
-
-I've picked this commit because of what I saw in f879fc32a
-("usb: host: xhci-rcar: Avoid long wait in xhci_reset()").
-
->From my understanding of that change, we added a dependency on ARCH_RENESAS
-for USB_XHCI_PLATFORM, but since USB_XHCI_RCAR depended on ARCH_SHMOBILE that
-would cause silly errors for kconfig and would probably confuse users.
-
-Rather than changing it to a ARCH_SHMOBILE dependency, I've preferred
-to pull in f879fc32a to keep the stable tree more aligned with upstream
-and possibly prevent any future backporting errors for new commits that
-add ARCH_RENESAS dependencies.
-
-If you don't agree with that approach I can change that to a ARCH_SHMOBILE
-dependency and remove this commit, or take any other approach you think
-is better?
-
-
-Thanks,
-Sasha
+> [ Upstream commit 6edd87f589cf1cd4c93ee07b8f8c72a5af427b10 ]
+> 
+> Make use of ARCH_RENESAS in place of ARCH_SHMOBILE.
+> 
+> This is part of an ongoing process to migrate from ARCH_SHMOBILE to
+> ARCH_RENESAS the motivation for which being that RENESAS seems to be a more
+> appropriate name than SHMOBILE for the majority of Renesas ARM based SoCs.
+> 
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Sasha Levin <sasha.levin@oracle.com>
+> ---
+>  drivers/usb/host/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+> index 197a6a3..2379773 100644
+> --- a/drivers/usb/host/Kconfig
+> +++ b/drivers/usb/host/Kconfig
+> @@ -45,7 +45,7 @@ config USB_XHCI_MVEBU
+>  config USB_XHCI_RCAR
+>  	tristate "xHCI support for Renesas R-Car SoCs"
+>  	select USB_XHCI_PLATFORM
+> -	depends on ARCH_SHMOBILE || COMPILE_TEST
+> +	depends on ARCH_RENESAS || COMPILE_TEST
+>  	---help---
+>  	  Say 'Y' to enable the support for the xHCI host controller
+>  	  found in Renesas R-Car ARM SoCs.
+> -- 
+> 2.5.0
+> 
