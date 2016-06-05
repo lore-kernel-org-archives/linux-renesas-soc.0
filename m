@@ -1,84 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:58291 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752257AbcF1OKt (ORCPT
+Received: from relay1.mentorg.com ([192.94.38.131]:45017 "EHLO
+	relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751211AbcFEU0G (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 10:10:49 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 11/13] ARM: dts: r8a7790: Add APMU nodes
-Date: Tue, 28 Jun 2016 16:10:40 +0200
-Message-Id: <1467123042-8468-12-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
-References: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
+	Sun, 5 Jun 2016 16:26:06 -0400
+Subject: Re: [PATCH 1/7] watchdog: add watchdog pretimeout framework
+To: Wolfram Sang <wsa@the-dreams.de>,
+	Guenter Roeck <linux@roeck-us.net>
+References: <1464183151-4912-1-git-send-email-wsa@the-dreams.de>
+ <1464183151-4912-2-git-send-email-wsa@the-dreams.de>
+ <5747041B.2050707@mentor.com> <20160526164136.GB1631@katana>
+ <20160526223717.GA6659@roeck-us.net> <20160605094823.GB1497@katana>
+CC: <linux-watchdog@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>,
+	Robin Gong <b38343@freescale.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Message-ID: <57548AD7.6060503@mentor.com>
+Date: Sun, 5 Jun 2016 23:25:59 +0300
+MIME-Version: 1.0
+In-Reply-To: <20160605094823.GB1497@katana>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Wolfram,
 
-Add DT nodes for the Advanced Power Management Units (APMU), and use the
-enable-method to point out that the APMU should be used for SMP
-support.
+On 05.06.2016 12:48, Wolfram Sang wrote:
+> On Thu, May 26, 2016 at 03:37:17PM -0700, Guenter Roeck wrote:
+>> On Thu, May 26, 2016 at 06:41:36PM +0200, Wolfram Sang wrote:
+>> [ ... ]
+>>>
+>>> No doubt about that. I had some ideas and thought it is easier to talk
+>>> over code. If you want to rebase it, too, I'd be happy to check what you
+>>> came up with to solve the problems. I might still argue that I prefer
+>>> the less-code approach, but it will be Guenter's / Wim's decision, of
+>>> course.
+>>>
+>> I have a large back-log of patches to review. Simple patches with less code
+>> will get preferential treating. The more complex, the higher the likelyhood
+>> that the patches get pushed to the end of the queue.
+>>
+>> Giving a quick glance, I liked Wolfram's patches because they seemed to
+>> be simple and straightforward. I hope the next version won't add too much
+>> additional complexity.
+> 
+> Vladimir, did you have time to look into this?
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v5:
-  - No changes,
+yes, I managed to rebase and split my change to smaller pieces to encourage
+reviewers.
 
-v4:
-  - Improve patch description,
-  - Use "renesas,<soctype>-apmu" instead of "renesas,apmu-<soctype>",
+My plan is to do thorough testing of the change and send it for review
+tomorrow or on Tuesday, please participate in review.
 
-v3:
-  - No changes,
+> I can offer to resend this series on-top of v4.7-rc1 with the core patch
+> re-attributed to Vladimir. Then we can review the basic stuff now, and
+> can discuss/deal with the bottom half handling incrementally.
+> 
+> Sounds good?
+> 
 
-v2:
-  - New.
----
- arch/arm/boot/dts/r8a7790.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 9997e7dfabe2250c..d18558f211022826 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -44,6 +44,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "renesas,apmu";
- 
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-@@ -164,6 +165,18 @@
- 		};
- 	};
- 
-+	apmu@e6151000 {
-+		compatible = "renesas,r8a7790-apmu", "renesas,apmu";
-+		reg = <0 0xe6151000 0 0x188>;
-+		cpus = <&cpu4 &cpu5 &cpu6 &cpu7>;
-+	};
-+
-+	apmu@e6152000 {
-+		compatible = "renesas,r8a7790-apmu", "renesas,apmu";
-+		reg = <0 0xe6152000 0 0x188>;
-+		cpus = <&cpu0 &cpu1 &cpu2 &cpu3>;
-+	};
-+
- 	gic: interrupt-controller@f1001000 {
- 		compatible = "arm,gic-400";
- 		#interrupt-cells = <3>;
--- 
-1.9.1
+--
+Best wishes,
+Vladimir
