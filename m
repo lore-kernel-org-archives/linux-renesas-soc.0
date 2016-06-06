@@ -1,142 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:35378 "EHLO
-	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754384AbcFHVag (ORCPT
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:33905 "EHLO
+	mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751098AbcFFEJ2 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 17:30:36 -0400
-Received: by mail-lf0-f45.google.com with SMTP id u74so14250921lff.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2016 14:30:35 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, robh+dt@kernel.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 08/12] ARM: dts: r8a7792: add [H]SCIF support
-Date: Thu, 09 Jun 2016 00:30:32 +0300
-Message-ID: <1501151.qkMbIJd7GW@wasted.cogentembedded.com>
-In-Reply-To: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
-References: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Mon, 6 Jun 2016 00:09:28 -0400
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 06 Jun 2016 12:59:07 +0900
+Message-Id: <20160606035907.31763.20748.sendpatchset@little-apple>
+In-Reply-To: <20160606035723.31763.66500.sendpatchset@little-apple>
+References: <20160606035723.31763.66500.sendpatchset@little-apple>
+Subject: [PATCH v2 11/11] iommu/ipmmu-vmsa: Hook up r8a7795 DT matching code
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe [H]SCIFs in the R8A7792 device tree.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tie in r8a7795 features and update the IOMMU_OF_DECLARE
+compat string to hook up the updated compat string.
 
+TODO:
+ - Go over init order once more
+ - Consider counting number of IPMMU devices from ->xlate()
+ - Experiment with delaying call to bus_set_iommu()
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
-Changes in version 3:
-- refreshed the patch.
 
-Changes in version 2:
-- resolved reject, indenting the device nodes that are now under the "soc" node;
-- added Geert's tag.
+ Changes since V1:
+ - Enable multi context feature
+ - Update TODO list
 
- arch/arm/boot/dts/r8a7792.dtsi |   90 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+ drivers/iommu/ipmmu-vmsa.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -152,6 +152,96 @@
- 			dma-channels = <15>;
- 		};
+--- 0027/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-06 11:13:33.220607110 +0900
+@@ -1074,11 +1074,22 @@ static const struct ipmmu_features ipmmu
+ 	.twobit_imttbcr_sl0 = false,
+ };
  
-+		scif0: serial@e6e60000 {
-+			compatible = "renesas,scif-r8a7792",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
-+			reg = <0 0xe6e60000 0 64>;
-+			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7792_CLK_SCIF0>, <&zs_clk>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
-+			       <&dmac1 0x29>, <&dmac1 0x2a>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
++static const struct ipmmu_features ipmmu_features_r8a7795 = {
++	.use_ns_alias_offset = false,
++	.has_cache_leaf_nodes = true,
++	.has_eight_ctx = true,
++	.setup_imbuscr = false,
++	.twobit_imttbcr_sl0 = true,
++};
 +
-+		scif1: serial@e6e68000 {
-+			compatible = "renesas,scif-r8a7792",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
-+			reg = <0 0xe6e68000 0 64>;
-+			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7792_CLK_SCIF1>, <&zs_clk>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
-+			       <&dmac1 0x2d>, <&dmac1 0x2e>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		scif2: serial@e6e58000 {
-+			compatible = "renesas,scif-r8a7792",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
-+			reg = <0 0xe6e58000 0 64>;
-+			interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7792_CLK_SCIF2>, <&zs_clk>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
-+			       <&dmac1 0x2b>, <&dmac1 0x2c>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		scif3: serial@e6ea8000 {
-+			compatible = "renesas,scif-r8a7792",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
-+			reg = <0 0xe6ea8000 0 64>;
-+			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7792_CLK_SCIF3>, <&zs_clk>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
-+			       <&dmac1 0x2f>, <&dmac1 0x30>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		hscif0: serial@e62c0000 {
-+			compatible = "renesas,hscif-r8a7792",
-+				     "renesas,rcar-gen2-hscif", "renesas,hscif";
-+			reg = <0 0xe62c0000 0 96>;
-+			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7792_CLK_HSCIF0>, <&zs_clk>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
-+			       <&dmac1 0x39>, <&dmac1 0x3a>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		hscif1: serial@e62c8000 {
-+			compatible = "renesas,hscif-r8a7792",
-+				     "renesas,rcar-gen2-hscif", "renesas,hscif";
-+			reg = <0 0xe62c8000 0 96>;
-+			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7792_CLK_HSCIF1>, <&zs_clk>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
-+			       <&dmac1 0x4d>, <&dmac1 0x4e>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
- 		/* Special CPG clocks */
- 		cpg_clocks: cpg_clocks@e6150000 {
- 			compatible = "renesas,r8a7792-cpg-clocks",
+ static const struct of_device_id ipmmu_of_ids[] = {
+ 	{
+ 		.compatible = "renesas,ipmmu-vmsa",
+ 		.data = &ipmmu_features_default,
+ 	}, {
++		.compatible = "renesas,ipmmu-r8a7795",
++		.data = &ipmmu_features_r8a7795,
++	}, {
+ 		/* Terminator */
+ 	},
+ };
+@@ -1255,6 +1266,8 @@ static int __init ipmmu_vmsa_iommu_of_se
+ 
+ IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "renesas,ipmmu-vmsa",
+ 		 ipmmu_vmsa_iommu_of_setup);
++IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795",
++		 ipmmu_vmsa_iommu_of_setup);
+ #endif
+ 
+ MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
