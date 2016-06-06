@@ -1,127 +1,54 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:38713 "EHLO
-	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753743AbcFGHy6 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 03:54:58 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-	iommu@lists.linux-foundation.org, linux@armlinux.org.uk
-Cc: hch@infradead.org, dan.j.williams@intel.com, vinod.koul@intel.com,
-	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	linus.walleij@linaro.org, arnd@arndb.de,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv8 4/6] arm: dma-mapping: add {map,unmap}_resource for iommu ops
-Date: Tue,  7 Jun 2016 09:54:11 +0200
-Message-Id: <1465286053-27258-5-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1465286053-27258-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1465286053-27258-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: [PATCH v1 05/25] PCI: iproc: Request host bridge window resources
+To: linux-pci@vger.kernel.org
+From: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Herring <robh@kernel.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Pratyush Anand <pratyush.anand@gmail.com>,
+	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
+	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
+	Michal Simek <michal.simek@xilinx.com>,
+	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
+	linux-arm-kernel@lists.infradead.org
+Date: Mon, 06 Jun 2016 18:05:23 -0500
+Message-ID: <20160606230523.20936.1752.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add methods to map/unmap device resources addresses for dma_map_ops that
-are IOMMU aware. This is needed to map a device MMIO register from a
-physical address.
+Request host bridge window resources so they appear in ioport_resource and
+iomem_resource and are reflected in /proc/ioports and /proc/iomem.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- arch/arm/mm/dma-mapping.c | 63 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+ drivers/pci/host/pcie-iproc.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index ff7ed56..7e9c8eb 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -1951,6 +1951,63 @@ static void arm_iommu_unmap_page(struct device *dev, dma_addr_t handle,
- 	__free_iova(mapping, iova, len);
- }
+diff --git a/drivers/pci/host/pcie-iproc.c b/drivers/pci/host/pcie-iproc.c
+index a576aee..e167b2f 100644
+--- a/drivers/pci/host/pcie-iproc.c
++++ b/drivers/pci/host/pcie-iproc.c
+@@ -462,6 +462,10 @@ int iproc_pcie_setup(struct iproc_pcie *pcie, struct list_head *res)
+ 	if (!pcie || !pcie->dev || !pcie->base)
+ 		return -EINVAL;
  
-+/**
-+ * arm_iommu_map_resource - map a device resource for DMA
-+ * @dev: valid struct device pointer
-+ * @phys_addr: physical address of resource
-+ * @size: size of resource to map
-+ * @dir: DMA transfer direction
-+ */
-+static dma_addr_t arm_iommu_map_resource(struct device *dev,
-+		phys_addr_t phys_addr, size_t size,
-+		enum dma_data_direction dir, struct dma_attrs *attrs)
-+{
-+	struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
-+	dma_addr_t dma_addr;
-+	int ret, prot;
-+	phys_addr_t addr = phys_addr & PAGE_MASK;
-+	unsigned int offset = phys_addr & ~PAGE_MASK;
-+	size_t len = PAGE_ALIGN(size + offset);
++	ret = devm_request_pci_bus_resources(pcie->dev, res);
++	if (ret)
++		return ret;
 +
-+	dma_addr = __alloc_iova(mapping, len);
-+	if (dma_addr == DMA_ERROR_CODE)
-+		return dma_addr;
-+
-+	prot = __dma_direction_to_prot(dir) | IOMMU_MMIO;
-+
-+	ret = iommu_map(mapping->domain, dma_addr, addr, len, prot);
-+	if (ret < 0)
-+		goto fail;
-+
-+	return dma_addr + offset;
-+fail:
-+	__free_iova(mapping, dma_addr, len);
-+	return DMA_ERROR_CODE;
-+}
-+
-+/**
-+ * arm_iommu_unmap_resource - unmap a device DMA resource
-+ * @dev: valid struct device pointer
-+ * @dma_handle: DMA address to resource
-+ * @size: size of resource to map
-+ * @dir: DMA transfer direction
-+ */
-+static void arm_iommu_unmap_resource(struct device *dev, dma_addr_t dma_handle,
-+		size_t size, enum dma_data_direction dir,
-+		struct dma_attrs *attrs)
-+{
-+	struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
-+	dma_addr_t iova = dma_handle & PAGE_MASK;
-+	unsigned int offset = dma_handle & ~PAGE_MASK;
-+	size_t len = PAGE_ALIGN(size + offset);
-+
-+	if (!iova)
-+		return;
-+
-+	iommu_unmap(mapping->domain, iova, len);
-+	__free_iova(mapping, iova, len);
-+}
-+
- static void arm_iommu_sync_single_for_cpu(struct device *dev,
- 		dma_addr_t handle, size_t size, enum dma_data_direction dir)
- {
-@@ -1994,6 +2051,9 @@ struct dma_map_ops iommu_ops = {
- 	.unmap_sg		= arm_iommu_unmap_sg,
- 	.sync_sg_for_cpu	= arm_iommu_sync_sg_for_cpu,
- 	.sync_sg_for_device	= arm_iommu_sync_sg_for_device,
-+
-+	.map_resource		= arm_iommu_map_resource,
-+	.unmap_resource		= arm_iommu_unmap_resource,
- };
- 
- struct dma_map_ops iommu_coherent_ops = {
-@@ -2007,6 +2067,9 @@ struct dma_map_ops iommu_coherent_ops = {
- 
- 	.map_sg		= arm_coherent_iommu_map_sg,
- 	.unmap_sg	= arm_coherent_iommu_unmap_sg,
-+
-+	.map_resource	= arm_iommu_map_resource,
-+	.unmap_resource	= arm_iommu_unmap_resource,
- };
- 
- /**
--- 
-2.8.2
+ 	ret = phy_init(pcie->phy);
+ 	if (ret) {
+ 		dev_err(pcie->dev, "unable to initialize PCIe PHY\n");
