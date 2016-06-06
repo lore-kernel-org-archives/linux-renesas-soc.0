@@ -1,82 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752970AbcFHBAx (ORCPT
+Received: from sauhun.de ([89.238.76.85]:49369 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752049AbcFFQIh (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 21:00:53 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 26/30] ARM: dts: kzm9g: Fix W=1 dtc warnings
-Date: Wed,  8 Jun 2016 09:59:56 +0900
-Message-Id: <8788b2c4f45aa1f4b333970c3dbc915da58d2326.1465346599.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1465346599.git.horms+renesas@verge.net.au>
-References: <cover.1465346599.git.horms+renesas@verge.net.au>
+	Mon, 6 Jun 2016 12:08:37 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/3] pinctrl: sh-pfc: r8a7795: add support for voltage switching
+Date: Mon,  6 Jun 2016 18:08:26 +0200
+Message-Id: <1465229307-1961-3-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
+References: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /regulator@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@3 has a unit name, but no reg property
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/sh73a0-kzm9g.dts | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 28 ++++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sh73a0-kzm9g.dts b/arch/arm/boot/dts/sh73a0-kzm9g.dts
-index 9881adf1734e..36567cbf2e1c 100644
---- a/arch/arm/boot/dts/sh73a0-kzm9g.dts
-+++ b/arch/arm/boot/dts/sh73a0-kzm9g.dts
-@@ -43,12 +43,12 @@
- 		stdout-path = &scifa4;
- 	};
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 44632b1a5c978c..33be5d56e3162a 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -17,8 +17,12 @@
+ 	PORT_GP_CFG_16(0, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+ 	PORT_GP_CFG_28(1, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+ 	PORT_GP_CFG_15(2, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_16(3, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_18(4, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
++	PORT_GP_CFG_12(3, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_IO_VOLTAGE),	\
++	PORT_GP_CFG_1(3, 12, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
++	PORT_GP_CFG_1(3, 13, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
++	PORT_GP_CFG_1(3, 14, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
++	PORT_GP_CFG_1(3, 15, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
++	PORT_GP_CFG_18(4, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_IO_VOLTAGE),	\
+ 	PORT_GP_CFG_26(5, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+ 	PORT_GP_CFG_32(6, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+ 	PORT_GP_CFG_4(7, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH)
+@@ -4765,8 +4769,28 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
+ 	{ },
+ };
  
--	memory {
-+	memory@40000000 {
- 		device_type = "memory";
- 		reg = <0x40000000 0x20000000>;
- 	};
++static int r8a7795_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *pocctrl)
++{
++	int bit = -EINVAL;
++
++	*pocctrl = 0xe6060380;
++
++	if (pin >= RCAR_GP_PIN(3, 0) && pin <= RCAR_GP_PIN(3, 11))
++		bit = pin & 0x1f;
++
++	if (pin >= RCAR_GP_PIN(4, 0) && pin <= RCAR_GP_PIN(4, 17))
++		bit = (pin & 0x1f) + 12;
++
++	return bit;
++}
++
++static const struct sh_pfc_soc_operations r8a7795_pinmux_ops = {
++	.pin_to_pocctrl = r8a7795_pin_to_pocctrl,
++};
++
+ const struct sh_pfc_soc_info r8a7795_pinmux_info = {
+ 	.name = "r8a77950_pfc",
++	.ops = &r8a7795_pinmux_ops,
+ 	.unlock_reg = 0xe6060000, /* PMMR */
  
--	reg_1p8v: regulator@0 {
-+	reg_1p8v: regulator-1p8v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
- 		regulator-min-microvolt = <1800000>;
-@@ -57,7 +57,7 @@
- 		regulator-boot-on;
- 	};
- 
--	reg_3p3v: regulator@1 {
-+	reg_3p3v: regulator-3p3v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-3.3V";
- 		regulator-min-microvolt = <3300000>;
-@@ -66,7 +66,7 @@
- 		regulator-boot-on;
- 	};
- 
--	vmmc_sdhi0: regulator@2 {
-+	vmmc_sdhi0: regulator-vmmc-sdhi0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "SDHI0 Vcc";
- 		regulator-min-microvolt = <3300000>;
-@@ -75,7 +75,7 @@
- 		enable-active-high;
- 	};
- 
--	vmmc_sdhi2: regulator@3 {
-+	vmmc_sdhi2: regulator-vmmc-sdhi2 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "SDHI2 Vcc";
- 		regulator-min-microvolt = <3300000>;
+ 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
 -- 
-2.1.4
+2.8.1
