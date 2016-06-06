@@ -1,6 +1,6 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: [PATCH v1 09/25] PCI: xilinx: Request host bridge window resources
+Subject: [PATCH v1 12/25] PCI: xilinx-nwl: Use dev_printk() when possible
 To: linux-pci@vger.kernel.org
 From: Bjorn Helgaas <bhelgaas@google.com>
 Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
@@ -19,8 +19,8 @@ Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
 	Michal Simek <michal.simek@xilinx.com>,
 	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
 	linux-arm-kernel@lists.infradead.org
-Date: Mon, 06 Jun 2016 18:05:52 -0500
-Message-ID: <20160606230552.20936.38959.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Date: Mon, 06 Jun 2016 18:06:14 -0500
+Message-ID: <20160606230614.20936.98599.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 MIME-Version: 1.0
@@ -29,27 +29,23 @@ Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Request host bridge window resources so they appear in ioport_resource and
-iomem_resource and are reflected in /proc/ioports and /proc/iomem.
+Use dev_printk() when possible to make messages more useful.
 
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/pci/host/pcie-xilinx.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/pci/host/pcie-xilinx-nwl.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/host/pcie-xilinx.c b/drivers/pci/host/pcie-xilinx.c
-index 5c456db..4703aa3 100644
---- a/drivers/pci/host/pcie-xilinx.c
-+++ b/drivers/pci/host/pcie-xilinx.c
-@@ -693,6 +693,11 @@ static int xilinx_pcie_probe(struct platform_device *pdev)
- 		dev_err(dev, "Getting bridge resources failed\n");
+diff --git a/drivers/pci/host/pcie-xilinx-nwl.c b/drivers/pci/host/pcie-xilinx-nwl.c
+index 3c16bbf..0b597d9 100644
+--- a/drivers/pci/host/pcie-xilinx-nwl.c
++++ b/drivers/pci/host/pcie-xilinx-nwl.c
+@@ -825,7 +825,7 @@ static int nwl_pcie_probe(struct platform_device *pdev)
+ 
+ 	err = of_pci_get_host_bridge_resources(node, 0, 0xff, &res, &iobase);
+ 	if (err) {
+-		pr_err("Getting bridge resources failed\n");
++		dev_err(pcie->dev, "Getting bridge resources failed\n");
  		return err;
  	}
-+
-+	err = devm_request_pci_bus_resources(dev, &res);
-+	if (err)
-+		goto error;
-+
- 	bus = pci_create_root_bus(&pdev->dev, 0,
- 				  &xilinx_pcie_ops, port, &res);
- 	if (!bus) {
+ 
