@@ -1,121 +1,143 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:38699 "EHLO
-	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753738AbcFGHy6 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 03:54:58 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-	iommu@lists.linux-foundation.org, linux@armlinux.org.uk
-Cc: hch@infradead.org, dan.j.williams@intel.com, vinod.koul@intel.com,
-	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	linus.walleij@linaro.org, arnd@arndb.de,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv8 3/6] dma-mapping: add dma_{map,unmap}_resource
-Date: Tue,  7 Jun 2016 09:54:10 +0200
-Message-Id: <1465286053-27258-4-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1465286053-27258-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1465286053-27258-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 06 Jun 2016 12:57:52 +0900
+Message-Id: <20160606035752.31763.99685.sendpatchset@little-apple>
+In-Reply-To: <20160606035723.31763.66500.sendpatchset@little-apple>
+References: <20160606035723.31763.66500.sendpatchset@little-apple>
+Subject: [PATCH v2 03/11] iommu/ipmmu-vmsa: Enable multi context support
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Map/Unmap a device MMIO resource from a physical address. If no dma_map_ops
-method is available the operation is a no-op.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Add support for up to 8 contexts. Each context is mapped
+to one domain. One domain is associated with each device,
+however one or more uTLBs for a single device are kept
+in the same domain.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- Documentation/DMA-API.txt   | 22 +++++++++++++++++-----
- include/linux/dma-mapping.h | 36 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 53 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/DMA-API.txt b/Documentation/DMA-API.txt
-index 45ef3f2..c7e5f99 100644
---- a/Documentation/DMA-API.txt
-+++ b/Documentation/DMA-API.txt
-@@ -277,14 +277,26 @@ and <size> parameters are provided to do partial page mapping, it is
- recommended that you never use these unless you really know what the
- cache width is.
+ Changes since V1:
+ - Support up to 8 contexts instead of 4
+ - Use feature flag and runtime handling
+ - Default to single context
  
-+dma_addr_t
-+dma_map_resource(struct device *dev, phys_addr_t phys_addr, size_t size,
-+		 enum dma_data_direction dir, struct dma_attrs *attrs)
-+
-+void
-+dma_unmap_resource(struct device *dev, dma_addr_t addr, size_t size,
-+		   enum dma_data_direction dir, struct dma_attrs *attrs)
-+
-+API for mapping and unmapping for MMIO resources. All the notes and
-+warnings for the other mapping APIs apply here. The API should only be
-+used to map device MMIO resources, mapping of RAM is not permitted.
-+
- int
- dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
+ drivers/iommu/ipmmu-vmsa.c |   38 ++++++++++++++++++++++++++++++--------
+ 1 file changed, 30 insertions(+), 8 deletions(-)
+
+--- 0011/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-06 10:34:37.680607110 +0900
+@@ -30,11 +30,12 @@
  
--In some circumstances dma_map_single() and dma_map_page() will fail to create
--a mapping. A driver can check for these errors by testing the returned
--DMA address with dma_mapping_error(). A non-zero return value means the mapping
--could not be created and the driver should take appropriate action (e.g.
--reduce current DMA mapping usage or delay and try again later).
-+In some circumstances dma_map_single(), dma_map_page() and dma_map_resource()
-+will fail to create a mapping. A driver can check for these errors by testing
-+the returned DMA address with dma_mapping_error(). A non-zero return value
-+means the mapping could not be created and the driver should take appropriate
-+action (e.g. reduce current DMA mapping usage or delay and try again later).
+ #include "io-pgtable.h"
  
- 	int
- 	dma_map_sg(struct device *dev, struct scatterlist *sg,
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index a11ff9d..4c381ba 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -218,6 +218,42 @@ static inline void dma_unmap_page(struct device *dev, dma_addr_t addr,
- 	debug_dma_unmap_page(dev, addr, size, dir, false);
+-#define IPMMU_CTX_MAX 1
++#define IPMMU_CTX_MAX 8
+ 
+ struct ipmmu_features {
+ 	bool use_ns_alias_offset;
+ 	bool has_cache_leaf_nodes;
++	bool has_eight_ctx;
+ };
+ 
+ struct ipmmu_vmsa_device {
+@@ -44,6 +45,7 @@ struct ipmmu_vmsa_device {
+ 	const struct ipmmu_features *features;
+ 	bool is_leaf;
+ 	unsigned int num_utlbs;
++	unsigned int num_ctx;
+ 	spinlock_t lock;			/* Protects ctx and domains[] */
+ 	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
+ 	struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
+@@ -347,11 +349,12 @@ static int ipmmu_domain_allocate_context
+ 
+ 	spin_lock_irqsave(&mmu->lock, flags);
+ 
+-	ret = find_first_zero_bit(mmu->ctx, IPMMU_CTX_MAX);
+-	if (ret != IPMMU_CTX_MAX) {
++	ret = find_first_zero_bit(mmu->ctx, mmu->num_ctx);
++	if (ret != mmu->num_ctx) {
+ 		mmu->domains[ret] = domain;
+ 		set_bit(ret, mmu->ctx);
+-	}
++	} else
++		ret = -EBUSY;
+ 
+ 	spin_unlock_irqrestore(&mmu->lock, flags);
+ 
+@@ -394,9 +397,9 @@ static int ipmmu_domain_init_context(str
+ 	 * Find an unused context.
+ 	 */
+ 	ret = ipmmu_domain_allocate_context(domain->root, domain);
+-	if (ret == IPMMU_CTX_MAX) {
++	if (ret < 0) {
+ 		free_io_pgtable_ops(domain->iop);
+-		return -EBUSY;
++		return ret;
+ 	}
+ 
+ 	domain->context_id = ret;
+@@ -531,7 +534,7 @@ static irqreturn_t ipmmu_irq(int irq, vo
+ 	/*
+ 	 * Check interrupts for all active contexts.
+ 	 */
+-	for (i = 0; i < IPMMU_CTX_MAX; i++) {
++	for (i = 0; i < mmu->num_ctx; i++) {
+ 		if (!mmu->domains[i])
+ 			continue;
+ 		if (ipmmu_domain_irq(mmu->domains[i]) == IRQ_HANDLED)
+@@ -601,6 +604,13 @@ static int ipmmu_attach_device(struct io
+ 		domain->mmu = mmu;
+ 		domain->root = root;
+ 		ret = ipmmu_domain_init_context(domain);
++		if (ret < 0) {
++			dev_err(dev, "Unable to initialize IPMMU context\n");
++			domain->mmu = NULL;
++		} else {
++			dev_info(dev, "Using IPMMU context %u\n",
++				 domain->context_id);
++		}
+ 	} else if (domain->mmu != mmu) {
+ 		/*
+ 		 * Something is wrong, we can't attach two devices using
+@@ -969,13 +979,14 @@ static void ipmmu_device_reset(struct ip
+ 	unsigned int i;
+ 
+ 	/* Disable all contexts. */
+-	for (i = 0; i < 4; ++i)
++	for (i = 0; i < mmu->num_ctx; ++i)
+ 		ipmmu_write(mmu, i * IM_CTX_SIZE + IMCTR, 0);
  }
  
-+static inline dma_addr_t dma_map_resource(struct device *dev,
-+					  phys_addr_t phys_addr,
-+					  size_t size,
-+					  enum dma_data_direction dir,
-+					  struct dma_attrs *attrs)
-+{
-+	struct dma_map_ops *ops = get_dma_ops(dev);
-+	unsigned long pfn = __phys_to_pfn(phys_addr);
-+	dma_addr_t addr;
+ static const struct ipmmu_features ipmmu_features_default = {
+ 	.use_ns_alias_offset = true,
+ 	.has_cache_leaf_nodes = false,
++	.has_eight_ctx = false,
+ };
+ 
+ static const struct of_device_id ipmmu_of_ids[] = {
+@@ -1034,6 +1045,17 @@ static int ipmmu_probe(struct platform_d
+ 	if (mmu->features->use_ns_alias_offset)
+ 		mmu->base += IM_NS_ALIAS_OFFSET;
+ 
++	/*
++	 * The number of contexts varies with generation and instance.
++	 * Newer SoCs get a total of 8 contexts enabled, older ones just one.
++	 */
++	if (mmu->features->has_eight_ctx)
++		mmu->num_ctx = 8;
++	else
++		mmu->num_ctx = 1;
 +
-+	BUG_ON(!valid_dma_direction(dir));
++	WARN_ON(mmu->num_ctx > IPMMU_CTX_MAX);
 +
-+	/* Don't allow RAM to be mapped */
-+	BUG_ON(pfn_valid(pfn));
-+
-+	addr = phys_addr;
-+	if (ops->map_resource)
-+		addr = ops->map_resource(dev, phys_addr, size, dir, attrs);
-+
-+	debug_dma_map_resource(dev, phys_addr, size, dir, addr);
-+
-+	return addr;
-+}
-+
-+static inline void dma_unmap_resource(struct device *dev, dma_addr_t addr,
-+				      size_t size, enum dma_data_direction dir,
-+				      struct dma_attrs *attrs)
-+{
-+	struct dma_map_ops *ops = get_dma_ops(dev);
-+
-+	BUG_ON(!valid_dma_direction(dir));
-+	if (ops->unmap_resource)
-+		ops->unmap_resource(dev, addr, size, dir, attrs);
-+	debug_dma_unmap_resource(dev, addr, size, dir);
-+}
-+
- static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
- 					   size_t size,
- 					   enum dma_data_direction dir)
--- 
-2.8.2
+ 	irq = platform_get_irq(pdev, 0);
+ 
+ 	/*
