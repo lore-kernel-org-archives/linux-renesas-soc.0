@@ -1,60 +1,45 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Peter Hurley <peter@hurleysoftware.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	devicetree@vger.kernel.org
-Subject: [PATCH v3 02/11] serial: sh-sci: Update DT binding documentation for dedicated RTS/CTS
-Date: Fri,  3 Jun 2016 12:00:02 +0200
-Message-Id: <1464948011-377-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
-References: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35145 "EHLO
+	mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751685AbcFFHPn (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 6 Jun 2016 03:15:43 -0400
+MIME-Version: 1.0
+In-Reply-To: <1465195811-3041-2-git-send-email-wsa@the-dreams.de>
+References: <1465195811-3041-1-git-send-email-wsa@the-dreams.de> <1465195811-3041-2-git-send-email-wsa@the-dreams.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 6 Jun 2016 09:15:41 +0200
+Message-ID: <CAMuHMdUH8V0potD361qzqXT=xRXPPb0VQh8KbV41NWVw3iHjrA@mail.gmail.com>
+Subject: Re: [RFC 1/3] pinctrl: sh-pfc: refactor voltage setting
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some Renesas SCIF UARTs have dedicated lines for RTS/CTS hardware flow
-control.  Whether these lines exist depends on SoC and UART instance
-inside the SoC.  Whether these lines can be used for hardware flow
-control depends on board wiring.
+On Mon, Jun 6, 2016 at 8:50 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> All known hardware being able to switch voltages has the same POCCTRL
+> register. So, factor out the common code to the core and keep only
+> the pin-to-bit mapping SoC specific. Convert the only user, r8a7790.
+> In case POCCTRL should ever get more complex (more voltages to select?),
+> we should probably switch over to a describing array like drive strength
+> does currently.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Amend the DT bindings with an optional property to indicate that RTS/CTS
-hardware flow control lines exist, and can be used as such, according to
-the Generic Serial DT Bindings.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
----
-v3:
-  - Add Acked-by,
+Gr{oetje,eeting}s,
 
-v2:
-  - Drop RFC status,
-  - Use "uart-has-rtscts" instead of "renesas,uart-has-rtscts",
-  - Refer to the Generic Serial DT Bindings.
----
- Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
- 1 file changed, 2 insertions(+)
+                        Geert
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index 997baeaa869baa6f..7a0e15053db97481 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -78,6 +78,8 @@ Optional properties:
-   - dma-names: Must contain a list of two DMA names, "tx" and "rx".
-   - {cts,dsr,dcd,rng,rts,dtr}-gpios: Specify GPIOs for modem lines, cfr. the
-     generic serial DT bindings in serial.txt.
-+  - uart-has-rtscts: Indicates dedicated lines for RTS/CTS hardware flow
-+    control, cfr. the generic serial DT bindings in serial.txt.
- 
- Example:
- 	aliases {
--- 
-1.9.1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
