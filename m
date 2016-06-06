@@ -1,51 +1,84 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Peter Hurley <peter@hurleysoftware.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 11/11] serial: sh-sci: Add DT support for dedicated RTS/CTS
-Date: Fri,  3 Jun 2016 12:00:11 +0200
-Message-Id: <1464948011-377-12-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
-References: <1464948011-377-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v1 25/25] PCI: versatile: Simplify host bridge window
+ iteration
+To: linux-pci@vger.kernel.org
+From: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Herring <robh@kernel.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Pratyush Anand <pratyush.anand@gmail.com>,
+	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
+	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
+	Michal Simek <michal.simek@xilinx.com>,
+	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
+	linux-arm-kernel@lists.infradead.org
+Date: Mon, 06 Jun 2016 18:07:51 -0500
+Message-ID: <20160606230751.20936.38789.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for indicating the availability of dedicated lines for
-RTS/CTS hardware flow control, using the standard "uart-has-rtscts" DT
-property.
+The switch is the only statement in the resource_list_for_each_entry()
+loop, so remove unnecessary "continue" statements in the switch.  Simplify
+checking for the required non-prefetchable memory aperture.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+No functional change intended.
+
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
-v3:
-  - No changes,
+ drivers/pci/host/pci-versatile.c |   17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
-v2:
-  - New.
----
- drivers/tty/serial/sh-sci.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 02b240a02dc6a593..d9cb0d70fceef07d 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2999,6 +2999,9 @@ sci_parse_dt(struct platform_device *pdev, unsigned int *dev_id)
- 	p->regtype = SCI_OF_REGTYPE(match->data);
- 	p->scscr = SCSCR_RE | SCSCR_TE;
+diff --git a/drivers/pci/host/pci-versatile.c b/drivers/pci/host/pci-versatile.c
+index 273edac..f2344057 100644
+--- a/drivers/pci/host/pci-versatile.c
++++ b/drivers/pci/host/pci-versatile.c
+@@ -90,11 +90,9 @@ static int versatile_pci_parse_request_of_pci_ranges(struct device *dev,
+ 		switch (resource_type(res)) {
+ 		case IORESOURCE_IO:
+ 			err = pci_remap_iospace(res, iobase);
+-			if (err) {
++			if (err)
+ 				dev_warn(dev, "error %d: failed to map resource %pR\n",
+ 					 err, res);
+-				continue;
+-			}
+ 			break;
+ 		case IORESOURCE_MEM:
+ 			res_valid |= !(res->flags & IORESOURCE_PREFETCH);
+@@ -104,19 +102,14 @@ static int versatile_pci_parse_request_of_pci_ranges(struct device *dev,
+ 			mem++;
  
-+	if (of_find_property(np, "uart-has-rtscts", NULL))
-+		p->capabilities |= SCIx_HAVE_RTSCTS;
-+
- 	return p;
- }
+ 			break;
+-		case IORESOURCE_BUS:
+-		default:
+-			continue;
+ 		}
+ 	}
  
--- 
-1.9.1
+-	if (!res_valid) {
+-		dev_err(dev, "non-prefetchable memory resource required\n");
+-		err = -EINVAL;
+-		goto out_release_res;
+-	}
++	if (res_valid)
++		return 0;
+ 
+-	return 0;
++	dev_err(dev, "non-prefetchable memory resource required\n");
++	err = -EINVAL;
+ 
+ out_release_res:
+ 	pci_free_resource_list(res);
