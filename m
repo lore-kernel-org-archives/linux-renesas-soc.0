@@ -1,60 +1,83 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: [PATCH v1 16/25] PCI: generic: Request host bridge window resources
+ with core function
+To: linux-pci@vger.kernel.org
+From: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Herring <robh@kernel.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Pratyush Anand <pratyush.anand@gmail.com>,
+	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
+	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
+	Michal Simek <michal.simek@xilinx.com>,
+	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 09/12] ARM: dts: r8a7792: add IRQC support
-Date: Thu, 09 Jun 2016 00:31:50 +0300
-Message-ID: <1560973.LULnaQ41Pv@wasted.cogentembedded.com>
-In-Reply-To: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
-References: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+Date: Mon, 06 Jun 2016 18:06:44 -0500
+Message-ID: <20160606230644.20936.23161.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the IRQC interrupt controller in the R8A7792 device tree.
+Use devm_request_pci_bus_resources() to request host bridge window
+resources instead of doing it by hand in the driver.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+No functional change intended.
 
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
-Changes in version 3:
-- refreshed the patch.
+ drivers/pci/host/pci-host-common.c |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-Changes in version 2:
-- resolved reject, indenting the IRQC node that is now under the "soc" node;
-- added Geert's tag.
-
- arch/arm/boot/dts/r8a7792.dtsi |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -70,6 +70,19 @@
- 				      IRQ_TYPE_LEVEL_HIGH)>;
- 		};
+diff --git a/drivers/pci/host/pci-host-common.c b/drivers/pci/host/pci-host-common.c
+index 16a4e61..e7515fd 100644
+--- a/drivers/pci/host/pci-host-common.c
++++ b/drivers/pci/host/pci-host-common.c
+@@ -36,12 +36,15 @@ static int gen_pci_parse_request_of_pci_ranges(struct device *dev,
+ 	if (err)
+ 		return err;
  
-+		irqc: interrupt-controller@e61c0000 {
-+			compatible = "renesas,irqc-r8a7792", "renesas,irqc";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			reg = <0 0xe61c0000 0 0x200>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp4_clks R8A7792_CLK_IRQC>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
++	err = devm_request_pci_bus_resources(dev, resources);
++	if (err)
++		goto out_release_res;
 +
- 		timer {
- 			compatible = "arm,armv7-timer";
- 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
-
+ 	resource_list_for_each_entry(win, resources) {
+-		struct resource *parent, *res = win->res;
++		struct resource *res = win->res;
+ 
+ 		switch (resource_type(res)) {
+ 		case IORESOURCE_IO:
+-			parent = &ioport_resource;
+ 			err = pci_remap_iospace(res, iobase);
+ 			if (err) {
+ 				dev_warn(dev, "error %d: failed to map resource %pR\n",
+@@ -50,7 +53,6 @@ static int gen_pci_parse_request_of_pci_ranges(struct device *dev,
+ 			}
+ 			break;
+ 		case IORESOURCE_MEM:
+-			parent = &iomem_resource;
+ 			res_valid |= !(res->flags & IORESOURCE_PREFETCH);
+ 			break;
+ 		case IORESOURCE_BUS:
+@@ -58,10 +60,6 @@ static int gen_pci_parse_request_of_pci_ranges(struct device *dev,
+ 		default:
+ 			continue;
+ 		}
+-
+-		err = devm_request_resource(dev, parent, res);
+-		if (err)
+-			goto out_release_res;
+ 	}
+ 
+ 	if (!res_valid) {
