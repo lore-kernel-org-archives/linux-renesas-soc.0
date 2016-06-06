@@ -1,54 +1,73 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:58030 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752844AbcFPK1y (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 16 Jun 2016 06:27:54 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: [PATCH v1 13/25] PCI: altera: Request host bridge window resources
+ with core function
+To: linux-pci@vger.kernel.org
+From: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Herring <robh@kernel.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Pratyush Anand <pratyush.anand@gmail.com>,
+	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
 	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 02/13] soc: renesas: rcar-sysc: Fix uninitialized error code in rcar_sysc_pd_init()
-Date: Thu, 16 Jun 2016 12:27:31 +0200
-Message-Id: <1466072862-28030-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1466072862-28030-1-git-send-email-geert+renesas@glider.be>
-References: <1466072862-28030-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	Simon Horman <horms@verge.net.au>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
+	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
+	Michal Simek <michal.simek@xilinx.com>,
+	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
+	linux-arm-kernel@lists.infradead.org
+Date: Mon, 06 Jun 2016 18:06:21 -0500
+Message-ID: <20160606230621.20936.79245.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On success, rcar_sysc_pd_init() returns an uninitialized error code.
-Use the return value of of_genpd_add_provider_onecell() to fix this.
+Use devm_request_pci_bus_resources() to request host bridge window
+resources instead of doing it by hand in the driver.
 
-This went unnoticed, as early_initcall() doesn't care about the return
-value.
+No functional change intended.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
-v4:
-  - New.
----
- drivers/soc/renesas/rcar-sysc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/host/pcie-altera.c |   11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index a43ca24699bed1ec..59a8152681a59a5c 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -398,7 +398,7 @@ static int __init rcar_sysc_pd_init(void)
- 		domains->domains[area->isr_bit] = &pd->genpd;
+diff --git a/drivers/pci/host/pcie-altera.c b/drivers/pci/host/pcie-altera.c
+index dbac6fb..b97abbc 100644
+--- a/drivers/pci/host/pcie-altera.c
++++ b/drivers/pci/host/pcie-altera.c
+@@ -432,21 +432,20 @@ static int altera_pcie_parse_request_of_pci_ranges(struct altera_pcie *pcie)
+ 	if (err)
+ 		return err;
+ 
++	err = devm_request_pci_bus_resources(dev, &pcie->resources);
++	if (err)
++		goto out_release_res;
++
+ 	resource_list_for_each_entry(win, &pcie->resources) {
+-		struct resource *parent, *res = win->res;
++		struct resource *res = win->res;
+ 
+ 		switch (resource_type(res)) {
+ 		case IORESOURCE_MEM:
+-			parent = &iomem_resource;
+ 			res_valid |= !(res->flags & IORESOURCE_PREFETCH);
+ 			break;
+ 		default:
+ 			continue;
+ 		}
+-
+-		err = devm_request_resource(dev, parent, res);
+-		if (err)
+-			goto out_release_res;
  	}
  
--	of_genpd_add_provider_onecell(np, &domains->onecell_data);
-+	error = of_genpd_add_provider_onecell(np, &domains->onecell_data);
- 
- out_put:
- 	of_node_put(np);
--- 
-1.9.1
+ 	if (!res_valid) {
