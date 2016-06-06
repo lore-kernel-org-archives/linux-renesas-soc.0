@@ -1,106 +1,52 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: [PATCH v1 01/25] PCI: Add devm_request_pci_bus_resources()
-To: linux-pci@vger.kernel.org
-From: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Herring <robh@kernel.org>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Pratyush Anand <pratyush.anand@gmail.com>,
-	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
-	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
-	Michal Simek <michal.simek@xilinx.com>,
-	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:35383 "EHLO
+	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751085AbcFFTDM (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 6 Jun 2016 15:03:12 -0400
+Received: by mail-lf0-f47.google.com with SMTP id j198so280605lfe.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Jun 2016 12:03:11 -0700 (PDT)
+Subject: Re: [PATCH v2 10/11] ARM: dts: blanche: initial device tree
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+References: <3446154.oZ24315zaL@wasted.cogentembedded.com>
+ <13571934.l66Gg7Cpm9@wasted.cogentembedded.com>
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
 	linux-arm-kernel@lists.infradead.org
-Date: Mon, 06 Jun 2016 18:04:52 -0500
-Message-ID: <20160606230452.20936.28937.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <4fe5c4ec-11a0-7e8a-cad1-91c0c30702df@cogentembedded.com>
+Date: Mon, 6 Jun 2016 22:03:07 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <13571934.l66Gg7Cpm9@wasted.cogentembedded.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Several host bridge drivers iterate through the list of bridge windows to
-request resources.  Several others don't request the window resources at
-all.
+On 06/04/2016 12:35 AM, Sergei Shtylyov wrote:
 
-Add a devm_request_pci_bus_resources() interface to make it easier for
-drivers to request all the window resources.
+> Add the initial device  tree for the R8A7792 SoC based Blanche board.
+> The board has 2 debug serial ports: SCIF0 and SCIF3; include support for
+> them,  so that  the serial console  can  work.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Acked-by: Simon Horman <horms+renesas@verge.net.au>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/bus.c   |   29 ++++++++++++++++++++++++++++-
- include/linux/pci.h |    5 ++++-
- 2 files changed, 32 insertions(+), 2 deletions(-)
+[...]
+> Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+> ===================================================================
+> --- /dev/null
+> +++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+> @@ -0,0 +1,44 @@
+> +/*
+> + * Device Tree Source for the Blanche board
+> + *
+> + * Copyright (C) 2016 Cogent Embedded, Inc.
 
-diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-index dd7cdbe..78b90c7 100644
---- a/drivers/pci/bus.c
-+++ b/drivers/pci/bus.c
-@@ -91,6 +91,34 @@ void pci_bus_remove_resources(struct pci_bus *bus)
- 	}
- }
- 
-+int devm_request_pci_bus_resources(struct device *dev,
-+				   struct list_head *resources)
-+{
-+	struct resource_entry *win;
-+	struct resource *parent, *res;
-+	int err;
-+
-+	resource_list_for_each_entry(win, resources) {
-+		res = win->res;
-+		switch (resource_type(res)) {
-+		case IORESOURCE_IO:
-+			parent = &ioport_resource;
-+			break;
-+		case IORESOURCE_MEM:
-+			parent = &iomem_resource;
-+			break;
-+		default:
-+			continue;
-+		}
-+
-+		err = devm_request_resource(dev, parent, res);
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-+
- static struct pci_bus_region pci_32_bit = {0, 0xffffffffULL};
- #ifdef CONFIG_PCI_BUS_ADDR_T_64BIT
- static struct pci_bus_region pci_64_bit = {0,
-@@ -397,4 +425,3 @@ void pci_bus_put(struct pci_bus *bus)
- 		put_device(&bus->dev);
- }
- EXPORT_SYMBOL(pci_bus_put);
--
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index b67e4df..6ac8360 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1143,9 +1143,12 @@ void pci_add_resource(struct list_head *resources, struct resource *res);
- void pci_add_resource_offset(struct list_head *resources, struct resource *res,
- 			     resource_size_t offset);
- void pci_free_resource_list(struct list_head *resources);
--void pci_bus_add_resource(struct pci_bus *bus, struct resource *res, unsigned int flags);
-+void pci_bus_add_resource(struct pci_bus *bus, struct resource *res,
-+			  unsigned int flags);
- struct resource *pci_bus_resource_n(const struct pci_bus *bus, int n);
- void pci_bus_remove_resources(struct pci_bus *bus);
-+int devm_request_pci_bus_resources(struct device *dev,
-+				   struct list_head *resources);
- 
- #define pci_bus_for_each_resource(bus, res, i)				\
- 	for (i = 0;							\
+    Looks like I need to add the Renesas Electronics copyright here. Pleae 
+hold one merging this patch as well.
+
+MBR, Sergei
