@@ -1,131 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53934 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932249AbcFIRml (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 9 Jun 2016 13:42:41 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87mvmvkq8b.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bB3yT-0003Nq-Ak@debutante>
-Date: Thu, 09 Jun 2016 18:42:33 +0100
-Subject: Applied "ASoC: rsnd: adg :: AUDIO-CLKOUTn asynchronizes support" to the asoc tree
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 06 Jun 2016 12:58:49 +0900
+Message-Id: <20160606035849.31763.15348.sendpatchset@little-apple>
+In-Reply-To: <20160606035723.31763.66500.sendpatchset@little-apple>
+References: <20160606035723.31763.66500.sendpatchset@little-apple>
+Subject: [PATCH v2 09/11] iommu/ipmmu-vmsa: Make IMBUSCTR setup optional
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Magnus Damm <damm+renesas@opensource.se>
 
-   ASoC: rsnd: adg :: AUDIO-CLKOUTn asynchronizes support
+Introduce a feature to allow opt-out of setting up
+IMBUSCR. The default case is unchanged.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 7dc20319660d12d2ef642e572e8802c228b6c1cd Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 9 Jun 2016 03:21:37 +0000
-Subject: [PATCH] ASoC: rsnd: adg :: AUDIO-CLKOUTn asynchronizes support
-
-AUDIO-CLKOUTn can asynchronizes with L/R clock.
-AUDIO-CLKOUTn synchronizes with L/R clock is now default behavior.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- .../devicetree/bindings/sound/renesas,rsnd.txt         |  2 ++
- sound/soc/sh/rcar/adg.c                                | 18 ++++++++++++++++++
- 2 files changed, 20 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-index c7b29df4a963..15a7316e4c91 100644
---- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-+++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-@@ -373,6 +373,8 @@ Optional properties:
- - #clock-cells			: it must be 0 if your system has audio_clkout
- 				  it must be 1 if your system has audio_clkout0/1/2/3
- - clock-frequency		: for all audio_clkout0/1/2/3
-+- clkout-lr-asynchronous	: boolean property. it indicates that audio_clkoutn
-+				  is asynchronizes with lr-clock.
- 
- SSI subnode properties:
- - interrupts			: Should contain SSI interrupt for PIO transfer
-diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
-index 49354d17ea55..7d3e0e46d64a 100644
---- a/sound/soc/sh/rcar/adg.c
-+++ b/sound/soc/sh/rcar/adg.c
-@@ -33,11 +33,15 @@ struct rsnd_adg {
- 	struct clk *clkout[CLKOUTMAX];
- 	struct clk_onecell_data onecell;
- 	struct rsnd_mod mod;
-+	u32 flags;
- 
- 	int rbga_rate_for_441khz; /* RBGA */
- 	int rbgb_rate_for_48khz;  /* RBGB */
+ Changes since V1:
+ - Updated the commit message
+ - Reworked patch to coexist with the multi context feature
+
+ drivers/iommu/ipmmu-vmsa.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+--- 0023/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-06 11:04:39.800607110 +0900
+@@ -37,6 +37,7 @@ struct ipmmu_features {
+ 	bool use_ns_alias_offset;
+ 	bool has_cache_leaf_nodes;
+ 	bool has_eight_ctx;
++	bool setup_imbuscr;
  };
  
-+#define LRCLK_ASYNC	(1 << 0)
-+#define adg_mode_flags(adg)	(adg->flags)
-+
- #define for_each_rsnd_clk(pos, adg, i)		\
- 	for (i = 0;				\
- 	     (i < CLKMAX) &&			\
-@@ -355,6 +359,16 @@ found_clock:
+ struct ipmmu_vmsa_device {
+@@ -438,10 +439,10 @@ static int ipmmu_domain_init_context(str
+ 	ipmmu_ctx_write(domain, IMMAIR0, domain->cfg.arm_lpae_s1_cfg.mair[0]);
  
- 	rsnd_adg_set_ssi_clk(ssi_mod, data);
+ 	/* IMBUSCR */
+-	ipmmu_ctx_write(domain, IMBUSCR,
+-			ipmmu_ctx_read(domain, IMBUSCR) &
+-			~(IMBUSCR_DVM | IMBUSCR_BUSSEL_MASK));
+-
++	if (domain->root->features->setup_imbuscr)
++		ipmmu_ctx_write(domain, IMBUSCR,
++				ipmmu_ctx_read(domain, IMBUSCR) &
++				~(IMBUSCR_DVM | IMBUSCR_BUSSEL_MASK));
+ 	/*
+ 	 * IMSTR
+ 	 * Clear all interrupt flags.
+@@ -1057,6 +1058,7 @@ static const struct ipmmu_features ipmmu
+ 	.use_ns_alias_offset = true,
+ 	.has_cache_leaf_nodes = false,
+ 	.has_eight_ctx = false,
++	.setup_imbuscr = true,
+ };
  
-+	if (!(adg_mode_flags(adg) & LRCLK_ASYNC)) {
-+		struct rsnd_mod *adg_mod = rsnd_mod_get(adg);
-+		u32 ckr = 0;
-+
-+		if (0 == (rate % 8000))
-+			ckr = 0x80000000;
-+
-+		rsnd_mod_bset(adg_mod, SSICKR, 0x80000000, ckr);
-+	}
-+
- 	dev_dbg(dev, "ADG: %s[%d] selects 0x%x for %d\n",
- 		rsnd_mod_name(ssi_mod), rsnd_mod_id(ssi_mod),
- 		data, rate);
-@@ -532,6 +546,7 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
- {
- 	struct rsnd_adg *adg;
- 	struct device *dev = rsnd_priv_to_dev(priv);
-+	struct device_node *np = dev->of_node;
- 
- 	adg = devm_kzalloc(dev, sizeof(*adg), GFP_KERNEL);
- 	if (!adg) {
-@@ -545,6 +560,9 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
- 	rsnd_adg_get_clkin(priv, adg);
- 	rsnd_adg_get_clkout(priv, adg);
- 
-+	if (of_get_property(np, "clkout-lr-asynchronous", NULL))
-+		adg->flags = LRCLK_ASYNC;
-+
- 	priv->adg = adg;
- 
- 	return 0;
--- 
-2.8.1
+ static const struct of_device_id ipmmu_of_ids[] = {
