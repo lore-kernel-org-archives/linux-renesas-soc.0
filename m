@@ -1,209 +1,219 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60721 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752321AbcFHHOi (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 03:14:38 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 3/4] ARM: dts: r8a7790: lager: use demuxer for IIC2/I2C2
-Date: Wed,  8 Jun 2016 16:14:25 +0900
-Message-Id: <1465370066-8450-4-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1465370066-8450-1-git-send-email-horms+renesas@verge.net.au>
-References: <1465370066-8450-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 06 Jun 2016 12:57:43 +0900
+Message-Id: <20160606035743.31763.22662.sendpatchset@little-apple>
+In-Reply-To: <20160606035723.31763.66500.sendpatchset@little-apple>
+References: <20160606035723.31763.66500.sendpatchset@little-apple>
+Subject: [PATCH v2 02/11] iommu/ipmmu-vmsa: Add optional root device feature
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for HDMI related I2C slaves.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Based on work by Wolfram Sang.
+Add root device handling to the IPMMU driver by allowing certain
+DT compat strings to enable has_cache_leaf_nodes that in turn will
+support both root devices with interrupts and leaf devices that
+face the actual IPMMU consumer devices.
 
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
-v2
-* Include GPIO fallback
----
- arch/arm/boot/dts/r8a7790-lager.dts | 138 ++++++++++++++++++++++--------------
- 1 file changed, 85 insertions(+), 53 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 20abb1470f91..80b0eaa93607 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -52,6 +52,8 @@
- 		serial1 = &scifa1;
- 		i2c8 = "i2cexio0";
- 		i2c9 = "i2cexio1";
-+		i2c10 = "i2chdmi";
-+		i2c11 = "gpioi2c";
- 	};
+ Changes since V1:
+ - Moved patch to earlier in the series
+ - Updated code to work with recent changes in:
+   [PATCH v3 00/06] iommu/ipmmu-vmsa: IPMMU multi-arch update V3
+
+ drivers/iommu/ipmmu-vmsa.c |   87 +++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 70 insertions(+), 17 deletions(-)
+
+--- 0009/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-06 10:11:32.130607110 +0900
+@@ -34,6 +34,7 @@
  
- 	chosen {
-@@ -283,6 +285,76 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 	};
-+
-+	i2chdmi: i2c-10 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&iic2>, <&i2c2>, <&gpioi2c>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ak4643: codec@12 {
-+			compatible = "asahi-kasei,ak4643";
-+			#sound-dai-cells = <0>;
-+			reg = <0x12>;
-+		};
-+
-+		composite-in@20 {
-+			compatible = "adi,adv7180";
-+			reg = <0x20>;
-+			remote = <&vin1>;
-+
-+			port {
-+				adv7180: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&vin1ep0>;
-+				};
-+			};
-+		};
-+
-+		hdmi@39 {
-+			compatible = "adi,adv7511w";
-+			reg = <0x39>;
-+			interrupt-parent = <&gpio1>;
-+			interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
-+
-+			adi,input-depth = <8>;
-+			adi,input-colorspace = "rgb";
-+			adi,input-clock = "1x";
-+			adi,input-style = <1>;
-+			adi,input-justification = "evenly";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7511_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					adv7511_out: endpoint {
-+						remote-endpoint = <&hdmi_con>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
-+	gpioi2c: i2c-11 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		gpios = <&gpio5 6 GPIO_ACTIVE_HIGH /* sda */
-+			 &gpio5 5 GPIO_ACTIVE_HIGH /* scl */
-+			>;
-+		i2c-gpio,delay-us = <5>;
-+	};
+ struct ipmmu_features {
+ 	bool use_ns_alias_offset;
++	bool has_cache_leaf_nodes;
  };
  
- &du {
-@@ -415,6 +487,11 @@
- 		function = "iic1";
- 	};
+ struct ipmmu_vmsa_device {
+@@ -41,6 +42,7 @@ struct ipmmu_vmsa_device {
+ 	void __iomem *base;
+ 	struct list_head list;
+ 	const struct ipmmu_features *features;
++	bool is_leaf;
+ 	unsigned int num_utlbs;
+ 	spinlock_t lock;			/* Protects ctx and domains[] */
+ 	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
+@@ -51,6 +53,7 @@ struct ipmmu_vmsa_device {
  
-+	i2c2_pins: i2c2 {
-+		groups = "i2c2";
-+		function = "i2c2";
-+	};
+ struct ipmmu_vmsa_domain {
+ 	struct ipmmu_vmsa_device *mmu;
++	struct ipmmu_vmsa_device *root;
+ 	struct iommu_domain io_domain;
+ 
+ 	struct io_pgtable_cfg cfg;
+@@ -195,6 +198,36 @@ static struct ipmmu_vmsa_domain *to_vmsa
+ #define IMUASID_ASID0_SHIFT		0
+ 
+ /* -----------------------------------------------------------------------------
++ * Root device handling
++ */
 +
- 	iic2_pins: iic2 {
- 		groups = "iic2";
- 		function = "iic2";
-@@ -616,63 +693,18 @@
- 	pinctrl-names = "i2c-exio1";
++static bool ipmmu_is_root(struct ipmmu_vmsa_device *mmu)
++{
++	if (mmu->features->has_cache_leaf_nodes)
++		return mmu->is_leaf ? false : true;
++	else
++		return true; /* older IPMMU hardware treated as single root */
++}
++
++static struct ipmmu_vmsa_device *ipmmu_find_root(struct ipmmu_vmsa_device *leaf)
++{
++	struct ipmmu_vmsa_device *mmu = NULL;
++
++	if (ipmmu_is_root(leaf))
++		return leaf;
++
++	spin_lock(&ipmmu_devices_lock);
++
++	list_for_each_entry(mmu, &ipmmu_devices, list) {
++		if (ipmmu_is_root(mmu))
++			break;
++	}
++
++	spin_unlock(&ipmmu_devices_lock);
++	return mmu;
++}
++
++/* -----------------------------------------------------------------------------
+  * Read/Write Access
+  */
+ 
+@@ -211,13 +244,13 @@ static void ipmmu_write(struct ipmmu_vms
+ 
+ static u32 ipmmu_ctx_read(struct ipmmu_vmsa_domain *domain, unsigned int reg)
+ {
+-	return ipmmu_read(domain->mmu, domain->context_id * IM_CTX_SIZE + reg);
++	return ipmmu_read(domain->root, domain->context_id * IM_CTX_SIZE + reg);
+ }
+ 
+ static void ipmmu_ctx_write(struct ipmmu_vmsa_domain *domain, unsigned int reg,
+ 			    u32 data)
+ {
+-	ipmmu_write(domain->mmu, domain->context_id * IM_CTX_SIZE + reg, data);
++	ipmmu_write(domain->root, domain->context_id * IM_CTX_SIZE + reg, data);
+ }
+ 
+ /* -----------------------------------------------------------------------------
+@@ -350,7 +383,7 @@ static int ipmmu_domain_init_context(str
+ 	 * TODO: Add support for coherent walk through CCI with DVM and remove
+ 	 * cache handling. For now, delegate it to the io-pgtable code.
+ 	 */
+-	domain->cfg.iommu_dev = domain->mmu->dev;
++	domain->cfg.iommu_dev = domain->root->dev;
+ 
+ 	domain->iop = alloc_io_pgtable_ops(ARM_32_LPAE_S1, &domain->cfg,
+ 					   domain);
+@@ -360,7 +393,7 @@ static int ipmmu_domain_init_context(str
+ 	/*
+ 	 * Find an unused context.
+ 	 */
+-	ret = ipmmu_domain_allocate_context(domain->mmu, domain);
++	ret = ipmmu_domain_allocate_context(domain->root, domain);
+ 	if (ret == IPMMU_CTX_MAX) {
+ 		free_io_pgtable_ops(domain->iop);
+ 		return -EBUSY;
+@@ -431,7 +464,7 @@ static void ipmmu_domain_destroy_context
+ 	 */
+ 	ipmmu_ctx_write(domain, IMCTR, IMCTR_FLUSH);
+ 	ipmmu_tlb_sync(domain);
+-	ipmmu_domain_free_context(domain->mmu, domain->context_id);
++	ipmmu_domain_free_context(domain->root, domain->context_id);
+ }
+ 
+ /* -----------------------------------------------------------------------------
+@@ -544,7 +577,7 @@ static int ipmmu_attach_device(struct io
+ 			       struct device *dev)
+ {
+ 	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
+-	struct ipmmu_vmsa_device *mmu = archdata->mmu;
++	struct ipmmu_vmsa_device *root, *mmu = archdata->mmu;
+ 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+ 	unsigned long flags;
+ 	unsigned int i;
+@@ -555,11 +588,18 @@ static int ipmmu_attach_device(struct io
+ 		return -ENXIO;
+ 	}
+ 
++	root = ipmmu_find_root(archdata->mmu);
++	if (!root) {
++		dev_err(dev, "Unable to locate root IPMMU\n");
++		return -EAGAIN;
++	}
++
+ 	spin_lock_irqsave(&domain->lock, flags);
+ 
+ 	if (!domain->mmu) {
+ 		/* The domain hasn't been used yet, initialize it. */
+ 		domain->mmu = mmu;
++		domain->root = root;
+ 		ret = ipmmu_domain_init_context(domain);
+ 	} else if (domain->mmu != mmu) {
+ 		/*
+@@ -935,6 +975,7 @@ static void ipmmu_device_reset(struct ip
+ 
+ static const struct ipmmu_features ipmmu_features_default = {
+ 	.use_ns_alias_offset = true,
++	.has_cache_leaf_nodes = false,
  };
  
--&iic2	{
--	status = "okay";
--	pinctrl-0 = <&iic2_pins>;
--	pinctrl-names = "default";
-+&i2c2	{
-+	pinctrl-0 = <&i2c2_pins>;
-+	pinctrl-names = "i2c-hdmi";
+ static const struct of_device_id ipmmu_of_ids[] = {
+@@ -994,19 +1035,31 @@ static int ipmmu_probe(struct platform_d
+ 		mmu->base += IM_NS_ALIAS_OFFSET;
  
- 	clock-frequency = <100000>;
-+};
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "no IRQ found\n");
+-		return irq;
+-	}
  
--	ak4643: codec@12 {
--		compatible = "asahi-kasei,ak4643";
--		#sound-dai-cells = <0>;
--		reg = <0x12>;
--	};
--
--	composite-in@20 {
--		compatible = "adi,adv7180";
--		reg = <0x20>;
--		remote = <&vin1>;
--
--		port {
--			adv7180: endpoint {
--				bus-width = <8>;
--				remote-endpoint = <&vin1ep0>;
--			};
--		};
--	};
--
--	hdmi@39 {
--		compatible = "adi,adv7511w";
--		reg = <0x39>;
--		interrupt-parent = <&gpio1>;
--		interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
--
--		adi,input-depth = <8>;
--		adi,input-colorspace = "rgb";
--		adi,input-clock = "1x";
--		adi,input-style = <1>;
--		adi,input-justification = "evenly";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7511_in: endpoint {
--					remote-endpoint = <&du_out_lvds0>;
--				};
--			};
-+&iic2	{
-+	pinctrl-0 = <&iic2_pins>;
-+	pinctrl-names = "i2c-hdmi";
+-	ret = devm_request_irq(&pdev->dev, irq, ipmmu_irq, 0,
+-			       dev_name(&pdev->dev), mmu);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "failed to request IRQ %d\n", irq);
+-		return ret;
+-	}
++	/*
++	 * Determine if this IPMMU instance is a leaf device by checking
++	 * if the renesas,ipmmu-main property exists or not.
++	 */
++	if (mmu->features->has_cache_leaf_nodes &&
++	    of_find_property(pdev->dev.of_node, "renesas,ipmmu-main", NULL))
++		mmu->is_leaf = true;
++
++	/* Root devices have mandatory IRQs */
++	if (ipmmu_is_root(mmu)) {
++		if (irq < 0) {
++			dev_err(&pdev->dev, "no IRQ found\n");
++			return irq;
++		}
  
--			port@1 {
--				reg = <1>;
--				adv7511_out: endpoint {
--					remote-endpoint = <&hdmi_con>;
--				};
--			};
--		};
--	};
-+	clock-frequency = <100000>;
- };
+-	ipmmu_device_reset(mmu);
++		ret = devm_request_irq(&pdev->dev, irq, ipmmu_irq, 0,
++				       dev_name(&pdev->dev), mmu);
++		if (ret < 0) {
++			dev_err(&pdev->dev, "failed to request IRQ %d\n", irq);
++			return ret;
++		}
++
++		ipmmu_device_reset(mmu);
++	}
  
- &iic3 {
--- 
-2.1.4
+ 	/*
+ 	 * We can't create the ARM mapping here as it requires the bus to have
