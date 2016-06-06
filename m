@@ -1,58 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:34413 "EHLO
-	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750956AbcFFHFe (ORCPT
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:36353 "EHLO
+	mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750764AbcFFEHp (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 6 Jun 2016 03:05:34 -0400
-MIME-Version: 1.0
-In-Reply-To: <20160606035723.31763.66500.sendpatchset@little-apple>
-References: <20160606035723.31763.66500.sendpatchset@little-apple>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 6 Jun 2016 09:05:32 +0200
-Message-ID: <CAMuHMdV7KbgO9Q8JUZotgqFAehZHMxxi9OVbJGavfrdeSWC9xg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/11] iommu/ipmmu-vmsa: r8a7795 support V2
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: iommu@lists.linux-foundation.org,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Joerg Roedel <joro@8bytes.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
+	Mon, 6 Jun 2016 00:07:45 -0400
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 06 Jun 2016 12:57:23 +0900
+Message-Id: <20160606035723.31763.66500.sendpatchset@little-apple>
+Subject: [PATCH v2 00/11] iommu/ipmmu-vmsa: r8a7795 support V2
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Magnus,
+iommu/ipmmu-vmsa: r8a7795 support V2
 
-On Mon, Jun 6, 2016 at 5:57 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> iommu/ipmmu-vmsa: r8a7795 support V2
->
-> [PATCH v2 01/11] iommu/ipmmu-vmsa: Introduce features, break out alias
-> [PATCH v2 02/11] iommu/ipmmu-vmsa: Add optional root device feature
-> [PATCH v2 03/11] iommu/ipmmu-vmsa: Enable multi context support
-> [PATCH v2 04/11] iommu/ipmmu-vmsa: Reuse iommu groups
-> [PATCH v2 05/11] iommu/ipmmu-vmsa: Make use of IOMMU_OF_DECLARE()
-> [PATCH v2 06/11] iommu/ipmmu-vmsa: Teach xlate() to skip disabled iommus
-> [PATCH v2 07/11] iommu/ipmmu-vmsa: IPMMU device is 64-bit bus master
-> [PATCH v2 08/11] iommu/ipmmu-vmsa: Write IMCTR twice
-> [PATCH v2 09/11] iommu/ipmmu-vmsa: Make IMBUSCTR setup optional
-> [PATCH v2 10/11] iommu/ipmmu-vmsa: Allow two bit SL0
-> [PATCH v2 11/11] iommu/ipmmu-vmsa: Hook up r8a7795 DT matching code
+[PATCH v2 01/11] iommu/ipmmu-vmsa: Introduce features, break out alias
+[PATCH v2 02/11] iommu/ipmmu-vmsa: Add optional root device feature
+[PATCH v2 03/11] iommu/ipmmu-vmsa: Enable multi context support
+[PATCH v2 04/11] iommu/ipmmu-vmsa: Reuse iommu groups
+[PATCH v2 05/11] iommu/ipmmu-vmsa: Make use of IOMMU_OF_DECLARE()
+[PATCH v2 06/11] iommu/ipmmu-vmsa: Teach xlate() to skip disabled iommus
+[PATCH v2 07/11] iommu/ipmmu-vmsa: IPMMU device is 64-bit bus master
+[PATCH v2 08/11] iommu/ipmmu-vmsa: Write IMCTR twice
+[PATCH v2 09/11] iommu/ipmmu-vmsa: Make IMBUSCTR setup optional
+[PATCH v2 10/11] iommu/ipmmu-vmsa: Allow two bit SL0
+[PATCH v2 11/11] iommu/ipmmu-vmsa: Hook up r8a7795 DT matching code
 
-Thanks for your series!
+This series contains updated r8a7795 support for the IPMMU driver
+compared to the earlier series posted as:
 
-For your convenience, I've queued it up in topic/r8a7795-ipmmu-v2 at
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git, and
-will include it in next renesas-drivers release.
+[PATCH 00/10] iommu/ipmmu-vmsa: Initial r8a7795 support
 
-Gr{oetje,eeting}s,
+The DT binding for r8a7795 has been accepted for upstream merge
+and this series implements support following such format:
 
-                        Geert
+d4e42e7 iommu/ipmmu-vmsa: Add r8a7795 DT binding
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+The r8a7795 IPMMU is almost register compatible with earlier devices
+like r8a7790-r8a7794, however some bitfields have been shifted
+slightly. On a grander scale topology has been added and interrupts
+have been reworked. So now there are several "cache" IPMMU units
+without interrupt that somehow communicate with IPMMU-MM that
+is the only instance that supports interrupts. The code refers to
+IPMMU-MM as a "root" device and the other ones as leaf nodes.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To make this more interesting the IPMMU driver needs to be shared
+between 32-bit ARM for r8a7790-r8a7794 and 64-bit ARM for r8a7795.
+In practice this means that two separate implementations are needed
+inside the driver to attach to the rather different architecture
+specific code.
+
+CONFIG_IOMMU_DMA=y is needed on 64-bit ARM while on 32-bit ARM
+the arch specific dma-mapping code is hooked up rather directly.
+During init 64-bit ARM IPMMU support is relying on IOMMU_OF_DECLARE().
+
+This version of the code is known to build on 32-bit and 64-bit ARM.
+
+Compared to V1 the patches have been reordered and multi context
+and iommu group code has been reworked. Now devices are grouped
+together based on the IPMMU they are connected to. For detail
+please see the change log in each individual patch.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
+
+ Developed on top of next-20160602 and:
+ [PATCH v3 00/06] iommu/ipmmu-vmsa: IPMMU multi-arch update V3
+
+ drivers/iommu/ipmmu-vmsa.c |  318 +++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 269 insertions(+), 49 deletions(-)
