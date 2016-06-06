@@ -1,39 +1,68 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: [PATCH v1 04/25] PCI: designware: Simplify host bridge window
+ iteration
+To: linux-pci@vger.kernel.org
+From: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Herring <robh@kernel.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Pratyush Anand <pratyush.anand@gmail.com>,
+	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
+	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
+	Michal Simek <michal.simek@xilinx.com>,
+	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 00/12] Add R8A7792/Blanche board support
-Date: Sun, 12 Jun 2016 23:47:15 +0300
-Message-ID: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+Date: Mon, 06 Jun 2016 18:05:15 -0500
+Message-ID: <20160606230515.20936.35308.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+The switch is the only statement in the resource_list_for_each_entry()
+loop, so remove unnecessary "continue" statements in the switch.
 
-   Here's the set of 12 patches against Simon Horman's 'renesas.git' repo,
-'renesas-devel-20160606-v4.7-rc2' tag. We add the device tree support for
-the R8A7792-based Blanche board. The R-Car 'clk' driver patch was posted
-separately and 2 'clk' binding patches were split from this series...
+No functional change intended.
 
-[01/12] ARM: shmobile: r8a7792: add clock index macros
-[02/12] ARM: shmobile: r8a7792: add power domain index macros
-[03/12] soc: renesas: rcar-sysc: add R8A7792 support
-[04/12] ARM: shmobile: r8a7792: basic SoC support
-[05/12] ARM: shmobile: r8a7792: add SMP support
-[06/12] ARM: dts: r8a7792: initial SoC device tree
-[07/12] ARM: dts: r8a7792: add SYS-DMAC support
-[08/12] ARM: dts: r8a7792: add [H]SCIF support
-[09/12] ARM: dts: r8a7792: add IRQC support
-[10/12] DT: arm: shmobile: document Blanche board
-[11/12] ARM: dts: blanche: initial device tree
-[12/12] ARM: dts: blanche: add Ethernet support
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ drivers/pci/host/pcie-designware.c |    6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-WBR, Sergei
-
+diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
+index 8304aeb..12afce1 100644
+--- a/drivers/pci/host/pcie-designware.c
++++ b/drivers/pci/host/pcie-designware.c
+@@ -465,11 +465,9 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 			pp->io_size = resource_size(pp->io);
+ 			pp->io_bus_addr = pp->io->start - win->offset;
+ 			ret = pci_remap_iospace(pp->io, pp->io_base);
+-			if (ret) {
++			if (ret)
+ 				dev_warn(pp->dev, "error %d: failed to map resource %pR\n",
+ 					 ret, pp->io);
+-				continue;
+-			}
+ 			break;
+ 		case IORESOURCE_MEM:
+ 			pp->mem = win->res;
+@@ -487,8 +485,6 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 		case IORESOURCE_BUS:
+ 			pp->busn = win->res;
+ 			break;
+-		default:
+-			continue;
+ 		}
+ 	}
+ 
