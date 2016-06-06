@@ -1,68 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:48456 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751774AbcFFLEB (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36822 "EHLO
+	mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751887AbcFFHXh (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 6 Jun 2016 07:04:01 -0400
-Date: Mon, 6 Jun 2016 13:03:53 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+	Mon, 6 Jun 2016 03:23:37 -0400
+MIME-Version: 1.0
+In-Reply-To: <1465195811-3041-3-git-send-email-wsa@the-dreams.de>
+References: <1465195811-3041-1-git-send-email-wsa@the-dreams.de> <1465195811-3041-3-git-send-email-wsa@the-dreams.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 6 Jun 2016 09:23:35 +0200
+Message-ID: <CAMuHMdW6ZEzpmxHMXTYb31JoGCxMskothr16p6GArNCEML8fGw@mail.gmail.com>
+Subject: Re: [RFC 2/3] pinctrl: sh-pfc: r8a7795: add support for voltage switching
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [RFC 2/3] pinctrl: sh-pfc: r8a7795: add support for voltage
- switching
-Message-ID: <20160606110353.GA1711@katana>
-References: <1465195811-3041-1-git-send-email-wsa@the-dreams.de>
- <1465195811-3041-3-git-send-email-wsa@the-dreams.de>
- <CAMuHMdW6ZEzpmxHMXTYb31JoGCxMskothr16p6GArNCEML8fGw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdW6ZEzpmxHMXTYb31JoGCxMskothr16p6GArNCEML8fGw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jun 06, 2016 at 09:23:35AM +0200, Geert Uytterhoeven wrote:
-> Hi Wolfram,
-> 
-> On Mon, Jun 6, 2016 at 8:50 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > ---
-> >  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 24 ++++++++++++++++++++++--
-> >  1 file changed, 22 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-> > index 44632b1a5c978c..8e068d8534de00 100644
-> > --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-> > +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-> > @@ -17,8 +17,8 @@
-> >         PORT_GP_CFG_16(0, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),      \
-> >         PORT_GP_CFG_28(1, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),      \
-> >         PORT_GP_CFG_15(2, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),      \
-> > -       PORT_GP_CFG_16(3, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),      \
-> > -       PORT_GP_CFG_18(4, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),      \
-> > +       PORT_GP_CFG_16(3, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_IO_VOLTAGE),  \
-> 
-> Shouldn't this be split in PORT_GP_CFG_12() with SH_PFC_PIN_CFG_IO_VOLTAGE,
-> and PORT_GP_CFG_4() without?
+Hi Wolfram,
 
-Right. However, PORT_GP_CFG_4 doesn't allow to set an offset for the pin
-numbers. Options I see:
+On Mon, Jun 6, 2016 at 8:50 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 24 ++++++++++++++++++++++--
+>  1 file changed, 22 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> index 44632b1a5c978c..8e068d8534de00 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> @@ -17,8 +17,8 @@
+>         PORT_GP_CFG_16(0, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),      \
+>         PORT_GP_CFG_28(1, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),      \
+>         PORT_GP_CFG_15(2, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),      \
+> -       PORT_GP_CFG_16(3, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),      \
+> -       PORT_GP_CFG_18(4, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),      \
+> +       PORT_GP_CFG_16(3, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_IO_VOLTAGE),  \
 
-a) keep it as is and rely on the checks in pin_to_pocctrl()
-b) use PORT_GP_CFG_12 and 4 times PORT_GP_CFG_1 which allow setting the
-   pin number
-c) introduce (yet another) macro like PORT_GP_CFG_4_OFS
+Shouldn't this be split in PORT_GP_CFG_12() with SH_PFC_PIN_CFG_IO_VOLTAGE,
+and PORT_GP_CFG_4() without?
 
-So far, I thought a) was good enough. Now I tend to option b) because it
-is indeed more precise. We still can do c) if demand for such a macro
-increases.
+> +       PORT_GP_CFG_18(4, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_IO_VOLTAGE),  \
 
-What do you think?
+Apart from that:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks,
+Gr{oetje,eeting}s,
 
-   Wolfram
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
