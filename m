@@ -1,46 +1,83 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752000AbcFHBAO (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 21:00:14 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 02/30] ARM: dts: bockw: SCIF0 supports RTS/CTS hardware flow control
-Date: Wed,  8 Jun 2016 09:59:32 +0900
-Message-Id: <388e9f592c740409ffe55740771389f946796694.1465346599.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1465346599.git.horms+renesas@verge.net.au>
-References: <cover.1465346599.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: [PATCH v1 10/25] PCI: xilinx-nwl: Free bridge resource list on
+ failure
+To: linux-pci@vger.kernel.org
+From: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Herring <robh@kernel.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Pratyush Anand <pratyush.anand@gmail.com>,
+	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
+	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
+	Michal Simek <michal.simek@xilinx.com>,
+	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
+	linux-arm-kernel@lists.infradead.org
+Date: Mon, 06 Jun 2016 18:05:59 -0500
+Message-ID: <20160606230559.20936.29055.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+of_pci_get_host_bridge_resources() allocates a list of resources for host
+bridge windows.  If we fail after allocating that list, free it before we
+return error.
 
-On the BOCK-W development board, the RTS and CTS pins of the console
-SCIF0 are wired to the "product serial" connector.  Reflect this in the
-DTS by adding the "uart-has-rtscts" property to the scif0 device node.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- arch/arm/boot/dts/r8a7778-bockw.dts | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/host/pcie-xilinx-nwl.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7778-bockw.dts b/arch/arm/boot/dts/r8a7778-bockw.dts
-index e0dab1464648..982a237ea622 100644
---- a/arch/arm/boot/dts/r8a7778-bockw.dts
-+++ b/arch/arm/boot/dts/r8a7778-bockw.dts
-@@ -223,6 +223,7 @@
- 	pinctrl-0 = <&scif0_pins>;
- 	pinctrl-names = "default";
+diff --git a/drivers/pci/host/pcie-xilinx-nwl.c b/drivers/pci/host/pcie-xilinx-nwl.c
+index 3479d30..506da7b 100644
+--- a/drivers/pci/host/pcie-xilinx-nwl.c
++++ b/drivers/pci/host/pcie-xilinx-nwl.c
+@@ -832,20 +832,22 @@ static int nwl_pcie_probe(struct platform_device *pdev)
+ 	err = nwl_pcie_init_irq_domain(pcie);
+ 	if (err) {
+ 		dev_err(pcie->dev, "Failed creating IRQ Domain\n");
+-		return err;
++		goto error;
+ 	}
  
-+	uart-has-rtscts;
- 	status = "okay";
- };
+ 	bus = pci_create_root_bus(&pdev->dev, pcie->root_busno,
+ 				  &nwl_pcie_ops, pcie, &res);
+-	if (!bus)
+-		return -ENOMEM;
++	if (!bus) {
++		err = -ENOMEM;
++		goto error;
++	}
  
--- 
-2.1.4
+ 	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+ 		err = nwl_pcie_enable_msi(pcie, bus);
+ 		if (err < 0) {
+ 			dev_err(&pdev->dev,
+ 				"failed to enable MSI support: %d\n", err);
+-			return err;
++			goto error;
+ 		}
+ 	}
+ 	pci_scan_child_bus(bus);
+@@ -855,6 +857,10 @@ static int nwl_pcie_probe(struct platform_device *pdev)
+ 	pci_bus_add_devices(bus);
+ 	platform_set_drvdata(pdev, pcie);
+ 	return 0;
++
++error:
++	pci_free_resource_list(&res);
++	return err;
+ }
+ 
+ static int nwl_pcie_remove(struct platform_device *pdev)
