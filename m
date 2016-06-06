@@ -1,34 +1,58 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 21 Jun 2016 14:42:07 +0200
-From: Joerg Roedel <joro@8bytes.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34413 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750956AbcFFHFe (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 6 Jun 2016 03:05:34 -0400
+MIME-Version: 1.0
+In-Reply-To: <20160606035723.31763.66500.sendpatchset@little-apple>
+References: <20160606035723.31763.66500.sendpatchset@little-apple>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 6 Jun 2016 09:05:32 +0200
+Message-ID: <CAMuHMdV7KbgO9Q8JUZotgqFAehZHMxxi9OVbJGavfrdeSWC9xg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] iommu/ipmmu-vmsa: r8a7795 support V2
 To: Magnus Damm <magnus.damm@gmail.com>
 Cc: iommu@lists.linux-foundation.org,
-	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	horms+renesas@verge.net.au
-Subject: Re: [PATCH v2 00/11] iommu/ipmmu-vmsa: r8a7795 support V2
-Message-ID: <20160621124206.GI28248@8bytes.org>
-References: <20160606035723.31763.66500.sendpatchset@little-apple>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20160606035723.31763.66500.sendpatchset@little-apple>
-Sender: linux-kernel-owner@vger.kernel.org
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Joerg Roedel <joro@8bytes.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jun 06, 2016 at 12:57:23PM +0900, Magnus Damm wrote:
->  Developed on top of next-20160602 and:
->  [PATCH v3 00/06] iommu/ipmmu-vmsa: IPMMU multi-arch update V3
-> 
->  drivers/iommu/ipmmu-vmsa.c |  318 +++++++++++++++++++++++++++++++++++++-------
->  1 file changed, 269 insertions(+), 49 deletions(-)
+Hi Magnus,
 
-Okay, what is the plan on merging this? It is developed on linux-next
-and doesn't apply on v4.7-rc4. From the areas it touches it should go
-through the iommu-tree, unless there are good reasons not to.
+On Mon, Jun 6, 2016 at 5:57 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
+> iommu/ipmmu-vmsa: r8a7795 support V2
+>
+> [PATCH v2 01/11] iommu/ipmmu-vmsa: Introduce features, break out alias
+> [PATCH v2 02/11] iommu/ipmmu-vmsa: Add optional root device feature
+> [PATCH v2 03/11] iommu/ipmmu-vmsa: Enable multi context support
+> [PATCH v2 04/11] iommu/ipmmu-vmsa: Reuse iommu groups
+> [PATCH v2 05/11] iommu/ipmmu-vmsa: Make use of IOMMU_OF_DECLARE()
+> [PATCH v2 06/11] iommu/ipmmu-vmsa: Teach xlate() to skip disabled iommus
+> [PATCH v2 07/11] iommu/ipmmu-vmsa: IPMMU device is 64-bit bus master
+> [PATCH v2 08/11] iommu/ipmmu-vmsa: Write IMCTR twice
+> [PATCH v2 09/11] iommu/ipmmu-vmsa: Make IMBUSCTR setup optional
+> [PATCH v2 10/11] iommu/ipmmu-vmsa: Allow two bit SL0
+> [PATCH v2 11/11] iommu/ipmmu-vmsa: Hook up r8a7795 DT matching code
 
+Thanks for your series!
 
-	Joerg
+For your convenience, I've queued it up in topic/r8a7795-ipmmu-v2 at
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git, and
+will include it in next renesas-drivers release.
 
-P.S.: Same question applies to your other two patch-sets.
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
