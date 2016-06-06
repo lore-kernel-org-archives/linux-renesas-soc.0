@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:49364 "EHLO pokefinder.org"
+Received: from sauhun.de ([89.238.76.85]:47457 "EHLO pokefinder.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751058AbcFFQIg (ORCPT
+	id S1750956AbcFFGuZ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 6 Jun 2016 12:08:36 -0400
+	Mon, 6 Jun 2016 02:50:25 -0400
 From: Wolfram Sang <wsa@the-dreams.de>
 To: linux-gpio@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert@linux-m68k.org>,
 	Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 0/3] pinctrl: sh-pfc: add r8a7795 support for voltage switching
-Date: Mon,  6 Jun 2016 18:08:24 +0200
-Message-Id: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
+Subject: [RFC 0/3] pinctrl: sh-pfc: add r8a7795 support for voltage switching
+Date: Mon,  6 Jun 2016 08:50:08 +0200
+Message-Id: <1465195811-3041-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -28,11 +28,9 @@ Branch is here:
 
 git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/h3-pfc-set-voltage
 
-Changes since RFC:
-* be precise in encoding which pins can do voltage switching on bank3
-* addded Geert's reviewed tag (thanks!)
+Please let me know what you think.
 
-Please apply,
+Thanks,
 
    Wolfram
 
@@ -43,10 +41,10 @@ Wolfram Sang (3):
 
  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 22 +++++++-
  drivers/pinctrl/sh-pfc/pfc-r8a7790.c               | 58 +++++-----------------
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 28 ++++++++++-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 24 ++++++++-
  drivers/pinctrl/sh-pfc/pinctrl.c                   | 41 +++++++++------
  drivers/pinctrl/sh-pfc/sh_pfc.h                    |  4 +-
- 5 files changed, 86 insertions(+), 67 deletions(-)
+ 5 files changed, 82 insertions(+), 67 deletions(-)
 
 -- 
 2.8.1
