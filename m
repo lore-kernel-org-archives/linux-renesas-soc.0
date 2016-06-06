@@ -1,148 +1,90 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34712 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1424453AbcFMPsE (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 13 Jun 2016 11:48:04 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: [PATCH v1 21/25] PCI: rcar: Simplify host bridge window iteration
+To: linux-pci@vger.kernel.org
+From: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Herring <robh@kernel.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Pratyush Anand <pratyush.anand@gmail.com>,
+	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
 	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87d1o2sj6z.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bCU5f-000315-5F@finisterre>
-Date: Mon, 13 Jun 2016 16:47:51 +0100
-Subject: Applied "ASoC: simple-card: use common PREFIX for each DT property" to the asoc tree
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	Simon Horman <horms@verge.net.au>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
+	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
+	Michal Simek <michal.simek@xilinx.com>,
+	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
+	linux-arm-kernel@lists.infradead.org
+Date: Mon, 06 Jun 2016 18:07:21 -0500
+Message-ID: <20160606230721.20936.25605.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+The switch is the only statement in the resource_list_for_each_entry()
+loop, so remove unnecessary cases and "continue" statements in the switch.
+Inline rcar_pcie_release_of_pci_ranges(), which is only called once.
 
-   ASoC: simple-card: use common PREFIX for each DT property
+No functional change intended.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 548563fa3e430ce61db79aa11331da6e5f535a3b Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Tue, 31 May 2016 08:59:01 +0000
-Subject: [PATCH] ASoC: simple-card: use common PREFIX for each DT property
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- sound/soc/generic/simple-card.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+ drivers/pci/host/pcie-rcar.c |   21 +++------------------
+ 1 file changed, 3 insertions(+), 18 deletions(-)
 
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 4e39c0fa78c9..b6e6d9a12ec2 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -40,6 +40,8 @@ struct simple_card_data {
- #define simple_priv_to_link(priv, i) ((priv)->snd_card.dai_link + i)
- #define simple_priv_to_props(priv, i) ((priv)->dai_props + i)
+diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+index ce096db..6546ca7 100644
+--- a/drivers/pci/host/pcie-rcar.c
++++ b/drivers/pci/host/pcie-rcar.c
+@@ -938,11 +938,6 @@ static const struct of_device_id rcar_pcie_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, rcar_pcie_of_match);
  
-+#define PREFIX	"simple-audio-card,"
-+
- static int asoc_simple_card_startup(struct snd_pcm_substream *substream)
+-static void rcar_pcie_release_of_pci_ranges(struct rcar_pcie *pci)
+-{
+-	pci_free_resource_list(&pci->resources);
+-}
+-
+ static int rcar_pcie_parse_request_of_pci_ranges(struct rcar_pcie *pci)
  {
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-@@ -344,7 +346,7 @@ static int asoc_simple_card_dai_link_of(struct device_node *node,
+ 	int err;
+@@ -962,28 +957,18 @@ static int rcar_pcie_parse_request_of_pci_ranges(struct rcar_pcie *pci)
+ 	resource_list_for_each_entry(win, &pci->resources) {
+ 		struct resource *res = win->res;
  
- 	/* For single DAI link & old style of DT node */
- 	if (is_top_level_node)
--		prefix = "simple-audio-card,";
-+		prefix = PREFIX;
- 
- 	snprintf(prop, sizeof(prop), "%scpu", prefix);
- 	cpu = of_get_child_by_name(node, prop);
-@@ -453,26 +455,26 @@ static int asoc_simple_card_parse_of(struct device_node *node,
- 		return -EINVAL;
- 
- 	/* Parse the card name from DT */
--	snd_soc_of_parse_card_name(&priv->snd_card, "simple-audio-card,name");
-+	snd_soc_of_parse_card_name(&priv->snd_card, PREFIX "name");
- 
- 	/* The off-codec widgets */
--	if (of_property_read_bool(node, "simple-audio-card,widgets")) {
-+	if (of_property_read_bool(node, PREFIX "widgets")) {
- 		ret = snd_soc_of_parse_audio_simple_widgets(&priv->snd_card,
--					"simple-audio-card,widgets");
-+					PREFIX "widgets");
- 		if (ret)
- 			return ret;
+-		switch (resource_type(res)) {
+-		case IORESOURCE_IO:
++		if (resource_type(res) == IORESOURCE_IO) {
+ 			err = pci_remap_iospace(res, iobase);
+-			if (err) {
++			if (err)
+ 				dev_warn(dev, "error %d: failed to map resource %pR\n",
+ 					 err, res);
+-				continue;
+-			}
+-			break;
+-		case IORESOURCE_MEM:
+-			break;
+-
+-		case IORESOURCE_BUS:
+-		default:
+-			continue;
+ 		}
  	}
  
- 	/* DAPM routes */
--	if (of_property_read_bool(node, "simple-audio-card,routing")) {
-+	if (of_property_read_bool(node, PREFIX "routing")) {
- 		ret = snd_soc_of_parse_audio_routing(&priv->snd_card,
--					"simple-audio-card,routing");
-+					PREFIX "routing");
- 		if (ret)
- 			return ret;
- 	}
+ 	return 0;
  
- 	/* Factor to mclk, used in hw_params() */
--	ret = of_property_read_u32(node, "simple-audio-card,mclk-fs", &val);
-+	ret = of_property_read_u32(node, PREFIX "mclk-fs", &val);
- 	if (ret == 0)
- 		priv->mclk_fs = val;
+ out_release_res:
+-	rcar_pcie_release_of_pci_ranges(pci);
++	pci_free_resource_list(&pci->resources);
+ 	return err;
+ }
  
-@@ -480,7 +482,7 @@ static int asoc_simple_card_parse_of(struct device_node *node,
- 		priv->snd_card.name : "");
- 
- 	/* Single/Muti DAI link(s) & New style of DT node */
--	if (of_get_child_by_name(node, "simple-audio-card,dai-link")) {
-+	if (of_get_child_by_name(node, PREFIX "dai-link")) {
- 		struct device_node *np = NULL;
- 		int i = 0;
- 
-@@ -502,13 +504,13 @@ static int asoc_simple_card_parse_of(struct device_node *node,
- 	}
- 
- 	priv->gpio_hp_det = of_get_named_gpio_flags(node,
--				"simple-audio-card,hp-det-gpio", 0, &flags);
-+				PREFIX "hp-det-gpio", 0, &flags);
- 	priv->gpio_hp_det_invert = !!(flags & OF_GPIO_ACTIVE_LOW);
- 	if (priv->gpio_hp_det == -EPROBE_DEFER)
- 		return -EPROBE_DEFER;
- 
- 	priv->gpio_mic_det = of_get_named_gpio_flags(node,
--				"simple-audio-card,mic-det-gpio", 0, &flags);
-+				PREFIX "mic-det-gpio", 0, &flags);
- 	priv->gpio_mic_det_invert = !!(flags & OF_GPIO_ACTIVE_LOW);
- 	if (priv->gpio_mic_det == -EPROBE_DEFER)
- 		return -EPROBE_DEFER;
-@@ -543,7 +545,7 @@ static int asoc_simple_card_probe(struct platform_device *pdev)
- 	int num_links, ret;
- 
- 	/* Get the number of DAI links */
--	if (np && of_get_child_by_name(np, "simple-audio-card,dai-link"))
-+	if (np && of_get_child_by_name(np, PREFIX "dai-link"))
- 		num_links = of_get_child_count(np);
- 	else
- 		num_links = 1;
--- 
-2.8.1
