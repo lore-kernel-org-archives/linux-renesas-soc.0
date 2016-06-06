@@ -1,75 +1,82 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36101 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752708AbcF3OP7 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:15:59 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 6/9] arm64: dts: r8a7796: Add SYSC PM Domains
-Date: Thu, 30 Jun 2016 16:15:04 +0200
-Message-Id: <fbb099e4ec724e320bec0126a47dbb683ca3cab0.1467291676.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467291676.git.horms+renesas@verge.net.au>
-References: <cover.1467291676.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: [PATCH v1 17/25] PCI: generic: Simplify host bridge window iteration
+To: linux-pci@vger.kernel.org
+From: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Herring <robh@kernel.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Pratyush Anand <pratyush.anand@gmail.com>,
+	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
+	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
+	Michal Simek <michal.simek@xilinx.com>,
+	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
+	linux-arm-kernel@lists.infradead.org
+Date: Mon, 06 Jun 2016 18:06:51 -0500
+Message-ID: <20160606230651.20936.73053.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The switch is the only statement in the resource_list_for_each_entry()
+loop, so remove unnecessary "continue" statements in the switch.  Simplify
+checking for the required non-prefetchable memory aperture.
 
-Add a device node for the System Controller.
-Hook up the Cortex-A57 CPU core and L2 cache/SCU to their respective PM
-Domains.
+No functional change intended.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/pci/host/pci-host-common.c |   17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 178debf68318..85f0843ddd87 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -10,6 +10,7 @@
+diff --git a/drivers/pci/host/pci-host-common.c b/drivers/pci/host/pci-host-common.c
+index e7515fd..bb03120 100644
+--- a/drivers/pci/host/pci-host-common.c
++++ b/drivers/pci/host/pci-host-common.c
+@@ -46,29 +46,24 @@ static int gen_pci_parse_request_of_pci_ranges(struct device *dev,
+ 		switch (resource_type(res)) {
+ 		case IORESOURCE_IO:
+ 			err = pci_remap_iospace(res, iobase);
+-			if (err) {
++			if (err)
+ 				dev_warn(dev, "error %d: failed to map resource %pR\n",
+ 					 err, res);
+-				continue;
+-			}
+ 			break;
+ 		case IORESOURCE_MEM:
+ 			res_valid |= !(res->flags & IORESOURCE_PREFETCH);
+ 			break;
+ 		case IORESOURCE_BUS:
+ 			*bus_range = res;
+-		default:
+-			continue;
++			break;
+ 		}
+ 	}
  
- #include <dt-bindings/clock/r8a7796-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/r8a7796-sysc.h>
+-	if (!res_valid) {
+-		dev_err(dev, "non-prefetchable memory resource required\n");
+-		err = -EINVAL;
+-		goto out_release_res;
+-	}
++	if (res_valid)
++		return 0;
  
- / {
- 	compatible = "renesas,r8a7796";
-@@ -30,6 +31,7 @@
- 			compatible = "arm,cortex-a57", "arm,armv8";
- 			reg = <0x0>;
- 			device_type = "cpu";
-+			power-domains = <&sysc R8A7796_PD_CA57_CPU0>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-@@ -37,6 +39,7 @@
- 		L2_CA57: cache-controller@0 {
- 			compatible = "cache";
- 			reg = <0>;
-+			power-domains = <&sysc R8A7796_PD_CA57_SCU>;
- 			cache-unified;
- 			cache-level = <2>;
- 		};
-@@ -104,6 +107,12 @@
- 			#power-domain-cells = <0>;
- 		};
+-	return 0;
++	dev_err(dev, "non-prefetchable memory resource required\n");
++	err = -EINVAL;
  
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a7796-sysc";
-+			reg = <0 0xe6180000 0 0x0400>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		scif2: serial@e6e88000 {
- 			compatible = "renesas,scif-r8a7796",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
--- 
-2.7.0.rc3.207.g0ac5344
+ out_release_res:
+ 	pci_free_resource_list(resources);
