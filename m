@@ -1,56 +1,91 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:51028 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758613AbcFAPXP (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 11:23:15 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: hch@infradead.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-	iommu@lists.linux-foundation.org
-Cc: dan.j.williams@intel.com, vinod.koul@intel.com,
-	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	linus.walleij@linaro.org, arnd@arndb.de,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv7 1/6] dma-mapping: add {map,unmap}_resource to dma_map_ops
-Date: Wed,  1 Jun 2016 17:22:24 +0200
-Message-Id: <1464794549-6601-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1464794549-6601-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1464794549-6601-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: [PATCH v1 14/25] PCI: altera: Simplify host bridge window iteration
+To: linux-pci@vger.kernel.org
+From: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Herring <robh@kernel.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Pratyush Anand <pratyush.anand@gmail.com>,
+	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
+	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
+	Michal Simek <michal.simek@xilinx.com>,
+	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
+	linux-arm-kernel@lists.infradead.org
+Date: Mon, 06 Jun 2016 18:06:29 -0500
+Message-ID: <20160606230629.20936.61795.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add methods to handle mapping of device resources from a physical
-address. This is needed for example to be able to map MMIO FIFO
-registers to a IOMMU.
+The switch is the only statement in the resource_list_for_each_entry()
+loop, so remove unnecessary "continue" statements in the switch.  Simplify
+checking for the required non-prefetchable memory aperture.  Inline
+altera_pcie_release_of_pci_ranges(), which is only called once.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+No functional change intended.
+
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- include/linux/dma-mapping.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/pci/host/pcie-altera.c |   24 ++++++------------------
+ 1 file changed, 6 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index c980a92..a11ff9d 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -49,6 +49,12 @@ struct dma_map_ops {
- 			 struct scatterlist *sg, int nents,
- 			 enum dma_data_direction dir,
- 			 struct dma_attrs *attrs);
-+	dma_addr_t (*map_resource)(struct device *dev, phys_addr_t phys_addr,
-+			       size_t size, enum dma_data_direction dir,
-+			       struct dma_attrs *attrs);
-+	void (*unmap_resource)(struct device *dev, dma_addr_t dma_handle,
-+			   size_t size, enum dma_data_direction dir,
-+			   struct dma_attrs *attrs);
- 	void (*sync_single_for_cpu)(struct device *dev,
- 				    dma_addr_t dma_handle, size_t size,
- 				    enum dma_data_direction dir);
--- 
-2.8.2
+diff --git a/drivers/pci/host/pcie-altera.c b/drivers/pci/host/pcie-altera.c
+index b97abbc..cf20c67 100644
+--- a/drivers/pci/host/pcie-altera.c
++++ b/drivers/pci/host/pcie-altera.c
+@@ -415,11 +415,6 @@ static void altera_pcie_isr(struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
+-static void altera_pcie_release_of_pci_ranges(struct altera_pcie *pcie)
+-{
+-	pci_free_resource_list(&pcie->resources);
+-}
+-
+ static int altera_pcie_parse_request_of_pci_ranges(struct altera_pcie *pcie)
+ {
+ 	int err, res_valid = 0;
+@@ -439,25 +434,18 @@ static int altera_pcie_parse_request_of_pci_ranges(struct altera_pcie *pcie)
+ 	resource_list_for_each_entry(win, &pcie->resources) {
+ 		struct resource *res = win->res;
+ 
+-		switch (resource_type(res)) {
+-		case IORESOURCE_MEM:
++		if (resource_type(res) == IORESOURCE_MEM)
+ 			res_valid |= !(res->flags & IORESOURCE_PREFETCH);
+-			break;
+-		default:
+-			continue;
+-		}
+ 	}
+ 
+-	if (!res_valid) {
+-		dev_err(dev, "non-prefetchable memory resource required\n");
+-		err = -EINVAL;
+-		goto out_release_res;
+-	}
++	if (res_valid)
++		return 0;
+ 
+-	return 0;
++	dev_err(dev, "non-prefetchable memory resource required\n");
++	err = -EINVAL;
+ 
+ out_release_res:
+-	altera_pcie_release_of_pci_ranges(pcie);
++	pci_free_resource_list(&pcie->resources);
+ 	return err;
+ }
+ 
