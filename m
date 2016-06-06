@@ -1,134 +1,84 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 11/20] drm: sti: Rely on the default ->best_encoder() behavior
-Date: Thu,  2 Jun 2016 16:31:38 +0200
-Message-Id: <1464877907-27723-12-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>
+Date: Mon, 06 Jun 2016 12:58:58 +0900
+Message-Id: <20160606035858.31763.1660.sendpatchset@little-apple>
+In-Reply-To: <20160606035723.31763.66500.sendpatchset@little-apple>
+References: <20160606035723.31763.66500.sendpatchset@little-apple>
+Subject: [PATCH v2 10/11] iommu/ipmmu-vmsa: Allow two bit SL0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All outputs have a 1:1 relationship between connectors and encoders
-and the driver is relying on the atomic helpers: we can drop the custom
-->best_encoder() implementations and let the core call
-drm_atomic_helper_best_encoder() for us.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Introduce support for two bit SL0 bitfield in IMTTBCR
+by using a separate feature flag.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/gpu/drm/sti/sti_dvo.c  | 10 ----------
- drivers/gpu/drm/sti/sti_hda.c  | 10 ----------
- drivers/gpu/drm/sti/sti_hdmi.c | 10 ----------
- 3 files changed, 30 deletions(-)
 
-diff --git a/drivers/gpu/drm/sti/sti_dvo.c b/drivers/gpu/drm/sti/sti_dvo.c
-index 25f7663..d5627d1 100644
---- a/drivers/gpu/drm/sti/sti_dvo.c
-+++ b/drivers/gpu/drm/sti/sti_dvo.c
-@@ -384,20 +384,10 @@ static int sti_dvo_connector_mode_valid(struct drm_connector *connector,
- 	return MODE_OK;
- }
- 
--struct drm_encoder *sti_dvo_best_encoder(struct drm_connector *connector)
--{
--	struct sti_dvo_connector *dvo_connector
--		= to_sti_dvo_connector(connector);
--
--	/* Best encoder is the one associated during connector creation */
--	return dvo_connector->encoder;
--}
--
- static const
- struct drm_connector_helper_funcs sti_dvo_connector_helper_funcs = {
- 	.get_modes = sti_dvo_connector_get_modes,
- 	.mode_valid = sti_dvo_connector_mode_valid,
--	.best_encoder = sti_dvo_best_encoder,
+ Changes since V1:
+ - None
+
+ drivers/iommu/ipmmu-vmsa.c |   15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+--- 0025/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-06 11:08:38.360607110 +0900
+@@ -38,6 +38,7 @@ struct ipmmu_features {
+ 	bool has_cache_leaf_nodes;
+ 	bool has_eight_ctx;
+ 	bool setup_imbuscr;
++	bool twobit_imttbcr_sl0;
  };
  
- static enum drm_connector_status
-diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
-index f7d3464..c4649f5 100644
---- a/drivers/gpu/drm/sti/sti_hda.c
-+++ b/drivers/gpu/drm/sti/sti_hda.c
-@@ -676,20 +676,10 @@ static int sti_hda_connector_mode_valid(struct drm_connector *connector,
- 	return MODE_OK;
- }
+ struct ipmmu_vmsa_device {
+@@ -146,6 +147,10 @@ static struct ipmmu_vmsa_domain *to_vmsa
+ #define IMTTBCR_TSZ0_MASK		(7 << 0)
+ #define IMTTBCR_TSZ0_SHIFT		O
  
--struct drm_encoder *sti_hda_best_encoder(struct drm_connector *connector)
--{
--	struct sti_hda_connector *hda_connector
--		= to_sti_hda_connector(connector);
--
--	/* Best encoder is the one associated during connector creation */
--	return hda_connector->encoder;
--}
--
- static const
- struct drm_connector_helper_funcs sti_hda_connector_helper_funcs = {
- 	.get_modes = sti_hda_connector_get_modes,
- 	.mode_valid = sti_hda_connector_mode_valid,
--	.best_encoder = sti_hda_best_encoder,
++#define IMTTBCR_SL0_TWOBIT_LVL_3	(0 << 6)
++#define IMTTBCR_SL0_TWOBIT_LVL_2	(1 << 6)
++#define IMTTBCR_SL0_TWOBIT_LVL_1	(2 << 6)
++
+ #define IMBUSCR				0x000c
+ #define IMBUSCR_DVM			(1 << 2)
+ #define IMBUSCR_BUSSEL_SYS		(0 << 0)
+@@ -381,6 +386,7 @@ static int ipmmu_domain_allocate_context
+ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+ {
+ 	u64 ttbr;
++	u32 tmp;
+ 	int ret;
+ 
+ 	/*
+@@ -431,9 +437,15 @@ static int ipmmu_domain_init_context(str
+ 	 * We use long descriptors with inner-shareable WBWA tables and allocate
+ 	 * the whole 32-bit VA space to TTBR0.
+ 	 */
++
++	if (domain->root->features->twobit_imttbcr_sl0)
++		tmp = IMTTBCR_SL0_TWOBIT_LVL_1;
++	else
++		tmp = IMTTBCR_SL0_LVL_1;
++
+ 	ipmmu_ctx_write(domain, IMTTBCR, IMTTBCR_EAE |
+ 			IMTTBCR_SH0_INNER_SHAREABLE | IMTTBCR_ORGN0_WB_WA |
+-			IMTTBCR_IRGN0_WB_WA | IMTTBCR_SL0_LVL_1);
++			IMTTBCR_IRGN0_WB_WA | tmp);
+ 
+ 	/* MAIR0 */
+ 	ipmmu_ctx_write(domain, IMMAIR0, domain->cfg.arm_lpae_s1_cfg.mair[0]);
+@@ -1059,6 +1071,7 @@ static const struct ipmmu_features ipmmu
+ 	.has_cache_leaf_nodes = false,
+ 	.has_eight_ctx = false,
+ 	.setup_imbuscr = true,
++	.twobit_imttbcr_sl0 = false,
  };
  
- static enum drm_connector_status
-diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
-index 6ef0715..dc9ab6e 100644
---- a/drivers/gpu/drm/sti/sti_hdmi.c
-+++ b/drivers/gpu/drm/sti/sti_hdmi.c
-@@ -897,20 +897,10 @@ static int sti_hdmi_connector_mode_valid(struct drm_connector *connector,
- 	return MODE_OK;
- }
- 
--struct drm_encoder *sti_hdmi_best_encoder(struct drm_connector *connector)
--{
--	struct sti_hdmi_connector *hdmi_connector
--		= to_sti_hdmi_connector(connector);
--
--	/* Best encoder is the one associated during connector creation */
--	return hdmi_connector->encoder;
--}
--
- static const
- struct drm_connector_helper_funcs sti_hdmi_connector_helper_funcs = {
- 	.get_modes = sti_hdmi_connector_get_modes,
- 	.mode_valid = sti_hdmi_connector_mode_valid,
--	.best_encoder = sti_hdmi_best_encoder,
- };
- 
- /* get detection status of display device */
--- 
-2.7.4
+ static const struct of_device_id ipmmu_of_ids[] = {
