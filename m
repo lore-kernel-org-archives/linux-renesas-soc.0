@@ -1,105 +1,205 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52954 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933021AbcFTTNt (ORCPT
+Received: from sauhun.de ([89.238.76.85]:49366 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751837AbcFFQIh (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 20 Jun 2016 15:13:49 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 18/24] v4l: vsp1: lut: Support runtime modification of controls
-Date: Mon, 20 Jun 2016 22:10:36 +0300
-Message-Id: <1466449842-29502-19-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Mon, 6 Jun 2016 12:08:37 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/3] pinctrl: sh-pfc: refactor voltage setting
+Date: Mon,  6 Jun 2016 18:08:25 +0200
+Message-Id: <1465229307-1961-2-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
+References: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Allow reconfiguration of the look-up table at runtime.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+All known hardware being able to switch voltages has the same POCCTRL
+register. So, factor out the common code to the core and keep only
+the pin-to-bit mapping SoC specific. Convert the only user, r8a7790.
+In case POCCTRL should ever get more complex (more voltages to select?),
+we should probably switch over to a describing array like drive strength
+does currently.
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/media/platform/vsp1/vsp1_lut.c | 25 +++++++++++++++----------
- drivers/media/platform/vsp1/vsp1_lut.h |  3 +++
- 2 files changed, 18 insertions(+), 10 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 58 ++++++++----------------------------
+ drivers/pinctrl/sh-pfc/pinctrl.c     | 41 +++++++++++++++----------
+ drivers/pinctrl/sh-pfc/sh_pfc.h      |  4 +--
+ 3 files changed, 40 insertions(+), 63 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
-index 0bd26dd5f706..e34237824a5a 100644
---- a/drivers/media/platform/vsp1/vsp1_lut.c
-+++ b/drivers/media/platform/vsp1/vsp1_lut.c
-@@ -52,7 +52,9 @@ static int lut_set_table(struct vsp1_lut *lut, struct v4l2_ctrl *ctrl)
- 		vsp1_dl_fragment_write(dlb, VI6_LUT_TABLE + 4 * i,
- 				       ctrl->p_new.p_u32[i]);
- 
-+	spin_lock_irq(&lut->lock);
- 	swap(lut->lut, dlb);
-+	spin_unlock_irq(&lut->lock);
- 
- 	vsp1_dl_fragment_free(dlb);
- 	return 0;
-@@ -184,20 +186,21 @@ static void lut_configure(struct vsp1_entity *entity,
- 			  struct vsp1_dl_list *dl, bool full)
- {
- 	struct vsp1_lut *lut = to_lut(&entity->subdev);
-+	struct vsp1_dl_body *dlb;
-+	unsigned long flags;
- 
--	if (!full)
-+	if (full) {
-+		vsp1_lut_write(lut, dl, VI6_LUT_CTRL, VI6_LUT_CTRL_EN);
- 		return;
--
--	vsp1_lut_write(lut, dl, VI6_LUT_CTRL, VI6_LUT_CTRL_EN);
--
--	mutex_lock(lut->ctrls.lock);
--
--	if (lut->lut) {
--		vsp1_dl_list_add_fragment(dl, lut->lut);
--		lut->lut = NULL;
- 	}
- 
--	mutex_unlock(lut->ctrls.lock);
-+	spin_lock_irqsave(&lut->lock, flags);
-+	dlb = lut->lut;
-+	lut->lut = NULL;
-+	spin_unlock_irqrestore(&lut->lock, flags);
-+
-+	if (dlb)
-+		vsp1_dl_list_add_fragment(dl, dlb);
- }
- 
- static const struct vsp1_entity_operations lut_entity_ops = {
-@@ -217,6 +220,8 @@ struct vsp1_lut *vsp1_lut_create(struct vsp1_device *vsp1)
- 	if (lut == NULL)
- 		return ERR_PTR(-ENOMEM);
- 
-+	spin_lock_init(&lut->lock);
-+
- 	lut->entity.ops = &lut_entity_ops;
- 	lut->entity.type = VSP1_ENTITY_LUT;
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_lut.h b/drivers/media/platform/vsp1/vsp1_lut.h
-index 021898fc0ce5..f8c4e8f0a79d 100644
---- a/drivers/media/platform/vsp1/vsp1_lut.h
-+++ b/drivers/media/platform/vsp1/vsp1_lut.h
-@@ -13,6 +13,8 @@
- #ifndef __VSP1_LUT_H__
- #define __VSP1_LUT_H__
- 
-+#include <linux/spinlock.h>
-+
- #include <media/media-entity.h>
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-subdev.h>
-@@ -29,6 +31,7 @@ struct vsp1_lut {
- 
- 	struct v4l2_ctrl_handler ctrls;
- 
-+	spinlock_t lock;
- 	struct vsp1_dl_body *lut;
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+index eed8daa464cc1e..1537a077939977 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+@@ -4696,47 +4696,6 @@ static const char * const vin3_groups[] = {
+ 	"vin3_clk",
  };
  
+-#define IOCTRL6 0x8c
+-
+-static int r8a7790_get_io_voltage(struct sh_pfc *pfc, unsigned int pin)
+-{
+-	u32 data, mask;
+-
+-	if (WARN(pin < RCAR_GP_PIN(3, 0) || pin > RCAR_GP_PIN(3, 31), "invalid pin %#x", pin))
+-		return -EINVAL;
+-
+-	data = ioread32(pfc->windows->virt + IOCTRL6),
+-	/* Bits in IOCTRL6 are numbered in opposite order to pins */
+-	mask = 0x80000000 >> (pin & 0x1f);
+-
+-	return (data & mask) ? 3300 : 1800;
+-}
+-
+-static int r8a7790_set_io_voltage(struct sh_pfc *pfc, unsigned int pin, u16 mV)
+-{
+-	u32 data, mask;
+-
+-	if (WARN(pin < RCAR_GP_PIN(3, 0) || pin > RCAR_GP_PIN(3, 31), "invalid pin %#x", pin))
+-		return -EINVAL;
+-
+-	if (mV != 1800 && mV != 3300)
+-		return -EINVAL;
+-
+-	data = ioread32(pfc->windows->virt + IOCTRL6);
+-	/* Bits in IOCTRL6 are numbered in opposite order to pins */
+-	mask = 0x80000000 >> (pin & 0x1f);
+-
+-	if (mV == 3300)
+-		data |= mask;
+-	else
+-		data &= ~mask;
+-
+-	iowrite32(~data, pfc->windows->virt); /* unlock reg */
+-	iowrite32(data, pfc->windows->virt + IOCTRL6);
+-
+-	return 0;
+-}
+-
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(audio_clk),
+ 	SH_PFC_FUNCTION(avb),
+@@ -5736,14 +5695,23 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 	{ },
+ };
+ 
+-static const struct sh_pfc_soc_operations pinmux_ops = {
+-	.get_io_voltage = r8a7790_get_io_voltage,
+-	.set_io_voltage = r8a7790_set_io_voltage,
++static int r8a7790_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *pocctrl)
++{
++	if (pin < RCAR_GP_PIN(3, 0) || pin > RCAR_GP_PIN(3, 31))
++		return -EINVAL;
++
++	*pocctrl = 0xe606008c;
++
++	return 31 - (pin & 0x1f);
++}
++
++static const struct sh_pfc_soc_operations r8a7790_pinmux_ops = {
++	.pin_to_pocctrl = r8a7790_pin_to_pocctrl,
+ };
+ 
+ const struct sh_pfc_soc_info r8a7790_pinmux_info = {
+ 	.name = "r8a77900_pfc",
+-	.ops = &pinmux_ops,
++	.ops = &r8a7790_pinmux_ops,
+ 	.unlock_reg = 0xe6060000, /* PMMR */
+ 
+ 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
+diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
+index fdb445d68b9a08..d4e65bc7dacd67 100644
+--- a/drivers/pinctrl/sh-pfc/pinctrl.c
++++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+@@ -632,19 +632,21 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 	}
+ 
+ 	case PIN_CONFIG_POWER_SOURCE: {
+-		int ret;
++		u32 pocctrl, val;
++		int bit;
+ 
+-		if (!pfc->info->ops || !pfc->info->ops->get_io_voltage)
++		if (!pfc->info->ops || !pfc->info->ops->pin_to_pocctrl)
+ 			return -ENOTSUPP;
+ 
++		bit = pfc->info->ops->pin_to_pocctrl(pfc, _pin, &pocctrl);
++		if (WARN(bit < 0, "invalid pin %#x", _pin))
++			return bit;
++
+ 		spin_lock_irqsave(&pfc->lock, flags);
+-		ret = pfc->info->ops->get_io_voltage(pfc, _pin);
++		val = sh_pfc_read_reg(pfc, pocctrl, 32);
+ 		spin_unlock_irqrestore(&pfc->lock, flags);
+ 
+-		if (ret < 0)
+-			return ret;
+-
+-		*config = ret;
++		*config = (val & BIT(bit)) ? 3300 : 1800;
+ 		break;
+ 	}
+ 
+@@ -696,20 +698,29 @@ static int sh_pfc_pinconf_set(struct pinctrl_dev *pctldev, unsigned _pin,
+ 		}
+ 
+ 		case PIN_CONFIG_POWER_SOURCE: {
+-			unsigned int arg =
+-				pinconf_to_config_argument(configs[i]);
+-			int ret;
++			unsigned int mV = pinconf_to_config_argument(configs[i]);
++			u32 pocctrl, val;
++			int bit;
+ 
+-			if (!pfc->info->ops || !pfc->info->ops->set_io_voltage)
++			if (!pfc->info->ops || !pfc->info->ops->pin_to_pocctrl)
+ 				return -ENOTSUPP;
+ 
++			bit = pfc->info->ops->pin_to_pocctrl(pfc, _pin, &pocctrl);
++			if (WARN(bit < 0, "invalid pin %#x", _pin))
++				return bit;
++
++			if (mV != 1800 && mV != 3300)
++				return -EINVAL;
++
+ 			spin_lock_irqsave(&pfc->lock, flags);
+-			ret = pfc->info->ops->set_io_voltage(pfc, _pin, arg);
++			val = sh_pfc_read_reg(pfc, pocctrl, 32);
++			if (mV == 3300)
++				val |= BIT(bit);
++			else
++				val &= ~BIT(bit);
++			sh_pfc_write_reg(pfc, pocctrl, 32, val);
+ 			spin_unlock_irqrestore(&pfc->lock, flags);
+ 
+-			if (ret)
+-				return ret;
+-
+ 			break;
+ 		}
+ 
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index 656ea32f776c92..ea3a527514558a 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -189,9 +189,7 @@ struct sh_pfc_soc_operations {
+ 	unsigned int (*get_bias)(struct sh_pfc *pfc, unsigned int pin);
+ 	void (*set_bias)(struct sh_pfc *pfc, unsigned int pin,
+ 			 unsigned int bias);
+-	int (*get_io_voltage)(struct sh_pfc *pfc, unsigned int pin);
+-	int (*set_io_voltage)(struct sh_pfc *pfc, unsigned int pin,
+-			      u16 voltage_mV);
++	int (*pin_to_pocctrl)(struct sh_pfc *pfc, unsigned int pin, u32 *pocctrl);
+ };
+ 
+ struct sh_pfc_soc_info {
 -- 
-Regards,
-
-Laurent Pinchart
+2.8.1
