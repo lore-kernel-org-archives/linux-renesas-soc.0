@@ -1,77 +1,60 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: iommu@lists.linux-foundation.org,
-	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
 	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
-Subject: Re: [PATCH 3/3] iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
-Date: Wed, 08 Jun 2016 03:18:41 +0300
-Message-ID: <10108662.fYf10pMtGa@avalon>
-In-Reply-To: <20160607033945.28687.70956.sendpatchset@little-apple>
-References: <20160607033918.28687.98260.sendpatchset@little-apple> <20160607033945.28687.70956.sendpatchset@little-apple>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>
+Date: Tue, 07 Jun 2016 12:39:45 +0900
+Message-Id: <20160607033945.28687.70956.sendpatchset@little-apple>
+In-Reply-To: <20160607033918.28687.98260.sendpatchset@little-apple>
+References: <20160607033918.28687.98260.sendpatchset@little-apple>
+Subject: [PATCH 3/3] iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Magnus,
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Thank you for the patch.
+Support the r8a7796 IPMMU by sharing feature flags between
+r8a7795 and r8a7796. Also update IOMMU_OF_DECLARE to hook
+up the updated compat string.
 
-On Tuesday 07 Jun 2016 12:39:45 Magnus Damm wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
-> 
-> Support the r8a7796 IPMMU by sharing feature flags between
-> r8a7795 and r8a7796. Also update IOMMU_OF_DECLARE to hook
-> up the updated compat string.
-> 
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> ---
-> 
->  drivers/iommu/ipmmu-vmsa.c |    9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> --- 0031/drivers/iommu/ipmmu-vmsa.c
-> +++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-06 11:19:40.210607110 +0900
-> @@ -1074,7 +1074,7 @@ static const struct ipmmu_features ipmmu
->  	.twobit_imttbcr_sl0 = false,
->  };
-> 
-> -static const struct ipmmu_features ipmmu_features_r8a7795 = {
-> +static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
->  	.use_ns_alias_offset = false,
->  	.has_cache_leaf_nodes = true,
->  	.has_eight_ctx = true,
-> @@ -1088,7 +1088,10 @@ static const struct of_device_id ipmmu_o
->  		.data = &ipmmu_features_default,
->  	}, {
->  		.compatible = "renesas,ipmmu-r8a7795",
-> -		.data = &ipmmu_features_r8a7795,
-> +		.data = &ipmmu_features_rcar_gen3,
-> +	}, {
-> +		.compatible = "renesas,ipmmu-r8a7796",
-> +		.data = &ipmmu_features_rcar_gen3,
->  	}, {
->  		/* Terminator */
->  	},
-> @@ -1268,6 +1271,8 @@ IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "r
->  		 ipmmu_vmsa_iommu_of_setup);
->  IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795",
->  		 ipmmu_vmsa_iommu_of_setup);
-> +IOMMU_OF_DECLARE(ipmmu_r8a7796_iommu_of, "renesas,ipmmu-r8a7796",
-> +		 ipmmu_vmsa_iommu_of_setup);
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-How about a Gen3 generic compatible string in addition to the SoC-specific 
-ones ?
+ drivers/iommu/ipmmu-vmsa.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
->  #endif
-> 
->  MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
-
--- 
-Regards,
-
-Laurent Pinchart
+--- 0031/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-06 11:19:40.210607110 +0900
+@@ -1074,7 +1074,7 @@ static const struct ipmmu_features ipmmu
+ 	.twobit_imttbcr_sl0 = false,
+ };
+ 
+-static const struct ipmmu_features ipmmu_features_r8a7795 = {
++static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
+ 	.use_ns_alias_offset = false,
+ 	.has_cache_leaf_nodes = true,
+ 	.has_eight_ctx = true,
+@@ -1088,7 +1088,10 @@ static const struct of_device_id ipmmu_o
+ 		.data = &ipmmu_features_default,
+ 	}, {
+ 		.compatible = "renesas,ipmmu-r8a7795",
+-		.data = &ipmmu_features_r8a7795,
++		.data = &ipmmu_features_rcar_gen3,
++	}, {
++		.compatible = "renesas,ipmmu-r8a7796",
++		.data = &ipmmu_features_rcar_gen3,
+ 	}, {
+ 		/* Terminator */
+ 	},
+@@ -1268,6 +1271,8 @@ IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "r
+ 		 ipmmu_vmsa_iommu_of_setup);
+ IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795",
+ 		 ipmmu_vmsa_iommu_of_setup);
++IOMMU_OF_DECLARE(ipmmu_r8a7796_iommu_of, "renesas,ipmmu-r8a7796",
++		 ipmmu_vmsa_iommu_of_setup);
+ #endif
+ 
+ MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
