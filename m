@@ -1,13 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38932 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750759AbcFJBCv (ORCPT
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:34397 "EHLO
+	mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932069AbcFGU6u (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 9 Jun 2016 21:02:51 -0400
-Date: Fri, 10 Jun 2016 10:02:45 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Tue, 7 Jun 2016 16:58:50 -0400
+Received: by mail-lf0-f42.google.com with SMTP id s186so58290185lfs.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Jun 2016 13:58:49 -0700 (PDT)
+Subject: Re: [PATCH 07/13] ARM: dts: r8a7792: initial SoC device tree
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+ <2539026.OyU5nvpxa6@wasted.cogentembedded.com>
+ <20160601005751.GG20527@verge.net.au>
+ <fdab2628-60bd-c41b-296b-38cd71a6c5da@cogentembedded.com>
+ <CAMuHMdUkOpEp+YCbZVZppdN4C7KKpDS9_gEuXi_WKZXM9YHgEQ@mail.gmail.com>
+Cc: Simon Horman <horms@verge.net.au>,
 	linux-renesas-soc@vger.kernel.org,
 	Rob Herring <robh+dt@kernel.org>,
 	Pawel Moll <pawel.moll@arm.com>,
@@ -19,55 +25,42 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
 	Russell King <linux@arm.linux.org.uk>,
 	"linux-arm-kernel@lists.infradead.org"
 	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 07/13] ARM: dts: r8a7792: initial SoC device tree
-Message-ID: <20160610010245.GA10152@verge.net.au>
-References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
- <2539026.OyU5nvpxa6@wasted.cogentembedded.com>
- <20160601005751.GG20527@verge.net.au>
- <fdab2628-60bd-c41b-296b-38cd71a6c5da@cogentembedded.com>
- <CAMuHMdUkOpEp+YCbZVZppdN4C7KKpDS9_gEuXi_WKZXM9YHgEQ@mail.gmail.com>
- <ab5e3a98-7ff2-dc8f-d255-f6da26f43527@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <ab5e3a98-7ff2-dc8f-d255-f6da26f43527@cogentembedded.com>
+Date: Tue, 7 Jun 2016 23:58:45 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ab5e3a98-7ff2-dc8f-d255-f6da26f43527@cogentembedded.com>
+In-Reply-To: <CAMuHMdUkOpEp+YCbZVZppdN4C7KKpDS9_gEuXi_WKZXM9YHgEQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jun 07, 2016 at 11:58:45PM +0300, Sergei Shtylyov wrote:
-> On 06/07/2016 10:13 AM, Geert Uytterhoeven wrote:
-> 
-> [...]
-> 
-> >>>And that the system behaves sanely on suspend/resume.
-> >>
-> >>   I'd be thankful if you told me how to test that. :-)
-> >
-> >System suspend:
-> >
-> >    echo mem > /sys/power/state
-> 
->    Oh. I know that one! :-)
-> 
-> >System resume: You're gonna need a "wakeup-source" in your DTS, e.g. gpio-keys.
-> >Serial should work too, echo "enabled" to the corresponding wakeup
-> >file in /sys first.
-> 
->    I'm afraid I couldn't find that file. All I saw were RPM controls...
-> 
-> >In case of issues, try "echo 0 > /sys/module/printk/parameters/console_suspend".
-> 
->    There's no problems suspending, it's the resuming that's a problem for me.
-> 
-> >Good luck!
-> 
->    As usual, there was no luck. :-)
-> 
-> WBR, Sergei
+On 06/07/2016 10:13 AM, Geert Uytterhoeven wrote:
 
-Does resume work for UP (i.e. without SMP)?
+[...]
 
-How did testing CPU hotplug go? Did it work for all CPUs?
+>>> And that the system behaves sanely on suspend/resume.
+>>
+>>    I'd be thankful if you told me how to test that. :-)
+>
+> System suspend:
+>
+>     echo mem > /sys/power/state
 
-If things work less well for SMP than UP I am inclined to ask
-you to defer adding SMP support.
+    Oh. I know that one! :-)
+
+> System resume: You're gonna need a "wakeup-source" in your DTS, e.g. gpio-keys.
+> Serial should work too, echo "enabled" to the corresponding wakeup
+> file in /sys first.
+
+    I'm afraid I couldn't find that file. All I saw were RPM controls...
+
+> In case of issues, try "echo 0 > /sys/module/printk/parameters/console_suspend".
+
+    There's no problems suspending, it's the resuming that's a problem for me.
+
+> Good luck!
+
+    As usual, there was no luck. :-)
+
+WBR, Sergei
