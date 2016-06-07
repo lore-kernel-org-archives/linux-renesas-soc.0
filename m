@@ -8,8 +8,8 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	linux-renesas-soc@vger.kernel.org
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <57582755.3080102@linaro.org>
-Date: Wed, 8 Jun 2016 16:10:29 +0200
+Message-ID: <57574976.6000400@linaro.org>
+Date: Wed, 8 Jun 2016 00:23:50 +0200
 MIME-Version: 1.0
 In-Reply-To: <CAMuHMdUi-LzYTnK4nmLip8a7WVPu7BjkeZ9588Uq=_O_i58yag@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
@@ -18,12 +18,12 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 On 06/07/2016 11:54 AM, Geert Uytterhoeven wrote:
+> Hi Daniel,
+
+Hi Geert,
 
 [ ... ]
 
-> in clockevents/clockevents/next breaks the boot on e.g. r8a7791/koelsch
-> (arm32) and r8a7795/salvator-x (arm64).
->
 > Using "earlycon keep_bootcon" on koelsch (this doesn't help on arm64)
 > reveals it's stuck at:
 >
@@ -32,24 +32,18 @@ On 06/07/2016 11:54 AM, Geert Uytterhoeven wrote:
 > 21474836475000000ns
 >      Calibrating delay loop...
 >
-> With the above commit reverted, it works again:
->
->      Architected cp15 timer(s) running at 10.00MHz (virt).
->      clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles:
-> 0x24e6a1710, max_idle_ns: 440795202120 ns
->      sched_clock: 56 bits at 10MHz, resolution 100ns, wraps every 4398046511100ns
->      Switching to timer-based delay loop, resolution 100ns
->      Calibrating delay loop (skipped), value calculated using timer
-> frequency.. 20.00 BogoMIPS (lpj=100000)
 
-I think it is fixed now and pushed on my tree. Is it possible to confirm 
-your boards are working correctly again after the linux-next is updated 
-with my latest changes ?
+Ok, so the "renesas,cmt-48-gen2" is not impacted by the changes because 
+it uses the platform approach. Very likely, the issue is coming from the 
+arch_arm_timer failing somewhere.
 
-Thanks for the report.
+Or I added a regression and the timer is wrongly returning an error, or 
+the error is always there and now it is caught.
+
+Can you give the traces before 'clocksource_probe: no matching 
+clocksources found' ?
 
    -- Daniel
-
 
 -- 
   <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
