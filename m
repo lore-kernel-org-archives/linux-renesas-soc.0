@@ -1,49 +1,109 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:53510 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752566AbcFJJ6Y (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 05:58:24 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: sh7757: Fix duplicate initializer in GPIO pinmux data
-Date: Fri, 10 Jun 2016 11:58:19 +0200
-Message-Id: <1465552699-5990-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 10/20] drm: rockchip: Rely on the default ->best_encoder() behavior
+Date: Tue,  7 Jun 2016 13:48:05 +0200
+Message-Id: <1465300095-16971-11-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-With C=1:
+All outputs have a 1:1 relationship between connectors and encoders
+and the driver is relying on the atomic helpers: we can drop the custom
+->best_encoder() implementations  and let the core call
+drm_atomic_helper_best_encoder() for us.
 
-    drivers/pinctrl/sh-pfc/pfc-sh7757.c:1613:9: warning: Initializer entry defined twice
-    drivers/pinctrl/sh-pfc/pfc-sh7757.c:1628:9:   also defined here
-
-Remove the duplicate initializer to fix this.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Acked-by: Mark Yao <mark.yao@rock-chips.com>
 ---
-Based on the comment near the definition of A16_MARK, which states A16
-belongs to the "PTV" section.
+ drivers/gpu/drm/rockchip/dw-mipi-dsi.c | 9 ---------
+ drivers/gpu/drm/rockchip/inno_hdmi.c   | 9 ---------
+ 2 files changed, 18 deletions(-)
 
-I do not have a sh7757 datasheet.
----
- drivers/pinctrl/sh-pfc/pfc-sh7757.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7757.c b/drivers/pinctrl/sh-pfc/pfc-sh7757.c
-index 0555a1fe076ed353..6d8c31caefc105e0 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7757.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7757.c
-@@ -1625,7 +1625,6 @@ static const struct pinmux_func pinmux_func_gpios[] = {
- 	GPIO_FN(VBIOS_CS),
+diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
+index dedc65b..ca22e5e 100644
+--- a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
++++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
+@@ -964,18 +964,9 @@ static enum drm_mode_status dw_mipi_dsi_mode_valid(
+ 	return mode_status;
+ }
  
- 	/* PTW (mobule: LBSC, EVC, SCIF) */
--	GPIO_FN(A16),
- 	GPIO_FN(A15),
- 	GPIO_FN(A14),
- 	GPIO_FN(A13),
+-static struct drm_encoder *dw_mipi_dsi_connector_best_encoder(
+-					struct drm_connector *connector)
+-{
+-	struct dw_mipi_dsi *dsi = con_to_dsi(connector);
+-
+-	return &dsi->encoder;
+-}
+-
+ static struct drm_connector_helper_funcs dw_mipi_dsi_connector_helper_funcs = {
+ 	.get_modes = dw_mipi_dsi_connector_get_modes,
+ 	.mode_valid = dw_mipi_dsi_mode_valid,
+-	.best_encoder = dw_mipi_dsi_connector_best_encoder,
+ };
+ 
+ static enum drm_connector_status
+diff --git a/drivers/gpu/drm/rockchip/inno_hdmi.c b/drivers/gpu/drm/rockchip/inno_hdmi.c
+index f8b4feb..006260d 100644
+--- a/drivers/gpu/drm/rockchip/inno_hdmi.c
++++ b/drivers/gpu/drm/rockchip/inno_hdmi.c
+@@ -579,14 +579,6 @@ inno_hdmi_connector_mode_valid(struct drm_connector *connector,
+ 	return MODE_OK;
+ }
+ 
+-static struct drm_encoder *
+-inno_hdmi_connector_best_encoder(struct drm_connector *connector)
+-{
+-	struct inno_hdmi *hdmi = to_inno_hdmi(connector);
+-
+-	return &hdmi->encoder;
+-}
+-
+ static int
+ inno_hdmi_probe_single_connector_modes(struct drm_connector *connector,
+ 				       uint32_t maxX, uint32_t maxY)
+@@ -613,7 +605,6 @@ static struct drm_connector_funcs inno_hdmi_connector_funcs = {
+ static struct drm_connector_helper_funcs inno_hdmi_connector_helper_funcs = {
+ 	.get_modes = inno_hdmi_connector_get_modes,
+ 	.mode_valid = inno_hdmi_connector_mode_valid,
+-	.best_encoder = inno_hdmi_connector_best_encoder,
+ };
+ 
+ static int inno_hdmi_register(struct drm_device *drm, struct inno_hdmi *hdmi)
 -- 
-1.9.1
+2.7.4
