@@ -1,18 +1,14 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:34397 "EHLO
-	mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932069AbcFGU6u (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 16:58:50 -0400
-Received: by mail-lf0-f42.google.com with SMTP id s186so58290185lfs.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Jun 2016 13:58:49 -0700 (PDT)
-Subject: Re: [PATCH 07/13] ARM: dts: r8a7792: initial SoC device tree
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <fdab2628-60bd-c41b-296b-38cd71a6c5da@cogentembedded.com>
 References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
- <2539026.OyU5nvpxa6@wasted.cogentembedded.com>
- <20160601005751.GG20527@verge.net.au>
+ <2539026.OyU5nvpxa6@wasted.cogentembedded.com> <20160601005751.GG20527@verge.net.au>
  <fdab2628-60bd-c41b-296b-38cd71a6c5da@cogentembedded.com>
- <CAMuHMdUkOpEp+YCbZVZppdN4C7KKpDS9_gEuXi_WKZXM9YHgEQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Jun 2016 09:13:54 +0200
+Message-ID: <CAMuHMdUkOpEp+YCbZVZppdN4C7KKpDS9_gEuXi_WKZXM9YHgEQ@mail.gmail.com>
+Subject: Re: [PATCH 07/13] ARM: dts: r8a7792: initial SoC device tree
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Simon Horman <horms@verge.net.au>,
 	linux-renesas-soc@vger.kernel.org,
 	Rob Herring <robh+dt@kernel.org>,
@@ -25,42 +21,58 @@ Cc: Simon Horman <horms@verge.net.au>,
 	Russell King <linux@arm.linux.org.uk>,
 	"linux-arm-kernel@lists.infradead.org"
 	<linux-arm-kernel@lists.infradead.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <ab5e3a98-7ff2-dc8f-d255-f6da26f43527@cogentembedded.com>
-Date: Tue, 7 Jun 2016 23:58:45 +0300
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUkOpEp+YCbZVZppdN4C7KKpDS9_gEuXi_WKZXM9YHgEQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 06/07/2016 10:13 AM, Geert Uytterhoeven wrote:
+Hi Sergei,
 
-[...]
-
->>> And that the system behaves sanely on suspend/resume.
->>
->>    I'd be thankful if you told me how to test that. :-)
+On Tue, Jun 7, 2016 at 12:26 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+>> With regards to SMP. Have you checked to make sure CPU hotplug works
+>> on all CPUs?
 >
-> System suspend:
+>    How to test the CPU hotplug? I've now added the SMP support and made sure
+> both CPUs are online and serve IRQs...
+
+Off/online all CPUs:
+
+    for i in /sys/*/*/cpu/cpu[0-9]*; do echo 0 > $i/online; echo 1 >
+$i/online; done
+
+Offline all CPUs:
+
+    for i in /sys/*/*/cpu/cpu[0-9]*; do echo 0 > $i/online; done; cat
+/proc/cpuinfo
+
+Online all CPUs:
+
+   for i in /sys/*/*/cpu/cpu[0-9]*; do echo 1 > $i/online; done; cat
+/proc/cpuinfo
+
+>> And that the system behaves sanely on suspend/resume.
 >
->     echo mem > /sys/power/state
+>    I'd be thankful if you told me how to test that. :-)
 
-    Oh. I know that one! :-)
+System suspend:
 
-> System resume: You're gonna need a "wakeup-source" in your DTS, e.g. gpio-keys.
-> Serial should work too, echo "enabled" to the corresponding wakeup
-> file in /sys first.
+    echo mem > /sys/power/state
 
-    I'm afraid I couldn't find that file. All I saw were RPM controls...
+System resume: You're gonna need a "wakeup-source" in your DTS, e.g. gpio-keys.
+Serial should work too, echo "enabled" to the corresponding wakeup
+file in /sys first.
 
-> In case of issues, try "echo 0 > /sys/module/printk/parameters/console_suspend".
+In case of issues, try "echo 0 > /sys/module/printk/parameters/console_suspend".
 
-    There's no problems suspending, it's the resuming that's a problem for me.
+Good luck!
 
-> Good luck!
+Gr{oetje,eeting}s,
 
-    As usual, there was no luck. :-)
+                        Geert
 
-WBR, Sergei
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
