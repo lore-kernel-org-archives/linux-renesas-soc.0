@@ -1,67 +1,93 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-	m.szyprowski@samsung.com
-Date: Wed, 08 Jun 2016 16:18:15 +0900
-Message-Id: <20160608071815.7560.8738.sendpatchset@little-apple>
-In-Reply-To: <20160608071737.7560.32571.sendpatchset@little-apple>
-References: <20160608071737.7560.32571.sendpatchset@little-apple>
-Subject: [PATCH v4 04/07] iommu/ipmmu-vmsa: Break out domain allocation code
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 02/20] drm: arc: Rely on the default ->best_encoder() behavior
+Date: Tue,  7 Jun 2016 13:47:57 +0200
+Message-Id: <1465300095-16971-3-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+We have a 1:1 relationship between connectors and encoders and the
+driver is relying on the atomic helpers: we can drop the custom
+->best_encoder(), and let the core call drm_atomic_helper_best_encoder()
+for us.
 
-Break out the domain allocation code into a separate function.
-This is preparation for future code sharing.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
+ drivers/gpu/drm/arc/arcpgu_hdmi.c | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
- Changes since V3:
- - None
-
- Changes since V2:
- - Included this new patch as-is from the following series:
-   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
-
- drivers/iommu/ipmmu-vmsa.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
---- 0005/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-08 15:00:20.760607110 +0900
-@@ -507,13 +507,10 @@ static irqreturn_t ipmmu_irq(int irq, vo
-  * IOMMU Operations
-  */
- 
--static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
-+static struct iommu_domain *__ipmmu_domain_alloc(unsigned type)
- {
- 	struct ipmmu_vmsa_domain *domain;
- 
--	if (type != IOMMU_DOMAIN_UNMANAGED)
--		return NULL;
--
- 	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
- 	if (!domain)
- 		return NULL;
-@@ -523,6 +520,14 @@ static struct iommu_domain *ipmmu_domain
- 	return &domain->io_domain;
+diff --git a/drivers/gpu/drm/arc/arcpgu_hdmi.c b/drivers/gpu/drm/arc/arcpgu_hdmi.c
+index 08b6bae..b7a8b2a 100644
+--- a/drivers/gpu/drm/arc/arcpgu_hdmi.c
++++ b/drivers/gpu/drm/arc/arcpgu_hdmi.c
+@@ -46,23 +46,6 @@ static int arcpgu_drm_connector_get_modes(struct drm_connector *connector)
+ 	return sfuncs->get_modes(&slave->base, connector);
  }
  
-+static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
-+{
-+	if (type != IOMMU_DOMAIN_UNMANAGED)
-+		return NULL;
-+
-+	return __ipmmu_domain_alloc(type);
-+}
-+
- static void ipmmu_domain_free(struct iommu_domain *io_domain)
+-struct drm_encoder *
+-arcpgu_drm_connector_best_encoder(struct drm_connector *connector)
+-{
+-	struct drm_encoder_slave *slave;
+-	struct arcpgu_drm_connector *con =
+-		container_of(connector, struct arcpgu_drm_connector, connector);
+-
+-	slave = con->encoder_slave;
+-	if (slave == NULL) {
+-		dev_err(connector->dev->dev,
+-			"connector_best_encoder: cannot find slave encoder for connector\n");
+-		return NULL;
+-	}
+-
+-	return &slave->base;
+-}
+-
+ static enum drm_connector_status
+ arcpgu_drm_connector_detect(struct drm_connector *connector, bool force)
  {
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+@@ -97,7 +80,6 @@ static void arcpgu_drm_connector_destroy(struct drm_connector *connector)
+ static const struct drm_connector_helper_funcs
+ arcpgu_drm_connector_helper_funcs = {
+ 	.get_modes = arcpgu_drm_connector_get_modes,
+-	.best_encoder = arcpgu_drm_connector_best_encoder,
+ };
+ 
+ static const struct drm_connector_funcs arcpgu_drm_connector_funcs = {
+-- 
+2.7.4
