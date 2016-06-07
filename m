@@ -1,137 +1,127 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-	m.szyprowski@samsung.com
-Date: Wed, 08 Jun 2016 16:18:34 +0900
-Message-Id: <20160608071834.7560.85882.sendpatchset@little-apple>
-In-Reply-To: <20160608071737.7560.32571.sendpatchset@little-apple>
-References: <20160608071737.7560.32571.sendpatchset@little-apple>
-Subject: [PATCH v4 06/07] iommu/ipmmu-vmsa: ARM and ARM64 archdata access
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:38713 "EHLO
+	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753743AbcFGHy6 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 7 Jun 2016 03:54:58 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+	iommu@lists.linux-foundation.org, linux@armlinux.org.uk
+Cc: hch@infradead.org, dan.j.williams@intel.com, vinod.koul@intel.com,
+	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
+	linus.walleij@linaro.org, arnd@arndb.de,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv8 4/6] arm: dma-mapping: add {map,unmap}_resource for iommu ops
+Date: Tue,  7 Jun 2016 09:54:11 +0200
+Message-Id: <1465286053-27258-5-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <1465286053-27258-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+References: <1465286053-27258-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Add methods to map/unmap device resources addresses for dma_map_ops that
+are IOMMU aware. This is needed to map a device MMIO register from a
+physical address.
 
-Not all architectures have an iommu member in their archdata, so
-use #ifdefs support build wit COMPILE_TEST on any architecture.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
+ arch/arm/mm/dma-mapping.c | 63 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
- Changes since V3:
- - New patch
-
- drivers/iommu/ipmmu-vmsa.c |   37 +++++++++++++++++++++++++++----------
- 1 file changed, 27 insertions(+), 10 deletions(-)
-
---- 0009/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-08 15:01:40.970607110 +0900
-@@ -70,6 +70,25 @@ static struct ipmmu_vmsa_domain *to_vmsa
- 	return container_of(dom, struct ipmmu_vmsa_domain, io_domain);
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index ff7ed56..7e9c8eb 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -1951,6 +1951,63 @@ static void arm_iommu_unmap_page(struct device *dev, dma_addr_t handle,
+ 	__free_iova(mapping, iova, len);
  }
  
-+#if defined(CONFIG_ARM) || defined(CONFIG_ARM64)
-+static struct ipmmu_vmsa_archdata *to_archdata(struct device *dev)
++/**
++ * arm_iommu_map_resource - map a device resource for DMA
++ * @dev: valid struct device pointer
++ * @phys_addr: physical address of resource
++ * @size: size of resource to map
++ * @dir: DMA transfer direction
++ */
++static dma_addr_t arm_iommu_map_resource(struct device *dev,
++		phys_addr_t phys_addr, size_t size,
++		enum dma_data_direction dir, struct dma_attrs *attrs)
 +{
-+	return dev->archdata.iommu;
-+}
-+static void set_archdata(struct device *dev, struct ipmmu_vmsa_archdata *p)
-+{
-+	dev->archdata.iommu = p;
-+}
-+#else
-+static struct ipmmu_vmsa_archdata *to_archdata(struct device *dev)
-+{
-+	return NULL;
-+}
-+static void set_archdata(struct device *dev, struct ipmmu_vmsa_archdata *p)
-+{
-+}
-+#endif
++	struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
++	dma_addr_t dma_addr;
++	int ret, prot;
++	phys_addr_t addr = phys_addr & PAGE_MASK;
++	unsigned int offset = phys_addr & ~PAGE_MASK;
++	size_t len = PAGE_ALIGN(size + offset);
 +
- #define TLB_LOOP_TIMEOUT		100	/* 100us */
- 
- /* -----------------------------------------------------------------------------
-@@ -539,7 +558,7 @@ static void ipmmu_domain_free(struct iom
- static int ipmmu_attach_device(struct iommu_domain *io_domain,
- 			       struct device *dev)
++	dma_addr = __alloc_iova(mapping, len);
++	if (dma_addr == DMA_ERROR_CODE)
++		return dma_addr;
++
++	prot = __dma_direction_to_prot(dir) | IOMMU_MMIO;
++
++	ret = iommu_map(mapping->domain, dma_addr, addr, len, prot);
++	if (ret < 0)
++		goto fail;
++
++	return dma_addr + offset;
++fail:
++	__free_iova(mapping, dma_addr, len);
++	return DMA_ERROR_CODE;
++}
++
++/**
++ * arm_iommu_unmap_resource - unmap a device DMA resource
++ * @dev: valid struct device pointer
++ * @dma_handle: DMA address to resource
++ * @size: size of resource to map
++ * @dir: DMA transfer direction
++ */
++static void arm_iommu_unmap_resource(struct device *dev, dma_addr_t dma_handle,
++		size_t size, enum dma_data_direction dir,
++		struct dma_attrs *attrs)
++{
++	struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
++	dma_addr_t iova = dma_handle & PAGE_MASK;
++	unsigned int offset = dma_handle & ~PAGE_MASK;
++	size_t len = PAGE_ALIGN(size + offset);
++
++	if (!iova)
++		return;
++
++	iommu_unmap(mapping->domain, iova, len);
++	__free_iova(mapping, iova, len);
++}
++
+ static void arm_iommu_sync_single_for_cpu(struct device *dev,
+ 		dma_addr_t handle, size_t size, enum dma_data_direction dir)
  {
--	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
-+	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
- 	struct ipmmu_vmsa_device *mmu = archdata->mmu;
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
- 	unsigned long flags;
-@@ -581,7 +600,7 @@ static int ipmmu_attach_device(struct io
- static void ipmmu_detach_device(struct iommu_domain *io_domain,
- 				struct device *dev)
- {
--	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
-+	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
- 	unsigned int i;
+@@ -1994,6 +2051,9 @@ struct dma_map_ops iommu_ops = {
+ 	.unmap_sg		= arm_iommu_unmap_sg,
+ 	.sync_sg_for_cpu	= arm_iommu_sync_sg_for_cpu,
+ 	.sync_sg_for_device	= arm_iommu_sync_sg_for_device,
++
++	.map_resource		= arm_iommu_map_resource,
++	.unmap_resource		= arm_iommu_unmap_resource,
+ };
  
-@@ -701,7 +720,7 @@ static int ipmmu_init_platform_device(st
- 	archdata->mmu = mmu;
- 	archdata->utlbs = utlbs;
- 	archdata->num_utlbs = num_utlbs;
--	dev->archdata.iommu = archdata;
-+	set_archdata(dev, archdata);
- 	return 0;
+ struct dma_map_ops iommu_coherent_ops = {
+@@ -2007,6 +2067,9 @@ struct dma_map_ops iommu_coherent_ops = {
  
- error:
-@@ -713,12 +732,11 @@ error:
+ 	.map_sg		= arm_coherent_iommu_map_sg,
+ 	.unmap_sg	= arm_coherent_iommu_unmap_sg,
++
++	.map_resource	= arm_iommu_map_resource,
++	.unmap_resource	= arm_iommu_unmap_resource,
+ };
  
- static int ipmmu_add_device(struct device *dev)
- {
--	struct ipmmu_vmsa_archdata *archdata;
- 	struct ipmmu_vmsa_device *mmu = NULL;
- 	struct iommu_group *group;
- 	int ret;
- 
--	if (dev->archdata.iommu) {
-+	if (to_archdata(dev)) {
- 		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
- 			 dev_name(dev));
- 		return -EINVAL;
-@@ -754,8 +772,7 @@ static int ipmmu_add_device(struct devic
- 	 * - Make the mapping size configurable ? We currently use a 2GB mapping
- 	 *   at a 1GB offset to ensure that NULL VAs will fault.
- 	 */
--	archdata = dev->archdata.iommu;
--	mmu = archdata->mmu;
-+	mmu = to_archdata(dev)->mmu;
- 	if (!mmu->mapping) {
- 		struct dma_iommu_mapping *mapping;
- 
-@@ -783,7 +800,7 @@ error:
- 	if (mmu)
- 		arm_iommu_release_mapping(mmu->mapping);
- 
--	dev->archdata.iommu = NULL;
-+	set_archdata(dev, NULL);
- 
- 	if (!IS_ERR_OR_NULL(group))
- 		iommu_group_remove_device(dev);
-@@ -793,7 +810,7 @@ error:
- 
- static void ipmmu_remove_device(struct device *dev)
- {
--	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
-+	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
- 
- 	arm_iommu_detach_device(dev);
- 	iommu_group_remove_device(dev);
-@@ -801,7 +818,7 @@ static void ipmmu_remove_device(struct d
- 	kfree(archdata->utlbs);
- 	kfree(archdata);
- 
--	dev->archdata.iommu = NULL;
-+	set_archdata(dev, NULL);
- }
- 
- static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
+ /**
+-- 
+2.8.2
