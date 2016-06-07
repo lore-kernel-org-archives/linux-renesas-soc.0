@@ -1,72 +1,105 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36087 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752574AbcF3OPi (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:15:38 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/9] arm64: dts: r8a7795: Add CAN FD support
-Date: Thu, 30 Jun 2016 16:15:00 +0200
-Message-Id: <341eb484b14a16fd32086e7dd82a9f7fdea2d040.1467291676.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467291676.git.horms+renesas@verge.net.au>
-References: <cover.1467291676.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 12/20] drm: sun4i: Rely on the default ->best_encoder() behavior
+Date: Tue,  7 Jun 2016 13:48:07 +0200
+Message-Id: <1465300095-16971-13-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+All outputs have a 1:1 relationship between connectors and encoders
+and the driver is relying on the atomic helpers: we can drop the custom
+->best_encoder() implementations and let the core call
+drm_atomic_helper_best_encoder() for us.
 
-Adds CAN FD controller node for r8a7795.
-
-Note: CAN FD controller register base address specified in R-Car Gen3
-Hardware User Manual v0.5E is incorrect. The correct address is:
-
-CAN FD - 0xe66c0000
-
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_rgb.c | 10 ----------
+ drivers/gpu/drm/sun4i/sun4i_tv.c  |  9 ---------
+ 2 files changed, 19 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index fad6dd8b7771..b902356873c2 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -583,6 +583,30 @@
- 			status = "disabled";
- 		};
+diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+index ab64948..442cfe2 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
++++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
+@@ -90,19 +90,9 @@ static int sun4i_rgb_mode_valid(struct drm_connector *connector,
+ 	return MODE_OK;
+ }
  
-+		canfd: can@e66c0000 {
-+			compatible = "renesas,r8a7795-canfd",
-+				     "renesas,rcar-gen3-canfd";
-+			reg = <0 0xe66c0000 0 0x8000>;
-+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
-+				   <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 914>,
-+			       <&cpg CPG_CORE R8A7795_CLK_CANFD>,
-+			       <&can_clk>;
-+			clock-names = "fck", "canfd", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R8A7795_CLK_CANFD>;
-+			assigned-clock-rates = <40000000>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			status = "disabled";
-+
-+			channel0 {
-+				status = "disabled";
-+			};
-+
-+			channel1 {
-+				status = "disabled";
-+			};
-+		};
-+
- 		hscif0: serial@e6540000 {
- 			compatible = "renesas,hscif-r8a7795",
- 				     "renesas,rcar-gen3-hscif",
+-static struct drm_encoder *
+-sun4i_rgb_best_encoder(struct drm_connector *connector)
+-{
+-	struct sun4i_rgb *rgb =
+-		drm_connector_to_sun4i_rgb(connector);
+-
+-	return &rgb->encoder;
+-}
+-
+ static struct drm_connector_helper_funcs sun4i_rgb_con_helper_funcs = {
+ 	.get_modes	= sun4i_rgb_get_modes,
+ 	.mode_valid	= sun4i_rgb_mode_valid,
+-	.best_encoder	= sun4i_rgb_best_encoder,
+ };
+ 
+ static enum drm_connector_status
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
+index bc047f9..b841478 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
+@@ -526,18 +526,9 @@ static int sun4i_tv_comp_mode_valid(struct drm_connector *connector,
+ 	return MODE_OK;
+ }
+ 
+-static struct drm_encoder *
+-sun4i_tv_comp_best_encoder(struct drm_connector *connector)
+-{
+-	struct sun4i_tv *tv = drm_connector_to_sun4i_tv(connector);
+-
+-	return &tv->encoder;
+-}
+-
+ static struct drm_connector_helper_funcs sun4i_tv_comp_connector_helper_funcs = {
+ 	.get_modes	= sun4i_tv_comp_get_modes,
+ 	.mode_valid	= sun4i_tv_comp_mode_valid,
+-	.best_encoder	= sun4i_tv_comp_best_encoder,
+ };
+ 
+ static enum drm_connector_status
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
