@@ -1,66 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:45256
-	"EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751301AbcFQLN0 (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:35175 "EHLO
+	mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751946AbcFGKbL (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 17 Jun 2016 07:13:26 -0400
-Date: Fri, 17 Jun 2016 08:07:23 -0300
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 05/13] v4l: vsp1: Add FCP support
-Message-ID: <20160617080723.7a760bf1@recife.lan>
-In-Reply-To: <1461620198-13428-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1461620198-13428-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-	<1461620198-13428-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Tue, 7 Jun 2016 06:31:11 -0400
+Received: by mail-lf0-f54.google.com with SMTP id u74so5038612lff.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Jun 2016 03:31:10 -0700 (PDT)
+Subject: Re: [PATCH v3 0/6] Add R8A7794/SILK sound DT support
+To: Simon Horman <horms@verge.net.au>
+References: <2378837.cigT3tNQPe@wasted.cogentembedded.com>
+ <7d19e749-8264-9004-64f4-aefabda699c6@cogentembedded.com>
+ <b77ad169-c9d1-4d67-0973-fc9639ddb613@cogentembedded.com>
+ <20160607003736.GB20591@verge.net.au>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org, magnus.damm@gmail.com,
+	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <56af1dfd-45cc-fc55-0d8f-8a01a98a9499@cogentembedded.com>
+Date: Tue, 7 Jun 2016 13:31:07 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20160607003736.GB20591@verge.net.au>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Em Tue, 26 Apr 2016 00:36:30 +0300
-Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> escreveu:
+Hello.
 
-> On some platforms the VSP performs memory accesses through an FCP. When
-> that's the case get a reference to the FCP from the VSP DT node and
-> enable/disable it at runtime as needed.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
->  .../devicetree/bindings/media/renesas,vsp1.txt      |  5 +++++
->  drivers/media/platform/Kconfig                      |  1 +
->  drivers/media/platform/vsp1/vsp1.h                  |  2 ++
->  drivers/media/platform/vsp1/vsp1_drv.c              | 21 ++++++++++++++++++++-
->  4 files changed, 28 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/renesas,vsp1.txt b/Documentation/devicetree/bindings/media/renesas,vsp1.txt
-> index 627405abd144..9b695bcbf219 100644
-> --- a/Documentation/devicetree/bindings/media/renesas,vsp1.txt
-> +++ b/Documentation/devicetree/bindings/media/renesas,vsp1.txt
-> @@ -14,6 +14,11 @@ Required properties:
->    - interrupts: VSP interrupt specifier.
->    - clocks: A phandle + clock-specifier pair for the VSP functional clock.
->  
-> +Optional properties:
-> +
-> +  - renesas,fcp: A phandle referencing the FCP that handles memory accesses
-> +                 for the VSP. Not needed on Gen2, mandatory on Gen3.
-> +
->  
->  Example: R8A7790 (R-Car H2) VSP1-S node
->  
-> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-> index f453910050be..a3304466e628 100644
-> --- a/drivers/media/platform/Kconfig
-> +++ b/drivers/media/platform/Kconfig
-> @@ -264,6 +264,7 @@ config VIDEO_RENESAS_VSP1
->  	tristate "Renesas VSP1 Video Processing Engine"
->  	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && HAS_DMA
->  	depends on (ARCH_RENESAS && OF) || COMPILE_TEST
-> +	depends on !ARM64 || VIDEO_RENESAS_FCP
+On 6/7/2016 3:37 AM, Simon Horman wrote:
 
-It sounds that this will break compile-test on ARM64 for no good reason.
+>>>>   Here's the set of 6 patches against Simon Horman's 'renesas.git' repo,
+>>>> 'renesas-devel-20160509-v4.6-rc7' tag. I'm adding the sound device tree support
+>>>> for the R8A7794 SoC based SILK board.
+>>>>
+>>>> [1/6] ARM: dts: r8a7794: add audio clocks
+>>>> [2/6] ARM: dts: r8a7794: add MSTP5 clocks
+>>>> [3/6] ARM: dts: r8a7794: add MSTP10 clocks
+>>>> [4/6] ARM: dts: r8a7794: add Audio-DMAC support
+>>>> [5/6] ARM: dts: r8a7794: add sound support
+>>>> [6/6] ARM: dts: silk: add sound support
+>>>
+>>>   Oops, forgot to mention that patch #5 depends on the R-Car sound patch
+>>> posted yesterday in order to get interpreted as intended (it uses a disabled
+>>> SRC node).
+>>
+>>   Simon, that patch has already hit Linus' tree but this series seems to be
+>> stuck. Please merge!
+>
+> Hi Sergei,
+>
+> there seem to be some outstanding review comments for v3 of this patchset.
 
-Thanks,
-Mauro
+    Indeed, seeing them now. Sorry for bothering you...
+
+> Could you address them and repost?
+
+    I will. :-)
+
+> Thanks!
+
+MBR, Sergei
