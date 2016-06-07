@@ -1,132 +1,143 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:51090 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753789AbcFAPXX (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 11:23:23 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: hch@infradead.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-	iommu@lists.linux-foundation.org
-Cc: dan.j.williams@intel.com, vinod.koul@intel.com,
-	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	linus.walleij@linaro.org, arnd@arndb.de,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv7 5/6] dmaengine: rcar-dmac: group slave configuration
-Date: Wed,  1 Jun 2016 17:22:28 +0200
-Message-Id: <1464794549-6601-6-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1464794549-6601-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1464794549-6601-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 09/20] drm: rcar-du: Rely on the default ->best_encoder() behavior
+Date: Tue,  7 Jun 2016 13:48:04 +0200
+Message-Id: <1465300095-16971-10-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Group slave address and transfer size in own structs for source and
-destination. This is in preparation for hooking up the dma-mapping API
-to the slave addresses.
+All outputs have a 1:1 relationship between connectors and encoders,
+and the driver is relying on the atomic helpers: we can drop the custom
+->best_encoder() implementations and let the core call
+drm_atomic_helper_best_encoder() for us.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/dma/sh/rcar-dmac.c | 38 ++++++++++++++++++++++----------------
- 1 file changed, 22 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 12 ------------
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.h |  3 ---
+ drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c |  1 -
+ drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c |  1 -
+ drivers/gpu/drm/rcar-du/rcar_du_vgacon.c  |  3 ---
+ 5 files changed, 20 deletions(-)
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index dfb1792..b0c3bb2 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -118,14 +118,22 @@ struct rcar_dmac_desc_page {
- 	sizeof(struct rcar_dmac_xfer_chunk))
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+index 4e939e4..55149e9 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+@@ -27,18 +27,6 @@
+ #include "rcar_du_vgacon.h"
  
- /*
-+ * struct rcar_dmac_chan_slave - Slave configuration
-+ * @slave_addr: slave memory address
-+ * @xfer_size: size (in bytes) of hardware transfers
-+ */
-+struct rcar_dmac_chan_slave {
-+	phys_addr_t slave_addr;
-+	unsigned int xfer_size;
-+};
-+
-+/*
-  * struct rcar_dmac_chan - R-Car Gen2 DMA Controller Channel
-  * @chan: base DMA channel object
-  * @iomem: channel I/O memory base
-  * @index: index of this channel in the controller
-- * @src_xfer_size: size (in bytes) of hardware transfers on the source side
-- * @dst_xfer_size: size (in bytes) of hardware transfers on the destination side
-- * @src_slave_addr: slave source memory address
-- * @dst_slave_addr: slave destination memory address
-+ * @src: slave memory address and size on the source side
-+ * @dst: slave memory address and size on the destination side
-  * @mid_rid: hardware MID/RID for the DMA client using this channel
-  * @lock: protects the channel CHCR register and the desc members
-  * @desc.free: list of free descriptors
-@@ -142,10 +150,8 @@ struct rcar_dmac_chan {
- 	void __iomem *iomem;
- 	unsigned int index;
+ /* -----------------------------------------------------------------------------
+- * Common connector functions
+- */
+-
+-struct drm_encoder *
+-rcar_du_connector_best_encoder(struct drm_connector *connector)
+-{
+-	struct rcar_du_connector *rcon = to_rcar_connector(connector);
+-
+-	return rcar_encoder_to_drm_encoder(rcon->encoder);
+-}
+-
+-/* -----------------------------------------------------------------------------
+  * Encoder
+  */
  
--	unsigned int src_xfer_size;
--	unsigned int dst_xfer_size;
--	dma_addr_t src_slave_addr;
--	dma_addr_t dst_slave_addr;
-+	struct rcar_dmac_chan_slave src;
-+	struct rcar_dmac_chan_slave dst;
- 	int mid_rid;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+index 719b6f2a..a8669c3 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+@@ -49,9 +49,6 @@ struct rcar_du_connector {
+ #define to_rcar_connector(c) \
+ 	container_of(c, struct rcar_du_connector, connector)
  
- 	spinlock_t lock;
-@@ -793,13 +799,13 @@ static void rcar_dmac_chan_configure_desc(struct rcar_dmac_chan *chan,
- 	case DMA_DEV_TO_MEM:
- 		chcr = RCAR_DMACHCR_DM_INC | RCAR_DMACHCR_SM_FIXED
- 		     | RCAR_DMACHCR_RS_DMARS;
--		xfer_size = chan->src_xfer_size;
-+		xfer_size = chan->src.xfer_size;
- 		break;
+-struct drm_encoder *
+-rcar_du_connector_best_encoder(struct drm_connector *connector);
+-
+ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 			 enum rcar_du_encoder_type type,
+ 			 enum rcar_du_output output,
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c b/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c
+index 6c92714..612b4d5 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c
+@@ -52,7 +52,6 @@ static int rcar_du_hdmi_connector_mode_valid(struct drm_connector *connector,
+ static const struct drm_connector_helper_funcs connector_helper_funcs = {
+ 	.get_modes = rcar_du_hdmi_connector_get_modes,
+ 	.mode_valid = rcar_du_hdmi_connector_mode_valid,
+-	.best_encoder = rcar_du_connector_best_encoder,
+ };
  
- 	case DMA_MEM_TO_DEV:
- 		chcr = RCAR_DMACHCR_DM_FIXED | RCAR_DMACHCR_SM_INC
- 		     | RCAR_DMACHCR_RS_DMARS;
--		xfer_size = chan->dst_xfer_size;
-+		xfer_size = chan->dst.xfer_size;
- 		break;
+ static enum drm_connector_status
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
+index e905f5d..6afd0af 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
+@@ -59,7 +59,6 @@ static int rcar_du_lvds_connector_get_modes(struct drm_connector *connector)
  
- 	case DMA_MEM_TO_MEM:
-@@ -1038,7 +1044,7 @@ rcar_dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
- 	}
+ static const struct drm_connector_helper_funcs connector_helper_funcs = {
+ 	.get_modes = rcar_du_lvds_connector_get_modes,
+-	.best_encoder = rcar_du_connector_best_encoder,
+ };
  
- 	dev_addr = dir == DMA_DEV_TO_MEM
--		 ? rchan->src_slave_addr : rchan->dst_slave_addr;
-+		 ? rchan->src.slave_addr : rchan->dst.slave_addr;
- 	return rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, dev_addr,
- 				      dir, flags, false);
- }
-@@ -1093,7 +1099,7 @@ rcar_dmac_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t buf_addr,
- 	}
+ static enum drm_connector_status
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c b/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
+index 9d7e5c9..8d6125c 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
+@@ -28,7 +28,6 @@ static int rcar_du_vga_connector_get_modes(struct drm_connector *connector)
  
- 	dev_addr = dir == DMA_DEV_TO_MEM
--		 ? rchan->src_slave_addr : rchan->dst_slave_addr;
-+		 ? rchan->src.slave_addr : rchan->dst.slave_addr;
- 	desc = rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, dev_addr,
- 				      dir, flags, true);
+ static const struct drm_connector_helper_funcs connector_helper_funcs = {
+ 	.get_modes = rcar_du_vga_connector_get_modes,
+-	.best_encoder = rcar_du_connector_best_encoder,
+ };
  
-@@ -1110,10 +1116,10 @@ static int rcar_dmac_device_config(struct dma_chan *chan,
- 	 * We could lock this, but you shouldn't be configuring the
- 	 * channel, while using it...
- 	 */
--	rchan->src_slave_addr = cfg->src_addr;
--	rchan->dst_slave_addr = cfg->dst_addr;
--	rchan->src_xfer_size = cfg->src_addr_width;
--	rchan->dst_xfer_size = cfg->dst_addr_width;
-+	rchan->src.slave_addr = cfg->src_addr;
-+	rchan->dst.slave_addr = cfg->dst_addr;
-+	rchan->src.xfer_size = cfg->src_addr_width;
-+	rchan->dst.xfer_size = cfg->dst_addr_width;
+ static enum drm_connector_status
+@@ -79,7 +78,5 @@ int rcar_du_vga_connector_init(struct rcar_du_device *rcdu,
+ 	if (ret < 0)
+ 		return ret;
  
+-	rcon->encoder = renc;
+-
  	return 0;
  }
 -- 
-2.8.2
+2.7.4
