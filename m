@@ -1,64 +1,77 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:33607 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752509AbcF1OLK (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 10:11:10 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 06/13] ARM: shmobile: apmu: Move #ifdef CONFIG_SMP to cover more functions
-Date: Tue, 28 Jun 2016 16:10:35 +0200
-Message-Id: <1467123042-8468-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
-References: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 18/20] drm/bridge: ptn3460: Rely on the default ->best_encoder() behavior
+Date: Tue,  7 Jun 2016 13:48:13 +0200
+Message-Id: <1465300095-16971-19-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-shmobile_smp_apmu_prepare_cpus() is used only if CONFIG_SMP=y.
+We have a 1:1 relationship between connectors and encoders, and the driver
+is relying on the atomic helpers: we can drop the custom ->best_encoder(),
+and let the core call drm_atomic_helper_best_encoder() for us.
 
-Hence move the #ifdef to cover shmobile_smp_apmu_prepare_cpus() and all
-functions only called by it (apmu_init_cpu() and apmu_parse_cfg()).
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
-v5:
-  - Add Reviewed-by,
+ drivers/gpu/drm/bridge/nxp-ptn3460.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-v4:
-  - New.
----
- arch/arm/mach-shmobile/platsmp-apmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index aba75c89f9c1c5eb..c1558ef0c590dd3e 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -74,6 +74,7 @@ static int __maybe_unused apmu_wrap(int cpu, int (*fn)(void __iomem *p, int cpu)
- 	return p ? fn(p, apmu_cpus[cpu].bit) : -EINVAL;
+diff --git a/drivers/gpu/drm/bridge/nxp-ptn3460.c b/drivers/gpu/drm/bridge/nxp-ptn3460.c
+index 7ecd59f..93f3dac 100644
+--- a/drivers/gpu/drm/bridge/nxp-ptn3460.c
++++ b/drivers/gpu/drm/bridge/nxp-ptn3460.c
+@@ -235,16 +235,8 @@ out:
+ 	return num_modes;
  }
  
-+#ifdef CONFIG_SMP
- static void apmu_init_cpu(struct resource *res, int cpu, int bit)
- {
- 	if ((cpu >= ARRAY_SIZE(apmu_cpus)) || apmu_cpus[cpu].iomem)
-@@ -128,7 +129,6 @@ void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
- 	apmu_parse_cfg(apmu_init_cpu, apmu_config, num);
- }
+-static struct drm_encoder *ptn3460_best_encoder(struct drm_connector *connector)
+-{
+-	struct ptn3460_bridge *ptn_bridge = connector_to_ptn3460(connector);
+-
+-	return ptn_bridge->bridge.encoder;
+-}
+-
+ static const struct drm_connector_helper_funcs ptn3460_connector_helper_funcs = {
+ 	.get_modes = ptn3460_get_modes,
+-	.best_encoder = ptn3460_best_encoder,
+ };
  
--#ifdef CONFIG_SMP
- int shmobile_smp_apmu_boot_secondary(unsigned int cpu, struct task_struct *idle)
- {
- 	/* For this particular CPU register boot vector */
+ static enum drm_connector_status ptn3460_detect(struct drm_connector *connector,
 -- 
-1.9.1
+2.7.4
