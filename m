@@ -1,47 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:34335 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752222AbcFHMIa (ORCPT
+Received: from 82-70-136-246.dsl.in-addr.zen.co.uk ([82.70.136.246]:36890 "EHLO
+	rainbowdash.ducie.codethink.co.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1755428AbcFGRdN (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 08:08:30 -0400
-Received: by mail-oi0-f51.google.com with SMTP id e72so8943346oib.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2016 05:08:29 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1465320786-10333-1-git-send-email-ben.dooks@codethink.co.uk>
-References: <1465320786-10333-1-git-send-email-ben.dooks@codethink.co.uk>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 8 Jun 2016 14:08:28 +0200
-Message-ID: <CACRpkdaq8jzBT8o8RVnnA6xQ1YVqFoYf+wgmrWciJx0qbDLs=g@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: fix warnings by include core.h
-To: Ben Dooks <ben.dooks@codethink.co.uk>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-kernel@lists.codethink.co.uk,
+	Tue, 7 Jun 2016 13:33:13 -0400
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+To: linux-kernel@lists.codethink.co.uk
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Alessandro Rubini <rubini@unipv.it>,
 	linux-renesas-soc@vger.kernel.org,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Subject: [PATCH] pinctrl: sh-pfc: fix warnings by include core.h
+Date: Tue,  7 Jun 2016 18:33:06 +0100
+Message-Id: <1465320786-10333-1-git-send-email-ben.dooks@codethink.co.uk>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jun 7, 2016 at 7:33 PM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
+Fix warnings about emev2_pinmux_info and r8a7779_pinmux_info
+by using core.h instead of sh_pfc.h in these files. This gives
+the declarations of the two structures and removes the following
+warnings:
 
-> Fix warnings about emev2_pinmux_info and r8a7779_pinmux_info
-> by using core.h instead of sh_pfc.h in these files. This gives
-> the declarations of the two structures and removes the following
-> warnings:
->
-> drivers/pinctrl/sh-pfc/pfc-emev2.c:1695:30: warning: symbol 'emev2_pinmux_info' was not declared. Should it be static?
-> drivers/pinctrl/sh-pfc/pfc-r8a7779.c:3888:30: warning: symbol 'r8a7779_pinmux_info' was not declared. Should it be static?
->
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+drivers/pinctrl/sh-pfc/pfc-emev2.c:1695:30: warning: symbol 'emev2_pinmux_info' was not declared. Should it be static?
+drivers/pinctrl/sh-pfc/pfc-r8a7779.c:3888:30: warning: symbol 'r8a7779_pinmux_info' was not declared. Should it be static?
 
-Geert/Laurent:
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alessandro Rubini <rubini@unipv.it>
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org
+---
+ drivers/pinctrl/sh-pfc/pfc-emev2.c   | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7779.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-- take a look at this patch
-- shall I apply this directly?
-
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/sh-pfc/pfc-emev2.c b/drivers/pinctrl/sh-pfc/pfc-emev2.c
+index 1cbbe04..f943854 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-emev2.c
++++ b/drivers/pinctrl/sh-pfc/pfc-emev2.c
+@@ -10,7 +10,7 @@
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ 
+-#include "sh_pfc.h"
++#include "core.h"
+ 
+ #define CPU_ALL_PORT(fn, pfx, sfx)					\
+ 	PORT_10(0,  fn, pfx, sfx),	PORT_90(0,  fn, pfx, sfx),	\
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
+index 5bef934..098d01e 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
+@@ -21,7 +21,7 @@
+ 
+ #include <linux/kernel.h>
+ 
+-#include "sh_pfc.h"
++#include "core.h"
+ 
+ #define CPU_ALL_PORT(fn, sfx)						\
+ 	PORT_GP_32(0, fn, sfx),						\
+-- 
+2.8.1
