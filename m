@@ -1,55 +1,90 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: [PATCH v1 11/25] PCI: xilinx-nwl: Request host bridge window
- resources
-To: linux-pci@vger.kernel.org
-From: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Herring <robh@kernel.org>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Pratyush Anand <pratyush.anand@gmail.com>,
-	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
-	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
-	Michal Simek <michal.simek@xilinx.com>,
-	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
-	linux-arm-kernel@lists.infradead.org
-Date: Mon, 06 Jun 2016 18:06:07 -0500
-Message-ID: <20160606230606.20936.88648.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 20/20] drm/bridge: dw-hdmi: Use drm_atomic_helper_best_encoder()
+Date: Tue,  7 Jun 2016 13:48:15 +0200
+Message-Id: <1465300095-16971-21-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Request host bridge window resources so they appear in ioport_resource and
-iomem_resource and are reflected in /proc/ioports and /proc/iomem.
+We have a 1:1 relationship between connectors and encoders, which means
+we can rely on the drm_atomic_helper_best_encoder() behavior.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+We still have to explicitly assign ->best_encoder() to
+drm_atomic_helper_best_encoder(), because the automated fallback to
+drm_atomic_helper_best_encoder() when ->best_encoder() is NULL is only
+available when the DRM device is using the atomic helpers, and this bridge
+is compatible with non-atomic and atomic devices.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
- drivers/pci/host/pcie-xilinx-nwl.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/bridge/dw-hdmi.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/drivers/pci/host/pcie-xilinx-nwl.c b/drivers/pci/host/pcie-xilinx-nwl.c
-index 506da7b..3c16bbf 100644
---- a/drivers/pci/host/pcie-xilinx-nwl.c
-+++ b/drivers/pci/host/pcie-xilinx-nwl.c
-@@ -829,6 +829,10 @@ static int nwl_pcie_probe(struct platform_device *pdev)
- 		return err;
- 	}
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index c9d9412..70b1f7d 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1476,15 +1476,6 @@ dw_hdmi_connector_mode_valid(struct drm_connector *connector,
+ 	return mode_status;
+ }
  
-+	err = devm_request_pci_bus_resources(pcie->dev, &res);
-+	if (err)
-+		goto error;
-+
- 	err = nwl_pcie_init_irq_domain(pcie);
- 	if (err) {
- 		dev_err(pcie->dev, "Failed creating IRQ Domain\n");
+-static struct drm_encoder *dw_hdmi_connector_best_encoder(struct drm_connector
+-							   *connector)
+-{
+-	struct dw_hdmi *hdmi = container_of(connector, struct dw_hdmi,
+-					     connector);
+-
+-	return hdmi->encoder;
+-}
+-
+ static void dw_hdmi_connector_destroy(struct drm_connector *connector)
+ {
+ 	drm_connector_unregister(connector);
+@@ -1525,7 +1516,7 @@ static const struct drm_connector_funcs dw_hdmi_atomic_connector_funcs = {
+ static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs = {
+ 	.get_modes = dw_hdmi_connector_get_modes,
+ 	.mode_valid = dw_hdmi_connector_mode_valid,
+-	.best_encoder = dw_hdmi_connector_best_encoder,
++	.best_encoder = drm_atomic_helper_best_encoder,
+ };
+ 
+ static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
+-- 
+2.7.4
