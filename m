@@ -35,108 +35,66 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
 	virtualization@lists.linux-foundation.org,
 	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 13/20] drm: tegra: Rely on the default ->best_encoder() behavior
-Date: Thu,  2 Jun 2016 16:31:40 +0200
-Message-Id: <1464877907-27723-14-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 16/20] drm: omap: Rely on the default ->best_encoder() behavior
+Date: Tue,  7 Jun 2016 13:48:11 +0200
+Message-Id: <1465300095-16971-17-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All outputs have a 1:1 relationship between connectors and encoders
-and the driver is relying on the atomic helpers: we can drop the custom
+We have a 1:1 relationship between connectors and encoders and the
+driver is relying on the atomic helpers: we can drop the custom
 ->best_encoder() implementation and let the core call
 drm_atomic_helper_best_encoder() for us.
 
 Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/gpu/drm/tegra/drm.h    | 2 --
- drivers/gpu/drm/tegra/dsi.c    | 1 -
- drivers/gpu/drm/tegra/hdmi.c   | 1 -
- drivers/gpu/drm/tegra/output.c | 8 --------
- drivers/gpu/drm/tegra/rgb.c    | 1 -
- drivers/gpu/drm/tegra/sor.c    | 1 -
- 6 files changed, 14 deletions(-)
+ drivers/gpu/drm/omapdrm/omap_connector.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index f52d6cb2..0ddcce1 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -239,8 +239,6 @@ int tegra_output_init(struct drm_device *drm, struct tegra_output *output);
- void tegra_output_exit(struct tegra_output *output);
- 
- int tegra_output_connector_get_modes(struct drm_connector *connector);
--struct drm_encoder *
--tegra_output_connector_best_encoder(struct drm_connector *connector);
- enum drm_connector_status
- tegra_output_connector_detect(struct drm_connector *connector, bool force);
- void tegra_output_connector_destroy(struct drm_connector *connector);
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index d1239eb..099cccb 100644
---- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -794,7 +794,6 @@ tegra_dsi_connector_mode_valid(struct drm_connector *connector,
- static const struct drm_connector_helper_funcs tegra_dsi_connector_helper_funcs = {
- 	.get_modes = tegra_output_connector_get_modes,
- 	.mode_valid = tegra_dsi_connector_mode_valid,
--	.best_encoder = tegra_output_connector_best_encoder,
+diff --git a/drivers/gpu/drm/omapdrm/omap_connector.c b/drivers/gpu/drm/omapdrm/omap_connector.c
+index ce2d67b..137fe69 100644
+--- a/drivers/gpu/drm/omapdrm/omap_connector.c
++++ b/drivers/gpu/drm/omapdrm/omap_connector.c
+@@ -32,7 +32,6 @@
+ struct omap_connector {
+ 	struct drm_connector base;
+ 	struct omap_dss_device *dssdev;
+-	struct drm_encoder *encoder;
+ 	bool hdmi_mode;
  };
  
- static const struct drm_encoder_funcs tegra_dsi_encoder_funcs = {
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index b7ef492..2fdb879 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -806,7 +806,6 @@ static const struct drm_connector_helper_funcs
- tegra_hdmi_connector_helper_funcs = {
- 	.get_modes = tegra_output_connector_get_modes,
- 	.mode_valid = tegra_hdmi_connector_mode_valid,
--	.best_encoder = tegra_output_connector_best_encoder,
- };
- 
- static const struct drm_encoder_funcs tegra_hdmi_encoder_funcs = {
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index 46664b6..1480f6a 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -42,14 +42,6 @@ int tegra_output_connector_get_modes(struct drm_connector *connector)
- 	return err;
+@@ -256,13 +255,6 @@ static int omap_connector_mode_valid(struct drm_connector *connector,
+ 	return ret;
  }
  
--struct drm_encoder *
--tegra_output_connector_best_encoder(struct drm_connector *connector)
+-struct drm_encoder *omap_connector_attached_encoder(
+-		struct drm_connector *connector)
 -{
--	struct tegra_output *output = connector_to_output(connector);
--
--	return &output->encoder;
+-	struct omap_connector *omap_connector = to_omap_connector(connector);
+-	return omap_connector->encoder;
 -}
 -
- enum drm_connector_status
- tegra_output_connector_detect(struct drm_connector *connector, bool force)
- {
-diff --git a/drivers/gpu/drm/tegra/rgb.c b/drivers/gpu/drm/tegra/rgb.c
-index e246334..a131b44 100644
---- a/drivers/gpu/drm/tegra/rgb.c
-+++ b/drivers/gpu/drm/tegra/rgb.c
-@@ -112,7 +112,6 @@ tegra_rgb_connector_mode_valid(struct drm_connector *connector,
- static const struct drm_connector_helper_funcs tegra_rgb_connector_helper_funcs = {
- 	.get_modes = tegra_output_connector_get_modes,
- 	.mode_valid = tegra_rgb_connector_mode_valid,
--	.best_encoder = tegra_output_connector_best_encoder,
+ static const struct drm_connector_funcs omap_connector_funcs = {
+ 	.dpms = drm_atomic_helper_connector_dpms,
+ 	.reset = drm_atomic_helper_connector_reset,
+@@ -276,7 +268,6 @@ static const struct drm_connector_funcs omap_connector_funcs = {
+ static const struct drm_connector_helper_funcs omap_connector_helper_funcs = {
+ 	.get_modes = omap_connector_get_modes,
+ 	.mode_valid = omap_connector_mode_valid,
+-	.best_encoder = omap_connector_attached_encoder,
  };
  
- static const struct drm_encoder_funcs tegra_rgb_encoder_funcs = {
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 757c6e8..34958d7 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -1087,7 +1087,6 @@ tegra_sor_connector_mode_valid(struct drm_connector *connector,
- static const struct drm_connector_helper_funcs tegra_sor_connector_helper_funcs = {
- 	.get_modes = tegra_sor_connector_get_modes,
- 	.mode_valid = tegra_sor_connector_mode_valid,
--	.best_encoder = tegra_output_connector_best_encoder,
- };
+ /* initialize connector */
+@@ -296,7 +287,6 @@ struct drm_connector *omap_connector_init(struct drm_device *dev,
+ 		goto fail;
  
- static const struct drm_encoder_funcs tegra_sor_encoder_funcs = {
+ 	omap_connector->dssdev = dssdev;
+-	omap_connector->encoder = encoder;
+ 
+ 	connector = &omap_connector->base;
+ 
 -- 
 2.7.4
