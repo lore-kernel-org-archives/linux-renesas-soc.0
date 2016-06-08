@@ -1,90 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:47465 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751039AbcFFGu0 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:43859 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756522AbcFHX60 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 6 Jun 2016 02:50:26 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC 3/3] arm64: dts: r8a7795: salvator: enable UHS for SDHI 0 & 3
-Date: Mon,  6 Jun 2016 08:50:11 +0200
-Message-Id: <1465195811-3041-4-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1465195811-3041-1-git-send-email-wsa@the-dreams.de>
-References: <1465195811-3041-1-git-send-email-wsa@the-dreams.de>
+	Wed, 8 Jun 2016 19:58:26 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 3/5] v4l: vsp1: lut: Initialize the mutex
+Date: Thu,  9 Jun 2016 02:58:14 +0300
+Message-Id: <1465430296-22644-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1465430296-22644-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1465430296-22644-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The LUT mutex isn't initialized when creating the LUT, fix it.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ drivers/media/platform/vsp1/vsp1_lut.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index abb25cfc20bd57..726426693f1fa0 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -229,11 +229,25 @@
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-+		power-source = <3300>;
-+	};
+diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
+index 2c367cb9755c..9a2c55b3570a 100644
+--- a/drivers/media/platform/vsp1/vsp1_lut.c
++++ b/drivers/media/platform/vsp1/vsp1_lut.c
+@@ -201,6 +201,8 @@ struct vsp1_lut *vsp1_lut_create(struct vsp1_device *vsp1)
+ 	if (lut == NULL)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	mutex_init(&lut->lock);
 +
-+	sdhi0_pins_uhs: sd0_uhs {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <1800>;
- 	};
- 
- 	sdhi3_pins: sd3 {
- 		groups = "sdhi3_data4", "sdhi3_ctrl";
- 		function = "sdhi3";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi3_pins_uhs: sd3_uhs {
-+		groups = "sdhi3_data4", "sdhi3_ctrl";
-+		function = "sdhi3";
-+		power-source = <1800>;
- 	};
- 
- 	sound_pins: sound {
-@@ -374,25 +388,29 @@
- 
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
--	pinctrl-names = "default";
-+	pinctrl-1 = <&sdhi0_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi0>;
- 	vqmmc-supply = <&vccq_sdhi0>;
- 	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
- 
- &sdhi3 {
- 	pinctrl-0 = <&sdhi3_pins>;
--	pinctrl-names = "default";
-+	pinctrl-1 = <&sdhi3_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi3>;
- 	vqmmc-supply = <&vccq_sdhi3>;
- 	cd-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
+ 	lut->entity.ops = &lut_entity_ops;
+ 	lut->entity.type = VSP1_ENTITY_LUT;
  
 -- 
-2.8.1
+Regards,
+
+Laurent Pinchart
