@@ -1,79 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:46853 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751704AbcFATV1 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751153AbcFHBAA (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 15:21:27 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+	Tue, 7 Jun 2016 21:00:00 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v3 17/22] ARM: shmobile: r8a7778: Stop passing mode pins state to clock driver
-Date: Wed,  1 Jun 2016 21:21:15 +0200
-Message-Id: <1464808880-343-18-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/9] arm64: dts: salvator-x: Enable watchdog timer
+Date: Wed,  8 Jun 2016 09:59:42 +0900
+Message-Id: <329260d5c4fdf9929b889e7badbb6d729edf123a.1465347183.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1465347183.git.horms+renesas@verge.net.au>
+References: <cover.1465347183.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Now the R-Car M1A CPG clock driver obtains the state of the mode pins
-from the R-Car RST driver, there's no longer a need to pass this state
-explicitly. Hence we can just remove the .init_time() callback, the
-generic ARM code will take care of calling of_clk_init().
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - New.
----
- arch/arm/mach-shmobile/setup-r8a7778.c | 15 ---------------
- 1 file changed, 15 deletions(-)
+This patch enables watchdog timer for Salvator-X board.
 
-diff --git a/arch/arm/mach-shmobile/setup-r8a7778.c b/arch/arm/mach-shmobile/setup-r8a7778.c
-index cf236db686a9dd47..7fa4a0b5f6549287 100644
---- a/arch/arm/mach-shmobile/setup-r8a7778.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7778.c
-@@ -15,7 +15,6 @@
-  * GNU General Public License for more details.
-  */
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 76bc94a528aa..84082922edb2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -330,6 +330,11 @@
+ 	shared-pin;
+ };
  
--#include <linux/clk/renesas.h>
- #include <linux/io.h>
- #include <linux/irqchip.h>
- 
-@@ -23,19 +22,6 @@
- 
- #include "common.h"
- 
--#define MODEMR 0xffcc0020
--
--static void __init r8a7778_timer_init(void)
--{
--	u32 mode;
--	void __iomem *modemr = ioremap_nocache(MODEMR, 4);
--
--	BUG_ON(!modemr);
--	mode = ioread32(modemr);
--	iounmap(modemr);
--	r8a7778_clocks_init(mode);
--}
--
- #define INT2SMSKCR0	0x82288 /* 0xfe782288 */
- #define INT2SMSKCR1	0x8228c /* 0xfe78228c */
- 
-@@ -70,6 +56,5 @@ DT_MACHINE_START(R8A7778_DT, "Generic R8A7778 (Flattened Device Tree)")
- 	.init_early	= shmobile_init_delay,
- 	.init_irq	= r8a7778_init_irq_dt,
- 	.init_late	= shmobile_init_late,
--	.init_time	= r8a7778_timer_init,
- 	.dt_compat	= r8a7778_compat_dt,
- MACHINE_END
++&wdt0 {
++	timeout-sec = <60>;
++	status = "okay";
++};
++
+ &audio_clk_a {
+ 	clock-frequency = <22579200>;
+ };
 -- 
-1.9.1
+2.1.4
