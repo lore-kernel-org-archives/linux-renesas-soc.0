@@ -1,49 +1,52 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:35114 "EHLO
-	mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751037AbcFAIRZ (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 04:17:25 -0400
-MIME-Version: 1.0
-In-Reply-To: <3573091.BUvyGW3hVt@wasted.cogentembedded.com>
-References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
-	<3573091.BUvyGW3hVt@wasted.cogentembedded.com>
-Date: Wed, 1 Jun 2016 10:17:24 +0200
-Message-ID: <CAMuHMdWvaGyWEbotmG53CW9hB2avJAbmJS72WXVod64UEdmf1w@mail.gmail.com>
-Subject: Re: [PATCH 10/13] ARM: dts: r8a7792: add IRQC support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+	m.szyprowski@samsung.com
+Date: Wed, 08 Jun 2016 16:17:46 +0900
+Message-Id: <20160608071746.7560.31634.sendpatchset@little-apple>
+In-Reply-To: <20160608071737.7560.32571.sendpatchset@little-apple>
+References: <20160608071737.7560.32571.sendpatchset@little-apple>
+Subject: [PATCH v4 01/07] iommu/ipmmu-vmsa: Remove platform data handling
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 1, 2016 at 12:29 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Describe the IRQC interrupt controller in the R8A7792 device tree.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The IPMMU driver is using DT these days, and platform data is no longer
+used by the driver. Remove unused code.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
 
-                        Geert
+ Changes since V3:
+ - None
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ Changes since V2:
+ - None
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ Changes since V1:
+ - Added Reviewed-by from Laurent
+
+ drivers/iommu/ipmmu-vmsa.c |    5 -----
+ 1 file changed, 5 deletions(-)
+
+--- 0001/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-02 20:43:14.090607110 +0900
+@@ -766,11 +766,6 @@ static int ipmmu_probe(struct platform_d
+ 	int irq;
+ 	int ret;
+ 
+-	if (!IS_ENABLED(CONFIG_OF) && !pdev->dev.platform_data) {
+-		dev_err(&pdev->dev, "missing platform data\n");
+-		return -EINVAL;
+-	}
+-
+ 	mmu = devm_kzalloc(&pdev->dev, sizeof(*mmu), GFP_KERNEL);
+ 	if (!mmu) {
+ 		dev_err(&pdev->dev, "cannot allocate device data\n");
