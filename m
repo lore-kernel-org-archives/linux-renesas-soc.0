@@ -1,77 +1,43 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 17/20] drm/bridge: anx78xx: Rely on the default ->best_encoder() behavior
-Date: Tue,  7 Jun 2016 13:48:12 +0200
-Message-Id: <1465300095-16971-18-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751760AbcFHBAG (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 7 Jun 2016 21:00:06 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 9/9] arm64: dts: r8a7795: Drop 0x from unit address of gic
+Date: Wed,  8 Jun 2016 09:59:46 +0900
+Message-Id: <21cc405c8a6332ddad2d2751a9723b2b3e227a05.1465347183.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1465347183.git.horms+renesas@verge.net.au>
+References: <cover.1465347183.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We have a 1:1 relationship between connectors and encoders, and the driver
-is relying on the atomic helpers: we can drop the custom ->best_encoder(),
-and let the core call drm_atomic_helper_best_encoder() for us.
+Drop 0x from unit address of gic as this is the desired form for
+a unit address.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/bridge/analogix-anx78xx.c | 8 --------
- 1 file changed, 8 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix-anx78xx.c
-index d087b05..f9f03bc 100644
---- a/drivers/gpu/drm/bridge/analogix-anx78xx.c
-+++ b/drivers/gpu/drm/bridge/analogix-anx78xx.c
-@@ -986,16 +986,8 @@ unlock:
- 	return num_modes;
- }
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index a4f4ec8daa21..04eb0bc65634 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -153,7 +153,7 @@
+ 		#size-cells = <2>;
+ 		ranges;
  
--static struct drm_encoder *anx78xx_best_encoder(struct drm_connector *connector)
--{
--	struct anx78xx *anx78xx = connector_to_anx78xx(connector);
--
--	return anx78xx->bridge.encoder;
--}
--
- static const struct drm_connector_helper_funcs anx78xx_connector_helper_funcs = {
- 	.get_modes = anx78xx_get_modes,
--	.best_encoder = anx78xx_best_encoder,
- };
- 
- static enum drm_connector_status anx78xx_detect(struct drm_connector *connector,
+-		gic: interrupt-controller@0xf1010000 {
++		gic: interrupt-controller@f1010000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
+ 			#address-cells = <0>;
 -- 
-2.7.4
+2.1.4
