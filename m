@@ -1,67 +1,209 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:48441 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752492AbcFPMel (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60721 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752321AbcFHHOi (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 16 Jun 2016 08:34:41 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	patches@opensource.wolfsonmicro.com,
-	linux-renesas-soc@vger.kernel.org, alsa-devel@alsa-project.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] ASoC: ak4613: Implement suspend callback
-Date: Thu, 16 Jun 2016 14:34:31 +0200
-Message-Id: <1466080472-9817-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1466080472-9817-1-git-send-email-geert+renesas@glider.be>
-References: <1466080472-9817-1-git-send-email-geert+renesas@glider.be>
+	Wed, 8 Jun 2016 03:14:38 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v2 3/4] ARM: dts: r8a7790: lager: use demuxer for IIC2/I2C2
+Date: Wed,  8 Jun 2016 16:14:25 +0900
+Message-Id: <1465370066-8450-4-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1465370066-8450-1-git-send-email-horms+renesas@verge.net.au>
+References: <1465370066-8450-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the suspend callback to accompany the existing resume operation.
-With the suspend/resume callbacks the regmap (regcache) state handling
-can follow the recommended sequence.
+Create a separate bus for HDMI related I2C slaves.
 
-Based on commit a2ebd58627e9aa48 ("ASoC: ak4642: Implement suspend
-callback") by Peter Ujfalusi <peter.ujfalusi@ti.com>.
+Based on work by Wolfram Sang.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- sound/soc/codecs/ak4613.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+v2
+* Include GPIO fallback
+---
+ arch/arm/boot/dts/r8a7790-lager.dts | 138 ++++++++++++++++++++++--------------
+ 1 file changed, 85 insertions(+), 53 deletions(-)
 
-diff --git a/sound/soc/codecs/ak4613.c b/sound/soc/codecs/ak4613.c
-index 5013d2ba0c10a968..97798d250f08689e 100644
---- a/sound/soc/codecs/ak4613.c
-+++ b/sound/soc/codecs/ak4613.c
-@@ -437,15 +437,25 @@ static struct snd_soc_dai_driver ak4613_dai = {
- 	.symmetric_rates = 1,
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 20abb1470f91..80b0eaa93607 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -52,6 +52,8 @@
+ 		serial1 = &scifa1;
+ 		i2c8 = "i2cexio0";
+ 		i2c9 = "i2cexio1";
++		i2c10 = "i2chdmi";
++		i2c11 = "gpioi2c";
+ 	};
+ 
+ 	chosen {
+@@ -283,6 +285,76 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
++
++	i2chdmi: i2c-10 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&iic2>, <&i2c2>, <&gpioi2c>;
++		i2c-bus-name = "i2c-hdmi";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ak4643: codec@12 {
++			compatible = "asahi-kasei,ak4643";
++			#sound-dai-cells = <0>;
++			reg = <0x12>;
++		};
++
++		composite-in@20 {
++			compatible = "adi,adv7180";
++			reg = <0x20>;
++			remote = <&vin1>;
++
++			port {
++				adv7180: endpoint {
++					bus-width = <8>;
++					remote-endpoint = <&vin1ep0>;
++				};
++			};
++		};
++
++		hdmi@39 {
++			compatible = "adi,adv7511w";
++			reg = <0x39>;
++			interrupt-parent = <&gpio1>;
++			interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
++
++			adi,input-depth = <8>;
++			adi,input-colorspace = "rgb";
++			adi,input-clock = "1x";
++			adi,input-style = <1>;
++			adi,input-justification = "evenly";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					adv7511_in: endpoint {
++						remote-endpoint = <&du_out_lvds0>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					adv7511_out: endpoint {
++						remote-endpoint = <&hdmi_con>;
++					};
++				};
++			};
++		};
++	};
++
++	gpioi2c: i2c-11 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		gpios = <&gpio5 6 GPIO_ACTIVE_HIGH /* sda */
++			 &gpio5 5 GPIO_ACTIVE_HIGH /* scl */
++			>;
++		i2c-gpio,delay-us = <5>;
++	};
  };
  
--static int ak4613_resume(struct snd_soc_codec *codec)
-+static int ak4613_suspend(struct snd_soc_codec *codec)
- {
- 	struct regmap *regmap = dev_get_regmap(codec->dev, NULL);
+ &du {
+@@ -415,6 +487,11 @@
+ 		function = "iic1";
+ 	};
  
-+	regcache_cache_only(regmap, true);
- 	regcache_mark_dirty(regmap);
-+	return 0;
-+}
++	i2c2_pins: i2c2 {
++		groups = "i2c2";
++		function = "i2c2";
++	};
 +
-+static int ak4613_resume(struct snd_soc_codec *codec)
-+{
-+	struct regmap *regmap = dev_get_regmap(codec->dev, NULL);
-+
-+	regcache_cache_only(regmap, false);
- 	return regcache_sync(regmap);
- }
+ 	iic2_pins: iic2 {
+ 		groups = "iic2";
+ 		function = "iic2";
+@@ -616,63 +693,18 @@
+ 	pinctrl-names = "i2c-exio1";
+ };
  
- static struct snd_soc_codec_driver soc_codec_dev_ak4613 = {
-+	.suspend		= ak4613_suspend,
- 	.resume			= ak4613_resume,
- 	.set_bias_level		= ak4613_set_bias_level,
- 	.controls		= ak4613_snd_controls,
+-&iic2	{
+-	status = "okay";
+-	pinctrl-0 = <&iic2_pins>;
+-	pinctrl-names = "default";
++&i2c2	{
++	pinctrl-0 = <&i2c2_pins>;
++	pinctrl-names = "i2c-hdmi";
+ 
+ 	clock-frequency = <100000>;
++};
+ 
+-	ak4643: codec@12 {
+-		compatible = "asahi-kasei,ak4643";
+-		#sound-dai-cells = <0>;
+-		reg = <0x12>;
+-	};
+-
+-	composite-in@20 {
+-		compatible = "adi,adv7180";
+-		reg = <0x20>;
+-		remote = <&vin1>;
+-
+-		port {
+-			adv7180: endpoint {
+-				bus-width = <8>;
+-				remote-endpoint = <&vin1ep0>;
+-			};
+-		};
+-	};
+-
+-	hdmi@39 {
+-		compatible = "adi,adv7511w";
+-		reg = <0x39>;
+-		interrupt-parent = <&gpio1>;
+-		interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
+-
+-		adi,input-depth = <8>;
+-		adi,input-colorspace = "rgb";
+-		adi,input-clock = "1x";
+-		adi,input-style = <1>;
+-		adi,input-justification = "evenly";
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7511_in: endpoint {
+-					remote-endpoint = <&du_out_lvds0>;
+-				};
+-			};
++&iic2	{
++	pinctrl-0 = <&iic2_pins>;
++	pinctrl-names = "i2c-hdmi";
+ 
+-			port@1 {
+-				reg = <1>;
+-				adv7511_out: endpoint {
+-					remote-endpoint = <&hdmi_con>;
+-				};
+-			};
+-		};
+-	};
++	clock-frequency = <100000>;
+ };
+ 
+ &iic3 {
 -- 
-1.9.1
+2.1.4
