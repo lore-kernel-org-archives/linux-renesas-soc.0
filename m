@@ -1,104 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751153AbcFHA75 (ORCPT
+	with ESMTP id S1752998AbcFHBBB (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 20:59:57 -0400
+	Tue, 7 Jun 2016 21:01:01 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/9] arm64: dts: r8a7795: enable DMA for I2C
-Date: Wed,  8 Jun 2016 09:59:40 +0900
-Message-Id: <d78a1cfa61baaeaa1c8976326e47337640633ace.1465347183.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1465347183.git.horms+renesas@verge.net.au>
-References: <cover.1465347183.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH 3/3] soc: renesas: rcar-sysc: Add support for R-Car M3-W power areas
+Date: Wed,  8 Jun 2016 10:00:13 +0900
+Message-Id: <e0c98b9171eecf1745eda08de86081db8ec41d51.1465347345.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1465347345.git.horms+renesas@verge.net.au>
+References: <cover.1465347345.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add DMA properties to the I2C nodes.
-
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/soc/renesas/Makefile       |  1 +
+ drivers/soc/renesas/r8a7796-sysc.c | 48 ++++++++++++++++++++++++++++++++++++++
+ drivers/soc/renesas/rcar-sysc.c    |  3 +++
+ drivers/soc/renesas/rcar-sysc.h    |  1 +
+ 4 files changed, 53 insertions(+)
+ create mode 100644 drivers/soc/renesas/r8a7796-sysc.c
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index de3e799a7bba..f8c7e331fdc6 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -749,6 +749,8 @@
- 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 931>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			dmas = <&dmac1 0x91>, <&dmac1 0x90>;
-+			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <110>;
- 			status = "disabled";
- 		};
-@@ -761,6 +763,8 @@
- 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 930>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			dmas = <&dmac1 0x93>, <&dmac1 0x92>;
-+			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <6>;
- 			status = "disabled";
- 		};
-@@ -773,6 +777,8 @@
- 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 929>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			dmas = <&dmac1 0x95>, <&dmac1 0x94>;
-+			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <6>;
- 			status = "disabled";
- 		};
-@@ -785,6 +791,8 @@
- 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 928>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			dmas = <&dmac0 0x97>, <&dmac0 0x96>;
-+			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <110>;
- 			status = "disabled";
- 		};
-@@ -797,6 +805,8 @@
- 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 927>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			dmas = <&dmac0 0x99>, <&dmac0 0x98>;
-+			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <110>;
- 			status = "disabled";
- 		};
-@@ -809,6 +819,8 @@
- 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 919>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			dmas = <&dmac0 0x9b>, <&dmac0 0x9a>;
-+			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <110>;
- 			status = "disabled";
- 		};
-@@ -821,6 +833,8 @@
- 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 918>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			dmas = <&dmac0 0x9d>, <&dmac0 0x9c>;
-+			dma-names = "tx", "rx";
- 			i2c-scl-internal-delay-ns = <6>;
- 			status = "disabled";
- 		};
+diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+index 151fcd3f025b..cd85cd5e6a01 100644
+--- a/drivers/soc/renesas/Makefile
++++ b/drivers/soc/renesas/Makefile
+@@ -5,3 +5,4 @@ obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
+ obj-$(CONFIG_ARCH_R8A7793)	+= rcar-sysc.o r8a7791-sysc.o
+ obj-$(CONFIG_ARCH_R8A7794)	+= rcar-sysc.o r8a7794-sysc.o
+ obj-$(CONFIG_ARCH_R8A7795)	+= rcar-sysc.o r8a7795-sysc.o
++obj-$(CONFIG_ARCH_R8A7796)	+= rcar-sysc.o r8a7796-sysc.o
+diff --git a/drivers/soc/renesas/r8a7796-sysc.c b/drivers/soc/renesas/r8a7796-sysc.c
+new file mode 100644
+index 000000000000..f700c842b9e1
+--- /dev/null
++++ b/drivers/soc/renesas/r8a7796-sysc.c
+@@ -0,0 +1,48 @@
++/*
++ * Renesas R-Car M3-W System Controller
++ *
++ * Copyright (C) 2016 Glider bvba
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
++
++#include <linux/bug.h>
++#include <linux/kernel.h>
++
++#include <dt-bindings/power/r8a7796-sysc.h>
++
++#include "rcar-sysc.h"
++
++static const struct rcar_sysc_area r8a7796_areas[] __initconst = {
++	{ "always-on",	    0, 0, R8A7796_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
++	{ "ca57-scu",	0x1c0, 0, R8A7796_PD_CA57_SCU,	R8A7796_PD_ALWAYS_ON,
++	  PD_SCU },
++	{ "ca57-cpu0",	 0x80, 0, R8A7796_PD_CA57_CPU0,	R8A7796_PD_CA57_SCU,
++	  PD_CPU_NOCR },
++	{ "ca57-cpu1",	 0x80, 1, R8A7796_PD_CA57_CPU1,	R8A7796_PD_CA57_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-scu",	0x140, 0, R8A7796_PD_CA53_SCU,	R8A7796_PD_ALWAYS_ON,
++	  PD_SCU },
++	{ "ca53-cpu0",	0x200, 0, R8A7796_PD_CA53_CPU0,	R8A7796_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-cpu1",	0x200, 1, R8A7796_PD_CA53_CPU1,	R8A7796_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-cpu2",	0x200, 2, R8A7796_PD_CA53_CPU2,	R8A7796_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "ca53-cpu3",	0x200, 3, R8A7796_PD_CA53_CPU3,	R8A7796_PD_CA53_SCU,
++	  PD_CPU_NOCR },
++	{ "cr7",	0x240, 0, R8A7796_PD_CR7,	R8A7796_PD_ALWAYS_ON },
++	{ "a3vc",	0x380, 0, R8A7796_PD_A3VC,	R8A7796_PD_ALWAYS_ON },
++	{ "a2vc0",	0x3c0, 0, R8A7796_PD_A2VC0,	R8A7796_PD_A3VC },
++	{ "a2vc1",	0x3c0, 1, R8A7796_PD_A2VC1,	R8A7796_PD_A3VC },
++	{ "3dg-a",	0x100, 0, R8A7796_PD_3DG_A,	R8A7796_PD_ALWAYS_ON },
++	{ "3dg-b",	0x100, 1, R8A7796_PD_3DG_B,	R8A7796_PD_3DG_A },
++	{ "a3ir",	0x180, 0, R8A7796_PD_A3IR,	R8A7796_PD_ALWAYS_ON },
++};
++
++const struct rcar_sysc_info r8a7796_sysc_info __initconst = {
++	.areas = r8a7796_areas,
++	.num_areas = ARRAY_SIZE(r8a7796_areas),
++};
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 79dbc770895f..fc997d4d2a4a 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -303,6 +303,9 @@ static const struct of_device_id rcar_sysc_matches[] = {
+ #ifdef CONFIG_ARCH_R8A7795
+ 	{ .compatible = "renesas,r8a7795-sysc", .data = &r8a7795_sysc_info },
+ #endif
++#ifdef CONFIG_ARCH_R8A7796
++	{ .compatible = "renesas,r8a7796-sysc", .data = &r8a7796_sysc_info },
++#endif
+ 	{ /* sentinel */ }
+ };
+ 
+diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
+index 5e766174c2f4..4ac3d7bf7f38 100644
+--- a/drivers/soc/renesas/rcar-sysc.h
++++ b/drivers/soc/renesas/rcar-sysc.h
+@@ -55,4 +55,5 @@ extern const struct rcar_sysc_info r8a7790_sysc_info;
+ extern const struct rcar_sysc_info r8a7791_sysc_info;
+ extern const struct rcar_sysc_info r8a7794_sysc_info;
+ extern const struct rcar_sysc_info r8a7795_sysc_info;
++extern const struct rcar_sysc_info r8a7796_sysc_info;
+ #endif /* __SOC_RENESAS_RCAR_SYSC_H__ */
 -- 
 2.1.4
