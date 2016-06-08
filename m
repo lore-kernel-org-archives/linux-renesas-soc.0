@@ -1,60 +1,38 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:34972 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750759AbcFIUez (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 9 Jun 2016 16:34:55 -0400
-Date: Thu, 9 Jun 2016 22:34:50 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
+Return-Path: <linux-i2c-owner@vger.kernel.org>
 Subject: Re: [PATCH] i2c: mux: refer to i2c-mux.txt
-Message-ID: <20160609203449.GK23522@katana>
+To: Simon Horman <horms+renesas@verge.net.au>,
+	Wolfram Sang <wsa@the-dreams.de>
 References: <1465366899-4824-1-git-send-email-horms+renesas@verge.net.au>
+CC: Magnus Damm <magnus.damm@gmail.com>, <linux-i2c@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>
+From: Peter Rosin <peda@axentia.se>
+Message-ID: <4c48ffe4-7637-009f-4e86-7ed6cb243927@axentia.se>
+Date: Wed, 8 Jun 2016 20:34:30 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="mPOSj6iWmtyhwOMz"
-Content-Disposition: inline
 In-Reply-To: <1465366899-4824-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Sender: linux-i2c-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi!
 
---mPOSj6iWmtyhwOMz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jun 08, 2016 at 03:21:39PM +0900, Simon Horman wrote:
+On 2016-06-08 08:21, Simon Horman wrote:
 > Correct references to i2c-mux.txt which was previously mux.txt.
->=20
+> 
 > Also correct the spelling of relevant.
->=20
+> 
 > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  Documentation/devicetree/bindings/i2c/i2c-arb-gpio-challenge.txt | 4 ++--
+>  Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.txt      | 3 ++-
+>  Documentation/devicetree/bindings/i2c/i2c-mux-gpio.txt           | 6 +++---
+>  Documentation/devicetree/bindings/i2c/i2c-mux-pinctrl.txt        | 4 ++--
+>  Documentation/devicetree/bindings/i2c/i2c-mux-reg.txt            | 6 +++---
+>  5 files changed, 12 insertions(+), 11 deletions(-)
+> 
 
-Applied to for-current, thanks!
+Acked-by: Peter Rosin <peda@axentia.se>
 
-
---mPOSj6iWmtyhwOMz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXWdLpAAoJEBQN5MwUoCm2iMkP/RbrrzHo0hKrBkSP9K/tBk4i
-lHKX4slgMp/Kx4GzU5pZY8uTPkaZpILRATlzK/BzLzbEX+WQ6MEqyFCJScj1wG0E
-C9eDiJeATY4WzqWpJuynTqd7Mn0/Y/KB1+vUi0ebEedms+rdo5ao3IkHjBkun2+w
-Q/1tMYpSEXTzdDhEeYReOTkEwDbvUFpiY922MpH85cgmOVSZfAy00hniuf/ja8lf
-eB3cHLwoU+d6uVqJhYUx7YerbwRFsycZtyKcxUppowVwgLZMlwc8KQFJK3fIrR7q
-pgvJjN703uIjRwOvClTwz/qhmk5C9nGOz9HPyGasWMWBWDioLNrH+NBmUOhsTemq
-7+8NwFHshQUCaCt+ltleSBGda3bfc2QfG37tBWkRNM1qe5IXDHlNh/SgfjPFHJ0y
-WUlTQSjaGJYVwOAD4u9msRFvsQXak6vhQveQPM6BsfXJDyOzmyEStFMESY6j1xeh
-8o6/+MTWIidtjJ48TD9nk/ZO2VgEFQASOGu0/znVQIXwbnUnHp1zjzr3zuZkYudJ
-ntdsUNRy/2cCaZVCTUkuJ2dZQlqNed/hAdnX2TJLq6ijhXz+pQTVFUvYhL102aiS
-RSPLVQRCdUEb03376IxvYN4gtT6cxj49YyDL7MtQwVlk+Q/QALlN64RfJWMXotcS
-DrASmnP+21tCEFoLzItM
-=Wlfs
------END PGP SIGNATURE-----
-
---mPOSj6iWmtyhwOMz--
+Thanks,
+Peter
