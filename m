@@ -1,46 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:11626 "EHLO
-	relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753880AbcFHB6o (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751684AbcFHBAE (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 21:58:44 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <thierry.reding@gmail.com>
-CC: <ryo.kodama.vz@renesas.com>, <linux-pwm@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] pwm: sysfs: get return value from pwm_apply_state()
-Date: Wed, 8 Jun 2016 10:58:23 +0900
-Message-ID: <1465351103-3152-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	Tue, 7 Jun 2016 21:00:04 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 8/9] arm64: dts: salvator-x: Fix W=1 dtc warnings
+Date: Wed,  8 Jun 2016 09:59:45 +0900
+Message-Id: <4a4e2138d6bb5e6b80e283df73c1acabb0b992f7.1465347183.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1465347183.git.horms+renesas@verge.net.au>
+References: <cover.1465347183.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ryo Kodama <ryo.kodama.vz@renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch adds to check the return value from pwm_apply_state()
-used in enable_store(). The error of enable_store() doesn't work
-if the return value doesn't received.
+Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@4 has a unit name, but no reg property
 
-Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/pwm/sysfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-index d985992..01695d4 100644
---- a/drivers/pwm/sysfs.c
-+++ b/drivers/pwm/sysfs.c
-@@ -152,7 +152,7 @@ static ssize_t enable_store(struct device *child,
- 		goto unlock;
- 	}
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 84082922edb2..98f02631a0f0 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -62,7 +62,7 @@
+ 		clock-frequency = <24576000>;
+ 	};
  
--	pwm_apply_state(pwm, &state);
-+	ret = pwm_apply_state(pwm, &state);
+-	vcc_sdhi0: regulator@1 {
++	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
  
- unlock:
- 	mutex_unlock(&export->lock);
+ 		regulator-name = "SDHI0 Vcc";
+@@ -73,7 +73,7 @@
+ 		enable-active-high;
+ 	};
+ 
+-	vccq_sdhi0: regulator@2 {
++	vccq_sdhi0: regulator-vccq-sdhi0 {
+ 		compatible = "regulator-gpio";
+ 
+ 		regulator-name = "SDHI0 VccQ";
+@@ -86,7 +86,7 @@
+ 			  1800000 0>;
+ 	};
+ 
+-	vcc_sdhi3: regulator@3 {
++	vcc_sdhi3: regulator-vcc-sdhi3 {
+ 		compatible = "regulator-fixed";
+ 
+ 		regulator-name = "SDHI3 Vcc";
+@@ -97,7 +97,7 @@
+ 		enable-active-high;
+ 	};
+ 
+-	vccq_sdhi3: regulator@4 {
++	vccq_sdhi3: regulator-vccq-sdhi3 {
+ 		compatible = "regulator-gpio";
+ 
+ 		regulator-name = "SDHI3 VccQ";
 -- 
-1.9.1
+2.1.4
