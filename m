@@ -1,103 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:34203 "EHLO
-	mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932975AbcFCVgA (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751153AbcFHA74 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 3 Jun 2016 17:36:00 -0400
-Received: by mail-lf0-f52.google.com with SMTP id k98so62449718lfi.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Jun 2016 14:35:59 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 10/11] ARM: dts: blanche: initial device tree
-Date: Sat, 04 Jun 2016 00:35:56 +0300
-Message-ID: <13571934.l66Gg7Cpm9@wasted.cogentembedded.com>
-In-Reply-To: <3446154.oZ24315zaL@wasted.cogentembedded.com>
-References: <3446154.oZ24315zaL@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Tue, 7 Jun 2016 20:59:56 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>,
+	Dirk Behme <dirk.behme@de.bosch.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/9] arm64: dts: r8a7795: Increase the size of GIC-400 mapped registers
+Date: Wed,  8 Jun 2016 09:59:39 +0900
+Message-Id: <457f47b7651ccb1828c1d02f7ace0d07e9b16f33.1465347183.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1465347183.git.horms+renesas@verge.net.au>
+References: <cover.1465347183.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the initial device  tree for the R8A7792 SoC based Blanche board.
-The board has 2 debug serial ports: SCIF0 and SCIF3; include support for
-them,  so that  the serial console  can  work.
+From: Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+There are some requirements about the GIC-400 memory layout and its
+mapping if using 64k aligned base addresses like on r8a7795.
 
+See e.g.
+
+http://xenbits.xen.org/gitweb/?p=xen.git;a=commit;h=21550029f709072aacf3b9
+
+Map the whole memory range instead of only 0x2000. This will fix
+the issue that some hypervisors, e.g. Xen, fail to handle the
+interrupts correctly.
+
+Signed-off-by: Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes in version 2:
-- added Simon's ACK and Geert's tag too.
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- arch/arm/boot/dts/Makefile            |    1 
- arch/arm/boot/dts/r8a7792-blanche.dts |   44 ++++++++++++++++++++++++++++++++++
- 2 files changed, 45 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/Makefile
-===================================================================
---- renesas.orig/arch/arm/boot/dts/Makefile
-+++ renesas/arch/arm/boot/dts/Makefile
-@@ -638,6 +638,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
- 	r8a7790-lager.dtb \
- 	r8a7791-koelsch.dtb \
- 	r8a7791-porter.dtb \
-+	r8a7792-blanche.dtb \
- 	r8a7793-gose.dtb \
- 	r8a7794-alt.dtb \
- 	r8a7794-silk.dtb \
-Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-===================================================================
---- /dev/null
-+++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-@@ -0,0 +1,44 @@
-+/*
-+ * Device Tree Source for the Blanche board
-+ *
-+ * Copyright (C) 2016 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r8a7792.dtsi"
-+
-+/ {
-+	model = "Blanche";
-+	compatible = "renesas,blanche", "renesas,r8a7792";
-+
-+	aliases {
-+		serial0 = &scif0;
-+		serial1 = &scif3;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x40000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
-+
-+&scif0 {
-+	status = "okay";
-+};
-+
-+&scif3 {
-+	status = "okay";
-+};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 3285a9286786..de3e799a7bba 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -157,9 +157,9 @@
+ 			#address-cells = <0>;
+ 			interrupt-controller;
+ 			reg = <0x0 0xf1010000 0 0x1000>,
+-			      <0x0 0xf1020000 0 0x2000>,
++			      <0x0 0xf1020000 0 0x20000>,
+ 			      <0x0 0xf1040000 0 0x20000>,
+-			      <0x0 0xf1060000 0 0x2000>;
++			      <0x0 0xf1060000 0 0x20000>;
+ 			interrupts = <GIC_PPI 9
+ 					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
+-- 
+2.1.4
