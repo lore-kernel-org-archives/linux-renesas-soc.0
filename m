@@ -1,53 +1,150 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Sender: Kieran Bingham <kieran@ksquared.org.uk>
-From: Kieran Bingham <kieran@bingham.xyz>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-media@vger.kernel.org (open list:MEDIA DRIVERS FOR RENESAS - FCP),
-	linux-renesas-soc@vger.kernel.org (open list:MEDIA DRIVERS FOR RENESAS - FCP),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Kieran Bingham <kieran@bingham.xyz>
-Subject: [PATCH 1/3] dt-bindings: Update Renesas R-Car FCP DT binding
-Date: Thu,  9 Jun 2016 14:41:32 +0100
-Message-Id: <1465479695-18644-2-git-send-email-kieran@bingham.xyz>
-In-Reply-To: <1465479695-18644-1-git-send-email-kieran@bingham.xyz>
-References: <1465479695-18644-1-git-send-email-kieran@bingham.xyz>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+	m.szyprowski@samsung.com
+Date: Wed, 08 Jun 2016 16:18:05 +0900
+Message-Id: <20160608071805.7560.11681.sendpatchset@little-apple>
+In-Reply-To: <20160608071737.7560.32571.sendpatchset@little-apple>
+References: <20160608071737.7560.32571.sendpatchset@little-apple>
+Subject: [PATCH v4 03/07] iommu/ipmmu-vmsa: Break out utlb parsing code
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The FCP driver, can also support the FCPF variant for FDP1 compatible
-processing.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+Break out the utlb parsing code and dev_data allocation into a
+separate function. This is preparation for future code sharing.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- Documentation/devicetree/bindings/media/renesas,fcp.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-index 6a12960609d8..271dcfdb5a76 100644
---- a/Documentation/devicetree/bindings/media/renesas,fcp.txt
-+++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-@@ -7,12 +7,14 @@ conversion of AXI transactions in order to reduce the memory bandwidth.
+ Changes since V3:
+ - Initialize "mmu" to NULL, check before accessing
+ - Removed group parameter from ipmmu_init_platform_device()
+
+ Changes since V2:
+ - Included this new patch from the following series:
+   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
+ - Reworked code to fit on top on previous two patches in current series.
+
+ drivers/iommu/ipmmu-vmsa.c |   60 +++++++++++++++++++++++++++-----------------
+ 1 file changed, 38 insertions(+), 22 deletions(-)
+
+--- 0004/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-08 14:59:34.470607110 +0900
+@@ -647,22 +647,15 @@ static int ipmmu_find_utlbs(struct ipmmu
+ 	return 0;
+ }
  
- There are three types of FCP: FCP for Codec (FCPC), FCP for VSP (FCPV) and FCP
- for FDP (FCPF). Their configuration and behaviour depend on the module they
--are paired with. These DT bindings currently support the FCPV only.
-+are paired with. These DT bindings currently support the FCPV and FCPF.
+-static int ipmmu_add_device(struct device *dev)
++static int ipmmu_init_platform_device(struct device *dev)
+ {
+ 	struct ipmmu_vmsa_archdata *archdata;
+ 	struct ipmmu_vmsa_device *mmu;
+-	struct iommu_group *group = NULL;
+ 	unsigned int *utlbs;
+ 	unsigned int i;
+ 	int num_utlbs;
+ 	int ret = -ENODEV;
  
-  - compatible: Must be one or more of the following
+-	if (dev->archdata.iommu) {
+-		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
+-			 dev_name(dev));
+-		return -EINVAL;
+-	}
+-
+ 	/* Find the master corresponding to the device. */
  
-    - "renesas,r8a7795-fcpv" for R8A7795 (R-Car H3) compatible 'FCP for VSP'
-+   - "renesas,r8a7795-fcpf" for R8A7795 (R-Car H3) compatible 'FCP for FDP'
-    - "renesas,fcpv" for generic compatible 'FCP for VSP'
-+   - "renesas,fcpf" for generic compatible 'FCP for FDP'
+ 	num_utlbs = of_count_phandle_with_args(dev->of_node, "iommus",
+@@ -690,7 +683,7 @@ static int ipmmu_add_device(struct devic
+ 	spin_unlock(&ipmmu_devices_lock);
  
-    When compatible with the generic version, nodes must list the
-    SoC-specific version corresponding to the platform first, followed by the
--- 
-2.7.4
+ 	if (ret < 0)
+-		return -ENODEV;
++		goto error;
+ 
+ 	for (i = 0; i < num_utlbs; ++i) {
+ 		if (utlbs[i] >= mmu->num_utlbs) {
+@@ -699,6 +692,36 @@ static int ipmmu_add_device(struct devic
+ 		}
+ 	}
+ 
++	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
++	if (!archdata) {
++		ret = -ENOMEM;
++		goto error;
++	}
++
++	archdata->mmu = mmu;
++	archdata->utlbs = utlbs;
++	archdata->num_utlbs = num_utlbs;
++	dev->archdata.iommu = archdata;
++	return 0;
++
++error:
++	kfree(utlbs);
++	return ret;
++}
++
++static int ipmmu_add_device(struct device *dev)
++{
++	struct ipmmu_vmsa_archdata *archdata;
++	struct ipmmu_vmsa_device *mmu = NULL;
++	struct iommu_group *group;
++	int ret;
++
++	if (dev->archdata.iommu) {
++		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
++			 dev_name(dev));
++		return -EINVAL;
++	}
++
+ 	/* Create a device group and add the device to it. */
+ 	group = iommu_group_alloc();
+ 	if (IS_ERR(group)) {
+@@ -716,16 +739,9 @@ static int ipmmu_add_device(struct devic
+ 		goto error;
+ 	}
+ 
+-	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
+-	if (!archdata) {
+-		ret = -ENOMEM;
++	ret = ipmmu_init_platform_device(dev);
++	if (ret < 0)
+ 		goto error;
+-	}
+-
+-	archdata->mmu = mmu;
+-	archdata->utlbs = utlbs;
+-	archdata->num_utlbs = num_utlbs;
+-	dev->archdata.iommu = archdata;
+ 
+ 	/*
+ 	 * Create the ARM mapping, used by the ARM DMA mapping core to allocate
+@@ -736,6 +752,8 @@ static int ipmmu_add_device(struct devic
+ 	 * - Make the mapping size configurable ? We currently use a 2GB mapping
+ 	 *   at a 1GB offset to ensure that NULL VAs will fault.
+ 	 */
++	archdata = dev->archdata.iommu;
++	mmu = archdata->mmu;
+ 	if (!mmu->mapping) {
+ 		struct dma_iommu_mapping *mapping;
+ 
+@@ -760,10 +778,8 @@ static int ipmmu_add_device(struct devic
+ 	return 0;
+ 
+ error:
+-	arm_iommu_release_mapping(mmu->mapping);
+-
+-	kfree(dev->archdata.iommu);
+-	kfree(utlbs);
++	if (mmu)
++		arm_iommu_release_mapping(mmu->mapping);
+ 
+ 	dev->archdata.iommu = NULL;
+ 
