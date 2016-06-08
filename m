@@ -1,56 +1,104 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-	m.szyprowski@samsung.com
-Date: Fri, 03 Jun 2016 00:55:19 +0900
-Message-Id: <20160602155519.31018.59925.sendpatchset@little-apple>
-Subject: [PATCH v3 00/06] iommu/ipmmu-vmsa: IPMMU multi-arch update V3
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751153AbcFHA75 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 7 Jun 2016 20:59:57 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/9] arm64: dts: r8a7795: enable DMA for I2C
+Date: Wed,  8 Jun 2016 09:59:40 +0900
+Message-Id: <d78a1cfa61baaeaa1c8976326e47337640633ace.1465347183.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1465347183.git.horms+renesas@verge.net.au>
+References: <cover.1465347183.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-iommu/ipmmu-vmsa: IPMMU multi-arch update V3
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-[PATCH v3 01/06] iommu/ipmmu-vmsa: Remove platform data handling
-[PATCH v3 02/06] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
-[PATCH v3 03/06] iommu/ipmmu-vmsa: Break out utlb parsing code
-[PATCH v3 04/06] iommu/ipmmu-vmsa: Break out domain allocation code
-[PATCH v3 05/06] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
-[PATCH v3 06/06] iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
+Add DMA properties to the I2C nodes.
 
-These patches update the IPMMU driver with a couple of changes
-to support build on multiple architectures. In the process of
-doing so the interrupt code gets reworked and the foundation
-for supporting multiple contexts are added.
-
-In this version of the series the patch order has been reworked
-to make simplify review. Thanks to Laurent for his suggestions!
-
-The 32-bit ARM logic has intentionally been changed as little as possible
-to avoid breakage. Once CONFIG_IOMMU_DMA can be used it may be good time
-to revisit the init ordering for the 32-bit SoCs. There is room for
-improvement for sure like Robin Murphy kindly pointed out.
-
-Changes since V2:
- - Got rid of patch 3 from the V2 however patch 1, 2 and 4 are kept.
- - V3 patch 3, 4 and 5 come from
-   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
- - Patch 5 has been reworked to include patch 3 of the V1 of this series 
-
-Changes since V1:
- - Got rid of patch 2 and 3 from initial series
- - Updated bitmap code locking and also used lighter bitop functions
- - Updated the Kconfig bits to apply on top of ARCH_RENESAS
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
- Built on top of next-20160602
-
- drivers/iommu/Kconfig      |    1 
- drivers/iommu/ipmmu-vmsa.c |  263 ++++++++++++++++++++++++++++++++++++--------
- 2 files changed, 216 insertions(+), 48 deletions(-)
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index de3e799a7bba..f8c7e331fdc6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -749,6 +749,8 @@
+ 			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 931>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			dmas = <&dmac1 0x91>, <&dmac1 0x90>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -761,6 +763,8 @@
+ 			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 930>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			dmas = <&dmac1 0x93>, <&dmac1 0x92>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -773,6 +777,8 @@
+ 			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 929>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			dmas = <&dmac1 0x95>, <&dmac1 0x94>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+@@ -785,6 +791,8 @@
+ 			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 928>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			dmas = <&dmac0 0x97>, <&dmac0 0x96>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -797,6 +805,8 @@
+ 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 927>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			dmas = <&dmac0 0x99>, <&dmac0 0x98>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -809,6 +819,8 @@
+ 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 919>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			dmas = <&dmac0 0x9b>, <&dmac0 0x9a>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <110>;
+ 			status = "disabled";
+ 		};
+@@ -821,6 +833,8 @@
+ 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 918>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			dmas = <&dmac0 0x9d>, <&dmac0 0x9c>;
++			dma-names = "tx", "rx";
+ 			i2c-scl-internal-delay-ns = <6>;
+ 			status = "disabled";
+ 		};
+-- 
+2.1.4
