@@ -1,73 +1,44 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: [PATCH v1 13/25] PCI: altera: Request host bridge window resources
- with core function
-To: linux-pci@vger.kernel.org
-From: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Herring <robh@kernel.org>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Pratyush Anand <pratyush.anand@gmail.com>,
-	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
-	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
-	Michal Simek <michal.simek@xilinx.com>,
-	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
-	linux-arm-kernel@lists.infradead.org
-Date: Mon, 06 Jun 2016 18:06:21 -0500
-Message-ID: <20160606230621.20936.79245.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752998AbcFHBA6 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 7 Jun 2016 21:00:58 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/3] soc: renesas: rcar-sysc: Document r8a7796 support
+Date: Wed,  8 Jun 2016 10:00:11 +0900
+Message-Id: <2ff1bf77e4d437be502b79443906fcb23e09b81b.1465347345.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1465347345.git.horms+renesas@verge.net.au>
+References: <cover.1465347345.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Use devm_request_pci_bus_resources() to request host bridge window
-resources instead of doing it by hand in the driver.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-No functional change intended.
-
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/pci/host/pcie-altera.c |   11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pci/host/pcie-altera.c b/drivers/pci/host/pcie-altera.c
-index dbac6fb..b97abbc 100644
---- a/drivers/pci/host/pcie-altera.c
-+++ b/drivers/pci/host/pcie-altera.c
-@@ -432,21 +432,20 @@ static int altera_pcie_parse_request_of_pci_ranges(struct altera_pcie *pcie)
- 	if (err)
- 		return err;
+diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+index b74e4d4785ab..0725fb37a973 100644
+--- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
++++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+@@ -14,6 +14,7 @@ Required properties:
+       - "renesas,r8a7793-sysc" (R-Car M2-N)
+       - "renesas,r8a7794-sysc" (R-Car E2)
+       - "renesas,r8a7795-sysc" (R-Car H3)
++      - "renesas,r8a7796-sysc" (R-Car M3-W)
+   - reg: Address start and address range for the device.
+   - #power-domain-cells: Must be 1.
  
-+	err = devm_request_pci_bus_resources(dev, &pcie->resources);
-+	if (err)
-+		goto out_release_res;
-+
- 	resource_list_for_each_entry(win, &pcie->resources) {
--		struct resource *parent, *res = win->res;
-+		struct resource *res = win->res;
- 
- 		switch (resource_type(res)) {
- 		case IORESOURCE_MEM:
--			parent = &iomem_resource;
- 			res_valid |= !(res->flags & IORESOURCE_PREFETCH);
- 			break;
- 		default:
- 			continue;
- 		}
--
--		err = devm_request_resource(dev, parent, res);
--		if (err)
--			goto out_release_res;
- 	}
- 
- 	if (!res_valid) {
+-- 
+2.1.4
