@@ -1,60 +1,52 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752979AbcFHBAz (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 7 Jun 2016 21:00:55 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v3 15/22] clk: renesas: r8a7796: Obtain mode pin values from R-Car RST driver
-Date: Wed,  1 Jun 2016 21:21:13 +0200
-Message-Id: <1464808880-343-16-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 28/30] ARM: dts: marzen: Fix W=1 dtc warnings
+Date: Wed,  8 Jun 2016 09:59:58 +0900
+Message-Id: <983ee3de2cd6963871a1d4b4ca11a9666738731a.1465346599.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1465346599.git.horms+renesas@verge.net.au>
+References: <cover.1465346599.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Obtain the values of the mode pins from the R-Car RST driver, which
-relies on the presence in DT of a device node for the RST module.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
+Warning (unit_address_vs_reg): Node /fixedregulator@0 has a unit name, but no reg property
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v3:
-  - New.
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7779-marzen.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index c84b549c14d2e57d..3db2d1cfc8cd788e 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -16,6 +16,7 @@
- #include <linux/device.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-+#include <linux/soc/renesas/rcar-rst.h>
+diff --git a/arch/arm/boot/dts/r8a7779-marzen.dts b/arch/arm/boot/dts/r8a7779-marzen.dts
+index b795da6f5503..cec79a6347c0 100644
+--- a/arch/arm/boot/dts/r8a7779-marzen.dts
++++ b/arch/arm/boot/dts/r8a7779-marzen.dts
+@@ -28,12 +28,12 @@
+ 		stdout-path = &scif2;
+ 	};
  
- #include <dt-bindings/clock/r8a7796-cpg-mssr.h>
+-	memory {
++	memory@60000000 {
+ 		device_type = "memory";
+ 		reg = <0x60000000 0x40000000>;
+ 	};
  
-@@ -159,7 +160,12 @@ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
- static int __init r8a7796_cpg_mssr_init(struct device *dev)
- {
- 	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
--	u32 cpg_mode = rcar_gen3_read_mode_pins();
-+	u32 cpg_mode;
-+	int error;
-+
-+	error = rcar_rst_read_mode_pins(&cpg_mode);
-+	if (error)
-+		return error;
- 
- 	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
- 	if (!cpg_pll_config->extal_div) {
+-	fixedregulator3v3: fixedregulator@0 {
++	fixedregulator3v3: regulator-3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-3.3V";
+ 		regulator-min-microvolt = <3300000>;
 -- 
-1.9.1
-
+2.1.4
