@@ -1,134 +1,239 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35690 "EHLO
-	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750825AbcFIKFV (ORCPT
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:36758 "EHLO
+	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758457AbcFHVSE (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 9 Jun 2016 06:05:21 -0400
+	Wed, 8 Jun 2016 17:18:04 -0400
+Received: by mail-lf0-f47.google.com with SMTP id j5so14030305lfb.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2016 14:18:03 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 06/12] ARM: dts: r8a7792: initial SoC device tree
+Date: Thu, 09 Jun 2016 00:17:59 +0300
+Message-ID: <1788169.FUQDsLAmXg@wasted.cogentembedded.com>
+In-Reply-To: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+References: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <1788169.FUQDsLAmXg@wasted.cogentembedded.com>
-References: <12536856.AsKMEpuejQ@wasted.cogentembedded.com> <1788169.FUQDsLAmXg@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 9 Jun 2016 12:05:19 +0200
-Message-ID: <CAMuHMdU0e=pS+q8PmXX9gwc6bHv-YdJo4G8nc-EA3NaKMuTrqQ@mail.gmail.com>
-Subject: Re: [PATCH v3 06/12] ARM: dts: r8a7792: initial SoC device tree
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+The initial R8A7792 SoC device tree including CPU cores, GIC, timer, SYSC,
+and the required  clock descriptions.
 
-On Wed, Jun 8, 2016 at 11:17 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> The initial R8A7792 SoC device tree including CPU cores, GIC, timer, SYSC,
-> and the required  clock descriptions.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
-> ---
-> Changes in version 3:
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Thanks for the update!
+---
+Changes in version 3:
+- moved the fixed factor clocks under the "soc" node;
+- added back the CPU1 node, adjusted the changelog.
 
-> --- /dev/null
-> +++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-> @@ -0,0 +1,180 @@
-> +/*
-> + * Device Tree Source for the r8a7792 SoC
-> + *
-> + * Copyright (C) 2016 Cogent Embedded Inc.
-> + *
-> + * This file is licensed under the terms of the GNU General Public License
-> + * version 2.  This program is licensed "as is" without any warranty of any
-> + * kind, whether express or implied.
-> + */
-> +
-> +#include <dt-bindings/clock/r8a7792-clock.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/power/r8a7792-sysc.h>
-> +
-> +/ {
-> +       compatible = "renesas,r8a7792";
-> +       #address-cells = <2>;
-> +       #size-cells = <2>;
-> +
-> +       cpus {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
+Changes in version 2:
+- explicitly included the IRQ header;
+- removed the CPU1 node;
+- removed the audio and PCIe bus clocks;
+- removed the SDH, SD0, and SD1 CPG clocks;
+- added RCAN and ADSP CPG clocks;
+- removed the PLL1/2, Z2, ZS, I, B, P, CL, M2, RCLK, OSCCLK, ZB3, ZB3D2, DDR,
+  and MP fixed factor clocks;
+- fixed up the parent and divisor for the CP fixed factor clock;
+- swapped  the SYS-DMAC0/1 clocks;
+- removed  all gated clocks except the [H]SCIF, IRQC, and SYS-DMAC ones;
+- created  the "soc" subnode, moving the SoC  device  nodes there;
+- removed  the "clocks" node, moving its fixed clock  subnodes to the root and
+  the MSTP subnodes into the "soc" node.
 
-This is gonna need
+ arch/arm/boot/dts/r8a7792.dtsi |  180 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 180 insertions(+)
 
-                enable-method = "renesas,apmu";
-
-soon.
-
-> +       soc {
-
-> +               p_clk: p {
-> +               compatible = "fixed-factor-clock";
-
-Missing TAB.
-
-> +                       clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
-> +                       #clock-cells = <0>;
-> +                       clock-div = <24>;
-> +                       clock-mult = <1>;
-> +               };
-> +               cp_clk: cp {
-> +                       compatible = "fixed-factor-clock";
-> +                       clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
-> +                       #clock-cells = <0>;
-> +                       clock-div = <3>;
-
-48
-
-(did you check /sys/kernel/debug/clk/clk_summary matches Table 7.2c?)
-
-> +                       clock-mult = <1>;
-> +               };
-> +
-> +               /* Gate clocks */
-
-> +               mstp7_clks: mstp7_clks@e615014c {
-> +                       compatible = "renesas,r8a7792-mstp-clocks",
-> +                                    "renesas,cpg-mstp-clocks";
-> +                       reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
-> +                       clocks = <&zs_clk>, <&zs_clk>, <&p_clk>, <&p_clk>,
-> +                                <&p_clk>, <&p_clk>;
-> +                       #clock-cells = <1>;
-> +                       clock-indices = <
-> +                               R8A7792_CLK_HSCIF1 R8A7792_CLK_HSCIF0
-> +                               R8A7792_CLK_SCIF3 R8A7792_CLK_SCIF2
-> +                               R8A7792_CLK_SCIF1 R8A7792_CLK_SCIF0
-> +                       >;
-> +                       clock-output-names = "hscif1", "hscif0", "scif3",
-> +                                            "scif2", "scif1", "scif0",
-> +                                            "du1", "du0";
-
-You forgot to drop "du1" and "du0".
-
-> +               };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+===================================================================
+--- /dev/null
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -0,0 +1,180 @@
++/*
++ * Device Tree Source for the r8a7792 SoC
++ *
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include <dt-bindings/clock/r8a7792-clock.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/power/r8a7792-sysc.h>
++
++/ {
++	compatible = "renesas,r8a7792";
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a15";
++			reg = <0>;
++			clock-frequency = <1000000000>;
++			clocks = <&cpg_clocks R8A7792_CLK_Z>;
++			power-domains = <&sysc R8A7792_PD_CA15_CPU0>;
++			next-level-cache = <&L2_CA15>;
++		};
++
++		cpu1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a15";
++			reg = <1>;
++			clock-frequency = <1000000000>;
++			power-domains = <&sysc R8A7792_PD_CA15_CPU1>;
++			next-level-cache = <&L2_CA15>;
++		};
++
++		L2_CA15: cache-controller@0 {
++			compatible = "cache";
++			reg = <0>;
++			cache-unified;
++			cache-level = <2>;
++			power-domains = <&sysc R8A7792_PD_CA15_SCU>;
++		};
++	};
++
++	soc {
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		gic: interrupt-controller@f1001000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <3>;
++			interrupt-controller;
++			reg = <0 0xf1001000 0 0x1000>,
++			      <0 0xf1002000 0 0x1000>,
++			      <0 0xf1004000 0 0x2000>,
++			      <0 0xf1006000 0 0x2000>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
++				      IRQ_TYPE_LEVEL_HIGH)>;
++		};
++
++		timer {
++			compatible = "arm,armv7-timer";
++			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
++				      IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
++				      IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
++				      IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
++				      IRQ_TYPE_LEVEL_LOW)>;
++		};
++
++		sysc: system-controller@e6180000 {
++			compatible = "renesas,r8a7792-sysc";
++			reg = <0 0xe6180000 0 0x0200>;
++			#power-domain-cells = <1>;
++		};
++
++		/* Special CPG clocks */
++		cpg_clocks: cpg_clocks@e6150000 {
++			compatible = "renesas,r8a7792-cpg-clocks",
++				     "renesas,rcar-gen2-cpg-clocks";
++			reg = <0 0xe6150000 0 0x1000>;
++			clocks = <&extal_clk>;
++			#clock-cells = <1>;
++			clock-output-names = "main", "pll0", "pll1", "pll3",
++					     "lb", "qspi", "z", "rcan", "adsp";
++			#power-domain-cells = <0>;
++		};
++
++		/* Fixed factor clocks */
++		zs_clk: zs {
++			compatible = "fixed-factor-clock";
++			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
++			#clock-cells = <0>;
++			clock-div = <6>;
++			clock-mult = <1>;
++		};
++		p_clk: p {
++		compatible = "fixed-factor-clock";
++			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
++			#clock-cells = <0>;
++			clock-div = <24>;
++			clock-mult = <1>;
++		};
++		cp_clk: cp {
++			compatible = "fixed-factor-clock";
++			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
++			#clock-cells = <0>;
++			clock-div = <3>;
++			clock-mult = <1>;
++		};
++
++		/* Gate clocks */
++		mstp2_clks: mstp2_clks@e6150138 {
++			compatible = "renesas,r8a7792-mstp-clocks",
++				     "renesas,cpg-mstp-clocks";
++			reg = <0 0xe6150138 0 4>, <0 0xe6150040 0 4>;
++			clocks = <&zs_clk>, <&zs_clk>;
++			#clock-cells = <1>;
++			clock-indices = <
++				R8A7792_CLK_SYS_DMAC1 R8A7792_CLK_SYS_DMAC0
++			>;
++			clock-output-names = "sys-dmac1", "sys-dmac0";
++		};
++		mstp4_clks: mstp4_clks@e6150140 {
++			compatible = "renesas,r8a7792-mstp-clocks",
++				     "renesas,cpg-mstp-clocks";
++			reg = <0 0xe6150140 0 4>, <0 0xe615004c 0 4>;
++			clocks = <&cp_clk>;
++			#clock-cells = <1>;
++			clock-indices = <R8A7792_CLK_IRQC>;
++			clock-output-names = "irqc";
++		};
++		mstp7_clks: mstp7_clks@e615014c {
++			compatible = "renesas,r8a7792-mstp-clocks",
++				     "renesas,cpg-mstp-clocks";
++			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
++			clocks = <&zs_clk>, <&zs_clk>, <&p_clk>, <&p_clk>,
++				 <&p_clk>, <&p_clk>;
++			#clock-cells = <1>;
++			clock-indices = <
++				R8A7792_CLK_HSCIF1 R8A7792_CLK_HSCIF0
++				R8A7792_CLK_SCIF3 R8A7792_CLK_SCIF2
++				R8A7792_CLK_SCIF1 R8A7792_CLK_SCIF0
++			>;
++			clock-output-names = "hscif1", "hscif0", "scif3",
++					     "scif2", "scif1", "scif0",
++					     "du1", "du0";
++		};
++	};
++
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++};
