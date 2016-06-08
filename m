@@ -1,93 +1,75 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 02/20] drm: arc: Rely on the default ->best_encoder() behavior
-Date: Tue,  7 Jun 2016 13:47:57 +0200
-Message-Id: <1465300095-16971-3-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752368AbcFHBAr (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 7 Jun 2016 21:00:47 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 29/30] ARM: dts: porter: Fix W=1 dtc warnings
+Date: Wed,  8 Jun 2016 09:59:59 +0900
+Message-Id: <afed0c94ee44ea701a849d1c9729f9b711729197.1465346599.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1465346599.git.horms+renesas@verge.net.au>
+References: <cover.1465346599.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We have a 1:1 relationship between connectors and encoders and the
-driver is relying on the atomic helpers: we can drop the custom
-->best_encoder(), and let the core call drm_atomic_helper_best_encoder()
-for us.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Warning (unit_address_vs_reg): Node /regulator@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /regulator@3 has a unit name, but no reg property
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpu/drm/arc/arcpgu_hdmi.c | 18 ------------------
- 1 file changed, 18 deletions(-)
+ arch/arm/boot/dts/r8a7791-porter.dts | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/arc/arcpgu_hdmi.c b/drivers/gpu/drm/arc/arcpgu_hdmi.c
-index 08b6bae..b7a8b2a 100644
---- a/drivers/gpu/drm/arc/arcpgu_hdmi.c
-+++ b/drivers/gpu/drm/arc/arcpgu_hdmi.c
-@@ -46,23 +46,6 @@ static int arcpgu_drm_connector_get_modes(struct drm_connector *connector)
- 	return sfuncs->get_modes(&slave->base, connector);
- }
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index 6a1bb1a8209b..e9151e946da8 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -46,7 +46,7 @@
+ 		reg = <2 0x00000000 0 0x40000000>;
+ 	};
  
--struct drm_encoder *
--arcpgu_drm_connector_best_encoder(struct drm_connector *connector)
--{
--	struct drm_encoder_slave *slave;
--	struct arcpgu_drm_connector *con =
--		container_of(connector, struct arcpgu_drm_connector, connector);
--
--	slave = con->encoder_slave;
--	if (slave == NULL) {
--		dev_err(connector->dev->dev,
--			"connector_best_encoder: cannot find slave encoder for connector\n");
--		return NULL;
--	}
--
--	return &slave->base;
--}
--
- static enum drm_connector_status
- arcpgu_drm_connector_detect(struct drm_connector *connector, bool force)
- {
-@@ -97,7 +80,6 @@ static void arcpgu_drm_connector_destroy(struct drm_connector *connector)
- static const struct drm_connector_helper_funcs
- arcpgu_drm_connector_helper_funcs = {
- 	.get_modes = arcpgu_drm_connector_get_modes,
--	.best_encoder = arcpgu_drm_connector_best_encoder,
- };
+-	vcc_sdhi0: regulator@0 {
++	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
  
- static const struct drm_connector_funcs arcpgu_drm_connector_funcs = {
+ 		regulator-name = "SDHI0 Vcc";
+@@ -55,7 +55,7 @@
+ 		regulator-always-on;
+ 	};
+ 
+-	vccq_sdhi0: regulator@1 {
++	vccq_sdhi0: regulator-vccq-sdhi0 {
+ 		compatible = "regulator-gpio";
+ 
+ 		regulator-name = "SDHI0 VccQ";
+@@ -68,7 +68,7 @@
+ 			  1800000 0>;
+ 	};
+ 
+-	vcc_sdhi2: regulator@2 {
++	vcc_sdhi2: regulator-vcc-sdhi2 {
+ 		compatible = "regulator-fixed";
+ 
+ 		regulator-name = "SDHI2 Vcc";
+@@ -77,7 +77,7 @@
+ 		regulator-always-on;
+ 	};
+ 
+-	vccq_sdhi2: regulator@3 {
++	vccq_sdhi2: regulator-vccq-sdhi2 {
+ 		compatible = "regulator-gpio";
+ 
+ 		regulator-name = "SDHI2 VccQ";
 -- 
-2.7.4
+2.1.4
