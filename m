@@ -1,40 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36179 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752299AbcF3OQP (ORCPT
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:36712 "EHLO
+	mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755396AbcFHVd3 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:16:15 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/2] ARM: multi_v7_defconfig: defconfig: Enable r8a7792 SoC
-Date: Thu, 30 Jun 2016 16:15:40 +0200
-Message-Id: <a1becf12c6dafd96d77e97c9a7cbc446ba1d1196.1467292079.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467292079.git.horms+renesas@verge.net.au>
-References: <cover.1467292079.git.horms+renesas@verge.net.au>
+	Wed, 8 Jun 2016 17:33:29 -0400
+Received: by mail-lf0-f41.google.com with SMTP id j5so14236571lfb.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2016 14:33:29 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v3 10/12] DT: arm: shmobile: document Blanche board
+Date: Thu, 09 Jun 2016 00:33:25 +0300
+Message-ID: <33316938.vPafSSLtPx@wasted.cogentembedded.com>
+In-Reply-To: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+References: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable support for r8a7792 SoC in multi_v7_defconfig.
+Document the Blanche device tree bindings, listing it as a supported board.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+This allows to use checkpatch.pl to validate .dts files referring to the
+Blanche board.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Rob Herring <robh@kernel.org>
+
 ---
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Changes in version 2:
+- added Rob's ACK.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 8f857564657f..672bdac2f6a0 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -90,6 +90,7 @@ CONFIG_ARCH_R8A7778=y
- CONFIG_ARCH_R8A7779=y
- CONFIG_ARCH_R8A7790=y
- CONFIG_ARCH_R8A7791=y
-+CONFIG_ARCH_R8A7792=y
- CONFIG_ARCH_R8A7793=y
- CONFIG_ARCH_R8A7794=y
- CONFIG_ARCH_SH73A0=y
--- 
-2.7.0.rc3.207.g0ac5344
+Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
+ Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
+ 1 file changed, 2 insertions(+)
+
+Index: renesas/Documentation/devicetree/bindings/arm/shmobile.txt
+===================================================================
+--- renesas.orig/Documentation/devicetree/bindings/arm/shmobile.txt
++++ renesas/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -39,6 +39,8 @@ Boards:
+     compatible = "renesas,ape6evm", "renesas,r8a73a4"
+   - Atmark Techno Armadillo-800 EVA
+     compatible = "renesas,armadillo800eva"
++  - Blanche (RTP0RC7792SEB00010S)
++    compatible = "renesas,blanche", "renesas,r8a7792"
+   - BOCK-W
+     compatible = "renesas,bockw", "renesas,r8a7778"
+   - Genmai (RTK772100BC00000BR)
