@@ -1,45 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:34329 "EHLO
-	mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752809AbcFCVJi (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752624AbcFHBAs (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 3 Jun 2016 17:09:38 -0400
-Received: by mail-lf0-f43.google.com with SMTP id k98so62133744lfi.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Jun 2016 14:09:38 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 00/11] Add R8A7792/Blanche board support
-Date: Sat, 04 Jun 2016 00:09:35 +0300
-Message-ID: <3446154.oZ24315zaL@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Tue, 7 Jun 2016 21:00:48 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 18/30] ARM: dts: sh73a0: Fix W=1 dtc warnings
+Date: Wed,  8 Jun 2016 09:59:48 +0900
+Message-Id: <1178814b0fc3649a9c586554e8f6d4f161a97c1f.1465346599.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1465346599.git.horms+renesas@verge.net.au>
+References: <cover.1465346599.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-   Here's the set of 11 patches against Simon Horman's 'renesas.git' repo,
-'renesas-devel-20160530-v4.7-rc1' tag. We add the device tree support for
-the R8A7792-based Blanche board. The R-Car 'clk' driver patch was posted last
-week separately and 2 'clk' binding patches was split from this series and just
-re-posted...
+Warning (unit_address_vs_reg): Node /cache-controller has a reg or ranges property, but no unit name
 
-[01/13] ARM: shmobile: r8a7792: add clock index macros
-[02/13] ARM: shmobile: r8a7792: add power domain index macros
-[03/13] soc: renesas: rcar-sysc: add R8A7792 support
-[04/13] ARM: shmobile: r8a7792: basic SoC support
-[05/13] ARM: dts: r8a7792: initial SoC device tree
-[06/13] ARM: dts: r8a7792: add SYS-DMAC support
-[07/13] ARM: dts: r8a7792: add [H]SCIF support
-[08/13] ARM dts: r8a7792: add IRQC support
-[09/13] DT: arm: shmobile: document Blanche board
-[10/13] ARM: dts: blanche: initial device tree
-[11/13] ARM: dts: blanche: add Ethernet support
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/sh73a0.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-WBR, Sergei
+diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
+index c4f434cdec60..032fe2f14b16 100644
+--- a/arch/arm/boot/dts/sh73a0.dtsi
++++ b/arch/arm/boot/dts/sh73a0.dtsi
+@@ -55,7 +55,7 @@
+ 		      <0xf0000100 0x100>;
+ 	};
+ 
+-	L2: cache-controller {
++	L2: cache-controller@f0100000 {
+ 		compatible = "arm,pl310-cache";
+ 		reg = <0xf0100000 0x1000>;
+ 		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+-- 
+2.1.4
