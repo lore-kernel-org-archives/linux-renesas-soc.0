@@ -1,90 +1,298 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 20/20] drm/bridge: dw-hdmi: Use drm_atomic_helper_best_encoder()
-Date: Tue,  7 Jun 2016 13:48:15 +0200
-Message-Id: <1465300095-16971-21-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752089AbcFHBA2 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 7 Jun 2016 21:00:28 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 15/30] ARM: dts: r8a7791: Fix W=1 dtc warnings
+Date: Wed,  8 Jun 2016 09:59:45 +0900
+Message-Id: <6f9314ce258c8504975d96fa509763245fff287b.1465346599.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1465346599.git.horms+renesas@verge.net.au>
+References: <cover.1465346599.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We have a 1:1 relationship between connectors and encoders, which means
-we can rely on the drm_atomic_helper_best_encoder() behavior.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-We still have to explicitly assign ->best_encoder() to
-drm_atomic_helper_best_encoder(), because the automated fallback to
-drm_atomic_helper_best_encoder() when ->best_encoder() is NULL is only
-available when the DRM device is using the atomic helpers, and this bridge
-is compatible with non-atomic and atomic devices.
+Warning (unit_address_vs_reg): Node /cache-controller@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,dvc/dvc@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,dvc/dvc@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,mix/mix@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,mix/mix@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@4 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@5 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@6 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@7 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@4 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@5 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@6 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@7 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@8 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@9 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@4 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@5 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@6 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@7 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@8 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@9 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /cache-controller@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,dvc/dvc@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,dvc/dvc@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,mix/mix@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,mix/mix@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@4 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@5 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@6 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ctu/ctu@7 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@4 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@5 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@6 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@7 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@8 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,src/src@9 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@0 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@1 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@2 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@3 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@4 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@5 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@6 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@7 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@8 has a unit name, but no reg property
+Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,ssi/ssi@9 has a unit name, but no reg property
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Move the cache-controller node under the cpus node, and make its unit
+name and reg property match the MPIDR values.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpu/drm/bridge/dw-hdmi.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 79 +++++++++++++++++++++---------------------
+ 1 file changed, 40 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index c9d9412..70b1f7d 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -1476,15 +1476,6 @@ dw_hdmi_connector_mode_valid(struct drm_connector *connector,
- 	return mode_status;
- }
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 2f924146d381..1985bd0dc32c 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -72,6 +72,14 @@
+ 			power-domains = <&sysc R8A7791_PD_CA15_CPU1>;
+ 			next-level-cache = <&L2_CA15>;
+ 		};
++
++		L2_CA15: cache-controller@0 {
++			compatible = "cache";
++			reg = <0>;
++			power-domains = <&sysc R8A7791_PD_CA15_SCU>;
++			cache-unified;
++			cache-level = <2>;
++		};
+ 	};
  
--static struct drm_encoder *dw_hdmi_connector_best_encoder(struct drm_connector
--							   *connector)
--{
--	struct dw_hdmi *hdmi = container_of(connector, struct dw_hdmi,
--					     connector);
--
--	return hdmi->encoder;
--}
--
- static void dw_hdmi_connector_destroy(struct drm_connector *connector)
- {
- 	drm_connector_unregister(connector);
-@@ -1525,7 +1516,7 @@ static const struct drm_connector_funcs dw_hdmi_atomic_connector_funcs = {
- static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs = {
- 	.get_modes = dw_hdmi_connector_get_modes,
- 	.mode_valid = dw_hdmi_connector_mode_valid,
--	.best_encoder = dw_hdmi_connector_best_encoder,
-+	.best_encoder = drm_atomic_helper_best_encoder,
- };
+ 	thermal-zones {
+@@ -93,13 +101,6 @@
+ 		};
+ 	};
  
- static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
+-	L2_CA15: cache-controller@0 {
+-		compatible = "cache";
+-		power-domains = <&sysc R8A7791_PD_CA15_SCU>;
+-		cache-unified;
+-		cache-level = <2>;
+-	};
+-
+ 	gic: interrupt-controller@f1001000 {
+ 		compatible = "arm,gic-400";
+ 		#interrupt-cells = <3>;
+@@ -1766,79 +1767,79 @@
+ 		status = "disabled";
+ 
+ 		rcar_sound,dvc {
+-			dvc0: dvc@0 {
++			dvc0: dvc-0 {
+ 				dmas = <&audma0 0xbc>;
+ 				dma-names = "tx";
+ 			};
+-			dvc1: dvc@1 {
++			dvc1: dvc-1 {
+ 				dmas = <&audma0 0xbe>;
+ 				dma-names = "tx";
+ 			};
+ 		};
+ 
+ 		rcar_sound,mix {
+-			mix0: mix@0 { };
+-			mix1: mix@1 { };
++			mix0: mix-0 { };
++			mix1: mix-1 { };
+ 		};
+ 
+ 		rcar_sound,ctu {
+-			ctu00: ctu@0 { };
+-			ctu01: ctu@1 { };
+-			ctu02: ctu@2 { };
+-			ctu03: ctu@3 { };
+-			ctu10: ctu@4 { };
+-			ctu11: ctu@5 { };
+-			ctu12: ctu@6 { };
+-			ctu13: ctu@7 { };
++			ctu00: ctu-0 { };
++			ctu01: ctu-1 { };
++			ctu02: ctu-2 { };
++			ctu03: ctu-3 { };
++			ctu10: ctu-4 { };
++			ctu11: ctu-5 { };
++			ctu12: ctu-6 { };
++			ctu13: ctu-7 { };
+ 		};
+ 
+ 		rcar_sound,src {
+-			src0: src@0 {
++			src0: src-0 {
+ 				interrupts = <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x85>, <&audma1 0x9a>;
+ 				dma-names = "rx", "tx";
+ 			};
+-			src1: src@1 {
++			src1: src-1 {
+ 				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x87>, <&audma1 0x9c>;
+ 				dma-names = "rx", "tx";
+ 			};
+-			src2: src@2 {
++			src2: src-2 {
+ 				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x89>, <&audma1 0x9e>;
+ 				dma-names = "rx", "tx";
+ 			};
+-			src3: src@3 {
++			src3: src-3 {
+ 				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x8b>, <&audma1 0xa0>;
+ 				dma-names = "rx", "tx";
+ 			};
+-			src4: src@4 {
++			src4: src-4 {
+ 				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x8d>, <&audma1 0xb0>;
+ 				dma-names = "rx", "tx";
+ 			};
+-			src5: src@5 {
++			src5: src-5 {
+ 				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x8f>, <&audma1 0xb2>;
+ 				dma-names = "rx", "tx";
+ 			};
+-			src6: src@6 {
++			src6: src-6 {
+ 				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x91>, <&audma1 0xb4>;
+ 				dma-names = "rx", "tx";
+ 			};
+-			src7: src@7 {
++			src7: src-7 {
+ 				interrupts = <GIC_SPI 359 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x93>, <&audma1 0xb6>;
+ 				dma-names = "rx", "tx";
+ 			};
+-			src8: src@8 {
++			src8: src-8 {
+ 				interrupts = <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x95>, <&audma1 0xb8>;
+ 				dma-names = "rx", "tx";
+ 			};
+-			src9: src@9 {
++			src9: src-9 {
+ 				interrupts = <GIC_SPI 361 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x97>, <&audma1 0xba>;
+ 				dma-names = "rx", "tx";
+@@ -1846,52 +1847,52 @@
+ 		};
+ 
+ 		rcar_sound,ssi {
+-			ssi0: ssi@0 {
++			ssi0: ssi-0 {
+ 				interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x01>, <&audma1 0x02>, <&audma0 0x15>, <&audma1 0x16>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi1: ssi@1 {
++			ssi1: ssi-1 {
+ 				 interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi2: ssi@2 {
++			ssi2: ssi-2 {
+ 				interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x05>, <&audma1 0x06>, <&audma0 0x63>, <&audma1 0x64>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi3: ssi@3 {
++			ssi3: ssi-3 {
+ 				interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x07>, <&audma1 0x08>, <&audma0 0x6f>, <&audma1 0x70>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi4: ssi@4 {
++			ssi4: ssi-4 {
+ 				interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x09>, <&audma1 0x0a>, <&audma0 0x71>, <&audma1 0x72>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi5: ssi@5 {
++			ssi5: ssi-5 {
+ 				interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x0b>, <&audma1 0x0c>, <&audma0 0x73>, <&audma1 0x74>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi6: ssi@6 {
++			ssi6: ssi-6 {
+ 				interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x0d>, <&audma1 0x0e>, <&audma0 0x75>, <&audma1 0x76>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi7: ssi@7 {
++			ssi7: ssi-7 {
+ 				interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x0f>, <&audma1 0x10>, <&audma0 0x79>, <&audma1 0x7a>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi8: ssi@8 {
++			ssi8: ssi-8 {
+ 				interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x11>, <&audma1 0x12>, <&audma0 0x7b>, <&audma1 0x7c>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
+ 			};
+-			ssi9: ssi@9 {
++			ssi9: ssi-9 {
+ 				interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
+ 				dmas = <&audma0 0x13>, <&audma1 0x14>, <&audma0 0x7d>, <&audma1 0x7e>;
+ 				dma-names = "rx", "tx", "rxu", "txu";
 -- 
-2.7.4
+2.1.4
