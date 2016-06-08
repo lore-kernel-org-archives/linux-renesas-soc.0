@@ -1,103 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:34140 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751681AbcFPK1v (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752998AbcFHBBE (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 16 Jun 2016 06:27:51 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <damm+renesas@opensource.se>,
+	Tue, 7 Jun 2016 21:01:04 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH v4 01/13] devicetree: bindings: Renesas APMU and SMP Enable method
-Date: Thu, 16 Jun 2016 12:27:30 +0200
-Message-Id: <1466072862-28030-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1466072862-28030-1-git-send-email-geert+renesas@glider.be>
-References: <1466072862-28030-1-git-send-email-geert+renesas@glider.be>
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/2] ARM: shmobile: pm-rmobile: Postpone call to pm_genpd_init()
+Date: Wed,  8 Jun 2016 10:00:19 +0900
+Message-Id: <85d9bf152bdaa7e98a05cc460aa6880efdf0b433.1465347025.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1465347025.git.horms+renesas@verge.net.au>
+References: <cover.1465347025.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add DT binding documentation for the APMU hardware and add "renesas,apmu"
-to the list of enable methods for the ARM cpus.
+All local setup of the generic_pm_domain structure should have been
+completed before calling pm_genpd_init().
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v4:
-  - s/reigsters/registers/,
-  - Use "renesas,<soctype>-apmu" instead of "renesas,apmu-<soctype>",
+ arch/arm/mach-shmobile/pm-rmobile.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v3:
-  - s/Until/Unit/g,
-
-v2:
-  - No changes.
----
- Documentation/devicetree/bindings/arm/cpus.txt     |  1 +
- .../devicetree/bindings/power/renesas,apmu.txt     | 31 ++++++++++++++++++++++
- 2 files changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/renesas,apmu.txt
-
-diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
-index 3f0cbbb8395f84ef..fa7520eb6387edbe 100644
---- a/Documentation/devicetree/bindings/arm/cpus.txt
-+++ b/Documentation/devicetree/bindings/arm/cpus.txt
-@@ -204,6 +204,7 @@ nodes to be present and contain the properties described below.
- 			    "qcom,gcc-msm8660"
- 			    "qcom,kpss-acc-v1"
- 			    "qcom,kpss-acc-v2"
-+			    "renesas,apmu"
- 			    "rockchip,rk3036-smp"
- 			    "rockchip,rk3066-smp"
- 			    "ste,dbx500-smp"
-diff --git a/Documentation/devicetree/bindings/power/renesas,apmu.txt b/Documentation/devicetree/bindings/power/renesas,apmu.txt
-new file mode 100644
-index 0000000000000000..84404c9edff73d97
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/renesas,apmu.txt
-@@ -0,0 +1,31 @@
-+DT bindings for the Renesas Advanced Power Management Unit
-+
-+Renesas R-Car line of SoCs utilize one or more APMU hardware units
-+for CPU core power domain control including SMP boot and CPU Hotplug.
-+
-+Required properties:
-+
-+- compatible: Should be "renesas,<soctype>-apmu", "renesas,apmu" as fallback.
-+	      Examples with soctypes are:
-+		- "renesas,r8a7790-apmu" (R-Car H2)
-+		- "renesas,r8a7791-apmu" (R-Car M2-W)
-+		- "renesas,r8a7792-apmu" (R-Car V2H)
-+		- "renesas,r8a7793-apmu" (R-Car M2-N)
-+		- "renesas,r8a7794-apmu" (R-Car E2)
-+
-+- reg: Base address and length of the I/O registers used by the APMU.
-+
-+- cpus: This node contains a list of CPU cores, which should match the order
-+  of CPU cores used by the WUPCR and PSTR registers in the Advanced Power
-+  Management Unit section of the device's datasheet.
-+
-+
-+Example:
-+
-+This shows the r8a7791 APMU that can control CPU0 and CPU1.
-+
-+	apmu@e6152000 {
-+		compatible = "renesas,r8a7791-apmu", "renesas,apmu";
-+		reg = <0 0xe6152000 0 0x188>;
-+		cpus = <&cpu0 &cpu1>;
-+	};
+diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
+index c0b05e9e6442..45a195501b78 100644
+--- a/arch/arm/mach-shmobile/pm-rmobile.c
++++ b/arch/arm/mach-shmobile/pm-rmobile.c
+@@ -131,13 +131,13 @@ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
+ 	struct dev_power_governor *gov = rmobile_pd->gov;
+ 
+ 	genpd->flags = GENPD_FLAG_PM_CLK;
+-	pm_genpd_init(genpd, gov ? : &simple_qos_governor, false);
+ 	genpd->dev_ops.active_wakeup	= rmobile_pd_active_wakeup;
+ 	genpd->power_off		= rmobile_pd_power_down;
+ 	genpd->power_on			= rmobile_pd_power_up;
+ 	genpd->attach_dev		= cpg_mstp_attach_dev;
+ 	genpd->detach_dev		= cpg_mstp_detach_dev;
+ 	__rmobile_pd_power_up(rmobile_pd, false);
++	pm_genpd_init(genpd, gov ? : &simple_qos_governor, false);
+ }
+ 
+ static int rmobile_pd_suspend_busy(void)
 -- 
-1.9.1
+2.1.4
