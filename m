@@ -1,76 +1,50 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: [PATCH v1 08/25] PCI: xilinx: Free bridge resource list on failure
-To: linux-pci@vger.kernel.org
-From: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Herring <robh@kernel.org>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Pratyush Anand <pratyush.anand@gmail.com>,
-	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
-	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
-	Michal Simek <michal.simek@xilinx.com>,
-	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
-	linux-arm-kernel@lists.infradead.org
-Date: Mon, 06 Jun 2016 18:05:45 -0500
-Message-ID: <20160606230545.20936.65430.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751609AbcFHBAC (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 7 Jun 2016 21:00:02 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 6/9] arm64: dts: r8a7795: Use SYSC "always-on" PM Domain for RWDT node
+Date: Wed,  8 Jun 2016 09:59:43 +0900
+Message-Id: <b186fbb6cc5550756a29bc1d0bf259a7aa632c11.1465347183.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1465347183.git.horms+renesas@verge.net.au>
+References: <cover.1465347183.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-of_pci_get_host_bridge_resources() allocates a list of resources for host
-bridge windows.  If we fail after allocating that list, free it before we
-return error.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Hook up the RWDT device node to the SYSC "always-on" PM Domain, for a
+more consistent device-power-area description in DT.
+
+Cfr. commit 38dbb45ee4bc ("arm64: dts: r8a7795: Use SYSC "always-on" PM
+Domain")
+
+Fixes: f43838a7ae014cba ("arm64: dts: r8a7795: Add RWDT node")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/pci/host/pcie-xilinx.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/host/pcie-xilinx.c b/drivers/pci/host/pcie-xilinx.c
-index 65f0fe0..5c456db 100644
---- a/drivers/pci/host/pcie-xilinx.c
-+++ b/drivers/pci/host/pcie-xilinx.c
-@@ -660,7 +660,6 @@ static int xilinx_pcie_probe(struct platform_device *pdev)
- 	struct xilinx_pcie_port *port;
- 	struct device *dev = &pdev->dev;
- 	struct pci_bus *bus;
--
- 	int err;
- 	resource_size_t iobase = 0;
- 	LIST_HEAD(res);
-@@ -696,8 +695,10 @@ static int xilinx_pcie_probe(struct platform_device *pdev)
- 	}
- 	bus = pci_create_root_bus(&pdev->dev, 0,
- 				  &xilinx_pcie_ops, port, &res);
--	if (!bus)
--		return -ENOMEM;
-+	if (!bus) {
-+		err = -ENOMEM;
-+		goto error;
-+	}
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index ba87e03969ee..bf38df355006 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -168,7 +168,7 @@
+ 			compatible = "renesas,r8a7795-wdt", "renesas,rcar-gen3-wdt";
+ 			reg = <0 0xe6020000 0 0x0c>;
+ 			clocks = <&cpg CPG_MOD 402>;
+-			power-domains = <&cpg>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
  
- #ifdef CONFIG_PCI_MSI
- 	xilinx_pcie_msi_chip.dev = port->dev;
-@@ -712,6 +713,10 @@ static int xilinx_pcie_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, port);
- 
- 	return 0;
-+
-+error:
-+	pci_free_resource_list(&res);
-+	return err;
- }
- 
- /**
+-- 
+2.1.4
