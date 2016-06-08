@@ -1,100 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45548 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932183AbcFQLnd (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:43857 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932401AbcFHX6c (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 17 Jun 2016 07:43:33 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org, alsa-devel@alsa-project.org,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	patches@opensource.wolfsonmicro.com,
-	Peter Ujfalusi <peter.ujfalusi@ti.com>
-In-Reply-To: <1466080472-9817-3-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1bDsBF-000258-9s@debutante>
-Date: Fri, 17 Jun 2016 12:43:21 +0100
-Subject: Applied "ASoC: ak4613: Implement suspend callback" to the asoc tree
+	Wed, 8 Jun 2016 19:58:32 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/5] R-Car VSP: Add CLU support
+Date: Thu,  9 Jun 2016 02:58:11 +0300
+Message-Id: <1465430296-22644-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hello,
 
-   ASoC: ak4613: Implement suspend callback
+This patch series adds support for the Cubic Look Up table (CLU) to the vsp1
+driver.
 
-has been applied to the asoc tree at
+The first three patches are small unrelated fixes, I've included them here to
+get them review and they will be added to the next pull request for the vsp1
+driver. Patch 4/5 replaces the custom ioctl used to configure the 1D lookup
+table (LUT) by an array control, to align it with the CLU API. This isn't an
+issue as there's no user of this API with the mainline kernel.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Finally patch 5/5 adds support for the CLU, exposing the look-up table
+contents through a control. The look-up table being quite large, I will likely
+work on supporting partial control updates in the control framework at some
+point. Feel free to beat me to it.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Laurent Pinchart (5):
+  v4l: vsp1: pipe: Fix typo in comment
+  v4l: vsp1: dl: Don't free fragments with interrupts disabled
+  v4l: vsp1: lut: Initialize the mutex
+  v4l: vsp1: lut: Expose configuration through a control
+  v4l: vsp1: Add Cubic Look Up Table (CLU) support
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+ drivers/media/platform/vsp1/Makefile      |   2 +-
+ drivers/media/platform/vsp1/vsp1.h        |   3 +
+ drivers/media/platform/vsp1/vsp1_clu.c    | 276 ++++++++++++++++++++++++++++++
+ drivers/media/platform/vsp1/vsp1_clu.h    |  44 +++++
+ drivers/media/platform/vsp1/vsp1_dl.c     |  72 ++++++--
+ drivers/media/platform/vsp1/vsp1_drv.c    |  25 ++-
+ drivers/media/platform/vsp1/vsp1_entity.c |   1 +
+ drivers/media/platform/vsp1/vsp1_entity.h |   1 +
+ drivers/media/platform/vsp1/vsp1_lut.c    |  72 +++++---
+ drivers/media/platform/vsp1/vsp1_lut.h    |   6 +-
+ drivers/media/platform/vsp1/vsp1_pipe.h   |   2 +-
+ drivers/media/platform/vsp1/vsp1_regs.h   |   9 +
+ include/uapi/linux/vsp1.h                 |  34 ----
+ 13 files changed, 465 insertions(+), 82 deletions(-)
+ create mode 100644 drivers/media/platform/vsp1/vsp1_clu.c
+ create mode 100644 drivers/media/platform/vsp1/vsp1_clu.h
+ delete mode 100644 include/uapi/linux/vsp1.h
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From f9ae17ba97e0fd134f7c0108c70e708313a07063 Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Thu, 16 Jun 2016 14:34:31 +0200
-Subject: [PATCH] ASoC: ak4613: Implement suspend callback
-
-Add the suspend callback to accompany the existing resume operation.
-With the suspend/resume callbacks the regmap (regcache) state handling
-can follow the recommended sequence.
-
-Based on commit a2ebd58627e9aa48 ("ASoC: ak4642: Implement suspend
-callback") by Peter Ujfalusi <peter.ujfalusi@ti.com>.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/ak4613.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/sound/soc/codecs/ak4613.c b/sound/soc/codecs/ak4613.c
-index 5013d2ba0c10..97798d250f08 100644
---- a/sound/soc/codecs/ak4613.c
-+++ b/sound/soc/codecs/ak4613.c
-@@ -437,15 +437,25 @@ static struct snd_soc_dai_driver ak4613_dai = {
- 	.symmetric_rates = 1,
- };
- 
--static int ak4613_resume(struct snd_soc_codec *codec)
-+static int ak4613_suspend(struct snd_soc_codec *codec)
- {
- 	struct regmap *regmap = dev_get_regmap(codec->dev, NULL);
- 
-+	regcache_cache_only(regmap, true);
- 	regcache_mark_dirty(regmap);
-+	return 0;
-+}
-+
-+static int ak4613_resume(struct snd_soc_codec *codec)
-+{
-+	struct regmap *regmap = dev_get_regmap(codec->dev, NULL);
-+
-+	regcache_cache_only(regmap, false);
- 	return regcache_sync(regmap);
- }
- 
- static struct snd_soc_codec_driver soc_codec_dev_ak4613 = {
-+	.suspend		= ak4613_suspend,
- 	.resume			= ak4613_resume,
- 	.set_bias_level		= ak4613_set_bias_level,
- 	.controls		= ak4613_snd_controls,
 -- 
-2.8.1
+Regards,
+
+Laurent Pinchart
