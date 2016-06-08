@@ -1,249 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:43859 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755741AbcFHX62 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751153AbcFHA77 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 19:58:28 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 4/5] v4l: vsp1: lut: Expose configuration through a control
-Date: Thu,  9 Jun 2016 02:58:15 +0300
-Message-Id: <1465430296-22644-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1465430296-22644-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1465430296-22644-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Tue, 7 Jun 2016 20:59:59 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 4/9] arm64: dts: r8a7795: Add RWDT node
+Date: Wed,  8 Jun 2016 09:59:41 +0900
+Message-Id: <3114815f635782102fdd7f47cb270d7f59b3d98f.1465347183.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1465347183.git.horms+renesas@verge.net.au>
+References: <cover.1465347183.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Replace the custom ioctl with a V4L2 control in order to standardize the
-API.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This patch adds the RWDT device node for r8a7795.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/vsp1/vsp1_lut.c | 74 ++++++++++++++++++++++------------
- drivers/media/platform/vsp1/vsp1_lut.h |  6 +--
- include/uapi/linux/vsp1.h              | 34 ----------------
- 3 files changed, 52 insertions(+), 62 deletions(-)
- delete mode 100644 include/uapi/linux/vsp1.h
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
-index 9a2c55b3570a..4c2d1e3ddaf0 100644
---- a/drivers/media/platform/vsp1/vsp1_lut.c
-+++ b/drivers/media/platform/vsp1/vsp1_lut.c
-@@ -13,7 +13,6 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index f8c7e331fdc6..ba87e03969ee 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -164,6 +164,14 @@
+ 					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
  
- #include <linux/device.h>
- #include <linux/gfp.h>
--#include <linux/vsp1.h>
- 
- #include <media/v4l2-subdev.h>
- 
-@@ -35,43 +34,60 @@ static inline void vsp1_lut_write(struct vsp1_lut *lut, struct vsp1_dl_list *dl,
- }
- 
- /* -----------------------------------------------------------------------------
-- * V4L2 Subdevice Core Operations
-+ * Controls
-  */
- 
--static int lut_set_table(struct vsp1_lut *lut, struct vsp1_lut_config *config)
-+#define V4L2_CID_VSP1_LUT_TABLE			(V4L2_CID_USER_BASE + 1)
++		wdt0: watchdog@e6020000 {
++			compatible = "renesas,r8a7795-wdt", "renesas,rcar-gen3-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
 +
-+static int lut_set_table(struct vsp1_lut *lut, struct v4l2_ctrl *ctrl)
- {
- 	struct vsp1_dl_body *dlb;
- 	unsigned int i;
- 
--	dlb = vsp1_dl_fragment_alloc(lut->entity.vsp1, ARRAY_SIZE(config->lut));
-+	dlb = vsp1_dl_fragment_alloc(lut->entity.vsp1, 256);
- 	if (!dlb)
- 		return -ENOMEM;
- 
--	for (i = 0; i < ARRAY_SIZE(config->lut); ++i)
-+	for (i = 0; i < 256; ++i)
- 		vsp1_dl_fragment_write(dlb, VI6_LUT_TABLE + 4 * i,
--				       config->lut[i]);
-+				       ctrl->p_new.p_u32[i]);
- 
--	mutex_lock(&lut->lock);
- 	swap(lut->lut, dlb);
--	mutex_unlock(&lut->lock);
- 
- 	vsp1_dl_fragment_free(dlb);
- 	return 0;
- }
- 
--static long lut_ioctl(struct v4l2_subdev *subdev, unsigned int cmd, void *arg)
-+static int lut_s_ctrl(struct v4l2_ctrl *ctrl)
- {
--	struct vsp1_lut *lut = to_lut(subdev);
--
--	switch (cmd) {
--	case VIDIOC_VSP1_LUT_CONFIG:
--		return lut_set_table(lut, arg);
-+	struct vsp1_lut *lut =
-+		container_of(ctrl->handler, struct vsp1_lut, ctrls);
- 
--	default:
--		return -ENOIOCTLCMD;
-+	switch (ctrl->id) {
-+	case V4L2_CID_VSP1_LUT_TABLE:
-+		lut_set_table(lut, ctrl);
-+		break;
- 	}
-+
-+	return 0;
- }
- 
-+static const struct v4l2_ctrl_ops lut_ctrl_ops = {
-+	.s_ctrl = lut_s_ctrl,
-+};
-+
-+static const struct v4l2_ctrl_config lut_table_control = {
-+	.ops = &lut_ctrl_ops,
-+	.id = V4L2_CID_VSP1_LUT_TABLE,
-+	.name = "Look-Up Table",
-+	.type = V4L2_CTRL_TYPE_U32,
-+	.min = 0x00000000,
-+	.max = 0x00ffffff,
-+	.step = 1,
-+	.def = 0,
-+	.dims = { 256},
-+};
-+
- /* -----------------------------------------------------------------------------
-  * V4L2 Subdevice Pad Operations
-  */
-@@ -147,10 +163,6 @@ static int lut_set_format(struct v4l2_subdev *subdev,
-  * V4L2 Subdevice Operations
-  */
- 
--static struct v4l2_subdev_core_ops lut_core_ops = {
--	.ioctl = lut_ioctl,
--};
--
- static struct v4l2_subdev_pad_ops lut_pad_ops = {
- 	.init_cfg = vsp1_entity_init_cfg,
- 	.enum_mbus_code = lut_enum_mbus_code,
-@@ -160,7 +172,6 @@ static struct v4l2_subdev_pad_ops lut_pad_ops = {
- };
- 
- static struct v4l2_subdev_ops lut_ops = {
--	.core	= &lut_core_ops,
- 	.pad    = &lut_pad_ops,
- };
- 
-@@ -176,12 +187,14 @@ static void lut_configure(struct vsp1_entity *entity,
- 
- 	vsp1_lut_write(lut, dl, VI6_LUT_CTRL, VI6_LUT_CTRL_EN);
- 
--	mutex_lock(&lut->lock);
-+	mutex_lock(lut->ctrls.lock);
-+
- 	if (lut->lut) {
- 		vsp1_dl_list_add_fragment(dl, lut->lut);
- 		lut->lut = NULL;
- 	}
--	mutex_unlock(&lut->lock);
-+
-+	mutex_unlock(lut->ctrls.lock);
- }
- 
- static const struct vsp1_entity_operations lut_entity_ops = {
-@@ -201,8 +214,6 @@ struct vsp1_lut *vsp1_lut_create(struct vsp1_device *vsp1)
- 	if (lut == NULL)
- 		return ERR_PTR(-ENOMEM);
- 
--	mutex_init(&lut->lock);
--
- 	lut->entity.ops = &lut_entity_ops;
- 	lut->entity.type = VSP1_ENTITY_LUT;
- 
-@@ -211,5 +222,18 @@ struct vsp1_lut *vsp1_lut_create(struct vsp1_device *vsp1)
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
-+	/* Initialize the control handler. */
-+	v4l2_ctrl_handler_init(&lut->ctrls, 1);
-+	v4l2_ctrl_new_custom(&lut->ctrls, &lut_table_control, NULL);
-+
-+	lut->entity.subdev.ctrl_handler = &lut->ctrls;
-+
-+	if (lut->ctrls.error) {
-+		dev_err(vsp1->dev, "lut: failed to initialize controls\n");
-+		ret = lut->ctrls.error;
-+		vsp1_entity_destroy(&lut->entity);
-+		return ERR_PTR(ret);
-+	}
-+
- 	return lut;
- }
-diff --git a/drivers/media/platform/vsp1/vsp1_lut.h b/drivers/media/platform/vsp1/vsp1_lut.h
-index cef874f22b6a..021898fc0ce5 100644
---- a/drivers/media/platform/vsp1/vsp1_lut.h
-+++ b/drivers/media/platform/vsp1/vsp1_lut.h
-@@ -13,9 +13,8 @@
- #ifndef __VSP1_LUT_H__
- #define __VSP1_LUT_H__
- 
--#include <linux/mutex.h>
--
- #include <media/media-entity.h>
-+#include <media/v4l2-ctrls.h>
- #include <media/v4l2-subdev.h>
- 
- #include "vsp1_entity.h"
-@@ -28,7 +27,8 @@ struct vsp1_device;
- struct vsp1_lut {
- 	struct vsp1_entity entity;
- 
--	struct mutex lock;
-+	struct v4l2_ctrl_handler ctrls;
-+
- 	struct vsp1_dl_body *lut;
- };
- 
-diff --git a/include/uapi/linux/vsp1.h b/include/uapi/linux/vsp1.h
-deleted file mode 100644
-index 9a823696d816..000000000000
---- a/include/uapi/linux/vsp1.h
-+++ /dev/null
-@@ -1,34 +0,0 @@
--/*
-- * vsp1.h
-- *
-- * Renesas R-Car VSP1 - User-space API
-- *
-- * Copyright (C) 2013 Renesas Corporation
-- *
-- * Contacts: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--
--#ifndef __VSP1_USER_H__
--#define __VSP1_USER_H__
--
--#include <linux/types.h>
--#include <linux/videodev2.h>
--
--/*
-- * Private IOCTLs
-- *
-- * VIDIOC_VSP1_LUT_CONFIG - Configure the lookup table
-- */
--
--#define VIDIOC_VSP1_LUT_CONFIG \
--	_IOWR('V', BASE_VIDIOC_PRIVATE + 1, struct vsp1_lut_config)
--
--struct vsp1_lut_config {
--	__u32 lut[256];
--};
--
--#endif	/* __VSP1_USER_H__ */
+ 		gpio0: gpio@e6050000 {
+ 			compatible = "renesas,gpio-r8a7795",
+ 				     "renesas,gpio-rcar";
 -- 
-Regards,
-
-Laurent Pinchart
+2.1.4
