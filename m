@@ -1,60 +1,142 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v3 14/22] clk: renesas: r8a7795: Obtain mode pin values from R-Car RST driver
-Date: Wed,  1 Jun 2016 21:21:12 +0200
-Message-Id: <1464808880-343-15-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:35378 "EHLO
+	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754384AbcFHVag (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 8 Jun 2016 17:30:36 -0400
+Received: by mail-lf0-f45.google.com with SMTP id u74so14250921lff.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2016 14:30:35 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
+	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 08/12] ARM: dts: r8a7792: add [H]SCIF support
+Date: Thu, 09 Jun 2016 00:30:32 +0300
+Message-ID: <1501151.qkMbIJd7GW@wasted.cogentembedded.com>
+In-Reply-To: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+References: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Obtain the values of the mode pins from the R-Car RST driver, which
-relies on the presence in DT of a device node for the RST module.
+Describe [H]SCIFs in the R8A7792 device tree.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - New.
----
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index e53aff5b23ad4967..e1f2359a59feee7e 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -15,6 +15,7 @@
- #include <linux/device.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-+#include <linux/soc/renesas/rcar-rst.h>
+---
+Changes in version 3:
+- refreshed the patch.
+
+Changes in version 2:
+- resolved reject, indenting the device nodes that are now under the "soc" node;
+- added Geert's tag.
+
+ arch/arm/boot/dts/r8a7792.dtsi |   90 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -152,6 +152,96 @@
+ 			dma-channels = <15>;
+ 		};
  
- #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
- 
-@@ -294,7 +295,12 @@ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
- static int __init r8a7795_cpg_mssr_init(struct device *dev)
- {
- 	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
--	u32 cpg_mode = rcar_gen3_read_mode_pins();
-+	u32 cpg_mode;
-+	int error;
++		scif0: serial@e6e60000 {
++			compatible = "renesas,scif-r8a7792",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6e60000 0 64>;
++			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7792_CLK_SCIF0>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
++			       <&dmac1 0x29>, <&dmac1 0x2a>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
 +
-+	error = rcar_rst_read_mode_pins(&cpg_mode);
-+	if (error)
-+		return error;
- 
- 	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
- 	if (!cpg_pll_config->extal_div) {
--- 
-1.9.1
-
++		scif1: serial@e6e68000 {
++			compatible = "renesas,scif-r8a7792",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6e68000 0 64>;
++			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7792_CLK_SCIF1>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
++			       <&dmac1 0x2d>, <&dmac1 0x2e>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif2: serial@e6e58000 {
++			compatible = "renesas,scif-r8a7792",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6e58000 0 64>;
++			interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7792_CLK_SCIF2>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
++			       <&dmac1 0x2b>, <&dmac1 0x2c>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif3: serial@e6ea8000 {
++			compatible = "renesas,scif-r8a7792",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6ea8000 0 64>;
++			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7792_CLK_SCIF3>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
++			       <&dmac1 0x2f>, <&dmac1 0x30>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		hscif0: serial@e62c0000 {
++			compatible = "renesas,hscif-r8a7792",
++				     "renesas,rcar-gen2-hscif", "renesas,hscif";
++			reg = <0 0xe62c0000 0 96>;
++			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7792_CLK_HSCIF0>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
++			       <&dmac1 0x39>, <&dmac1 0x3a>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		hscif1: serial@e62c8000 {
++			compatible = "renesas,hscif-r8a7792",
++				     "renesas,rcar-gen2-hscif", "renesas,hscif";
++			reg = <0 0xe62c8000 0 96>;
++			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7792_CLK_HSCIF1>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
++			       <&dmac1 0x4d>, <&dmac1 0x4e>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
+ 		/* Special CPG clocks */
+ 		cpg_clocks: cpg_clocks@e6150000 {
+ 			compatible = "renesas,r8a7792-cpg-clocks",
