@@ -1,118 +1,391 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52953 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753946AbcFTTLx (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752089AbcFHBAW (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 20 Jun 2016 15:11:53 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 05/24] media: Add video processing entity functions
-Date: Mon, 20 Jun 2016 22:10:23 +0300
-Message-Id: <1466449842-29502-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Tue, 7 Jun 2016 21:00:22 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 06/30] ARM: dts: r8a7791: Reference both DMA controllers
+Date: Wed,  8 Jun 2016 09:59:36 +0900
+Message-Id: <4aed4c9f01e1112d88ec82e666febe49715e5f33.1465346599.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1465346599.git.horms+renesas@verge.net.au>
+References: <cover.1465346599.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add composer, pixel formatter, pixel encoding converter and scaler
-functions.
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+R-Car Gen2 have two DMA controllers, which are equivalent. Add
+references to both dmac0 and dmac1 so the driver can choose which one to
+use.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/DocBook/media/v4l/media-types.xml | 55 +++++++++++++++++++++++++
- include/uapi/linux/media.h                      |  9 ++++
- 2 files changed, 64 insertions(+)
+ arch/arm/boot/dts/r8a7791.dtsi | 145 ++++++++++++++++++++++++-----------------
+ 1 file changed, 87 insertions(+), 58 deletions(-)
 
-diff --git a/Documentation/DocBook/media/v4l/media-types.xml b/Documentation/DocBook/media/v4l/media-types.xml
-index 5e3f20fdcf17..60fe841f8846 100644
---- a/Documentation/DocBook/media/v4l/media-types.xml
-+++ b/Documentation/DocBook/media/v4l/media-types.xml
-@@ -121,6 +121,61 @@
- 	    <entry><constant>MEDIA_ENT_F_AUDIO_MIXER</constant></entry>
- 	    <entry>Audio Mixer Function Entity.</entry>
- 	  </row>
-+	  <row>
-+	    <entry><constant>MEDIA_ENT_F_PROC_VIDEO_COMPOSER</constant></entry>
-+	    <entry>Video composer (blender). An entity capable of video
-+		   composing must have at least two sink pads and one source
-+		   pad, and composes input video frames onto output video
-+		   frames. Composition can be performed using alpha blending,
-+		   color keying, raster operations (ROP), stitching or any other
-+		   means.
-+	    </entry>
-+	  </row>
-+	  <row>
-+	    <entry><constant>MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER</constant></entry>
-+	    <entry>Video pixel formatter. An entity capable of pixel formatting
-+		   must have at least one sink pad and one source pad. Read
-+		   pixel formatters read pixels from memory and perform a subset
-+		   of unpacking, cropping, color keying, alpha multiplication
-+		   and pixel encoding conversion. Write pixel formatters perform
-+		   a subset of dithering, pixel encoding conversion and packing
-+		   and write pixels to memory.
-+	    </entry>
-+	  </row>
-+	  <row>
-+	    <entry><constant>MEDIA_ENT_F_PROC_VIDEO_PIXEL_ENC_CONV</constant></entry>
-+	    <entry>Video pixel encoding converter. An entity capable of pixel
-+		   enconding conversion must have at least one sink pad and one
-+		   source pad, and convert the encoding of pixels received on
-+		   its sink pad(s) to a different encoding output on its source
-+		   pad(s). Pixel encoding conversion includes but isn't limited
-+		   to RGB to/from HSV, RGB to/from YUV and CFA (Bayer) to RGB
-+		   conversions.
-+	    </entry>
-+	  </row>
-+	  <row>
-+	    <entry><constant>MEDIA_ENT_F_PROC_VIDEO_LUT</constant></entry>
-+	    <entry>Video look-up table. An entity capable of video lookup table
-+		   processing must have one sink pad and one source pad. It uses
-+		   the values of the pixels received on its sink pad to look up
-+		   entries in internal tables and output them on its source pad.
-+		   The lookup processing can be performed on all components
-+		   separately or combine them for multi-dimensional table
-+		   lookups.
-+	    </entry>
-+	  </row>
-+	  <row>
-+	    <entry><constant>MEDIA_ENT_F_PROC_VIDEO_SCALER</constant></entry>
-+	    <entry>Video scaler. An entity capable of video scaling must have
-+		   at least one sink pad and one source pad, and scale the
-+		   video frame(s) received on its sink pad(s) to a different
-+		   resolution output on its source pad(s). The range of
-+		   supported scaling ratios is entity-specific and can differ
-+		   between the horizontal and vertical directions (in particular
-+		   scaling can be supported in one direction only). Binning and
-+		   skipping are considered as scaling.
-+	    </entry>
-+	  </row>
- 	</tbody>
-       </tgroup>
-     </table>
-diff --git a/include/uapi/linux/media.h b/include/uapi/linux/media.h
-index df59edee25d1..3136686c4bd0 100644
---- a/include/uapi/linux/media.h
-+++ b/include/uapi/linux/media.h
-@@ -95,6 +95,15 @@ struct media_device_info {
- #define MEDIA_ENT_F_AUDIO_MIXER		(MEDIA_ENT_F_BASE + 0x03003)
- 
- /*
-+ * Processing entities
-+ */
-+#define MEDIA_ENT_F_PROC_VIDEO_COMPOSER		(MEDIA_ENT_F_BASE + 0x4001)
-+#define MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER	(MEDIA_ENT_F_BASE + 0x4002)
-+#define MEDIA_ENT_F_PROC_VIDEO_PIXEL_ENC_CONV	(MEDIA_ENT_F_BASE + 0x4003)
-+#define MEDIA_ENT_F_PROC_VIDEO_LUT		(MEDIA_ENT_F_BASE + 0x4004)
-+#define MEDIA_ENT_F_PROC_VIDEO_SCALER		(MEDIA_ENT_F_BASE + 0x4005)
-+
-+/*
-  * Connectors
-  */
- /* It is a responsibility of the entity drivers to add connectors and links */
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index db67e342c585..2f924146d381 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -514,8 +514,9 @@
+ 		reg = <0 0xe60b0000 0 0x425>;
+ 		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7791_CLK_IICDVFS>;
+-		dmas = <&dmac0 0x77>, <&dmac0 0x78>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x77>, <&dmac0 0x78>,
++		       <&dmac1 0x77>, <&dmac1 0x78>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -527,8 +528,9 @@
+ 		reg = <0 0xe6500000 0 0x425>;
+ 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7791_CLK_IIC0>;
+-		dmas = <&dmac0 0x61>, <&dmac0 0x62>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x61>, <&dmac0 0x62>,
++		       <&dmac1 0x61>, <&dmac1 0x62>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -540,8 +542,9 @@
+ 		reg = <0 0xe6510000 0 0x425>;
+ 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7791_CLK_IIC1>;
+-		dmas = <&dmac0 0x65>, <&dmac0 0x66>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x65>, <&dmac0 0x66>,
++		       <&dmac1 0x65>, <&dmac1 0x66>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -556,8 +559,9 @@
+ 		reg = <0 0xee200000 0 0x80>;
+ 		interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7791_CLK_MMCIF0>;
+-		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
++		       <&dmac1 0xd1>, <&dmac1 0xd2>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		reg-io-width = <4>;
+ 		status = "disabled";
+@@ -569,8 +573,9 @@
+ 		reg = <0 0xee100000 0 0x328>;
+ 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7791_CLK_SDHI0>;
+-		dmas = <&dmac1 0xcd>, <&dmac1 0xce>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
++		       <&dmac1 0xcd>, <&dmac1 0xce>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -580,8 +585,9 @@
+ 		reg = <0 0xee140000 0 0x100>;
+ 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7791_CLK_SDHI1>;
+-		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0xc1>, <&dmac0 0xc2>,
++		       <&dmac1 0xc1>, <&dmac1 0xc2>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -591,8 +597,9 @@
+ 		reg = <0 0xee160000 0 0x100>;
+ 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7791_CLK_SDHI2>;
+-		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
++		       <&dmac1 0xd3>, <&dmac1 0xd4>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -604,8 +611,9 @@
+ 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA0>;
+ 		clock-names = "fck";
+-		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x21>, <&dmac0 0x22>,
++		       <&dmac1 0x21>, <&dmac1 0x22>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -617,8 +625,9 @@
+ 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA1>;
+ 		clock-names = "fck";
+-		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x25>, <&dmac0 0x26>,
++		       <&dmac1 0x25>, <&dmac1 0x26>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -630,8 +639,9 @@
+ 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA2>;
+ 		clock-names = "fck";
+-		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x27>, <&dmac0 0x28>,
++		       <&dmac1 0x27>, <&dmac1 0x28>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -643,8 +653,9 @@
+ 		interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA3>;
+ 		clock-names = "fck";
+-		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>,
++		       <&dmac1 0x1b>, <&dmac1 0x1c>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -656,8 +667,9 @@
+ 		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA4>;
+ 		clock-names = "fck";
+-		dmas = <&dmac0 0x1f>, <&dmac0 0x20>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x1f>, <&dmac0 0x20>,
++		       <&dmac1 0x1f>, <&dmac1 0x20>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -669,8 +681,9 @@
+ 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA5>;
+ 		clock-names = "fck";
+-		dmas = <&dmac0 0x23>, <&dmac0 0x24>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x23>, <&dmac0 0x24>,
++		       <&dmac1 0x23>, <&dmac1 0x24>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -682,8 +695,9 @@
+ 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB0>;
+ 		clock-names = "fck";
+-		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
++		       <&dmac1 0x3d>, <&dmac1 0x3e>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -695,8 +709,9 @@
+ 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB1>;
+ 		clock-names = "fck";
+-		dmas = <&dmac0 0x19>, <&dmac0 0x1a>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x19>, <&dmac0 0x1a>,
++		       <&dmac1 0x19>, <&dmac1 0x1a>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -708,8 +723,9 @@
+ 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB2>;
+ 		clock-names = "fck";
+-		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>,
++		       <&dmac1 0x1d>, <&dmac1 0x1e>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -722,8 +738,9 @@
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF0>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
++		       <&dmac1 0x29>, <&dmac1 0x2a>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -736,8 +753,9 @@
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF1>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
++		       <&dmac1 0x2d>, <&dmac1 0x2e>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -750,8 +768,9 @@
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF2>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
++		       <&dmac1 0x2b>, <&dmac1 0x2c>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -764,8 +783,9 @@
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF3>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x2f>, <&dmac0 0x30>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
++		       <&dmac1 0x2f>, <&dmac1 0x30>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -778,8 +798,9 @@
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF4>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
++		       <&dmac1 0xfb>, <&dmac1 0xfc>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -792,8 +813,9 @@
+ 		clocks = <&mstp7_clks R8A7791_CLK_SCIF5>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
++		       <&dmac1 0xfd>, <&dmac1 0xfe>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -806,8 +828,9 @@
+ 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF0>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
++		       <&dmac1 0x39>, <&dmac1 0x3a>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -820,8 +843,9 @@
+ 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF1>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
++		       <&dmac1 0x4d>, <&dmac1 0x4e>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -834,8 +858,9 @@
+ 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF2>, <&zs_clk>,
+ 			 <&scif_clk>;
+ 		clock-names = "fck", "brg_int", "scif_clk";
+-		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>,
++		       <&dmac1 0x3b>, <&dmac1 0x3c>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		status = "disabled";
+ 	};
+@@ -1478,8 +1503,9 @@
+ 		reg = <0 0xe6b10000 0 0x2c>;
+ 		interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp9_clks R8A7791_CLK_QSPI_MOD>;
+-		dmas = <&dmac0 0x17>, <&dmac0 0x18>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x17>, <&dmac0 0x18>,
++		       <&dmac1 0x17>, <&dmac1 0x18>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		num-cs = <1>;
+ 		#address-cells = <1>;
+@@ -1492,8 +1518,9 @@
+ 		reg = <0 0xe6e20000 0 0x0064>;
+ 		interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7791_CLK_MSIOF0>;
+-		dmas = <&dmac0 0x51>, <&dmac0 0x52>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x51>, <&dmac0 0x52>,
++		       <&dmac1 0x51>, <&dmac1 0x52>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -1505,8 +1532,9 @@
+ 		reg = <0 0xe6e10000 0 0x0064>;
+ 		interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_MSIOF1>;
+-		dmas = <&dmac0 0x55>, <&dmac0 0x56>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x55>, <&dmac0 0x56>,
++		       <&dmac1 0x55>, <&dmac1 0x56>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -1518,8 +1546,9 @@
+ 		reg = <0 0xe6e00000 0 0x0064>;
+ 		interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_MSIOF2>;
+-		dmas = <&dmac0 0x41>, <&dmac0 0x42>;
+-		dma-names = "tx", "rx";
++		dmas = <&dmac0 0x41>, <&dmac0 0x42>,
++		       <&dmac1 0x41>, <&dmac1 0x42>;
++		dma-names = "tx", "rx", "tx", "rx";
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
-Regards,
-
-Laurent Pinchart
+2.1.4
