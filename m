@@ -1,61 +1,52 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:34439 "EHLO
-	mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750900AbcFJGz7 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 02:55:59 -0400
-MIME-Version: 1.0
-In-Reply-To: <20160608071737.7560.32571.sendpatchset@little-apple>
-References: <20160608071737.7560.32571.sendpatchset@little-apple>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 10 Jun 2016 08:55:58 +0200
-Message-ID: <CAMuHMdVuvg+hUL32SxXaqxXiPV=ZnRPuCLrm8CoW+1TZe-jT=g@mail.gmail.com>
-Subject: Re: [PATCH v4 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V4
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: iommu@lists.linux-foundation.org,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Joerg Roedel <joro@8bytes.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+	m.szyprowski@samsung.com
+Date: Wed, 08 Jun 2016 16:17:37 +0900
+Message-Id: <20160608071737.7560.32571.sendpatchset@little-apple>
+Subject: [PATCH v4 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V4
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Magnus,
+iommu/ipmmu-vmsa: IPMMU multi-arch update V4
 
-On Wed, Jun 8, 2016 at 9:17 AM, Magnus Damm <magnus.damm@gmail.com> wrote:
-> iommu/ipmmu-vmsa: IPMMU multi-arch update V4
->
-> [PATCH v4 01/07] iommu/ipmmu-vmsa: Remove platform data handling
-> [PATCH v4 02/07] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
-> [PATCH v4 03/07] iommu/ipmmu-vmsa: Break out utlb parsing code
-> [PATCH v4 04/07] iommu/ipmmu-vmsa: Break out domain allocation code
-> [PATCH v4 05/07] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
-> [PATCH v4 06/07] iommu/ipmmu-vmsa: ARM and ARM64 archdata access
-> [PATCH v4 07/07] iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
->
-> These patches update the IPMMU driver with a couple of changes
-> to support build on multiple architectures. In the process of
-> doing so the interrupt code gets reworked and the foundation
-> for supporting multiple contexts are added.
+[PATCH v4 01/07] iommu/ipmmu-vmsa: Remove platform data handling
+[PATCH v4 02/07] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
+[PATCH v4 03/07] iommu/ipmmu-vmsa: Break out utlb parsing code
+[PATCH v4 04/07] iommu/ipmmu-vmsa: Break out domain allocation code
+[PATCH v4 05/07] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
+[PATCH v4 06/07] iommu/ipmmu-vmsa: ARM and ARM64 archdata access
+[PATCH v4 07/07] iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
 
-Thanks for your series!
+These patches update the IPMMU driver with a couple of changes
+to support build on multiple architectures. In the process of
+doing so the interrupt code gets reworked and the foundation
+for supporting multiple contexts are added.
 
-For your convenience, I've queued it up in topic/ipmmu-multi-arch-v4 at
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git, and
-will include it in next renesas-drivers release.
+Changes since V3:
+ - Updated patch 3/7 to fix hang-on-boot issue on 32-bit ARM - thanks Geert!
+ - Reworked group parameter handling in patch 3/7 and 5/7.
+ - Added patch 6/7 to fix build of the driver on s390/tile/um architectures
 
-Gr{oetje,eeting}s,
+Changes since V2:
+ - Got rid of patch 3 from the V2 however patch 1, 2 and 4 are kept.
+ - V3 patch 3, 4 and 5 come from
+   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
+ - Patch 5 has been reworked to include patch 3 of the V1 of this series 
 
-                        Geert
+Changes since V1:
+ - Got rid of patch 2 and 3 from initial series
+ - Updated bitmap code locking and also used lighter bitop functions
+ - Updated the Kconfig bits to apply on top of ARCH_RENESAS
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ drivers/iommu/Kconfig      |    1 
+ drivers/iommu/ipmmu-vmsa.c |  302 +++++++++++++++++++++++++++++++++++---------
+ 2 files changed, 243 insertions(+), 60 deletions(-)
