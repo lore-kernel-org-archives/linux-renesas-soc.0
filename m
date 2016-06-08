@@ -1,44 +1,47 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Sender: Kieran Bingham <kieran@ksquared.org.uk>
-From: Kieran Bingham <kieran@bingham.xyz>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-media@vger.kernel.org (open list:MEDIA DRIVERS FOR RENESAS - FCP),
-	linux-renesas-soc@vger.kernel.org (open list:MEDIA DRIVERS FOR RENESAS - FCP),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Kieran Bingham <kieran@bingham.xyz>
-Subject: [PATCH 2/3] dt-bindings: Document Renesas R-Car FCP power-domains usage
-Date: Thu,  9 Jun 2016 14:41:33 +0100
-Message-Id: <1465479695-18644-3-git-send-email-kieran@bingham.xyz>
-In-Reply-To: <1465479695-18644-1-git-send-email-kieran@bingham.xyz>
-References: <1465479695-18644-1-git-send-email-kieran@bingham.xyz>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751684AbcFHBAP (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 7 Jun 2016 21:00:15 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/30] ARM: dts: kzm9g: SCIFA4 supports RTS/CTS hardware flow control
+Date: Wed,  8 Jun 2016 09:59:33 +0900
+Message-Id: <d5bb5dcc584109323c4305e5e2a570aa1fa974ce.1465346599.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1465346599.git.horms+renesas@verge.net.au>
+References: <cover.1465346599.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The power domain must be specified to bring the device out of module
-standby. Document this in the example provided, so that new additions
-are not missed.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+On the KZM-A9-GT development board, the RTS and CTS pins of the debug
+console SCIFA4 are wired to the CP2102 Serial-USB bridge.  Reflect
+this in the DTS by adding the "uart-has-rtscts" property to the scifa4
+device node.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/media/renesas,fcp.txt | 1 +
+ arch/arm/boot/dts/sh73a0-kzm9g.dts | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-index 271dcfdb5a76..6a55f5215221 100644
---- a/Documentation/devicetree/bindings/media/renesas,fcp.txt
-+++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-@@ -31,4 +31,5 @@ Device node example
- 		compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
- 		reg = <0 0xfea2f000 0 0x200>;
- 		clocks = <&cpg CPG_MOD 602>;
-+		power-domains = <&sysc R8A7795_PD_A3VP>;
- 	};
+diff --git a/arch/arm/boot/dts/sh73a0-kzm9g.dts b/arch/arm/boot/dts/sh73a0-kzm9g.dts
+index c2d8a080e392..9881adf1734e 100644
+--- a/arch/arm/boot/dts/sh73a0-kzm9g.dts
++++ b/arch/arm/boot/dts/sh73a0-kzm9g.dts
+@@ -378,6 +378,7 @@
+ 	pinctrl-0 = <&scifa4_pins>;
+ 	pinctrl-names = "default";
+ 
++	uart-has-rtscts;
+ 	status = "okay";
+ };
+ 
 -- 
-2.7.4
+2.1.4
