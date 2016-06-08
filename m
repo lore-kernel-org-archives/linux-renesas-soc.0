@@ -1,46 +1,46 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Sender: Kieran Bingham <kieran@ksquared.org.uk>
-From: Kieran Bingham <kieran@bingham.xyz>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Kieran Bingham <kieran@bingham.xyz>
-Subject: [RESEND PATCH 0/2] arm64: dts: r8a7795: Add FCPF and FDP1 device nodes
-Date: Thu,  9 Jun 2016 17:56:56 +0100
-Message-Id: <1465491418-32752-1-git-send-email-kieran@bingham.xyz>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:33170 "EHLO
+	mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1425758AbcFHVBg (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 8 Jun 2016 17:01:36 -0400
+Received: by mail-lf0-f43.google.com with SMTP id s64so13833530lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2016 14:01:36 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 00/12] Add R8A7792/Blanche board support
+Date: Thu, 09 Jun 2016 00:01:32 +0300
+Message-ID: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Appologies for the resend, I very cleverly sent this cover letter detailing the
-dependencies only to my e-mail address. And I already know the dependencies!
+Hello.
 
-Following two patches are the same, sorry for the noise.
+   Here's the set of 12 patches against Simon Horman's 'renesas.git' repo,
+'renesas-devel-20160606-v4.7-rc2' tag. We add the device tree support for
+the R8A7792-based Blanche board. Added in this version is the SMP support.
+The R-Car 'clk' driver patch was posted separately and 2 'clk' binding patches
+were split from this series...
 
-These are dependent upon the FCP bindings from Laurent [0], and the FCPF
-update to those bindings from me [1], and of course the bindings for the
-FDP1 [2] which are all posted separately.
+[01/12] ARM: shmobile: r8a7792: add clock index macros
+[02/12] ARM: shmobile: r8a7792: add power domain index macros
+[03/12] soc: renesas: rcar-sysc: add R8A7792 support
+[04/12] ARM: shmobile: r8a7792: basic SoC support
+[05/12] ARM: shmobile: r8a7792: add SMP support
+[06/12] ARM: dts: r8a7792: initial SoC device tree
+[07/12] ARM: dts: r8a7792: add SYS-DMAC support
+[08/12] ARM: dts: r8a7792: add [H]SCIF support
+[09/12] ARM dts: r8a7792: add IRQC support
+[10/12] DT: arm: shmobile: document Blanche board
+[11/12] ARM: dts: blanche: initial device tree
+[12/12] ARM: dts: blanche: add Ethernet support
 
-[0] http://www.spinics.net/lists/devicetree/msg123968.html
-[1] https://lkml.org/lkml/2016/6/9/291
-[2] https://lkml.org/lkml/2016/6/9/294
-
-Kieran Bingham (2):
-  arm64: dts: r8a7795: add FCPF device nodes
-  arm64: dts: r8a7795: add FDP1 device nodes
-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 48 ++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
-
--- 
-2.7.4
+WBR, Sergei
