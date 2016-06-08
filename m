@@ -1,84 +1,94 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: [PATCH v1 25/25] PCI: versatile: Simplify host bridge window
- iteration
-To: linux-pci@vger.kernel.org
-From: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Herring <robh@kernel.org>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Pratyush Anand <pratyush.anand@gmail.com>,
-	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
+Subject: Re: [PATCH v2 07/20] drm: mediatek: Rely on the default
+ ->best_encoder() behavior
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>
+References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1465300095-16971-8-git-send-email-boris.brezillon@free-electrons.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
-	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
-	Michal Simek <michal.simek@xilinx.com>,
-	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
-	linux-arm-kernel@lists.infradead.org
-Date: Mon, 06 Jun 2016 18:07:51 -0500
-Message-ID: <20160606230751.20936.38789.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	virtualization@lists.linux-foundation.org
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <5757FEB3.8050001@gmail.com>
+Date: Wed, 8 Jun 2016 13:17:07 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <1465300095-16971-8-git-send-email-boris.brezillon@free-electrons.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The switch is the only statement in the resource_list_for_each_entry()
-loop, so remove unnecessary "continue" statements in the switch.  Simplify
-checking for the required non-prefetchable memory aperture.
 
-No functional change intended.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/host/pci-versatile.c |   17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+On 07/06/16 13:48, Boris Brezillon wrote:
+> We have a 1:1 relationship between connectors and encoders and the
+> driver is relying on the atomic helpers: we can drop the custom
+> ->best_encoder() implementation and let the core call
+> drm_atomic_helper_best_encoder() for us.
+>
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-diff --git a/drivers/pci/host/pci-versatile.c b/drivers/pci/host/pci-versatile.c
-index 273edac..f2344057 100644
---- a/drivers/pci/host/pci-versatile.c
-+++ b/drivers/pci/host/pci-versatile.c
-@@ -90,11 +90,9 @@ static int versatile_pci_parse_request_of_pci_ranges(struct device *dev,
- 		switch (resource_type(res)) {
- 		case IORESOURCE_IO:
- 			err = pci_remap_iospace(res, iobase);
--			if (err) {
-+			if (err)
- 				dev_warn(dev, "error %d: failed to map resource %pR\n",
- 					 err, res);
--				continue;
--			}
- 			break;
- 		case IORESOURCE_MEM:
- 			res_valid |= !(res->flags & IORESOURCE_PREFETCH);
-@@ -104,19 +102,14 @@ static int versatile_pci_parse_request_of_pci_ranges(struct device *dev,
- 			mem++;
- 
- 			break;
--		case IORESOURCE_BUS:
--		default:
--			continue;
- 		}
- 	}
- 
--	if (!res_valid) {
--		dev_err(dev, "non-prefetchable memory resource required\n");
--		err = -EINVAL;
--		goto out_release_res;
--	}
-+	if (res_valid)
-+		return 0;
- 
--	return 0;
-+	dev_err(dev, "non-prefetchable memory resource required\n");
-+	err = -EINVAL;
- 
- out_release_res:
- 	pci_free_resource_list(res);
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+
+> ---
+>   drivers/gpu/drm/mediatek/mtk_dsi.c | 9 ---------
+>   1 file changed, 9 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> index 2d808e5..7343ffc 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> @@ -575,14 +575,6 @@ static int mtk_dsi_connector_get_modes(struct drm_connector *connector)
+>   	return drm_panel_get_modes(dsi->panel);
+>   }
+>
+> -static struct drm_encoder *mtk_dsi_connector_best_encoder(
+> -		struct drm_connector *connector)
+> -{
+> -	struct mtk_dsi *dsi = connector_to_dsi(connector);
+> -
+> -	return &dsi->encoder;
+> -}
+> -
+>   static const struct drm_encoder_helper_funcs mtk_dsi_encoder_helper_funcs = {
+>   	.mode_fixup = mtk_dsi_encoder_mode_fixup,
+>   	.mode_set = mtk_dsi_encoder_mode_set,
+> @@ -603,7 +595,6 @@ static const struct drm_connector_funcs mtk_dsi_connector_funcs = {
+>   static const struct drm_connector_helper_funcs
+>   	mtk_dsi_connector_helper_funcs = {
+>   	.get_modes = mtk_dsi_connector_get_modes,
+> -	.best_encoder = mtk_dsi_connector_best_encoder,
+>   };
+>
+>   static int mtk_drm_attach_bridge(struct drm_bridge *bridge,
+>
