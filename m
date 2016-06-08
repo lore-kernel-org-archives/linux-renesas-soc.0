@@ -1,71 +1,55 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:37824 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751570AbcFATV1 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 15:21:27 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v3 20/22] clk: renesas: r8a7778: Remove obsolete r8a7778_clocks_init()
-Date: Wed,  1 Jun 2016 21:21:18 +0200
-Message-Id: <1464808880-343-21-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: iommu@lists.linux-foundation.org,
+	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	joro@8bytes.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+Subject: Re: [PATCH 1/3] iommu/ipmmu-vmsa: Add r8a7796 DT binding
+Date: Wed, 08 Jun 2016 03:17:34 +0300
+Message-ID: <1576781.gBe1LZDnOQ@avalon>
+In-Reply-To: <20160607033927.28687.67122.sendpatchset@little-apple>
+References: <20160607033918.28687.98260.sendpatchset@little-apple> <20160607033927.28687.67122.sendpatchset@little-apple>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car M1A board code no longer calls r8a7778_clocks_init().
+Hi Magnus,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - New.
----
- drivers/clk/renesas/clk-r8a7778.c | 13 -------------
- include/linux/clk/renesas.h       |  1 -
- 2 files changed, 14 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/clk/renesas/clk-r8a7778.c b/drivers/clk/renesas/clk-r8a7778.c
-index 07ea411098a75ad1..886a8380e91247a1 100644
---- a/drivers/clk/renesas/clk-r8a7778.c
-+++ b/drivers/clk/renesas/clk-r8a7778.c
-@@ -143,16 +143,3 @@ static void __init r8a7778_cpg_clocks_init(struct device_node *np)
- 
- CLK_OF_DECLARE(r8a7778_cpg_clks, "renesas,r8a7778-cpg-clocks",
- 	       r8a7778_cpg_clocks_init);
--
--void __init r8a7778_clocks_init(u32 mode)
--{
--	BUG_ON(!(mode & BIT(19)));
--
--	cpg_mode_rates = (!!(mode & BIT(18)) << 2) |
--			 (!!(mode & BIT(12)) << 1) |
--			 (!!(mode & BIT(11)));
--	cpg_mode_divs = (!!(mode & BIT(2)) << 1) |
--			(!!(mode & BIT(1)));
--
--	of_clk_init(NULL);
--}
-diff --git a/include/linux/clk/renesas.h b/include/linux/clk/renesas.h
-index ba6fa4148515e5c9..2b663bba1adcc7c1 100644
---- a/include/linux/clk/renesas.h
-+++ b/include/linux/clk/renesas.h
-@@ -20,7 +20,6 @@ struct device;
- struct device_node;
- struct generic_pm_domain;
- 
--void r8a7778_clocks_init(u32 mode);
- void r8a7779_clocks_init(u32 mode);
- void rcar_gen2_clocks_init(u32 mode);
- 
+On Tuesday 07 Jun 2016 12:39:27 Magnus Damm wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+> 
+> Update the IPMMU DT binding documentation to include the r8a7796 compat
+> string for R-Car M3-W.
+> 
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+> 
+>  Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- 0001/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
+> +++
+> work/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt	
+2016-06
+> -06 11:27:37.560607110 +0900 @@ -16,6 +16,7 @@ Required Properties:
+>      - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
+>      - "renesas,ipmmu-r8a7794" for the R8A7794 (R-Car E2) IPMMU.
+>      - "renesas,ipmmu-r8a7795" for the R8A7795 (R-Car H3) IPMMU.
+> +    - "renesas,ipmmu-r8a7796" for the R8A7796 (R-Car M3-W) IPMMU.
+>      - "renesas,ipmmu-vmsa" for generic R-Car Gen2 VMSA-compatible IPMMU.
+> 
+>    - reg: Base address and size of the IPMMU registers.
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
