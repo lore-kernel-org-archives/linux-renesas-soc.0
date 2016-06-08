@@ -1,55 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751153AbcFHA77 (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:34854 "EHLO
+	mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932354AbcFHVge (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 20:59:59 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/9] arm64: dts: r8a7795: Add RWDT node
-Date: Wed,  8 Jun 2016 09:59:41 +0900
-Message-Id: <3114815f635782102fdd7f47cb270d7f59b3d98f.1465347183.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1465347183.git.horms+renesas@verge.net.au>
-References: <cover.1465347183.git.horms+renesas@verge.net.au>
+	Wed, 8 Jun 2016 17:36:34 -0400
+Received: by mail-lf0-f54.google.com with SMTP id u74so14328641lff.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2016 14:36:34 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 12/12] ARM: dts: blanche: add Ethernet support
+Date: Thu, 09 Jun 2016 00:36:31 +0300
+Message-ID: <1684757.OTRo8llZyo@wasted.cogentembedded.com>
+In-Reply-To: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+References: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+R8A7792  SoC  doesn't have the EtherMAC core, so SMSC  LAN89218  Ethernet
+chip was used instead on the Blanche board; this chip  is compatible with
+SMSC LAN9115  for  which there's a (device tree aware) driver. Describe
+the  chip in  the  Blanche device tree;  enable DHCP and NFS root in the
+kernel command line for the kernel booting.
 
-This patch adds the RWDT device node for r8a7795.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Changes in version 3:
+- refreshed the patch.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index f8c7e331fdc6..ba87e03969ee 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -164,6 +164,14 @@
- 					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
- 		};
+Changes in version 2:
+- added Simon's ACK.
+
+ arch/arm/boot/dts/r8a7792-blanche.dts |   23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
+
+Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
++++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -22,7 +22,7 @@
+ 	};
  
-+		wdt0: watchdog@e6020000 {
-+			compatible = "renesas,r8a7795-wdt", "renesas,rcar-gen3-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
+ 	chosen {
+-		bootargs = "ignore_loglevel";
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+@@ -30,6 +30,27 @@
+ 		device_type = "memory";
+ 		reg = <0 0x40000000 0 0x40000000>;
+ 	};
 +
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a7795",
- 				     "renesas,gpio-rcar";
--- 
-2.1.4
++	d3_3v: regulator-3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "D3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	ethernet@18000000 {
++		compatible = "smsc,lan89218", "smsc,lan9115";
++		reg = <0 0x18000000 0 0x100>;
++		phy-mode = "mii";
++		interrupt-parent = <&irqc>;
++		interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
++		smsc,irq-push-pull;
++		reg-io-width = <4>;
++		vddvario-supply = <&d3_3v>;
++		vdd33a-supply = <&d3_3v>;
++	};
+ };
+ 
+ &extal_clk {
