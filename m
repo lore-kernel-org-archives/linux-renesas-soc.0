@@ -1,125 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:58293 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752023AbcF1OKt (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:35967 "EHLO
+	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751736AbcFHVLd (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 10:10:49 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 04/13] soc: renesas: rcar-sysc: Move SYSC interrupt config to rcar-sysc driver
-Date: Tue, 28 Jun 2016 16:10:33 +0200
-Message-Id: <1467123042-8468-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
-References: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
+	Wed, 8 Jun 2016 17:11:33 -0400
+Received: by mail-lf0-f53.google.com with SMTP id j5so13938261lfb.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2016 14:11:32 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 04/12] ARM: shmobile: r8a7792: basic SoC support
+Date: Thu, 09 Jun 2016 00:11:29 +0300
+Message-ID: <63725827.hh7OmSSScd@wasted.cogentembedded.com>
+In-Reply-To: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+References: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On R-Car H1 and Gen2, the SYSC interrupt registers are always configured
-using hardcoded values in platform code. For R-Car Gen2, values are
-provided for H2 and M2-W only, other SoCs are not yet supported, and
-never will be.
+Add minimal support for the R-Car V2H (R8A7792) SoC.
 
-Move this configuration from SoC-specific platform code to the
-rcar_sysc_init() wrapper, so it can be skipped if the SYSC is configured
-from DT. This would be the case not only for H1, H2, and M2-W using a
-modern DTS, but also for other R-Car Gen2 SoCs not supported by the
-platform code, relying purely on DT.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-There is no longer a need to return the mapped register block, hence
-make the function return void.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
-v5:
-  - Add Reviewed-by,
+Changes in version 3:
+- added Cogent Embedded's copyright;
+- removed a supefluous space in Renesas Electronics' copyright.
 
-v4:
-  - New.
----
- arch/arm/mach-shmobile/pm-r8a7779.c   |  6 +-----
- arch/arm/mach-shmobile/pm-rcar-gen2.c |  6 +-----
- drivers/soc/renesas/rcar-sysc.c       | 12 ++++++++----
- include/linux/soc/renesas/rcar-sysc.h |  2 +-
- 4 files changed, 11 insertions(+), 15 deletions(-)
+Changes in version 2:
+- removed 'select I2C';
+- added Simon's ACK and Geert's tag too.
 
-diff --git a/arch/arm/mach-shmobile/pm-r8a7779.c b/arch/arm/mach-shmobile/pm-r8a7779.c
-index 4174cbcbc467d047..5c9a93f5e650181a 100644
---- a/arch/arm/mach-shmobile/pm-r8a7779.c
-+++ b/arch/arm/mach-shmobile/pm-r8a7779.c
-@@ -23,11 +23,7 @@
+ arch/arm/mach-shmobile/Kconfig         |    4 +++
+ arch/arm/mach-shmobile/Makefile        |    1 
+ arch/arm/mach-shmobile/setup-r8a7792.c |   35 +++++++++++++++++++++++++++++++++
+ 3 files changed, 40 insertions(+)
+
+Index: renesas/arch/arm/mach-shmobile/Kconfig
+===================================================================
+--- renesas.orig/arch/arm/mach-shmobile/Kconfig
++++ renesas/arch/arm/mach-shmobile/Kconfig
+@@ -86,6 +86,10 @@ config ARCH_R8A7791
+ 	select ARCH_RCAR_GEN2
+ 	select I2C
  
- static void __init r8a7779_sysc_init(void)
- {
--	void __iomem *base = rcar_sysc_init(0xffd85000);
--
--	/* enable all interrupt sources, but do not use interrupt handler */
--	iowrite32(0x0131000e, base + SYSCIER);
--	iowrite32(0, base + SYSCIMR);
-+	rcar_sysc_init(0xffd85000, 0x0131000e);
- }
- 
- #else /* CONFIG_PM || CONFIG_SMP */
-diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-index 61361dac6068210a..dd9ac366868f4336 100644
---- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-@@ -36,11 +36,7 @@
- 
- static void __init rcar_gen2_sysc_init(u32 syscier)
- {
--	void __iomem *base = rcar_sysc_init(0xe6180000);
--
--	/* enable all interrupt sources, but do not use interrupt handler */
--	iowrite32(syscier, base + SYSCIER);
--	iowrite32(0, base + SYSCIMR);
-+	rcar_sysc_init(0xe6180000, syscier);
- }
- 
- #else /* CONFIG_SMP */
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 68d6856c9d3cd192..22f0d646225c444e 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -400,10 +400,14 @@ out_put:
- }
- early_initcall(rcar_sysc_pd_init);
- 
--void __iomem * __init rcar_sysc_init(phys_addr_t base)
-+void __init rcar_sysc_init(phys_addr_t base, u32 syscier)
- {
--	if (rcar_sysc_pd_init())
--		rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
-+	if (!rcar_sysc_pd_init())
-+		return;
- 
--	return rcar_sysc_base;
-+	rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
++config ARCH_R8A7792
++	bool "R-Car V2H (R8A77920)"
++	select ARCH_RCAR_GEN2
 +
-+	/* enable all interrupt sources, but do not use interrupt handler */
-+	iowrite32(syscier, rcar_sysc_base + SYSCIER);
-+	iowrite32(0, rcar_sysc_base + SYSCIMR);
- }
-diff --git a/include/linux/soc/renesas/rcar-sysc.h b/include/linux/soc/renesas/rcar-sysc.h
-index 92fc613ab23db091..7b8b280c181b8389 100644
---- a/include/linux/soc/renesas/rcar-sysc.h
-+++ b/include/linux/soc/renesas/rcar-sysc.h
-@@ -11,6 +11,6 @@ struct rcar_sysc_ch {
- 
- int rcar_sysc_power_down(const struct rcar_sysc_ch *sysc_ch);
- int rcar_sysc_power_up(const struct rcar_sysc_ch *sysc_ch);
--void __iomem *rcar_sysc_init(phys_addr_t base);
-+void rcar_sysc_init(phys_addr_t base, u32 syscier);
- 
- #endif /* __LINUX_SOC_RENESAS_RCAR_SYSC_H__ */
--- 
-1.9.1
+ config ARCH_R8A7793
+ 	bool "R-Car M2-N (R8A7793)"
+ 	select ARCH_RCAR_GEN2
+Index: renesas/arch/arm/mach-shmobile/Makefile
+===================================================================
+--- renesas.orig/arch/arm/mach-shmobile/Makefile
++++ renesas/arch/arm/mach-shmobile/Makefile
+@@ -13,6 +13,7 @@ obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7
+ obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
+ obj-$(CONFIG_ARCH_R8A7790)	+= setup-r8a7790.o
+ obj-$(CONFIG_ARCH_R8A7791)	+= setup-r8a7791.o
++obj-$(CONFIG_ARCH_R8A7792)	+= setup-r8a7792.o
+ obj-$(CONFIG_ARCH_R8A7793)	+= setup-r8a7793.o
+ obj-$(CONFIG_ARCH_R8A7794)	+= setup-r8a7794.o
+ obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
+Index: renesas/arch/arm/mach-shmobile/setup-r8a7792.c
+===================================================================
+--- /dev/null
++++ renesas/arch/arm/mach-shmobile/setup-r8a7792.c
+@@ -0,0 +1,35 @@
++/*
++ * r8a7792 processor support
++ *
++ * Copyright (C) 2014 Renesas Electronics Corporation
++ * Copyright (C) 2016 Cogent  Embedded, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/of_platform.h>
++
++#include <asm/mach/arch.h>
++
++#include "common.h"
++#include "rcar-gen2.h"
++
++static const char * const r8a7792_boards_compat_dt[] __initconst = {
++	"renesas,r8a7792",
++	NULL,
++};
++
++DT_MACHINE_START(R8A7792_DT, "Generic R8A7792 (Flattened Device Tree)")
++	.init_early	= shmobile_init_delay,
++	.init_late	= shmobile_init_late,
++	.init_time	= rcar_gen2_timer_init,
++	.reserve	= rcar_gen2_reserve,
++	.dt_compat	= r8a7792_boards_compat_dt,
++MACHINE_END
