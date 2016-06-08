@@ -1,27 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:33648 "EHLO
-	mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752115AbcFIVgl (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:33176 "EHLO
+	mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756680AbcFHVfU (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 9 Jun 2016 17:36:41 -0400
-Received: by mail-lf0-f54.google.com with SMTP id f6so13719974lfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Jun 2016 14:36:40 -0700 (PDT)
+	Wed, 8 Jun 2016 17:35:20 -0400
+Received: by mail-lf0-f52.google.com with SMTP id s64so14303325lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2016 14:35:19 -0700 (PDT)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
 Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 04/12] ARM: shmobile: r8a7792: basic SoC support
-Date: Fri, 10 Jun 2016 00:36:37 +0300
-Message-ID: <3402504.y4Ms7l6u2i@wasted.cogentembedded.com>
-In-Reply-To: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
-References: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
+Subject: [PATCH v3 11/12] ARM: dts: blanche: initial device tree
+Date: Thu, 09 Jun 2016 00:35:16 +0300
+Message-ID: <7848381.2a6ebXTF0o@wasted.cogentembedded.com>
+In-Reply-To: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+References: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add minimal support for the R-Car V2H (R8A7792) SoC.
+Add the initial device  tree for the R8A7792 SoC based Blanche board.
+The board has 2 debug serial ports: SCIF0 and SCIF3; include support for
+them,  so that  the serial console  can  work.
 
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Acked-by: Simon Horman <horms+renesas@verge.net.au>
@@ -29,82 +34,74 @@ Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 ---
 Changes in version 3:
-- added Cogent Embedded's copyright;
-- removed a supefluous space in Renesas Electronics' copyright.
+- added Renesas Electronics' copyright.
 
 Changes in version 2:
-- removed 'select I2C';
 - added Simon's ACK and Geert's tag too.
 
- arch/arm/mach-shmobile/Kconfig         |    4 +++
- arch/arm/mach-shmobile/Makefile        |    1 
- arch/arm/mach-shmobile/setup-r8a7792.c |   35 +++++++++++++++++++++++++++++++++
- 3 files changed, 40 insertions(+)
+ arch/arm/boot/dts/Makefile            |    1 
+ arch/arm/boot/dts/r8a7792-blanche.dts |   45 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 46 insertions(+)
 
-Index: renesas/arch/arm/mach-shmobile/Kconfig
+Index: renesas/arch/arm/boot/dts/Makefile
 ===================================================================
---- renesas.orig/arch/arm/mach-shmobile/Kconfig
-+++ renesas/arch/arm/mach-shmobile/Kconfig
-@@ -86,6 +86,10 @@ config ARCH_R8A7791
- 	select ARCH_RCAR_GEN2
- 	select I2C
- 
-+config ARCH_R8A7792
-+	bool "R-Car V2H (R8A77920)"
-+	select ARCH_RCAR_GEN2
-+
- config ARCH_R8A7793
- 	bool "R-Car M2-N (R8A7793)"
- 	select ARCH_RCAR_GEN2
-Index: renesas/arch/arm/mach-shmobile/Makefile
-===================================================================
---- renesas.orig/arch/arm/mach-shmobile/Makefile
-+++ renesas/arch/arm/mach-shmobile/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7
- obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
- obj-$(CONFIG_ARCH_R8A7790)	+= setup-r8a7790.o
- obj-$(CONFIG_ARCH_R8A7791)	+= setup-r8a7791.o
-+obj-$(CONFIG_ARCH_R8A7792)	+= setup-r8a7792.o
- obj-$(CONFIG_ARCH_R8A7793)	+= setup-r8a7793.o
- obj-$(CONFIG_ARCH_R8A7794)	+= setup-r8a7794.o
- obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
-Index: renesas/arch/arm/mach-shmobile/setup-r8a7792.c
+--- renesas.orig/arch/arm/boot/dts/Makefile
++++ renesas/arch/arm/boot/dts/Makefile
+@@ -638,6 +638,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
+ 	r8a7790-lager.dtb \
+ 	r8a7791-koelsch.dtb \
+ 	r8a7791-porter.dtb \
++	r8a7792-blanche.dtb \
+ 	r8a7793-gose.dtb \
+ 	r8a7794-alt.dtb \
+ 	r8a7794-silk.dtb \
+Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
 ===================================================================
 --- /dev/null
-+++ renesas/arch/arm/mach-shmobile/setup-r8a7792.c
-@@ -0,0 +1,35 @@
++++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -0,0 +1,45 @@
 +/*
-+ * r8a7792 processor support
++ * Device Tree Source for the Blanche board
 + *
 + * Copyright (C) 2014 Renesas Electronics Corporation
 + * Copyright (C) 2016 Cogent  Embedded, Inc.
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
 + */
 +
-+#include <linux/of_platform.h>
++/dts-v1/;
++#include "r8a7792.dtsi"
 +
-+#include <asm/mach/arch.h>
++/ {
++	model = "Blanche";
++	compatible = "renesas,blanche", "renesas,r8a7792";
 +
-+#include "common.h"
-+#include "rcar-gen2.h"
++	aliases {
++		serial0 = &scif0;
++		serial1 = &scif3;
++	};
 +
-+static const char * const r8a7792_boards_compat_dt[] __initconst = {
-+	"renesas,r8a7792",
-+	NULL,
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0 0x40000000 0 0x40000000>;
++	};
 +};
 +
-+DT_MACHINE_START(R8A7792_DT, "Generic R8A7792 (Flattened Device Tree)")
-+	.init_early	= shmobile_init_delay,
-+	.init_late	= shmobile_init_late,
-+	.init_time	= rcar_gen2_timer_init,
-+	.reserve	= rcar_gen2_reserve,
-+	.dt_compat	= r8a7792_boards_compat_dt,
-+MACHINE_END
++&extal_clk {
++	clock-frequency = <20000000>;
++};
++
++&scif0 {
++	status = "okay";
++};
++
++&scif3 {
++	status = "okay";
++};
