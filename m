@@ -1,105 +1,90 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 12/20] drm: sun4i: Rely on the default ->best_encoder() behavior
-Date: Thu,  2 Jun 2016 16:31:39 +0200
-Message-Id: <1464877907-27723-13-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36738 "EHLO
+	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755785AbcFHHFz (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 8 Jun 2016 03:05:55 -0400
+MIME-Version: 1.0
+In-Reply-To: <2268000.l71DRbJSRE@wasted.cogentembedded.com>
+References: <3446154.oZ24315zaL@wasted.cogentembedded.com> <2268000.l71DRbJSRE@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 8 Jun 2016 09:05:54 +0200
+Message-ID: <CAMuHMdUMQZGg_hy0WOgwJMZhDCsKt-XJvnX0tq6i=92qubOAUg@mail.gmail.com>
+Subject: Re: [PATCH v2 05/11] ARM: dts: r8a7792: initial SoC device tree
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	linux-renesas-soc@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All outputs have a 1:1 relationship between connectors and encoders
-and the driver is relying on the atomic helpers: we can drop the custom
-->best_encoder() implementations and let the core call
-drm_atomic_helper_best_encoder() for us.
+Hi Sergei,
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/gpu/drm/sun4i/sun4i_rgb.c | 10 ----------
- drivers/gpu/drm/sun4i/sun4i_tv.c  |  9 ---------
- 2 files changed, 19 deletions(-)
+On Fri, Jun 3, 2016 at 11:26 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> The initial R8A7792 SoC device tree including CPU core, GIC, timer, SYSC,
+> and the required  clock descriptions.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> ---
+> Changes in version 2:
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_rgb.c b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-index ab64948..442cfe2 100644
---- a/drivers/gpu/drm/sun4i/sun4i_rgb.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_rgb.c
-@@ -90,19 +90,9 @@ static int sun4i_rgb_mode_valid(struct drm_connector *connector,
- 	return MODE_OK;
- }
- 
--static struct drm_encoder *
--sun4i_rgb_best_encoder(struct drm_connector *connector)
--{
--	struct sun4i_rgb *rgb =
--		drm_connector_to_sun4i_rgb(connector);
--
--	return &rgb->encoder;
--}
--
- static struct drm_connector_helper_funcs sun4i_rgb_con_helper_funcs = {
- 	.get_modes	= sun4i_rgb_get_modes,
- 	.mode_valid	= sun4i_rgb_mode_valid,
--	.best_encoder	= sun4i_rgb_best_encoder,
- };
- 
- static enum drm_connector_status
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
-index bc047f9..b841478 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
-@@ -526,18 +526,9 @@ static int sun4i_tv_comp_mode_valid(struct drm_connector *connector,
- 	return MODE_OK;
- }
- 
--static struct drm_encoder *
--sun4i_tv_comp_best_encoder(struct drm_connector *connector)
--{
--	struct sun4i_tv *tv = drm_connector_to_sun4i_tv(connector);
--
--	return &tv->encoder;
--}
--
- static struct drm_connector_helper_funcs sun4i_tv_comp_connector_helper_funcs = {
- 	.get_modes	= sun4i_tv_comp_get_modes,
- 	.mode_valid	= sun4i_tv_comp_mode_valid,
--	.best_encoder	= sun4i_tv_comp_best_encoder,
- };
- 
- static enum drm_connector_status
--- 
-2.7.4
+> - created  the "soc" subnode, moving the SoC  device  nodes there;
+> - removed  the "clocks" node, moving its fixed clock  subnodes to the root and
+>   the MSTP subnodes into the "soc" node.
+>
+>  arch/arm/boot/dts/r8a7792.dtsi |  171 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 171 insertions(+)
+>
+> Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+> ===================================================================
+> --- /dev/null
+> +++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+
+> +       /* Fixed factor clocks */
+> +       zs_clk: zs {
+> +               compatible = "fixed-factor-clock";
+> +               clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
+> +               #clock-cells = <0>;
+> +               clock-div = <6>;
+> +               clock-mult = <1>;
+> +       };
+> +       p_clk: p {
+> +               compatible = "fixed-factor-clock";
+> +               clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
+> +               #clock-cells = <0>;
+> +               clock-div = <24>;
+> +               clock-mult = <1>;
+> +       };
+> +       cp_clk: cp {
+> +               compatible = "fixed-factor-clock";
+> +               clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
+> +               #clock-cells = <0>;
+> +               clock-div = <3>;
+> +               clock-mult = <1>;
+> +       };
+
+I think the above 3 fixed factor clocks should be children of the "soc" node,
+as they're generated on-SoC.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
