@@ -1,112 +1,107 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752368AbcFHBAm (ORCPT
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:33619 "EHLO
+	mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750751AbcFIVtP (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 21:00:42 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 25/30] ARM: dts: kzm9d: Fix W=1 dtc warnings
-Date: Wed,  8 Jun 2016 09:59:55 +0900
-Message-Id: <815be9c2a436855227774f77b4d251292792964b.1465346599.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1465346599.git.horms+renesas@verge.net.au>
-References: <cover.1465346599.git.horms+renesas@verge.net.au>
+	Thu, 9 Jun 2016 17:49:15 -0400
+Received: by mail-lf0-f43.google.com with SMTP id f6so13871995lfg.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Jun 2016 14:49:14 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 11/12] ARM: dts: blanche: initial device tree
+Date: Fri, 10 Jun 2016 00:49:11 +0300
+Message-ID: <1696555.qxkHIgkrXz@wasted.cogentembedded.com>
+In-Reply-To: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
+References: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Add the initial device  tree for the R8A7792 SoC based Blanche board.
+The board has 2 debug serial ports: SCIF0 and SCIF3; include support for
+them,  so that  the serial console  can  work.
 
-Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /pfc@e0140200/serial@e1030000 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /gpio_keys/button@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /gpio_keys/button@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /gpio_keys/button@3 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /gpio_keys/button@4 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/emev2-kzm9d.dts | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Changes in version 3:
+- added Renesas Electronics' copyright.
 
-diff --git a/arch/arm/boot/dts/emev2-kzm9d.dts b/arch/arm/boot/dts/emev2-kzm9d.dts
-index a35b851e1cd7..9eb86f8f32c5 100644
---- a/arch/arm/boot/dts/emev2-kzm9d.dts
-+++ b/arch/arm/boot/dts/emev2-kzm9d.dts
-@@ -18,7 +18,7 @@
- 	model = "EMEV2 KZM9D Board";
- 	compatible = "renesas,kzm9d", "renesas,emev2";
- 
--	memory {
+Changes in version 2:
+- added Simon's ACK and Geert's tag too.
+
+ arch/arm/boot/dts/Makefile            |    1 
+ arch/arm/boot/dts/r8a7792-blanche.dts |   45 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 46 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/Makefile
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/Makefile
++++ renesas/arch/arm/boot/dts/Makefile
+@@ -638,6 +638,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
+ 	r8a7790-lager.dtb \
+ 	r8a7791-koelsch.dtb \
+ 	r8a7791-porter.dtb \
++	r8a7792-blanche.dtb \
+ 	r8a7793-gose.dtb \
+ 	r8a7794-alt.dtb \
+ 	r8a7794-silk.dtb \
+Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+===================================================================
+--- /dev/null
++++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -0,0 +1,45 @@
++/*
++ * Device Tree Source for the Blanche board
++ *
++ * Copyright (C) 2014 Renesas Electronics Corporation
++ * Copyright (C) 2016 Cogent  Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r8a7792.dtsi"
++
++/ {
++	model = "Blanche";
++	compatible = "renesas,blanche", "renesas,r8a7792";
++
++	aliases {
++		serial0 = &scif0;
++		serial1 = &scif3;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial0:115200n8";
++	};
++
 +	memory@40000000 {
- 		device_type = "memory";
- 		reg = <0x40000000 0x8000000>;
- 	};
-@@ -33,28 +33,28 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		button@1 {
-+		one {
- 			debounce_interval = <50>;
- 			wakeup-source;
- 			label = "DSW2-1";
- 			linux,code = <KEY_1>;
- 			gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
- 		};
--		button@2 {
-+		two {
- 			debounce_interval = <50>;
- 			wakeup-source;
- 			label = "DSW2-2";
- 			linux,code = <KEY_2>;
- 			gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
- 		};
--		button@3 {
-+		three {
- 			debounce_interval = <50>;
- 			wakeup-source;
- 			label = "DSW2-3";
- 			linux,code = <KEY_3>;
- 			gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
- 		};
--		button@4 {
-+		four {
- 			debounce_interval = <50>;
- 			wakeup-source;
- 			label = "DSW2-4";
-@@ -63,7 +63,7 @@
- 		};
- 	};
- 
--	reg_1p8v: regulator@0 {
-+	reg_1p8v: regulator-1p8v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
- 		regulator-min-microvolt = <1800000>;
-@@ -72,7 +72,7 @@
- 		regulator-boot-on;
- 	};
- 
--	reg_3p3v: regulator@1 {
-+	reg_3p3v: regulator-3p3v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-3.3V";
- 		regulator-min-microvolt = <3300000>;
-@@ -104,7 +104,7 @@
- };
- 
- &pfc {
--	uart1_pins: serial@e1030000 {
-+	uart1_pins: uart1 {
- 		groups = "uart1_ctrl", "uart1_data";
- 		function = "uart1";
- 	};
--- 
-2.1.4
++		device_type = "memory";
++		reg = <0 0x40000000 0 0x40000000>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <20000000>;
++};
++
++&scif0 {
++	status = "okay";
++};
++
++&scif3 {
++	status = "okay";
++};
