@@ -11,17 +11,17 @@ To: Simon Horman <horms@verge.net.au>,
 	Ian Campbell <ijc+devicetree@hellion.org.uk>,
 	Kumar Gala <galak@codeaurora.org>,
 	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Kieran Bingham <kieran@bingham.xyz>
+	Will Deacon <will.deacon@arm.com>,
+	linux-renesas-soc@vger.kernel.org (open list:ARM/RENESAS ARM64 ARCHITECTURE),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Kieran Bingham <kieran@bingham.xyz>
 Subject: [PATCH 2/2] arm64: dts: r8a7795: add FDP1 device nodes
-Date: Thu,  9 Jun 2016 17:56:58 +0100
-Message-Id: <1465491418-32752-3-git-send-email-kieran@bingham.xyz>
-In-Reply-To: <1465491418-32752-1-git-send-email-kieran@bingham.xyz>
-References: <1465491418-32752-1-git-send-email-kieran@bingham.xyz>
+Date: Thu,  9 Jun 2016 17:42:49 +0100
+Message-Id: <1465490569-31177-3-git-send-email-kieran@bingham.xyz>
+In-Reply-To: <1465490569-31177-1-git-send-email-kieran@bingham.xyz>
+References: <1465490569-31177-1-git-send-email-kieran@bingham.xyz>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
