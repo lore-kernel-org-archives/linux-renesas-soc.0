@@ -1,146 +1,70 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-	m.szyprowski@samsung.com
-Date: Fri, 03 Jun 2016 00:55:50 +0900
-Message-Id: <20160602155550.31018.5799.sendpatchset@little-apple>
-In-Reply-To: <20160602155519.31018.59925.sendpatchset@little-apple>
-References: <20160602155519.31018.59925.sendpatchset@little-apple>
-Subject: [PATCH v3 03/06] iommu/ipmmu-vmsa: Break out utlb parsing code
+Subject: Re: [PATCH 0/9] clocksource/drivers/clksrc-of: Improve error handling
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1464770093-12667-1-git-send-email-daniel.lezcano@linaro.org>
+ <CAMuHMdUi-LzYTnK4nmLip8a7WVPu7BjkeZ9588Uq=_O_i58yag@mail.gmail.com>
+ <57582755.3080102@linaro.org>
+ <CAMuHMdUaevj2OAteDVJs8vdHDG-=ymLGmO4MmXJu4Te15UaiQQ@mail.gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <57591F8B.3040302@linaro.org>
+Date: Thu, 9 Jun 2016 09:49:31 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUaevj2OAteDVJs8vdHDG-=ymLGmO4MmXJu4Te15UaiQQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 06/09/2016 09:46 AM, Geert Uytterhoeven wrote:
+> Hi Daniel,
+>
+> On Wed, Jun 8, 2016 at 4:10 PM, Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+>> On 06/07/2016 11:54 AM, Geert Uytterhoeven wrote:
+>>
+>> [ ... ]
+>>
+>>> in clockevents/clockevents/next breaks the boot on e.g. r8a7791/koelsch
+>>> (arm32) and r8a7795/salvator-x (arm64).
+>>>
+>>> Using "earlycon keep_bootcon" on koelsch (this doesn't help on arm64)
+>>> reveals it's stuck at:
+>>>
+>>>       clocksource_probe: no matching clocksources found
+>>>       sched_clock: 32 bits at 100 Hz, resolution 10000000ns, wraps every
+>>> 21474836475000000ns
+>>>       Calibrating delay loop...
+>>>
+>>> With the above commit reverted, it works again:
+>>>
+>>>       Architected cp15 timer(s) running at 10.00MHz (virt).
+>>>       clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles:
+>>> 0x24e6a1710, max_idle_ns: 440795202120 ns
+>>>       sched_clock: 56 bits at 10MHz, resolution 100ns, wraps every
+>>> 4398046511100ns
+>>>       Switching to timer-based delay loop, resolution 100ns
+>>>       Calibrating delay loop (skipped), value calculated using timer
+>>> frequency.. 20.00 BogoMIPS (lpj=100000)
+>>
+>> I think it is fixed now and pushed on my tree. Is it possible to confirm
+>> your boards are working correctly again after the linux-next is updated with
+>> my latest changes ?
+>
+> I can confirm the issue is fixed in today's clockevents/next
+> (52be039599e1339e).
 
-Break out the utlb parsing code and dev_data allocation into a
-separate function. This is preparation for future code sharing.
+Great ! Thanks for testing.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+   -- Daniel
 
- Changes since V2:
- - Included this new patch from the following series:
-   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
- - Reworked code to fit on top on previous two patches in current series.
 
- drivers/iommu/ipmmu-vmsa.c |   58 ++++++++++++++++++++++++++++----------------
- 1 file changed, 38 insertions(+), 20 deletions(-)
+-- 
+  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
---- 0004/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-02 21:23:51.700607110 +0900
-@@ -647,22 +647,16 @@ static int ipmmu_find_utlbs(struct ipmmu
- 	return 0;
- }
- 
--static int ipmmu_add_device(struct device *dev)
-+static int ipmmu_init_platform_device(struct device *dev,
-+				      struct iommu_group *group)
- {
- 	struct ipmmu_vmsa_archdata *archdata;
- 	struct ipmmu_vmsa_device *mmu;
--	struct iommu_group *group = NULL;
- 	unsigned int *utlbs;
- 	unsigned int i;
- 	int num_utlbs;
- 	int ret = -ENODEV;
- 
--	if (dev->archdata.iommu) {
--		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
--			 dev_name(dev));
--		return -EINVAL;
--	}
--
- 	/* Find the master corresponding to the device. */
- 
- 	num_utlbs = of_count_phandle_with_args(dev->of_node, "iommus",
-@@ -690,7 +684,7 @@ static int ipmmu_add_device(struct devic
- 	spin_unlock(&ipmmu_devices_lock);
- 
- 	if (ret < 0)
--		return -ENODEV;
-+		goto error;
- 
- 	for (i = 0; i < num_utlbs; ++i) {
- 		if (utlbs[i] >= mmu->num_utlbs) {
-@@ -699,6 +693,36 @@ static int ipmmu_add_device(struct devic
- 		}
- 	}
- 
-+	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
-+	if (!archdata) {
-+		ret = -ENOMEM;
-+		goto error;
-+	}
-+
-+	archdata->mmu = mmu;
-+	archdata->utlbs = utlbs;
-+	archdata->num_utlbs = num_utlbs;
-+	dev->archdata.iommu = archdata;
-+	return 0;
-+
-+error:
-+	kfree(utlbs);
-+	return ret;
-+}
-+
-+static int ipmmu_add_device(struct device *dev)
-+{
-+	struct ipmmu_vmsa_archdata *archdata;
-+	struct ipmmu_vmsa_device *mmu;
-+	struct iommu_group *group;
-+	int ret;
-+
-+	if (dev->archdata.iommu) {
-+		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
-+			 dev_name(dev));
-+		return -EINVAL;
-+	}
-+
- 	/* Create a device group and add the device to it. */
- 	group = iommu_group_alloc();
- 	if (IS_ERR(group)) {
-@@ -716,17 +740,12 @@ static int ipmmu_add_device(struct devic
- 		goto error;
- 	}
- 
--	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
--	if (!archdata) {
--		ret = -ENOMEM;
-+	ret = ipmmu_init_platform_device(dev, group);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to init platform device\n");
- 		goto error;
- 	}
- 
--	archdata->mmu = mmu;
--	archdata->utlbs = utlbs;
--	archdata->num_utlbs = num_utlbs;
--	dev->archdata.iommu = archdata;
--
- 	/*
- 	 * Create the ARM mapping, used by the ARM DMA mapping core to allocate
- 	 * VAs. This will allocate a corresponding IOMMU domain.
-@@ -736,6 +755,8 @@ static int ipmmu_add_device(struct devic
- 	 * - Make the mapping size configurable ? We currently use a 2GB mapping
- 	 *   at a 1GB offset to ensure that NULL VAs will fault.
- 	 */
-+	archdata = dev->archdata.iommu;
-+	mmu = archdata->mmu;
- 	if (!mmu->mapping) {
- 		struct dma_iommu_mapping *mapping;
- 
-@@ -762,9 +783,6 @@ static int ipmmu_add_device(struct devic
- error:
- 	arm_iommu_release_mapping(mmu->mapping);
- 
--	kfree(dev->archdata.iommu);
--	kfree(utlbs);
--
- 	dev->archdata.iommu = NULL;
- 
- 	if (!IS_ERR_OR_NULL(group))
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
