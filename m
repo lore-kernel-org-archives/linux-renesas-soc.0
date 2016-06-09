@@ -1,37 +1,70 @@
 Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1465491418-32752-3-git-send-email-kieran@bingham.xyz>
-References: <1465491418-32752-1-git-send-email-kieran@bingham.xyz> <1465491418-32752-3-git-send-email-kieran@bingham.xyz>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 10 Jun 2016 09:31:45 +0200
-Message-ID: <CAMuHMdV6p1iwxZSOGE564=vrYUiKc167hf7b-U9Dror9FpeDtg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: r8a7795: add FDP1 device nodes
-To: Kieran Bingham <kieran@ksquared.org.uk>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, linux-renesas-soc@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <kieran@ksquared.org.uk>
+Return-Path: <kieran@ksquared.org.uk>
+Sender: Kieran Bingham <kieran@ksquared.org.uk>
+From: Kieran Bingham <kieran@bingham.xyz>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Kieran Bingham <kieran@bingham.xyz>
+Subject: [PATCH 2/2] arm64: dts: r8a7795: add FDP1 device nodes
+Date: Thu,  9 Jun 2016 17:56:58 +0100
+Message-Id: <1465491418-32752-3-git-send-email-kieran@bingham.xyz>
+In-Reply-To: <1465491418-32752-1-git-send-email-kieran@bingham.xyz>
+References: <1465491418-32752-1-git-send-email-kieran@bingham.xyz>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jun 9, 2016 at 6:56 PM, Kieran Bingham <kieran@ksquared.org.uk> wrote:
-> Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index e63e5f29cceb..0c0aa14f7f4d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1244,5 +1244,32 @@
+ 			clocks = <&cpg CPG_MOD 613>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 		};
++
++		fdp1ch1: fdp1@fe940000 {
++			compatible = "renesas,r8a7795-fdp1", "renesas,fdp1";
++			reg = <0 0xfe940000 0 0x2400>;
++			interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 119>;
++			power-domains = <&sysc R8A7795_PD_A3VP>;
++			renesas,fcp = <&fcpf0>;
++		};
++
++		fdp1ch2: fdp1@fe944000 {
++			compatible = "renesas,r8a7795-fdp1", "renesas,fdp1";
++			reg = <0 0xfe944000 0 0x2400>;
++			interrupts = <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 118>;
++			power-domains = <&sysc R8A7795_PD_A3VP>;
++			renesas,fcp = <&fcpf1>;
++		};
++
++		fdp1ch3: fdp1@fe948000 {
++			compatible = "renesas,r8a7795-fdp1", "renesas,fdp1";
++			reg = <0 0xfe948000 0 0x2400>;
++			interrupts = <GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 117>;
++			power-domains = <&sysc R8A7795_PD_A3VP>;
++			renesas,fcp = <&fcpf2>;
++		};
+ 	};
+ };
+-- 
+2.7.4
