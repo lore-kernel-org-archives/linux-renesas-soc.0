@@ -1,60 +1,112 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:43857 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932401AbcFHX6c (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 19:58:32 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/5] R-Car VSP: Add CLU support
-Date: Thu,  9 Jun 2016 02:58:11 +0300
-Message-Id: <1465430296-22644-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 07/12] ARM: dts: r8a7792: add SYS-DMAC support
+Date: Fri, 10 Jun 2016 00:43:33 +0300
+Message-ID: <2336328.yuWhdAVn4L@wasted.cogentembedded.com>
+In-Reply-To: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
+References: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Describe SYS-DMAC0/1 in the R8A7792 device tree.
 
-This patch series adds support for the Cubic Look Up table (CLU) to the vsp1
-driver.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The first three patches are small unrelated fixes, I've included them here to
-get them review and they will be added to the next pull request for the vsp1
-driver. Patch 4/5 replaces the custom ioctl used to configure the 1D lookup
-table (LUT) by an array control, to align it with the CLU API. This isn't an
-issue as there's no user of this API with the mainline kernel.
+---
+Changes in version 3:
+- refreshed the patch.
 
-Finally patch 5/5 adds support for the CLU, exposing the look-up table
-contents through a control. The look-up table being quite large, I will likely
-work on supporting partial control updates in the control framework at some
-point. Feel free to beat me to it.
+Changes in version 2:
+- resolved reject, indenting the device nodes that are now under the "soc" node;
+- added Simon's ACK and Geert's tag too.
 
-Laurent Pinchart (5):
-  v4l: vsp1: pipe: Fix typo in comment
-  v4l: vsp1: dl: Don't free fragments with interrupts disabled
-  v4l: vsp1: lut: Initialize the mutex
-  v4l: vsp1: lut: Expose configuration through a control
-  v4l: vsp1: Add Cubic Look Up Table (CLU) support
+ arch/arm/boot/dts/r8a7792.dtsi |   64 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
- drivers/media/platform/vsp1/Makefile      |   2 +-
- drivers/media/platform/vsp1/vsp1.h        |   3 +
- drivers/media/platform/vsp1/vsp1_clu.c    | 276 ++++++++++++++++++++++++++++++
- drivers/media/platform/vsp1/vsp1_clu.h    |  44 +++++
- drivers/media/platform/vsp1/vsp1_dl.c     |  72 ++++++--
- drivers/media/platform/vsp1/vsp1_drv.c    |  25 ++-
- drivers/media/platform/vsp1/vsp1_entity.c |   1 +
- drivers/media/platform/vsp1/vsp1_entity.h |   1 +
- drivers/media/platform/vsp1/vsp1_lut.c    |  72 +++++---
- drivers/media/platform/vsp1/vsp1_lut.h    |   6 +-
- drivers/media/platform/vsp1/vsp1_pipe.h   |   2 +-
- drivers/media/platform/vsp1/vsp1_regs.h   |   9 +
- include/uapi/linux/vsp1.h                 |  34 ----
- 13 files changed, 465 insertions(+), 82 deletions(-)
- create mode 100644 drivers/media/platform/vsp1/vsp1_clu.c
- create mode 100644 drivers/media/platform/vsp1/vsp1_clu.h
- delete mode 100644 include/uapi/linux/vsp1.h
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -88,6 +88,70 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		dmac0: dma-controller@e6700000 {
++			compatible = "renesas,dmac-r8a7792",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe6700000 0 0x20000>;
++			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14";
++			clocks = <&mstp2_clks R8A7792_CLK_SYS_DMAC0>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			#dma-cells = <1>;
++			dma-channels = <15>;
++		};
++
++		dmac1: dma-controller@e6720000 {
++			compatible = "renesas,dmac-r8a7792",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe6720000 0 0x20000>;
++			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14";
++			clocks = <&mstp2_clks R8A7792_CLK_SYS_DMAC1>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			#dma-cells = <1>;
++			dma-channels = <15>;
++		};
++
+ 		/* Special CPG clocks */
+ 		cpg_clocks: cpg_clocks@e6150000 {
+ 			compatible = "renesas,r8a7792-cpg-clocks",
 
--- 
-Regards,
-
-Laurent Pinchart
