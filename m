@@ -1,148 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:34765 "EHLO
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:36311 "EHLO
 	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750819AbcFIVit (ORCPT
+	with ESMTP id S1752232AbcFILXB (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 9 Jun 2016 17:38:49 -0400
-Received: by mail-lf0-f47.google.com with SMTP id j7so10927125lfg.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Jun 2016 14:38:43 -0700 (PDT)
+	Thu, 9 Jun 2016 07:23:01 -0400
+Received: by mail-lf0-f47.google.com with SMTP id j5so24051557lfb.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Jun 2016 04:23:00 -0700 (PDT)
+Subject: Re: [PATCH v3 05/12] ARM: shmobile: r8a7792: add SMP support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+ <7848375.HIECFST0Ua@wasted.cogentembedded.com>
+ <CAMuHMdXe==X8x5Q2Hnm7kPp9THwvqVq95imwGoAQyDQv=8=P3g@mail.gmail.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	linux-renesas-soc@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 05/12] ARM: shmobile: r8a7792: add SMP support
-Date: Fri, 10 Jun 2016 00:38:40 +0300
-Message-ID: <1982544.IbOor8c2zK@wasted.cogentembedded.com>
-In-Reply-To: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
-References: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
+Message-ID: <97912a61-cff1-24e1-b275-16431e20bff3@cogentembedded.com>
+Date: Thu, 9 Jun 2016 14:22:57 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAMuHMdXe==X8x5Q2Hnm7kPp9THwvqVq95imwGoAQyDQv=8=P3g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add R8A7792 SMP support using the shared APMU code. This SoC has 2 ARM
-Cortex-A15  CPU cores.
+On 6/9/2016 11:44 AM, Geert Uytterhoeven wrote:
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>> Add R8A7792 SMP support using the shared APMU code. This SoC has 2 ARM
+>> Cortex-A15  CPU cores.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>
+[...]
+>>  # PM objects
+>> Index: renesas/arch/arm/mach-shmobile/r8a7792.h
+>> ===================================================================
+>> --- /dev/null
+>> +++ renesas/arch/arm/mach-shmobile/r8a7792.h
+>> @@ -0,0 +1,6 @@
+>> +#ifndef __ASM_R8A7792_H__
+>> +#define __ASM_R8A7792_H__
+>> +
+>> +extern const struct smp_operations r8a7792_smp_ops;
+>
+> For new SMP support, you should no longer add an SoC-specific struct
+> smp_operations, but rely on the DT "enable-method" property, cfr.
+> "[PATCH v3 00/09] ARM: shmobile: APMU DT support via SMP Enable method V3"
+> (http://www.spinics.net/lists/linux-sh/msg45229.html).
+>
+> That series will no longer apply, but I've been carrying (and rebasing) it in
+> my local tree for quite a while, as it was related to SYSC cleanup (avoiding
+> your r8a7792_ca15_scu). But unfortunately that depends on the SYSC node always
+> be present in DT.
 
----
-Changes in version 3:
-- new patch.
+    My patch is not against you repo, it's against Simon's repo. If you indeed 
+care for these Magnus' patches (abandoned again?), please re-post them and get 
+them merged.
 
- arch/arm/mach-shmobile/Makefile        |    1 
- arch/arm/mach-shmobile/r8a7792.h       |    6 +++
- arch/arm/mach-shmobile/setup-r8a7792.c |    2 +
- arch/arm/mach-shmobile/smp-r8a7792.c   |   62 +++++++++++++++++++++++++++++++++
- 4 files changed, 71 insertions(+)
+> Gr{oetje,eeting}s,
+>
+>                         Geert
 
-Index: renesas/arch/arm/mach-shmobile/Makefile
-===================================================================
---- renesas.orig/arch/arm/mach-shmobile/Makefile
-+++ renesas/arch/arm/mach-shmobile/Makefile
-@@ -35,6 +35,7 @@ smp-$(CONFIG_ARCH_SH73A0)	+= smp-sh73a0.
- smp-$(CONFIG_ARCH_R8A7779)	+= smp-r8a7779.o headsmp-scu.o platsmp-scu.o
- smp-$(CONFIG_ARCH_R8A7790)	+= smp-r8a7790.o
- smp-$(CONFIG_ARCH_R8A7791)	+= smp-r8a7791.o
-+smp-$(CONFIG_ARCH_R8A7792)	+= smp-r8a7792.o
- smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
- 
- # PM objects
-Index: renesas/arch/arm/mach-shmobile/r8a7792.h
-===================================================================
---- /dev/null
-+++ renesas/arch/arm/mach-shmobile/r8a7792.h
-@@ -0,0 +1,6 @@
-+#ifndef __ASM_R8A7792_H__
-+#define __ASM_R8A7792_H__
-+
-+extern const struct smp_operations r8a7792_smp_ops;
-+
-+#endif /* __ASM_R8A7792_H__ */
-Index: renesas/arch/arm/mach-shmobile/setup-r8a7792.c
-===================================================================
---- renesas.orig/arch/arm/mach-shmobile/setup-r8a7792.c
-+++ renesas/arch/arm/mach-shmobile/setup-r8a7792.c
-@@ -20,6 +20,7 @@
- 
- #include "common.h"
- #include "rcar-gen2.h"
-+#include "r8a7792.h"
- 
- static const char * const r8a7792_boards_compat_dt[] __initconst = {
- 	"renesas,r8a7792",
-@@ -27,6 +28,7 @@ static const char * const r8a7792_boards
- };
- 
- DT_MACHINE_START(R8A7792_DT, "Generic R8A7792 (Flattened Device Tree)")
-+	.smp		= smp_ops(r8a7792_smp_ops),
- 	.init_early	= shmobile_init_delay,
- 	.init_late	= shmobile_init_late,
- 	.init_time	= rcar_gen2_timer_init,
-Index: renesas/arch/arm/mach-shmobile/smp-r8a7792.c
-===================================================================
---- /dev/null
-+++ renesas/arch/arm/mach-shmobile/smp-r8a7792.c
-@@ -0,0 +1,62 @@
-+/*
-+ * SMP support for r8a7792
-+ *
-+ * Copyright (C) 2014 Renesas Electronics Corporation
-+ * Copyright (C) 2016 Cogent  Embedded, Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/smp.h>
-+#include <linux/io.h>
-+#include <linux/soc/renesas/rcar-sysc.h>
-+
-+#include <asm/smp_plat.h>
-+
-+#include "common.h"
-+#include "platsmp-apmu.h"
-+#include "rcar-gen2.h"
-+#include "r8a7792.h"
-+
-+static struct rcar_sysc_ch r8a7792_ca15_scu = {
-+	.chan_offs	= 0x180,	/* PWRSR5 .. PWRER5 */
-+	.isr_bit	= 12,		/* CA15-SCU */
-+};
-+
-+static struct rcar_apmu_config r8a7792_apmu_config[] = {
-+	{
-+		.iomem	= DEFINE_RES_MEM(0xe6152000, 0x188),
-+		.cpus	= { 0, 1 },
-+	},
-+};
-+
-+static void __init r8a7792_smp_prepare_cpus(unsigned int max_cpus)
-+{
-+	/* let APMU code install data related to shmobile_boot_vector */
-+	shmobile_smp_apmu_prepare_cpus(max_cpus,
-+				       r8a7792_apmu_config,
-+				       ARRAY_SIZE(r8a7792_apmu_config));
-+
-+	/* turn on power to SCU */
-+	rcar_gen2_pm_init();
-+	rcar_sysc_power_up(&r8a7792_ca15_scu);
-+}
-+
-+const struct smp_operations r8a7792_smp_ops __initconst = {
-+	.smp_prepare_cpus	= r8a7792_smp_prepare_cpus,
-+	.smp_boot_secondary	= shmobile_smp_apmu_boot_secondary,
-+#ifdef CONFIG_HOTPLUG_CPU
-+	.cpu_can_disable	= shmobile_smp_cpu_can_disable,
-+	.cpu_die		= shmobile_smp_apmu_cpu_die,
-+	.cpu_kill		= shmobile_smp_apmu_cpu_kill,
-+#endif
-+};
+MBR, Sergei
