@@ -10,32 +10,23 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Kieran Bingham <kieran@bingham.xyz>
 Subject: [PATCH] v4l: Extend FCP compatible list to support the FDP
-Date: Thu,  9 Jun 2016 18:06:43 +0100
-Message-Id: <1465492003-1554-2-git-send-email-kieran@bingham.xyz>
-In-Reply-To: <1465492003-1554-1-git-send-email-kieran@bingham.xyz>
-References: <1465492003-1554-1-git-send-email-kieran@bingham.xyz>
+Date: Thu,  9 Jun 2016 18:06:42 +0100
+Message-Id: <1465492003-1554-1-git-send-email-kieran@bingham.xyz>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The FCP must be powered up for the FDP1 to function, even when the FDP1
-does not make use of the FCNL features. Extend the compatible list
-to allow us to use the power domain and runtime-pm support.
+The following patch extends Laurents FCP driver to support the FCP for
+FDP (FCPF) which is used by the FDP driver currently in development
 
-Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
----
+This patch is of course dependant upon Laurents FCP driver series [0]
+which has not yet hit mainline
+
+[0] http://www.spinics.net/lists/linux-media/msg97302.html
+
+Kieran Bingham (1):
+  v4l: Extend FCP compatible list to support the FDP
+
  drivers/media/platform/rcar-fcp.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/rcar-fcp.c b/drivers/media/platform/rcar-fcp.c
-index 6a7bcc3028b1..0ff6b1edf1db 100644
---- a/drivers/media/platform/rcar-fcp.c
-+++ b/drivers/media/platform/rcar-fcp.c
-@@ -160,6 +160,7 @@ static int rcar_fcp_remove(struct platform_device *pdev)
- 
- static const struct of_device_id rcar_fcp_of_match[] = {
- 	{ .compatible = "renesas,fcpv" },
-+	{ .compatible = "renesas,fcpf" },
- 	{ },
- };
- 
 -- 
 2.7.4
