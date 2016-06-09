@@ -1,11 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:33176 "EHLO
-	mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756680AbcFHVfU (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:35865 "EHLO
+	mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752186AbcFIVpm (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 17:35:20 -0400
-Received: by mail-lf0-f52.google.com with SMTP id s64so14303325lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2016 14:35:19 -0700 (PDT)
+	Thu, 9 Jun 2016 17:45:42 -0400
+Received: by mail-lf0-f50.google.com with SMTP id j5so34653147lfb.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Jun 2016 14:45:42 -0700 (PDT)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
 	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
@@ -13,95 +13,54 @@ To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org
 Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 11/12] ARM: dts: blanche: initial device tree
-Date: Thu, 09 Jun 2016 00:35:16 +0300
-Message-ID: <7848381.2a6ebXTF0o@wasted.cogentembedded.com>
-In-Reply-To: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
-References: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+Subject: [PATCH v4 09/12] ARM dts: r8a7792: add IRQC support
+Date: Fri, 10 Jun 2016 00:45:39 +0300
+Message-ID: <3348412.H0MfYcvH4W@wasted.cogentembedded.com>
+In-Reply-To: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
+References: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the initial device  tree for the R8A7792 SoC based Blanche board.
-The board has 2 debug serial ports: SCIF0 and SCIF3; include support for
-them,  so that  the serial console  can  work.
+Describe the IRQC interrupt controller in the R8A7792 device tree.
 
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 ---
 Changes in version 3:
-- added Renesas Electronics' copyright.
+- refreshed the patch.
 
 Changes in version 2:
-- added Simon's ACK and Geert's tag too.
+- resolved reject, indenting the IRQC node that is now under the "soc" node;
+- added Geert's tag.
 
- arch/arm/boot/dts/Makefile            |    1 
- arch/arm/boot/dts/r8a7792-blanche.dts |   45 ++++++++++++++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
+ arch/arm/boot/dts/r8a7792.dtsi |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Index: renesas/arch/arm/boot/dts/Makefile
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
 ===================================================================
---- renesas.orig/arch/arm/boot/dts/Makefile
-+++ renesas/arch/arm/boot/dts/Makefile
-@@ -638,6 +638,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
- 	r8a7790-lager.dtb \
- 	r8a7791-koelsch.dtb \
- 	r8a7791-porter.dtb \
-+	r8a7792-blanche.dtb \
- 	r8a7793-gose.dtb \
- 	r8a7794-alt.dtb \
- 	r8a7794-silk.dtb \
-Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-===================================================================
---- /dev/null
-+++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-@@ -0,0 +1,45 @@
-+/*
-+ * Device Tree Source for the Blanche board
-+ *
-+ * Copyright (C) 2014 Renesas Electronics Corporation
-+ * Copyright (C) 2016 Cogent  Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
+--- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -70,6 +70,19 @@
+ 				      IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
+ 
++		irqc: interrupt-controller@e61c0000 {
++			compatible = "renesas,irqc-r8a7792", "renesas,irqc";
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			reg = <0 0xe61c0000 0 0x200>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp4_clks R8A7792_CLK_IRQC>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++		};
 +
-+/dts-v1/;
-+#include "r8a7792.dtsi"
-+
-+/ {
-+	model = "Blanche";
-+	compatible = "renesas,blanche", "renesas,r8a7792";
-+
-+	aliases {
-+		serial0 = &scif0;
-+		serial1 = &scif3;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x40000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
-+
-+&scif0 {
-+	status = "okay";
-+};
-+
-+&scif3 {
-+	status = "okay";
-+};
+ 		timer {
+ 			compatible = "arm,armv7-timer";
+ 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
