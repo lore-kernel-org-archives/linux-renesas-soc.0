@@ -1,206 +1,150 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52954 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932089AbcFTTMA (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:33493 "EHLO
+	mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752165AbcFIVcA (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 20 Jun 2016 15:12:00 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 10/24] v4l: vsp1: Set entities functions
-Date: Mon, 20 Jun 2016 22:10:28 +0300
-Message-Id: <1466449842-29502-11-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Thu, 9 Jun 2016 17:32:00 -0400
+Received: by mail-lf0-f50.google.com with SMTP id f6so13660763lfg.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Jun 2016 14:31:59 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v4 01/12] ARM: shmobile: r8a7792: add clock index macros
+Date: Fri, 10 Jun 2016 00:31:56 +0300
+Message-ID: <4491799.qY5RE8eaAd@wasted.cogentembedded.com>
+In-Reply-To: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
+References: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Initialize the function field of all subdev entities instantiated by the
-driver. This gets rids of multiple warnings printed by the media
-controller core.
+Add macros usable by the device tree sources to reference the R8A7792
+clocks  by index.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 ---
- drivers/media/platform/vsp1/vsp1_bru.c    | 3 ++-
- drivers/media/platform/vsp1/vsp1_entity.c | 3 ++-
- drivers/media/platform/vsp1/vsp1_entity.h | 2 +-
- drivers/media/platform/vsp1/vsp1_hgo.c    | 3 ++-
- drivers/media/platform/vsp1/vsp1_hsit.c   | 5 +++--
- drivers/media/platform/vsp1/vsp1_lif.c    | 7 ++++++-
- drivers/media/platform/vsp1/vsp1_lut.c    | 3 ++-
- drivers/media/platform/vsp1/vsp1_rpf.c    | 3 ++-
- drivers/media/platform/vsp1/vsp1_sru.c    | 3 ++-
- drivers/media/platform/vsp1/vsp1_uds.c    | 3 ++-
- drivers/media/platform/vsp1/vsp1_wpf.c    | 3 ++-
- 11 files changed, 26 insertions(+), 12 deletions(-)
+Changes in version 4:
+- added Geert's tag.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_bru.c b/drivers/media/platform/vsp1/vsp1_bru.c
-index b1068c018011..835593dd88b3 100644
---- a/drivers/media/platform/vsp1/vsp1_bru.c
-+++ b/drivers/media/platform/vsp1/vsp1_bru.c
-@@ -390,7 +390,8 @@ struct vsp1_bru *vsp1_bru_create(struct vsp1_device *vsp1)
- 	bru->entity.type = VSP1_ENTITY_BRU;
- 
- 	ret = vsp1_entity_init(vsp1, &bru->entity, "bru",
--			       vsp1->info->num_bru_inputs + 1, &bru_ops);
-+			       vsp1->info->num_bru_inputs + 1, &bru_ops,
-+			       MEDIA_ENT_F_PROC_VIDEO_COMPOSER);
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_entity.c b/drivers/media/platform/vsp1/vsp1_entity.c
-index 42f9b00ffc3b..6893f9d33941 100644
---- a/drivers/media/platform/vsp1/vsp1_entity.c
-+++ b/drivers/media/platform/vsp1/vsp1_entity.c
-@@ -443,7 +443,7 @@ static const struct vsp1_route vsp1_routes[] = {
- 
- int vsp1_entity_init(struct vsp1_device *vsp1, struct vsp1_entity *entity,
- 		     const char *name, unsigned int num_pads,
--		     const struct v4l2_subdev_ops *ops)
-+		     const struct v4l2_subdev_ops *ops, u32 function)
- {
- 	struct v4l2_subdev *subdev;
- 	unsigned int i;
-@@ -491,6 +491,7 @@ int vsp1_entity_init(struct vsp1_device *vsp1, struct vsp1_entity *entity,
- 	subdev = &entity->subdev;
- 	v4l2_subdev_init(subdev, ops);
- 
-+	subdev->entity.function = function;
- 	subdev->entity.ops = &vsp1->media_ops;
- 	subdev->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_entity.h b/drivers/media/platform/vsp1/vsp1_entity.h
-index d599c8cc99b7..63e3990eb495 100644
---- a/drivers/media/platform/vsp1/vsp1_entity.h
-+++ b/drivers/media/platform/vsp1/vsp1_entity.h
-@@ -106,7 +106,7 @@ static inline struct vsp1_entity *to_vsp1_entity(struct v4l2_subdev *subdev)
- 
- int vsp1_entity_init(struct vsp1_device *vsp1, struct vsp1_entity *entity,
- 		     const char *name, unsigned int num_pads,
--		     const struct v4l2_subdev_ops *ops);
-+		     const struct v4l2_subdev_ops *ops, u32 function);
- void vsp1_entity_destroy(struct vsp1_entity *entity);
- 
- extern const struct v4l2_subdev_internal_ops vsp1_subdev_internal_ops;
-diff --git a/drivers/media/platform/vsp1/vsp1_hgo.c b/drivers/media/platform/vsp1/vsp1_hgo.c
-index a8b0d6ed00a5..4f15e1090384 100644
---- a/drivers/media/platform/vsp1/vsp1_hgo.c
-+++ b/drivers/media/platform/vsp1/vsp1_hgo.c
-@@ -465,7 +465,8 @@ struct vsp1_hgo *vsp1_hgo_create(struct vsp1_device *vsp1)
- 	hgo->entity.ops = &hgo_entity_ops;
- 	hgo->entity.type = VSP1_ENTITY_HGO;
- 
--	ret = vsp1_entity_init(vsp1, &hgo->entity, "hgo", 2, &hgo_ops);
-+	ret = vsp1_entity_init(vsp1, &hgo->entity, "hgo", 2, &hgo_ops,
-+			       MEDIA_ENT_F_PROC_VIDEO_STATISTICS);
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_hsit.c b/drivers/media/platform/vsp1/vsp1_hsit.c
-index 68b8567b374d..41b09e49e659 100644
---- a/drivers/media/platform/vsp1/vsp1_hsit.c
-+++ b/drivers/media/platform/vsp1/vsp1_hsit.c
-@@ -161,8 +161,9 @@ struct vsp1_hsit *vsp1_hsit_create(struct vsp1_device *vsp1, bool inverse)
- 	else
- 		hsit->entity.type = VSP1_ENTITY_HST;
- 
--	ret = vsp1_entity_init(vsp1, &hsit->entity, inverse ? "hsi" : "hst", 2,
--			       &hsit_ops);
-+	ret = vsp1_entity_init(vsp1, &hsit->entity, inverse ? "hsi" : "hst",
-+			       2, &hsit_ops,
-+			       MEDIA_ENT_F_PROC_VIDEO_PIXEL_ENC_CONV);
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_lif.c b/drivers/media/platform/vsp1/vsp1_lif.c
-index 0217393f22df..60d26b600768 100644
---- a/drivers/media/platform/vsp1/vsp1_lif.c
-+++ b/drivers/media/platform/vsp1/vsp1_lif.c
-@@ -165,7 +165,12 @@ struct vsp1_lif *vsp1_lif_create(struct vsp1_device *vsp1)
- 	lif->entity.ops = &lif_entity_ops;
- 	lif->entity.type = VSP1_ENTITY_LIF;
- 
--	ret = vsp1_entity_init(vsp1, &lif->entity, "lif", 2, &lif_ops);
-+	/* The LIF is never exposed to userspace, but media entity registration
-+	 * requires a function to be set. Use PROC_VIDEO_PIXEL_FORMATTER just to
-+	 * avoid triggering a WARN_ON(), the value won't be seen anywhere.
-+	 */
-+	ret = vsp1_entity_init(vsp1, &lif->entity, "lif", 2, &lif_ops,
-+			       MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER);
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
-index aa09e59f0ab8..2c367cb9755c 100644
---- a/drivers/media/platform/vsp1/vsp1_lut.c
-+++ b/drivers/media/platform/vsp1/vsp1_lut.c
-@@ -204,7 +204,8 @@ struct vsp1_lut *vsp1_lut_create(struct vsp1_device *vsp1)
- 	lut->entity.ops = &lut_entity_ops;
- 	lut->entity.type = VSP1_ENTITY_LUT;
- 
--	ret = vsp1_entity_init(vsp1, &lut->entity, "lut", 2, &lut_ops);
-+	ret = vsp1_entity_init(vsp1, &lut->entity, "lut", 2, &lut_ops,
-+			       MEDIA_ENT_F_PROC_VIDEO_LUT);
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_rpf.c b/drivers/media/platform/vsp1/vsp1_rpf.c
-index 64dfbddf2aba..4895038c5fc0 100644
---- a/drivers/media/platform/vsp1/vsp1_rpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_rpf.c
-@@ -237,7 +237,8 @@ struct vsp1_rwpf *vsp1_rpf_create(struct vsp1_device *vsp1, unsigned int index)
- 	rpf->entity.index = index;
- 
- 	sprintf(name, "rpf.%u", index);
--	ret = vsp1_entity_init(vsp1, &rpf->entity, name, 2, &rpf_ops);
-+	ret = vsp1_entity_init(vsp1, &rpf->entity, name, 2, &rpf_ops,
-+			       MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER);
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_sru.c b/drivers/media/platform/vsp1/vsp1_sru.c
-index 97ef997ae735..9dc7c77c74f8 100644
---- a/drivers/media/platform/vsp1/vsp1_sru.c
-+++ b/drivers/media/platform/vsp1/vsp1_sru.c
-@@ -308,7 +308,8 @@ struct vsp1_sru *vsp1_sru_create(struct vsp1_device *vsp1)
- 	sru->entity.ops = &sru_entity_ops;
- 	sru->entity.type = VSP1_ENTITY_SRU;
- 
--	ret = vsp1_entity_init(vsp1, &sru->entity, "sru", 2, &sru_ops);
-+	ret = vsp1_entity_init(vsp1, &sru->entity, "sru", 2, &sru_ops,
-+			       MEDIA_ENT_F_PROC_VIDEO_SCALER);
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_uds.c b/drivers/media/platform/vsp1/vsp1_uds.c
-index 1875e29da184..26f7393d278e 100644
---- a/drivers/media/platform/vsp1/vsp1_uds.c
-+++ b/drivers/media/platform/vsp1/vsp1_uds.c
-@@ -314,7 +314,8 @@ struct vsp1_uds *vsp1_uds_create(struct vsp1_device *vsp1, unsigned int index)
- 	uds->entity.index = index;
- 
- 	sprintf(name, "uds.%u", index);
--	ret = vsp1_entity_init(vsp1, &uds->entity, name, 2, &uds_ops);
-+	ret = vsp1_entity_init(vsp1, &uds->entity, name, 2, &uds_ops,
-+			       MEDIA_ENT_F_PROC_VIDEO_SCALER);
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
-index 6c91eaa35e75..4e391ccf8ba4 100644
---- a/drivers/media/platform/vsp1/vsp1_wpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-@@ -216,7 +216,8 @@ struct vsp1_rwpf *vsp1_wpf_create(struct vsp1_device *vsp1, unsigned int index)
- 	wpf->entity.index = index;
- 
- 	sprintf(name, "wpf.%u", index);
--	ret = vsp1_entity_init(vsp1, &wpf->entity, name, 2, &wpf_ops);
-+	ret = vsp1_entity_init(vsp1, &wpf->entity, name, 2, &wpf_ops,
-+			       MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER);
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
--- 
-Regards,
+Changes in version 2:
+- removed the SDH, SD0, and SD1 clocks;
+- added RCAN and ADSP clock indeces;
+- fixed SYS-DMAC0/1 clock indeces.
 
-Laurent Pinchart
+ include/dt-bindings/clock/r8a7792-clock.h |  103 ++++++++++++++++++++++++++++++
+ 1 file changed, 103 insertions(+)
+
+Index: renesas/include/dt-bindings/clock/r8a7792-clock.h
+===================================================================
+--- /dev/null
++++ renesas/include/dt-bindings/clock/r8a7792-clock.h
+@@ -0,0 +1,103 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_R8A7792_H__
++#define __DT_BINDINGS_CLOCK_R8A7792_H__
++
++/* CPG */
++#define R8A7792_CLK_MAIN		0
++#define R8A7792_CLK_PLL0		1
++#define R8A7792_CLK_PLL1		2
++#define R8A7792_CLK_PLL3		3
++#define R8A7792_CLK_LB			4
++#define R8A7792_CLK_QSPI		5
++#define R8A7792_CLK_Z			6
++#define R8A7792_CLK_RCAN		7
++#define R8A7792_CLK_ADSP		8
++
++/* MSTP0 */
++#define R8A7792_CLK_MSIOF0		0
++
++/* MSTP1 */
++#define R8A7792_CLK_TMU1		11
++#define R8A7792_CLK_TMU3		21
++#define R8A7792_CLK_TMU2		22
++#define R8A7792_CLK_CMT0		24
++#define R8A7792_CLK_TMU0		25
++#define R8A7792_CLK_VSP1DU1		27
++#define R8A7792_CLK_VSP1DU0		28
++#define R8A7792_CLK_VSP1_SY		31
++
++/* MSTP2 */
++#define R8A7792_CLK_MSIOF1		8
++#define R8A7792_CLK_SYS_DMAC1		18
++#define R8A7792_CLK_SYS_DMAC0		19
++
++/* MSTP3 */
++#define R8A7792_CLK_TPU0		4
++#define R8A7792_CLK_SDHI0		14
++#define R8A7792_CLK_CMT1		29
++
++/* MSTP4 */
++#define R8A7792_CLK_IRQC		7
++
++/* MSTP5 */
++#define R8A7792_CLK_AUDIO_DMAC0		2
++#define R8A7792_CLK_THERMAL		22
++#define R8A7792_CLK_PWM			23
++
++/* MSTP7 */
++#define R8A7792_CLK_HSCIF1		16
++#define R8A7792_CLK_HSCIF0		17
++#define R8A7792_CLK_SCIF3		18
++#define R8A7792_CLK_SCIF2		19
++#define R8A7792_CLK_SCIF1		20
++#define R8A7792_CLK_SCIF0		21
++#define R8A7792_CLK_DU1			23
++#define R8A7792_CLK_DU0			24
++
++/* MSTP8 */
++#define R8A7792_CLK_VIN5		4
++#define R8A7792_CLK_VIN4		5
++#define R8A7792_CLK_VIN3		8
++#define R8A7792_CLK_VIN2		9
++#define R8A7792_CLK_VIN1		10
++#define R8A7792_CLK_VIN0		11
++#define R8A7792_CLK_ETHERAVB		12
++
++/* MSTP9 */
++#define R8A7792_CLK_GPIO7		4
++#define R8A7792_CLK_GPIO6		5
++#define R8A7792_CLK_GPIO5		7
++#define R8A7792_CLK_GPIO4		8
++#define R8A7792_CLK_GPIO3		9
++#define R8A7792_CLK_GPIO2		10
++#define R8A7792_CLK_GPIO1		11
++#define R8A7792_CLK_GPIO0		12
++#define R8A7792_CLK_GPIO11		13
++#define R8A7792_CLK_GPIO10		14
++#define R8A7792_CLK_CAN1		15
++#define R8A7792_CLK_CAN0		16
++#define R8A7792_CLK_QSPI_MOD		17
++#define R8A7792_CLK_GPIO9		19
++#define R8A7792_CLK_GPIO8		21
++#define R8A7792_CLK_I2C5		25
++#define R8A7792_CLK_IICDVFS		26
++#define R8A7792_CLK_I2C4		27
++#define R8A7792_CLK_I2C3		28
++#define R8A7792_CLK_I2C2		29
++#define R8A7792_CLK_I2C1		30
++#define R8A7792_CLK_I2C0		31
++
++/* MSTP10 */
++#define R8A7792_CLK_SSI_ALL		5
++#define R8A7792_CLK_SSI4		11
++#define R8A7792_CLK_SSI3		12
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7792_H__ */
