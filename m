@@ -1,63 +1,143 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:60242 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752166AbcFNOP3 (ORCPT
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:36695 "EHLO
+	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751699AbcFIVo4 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 14 Jun 2016 10:15:29 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 5/5] ARM: dts: kzm9g: Update console parameters
-Date: Tue, 14 Jun 2016 16:15:24 +0200
-Message-Id: <1465913724-26172-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1465913724-26172-1-git-send-email-geert+renesas@glider.be>
-References: <1465913724-26172-1-git-send-email-geert+renesas@glider.be>
+	Thu, 9 Jun 2016 17:44:56 -0400
+Received: by mail-lf0-f47.google.com with SMTP id j5so34643774lfb.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Jun 2016 14:44:55 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 08/12] ARM: dts: r8a7792: add [H]SCIF support
+Date: Fri, 10 Jun 2016 00:44:52 +0300
+Message-ID: <1675474.pCyC4XVSBs@wasted.cogentembedded.com>
+In-Reply-To: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
+References: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Change the console alias to "serial0", for consistency with other
-boards (the first unlabeled serial port is always called "serial0").
-This does change the serial console from /dev/ttySC4 to /dev/ttySC0.
-Add the serial port config to "chosen/stdout-path", which requires
-referring to the port by alias.
-Drop the "console=" parameters from the kernel command line, as they're
-no longer needed for DT-based platforms.
+Describe [H]SCIFs in the R8A7792 device tree.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Change one-line summary prefix to match current arm-soc practices,
-  - Drop name change of pfc subnode,
-  - Reword patch description.
----
- arch/arm/boot/dts/sh73a0-kzm9g.dts | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/sh73a0-kzm9g.dts b/arch/arm/boot/dts/sh73a0-kzm9g.dts
-index 1df68b1670339491..3d65f1f6d78b62a4 100644
---- a/arch/arm/boot/dts/sh73a0-kzm9g.dts
-+++ b/arch/arm/boot/dts/sh73a0-kzm9g.dts
-@@ -22,7 +22,7 @@
- 	compatible = "renesas,kzm9g", "renesas,sh73a0";
+---
+Changes in version 3:
+- refreshed the patch.
+
+Changes in version 2:
+- resolved reject, indenting the device nodes that are now under the "soc" node;
+- added Geert's tag.
+
+ arch/arm/boot/dts/r8a7792.dtsi |   90 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -152,6 +152,96 @@
+ 			dma-channels = <15>;
+ 		};
  
- 	aliases {
--		serial4 = &scifa4;
-+		serial0 = &scifa4;
- 	};
- 
- 	cpus {
-@@ -39,8 +39,8 @@
- 	};
- 
- 	chosen {
--		bootargs = "console=tty0 console=ttySC4,115200 root=/dev/nfs ip=dhcp ignore_loglevel rw";
--		stdout-path = &scifa4;
-+		bootargs = "root=/dev/nfs ip=dhcp ignore_loglevel rw";
-+		stdout-path = "serial0:115200n8";
- 	};
- 
- 	memory@40000000 {
--- 
-1.9.1
++		scif0: serial@e6e60000 {
++			compatible = "renesas,scif-r8a7792",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6e60000 0 64>;
++			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7792_CLK_SCIF0>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
++			       <&dmac1 0x29>, <&dmac1 0x2a>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif1: serial@e6e68000 {
++			compatible = "renesas,scif-r8a7792",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6e68000 0 64>;
++			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7792_CLK_SCIF1>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
++			       <&dmac1 0x2d>, <&dmac1 0x2e>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif2: serial@e6e58000 {
++			compatible = "renesas,scif-r8a7792",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6e58000 0 64>;
++			interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7792_CLK_SCIF2>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
++			       <&dmac1 0x2b>, <&dmac1 0x2c>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif3: serial@e6ea8000 {
++			compatible = "renesas,scif-r8a7792",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6ea8000 0 64>;
++			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7792_CLK_SCIF3>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
++			       <&dmac1 0x2f>, <&dmac1 0x30>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		hscif0: serial@e62c0000 {
++			compatible = "renesas,hscif-r8a7792",
++				     "renesas,rcar-gen2-hscif", "renesas,hscif";
++			reg = <0 0xe62c0000 0 96>;
++			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7792_CLK_HSCIF0>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
++			       <&dmac1 0x39>, <&dmac1 0x3a>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		hscif1: serial@e62c8000 {
++			compatible = "renesas,hscif-r8a7792",
++				     "renesas,rcar-gen2-hscif", "renesas,hscif";
++			reg = <0 0xe62c8000 0 96>;
++			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7792_CLK_HSCIF1>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
++			       <&dmac1 0x4d>, <&dmac1 0x4e>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
+ 		/* Special CPG clocks */
+ 		cpg_clocks: cpg_clocks@e6150000 {
+ 			compatible = "renesas,r8a7792-cpg-clocks",
