@@ -1,66 +1,41 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52294 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751141AbcFFBCn (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sun, 5 Jun 2016 21:02:43 -0400
-Date: Mon, 6 Jun 2016 10:02:39 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Linux MMC List <linux-mmc@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Ai Kyuse <ai.kyuse.uw@renesas.com>
-Subject: Re: [PATCH v3 3/4] mmc: sh_mobile_sdhi: Add tuning support
-Message-ID: <20160606010238.GC4859@verge.net.au>
-References: <1464057797-29951-1-git-send-email-horms+renesas@verge.net.au>
- <1464057797-29951-4-git-send-email-horms+renesas@verge.net.au>
- <CAMuHMdWs2cFgy8PtAUaYdfqnm+LU5cB9sn5WNnKsqRqza=nW6w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWs2cFgy8PtAUaYdfqnm+LU5cB9sn5WNnKsqRqza=nW6w@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <kieran@ksquared.org.uk>
+Return-Path: <kieran@ksquared.org.uk>
+Sender: Kieran Bingham <kieran@ksquared.org.uk>
+From: Kieran Bingham <kieran@bingham.xyz>
+To: laurent.pinchart@ideasonboard.com,
+	mchehab@osg.samsung.com,
+	linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kieran Bingham <kieran@bingham.xyz>
+Subject: [PATCH] v4l: Extend FCP compatible list to support the FDP
+Date: Thu,  9 Jun 2016 18:06:43 +0100
+Message-Id: <1465492003-1554-2-git-send-email-kieran@bingham.xyz>
+In-Reply-To: <1465492003-1554-1-git-send-email-kieran@bingham.xyz>
+References: <1465492003-1554-1-git-send-email-kieran@bingham.xyz>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, May 31, 2016 at 12:39:58PM +0200, Geert Uytterhoeven wrote:
-> Hi Simon,
-> 
-> On Tue, May 24, 2016 at 4:43 AM, Simon Horman
-> <horms+renesas@verge.net.au> wrote:
-> > --- a/drivers/mmc/host/sh_mobile_sdhi.c
-> > +++ b/drivers/mmc/host/sh_mobile_sdhi.c
-> 
-> > @@ -403,6 +580,30 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
-> >         if (ret < 0)
-> >                 goto efree;
-> >
-> > +       if (host->mmc->caps & MMC_CAP_UHS_SDR104)
-> > +               host->mmc->caps |= MMC_CAP_HW_RESET;
-> > +
-> > +       if (of_id && of_id->data) {
-> > +               const struct sh_mobile_sdhi_of_data *of_data = of_id->data;
-> > +               const struct sh_mobile_sdhi_scc *taps = of_data->taps;
-> > +               bool hit = false;
-> > +
-> > +               for (i = 0; i < of_data->taps_num; i++) {
-> > +                       if (taps[i].clk_rate == 0 ||
-> > +                           taps[i].clk_rate == host->mmc->f_max) {
-> > +                               host->scc_tappos = taps->tap;
-> > +                               hit = true;
-> > +                               break;
-> > +                       }
-> > +               }
-> > +
-> > +               if (!hit)
-> > +                       dev_warn(&host->pdev->dev, "Unknown clock rate for SDR104 and HS200\n");
-> 
-> This warning triggers on sh7a0/kzm9g, r8a73a4/ape6evm, and
-> r8a7740/armadillo.
-> 
-> Perhaps the tap code should check if MMC_CAP_UHS_SDR104 is
-> enabled?
+The FCP must be powered up for the FDP1 to function, even when the FDP1
+does not make use of the FCNL features. Extend the compatible list
+to allow us to use the power domain and runtime-pm support.
 
-Thanks. Yes, I think that would be sensible.
+Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+---
+ drivers/media/platform/rcar-fcp.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/media/platform/rcar-fcp.c b/drivers/media/platform/rcar-fcp.c
+index 6a7bcc3028b1..0ff6b1edf1db 100644
+--- a/drivers/media/platform/rcar-fcp.c
++++ b/drivers/media/platform/rcar-fcp.c
+@@ -160,6 +160,7 @@ static int rcar_fcp_remove(struct platform_device *pdev)
+ 
+ static const struct of_device_id rcar_fcp_of_match[] = {
+ 	{ .compatible = "renesas,fcpv" },
++	{ .compatible = "renesas,fcpf" },
+ 	{ },
+ };
+ 
+-- 
+2.7.4
