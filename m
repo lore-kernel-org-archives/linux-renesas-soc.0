@@ -1,204 +1,131 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-	m.szyprowski@samsung.com
-Date: Wed, 08 Jun 2016 16:18:25 +0900
-Message-Id: <20160608071825.7560.72273.sendpatchset@little-apple>
-In-Reply-To: <20160608071737.7560.32571.sendpatchset@little-apple>
-References: <20160608071737.7560.32571.sendpatchset@little-apple>
-Subject: [PATCH v4 05/07] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53934 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932249AbcFIRml (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 9 Jun 2016 13:42:41 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87mvmvkq8b.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bB3yT-0003Nq-Ak@debutante>
+Date: Thu, 09 Jun 2016 18:42:33 +0100
+Subject: Applied "ASoC: rsnd: adg :: AUDIO-CLKOUTn asynchronizes support" to the asoc tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+The patch
 
-Introduce an alternative set of iommu_ops suitable for 64-bit ARM
-as well as 32-bit ARM when CONFIG_IOMMU_DMA=y.
+   ASoC: rsnd: adg :: AUDIO-CLKOUTn asynchronizes support
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 7dc20319660d12d2ef642e572e8802c228b6c1cd Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Thu, 9 Jun 2016 03:21:37 +0000
+Subject: [PATCH] ASoC: rsnd: adg :: AUDIO-CLKOUTn asynchronizes support
+
+AUDIO-CLKOUTn can asynchronizes with L/R clock.
+AUDIO-CLKOUTn synchronizes with L/R clock is now default behavior.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
+ .../devicetree/bindings/sound/renesas,rsnd.txt         |  2 ++
+ sound/soc/sh/rcar/adg.c                                | 18 ++++++++++++++++++
+ 2 files changed, 20 insertions(+)
 
- Changes since V3:
- - Removed group parameter from ipmmu_init_platform_device()
-
- Changes since V2:
- - Included this new patch from the following series:
-   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
- - Use only a single iommu_ops structure with #ifdef CONFIG_IOMMU_DMA
- - Folded in #ifdefs to handle CONFIG_ARM and CONFIG_IOMMU_DMA
- - of_xlate() is now used without #ifdefs
- - Made sure code compiles on both 32-bit and 64-bit ARM.
-
- drivers/iommu/ipmmu-vmsa.c |  111 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 103 insertions(+), 8 deletions(-)
-
---- 0008/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-08 15:08:39.950607110 +0900
-@@ -10,6 +10,7 @@
+diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+index c7b29df4a963..15a7316e4c91 100644
+--- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
++++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+@@ -373,6 +373,8 @@ Optional properties:
+ - #clock-cells			: it must be 0 if your system has audio_clkout
+ 				  it must be 1 if your system has audio_clkout0/1/2/3
+ - clock-frequency		: for all audio_clkout0/1/2/3
++- clkout-lr-asynchronous	: boolean property. it indicates that audio_clkoutn
++				  is asynchronizes with lr-clock.
  
- #include <linux/bitmap.h>
- #include <linux/delay.h>
-+#include <linux/dma-iommu.h>
- #include <linux/dma-mapping.h>
- #include <linux/err.h>
- #include <linux/export.h>
-@@ -22,8 +23,10 @@
- #include <linux/sizes.h>
- #include <linux/slab.h>
+ SSI subnode properties:
+ - interrupts			: Should contain SSI interrupt for PIO transfer
+diff --git a/sound/soc/sh/rcar/adg.c b/sound/soc/sh/rcar/adg.c
+index 49354d17ea55..7d3e0e46d64a 100644
+--- a/sound/soc/sh/rcar/adg.c
++++ b/sound/soc/sh/rcar/adg.c
+@@ -33,11 +33,15 @@ struct rsnd_adg {
+ 	struct clk *clkout[CLKOUTMAX];
+ 	struct clk_onecell_data onecell;
+ 	struct rsnd_mod mod;
++	u32 flags;
  
-+#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
- #include <asm/dma-iommu.h>
- #include <asm/pgalloc.h>
-+#endif
- 
- #include "io-pgtable.h"
- 
-@@ -520,14 +523,6 @@ static struct iommu_domain *__ipmmu_doma
- 	return &domain->io_domain;
- }
- 
--static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
--{
--	if (type != IOMMU_DOMAIN_UNMANAGED)
--		return NULL;
--
--	return __ipmmu_domain_alloc(type);
--}
--
- static void ipmmu_domain_free(struct iommu_domain *io_domain)
- {
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
-@@ -714,6 +709,8 @@ error:
- 	return ret;
- }
- 
-+#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
-+
- static int ipmmu_add_device(struct device *dev)
- {
- 	struct ipmmu_vmsa_archdata *archdata;
-@@ -807,6 +804,14 @@ static void ipmmu_remove_device(struct d
- 	dev->archdata.iommu = NULL;
- }
- 
-+static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
-+{
-+	if (type != IOMMU_DOMAIN_UNMANAGED)
-+		return NULL;
-+
-+	return __ipmmu_domain_alloc(type);
-+}
-+
- static const struct iommu_ops ipmmu_ops = {
- 	.domain_alloc = ipmmu_domain_alloc,
- 	.domain_free = ipmmu_domain_free,
-@@ -821,6 +826,94 @@ static const struct iommu_ops ipmmu_ops
- 	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
+ 	int rbga_rate_for_441khz; /* RBGA */
+ 	int rbgb_rate_for_48khz;  /* RBGB */
  };
  
-+#endif /* !CONFIG_ARM && CONFIG_IOMMU_DMA */
++#define LRCLK_ASYNC	(1 << 0)
++#define adg_mode_flags(adg)	(adg->flags)
 +
-+#ifdef CONFIG_IOMMU_DMA
+ #define for_each_rsnd_clk(pos, adg, i)		\
+ 	for (i = 0;				\
+ 	     (i < CLKMAX) &&			\
+@@ -355,6 +359,16 @@ found_clock:
+ 
+ 	rsnd_adg_set_ssi_clk(ssi_mod, data);
+ 
++	if (!(adg_mode_flags(adg) & LRCLK_ASYNC)) {
++		struct rsnd_mod *adg_mod = rsnd_mod_get(adg);
++		u32 ckr = 0;
 +
-+static struct iommu_domain *ipmmu_domain_alloc_dma(unsigned type)
-+{
-+	struct iommu_domain *io_domain;
++		if (0 == (rate % 8000))
++			ckr = 0x80000000;
 +
-+	if (type != IOMMU_DOMAIN_DMA)
-+		return NULL;
-+
-+	io_domain = __ipmmu_domain_alloc(type);
-+	if (io_domain)
-+		iommu_get_dma_cookie(io_domain);
-+
-+	return io_domain;
-+}
-+
-+static void ipmmu_domain_free_dma(struct iommu_domain *io_domain)
-+{
-+	iommu_put_dma_cookie(io_domain);
-+	ipmmu_domain_free(io_domain);
-+}
-+
-+static int ipmmu_add_device_dma(struct device *dev)
-+{
-+	struct iommu_group *group;
-+
-+	/* only accept devices with iommus property */
-+	if (of_count_phandle_with_args(dev->of_node, "iommus",
-+				       "#iommu-cells") < 0)
-+		return -ENODEV;
-+
-+	group = iommu_group_get_for_dev(dev);
-+	if (IS_ERR(group))
-+		return PTR_ERR(group);
-+
-+	return 0;
-+}
-+
-+static void ipmmu_remove_device_dma(struct device *dev)
-+{
-+	iommu_group_remove_device(dev);
-+}
-+
-+static struct iommu_group *ipmmu_device_group_dma(struct device *dev)
-+{
-+	struct iommu_group *group;
-+	int ret;
-+
-+	group = generic_device_group(dev);
-+	if (IS_ERR(group))
-+		return group;
-+
-+	ret = ipmmu_init_platform_device(dev);
-+	if (ret) {
-+		iommu_group_put(group);
-+		group = ERR_PTR(ret);
++		rsnd_mod_bset(adg_mod, SSICKR, 0x80000000, ckr);
 +	}
 +
-+	return group;
-+}
-+
-+static int ipmmu_of_xlate_dma(struct device *dev,
-+			      struct of_phandle_args *spec)
-+{
-+	/* dummy callback to satisfy of_iommu_configure() */
-+	return 0;
-+}
-+
-+static const struct iommu_ops ipmmu_ops = {
-+	.domain_alloc = ipmmu_domain_alloc_dma,
-+	.domain_free = ipmmu_domain_free_dma,
-+	.attach_dev = ipmmu_attach_device,
-+	.detach_dev = ipmmu_detach_device,
-+	.map = ipmmu_map,
-+	.unmap = ipmmu_unmap,
-+	.map_sg = default_iommu_map_sg,
-+	.iova_to_phys = ipmmu_iova_to_phys,
-+	.add_device = ipmmu_add_device_dma,
-+	.remove_device = ipmmu_remove_device_dma,
-+	.device_group = ipmmu_device_group_dma,
-+	.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K,
-+	.of_xlate = ipmmu_of_xlate_dma,
-+};
-+
-+#endif /* CONFIG_IOMMU_DMA */
-+
- /* -----------------------------------------------------------------------------
-  * Probe/remove and init
-  */
-@@ -910,7 +1003,9 @@ static int ipmmu_remove(struct platform_
- 	list_del(&mmu->list);
- 	spin_unlock(&ipmmu_devices_lock);
+ 	dev_dbg(dev, "ADG: %s[%d] selects 0x%x for %d\n",
+ 		rsnd_mod_name(ssi_mod), rsnd_mod_id(ssi_mod),
+ 		data, rate);
+@@ -532,6 +546,7 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
+ {
+ 	struct rsnd_adg *adg;
+ 	struct device *dev = rsnd_priv_to_dev(priv);
++	struct device_node *np = dev->of_node;
  
-+#if defined(CONFIG_ARM) && !defined(CONFIG_IOMMU_DMA)
- 	arm_iommu_release_mapping(mmu->mapping);
-+#endif
+ 	adg = devm_kzalloc(dev, sizeof(*adg), GFP_KERNEL);
+ 	if (!adg) {
+@@ -545,6 +560,9 @@ int rsnd_adg_probe(struct rsnd_priv *priv)
+ 	rsnd_adg_get_clkin(priv, adg);
+ 	rsnd_adg_get_clkout(priv, adg);
  
- 	ipmmu_device_reset(mmu);
++	if (of_get_property(np, "clkout-lr-asynchronous", NULL))
++		adg->flags = LRCLK_ASYNC;
++
+ 	priv->adg = adg;
  
+ 	return 0;
+-- 
+2.8.1
