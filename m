@@ -1,42 +1,62 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52953 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932449AbcFTTMB (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 20 Jun 2016 15:12:01 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 11/24] v4l: vsp1: pipe: Fix typo in comment
-Date: Mon, 20 Jun 2016 22:10:29 +0300
-Message-Id: <1466449842-29502-12-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v4 02/12] ARM: shmobile: r8a7792: add power domain index macros
+Date: Fri, 10 Jun 2016 00:33:32 +0300
+Message-ID: <5668456.Vz9YOUO7ef@wasted.cogentembedded.com>
+In-Reply-To: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
+References: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The vsp1_pipeline wq field is a wait queue, not a work queue. Fix the
-comment accordingly.
+Add macros usable by the device tree sources to reference R8A7792 SYSC power
+domains by index.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 ---
- drivers/media/platform/vsp1/vsp1_pipe.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in version 2:
+- added Geert's tag.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
-index 3ecd3c1794a9..2cbf1a5ea1fb 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.h
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.h
-@@ -61,7 +61,7 @@ enum vsp1_pipeline_state {
-  * @pipe: the media pipeline
-  * @irqlock: protects the pipeline state
-  * @state: current state
-- * @wq: work queue to wait for state change completion
-+ * @wq: wait queue to wait for state change completion
-  * @frame_end: frame end interrupt handler
-  * @lock: protects the pipeline use count and stream count
-  * @kref: pipeline reference count
--- 
-Regards,
+ include/dt-bindings/power/r8a7792-sysc.h |   26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-Laurent Pinchart
+Index: renesas/include/dt-bindings/power/r8a7792-sysc.h
+===================================================================
+--- /dev/null
++++ renesas/include/dt-bindings/power/r8a7792-sysc.h
+@@ -0,0 +1,26 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
++#ifndef __DT_BINDINGS_POWER_R8A7792_SYSC_H__
++#define __DT_BINDINGS_POWER_R8A7792_SYSC_H__
++
++/*
++ * These power domain indices match the numbers of the interrupt bits
++ * representing the power areas in the various Interrupt Registers
++ * (e.g. SYSCISR, Interrupt Status Register)
++ */
++
++#define R8A7792_PD_CA15_CPU0		0
++#define R8A7792_PD_CA15_CPU1		1
++#define R8A7792_PD_CA15_SCU		12
++#define R8A7792_PD_SGX			20
++#define R8A7792_PD_IMP			24
++
++/* Always-on power area */
++#define R8A7792_PD_ALWAYS_ON		32
++
++#endif /* __DT_BINDINGS_POWER_R8A7792_SYSC_H__ */
+
