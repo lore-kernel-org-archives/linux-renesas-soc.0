@@ -1,84 +1,39 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 06 Jun 2016 12:58:58 +0900
-Message-Id: <20160606035858.31763.1660.sendpatchset@little-apple>
-In-Reply-To: <20160606035723.31763.66500.sendpatchset@little-apple>
-References: <20160606035723.31763.66500.sendpatchset@little-apple>
-Subject: [PATCH v2 10/11] iommu/ipmmu-vmsa: Allow two bit SL0
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1465488747-26892-2-git-send-email-kieran@bingham.xyz>
+References: <1465488747-26892-1-git-send-email-kieran@bingham.xyz> <1465488747-26892-2-git-send-email-kieran@bingham.xyz>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Jun 2016 09:24:35 +0200
+Message-ID: <CAMuHMdXuSsv50kzMeLT_QAfJtnvEoZsP-ofFQFzQ7yhct-5jmQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7795: Provide FDP1 clocks
+To: Kieran Bingham <kieran@bingham.xyz>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Kieran,
 
-Introduce support for two bit SL0 bitfield in IMTTBCR
-by using a separate feature flag.
+On Thu, Jun 9, 2016 at 6:12 PM, Kieran Bingham <kieran@bingham.xyz> wrote:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+> ---
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c | 3 +++
+>  1 file changed, 3 insertions(+)
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+Thanks queued in clk-renesas-for-v4.8.
 
- Changes since V1:
- - None
+Gr{oetje,eeting}s,
 
- drivers/iommu/ipmmu-vmsa.c |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+                        Geert
 
---- 0025/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-06 11:08:38.360607110 +0900
-@@ -38,6 +38,7 @@ struct ipmmu_features {
- 	bool has_cache_leaf_nodes;
- 	bool has_eight_ctx;
- 	bool setup_imbuscr;
-+	bool twobit_imttbcr_sl0;
- };
- 
- struct ipmmu_vmsa_device {
-@@ -146,6 +147,10 @@ static struct ipmmu_vmsa_domain *to_vmsa
- #define IMTTBCR_TSZ0_MASK		(7 << 0)
- #define IMTTBCR_TSZ0_SHIFT		O
- 
-+#define IMTTBCR_SL0_TWOBIT_LVL_3	(0 << 6)
-+#define IMTTBCR_SL0_TWOBIT_LVL_2	(1 << 6)
-+#define IMTTBCR_SL0_TWOBIT_LVL_1	(2 << 6)
-+
- #define IMBUSCR				0x000c
- #define IMBUSCR_DVM			(1 << 2)
- #define IMBUSCR_BUSSEL_SYS		(0 << 0)
-@@ -381,6 +386,7 @@ static int ipmmu_domain_allocate_context
- static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
- {
- 	u64 ttbr;
-+	u32 tmp;
- 	int ret;
- 
- 	/*
-@@ -431,9 +437,15 @@ static int ipmmu_domain_init_context(str
- 	 * We use long descriptors with inner-shareable WBWA tables and allocate
- 	 * the whole 32-bit VA space to TTBR0.
- 	 */
-+
-+	if (domain->root->features->twobit_imttbcr_sl0)
-+		tmp = IMTTBCR_SL0_TWOBIT_LVL_1;
-+	else
-+		tmp = IMTTBCR_SL0_LVL_1;
-+
- 	ipmmu_ctx_write(domain, IMTTBCR, IMTTBCR_EAE |
- 			IMTTBCR_SH0_INNER_SHAREABLE | IMTTBCR_ORGN0_WB_WA |
--			IMTTBCR_IRGN0_WB_WA | IMTTBCR_SL0_LVL_1);
-+			IMTTBCR_IRGN0_WB_WA | tmp);
- 
- 	/* MAIR0 */
- 	ipmmu_ctx_write(domain, IMMAIR0, domain->cfg.arm_lpae_s1_cfg.mair[0]);
-@@ -1059,6 +1071,7 @@ static const struct ipmmu_features ipmmu
- 	.has_cache_leaf_nodes = false,
- 	.has_eight_ctx = false,
- 	.setup_imbuscr = true,
-+	.twobit_imttbcr_sl0 = false,
- };
- 
- static const struct of_device_id ipmmu_of_ids[] = {
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
