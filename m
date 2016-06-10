@@ -1,15 +1,15 @@
 Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <robh@kernel.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWQZjE+AnPry6PiVc69PVdZ_2zstOKR==B6nywun2Om9Q@mail.gmail.com>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20160610173914.GA20505@rob-hp-laptop>
 References: <1465479695-18644-1-git-send-email-kieran@bingham.xyz>
  <1465479695-18644-3-git-send-email-kieran@bingham.xyz> <20160610173914.GA20505@rob-hp-laptop>
- <CAMuHMdWQZjE+AnPry6PiVc69PVdZ_2zstOKR==B6nywun2Om9Q@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 10 Jun 2016 16:33:36 -0500
-Message-ID: <CAL_JsqLd+sXeEtq+chtrCxyDgyBm9s3giCC+ri8oMvfVLjunaA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Jun 2016 21:11:25 +0200
+Message-ID: <CAMuHMdWQZjE+AnPry6PiVc69PVdZ_2zstOKR==B6nywun2Om9Q@mail.gmail.com>
 Subject: Re: [PATCH 2/3] dt-bindings: Document Renesas R-Car FCP power-domains usage
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Rob Herring <robh@kernel.org>
 Cc: Kieran Bingham <kieran@ksquared.org.uk>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Pawel Moll <pawel.moll@arm.com>,
 	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
@@ -20,50 +20,44 @@ Cc: Kieran Bingham <kieran@ksquared.org.uk>,
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jun 10, 2016 at 2:11 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Rob,
->
-> On Fri, Jun 10, 2016 at 7:39 PM, Rob Herring <robh@kernel.org> wrote:
->> On Thu, Jun 09, 2016 at 02:41:33PM +0100, Kieran Bingham wrote:
->>> The power domain must be specified to bring the device out of module
->>> standby. Document this in the example provided, so that new additions
->>> are not missed.
->>>
->>> Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
->>> ---
->>>  Documentation/devicetree/bindings/media/renesas,fcp.txt | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt b/Documentation/devicetree/bindings/media/renesas,fcp.txt
->>> index 271dcfdb5a76..6a55f5215221 100644
->>> --- a/Documentation/devicetree/bindings/media/renesas,fcp.txt
->>> +++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
->>> @@ -31,4 +31,5 @@ Device node example
->>>               compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
->>>               reg = <0 0xfea2f000 0 0x200>;
->>>               clocks = <&cpg CPG_MOD 602>;
->>> +             power-domains = <&sysc R8A7795_PD_A3VP>;
+Hi Rob,
+
+On Fri, Jun 10, 2016 at 7:39 PM, Rob Herring <robh@kernel.org> wrote:
+> On Thu, Jun 09, 2016 at 02:41:33PM +0100, Kieran Bingham wrote:
+>> The power domain must be specified to bring the device out of module
+>> standby. Document this in the example provided, so that new additions
+>> are not missed.
 >>
->> This needs to be documented above too, not just the example.
+>> Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+>> ---
+>>  Documentation/devicetree/bindings/media/renesas,fcp.txt | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt b/Documentation/devicetree/bindings/media/renesas,fcp.txt
+>> index 271dcfdb5a76..6a55f5215221 100644
+>> --- a/Documentation/devicetree/bindings/media/renesas,fcp.txt
+>> +++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
+>> @@ -31,4 +31,5 @@ Device node example
+>>               compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
+>>               reg = <0 0xfea2f000 0 0x200>;
+>>               clocks = <&cpg CPG_MOD 602>;
+>> +             power-domains = <&sysc R8A7795_PD_A3VP>;
 >
-> Why? Power domains are an optional feature, whose presence depends
-> on the platform, not on the device.
+> This needs to be documented above too, not just the example.
 
-Examples are not documentation. The binding should stand on its own
-without the example.
+Why? Power domains are an optional feature, whose presence depends
+on the platform, not on the device.
 
-How did I know this is optional unless you document it as optional?
-How many power domains does the device have?
+Hence "power-domains" properties may appear in any device node.
+Having to document them in every single binding document is overkill.
 
-> Hence "power-domains" properties may appear in any device node.
-> Having to document them in every single binding document is overkill.
+Gr{oetje,eeting}s,
 
-We do it for everything else pretty much. There's some exceptions like "status".
+                        Geert
 
-I agree that we get a bunch of redundancy with random text describing
-the properties. I'm all for a structured syntax that can distill the
-device bindings down to the pertainent information. If only someone
-proposed using yaml or something...
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Rob
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
