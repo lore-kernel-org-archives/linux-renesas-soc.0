@@ -1,65 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752998AbcFHBA4 (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:59387 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933307AbcFJNBQ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 21:00:56 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 30/30] ARM: dts: silk: Fix W=1 dtc warnings
-Date: Wed,  8 Jun 2016 10:00:00 +0900
-Message-Id: <b6960f19676e19f37a5e5a8af059fdf3b435d2f4.1465346599.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1465346599.git.horms+renesas@verge.net.au>
-References: <cover.1465346599.git.horms+renesas@verge.net.au>
+	Fri, 10 Jun 2016 09:01:16 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 05/19] ARM: dts: marzen: Name serial port pfc subnodes after device names
+Date: Fri, 10 Jun 2016 15:00:51 +0200
+Message-Id: <1465563665-2231-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
+References: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Name the Pin Function Controller subnodes for SCIF2 and SCIF4 after
+their device names, instead of using some arbitrary names that look like
+serial port aliases, but differ from the actual aliases.
 
-Warning (unit_address_vs_reg): Node /regulator@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@3 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@4 has a unit name, but no reg property
+This avoids conflicts when enabling support for more serial ports later,
+either here or in a DT overlay.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7794-silk.dts | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7779-marzen.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index 56d98d5b2185..b8c7a63c5ec4 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -32,7 +32,7 @@
- 		reg = <0 0x40000000 0 0x40000000>;
+diff --git a/arch/arm/boot/dts/r8a7779-marzen.dts b/arch/arm/boot/dts/r8a7779-marzen.dts
+index cec79a6347c036f7..013e6f510b0faae4 100644
+--- a/arch/arm/boot/dts/r8a7779-marzen.dts
++++ b/arch/arm/boot/dts/r8a7779-marzen.dts
+@@ -195,12 +195,12 @@
+ 		};
  	};
  
--	d3_3v: regulator@0 {
-+	d3_3v: regulator-d3-3v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "D3.3V";
- 		regulator-min-microvolt = <3300000>;
-@@ -41,7 +41,7 @@
- 		regulator-always-on;
+-	scif2_pins: serial2 {
++	scif2_pins: scif2 {
+ 		groups = "scif2_data_c";
+ 		function = "scif2";
  	};
  
--	vcc_sdhi1: regulator@3 {
-+	vcc_sdhi1: regulator-vcc-sdhi1 {
- 		compatible = "regulator-fixed";
- 
- 		regulator-name = "SDHI1 Vcc";
-@@ -52,7 +52,7 @@
- 		enable-active-high;
+-	scif4_pins: serial4 {
++	scif4_pins: scif4 {
+ 		groups = "scif4_data";
+ 		function = "scif4";
  	};
- 
--	vccq_sdhi1: regulator@4 {
-+	vccq_sdhi1: regulator-vccq-sdhi1 {
- 		compatible = "regulator-gpio";
- 
- 		regulator-name = "SDHI1 VccQ";
 -- 
-2.1.4
+1.9.1
