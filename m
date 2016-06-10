@@ -1,48 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36051 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752250AbcF3OP3 (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:44922 "EHLO
+	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752320AbcFJKFI (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:15:29 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM64 Based SoC Defconfig Updates for v4.8
-Date: Thu, 30 Jun 2016 16:14:56 +0200
-Message-Id: <cover.1467291186.git.horms+renesas@verge.net.au>
+	Fri, 10 Jun 2016 06:05:08 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Ben Dooks <ben.dooks@codethink.co.uk>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/3] pinctrl: sh-pfc: Move SoC-specific forward declarations to sh_pfc.h
+Date: Fri, 10 Jun 2016 12:05:01 +0200
+Message-Id: <1465553103-6345-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
+References: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+With C=1:
 
-Please consider these Renesas ARM64 based SoC defconfig updates for v4.8.
+    drivers/pinctrl/sh-pfc/pfc-emev2.c:1695:30: warning: symbol 'emev2_pinmux_info' was not declared. Should it be static?
+    drivers/pinctrl/sh-pfc/pfc-r8a7779.c:3888:30: warning: symbol 'r8a7779_pinmux_info' was not declared. Should it be static?
 
+Note that there are more warnings on SH.
 
-The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+The sh_pfc_soc_info structure is defined in sh_pfc.h, while all forward
+declarations for the SoC-specific versions are in core.h.
+Move the forward declarations from core.h to sh_pfc.h to fix this.
 
-  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+Reported-by: Ben Dooks <ben.dooks@codethink.co.uk>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/core.h   | 24 ------------------------
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 24 ++++++++++++++++++++++++
+ 2 files changed, 24 insertions(+), 24 deletions(-)
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-defconfig-for-v4.8
-
-for you to fetch changes up to 62bcf9087150f9588456d941d4ee444ead8ed6f2:
-
-  arm64: defconfig: enable Renesas R8A7796 SoC (2016-06-06 10:26:04 +0900)
-
-----------------------------------------------------------------
-Renesas ARM64 Based SoC Defconfig Updates for v4.8
-
-* Enable Renesas R8A7796 SoC in ARM64 defcnfig
-
-----------------------------------------------------------------
-Takeshi Kihara (1):
-      arm64: defconfig: enable Renesas R8A7796 SoC
-
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
+index dc1b2adb24c5c588..539ec7dc0b644dbe 100644
+--- a/drivers/pinctrl/sh-pfc/core.h
++++ b/drivers/pinctrl/sh-pfc/core.h
+@@ -67,28 +67,4 @@ void sh_pfc_write_reg(struct sh_pfc *pfc, u32 reg, unsigned int width,
+ int sh_pfc_get_pin_index(struct sh_pfc *pfc, unsigned int pin);
+ int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type);
+ 
+-extern const struct sh_pfc_soc_info emev2_pinmux_info;
+-extern const struct sh_pfc_soc_info r8a73a4_pinmux_info;
+-extern const struct sh_pfc_soc_info r8a7740_pinmux_info;
+-extern const struct sh_pfc_soc_info r8a7778_pinmux_info;
+-extern const struct sh_pfc_soc_info r8a7779_pinmux_info;
+-extern const struct sh_pfc_soc_info r8a7790_pinmux_info;
+-extern const struct sh_pfc_soc_info r8a7791_pinmux_info;
+-extern const struct sh_pfc_soc_info r8a7793_pinmux_info;
+-extern const struct sh_pfc_soc_info r8a7794_pinmux_info;
+-extern const struct sh_pfc_soc_info r8a7795_pinmux_info;
+-extern const struct sh_pfc_soc_info sh7203_pinmux_info;
+-extern const struct sh_pfc_soc_info sh7264_pinmux_info;
+-extern const struct sh_pfc_soc_info sh7269_pinmux_info;
+-extern const struct sh_pfc_soc_info sh73a0_pinmux_info;
+-extern const struct sh_pfc_soc_info sh7720_pinmux_info;
+-extern const struct sh_pfc_soc_info sh7722_pinmux_info;
+-extern const struct sh_pfc_soc_info sh7723_pinmux_info;
+-extern const struct sh_pfc_soc_info sh7724_pinmux_info;
+-extern const struct sh_pfc_soc_info sh7734_pinmux_info;
+-extern const struct sh_pfc_soc_info sh7757_pinmux_info;
+-extern const struct sh_pfc_soc_info sh7785_pinmux_info;
+-extern const struct sh_pfc_soc_info sh7786_pinmux_info;
+-extern const struct sh_pfc_soc_info shx3_pinmux_info;
+-
+ #endif /* __SH_PFC_CORE_H__ */
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index ea3a527514558add..332d379b302cba70 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -225,6 +225,30 @@ struct sh_pfc_soc_info {
+ 	u32 unlock_reg;
+ };
+ 
++extern const struct sh_pfc_soc_info emev2_pinmux_info;
++extern const struct sh_pfc_soc_info r8a73a4_pinmux_info;
++extern const struct sh_pfc_soc_info r8a7740_pinmux_info;
++extern const struct sh_pfc_soc_info r8a7778_pinmux_info;
++extern const struct sh_pfc_soc_info r8a7779_pinmux_info;
++extern const struct sh_pfc_soc_info r8a7790_pinmux_info;
++extern const struct sh_pfc_soc_info r8a7791_pinmux_info;
++extern const struct sh_pfc_soc_info r8a7793_pinmux_info;
++extern const struct sh_pfc_soc_info r8a7794_pinmux_info;
++extern const struct sh_pfc_soc_info r8a7795_pinmux_info;
++extern const struct sh_pfc_soc_info sh7203_pinmux_info;
++extern const struct sh_pfc_soc_info sh7264_pinmux_info;
++extern const struct sh_pfc_soc_info sh7269_pinmux_info;
++extern const struct sh_pfc_soc_info sh73a0_pinmux_info;
++extern const struct sh_pfc_soc_info sh7720_pinmux_info;
++extern const struct sh_pfc_soc_info sh7722_pinmux_info;
++extern const struct sh_pfc_soc_info sh7723_pinmux_info;
++extern const struct sh_pfc_soc_info sh7724_pinmux_info;
++extern const struct sh_pfc_soc_info sh7734_pinmux_info;
++extern const struct sh_pfc_soc_info sh7757_pinmux_info;
++extern const struct sh_pfc_soc_info sh7785_pinmux_info;
++extern const struct sh_pfc_soc_info sh7786_pinmux_info;
++extern const struct sh_pfc_soc_info shx3_pinmux_info;
++
+ /* -----------------------------------------------------------------------------
+  * Helper macros to create pin and port lists
+  */
+-- 
+1.9.1
