@@ -1,52 +1,41 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36101 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752705AbcF3OP4 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:15:56 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/9] arm64: dts: r8a7795: Add missing blank lines between cpu nodes
-Date: Thu, 30 Jun 2016 16:14:59 +0200
-Message-Id: <3bb1acd1eb312c99f3b60d1f591668d00ff007ab.1467291676.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467291676.git.horms+renesas@verge.net.au>
-References: <cover.1467291676.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 14/19] ARM: dts: gose: Name spi pfc subnode after device name
+Date: Fri, 10 Jun 2016 15:01:00 +0200
+Message-Id: <1465563665-2231-15-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
+References: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Name the Pin Function Controller subnode for QSPI after its device name,
+instead of after the spi interface alias.
 
-For consistency with a57_0/a57_1 cpu nodes, and all other nodes.
+This avoids conflicts when enabl support for more spi interfaces later,
+either here or in a DT overlay.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/r8a7793-gose.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 04eb0bc65634..fad6dd8b7771 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -53,6 +53,7 @@
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-+
- 		a57_2: cpu@2 {
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x2>;
-@@ -61,6 +62,7 @@
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-+
- 		a57_3: cpu@3 {
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x3>;
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 995e1e0fb1ff4f57..90af18600124e119 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -360,7 +360,7 @@
+ 		renesas,function = "sdhi2";
+ 	};
+ 
+-	qspi_pins: spi0 {
++	qspi_pins: qspi {
+ 		groups = "qspi_ctrl", "qspi_data4";
+ 		function = "qspi";
+ 	};
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
+
