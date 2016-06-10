@@ -1,75 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752275AbcFHBAb (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 21:00:31 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 19/30] ARM: dts: ape6evm: Fix W=1 dtc warnings
-Date: Wed,  8 Jun 2016 09:59:49 +0900
-Message-Id: <4706147211708c7a8c027b798a016fdd5d03c9d2.1465346599.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1465346599.git.horms+renesas@verge.net.au>
-References: <cover.1465346599.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 06/19] ARM: dts: lager: Name serial port pfc subnodes after device names
+Date: Fri, 10 Jun 2016 15:00:52 +0200
+Message-Id: <1465563665-2231-7-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
+References: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Name the Pin Function Controller subnodes for SCIF0 and SCIFA1 after
+their device names, instead of after the serial port aliases.
 
-Warning (unit_address_vs_reg): Node /regulator@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@1 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@2 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /regulator@3 has a unit name, but no reg property
+This avoids conflicts when enabling support for more serial ports later,
+either here or in a DT overlay.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a73a4-ape6evm.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/r8a7790-lager.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a73a4-ape6evm.dts b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-index 93ace33e3e36..740e5d23f7c7 100644
---- a/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-+++ b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-@@ -36,7 +36,7 @@
- 		reg = <2 0x00000000 0 0x40000000>;
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 15cef6232a391e02..9cb055a932edabc7 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -317,7 +317,7 @@
+ 		function = "du";
  	};
  
--	vcc_mmc0: regulator@0 {
-+	vcc_mmc0: regulator-mmc0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "MMC0 Vcc";
- 		regulator-min-microvolt = <2800000>;
-@@ -44,7 +44,7 @@
- 		regulator-always-on;
+-	scif0_pins: serial0 {
++	scif0_pins: scif0 {
+ 		groups = "scif0_data";
+ 		function = "scif0";
+ 	};
+@@ -337,7 +337,7 @@
+ 		function = "intc";
  	};
  
--	vcc_sdhi0: regulator@1 {
-+	vcc_sdhi0: regulator-sdhi0 {
- 		compatible = "regulator-fixed";
- 
- 		regulator-name = "SDHI0 Vcc";
-@@ -56,7 +56,7 @@
+-	scifa1_pins: serial1 {
++	scifa1_pins: scifa1 {
+ 		groups = "scifa1_data";
+ 		function = "scifa1";
  	};
- 
- 	/* Common 1.8V and 3.3V rails, used by several devices on APE6EVM */
--	ape6evm_fixed_1v8: regulator@2 {
-+	ape6evm_fixed_1v8: regulator-1v8 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "1V8";
- 		regulator-min-microvolt = <1800000>;
-@@ -64,7 +64,7 @@
- 		regulator-always-on;
- 	};
- 
--	ape6evm_fixed_3v3: regulator@3 {
-+	ape6evm_fixed_3v3: regulator-3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "3V3";
- 		regulator-min-microvolt = <3300000>;
 -- 
-2.1.4
+1.9.1
+
