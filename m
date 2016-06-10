@@ -1,77 +1,178 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932123AbcF3ORe (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:17:34 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 41/41] ARM: dts: r8a7792: add SMP support
-Date: Thu, 30 Jun 2016 16:16:01 +0200
-Message-Id: <8fd763c75c3ab8e72e5d7f0d4c53531e6ff76197.1467294011.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
-References: <cover.1467294011.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 10 Jun 2016 17:25:58 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Joonyoung Shim <jy0922.shim@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Alison Wang <alison.wang@freescale.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mark Yao <mark.yao@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Vincent Abriou <vincent.abriou@st.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Stephen Warren <swarren@wwwdotorg.org>,
+	Alexandre Courbot <gnurou@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v2 00/20] drm/atomic: Provide default ->best_encoder()
+ behavior
+Message-ID: <20160610152558.GM3363@phenom.ffwll.local>
+References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Tue, Jun 07, 2016 at 01:47:55PM +0200, Boris Brezillon wrote:
+> Hello,
+> 
+> This patch series aims at replacing all dummy ->best_encoder()
+> implementations where we have a 1:1 relationship between encoders
+> and connectors.
+> The core already provides the drm_atomic_helper_best_encoder()
+> function which is taking the first encoder attached to the
+> connector (after making sure only one encoder was attached to the
+> connector), but it's not automatically used, and drivers wanting
+> to rely on this default behavior have to explicitly assign their
+> ->best_encoder() hook to drm_atomic_helper_best_encoder().
+> 
+> The first patch fixes remaining places where
+> drm_atomic_helper_best_encoder() should be called when ->best_encoder()
+> is NULL, so that drivers using the atomic helpers can get rid of the
+> explicit ->best_encoder assignment if they need to rely on the default
+> drm_atomic_helper_best_encoder() implementation.
+> 
+> The following patches are killing all open coded ->best_encoder()
+> implementations that could be replaced by
+> drm_atomic_helper_best_encoder().
+> 
+> All modifications have been compile tested except for the changed on
+> the intel driver.
+> I've also tested on an atmel board, but I recommend waiting for DRM
+> driver maintainers feedback before applying the associated changes.
+> 
+> Note that once patch 1 is applied, the other patches can be applied
+> independently.
 
-Add the device tree nodes for the Advanced Power Management Unit (APMU)
-and the second Cortex-A15 CPU core.
-Use the "enable-method" prop  to point out that the APMU should be used
-for the SMP support.
+One comment on the i915 patch, all others should now be in drm-misc.
+Thanks a lot for doing this.
+-Daniel
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7792.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+> 
+> Best Regards,
+> 
+> Boris
+> 
+> Changes since v1:
+> - remove useless ->encoder backpointers in some implementations
+> - documented the default behavior in the vtable doc
+> - added R-b/A-b tags
+> 
+> Boris Brezillon (20):
+>   drm/atomic: Fix remaining places where !funcs->best_encoder is valid
+>   drm: arc: Rely on the default ->best_encoder() behavior
+>   drm: atmel-hlcdc: Rely on the default ->best_encoder() behavior
+>   drm: exynos: Rely on the default ->best_encoder() behavior
+>   drm: fsl-dcu: Rely on the default ->best_encoder() behavior
+>   drm: i915: Rely on the default ->best_encoder() behavior where
+>     appropriate
+>   drm: mediatek: Rely on the default ->best_encoder() behavior
+>   drm: msm: Rely on the default ->best_encoder() behavior where
+>     appropriate
+>   drm: rcar-du: Rely on the default ->best_encoder() behavior
+>   drm: rockchip: Rely on the default ->best_encoder() behavior
+>   drm: sti: Rely on the default ->best_encoder() behavior
+>   drm: sun4i: Rely on the default ->best_encoder() behavior
+>   drm: tegra: Rely on the default ->best_encoder() behavior
+>   drm: vc4: Rely on the default ->best_encoder() behavior
+>   drm: virtgpu: Rely on the default ->best_encoder() behavior
+>   drm: omap: Rely on the default ->best_encoder() behavior
+>   drm/bridge: anx78xx: Rely on the default ->best_encoder() behavior
+>   drm/bridge: ptn3460: Rely on the default ->best_encoder() behavior
+>   drm/bridge: ps8622: Rely on the default ->best_encoder() behavior
+>   drm/bridge: dw-hdmi: Use drm_atomic_helper_best_encoder()
+> 
+>  drivers/gpu/drm/arc/arcpgu_hdmi.c                  | 18 ------------------
+>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c   | 12 ------------
+>  drivers/gpu/drm/bridge/analogix-anx78xx.c          |  8 --------
+>  drivers/gpu/drm/bridge/dw-hdmi.c                   | 11 +----------
+>  drivers/gpu/drm/bridge/nxp-ptn3460.c               |  8 --------
+>  drivers/gpu/drm/bridge/parade-ps8622.c             | 10 ----------
+>  drivers/gpu/drm/drm_atomic_helper.c                |  4 +++-
+>  drivers/gpu/drm/drm_fb_helper.c                    | 13 ++++++++++++-
+>  drivers/gpu/drm/exynos/exynos_drm_dpi.c            |  9 ---------
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  9 ---------
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c           |  8 --------
+>  drivers/gpu/drm/exynos/exynos_hdmi.c               |  8 --------
+>  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c          |  9 ---------
+>  drivers/gpu/drm/i915/intel_crt.c                   |  1 -
+>  drivers/gpu/drm/i915/intel_display.c               |  8 --------
+>  drivers/gpu/drm/i915/intel_dp.c                    |  1 -
+>  drivers/gpu/drm/i915/intel_drv.h                   |  1 -
+>  drivers/gpu/drm/i915/intel_dsi.c                   |  1 -
+>  drivers/gpu/drm/i915/intel_dvo.c                   |  1 -
+>  drivers/gpu/drm/i915/intel_hdmi.c                  |  1 -
+>  drivers/gpu/drm/i915/intel_lvds.c                  |  1 -
+>  drivers/gpu/drm/i915/intel_sdvo.c                  |  1 -
+>  drivers/gpu/drm/i915/intel_tv.c                    |  1 -
+>  drivers/gpu/drm/mediatek/mtk_dsi.c                 |  9 ---------
+>  drivers/gpu/drm/msm/edp/edp_connector.c            | 10 ----------
+>  drivers/gpu/drm/msm/hdmi/hdmi_connector.c          |  8 --------
+>  drivers/gpu/drm/msm/mdp/mdp4/mdp4_lvds_connector.c |  9 ---------
+>  drivers/gpu/drm/omapdrm/omap_connector.c           | 10 ----------
+>  drivers/gpu/drm/rcar-du/rcar_du_encoder.c          | 12 ------------
+>  drivers/gpu/drm/rcar-du/rcar_du_encoder.h          |  3 ---
+>  drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c          |  1 -
+>  drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c          |  1 -
+>  drivers/gpu/drm/rcar-du/rcar_du_vgacon.c           |  3 ---
+>  drivers/gpu/drm/rockchip/dw-mipi-dsi.c             |  9 ---------
+>  drivers/gpu/drm/rockchip/inno_hdmi.c               |  9 ---------
+>  drivers/gpu/drm/sti/sti_dvo.c                      | 10 ----------
+>  drivers/gpu/drm/sti/sti_hda.c                      | 10 ----------
+>  drivers/gpu/drm/sti/sti_hdmi.c                     | 10 ----------
+>  drivers/gpu/drm/sun4i/sun4i_rgb.c                  | 10 ----------
+>  drivers/gpu/drm/sun4i/sun4i_tv.c                   |  9 ---------
+>  drivers/gpu/drm/tegra/drm.h                        |  2 --
+>  drivers/gpu/drm/tegra/dsi.c                        |  1 -
+>  drivers/gpu/drm/tegra/hdmi.c                       |  1 -
+>  drivers/gpu/drm/tegra/output.c                     |  8 --------
+>  drivers/gpu/drm/tegra/rgb.c                        |  1 -
+>  drivers/gpu/drm/tegra/sor.c                        |  1 -
+>  drivers/gpu/drm/vc4/vc4_dpi.c                      |  9 ---------
+>  drivers/gpu/drm/vc4/vc4_hdmi.c                     |  9 ---------
+>  drivers/gpu/drm/virtio/virtgpu_display.c           | 10 ----------
+>  include/drm/drm_modeset_helper_vtables.h           | 10 ++++++++--
+>  50 files changed, 24 insertions(+), 305 deletions(-)
+> 
+> -- 
+> 2.7.4
+> 
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index ad895f8b2353..75256ef4a04d 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -21,6 +21,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "renesas,apmu";
- 
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-@@ -32,6 +33,15 @@
- 			next-level-cache = <&L2_CA15>;
- 		};
- 
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <1>;
-+			clock-frequency = <1000000000>;
-+			power-domains = <&sysc R8A7792_PD_CA15_CPU1>;
-+			next-level-cache = <&L2_CA15>;
-+		};
-+
- 		L2_CA15: cache-controller@0 {
- 			compatible = "cache";
- 			reg = <0>;
-@@ -49,6 +59,12 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		apmu@e6152000 {
-+			compatible = "renesas,r8a7792-apmu", "renesas,apmu";
-+			reg = <0 0xe6152000 0 0x188>;
-+			cpus = <&cpu0 &cpu1>;
-+		};
-+
- 		gic: interrupt-controller@f1001000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
 -- 
-2.7.0.rc3.207.g0ac5344
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
