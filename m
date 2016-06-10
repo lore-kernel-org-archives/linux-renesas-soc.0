@@ -1,58 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:15042 "EHLO
-	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750975AbcFJIic (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:33093 "EHLO
+	mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751382AbcFJH6a (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 04:38:32 -0400
-Subject: Re: [PATCH/RFC v3 02/22] soc: renesas: Add R-Car RST driver
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+	Fri, 10 Jun 2016 03:58:30 -0400
+MIME-Version: 1.0
+In-Reply-To: <d38d97fb-5b96-0773-abf6-c737b4f2fef1@de.bosch.com>
 References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
- <1464808880-343-3-git-send-email-geert+renesas@glider.be>
- <d38d97fb-5b96-0773-abf6-c737b4f2fef1@de.bosch.com>
- <CAMuHMdUX=iAe=51+8JyaKxMBOUA_jJXGK0BTKxRuTXtug_R1Tw@mail.gmail.com>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+ <1464808880-343-3-git-send-email-geert+renesas@glider.be> <d38d97fb-5b96-0773-abf6-c737b4f2fef1@de.bosch.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Jun 2016 09:58:28 +0200
+Message-ID: <CAMuHMdUX=iAe=51+8JyaKxMBOUA_jJXGK0BTKxRuTXtug_R1Tw@mail.gmail.com>
+Subject: Re: [PATCH/RFC v3 02/22] soc: renesas: Add R-Car RST driver
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	Philipp Zabel <p.zabel@pengutronix.de>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	<linux-renesas-soc@vger.kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
 	"linux-arm-kernel@lists.infradead.org"
 	<linux-arm-kernel@lists.infradead.org>,
 	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-From: Dirk Behme <dirk.behme@de.bosch.com>
-Message-ID: <fd389ff9-7863-b848-0e14-ca7241f44f6e@de.bosch.com>
-Date: Fri, 10 Jun 2016 10:38:28 +0200
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUX=iAe=51+8JyaKxMBOUA_jJXGK0BTKxRuTXtug_R1Tw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 10.06.2016 09:58, Geert Uytterhoeven wrote:
-> Hi Dirk,
+Hi Dirk,
+
+On Thu, Jun 2, 2016 at 7:42 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>> +int __init rcar_rst_read_mode_pins(u32 *mode)
 >
-> On Thu, Jun 2, 2016 at 7:42 AM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
->>> +int __init rcar_rst_read_mode_pins(u32 *mode)
->>
->> Just a style issue: Is the string 'pins' in the function name still
->> relevant? I.e. what's about just 'rcar_rst_read_mode()'?
->
-> I feel "mode" is a too generic word for a public API.
-> It's used a several contexts inside the RST module (secure mode, 64-bit
-> addressing mode, free-running mode, step-up mode).
+> Just a style issue: Is the string 'pins' in the function name still
+> relevant? I.e. what's about just 'rcar_rst_read_mode()'?
 
-What's about
+I feel "mode" is a too generic word for a public API.
+It's used a several contexts inside the RST module (secure mode, 64-bit
+addressing mode, free-running mode, step-up mode).
 
-rcar_rst_read_mode_monitor()
+Gr{oetje,eeting}s,
 
-then?
+                        Geert
 
-Taken from the manual ;)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-Best regards
-
-Dirk
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
