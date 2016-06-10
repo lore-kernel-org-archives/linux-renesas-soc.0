@@ -1,69 +1,41 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:36299 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751571AbcFATV1 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 15:21:27 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v3 22/22] clk: renesas: rcar-gen2: Remove obsolete rcar_gen2_clocks_init()
-Date: Wed,  1 Jun 2016 21:21:20 +0200
-Message-Id: <1464808880-343-23-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH 16/19] ARM: dts: alt: Name spi pfc subnode after device name
+Date: Fri, 10 Jun 2016 15:01:02 +0200
+Message-Id: <1465563665-2231-17-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
+References: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car Gen2 board code no longer calls rcar_gen2_clocks_init().
+Name the Pin Function Controller subnode for QSPI after its device name,
+instead of after the spi interface alias.
+
+This avoids conflicts when enabl support for more spi interfaces later,
+either here or in a DT overlay.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v3:
-  - rebased,
+ arch/arm/boot/dts/r8a7794-alt.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2:
-  - No changes.
----
- drivers/clk/renesas/clk-rcar-gen2.c | 7 -------
- include/linux/clk/renesas.h         | 2 --
- 2 files changed, 9 deletions(-)
-
-diff --git a/drivers/clk/renesas/clk-rcar-gen2.c b/drivers/clk/renesas/clk-rcar-gen2.c
-index 436fc7a7714e4bd7..4860022627bb455f 100644
---- a/drivers/clk/renesas/clk-rcar-gen2.c
-+++ b/drivers/clk/renesas/clk-rcar-gen2.c
-@@ -430,10 +430,3 @@ static void __init rcar_gen2_cpg_clocks_init(struct device_node *np)
- }
- CLK_OF_DECLARE(rcar_gen2_cpg_clks, "renesas,rcar-gen2-cpg-clocks",
- 	       rcar_gen2_cpg_clocks_init);
--
--void __init rcar_gen2_clocks_init(u32 mode)
--{
--	cpg_mode = mode;
--
--	of_clk_init(NULL);
--}
-diff --git a/include/linux/clk/renesas.h b/include/linux/clk/renesas.h
-index 9e969941f3f62878..9ebf1f8243bb57af 100644
---- a/include/linux/clk/renesas.h
-+++ b/include/linux/clk/renesas.h
-@@ -20,8 +20,6 @@ struct device;
- struct device_node;
- struct generic_pm_domain;
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index 1335664b2f886a17..1ad37d431a2a3bfc 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -147,7 +147,7 @@
+ };
  
--void rcar_gen2_clocks_init(u32 mode);
--
- void cpg_mstp_add_clk_domain(struct device_node *np);
- #ifdef CONFIG_CLK_RENESAS_CPG_MSTP
- int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev);
+ &pfc {
+-	qspi_pins: spi0 {
++	qspi_pins: qspi {
+ 		groups = "qspi_ctrl", "qspi_data4";
+ 		function = "qspi";
+ 	};
 -- 
 1.9.1
+
