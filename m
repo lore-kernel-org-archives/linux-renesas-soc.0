@@ -1,56 +1,39 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36559 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752069AbcF3OR4 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:17:56 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/8] ARM: shmobile: apmu: Move #ifdef CONFIG_SMP to cover more functions
-Date: Thu, 30 Jun 2016 16:16:20 +0200
-Message-Id: <d3f3fb0cfdcf4cbf69af65e8bfdde65cedf4e53a.1467293089.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467293089.git.horms+renesas@verge.net.au>
-References: <cover.1467293089.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1465491418-32752-2-git-send-email-kieran@bingham.xyz>
+References: <1465491418-32752-1-git-send-email-kieran@bingham.xyz> <1465491418-32752-2-git-send-email-kieran@bingham.xyz>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Jun 2016 09:28:17 +0200
+Message-ID: <CAMuHMdXRBecAXsJb=0i8J=trACcjHKSHk5TR7DHaBZqVUUZatA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: r8a7795: add FCPF device nodes
+To: Kieran Bingham <kieran@ksquared.org.uk>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, linux-renesas-soc@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, Jun 9, 2016 at 6:56 PM, Kieran Bingham <kieran@ksquared.org.uk> wrote:
+> Provide nodes for the FCP devices dedicated to the FDP device channels.
+>
+> Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
 
-shmobile_smp_apmu_prepare_cpus() is used only if CONFIG_SMP=y.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hence move the #ifdef to cover shmobile_smp_apmu_prepare_cpus() and all
-functions only called by it (apmu_init_cpu() and apmu_parse_cfg()).
+Gr{oetje,eeting}s,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/platsmp-apmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+                        Geert
 
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index aba75c89f9c1..c1558ef0c590 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -74,6 +74,7 @@ static int __maybe_unused apmu_wrap(int cpu, int (*fn)(void __iomem *p, int cpu)
- 	return p ? fn(p, apmu_cpus[cpu].bit) : -EINVAL;
- }
- 
-+#ifdef CONFIG_SMP
- static void apmu_init_cpu(struct resource *res, int cpu, int bit)
- {
- 	if ((cpu >= ARRAY_SIZE(apmu_cpus)) || apmu_cpus[cpu].iomem)
-@@ -128,7 +129,6 @@ void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
- 	apmu_parse_cfg(apmu_init_cpu, apmu_config, num);
- }
- 
--#ifdef CONFIG_SMP
- int shmobile_smp_apmu_boot_secondary(unsigned int cpu, struct task_struct *idle)
- {
- 	/* For this particular CPU register boot vector */
--- 
-2.7.0.rc3.207.g0ac5344
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
