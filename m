@@ -1,45 +1,42 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:40267 "EHLO
-	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933148AbcFJNBP (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 09:01:15 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 01/19] ARM: dts: ape6evm: Name serial port pfc subnode after device name
-Date: Fri, 10 Jun 2016 15:00:47 +0200
-Message-Id: <1465563665-2231-2-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 15/19] ARM: dts: alt: Name serial port pfc subnode after device name
+Date: Fri, 10 Jun 2016 15:01:01 +0200
+Message-Id: <1465563665-2231-16-git-send-email-geert+renesas@glider.be>
 In-Reply-To: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
 References: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Name the Pin Function Controller subnode for SCIFA0 after its device
-name, instead of after the serial port alias.
+Name the Pin Function Controller subnode for SCIF2 after its device
+name, instead of using some arbitrary name that looks like a serial port
+alias, but differs from the actual alias.
 
 This avoids conflicts when enabling support for more serial ports later,
 either here or in a DT overlay.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a73a4-ape6evm.dts | 2 +-
+ arch/arm/boot/dts/r8a7794-alt.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a73a4-ape6evm.dts b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-index 740e5d23f7c70843..5bccc7d229d766c7 100644
---- a/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-+++ b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-@@ -188,7 +188,7 @@
- };
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index 383ad791f1db3151..1335664b2f886a17 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -111,7 +111,7 @@
+ 		function = "du";
+ 	};
  
- &pfc {
--	scifa0_pins: serial0 {
-+	scifa0_pins: scifa0 {
- 		groups = "scifa0_data";
- 		function = "scifa0";
+-	scif2_pins: serial2 {
++	scif2_pins: scif2 {
+ 		groups = "scif2_data";
+ 		function = "scif2";
  	};
 -- 
 1.9.1
+
