@@ -1,71 +1,86 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35397 "EHLO
+	mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751354AbcFJHwI (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 10 Jun 2016 03:52:08 -0400
 MIME-Version: 1.0
-In-Reply-To: <57661211.7010900@rvc.renesas.com>
-References: <57661211.7010900@rvc.renesas.com>
+In-Reply-To: <10393056.BKo7UTPXFi@avalon>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+ <1464808880-343-2-git-send-email-geert+renesas@glider.be> <10393056.BKo7UTPXFi@avalon>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 20 Jun 2016 09:40:26 +0200
-Message-ID: <CAMuHMdU3_O9YA6cjR=-ub6drKu8g-s4hmem4uggZeNBMJrC8qQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal support
-To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Thao Phuong Le. Nguyen" <thao.nguyen.yb@rvc.renesas.com>,
-	"Hien Duy. Dang" <hien.dang.eb@rvc.renesas.com>,
-	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
+Date: Fri, 10 Jun 2016 09:52:07 +0200
+Message-ID: <CAMuHMdVVCwhVBzPTRVzU6MFbP_sfQPu_dGx1Ef2urNMD+Eda_g@mail.gmail.com>
+Subject: Re: [PATCH/RFC v3 01/22] reset: Add renesas,rst DT bindings
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms@verge.net.au>,
-	"open list:MEDIA DRIVERS FOR RENESAS - FCP"
-	<linux-renesas-soc@vger.kernel.org>
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>,
+	linux-renesas-soc@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Khiem,
+Hi Laurent,
 
-On Sun, Jun 19, 2016 at 5:31 AM, Khiem Nguyen
-<khiem.nguyen.xt@rvc.renesas.com> wrote:
-> This patchset adds new thermal sensor driver to support 3 sensors
-> found in R-Car Gen3 series.
+On Thu, Jun 2, 2016 at 11:47 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+>> @@ -0,0 +1,35 @@
+>> +DT bindings for the Renesas R-Car Reset Controller
+>> +
+>> +The R-Car Reset Controller provides reset control, and implements the
+>> following
+>> +functions:
+>> +  - Latching of the levels on mode pins when PRESET# is negated,
+>> +  - Mode monitoring register,
+>> +  - Reset control of peripheral devices (on R-Car Gen1),
+>> +  - Watchdog timer (on R-Car Gen1).
+>> +  - Register-based reset control and boot address registers for the various
+>> CPU
+>> +    cores (on R-Car Gen2/Gen3),
+>> +
+>> +
+>> +Required properties:
+>> +  - compatible: Should be
+>> +               - "renesas,<soctype>-reset-wdt" for R-Car Gen1,
+>> +               - "renesas,<soctype>-rst" for R-Car Gen2/Gen3.
+>> +             Examples with soctypes are:
+>> +               - "renesas,r8a7778-reset-wdt" (R-Car M1A)
+>> +               - "renesas,r8a7779-reset-wdt" (R-Car H1)
+>> +               - "renesas,r8a7790-rst" (R-Car H2)
+>> +               - "renesas,r8a7791-rst" (R-Car M2-W)
+>> +               - "renesas,r8a7792-rst" (R-Car V2H
+>> +               - "renesas,r8a7793-rst" (R-Car M2-N)
+>> +               - "renesas,r8a7794-rst" (R-Car E2)
+>> +               - "renesas,r8a7795-rst" (R-Car H3)
+>> +               - "renesas,r8a7796-rst" (R-Car M3-W)
 >
-> It has been decided to create new driver, instead of using the existing
-> thermal driver due to many differences in HW setting flows, the method
-> to calculate temperatures value and some newly supported features.
->
-> The new driver can support both polling mode and interrupt mode.
-> It has been tested with R-Car H3.
->
-> This driver is developed based on early work of Hien Dang and Thao Nguyen.
-> All comments are welcome.
+> Any specific reason for such a large indentation ? (I know this is really
+> nitpicking)
 
-Thanks for your series!
+To align the two paragraphs and lists.
 
-Please CC linux-renesas-soc for drivers related to Renesas SoCs.
-Please CC Simon for dts and defconfig updates that should go through his tree.
+> Apart from that, it's just a bit of a shame we can't have generic compatible
+> strings, but that would require additional DT properties to describe the reset
+> controller features, and I assume that's not a path we want to take.
 
-> Khiem Nguyen (4):
->   thermal: rcar_gen3_thermal: Document the R-Car Gen3 thermal bindings
->   thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal driver support
->   arm64: dts: r8a7795: Add R-Car Gen3 thermal support
->   arm64: defconfig: Enable R-Car Gen3 thermal support
->
->  .../bindings/thermal/rcar-gen3-thermal.txt         |  79 ++++
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  86 ++++
->  arch/arm64/configs/defconfig                       |   2 +
->  drivers/thermal/Kconfig                            |   9 +
->  drivers/thermal/Makefile                           |   1 +
->  drivers/thermal/rcar_gen3_thermal.c                | 524 +++++++++++++++++++++
->  6 files changed, 701 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
->  create mode 100644 drivers/thermal/rcar_gen3_thermal.c
+The reset controller is one of the few blocks that really differs
+between members
+of the same family, due to the relationship with the various CPU cores.
+
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+Thanks!
 
 Gr{oetje,eeting}s,
 
