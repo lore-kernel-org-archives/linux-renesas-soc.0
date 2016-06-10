@@ -1,47 +1,45 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] ARM: dts: r8a7792: add JPU support
-Date: Fri, 17 Jun 2016 01:03:53 +0300
-Message-ID: <2415204.YUO4drecC0@wasted.cogentembedded.com>
-In-Reply-To: <7346244.CEZI3u99oZ@wasted.cogentembedded.com>
-References: <7346244.CEZI3u99oZ@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:40267 "EHLO
+	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933148AbcFJNBP (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 10 Jun 2016 09:01:15 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 01/19] ARM: dts: ape6evm: Name serial port pfc subnode after device name
+Date: Fri, 10 Jun 2016 15:00:47 +0200
+Message-Id: <1465563665-2231-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
+References: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe JPEG Processing Unit (JPU) in the R8A7792 device tree.
+Name the Pin Function Controller subnode for SCIFA0 after its device
+name, instead of after the serial port alias.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This avoids conflicts when enabling support for more serial ports later,
+either here or in a DT overlay.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7792.dtsi |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/boot/dts/r8a73a4-ape6evm.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -246,6 +246,15 @@
- 			status = "disabled";
- 		};
+diff --git a/arch/arm/boot/dts/r8a73a4-ape6evm.dts b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
+index 740e5d23f7c70843..5bccc7d229d766c7 100644
+--- a/arch/arm/boot/dts/r8a73a4-ape6evm.dts
++++ b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
+@@ -188,7 +188,7 @@
+ };
  
-+		jpu: jpeg-codec@fe980000 {
-+			compatible = "renesas,jpu-r8a7792",
-+				     "renesas,rcar-gen2-jpu";
-+			reg = <0 0xfe980000 0 0x10300>;
-+			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp1_clks R8A7792_CLK_JPU>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
- 		/* Special CPG clocks */
- 		cpg_clocks: cpg_clocks@e6150000 {
- 			compatible = "renesas,r8a7792-cpg-clocks",
-
+ &pfc {
+-	scifa0_pins: serial0 {
++	scifa0_pins: scifa0 {
+ 		groups = "scifa0_data";
+ 		function = "scifa0";
+ 	};
+-- 
+1.9.1
