@@ -1,66 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:35865 "EHLO
-	mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752186AbcFIVpm (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:51397 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933313AbcFJNBR (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 9 Jun 2016 17:45:42 -0400
-Received: by mail-lf0-f50.google.com with SMTP id j5so34653147lfb.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Jun 2016 14:45:42 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 09/12] ARM dts: r8a7792: add IRQC support
-Date: Fri, 10 Jun 2016 00:45:39 +0300
-Message-ID: <3348412.H0MfYcvH4W@wasted.cogentembedded.com>
-In-Reply-To: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
-References: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Fri, 10 Jun 2016 09:01:17 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 02/19] ARM: dts: ape6evm: Name mmc pfc subnode after device name
+Date: Fri, 10 Jun 2016 15:00:48 +0200
+Message-Id: <1465563665-2231-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
+References: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the IRQC interrupt controller in the R8A7792 device tree.
+Name the Pin Function Controller subnode for MMC0 after its device name,
+instead of using the generic and indexless "mmc".
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This avoids conflicts when enabling support for more MMC interfaces
+later, either here or in a DT overlay.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes in version 3:
-- refreshed the patch.
+ arch/arm/boot/dts/r8a73a4-ape6evm.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in version 2:
-- resolved reject, indenting the IRQC node that is now under the "soc" node;
-- added Geert's tag.
-
- arch/arm/boot/dts/r8a7792.dtsi |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -70,6 +70,19 @@
- 				      IRQ_TYPE_LEVEL_HIGH)>;
- 		};
+diff --git a/arch/arm/boot/dts/r8a73a4-ape6evm.dts b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
+index 5bccc7d229d766c7..ec7c86e06538677a 100644
+--- a/arch/arm/boot/dts/r8a73a4-ape6evm.dts
++++ b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
+@@ -193,7 +193,7 @@
+ 		function = "scifa0";
+ 	};
  
-+		irqc: interrupt-controller@e61c0000 {
-+			compatible = "renesas,irqc-r8a7792", "renesas,irqc";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			reg = <0 0xe61c0000 0 0x200>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp4_clks R8A7792_CLK_IRQC>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
- 		timer {
- 			compatible = "arm,armv7-timer";
- 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
+-	mmc0_pins: mmc {
++	mmc0_pins: mmc0 {
+ 		groups = "mmc0_data8", "mmc0_ctrl";
+ 		function = "mmc0";
+ 	};
+-- 
+1.9.1
