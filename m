@@ -1,46 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:60243 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752371AbcFNOP3 (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36092 "EHLO
+	mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751833AbcFJGun (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 14 Jun 2016 10:15:29 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/5] ARM: dts: marzen: Add serial port config to chosen/stdout-path
-Date: Tue, 14 Jun 2016 16:15:22 +0200
-Message-Id: <1465913724-26172-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1465913724-26172-1-git-send-email-geert+renesas@glider.be>
-References: <1465913724-26172-1-git-send-email-geert+renesas@glider.be>
+	Fri, 10 Jun 2016 02:50:43 -0400
+MIME-Version: 1.0
+In-Reply-To: <2935290.QhIdlclvX3@wasted.cogentembedded.com>
+References: <1879394.3zBGLpF2nv@wasted.cogentembedded.com> <2935290.QhIdlclvX3@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Jun 2016 08:50:42 +0200
+Message-ID: <CAMuHMdXMnbHFbXCsTR7yiiehWrOyitrFctxuNn0O2+kr5kig1A@mail.gmail.com>
+Subject: Re: [PATCH v4 06/12] ARM: dts: r8a7792: initial SoC device tree
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	linux-renesas-soc@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the serial port config to "chosen/stdout-path", which requires
-referring to the port by alias.
+On Thu, Jun 9, 2016 at 11:41 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> The initial R8A7792 SoC device tree including CPU cores, GIC, timer, SYSC,
+> and the required  clock descriptions.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Change one-line summary prefix to match current arm-soc practices,
-  - Reword patch description.
----
- arch/arm/boot/dts/r8a7779-marzen.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/r8a7779-marzen.dts b/arch/arm/boot/dts/r8a7779-marzen.dts
-index 013e6f510b0faae4..541678df90a9829e 100644
---- a/arch/arm/boot/dts/r8a7779-marzen.dts
-+++ b/arch/arm/boot/dts/r8a7779-marzen.dts
-@@ -25,7 +25,7 @@
- 
- 	chosen {
- 		bootargs = "ignore_loglevel root=/dev/nfs ip=on";
--		stdout-path = &scif2;
-+		stdout-path = "serial0:115200n8";
- 	};
- 
- 	memory@60000000 {
--- 
-1.9.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
