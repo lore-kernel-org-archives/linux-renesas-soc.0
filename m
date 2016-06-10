@@ -1,62 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:38208 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752320AbcFJLMF (ORCPT
+Received: from mail-io0-f182.google.com ([209.85.223.182]:36465 "EHLO
+	mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752963AbcFJHDf (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 07:12:05 -0400
-Date: Fri, 10 Jun 2016 13:12:00 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+	Fri, 10 Jun 2016 03:03:35 -0400
+MIME-Version: 1.0
+In-Reply-To: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
+References: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Jun 2016 09:03:33 +0200
+Message-ID: <CAMuHMdWyt2e9f=8r+q9U=BLFW2R9OSh5GCnpvsMniXWahQ_qzg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] pinctrl: sh-pfc: add r8a7795 support for voltage switching
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
 	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/3] pinctrl: sh-pfc: add r8a7795 support for voltage
- switching
-Message-ID: <20160610111200.GB1626@katana>
-References: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
- <CAMuHMdWyt2e9f=8r+q9U=BLFW2R9OSh5GCnpvsMniXWahQ_qzg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ZfOjI3PrQbgiZnxM"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWyt2e9f=8r+q9U=BLFW2R9OSh5GCnpvsMniXWahQ_qzg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---ZfOjI3PrQbgiZnxM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, Jun 6, 2016 at 6:08 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> This series adds support for PFC voltage switching for r8a7795. I decided to
+> refactor voltage switching because all Gen2 and Gen3 hardware follow the same
+> style to do that. So, we can put generic handling to the core and keep only
+> pin-to-bit mapping SoC specific. See patch 1 for details.
+>
+> Tested on a Lager board (r8a7790/H2) and a Salvator-X (r8a7795/H3) by using
+> UHS/non-UHS SD cards. They work fine with SDR50 and the POCCTRL register
+> setting was also verified.
+>
+> Branch is here:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/h3-pfc-set-voltage
+>
+> Changes since RFC:
+> * be precise in encoding which pins can do voltage switching on bank3
+> * addded Geert's reviewed tag (thanks!)
+>
+> Please apply,
+>
+>    Wolfram
+>
+> Wolfram Sang (3):
+>   pinctrl: sh-pfc: refactor voltage setting
+>   pinctrl: sh-pfc: r8a7795: add support for voltage switching
+>   arm64: dts: r8a7795: salvator: enable UHS for SDHI 0 & 3
 
+Thanks for your series!
 
-> BTW, are these a hard dependency for patch 3, or will the missing power
-> source control just be ignored?
+I've queued the first two patches in sh-pfc-for-v4.8, and will send a pull
+request after next renesas-drivers release.
 
-Long answer short: It is a hard dependency.
+BTW, are these a hard dependency for patch 3, or will the missing power
+source control just be ignored?
 
-It shouldn't be, but fixing this might need patches to pfc, mmc-core,
-and sdhi driver. Need to think about it. (and even then, patch 3 will be
-depending on these yet-to-come fixes).
+Gr{oetje,eeting}s,
 
+                        Geert
 
---ZfOjI3PrQbgiZnxM
-Content-Type: application/pgp-signature; name="signature.asc"
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXWqCAAAoJEBQN5MwUoCm2HcwQAJYqYzf8zCx5brUXHooneq0f
-r6U0aXouZRiSSDI8D79J2gNyTHounQ/hq288Dr958s0fIxTYcF8vGpPL7RA7uFRN
-MGpkpl2L/iv/CkoYG3CtafUmdXywVCu52I0PT0LSV5Yx7ZkJYPn3B2lSUGQj9LhK
-tknOEfntxWrowRXm/tGZR3zKaGnfErgQO+0ksMyuPbVeY5xyNSWBO3vpjo4UCo2B
-JrGt05Pj6i7ndXNIJ1b0gGICshJBEjUvZvqPPU+JgC1BXzjA4Ud8kyphAk3b4eUr
-7T9xYU9B1it7MSF5aZ5Dqu3oTPBzyV15lCKpzjxGqS0J3QH1fx7XXQWEprpEdfRG
-6pXggf5eEdckvY6nRQG5zPwZK9w1Qm4gsYmI0RdS+/YdJ45VqM6SxmuT2apnm0nz
-KoHhElEITSXPzEwfe+9Bbmr31rGWbaFrhqrawLMUVzOsD0/o793kXWbnFMOUgO5F
-WjPDUyCkIhri3wzOvcVl9owSwJG/j9W5dccZZw15s3ofAYo/c+F6k2sdrg+qRUZU
-sFJHG8v974IfDb+6Elaa/o7h+80ENsk8+zVc3XipwQl5/MlaSFtES15Ss0awequU
-M+hFZz4A5hFbTGyKiotrsvlJwA8qvj5XykJyG4UpFcEnQOWd25oAOX9ykZ2Ptyrq
-fM2doNF/p5Xl9V/yitlm
-=6l97
------END PGP SIGNATURE-----
-
---ZfOjI3PrQbgiZnxM--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
