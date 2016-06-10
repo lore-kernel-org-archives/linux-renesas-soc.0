@@ -1,64 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:45236 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932625AbcFJNW1 (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:57073 "EHLO
+	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751494AbcFJHoj (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 09:22:27 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+	Fri, 10 Jun 2016 03:44:39 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: r8a7795: Correct lvds clock parent
-Date: Fri, 10 Jun 2016 16:22:27 +0300
-Message-ID: <2566506.K23fCkD3hP@avalon>
-In-Reply-To: <1465544673-23181-1-git-send-email-geert+renesas@glider.be>
-References: <1465544673-23181-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a7795: Correct lvds clock parent
+Date: Fri, 10 Jun 2016 09:44:33 +0200
+Message-Id: <1465544673-23181-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+According to the latest information, the parent clock of the LVDS module
+clock is the S0D4 clock, not the S2D1 clock.
 
-Thank you for the patch.
+Note that this change has no influence on actual operation, as the
+rcar-du LVDS encoder driver doesn't use the parent clock's rate.
 
-On Friday 10 Jun 2016 09:44:33 Geert Uytterhoeven wrote:
-> According to the latest information, the parent clock of the LVDS module
-> clock is the S0D4 clock, not the S2D1 clock.
-> 
-> Note that this change has no influence on actual operation, as the
-> rcar-du LVDS encoder driver doesn't use the parent clock's rate.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Will queue in clk-renesas-for-v4.8.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
-> Will queue in clk-renesas-for-v4.8.
-> 
->  drivers/clk/renesas/r8a7795-cpg-mssr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-> b/drivers/clk/renesas/r8a7795-cpg-mssr.c index
-> 8f76af6f454d0823..ad01b0b1bc5fa172 100644
-> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-> @@ -180,7 +180,7 @@ static const struct mssr_mod_clk r8a7795_mod_clks[]
-> __initconst = { DEF_MOD("du2",			 722,	R8A7795_CLK_S2D1),
->  	DEF_MOD("du1",			 723,	R8A7795_CLK_S2D1),
->  	DEF_MOD("du0",			 724,	R8A7795_CLK_S2D1),
-> -	DEF_MOD("lvds",			 727,	R8A7795_CLK_S2D1),
-> +	DEF_MOD("lvds",			 727,	R8A7795_CLK_S0D4),
->  	DEF_MOD("hdmi1",		 728,	R8A7795_CLK_HDMI),
->  	DEF_MOD("hdmi0",		 729,	R8A7795_CLK_HDMI),
->  	DEF_MOD("vin7",			 804,	R8A7795_CLK_S2D1),
-
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index 8f76af6f454d0823..ad01b0b1bc5fa172 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -180,7 +180,7 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+ 	DEF_MOD("du2",			 722,	R8A7795_CLK_S2D1),
+ 	DEF_MOD("du1",			 723,	R8A7795_CLK_S2D1),
+ 	DEF_MOD("du0",			 724,	R8A7795_CLK_S2D1),
+-	DEF_MOD("lvds",			 727,	R8A7795_CLK_S2D1),
++	DEF_MOD("lvds",			 727,	R8A7795_CLK_S0D4),
+ 	DEF_MOD("hdmi1",		 728,	R8A7795_CLK_HDMI),
+ 	DEF_MOD("hdmi0",		 729,	R8A7795_CLK_HDMI),
+ 	DEF_MOD("vin7",			 804,	R8A7795_CLK_S2D1),
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
