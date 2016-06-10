@@ -1,143 +1,108 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:33026 "EHLO
-	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932426AbcFLVJu (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sun, 12 Jun 2016 17:09:50 -0400
-Received: by mail-lf0-f47.google.com with SMTP id f6so53019410lfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Jun 2016 14:09:44 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 08/12] ARM: dts: r8a7792: add [H]SCIF support
-Date: Mon, 13 Jun 2016 00:09:42 +0300
-Message-ID: <4960519.xV8itPzGGv@wasted.cogentembedded.com>
-In-Reply-To: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
-References: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <kieran@ksquared.org.uk>
+Return-Path: <kieran@ksquared.org.uk>
+Sender: Kieran Bingham <kieran@ksquared.org.uk>
+Subject: Re: [PATCH RFC 1/2] v4l: platform: Add Renesas R-Car FDP1 Driver
+To: laurent.pinchart@ideasonboard.com, mchehab@osg.samsung.com,
+ linux-media@vger.kernel.org
+References: <1465493879-5419-1-git-send-email-kieran@bingham.xyz>
+ <1465493879-5419-2-git-send-email-kieran@bingham.xyz>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Kieran Bingham <kieran@bingham.xyz>
+Message-ID: <575AB3A8.4090905@bingham.xyz>
+Date: Fri, 10 Jun 2016 13:33:44 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1465493879-5419-2-git-send-email-kieran@bingham.xyz>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe [H]SCIFs in the R8A7792 device tree.
+Today I learned about make C=1
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+So ... reviewing my own patch, consider the following sparse warnings
+'fixed up'
 
----
-Changes in version 3:
-- refreshed the patch.
+I'll run make C=1 before any future submissions from now on.
 
-Changes in version 2:
-- resolved reject, indenting the device nodes that are now under the "soc" node;
-- added Geert's tag.
 
- arch/arm/boot/dts/r8a7792.dtsi |   90 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+On 09/06/16 18:37, Kieran Bingham wrote:
+> The FDP1 driver performs advanced de-interlacing on a memory 2 memory
+> based video stream, and supports conversion from YCbCr/YUV
+> to RGB pixel formats
+> 
+> Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+> ---
+>  drivers/media/platform/Kconfig     |   13 +
+>  drivers/media/platform/Makefile    |    1 +
+>  drivers/media/platform/rcar_fdp1.c | 2038 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 2052 insertions(+)
+>  create mode 100644 drivers/media/platform/rcar_fdp1.c
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -152,6 +152,96 @@
- 			dma-channels = <15>;
- 		};
- 
-+		scif0: serial@e6e60000 {
-+			compatible = "renesas,scif-r8a7792",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
-+			reg = <0 0xe6e60000 0 64>;
-+			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7792_CLK_SCIF0>, <&zs_clk>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
-+			       <&dmac1 0x29>, <&dmac1 0x2a>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		scif1: serial@e6e68000 {
-+			compatible = "renesas,scif-r8a7792",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
-+			reg = <0 0xe6e68000 0 64>;
-+			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7792_CLK_SCIF1>, <&zs_clk>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
-+			       <&dmac1 0x2d>, <&dmac1 0x2e>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		scif2: serial@e6e58000 {
-+			compatible = "renesas,scif-r8a7792",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
-+			reg = <0 0xe6e58000 0 64>;
-+			interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7792_CLK_SCIF2>, <&zs_clk>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
-+			       <&dmac1 0x2b>, <&dmac1 0x2c>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		scif3: serial@e6ea8000 {
-+			compatible = "renesas,scif-r8a7792",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
-+			reg = <0 0xe6ea8000 0 64>;
-+			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7792_CLK_SCIF3>, <&zs_clk>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
-+			       <&dmac1 0x2f>, <&dmac1 0x30>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		hscif0: serial@e62c0000 {
-+			compatible = "renesas,hscif-r8a7792",
-+				     "renesas,rcar-gen2-hscif", "renesas,hscif";
-+			reg = <0 0xe62c0000 0 96>;
-+			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7792_CLK_HSCIF0>, <&zs_clk>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
-+			       <&dmac1 0x39>, <&dmac1 0x3a>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		hscif1: serial@e62c8000 {
-+			compatible = "renesas,hscif-r8a7792",
-+				     "renesas,rcar-gen2-hscif", "renesas,hscif";
-+			reg = <0 0xe62c8000 0 96>;
-+			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp7_clks R8A7792_CLK_HSCIF1>, <&zs_clk>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
-+			       <&dmac1 0x4d>, <&dmac1 0x4e>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
- 		/* Special CPG clocks */
- 		cpg_clocks: cpg_clocks@e6150000 {
- 			compatible = "renesas,r8a7792-cpg-clocks",
+...
+
+> +/* FDP1 Lookup tables range from 0...255 only */
+> +unsigned char fdp1_diff_adj[256] = {
+sparse: warning: symbol '...' was not declared. Should it be static?
++ static unsigned...
+
+> +	0x00, 0x24, 0x43, 0x5E, 0x76, 0x8C, 0x9E, 0xAF,
+...
+> +	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+> +};
+> +
+> +unsigned char fdp1_sad_adj[256] = {
+likewise
+
+> +	0x00, 0x24, 0x43, 0x5E, 0x76, 0x8C, 0x9E, 0xAF,
+...
+> +	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+> +};
+> +
+> +unsigned char fdp1_bld_gain[256] = {
+and again ...
+> +	0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+...
+> +	0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80
+> +};
+> +
+> +unsigned char fdp1_dif_gain[256] = {
+> +	0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+...
+> +	0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80
+> +};
+> +
+> +unsigned char fdp1_mdet[256] = {
+and finally for the lut...
+> +	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+...
+> +	0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF
+> +};
+> +
+...
+
+> +static void fdp1_write(struct fdp1_dev *fdp1, u32 val, unsigned int reg)
+> +{
+> +	if (debug >= 2)
+> +		dprintk(fdp1, "Write to %p\n", fdp1->regs + reg);
+> +
+> +	iowrite32(val, fdp1->regs + reg);
+> +}
+> +
+> +
+> +void fdp1_print_regs32(struct fdp1_dev *fdp1)
+Another +static
+
+...
+
+> +static struct fdp1_plane_addrs vb2_dc_to_pa(struct vb2_v4l2_buffer *buf,
+> +		unsigned int planes)
+> +{
+> +	struct fdp1_plane_addrs pa = { 0 };
+
+sparse: warning: missing braces around initializer
++ struct fdp1_plane_addrs pa = { { 0 } };
+
+-- 
+Regards
+
+Kieran Bingham
