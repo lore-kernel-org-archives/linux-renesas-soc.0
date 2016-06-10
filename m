@@ -1,47 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36559 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932165AbcF3OR7 (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:59394 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933296AbcFJNBQ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:17:59 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 7/8] ARM: shmobile: r8a7790: Prioritize DT APMU support
-Date: Thu, 30 Jun 2016 16:16:23 +0200
-Message-Id: <f5d70b9cee2282ecbd98c60e5faf46a896c188a3.1467293089.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467293089.git.horms+renesas@verge.net.au>
-References: <cover.1467293089.git.horms+renesas@verge.net.au>
+	Fri, 10 Jun 2016 09:01:16 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 03/19] ARM: dts: armadillo800eva: Name serial port pfc subnode after device name
+Date: Fri, 10 Jun 2016 15:00:49 +0200
+Message-Id: <1465563665-2231-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
+References: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Name the Pin Function Controller subnode for SCIFA1 after its device
+name, instead of after the serial port alias.
 
-Adjust the r8a7790 SoC support code to not configure any non-DT SMP code
-in case the DT-based enable-method has been installed already.
+This avoids conflicts when enabling support for more serial ports later,
+either here or in a DT overlay.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/setup-r8a7790.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-shmobile/setup-r8a7790.c b/arch/arm/mach-shmobile/setup-r8a7790.c
-index 3a18af4922b4..3506327e0bed 100644
---- a/arch/arm/mach-shmobile/setup-r8a7790.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7790.c
-@@ -28,6 +28,7 @@ static const char * const r8a7790_boards_compat_dt[] __initconst = {
- };
+diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+index 1620495166851971..6866f61a350c7cc3 100644
+--- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
++++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+@@ -232,7 +232,7 @@
+ 		function = "gether";
+ 	};
  
- DT_MACHINE_START(R8A7790_DT, "Generic R8A7790 (Flattened Device Tree)")
-+	.smp_init	= shmobile_smp_init_fallback_ops,
- 	.smp		= smp_ops(r8a7790_smp_ops),
- 	.init_early	= shmobile_init_delay,
- 	.init_time	= rcar_gen2_timer_init,
+-	scifa1_pins: serial1 {
++	scifa1_pins: scifa1 {
+ 		groups = "scifa1_data";
+ 		function = "scifa1";
+ 	};
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
