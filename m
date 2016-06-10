@@ -1,50 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36846 "EHLO
-	mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752078AbcFJLVl (ORCPT
+Received: from sauhun.de ([89.238.76.85]:38208 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752320AbcFJLMF (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 07:21:41 -0400
-MIME-Version: 1.0
-In-Reply-To: <20160610111200.GB1626@katana>
-References: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
- <CAMuHMdWyt2e9f=8r+q9U=BLFW2R9OSh5GCnpvsMniXWahQ_qzg@mail.gmail.com> <20160610111200.GB1626@katana>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 10 Jun 2016 13:21:39 +0200
-Message-ID: <CAMuHMdXnk2O4Q6O5OYVfdMujFEiit3pU4OD-DNL+qawgwAOyUw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] pinctrl: sh-pfc: add r8a7795 support for voltage switching
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Simon Horman <horms@verge.net.au>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	Fri, 10 Jun 2016 07:12:05 -0400
+Date: Fri, 10 Jun 2016 13:12:00 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
 	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 0/3] pinctrl: sh-pfc: add r8a7795 support for voltage
+ switching
+Message-ID: <20160610111200.GB1626@katana>
+References: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
+ <CAMuHMdWyt2e9f=8r+q9U=BLFW2R9OSh5GCnpvsMniXWahQ_qzg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ZfOjI3PrQbgiZnxM"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWyt2e9f=8r+q9U=BLFW2R9OSh5GCnpvsMniXWahQ_qzg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
 
-On Fri, Jun 10, 2016 at 1:12 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
->> BTW, are these a hard dependency for patch 3, or will the missing power
->> source control just be ignored?
->
-> Long answer short: It is a hard dependency.
->
-> It shouldn't be, but fixing this might need patches to pfc, mmc-core,
-> and sdhi driver. Need to think about it. (and even then, patch 3 will be
-> depending on these yet-to-come fixes).
+--ZfOjI3PrQbgiZnxM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks, good to know! ;-)
 
-Simon: So either you can merge sh-pfc-for-v4.8 first (after I have sent the
-pull request, and Linus W. has merged it!), or the DTS update will have to wait
-for v4.9.
+> BTW, are these a hard dependency for patch 3, or will the missing power
+> source control just be ignored?
 
-Gr{oetje,eeting}s,
+Long answer short: It is a hard dependency.
 
-                        Geert
+It shouldn't be, but fixing this might need patches to pfc, mmc-core,
+and sdhi driver. Need to think about it. (and even then, patch 3 will be
+depending on these yet-to-come fixes).
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--ZfOjI3PrQbgiZnxM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXWqCAAAoJEBQN5MwUoCm2HcwQAJYqYzf8zCx5brUXHooneq0f
+r6U0aXouZRiSSDI8D79J2gNyTHounQ/hq288Dr958s0fIxTYcF8vGpPL7RA7uFRN
+MGpkpl2L/iv/CkoYG3CtafUmdXywVCu52I0PT0LSV5Yx7ZkJYPn3B2lSUGQj9LhK
+tknOEfntxWrowRXm/tGZR3zKaGnfErgQO+0ksMyuPbVeY5xyNSWBO3vpjo4UCo2B
+JrGt05Pj6i7ndXNIJ1b0gGICshJBEjUvZvqPPU+JgC1BXzjA4Ud8kyphAk3b4eUr
+7T9xYU9B1it7MSF5aZ5Dqu3oTPBzyV15lCKpzjxGqS0J3QH1fx7XXQWEprpEdfRG
+6pXggf5eEdckvY6nRQG5zPwZK9w1Qm4gsYmI0RdS+/YdJ45VqM6SxmuT2apnm0nz
+KoHhElEITSXPzEwfe+9Bbmr31rGWbaFrhqrawLMUVzOsD0/o793kXWbnFMOUgO5F
+WjPDUyCkIhri3wzOvcVl9owSwJG/j9W5dccZZw15s3ofAYo/c+F6k2sdrg+qRUZU
+sFJHG8v974IfDb+6Elaa/o7h+80ENsk8+zVc3XipwQl5/MlaSFtES15Ss0awequU
+M+hFZz4A5hFbTGyKiotrsvlJwA8qvj5XykJyG4UpFcEnQOWd25oAOX9ykZ2Ptyrq
+fM2doNF/p5Xl9V/yitlm
+=6l97
+-----END PGP SIGNATURE-----
+
+--ZfOjI3PrQbgiZnxM--
