@@ -1,38 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:36517 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1423098AbcFMMAM (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:40732 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752685AbcFJKFI (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 13 Jun 2016 08:00:12 -0400
-Received: by mail-oi0-f42.google.com with SMTP id p204so203568411oih.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jun 2016 05:00:12 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
-References: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 13 Jun 2016 14:00:06 +0200
-Message-ID: <CACRpkdZ6q=M=UamEvtNKwcA_4M+ujCYQ0EWbBX2BukwcFe_OTQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] pinctrl: sh-pfc: Cleanups
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Fri, 10 Jun 2016 06:05:08 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Ben Dooks <ben.dooks@codethink.co.uk>,
 	Laxman Dewangan <ldewangan@nvidia.com>,
-	linux-renesas-soc@vger.kernel.org,
-	"linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+	linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/3] pinctrl: sh-pfc: Cleanups
+Date: Fri, 10 Jun 2016 12:05:00 +0200
+Message-Id: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jun 10, 2016 at 12:05 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+	Hi,
 
-> This series contains various cleanups for the Renesas Pin Function
-> Controller driver subsystem.
+This series contains various cleanups for the Renesas Pin Function
+Controller driver subsystem.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+This has been tested on r8a7791/koelsch, and compile-tested for other
+ARM and SH platforms.
 
-I guess I will get them by pull request from you.
+I plan to queue this in sh-pfc-for-v4.8.
 
-Yours,
-Linus Walleij
+Thanks for your comments!
+
+Geert Uytterhoeven (3):
+  pinctrl: sh-pfc: Move SoC-specific forward declarations to sh_pfc.h
+  pinctrl: sh-pfc: Improve core and user separation
+  pinctrl: sh-pfc: Convert to devm_gpiochip_add_data()
+
+ drivers/pinctrl/sh-pfc/core.c        | 10 -------
+ drivers/pinctrl/sh-pfc/core.h        | 58 ------------------------------------
+ drivers/pinctrl/sh-pfc/gpio.c        | 13 +-------
+ drivers/pinctrl/sh-pfc/pfc-r8a73a4.c |  1 -
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c |  1 -
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c |  2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c |  1 -
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c |  1 -
+ drivers/pinctrl/sh-pfc/sh_pfc.h      | 51 ++++++++++++++++++++++++++++++-
+ 9 files changed, 52 insertions(+), 86 deletions(-)
+
+-- 
+1.9.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
