@@ -1,117 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52956 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753309AbcFTTSe (ORCPT
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:35994 "EHLO
+	mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932521AbcFLU4y (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 20 Jun 2016 15:18:34 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 00/24] R-Car VSP1: Histogram, look-up table and flip support
-Date: Mon, 20 Jun 2016 22:10:18 +0300
-Message-Id: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Sun, 12 Jun 2016 16:56:54 -0400
+Received: by mail-lf0-f51.google.com with SMTP id q132so36134547lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Jun 2016 13:56:53 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org
+Cc: magnus.damm@gmail.com
+Subject: [PATCH v5 03/12] soc: renesas: rcar-sysc: add R8A7792 support
+Date: Sun, 12 Jun 2016 23:56:50 +0300
+Message-ID: <1897480.o0ohe3SCrB@wasted.cogentembedded.com>
+In-Reply-To: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+References: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Add support for R-Car V2H (R8A7792) SoC power areas to the SYSC driver.
 
-Here's my current set of pending VSP1 patches, based on top of the
-"[PATCH v2 00/13] R-Car VSP improvements for v4.7 - Round 2" series. For
-convenience I've pushed the patches and their dependencies to
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-	git://linuxtv.org/pinchartl/media.git vsp1/flip
+---
+Changes in version 5:
+- refreshed the patch.
 
-The series contains new features as well as several fixes. In particular the
-driver now supports histogram generation through the HGO (01/24 to 04/24),
-doesn't generate warnings to the kernel log due to uninitialized functions
-(05/24 to 10/24), supports the LUT and CLU (12/24 to 19/24), supports
-horizontal and vertical flipping (20/24 to 22/24) and doesn't attempt to
-access freed buffers anymore (24/24).
+Changes in version 2:
+- added Geert's tag.
 
-I plan to send a pull request for v4.8 as soon as the previous pull request
-gets merged.
+ drivers/soc/renesas/Makefile       |    1 +
+ drivers/soc/renesas/r8a7792-sysc.c |   34 ++++++++++++++++++++++++++++++++++
+ drivers/soc/renesas/rcar-sysc.c    |    3 +++
+ drivers/soc/renesas/rcar-sysc.h    |    1 +
+ 4 files changed, 39 insertions(+)
 
-Laurent Pinchart (24):
-  v4l: Add metadata buffer type and format
-  v4l: Define a pixel format for the R-Car VSP1 1-D histogram engine
-  v4l: vsp1: Add HGO support
-  v4l: vsp1: Don't create HGO entity when the userspace API is disabled
-  media: Add video processing entity functions
-  media: Add video statistics computation functions
-  v4l: vsp1: Base link creation on availability of entities
-  v4l: vsp1: Don't register media device when userspace API is disabled
-  v4l: vsp1: Don't create LIF entity when the userspace API is enabled
-  v4l: vsp1: Set entities functions
-  v4l: vsp1: pipe: Fix typo in comment
-  v4l: vsp1: dl: Don't free fragments with interrupts disabled
-  v4l: vsp1: lut: Initialize the mutex
-  v4l: vsp1: lut: Expose configuration through a control
-  v4l: vsp1: Add Cubic Look Up Table (CLU) support
-  v4l: vsp1: sru: Fix intensity control ID
-  v4l: vsp1: Support runtime modification of controls
-  v4l: vsp1: lut: Support runtime modification of controls
-  v4l: vsp1: clu: Support runtime modification of controls
-  v4l: vsp1: Simplify alpha propagation
-  v4l: vsp1: rwpf: Support runtime modification of controls
-  v4l: vsp1: wpf: Add flipping support
-  v4l: vsp1: Constify operation structures
-  v4l: vsp1: Stop the pipeline upon the first STREAMOFF
-
- Documentation/DocBook/media/v4l/dev-meta.xml       |  93 ++++
- Documentation/DocBook/media/v4l/media-types.xml    |  64 +++
- .../DocBook/media/v4l/pixfmt-meta-vsp1-hgo.xml     | 307 +++++++++++++
- Documentation/DocBook/media/v4l/pixfmt.xml         |   9 +
- Documentation/DocBook/media/v4l/v4l2.xml           |   1 +
- drivers/media/platform/Kconfig                     |   1 +
- drivers/media/platform/vsp1/Makefile               |   4 +-
- drivers/media/platform/vsp1/vsp1.h                 |   8 +
- drivers/media/platform/vsp1/vsp1_bru.c             |  12 +-
- drivers/media/platform/vsp1/vsp1_clu.c             | 292 ++++++++++++
- drivers/media/platform/vsp1/vsp1_clu.h             |  48 ++
- drivers/media/platform/vsp1/vsp1_dl.c              |  72 ++-
- drivers/media/platform/vsp1/vsp1_drm.c             |   8 +-
- drivers/media/platform/vsp1/vsp1_drv.c             |  91 ++--
- drivers/media/platform/vsp1/vsp1_entity.c          | 140 +++++-
- drivers/media/platform/vsp1/vsp1_entity.h          |  12 +-
- drivers/media/platform/vsp1/vsp1_hgo.c             | 500 +++++++++++++++++++++
- drivers/media/platform/vsp1/vsp1_hgo.h             |  50 +++
- drivers/media/platform/vsp1/vsp1_histo.c           | 307 +++++++++++++
- drivers/media/platform/vsp1/vsp1_histo.h           |  68 +++
- drivers/media/platform/vsp1/vsp1_hsit.c            |  14 +-
- drivers/media/platform/vsp1/vsp1_lif.c             |  16 +-
- drivers/media/platform/vsp1/vsp1_lut.c             | 101 +++--
- drivers/media/platform/vsp1/vsp1_lut.h             |   7 +-
- drivers/media/platform/vsp1/vsp1_pipe.c            |  62 ++-
- drivers/media/platform/vsp1/vsp1_pipe.h            |   8 +-
- drivers/media/platform/vsp1/vsp1_regs.h            |  40 +-
- drivers/media/platform/vsp1/vsp1_rpf.c             |  31 +-
- drivers/media/platform/vsp1/vsp1_rwpf.c            |   6 +-
- drivers/media/platform/vsp1/vsp1_rwpf.h            |  14 +-
- drivers/media/platform/vsp1/vsp1_sru.c             |  14 +-
- drivers/media/platform/vsp1/vsp1_uds.c             |  16 +-
- drivers/media/platform/vsp1/vsp1_uds.h             |   2 +-
- drivers/media/platform/vsp1/vsp1_video.c           |  36 +-
- drivers/media/platform/vsp1/vsp1_wpf.c             | 159 ++++++-
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c      |  19 +
- drivers/media/v4l2-core/v4l2-dev.c                 |  16 +-
- drivers/media/v4l2-core/v4l2-ioctl.c               |  35 ++
- drivers/media/v4l2-core/videobuf2-v4l2.c           |   3 +
- include/media/v4l2-ioctl.h                         |   8 +
- include/uapi/linux/media.h                         |  10 +
- include/uapi/linux/videodev2.h                     |  17 +
- include/uapi/linux/vsp1.h                          |  34 --
- 43 files changed, 2515 insertions(+), 240 deletions(-)
- create mode 100644 Documentation/DocBook/media/v4l/dev-meta.xml
- create mode 100644 Documentation/DocBook/media/v4l/pixfmt-meta-vsp1-hgo.xml
- create mode 100644 drivers/media/platform/vsp1/vsp1_clu.c
- create mode 100644 drivers/media/platform/vsp1/vsp1_clu.h
- create mode 100644 drivers/media/platform/vsp1/vsp1_hgo.c
- create mode 100644 drivers/media/platform/vsp1/vsp1_hgo.h
- create mode 100644 drivers/media/platform/vsp1/vsp1_histo.c
- create mode 100644 drivers/media/platform/vsp1/vsp1_histo.h
- delete mode 100644 include/uapi/linux/vsp1.h
-
--- 
-Regards,
-
-Laurent Pinchart
+Index: renesas/drivers/soc/renesas/Makefile
+===================================================================
+--- renesas.orig/drivers/soc/renesas/Makefile
++++ renesas/drivers/soc/renesas/Makefile
+@@ -1,6 +1,7 @@
+ obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
+ obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
+ obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
++obj-$(CONFIG_ARCH_R8A7792)	+= rcar-sysc.o r8a7792-sysc.o
+ # R-Car M2-N is identical to R-Car M2-W w.r.t. power domains.
+ obj-$(CONFIG_ARCH_R8A7793)	+= rcar-sysc.o r8a7791-sysc.o
+ obj-$(CONFIG_ARCH_R8A7794)	+= rcar-sysc.o r8a7794-sysc.o
+Index: renesas/drivers/soc/renesas/r8a7792-sysc.c
+===================================================================
+--- /dev/null
++++ renesas/drivers/soc/renesas/r8a7792-sysc.c
+@@ -0,0 +1,34 @@
++/*
++ * Renesas R-Car V2H (R8A7792) System Controller
++ *
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
++
++#include <linux/bug.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++
++#include <dt-bindings/power/r8a7792-sysc.h>
++
++#include "rcar-sysc.h"
++
++static const struct rcar_sysc_area r8a7792_areas[] __initconst = {
++	{ "always-on",	    0, 0, R8A7792_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
++	{ "ca15-scu",	0x180, 0, R8A7792_PD_CA15_SCU,	R8A7792_PD_ALWAYS_ON,
++	  PD_SCU },
++	{ "ca15-cpu0",	 0x40, 0, R8A7792_PD_CA15_CPU0,	R8A7792_PD_CA15_SCU,
++	  PD_CPU_NOCR },
++	{ "ca15-cpu1",	 0x40, 1, R8A7792_PD_CA15_CPU1,	R8A7792_PD_CA15_SCU,
++	  PD_CPU_NOCR },
++	{ "sgx",	 0xc0, 0, R8A7792_PD_SGX,	R8A7792_PD_ALWAYS_ON },
++	{ "imp",	0x140, 0, R8A7792_PD_IMP,	R8A7792_PD_ALWAYS_ON },
++};
++
++const struct rcar_sysc_info r8a7792_sysc_info __initconst = {
++	.areas = r8a7792_areas,
++	.num_areas = ARRAY_SIZE(r8a7792_areas),
++};
+Index: renesas/drivers/soc/renesas/rcar-sysc.c
+===================================================================
+--- renesas.orig/drivers/soc/renesas/rcar-sysc.c
++++ renesas/drivers/soc/renesas/rcar-sysc.c
+@@ -293,6 +293,9 @@ static const struct of_device_id rcar_sy
+ #ifdef CONFIG_ARCH_R8A7791
+ 	{ .compatible = "renesas,r8a7791-sysc", .data = &r8a7791_sysc_info },
+ #endif
++#ifdef CONFIG_ARCH_R8A7792
++	{ .compatible = "renesas,r8a7792-sysc", .data = &r8a7792_sysc_info },
++#endif
+ #ifdef CONFIG_ARCH_R8A7793
+ 	/* R-Car M2-N is identical to R-Car M2-W w.r.t. power domains. */
+ 	{ .compatible = "renesas,r8a7793-sysc", .data = &r8a7791_sysc_info },
+Index: renesas/drivers/soc/renesas/rcar-sysc.h
+===================================================================
+--- renesas.orig/drivers/soc/renesas/rcar-sysc.h
++++ renesas/drivers/soc/renesas/rcar-sysc.h
+@@ -53,6 +53,7 @@ struct rcar_sysc_info {
+ extern const struct rcar_sysc_info r8a7779_sysc_info;
+ extern const struct rcar_sysc_info r8a7790_sysc_info;
+ extern const struct rcar_sysc_info r8a7791_sysc_info;
++extern const struct rcar_sysc_info r8a7792_sysc_info;
+ extern const struct rcar_sysc_info r8a7794_sysc_info;
+ extern const struct rcar_sysc_info r8a7795_sysc_info;
+ extern const struct rcar_sysc_info r8a7796_sysc_info;
