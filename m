@@ -1,284 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56322 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751696AbcF2SVG (ORCPT
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:36691 "EHLO
+	mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932521AbcFLVBy (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 14:21:06 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87bn3msj5o.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bIK6W-0004iT-6S@finisterre>
-Date: Wed, 29 Jun 2016 19:20:52 +0100
-Subject: Applied "ASoC: simple-card: add new asoc_simple_jack and use it" to the asoc tree
+	Sun, 12 Jun 2016 17:01:54 -0400
+Received: by mail-lf0-f44.google.com with SMTP id q132so36171967lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Jun 2016 14:01:53 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 04/12] ARM: shmobile: r8a7792: basic SoC support
+Date: Mon, 13 Jun 2016 00:01:49 +0300
+Message-ID: <2263631.FdTI6u9Ha0@wasted.cogentembedded.com>
+In-Reply-To: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+References: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Add minimal support for the R-Car V2H (R8A7792) SoC.
 
-   ASoC: simple-card: add new asoc_simple_jack and use it
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 9eac361877b3c96c8f68dffd7a7a3e92a2b85d0b Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Tue, 31 May 2016 08:59:46 +0000
-Subject: [PATCH] ASoC: simple-card: add new asoc_simple_jack and use it
-
-Current simple-card supports snd_soc_jack/pin/gpio.
-These code are very similar, but driver has verbosity code.
-So, this patch adds new snd_soc_jack and cleanups code
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/generic/simple-card.c | 153 ++++++++++++++++++++--------------------
- 1 file changed, 78 insertions(+), 75 deletions(-)
+Changes in version 3:
+- added Cogent Embedded's copyright;
+- removed a supefluous space in Renesas Electronics' copyright.
 
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index b6e6d9a12ec2..8d0311ceded1 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -21,6 +21,12 @@
- #include <sound/soc-dai.h>
- #include <sound/soc.h>
+Changes in version 2:
+- removed 'select I2C';
+- added Simon's ACK and Geert's tag too.
+
+ arch/arm/mach-shmobile/Kconfig         |    4 +++
+ arch/arm/mach-shmobile/Makefile        |    1 
+ arch/arm/mach-shmobile/setup-r8a7792.c |   35 +++++++++++++++++++++++++++++++++
+ 3 files changed, 40 insertions(+)
+
+Index: renesas/arch/arm/mach-shmobile/Kconfig
+===================================================================
+--- renesas.orig/arch/arm/mach-shmobile/Kconfig
++++ renesas/arch/arm/mach-shmobile/Kconfig
+@@ -86,6 +86,10 @@ config ARCH_R8A7791
+ 	select ARCH_RCAR_GEN2
+ 	select I2C
  
-+struct asoc_simple_jack {
-+	struct snd_soc_jack jack;
-+	struct snd_soc_jack_pin pin;
-+	struct snd_soc_jack_gpio gpio;
++config ARCH_R8A7792
++	bool "R-Car V2H (R8A77920)"
++	select ARCH_RCAR_GEN2
++
+ config ARCH_R8A7793
+ 	bool "R-Car M2-N (R8A7793)"
+ 	select ARCH_RCAR_GEN2
+Index: renesas/arch/arm/mach-shmobile/Makefile
+===================================================================
+--- renesas.orig/arch/arm/mach-shmobile/Makefile
++++ renesas/arch/arm/mach-shmobile/Makefile
+@@ -13,6 +13,7 @@ obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7
+ obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
+ obj-$(CONFIG_ARCH_R8A7790)	+= setup-r8a7790.o
+ obj-$(CONFIG_ARCH_R8A7791)	+= setup-r8a7791.o
++obj-$(CONFIG_ARCH_R8A7792)	+= setup-r8a7792.o
+ obj-$(CONFIG_ARCH_R8A7793)	+= setup-r8a7793.o
+ obj-$(CONFIG_ARCH_R8A7794)	+= setup-r8a7794.o
+ obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
+Index: renesas/arch/arm/mach-shmobile/setup-r8a7792.c
+===================================================================
+--- /dev/null
++++ renesas/arch/arm/mach-shmobile/setup-r8a7792.c
+@@ -0,0 +1,35 @@
++/*
++ * r8a7792 processor support
++ *
++ * Copyright (C) 2014 Renesas Electronics Corporation
++ * Copyright (C) 2016 Cogent  Embedded, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/of_platform.h>
++
++#include <asm/mach/arch.h>
++
++#include "common.h"
++#include "rcar-gen2.h"
++
++static const char * const r8a7792_boards_compat_dt[] __initconst = {
++	"renesas,r8a7792",
++	NULL,
 +};
 +
- struct simple_card_data {
- 	struct snd_soc_card snd_card;
- 	struct simple_dai_props {
-@@ -29,10 +35,8 @@ struct simple_card_data {
- 		unsigned int mclk_fs;
- 	} *dai_props;
- 	unsigned int mclk_fs;
--	int gpio_hp_det;
--	int gpio_hp_det_invert;
--	int gpio_mic_det;
--	int gpio_mic_det_invert;
-+	struct asoc_simple_jack hp_jack;
-+	struct asoc_simple_jack mic_jack;
- 	struct snd_soc_dai_link dai_link[];	/* dynamically allocated */
- };
- 
-@@ -42,6 +46,67 @@ struct simple_card_data {
- 
- #define PREFIX	"simple-audio-card,"
- 
-+#define asoc_simple_card_init_hp(card, sjack, prefix)\
-+	asoc_simple_card_init_jack(card, sjack, 1, prefix)
-+#define asoc_simple_card_init_mic(card, sjack, prefix)\
-+	asoc_simple_card_init_jack(card, sjack, 0, prefix)
-+static int asoc_simple_card_init_jack(struct snd_soc_card *card,
-+				      struct asoc_simple_jack *sjack,
-+				      int is_hp, char *prefix)
-+{
-+	struct device *dev = card->dev;
-+	enum of_gpio_flags flags;
-+	char prop[128];
-+	char *pin_name;
-+	char *gpio_name;
-+	int mask;
-+	int det;
-+
-+	sjack->gpio.gpio = -ENOENT;
-+
-+	if (is_hp) {
-+		snprintf(prop, sizeof(prop), "%shp-det-gpio", prefix);
-+		pin_name	= "Headphones";
-+		gpio_name	= "Headphone detection";
-+		mask		= SND_JACK_HEADPHONE;
-+	} else {
-+		snprintf(prop, sizeof(prop), "%smic-det-gpio", prefix);
-+		pin_name	= "Mic Jack";
-+		gpio_name	= "Mic detection";
-+		mask		= SND_JACK_MICROPHONE;
-+	}
-+
-+	det = of_get_named_gpio_flags(dev->of_node, prop, 0, &flags);
-+	if (det == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+
-+	if (gpio_is_valid(det)) {
-+		sjack->pin.pin		= pin_name;
-+		sjack->pin.mask		= mask;
-+
-+		sjack->gpio.name	= gpio_name;
-+		sjack->gpio.report	= mask;
-+		sjack->gpio.gpio	= det;
-+		sjack->gpio.invert	= !!(flags & OF_GPIO_ACTIVE_LOW);
-+		sjack->gpio.debounce_time = 150;
-+
-+		snd_soc_card_jack_new(card, pin_name, mask,
-+				      &sjack->jack,
-+				      &sjack->pin, 1);
-+
-+		snd_soc_jack_add_gpios(&sjack->jack, 1,
-+				       &sjack->gpio);
-+	}
-+
-+	return 0;
-+}
-+
-+static void asoc_simple_card_remove_jack(struct asoc_simple_jack *sjack)
-+{
-+	if (gpio_is_valid(sjack->gpio.gpio))
-+		snd_soc_jack_free_gpios(&sjack->jack, 1, &sjack->gpio);
-+}
-+
- static int asoc_simple_card_startup(struct snd_pcm_substream *substream)
- {
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-@@ -112,32 +177,6 @@ static struct snd_soc_ops asoc_simple_card_ops = {
- 	.hw_params = asoc_simple_card_hw_params,
- };
- 
--static struct snd_soc_jack simple_card_hp_jack;
--static struct snd_soc_jack_pin simple_card_hp_jack_pins[] = {
--	{
--		.pin = "Headphones",
--		.mask = SND_JACK_HEADPHONE,
--	},
--};
--static struct snd_soc_jack_gpio simple_card_hp_jack_gpio = {
--	.name = "Headphone detection",
--	.report = SND_JACK_HEADPHONE,
--	.debounce_time = 150,
--};
--
--static struct snd_soc_jack simple_card_mic_jack;
--static struct snd_soc_jack_pin simple_card_mic_jack_pins[] = {
--	{
--		.pin = "Mic Jack",
--		.mask = SND_JACK_MICROPHONE,
--	},
--};
--static struct snd_soc_jack_gpio simple_card_mic_jack_gpio = {
--	.name = "Mic detection",
--	.report = SND_JACK_MICROPHONE,
--	.debounce_time = 150,
--};
--
- static int __asoc_simple_card_dai_init(struct snd_soc_dai *dai,
- 				       struct asoc_simple_dai *set)
- {
-@@ -186,30 +225,14 @@ static int asoc_simple_card_dai_init(struct snd_soc_pcm_runtime *rtd)
- 	if (ret < 0)
- 		return ret;
- 
--	if (gpio_is_valid(priv->gpio_hp_det)) {
--		snd_soc_card_jack_new(rtd->card, "Headphones",
--				      SND_JACK_HEADPHONE,
--				      &simple_card_hp_jack,
--				      simple_card_hp_jack_pins,
--				      ARRAY_SIZE(simple_card_hp_jack_pins));
--
--		simple_card_hp_jack_gpio.gpio = priv->gpio_hp_det;
--		simple_card_hp_jack_gpio.invert = priv->gpio_hp_det_invert;
--		snd_soc_jack_add_gpios(&simple_card_hp_jack, 1,
--				       &simple_card_hp_jack_gpio);
--	}
-+	ret = asoc_simple_card_init_hp(rtd->card, &priv->hp_jack, PREFIX);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = asoc_simple_card_init_mic(rtd->card, &priv->hp_jack, PREFIX);
-+	if (ret < 0)
-+		return ret;
- 
--	if (gpio_is_valid(priv->gpio_mic_det)) {
--		snd_soc_card_jack_new(rtd->card, "Mic Jack",
--				      SND_JACK_MICROPHONE,
--				      &simple_card_mic_jack,
--				      simple_card_mic_jack_pins,
--				      ARRAY_SIZE(simple_card_mic_jack_pins));
--		simple_card_mic_jack_gpio.gpio = priv->gpio_mic_det;
--		simple_card_mic_jack_gpio.invert = priv->gpio_mic_det_invert;
--		snd_soc_jack_add_gpios(&simple_card_mic_jack, 1,
--				       &simple_card_mic_jack_gpio);
--	}
- 	return 0;
- }
- 
-@@ -447,7 +470,6 @@ static int asoc_simple_card_parse_of(struct device_node *node,
- 				     struct simple_card_data *priv)
- {
- 	struct device *dev = simple_priv_to_dev(priv);
--	enum of_gpio_flags flags;
- 	u32 val;
- 	int ret;
- 
-@@ -503,18 +525,6 @@ static int asoc_simple_card_parse_of(struct device_node *node,
- 			return ret;
- 	}
- 
--	priv->gpio_hp_det = of_get_named_gpio_flags(node,
--				PREFIX "hp-det-gpio", 0, &flags);
--	priv->gpio_hp_det_invert = !!(flags & OF_GPIO_ACTIVE_LOW);
--	if (priv->gpio_hp_det == -EPROBE_DEFER)
--		return -EPROBE_DEFER;
--
--	priv->gpio_mic_det = of_get_named_gpio_flags(node,
--				PREFIX "mic-det-gpio", 0, &flags);
--	priv->gpio_mic_det_invert = !!(flags & OF_GPIO_ACTIVE_LOW);
--	if (priv->gpio_mic_det == -EPROBE_DEFER)
--		return -EPROBE_DEFER;
--
- 	if (!priv->snd_card.name)
- 		priv->snd_card.name = priv->snd_card.dai_link->name;
- 
-@@ -564,9 +574,6 @@ static int asoc_simple_card_probe(struct platform_device *pdev)
- 	priv->snd_card.dai_link = dai_link;
- 	priv->snd_card.num_links = num_links;
- 
--	priv->gpio_hp_det = -ENOENT;
--	priv->gpio_mic_det = -ENOENT;
--
- 	/* Get room for the other properties */
- 	priv->dai_props = devm_kzalloc(dev,
- 			sizeof(*priv->dai_props) * num_links,
-@@ -633,12 +640,8 @@ static int asoc_simple_card_remove(struct platform_device *pdev)
- 	struct snd_soc_card *card = platform_get_drvdata(pdev);
- 	struct simple_card_data *priv = snd_soc_card_get_drvdata(card);
- 
--	if (gpio_is_valid(priv->gpio_hp_det))
--		snd_soc_jack_free_gpios(&simple_card_hp_jack, 1,
--					&simple_card_hp_jack_gpio);
--	if (gpio_is_valid(priv->gpio_mic_det))
--		snd_soc_jack_free_gpios(&simple_card_mic_jack, 1,
--					&simple_card_mic_jack_gpio);
-+	asoc_simple_card_remove_jack(&priv->hp_jack);
-+	asoc_simple_card_remove_jack(&priv->mic_jack);
- 
- 	return asoc_simple_card_unref(card);
- }
--- 
-2.8.1
++DT_MACHINE_START(R8A7792_DT, "Generic R8A7792 (Flattened Device Tree)")
++	.init_early	= shmobile_init_delay,
++	.init_late	= shmobile_init_late,
++	.init_time	= rcar_gen2_timer_init,
++	.reserve	= rcar_gen2_reserve,
++	.dt_compat	= r8a7792_boards_compat_dt,
++MACHINE_END
