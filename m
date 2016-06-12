@@ -1,50 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47886 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751824AbcFOECf (ORCPT
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:36073 "EHLO
+	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932156AbcFLVMK (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 15 Jun 2016 00:02:35 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFC 3/4] mmc: renesas_sdhi: rename DMA source file as renesas_sdhi_dma.c
-Date: Wed, 15 Jun 2016 13:01:56 +0900
-Message-Id: <1465963317-28672-4-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1465963317-28672-1-git-send-email-horms+renesas@verge.net.au>
-References: <1465963317-28672-1-git-send-email-horms+renesas@verge.net.au>
+	Sun, 12 Jun 2016 17:12:10 -0400
+Received: by mail-lf0-f48.google.com with SMTP id q132so36248482lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Jun 2016 14:12:09 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 09/12] ARM: dts: r8a7792: add IRQC support
+Date: Mon, 13 Jun 2016 00:12:06 +0300
+Message-ID: <2893973.cKZ2jGJP6M@wasted.cogentembedded.com>
+In-Reply-To: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+References: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Rename the source file for DMA for Renesas SDHI as a follow-up to attaching
-DMA code to the renesas_sdhi driver rather than the tmio_core driver.
+Describe the IRQC interrupt controller in the R8A7792 device tree.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
 ---
- drivers/mmc/host/Makefile                               | 2 +-
- drivers/mmc/host/{tmio_mmc_dma.c => renesas_sdhi_dma.c} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename drivers/mmc/host/{tmio_mmc_dma.c => renesas_sdhi_dma.c} (100%)
+Changes in version 3:
+- refreshed the patch.
 
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index 4f7903fbef26..0ea7fb6f3d5e 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -38,7 +38,7 @@ obj-$(CONFIG_MMC_TMIO)		+= tmio_mmc.o
- obj-$(CONFIG_MMC_TMIO_CORE)	+= tmio_mmc_core.o
- tmio_mmc_core-y			:= tmio_mmc_pio.o
- obj-$(CONFIG_MMC_SDHI)		+= renesas_sdhi.o
--renesas_sdhi-$(subst m,y,$(CONFIG_MMC_SDHI_DMA))	+= tmio_mmc_dma.o
-+renesas_sdhi-$(subst m,y,$(CONFIG_MMC_SDHI_DMA))	+= renesas_sdhi_dma.o
- obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
- obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
- obj-$(CONFIG_SDH_BFIN)		+= bfin_sdh.o
-diff --git a/drivers/mmc/host/tmio_mmc_dma.c b/drivers/mmc/host/renesas_sdhi_dma.c
-similarity index 100%
-rename from drivers/mmc/host/tmio_mmc_dma.c
-rename to drivers/mmc/host/renesas_sdhi_dma.c
--- 
-2.1.4
+Changes in version 2:
+- resolved reject, indenting the IRQC node that is now under the "soc" node;
+- added Geert's tag.
+
+ arch/arm/boot/dts/r8a7792.dtsi |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -70,6 +70,19 @@
+ 				      IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
+ 
++		irqc: interrupt-controller@e61c0000 {
++			compatible = "renesas,irqc-r8a7792", "renesas,irqc";
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			reg = <0 0xe61c0000 0 0x200>;
++			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp4_clks R8A7792_CLK_IRQC>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++		};
++
+ 		timer {
+ 			compatible = "arm,armv7-timer";
+ 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
