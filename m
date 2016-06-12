@@ -1,81 +1,39 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753189AbcFHBBG (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 21:01:06 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/2] ARM: shmobile: rcar-gen2: Use ICRAM1 for jump stub on all SoCs
-Date: Wed,  8 Jun 2016 10:00:20 +0900
-Message-Id: <c94bc815f3c757df402d6f6a3e8d855b9168e6af.1465347025.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1465347025.git.horms+renesas@verge.net.au>
-References: <cover.1465347025.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 00/12] Add R8A7792/Blanche board support
+Date: Sun, 12 Jun 2016 23:47:15 +0300
+Message-ID: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hello.
 
-Currently the different SoCs in the R-Car Gen2 family use different
-types of on-chip RAM for the jump stub:
-  - R-Car H2 uses Media RAM,
-  - R-Car M2-W uses another type of optional On-chip RAM, as it doesn't
-    have Media RAM,
-  - R-Car M2-N uses Inter Connect RAM in Magnus Damm's "ARM: shmobile:
-    r8a7793 boot address update".
+   Here's the set of 12 patches against Simon Horman's 'renesas.git' repo,
+'renesas-devel-20160606-v4.7-rc2' tag. We add the device tree support for
+the R8A7792-based Blanche board. The R-Car 'clk' driver patch was posted
+separately and 2 'clk' binding patches were split from this series...
 
-As all R-Car Gen2 SoCs have 4 KiB of Inter Connect RAM, consolidate the
-code by always using that.
+[01/12] ARM: shmobile: r8a7792: add clock index macros
+[02/12] ARM: shmobile: r8a7792: add power domain index macros
+[03/12] soc: renesas: rcar-sysc: add R8A7792 support
+[04/12] ARM: shmobile: r8a7792: basic SoC support
+[05/12] ARM: shmobile: r8a7792: add SMP support
+[06/12] ARM: dts: r8a7792: initial SoC device tree
+[07/12] ARM: dts: r8a7792: add SYS-DMAC support
+[08/12] ARM: dts: r8a7792: add [H]SCIF support
+[09/12] ARM: dts: r8a7792: add IRQC support
+[10/12] DT: arm: shmobile: document Blanche board
+[11/12] ARM: dts: blanche: initial device tree
+[12/12] ARM: dts: blanche: add Ethernet support
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/pm-rcar-gen2.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+WBR, Sergei
 
-diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-index 691ac166a277..61361dac6068 100644
---- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-@@ -26,8 +26,7 @@
- #define CA7RESCNT	0x0044
- 
- /* On-chip RAM */
--#define MERAM		0xe8080000
--#define RAM		0xe6300000
-+#define ICRAM1		0xe63c0000	/* Inter Connect RAM1 (4 KiB) */
- 
- /* SYSC */
- #define SYSCIER 0x0c
-@@ -58,7 +57,7 @@ void __init rcar_gen2_pm_init(void)
- 	struct device_node *np, *cpus;
- 	bool has_a7 = false;
- 	bool has_a15 = false;
--	phys_addr_t boot_vector_addr = 0;
-+	phys_addr_t boot_vector_addr = ICRAM1;
- 	u32 syscier = 0;
- 
- 	if (once++)
-@@ -75,14 +74,10 @@ void __init rcar_gen2_pm_init(void)
- 			has_a7 = true;
- 	}
- 
--	if (of_machine_is_compatible("renesas,r8a7790")) {
--		boot_vector_addr = MERAM;
-+	if (of_machine_is_compatible("renesas,r8a7790"))
- 		syscier = 0x013111ef;
--
--	} else if (of_machine_is_compatible("renesas,r8a7791")) {
--		boot_vector_addr = RAM;
-+	else if (of_machine_is_compatible("renesas,r8a7791"))
- 		syscier = 0x00111003;
--	}
- 
- 	/* RAM for jump stub, because BAR requires 256KB aligned address */
- 	p = ioremap_nocache(boot_vector_addr, shmobile_boot_size);
--- 
-2.1.4
