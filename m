@@ -1,68 +1,94 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:34143 "EHLO
-	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1162253AbcFHVHX (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 17:07:23 -0400
-Received: by mail-lf0-f53.google.com with SMTP id s186so13884865lfs.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2016 14:07:22 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v3 02/12] ARM: shmobile: r8a7792: add power domain index macros
-Date: Thu, 09 Jun 2016 00:07:18 +0300
-Message-ID: <1587622.DYglMsba7M@wasted.cogentembedded.com>
-In-Reply-To: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
-References: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAL_JsqLd+sXeEtq+chtrCxyDgyBm9s3giCC+ri8oMvfVLjunaA@mail.gmail.com>
+References: <1465479695-18644-1-git-send-email-kieran@bingham.xyz>
+ <1465479695-18644-3-git-send-email-kieran@bingham.xyz> <20160610173914.GA20505@rob-hp-laptop>
+ <CAMuHMdWQZjE+AnPry6PiVc69PVdZ_2zstOKR==B6nywun2Om9Q@mail.gmail.com> <CAL_JsqLd+sXeEtq+chtrCxyDgyBm9s3giCC+ri8oMvfVLjunaA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 12 Jun 2016 10:46:34 +0200
+Message-ID: <CAMuHMdUnwHYUVGHZn=gE0dxqR81iKO0dMEMATOL=Sw5aWbGVgQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: Document Renesas R-Car FCP power-domains usage
+To: Rob Herring <robh@kernel.org>
+Cc: Kieran Bingham <kieran@ksquared.org.uk>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"open list:MEDIA DRIVERS FOR RENESAS - FCP" <linux-media@vger.kernel.org>,
+	"open list:MEDIA DRIVERS FOR RENESAS - FCP" <linux-renesas-soc@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+	Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by the device tree sources to reference R8A7792 SYSC power
-domains by index.
+Hi Rob,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+CC linux-pm
 
----
-Changes in version 2:
-- added Geert's tag.
+On Fri, Jun 10, 2016 at 11:33 PM, Rob Herring <robh@kernel.org> wrote:
+> On Fri, Jun 10, 2016 at 2:11 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Fri, Jun 10, 2016 at 7:39 PM, Rob Herring <robh@kernel.org> wrote:
+>>> On Thu, Jun 09, 2016 at 02:41:33PM +0100, Kieran Bingham wrote:
+>>>> The power domain must be specified to bring the device out of module
+>>>> standby. Document this in the example provided, so that new additions
+>>>> are not missed.
+>>>>
+>>>> Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+>>>> ---
+>>>>  Documentation/devicetree/bindings/media/renesas,fcp.txt | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt b/Documentation/devicetree/bindings/media/renesas,fcp.txt
+>>>> index 271dcfdb5a76..6a55f5215221 100644
+>>>> --- a/Documentation/devicetree/bindings/media/renesas,fcp.txt
+>>>> +++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
+>>>> @@ -31,4 +31,5 @@ Device node example
+>>>>               compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
+>>>>               reg = <0 0xfea2f000 0 0x200>;
+>>>>               clocks = <&cpg CPG_MOD 602>;
+>>>> +             power-domains = <&sysc R8A7795_PD_A3VP>;
+>>>
+>>> This needs to be documented above too, not just the example.
+>>
+>> Why? Power domains are an optional feature, whose presence depends
+>> on the platform, not on the device.
+>
+> Examples are not documentation. The binding should stand on its own
+> without the example.
+>
+> How did I know this is optional unless you document it as optional?
+> How many power domains does the device have?
 
- include/dt-bindings/power/r8a7792-sysc.h |   26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+The device does not have power domains, and is not aware of the existence
+of power domains. Each SoC has one or more power domains.
 
-Index: renesas/include/dt-bindings/power/r8a7792-sysc.h
-===================================================================
---- /dev/null
-+++ renesas/include/dt-bindings/power/r8a7792-sysc.h
-@@ -0,0 +1,26 @@
-+/*
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7792_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7792_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A7792_PD_CA15_CPU0		0
-+#define R8A7792_PD_CA15_CPU1		1
-+#define R8A7792_PD_CA15_SCU		12
-+#define R8A7792_PD_SGX			20
-+#define R8A7792_PD_IMP			24
-+
-+/* Always-on power area */
-+#define R8A7792_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7792_SYSC_H__ */
+"power-domains" properties are used to describe the hierarchical relationship
+between power domains and the devices that resides in these power domains.
+Just like nodes and subnodes describe the hierarchical relationship between
+buses and the devices directly connected to these buses.
+
+On the (Linux) software side, the device driver does have to use Runtime PM
+if an SoC has more power domains than just the single "always-on" power domain.
+
+>> Hence "power-domains" properties may appear in any device node.
+>> Having to document them in every single binding document is overkill.
+>
+> We do it for everything else pretty much. There's some exceptions like "status".
+
+IMHO having to document "power-domains" in every single DT binding is
+as silly as having to document that the device node must be a child of the bus
+device node in every single DT binding. This belongs in the DT binding of the
+power controller, which is the device controlling the power domain.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
