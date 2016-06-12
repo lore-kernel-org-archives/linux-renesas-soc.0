@@ -1,50 +1,101 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-	m.szyprowski@samsung.com
-Date: Fri, 03 Jun 2016 00:56:18 +0900
-Message-Id: <20160602155618.31018.67078.sendpatchset@little-apple>
-In-Reply-To: <20160602155519.31018.59925.sendpatchset@little-apple>
-References: <20160602155519.31018.59925.sendpatchset@little-apple>
-Subject: [PATCH v3 06/06] iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 11/12] ARM: dts: blanche: initial device tree
+Date: Mon, 13 Jun 2016 00:15:55 +0300
+Message-ID: <1845407.R5taI3Tpvj@wasted.cogentembedded.com>
+In-Reply-To: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+References: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Add the initial device  tree for the R8A7792 SoC based Blanche board.
+The board has 2 debug serial ports: SCIF0 and SCIF3; include support for
+them,  so that  the serial console  can  work.
 
-Neither the ARM page table code enabled by IOMMU_IO_PGTABLE_LPAE
-nor the IPMMU_VMSA driver actually depends on ARM_LPAE, so get
-rid of the dependency.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Tested with ipmmu-vmsa on r8a7794 ALT and a kernel config using:
- # CONFIG_ARM_LPAE is not set
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
+Changes in version 3:
+- added Renesas Electronics' copyright.
 
- Changes since V2:
- - None
+Changes in version 2:
+- added Simon's ACK and Geert's tag too.
 
- Changes since V1:
- - Rebased on top of ARCH_RENESAS change
- - Added Acked-by from Laurent
+ arch/arm/boot/dts/Makefile            |    1 
+ arch/arm/boot/dts/r8a7792-blanche.dts |   45 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 46 insertions(+)
 
- drivers/iommu/Kconfig |    1 -
- 1 file changed, 1 deletion(-)
+Index: renesas/arch/arm/boot/dts/Makefile
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/Makefile
++++ renesas/arch/arm/boot/dts/Makefile
+@@ -638,6 +638,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
+ 	r8a7790-lager.dtb \
+ 	r8a7791-koelsch.dtb \
+ 	r8a7791-porter.dtb \
++	r8a7792-blanche.dtb \
+ 	r8a7793-gose.dtb \
+ 	r8a7794-alt.dtb \
+ 	r8a7794-silk.dtb \
+Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+===================================================================
+--- /dev/null
++++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -0,0 +1,45 @@
++/*
++ * Device Tree Source for the Blanche board
++ *
++ * Copyright (C) 2014 Renesas Electronics Corporation
++ * Copyright (C) 2016 Cogent  Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r8a7792.dtsi"
++
++/ {
++	model = "Blanche";
++	compatible = "renesas,blanche", "renesas,r8a7792";
++
++	aliases {
++		serial0 = &scif0;
++		serial1 = &scif3;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0 0x40000000 0 0x40000000>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <20000000>;
++};
++
++&scif0 {
++	status = "okay";
++};
++
++&scif3 {
++	status = "okay";
++};
 
---- 0001/drivers/iommu/Kconfig
-+++ work/drivers/iommu/Kconfig	2016-06-02 22:17:14.950607110 +0900
-@@ -273,7 +273,6 @@ config EXYNOS_IOMMU_DEBUG
- 
- config IPMMU_VMSA
- 	bool "Renesas VMSA-compatible IPMMU"
--	depends on ARM_LPAE
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	select IOMMU_API
- 	select IOMMU_IO_PGTABLE_LPAE
