@@ -1,11 +1,4 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:36073 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932156AbcFLVMK (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sun, 12 Jun 2016 17:12:10 -0400
-Received: by mail-lf0-f48.google.com with SMTP id q132so36248482lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Jun 2016 14:12:09 -0700 (PDT)
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
 	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
@@ -13,54 +6,75 @@ To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org
 Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 09/12] ARM: dts: r8a7792: add IRQC support
-Date: Mon, 13 Jun 2016 00:12:06 +0300
-Message-ID: <2893973.cKZ2jGJP6M@wasted.cogentembedded.com>
+Subject: [PATCH v5 12/12] ARM: dts: blanche: add Ethernet support
+Date: Mon, 13 Jun 2016 00:17:11 +0300
+Message-ID: <1791778.Vq4vL64bUW@wasted.cogentembedded.com>
 In-Reply-To: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
 References: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the IRQC interrupt controller in the R8A7792 device tree.
+R8A7792  SoC  doesn't have the EtherMAC core, so SMSC  LAN89218  Ethernet
+chip was used instead on the Blanche board; this chip  is compatible with
+SMSC LAN9115  for  which there's a (device tree aware) driver. Describe
+the  chip in  the  Blanche device tree;  enable DHCP and NFS root in the
+kernel command line for the kernel booting.
 
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
 ---
 Changes in version 3:
 - refreshed the patch.
 
 Changes in version 2:
-- resolved reject, indenting the IRQC node that is now under the "soc" node;
-- added Geert's tag.
+- added Simon's ACK.
 
- arch/arm/boot/dts/r8a7792.dtsi |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/boot/dts/r8a7792-blanche.dts |   23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
 ===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -70,6 +70,19 @@
- 				      IRQ_TYPE_LEVEL_HIGH)>;
- 		};
+--- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
++++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -22,7 +22,7 @@
+ 	};
  
-+		irqc: interrupt-controller@e61c0000 {
-+			compatible = "renesas,irqc-r8a7792", "renesas,irqc";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			reg = <0 0xe61c0000 0 0x200>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp4_clks R8A7792_CLK_IRQC>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
+ 	chosen {
+-		bootargs = "ignore_loglevel";
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+@@ -30,6 +30,27 @@
+ 		device_type = "memory";
+ 		reg = <0 0x40000000 0 0x40000000>;
+ 	};
 +
- 		timer {
- 			compatible = "arm,armv7-timer";
- 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
++	d3_3v: regulator-3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "D3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	ethernet@18000000 {
++		compatible = "smsc,lan89218", "smsc,lan9115";
++		reg = <0 0x18000000 0 0x100>;
++		phy-mode = "mii";
++		interrupt-parent = <&irqc>;
++		interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
++		smsc,irq-push-pull;
++		reg-io-width = <4>;
++		vddvario-supply = <&d3_3v>;
++		vdd33a-supply = <&d3_3v>;
++	};
+ };
+ 
+ &extal_clk {
+
