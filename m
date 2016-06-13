@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:33397 "EHLO pokefinder.org"
+Received: from sauhun.de ([89.238.76.85]:55521 "EHLO pokefinder.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751259AbcFNWJW (ORCPT
+	id S1422860AbcFMObk (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 14 Jun 2016 18:09:22 -0400
-Date: Wed, 15 Jun 2016 00:09:12 +0200
+	Mon, 13 Jun 2016 10:31:40 -0400
+Date: Mon, 13 Jun 2016 16:31:34 +0200
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Simon Horman <horms+renesas@verge.net.au>
 Cc: linux-renesas-soc@vger.kernel.org,
@@ -12,51 +12,67 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>
 Subject: Re: [PATCH v2 0/4] ARM: dts: r8a7790: lager: use demuxer for I2C
-Message-ID: <20160614220912.GA5528@tetsubishi>
+Message-ID: <20160613143134.GB1603@katana>
 References: <1465370066-8450-1-git-send-email-horms+renesas@verge.net.au>
- <20160613143134.GB1603@katana>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Dxnq1zWXvFF0Q93v"
+	protocol="application/pgp-signature"; boundary="NMuMz9nt05w80d4+"
 Content-Disposition: inline
-In-Reply-To: <20160613143134.GB1603@katana>
+In-Reply-To: <1465370066-8450-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---Dxnq1zWXvFF0Q93v
+--NMuMz9nt05w80d4+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 
-> Confirmed :( Got today only this far that the ENODEV comes from the PFC
-> driver. CONFIG_DEBUG_PINCTRL is a good idea for further debugging
-> probably.
+>    # ./exercise-i2c-demux.sh
+>    I2C Demux: i2c-8
+>      Master: 1:/i2c@e650800
+>    [   97.694487] i2c-rcar e6508000.i2c: probed 0 (1)
+>      Master: 0:/i2c@e650000
+>    [  102.706365] i2c-demux-pinctrl i2c-8: failed to setup demux-adapter 0 (-19) 0 (0)
 
-Correction, it seems the pinctrl handle gets mixed up, so the
-devm_pinctrl_get_select() fails. Does that match your findings?
-Pity I can't access my boards for the rest of the week :(
+Confirmed :( Got today only this far that the ENODEV comes from the PFC
+driver. CONFIG_DEBUG_PINCTRL is a good idea for further debugging
+probably.
+
+>    3.1 Unfortunately it fails for the I2C2 dmux if the GPIO fallback is
+>        present.
+
+Hopefully the same issue.
+
+>    3.2 The test also fails for the I2C3 demux but that appears to be due
+>        to a shortcoming in the voltage regulator code which does not
+>        appear to like being reinitialised. The kernel complains as follows:
+
+Yes, the demuxer trigger re-bind cycles which are not well considered
+and/or tested. E.g. for soc-camera, this patch needed to go upstream:
+
+https://patchwork.linuxtv.org/patch/32473/
 
 
---Dxnq1zWXvFF0Q93v
+--NMuMz9nt05w80d4+
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJXYICHAAoJEBQN5MwUoCm2gHwP/0fuF2CCcjWMtzYqnJw3cYSG
-3cPvbK7kr3iPlvrjuZdcl1bNJzpsO+z+7+cMdhDTHpQf5HOQokM8d9wewGK/CAc+
-k16yiNORnmaBeWvv+7NpbqzaxLp+OWsqhlTM1FK3+K6dBD7d3QjlOrX4V/k+/7eV
-cpWbiJLnN1EaCK6Pt9+4sgRsZUGedbKBi7EICEYF62yZVpWlvseN8UvS3QehxeWy
-NGPjaCR96zBk26dzaxHgJig6puM3A+2MWrcQcJnt8iqxt/GprbIXeiGExy4w7BsN
-16ICVnG+bszaqxYIqlhSt+/17jErEi37TENdFHIsFtc2NnsSJ47H3jGW656szY4A
-582+JuZfIafPDsCC5YfujDZne2U8lQROQ/rn9GqNwXObMwmCTzh2JfGM85J55KlR
-QKKm499+OOEweUGKUO6Aih2MENKnqMfo0TUNqxgTb8+8tc4VJ9q95PycYLmspoXu
-h1heTcjecQa0Xts6Y1ZK94hrH5KnclhJYMEukLAMLu3emCB8t9OVy+JUWtwGBcTo
-iYzUcCKbVJz3YK3Gh/2rkeD5ROwL2+NNfw2DY1Rhn58R+El46LZvM2M3CWvK88gs
-1z4F1XkEHSebpdRZzCEL84U/hhmgjlAVwAzp6ECA9XeNL1xF7Th5nfbOjQemeul2
-Fmx6MvtKBAJqQvQ6WiuM
-=kbah
+iQIcBAEBAgAGBQJXXsPGAAoJEBQN5MwUoCm2KtoP/0heQdHb0jsAvds4uJf8jPaw
+zBl/ConWe8MYUZYhyaeXz71beQr1cgOS1Y7rRJduEo+Bb8dQeMvMjFLDZmSsq/v2
+lZQMwq31ngyanVbI1mae8YHRIx5VFOFuzrxwKYUOuklmg1D651vFxnByc1cqJlq1
+b14op+YSUCVWxRbiHDE3djQMn2RNotaAazJjsnHMSGQ1RwBPPa/e7EwZTFzCmV4V
+gcEBD3hP3C4MXEZEJZlUkL4LsxT9r/95UuYjR9knlPcFCroATNXBUflyFj+VMh0O
+bqUqdyfkilMrqS6BNmOaPHEEiRXUYyXuibdNJmywz1RDI5suFs2RxFNrZmONJ88F
+ZouJUQR49HUR9WjSEwPzLXVeyidHWiGnJRrJyp70/hLEa3iVH6iluchJvEv0Mh8x
+TiMH85vfug8CU4ojRHtIYWQknu0kdC2V0LoF+A+UvghSPp/WWShcFFj8hp5oET+m
+6bepU5feVyF0GLXkudc9WHHSxvatJOKvUI+MB3AIRcGLb1784GVK7Dwvw8ASz24I
+Z4k1Hid9SJ9Do2l0dTYtWUOkdp0zfXpEcsp1YCEILbZ/2JO3ABA4oz8qbogd4hNW
+n4MmJUd3I181SrJ6gyAiaZAELpBHcZOZmp75EKvjX2p2NC/ZnuoC5b8cATxVJcVz
+vM2ubgEGf6ZI9Mrb1nQK
+=C9cy
 -----END PGP SIGNATURE-----
 
---Dxnq1zWXvFF0Q93v--
+--NMuMz9nt05w80d4+--
