@@ -1,45 +1,28 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:51403 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933150AbcFJNBQ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:44493 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933059AbcFMCCv (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 09:01:16 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 08/19] ARM: dts: lager: Name vin pfc subnode after device name
-Date: Fri, 10 Jun 2016 15:00:54 +0200
-Message-Id: <1465563665-2231-9-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
-References: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
+	Sun, 12 Jun 2016 22:02:51 -0400
+Date: Mon, 13 Jun 2016 11:02:46 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: r8a7795: Add missing blank lines between cpu
+ nodes
+Message-ID: <20160613020242.GA5280@verge.net.au>
+References: <1465553205-7159-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1465553205-7159-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Name the Pin Function Controller subnode for VIN1 after its device name,
-instead of using the generic and indexless "vin".
+On Fri, Jun 10, 2016 at 12:06:45PM +0200, Geert Uytterhoeven wrote:
+> For consistency with a57_0/a57_1 cpu nodes, and all other nodes.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This avoids conflicts when enabling support for more video inputs later,
-either here or in a DT overlay.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7790-lager.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 2d72c75ba4cb9c97..5e43763cec6575d3 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -427,7 +427,7 @@
- 		function = "usb2";
- 	};
- 
--	vin1_pins: vin {
-+	vin1_pins: vin1 {
- 		groups = "vin1_data8", "vin1_clk";
- 		function = "vin1";
- 	};
--- 
-1.9.1
+Thanks, I have queued this up.
