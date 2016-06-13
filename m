@@ -1,50 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:56156 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751872AbcFXOfb (ORCPT
+Received: from mout.gmx.net ([212.227.17.21]:51546 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1423867AbcFMPda (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 24 Jun 2016 10:35:31 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Mon, 13 Jun 2016 11:33:30 -0400
+Date: Mon, 13 Jun 2016 17:33:01 +0200 (CEST)
+From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
 	Sakari Ailus <sakari.ailus@iki.fi>,
 	Hans Verkuil <hans.verkuil@cisco.com>,
 	Mauro Carvalho Chehab <mchehab@osg.samsung.com>
 Subject: Re: [PATCH/RFC v2 4/4] v4l: vsp1: Add HGO support
-Date: Fri, 24 Jun 2016 17:35:51 +0300
-Message-ID: <2199003.uUy7t6IokG@avalon>
-In-Reply-To: <Pine.LNX.4.64.1606131726380.18676@axis700.grange>
-References: <1463012283-3078-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1463012283-3078-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <Pine.LNX.4.64.1606131726380.18676@axis700.grange>
+In-Reply-To: <1463012283-3078-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Message-ID: <Pine.LNX.4.64.1606131726380.18676@axis700.grange>
+References: <1463012283-3078-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1463012283-3078-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Guennadi,
+Hi Laurent,
 
-On Monday 13 Jun 2016 17:33:01 Guennadi Liakhovetski wrote:
-> On Thu, 12 May 2016, Laurent Pinchart wrote:
-> > The HGO is a Histogram Generator One-Dimension. It computes per-channel
-> > histograms over a configurable region of the image with optional
-> > subsampling.
-> > 
-> > Signed-off-by: Laurent Pinchart
-> > <laurent.pinchart+renesas@ideasonboard.com>
+On Thu, 12 May 2016, Laurent Pinchart wrote:
+
+> The HGO is a Histogram Generator One-Dimension. It computes per-channel
+> histograms over a configurable region of the image with optional
+> subsampling.
 > 
-> [snip]
-> 
-> Do I understand this correctly, that with this if such a metadata device
-> is opened, while no video data is streaming, all calls will succeed, but
-> no buffers will be dequeued, i.e. the user-space application will hang in
-> DQBUF or poll() / select() indefinitely?
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-That's correct. Same as with a mem-to-mem device, if you open the capture 
-node, queue buffers and start streaming, DQBUF will wait until you start 
-supplying buffers on the node at the other end of the pipeline.
+[snip]
 
--- 
-Regards,
+Do I understand this correctly, that with this if such a metadata device 
+is opened, while no video data is streaming, all calls will succeed, but 
+no buffers will be dequeued, i.e. the user-space application will hang in 
+DQBUF or poll() / select() indefinitely?
 
-Laurent Pinchart
+Thanks
+Guennadi
