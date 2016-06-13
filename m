@@ -1,121 +1,148 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:18428 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932236AbcFAHD4 (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34712 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1424453AbcFMPsE (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 03:03:56 -0400
-From: Felipe Balbi <felipe.balbi@linux.intel.com>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	mathias.nyman@intel.com, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [PATCH v2 0/2] usb: host: xhci: rcar: fix the quirks setting of XHCI_NO_64BIT_SUPPORT
-In-Reply-To: <1464763483-6224-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1464763483-6224-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Date: Wed, 01 Jun 2016 10:01:25 +0300
-Message-ID: <87bn3ll7ei.fsf@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
+	Mon, 13 Jun 2016 11:48:04 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87d1o2sj6z.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bCU5f-000315-5F@finisterre>
+Date: Mon, 13 Jun 2016 16:47:51 +0100
+Subject: Applied "ASoC: simple-card: use common PREFIX for each DT property" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+The patch
 
-Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com> writes:
+   ASoC: simple-card: use common PREFIX for each DT property
 
-> I'm afraid but I found a regression of xhci-rcar in v4.7-rc1.
-> This regression is caused by the following commit:
->
-> commit b1c127ae990bccf0187d741c1695a61e54de1943
-> Author: Felipe Balbi <felipe.balbi@linux.intel.com>
-> Date:   Fri Apr 22 13:17:16 2016 +0300
->
->     usb: host: xhci: plat: make use of new methods in xhci_plat_priv
->=20=20=20=20=20
->     Now that the code has been refactored enough,
->     switching over to using ->plat_start() and
->     ->init_quirk() becomes a very simple patch.
->=20=20=20=20=20
->     After this patch, there are no further uses for
->     xhci_plat_type_is() which will be removed in a
->     follow-up patch.
->=20=20=20=20=20
->     Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->     Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
->     Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
->     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->
-> < Overview >
-> The regression is the quirks flag "XHCI_NO_64BIT_SUPPORT" will be overwri=
-tten
-> by xhci_gen_setup(). Then, the driver will not work correctly.
->
-> < Detail >
-> Since the previous code will do the following, the quirks flag can be set:
->
-> xhci_plat_setup()
->  -> xhci_gen_setup(hcd, xhci_plat_quirks);
->   -> xhci->quirks =3D quirks;
->    -> get_quirks() [This is xhci_plat_quirks]
->     -> xhci->quirks |=3D XHCI_NO_64BIT_SUPPORT
->
-> However, after we applied the patch above, the quirks will disappear:
->
-> xhci_plat_setup()
->  -> xhci_priv_init_quirk();
->   -> xhci_rcar_init_quirk();
->    -> xhci->quirks |=3D XHCI_NO_64BIT_SUPPORT
->   -> xhci_gen_setup(hcd, xhci_plat_quirks);
->    -> xhci->quirks =3D quirks; <----------------- here
->     -> get_quirks() [This is xhci_plat_quirks]
->
-> So, I submitted incremental patches to resolve this issue like the follow=
-ings:
->
-> xhci_plat_setup()
->  -> xhci_priv_init_quirk();
->   -> xhci_rcar_init_quirk();
->   -> xhci_gen_setup(hcd, xhci_plat_quirks);
->    -> xhci->quirks =3D quirks;
->     -> get_quirks() [This is xhci_plat_quirks]
->      -> xhci->quirks |=3D priv->quirks (XHCI_NO_64BIT_SUPPORT)
+has been applied to the asoc tree at
 
-isn't the following enough?
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-@@ -4886,7 +4886,7 @@ int xhci_gen_setup(struct usb_hcd *hcd, xhci_get_quir=
-ks_t get_quirks)
- 		xhci->hcc_params2 =3D readl(&xhci->cap_regs->hcc_params2);
- 	xhci_print_registers(xhci);
-=20
-=2D	xhci->quirks =3D quirks;
-+	xhci->quirks |=3D quirks;
-=20
- 	get_quirks(dev, xhci);
-=20
-=2D-=20
-balbi
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-iQIcBAEBCAAGBQJXTohFAAoJEIaOsuA1yqRExzkQAKYumCuQ6vWQx82fQJ3Qwqac
-3Psqf3+FVvoD9hdX8YIYHSd7VZeKQ7vMGnNn5fLtGjRX3grMLW+cGAFqF2NexH0M
-yygxId5AwLBesPp5qmXFjyYKwEe6JXYsQjiJm6J0yaGC+bZqK2tGcPMyF5d48Qb+
-7VqohBTVQFGMeUToyvuY+cPoh+OEIk3V+w0wE96TN9prPrhgx+nPpB7q6ip0CwDs
-/HUhQ72yLkKtJtwg5kwNrwiYxTNHDdte0u4myoT6JD/fI0mjeIt7KeisvAM9n/X+
-c6GzV2N+2UlPfpfAMD1MKjsrrKzjI+pVAEJAgltvU7hzQ8cOxwMidYO1l0lrA7Fl
-Zf3npRc2lVt8fGoEAx3QGedzXgjXwaKq4C/8fqvaMJDxXeFmVtVe00fVntkpX4Gd
-L/dzThuPtfL1j+OZqLlKAXN8c8n8Z5jEwXG+bn/zaJeJRzcseI41JmYaPglLO5uu
-XYv1RZkku33U8dBfAl7D42ZmODGCm8r8saG8bp9KgtOCQpDg18g8fqS1w6M8UrEB
-tCXqQRx2g+cImxtA4l2/aPorVSP3+W/QviYig9YR4CLT8x0K5hG8Q6Zsdp7nX8Rx
-uT1DtKJShL6GfqtTlEqIbCSTovOGrN3Ui0+IZocBVVYqmA3CsrXoUOVDKEIcpUcK
-yedErnqQYWBP2jBykqGP
-=/uX0
------END PGP SIGNATURE-----
---=-=-=--
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 548563fa3e430ce61db79aa11331da6e5f535a3b Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Tue, 31 May 2016 08:59:01 +0000
+Subject: [PATCH] ASoC: simple-card: use common PREFIX for each DT property
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/generic/simple-card.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
+
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index 4e39c0fa78c9..b6e6d9a12ec2 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -40,6 +40,8 @@ struct simple_card_data {
+ #define simple_priv_to_link(priv, i) ((priv)->snd_card.dai_link + i)
+ #define simple_priv_to_props(priv, i) ((priv)->dai_props + i)
+ 
++#define PREFIX	"simple-audio-card,"
++
+ static int asoc_simple_card_startup(struct snd_pcm_substream *substream)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+@@ -344,7 +346,7 @@ static int asoc_simple_card_dai_link_of(struct device_node *node,
+ 
+ 	/* For single DAI link & old style of DT node */
+ 	if (is_top_level_node)
+-		prefix = "simple-audio-card,";
++		prefix = PREFIX;
+ 
+ 	snprintf(prop, sizeof(prop), "%scpu", prefix);
+ 	cpu = of_get_child_by_name(node, prop);
+@@ -453,26 +455,26 @@ static int asoc_simple_card_parse_of(struct device_node *node,
+ 		return -EINVAL;
+ 
+ 	/* Parse the card name from DT */
+-	snd_soc_of_parse_card_name(&priv->snd_card, "simple-audio-card,name");
++	snd_soc_of_parse_card_name(&priv->snd_card, PREFIX "name");
+ 
+ 	/* The off-codec widgets */
+-	if (of_property_read_bool(node, "simple-audio-card,widgets")) {
++	if (of_property_read_bool(node, PREFIX "widgets")) {
+ 		ret = snd_soc_of_parse_audio_simple_widgets(&priv->snd_card,
+-					"simple-audio-card,widgets");
++					PREFIX "widgets");
+ 		if (ret)
+ 			return ret;
+ 	}
+ 
+ 	/* DAPM routes */
+-	if (of_property_read_bool(node, "simple-audio-card,routing")) {
++	if (of_property_read_bool(node, PREFIX "routing")) {
+ 		ret = snd_soc_of_parse_audio_routing(&priv->snd_card,
+-					"simple-audio-card,routing");
++					PREFIX "routing");
+ 		if (ret)
+ 			return ret;
+ 	}
+ 
+ 	/* Factor to mclk, used in hw_params() */
+-	ret = of_property_read_u32(node, "simple-audio-card,mclk-fs", &val);
++	ret = of_property_read_u32(node, PREFIX "mclk-fs", &val);
+ 	if (ret == 0)
+ 		priv->mclk_fs = val;
+ 
+@@ -480,7 +482,7 @@ static int asoc_simple_card_parse_of(struct device_node *node,
+ 		priv->snd_card.name : "");
+ 
+ 	/* Single/Muti DAI link(s) & New style of DT node */
+-	if (of_get_child_by_name(node, "simple-audio-card,dai-link")) {
++	if (of_get_child_by_name(node, PREFIX "dai-link")) {
+ 		struct device_node *np = NULL;
+ 		int i = 0;
+ 
+@@ -502,13 +504,13 @@ static int asoc_simple_card_parse_of(struct device_node *node,
+ 	}
+ 
+ 	priv->gpio_hp_det = of_get_named_gpio_flags(node,
+-				"simple-audio-card,hp-det-gpio", 0, &flags);
++				PREFIX "hp-det-gpio", 0, &flags);
+ 	priv->gpio_hp_det_invert = !!(flags & OF_GPIO_ACTIVE_LOW);
+ 	if (priv->gpio_hp_det == -EPROBE_DEFER)
+ 		return -EPROBE_DEFER;
+ 
+ 	priv->gpio_mic_det = of_get_named_gpio_flags(node,
+-				"simple-audio-card,mic-det-gpio", 0, &flags);
++				PREFIX "mic-det-gpio", 0, &flags);
+ 	priv->gpio_mic_det_invert = !!(flags & OF_GPIO_ACTIVE_LOW);
+ 	if (priv->gpio_mic_det == -EPROBE_DEFER)
+ 		return -EPROBE_DEFER;
+@@ -543,7 +545,7 @@ static int asoc_simple_card_probe(struct platform_device *pdev)
+ 	int num_links, ret;
+ 
+ 	/* Get the number of DAI links */
+-	if (np && of_get_child_by_name(np, "simple-audio-card,dai-link"))
++	if (np && of_get_child_by_name(np, PREFIX "dai-link"))
+ 		num_links = of_get_child_count(np);
+ 	else
+ 		num_links = 1;
+-- 
+2.8.1
