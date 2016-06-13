@@ -1,112 +1,38 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 14/20] drm: vc4: Rely on the default ->best_encoder() behavior
-Date: Thu,  2 Jun 2016 16:31:41 +0200
-Message-Id: <1464877907-27723-15-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:36517 "EHLO
+	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1423098AbcFMMAM (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 13 Jun 2016 08:00:12 -0400
+Received: by mail-oi0-f42.google.com with SMTP id p204so203568411oih.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jun 2016 05:00:12 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
+References: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 13 Jun 2016 14:00:06 +0200
+Message-ID: <CACRpkdZ6q=M=UamEvtNKwcA_4M+ujCYQ0EWbBX2BukwcFe_OTQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] pinctrl: sh-pfc: Cleanups
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Ben Dooks <ben.dooks@codethink.co.uk>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	linux-renesas-soc@vger.kernel.org,
+	"linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All outputs have a 1:1 relationship between connectors and encoders and
-the driver is relying on the atomic helpers: we can drop the custom
-->best_encoder() implementations and let the core call
-drm_atomic_helper_best_encoder() for us.
+On Fri, Jun 10, 2016 at 12:05 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/gpu/drm/vc4/vc4_dpi.c  | 9 ---------
- drivers/gpu/drm/vc4/vc4_hdmi.c | 9 ---------
- 2 files changed, 18 deletions(-)
+> This series contains various cleanups for the Renesas Pin Function
+> Controller driver subsystem.
 
-diff --git a/drivers/gpu/drm/vc4/vc4_dpi.c b/drivers/gpu/drm/vc4/vc4_dpi.c
-index 9817dbf..dba1114 100644
---- a/drivers/gpu/drm/vc4/vc4_dpi.c
-+++ b/drivers/gpu/drm/vc4/vc4_dpi.c
-@@ -208,14 +208,6 @@ static int vc4_dpi_connector_get_modes(struct drm_connector *connector)
- 	return 0;
- }
- 
--static struct drm_encoder *
--vc4_dpi_connector_best_encoder(struct drm_connector *connector)
--{
--	struct vc4_dpi_connector *dpi_connector =
--		to_vc4_dpi_connector(connector);
--	return dpi_connector->encoder;
--}
--
- static const struct drm_connector_funcs vc4_dpi_connector_funcs = {
- 	.dpms = drm_atomic_helper_connector_dpms,
- 	.detect = vc4_dpi_connector_detect,
-@@ -228,7 +220,6 @@ static const struct drm_connector_funcs vc4_dpi_connector_funcs = {
- 
- static const struct drm_connector_helper_funcs vc4_dpi_connector_helper_funcs = {
- 	.get_modes = vc4_dpi_connector_get_modes,
--	.best_encoder = vc4_dpi_connector_best_encoder,
- };
- 
- static struct drm_connector *vc4_dpi_connector_init(struct drm_device *dev,
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index fd2644d..68df91c 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -208,14 +208,6 @@ static int vc4_hdmi_connector_get_modes(struct drm_connector *connector)
- 	return ret;
- }
- 
--static struct drm_encoder *
--vc4_hdmi_connector_best_encoder(struct drm_connector *connector)
--{
--	struct vc4_hdmi_connector *hdmi_connector =
--		to_vc4_hdmi_connector(connector);
--	return hdmi_connector->encoder;
--}
--
- static const struct drm_connector_funcs vc4_hdmi_connector_funcs = {
- 	.dpms = drm_atomic_helper_connector_dpms,
- 	.detect = vc4_hdmi_connector_detect,
-@@ -228,7 +220,6 @@ static const struct drm_connector_funcs vc4_hdmi_connector_funcs = {
- 
- static const struct drm_connector_helper_funcs vc4_hdmi_connector_helper_funcs = {
- 	.get_modes = vc4_hdmi_connector_get_modes,
--	.best_encoder = vc4_hdmi_connector_best_encoder,
- };
- 
- static struct drm_connector *vc4_hdmi_connector_init(struct drm_device *dev,
--- 
-2.7.4
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+I guess I will get them by pull request from you.
+
+Yours,
+Linus Walleij
