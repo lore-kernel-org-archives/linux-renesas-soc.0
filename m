@@ -1,69 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932123AbcF3ORh (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:14225 "EHLO
+	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751409AbcFNHYA (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:17:37 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
+	Tue, 14 Jun 2016 03:24:00 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: Ulrich Hecht <ulrich.hecht@gmail.com>
+CC: "mkl@pengutronix.de" <mkl@pengutronix.de>,
+	"wg@grandegger.com" <wg@grandegger.com>,
+	"socketcan@hartkopp.net" <socketcan@hartkopp.net>,
+	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Second Round of Renesas ARM Based SoC R-Car SYSC Updates for v4.8
-Date: Thu, 30 Jun 2016 16:16:11 +0200
-Message-Id: <cover.1467292648.git.horms+renesas@verge.net.au>
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v6 1/2] can: rcar_canfd: Add Renesas R-Car CAN FD driver
+Date: Tue, 14 Jun 2016 07:23:54 +0000
+Message-ID: <SG2PR06MB103867812893000E1DDED08AC3540@SG2PR06MB1038.apcprd06.prod.outlook.com>
+References: <SG2PR06MB1038056F44EFBCB51674B832C35D0@SG2PR06MB1038.apcprd06.prod.outlook.com>
+ <1465367896-60207-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1465367896-60207-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <CAO3366xx0e3TVBL+cps6ye81S_vi6oOGugOOu6FWQr-XBcCx6g@mail.gmail.com>
+In-Reply-To: <CAO3366xx0e3TVBL+cps6ye81S_vi6oOGugOOu6FWQr-XBcCx6g@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
-
-Please consider these second round of Renesas ARM based SoC R-Car SYSC
-updates for v4.8.
-
-This pull request is based on the previous round of
-such requests, tagged as renesas-rcar-sysc-for-v4.8,
-which you have already pulled.
-
-
-The following changes since commit e0c98b9171eecf1745eda08de86081db8ec41d51:
-
-  soc: renesas: rcar-sysc: Add support for R-Car M3-W power areas (2016-06-06 10:14:21 +0900)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-rcar-sysc2-for-v4.8
-
-for you to fetch changes up to ced42730d19dd140a76f86c3761f646b83a35d09:
-
-  soc: renesas: rcar-sysc: Improve SYSC interrupt config in legacy wrapper (2016-06-29 14:37:24 +0200)
-
-----------------------------------------------------------------
-Second Round of Renesas ARM Based SoC R-Car SYSC Updates for v4.8
-
-* Prepare for handling SYSC interrupt configuration purely
-  from DT in the rcar-sysc driver for new SoCs, while preserving
-  backward compatibility with old DTBs for R-Car H1, H2, and M2-W
-* Add R8A7792 support
-
-----------------------------------------------------------------
-Geert Uytterhoeven (4):
-      soc: renesas: rcar-sysc: Fix uninitialized error code in rcar_sysc_pd_init()
-      soc: renesas: rcar-sysc: Make rcar_sysc_init() init the PM domains
-      soc: renesas: rcar-sysc: Move SYSC interrupt config to rcar-sysc driver
-      soc: renesas: rcar-sysc: Improve SYSC interrupt config in legacy wrapper
-
-Sergei Shtylyov (1):
-      soc: renesas: rcar-sysc: add R8A7792 support
-
- arch/arm/mach-shmobile/pm-r8a7779.c   |  6 +----
- arch/arm/mach-shmobile/pm-rcar-gen2.c |  6 +----
- drivers/soc/renesas/Makefile          |  1 +
- drivers/soc/renesas/r8a7792-sysc.c    | 34 ++++++++++++++++++++++++++++
- drivers/soc/renesas/rcar-sysc.c       | 42 ++++++++++++++++++++++++++---------
- drivers/soc/renesas/rcar-sysc.h       |  1 +
- include/linux/soc/renesas/rcar-sysc.h |  2 +-
- 7 files changed, 71 insertions(+), 21 deletions(-)
- create mode 100644 drivers/soc/renesas/r8a7792-sysc.c
+SGkgVWxyaWNoLA0KDQo+IFRoYW5rcyBmb3IgdGhlIHBhdGNoLCB0aGlzIGlzIGEgbG90IGVhc2ll
+ciB0byBoYW5kbGUuDQo+IA0KWy4uLl0NCj4gPiArI2RlZmluZSBSQ0FORkRfUkZQVFJfUkZUUyh4
+KSAgICAgICAgICAgKCgoeCkgPj4gMCkgJiAweGZmKQ0KPiANCj4gVGhhdCBzaG91bGQgYmUgIigo
+KHgpID4+IDApICYgMHhmZmZmKSIuDQo+IA0KPiA+ICsNClsuLi5dDQoNCj4gPiArLyogUlNDRkRu
+Q0ZEUk1YWFhxIC0+IFJDQU5GRF9GX1JNWFhYKHEpICovDQo+ID4gKyNkZWZpbmUgUkNBTkZEX0Zf
+Uk1JRChxKSAgICAgICAgICAgICAgICgweDIwMDAgKyAoMHgxMCAqIChxKSkpDQo+ID4gKyNkZWZp
+bmUgUkNBTkZEX0ZfUk1QVFIocSkgICAgICAgICAgICAgICgweDIwMDQgKyAoMHgxMCAqIChxKSkp
+DQo+ID4gKyNkZWZpbmUgUkNBTkZEX0ZfUk1GRFNUUyhxKSAgICAgICAgICAgICgweDIwMDggKyAo
+MHgxMCAqIChxKSkpDQo+IA0KPiBUaGVzZSBzaG91bGQgYWxsIGJlICIrICgweDIwICogKHEpKSIu
+DQo+IA0KWy4uLl0NCj4gDQo+IEFwYXJ0IGZyb20gdGhhdCwgYWxsIHJlZ2lzdGVyIGFkZHJlc3Nl
+cywgb2Zmc2V0cywgYml0IHBvc2l0aW9ucyBhbmQgbWFza3MNCj4gY2hlY2sgb3V0LiBXaXRoIHRo
+ZSB0d28gaXNzdWVzIGZpeGVkOg0KPiANCj4gUmV2aWV3ZWQtYnk6IFVscmljaCBIZWNodCA8dWxy
+aWNoLmhlY2h0K3JlbmVzYXNAZ21haWwuY29tPg0KDQpUaGFuayB5b3UgZm9yIHlvdXIgdGltZSAm
+IHJldmlldyBjb21tZW50cy4gSSBoYXZlIGZpeGVkIHRoZXNlIHR5cG9zIGFuZCBzZW50IG91dCBh
+IHY3IHBhdGNoIHNldCBhZGRpbmcgeW91ciBSZXZpZXdlZC1ieSB0YWcuDQoNClRoYW5rcywNClJh
+bWVzaA0K
