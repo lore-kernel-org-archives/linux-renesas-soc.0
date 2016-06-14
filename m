@@ -1,36 +1,23 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:47505 "EHLO
+Received: from relmlor2.renesas.com ([210.160.252.172]:22565 "EHLO
 	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752337AbcFQI1p (ORCPT
+	by vger.kernel.org with ESMTP id S1751602AbcFNHTV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 17 Jun 2016 04:27:45 -0400
+	Tue, 14 Jun 2016 03:19:21 -0400
 From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: davem@davemloft.net
-Cc: mkl@pengutronix.de, wg@grandegger.com, socketcan@hartkopp.net,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
+To: mkl@pengutronix.de, wg@grandegger.com, socketcan@hartkopp.net
+Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-	magnus.damm@gmail.com, chris.paterson2@renesas.com,
+	magnus.damm@gmail.com, ulrich.hecht@gmail.com,
+	chris.paterson2@renesas.com,
 	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [[RESEND]PATCH v7 0/2] Add CAN FD driver support to r8a7795 SoC
-Date: Fri, 17 Jun 2016 09:20:54 +0100
-Message-Id: <1466151656-51147-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1465888372-38319-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1465888372-38319-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v7 0/2] Add CAN FD driver support to r8a7795 SoC
+Date: Tue, 14 Jun 2016 08:12:50 +0100
+Message-Id: <1465888372-38319-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1465368946-65068-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1465368946-65068-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
-
---------------
-Hello David M,
-
-   Would it be possible for you to consider this patch please?
-
-   This patch set has undergone multiple reviews as in the change history
-   below. We would be grateful if you could consider accepting this patch as
-   Marc K appears to be inactive and we haven't heard from him since March.
-
-Thanks,
-Ramesh
---------------
 
 Hi All,
 
