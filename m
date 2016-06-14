@@ -1,93 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:40911 "EHLO
-	relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1422803AbcFHHdN (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 03:33:13 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <stable@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] usb: renesas_usbhs: fix NULL pointer dereference in xfer_work()
-Date: Wed, 8 Jun 2016 16:32:49 +0900
-Message-ID: <1465371170-4828-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1465371170-4828-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1465371170-4828-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <horms@verge.net.au>
+Date: Tue, 14 Jun 2016 09:59:40 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Kieran Bingham <kieran@bingham.xyz>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH 0/2] arm64: dts: r8a7795: Add FCPF and FDP1 device
+ nodes
+Message-ID: <20160614005940.GD6456@verge.net.au>
+References: <1465491418-32752-1-git-send-email-kieran@bingham.xyz>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1465491418-32752-1-git-send-email-kieran@bingham.xyz>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch fixes an issue that the xfer_work() is possible to cause
-NULL pointer dereference if the usb cable is disconnected while data
-transfer is running.
+On Thu, Jun 09, 2016 at 05:56:56PM +0100, Kieran Bingham wrote:
+> Appologies for the resend, I very cleverly sent this cover letter detailing the
+> dependencies only to my e-mail address. And I already know the dependencies!
+> 
+> Following two patches are the same, sorry for the noise.
+> 
+> These are dependent upon the FCP bindings from Laurent [0], and the FCPF
+> update to those bindings from me [1], and of course the bindings for the
+> FDP1 [2] which are all posted separately.
+> 
+> [0] http://www.spinics.net/lists/devicetree/msg123968.html
+> [1] https://lkml.org/lkml/2016/6/9/291
+> [2] https://lkml.org/lkml/2016/6/9/294
 
-In such case, a gadget driver may call usb_ep_disable()) before
-xfer_work() is actually called. In this case, the usbhs_pkt_pop()
-will call usbhsf_fifo_unselect(), and then usbhs_pipe_to_fifo()
-in xfer_work() will return NULL.
+These patches look good to me. My assumption is that they
+can be applied without causing any breakage and that the
+relevant features will start working once driver support
+shows up in the kernel.
 
-Fixes: e73a989 ("usb: renesas_usbhs: add DMAEngine support")
-Cc: <stable@vger.kernel.org> # v3.1+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/renesas_usbhs/fifo.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+If the above assumption is correct then please let me know when the
+bindings have been accepted by the relevant subsystem maintainer(s).
 
-diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
-index 7be4e7d..280ed5f 100644
---- a/drivers/usb/renesas_usbhs/fifo.c
-+++ b/drivers/usb/renesas_usbhs/fifo.c
-@@ -810,20 +810,27 @@ static void xfer_work(struct work_struct *work)
- {
- 	struct usbhs_pkt *pkt = container_of(work, struct usbhs_pkt, work);
- 	struct usbhs_pipe *pipe = pkt->pipe;
--	struct usbhs_fifo *fifo = usbhs_pipe_to_fifo(pipe);
-+	struct usbhs_fifo *fifo;
- 	struct usbhs_priv *priv = usbhs_pipe_to_priv(pipe);
- 	struct dma_async_tx_descriptor *desc;
--	struct dma_chan *chan = usbhsf_dma_chan_get(fifo, pkt);
-+	struct dma_chan *chan;
- 	struct device *dev = usbhs_priv_to_dev(priv);
- 	enum dma_transfer_direction dir;
-+	unsigned long flags;
- 
-+	usbhs_lock(priv, flags);
-+	fifo = usbhs_pipe_to_fifo(pipe);
-+	if (!fifo)
-+		goto xfer_work_end;
-+
-+	chan = usbhsf_dma_chan_get(fifo, pkt);
- 	dir = usbhs_pipe_is_dir_in(pipe) ? DMA_DEV_TO_MEM : DMA_MEM_TO_DEV;
- 
- 	desc = dmaengine_prep_slave_single(chan, pkt->dma + pkt->actual,
- 					pkt->trans, dir,
- 					DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
- 	if (!desc)
--		return;
-+		goto xfer_work_end;
- 
- 	desc->callback		= usbhsf_dma_complete;
- 	desc->callback_param	= pipe;
-@@ -831,7 +838,7 @@ static void xfer_work(struct work_struct *work)
- 	pkt->cookie = dmaengine_submit(desc);
- 	if (pkt->cookie < 0) {
- 		dev_err(dev, "Failed to submit dma descriptor\n");
--		return;
-+		goto xfer_work_end;
- 	}
- 
- 	dev_dbg(dev, "  %s %d (%d/ %d)\n",
-@@ -842,6 +849,9 @@ static void xfer_work(struct work_struct *work)
- 	usbhs_pipe_set_trans_count_if_bulk(pipe, pkt->trans);
- 	dma_async_issue_pending(chan);
- 	usbhs_pipe_enable(pipe);
-+
-+xfer_work_end:
-+	usbhs_unlock(priv, flags);
- }
- 
- /*
--- 
-1.9.1
+If the patches need rebasing at that time then please repost them.
+Otherwise you can either repost them or ping me as a response to this thread.
+
+Thanks!
