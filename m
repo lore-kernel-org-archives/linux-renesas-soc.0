@@ -1,149 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33502 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933096AbcFPB0I (ORCPT
+Received: from sauhun.de ([89.238.76.85]:33397 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751259AbcFNWJW (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 15 Jun 2016 21:26:08 -0400
-Date: Thu, 16 Jun 2016 10:26:03 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa@the-dreams.de>
+	Tue, 14 Jun 2016 18:09:22 -0400
+Date: Wed, 15 Jun 2016 00:09:12 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>
 Subject: Re: [PATCH v2 0/4] ARM: dts: r8a7790: lager: use demuxer for I2C
-Message-ID: <20160616012600.GA4745@verge.net.au>
+Message-ID: <20160614220912.GA5528@tetsubishi>
 References: <1465370066-8450-1-git-send-email-horms+renesas@verge.net.au>
  <20160613143134.GB1603@katana>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Dxnq1zWXvFF0Q93v"
 Content-Disposition: inline
 In-Reply-To: <20160613143134.GB1603@katana>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jun 13, 2016 at 04:31:34PM +0200, Wolfram Sang wrote:
-> 
-> >    # ./exercise-i2c-demux.sh
-> >    I2C Demux: i2c-8
-> >      Master: 1:/i2c@e650800
-> >    [   97.694487] i2c-rcar e6508000.i2c: probed 0 (1)
-> >      Master: 0:/i2c@e650000
-> >    [  102.706365] i2c-demux-pinctrl i2c-8: failed to setup demux-adapter 0 (-19) 0 (0)
-> 
+
+--Dxnq1zWXvFF0Q93v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+
 > Confirmed :( Got today only this far that the ENODEV comes from the PFC
 > driver. CONFIG_DEBUG_PINCTRL is a good idea for further debugging
 > probably.
 
-I tried to track this down and my findings so far are a bit puzzling.
-
-It seems to me that the first and only item of the "pinctrl-names" property
-(a.k.a. statename) retrieved for i2c@e6508000 changes from i2c-exio0 to
-i2c-exio1. Perhaps it really is overwritten for some reason. Or perhaps
-there is a stale pointer.  Or perhaps I am chasing the wrong thing. But in
-any case my observation is illustrated using the debug patch below.
-
-I am testing using only the first two patches of the series applied on top
-of renesas-devel-20160614-v4.7-rc3, that is the only demux devices are
-i2c-exio0 and i2c-exio1.
-
-I am using shmobile_defconfig, with CONFIG_DEBUG_PINCTRL enabled.
-
-I am examining only i2c-8, i2c-exio0.
-
-1. At probe time the first parent, 0:/i2c@e6500000
-
-   i2c-demux-pinctrl i2c-8: i2c_demux_activate_master chan:0 bus_name:i2c-exio0 np->full_name/i2c@e6500000 np:ef7db76c statename:i2c-exio0
-   i2c-demux-pinctrl i2c-8: i2c_demux_activate_master chan:1 bus_name:i2c-exio0 np->full_name/i2c@e6508000 np:ef7dabfc statename:i2c-exio0
-
-2. At run time I select the second parent, 1:/i2c@e6508000.
-   This works. But the statename of i2c@e6500000 is already i2c-exio1.
-
-   i2c-demux-pinctrl i2c-8: i2c_demux_deactivate_master chan:0 bus_name:i2c-exio0 np->full_name:/i2c@e6500000 np:ef7db76c statename:i2c-exio1
-   i2c-demux-pinctrl i2c-8: i2c_demux_deactivate_master chan:1 bus_name:i2c-exio0 np->full_name:/i2c@e6508000 np:ef7dabfc statename:i2c-exio0
-
-   i2c-demux-pinctrl i2c-8: i2c_demux_activate_master chan:0 bus_name:i2c-exio0 np->full_name:/i2c@e6500000 np:ef7db76c statename:i2c-exio1
-   i2c-demux-pinctrl i2c-8: i2c_demux_activate_master chan:1 bus_name:i2c-exio0 np->full_name:/i2c@e6508000 np:ef7dabfc statename:i2c-exio0
-
-3. At run time I re-select the first parent, 0:/i2c@e6500000.
-   This fails as described above. The new debug code shows.
-
-   i2c-demux-pinctrl i2c-8: i2c_demux_deactivate_master chan:0 bus_name:i2c-exio0 np->full_name:/i2c@e6500000 np:ef7db76c statename:i2c-exio1
-   34.700444] i2c-demux-pinctrl i2c-8: i2c_demux_deactivate_master chan:1 bus_name:i2c-exio0 np->full_name:/i2c@e6508000 np:ef7dabfc statename:i2c-exio0
-
-   [i2c_demux_deactivate_master exits before reaching debug code,
-    but I have previously observed that statename is i2c-exio1
-    for i2c@e6500000]
+Correction, it seems the pinctrl handle gets mixed up, so the
+devm_pinctrl_get_select() fails. Does that match your findings?
+Pity I can't access my boards for the rest of the week :(
 
 
-> >    3.1 Unfortunately it fails for the I2C2 dmux if the GPIO fallback is
-> >        present.
-> 
-> Hopefully the same issue.
+--Dxnq1zWXvFF0Q93v
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Hopefully :)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-> >    3.2 The test also fails for the I2C3 demux but that appears to be due
-> >        to a shortcoming in the voltage regulator code which does not
-> >        appear to like being reinitialised. The kernel complains as follows:
-> 
-> Yes, the demuxer trigger re-bind cycles which are not well considered
-> and/or tested. E.g. for soc-camera, this patch needed to go upstream:
-> 
-> https://patchwork.linuxtv.org/patch/32473/
+iQIcBAEBAgAGBQJXYICHAAoJEBQN5MwUoCm2gHwP/0fuF2CCcjWMtzYqnJw3cYSG
+3cPvbK7kr3iPlvrjuZdcl1bNJzpsO+z+7+cMdhDTHpQf5HOQokM8d9wewGK/CAc+
+k16yiNORnmaBeWvv+7NpbqzaxLp+OWsqhlTM1FK3+K6dBD7d3QjlOrX4V/k+/7eV
+cpWbiJLnN1EaCK6Pt9+4sgRsZUGedbKBi7EICEYF62yZVpWlvseN8UvS3QehxeWy
+NGPjaCR96zBk26dzaxHgJig6puM3A+2MWrcQcJnt8iqxt/GprbIXeiGExy4w7BsN
+16ICVnG+bszaqxYIqlhSt+/17jErEi37TENdFHIsFtc2NnsSJ47H3jGW656szY4A
+582+JuZfIafPDsCC5YfujDZne2U8lQROQ/rn9GqNwXObMwmCTzh2JfGM85J55KlR
+QKKm499+OOEweUGKUO6Aih2MENKnqMfo0TUNqxgTb8+8tc4VJ9q95PycYLmspoXu
+h1heTcjecQa0Xts6Y1ZK94hrH5KnclhJYMEukLAMLu3emCB8t9OVy+JUWtwGBcTo
+iYzUcCKbVJz3YK3Gh/2rkeD5ROwL2+NNfw2DY1Rhn58R+El46LZvM2M3CWvK88gs
+1z4F1XkEHSebpdRZzCEL84U/hhmgjlAVwAzp6ECA9XeNL1xF7Th5nfbOjQemeul2
+Fmx6MvtKBAJqQvQ6WiuM
+=kbah
+-----END PGP SIGNATURE-----
 
-Understood. It looks like there is some more work to be done but from my
-point of view fixing individual drivers is less critical than resolving
-the switching issue(s) above. I think the order things are described
-is probably the order in which they should be addressed.
-
-
-diff --git a/drivers/i2c/muxes/i2c-demux-pinctrl.c b/drivers/i2c/muxes/i2c-demux-pinctrl.c
-index 8de073aed001..8a54380a9e0c 100644
---- a/drivers/i2c/muxes/i2c-demux-pinctrl.c
-+++ b/drivers/i2c/muxes/i2c-demux-pinctrl.c
-@@ -55,6 +55,27 @@ static u32 i2c_demux_functionality(struct i2c_adapter *adap)
- 	return parent->algo->functionality(parent);
- }
- 
-+static int dbg_show(const char *prefix, struct i2c_demux_pinctrl_priv *priv)
-+{
-+	int i;
-+
-+	for (i = 0; i < priv->num_chan; i++) {
-+		struct device_node *np;
-+		const char *statename;
-+		int ret;
-+
-+		np = priv->chan[i].parent_np;
-+
-+		ret = of_property_read_string_index(np, "pinctrl-names",
-+						    0, &statename);
-+		if (ret)
-+			statename = "<error>";
-+		dev_err(priv->dev, "%s chan:%d bus_name:%s np->full_name:%s "
-+			"np:%p statename:%s\n", prefix, i, priv->bus_name,
-+			np->full_name, np, statename);
-+	}
-+}
-+
- static int i2c_demux_activate_master(struct i2c_demux_pinctrl_priv *priv, u32 new_chan)
- {
- 	struct i2c_adapter *adap;
-@@ -99,6 +120,7 @@ static int i2c_demux_activate_master(struct i2c_demux_pinctrl_priv *priv, u32 ne
- 	if (ret < 0)
- 		goto err_with_put;
- 
-+	dbg_show(__func__, priv);
- 	return 0;
- 
-  err_with_put:
-@@ -115,6 +137,8 @@ static int i2c_demux_deactivate_master(struct i2c_demux_pinctrl_priv *priv)
- 	if (cur < 0)
- 		return 0;
- 
-+	dbg_show(__func__, priv);
-+
- 	i2c_del_adapter(&priv->cur_adap);
- 	i2c_put_adapter(priv->chan[cur].parent_adap);
- 
+--Dxnq1zWXvFF0Q93v--
