@@ -1,42 +1,60 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 17/19] ARM: dts: silk: Name serial port pfc subnode after device name
-Date: Fri, 10 Jun 2016 15:01:03 +0200
-Message-Id: <1465563665-2231-18-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
-References: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49570 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752739AbcFOW37 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 15 Jun 2016 18:29:59 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Cc: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	vinod.koul@intel.com, geert+renesas@glider.be,
+	laurent.pinchart+renesas@ideasonboard.com, mfarooq@visteon.com
+Subject: Re: [PATCH 3/4] dma: rcar-dma: Fixed active descriptor initializing
+Date: Thu, 16 Jun 2016 01:30:08 +0300
+Message-ID: <1847659.tdlhlPx5Jh@avalon>
+In-Reply-To: <20160615111308.28739-4-niklas.soderlund+renesas@ragnatech.se>
+References: <20160615111308.28739-1-niklas.soderlund+renesas@ragnatech.se> <20160615111308.28739-4-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Name the Pin Function Controller subnode for SCIF2 after its device
-name, instead of using some arbitrary name that looks like a serial port
-alias, but differs from the actual alias.
+Hi Niklas,
 
-This avoids conflicts when enabling support for more serial ports later,
-either here or in a DT overlay.
+Thank you for the patch.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7794-silk.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wednesday 15 Jun 2016 13:13:07 Niklas S�derlund wrote:
+> From: Muhammad Hamza Farooq <mfarooq@visteon.com>
+> 
+> Running descriptor pointer is set to NULL upon freeing resources. Other-
+> wise, rcar_dmac_issue_pending might not start new transfers
+> 
+> Signed-off-by: Muhammad Hamza Farooq <mfarooq@visteon.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index b8c7a63c5ec456bc..7e88f6fe55cdcc02 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -129,7 +129,7 @@
- 	pinctrl-0 = <&scif_clk_pins>;
- 	pinctrl-names = "default";
- 
--	scif2_pins: serial2 {
-+	scif2_pins: scif2 {
- 		groups = "scif2_data";
- 		function = "scif2";
- 	};
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/dma/sh/rcar-dmac.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+> index 7f26576..59951fb 100644
+> --- a/drivers/dma/sh/rcar-dmac.c
+> +++ b/drivers/dma/sh/rcar-dmac.c
+> @@ -990,6 +990,8 @@ static void rcar_dmac_free_chan_resources(struct
+> dma_chan *chan) list_splice_init(&rchan->desc.done, &list);
+>  	list_splice_init(&rchan->desc.wait, &list);
+> 
+> +	rchan->desc.running = NULL;
+> +
+>  	list_for_each_entry(desc, &list, node)
+>  		rcar_dmac_realloc_hwdesc(rchan, desc, 0);
+
 -- 
-1.9.1
+Regards,
 
+Laurent Pinchart
