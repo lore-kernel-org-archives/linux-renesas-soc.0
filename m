@@ -1,50 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:38433 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752091AbcF1O3n (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:48089 "EHLO
+	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S932130AbcFONpT (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 10:29:43 -0400
-Date: Tue, 28 Jun 2016 20:06:41 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Niklas =?iso-8859-1?Q?S=F6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Cc: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	geert+renesas@glider.be, laurent.pinchart+renesas@ideasonboard.com,
-	mfarooq@visteon.com
-Subject: Re: [PATCH 0/4] Residue patches for rcar-dmac from renesas-drivers
-Message-ID: <20160628143640.GC14945@localhost>
+	Wed, 15 Jun 2016 09:45:19 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: =?utf-8?B?TmlrbGFzIFPDtmRlcmx1bmQ=?=
+	<niklas.soderlund+renesas@ragnatech.se>,
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+CC: "vinod.koul@intel.com" <vinod.koul@intel.com>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>,
+	"laurent.pinchart+renesas@ideasonboard.com"
+	<laurent.pinchart+renesas@ideasonboard.com>,
+	"mfarooq@visteon.com" <mfarooq@visteon.com>
+Subject: RE: [PATCH 0/4] Residue patches for rcar-dmac from renesas-drivers
+Date: Wed, 15 Jun 2016 13:45:08 +0000
+Message-ID: <SG2PR06MB10387265135C17A5AFDE20A5C3550@SG2PR06MB1038.apcprd06.prod.outlook.com>
 References: <20160615111308.28739-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 In-Reply-To: <20160615111308.28739-1-niklas.soderlund+renesas@ragnatech.se>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jun 15, 2016 at 01:13:04PM +0200, Niklas S�derlund wrote:
-> Hi all,
-> 
-> Laurent Pinchart (1):
->   dmaengine: rcar-dmac: Fix residue reporting for pending descriptors
-> 
-> Muhammad Hamza Farooq (2):
->   dma: rcar-dma: use result of updated get_residue in tx_status
->   dma: rcar-dma: Fixed active descriptor initializing
-> 
-> Niklas S�derlund (1):
->   dmaengine: rcar-dmac: warn if transfer cannot start as TE = 1
-
-At least maintain consistency in patch title, 2 are dma and two dmaengine.
-Correct one is latter..
-
-> 
->  drivers/dma/sh/rcar-dmac.c | 40 +++++++++++++++++++++++++++++++++++++---
->  1 file changed, 37 insertions(+), 3 deletions(-)
-> 
-> -- 
-> 2.8.3
-> 
-
--- 
-~Vinod
+SGkgTmlrbGFzLA0KDQpUaGFua3MgZm9yIHRoZSBleHBsYW5hdGlvbi4NCg0KPiBTdWJqZWN0OiBb
+UEFUQ0ggMC80XSBSZXNpZHVlIHBhdGNoZXMgZm9yIHJjYXItZG1hYyBmcm9tIHJlbmVzYXMtZHJp
+dmVycw0KPiANCj4gSGkgYWxsLA0KPiANCj4gSSBoYXZlIGxvb2tlZCBvdmVyIHRoZSBETUEgcmVz
+aWR1ZSBicmFuY2hlcyBpbiByZW5lc2FzLWRyaXZlcnMgdHJlZQ0KPiAodG9waWMvcmNhci1kbWFj
+LWhhbXphLXYzIGFuZCB0b3BpYy9yY2FyLWRtYWMtcmVzaWR1ZS12MSkgaG9waW5nIHRvIGJyaW5n
+DQo+IHRoZW0gdG8gdXBzdHJlYW0uIFRoZSBvcmlnaW5hbCBhdXRob3IgZm9yIHRoZSBidWxrIG9m
+IHRoZSBwYXRjaGVzIEhhbXphDQo+IEZhcm9vcSBoYXZlIG5vdCBzaG93biBhbnkgYWN0aXZpdHkg
+c2luY2UgYXV0dW1uIDIwMTUuDQo+IA0KPiBJbiB0aGlzIGNvdmVyIGxldHRlciBJIHRhbGsgYWJv
+dXQgYWxsIHRoZSBwYXRjaGVzIGluIHRoZSBhYm92ZSBicmFuY2hlcw0KPiBidXQgZm9yIG9idmlv
+dXMgcmVhc29ucyBvbmx5IHBhdGNoZXMgSSB0aGluayBzaG91bGQgYmUgZm9yd2FyZGVkIHRvDQo+
+IHVwc3RyZWFtIGFyZSBpbmNsdWRlZCBpbiB0aGUgc2VyaWVzLiBBbGwgcGF0Y2hlcyBhcmUgYmFz
+ZWQgb250b3Agb2YNCj4gdjQuNy1yYzEgYW5kIGFyZSB0ZXN0ZWQgb24gS29lbHNjaCB1c2luZyBH
+ZWVydHMgc2VydGVzdCB0b29sIHRvIGdlbmVyYXRlDQo+IERNQSB0cmFmZmljLiBUaGUgaGlnaGVz
+dCBiYXVkIEkgY291bGQgZ2V0IHRvIHdvcmsgYXQgd2FzIDkyMTYwMCBicHMuDQo+IEZyb20gcmVh
+ZGluZyB0aGUgb3JpZ2luYWwgbWFpbCB0aHJlYWRzIG15IGNvbmNsdXNpb24gaXMgdGhhdCB0aGlz
+IGlzIGdvb2QNCj4gZW5vdWdoIHNpbmNlIGFsbCBlcnJvcnMgcmVwb3J0ZWQgYnkgSGFtemEgRmFy
+b29xIHdoZXJlIHJlbGF0ZWQgdG8gdGhlDQo+IHNlcmlhbCBzaC1zY2kgZHJpdmVyLg0KPiANCj4g
+KiBQYXRjaGVzIGZyb20gdG9waWMvcmNhci1kbWFjLWhhbXphLXYzDQo+IA0KPiAtIGRtYTogcmNh
+ci1kbWE6IGFkZCB3YWl0IGFmdGVyIHN0b3BwaW5nIGRtYSBlbmdpbmUNCj4gICAgIEluIGEgcGVy
+ZmVjdCB3b3JsZCBvbmUgc2hvdWxkIGNoZWNrIHRoYXQgUkNBUl9ETUFDSENSX0RFIGlzIHJlYWQN
+Cj4gICAgIGJhY2sgYXMgMCBhZnRlciBpdCBoYXZlIGJlZW4gY2xlYXJlZC4gVGhlIGRvY3VtZW50
+YXRpb24gY2xlYXJseQ0KPiAgICAgc3RhdGVzIHRoYXQgb25lIHNob3VsZCBkbyBzby4NCj4gDQo+
+ICAgICBJbiB0aGUgcmVhbCB3b3JsZCB0aGUgd29yc3QgY2FzZSB0aW1lIGZvciB0aGlzIHJlZ2lz
+dGVyIHRvIGJlDQo+ICAgICBjbGVhcmVkIGFzIE1vcmltb3RvLXNhbiBjaGVja2VkIHdpdGggSFcg
+aXMgNzAwdXMuIExhdXJlbnQgbGF0ZXINCj4gICAgIHBvaW50ZWQgb3V0IHRoaXMgaXMgdG9vIGxv
+bmcgdG8gYnVzeSBsb29wIG92ZXIgc2luY2UgdGhpcyBpcyBkb25lDQo+ICAgICBmcm9tIGJvdGgg
+aW50ZXJydXB0IGNvbnRleHQgYW5kIHVzZXIgY29udGV4dCB3aXRoIGEgc3BpbmxvY2sgaG9sZC4N
+Cj4gDQo+ICAgICBBbHNvIGluIHRoZSByZWFsIHdvcmxkIHRoZSByY2FyLWRtYWMgZHJpdmVyIFdB
+Uk5fT05fT05DRSgpIHRoYXQNCj4gICAgIFJDQVJfRE1BQ0hDUl9ERSBpcyBub3Qgc2V0IGJlZm9y
+ZSBpdCBhdHRlbXB0cyB0byBzdGFydCBhbiB0cmFuc2ZlcmVlDQo+ICAgICBpbiByY2FyX2RtYWNf
+Y2hhbl9zdGFydF94ZmVyKCkuIFNvIGlmIHRoaXMgZXZlciBiZWNvbWVzIGEgcHJvYmxlbSB3ZQ0K
+PiAgICAgd2lsbCBrbm93IGFib3V0IGl0LiBBdCBsZWFzdCBJIGhhdmUgbmV2ZXIgc2VlbiB0aGlz
+IHdhcm5pbmcgd2hpbGUNCj4gICAgIHVzaW5nIERNQS4gV2hpdCB0aGlzIGluIG1pbmQgSSBoYXZl
+IG5vdCB0cmllZCB0byBpbXBsZW1lbnQgYSBmaXggZm9yDQo+ICAgICB0aGlzIGFuZCBJIHRoaW5r
+IHRoZSBvcmlnaW5hbCBwYXRjaCBjYW4gYmUgZHJvcHBlZC4NCg0KQXMgeW91IG1lbnRpb25lZCwg
+d2UgY2Fubm90IGJ1c3kgbG9vcCBmb3IgbG9uZ2VyIGJ1dCBJIHRoaW5rIHRoaXMgcGF0Y2ggd2Fz
+IHN0aWxsIHVzZWZ1bCB3aXRoIGEgY2hlY2sgJiBXQVJOX09OIHByaW50IHdoZW4gaXQgZmFpbHMu
+IEl0IHRyaWVzIHRvIGNvbWVzIGNsb3NlIHRvIHRoZSBkbWFlbmdpbmVfdGVybWluYXRlX3N5bmMg
+YXBpIGRlc2NyaXB0aW9uICYgaXQgY2FuIGFkZCB0byB0aGUgcmNhcl9kbWFjX2NoYW5fc3RhcnRf
+eGZlcigpIGNoZWNrIHlvdSBhbHJlYWR5IGltcGxlbWVudGVkLg0KDQpJIGhpdCB0aGlzIGNhc2Ug
+b25jZSB3aGVuIEkgdXNlZCBmb3VyIFNZUy1ETUFDIGNoYW5uZWxzIGluIHBhcmFsbGVsIHdpdGgg
+RFJJRiBkb2luZyBjeWNsaWMgRE1BIHVuZGVyIGZ1bGwgbG9hZCAmIGV0aGVybmV0IHRyYWZmaWMg
+KHI4YTc3OTUgU29DKS4NCg0KLS0tPHNuaXA+LS0tDQpbICAzNzUuMTA4NDQxXSBXQVJOSU5HOiBD
+UFU6IDMgUElEOiAyMDc0IGF0IC9ob21lL3JhbWVzaC90bXAvcmVuZXNhcy1kcml2ZXJzLTIvcmVu
+ZXNhcy1kcml2ZXJzL2RyaXZlcnMvZG1hL3NoL3JjYXItZG1hYy5jOjc3MyByY2FyX2RtYWNfY2hh
+bl9oYWx0KzB4YTQvMHhkNA0KWyAgMzc1LjEyMjA4M10gTW9kdWxlcyBsaW5rZWQgaW46IHJjYXJf
+ZHJpZg0KDQpbICAzNzUuMTI3NTEyXSBDUFU6IDMgUElEOiAyMDc0IENvbW06IGRyaWYtY2FwdHVy
+ZS1lcyBOb3QgdGFpbnRlZCA0LjYuMC1yYzErICMyMQ0KWyAgMzc1LjEzNDY0MV0gSGFyZHdhcmUg
+bmFtZTogUmVuZXNhcyBTYWx2YXRvci1YIGJvYXJkIGJhc2VkIG9uIHI4YTc3OTUgKERUKQ0KWyAg
+Mzc1LjE0MTQyNF0gdGFzazogZmZmZmZmYzAzOTMyMGM4MCB0aTogZmZmZmZmYzAzOGI3YzAwMCB0
+YXNrLnRpOiBmZmZmZmZjMDM4YjdjMDAwDQpbICAzNzUuMTQ4OTAzXSBQQyBpcyBhdCByY2FyX2Rt
+YWNfY2hhbl9oYWx0KzB4YTQvMHhkNA0KWyAgMzc1LjE1MzY4OV0gTFIgaXMgYXQgcmNhcl9kbWFj
+X2NoYW5faGFsdCsweDhjLzB4ZDQNClsgIDM3NS4xNTg0NzRdIHBjIDogWzxmZmZmZmY4MDA4NDcx
+MTk0Pl0gbHIgOiBbPGZmZmZmZjgwMDg0NzExN2M+XSBwc3RhdGU6IDYwMDAwMWM1DQpbICAzNzUu
+MTY1ODYyXSBzcCA6IGZmZmZmZmMwMzhiN2ZjZDANClsgIDM3NS4xNjkxNjldIHgyOTogZmZmZmZm
+YzAzOGI3ZmNkMCB4Mjg6IGZmZmZmZmMwMzhiN2MwMDAgDQpbICAzNzUuMTc0NDg5XSB4Mjc6IGZm
+ZmZmZjgwMDg4YWMwMDAgeDI2OiAwMDAwMDAwMDAwMDAwMDFkIA0KWyAgMzc1LjE3OTgwOV0geDI1
+OiBmZmZmZmZjMDM3MWQ0MDE4IHgyNDogMDAwMDAwMDAwMDAwMDAwMCANClsgIDM3NS4xODUxMjdd
+IHgyMzogMDAwMDAwMDAwMDAwMDAwMCB4MjI6IGZmZmZmZjgwMDhiNTMzZDggDQpbICAzNzUuMTkw
+NDQ2XSB4MjE6IGZmZmZmZmMwMzhmNzIxMTggeDIwOiBmZmZmZmY4MDA4ZTU1MWIwIA0KWyAgMzc1
+LjE5NTc2NV0geDE5OiAwMDAwMDAwMDAwMDAwMDAwIHgxODogMDAwMDAwMDAwMDAwMDAwMSANClsg
+IDM3NS4yMDEwODRdIHgxNzogMDAwMDAwN2Y4YzRiNTQwMCB4MTY6IGZmZmZmZjgwMDgyMTU5MDAg
+DQpbICAzNzUuMjA2NDAyXSB4MTU6IDAwMDAwMDdmOGMzZjljOTQgeDE0OiAwMDAwMDA3ZjhjNTZl
+MDAwIA0KWyAgMzc1LjIxMTcyMF0geDEzOiAwMDAwMDA3ZjhjNDA4ODI4IHgxMjogZmZmZmZmZmZm
+ZmZmZmZmZiANClsgIDM3NS4yMTcwMzldIHgxMTogMDAwMDAwN2ZkNzk2NzU2MCB4MTA6IDAwMDAw
+MDAwMDAwMDA4NzAgDQpbICAzNzUuMjIyMzU3XSB4OSA6IGZmZmZmZmMwMzhiN2MwMDAgeDggOiBm
+ZmZmZmZjMDM5MzIxNTUwIA0KWyAgMzc1LjIyNzY3Nl0geDcgOiAwMDAwMDAwMDAwMDAwMDAxIHg2
+IDogZmZmZmZmYzAzOGY3MjBmOCANClsgIDM3NS4yMzI5OTRdIHg1IDogZmZmZmZmYzAzODFmYTAx
+MCB4NCA6IGZmZmZmZmMwMzgxZmFmZDggDQpbICAzNzUuMjM4MzEyXSB4MyA6IDAwMDAwMDAwMDAw
+MDAwMDAgeDIgOiBmZmZmZmY4MDA4YjUzMDAwIA0KWyAgMzc1LjI0MzYzMF0geDEgOiAwMDAwMDAw
+MDAwMDAwMDBjIHgwIDogMDAwMDAwMDAwMDAwMDAwMCANCg0KWyAgMzc1LjI1MDQzM10gLS0tWyBl
+bmQgdHJhY2UgZGY3MjVlYTUwODUxMzM3MiBdLS0tDQotLS08c25pcD4tLS0NCg0KVGhhbmtzLA0K
+UmFtZXNoDQo=
