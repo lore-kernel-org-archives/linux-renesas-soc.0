@@ -1,186 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:50100 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751562AbcFPPFE convert rfc822-to-8bit (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47958 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750741AbcFOEI0 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 16 Jun 2016 11:05:04 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
-	<niklas.soderlund@ragnatech.se>
-Cc: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
-	hverkuil@xs4all.nl, linux-renesas-soc@vger.kernel.org,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-	Niklas =?ISO-8859-1?Q?S=F6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH 3/8] media: rcar-vin: add DV timings support
-Date: Thu, 16 Jun 2016 18:05:14 +0300
-Message-ID: <1536149.DWb34yPSHI@avalon>
-In-Reply-To: <1464203409-1279-4-git-send-email-niklas.soderlund@ragnatech.se>
-References: <1464203409-1279-1-git-send-email-niklas.soderlund@ragnatech.se> <1464203409-1279-4-git-send-email-niklas.soderlund@ragnatech.se>
+	Wed, 15 Jun 2016 00:08:26 -0400
+Date: Wed, 15 Jun 2016 13:08:23 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v2 1/4] ARM: dts: r8a7790: lager: rename i2cexio as
+ i2cexio0
+Message-ID: <20160615040823.GA29110@verge.net.au>
+References: <1465370066-8450-1-git-send-email-horms+renesas@verge.net.au>
+ <1465370066-8450-2-git-send-email-horms+renesas@verge.net.au>
+ <20160608080340.GH1521@katana>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160608080340.GH1521@katana>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Niklas,
-
-Thank you for the patch.
-
-On Wednesday 25 May 2016 21:10:04 Niklas S�derlund wrote:
-> From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+On Wed, Jun 08, 2016 at 10:03:40AM +0200, Wolfram Sang wrote:
+> On Wed, Jun 08, 2016 at 04:14:23PM +0900, Simon Horman wrote:
+> > This is in preparation for adding i2cexio1 which will use the
+> > dmuxer for IIC1/I2C0.
 > 
-> Adds ioctls DV_TIMINGS_CAP, ENUM_DV_TIMINGS, G_DV_TIMINGS, S_DV_TIMINGS,
-> and QUERY_DV_TIMINGS.
-> 
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 82 ++++++++++++++++++++++++++
->  1 file changed, 82 insertions(+)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index 3788f8a..10a5c10 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -400,6 +400,10 @@ static int rvin_enum_input(struct file *file, void
-> *priv,
-> 
->  	i->type = V4L2_INPUT_TYPE_CAMERA;
->  	i->std = vin->vdev.tvnorms;
-> +
-> +	if (v4l2_subdev_has_op(sd, pad, dv_timings_cap))
-> +		i->capabilities = V4L2_IN_CAP_DV_TIMINGS;
-> +
->  	strlcpy(i->name, "Camera", sizeof(i->name));
-> 
->  	return 0;
-> @@ -478,6 +482,78 @@ static int rvin_subscribe_event(struct v4l2_fh *fh,
->  	return v4l2_ctrl_subscribe_event(fh, sub);
->  }
-> 
-> +static int rvin_enum_dv_timings(struct file *file, void *priv_fh,
-> +				    struct v4l2_enum_dv_timings *timings)
-> +{
-> +	struct rvin_dev *vin = video_drvdata(file);
-> +	struct v4l2_subdev *sd = vin_to_source(vin);
-> +	int pad, ret;
+> I2C1
 
-pad can't be negative, you can make it an unsigned int.
-
-	unsigned int pad = timings->pad;
-	int ret;
-
-	timings->pad = vin->src_pad_idx;
-
-> +
-> +	pad = timings->pad;
-> +	timings->pad = vin->src_pad_idx;
-> +
-> +	ret = v4l2_subdev_call(sd, pad, enum_dv_timings, timings);
-> +
-> +	timings->pad = pad;
-> +
-> +	return ret;
-> +}
-> +
-> +static int rvin_s_dv_timings(struct file *file, void *priv_fh,
-> +				    struct v4l2_dv_timings *timings)
-> +{
-> +	struct rvin_dev *vin = video_drvdata(file);
-> +	struct v4l2_subdev *sd = vin_to_source(vin);
-> +	int err;
-
-The driver uses ret instead of err, let's keep it that way.
-
-> +
-> +	err = v4l2_subdev_call(sd,
-> +			video, s_dv_timings, timings);
-
-No need for a line break.
-
-> +	if (!err) {
-
-I'd write this
-
-	if (ret)
-		return ret;
-
-(with a return 0; at the end of the function) to lower the indentation level 
-of the code below.
-
-> +		vin->source.width = timings->bt.width;
-> +		vin->source.height = timings->bt.height;
-> +		vin->format.width = timings->bt.width;
-> +		vin->format.height = timings->bt.height;
-> +	}
-> +	return err;
-> +}
-> +
-> +static int rvin_g_dv_timings(struct file *file, void *priv_fh,
-> +				    struct v4l2_dv_timings *timings)
-> +{
-> +	struct rvin_dev *vin = video_drvdata(file);
-> +	struct v4l2_subdev *sd = vin_to_source(vin);
-> +
-> +	return v4l2_subdev_call(sd,
-> +			video, g_dv_timings, timings);
-
-No need for a line break.
-
-> +}
-> +
-> +static int rvin_query_dv_timings(struct file *file, void *priv_fh,
-> +				    struct v4l2_dv_timings *timings)
-> +{
-> +	struct rvin_dev *vin = video_drvdata(file);
-> +	struct v4l2_subdev *sd = vin_to_source(vin);
-> +
-> +	return v4l2_subdev_call(sd,
-> +			video, query_dv_timings, timings);
-
-No need for a line break.
-
-> +}
-> +
-> +static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
-> +				    struct v4l2_dv_timings_cap *cap)
-> +{
-> +	struct rvin_dev *vin = video_drvdata(file);
-> +	struct v4l2_subdev *sd = vin_to_source(vin);
-> +	int pad, ret;
-
-Same comment as above about pad not being negative.
-
-> +
-> +	pad = cap->pad;
-> +	cap->pad = vin->src_pad_idx;
-> +
-> +	ret = v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
-> +
-> +	cap->pad = pad;
-> +
-> +	return ret;
-> +}
-> +
->  static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
->  	.vidioc_querycap		= rvin_querycap,
->  	.vidioc_try_fmt_vid_cap		= rvin_try_fmt_vid_cap,
-> @@ -494,6 +570,12 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
->  	.vidioc_g_input			= rvin_g_input,
->  	.vidioc_s_input			= rvin_s_input,
-> 
-> +	.vidioc_dv_timings_cap		= rvin_dv_timings_cap,
-> +	.vidioc_enum_dv_timings		= rvin_enum_dv_timings,
-> +	.vidioc_g_dv_timings		= rvin_g_dv_timings,
-> +	.vidioc_s_dv_timings		= rvin_s_dv_timings,
-> +	.vidioc_query_dv_timings	= rvin_query_dv_timings,
-> +
->  	.vidioc_querystd		= rvin_querystd,
->  	.vidioc_g_std			= rvin_g_std,
->  	.vidioc_s_std			= rvin_s_std,
-
--- 
-Regards,
-
-Laurent Pinchart
+Thanks, I will fix that.
