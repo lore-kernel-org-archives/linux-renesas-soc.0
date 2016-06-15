@@ -1,102 +1,134 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:48089 "EHLO
-	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S932130AbcFONpT (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:48132 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752958AbcFOLVb (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 15 Jun 2016 09:45:19 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: =?utf-8?B?TmlrbGFzIFPDtmRlcmx1bmQ=?=
-	<niklas.soderlund+renesas@ragnatech.se>,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>
-CC: "vinod.koul@intel.com" <vinod.koul@intel.com>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>,
-	"laurent.pinchart+renesas@ideasonboard.com"
-	<laurent.pinchart+renesas@ideasonboard.com>,
-	"mfarooq@visteon.com" <mfarooq@visteon.com>
-Subject: RE: [PATCH 0/4] Residue patches for rcar-dmac from renesas-drivers
-Date: Wed, 15 Jun 2016 13:45:08 +0000
-Message-ID: <SG2PR06MB10387265135C17A5AFDE20A5C3550@SG2PR06MB1038.apcprd06.prod.outlook.com>
-References: <20160615111308.28739-1-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160615111308.28739-1-niklas.soderlund+renesas@ragnatech.se>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	Wed, 15 Jun 2016 07:21:31 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: vinod.koul@intel.com, geert+renesas@glider.be,
+	laurent.pinchart+renesas@ideasonboard.com, mfarooq@visteon.com,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 0/4] Residue patches for rcar-dmac from renesas-drivers
+Date: Wed, 15 Jun 2016 13:13:04 +0200
+Message-Id: <20160615111308.28739-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgTmlrbGFzLA0KDQpUaGFua3MgZm9yIHRoZSBleHBsYW5hdGlvbi4NCg0KPiBTdWJqZWN0OiBb
-UEFUQ0ggMC80XSBSZXNpZHVlIHBhdGNoZXMgZm9yIHJjYXItZG1hYyBmcm9tIHJlbmVzYXMtZHJp
-dmVycw0KPiANCj4gSGkgYWxsLA0KPiANCj4gSSBoYXZlIGxvb2tlZCBvdmVyIHRoZSBETUEgcmVz
-aWR1ZSBicmFuY2hlcyBpbiByZW5lc2FzLWRyaXZlcnMgdHJlZQ0KPiAodG9waWMvcmNhci1kbWFj
-LWhhbXphLXYzIGFuZCB0b3BpYy9yY2FyLWRtYWMtcmVzaWR1ZS12MSkgaG9waW5nIHRvIGJyaW5n
-DQo+IHRoZW0gdG8gdXBzdHJlYW0uIFRoZSBvcmlnaW5hbCBhdXRob3IgZm9yIHRoZSBidWxrIG9m
-IHRoZSBwYXRjaGVzIEhhbXphDQo+IEZhcm9vcSBoYXZlIG5vdCBzaG93biBhbnkgYWN0aXZpdHkg
-c2luY2UgYXV0dW1uIDIwMTUuDQo+IA0KPiBJbiB0aGlzIGNvdmVyIGxldHRlciBJIHRhbGsgYWJv
-dXQgYWxsIHRoZSBwYXRjaGVzIGluIHRoZSBhYm92ZSBicmFuY2hlcw0KPiBidXQgZm9yIG9idmlv
-dXMgcmVhc29ucyBvbmx5IHBhdGNoZXMgSSB0aGluayBzaG91bGQgYmUgZm9yd2FyZGVkIHRvDQo+
-IHVwc3RyZWFtIGFyZSBpbmNsdWRlZCBpbiB0aGUgc2VyaWVzLiBBbGwgcGF0Y2hlcyBhcmUgYmFz
-ZWQgb250b3Agb2YNCj4gdjQuNy1yYzEgYW5kIGFyZSB0ZXN0ZWQgb24gS29lbHNjaCB1c2luZyBH
-ZWVydHMgc2VydGVzdCB0b29sIHRvIGdlbmVyYXRlDQo+IERNQSB0cmFmZmljLiBUaGUgaGlnaGVz
-dCBiYXVkIEkgY291bGQgZ2V0IHRvIHdvcmsgYXQgd2FzIDkyMTYwMCBicHMuDQo+IEZyb20gcmVh
-ZGluZyB0aGUgb3JpZ2luYWwgbWFpbCB0aHJlYWRzIG15IGNvbmNsdXNpb24gaXMgdGhhdCB0aGlz
-IGlzIGdvb2QNCj4gZW5vdWdoIHNpbmNlIGFsbCBlcnJvcnMgcmVwb3J0ZWQgYnkgSGFtemEgRmFy
-b29xIHdoZXJlIHJlbGF0ZWQgdG8gdGhlDQo+IHNlcmlhbCBzaC1zY2kgZHJpdmVyLg0KPiANCj4g
-KiBQYXRjaGVzIGZyb20gdG9waWMvcmNhci1kbWFjLWhhbXphLXYzDQo+IA0KPiAtIGRtYTogcmNh
-ci1kbWE6IGFkZCB3YWl0IGFmdGVyIHN0b3BwaW5nIGRtYSBlbmdpbmUNCj4gICAgIEluIGEgcGVy
-ZmVjdCB3b3JsZCBvbmUgc2hvdWxkIGNoZWNrIHRoYXQgUkNBUl9ETUFDSENSX0RFIGlzIHJlYWQN
-Cj4gICAgIGJhY2sgYXMgMCBhZnRlciBpdCBoYXZlIGJlZW4gY2xlYXJlZC4gVGhlIGRvY3VtZW50
-YXRpb24gY2xlYXJseQ0KPiAgICAgc3RhdGVzIHRoYXQgb25lIHNob3VsZCBkbyBzby4NCj4gDQo+
-ICAgICBJbiB0aGUgcmVhbCB3b3JsZCB0aGUgd29yc3QgY2FzZSB0aW1lIGZvciB0aGlzIHJlZ2lz
-dGVyIHRvIGJlDQo+ICAgICBjbGVhcmVkIGFzIE1vcmltb3RvLXNhbiBjaGVja2VkIHdpdGggSFcg
-aXMgNzAwdXMuIExhdXJlbnQgbGF0ZXINCj4gICAgIHBvaW50ZWQgb3V0IHRoaXMgaXMgdG9vIGxv
-bmcgdG8gYnVzeSBsb29wIG92ZXIgc2luY2UgdGhpcyBpcyBkb25lDQo+ICAgICBmcm9tIGJvdGgg
-aW50ZXJydXB0IGNvbnRleHQgYW5kIHVzZXIgY29udGV4dCB3aXRoIGEgc3BpbmxvY2sgaG9sZC4N
-Cj4gDQo+ICAgICBBbHNvIGluIHRoZSByZWFsIHdvcmxkIHRoZSByY2FyLWRtYWMgZHJpdmVyIFdB
-Uk5fT05fT05DRSgpIHRoYXQNCj4gICAgIFJDQVJfRE1BQ0hDUl9ERSBpcyBub3Qgc2V0IGJlZm9y
-ZSBpdCBhdHRlbXB0cyB0byBzdGFydCBhbiB0cmFuc2ZlcmVlDQo+ICAgICBpbiByY2FyX2RtYWNf
-Y2hhbl9zdGFydF94ZmVyKCkuIFNvIGlmIHRoaXMgZXZlciBiZWNvbWVzIGEgcHJvYmxlbSB3ZQ0K
-PiAgICAgd2lsbCBrbm93IGFib3V0IGl0LiBBdCBsZWFzdCBJIGhhdmUgbmV2ZXIgc2VlbiB0aGlz
-IHdhcm5pbmcgd2hpbGUNCj4gICAgIHVzaW5nIERNQS4gV2hpdCB0aGlzIGluIG1pbmQgSSBoYXZl
-IG5vdCB0cmllZCB0byBpbXBsZW1lbnQgYSBmaXggZm9yDQo+ICAgICB0aGlzIGFuZCBJIHRoaW5r
-IHRoZSBvcmlnaW5hbCBwYXRjaCBjYW4gYmUgZHJvcHBlZC4NCg0KQXMgeW91IG1lbnRpb25lZCwg
-d2UgY2Fubm90IGJ1c3kgbG9vcCBmb3IgbG9uZ2VyIGJ1dCBJIHRoaW5rIHRoaXMgcGF0Y2ggd2Fz
-IHN0aWxsIHVzZWZ1bCB3aXRoIGEgY2hlY2sgJiBXQVJOX09OIHByaW50IHdoZW4gaXQgZmFpbHMu
-IEl0IHRyaWVzIHRvIGNvbWVzIGNsb3NlIHRvIHRoZSBkbWFlbmdpbmVfdGVybWluYXRlX3N5bmMg
-YXBpIGRlc2NyaXB0aW9uICYgaXQgY2FuIGFkZCB0byB0aGUgcmNhcl9kbWFjX2NoYW5fc3RhcnRf
-eGZlcigpIGNoZWNrIHlvdSBhbHJlYWR5IGltcGxlbWVudGVkLg0KDQpJIGhpdCB0aGlzIGNhc2Ug
-b25jZSB3aGVuIEkgdXNlZCBmb3VyIFNZUy1ETUFDIGNoYW5uZWxzIGluIHBhcmFsbGVsIHdpdGgg
-RFJJRiBkb2luZyBjeWNsaWMgRE1BIHVuZGVyIGZ1bGwgbG9hZCAmIGV0aGVybmV0IHRyYWZmaWMg
-KHI4YTc3OTUgU29DKS4NCg0KLS0tPHNuaXA+LS0tDQpbICAzNzUuMTA4NDQxXSBXQVJOSU5HOiBD
-UFU6IDMgUElEOiAyMDc0IGF0IC9ob21lL3JhbWVzaC90bXAvcmVuZXNhcy1kcml2ZXJzLTIvcmVu
-ZXNhcy1kcml2ZXJzL2RyaXZlcnMvZG1hL3NoL3JjYXItZG1hYy5jOjc3MyByY2FyX2RtYWNfY2hh
-bl9oYWx0KzB4YTQvMHhkNA0KWyAgMzc1LjEyMjA4M10gTW9kdWxlcyBsaW5rZWQgaW46IHJjYXJf
-ZHJpZg0KDQpbICAzNzUuMTI3NTEyXSBDUFU6IDMgUElEOiAyMDc0IENvbW06IGRyaWYtY2FwdHVy
-ZS1lcyBOb3QgdGFpbnRlZCA0LjYuMC1yYzErICMyMQ0KWyAgMzc1LjEzNDY0MV0gSGFyZHdhcmUg
-bmFtZTogUmVuZXNhcyBTYWx2YXRvci1YIGJvYXJkIGJhc2VkIG9uIHI4YTc3OTUgKERUKQ0KWyAg
-Mzc1LjE0MTQyNF0gdGFzazogZmZmZmZmYzAzOTMyMGM4MCB0aTogZmZmZmZmYzAzOGI3YzAwMCB0
-YXNrLnRpOiBmZmZmZmZjMDM4YjdjMDAwDQpbICAzNzUuMTQ4OTAzXSBQQyBpcyBhdCByY2FyX2Rt
-YWNfY2hhbl9oYWx0KzB4YTQvMHhkNA0KWyAgMzc1LjE1MzY4OV0gTFIgaXMgYXQgcmNhcl9kbWFj
-X2NoYW5faGFsdCsweDhjLzB4ZDQNClsgIDM3NS4xNTg0NzRdIHBjIDogWzxmZmZmZmY4MDA4NDcx
-MTk0Pl0gbHIgOiBbPGZmZmZmZjgwMDg0NzExN2M+XSBwc3RhdGU6IDYwMDAwMWM1DQpbICAzNzUu
-MTY1ODYyXSBzcCA6IGZmZmZmZmMwMzhiN2ZjZDANClsgIDM3NS4xNjkxNjldIHgyOTogZmZmZmZm
-YzAzOGI3ZmNkMCB4Mjg6IGZmZmZmZmMwMzhiN2MwMDAgDQpbICAzNzUuMTc0NDg5XSB4Mjc6IGZm
-ZmZmZjgwMDg4YWMwMDAgeDI2OiAwMDAwMDAwMDAwMDAwMDFkIA0KWyAgMzc1LjE3OTgwOV0geDI1
-OiBmZmZmZmZjMDM3MWQ0MDE4IHgyNDogMDAwMDAwMDAwMDAwMDAwMCANClsgIDM3NS4xODUxMjdd
-IHgyMzogMDAwMDAwMDAwMDAwMDAwMCB4MjI6IGZmZmZmZjgwMDhiNTMzZDggDQpbICAzNzUuMTkw
-NDQ2XSB4MjE6IGZmZmZmZmMwMzhmNzIxMTggeDIwOiBmZmZmZmY4MDA4ZTU1MWIwIA0KWyAgMzc1
-LjE5NTc2NV0geDE5OiAwMDAwMDAwMDAwMDAwMDAwIHgxODogMDAwMDAwMDAwMDAwMDAwMSANClsg
-IDM3NS4yMDEwODRdIHgxNzogMDAwMDAwN2Y4YzRiNTQwMCB4MTY6IGZmZmZmZjgwMDgyMTU5MDAg
-DQpbICAzNzUuMjA2NDAyXSB4MTU6IDAwMDAwMDdmOGMzZjljOTQgeDE0OiAwMDAwMDA3ZjhjNTZl
-MDAwIA0KWyAgMzc1LjIxMTcyMF0geDEzOiAwMDAwMDA3ZjhjNDA4ODI4IHgxMjogZmZmZmZmZmZm
-ZmZmZmZmZiANClsgIDM3NS4yMTcwMzldIHgxMTogMDAwMDAwN2ZkNzk2NzU2MCB4MTA6IDAwMDAw
-MDAwMDAwMDA4NzAgDQpbICAzNzUuMjIyMzU3XSB4OSA6IGZmZmZmZmMwMzhiN2MwMDAgeDggOiBm
-ZmZmZmZjMDM5MzIxNTUwIA0KWyAgMzc1LjIyNzY3Nl0geDcgOiAwMDAwMDAwMDAwMDAwMDAxIHg2
-IDogZmZmZmZmYzAzOGY3MjBmOCANClsgIDM3NS4yMzI5OTRdIHg1IDogZmZmZmZmYzAzODFmYTAx
-MCB4NCA6IGZmZmZmZmMwMzgxZmFmZDggDQpbICAzNzUuMjM4MzEyXSB4MyA6IDAwMDAwMDAwMDAw
-MDAwMDAgeDIgOiBmZmZmZmY4MDA4YjUzMDAwIA0KWyAgMzc1LjI0MzYzMF0geDEgOiAwMDAwMDAw
-MDAwMDAwMDBjIHgwIDogMDAwMDAwMDAwMDAwMDAwMCANCg0KWyAgMzc1LjI1MDQzM10gLS0tWyBl
-bmQgdHJhY2UgZGY3MjVlYTUwODUxMzM3MiBdLS0tDQotLS08c25pcD4tLS0NCg0KVGhhbmtzLA0K
-UmFtZXNoDQo=
+Hi all,
+
+I have looked over the DMA residue branches in renesas-drivers tree
+(topic/rcar-dmac-hamza-v3 and topic/rcar-dmac-residue-v1) hoping to 
+bring them to upstream. The original author for the bulk of the patches 
+Hamza Farooq have not shown any activity since autumn 2015.
+
+In this cover letter I talk about all the patches in the above branches 
+but for obvious reasons only patches I think should be forwarded to 
+upstream are included in the series. All patches are based ontop of 
+v4.7-rc1 and are tested on Koelsch using Geerts sertest tool to generate 
+DMA traffic. The highest baud I could get to work at was 921600 bps.  
+>From reading the original mail threads my conclusion is that this is 
+good enough since all errors reported by Hamza Farooq where related to 
+the serial sh-sci driver.
+
+* Patches from topic/rcar-dmac-hamza-v3
+
+- dma: rcar-dma: add wait after stopping dma engine
+    In a perfect world one should check that RCAR_DMACHCR_DE is read 
+    back as 0 after it have been cleared. The documentation clearly 
+    states that one should do so.
+
+    In the real world the worst case time for this register to be 
+    cleared as Morimoto-san checked with HW is 700us. Laurent later 
+    pointed out this is too long to busy loop over since this is done
+    from both interrupt context and user context with a spinlock hold.
+
+    Also in the real world the rcar-dmac driver WARN_ON_ONCE() that 
+    RCAR_DMACHCR_DE is not set before it attempts to start an transferee 
+    in rcar_dmac_chan_start_xfer(). So if this ever becomes a problem we 
+    will know about it. At least I have never seen this warning while 
+    using DMA. Whit this in mind I have not tried to implement a fix for 
+    this and I think the original patch can be dropped.
+
+- dma: rcar-dma: Added dma_pause operation to rcar_dma driver
+    This patch adds support for device pause operation, but not the 
+    resume operation. As pointed out in the original mail thread the 
+    pausing must not destroy any already started transaction which it do 
+    in its current form according to its author.
+
+    Since the feature is incomplete and the use case never documented I 
+    propose we drop this patch and if we can find the use case create a 
+    separate task to add pause/resume functionality to the driver later.
+
+- dma: rcar-dma: check if complete DMA packet received but not processed
+    This patch is already addressed by Laruent in the original maling 
+    thread:
+
+    "I don't think this will work. In particular rcar_dmac_tx_status() 
+    can be called with a cookie corresponding to a transfer not yet 
+    scheduled. A pending transfer complete interrupt doesn't mean that 
+    that cookie is complete.
+
+    Furthermore I'm not sure this will really improve performances. The 
+    dma_cookie_status() call below just compares cookie values, I don't 
+    expect it to be much slower than a register read."
+
+    I can see no reason to disagree with Laruent here and I propose this 
+    patch is dropped.
+
+- dma: rcar-dma: use result of updated get_residue in tx_status
+    Patch is IMHO good but needs a explanation in commit message to 
+    address the questions raised in the original mail thread. I have 
+    added en explanation and included the original patch.
+
+- dma: rcar-dma: warn if transfer cannot start as TE = 1
+    Patch is a bit oddly implemented and uses new functionality from 
+    patch 'dma: rcar-dma: add wait after stopping dma engine' above. I 
+    do however think the patch have merit. One should make sure 
+    according to the documentation that RCAR_DMACHCR_TE is not set 
+    before starting a transfer. I have reworked the check and proposed a 
+    different solution.
+
+- dma: rcar-dma: Fixed active descriptor initializing
+    Patch is clearly a bugfix and looks good. Laurent had a good comment 
+    in the original mail thread about how it can be made differently by 
+    reworking rcar_dmac_free_chan_resources() to call 
+    rcar_dmac_chan_reinit() which would correctly set 
+    rchan->desc.running to NULL.
+
+    I have tried to implement this but failed. In my attempts to 
+    implement Laurents proposal which I thought would be trivial the 
+    kernel locks-up after a while with 'rcu_sched self-detected stall on 
+    CPU'. And I'm not smart enough to figure out why so I have kept the 
+    original patch so the bug fix part can be merged since that in 
+    itself is good.
+
+* Patch from topic/rcar-dmac-residue-v1
+
+- dmaengine: rcar-dmac: Fix residue reporting for pending descriptors
+    Patch is good AFIK. There where one report on the maling list by 
+    Hamza Farooq that state he saw lots of warnings coming from the 
+    WARN() introduced in this patch. I have run lots of testes using 
+    Geers nice sertest tool and have not once seen the warning once. The 
+    patch is included in this series.
+
+Laurent Pinchart (1):
+  dmaengine: rcar-dmac: Fix residue reporting for pending descriptors
+
+Muhammad Hamza Farooq (2):
+  dma: rcar-dma: use result of updated get_residue in tx_status
+  dma: rcar-dma: Fixed active descriptor initializing
+
+Niklas Söderlund (1):
+  dmaengine: rcar-dmac: warn if transfer cannot start as TE = 1
+
+ drivers/dma/sh/rcar-dmac.c | 40 +++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 37 insertions(+), 3 deletions(-)
+
+-- 
+2.8.3
