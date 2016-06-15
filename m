@@ -1,123 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57320 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751671AbcFVDtu (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49550 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753105AbcFOWTU convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 21 Jun 2016 23:49:50 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 11/13] ARM: dts: alt: use demuxer for I2C1
-Date: Wed, 22 Jun 2016 12:43:49 +0900
-Message-Id: <1466567031-20381-12-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
-References: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
+	Wed, 15 Jun 2016 18:19:20 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Cc: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	vinod.koul@intel.com, geert+renesas@glider.be,
+	laurent.pinchart+renesas@ideasonboard.com, mfarooq@visteon.com
+Subject: Re: [PATCH 1/4] dma: rcar-dma: use result of updated get_residue in tx_status
+Date: Thu, 16 Jun 2016 01:19:26 +0300
+Message-ID: <2277618.qmNLfjQA5Y@avalon>
+In-Reply-To: <20160615111308.28739-2-niklas.soderlund+renesas@ragnatech.se>
+References: <20160615111308.28739-1-niklas.soderlund+renesas@ragnatech.se> <20160615111308.28739-2-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
+Hi Niklas,
 
-Based on work for the r8a7790/lager by Wolfram Sang.
+Thank you for the patch.
 
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v3
-* New patch
----
- arch/arm/boot/dts/r8a7794-alt.dts | 54 ++++++++++++++++++++++++++++-----------
- 1 file changed, 39 insertions(+), 15 deletions(-)
+On Wednesday 15 Jun 2016 13:13:05 Niklas S�derlund wrote:
+> From: Muhammad Hamza Farooq <mfarooq@visteon.com>
+> 
+> The hardware might have complete the transfer but the interrupt handler
+> might not have had a chance to run. If rcar_dmac_chan_get_residue()
+> which reads HW registers finds that there is no residue return
+> DMA_COMPLETE.
+> 
+> Signed-off-by: Muhammad Hamza Farooq <mfarooq@visteon.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> [Niklas: add explanation in commit message]
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 1ad37d431a2a..d00b1b33f6ed 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -10,6 +10,7 @@
- 
- /dts-v1/;
- #include "r8a7794.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	model = "Alt";
-@@ -17,6 +18,8 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		i2c9 = "gpioi2c1";
-+		i2c11 = "i2chdmi";
- 	};
- 
- 	chosen {
-@@ -77,6 +80,41 @@
- 		#clock-cells = <0>;
- 		clock-frequency = <148500000>;
- 	};
-+
-+	gpioi2c1: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		gpios = <&gpio4 1 GPIO_ACTIVE_HIGH /* sda */
-+			 &gpio4 0 GPIO_ACTIVE_HIGH /* scl */
-+			>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
-+	/*
-+	 * A fallback to GPIO is provided for I2C1.
-+	 */
-+	i2chdmi: i2c-11 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c1>, <&gpioi2c1>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		composite-in@20 {
-+			compatible = "adi,adv7180";
-+			reg = <0x20>;
-+			remote = <&vin0>;
-+
-+			port {
-+				adv7180: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&vin0ep>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &du {
-@@ -171,23 +209,9 @@
- 
- &i2c1 {
- 	pinctrl-0 = <&i2c1_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-hdmi";
- 
--	status = "okay";
- 	clock-frequency = <400000>;
--
--	composite-in@20 {
--		compatible = "adi,adv7180";
--		reg = <0x20>;
--		remote = <&vin0>;
--
--		port {
--			adv7180: endpoint {
--				bus-width = <8>;
--				remote-endpoint = <&vin0ep>;
--			};
--		};
--	};
- };
- 
- &vin0 {
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/dma/sh/rcar-dmac.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+> index dfb1792..791a064 100644
+> --- a/drivers/dma/sh/rcar-dmac.c
+> +++ b/drivers/dma/sh/rcar-dmac.c
+> @@ -1202,6 +1202,10 @@ static enum dma_status rcar_dmac_tx_status(struct
+> dma_chan *chan, residue = rcar_dmac_chan_get_residue(rchan, cookie);
+>  	spin_unlock_irqrestore(&rchan->lock, flags);
+> 
+> +	/* if there's no residue, the cookie is complete */
+> +	if (!residue)
+> +		return DMA_COMPLETE;
+> +
+>  	dma_set_residue(txstate, residue);
+> 
+>  	return status;
+
 -- 
-2.1.4
+Regards,
+
+Laurent Pinchart
