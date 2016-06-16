@@ -1,7 +1,7 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:34226 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752453AbcFPK1t (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:38297 "EHLO
+	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752659AbcFPK1t (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
 	Thu, 16 Jun 2016 06:27:49 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -16,9 +16,9 @@ Cc: Mark Rutland <mark.rutland@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <damm+renesas@opensource.se>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 12/13] ARM: dts: r8a7791: Add APMU node
-Date: Thu, 16 Jun 2016 12:27:41 +0200
-Message-Id: <1466072862-28030-13-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4 08/13] ARM: shmobile: smp: Add function to prioritize DT SMP
+Date: Thu, 16 Jun 2016 12:27:37 +0200
+Message-Id: <1466072862-28030-9-git-send-email-geert+renesas@glider.be>
 In-Reply-To: <1466072862-28030-1-git-send-email-geert+renesas@glider.be>
 References: <1466072862-28030-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -26,50 +26,54 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Magnus Damm <damm+renesas@opensource.se>
 
-Add a DT node for the Advanced Power Management Units (APMU), and use
-the enable-method to point out that the APMU should be used for SMP
-support.
+Add a function to check if other DT based method is available, and
+if so return false to not hook up smp_ops from the machine vector.
+
+This results in that DT-based SMP support has priority over older
+C-based smp_ops code, and in case DT-based SMP support code does not
+exist in the DTB then the old smp_ops code will still work as-is.
 
 Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-----
+---
 v4:
-  - Improve patch description,
-  - Use "renesas,<soctype>-apmu" instead of "renesas,apmu-<soctype>",
+  - Remove empty line at end of file,
 
 v3:
   - No changes,
 
 v2:
-  - No changes.
+  - Rework r8a7791-specific version to become reusable function.
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/mach-shmobile/common.h  | 1 +
+ arch/arm/mach-shmobile/platsmp.c | 6 ++++++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 1985bd0dc32ce738..8f0086bbd96bb27a 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -43,6 +43,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "renesas,apmu";
- 
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-@@ -101,6 +102,12 @@
- 		};
- 	};
- 
-+	apmu@e6152000 {
-+		compatible = "renesas,r8a7791-apmu", "renesas,apmu";
-+		reg = <0 0xe6152000 0 0x188>;
-+		cpus = <&cpu0 &cpu1>;
-+	};
+diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
+index 3b562d87826d7410..1a8f7b3ab449db56 100644
+--- a/arch/arm/mach-shmobile/common.h
++++ b/arch/arm/mach-shmobile/common.h
+@@ -10,6 +10,7 @@ extern void shmobile_smp_sleep(void);
+ extern void shmobile_smp_hook(unsigned int cpu, unsigned long fn,
+ 			      unsigned long arg);
+ extern bool shmobile_smp_cpu_can_disable(unsigned int cpu);
++extern bool shmobile_smp_init_fallback_ops(void);
+ extern void shmobile_boot_scu(void);
+ extern void shmobile_smp_scu_prepare_cpus(phys_addr_t scu_base_phys,
+ 					  unsigned int max_cpus);
+diff --git a/arch/arm/mach-shmobile/platsmp.c b/arch/arm/mach-shmobile/platsmp.c
+index b23378f3d7e1726b..f3dba6f356e29446 100644
+--- a/arch/arm/mach-shmobile/platsmp.c
++++ b/arch/arm/mach-shmobile/platsmp.c
+@@ -36,3 +36,9 @@ bool shmobile_smp_cpu_can_disable(unsigned int cpu)
+ 	return true; /* Hotplug of any CPU is supported */
+ }
+ #endif
 +
- 	gic: interrupt-controller@f1001000 {
- 		compatible = "arm,gic-400";
- 		#interrupt-cells = <3>;
++bool __init shmobile_smp_init_fallback_ops(void)
++{
++	/* fallback on PSCI/smp_ops if no other DT based method is detected */
++	return platform_can_secondary_boot() ? true : false;
++}
 -- 
 1.9.1
