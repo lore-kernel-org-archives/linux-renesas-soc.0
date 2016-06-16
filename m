@@ -1,41 +1,47 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/2] ARM: dts: r8a7792: add JPU support
+Date: Fri, 17 Jun 2016 01:03:53 +0300
+Message-ID: <2415204.YUO4drecC0@wasted.cogentembedded.com>
+In-Reply-To: <7346244.CEZI3u99oZ@wasted.cogentembedded.com>
+References: <7346244.CEZI3u99oZ@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <2415204.YUO4drecC0@wasted.cogentembedded.com>
-References: <7346244.CEZI3u99oZ@wasted.cogentembedded.com> <2415204.YUO4drecC0@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 17 Jun 2016 09:20:42 +0200
-Message-ID: <CAMuHMdUgS1L2UHMeN4CDj_MJ4uYKB57xE5rMQDXp+WjRAi1adw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: r8a7792: add JPU support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	"open list:MEDIA DRIVERS FOR RENESAS - FCP"
-	<linux-renesas-soc@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jun 17, 2016 at 12:03 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Describe JPEG Processing Unit (JPU) in the R8A7792 device tree.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Describe JPEG Processing Unit (JPU) in the R8A7792 device tree.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
+---
+ arch/arm/boot/dts/r8a7792.dtsi |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-                        Geert
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -246,6 +246,15 @@
+ 			status = "disabled";
+ 		};
+ 
++		jpu: jpeg-codec@fe980000 {
++			compatible = "renesas,jpu-r8a7792",
++				     "renesas,rcar-gen2-jpu";
++			reg = <0 0xfe980000 0 0x10300>;
++			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp1_clks R8A7792_CLK_JPU>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++		};
++
+ 		/* Special CPG clocks */
+ 		cpg_clocks: cpg_clocks@e6150000 {
+ 			compatible = "renesas,r8a7792-cpg-clocks",
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
