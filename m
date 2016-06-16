@@ -1,251 +1,149 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52953 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932744AbcFTTMH (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33502 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933096AbcFPB0I (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 20 Jun 2016 15:12:07 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 14/24] v4l: vsp1: lut: Expose configuration through a control
-Date: Mon, 20 Jun 2016 22:10:32 +0300
-Message-Id: <1466449842-29502-15-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Wed, 15 Jun 2016 21:26:08 -0400
+Date: Thu, 16 Jun 2016 10:26:03 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v2 0/4] ARM: dts: r8a7790: lager: use demuxer for I2C
+Message-ID: <20160616012600.GA4745@verge.net.au>
+References: <1465370066-8450-1-git-send-email-horms+renesas@verge.net.au>
+ <20160613143134.GB1603@katana>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160613143134.GB1603@katana>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Replace the custom ioctl with a V4L2 control in order to standardize the
-API.
+On Mon, Jun 13, 2016 at 04:31:34PM +0200, Wolfram Sang wrote:
+> 
+> >    # ./exercise-i2c-demux.sh
+> >    I2C Demux: i2c-8
+> >      Master: 1:/i2c@e650800
+> >    [   97.694487] i2c-rcar e6508000.i2c: probed 0 (1)
+> >      Master: 0:/i2c@e650000
+> >    [  102.706365] i2c-demux-pinctrl i2c-8: failed to setup demux-adapter 0 (-19) 0 (0)
+> 
+> Confirmed :( Got today only this far that the ENODEV comes from the PFC
+> driver. CONFIG_DEBUG_PINCTRL is a good idea for further debugging
+> probably.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_lut.c | 76 +++++++++++++++++++++++-----------
- drivers/media/platform/vsp1/vsp1_lut.h |  6 +--
- include/uapi/linux/vsp1.h              | 34 ---------------
- 3 files changed, 54 insertions(+), 62 deletions(-)
- delete mode 100644 include/uapi/linux/vsp1.h
+I tried to track this down and my findings so far are a bit puzzling.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
-index 9a2c55b3570a..70f189ee235c 100644
---- a/drivers/media/platform/vsp1/vsp1_lut.c
-+++ b/drivers/media/platform/vsp1/vsp1_lut.c
-@@ -13,7 +13,6 @@
- 
- #include <linux/device.h>
- #include <linux/gfp.h>
--#include <linux/vsp1.h>
- 
- #include <media/v4l2-subdev.h>
- 
-@@ -35,43 +34,60 @@ static inline void vsp1_lut_write(struct vsp1_lut *lut, struct vsp1_dl_list *dl,
+It seems to me that the first and only item of the "pinctrl-names" property
+(a.k.a. statename) retrieved for i2c@e6508000 changes from i2c-exio0 to
+i2c-exio1. Perhaps it really is overwritten for some reason. Or perhaps
+there is a stale pointer.  Or perhaps I am chasing the wrong thing. But in
+any case my observation is illustrated using the debug patch below.
+
+I am testing using only the first two patches of the series applied on top
+of renesas-devel-20160614-v4.7-rc3, that is the only demux devices are
+i2c-exio0 and i2c-exio1.
+
+I am using shmobile_defconfig, with CONFIG_DEBUG_PINCTRL enabled.
+
+I am examining only i2c-8, i2c-exio0.
+
+1. At probe time the first parent, 0:/i2c@e6500000
+
+   i2c-demux-pinctrl i2c-8: i2c_demux_activate_master chan:0 bus_name:i2c-exio0 np->full_name/i2c@e6500000 np:ef7db76c statename:i2c-exio0
+   i2c-demux-pinctrl i2c-8: i2c_demux_activate_master chan:1 bus_name:i2c-exio0 np->full_name/i2c@e6508000 np:ef7dabfc statename:i2c-exio0
+
+2. At run time I select the second parent, 1:/i2c@e6508000.
+   This works. But the statename of i2c@e6500000 is already i2c-exio1.
+
+   i2c-demux-pinctrl i2c-8: i2c_demux_deactivate_master chan:0 bus_name:i2c-exio0 np->full_name:/i2c@e6500000 np:ef7db76c statename:i2c-exio1
+   i2c-demux-pinctrl i2c-8: i2c_demux_deactivate_master chan:1 bus_name:i2c-exio0 np->full_name:/i2c@e6508000 np:ef7dabfc statename:i2c-exio0
+
+   i2c-demux-pinctrl i2c-8: i2c_demux_activate_master chan:0 bus_name:i2c-exio0 np->full_name:/i2c@e6500000 np:ef7db76c statename:i2c-exio1
+   i2c-demux-pinctrl i2c-8: i2c_demux_activate_master chan:1 bus_name:i2c-exio0 np->full_name:/i2c@e6508000 np:ef7dabfc statename:i2c-exio0
+
+3. At run time I re-select the first parent, 0:/i2c@e6500000.
+   This fails as described above. The new debug code shows.
+
+   i2c-demux-pinctrl i2c-8: i2c_demux_deactivate_master chan:0 bus_name:i2c-exio0 np->full_name:/i2c@e6500000 np:ef7db76c statename:i2c-exio1
+   34.700444] i2c-demux-pinctrl i2c-8: i2c_demux_deactivate_master chan:1 bus_name:i2c-exio0 np->full_name:/i2c@e6508000 np:ef7dabfc statename:i2c-exio0
+
+   [i2c_demux_deactivate_master exits before reaching debug code,
+    but I have previously observed that statename is i2c-exio1
+    for i2c@e6500000]
+
+
+> >    3.1 Unfortunately it fails for the I2C2 dmux if the GPIO fallback is
+> >        present.
+> 
+> Hopefully the same issue.
+
+Hopefully :)
+
+> >    3.2 The test also fails for the I2C3 demux but that appears to be due
+> >        to a shortcoming in the voltage regulator code which does not
+> >        appear to like being reinitialised. The kernel complains as follows:
+> 
+> Yes, the demuxer trigger re-bind cycles which are not well considered
+> and/or tested. E.g. for soc-camera, this patch needed to go upstream:
+> 
+> https://patchwork.linuxtv.org/patch/32473/
+
+Understood. It looks like there is some more work to be done but from my
+point of view fixing individual drivers is less critical than resolving
+the switching issue(s) above. I think the order things are described
+is probably the order in which they should be addressed.
+
+
+diff --git a/drivers/i2c/muxes/i2c-demux-pinctrl.c b/drivers/i2c/muxes/i2c-demux-pinctrl.c
+index 8de073aed001..8a54380a9e0c 100644
+--- a/drivers/i2c/muxes/i2c-demux-pinctrl.c
++++ b/drivers/i2c/muxes/i2c-demux-pinctrl.c
+@@ -55,6 +55,27 @@ static u32 i2c_demux_functionality(struct i2c_adapter *adap)
+ 	return parent->algo->functionality(parent);
  }
  
- /* -----------------------------------------------------------------------------
-- * V4L2 Subdevice Core Operations
-+ * Controls
-  */
- 
--static int lut_set_table(struct vsp1_lut *lut, struct vsp1_lut_config *config)
-+#define V4L2_CID_VSP1_LUT_TABLE			(V4L2_CID_USER_BASE | 0x1001)
++static int dbg_show(const char *prefix, struct i2c_demux_pinctrl_priv *priv)
++{
++	int i;
 +
-+static int lut_set_table(struct vsp1_lut *lut, struct v4l2_ctrl *ctrl)
- {
- 	struct vsp1_dl_body *dlb;
- 	unsigned int i;
- 
--	dlb = vsp1_dl_fragment_alloc(lut->entity.vsp1, ARRAY_SIZE(config->lut));
-+	dlb = vsp1_dl_fragment_alloc(lut->entity.vsp1, 256);
- 	if (!dlb)
- 		return -ENOMEM;
- 
--	for (i = 0; i < ARRAY_SIZE(config->lut); ++i)
-+	for (i = 0; i < 256; ++i)
- 		vsp1_dl_fragment_write(dlb, VI6_LUT_TABLE + 4 * i,
--				       config->lut[i]);
-+				       ctrl->p_new.p_u32[i]);
- 
--	mutex_lock(&lut->lock);
- 	swap(lut->lut, dlb);
--	mutex_unlock(&lut->lock);
- 
- 	vsp1_dl_fragment_free(dlb);
- 	return 0;
- }
- 
--static long lut_ioctl(struct v4l2_subdev *subdev, unsigned int cmd, void *arg)
-+static int lut_s_ctrl(struct v4l2_ctrl *ctrl)
- {
--	struct vsp1_lut *lut = to_lut(subdev);
--
--	switch (cmd) {
--	case VIDIOC_VSP1_LUT_CONFIG:
--		return lut_set_table(lut, arg);
-+	struct vsp1_lut *lut =
-+		container_of(ctrl->handler, struct vsp1_lut, ctrls);
- 
--	default:
--		return -ENOIOCTLCMD;
-+	switch (ctrl->id) {
-+	case V4L2_CID_VSP1_LUT_TABLE:
-+		lut_set_table(lut, ctrl);
-+		break;
- 	}
++	for (i = 0; i < priv->num_chan; i++) {
++		struct device_node *np;
++		const char *statename;
++		int ret;
 +
-+	return 0;
- }
- 
-+static const struct v4l2_ctrl_ops lut_ctrl_ops = {
-+	.s_ctrl = lut_s_ctrl,
-+};
++		np = priv->chan[i].parent_np;
 +
-+static const struct v4l2_ctrl_config lut_table_control = {
-+	.ops = &lut_ctrl_ops,
-+	.id = V4L2_CID_VSP1_LUT_TABLE,
-+	.name = "Look-Up Table",
-+	.type = V4L2_CTRL_TYPE_U32,
-+	.min = 0x00000000,
-+	.max = 0x00ffffff,
-+	.step = 1,
-+	.def = 0,
-+	.dims = { 256},
-+};
-+
- /* -----------------------------------------------------------------------------
-  * V4L2 Subdevice Pad Operations
-  */
-@@ -147,10 +163,6 @@ static int lut_set_format(struct v4l2_subdev *subdev,
-  * V4L2 Subdevice Operations
-  */
- 
--static struct v4l2_subdev_core_ops lut_core_ops = {
--	.ioctl = lut_ioctl,
--};
--
- static struct v4l2_subdev_pad_ops lut_pad_ops = {
- 	.init_cfg = vsp1_entity_init_cfg,
- 	.enum_mbus_code = lut_enum_mbus_code,
-@@ -160,7 +172,6 @@ static struct v4l2_subdev_pad_ops lut_pad_ops = {
- };
- 
- static struct v4l2_subdev_ops lut_ops = {
--	.core	= &lut_core_ops,
- 	.pad    = &lut_pad_ops,
- };
- 
-@@ -176,12 +187,14 @@ static void lut_configure(struct vsp1_entity *entity,
- 
- 	vsp1_lut_write(lut, dl, VI6_LUT_CTRL, VI6_LUT_CTRL_EN);
- 
--	mutex_lock(&lut->lock);
-+	mutex_lock(lut->ctrls.lock);
-+
- 	if (lut->lut) {
- 		vsp1_dl_list_add_fragment(dl, lut->lut);
- 		lut->lut = NULL;
- 	}
--	mutex_unlock(&lut->lock);
-+
-+	mutex_unlock(lut->ctrls.lock);
- }
- 
- static const struct vsp1_entity_operations lut_entity_ops = {
-@@ -201,8 +214,6 @@ struct vsp1_lut *vsp1_lut_create(struct vsp1_device *vsp1)
- 	if (lut == NULL)
- 		return ERR_PTR(-ENOMEM);
- 
--	mutex_init(&lut->lock);
--
- 	lut->entity.ops = &lut_entity_ops;
- 	lut->entity.type = VSP1_ENTITY_LUT;
- 
-@@ -211,5 +222,20 @@ struct vsp1_lut *vsp1_lut_create(struct vsp1_device *vsp1)
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
-+	/* Initialize the control handler. */
-+	v4l2_ctrl_handler_init(&lut->ctrls, 1);
-+	v4l2_ctrl_new_custom(&lut->ctrls, &lut_table_control, NULL);
-+
-+	lut->entity.subdev.ctrl_handler = &lut->ctrls;
-+
-+	if (lut->ctrls.error) {
-+		dev_err(vsp1->dev, "lut: failed to initialize controls\n");
-+		ret = lut->ctrls.error;
-+		vsp1_entity_destroy(&lut->entity);
-+		return ERR_PTR(ret);
++		ret = of_property_read_string_index(np, "pinctrl-names",
++						    0, &statename);
++		if (ret)
++			statename = "<error>";
++		dev_err(priv->dev, "%s chan:%d bus_name:%s np->full_name:%s "
++			"np:%p statename:%s\n", prefix, i, priv->bus_name,
++			np->full_name, np, statename);
 +	}
++}
 +
-+	v4l2_ctrl_handler_setup(&lut->ctrls);
+ static int i2c_demux_activate_master(struct i2c_demux_pinctrl_priv *priv, u32 new_chan)
+ {
+ 	struct i2c_adapter *adap;
+@@ -99,6 +120,7 @@ static int i2c_demux_activate_master(struct i2c_demux_pinctrl_priv *priv, u32 ne
+ 	if (ret < 0)
+ 		goto err_with_put;
+ 
++	dbg_show(__func__, priv);
+ 	return 0;
+ 
+  err_with_put:
+@@ -115,6 +137,8 @@ static int i2c_demux_deactivate_master(struct i2c_demux_pinctrl_priv *priv)
+ 	if (cur < 0)
+ 		return 0;
+ 
++	dbg_show(__func__, priv);
 +
- 	return lut;
- }
-diff --git a/drivers/media/platform/vsp1/vsp1_lut.h b/drivers/media/platform/vsp1/vsp1_lut.h
-index cef874f22b6a..021898fc0ce5 100644
---- a/drivers/media/platform/vsp1/vsp1_lut.h
-+++ b/drivers/media/platform/vsp1/vsp1_lut.h
-@@ -13,9 +13,8 @@
- #ifndef __VSP1_LUT_H__
- #define __VSP1_LUT_H__
+ 	i2c_del_adapter(&priv->cur_adap);
+ 	i2c_put_adapter(priv->chan[cur].parent_adap);
  
--#include <linux/mutex.h>
--
- #include <media/media-entity.h>
-+#include <media/v4l2-ctrls.h>
- #include <media/v4l2-subdev.h>
- 
- #include "vsp1_entity.h"
-@@ -28,7 +27,8 @@ struct vsp1_device;
- struct vsp1_lut {
- 	struct vsp1_entity entity;
- 
--	struct mutex lock;
-+	struct v4l2_ctrl_handler ctrls;
-+
- 	struct vsp1_dl_body *lut;
- };
- 
-diff --git a/include/uapi/linux/vsp1.h b/include/uapi/linux/vsp1.h
-deleted file mode 100644
-index 9a823696d816..000000000000
---- a/include/uapi/linux/vsp1.h
-+++ /dev/null
-@@ -1,34 +0,0 @@
--/*
-- * vsp1.h
-- *
-- * Renesas R-Car VSP1 - User-space API
-- *
-- * Copyright (C) 2013 Renesas Corporation
-- *
-- * Contacts: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--
--#ifndef __VSP1_USER_H__
--#define __VSP1_USER_H__
--
--#include <linux/types.h>
--#include <linux/videodev2.h>
--
--/*
-- * Private IOCTLs
-- *
-- * VIDIOC_VSP1_LUT_CONFIG - Configure the lookup table
-- */
--
--#define VIDIOC_VSP1_LUT_CONFIG \
--	_IOWR('V', BASE_VIDIOC_PRIVATE + 1, struct vsp1_lut_config)
--
--struct vsp1_lut_config {
--	__u32 lut[256];
--};
--
--#endif	/* __VSP1_USER_H__ */
--- 
-Regards,
-
-Laurent Pinchart
