@@ -1,54 +1,96 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35957 "EHLO
-	mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750998AbcFAIW3 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 04:22:29 -0400
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: "kishon@ti.com" <kishon@ti.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH] phy: rcar-gen3-usb2: fix unexpected repeat interrupts of
+ VBUS change
+Date: Thu, 16 Jun 2016 09:04:52 +0000
+Message-ID: <SG2PR06MB0919896B815C3A8A277D66C3D8560@SG2PR06MB0919.apcprd06.prod.outlook.com>
+References: <1464698837-7556-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1464698837-7556-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <1669958.qjJ7i3NBPv@wasted.cogentembedded.com>
-References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
-	<1669958.qjJ7i3NBPv@wasted.cogentembedded.com>
-Date: Wed, 1 Jun 2016 10:22:28 +0200
-Message-ID: <CAMuHMdU2P6VKXNpEHGOKpyuM45Pk0CuHWngxwu5AYGqYfduXXg@mail.gmail.com>
-Subject: Re: [PATCH 13/13] ARM: dts: blanche: add Ethernet support
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+Hi Kishon,
 
-On Wed, Jun 1, 2016 at 12:33 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> --- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
-> +++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+Would you review this patch?
 
-> +       ethernet@18000000 {
-> +               compatible = "smsc,lan89218", "smsc,lan9115";
+Best regards,
+Yoshihiro Shimoda
 
-The "smsc,lan89218" needs to be documented in the device tree bindings.
-Google couldn't find any evidence you submitted a patch for that.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> -----Original Message-----
+> From: Yoshihiro Shimoda
+> Sent: Tuesday, May 31, 2016 9:47 PM
+> To: kishon@ti.com
+> Cc: linux-kernel@vger.kernel.org; linux-renesas-soc@vger.kernel.org; stable@vger.kernel.org; Yoshihiro Shimoda
+> <yoshihiro.shimoda.uh@renesas.com>
+> Subject: [PATCH] phy: rcar-gen3-usb2: fix unexpected repeat interrupts of VBUS change
+> 
+> This patch fixes an issue that the driver is possible to cause
+> unexpected repeat interrupts if a board condition is wrong
+> (e.g. even if the ID pin is as function, a board supplies the VBUS.)
+> 
+> The reason why unexpected repeat interrupts happen is:
+>  1) The driver changed the mode to function if it detected the ID pin
+>     is high and the VBUS is high.
+>  2) After the driver changed function mode, it disabled the "VBUS control"
+>     feature. Then, the VBUS signal will be low.
+>  3) Since the VBUS change interruption happened, the driver checked
+>     the ID pin and VBUS.
+>  4) Since VBUS was low, the driver changed the mode to host and enabled
+>     the "VBUS control" feature. Then the VBUS signal will be high.
+>  5) Since the VBUS change interruption happened, the driver did 1) above.
+> 
+> So, this patch modified the condition in rcar_gen3_device_recognition()
+> to check the ID pin only.
+> 
+> Fixes: 1114e2d (phy: rcar-gen3-usb2: change the mode to OTG on the combined channel)
+> Cc: <stable@vger.kernel.org> # v4.5+
+> Reported-by: Simon Horman <horms@verge.net.au>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  drivers/phy/phy-rcar-gen3-usb2.c | 14 +-------------
+>  1 file changed, 1 insertion(+), 13 deletions(-)
+> 
+> diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
+> index 76bb88f..4be3f5d 100644
+> --- a/drivers/phy/phy-rcar-gen3-usb2.c
+> +++ b/drivers/phy/phy-rcar-gen3-usb2.c
+> @@ -144,12 +144,6 @@ static void rcar_gen3_init_for_peri(struct rcar_gen3_chan *ch)
+>  	extcon_set_cable_state_(ch->extcon, EXTCON_USB, true);
+>  }
+> 
+> -static bool rcar_gen3_check_vbus(struct rcar_gen3_chan *ch)
+> -{
+> -	return !!(readl(ch->base + USB2_ADPCTRL) &
+> -		  USB2_ADPCTRL_OTGSESSVLD);
+> -}
+> -
+>  static bool rcar_gen3_check_id(struct rcar_gen3_chan *ch)
+>  {
+>  	return !!(readl(ch->base + USB2_ADPCTRL) & USB2_ADPCTRL_IDDIG);
+> @@ -157,13 +151,7 @@ static bool rcar_gen3_check_id(struct rcar_gen3_chan *ch)
+> 
+>  static void rcar_gen3_device_recognition(struct rcar_gen3_chan *ch)
+>  {
+> -	bool is_host = true;
+> -
+> -	/* B-device? */
+> -	if (rcar_gen3_check_id(ch) && rcar_gen3_check_vbus(ch))
+> -		is_host = false;
+> -
+> -	if (is_host)
+> +	if (!rcar_gen3_check_id(ch))
+>  		rcar_gen3_init_for_host(ch);
+>  	else
+>  		rcar_gen3_init_for_peri(ch);
+> --
+> 1.9.1
