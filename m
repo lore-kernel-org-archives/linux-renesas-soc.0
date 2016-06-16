@@ -1,46 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:35393 "EHLO
-	mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964917AbcFQUYk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41063 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750930AbcFPFTW (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 17 Jun 2016 16:24:40 -0400
-Received: by mail-lf0-f54.google.com with SMTP id l188so5166247lfe.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jun 2016 13:24:39 -0700 (PDT)
+	Thu, 16 Jun 2016 01:19:22 -0400
+Date: Thu, 16 Jun 2016 14:19:18 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH/RFC] ARM: shmobile: rcar-gen2: Correct arch timer
  frequency on R-Car V2H
-To: Simon Horman <horms@verge.net.au>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
+Message-ID: <20160616051918.GD10590@verge.net.au>
 References: <1465813872-11937-1-git-send-email-geert+renesas@glider.be>
- <20160616051918.GD10590@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <f7f5436e-230b-eadd-35d5-6684b41bd31d@cogentembedded.com>
-Date: Fri, 17 Jun 2016 23:24:36 +0300
 MIME-Version: 1.0
-In-Reply-To: <20160616051918.GD10590@verge.net.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1465813872-11937-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 06/16/2016 08:19 AM, Simon Horman wrote:
+On Mon, Jun 13, 2016 at 12:31:12PM +0200, Geert Uytterhoeven wrote:
+> According to the datasheet, the frequency of the ARM architecture timer
+> on R-Car V2H depends on the frequency of the ZS clock, just like on
+> R-Car E2.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Against renesas-devel-20160613-v4.7-rc3 with "ARM: shmobile: rcar-gen2:
+> Obtain extal frequency from DT" applied.
+> 
+> Untested due to lack of hardware.
 
->> According to the datasheet, the frequency of the ARM architecture timer
->> on R-Car V2H depends on the frequency of the ZS clock, just like on
->> R-Car E2.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> Against renesas-devel-20160613-v4.7-rc3 with "ARM: shmobile: rcar-gen2:
->> Obtain extal frequency from DT" applied.
->>
->> Untested due to lack of hardware.
->
-> Sergei, could you test this?
+Sergei, could you test this?
 
-    Done, now 'sleep 5' takes 5 seconds indeed. :-)
-
-Tested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-MBR, Sergei
+> ---
+>  arch/arm/mach-shmobile/setup-rcar-gen2.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+> index ea092d5dd475042d..afb9fdcd3d9084e2 100644
+> --- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
+> +++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+> @@ -76,7 +76,8 @@ void __init rcar_gen2_timer_init(void)
+>  	void __iomem *base;
+>  	u32 freq;
+>  
+> -	if (of_machine_is_compatible("renesas,r8a7794")) {
+> +	if (of_machine_is_compatible("renesas,r8a7792") ||
+> +	    of_machine_is_compatible("renesas,r8a7794")) {
+>  		freq = 260000000 / 8;	/* ZS / 8 */
+>  		/* CNTVOFF has to be initialized either from non-secure
+>  		 * Hypervisor mode or secure Monitor mode with SCR.NS==1.
+> -- 
+> 1.9.1
+> 
