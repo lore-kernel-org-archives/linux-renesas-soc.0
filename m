@@ -1,65 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34351 "EHLO
-	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753132AbcFOMSw (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:50162 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752655AbcFPQzS convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 15 Jun 2016 08:18:52 -0400
-Received: by mail-wm0-f65.google.com with SMTP id 187so3569644wmz.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jun 2016 05:18:52 -0700 (PDT)
-From: Chris Wilson <chris@chris-wilson.co.uk>
-To: intel-gfx@lists.freedesktop.org
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 11/44] drm/rcar-du: Remove redundant calls to drm_connector_register_all()
-Date: Wed, 15 Jun 2016 13:17:56 +0100
-Message-Id: <1465993109-19523-12-git-send-email-chris@chris-wilson.co.uk>
-In-Reply-To: <1465993109-19523-1-git-send-email-chris@chris-wilson.co.uk>
-References: <1465993109-19523-1-git-send-email-chris@chris-wilson.co.uk>
+	Thu, 16 Jun 2016 12:55:18 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+	<niklas.soderlund@ragnatech.se>
+Cc: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
+	hverkuil@xs4all.nl, linux-renesas-soc@vger.kernel.org,
+	Niklas =?ISO-8859-1?Q?S=F6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH 7/8] [media] rcar-vin: enable Gen3
+Date: Thu, 16 Jun 2016 19:55:28 +0300
+Message-ID: <58668562.0vKzljaCLa@avalon>
+In-Reply-To: <1464203409-1279-8-git-send-email-niklas.soderlund@ragnatech.se>
+References: <1464203409-1279-1-git-send-email-niklas.soderlund@ragnatech.se> <1464203409-1279-8-git-send-email-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Up to now, the recommendation was for drivers to call drm_dev_register()
-followed by drm_connector_register_all(). Now that
-drm_connector_register() is safe against multiple invocations, we can
-move drm_connector_register_all() to drm_dev_register() and not suffer
-from any backwards compatibility issues with drivers not following the
-more rigorous init ordering.
+Hi Niklas,
 
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: David Airlie <airlied@linux.ie>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 5 -----
- 1 file changed, 5 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 48ec4b6e8b26..36d390093c92 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -278,7 +278,6 @@ static int rcar_du_remove(struct platform_device *pdev)
- 	struct rcar_du_device *rcdu = platform_get_drvdata(pdev);
- 	struct drm_device *ddev = rcdu->ddev;
- 
--	drm_connector_unregister_all(ddev);
- 	drm_dev_unregister(ddev);
- 
- 	if (rcdu->fbdev)
-@@ -360,10 +359,6 @@ static int rcar_du_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto error;
- 
--	ret = drm_connector_register_all(ddev);
--	if (ret < 0)
--		goto error;
--
- 	DRM_INFO("Device %s probed\n", dev_name(&pdev->dev));
- 
- 	return 0;
+On Wednesday 25 May 2016 21:10:08 Niklas S�derlund wrote:
+> From: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/platform/rcar-vin/Kconfig     | 2 +-
+>  drivers/media/platform/rcar-vin/rcar-core.c | 1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/Kconfig
+> b/drivers/media/platform/rcar-vin/Kconfig index b2ff2d4..ca3ea91 100644
+> --- a/drivers/media/platform/rcar-vin/Kconfig
+> +++ b/drivers/media/platform/rcar-vin/Kconfig
+> @@ -5,7 +5,7 @@ config VIDEO_RCAR_VIN
+>  	select VIDEOBUF2_DMA_CONTIG
+>  	---help---
+>  	  Support for Renesas R-Car Video Input (VIN) driver.
+> -	  Supports R-Car Gen2 SoCs.
+> +	  Supports R-Car Gen2 and Gen3 SoCs.
+> 
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called rcar-vin.
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c
+> b/drivers/media/platform/rcar-vin/rcar-core.c index d901ad0..520690c 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -26,6 +26,7 @@
+>  #include "rcar-vin.h"
+> 
+>  static const struct of_device_id rvin_of_id_table[] = {
+> +	{ .compatible = "renesas,vin-r8a7795", .data = (void *)RCAR_GEN3 },
+
+This isn't needed with patch 8/8. I'd drop this hunk, and merge the previous 
+one into 8/8.
+
+>  	{ .compatible = "renesas,vin-r8a7794", .data = (void *)RCAR_GEN2 },
+>  	{ .compatible = "renesas,vin-r8a7793", .data = (void *)RCAR_GEN2 },
+>  	{ .compatible = "renesas,vin-r8a7791", .data = (void *)RCAR_GEN2 },
+
 -- 
-2.8.1
+Regards,
+
+Laurent Pinchart
