@@ -1,219 +1,54 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:58030 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752844AbcFPK1y (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 16 Jun 2016 06:27:54 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 06 Jun 2016 12:57:43 +0900
-Message-Id: <20160606035743.31763.22662.sendpatchset@little-apple>
-In-Reply-To: <20160606035723.31763.66500.sendpatchset@little-apple>
-References: <20160606035723.31763.66500.sendpatchset@little-apple>
-Subject: [PATCH v2 02/11] iommu/ipmmu-vmsa: Add optional root device feature
-Sender: linux-kernel-owner@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 02/13] soc: renesas: rcar-sysc: Fix uninitialized error code in rcar_sysc_pd_init()
+Date: Thu, 16 Jun 2016 12:27:31 +0200
+Message-Id: <1466072862-28030-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1466072862-28030-1-git-send-email-geert+renesas@glider.be>
+References: <1466072862-28030-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On success, rcar_sysc_pd_init() returns an uninitialized error code.
+Use the return value of of_genpd_add_provider_onecell() to fix this.
 
-Add root device handling to the IPMMU driver by allowing certain
-DT compat strings to enable has_cache_leaf_nodes that in turn will
-support both root devices with interrupts and leaf devices that
-face the actual IPMMU consumer devices.
+This went unnoticed, as early_initcall() doesn't care about the return
+value.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+v4:
+  - New.
+---
+ drivers/soc/renesas/rcar-sysc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- Changes since V1:
- - Moved patch to earlier in the series
- - Updated code to work with recent changes in:
-   [PATCH v3 00/06] iommu/ipmmu-vmsa: IPMMU multi-arch update V3
-
- drivers/iommu/ipmmu-vmsa.c |   87 +++++++++++++++++++++++++++++++++++---------
- 1 file changed, 70 insertions(+), 17 deletions(-)
-
---- 0009/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-06 10:11:32.130607110 +0900
-@@ -34,6 +34,7 @@
- 
- struct ipmmu_features {
- 	bool use_ns_alias_offset;
-+	bool has_cache_leaf_nodes;
- };
- 
- struct ipmmu_vmsa_device {
-@@ -41,6 +42,7 @@ struct ipmmu_vmsa_device {
- 	void __iomem *base;
- 	struct list_head list;
- 	const struct ipmmu_features *features;
-+	bool is_leaf;
- 	unsigned int num_utlbs;
- 	spinlock_t lock;			/* Protects ctx and domains[] */
- 	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
-@@ -51,6 +53,7 @@ struct ipmmu_vmsa_device {
- 
- struct ipmmu_vmsa_domain {
- 	struct ipmmu_vmsa_device *mmu;
-+	struct ipmmu_vmsa_device *root;
- 	struct iommu_domain io_domain;
- 
- 	struct io_pgtable_cfg cfg;
-@@ -195,6 +198,36 @@ static struct ipmmu_vmsa_domain *to_vmsa
- #define IMUASID_ASID0_SHIFT		0
- 
- /* -----------------------------------------------------------------------------
-+ * Root device handling
-+ */
-+
-+static bool ipmmu_is_root(struct ipmmu_vmsa_device *mmu)
-+{
-+	if (mmu->features->has_cache_leaf_nodes)
-+		return mmu->is_leaf ? false : true;
-+	else
-+		return true; /* older IPMMU hardware treated as single root */
-+}
-+
-+static struct ipmmu_vmsa_device *ipmmu_find_root(struct ipmmu_vmsa_device *leaf)
-+{
-+	struct ipmmu_vmsa_device *mmu = NULL;
-+
-+	if (ipmmu_is_root(leaf))
-+		return leaf;
-+
-+	spin_lock(&ipmmu_devices_lock);
-+
-+	list_for_each_entry(mmu, &ipmmu_devices, list) {
-+		if (ipmmu_is_root(mmu))
-+			break;
-+	}
-+
-+	spin_unlock(&ipmmu_devices_lock);
-+	return mmu;
-+}
-+
-+/* -----------------------------------------------------------------------------
-  * Read/Write Access
-  */
- 
-@@ -211,13 +244,13 @@ static void ipmmu_write(struct ipmmu_vms
- 
- static u32 ipmmu_ctx_read(struct ipmmu_vmsa_domain *domain, unsigned int reg)
- {
--	return ipmmu_read(domain->mmu, domain->context_id * IM_CTX_SIZE + reg);
-+	return ipmmu_read(domain->root, domain->context_id * IM_CTX_SIZE + reg);
- }
- 
- static void ipmmu_ctx_write(struct ipmmu_vmsa_domain *domain, unsigned int reg,
- 			    u32 data)
- {
--	ipmmu_write(domain->mmu, domain->context_id * IM_CTX_SIZE + reg, data);
-+	ipmmu_write(domain->root, domain->context_id * IM_CTX_SIZE + reg, data);
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -350,7 +383,7 @@ static int ipmmu_domain_init_context(str
- 	 * TODO: Add support for coherent walk through CCI with DVM and remove
- 	 * cache handling. For now, delegate it to the io-pgtable code.
- 	 */
--	domain->cfg.iommu_dev = domain->mmu->dev;
-+	domain->cfg.iommu_dev = domain->root->dev;
- 
- 	domain->iop = alloc_io_pgtable_ops(ARM_32_LPAE_S1, &domain->cfg,
- 					   domain);
-@@ -360,7 +393,7 @@ static int ipmmu_domain_init_context(str
- 	/*
- 	 * Find an unused context.
- 	 */
--	ret = ipmmu_domain_allocate_context(domain->mmu, domain);
-+	ret = ipmmu_domain_allocate_context(domain->root, domain);
- 	if (ret == IPMMU_CTX_MAX) {
- 		free_io_pgtable_ops(domain->iop);
- 		return -EBUSY;
-@@ -431,7 +464,7 @@ static void ipmmu_domain_destroy_context
- 	 */
- 	ipmmu_ctx_write(domain, IMCTR, IMCTR_FLUSH);
- 	ipmmu_tlb_sync(domain);
--	ipmmu_domain_free_context(domain->mmu, domain->context_id);
-+	ipmmu_domain_free_context(domain->root, domain->context_id);
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -544,7 +577,7 @@ static int ipmmu_attach_device(struct io
- 			       struct device *dev)
- {
- 	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
--	struct ipmmu_vmsa_device *mmu = archdata->mmu;
-+	struct ipmmu_vmsa_device *root, *mmu = archdata->mmu;
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
- 	unsigned long flags;
- 	unsigned int i;
-@@ -555,11 +588,18 @@ static int ipmmu_attach_device(struct io
- 		return -ENXIO;
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index a43ca24699bed1ec..59a8152681a59a5c 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -398,7 +398,7 @@ static int __init rcar_sysc_pd_init(void)
+ 		domains->domains[area->isr_bit] = &pd->genpd;
  	}
  
-+	root = ipmmu_find_root(archdata->mmu);
-+	if (!root) {
-+		dev_err(dev, "Unable to locate root IPMMU\n");
-+		return -EAGAIN;
-+	}
-+
- 	spin_lock_irqsave(&domain->lock, flags);
+-	of_genpd_add_provider_onecell(np, &domains->onecell_data);
++	error = of_genpd_add_provider_onecell(np, &domains->onecell_data);
  
- 	if (!domain->mmu) {
- 		/* The domain hasn't been used yet, initialize it. */
- 		domain->mmu = mmu;
-+		domain->root = root;
- 		ret = ipmmu_domain_init_context(domain);
- 	} else if (domain->mmu != mmu) {
- 		/*
-@@ -935,6 +975,7 @@ static void ipmmu_device_reset(struct ip
- 
- static const struct ipmmu_features ipmmu_features_default = {
- 	.use_ns_alias_offset = true,
-+	.has_cache_leaf_nodes = false,
- };
- 
- static const struct of_device_id ipmmu_of_ids[] = {
-@@ -994,19 +1035,31 @@ static int ipmmu_probe(struct platform_d
- 		mmu->base += IM_NS_ALIAS_OFFSET;
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "no IRQ found\n");
--		return irq;
--	}
- 
--	ret = devm_request_irq(&pdev->dev, irq, ipmmu_irq, 0,
--			       dev_name(&pdev->dev), mmu);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "failed to request IRQ %d\n", irq);
--		return ret;
--	}
-+	/*
-+	 * Determine if this IPMMU instance is a leaf device by checking
-+	 * if the renesas,ipmmu-main property exists or not.
-+	 */
-+	if (mmu->features->has_cache_leaf_nodes &&
-+	    of_find_property(pdev->dev.of_node, "renesas,ipmmu-main", NULL))
-+		mmu->is_leaf = true;
-+
-+	/* Root devices have mandatory IRQs */
-+	if (ipmmu_is_root(mmu)) {
-+		if (irq < 0) {
-+			dev_err(&pdev->dev, "no IRQ found\n");
-+			return irq;
-+		}
- 
--	ipmmu_device_reset(mmu);
-+		ret = devm_request_irq(&pdev->dev, irq, ipmmu_irq, 0,
-+				       dev_name(&pdev->dev), mmu);
-+		if (ret < 0) {
-+			dev_err(&pdev->dev, "failed to request IRQ %d\n", irq);
-+			return ret;
-+		}
-+
-+		ipmmu_device_reset(mmu);
-+	}
- 
- 	/*
- 	 * We can't create the ARM mapping here as it requires the bus to have
+ out_put:
+ 	of_node_put(np);
+-- 
+1.9.1
