@@ -1,121 +1,51 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] i2c: mux: refer to i2c-mux.txt
-Date: Wed,  8 Jun 2016 15:21:39 +0900
-Message-Id: <1465366899-4824-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-i2c-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f50.google.com ([209.85.214.50]:36317 "EHLO
+	mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751490AbcFPGtF (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 16 Jun 2016 02:49:05 -0400
+Received: by mail-it0-f50.google.com with SMTP id a5so127950222ita.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jun 2016 23:49:04 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <87oa72kmf5.wl%kuninori.morimoto.gx@renesas.com>
+References: <1465906188-20978-1-git-send-email-geert+renesas@glider.be> <87oa72kmf5.wl%kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 16 Jun 2016 08:49:03 +0200
+Message-ID: <CAMuHMdXmHKpNPgP=DgQD8RuDzrOEC1Cstz7gV+mgK4b9jxTyZQ@mail.gmail.com>
+Subject: Re: renesas-drivers-2016-06-14-v4.7-rc2
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Correct references to i2c-mux.txt which was previously mux.txt.
+Hi Morimoto-san,
 
-Also correct the spelling of relevant.
+On Thu, Jun 16, 2016 at 2:34 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+>> I have pushed renesas-drivers-2016-06-14-v4.7-rc2 to
+>> https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+> (snip)
+>> Today's version is based on renesas-devel-20160613-v4.7-rc3.
+>
+> It is based on -rc3 version.
+> So correct renesas-drivers tag is -rc3 instead of -rc2 ;P
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/i2c/i2c-arb-gpio-challenge.txt | 4 ++--
- Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.txt      | 3 ++-
- Documentation/devicetree/bindings/i2c/i2c-mux-gpio.txt           | 6 +++---
- Documentation/devicetree/bindings/i2c/i2c-mux-pinctrl.txt        | 4 ++--
- Documentation/devicetree/bindings/i2c/i2c-mux-reg.txt            | 6 +++---
- 5 files changed, 12 insertions(+), 11 deletions(-)
+Oops, thanks for reporting!
+I've pushed out the correct tag (renesas-drivers-2016-06-14-v4.7-rc3),
+and deleted the wrong one.
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-arb-gpio-challenge.txt b/Documentation/devicetree/bindings/i2c/i2c-arb-gpio-challenge.txt
-index bfeabb843941..71191ff0e781 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-arb-gpio-challenge.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-arb-gpio-challenge.txt
-@@ -44,8 +44,8 @@ Required properties:
- - our-claim-gpio: The GPIO that we use to claim the bus.
- - their-claim-gpios: The GPIOs that the other sides use to claim the bus.
-   Note that some implementations may only support a single other master.
--- Standard I2C mux properties. See mux.txt in this directory.
--- Single I2C child bus node at reg 0. See mux.txt in this directory.
-+- Standard I2C mux properties. See i2c-mux.txt in this directory.
-+- Single I2C child bus node at reg 0. See i2c-mux.txt in this directory.
- 
- Optional properties:
- - slew-delay-us: microseconds to wait for a GPIO to go high. Default is 10 us.
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.txt b/Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.txt
-index 6078aefe7ed4..7ce23ac61308 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.txt
-@@ -27,7 +27,8 @@ Required properties:
- - i2c-bus-name: The name of this bus. Also needed as pinctrl-name for the I2C
- 		parents.
- 
--Furthermore, I2C mux properties and child nodes. See mux.txt in this directory.
-+Furthermore, I2C mux properties and child nodes. See i2c-mux.txt in this
-+directory.
- 
- Example:
- 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-mux-gpio.txt b/Documentation/devicetree/bindings/i2c/i2c-mux-gpio.txt
-index 66709a825541..21da3ecbb370 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-mux-gpio.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-mux-gpio.txt
-@@ -22,8 +22,8 @@ Required properties:
- - i2c-parent: The phandle of the I2C bus that this multiplexer's master-side
-   port is connected to.
- - mux-gpios: list of gpios used to control the muxer
--* Standard I2C mux properties. See mux.txt in this directory.
--* I2C child bus nodes. See mux.txt in this directory.
-+* Standard I2C mux properties. See i2c-mux.txt in this directory.
-+* I2C child bus nodes. See i2c-mux.txt in this directory.
- 
- Optional properties:
- - idle-state: value to set the muxer to when idle. When no value is
-@@ -33,7 +33,7 @@ For each i2c child node, an I2C child bus will be created. They will
- be numbered based on their order in the device tree.
- 
- Whenever an access is made to a device on a child bus, the value set
--in the revelant node's reg property will be output using the list of
-+in the relevant node's reg property will be output using the list of
- GPIOs, the first in the list holding the least-significant value.
- 
- If an idle state is defined, using the idle-state (optional) property,
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-mux-pinctrl.txt b/Documentation/devicetree/bindings/i2c/i2c-mux-pinctrl.txt
-index ae8af1694e95..33119a98e144 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-mux-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-mux-pinctrl.txt
-@@ -28,9 +28,9 @@ Also required are:
- * Standard pinctrl properties that specify the pin mux state for each child
-   bus. See ../pinctrl/pinctrl-bindings.txt.
- 
--* Standard I2C mux properties. See mux.txt in this directory.
-+* Standard I2C mux properties. See i2c-mux.txt in this directory.
- 
--* I2C child bus nodes. See mux.txt in this directory.
-+* I2C child bus nodes. See i2c-mux.txt in this directory.
- 
- For each named state defined in the pinctrl-names property, an I2C child bus
- will be created. I2C child bus numbers are assigned based on the index into
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-mux-reg.txt b/Documentation/devicetree/bindings/i2c/i2c-mux-reg.txt
-index 688783fbe696..de00d7fc450b 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-mux-reg.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-mux-reg.txt
-@@ -7,8 +7,8 @@ Required properties:
- - compatible: i2c-mux-reg
- - i2c-parent: The phandle of the I2C bus that this multiplexer's master-side
-   port is connected to.
--* Standard I2C mux properties. See mux.txt in this directory.
--* I2C child bus nodes. See mux.txt in this directory.
-+* Standard I2C mux properties. See i2c-mux.txt in this directory.
-+* I2C child bus nodes. See i2c-mux.txt in this directory.
- 
- Optional properties:
- - reg: this pair of <offset size> specifies the register to control the mux.
-@@ -24,7 +24,7 @@ Optional properties:
-   given, it defaults to the last value used.
- 
- Whenever an access is made to a device on a child bus, the value set
--in the revelant node's reg property will be output to the register.
-+in the relevant node's reg property will be output to the register.
- 
- If an idle state is defined, using the idle-state (optional) property,
- whenever an access is not being made to a device on a child bus, the
--- 
-2.1.4
+Gr{oetje,eeting}s,
 
+                        Geert
+
+P.S. Root cause analysis: I was doing a bisection while making the release, and
+     my script picked up the version number from the bisection instead of from
+     the renesas-drivers branch. Script fixed.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
