@@ -1,9 +1,9 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:59851 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752418AbcF1OLK (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:34226 "EHLO
+	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752453AbcFPK1t (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 10:11:10 -0400
+	Thu, 16 Jun 2016 06:27:49 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>
@@ -13,14 +13,14 @@ Cc: Mark Rutland <mark.rutland@arm.com>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
 	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <damm+renesas@opensource.se>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 12/13] ARM: dts: r8a7791: Add APMU node
-Date: Tue, 28 Jun 2016 16:10:41 +0200
-Message-Id: <1467123042-8468-13-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
-References: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4 12/13] ARM: dts: r8a7791: Add APMU node
+Date: Thu, 16 Jun 2016 12:27:41 +0200
+Message-Id: <1466072862-28030-13-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1466072862-28030-1-git-send-email-geert+renesas@glider.be>
+References: <1466072862-28030-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -33,9 +33,6 @@ support.
 Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ----
-v5:
-  - No changes,
-
 v4:
   - Improve patch description,
   - Use "renesas,<soctype>-apmu" instead of "renesas,apmu-<soctype>",
