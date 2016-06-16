@@ -1,108 +1,56 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 10/20] drm: rockchip: Rely on the default ->best_encoder() behavior
-Date: Thu,  2 Jun 2016 16:31:37 +0200
-Message-Id: <1464877907-27723-11-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:48442 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753970AbcFPMem (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 16 Jun 2016 08:34:42 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	patches@opensource.wolfsonmicro.com,
+	linux-renesas-soc@vger.kernel.org, alsa-devel@alsa-project.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/3] ASoC: ak4613: Enable cache usage to fix crashes on resume
+Date: Thu, 16 Jun 2016 14:34:30 +0200
+Message-Id: <1466080472-9817-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1466080472-9817-1-git-send-email-geert+renesas@glider.be>
+References: <1466080472-9817-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All outputss have a 1:1 relationship between connectors and encoders
-and the driver is relying on the atomic helpers: we can drop the custom
-->best_encoder() implementations  and let the core call
-drm_atomic_helper_best_encoder() for us.
+During system resume:
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+    kernel BUG at drivers/base/regmap/regcache.c:347!
+    ...
+    PC is at regcache_sync+0x1c/0x128
+    LR is at ak4613_resume+0x28/0x34
+
+The ak4613 driver is using a regmap cache sync to restore the
+configuration of the chip on resume but does not actually define a
+register cache which means that the resume is never going to work and we
+trigger asserts in regmap.  Fix this by enabling caching.
+
+Based on commit d3030d11961a8c10 ("ASoC: ak4642: Enable cache usage to
+fix crashes on resume") by Mark Brown <broonie@kernel.org>.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/rockchip/dw-mipi-dsi.c | 9 ---------
- drivers/gpu/drm/rockchip/inno_hdmi.c   | 9 ---------
- 2 files changed, 18 deletions(-)
+ sound/soc/codecs/ak4613.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
-index dedc65b..ca22e5e 100644
---- a/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
-+++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi.c
-@@ -964,18 +964,9 @@ static enum drm_mode_status dw_mipi_dsi_mode_valid(
- 	return mode_status;
- }
- 
--static struct drm_encoder *dw_mipi_dsi_connector_best_encoder(
--					struct drm_connector *connector)
--{
--	struct dw_mipi_dsi *dsi = con_to_dsi(connector);
--
--	return &dsi->encoder;
--}
--
- static struct drm_connector_helper_funcs dw_mipi_dsi_connector_helper_funcs = {
- 	.get_modes = dw_mipi_dsi_connector_get_modes,
- 	.mode_valid = dw_mipi_dsi_mode_valid,
--	.best_encoder = dw_mipi_dsi_connector_best_encoder,
+diff --git a/sound/soc/codecs/ak4613.c b/sound/soc/codecs/ak4613.c
+index 33d2f2e10e2419d8..5013d2ba0c10a968 100644
+--- a/sound/soc/codecs/ak4613.c
++++ b/sound/soc/codecs/ak4613.c
+@@ -146,6 +146,7 @@ static const struct regmap_config ak4613_regmap_cfg = {
+ 	.max_register		= 0x16,
+ 	.reg_defaults		= ak4613_reg,
+ 	.num_reg_defaults	= ARRAY_SIZE(ak4613_reg),
++	.cache_type		= REGCACHE_RBTREE,
  };
  
- static enum drm_connector_status
-diff --git a/drivers/gpu/drm/rockchip/inno_hdmi.c b/drivers/gpu/drm/rockchip/inno_hdmi.c
-index f8b4feb..006260d 100644
---- a/drivers/gpu/drm/rockchip/inno_hdmi.c
-+++ b/drivers/gpu/drm/rockchip/inno_hdmi.c
-@@ -579,14 +579,6 @@ inno_hdmi_connector_mode_valid(struct drm_connector *connector,
- 	return MODE_OK;
- }
- 
--static struct drm_encoder *
--inno_hdmi_connector_best_encoder(struct drm_connector *connector)
--{
--	struct inno_hdmi *hdmi = to_inno_hdmi(connector);
--
--	return &hdmi->encoder;
--}
--
- static int
- inno_hdmi_probe_single_connector_modes(struct drm_connector *connector,
- 				       uint32_t maxX, uint32_t maxY)
-@@ -613,7 +605,6 @@ static struct drm_connector_funcs inno_hdmi_connector_funcs = {
- static struct drm_connector_helper_funcs inno_hdmi_connector_helper_funcs = {
- 	.get_modes = inno_hdmi_connector_get_modes,
- 	.mode_valid = inno_hdmi_connector_mode_valid,
--	.best_encoder = inno_hdmi_connector_best_encoder,
- };
- 
- static int inno_hdmi_register(struct drm_device *drm, struct inno_hdmi *hdmi)
+ static const struct of_device_id ak4613_of_match[] = {
 -- 
-2.7.4
+1.9.1
