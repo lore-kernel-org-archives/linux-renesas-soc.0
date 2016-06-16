@@ -1,41 +1,75 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:36320 "EHLO
+	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754625AbcFPWCz (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 16 Jun 2016 18:02:55 -0400
+Received: by mail-lf0-f53.google.com with SMTP id q132so49078112lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Jun 2016 15:02:54 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/2] ARM: dts: r8a7792: add JPU clocks
+Date: Fri, 17 Jun 2016 01:02:48 +0300
+Message-ID: <8298805.L3k84jpzv2@wasted.cogentembedded.com>
+In-Reply-To: <7346244.CEZI3u99oZ@wasted.cogentembedded.com>
+References: <7346244.CEZI3u99oZ@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <8298805.L3k84jpzv2@wasted.cogentembedded.com>
-References: <7346244.CEZI3u99oZ@wasted.cogentembedded.com> <8298805.L3k84jpzv2@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 17 Jun 2016 09:19:21 +0200
-Message-ID: <CAMuHMdWdcenxu-riFhpjZ3JbBYvkKjRWLvijVVBZvXy1tJHQ5w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: r8a7792: add JPU clocks
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	"open list:MEDIA DRIVERS FOR RENESAS - FCP"
-	<linux-renesas-soc@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: devicetree-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jun 17, 2016 at 12:02 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add JPU clock and its parent, M2 clock to the R8A7792 device tree.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add JPU clock and its parent, M2 clock to the R8A7792 device tree.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
+---
+ arch/arm/boot/dts/r8a7792.dtsi            |   16 ++++++++++++++++
+ include/dt-bindings/clock/r8a7792-clock.h |    1 +
+ 2 files changed, 17 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -280,8 +280,24 @@
+ 			clock-div = <48>;
+ 			clock-mult = <1>;
+ 		};
++		m2_clk: m2 {
++			compatible = "fixed-factor-clock";
++			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
++			#clock-cells = <0>;
++			clock-div = <8>;
++			clock-mult = <1>;
++		};
+ 
+ 		/* Gate clocks */
++		mstp1_clks: mstp1_clks@e6150134 {
++			compatible = "renesas,r8a7792-mstp-clocks",
++				     "renesas,cpg-mstp-clocks";
++			reg = <0 0xe6150134 0 4>, <0 0xe6150038 0 4>;
++			clocks = <&m2_clk>;
++			#clock-cells = <1>;
++			clock-indices = <R8A7792_CLK_JPU>;
++			clock-output-names = "jpu";
++		};
+ 		mstp2_clks: mstp2_clks@e6150138 {
+ 			compatible = "renesas,r8a7792-mstp-clocks",
+ 				     "renesas,cpg-mstp-clocks";
+Index: renesas/include/dt-bindings/clock/r8a7792-clock.h
+===================================================================
+--- renesas.orig/include/dt-bindings/clock/r8a7792-clock.h
++++ renesas/include/dt-bindings/clock/r8a7792-clock.h
+@@ -24,6 +24,7 @@
+ #define R8A7792_CLK_MSIOF0		0
+ 
+ /* MSTP1 */
++#define R8A7792_CLK_JPU			6
+ #define R8A7792_CLK_TMU1		11
+ #define R8A7792_CLK_TMU3		21
+ #define R8A7792_CLK_TMU2		22
