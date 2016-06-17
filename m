@@ -1,63 +1,89 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Sender: Kieran Bingham <kieran@ksquared.org.uk>
-From: Kieran Bingham <kieran@bingham.xyz>
-To: horms@verge.net.au,
-	linux-renesas-soc@vger.kernel.org
-Cc: magnus.damm@gmail.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kieran@bingham.xyz
-Subject: [PATCH v2 0/2] arm64: dts: r8a7795: FCPF and FDP1 device nodes
-Date: Thu, 30 Jun 2016 14:32:41 +0100
-Message-Id: <1467293563-940-1-git-send-email-kieran@bingham.xyz>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45520 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932183AbcFQLn2 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 17 Jun 2016 07:43:28 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org, alsa-devel@alsa-project.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	patches@opensource.wolfsonmicro.com,
+	Peter Ujfalusi <peter.ujfalusi@ti.com>
+In-Reply-To: <1466080472-9817-2-git-send-email-geert+renesas@glider.be>
+Message-Id: <E1bDsBC-00024E-CC@debutante>
+Date: Fri, 17 Jun 2016 12:43:18 +0100
+Subject: Applied "ASoC: ak4613: Enable cache usage to fix crashes on resume" to the asoc tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+The patch
 
-Here is my updated series for the dts updates in relation to the RCar/FDP1.
+   ASoC: ak4613: Enable cache usage to fix crashes on resume
 
-The fcpf patch has collected a reviewed-by from Geert, whilst the fdp1
-patch has collected a reviewed by from both Laurent and Geert, with a
-small change to remove the labels, as they will not be referenced.
+has been applied to the asoc tree at
 
-You responded to my previous set for these with the following comment:
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-> These patches look good to me. My assumption is that they
-> can be applied without causing any breakage and that the
-> relevant features will start working once driver support
-> shows up in the kernel.
-> 
-> If the above assumption is correct then please let me know when the
-> bindings have been accepted by the relevant subsystem maintainer(s).
-> 
-> If the patches need rebasing at that time then please repost them.
-> Otherwise you can either repost them or ping me as a response to this thread.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Your assumption was correct, and they could be applied without breakage.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-RobH has acked the binding for the RCar FCPF, but I have not seen an ack for
-the FDP1 binding yet. I'll follow that up, and ping you on the fdp1 dts patch
-when it resolved.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Regards
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Kieran
+Thanks,
+Mark
 
---
+>From dcd2d1f78664fdc75eadaaf65257834e24383d01 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Thu, 16 Jun 2016 14:34:30 +0200
+Subject: [PATCH] ASoC: ak4613: Enable cache usage to fix crashes on resume
 
-Kieran Bingham (2):
-  arm64: dts: r8a7795: add FCPF device nodes
-  arm64: dts: r8a7795: add FDP1 device nodes
+During system resume:
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 48 ++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+    kernel BUG at drivers/base/regmap/regcache.c:347!
+    ...
+    PC is at regcache_sync+0x1c/0x128
+    LR is at ak4613_resume+0x28/0x34
 
+The ak4613 driver is using a regmap cache sync to restore the
+configuration of the chip on resume but does not actually define a
+register cache which means that the resume is never going to work and we
+trigger asserts in regmap.  Fix this by enabling caching.
+
+Based on commit d3030d11961a8c10 ("ASoC: ak4642: Enable cache usage to
+fix crashes on resume") by Mark Brown <broonie@kernel.org>.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/ak4613.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/soc/codecs/ak4613.c b/sound/soc/codecs/ak4613.c
+index 33d2f2e10e24..5013d2ba0c10 100644
+--- a/sound/soc/codecs/ak4613.c
++++ b/sound/soc/codecs/ak4613.c
+@@ -146,6 +146,7 @@ static const struct regmap_config ak4613_regmap_cfg = {
+ 	.max_register		= 0x16,
+ 	.reg_defaults		= ak4613_reg,
+ 	.num_reg_defaults	= ARRAY_SIZE(ak4613_reg),
++	.cache_type		= REGCACHE_RBTREE,
+ };
+ 
+ static const struct of_device_id ak4613_of_match[] = {
 -- 
-2.7.4
+2.8.1
