@@ -1,50 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f179.google.com ([209.85.223.179]:36012 "EHLO
-	mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933415AbcFQNA1 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:20791 "EHLO
+	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S932183AbcFQMbz (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 17 Jun 2016 09:00:27 -0400
-MIME-Version: 1.0
-In-Reply-To: <1466166314-10996-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1466166314-10996-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 17 Jun 2016 15:00:23 +0200
-Message-ID: <CAMuHMdUufppSHD3J_0j3z0LCXJxQ3rbhUa4+cQVdQ73EWZz-fw@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7795: Add DRIF clock
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"open list:MEDIA DRIVERS FOR RENESAS - FCP"
-	<linux-renesas-soc@vger.kernel.org>,
-	Chris Paterson <chris.paterson2@renesas.com>
-Content-Type: text/plain; charset=UTF-8
+	Fri, 17 Jun 2016 08:31:55 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: mturquette@baylibre.com, sboyd@codeaurora.org,
+	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	chris.paterson2@renesas.com,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH] clk: renesas: r8a7795: Add DRIF clock
+Date: Fri, 17 Jun 2016 13:25:14 +0100
+Message-Id: <1466166314-10996-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ramesh,
+This patch adds DRIF module clocks for r8a7795 SoC.
 
-On Fri, Jun 17, 2016 at 2:25 PM, Ramesh Shanmugasundaram
-<ramesh.shanmugasundaram@bp.renesas.com> wrote:
-> This patch adds DRIF module clocks for r8a7795 SoC.
->
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Thanks!
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-(i.e. will queue in clk-renesas-for-v4.8)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index ad01b0b..b9485ab 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -138,6 +138,14 @@ static const struct mssr_mod_clk r8a7795_mod_clks[] __initconst = {
+ 	DEF_MOD("intc-ap",		 408,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("audmac0",		 502,	R8A7795_CLK_S3D4),
+ 	DEF_MOD("audmac1",		 501,	R8A7795_CLK_S3D4),
++	DEF_MOD("drif7",		 508,	R8A7795_CLK_S3D2),
++	DEF_MOD("drif6",		 509,	R8A7795_CLK_S3D2),
++	DEF_MOD("drif5",		 510,	R8A7795_CLK_S3D2),
++	DEF_MOD("drif4",		 511,	R8A7795_CLK_S3D2),
++	DEF_MOD("drif3",		 512,	R8A7795_CLK_S3D2),
++	DEF_MOD("drif2",		 513,	R8A7795_CLK_S3D2),
++	DEF_MOD("drif1",		 514,	R8A7795_CLK_S3D2),
++	DEF_MOD("drif0",		 515,	R8A7795_CLK_S3D2),
+ 	DEF_MOD("hscif4",		 516,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("hscif3",		 517,	R8A7795_CLK_S3D1),
+ 	DEF_MOD("hscif2",		 518,	R8A7795_CLK_S3D1),
+-- 
+1.9.1
