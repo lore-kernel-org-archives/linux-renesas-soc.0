@@ -1,100 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:45342
-	"EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751956AbcF1Lcq (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:47505 "EHLO
+	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754850AbcFQI1u (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 07:32:46 -0400
-Date: Tue, 28 Jun 2016 08:32:38 -0300
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-	ian.molton@codethink.co.uk, lars@metafoo.de,
-	william.towle@codethink.co.uk
-Subject: Re: [PATCH v4 3/8] media: rcar_vin: Use correct pad number in
- try_fmt
-Message-ID: <20160628083238.5fe7e32b@recife.lan>
-In-Reply-To: <1462975376-491-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1462975376-491-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-	<1462975376-491-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+	Fri, 17 Jun 2016 04:27:50 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: davem@davemloft.net
+Cc: mkl@pengutronix.de, wg@grandegger.com, socketcan@hartkopp.net,
+	linux-can@vger.kernel.org, netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
+	magnus.damm@gmail.com, chris.paterson2@renesas.com,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [[RESEND]PATCH v7 2/2] can: rcar_can: Move Renesas CAN driver to rcar dir
+Date: Fri, 17 Jun 2016 09:20:56 +0100
+Message-Id: <1466151656-51147-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1466151656-51147-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1465888372-38319-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1466151656-51147-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Em Wed, 11 May 2016 16:02:51 +0200
-Ulrich Hecht <ulrich.hecht+renesas@gmail.com> escreveu:
+This patch clubs the Renesas controller drivers in one rcar dir.
 
-> Fix rcar_vin_try_fmt's use of an inappropriate pad number when calling
-> the subdev set_fmt function - for the ADV7612, IDs should be non-zero.
-> 
-> Signed-off-by: William Towle <william.towle@codethink.co.uk>
-> Reviewed-by: Rob Taylor <rob.taylor@codethink.co.uk>
-> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-> [uli: adapted to rcar-vin rewrite]
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+ drivers/net/can/Kconfig               | 10 ----------
+ drivers/net/can/Makefile              |  1 -
+ drivers/net/can/rcar/Kconfig          | 10 ++++++++++
+ drivers/net/can/rcar/Makefile         |  3 ++-
+ drivers/net/can/{ => rcar}/rcar_can.c |  0
+ 5 files changed, 12 insertions(+), 12 deletions(-)
+ rename drivers/net/can/{ => rcar}/rcar_can.c (100%)
 
-Please use [email@domain: some revierwer note], as stated at Documentation/SubmittingPatches.
-
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-
-This patch breaks compilation:
-
-drivers/media/platform/rcar-vin/rcar-v4l2.c: In function '__rvin_try_format_source':
-drivers/media/platform/rcar-vin/rcar-v4l2.c:115:18: error: 'struct rvin_dev' has no member named 'src_pad_idx'
-  format.pad = vin->src_pad_idx;
-                  ^~
-
-
-
-> ---
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> index 0bc4487..42dbd35 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -98,7 +98,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
->  					struct rvin_source_fmt *source)
->  {
->  	struct v4l2_subdev *sd;
-> -	struct v4l2_subdev_pad_config pad_cfg;
-> +	struct v4l2_subdev_pad_config *pad_cfg;
->  	struct v4l2_subdev_format format = {
->  		.which = which,
->  	};
-> @@ -108,10 +108,16 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
->  
->  	v4l2_fill_mbus_format(&format.format, pix, vin->source.code);
->  
-> +	pad_cfg = v4l2_subdev_alloc_pad_config(sd);
-> +	if (pad_cfg == NULL)
-> +		return -ENOMEM;
-> +
-> +	format.pad = vin->src_pad_idx;
-> +
->  	ret = v4l2_device_call_until_err(sd->v4l2_dev, 0, pad, set_fmt,
-> -					 &pad_cfg, &format);
-> +					 pad_cfg, &format);
->  	if (ret < 0)
-> -		return ret;
-> +		goto cleanup;
->  
->  	v4l2_fill_pix_format(pix, &format.format);
->  
-> @@ -121,6 +127,8 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
->  	vin_dbg(vin, "Source resolution: %ux%u\n", source->width,
->  		source->height);
->  
-> +cleanup:
-> +	v4l2_subdev_free_pad_config(pad_cfg);
->  	return 0;
->  }
->  
-
-
-
-Thanks,
-Mauro
+diff --git a/drivers/net/can/Kconfig b/drivers/net/can/Kconfig
+index 13003a9..22570ea 100644
+--- a/drivers/net/can/Kconfig
++++ b/drivers/net/can/Kconfig
+@@ -104,16 +104,6 @@ config CAN_JANZ_ICAN3
+ 	  This driver can also be built as a module. If so, the module will be
+ 	  called janz-ican3.ko.
+ 
+-config CAN_RCAR
+-	tristate "Renesas R-Car CAN controller"
+-	depends on ARCH_RENESAS || ARM
+-	---help---
+-	  Say Y here if you want to use CAN controller found on Renesas R-Car
+-	  SoCs.
+-
+-	  To compile this driver as a module, choose M here: the module will
+-	  be called rcar_can.
+-
+ config CAN_SUN4I
+ 	tristate "Allwinner A10 CAN controller"
+ 	depends on MACH_SUN4I || MACH_SUN7I || COMPILE_TEST
+diff --git a/drivers/net/can/Makefile b/drivers/net/can/Makefile
+index 226d5b5..26ba4b7 100644
+--- a/drivers/net/can/Makefile
++++ b/drivers/net/can/Makefile
+@@ -25,7 +25,6 @@ obj-$(CONFIG_CAN_IFI_CANFD)	+= ifi_canfd/
+ obj-$(CONFIG_CAN_JANZ_ICAN3)	+= janz-ican3.o
+ obj-$(CONFIG_CAN_MSCAN)		+= mscan/
+ obj-$(CONFIG_CAN_M_CAN)		+= m_can/
+-obj-$(CONFIG_CAN_RCAR)		+= rcar_can.o
+ obj-$(CONFIG_CAN_SJA1000)	+= sja1000/
+ obj-$(CONFIG_CAN_SUN4I)		+= sun4i_can.o
+ obj-$(CONFIG_CAN_TI_HECC)	+= ti_hecc.o
+diff --git a/drivers/net/can/rcar/Kconfig b/drivers/net/can/rcar/Kconfig
+index 6ea64d1..7b03a3a 100644
+--- a/drivers/net/can/rcar/Kconfig
++++ b/drivers/net/can/rcar/Kconfig
+@@ -1,3 +1,13 @@
++config CAN_RCAR
++	tristate "Renesas R-Car CAN controller"
++	depends on ARCH_RENESAS || ARM
++	---help---
++	  Say Y here if you want to use CAN controller found on Renesas R-Car
++	  SoCs.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called rcar_can.
++
+ config CAN_RCAR_CANFD
+ 	tristate "Renesas R-Car CAN FD controller"
+ 	depends on ARCH_RENESAS || ARM
+diff --git a/drivers/net/can/rcar/Makefile b/drivers/net/can/rcar/Makefile
+index cbaf498e..08de36a 100644
+--- a/drivers/net/can/rcar/Makefile
++++ b/drivers/net/can/rcar/Makefile
+@@ -1,5 +1,6 @@
+ #
+-#  Makefile for the Renesas R-Car CAN FD controller driver
++#  Makefile for the Renesas R-Car CAN & CAN FD controller drivers
+ #
+ 
++obj-$(CONFIG_CAN_RCAR)		+= rcar_can.o
+ obj-$(CONFIG_CAN_RCAR_CANFD)	+= rcar_canfd.o
+diff --git a/drivers/net/can/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
+similarity index 100%
+rename from drivers/net/can/rcar_can.c
+rename to drivers/net/can/rcar/rcar_can.c
+-- 
+1.9.1
