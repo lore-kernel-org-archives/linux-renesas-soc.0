@@ -1,111 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57320 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751671AbcFVDtv (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45554 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932315AbcFQLnd (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 21 Jun 2016 23:49:51 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 12/13] ARM: dts: alt: use demuxer for I2C4
-Date: Wed, 22 Jun 2016 12:43:50 +0900
-Message-Id: <1466567031-20381-13-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
-References: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
+	Fri, 17 Jun 2016 07:43:33 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+	Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org, alsa-devel@alsa-project.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	patches@opensource.wolfsonmicro.com,
+	Peter Ujfalusi <peter.ujfalusi@ti.com>
+In-Reply-To: <1466080472-9817-4-git-send-email-geert+renesas@glider.be>
+Message-Id: <E1bDsBI-000269-6C@debutante>
+Date: Fri, 17 Jun 2016 12:43:24 +0100
+Subject: Applied "ASoC: wm8940: Enable cache usage to fix crashes on resume" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make it possible to fallback to GPIO for I2C4 on the EXIO-B connector.
+The patch
 
-This is based on reference work for the I2C0 core of the lager/r8a7790
-by Wolfram Sang.
+   ASoC: wm8940: Enable cache usage to fix crashes on resume
 
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 50c7a0ef2d97e56c7ce2f1ea5fe1d8e25aadc1bb Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Thu, 16 Jun 2016 14:34:32 +0200
+Subject: [PATCH] ASoC: wm8940: Enable cache usage to fix crashes on resume
+
+The wm8940 driver is using a regmap cache sync to restore the
+configuration of the chip when switching from OFF to STANDBY, but does
+not actually define a register cache which means that the restore is
+never going to work and we trigger asserts in regmap.  Fix this by
+enabling caching.
+
+Based on commit d3030d11961a8c10 ("ASoC: ak4642: Enable cache usage to
+fix crashes on resume") by Mark Brown <broonie@kernel.org>.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-v3
-* New Patch
----
- arch/arm/boot/dts/r8a7794-alt.dts | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ sound/soc/codecs/wm8940.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index d00b1b33f6ed..10f72e700685 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -19,7 +19,9 @@
- 	aliases {
- 		serial0 = &scif2;
- 		i2c9 = "gpioi2c1";
-+		i2c10 = "gpioi2c4";
- 		i2c11 = "i2chdmi";
-+		i2c12 = "i2cexio4";
- 	};
+diff --git a/sound/soc/codecs/wm8940.c b/sound/soc/codecs/wm8940.c
+index f6f9395ea38e..1c600819f768 100644
+--- a/sound/soc/codecs/wm8940.c
++++ b/sound/soc/codecs/wm8940.c
+@@ -743,6 +743,7 @@ static const struct regmap_config wm8940_regmap = {
+ 	.max_register = WM8940_MONOMIX,
+ 	.reg_defaults = wm8940_reg_defaults,
+ 	.num_reg_defaults = ARRAY_SIZE(wm8940_reg_defaults),
++	.cache_type = REGCACHE_RBTREE,
  
- 	chosen {
-@@ -92,6 +94,17 @@
- 		i2c-gpio,delay-us = <5>;
- 	};
- 
-+	gpioi2c4: i2c-10 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		gpios = <&gpio4 9 GPIO_ACTIVE_HIGH /* sda */
-+			 &gpio4 8 GPIO_ACTIVE_HIGH /* scl */
-+			>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
- 	/*
- 	 * A fallback to GPIO is provided for I2C1.
- 	 */
-@@ -115,6 +128,18 @@
- 			};
- 		};
- 	};
-+
-+	/*
-+	 * I2C4 is routed to EXIO connector B, pins 73 (SCL) + 74 (SDA).
-+	 * A fallback to GPIO is provided.
-+	 */
-+	i2cexio4: i2c-14 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c4>, <&gpioi2c4>;
-+		i2c-bus-name = "i2c-exio4";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
- };
- 
- &du {
-@@ -174,6 +199,11 @@
- 		function = "i2c1";
- 	};
- 
-+	i2c4_pins: i2c4 {
-+		groups = "i2c4";
-+		function = "i2c4";
-+	};
-+
- 	vin0_pins: vin0 {
- 		groups = "vin0_data8", "vin0_clk";
- 		function = "vin0";
-@@ -214,6 +244,11 @@
- 	clock-frequency = <400000>;
- };
- 
-+&i2c4 {
-+	pinctrl-0 = <&i2c4_pins>;
-+	pinctrl-names = "i2c-exio4";
-+};
-+
- &vin0 {
- 	status = "okay";
- 	pinctrl-0 = <&vin0_pins>;
+ 	.readable_reg = wm8940_readable_register,
+ 	.volatile_reg = wm8940_volatile_register,
 -- 
-2.1.4
+2.8.1
