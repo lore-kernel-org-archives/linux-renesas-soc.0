@@ -1,85 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:53136 "EHLO
-	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754485AbcFQIae (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:47505 "EHLO
+	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752337AbcFQI1p (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 17 Jun 2016 04:30:34 -0400
-Subject: Re: [[RESEND]PATCH v7 0/2] Add CAN FD driver support to r8a7795 SoC
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-	davem@davemloft.net
-References: <1465888372-38319-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <1466151656-51147-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Cc: wg@grandegger.com, socketcan@hartkopp.net,
+	Fri, 17 Jun 2016 04:27:45 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: davem@davemloft.net
+Cc: mkl@pengutronix.de, wg@grandegger.com, socketcan@hartkopp.net,
 	linux-can@vger.kernel.org, netdev@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
-	magnus.damm@gmail.com, chris.paterson2@renesas.com
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Message-ID: <6823878d-743d-8dfd-3128-3e5794265b15@pengutronix.de>
-Date: Fri, 17 Jun 2016 10:30:17 +0200
-MIME-Version: 1.0
-In-Reply-To: <1466151656-51147-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="EUe0eewVC1xjkngquWJBOjsuqMGbG5gws"
+	magnus.damm@gmail.com, chris.paterson2@renesas.com,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [[RESEND]PATCH v7 0/2] Add CAN FD driver support to r8a7795 SoC
+Date: Fri, 17 Jun 2016 09:20:54 +0100
+Message-Id: <1466151656-51147-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1465888372-38319-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1465888372-38319-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---EUe0eewVC1xjkngquWJBOjsuqMGbG5gws
-Content-Type: multipart/mixed; boundary="pr2SamgwnX6Tk0ut55NeMtqVNrD25hQbq"
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
- davem@davemloft.net
-Cc: wg@grandegger.com, socketcan@hartkopp.net, linux-can@vger.kernel.org,
- netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- horms@verge.net.au, magnus.damm@gmail.com, chris.paterson2@renesas.com
-Message-ID: <6823878d-743d-8dfd-3128-3e5794265b15@pengutronix.de>
-Subject: Re: [[RESEND]PATCH v7 0/2] Add CAN FD driver support to r8a7795 SoC
-References: <1465888372-38319-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <1466151656-51147-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1466151656-51147-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+--------------
+Hello David M,
 
---pr2SamgwnX6Tk0ut55NeMtqVNrD25hQbq
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+   Would it be possible for you to consider this patch please?
 
-On 06/17/2016 10:20 AM, Ramesh Shanmugasundaram wrote:
->    Would it be possible for you to consider this patch please?
->=20
->    This patch set has undergone multiple reviews as in the change histo=
-ry
->    below. We would be grateful if you could consider accepting this pat=
-ch as
->    Marc K appears to be inactive and we haven't heard from him since Ma=
-rch.
+   This patch set has undergone multiple reviews as in the change history
+   below. We would be grateful if you could consider accepting this patch as
+   Marc K appears to be inactive and we haven't heard from him since March.
 
-I'll take the patch.
+Thanks,
+Ramesh
+--------------
 
-Marc
+Hi All,
 
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+   This patch is based on can-next latest tag "linux-can-next-for-4.7-20160509"
+
+Changes since v6:
+	* Corrected two register definitions as pointed out by Ulrich
+	* Added Ulrich's Reviewed-by: tag
+
+Changes since v5:
+	* Addressed Ulrich's concerns on register, bits naming convention
+	* Rebased to latest tag (linux-can-next-for-4.7-20160509)
+
+Changes since v4:
+	* Rebased to latest can-next/testing branch
+	* Addressed Marc K review comments on v2 patch
+	* Use clk_get_rate() to find ext clock availability. Refer thread
+	(https://lkml.org/lkml/2016/4/8/203)
+
+Changes since v3:
+	* Split v3 patch into two (Marc K)
+	  (1) Introduce rcar_canfd.c driver in drivers/net/can/rcar dir
+	  (2) Move rcar_can.c driver to new drivers/net/can/rcar dir
+	* Added Acked-by Rob H for the bindings
+	* Added comments on CAN FD only mode in driver & Kconfig (Oliver H)
+
+Changes since v2:
+	* Rebased to latest tag (linux-can-next-for-4.6-20160310)
+	* Cleaned up leftover debugfs code (Thanks Oliver H)
+	* Revised devicetree documentation text (as suggested by Rob H)
+	  (https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg01597.html)
+	* Used new can subsystem api to set static configuration & removed check in rcar_canfd_start (as suggested by Oliver H)
+	  (Refer: http://comments.gmane.org/gmane.linux.can/9126 &
+	   https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg01867.html)
+	* Clubbed Renesas controller drivers to driver/net/can/rcar dir (as suggested by Oliver H)
+	* Updated commit message
+
+Changes since v1:
+	* Removed testmodes & debugfs code (suggested by Oliver H)
+	* Fixed tx path race issue by introducing lock (suggested by Marc K)
+	* Removed __maybe_unused attribute of rcar_canfd_of_table
 
 
---pr2SamgwnX6Tk0ut55NeMtqVNrD25hQbq--
+Ramesh Shanmugasundaram (2):
+  can: rcar_canfd: Add Renesas R-Car CAN FD driver
+  can: rcar_can: Move Renesas CAN driver to rcar dir
 
---EUe0eewVC1xjkngquWJBOjsuqMGbG5gws
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+ .../devicetree/bindings/net/can/rcar_canfd.txt     |   89 +
+ drivers/net/can/Kconfig                            |   11 +-
+ drivers/net/can/Makefile                           |    2 +-
+ drivers/net/can/rcar/Kconfig                       |   21 +
+ drivers/net/can/rcar/Makefile                      |    6 +
+ drivers/net/can/{ => rcar}/rcar_can.c              |    0
+ drivers/net/can/rcar/rcar_canfd.c                  | 1695 ++++++++++++++++++++
+ 7 files changed, 1813 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/can/rcar_canfd.txt
+ create mode 100644 drivers/net/can/rcar/Kconfig
+ create mode 100644 drivers/net/can/rcar/Makefile
+ rename drivers/net/can/{ => rcar}/rcar_can.c (100%)
+ create mode 100644 drivers/net/can/rcar/rcar_canfd.c
 
------BEGIN PGP SIGNATURE-----
-
-iQEcBAEBCgAGBQJXY7UZAAoJED07qiWsqSVqohEH/jIPxSTW/fYeg6SDNViz6c4l
-dCzN3d8j/y4dgsM47BjvjPDJmyYvO8CXD5GCxpF0fiLFxOgy+xs5ipQ9AitquCAM
-3Q+td8Bky3bGhxSgz7g8TzVa4rtX3T7hWbfqpkE6Nq2wvUcpS6kfL8qFchyBHYUG
-uKrV2IZUsp9avIUw7/IBWvXL+rU/yy9hV+WvrwwFc1NhycfO8g+npjyA14ALw1Xy
-XfBNUE2hDZWHJCLkTw9Cmjd9pTk7TwP8gHEUbxGftvlHVlm+fANizSfvkPlz4ttg
-rVxnBKxTGAvH0Zp1fiszriW7lunpx6hnFS4L+kN0iduNAbXp2pf35xTaszTp3Aw=
-=g2sc
------END PGP SIGNATURE-----
-
---EUe0eewVC1xjkngquWJBOjsuqMGbG5gws--
+-- 
+1.9.1
