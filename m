@@ -1,161 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:38684 "EHLO
-	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753724AbcFGHy5 (ORCPT
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:33449 "EHLO
+	mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751300AbcFQP5p (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 03:54:57 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-	iommu@lists.linux-foundation.org, linux@armlinux.org.uk
-Cc: hch@infradead.org, dan.j.williams@intel.com, vinod.koul@intel.com,
-	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	linus.walleij@linaro.org, arnd@arndb.de,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv8 2/6] dma-debug: add support for resource mappings
-Date: Tue,  7 Jun 2016 09:54:09 +0200
-Message-Id: <1465286053-27258-3-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1465286053-27258-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1465286053-27258-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+	Fri, 17 Jun 2016 11:57:45 -0400
+Received: by mail-oi0-f68.google.com with SMTP id e205so14475411oig.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jun 2016 08:57:45 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <1466072862-28030-6-git-send-email-geert+renesas@glider.be>
+References: <1466072862-28030-1-git-send-email-geert+renesas@glider.be> <1466072862-28030-6-git-send-email-geert+renesas@glider.be>
+From: Ulrich Hecht <ulrich.hecht@gmail.com>
+Date: Fri, 17 Jun 2016 17:57:44 +0200
+Message-ID: <CAO3366xJnRVbnrG+zvU=hb_g=aaYUH06JPDdtKkv3w+c4uv=+g@mail.gmail.com>
+Subject: Re: [PATCH v4 05/13] soc: renesas: rcar-sysc: Improve SYSC interrupt
+ config in legacy wrapper
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-renesas-soc@vger.kernel.org,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-A MMIO mapped resource can not be represented by a struct page so a new
-debug type is needed to handle this. This patch add such type and
-functionality to add/remove entries and how to translate them to a
-physical address.
+On Thu, Jun 16, 2016 at 12:27 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> Align SYSC interrupt configuration in the legacy wrapper with the DT
+> version:
+>   - Mask SYSC interrupt sources before enabling them (doesn't matter
+>     much as they're disabled at the GIC level anyway),
+>   - Make sure not to clear reserved SYSCIMR bits that were set before.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v4:
+>   - New.
+> ---
+>  drivers/soc/renesas/rcar-sysc.c | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+> index 22f0d646225c444e..65c8e1eb90c09bb3 100644
+> --- a/drivers/soc/renesas/rcar-sysc.c
+> +++ b/drivers/soc/renesas/rcar-sysc.c
+> @@ -402,12 +402,25 @@ early_initcall(rcar_sysc_pd_init);
+>
+>  void __init rcar_sysc_init(phys_addr_t base, u32 syscier)
+>  {
+> +       u32 syscimr;
+> +
+>         if (!rcar_sysc_pd_init())
+>                 return;
+>
+>         rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
+>
+> -       /* enable all interrupt sources, but do not use interrupt handler */
+> +       /*
+> +        * Mask all interrupt sources to prevent the CPU from receiving them.
+> +        * Make sure not to clear reserved bits that were set before.
+> +        */
+> +       syscimr = ioread32(rcar_sysc_base + SYSCIMR);
+> +       syscimr |= syscier;
+> +       pr_debug("%s: syscimr = 0x%08x\n", __func__, syscimr);
+> +       iowrite32(syscimr, rcar_sysc_base + SYSCIMR);
+> +
+> +       /*
+> +        * SYSC needs all interrupt sources enabled to control power.
+> +        */
+> +       pr_debug("%s: syscier = 0x%08x\n", __func__, syscier);
+>         iowrite32(syscier, rcar_sysc_base + SYSCIER);
+> -       iowrite32(0, rcar_sysc_base + SYSCIMR);
+>  }
+> --
+> 1.9.1
+>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- include/linux/dma-debug.h | 19 +++++++++++++++++
- lib/dma-debug.c           | 52 +++++++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 69 insertions(+), 2 deletions(-)
+Reviewed-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-diff --git a/include/linux/dma-debug.h b/include/linux/dma-debug.h
-index fe8cb61..c7d844f 100644
---- a/include/linux/dma-debug.h
-+++ b/include/linux/dma-debug.h
-@@ -56,6 +56,13 @@ extern void debug_dma_alloc_coherent(struct device *dev, size_t size,
- extern void debug_dma_free_coherent(struct device *dev, size_t size,
- 				    void *virt, dma_addr_t addr);
- 
-+extern void debug_dma_map_resource(struct device *dev, phys_addr_t addr,
-+				   size_t size, int direction,
-+				   dma_addr_t dma_addr);
-+
-+extern void debug_dma_unmap_resource(struct device *dev, dma_addr_t dma_addr,
-+				     size_t size, int direction);
-+
- extern void debug_dma_sync_single_for_cpu(struct device *dev,
- 					  dma_addr_t dma_handle, size_t size,
- 					  int direction);
-@@ -141,6 +148,18 @@ static inline void debug_dma_free_coherent(struct device *dev, size_t size,
- {
- }
- 
-+static inline void debug_dma_map_resource(struct device *dev, phys_addr_t addr,
-+					  size_t size, int direction,
-+					  dma_addr_t dma_addr)
-+{
-+}
-+
-+static inline void debug_dma_unmap_resource(struct device *dev,
-+					    dma_addr_t dma_addr, size_t size,
-+					    int direction)
-+{
-+}
-+
- static inline void debug_dma_sync_single_for_cpu(struct device *dev,
- 						 dma_addr_t dma_handle,
- 						 size_t size, int direction)
-diff --git a/lib/dma-debug.c b/lib/dma-debug.c
-index 51a76af..ce75fba 100644
---- a/lib/dma-debug.c
-+++ b/lib/dma-debug.c
-@@ -43,6 +43,7 @@ enum {
- 	dma_debug_page,
- 	dma_debug_sg,
- 	dma_debug_coherent,
-+	dma_debug_resource,
- };
- 
- enum map_err_types {
-@@ -150,8 +151,9 @@ static const char *const maperr2str[] = {
- 	[MAP_ERR_CHECKED] = "dma map error checked",
- };
- 
--static const char *type2name[4] = { "single", "page",
--				    "scather-gather", "coherent" };
-+static const char *type2name[5] = { "single", "page",
-+				    "scather-gather", "coherent",
-+				    "resource" };
- 
- static const char *dir2name[4] = { "DMA_BIDIRECTIONAL", "DMA_TO_DEVICE",
- 				   "DMA_FROM_DEVICE", "DMA_NONE" };
-@@ -397,6 +399,9 @@ static void hash_bucket_del(struct dma_debug_entry *entry)
- 
- static unsigned long long phys_addr(struct dma_debug_entry *entry)
- {
-+	if (entry->type == dma_debug_resource)
-+		return __pfn_to_phys(entry->pfn) + entry->offset;
-+
- 	return page_to_phys(pfn_to_page(entry->pfn)) + entry->offset;
- }
- 
-@@ -1493,6 +1498,49 @@ void debug_dma_free_coherent(struct device *dev, size_t size,
- }
- EXPORT_SYMBOL(debug_dma_free_coherent);
- 
-+void debug_dma_map_resource(struct device *dev, phys_addr_t addr, size_t size,
-+			    int direction, dma_addr_t dma_addr)
-+{
-+	struct dma_debug_entry *entry;
-+
-+	if (unlikely(dma_debug_disabled()))
-+		return;
-+
-+	entry = dma_entry_alloc();
-+	if (!entry)
-+		return;
-+
-+	entry->type		= dma_debug_resource;
-+	entry->dev		= dev;
-+	entry->pfn		= __phys_to_pfn(addr);
-+	entry->offset		= offset_in_page(addr);
-+	entry->size		= size;
-+	entry->dev_addr		= dma_addr;
-+	entry->direction	= direction;
-+	entry->map_err_type	= MAP_ERR_NOT_CHECKED;
-+
-+	add_dma_entry(entry);
-+}
-+EXPORT_SYMBOL(debug_dma_map_resource);
-+
-+void debug_dma_unmap_resource(struct device *dev, dma_addr_t dma_addr,
-+			      size_t size, int direction)
-+{
-+	struct dma_debug_entry ref = {
-+		.type           = dma_debug_resource,
-+		.dev            = dev,
-+		.dev_addr       = dma_addr,
-+		.size           = size,
-+		.direction      = direction,
-+	};
-+
-+	if (unlikely(dma_debug_disabled()))
-+		return;
-+
-+	check_unmap(&ref);
-+}
-+EXPORT_SYMBOL(debug_dma_unmap_resource);
-+
- void debug_dma_sync_single_for_cpu(struct device *dev, dma_addr_t dma_handle,
- 				   size_t size, int direction)
- {
--- 
-2.8.2
+CU
+Uli
