@@ -1,177 +1,41 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57320 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751523AbcFVDtp (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 21 Jun 2016 23:49:45 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <8298805.L3k84jpzv2@wasted.cogentembedded.com>
+References: <7346244.CEZI3u99oZ@wasted.cogentembedded.com> <8298805.L3k84jpzv2@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 17 Jun 2016 09:19:21 +0200
+Message-ID: <CAMuHMdWdcenxu-riFhpjZ3JbBYvkKjRWLvijVVBZvXy1tJHQ5w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: r8a7792: add JPU clocks
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	"open list:MEDIA DRIVERS FOR RENESAS - FCP"
+	<linux-renesas-soc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 09/13] ARM: dts: porter: use demuxer for I2C2
-Date: Wed, 22 Jun 2016 12:43:47 +0900
-Message-Id: <1466567031-20381-10-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
-References: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for HDMI related I2C2 and provide fallback to GPIO.
+On Fri, Jun 17, 2016 at 12:02 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add JPU clock and its parent, M2 clock to the R8A7792 device tree.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Based on work for the r8a7790/lager by Wolfram Sang.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v3
-* New patch
----
- arch/arm/boot/dts/r8a7793-gose.dts | 114 ++++++++++++++++++++++---------------
- 1 file changed, 69 insertions(+), 45 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 90af18600124..2c8c8a4852c8 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -48,6 +48,8 @@
- 	aliases {
- 		serial0 = &scif0;
- 		serial1 = &scif1;
-+		i2c9 = "gpioi2c2";
-+		i2c11 = "i2chdmi";
- 	};
- 
- 	chosen {
-@@ -275,6 +277,72 @@
- 		#clock-cells = <0>;
- 		clock-frequency = <148500000>;
- 	};
-+
-+	gpioi2c2: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		gpios = <&gpio2 7 GPIO_ACTIVE_HIGH /* sda */
-+			 &gpio2 6 GPIO_ACTIVE_HIGH /* scl */
-+			>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
-+	/*
-+	 * A fallback to GPIO is provided for I2C2.
-+	 */
-+	i2chdmi: i2c-11 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c2>, <&gpioi2c2>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ak4643: codec@12 {
-+			compatible = "asahi-kasei,ak4643";
-+			#sound-dai-cells = <0>;
-+			reg = <0x12>;
-+		};
-+
-+		hdmi@39 {
-+			compatible = "adi,adv7511w";
-+			reg = <0x39>;
-+			interrupt-parent = <&gpio3>;
-+			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
-+
-+			adi,input-depth = <8>;
-+			adi,input-colorspace = "rgb";
-+			adi,input-clock = "1x";
-+			adi,input-style = <1>;
-+			adi,input-justification = "evenly";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7511_in: endpoint {
-+						remote-endpoint = <&du_out_rgb>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					adv7511_out: endpoint {
-+						remote-endpoint = <&hdmi_con>;
-+					};
-+				};
-+			};
-+		};
-+
-+		eeprom@50 {
-+			compatible = "renesas,r1ex24002", "atmel,24c02";
-+			reg = <0x50>;
-+			pagesize = <16>;
-+		};
-+	};
- };
- 
- &du {
-@@ -488,54 +556,10 @@
- 
- &i2c2 {
- 	pinctrl-0 = <&i2c2_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-hdmi";
- 
- 	status = "okay";
- 	clock-frequency = <100000>;
--
--	ak4643: codec@12 {
--		compatible = "asahi-kasei,ak4643";
--		#sound-dai-cells = <0>;
--		reg = <0x12>;
--	};
--
--	hdmi@39 {
--		compatible = "adi,adv7511w";
--		reg = <0x39>;
--		interrupt-parent = <&gpio3>;
--		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
--
--		adi,input-depth = <8>;
--		adi,input-colorspace = "rgb";
--		adi,input-clock = "1x";
--		adi,input-style = <1>;
--		adi,input-justification = "evenly";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7511_in: endpoint {
--					remote-endpoint = <&du_out_rgb>;
--				};
--			};
--
--			port@1 {
--				reg = <1>;
--				adv7511_out: endpoint {
--					remote-endpoint = <&hdmi_con>;
--				};
--			};
--		};
--	};
--
--	eeprom@50 {
--		compatible = "renesas,r1ex24002", "atmel,24c02";
--		reg = <0x50>;
--		pagesize = <16>;
--	};
- };
- 
- &rcar_sound {
--- 
-2.1.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
