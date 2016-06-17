@@ -1,106 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:51230 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751782AbcFNMJu (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45548 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932183AbcFQLnd (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 14 Jun 2016 08:09:50 -0400
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-	by ayla.of.borg with esmtp (Exim 4.82)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1bCnAC-0003iT-5B
-	for linux-renesas-soc@vger.kernel.org; Tue, 14 Jun 2016 14:09:48 +0200
-Received: from geert by ramsan with local (Exim 4.82)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1bCnAC-0005Sy-SV
-	for linux-renesas-soc@vger.kernel.org; Tue, 14 Jun 2016 14:09:48 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2016-06-14-v4.7-rc2
-Date: Tue, 14 Jun 2016 14:09:48 +0200
-Message-Id: <1465906188-20978-1-git-send-email-geert+renesas@glider.be>
+	Fri, 17 Jun 2016 07:43:33 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org, alsa-devel@alsa-project.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	patches@opensource.wolfsonmicro.com,
+	Peter Ujfalusi <peter.ujfalusi@ti.com>
+In-Reply-To: <1466080472-9817-3-git-send-email-geert+renesas@glider.be>
+Message-Id: <E1bDsBF-000258-9s@debutante>
+Date: Fri, 17 Jun 2016 12:43:21 +0100
+Subject: Applied "ASoC: ak4613: Implement suspend callback" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2016-06-14-v4.7-rc2 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+The patch
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+   ASoC: ak4613: Implement suspend callback
 
-Today's version is based on renesas-devel-20160613-v4.7-rc3.
+has been applied to the asoc tree at
 
-Included branches with driver code:
-  - clk-renesas-for-v4.8
-  - sh-pfc-for-v4.8
-  - topic/rcar-dmac-residue-v1
-  - topic/rcar-dmac-hamza-v3
-  - topic/ipmmu-multi-arch-v4
-  - topic/r8a7795-ipmmu-v2-rebased1
-  - topic/r8a7796-ipmmu-v1-rebased1
-  - topic/salvator-x-ipmmu-rfc-v3-rebased4
-  - topic/scif-hwflow-v3
-  - topic/scif-fifo-v1
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/r8a7796-v3
-  - topic/r8a7796-sysc-dt-v1
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-v3
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#staging/ks7010
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/pretimeout
-  - topic/h3-pfc-set-voltage-v1-rebased1
-  - https://git.ragnatech.se/linux#rcar-vin-for-renesas-drivers
-  - git://linuxtv.org/pinchartl/media.git#for/renesas-drivers
-  - git://linuxtv.org/pinchartl/media.git#vsp1/functions
-  - topic/fcpf-v1-rebased2
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://people.freedesktop.org/~airlied/linux#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/mchehab/media-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git#mmc-next
-  - git://git.linaro.org/people/ulf.hansson/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/djbw/dmaengine.git#next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://ftp.arm.linux.org.uk/pub/linux/arm/kernel/git-cur/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.infradead.org/battery-2.6.git#master
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm-intel#topic/drm-misc
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Gr{oetje,eeting}s,
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-						Geert
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Thanks,
+Mark
+
+>From f9ae17ba97e0fd134f7c0108c70e708313a07063 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Thu, 16 Jun 2016 14:34:31 +0200
+Subject: [PATCH] ASoC: ak4613: Implement suspend callback
+
+Add the suspend callback to accompany the existing resume operation.
+With the suspend/resume callbacks the regmap (regcache) state handling
+can follow the recommended sequence.
+
+Based on commit a2ebd58627e9aa48 ("ASoC: ak4642: Implement suspend
+callback") by Peter Ujfalusi <peter.ujfalusi@ti.com>.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/ak4613.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/ak4613.c b/sound/soc/codecs/ak4613.c
+index 5013d2ba0c10..97798d250f08 100644
+--- a/sound/soc/codecs/ak4613.c
++++ b/sound/soc/codecs/ak4613.c
+@@ -437,15 +437,25 @@ static struct snd_soc_dai_driver ak4613_dai = {
+ 	.symmetric_rates = 1,
+ };
+ 
+-static int ak4613_resume(struct snd_soc_codec *codec)
++static int ak4613_suspend(struct snd_soc_codec *codec)
+ {
+ 	struct regmap *regmap = dev_get_regmap(codec->dev, NULL);
+ 
++	regcache_cache_only(regmap, true);
+ 	regcache_mark_dirty(regmap);
++	return 0;
++}
++
++static int ak4613_resume(struct snd_soc_codec *codec)
++{
++	struct regmap *regmap = dev_get_regmap(codec->dev, NULL);
++
++	regcache_cache_only(regmap, false);
+ 	return regcache_sync(regmap);
+ }
+ 
+ static struct snd_soc_codec_driver soc_codec_dev_ak4613 = {
++	.suspend		= ak4613_suspend,
+ 	.resume			= ak4613_resume,
+ 	.set_bias_level		= ak4613_set_bias_level,
+ 	.controls		= ak4613_snd_controls,
+-- 
+2.8.1
