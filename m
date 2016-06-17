@@ -1,49 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752656AbcF3OQ7 (ORCPT
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:56343 "EHLO
+	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754070AbcFQJRe (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:16:59 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 16/41] ARM: dts: alt: Name spi pfc subnode after device name
-Date: Thu, 30 Jun 2016 16:15:36 +0200
-Message-Id: <fc10f3c93b2d32a490fcbf89329179d9d8320beb.1467294011.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
-References: <cover.1467294011.git.horms+renesas@verge.net.au>
+	Fri, 17 Jun 2016 05:17:34 -0400
+Subject: Re: [[RESEND]PATCH v7 0/2] Add CAN FD driver support to r8a7795 SoC
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+	davem@davemloft.net
+References: <1465888372-38319-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1466151656-51147-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <6823878d-743d-8dfd-3128-3e5794265b15@pengutronix.de>
+Cc: wg@grandegger.com, socketcan@hartkopp.net,
+	linux-can@vger.kernel.org, netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, horms@verge.net.au,
+	magnus.damm@gmail.com, chris.paterson2@renesas.com
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <14ed8578-6795-ba77-262f-6707168743b0@pengutronix.de>
+Date: Fri, 17 Jun 2016 11:17:14 +0200
+MIME-Version: 1.0
+In-Reply-To: <6823878d-743d-8dfd-3128-3e5794265b15@pengutronix.de>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="hKRiPbMuGbja6IsfwPSrBRAWs2kJlbVbj"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--hKRiPbMuGbja6IsfwPSrBRAWs2kJlbVbj
+Content-Type: multipart/mixed; boundary="cKn5T19WV4oKRvJUa1QF07WSAR61Mjb0p"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+ davem@davemloft.net
+Cc: wg@grandegger.com, socketcan@hartkopp.net, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ horms@verge.net.au, magnus.damm@gmail.com, chris.paterson2@renesas.com
+Message-ID: <14ed8578-6795-ba77-262f-6707168743b0@pengutronix.de>
+Subject: Re: [[RESEND]PATCH v7 0/2] Add CAN FD driver support to r8a7795 SoC
+References: <1465888372-38319-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1466151656-51147-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <6823878d-743d-8dfd-3128-3e5794265b15@pengutronix.de>
+In-Reply-To: <6823878d-743d-8dfd-3128-3e5794265b15@pengutronix.de>
 
-Name the Pin Function Controller subnode for QSPI after its device name,
-instead of after the spi interface alias.
+--cKn5T19WV4oKRvJUa1QF07WSAR61Mjb0p
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-This avoids conflicts when enabling support for more spi interfaces later,
-either here or in a DT overlay.
+On 06/17/2016 10:30 AM, Marc Kleine-Budde wrote:
+> On 06/17/2016 10:20 AM, Ramesh Shanmugasundaram wrote:
+>>    Would it be possible for you to consider this patch please?
+>>
+>>    This patch set has undergone multiple reviews as in the change hist=
+ory
+>>    below. We would be grateful if you could consider accepting this pa=
+tch as
+>>    Marc K appears to be inactive and we haven't heard from him since M=
+arch.
+>=20
+> I'll take the patch.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7794-alt.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Added to can-next/master.
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index 1335664b2f88..1ad37d431a2a 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -147,7 +147,7 @@
- };
- 
- &pfc {
--	qspi_pins: spi0 {
-+	qspi_pins: qspi {
- 		groups = "qspi_ctrl", "qspi_data4";
- 		function = "qspi";
- 	};
--- 
-2.7.0.rc3.207.g0ac5344
+Tnx,
+Marc
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--cKn5T19WV4oKRvJUa1QF07WSAR61Mjb0p--
+
+--hKRiPbMuGbja6IsfwPSrBRAWs2kJlbVbj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBCgAGBQJXY8AaAAoJED07qiWsqSVqXuUH/2sSVDB91lOd1SdCiTJav6GB
+luifZfrp0WzCSjNueMlCm1aAvEBDFoLT3jtuPvclzTxeVvRXzR3qLKEofWTwPGKX
+dldUC8d9AdodbNX3Gk3tC2YH9w3lTJJ1DroaYt0eGQfnts6TamMVUg5rAq2VYR2x
+46n+W+gGHfvoxEP+4x8clLdD2yIRIWxGeBSoR2cNt2t/+oMoQPF1vwYaKhYKJxDd
+Jvp+Yuzxa4fwOhJUPqn1Rb8OJPEd4WzLcnFfmZTBh7FPM933KhYmOTpEaVTH6fDw
+MlEywe7pr/bbUd2c4jwuOw9m4mY2qXxRNPosYqjC7JxF96D5z/4sHtd23jNStQY=
+=H8kh
+-----END PGP SIGNATURE-----
+
+--hKRiPbMuGbja6IsfwPSrBRAWs2kJlbVbj--
