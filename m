@@ -1,85 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f173.google.com ([209.85.223.173]:36418 "EHLO
-	mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750696AbcFUIjs (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:60795 "EHLO
+	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750882AbcFQOQN (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 21 Jun 2016 04:39:48 -0400
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB103835BE72B262243B46864BC3570@SG2PR06MB1038.apcprd06.prod.outlook.com>
+	Fri, 17 Jun 2016 10:16:13 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+	"open list:MEDIA DRIVERS FOR RENESAS - FCP"
+	<linux-renesas-soc@vger.kernel.org>,
+	Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: RE: [PATCH] pinctrl: sh-pfc: r8a7795: Add DRIF support
+Date: Fri, 17 Jun 2016 14:16:01 +0000
+Message-ID: <SG2PR06MB103835BE72B262243B46864BC3570@SG2PR06MB1038.apcprd06.prod.outlook.com>
 References: <1466165981-65284-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <CAMuHMdXz5mvR=+iWBap=jV7w94phuLXJSNKtOCqjxCEFNy=QDg@mail.gmail.com> <SG2PR06MB103835BE72B262243B46864BC3570@SG2PR06MB1038.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Jun 2016 09:37:25 +0200
-Message-ID: <CAMuHMdXYW5ObuDPm7aCr5uTaPYBrTAREM6Z16XWF3q7YBtFgNw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add DRIF support
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-renesas-soc@vger.kernel.org,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+ <CAMuHMdXz5mvR=+iWBap=jV7w94phuLXJSNKtOCqjxCEFNy=QDg@mail.gmail.com>
+In-Reply-To: <CAMuHMdXz5mvR=+iWBap=jV7w94phuLXJSNKtOCqjxCEFNy=QDg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ramesh,
-
-CC linux-gpio, LinusW, Laurent
-
-On Fri, Jun 17, 2016 at 4:16 PM, Ramesh Shanmugasundaram
-<ramesh.shanmugasundaram@bp.renesas.com> wrote:
->> >  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 121
->> > +++++++++++++++++++++++++++++++++++
->> >  1 file changed, 121 insertions(+)
->> >
->> > diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
->> > b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
->> > index 33be5d56..6f246ec 100644
->> > --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
->> > +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
->> > @@ -1658,6 +1658,91 @@ static const unsigned int canfd1_data_mux[] = {
->> >         CANFD1_TX_MARK,         CANFD1_RX_MARK,
->> >  };
->> >
->> > +/* - DRIF
->> > +--------------------------------------------------------------- */
->> static const unsigned int drif0_data_a_pins[] = {
->> > +       /* CLK, SYNC, D0, D1 */
->> > +       RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9), RCAR_GP_PIN(6, 10),
->> > +       RCAR_GP_PIN(6, 7),
->> > +};
->> > +static const unsigned int drif0_data_a_mux[] = {
->> > +       RIF0_CLK_A_MARK, RIF0_SYNC_A_MARK, RIF0_D0_A_MARK,
->> > +RIF0_D1_A_MARK, };
->>
->> According to my information, each DRIF module consists of two sub-modules
->> (that's why there are 8 module clocks for 4 DRIF modules), each handling a
->> data pin, but sharing the CLK and SYNC signals.
->> Hence it's possible to receive using only one data pin. Is that correct?
->
-> Yes, that is correct.
->
->> Shouldn't the pinctrl data reflect that? The second unused data pin could
->> be used for something else.
->
-> Is that possible? For e.g. when MOD_SEL0(bit8 -> sel_drif2) is set to 0, all the 4 pins are owned by DRIF IP(RIF2_XXX_A set) even though one of the RIF2_D0_A or RIF2_D1_A may be unused depending on the master it interfaces with. Am I missing something?
-
-You're right, the whole block is switched.
-
-The unused data pin can still be configured as a GPIO, as the GPSR register
-(to select between GPIO and IP function) takes precedence.
-
-Linus/Laurent: I assume the GPIO also takes precedence in the Linux pinctrl
-subsystem, or would it return an error, as the pin is claimed by the IP group?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgeW91ciB0aW1lIGFuZCByZXZpZXcNCg0KPiA+ICBkcml2
+ZXJzL3BpbmN0cmwvc2gtcGZjL3BmYy1yOGE3Nzk1LmMgfCAxMjENCj4gPiArKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMTIxIGluc2VydGlv
+bnMoKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvc2gtcGZjL3BmYy1y
+OGE3Nzk1LmMNCj4gPiBiL2RyaXZlcnMvcGluY3RybC9zaC1wZmMvcGZjLXI4YTc3OTUuYw0KPiA+
+IGluZGV4IDMzYmU1ZDU2Li42ZjI0NmVjIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvcGluY3Ry
+bC9zaC1wZmMvcGZjLXI4YTc3OTUuYw0KPiA+ICsrKyBiL2RyaXZlcnMvcGluY3RybC9zaC1wZmMv
+cGZjLXI4YTc3OTUuYw0KPiA+IEBAIC0xNjU4LDYgKzE2NTgsOTEgQEAgc3RhdGljIGNvbnN0IHVu
+c2lnbmVkIGludCBjYW5mZDFfZGF0YV9tdXhbXSA9IHsNCj4gPiAgICAgICAgIENBTkZEMV9UWF9N
+QVJLLCAgICAgICAgIENBTkZEMV9SWF9NQVJLLA0KPiA+ICB9Ow0KPiA+DQo+ID4gKy8qIC0gRFJJ
+Rg0KPiA+ICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0gKi8NCj4gc3RhdGljIGNvbnN0IHVuc2lnbmVkIGludCBkcmlmMF9kYXRh
+X2FfcGluc1tdID0gew0KPiA+ICsgICAgICAgLyogQ0xLLCBTWU5DLCBEMCwgRDEgKi8NCj4gPiAr
+ICAgICAgIFJDQVJfR1BfUElOKDYsIDgpLCBSQ0FSX0dQX1BJTig2LCA5KSwgUkNBUl9HUF9QSU4o
+NiwgMTApLA0KPiA+ICsgICAgICAgUkNBUl9HUF9QSU4oNiwgNyksDQo+ID4gK307DQo+ID4gK3N0
+YXRpYyBjb25zdCB1bnNpZ25lZCBpbnQgZHJpZjBfZGF0YV9hX211eFtdID0gew0KPiA+ICsgICAg
+ICAgUklGMF9DTEtfQV9NQVJLLCBSSUYwX1NZTkNfQV9NQVJLLCBSSUYwX0QwX0FfTUFSSywNCj4g
+PiArUklGMF9EMV9BX01BUkssIH07DQo+IA0KPiBBY2NvcmRpbmcgdG8gbXkgaW5mb3JtYXRpb24s
+IGVhY2ggRFJJRiBtb2R1bGUgY29uc2lzdHMgb2YgdHdvIHN1Yi1tb2R1bGVzDQo+ICh0aGF0J3Mg
+d2h5IHRoZXJlIGFyZSA4IG1vZHVsZSBjbG9ja3MgZm9yIDQgRFJJRiBtb2R1bGVzKSwgZWFjaCBo
+YW5kbGluZyBhDQo+IGRhdGEgcGluLCBidXQgc2hhcmluZyB0aGUgQ0xLIGFuZCBTWU5DIHNpZ25h
+bHMuDQo+IEhlbmNlIGl0J3MgcG9zc2libGUgdG8gcmVjZWl2ZSB1c2luZyBvbmx5IG9uZSBkYXRh
+IHBpbi4gSXMgdGhhdCBjb3JyZWN0Pw0KDQpZZXMsIHRoYXQgaXMgY29ycmVjdC4NCg0KPiANCj4g
+U2hvdWxkbid0IHRoZSBwaW5jdHJsIGRhdGEgcmVmbGVjdCB0aGF0PyBUaGUgc2Vjb25kIHVudXNl
+ZCBkYXRhIHBpbiBjb3VsZA0KPiBiZSB1c2VkIGZvciBzb21ldGhpbmcgZWxzZS4NCg0KSXMgdGhh
+dCBwb3NzaWJsZT8gRm9yIGUuZy4gd2hlbiBNT0RfU0VMMChiaXQ4IC0+IHNlbF9kcmlmMikgaXMg
+c2V0IHRvIDAsIGFsbCB0aGUgNCBwaW5zIGFyZSBvd25lZCBieSBEUklGIElQKFJJRjJfWFhYX0Eg
+c2V0KSBldmVuIHRob3VnaCBvbmUgb2YgdGhlIFJJRjJfRDBfQSBvciBSSUYyX0QxX0EgbWF5IGJl
+IHVudXNlZCBkZXBlbmRpbmcgb24gdGhlIG1hc3RlciBpdCBpbnRlcmZhY2VzIHdpdGguIEFtIEkg
+bWlzc2luZyBzb21ldGhpbmc/DQoNCj4gDQo+IE9uZSB3YXkgdG8gaGFuZGxlIHRoaXMgaXMgbGlr
+ZSBTREhJIGFuZCBEVSBkbzogcHJvdmlkZSAyIHNldHMgb2YgZGF0YSwgb25lDQo+IGZvciBzaW5n
+bGUtYml0LCBhbmQgb25lIGZvciBkdWFsLWJpdCBjb25maWd1cmF0aW9uczoNCj4gICAtICJkcmlm
+MF9kYXRhMV9hX3BpbnMiIGZvciBDTEssIFNZTkMsIGFuZCBEMCwNCj4gICAtICJkcmlmMF9kYXRh
+Ml9hX3BpbnMiIGZvciBDTEsuIFNZTkMsIEQwLCBhbmQgRDEuDQo+IA0KPiBBbHRlcm5hdGl2ZSwg
+aXQgY291bGQgYmUgc3BsaXQgaW4gMyBncm91cHM6DQo+ICAgLSAiZHJpZjBfY3RybF9hX3BpbnMi
+IGZvciBDTEsgYW5kIFNZTkMsDQo+ICAgLSAiZHJpZjBfZGF0YTBfYV9waW5zIGZvciBEMCwNCj4g
+ICAtICJkcmlmMF9kYXRhMV9hX3BpbnMgZm9yIEQxLg0KPiANCj4gSSB0aGluayB0aGUgbGF0dGVy
+IGlzIHByZWZlcmFibGUsIGFzIHlvdSBjYW4gcHJvYmFibHkgY29uZmlndXJlIHRoZSBEUklGDQo+
+IHRvIHJlY2VpdmUgZGF0YSB0aHJvdWdoIEQxIG9ubHksIGFuZCBsZWF2ZSBEMCB1bnVzZWQ/DQo+
+IA0KPiA+ICtzdGF0aWMgY29uc3QgdW5zaWduZWQgaW50IGRyaWYzX2RhdGFfYV9waW5zW10gPSB7
+DQo+ID4gKyAgICAgICAvKiBDTEssIFNZTkMsIEQwLCBEMSAqLw0KPiA+ICsgICAgICAgUkNBUl9H
+UF9QSU4oNiwgMTcpLCBSQ0FSX0dQX1BJTig2LCAxOCksIFJDQVJfR1BfUElOKDYsIDE5KSwNCj4g
+PiArICAgICAgIFJDQVJfR1BfUElOKDYsIDEwKSwNCj4gDQo+IEFjY29yZGluZyB0byBteSBkYXRh
+c2hlZXQsIHRoZSBhYm92ZSBsaW5lIHNob3VsZCBiZQ0KPiANCj4gICAgICAgICBSQ0FSX0dQX1BJ
+Tig2LCAyMCksDQoNCllvdSBhcmUgcmlnaHQuIFRoYW5rcyBhZ2Fpbi4gSSdsbCBmaXggdGhhdCB0
+eXBvIDotKA0KDQpUaGFua3MsDQpSYW1lc2gNCg==
