@@ -1,36 +1,79 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 21 Jun 2016 10:38:37 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: magnus.damm@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, linux-renesas-soc@vger.kernel.org,
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: horms@verge.net.au, magnus.damm@gmail.com
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	chris.paterson2@renesas.com
-Subject: Re: [PATCH v3] arm64: dts: r8a7795: Add CAN FD support
-Message-ID: <20160621013834.GA18247@verge.net.au>
+	chris.paterson2@renesas.com,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v3] arm64: dts: r8a7795: Add CAN FD support
+Date: Fri, 17 Jun 2016 13:35:43 +0100
+Message-Id: <1466166943-17670-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1456906550-4849-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 References: <1456906550-4849-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <1466166943-17670-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1466166943-17670-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jun 17, 2016 at 01:35:43PM +0100, Ramesh Shanmugasundaram wrote:
-> Adds CAN FD controller node for r8a7795.
-> 
-> Note: CAN FD controller register base address specified in R-Car Gen3
-> Hardware User Manual v0.5E is incorrect. The correct address is:
-> 
-> CAN FD - 0xe66c0000
-> 
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-> ---
-> 
-> Note:
-> Bindings already Acked-by: Rob H on driver patch set
-> (https://www.mail-archive.com/netdev@vger.kernel.org/msg102789.html)
+Adds CAN FD controller node for r8a7795.
 
-Thanks, I have queued this up.
+Note: CAN FD controller register base address specified in R-Car Gen3
+Hardware User Manual v0.5E is incorrect. The correct address is:
+
+CAN FD - 0xe66c0000
+
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+---
+
+Note:
+Bindings already Acked-by: Rob H on driver patch set
+(https://www.mail-archive.com/netdev@vger.kernel.org/msg102789.html)
+
+Changes since v2:
+	Rebased to Simon's latest tag:renesas-devel-20160616-v4.7-rc3
+
+Changes since v1:
+	As suggested by Sergei, Simon - changed node name from canfd@ to can@
+
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index fad6dd8..b902356 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -583,6 +583,30 @@
+ 			status = "disabled";
+ 		};
+ 
++		canfd: can@e66c0000 {
++			compatible = "renesas,r8a7795-canfd",
++				     "renesas,rcar-gen3-canfd";
++			reg = <0 0xe66c0000 0 0x8000>;
++			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++				   <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 914>,
++			       <&cpg CPG_CORE R8A7795_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "fck", "canfd", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A7795_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			status = "disabled";
++
++			channel0 {
++				status = "disabled";
++			};
++
++			channel1 {
++				status = "disabled";
++			};
++		};
++
+ 		hscif0: serial@e6540000 {
+ 			compatible = "renesas,hscif-r8a7795",
+ 				     "renesas,rcar-gen3-hscif",
+-- 
+1.9.1
+
