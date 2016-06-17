@@ -1,51 +1,41 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:48162 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753093AbcFOLVc (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 15 Jun 2016 07:21:32 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: vinod.koul@intel.com, geert+renesas@glider.be,
-	laurent.pinchart+renesas@ideasonboard.com, mfarooq@visteon.com,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 3/4] dma: rcar-dma: Fixed active descriptor initializing
-Date: Wed, 15 Jun 2016 13:13:07 +0200
-Message-Id: <20160615111308.28739-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160615111308.28739-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160615111308.28739-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <2415204.YUO4drecC0@wasted.cogentembedded.com>
+References: <7346244.CEZI3u99oZ@wasted.cogentembedded.com> <2415204.YUO4drecC0@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 17 Jun 2016 09:20:42 +0200
+Message-ID: <CAMuHMdUgS1L2UHMeN4CDj_MJ4uYKB57xE5rMQDXp+WjRAi1adw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: r8a7792: add JPU support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	"open list:MEDIA DRIVERS FOR RENESAS - FCP"
+	<linux-renesas-soc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Muhammad Hamza Farooq <mfarooq@visteon.com>
+On Fri, Jun 17, 2016 at 12:03 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Describe JPEG Processing Unit (JPU) in the R8A7792 device tree.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Running descriptor pointer is set to NULL upon freeing resources. Other-
-wise, rcar_dmac_issue_pending might not start new transfers
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Muhammad Hamza Farooq <mfarooq@visteon.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/dma/sh/rcar-dmac.c | 2 ++
- 1 file changed, 2 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 7f26576..59951fb 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -990,6 +990,8 @@ static void rcar_dmac_free_chan_resources(struct dma_chan *chan)
- 	list_splice_init(&rchan->desc.done, &list);
- 	list_splice_init(&rchan->desc.wait, &list);
- 
-+	rchan->desc.running = NULL;
-+
- 	list_for_each_entry(desc, &list, node)
- 		rcar_dmac_realloc_hwdesc(rchan, desc, 0);
- 
--- 
-2.8.3
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
