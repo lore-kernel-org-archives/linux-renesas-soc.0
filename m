@@ -1,89 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45520 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932183AbcFQLn2 (ORCPT
+Received: from mail-io0-f179.google.com ([209.85.223.179]:36012 "EHLO
+	mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933415AbcFQNA1 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 17 Jun 2016 07:43:28 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org, alsa-devel@alsa-project.org,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	patches@opensource.wolfsonmicro.com,
-	Peter Ujfalusi <peter.ujfalusi@ti.com>
-In-Reply-To: <1466080472-9817-2-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1bDsBC-00024E-CC@debutante>
-Date: Fri, 17 Jun 2016 12:43:18 +0100
-Subject: Applied "ASoC: ak4613: Enable cache usage to fix crashes on resume" to the asoc tree
+	Fri, 17 Jun 2016 09:00:27 -0400
+MIME-Version: 1.0
+In-Reply-To: <1466166314-10996-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1466166314-10996-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 17 Jun 2016 15:00:23 +0200
+Message-ID: <CAMuHMdUufppSHD3J_0j3z0LCXJxQ3rbhUa4+cQVdQ73EWZz-fw@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7795: Add DRIF clock
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"open list:MEDIA DRIVERS FOR RENESAS - FCP"
+	<linux-renesas-soc@vger.kernel.org>,
+	Chris Paterson <chris.paterson2@renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hi Ramesh,
 
-   ASoC: ak4613: Enable cache usage to fix crashes on resume
+On Fri, Jun 17, 2016 at 2:25 PM, Ramesh Shanmugasundaram
+<ramesh.shanmugasundaram@bp.renesas.com> wrote:
+> This patch adds DRIF module clocks for r8a7795 SoC.
+>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-has been applied to the asoc tree at
+Thanks!
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+(i.e. will queue in clk-renesas-for-v4.8)
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Gr{oetje,eeting}s,
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+                        Geert
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Thanks,
-Mark
-
->From dcd2d1f78664fdc75eadaaf65257834e24383d01 Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Thu, 16 Jun 2016 14:34:30 +0200
-Subject: [PATCH] ASoC: ak4613: Enable cache usage to fix crashes on resume
-
-During system resume:
-
-    kernel BUG at drivers/base/regmap/regcache.c:347!
-    ...
-    PC is at regcache_sync+0x1c/0x128
-    LR is at ak4613_resume+0x28/0x34
-
-The ak4613 driver is using a regmap cache sync to restore the
-configuration of the chip on resume but does not actually define a
-register cache which means that the resume is never going to work and we
-trigger asserts in regmap.  Fix this by enabling caching.
-
-Based on commit d3030d11961a8c10 ("ASoC: ak4642: Enable cache usage to
-fix crashes on resume") by Mark Brown <broonie@kernel.org>.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/ak4613.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/sound/soc/codecs/ak4613.c b/sound/soc/codecs/ak4613.c
-index 33d2f2e10e24..5013d2ba0c10 100644
---- a/sound/soc/codecs/ak4613.c
-+++ b/sound/soc/codecs/ak4613.c
-@@ -146,6 +146,7 @@ static const struct regmap_config ak4613_regmap_cfg = {
- 	.max_register		= 0x16,
- 	.reg_defaults		= ak4613_reg,
- 	.num_reg_defaults	= ARRAY_SIZE(ak4613_reg),
-+	.cache_type		= REGCACHE_RBTREE,
- };
- 
- static const struct of_device_id ak4613_of_match[] = {
--- 
-2.8.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
