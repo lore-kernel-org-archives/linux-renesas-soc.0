@@ -1,60 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751153AbcFHA74 (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33478 "EHLO
+	mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754958AbcFQG1a (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 20:59:56 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+	Fri, 17 Jun 2016 02:27:30 -0400
+MIME-Version: 1.0
+In-Reply-To: <87a8iko9dm.wl%kuninori.morimoto.gx@renesas.com>
+References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+ <2539026.OyU5nvpxa6@wasted.cogentembedded.com> <20160601005751.GG20527@verge.net.au>
+ <fdab2628-60bd-c41b-296b-38cd71a6c5da@cogentembedded.com> <CAMuHMdUkOpEp+YCbZVZppdN4C7KKpDS9_gEuXi_WKZXM9YHgEQ@mail.gmail.com>
+ <ab5e3a98-7ff2-dc8f-d255-f6da26f43527@cogentembedded.com> <20160610010245.GA10152@verge.net.au>
+ <8efb1c7e-5463-2556-744c-d327886d92d4@cogentembedded.com> <CAMuHMdUK=y2kZY1kA97QpCDyUZXFejpXTpO9ZVNQoBfDNoRgfg@mail.gmail.com>
+ <1b9a4cf4-1101-ccbf-772b-49b8a689a1b6@cogentembedded.com> <CAMuHMdV6f5ZzPxySzCgi7L+Sr1_4Ph1sLLyQ_j-sJ0tmBOvrHg@mail.gmail.com>
+ <87eg80d1m9.wl%kuninori.morimoto.gx@renesas.com> <87a8iko9dm.wl%kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 17 Jun 2016 08:27:24 +0200
+Message-ID: <CAMuHMdVR9PgyhCnRU_zr2HJZp_CbXJLuxSSP7npu-6BhrJ+q4A@mail.gmail.com>
+Subject: Re: [PATCH 07/13] ARM: dts: r8a7792: initial SoC device tree
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Simon Horman <horms@verge.net.au>,
+	"open list:MEDIA DRIVERS FOR RENESAS - FCP"
+	<linux-renesas-soc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>,
-	Dirk Behme <dirk.behme@de.bosch.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/9] arm64: dts: r8a7795: Increase the size of GIC-400 mapped registers
-Date: Wed,  8 Jun 2016 09:59:39 +0900
-Message-Id: <457f47b7651ccb1828c1d02f7ace0d07e9b16f33.1465347183.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1465347183.git.horms+renesas@verge.net.au>
-References: <cover.1465347183.git.horms+renesas@verge.net.au>
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>
+Hi Morimoto-san,
 
-There are some requirements about the GIC-400 memory layout and its
-mapping if using 64k aligned base addresses like on r8a7795.
+On Fri, Jun 17, 2016 at 4:14 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+>> > Right, I had forgotten about that.
+>> > Fortunately the clk-rcar-gen2 driver has a sane failure mode for this case ;-)
+>> >
+>> > it seems the RCAN clock can just be modeled as a fixed clock. However,
+>> > its divider value isn't clear to me, as 15.9 MHz cannot be generated from PLL1
+>> > using an integer divider. Morimoto-san, can you please ask for clarification?
+>>
+>> OK.
+>> Now, I asked to HW team about that.
+>> Please wait.
+>
+> RCAN divider is fixed for 1/49
+>
+> PLL1 (= 1560MHz)
+>   -> 1/2 (= 780MHz)
+>     -> RCAN divider 1/49 (= 15.9183..MHz)
+>
+> Is this clear for you ?
 
-See e.g.
+Thanks, that's exactly what we need to know.
 
-http://xenbits.xen.org/gitweb/?p=xen.git;a=commit;h=21550029f709072aacf3b9
+Gr{oetje,eeting}s,
 
-Map the whole memory range instead of only 0x2000. This will fix
-the issue that some hypervisors, e.g. Xen, fail to handle the
-interrupts correctly.
+                        Geert
 
-Signed-off-by: Pooya Keshavarzi <Pooya.Keshavarzi@de.bosch.com>
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 3285a9286786..de3e799a7bba 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -157,9 +157,9 @@
- 			#address-cells = <0>;
- 			interrupt-controller;
- 			reg = <0x0 0xf1010000 0 0x1000>,
--			      <0x0 0xf1020000 0 0x2000>,
-+			      <0x0 0xf1020000 0 0x20000>,
- 			      <0x0 0xf1040000 0 0x20000>,
--			      <0x0 0xf1060000 0 0x2000>;
-+			      <0x0 0xf1060000 0 0x20000>;
- 			interrupts = <GIC_PPI 9
- 					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
- 		};
--- 
-2.1.4
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
