@@ -1,41 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41272 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750930AbcFPFYO (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 16 Jun 2016 01:24:14 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/2] ARM: shmobile: defconfig: Enable r8a7792 SoC
-Date: Thu, 16 Jun 2016 14:23:57 +0900
-Message-Id: <1466054638-11326-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1466054638-11326-1-git-send-email-horms+renesas@verge.net.au>
-References: <1466054638-11326-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: [PATCH/RFC 0/3] thermal: rcar_gen3_thermal: Apply shared interrupts
+ for thermal sensors
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+References: <57661211.7010900@rvc.renesas.com>
+CC: Wolfram Sang <wsa@the-dreams.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Thao Phuong Le. Nguyen" <thao.nguyen.yb@rvc.renesas.com>,
+	"Hien Duy. Dang" <hien.dang.eb@rvc.renesas.com>,
+	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+	"Khiem Trong. Nguyen" <khiem.nguyen.xt@rvc.renesas.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Simon Horman <horms@verge.net.au>
+From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Message-ID: <57661BB1.3060401@rvc.renesas.com>
+Date: Sun, 19 Jun 2016 11:12:33 +0700
+MIME-Version: 1.0
+In-Reply-To: <57661211.7010900@rvc.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable support for r8a7792 SoC in shmobile_defconfig.
+This patchset intents to improve thermal driver operation in interrupt mode,
+which has been introduced in [1].
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+The original idea is using 1 interrupt for each thermal sensor, to detect both up
+and down temperature. It caused issue when the temperature is changing rapidly.
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index f2d635566a13..baa07a46a88b 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -17,6 +17,7 @@ CONFIG_ARCH_R8A7778=y
- CONFIG_ARCH_R8A7779=y
- CONFIG_ARCH_R8A7790=y
- CONFIG_ARCH_R8A7791=y
-+CONFIG_ARCH_R8A7792=y
- CONFIG_ARCH_R8A7793=y
- CONFIG_ARCH_R8A7794=y
- CONFIG_ARCH_SH73A0=y
+The new idea is about using shared interrupt I/F for all three sensors.
+Two interrupts will be set to detect temperature up and down. When interrupt occurs,
+the temperature will be updated in all 3 sensors, if the temperature value is changed. 
+
+All comments are welcome.
+
+[1]
+[PATCH 0/4] thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal support
+https://www.spinics.net/lists/kernel/msg2282663.html
+
+--
+Gaku Inami (3):
+  thermal: rcar_gen3_thermal: Modify the shared irq with initialization
+  thermal: rcar_gen3_thermal: Modify the way to detect the interrupts
+  arm64: dts: r8a7795: Support shared irq for thermal sensors
+
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi |  9 ++--
+ drivers/thermal/rcar_gen3_thermal.c      | 89 ++++++++++++++++++++------------
+ 2 files changed, 63 insertions(+), 35 deletions(-)
+
 -- 
-2.1.4
+1.9.1
