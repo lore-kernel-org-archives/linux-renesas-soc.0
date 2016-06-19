@@ -1,17 +1,10 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <57661CAD.8040807@rvc.renesas.com>
-References: <57661211.7010900@rvc.renesas.com> <57661BB1.3060401@rvc.renesas.com>
- <57661CAD.8040807@rvc.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 20 Jun 2016 09:53:56 +0200
-Message-ID: <CAMuHMdXvSYFcMzpptrN2AKdeO88P38Ts8-p1CXXYVaGiXvqw5Q@mail.gmail.com>
-Subject: Re: [PATCH/RFC 3/3] arm64: dts: r8a7795: Support shared irq for
- thermal sensors
-To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Wolfram Sang <wsa@the-dreams.de>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: [PATCH/RFC 3/3] arm64: dts: r8a7795: Support shared irq for thermal
+ sensors
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+References: <57661211.7010900@rvc.renesas.com>
+ <57661BB1.3060401@rvc.renesas.com>
+CC: Wolfram Sang <wsa@the-dreams.de>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <damm+renesas@opensource.se>,
 	Zhang Rui <rui.zhang@intel.com>,
@@ -29,45 +22,61 @@ Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
 	<linux-arm-kernel@lists.infradead.org>,
 	Gaku Inami <gaku.inami.xw@bp.renesas.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
-	Simon Horman <horms@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+	Simon Horman <horms@verge.net.au>,
+	"Khiem Trong. Nguyen" <khiem.nguyen.xt@rvc.renesas.com>
+From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Message-ID: <57661CAD.8040807@rvc.renesas.com>
+Date: Sun, 19 Jun 2016 11:16:45 +0700
+MIME-Version: 1.0
+In-Reply-To: <57661BB1.3060401@rvc.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Khiem,
+This patch adds the shared interrupts for thermal sensors
+TSC1/TSC2/TSC3.
 
-On Sun, Jun 19, 2016 at 6:16 AM, Khiem Nguyen
-<khiem.nguyen.xt@rvc.renesas.com> wrote:
-> This patch adds the shared interrupts for thermal sensors
-> TSC1/TSC2/TSC3.
->
-> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-> ---
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> index db203db..761df2b 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> @@ -1628,7 +1628,8 @@
->                         compatible = "renesas,thermal-r8a7795",
->                                 "renesas,rcar-gen3-thermal";
->                         reg = <0 0xe6198000 0 0x5c>;
-> -                       interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-> +                       interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-> +                                    <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
+Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-If you make this change, the DT bindings should be updated first.
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index db203db..761df2b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1628,7 +1628,8 @@
+ 			compatible = "renesas,thermal-r8a7795",
+ 				"renesas,rcar-gen3-thermal";
+ 			reg = <0 0xe6198000 0 0x5c>;
+-			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 522>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#thermal-sensor-cells = <0>;
+@@ -1639,7 +1640,8 @@
+ 			compatible = "renesas,thermal-r8a7795",
+ 				"renesas,rcar-gen3-thermal";
+ 			reg = <0 0xe61a0000 0 0x5c>;
+-			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 522>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#thermal-sensor-cells = <0>;
+@@ -1650,7 +1652,8 @@
+ 			compatible = "renesas,thermal-r8a7795",
+ 				"renesas,rcar-gen3-thermal";
+ 			reg = <0 0xe61a8000 0 0x5c>;
+-			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 522>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			#thermal-sensor-cells = <0>;
+-- 
+1.9.1
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
