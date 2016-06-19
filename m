@@ -1,53 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:36712 "EHLO
-	mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755396AbcFHVd3 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:59121 "EHLO
+	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751310AbcFSEOD (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 17:33:29 -0400
-Received: by mail-lf0-f41.google.com with SMTP id j5so14236571lfb.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2016 14:33:29 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v3 10/12] DT: arm: shmobile: document Blanche board
-Date: Thu, 09 Jun 2016 00:33:25 +0300
-Message-ID: <33316938.vPafSSLtPx@wasted.cogentembedded.com>
-In-Reply-To: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
-References: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+	Sun, 19 Jun 2016 00:14:03 -0400
+Subject: [PATCH/RFC 1/3] thermal: rcar_gen3_thermal: Modify the shared irq
+ with initialization
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+References: <57661211.7010900@rvc.renesas.com>
+ <57661BB1.3060401@rvc.renesas.com>
+CC: Wolfram Sang <wsa@the-dreams.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Thao Phuong Le. Nguyen" <thao.nguyen.yb@rvc.renesas.com>,
+	"Hien Duy. Dang" <hien.dang.eb@rvc.renesas.com>,
+	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Simon Horman <horms@verge.net.au>,
+	"Khiem Trong. Nguyen" <khiem.nguyen.xt@rvc.renesas.com>
+From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Message-ID: <57661C07.9050905@rvc.renesas.com>
+Date: Sun, 19 Jun 2016 11:13:59 +0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <57661BB1.3060401@rvc.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the Blanche device tree bindings, listing it as a supported board.
+In R-CAR Gen3 series, it has some thermal sensors. The interrupt I/F
+that can be used in thermal sensors is three. So it should be used
+the interrupt I/F as shared.
 
-This allows to use checkpatch.pl to validate .dts files referring to the
-Blanche board.
+This patch changes the shared settings for the thermal interrupts.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Rob Herring <robh@kernel.org>
-
+Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
 ---
-Changes in version 2:
-- added Rob's ACK.
+ drivers/thermal/rcar_gen3_thermal.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
- Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
- 1 file changed, 2 insertions(+)
-
-Index: renesas/Documentation/devicetree/bindings/arm/shmobile.txt
-===================================================================
---- renesas.orig/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ renesas/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -39,6 +39,8 @@ Boards:
-     compatible = "renesas,ape6evm", "renesas,r8a73a4"
-   - Atmark Techno Armadillo-800 EVA
-     compatible = "renesas,armadillo800eva"
-+  - Blanche (RTP0RC7792SEB00010S)
-+    compatible = "renesas,blanche", "renesas,r8a7792"
-   - BOCK-W
-     compatible = "renesas,bockw", "renesas,r8a7778"
-   - Genmai (RTK772100BC00000BR)
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index a9a372b..e640a14 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -416,6 +416,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 	int ret = -ENODEV;
+ 	int idle;
+ 	struct device_node *tz_nd, *tmp_nd;
++	int i, irq_cnt;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+@@ -489,13 +490,18 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 	rcar_gen3_thermal_irq_enable(priv);
+ 
+ 	/* Interrupt */
+-	if (irq) {
+-		ret = devm_request_irq(dev, irq->start,
+-					rcar_gen3_thermal_irq, 0,
+-				       dev_name(dev), priv);
+-		if (ret) {
+-			dev_err(dev, "IRQ request failed\n ");
+-			goto error_unregister;
++	if (rcar_has_irq_support(priv)) {
++		irq_cnt = platform_irq_count(pdev);
++		for (i = 0; i < irq_cnt; i++) {
++			irq = platform_get_resource(pdev, IORESOURCE_IRQ, i);
++			ret = devm_request_irq(dev, irq->start,
++					       rcar_gen3_thermal_irq,
++					       IRQF_SHARED,
++					       dev_name(dev), priv);
++			if (ret) {
++				dev_err(dev, "IRQ request failed\n ");
++				goto error_unregister;
++			}
+ 		}
+ 	}
+ 
+-- 
+1.9.1
