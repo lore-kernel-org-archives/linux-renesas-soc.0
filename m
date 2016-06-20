@@ -1,63 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56216 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751839AbcF2SMM (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52954 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932836AbcFTTML (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 14:12:12 -0400
-Date: Wed, 29 Jun 2016 19:11:59 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linux-ALSA <alsa-devel@alsa-project.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org
-Message-ID: <20160629181159.GH6247@sirena.org.uk>
-References: <87fusysjam.wl%kuninori.morimoto.gx@renesas.com>
- <878tyqsj48.wl%kuninori.morimoto.gx@renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0XhtP95kHFp3KGBe"
-Content-Disposition: inline
-In-Reply-To: <878tyqsj48.wl%kuninori.morimoto.gx@renesas.com>
-Subject: Re: [PATCH 05/39 v2] ASoC: simple-card-utils: add
- asoc_simple_card_parse_tdm()
+	Mon, 20 Jun 2016 15:12:11 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 16/24] v4l: vsp1: sru: Fix intensity control ID
+Date: Mon, 20 Jun 2016 22:10:34 +0300
+Message-Id: <1466449842-29502-17-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+The intensity control reused the V4L2_CID_CONTRAST control ID by
+mistake. Fix it by using an ID from the device-specific IDs range.
 
---0XhtP95kHFp3KGBe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_sru.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Tue, May 31, 2016 at 09:00:40AM +0000, Kuninori Morimoto wrote:
+diff --git a/drivers/media/platform/vsp1/vsp1_sru.c b/drivers/media/platform/vsp1/vsp1_sru.c
+index 9dc7c77c74f8..1a01f9a43875 100644
+--- a/drivers/media/platform/vsp1/vsp1_sru.c
++++ b/drivers/media/platform/vsp1/vsp1_sru.c
+@@ -37,7 +37,7 @@ static inline void vsp1_sru_write(struct vsp1_sru *sru, struct vsp1_dl_list *dl,
+  * Controls
+  */
+ 
+-#define V4L2_CID_VSP1_SRU_INTENSITY		(V4L2_CID_USER_BASE + 1)
++#define V4L2_CID_VSP1_SRU_INTENSITY		(V4L2_CID_USER_BASE | 0x1001)
+ 
+ struct vsp1_sru_param {
+ 	u32 ctrl0;
+-- 
+Regards,
 
-> +int asoc_simple_card_parse_tdm(struct device_node *port_np,
-> +			       struct asoc_simple_dai *simple_dai)
-> +{
-> +	return snd_soc_of_parse_tdm_slot(port_np,
-> +					 &simple_dai->tx_slot_mask,
-> +					 &simple_dai->rx_slot_mask,
-> +					 &simple_dai->slots,
-> +					 &simple_dai->slot_width);
-> +}
-> +EXPORT_SYMBOL_GPL(asoc_simple_card_parse_tdm);
-
-This is (obviously) a very thin wrapper around the existing interface.
-If that makes sense then perhaps we should just update the existing
-interface?
-
---0XhtP95kHFp3KGBe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXdA9uAAoJECTWi3JdVIfQzuoH/RNpz4GQPGRWO5mtNf4O1gXL
-/4lP925zvrHBxV2REnLowGz/XVjJE4fIEn3k8fHSjlNkn/z8PTXdEbuVMKJXpaZC
-6Y8zVtMbsgqibsb4XLVFy6WlDUgh7s7+QZ2PPvmm0mMCVzVxh5wyzAISB1I/deEr
-MoT32yu1BKFi/LUB+85HwtAr9jY2dvhgJdwQ8hvnL/kSIkm+b5aKXpay1LqLZFTX
-16lvrgnQilcdJ42ygKxYY8LgltwrbZf0FMmSPAnaB3bn2Ot7Jlo3fcw5ky9xIfB7
-CaC0cQIuGqC94t8aB3oBK3gby7v4Unl88/9G6xLnEJXBT0xBMwutCTq0o2XWZZU=
-=tOnr
------END PGP SIGNATURE-----
-
---0XhtP95kHFp3KGBe--
+Laurent Pinchart
