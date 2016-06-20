@@ -1,65 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35269 "EHLO
-	mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751139AbcFUNOf (ORCPT
+Received: from sauhun.de ([89.238.76.85]:33433 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751946AbcFTGkn (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 21 Jun 2016 09:14:35 -0400
-MIME-Version: 1.0
-In-Reply-To: <1466404822-2540-1-git-send-email-wsa@the-dreams.de>
-References: <1466404822-2540-1-git-send-email-wsa@the-dreams.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Jun 2016 15:11:46 +0200
-Message-ID: <CAMuHMdXWwZaCoLz8TTLBVg8qmKpiw0wKGUawd6ti0wg3X5e6xA@mail.gmail.com>
-Subject: Re: [RFC] pinctrl: sh-pfc: propagate errors on group config
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+	Mon, 20 Jun 2016 02:40:43 -0400
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-gpio@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [RFC] pinctrl: sh-pfc: propagate errors on group config
+Date: Mon, 20 Jun 2016 08:40:22 +0200
+Message-Id: <1466404822-2540-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-On Mon, Jun 20, 2016 at 8:40 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> On group configuration, bail out if setting one of the individual pins
-> fails. We don't need to roll-back, the pinctrl core will do this for us.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->
-> Tested on a Lager and Salvator-X without problems. Needs probably more testing
-> on various HW to avoid regressions?
+On group configuration, bail out if setting one of the individual pins
+fails. We don't need to roll-back, the pinctrl core will do this for us.
 
-Your patch causes the display to fail on r8a7740/armadillo.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Disabling the error propagation and adding more debug prints reveals:
+Tested on a Lager and Salvator-X without problems. Needs probably more testing
+on various HW to avoid regressions?
 
-+sh_pfc_pinconf_validate: pin 58: 15 not supported
-+sh_pfc_pinconf_set:694: config 0: sh_pfc_pinconf_validate() failed
-+sh_pfc_pinconf_group_set:781: sh_pfc_pinconf_set() failed -524 for
-pin 0 of group lcd0_data24_0
-+sh_pfc_pinconf_validate: pin 57: 15 not supported
-+sh_pfc_pinconf_set:694: config 0: sh_pfc_pinconf_validate() failed
-+sh_pfc_pinconf_group_set:781: sh_pfc_pinconf_set() failed -524 for
-pin 1 of group lcd0_data24_0
-+sh_pfc_pinconf_validate: pin 56: 15 not supported
-+sh_pfc_pinconf_set:694: config 0: sh_pfc_pinconf_validate() failed
-+sh_pfc_pinconf_group_set:781: sh_pfc_pinconf_set() failed -524 for
-pin 2 of group lcd0_data24_0
- ...
+ drivers/pinctrl/sh-pfc/pinctrl.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-15 = PIN_CONFIG_OUTPUT
-
-No idea why this is set for all pins of the lcd0_data24_0 group (and not for any
-other pin or group on any other SoC).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
+index d4e65bc7dacd67..c52ca5873974f3 100644
+--- a/drivers/pinctrl/sh-pfc/pinctrl.c
++++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+@@ -739,13 +739,16 @@ static int sh_pfc_pinconf_group_set(struct pinctrl_dev *pctldev, unsigned group,
+ 	struct sh_pfc_pinctrl *pmx = pinctrl_dev_get_drvdata(pctldev);
+ 	const unsigned int *pins;
+ 	unsigned int num_pins;
+-	unsigned int i;
++	unsigned int i, ret;
+ 
+ 	pins = pmx->pfc->info->groups[group].pins;
+ 	num_pins = pmx->pfc->info->groups[group].nr_pins;
+ 
+-	for (i = 0; i < num_pins; ++i)
+-		sh_pfc_pinconf_set(pctldev, pins[i], configs, num_configs);
++	for (i = 0; i < num_pins; ++i) {
++		ret = sh_pfc_pinconf_set(pctldev, pins[i], configs, num_configs);
++		if (ret)
++			return ret;
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.8.1
