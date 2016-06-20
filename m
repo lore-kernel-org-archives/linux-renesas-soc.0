@@ -1,95 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:45479 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751558AbcFATV1 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52953 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932449AbcFTTMB (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 15:21:27 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v3 01/22] reset: Add renesas,rst DT bindings
-Date: Wed,  1 Jun 2016 21:20:59 +0200
-Message-Id: <1464808880-343-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+	Mon, 20 Jun 2016 15:12:01 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 11/24] v4l: vsp1: pipe: Fix typo in comment
+Date: Mon, 20 Jun 2016 22:10:29 +0300
+Message-Id: <1466449842-29502-12-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add DT bindings for the Renesas R-Car Reset Controller (R-Car Gen1
-RESET/WDT and R-Car Gen2/Gen3 RST).
+The vsp1_pipeline wq field is a wait queue, not a work queue. Fix the
+comment accordingly.
 
-As the features provided by the hardware module differ a lot across the
-various SoC families and members, only SoC-specific compatible values
-are defined.
-
-For now we use the RST only for providing access to the state of the
-mode pins.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-v3:
-  - Clarify current usage,
-  - Use "renesas,<soctype>-rst" instead of "renesas,rst-<soctype>",
-  - Drop "syscon" compatible value,
-  - Add R-Car M3-W,
-  - Add R-Car Gen1,
+ drivers/media/platform/vsp1/vsp1_pipe.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2:
-  - Add Acked-by.
----
- .../devicetree/bindings/reset/renesas,rst.txt      | 35 ++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/renesas,rst.txt
-
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-new file mode 100644
-index 0000000000000000..488c72e1ee849cd3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-@@ -0,0 +1,35 @@
-+DT bindings for the Renesas R-Car Reset Controller
-+
-+The R-Car Reset Controller provides reset control, and implements the following
-+functions:
-+  - Latching of the levels on mode pins when PRESET# is negated,
-+  - Mode monitoring register,
-+  - Reset control of peripheral devices (on R-Car Gen1),
-+  - Watchdog timer (on R-Car Gen1).
-+  - Register-based reset control and boot address registers for the various CPU
-+    cores (on R-Car Gen2/Gen3),
-+
-+
-+Required properties:
-+  - compatible: Should be
-+		  - "renesas,<soctype>-reset-wdt" for R-Car Gen1,
-+		  - "renesas,<soctype>-rst" for R-Car Gen2/Gen3.
-+		Examples with soctypes are:
-+		  - "renesas,r8a7778-reset-wdt" (R-Car M1A)
-+		  - "renesas,r8a7779-reset-wdt" (R-Car H1)
-+		  - "renesas,r8a7790-rst" (R-Car H2)
-+		  - "renesas,r8a7791-rst" (R-Car M2-W)
-+		  - "renesas,r8a7792-rst" (R-Car V2H
-+		  - "renesas,r8a7793-rst" (R-Car M2-N)
-+		  - "renesas,r8a7794-rst" (R-Car E2)
-+		  - "renesas,r8a7795-rst" (R-Car H3)
-+		  - "renesas,r8a7796-rst" (R-Car M3-W)
-+  - reg: Address start and address range for the device.
-+
-+
-+Example:
-+
-+	rst: reset-controller@e6160000 {
-+		compatible = "renesas,r8a7795-rst";
-+		reg = <0 0xe6160000 0 0x0200>;
-+	};
+diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
+index 3ecd3c1794a9..2cbf1a5ea1fb 100644
+--- a/drivers/media/platform/vsp1/vsp1_pipe.h
++++ b/drivers/media/platform/vsp1/vsp1_pipe.h
+@@ -61,7 +61,7 @@ enum vsp1_pipeline_state {
+  * @pipe: the media pipeline
+  * @irqlock: protects the pipeline state
+  * @state: current state
+- * @wq: work queue to wait for state change completion
++ * @wq: wait queue to wait for state change completion
+  * @frame_end: frame end interrupt handler
+  * @lock: protects the pipeline use count and stream count
+  * @kref: pipeline reference count
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
