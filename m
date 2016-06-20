@@ -1,63 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:58289 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752307AbcF1OKt (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52954 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753847AbcFTTLx (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 10:10:49 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 09/13] ARM: shmobile: r8a7790: Prioritize DT APMU support
-Date: Tue, 28 Jun 2016 16:10:38 +0200
-Message-Id: <1467123042-8468-10-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
-References: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
+	Mon, 20 Jun 2016 15:11:53 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 06/24] media: Add video statistics computation functions
+Date: Mon, 20 Jun 2016 22:10:24 +0300
+Message-Id: <1466449842-29502-7-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+The video statistics function describes entities such as video histogram
+engines or 3A statistics engines.
 
-Adjust the r8a7790 SoC support code to not configure any non-DT SMP code
-in case the DT-based enable-method has been installed already.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
-v5:
-  - No changes,
+ Documentation/DocBook/media/v4l/media-types.xml | 9 +++++++++
+ include/uapi/linux/media.h                      | 1 +
+ 2 files changed, 10 insertions(+)
 
-v4:
-  - No changes,
-
-v3:
-  - No changes,
-
-v2:
-  - New.
----
- arch/arm/mach-shmobile/setup-r8a7790.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/mach-shmobile/setup-r8a7790.c b/arch/arm/mach-shmobile/setup-r8a7790.c
-index 3a18af4922b42577..3506327e0bed2422 100644
---- a/arch/arm/mach-shmobile/setup-r8a7790.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7790.c
-@@ -28,6 +28,7 @@ static const char * const r8a7790_boards_compat_dt[] __initconst = {
- };
+diff --git a/Documentation/DocBook/media/v4l/media-types.xml b/Documentation/DocBook/media/v4l/media-types.xml
+index 60fe841f8846..95aa1f9c836a 100644
+--- a/Documentation/DocBook/media/v4l/media-types.xml
++++ b/Documentation/DocBook/media/v4l/media-types.xml
+@@ -176,6 +176,15 @@
+ 		   skipping are considered as scaling.
+ 	    </entry>
+ 	  </row>
++	  <row>
++	    <entry><constant>MEDIA_ENT_F_PROC_VIDEO_STATISTICS</constant></entry>
++	    <entry>Video statistics computation (histogram, 3A, ...). An entity
++		   capable of statistics computation must have one sink pad and
++		   one source pad. It computes statistics over the frames
++		   received on its sink pad and outputs the statistics data on
++		   its source pad.
++	    </entry>
++	  </row>
+ 	</tbody>
+       </tgroup>
+     </table>
+diff --git a/include/uapi/linux/media.h b/include/uapi/linux/media.h
+index 3136686c4bd0..7acf0f634f70 100644
+--- a/include/uapi/linux/media.h
++++ b/include/uapi/linux/media.h
+@@ -102,6 +102,7 @@ struct media_device_info {
+ #define MEDIA_ENT_F_PROC_VIDEO_PIXEL_ENC_CONV	(MEDIA_ENT_F_BASE + 0x4003)
+ #define MEDIA_ENT_F_PROC_VIDEO_LUT		(MEDIA_ENT_F_BASE + 0x4004)
+ #define MEDIA_ENT_F_PROC_VIDEO_SCALER		(MEDIA_ENT_F_BASE + 0x4005)
++#define MEDIA_ENT_F_PROC_VIDEO_STATISTICS	(MEDIA_ENT_F_BASE + 0x4006)
  
- DT_MACHINE_START(R8A7790_DT, "Generic R8A7790 (Flattened Device Tree)")
-+	.smp_init	= shmobile_smp_init_fallback_ops,
- 	.smp		= smp_ops(r8a7790_smp_ops),
- 	.init_early	= shmobile_init_delay,
- 	.init_time	= rcar_gen2_timer_init,
+ /*
+  * Connectors
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
