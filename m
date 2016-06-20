@@ -1,122 +1,157 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:37732 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752078AbcFJKFI (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52953 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932159AbcFTTNx (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 06:05:08 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] pinctrl: sh-pfc: Convert to devm_gpiochip_add_data()
-Date: Fri, 10 Jun 2016 12:05:03 +0200
-Message-Id: <1465553103-6345-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
-References: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
+	Mon, 20 Jun 2016 15:13:53 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 21/24] v4l: vsp1: rwpf: Support runtime modification of controls
+Date: Mon, 20 Jun 2016 22:10:39 +0300
+Message-Id: <1466449842-29502-22-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This allows to remove the .remove() callback, and all functions and data
-it needed for its own bookkeeping.
+Allow reconfiguration of the alpha value at runtime.
 
-Suggested-by: Laxman Dewangan <ldewangan@nvidia.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/pinctrl/sh-pfc/core.c   | 10 ----------
- drivers/pinctrl/sh-pfc/core.h   |  1 -
- drivers/pinctrl/sh-pfc/gpio.c   | 13 +------------
- drivers/pinctrl/sh-pfc/sh_pfc.h |  3 ---
- 4 files changed, 1 insertion(+), 26 deletions(-)
+ drivers/media/platform/vsp1/vsp1_rpf.c  | 21 ++++++++++++---------
+ drivers/media/platform/vsp1/vsp1_rwpf.c |  2 --
+ drivers/media/platform/vsp1/vsp1_rwpf.h |  3 +++
+ drivers/media/platform/vsp1/vsp1_wpf.c  | 10 +++++++---
+ 4 files changed, 22 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 9b9cee06ec59aad3..a3b82041b6a22b13 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -598,15 +598,6 @@ static int sh_pfc_probe(struct platform_device *pdev)
- 	return 0;
- }
+diff --git a/drivers/media/platform/vsp1/vsp1_rpf.c b/drivers/media/platform/vsp1/vsp1_rpf.c
+index 2a734b131110..39b0580878ce 100644
+--- a/drivers/media/platform/vsp1/vsp1_rpf.c
++++ b/drivers/media/platform/vsp1/vsp1_rpf.c
+@@ -73,8 +73,15 @@ static void rpf_configure(struct vsp1_entity *entity,
+ 	u32 pstride;
+ 	u32 infmt;
  
--static int sh_pfc_remove(struct platform_device *pdev)
--{
--#ifdef CONFIG_PINCTRL_SH_PFC_GPIO
--	sh_pfc_unregister_gpiochip(platform_get_drvdata(pdev));
--#endif
+-	if (!full)
++	if (!full) {
++		vsp1_rpf_write(rpf, dl, VI6_RPF_VRTCOL_SET,
++			       rpf->alpha << VI6_RPF_VRTCOL_SET_LAYA_SHIFT);
++		vsp1_rpf_write(rpf, dl, VI6_RPF_MULT_ALPHA, rpf->mult_alpha |
++			       (rpf->alpha << VI6_RPF_MULT_ALPHA_RATIO_SHIFT));
++
++		vsp1_pipeline_propagate_alpha(pipe, dl, rpf->alpha);
+ 		return;
++	}
+ 
+ 	/* Source size, stride and crop offsets.
+ 	 *
+@@ -171,9 +178,6 @@ static void rpf_configure(struct vsp1_entity *entity,
+ 		       (fmtinfo->alpha ? VI6_RPF_ALPH_SEL_ASEL_PACKED
+ 				       : VI6_RPF_ALPH_SEL_ASEL_FIXED));
+ 
+-	vsp1_rpf_write(rpf, dl, VI6_RPF_VRTCOL_SET,
+-		       rpf->alpha << VI6_RPF_VRTCOL_SET_LAYA_SHIFT);
 -
--	return 0;
--}
+ 	if (entity->vsp1->info->gen == 3) {
+ 		u32 mult;
+ 
+@@ -191,8 +195,7 @@ static void rpf_configure(struct vsp1_entity *entity,
+ 			mult = VI6_RPF_MULT_ALPHA_A_MMD_RATIO
+ 			     | (premultiplied ?
+ 				VI6_RPF_MULT_ALPHA_P_MMD_RATIO :
+-				VI6_RPF_MULT_ALPHA_P_MMD_NONE)
+-			     | (rpf->alpha << VI6_RPF_MULT_ALPHA_RATIO_SHIFT);
++				VI6_RPF_MULT_ALPHA_P_MMD_NONE);
+ 		} else {
+ 			/* When the input doesn't contain an alpha channel the
+ 			 * global alpha value is applied in the unpacking unit,
+@@ -203,11 +206,9 @@ static void rpf_configure(struct vsp1_entity *entity,
+ 			     | VI6_RPF_MULT_ALPHA_P_MMD_NONE;
+ 		}
+ 
+-		vsp1_rpf_write(rpf, dl, VI6_RPF_MULT_ALPHA, mult);
++		rpf->mult_alpha = mult;
+ 	}
+ 
+-	vsp1_pipeline_propagate_alpha(pipe, dl, rpf->alpha);
 -
- static const struct platform_device_id sh_pfc_id_table[] = {
- #ifdef CONFIG_PINCTRL_PFC_SH7203
- 	{ "pfc-sh7203", (kernel_ulong_t)&sh7203_pinmux_info },
-@@ -650,7 +641,6 @@ static const struct platform_device_id sh_pfc_id_table[] = {
+ 	vsp1_rpf_write(rpf, dl, VI6_RPF_MSK_CTRL, 0);
+ 	vsp1_rpf_write(rpf, dl, VI6_RPF_CKEY_CTRL, 0);
  
- static struct platform_driver sh_pfc_driver = {
- 	.probe		= sh_pfc_probe,
--	.remove		= sh_pfc_remove,
- 	.id_table	= sh_pfc_id_table,
- 	.driver		= {
- 		.name	= DRV_NAME,
-diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
-index 9dde6ea5e28f3a1b..0bbdea5849f41713 100644
---- a/drivers/pinctrl/sh-pfc/core.h
-+++ b/drivers/pinctrl/sh-pfc/core.h
-@@ -20,7 +20,6 @@ struct sh_pfc_pin_range {
- };
+@@ -253,6 +254,8 @@ struct vsp1_rwpf *vsp1_rpf_create(struct vsp1_device *vsp1, unsigned int index)
+ 		goto error;
+ 	}
  
- int sh_pfc_register_gpiochip(struct sh_pfc *pfc);
--int sh_pfc_unregister_gpiochip(struct sh_pfc *pfc);
++	v4l2_ctrl_handler_setup(&rpf->ctrls);
++
+ 	return rpf;
  
- int sh_pfc_register_pinctrl(struct sh_pfc *pfc);
+ error:
+diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.c b/drivers/media/platform/vsp1/vsp1_rwpf.c
+index 3b6e032e7806..cd3562d1d9cf 100644
+--- a/drivers/media/platform/vsp1/vsp1_rwpf.c
++++ b/drivers/media/platform/vsp1/vsp1_rwpf.c
+@@ -243,8 +243,6 @@ static const struct v4l2_ctrl_ops vsp1_rwpf_ctrl_ops = {
  
-diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
-index 97dff6a09ff08115..6b5422766f13d7f8 100644
---- a/drivers/pinctrl/sh-pfc/gpio.c
-+++ b/drivers/pinctrl/sh-pfc/gpio.c
-@@ -318,7 +318,7 @@ sh_pfc_add_gpiochip(struct sh_pfc *pfc, int(*setup)(struct sh_pfc_chip *),
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
--	ret = gpiochip_add_data(&chip->gpio_chip, chip);
-+	ret = devm_gpiochip_add_data(pfc->dev, &chip->gpio_chip, chip);
- 	if (unlikely(ret < 0))
- 		return ERR_PTR(ret);
- 
-@@ -399,18 +399,7 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
- 	chip = sh_pfc_add_gpiochip(pfc, gpio_function_setup, NULL);
- 	if (IS_ERR(chip))
- 		return PTR_ERR(chip);
+ int vsp1_rwpf_init_ctrls(struct vsp1_rwpf *rwpf)
+ {
+-	rwpf->alpha = 255;
 -
--	pfc->func = chip;
- #endif /* CONFIG_SUPERH */
+ 	v4l2_ctrl_handler_init(&rwpf->ctrls, 1);
+ 	v4l2_ctrl_new_std(&rwpf->ctrls, &vsp1_rwpf_ctrl_ops,
+ 			  V4L2_CID_ALPHA_COMPONENT, 0, 255, 1, 255);
+diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.h b/drivers/media/platform/vsp1/vsp1_rwpf.h
+index 9ff7c78f239e..801cacc12e07 100644
+--- a/drivers/media/platform/vsp1/vsp1_rwpf.h
++++ b/drivers/media/platform/vsp1/vsp1_rwpf.h
+@@ -49,6 +49,9 @@ struct vsp1_rwpf {
  
- 	return 0;
- }
--
--int sh_pfc_unregister_gpiochip(struct sh_pfc *pfc)
--{
--	gpiochip_remove(&pfc->gpio->gpio_chip);
--#ifdef CONFIG_SUPERH
--	gpiochip_remove(&pfc->func->gpio_chip);
--#endif
--	return 0;
--}
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 5732752667e2654a..5e966c09434d969c 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -207,9 +207,6 @@ struct sh_pfc {
- 	unsigned int nr_gpio_pins;
+ 	unsigned int alpha;
  
- 	struct sh_pfc_chip *gpio;
--#ifdef CONFIG_SUPERH
--	struct sh_pfc_chip *func;
--#endif
- };
++	u32 mult_alpha;
++	u32 outfmt;
++
+ 	unsigned int offsets[2];
+ 	struct vsp1_rwpf_memory mem;
  
- struct sh_pfc_soc_operations {
+diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
+index af22d8043a70..dab902c2e676 100644
+--- a/drivers/media/platform/vsp1/vsp1_wpf.c
++++ b/drivers/media/platform/vsp1/vsp1_wpf.c
+@@ -104,8 +104,11 @@ static void wpf_configure(struct vsp1_entity *entity,
+ 	u32 outfmt = 0;
+ 	u32 srcrpf = 0;
+ 
+-	if (!full)
++	if (!full) {
++		vsp1_wpf_write(wpf, dl, VI6_WPF_OUTFMT, wpf->outfmt |
++			       (wpf->alpha << VI6_WPF_OUTFMT_PDV_SHIFT));
+ 		return;
++	}
+ 
+ 	/* Cropping */
+ 	crop = vsp1_rwpf_get_crop(wpf, wpf->entity.config);
+@@ -151,8 +154,7 @@ static void wpf_configure(struct vsp1_entity *entity,
+ 	if (sink_format->code != source_format->code)
+ 		outfmt |= VI6_WPF_OUTFMT_CSC;
+ 
+-	outfmt |= wpf->alpha << VI6_WPF_OUTFMT_PDV_SHIFT;
+-	vsp1_wpf_write(wpf, dl, VI6_WPF_OUTFMT, outfmt);
++	wpf->outfmt = outfmt;
+ 
+ 	vsp1_dl_list_write(dl, VI6_DPR_WPF_FPORCH(wpf->entity.index),
+ 			   VI6_DPR_WPF_FPORCH_FP_WPFN);
+@@ -239,6 +241,8 @@ struct vsp1_rwpf *vsp1_wpf_create(struct vsp1_device *vsp1, unsigned int index)
+ 		goto error;
+ 	}
+ 
++	v4l2_ctrl_handler_setup(&wpf->ctrls);
++
+ 	return wpf;
+ 
+ error:
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
