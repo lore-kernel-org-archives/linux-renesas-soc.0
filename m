@@ -1,195 +1,49 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-	m.szyprowski@samsung.com
-Date: Wed, 08 Jun 2016 16:17:56 +0900
-Message-Id: <20160608071756.7560.69130.sendpatchset@little-apple>
-In-Reply-To: <20160608071737.7560.32571.sendpatchset@little-apple>
-References: <20160608071737.7560.32571.sendpatchset@little-apple>
-Subject: [PATCH v4 02/07] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52953 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933127AbcFTTOA (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 20 Jun 2016 15:14:00 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 24/24] v4l: vsp1: Stop the pipeline upon the first STREAMOFF
+Date: Mon, 20 Jun 2016 22:10:42 +0300
+Message-Id: <1466449842-29502-25-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+The device is stopped when STREAMOFF is called on the last video node in
+the pipeline. This results in possible memory corruption and/or crashes,
+as userspace could free buffers while the hardware is still writing to
+them, and the frame completion interrupt handler could try to access
+buffers that don't exist anymore.
 
-Introduce a bitmap for context handing and convert the
-interrupt routine to handle all registered contexts.
+Fix this by stopping the pipeline upon the first STREAMOFF call, not the
+last.
 
-At this point the number of contexts are still limited.
-
-Also remove the use of the ARM specific mapping variable
-from ipmmu_irq() to allow compile on ARM64.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reported-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
+ drivers/media/platform/vsp1/vsp1_video.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- Changes since V3:
- - None
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index f2cb19bd86ca..7d491b7b29e2 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -686,7 +686,7 @@ static void vsp1_video_stop_streaming(struct vb2_queue *vq)
+ 	int ret;
+ 
+ 	mutex_lock(&pipe->lock);
+-	if (--pipe->stream_count == 0) {
++	if (--pipe->stream_count == pipe->num_inputs) {
+ 		/* Stop the pipeline. */
+ 		ret = vsp1_pipeline_stop(pipe);
+ 		if (ret == -ETIMEDOUT)
+-- 
+Regards,
 
- Changes since V2: (Thanks again to Laurent!)
- - Introduce a spinlock together with the bitmap and domain array.
- - Break out code into separate functions for alloc and free.
- - Perform free after (instead of before) configuring hardware registers.
- - Use the spinlock to protect the domain array in the interrupt handler.
-
- Changes since V1: (Thanks to Laurent for feedback!)
- - Use simple find_first_zero()/set_bit()/clear_bit() for context management.
- - For allocation rely on spinlock held when calling ipmmu_domain_init_context()
- - For test/free use atomic bitops
- - Return IRQ_HANDLED if any of the contexts generated interrupts
-
- drivers/iommu/ipmmu-vmsa.c |   76 ++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 66 insertions(+), 10 deletions(-)
-
---- 0002/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-02 21:10:37.350607110 +0900
-@@ -8,6 +8,7 @@
-  * the Free Software Foundation; version 2 of the License.
-  */
- 
-+#include <linux/bitmap.h>
- #include <linux/delay.h>
- #include <linux/dma-mapping.h>
- #include <linux/err.h>
-@@ -26,12 +27,17 @@
- 
- #include "io-pgtable.h"
- 
-+#define IPMMU_CTX_MAX 1
-+
- struct ipmmu_vmsa_device {
- 	struct device *dev;
- 	void __iomem *base;
- 	struct list_head list;
- 
- 	unsigned int num_utlbs;
-+	spinlock_t lock;			/* Protects ctx and domains[] */
-+	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
-+	struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
- 
- 	struct dma_iommu_mapping *mapping;
- };
-@@ -293,9 +299,29 @@ static struct iommu_gather_ops ipmmu_gat
-  * Domain/Context Management
-  */
- 
-+static int ipmmu_domain_allocate_context(struct ipmmu_vmsa_device *mmu,
-+					 struct ipmmu_vmsa_domain *domain)
-+{
-+	unsigned long flags;
-+	int ret;
-+
-+	spin_lock_irqsave(&mmu->lock, flags);
-+
-+	ret = find_first_zero_bit(mmu->ctx, IPMMU_CTX_MAX);
-+	if (ret != IPMMU_CTX_MAX) {
-+		mmu->domains[ret] = domain;
-+		set_bit(ret, mmu->ctx);
-+	}
-+
-+	spin_unlock_irqrestore(&mmu->lock, flags);
-+
-+	return ret;
-+}
-+
- static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
- {
- 	u64 ttbr;
-+	int ret;
- 
- 	/*
- 	 * Allocate the page table operations.
-@@ -325,10 +351,15 @@ static int ipmmu_domain_init_context(str
- 		return -EINVAL;
- 
- 	/*
--	 * TODO: When adding support for multiple contexts, find an unused
--	 * context.
-+	 * Find an unused context.
- 	 */
--	domain->context_id = 0;
-+	ret = ipmmu_domain_allocate_context(domain->mmu, domain);
-+	if (ret == IPMMU_CTX_MAX) {
-+		free_io_pgtable_ops(domain->iop);
-+		return -EBUSY;
-+	}
-+
-+	domain->context_id = ret;
- 
- 	/* TTBR0 */
- 	ttbr = domain->cfg.arm_lpae_s1_cfg.ttbr[0];
-@@ -370,6 +401,19 @@ static int ipmmu_domain_init_context(str
- 	return 0;
- }
- 
-+static void ipmmu_domain_free_context(struct ipmmu_vmsa_device *mmu,
-+				      unsigned int context_id)
-+{
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&mmu->lock, flags);
-+
-+	clear_bit(context_id, mmu->ctx);
-+	mmu->domains[context_id] = NULL;
-+
-+	spin_unlock_irqrestore(&mmu->lock, flags);
-+}
-+
- static void ipmmu_domain_destroy_context(struct ipmmu_vmsa_domain *domain)
- {
- 	/*
-@@ -380,6 +424,7 @@ static void ipmmu_domain_destroy_context
- 	 */
- 	ipmmu_ctx_write(domain, IMCTR, IMCTR_FLUSH);
- 	ipmmu_tlb_sync(domain);
-+	ipmmu_domain_free_context(domain->mmu, domain->context_id);
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -437,16 +482,25 @@ static irqreturn_t ipmmu_domain_irq(stru
- static irqreturn_t ipmmu_irq(int irq, void *dev)
- {
- 	struct ipmmu_vmsa_device *mmu = dev;
--	struct iommu_domain *io_domain;
--	struct ipmmu_vmsa_domain *domain;
-+	irqreturn_t status = IRQ_NONE;
-+	unsigned int i;
-+	unsigned long flags;
- 
--	if (!mmu->mapping)
--		return IRQ_NONE;
-+	spin_lock_irqsave(&mmu->lock, flags);
-+
-+	/*
-+	 * Check interrupts for all active contexts.
-+	 */
-+	for (i = 0; i < IPMMU_CTX_MAX; i++) {
-+		if (!mmu->domains[i])
-+			continue;
-+		if (ipmmu_domain_irq(mmu->domains[i]) == IRQ_HANDLED)
-+			status = IRQ_HANDLED;
-+	}
- 
--	io_domain = mmu->mapping->domain;
--	domain = to_vmsa_domain(io_domain);
-+	spin_unlock_irqrestore(&mmu->lock, flags);
- 
--	return ipmmu_domain_irq(domain);
-+	return status;
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -774,6 +828,8 @@ static int ipmmu_probe(struct platform_d
- 
- 	mmu->dev = &pdev->dev;
- 	mmu->num_utlbs = 32;
-+	spin_lock_init(&mmu->lock);
-+	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
- 
- 	/* Map I/O memory and request IRQ. */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+Laurent Pinchart
