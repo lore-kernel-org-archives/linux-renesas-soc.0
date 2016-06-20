@@ -1,83 +1,41 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 16/20] drm: omap: Rely on the default ->best_encoder() behavior
-Date: Thu,  2 Jun 2016 16:31:43 +0200
-Message-Id: <1464877907-27723-17-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52953 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932639AbcFTTME (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 20 Jun 2016 15:12:04 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 13/24] v4l: vsp1: lut: Initialize the mutex
+Date: Mon, 20 Jun 2016 22:10:31 +0300
+Message-Id: <1466449842-29502-14-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We have a 1:1 relationship between connectors and encoders and the
-driver is relying on the atomic helpers: we can drop the custom
-->best_encoder() implementation and let the core call
-drm_atomic_helper_best_encoder() for us.
+The LUT mutex isn't initialized when creating the LUT, fix it.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/omapdrm/omap_connector.c | 8 --------
- 1 file changed, 8 deletions(-)
+ drivers/media/platform/vsp1/vsp1_lut.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_connector.c b/drivers/gpu/drm/omapdrm/omap_connector.c
-index ce2d67b..80af5e1 100644
---- a/drivers/gpu/drm/omapdrm/omap_connector.c
-+++ b/drivers/gpu/drm/omapdrm/omap_connector.c
-@@ -256,13 +256,6 @@ static int omap_connector_mode_valid(struct drm_connector *connector,
- 	return ret;
- }
+diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
+index 2c367cb9755c..9a2c55b3570a 100644
+--- a/drivers/media/platform/vsp1/vsp1_lut.c
++++ b/drivers/media/platform/vsp1/vsp1_lut.c
+@@ -201,6 +201,8 @@ struct vsp1_lut *vsp1_lut_create(struct vsp1_device *vsp1)
+ 	if (lut == NULL)
+ 		return ERR_PTR(-ENOMEM);
  
--struct drm_encoder *omap_connector_attached_encoder(
--		struct drm_connector *connector)
--{
--	struct omap_connector *omap_connector = to_omap_connector(connector);
--	return omap_connector->encoder;
--}
--
- static const struct drm_connector_funcs omap_connector_funcs = {
- 	.dpms = drm_atomic_helper_connector_dpms,
- 	.reset = drm_atomic_helper_connector_reset,
-@@ -276,7 +269,6 @@ static const struct drm_connector_funcs omap_connector_funcs = {
- static const struct drm_connector_helper_funcs omap_connector_helper_funcs = {
- 	.get_modes = omap_connector_get_modes,
- 	.mode_valid = omap_connector_mode_valid,
--	.best_encoder = omap_connector_attached_encoder,
- };
++	mutex_init(&lut->lock);
++
+ 	lut->entity.ops = &lut_entity_ops;
+ 	lut->entity.type = VSP1_ENTITY_LUT;
  
- /* initialize connector */
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
