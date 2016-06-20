@@ -1,64 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52954 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753847AbcFTTLx (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:58687 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751496AbcFTIft (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 20 Jun 2016 15:11:53 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 06/24] media: Add video statistics computation functions
-Date: Mon, 20 Jun 2016 22:10:24 +0300
-Message-Id: <1466449842-29502-7-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Mon, 20 Jun 2016 04:35:49 -0400
+Date: Mon, 20 Jun 2016 17:35:37 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org, magnus.damm@gmail.com,
+	linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: dts: silk: add DU pins
+Message-ID: <20160620083537.GF17292@verge.net.au>
+References: <1674850.BZpGW9kEud@wasted.cogentembedded.com>
+ <2415333.mtLdVEoB2G@wasted.cogentembedded.com>
+ <f9aee8b5-7f78-acd0-e544-3d5977c01246@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f9aee8b5-7f78-acd0-e544-3d5977c01246@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The video statistics function describes entities such as video histogram
-engines or 3A statistics engines.
+On Fri, Jun 17, 2016 at 11:53:21PM +0300, Sergei Shtylyov wrote:
+> Hello.
+> 
+> On 04/13/2016 10:36 PM, Sergei Shtylyov wrote:
+> 
+> >Add the (previously omitted) DU pin data to the SILK board's device tree.
+> >
+> >Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >
+> >---
+> >This patch is against the 'renesas-devel-20160411-v4.6-rc3' tag of Simon
+> >Horman's 'renesas.git' repo. It depends on the R8A7794 DU PFC driver patch
+> >just posted for the pins to be configured...
+> 
+>    Simon, this patch seems stuck while the PFC driver patch hit Linus' tree
+> long ago. :-(
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- Documentation/DocBook/media/v4l/media-types.xml | 9 +++++++++
- include/uapi/linux/media.h                      | 1 +
- 2 files changed, 10 insertions(+)
-
-diff --git a/Documentation/DocBook/media/v4l/media-types.xml b/Documentation/DocBook/media/v4l/media-types.xml
-index 60fe841f8846..95aa1f9c836a 100644
---- a/Documentation/DocBook/media/v4l/media-types.xml
-+++ b/Documentation/DocBook/media/v4l/media-types.xml
-@@ -176,6 +176,15 @@
- 		   skipping are considered as scaling.
- 	    </entry>
- 	  </row>
-+	  <row>
-+	    <entry><constant>MEDIA_ENT_F_PROC_VIDEO_STATISTICS</constant></entry>
-+	    <entry>Video statistics computation (histogram, 3A, ...). An entity
-+		   capable of statistics computation must have one sink pad and
-+		   one source pad. It computes statistics over the frames
-+		   received on its sink pad and outputs the statistics data on
-+		   its source pad.
-+	    </entry>
-+	  </row>
- 	</tbody>
-       </tgroup>
-     </table>
-diff --git a/include/uapi/linux/media.h b/include/uapi/linux/media.h
-index 3136686c4bd0..7acf0f634f70 100644
---- a/include/uapi/linux/media.h
-+++ b/include/uapi/linux/media.h
-@@ -102,6 +102,7 @@ struct media_device_info {
- #define MEDIA_ENT_F_PROC_VIDEO_PIXEL_ENC_CONV	(MEDIA_ENT_F_BASE + 0x4003)
- #define MEDIA_ENT_F_PROC_VIDEO_LUT		(MEDIA_ENT_F_BASE + 0x4004)
- #define MEDIA_ENT_F_PROC_VIDEO_SCALER		(MEDIA_ENT_F_BASE + 0x4005)
-+#define MEDIA_ENT_F_PROC_VIDEO_STATISTICS	(MEDIA_ENT_F_BASE + 0x4006)
- 
- /*
-  * Connectors
--- 
-Regards,
-
-Laurent Pinchart
+Thanks, I have queued it up.
