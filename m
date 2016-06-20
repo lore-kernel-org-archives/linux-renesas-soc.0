@@ -1,110 +1,79 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:36691 "EHLO
-	mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932521AbcFLVBy (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sun, 12 Jun 2016 17:01:54 -0400
-Received: by mail-lf0-f44.google.com with SMTP id q132so36171967lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Jun 2016 14:01:53 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 04/12] ARM: shmobile: r8a7792: basic SoC support
-Date: Mon, 13 Jun 2016 00:01:49 +0300
-Message-ID: <2263631.FdTI6u9Ha0@wasted.cogentembedded.com>
-In-Reply-To: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
-References: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <57661211.7010900@rvc.renesas.com>
+References: <57661211.7010900@rvc.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 20 Jun 2016 09:40:26 +0200
+Message-ID: <CAMuHMdU3_O9YA6cjR=-ub6drKu8g-s4hmem4uggZeNBMJrC8qQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal support
+To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Thao Phuong Le. Nguyen" <thao.nguyen.yb@rvc.renesas.com>,
+	"Hien Duy. Dang" <hien.dang.eb@rvc.renesas.com>,
+	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
+	Simon Horman <horms@verge.net.au>,
+	"open list:MEDIA DRIVERS FOR RENESAS - FCP"
+	<linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add minimal support for the R-Car V2H (R8A7792) SoC.
+Hi Khiem,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Sun, Jun 19, 2016 at 5:31 AM, Khiem Nguyen
+<khiem.nguyen.xt@rvc.renesas.com> wrote:
+> This patchset adds new thermal sensor driver to support 3 sensors
+> found in R-Car Gen3 series.
+>
+> It has been decided to create new driver, instead of using the existing
+> thermal driver due to many differences in HW setting flows, the method
+> to calculate temperatures value and some newly supported features.
+>
+> The new driver can support both polling mode and interrupt mode.
+> It has been tested with R-Car H3.
+>
+> This driver is developed based on early work of Hien Dang and Thao Nguyen.
+> All comments are welcome.
 
----
-Changes in version 3:
-- added Cogent Embedded's copyright;
-- removed a supefluous space in Renesas Electronics' copyright.
+Thanks for your series!
 
-Changes in version 2:
-- removed 'select I2C';
-- added Simon's ACK and Geert's tag too.
+Please CC linux-renesas-soc for drivers related to Renesas SoCs.
+Please CC Simon for dts and defconfig updates that should go through his tree.
 
- arch/arm/mach-shmobile/Kconfig         |    4 +++
- arch/arm/mach-shmobile/Makefile        |    1 
- arch/arm/mach-shmobile/setup-r8a7792.c |   35 +++++++++++++++++++++++++++++++++
- 3 files changed, 40 insertions(+)
+> Khiem Nguyen (4):
+>   thermal: rcar_gen3_thermal: Document the R-Car Gen3 thermal bindings
+>   thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal driver support
+>   arm64: dts: r8a7795: Add R-Car Gen3 thermal support
+>   arm64: defconfig: Enable R-Car Gen3 thermal support
+>
+>  .../bindings/thermal/rcar-gen3-thermal.txt         |  79 ++++
+>  arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  86 ++++
+>  arch/arm64/configs/defconfig                       |   2 +
+>  drivers/thermal/Kconfig                            |   9 +
+>  drivers/thermal/Makefile                           |   1 +
+>  drivers/thermal/rcar_gen3_thermal.c                | 524 +++++++++++++++++++++
+>  6 files changed, 701 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
+>  create mode 100644 drivers/thermal/rcar_gen3_thermal.c
 
-Index: renesas/arch/arm/mach-shmobile/Kconfig
-===================================================================
---- renesas.orig/arch/arm/mach-shmobile/Kconfig
-+++ renesas/arch/arm/mach-shmobile/Kconfig
-@@ -86,6 +86,10 @@ config ARCH_R8A7791
- 	select ARCH_RCAR_GEN2
- 	select I2C
- 
-+config ARCH_R8A7792
-+	bool "R-Car V2H (R8A77920)"
-+	select ARCH_RCAR_GEN2
-+
- config ARCH_R8A7793
- 	bool "R-Car M2-N (R8A7793)"
- 	select ARCH_RCAR_GEN2
-Index: renesas/arch/arm/mach-shmobile/Makefile
-===================================================================
---- renesas.orig/arch/arm/mach-shmobile/Makefile
-+++ renesas/arch/arm/mach-shmobile/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7
- obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
- obj-$(CONFIG_ARCH_R8A7790)	+= setup-r8a7790.o
- obj-$(CONFIG_ARCH_R8A7791)	+= setup-r8a7791.o
-+obj-$(CONFIG_ARCH_R8A7792)	+= setup-r8a7792.o
- obj-$(CONFIG_ARCH_R8A7793)	+= setup-r8a7793.o
- obj-$(CONFIG_ARCH_R8A7794)	+= setup-r8a7794.o
- obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
-Index: renesas/arch/arm/mach-shmobile/setup-r8a7792.c
-===================================================================
---- /dev/null
-+++ renesas/arch/arm/mach-shmobile/setup-r8a7792.c
-@@ -0,0 +1,35 @@
-+/*
-+ * r8a7792 processor support
-+ *
-+ * Copyright (C) 2014 Renesas Electronics Corporation
-+ * Copyright (C) 2016 Cogent  Embedded, Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/of_platform.h>
-+
-+#include <asm/mach/arch.h>
-+
-+#include "common.h"
-+#include "rcar-gen2.h"
-+
-+static const char * const r8a7792_boards_compat_dt[] __initconst = {
-+	"renesas,r8a7792",
-+	NULL,
-+};
-+
-+DT_MACHINE_START(R8A7792_DT, "Generic R8A7792 (Flattened Device Tree)")
-+	.init_early	= shmobile_init_delay,
-+	.init_late	= shmobile_init_late,
-+	.init_time	= rcar_gen2_timer_init,
-+	.reserve	= rcar_gen2_reserve,
-+	.dt_compat	= r8a7792_boards_compat_dt,
-+MACHINE_END
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
