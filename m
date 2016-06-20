@@ -1,49 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:32927 "EHLO
-	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752255AbcFUHLo (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:35485 "EHLO
+	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751628AbcFTWc3 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 21 Jun 2016 03:11:44 -0400
+	Mon, 20 Jun 2016 18:32:29 -0400
+Received: by mail-lf0-f53.google.com with SMTP id l188so49269047lfe.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jun 2016 15:31:08 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] ARM: dts: r8a7792: add SMP support
+Date: Tue, 21 Jun 2016 01:31:01 +0300
+Message-ID: <1627631.X1bJtVQHBF@wasted.cogentembedded.com>
+In-Reply-To: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+References: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <1627631.X1bJtVQHBF@wasted.cogentembedded.com>
-References: <14666252.G84Ipxe6EL@wasted.cogentembedded.com> <1627631.X1bJtVQHBF@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Jun 2016 09:10:55 +0200
-Message-ID: <CAMuHMdXQ9rN8Gp0geqiubjcniodtEdo2S6-fMJx0YLtgXZHuDA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: r8a7792: add SMP support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	"open list:MEDIA DRIVERS FOR RENESAS - FCP"
-	<linux-renesas-soc@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jun 21, 2016 at 12:31 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add the device tree nodes for the Advanced Power Management Unit (APMU)
-> and the second Cortex-A15 CPU core.
-> Use the "enable-method" prop  to point out that the APMU should be used
-> for the SMP support.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add the device tree nodes for the Advanced Power Management Unit (APMU)
+and the second Cortex-A15 CPU core.
+Use the "enable-method" prop  to point out that the APMU should be used
+for the SMP support.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
+---
+This patch is against the 'renesas-devel-20160620-v4.7-rc4' tag of Simon
+Horman's 'renesas.git' repo.  It depends on Magnus'/Geert's SMP patchset...
 
-                        Geert
+ arch/arm/boot/dts/r8a7792.dtsi |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -21,6 +21,7 @@
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		enable-method = "renesas,apmu";
+ 
+ 		cpu0: cpu@0 {
+ 			device_type = "cpu";
+@@ -32,6 +33,15 @@
+ 			next-level-cache = <&L2_CA15>;
+ 		};
+ 
++		cpu1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a15";
++			reg = <1>;
++			clock-frequency = <1000000000>;
++			power-domains = <&sysc R8A7792_PD_CA15_CPU1>;
++			next-level-cache = <&L2_CA15>;
++		};
++
+ 		L2_CA15: cache-controller@0 {
+ 			compatible = "cache";
+ 			reg = <0>;
+@@ -49,6 +59,12 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		apmu@e6152000 {
++			compatible = "renesas,r8a7792-apmu", "renesas,apmu";
++			reg = <0 0xe6152000 0 0x188>;
++			cpus = <&cpu0 &cpu1>;
++		};
++
+ 		gic: interrupt-controller@f1001000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
