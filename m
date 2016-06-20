@@ -1,49 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752334AbcF3OQn (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52954 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753477AbcFTTLz (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:16:43 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/41] ARM: dts: armadillo800eva: Name serial port pfc subnode after device name
-Date: Thu, 30 Jun 2016 16:15:23 +0200
-Message-Id: <94667b193c67b3510e644a61243155c234b9f87d.1467294011.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
-References: <cover.1467294011.git.horms+renesas@verge.net.au>
+	Mon, 20 Jun 2016 15:11:55 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 08/24] v4l: vsp1: Don't register media device when userspace API is disabled
+Date: Mon, 20 Jun 2016 22:10:26 +0300
+Message-Id: <1466449842-29502-9-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The media device doesn't need to be exposed to userspace when the VSP is
+fully controlled by the DU driver. Don't register it in that case.
 
-Name the Pin Function Controller subnode for SCIFA1 after its device
-name, instead of after the serial port alias.
-
-This avoids conflicts when enabling support for more serial ports later,
-either here or in a DT overlay.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/vsp1/vsp1_drv.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-index 162049516685..6866f61a350c 100644
---- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-+++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-@@ -232,7 +232,7 @@
- 		function = "gether";
- 	};
+diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
+index c42576825ad4..cd56cad3abd9 100644
+--- a/drivers/media/platform/vsp1/vsp1_drv.c
++++ b/drivers/media/platform/vsp1/vsp1_drv.c
+@@ -218,7 +218,8 @@ static void vsp1_destroy_entities(struct vsp1_device *vsp1)
+ 	}
  
--	scifa1_pins: serial1 {
-+	scifa1_pins: scifa1 {
- 		groups = "scifa1_data";
- 		function = "scifa1";
- 	};
+ 	v4l2_device_unregister(&vsp1->v4l2_dev);
+-	media_device_unregister(&vsp1->media_dev);
++	if (vsp1->info->uapi)
++		media_device_unregister(&vsp1->media_dev);
+ 	media_device_cleanup(&vsp1->media_dev);
+ 
+ 	if (!vsp1->info->uapi)
+@@ -403,14 +404,15 @@ static int vsp1_create_entities(struct vsp1_device *vsp1)
+ 	/* Register subdev nodes if the userspace API is enabled or initialize
+ 	 * the DRM pipeline otherwise.
+ 	 */
+-	if (vsp1->info->uapi)
++	if (vsp1->info->uapi) {
+ 		ret = v4l2_device_register_subdev_nodes(&vsp1->v4l2_dev);
+-	else
+-		ret = vsp1_drm_init(vsp1);
+-	if (ret < 0)
+-		goto done;
++		if (ret < 0)
++			goto done;
+ 
+-	ret = media_device_register(mdev);
++		ret = media_device_register(mdev);
++	} else {
++		ret = vsp1_drm_init(vsp1);
++	}
+ 
+ done:
+ 	if (ret < 0)
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
