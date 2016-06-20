@@ -1,140 +1,105 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 08/20] drm: msm: Rely on the default ->best_encoder() behavior where appropriate
-Date: Tue,  7 Jun 2016 13:48:03 +0200
-Message-Id: <1465300095-16971-9-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52954 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933021AbcFTTNt (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 20 Jun 2016 15:13:49 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 18/24] v4l: vsp1: lut: Support runtime modification of controls
+Date: Mon, 20 Jun 2016 22:10:36 +0300
+Message-Id: <1466449842-29502-19-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-For all outputs except DSI we have a 1:1 relationship between connectors
-and encoders and the driver is relying on the atomic helpers: we can
-drop the custom ->best_encoder() and let the core call
-drm_atomic_helper_best_encoder() for us.
+Allow reconfiguration of the look-up table at runtime.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/msm/edp/edp_connector.c            | 10 ----------
- drivers/gpu/drm/msm/hdmi/hdmi_connector.c          |  8 --------
- drivers/gpu/drm/msm/mdp/mdp4/mdp4_lvds_connector.c |  9 ---------
- 3 files changed, 27 deletions(-)
+ drivers/media/platform/vsp1/vsp1_lut.c | 25 +++++++++++++++----------
+ drivers/media/platform/vsp1/vsp1_lut.h |  3 +++
+ 2 files changed, 18 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/edp/edp_connector.c b/drivers/gpu/drm/msm/edp/edp_connector.c
-index 72360cd..5960628 100644
---- a/drivers/gpu/drm/msm/edp/edp_connector.c
-+++ b/drivers/gpu/drm/msm/edp/edp_connector.c
-@@ -91,15 +91,6 @@ static int edp_connector_mode_valid(struct drm_connector *connector,
- 	return MODE_OK;
- }
+diff --git a/drivers/media/platform/vsp1/vsp1_lut.c b/drivers/media/platform/vsp1/vsp1_lut.c
+index 0bd26dd5f706..e34237824a5a 100644
+--- a/drivers/media/platform/vsp1/vsp1_lut.c
++++ b/drivers/media/platform/vsp1/vsp1_lut.c
+@@ -52,7 +52,9 @@ static int lut_set_table(struct vsp1_lut *lut, struct v4l2_ctrl *ctrl)
+ 		vsp1_dl_fragment_write(dlb, VI6_LUT_TABLE + 4 * i,
+ 				       ctrl->p_new.p_u32[i]);
  
--static struct drm_encoder *
--edp_connector_best_encoder(struct drm_connector *connector)
--{
--	struct edp_connector *edp_connector = to_edp_connector(connector);
--
--	DBG("");
--	return edp_connector->edp->encoder;
--}
--
- static const struct drm_connector_funcs edp_connector_funcs = {
- 	.dpms = drm_atomic_helper_connector_dpms,
- 	.detect = edp_connector_detect,
-@@ -113,7 +104,6 @@ static const struct drm_connector_funcs edp_connector_funcs = {
- static const struct drm_connector_helper_funcs edp_connector_helper_funcs = {
- 	.get_modes = edp_connector_get_modes,
- 	.mode_valid = edp_connector_mode_valid,
--	.best_encoder = edp_connector_best_encoder,
- };
++	spin_lock_irq(&lut->lock);
+ 	swap(lut->lut, dlb);
++	spin_unlock_irq(&lut->lock);
  
- /* initialize connector */
-diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_connector.c b/drivers/gpu/drm/msm/hdmi/hdmi_connector.c
-index b15d726..a2515b4 100644
---- a/drivers/gpu/drm/msm/hdmi/hdmi_connector.c
-+++ b/drivers/gpu/drm/msm/hdmi/hdmi_connector.c
-@@ -406,13 +406,6 @@ static int msm_hdmi_connector_mode_valid(struct drm_connector *connector,
+ 	vsp1_dl_fragment_free(dlb);
  	return 0;
+@@ -184,20 +186,21 @@ static void lut_configure(struct vsp1_entity *entity,
+ 			  struct vsp1_dl_list *dl, bool full)
+ {
+ 	struct vsp1_lut *lut = to_lut(&entity->subdev);
++	struct vsp1_dl_body *dlb;
++	unsigned long flags;
+ 
+-	if (!full)
++	if (full) {
++		vsp1_lut_write(lut, dl, VI6_LUT_CTRL, VI6_LUT_CTRL_EN);
+ 		return;
+-
+-	vsp1_lut_write(lut, dl, VI6_LUT_CTRL, VI6_LUT_CTRL_EN);
+-
+-	mutex_lock(lut->ctrls.lock);
+-
+-	if (lut->lut) {
+-		vsp1_dl_list_add_fragment(dl, lut->lut);
+-		lut->lut = NULL;
+ 	}
+ 
+-	mutex_unlock(lut->ctrls.lock);
++	spin_lock_irqsave(&lut->lock, flags);
++	dlb = lut->lut;
++	lut->lut = NULL;
++	spin_unlock_irqrestore(&lut->lock, flags);
++
++	if (dlb)
++		vsp1_dl_list_add_fragment(dl, dlb);
  }
  
--static struct drm_encoder *
--msm_hdmi_connector_best_encoder(struct drm_connector *connector)
--{
--	struct hdmi_connector *hdmi_connector = to_hdmi_connector(connector);
--	return hdmi_connector->hdmi->encoder;
--}
--
- static const struct drm_connector_funcs hdmi_connector_funcs = {
- 	.dpms = drm_atomic_helper_connector_dpms,
- 	.detect = hdmi_connector_detect,
-@@ -426,7 +419,6 @@ static const struct drm_connector_funcs hdmi_connector_funcs = {
- static const struct drm_connector_helper_funcs msm_hdmi_connector_helper_funcs = {
- 	.get_modes = msm_hdmi_connector_get_modes,
- 	.mode_valid = msm_hdmi_connector_mode_valid,
--	.best_encoder = msm_hdmi_connector_best_encoder,
+ static const struct vsp1_entity_operations lut_entity_ops = {
+@@ -217,6 +220,8 @@ struct vsp1_lut *vsp1_lut_create(struct vsp1_device *vsp1)
+ 	if (lut == NULL)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	spin_lock_init(&lut->lock);
++
+ 	lut->entity.ops = &lut_entity_ops;
+ 	lut->entity.type = VSP1_ENTITY_LUT;
+ 
+diff --git a/drivers/media/platform/vsp1/vsp1_lut.h b/drivers/media/platform/vsp1/vsp1_lut.h
+index 021898fc0ce5..f8c4e8f0a79d 100644
+--- a/drivers/media/platform/vsp1/vsp1_lut.h
++++ b/drivers/media/platform/vsp1/vsp1_lut.h
+@@ -13,6 +13,8 @@
+ #ifndef __VSP1_LUT_H__
+ #define __VSP1_LUT_H__
+ 
++#include <linux/spinlock.h>
++
+ #include <media/media-entity.h>
+ #include <media/v4l2-ctrls.h>
+ #include <media/v4l2-subdev.h>
+@@ -29,6 +31,7 @@ struct vsp1_lut {
+ 
+ 	struct v4l2_ctrl_handler ctrls;
+ 
++	spinlock_t lock;
+ 	struct vsp1_dl_body *lut;
  };
  
- /* initialize connector */
-diff --git a/drivers/gpu/drm/msm/mdp/mdp4/mdp4_lvds_connector.c b/drivers/gpu/drm/msm/mdp/mdp4/mdp4_lvds_connector.c
-index 2648cd7..353429b 100644
---- a/drivers/gpu/drm/msm/mdp/mdp4/mdp4_lvds_connector.c
-+++ b/drivers/gpu/drm/msm/mdp/mdp4/mdp4_lvds_connector.c
-@@ -90,14 +90,6 @@ static int mdp4_lvds_connector_mode_valid(struct drm_connector *connector,
- 	return MODE_OK;
- }
- 
--static struct drm_encoder *
--mdp4_lvds_connector_best_encoder(struct drm_connector *connector)
--{
--	struct mdp4_lvds_connector *mdp4_lvds_connector =
--			to_mdp4_lvds_connector(connector);
--	return mdp4_lvds_connector->encoder;
--}
--
- static const struct drm_connector_funcs mdp4_lvds_connector_funcs = {
- 	.dpms = drm_atomic_helper_connector_dpms,
- 	.detect = mdp4_lvds_connector_detect,
-@@ -111,7 +103,6 @@ static const struct drm_connector_funcs mdp4_lvds_connector_funcs = {
- static const struct drm_connector_helper_funcs mdp4_lvds_connector_helper_funcs = {
- 	.get_modes = mdp4_lvds_connector_get_modes,
- 	.mode_valid = mdp4_lvds_connector_mode_valid,
--	.best_encoder = mdp4_lvds_connector_best_encoder,
- };
- 
- /* initialize connector */
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
