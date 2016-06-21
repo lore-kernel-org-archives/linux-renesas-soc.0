@@ -1,76 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:41757 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751537AbcFUUhi (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:35269 "EHLO
+	mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751139AbcFUNOf (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 21 Jun 2016 16:37:38 -0400
-Date: Tue, 21 Jun 2016 22:37:08 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+	Tue, 21 Jun 2016 09:14:35 -0400
+MIME-Version: 1.0
+In-Reply-To: <1466404822-2540-1-git-send-email-wsa@the-dreams.de>
+References: <1466404822-2540-1-git-send-email-wsa@the-dreams.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 21 Jun 2016 15:11:46 +0200
+Message-ID: <CAMuHMdXWwZaCoLz8TTLBVg8qmKpiw0wKGUawd6ti0wg3X5e6xA@mail.gmail.com>
+Subject: Re: [RFC] pinctrl: sh-pfc: propagate errors on group config
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
 	linux-renesas-soc@vger.kernel.org
-Subject: Re: [RFC] pinctrl: sh-pfc: propagate errors on group config
-Message-ID: <20160621203707.GB1682@katana>
-References: <1466404822-2540-1-git-send-email-wsa@the-dreams.de>
- <CAMuHMdXWwZaCoLz8TTLBVg8qmKpiw0wKGUawd6ti0wg3X5e6xA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="V0207lvV8h4k8FAm"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXWwZaCoLz8TTLBVg8qmKpiw0wKGUawd6ti0wg3X5e6xA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---V0207lvV8h4k8FAm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jun 20, 2016 at 8:40 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> On group configuration, bail out if setting one of the individual pins
+> fails. We don't need to roll-back, the pinctrl core will do this for us.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> Tested on a Lager and Salvator-X without problems. Needs probably more testing
+> on various HW to avoid regressions?
 
+Your patch causes the display to fail on r8a7740/armadillo.
 
-> > On group configuration, bail out if setting one of the individual pins
-> > fails. We don't need to roll-back, the pinctrl core will do this for us.
-> >
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > ---
-> >
-> > Tested on a Lager and Salvator-X without problems. Needs probably more =
-testing
-> > on various HW to avoid regressions?
->=20
-> Your patch causes the display to fail on r8a7740/armadillo.
+Disabling the error propagation and adding more debug prints reveals:
 
-I would have been surprised if this patch didn't uncover some hidden
-issues.
++sh_pfc_pinconf_validate: pin 58: 15 not supported
++sh_pfc_pinconf_set:694: config 0: sh_pfc_pinconf_validate() failed
++sh_pfc_pinconf_group_set:781: sh_pfc_pinconf_set() failed -524 for
+pin 0 of group lcd0_data24_0
++sh_pfc_pinconf_validate: pin 57: 15 not supported
++sh_pfc_pinconf_set:694: config 0: sh_pfc_pinconf_validate() failed
++sh_pfc_pinconf_group_set:781: sh_pfc_pinconf_set() failed -524 for
+pin 1 of group lcd0_data24_0
++sh_pfc_pinconf_validate: pin 56: 15 not supported
++sh_pfc_pinconf_set:694: config 0: sh_pfc_pinconf_validate() failed
++sh_pfc_pinconf_group_set:781: sh_pfc_pinconf_set() failed -524 for
+pin 2 of group lcd0_data24_0
+ ...
 
-> 15 =3D PIN_CONFIG_OUTPUT
->=20
-> No idea why this is set for all pins of the lcd0_data24_0 group (and not =
-for any
-> other pin or group on any other SoC).
+15 = PIN_CONFIG_OUTPUT
 
-Me neither. Sadly no bandwith here to dig into it.
+No idea why this is set for all pins of the lcd0_data24_0 group (and not for any
+other pin or group on any other SoC).
 
+Gr{oetje,eeting}s,
 
---V0207lvV8h4k8FAm
-Content-Type: application/pgp-signature; name="signature.asc"
+                        Geert
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIcBAEBAgAGBQJXaaVzAAoJEBQN5MwUoCm2BlEP/1voXyw7+8ZF9oBEWabB/oaq
-1bytH+YDLpPrEhIJtdoqEYdLv8VuyGUQgGXRA6oCiMbLhrAozBGjiIrC4qGemn3r
-LbMYqGpT5hyjo+tHggtyf6MVRmzfNoXlpPsu7ExSrTIM8/b0TI1DwtnscQFd5uwz
-p+EpeIEPJZj32LZx8ZKIpgQg8LzUzv6U3m4Tgvs9+KjsiGPfVoXl+J9KkeQt+XR+
-Jsj9grv74zX+koWQj3tcn9hZPBJzxPU1mX7oeMBniMGI8Ttmxo28u1EnFni4yvl3
-d5bDX0dQu3vesdPW/gKt98F3njdiHLyl66uv44oa/3EkOr7u8Y9g+iSJgTDC37LU
-6xXpmxQ1XtAFdZqSCxcgwXLTQf+hYM0m66hAFZm9VFYycGtGIfXK+6rpZkobkEDG
-PTOzpq9fkroccJxHvFzUgBbv3eE1aGu7LYUWj7Cfy3DpQO3HrrdQb7VUzoRwJ/8V
-8cQjyadqG+w9it5Ei9H+Jiw4/Teje7yQdgxdfyspm5glyRNHW31IQD9cxEBgpQ6j
-JlPPtE9E13ij/v4ujf2rJto/PsDX6r88vzS4pkDpwaK+271ozB73KS+8xhPUdN26
-oaCJZ7xqQ0SiaqWcy8ZZsBhg73NYjIPZC6z4Fau3xRQ99ugjEDS9gXc8USeaRiEm
-1IWUca/5jKsGnIfkRUY3
-=NoDh
------END PGP SIGNATURE-----
-
---V0207lvV8h4k8FAm--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
