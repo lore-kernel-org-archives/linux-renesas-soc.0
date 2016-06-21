@@ -1,82 +1,43 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:36419 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751644AbcFWNj2 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 23 Jun 2016 09:39:28 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v4.8
-Date: Thu, 23 Jun 2016 15:39:21 +0200
-Message-Id: <1466689161-27672-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: [PATCH 0/2] ARM/PCI: Make I/O port space optional
+To: Simon Horman <horms@verge.net.au>,
+	Russell King <linux@armlinux.org.uk>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Valentine Barshak <valentine.barshak@cogentembedded.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-arm-kernel@lists.infradead.org
+Date: Tue, 21 Jun 2016 12:01:31 -0500
+Message-ID: <20160621165646.7997.44001.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Linus,
+Currently we always require an I/O port resource for PCI host bridges.  Even
+if the bridge doesn't actually support I/O port space, we add a default I/O
+resource for it.
 
-The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+These patches make I/O port space optional on ARM.  Comments welcome.
 
-  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+If these look OK, I'll fold them into the series at [1], where they should
+fix a resource conflict [2] in the R-Car driver.
 
-are available in the git repository at:
+[1] http://lkml.kernel.org/r/20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com
+[2] http://lkml.kernel.org/r/CAMuHMdVgLfTD-BjRZ+gVKgYE8dkDZzQ6DnYtkUs+jVPthJsEdQ@mail.gmail.com
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.8-tag1
+---
 
-for you to fetch changes up to 2d7758319889bf9def19e0a7a5daf1f87c9a9116:
+Bjorn Helgaas (2):
+      ARM: Make PCI I/O space optional
+      PCI: rcar: Drop gen2 dummy I/O port region
 
-  pinctrl: sh-pfc: r8a7795: Add DRIF support (2016-06-23 11:01:21 +0200)
 
-----------------------------------------------------------------
-pinctrl: sh-pfc: Updates for v4.8
-
-  - Voltage switching support for R-Car H3,
-  - DRIF pin support for R-Car H3,
-  - Cleanups and fixes.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Geert Uytterhoeven (4):
-      pinctrl: sh-pfc: sh7757: Fix duplicate initializer in GPIO pinmux data
-      pinctrl: sh-pfc: Move SoC-specific forward declarations to sh_pfc.h
-      pinctrl: sh-pfc: Improve core and user API separation
-      pinctrl: sh-pfc: Convert to devm_gpiochip_add_data()
-
-Kuninori Morimoto (1):
-      pinctrl: sh-pfc: r8a7795: Use PINMUX_SINGLE() for I2C
-
-Ramesh Shanmugasundaram (1):
-      pinctrl: sh-pfc: r8a7795: Add DRIF support
-
-Wolfram Sang (3):
-      pinctrl: sh-pfc: refactor voltage setting
-      pinctrl: sh-pfc: r8a7795: add support for voltage switching
-      pinctrl: sh-pfc: fix property name in bindings doc
-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   2 +-
- drivers/pinctrl/sh-pfc/core.c                      |  10 -
- drivers/pinctrl/sh-pfc/core.h                      |  58 ----
- drivers/pinctrl/sh-pfc/gpio.c                      |  13 +-
- drivers/pinctrl/sh-pfc/pfc-r8a73a4.c               |   1 -
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c               |   1 -
- drivers/pinctrl/sh-pfc/pfc-r8a7778.c               |   2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c               |  59 +---
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c               |   1 -
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 327 ++++++++++++++++++++-
- drivers/pinctrl/sh-pfc/pfc-sh7757.c                |   1 -
- drivers/pinctrl/sh-pfc/pinctrl.c                   |  41 ++-
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |  55 +++-
- 13 files changed, 413 insertions(+), 158 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+ arch/arm/include/asm/mach/pci.h  |    1 +
+ arch/arm/kernel/bios32.c         |   13 +++++++++++--
+ drivers/pci/host/pci-rcar-gen2.c |   11 +----------
+ 3 files changed, 13 insertions(+), 12 deletions(-)
