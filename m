@@ -1,53 +1,34 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52953 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753560AbcFTTLz (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 20 Jun 2016 15:11:55 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 07/24] v4l: vsp1: Base link creation on availability of entities
-Date: Mon, 20 Jun 2016 22:10:25 +0300
-Message-Id: <1466449842-29502-8-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 21 Jun 2016 14:42:07 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: iommu@lists.linux-foundation.org,
+	laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	horms+renesas@verge.net.au
+Subject: Re: [PATCH v2 00/11] iommu/ipmmu-vmsa: r8a7795 support V2
+Message-ID: <20160621124206.GI28248@8bytes.org>
+References: <20160606035723.31763.66500.sendpatchset@little-apple>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160606035723.31763.66500.sendpatchset@little-apple>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Check the entity pointer instead of the feature flag to see if the
-entity is available before creating related links. The two methods are
-currently equivalent, but will differ in the future as we implement
-support for ignoring some of the entities present in the hardware.
+On Mon, Jun 06, 2016 at 12:57:23PM +0900, Magnus Damm wrote:
+>  Developed on top of next-20160602 and:
+>  [PATCH v3 00/06] iommu/ipmmu-vmsa: IPMMU multi-arch update V3
+> 
+>  drivers/iommu/ipmmu-vmsa.c |  318 +++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 269 insertions(+), 49 deletions(-)
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Okay, what is the plan on merging this? It is developed on linux-next
+and doesn't apply on v4.7-rc4. From the areas it touches it should go
+through the iommu-tree, unless there are good reasons not to.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index 0d3624a05ef1..c42576825ad4 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -149,7 +149,7 @@ static int vsp1_uapi_create_links(struct vsp1_device *vsp1)
- 			return ret;
- 	}
- 
--	if (vsp1->info->features & VSP1_HAS_HGO) {
-+	if (vsp1->hgo) {
- 		ret = media_create_pad_link(&vsp1->hgo->entity.subdev.entity,
- 					    HGO_PAD_SOURCE,
- 					    &vsp1->hgo->histo.video.entity, 0,
-@@ -159,7 +159,7 @@ static int vsp1_uapi_create_links(struct vsp1_device *vsp1)
- 			return ret;
- 	}
- 
--	if (vsp1->info->features & VSP1_HAS_LIF) {
-+	if (vsp1->lif) {
- 		ret = media_create_pad_link(&vsp1->wpf[0]->entity.subdev.entity,
- 					    RWPF_PAD_SOURCE,
- 					    &vsp1->lif->entity.subdev.entity,
--- 
-Regards,
 
-Laurent Pinchart
+	Joerg
+
+P.S.: Same question applies to your other two patch-sets.
