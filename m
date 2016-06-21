@@ -1,56 +1,80 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:50457 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752593AbcFNOPa (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 14 Jun 2016 10:15:30 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: [PATCH 2/2] PCI: rcar: Drop gen2 dummy I/O port region
 To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 4/5] ARM: dts: kzm9d: Update console parameters
-Date: Tue, 14 Jun 2016 16:15:23 +0200
-Message-Id: <1465913724-26172-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1465913724-26172-1-git-send-email-geert+renesas@glider.be>
-References: <1465913724-26172-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	Russell King <linux@armlinux.org.uk>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Valentine Barshak <valentine.barshak@cogentembedded.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-arm-kernel@lists.infradead.org
+Date: Tue, 21 Jun 2016 12:01:50 -0500
+Message-ID: <20160621170150.7997.4821.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+In-Reply-To: <20160621165646.7997.44001.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20160621165646.7997.44001.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a "serial1" alias for the serial console (it is labeled "uart1").
-Add the serial port config to "chosen/stdout-path", which requires
-referring to the port by alias.
-Drop the "console=" parameter from the kernel command line, as it's no
-longer needed for DT-based platforms.
+Previously we added a dummy I/O port region even though the R-Car
+controller doesn't support PCI port I/O.  This resulted in bogus root bus
+resources like this:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Change one-line summary prefix to match current arm-soc practices,
-  - Reword patch description.
----
- arch/arm/boot/dts/emev2-kzm9d.dts | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+  pci_bus 0000:00: root bus resource [io  0xee080000-0xee0810ff]
+  pci_bus 0000:00: root bus resource [mem 0xee080000-0xee0810ff]
 
-diff --git a/arch/arm/boot/dts/emev2-kzm9d.dts b/arch/arm/boot/dts/emev2-kzm9d.dts
-index 9eb86f8f32c5afc0..60d0a732833aaada 100644
---- a/arch/arm/boot/dts/emev2-kzm9d.dts
-+++ b/arch/arm/boot/dts/emev2-kzm9d.dts
-@@ -23,9 +23,13 @@
- 		reg = <0x40000000 0x8000000>;
- 	};
+Drop the unused dummy I/O port region and set struct hw_pci.io_optional so
+the ARM PCI code doesn't add a default one for us.
+
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ drivers/pci/host/pci-rcar-gen2.c |   11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
+diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
+index 9980a4b..ddf7765 100644
+--- a/drivers/pci/host/pci-rcar-gen2.c
++++ b/drivers/pci/host/pci-rcar-gen2.c
+@@ -97,7 +97,6 @@
+ struct rcar_pci_priv {
+ 	struct device *dev;
+ 	void __iomem *reg;
+-	struct resource io_res;
+ 	struct resource mem_res;
+ 	struct resource *cfg_res;
+ 	unsigned busnr;
+@@ -273,7 +272,6 @@ static int rcar_pci_setup(int nr, struct pci_sys_data *sys)
+ 		rcar_pci_setup_errirq(priv);
  
-+	aliases {
-+		serial1 = &uart1;
-+	};
-+
- 	chosen {
--		bootargs = "console=ttyS1,115200n81 ignore_loglevel root=/dev/nfs ip=dhcp";
--		stdout-path = &uart1;
-+		bootargs = "ignore_loglevel root=/dev/nfs ip=dhcp";
-+		stdout-path = "serial1:115200n8";
- 	};
+ 	/* Add PCI resources */
+-	pci_add_resource(&sys->resources, &priv->io_res);
+ 	pci_add_resource(&sys->resources, &priv->mem_res);
  
- 	gpio_keys {
--- 
-1.9.1
+ 	/* Setup bus number based on platform device id / of bus-range */
+@@ -371,14 +369,6 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	priv->mem_res = *mem_res;
+-	/*
+-	 * The controller does not support/use port I/O,
+-	 * so setup a dummy port I/O region here.
+-	 */
+-	priv->io_res.start = priv->mem_res.start;
+-	priv->io_res.end = priv->mem_res.end;
+-	priv->io_res.flags = IORESOURCE_IO;
+-
+ 	priv->cfg_res = cfg_res;
+ 
+ 	priv->irq = platform_get_irq(pdev, 0);
+@@ -421,6 +411,7 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ 	hw_private[0] = priv;
+ 	memset(&hw, 0, sizeof(hw));
+ 	hw.nr_controllers = ARRAY_SIZE(hw_private);
++	hw.io_optional = 1;
+ 	hw.private_data = hw_private;
+ 	hw.map_irq = rcar_pci_map_irq;
+ 	hw.ops = &rcar_pci_ops;
