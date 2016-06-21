@@ -1,82 +1,77 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: [PATCH/RFC 3/3] arm64: dts: r8a7795: Support shared irq for thermal
- sensors
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-References: <57661211.7010900@rvc.renesas.com>
- <57661BB1.3060401@rvc.renesas.com>
-CC: Wolfram Sang <wsa@the-dreams.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Thao Phuong Le. Nguyen" <thao.nguyen.yb@rvc.renesas.com>,
-	"Hien Duy. Dang" <hien.dang.eb@rvc.renesas.com>,
-	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Simon Horman <horms@verge.net.au>,
-	"Khiem Trong. Nguyen" <khiem.nguyen.xt@rvc.renesas.com>
-From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Message-ID: <57661CAD.8040807@rvc.renesas.com>
-Date: Sun, 19 Jun 2016 11:16:45 +0700
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:53379 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751589AbcFUJO7 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 21 Jun 2016 05:14:59 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	Daniel Vetter <daniel.vetter@ffwll.ch>,
+	David Airlie <airlied@linux.ie>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 7/7] drm/rcar-du: Remove redundant calls to drm_connector_register_all()
+Date: Tue, 21 Jun 2016 12:15:17 +0300
+Message-ID: <2881992.mZhRLFloE1@avalon>
+In-Reply-To: <1466151923-1572-8-git-send-email-chris@chris-wilson.co.uk>
+References: <1466151923-1572-1-git-send-email-chris@chris-wilson.co.uk> <1466151923-1572-8-git-send-email-chris@chris-wilson.co.uk>
 MIME-Version: 1.0
-In-Reply-To: <57661BB1.3060401@rvc.renesas.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds the shared interrupts for thermal sensors
-TSC1/TSC2/TSC3.
+Hi Chris,
 
-Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Thank you for the patch.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index db203db..761df2b 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1628,7 +1628,8 @@
- 			compatible = "renesas,thermal-r8a7795",
- 				"renesas,rcar-gen3-thermal";
- 			reg = <0 0xe6198000 0 0x5c>;
--			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 522>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#thermal-sensor-cells = <0>;
-@@ -1639,7 +1640,8 @@
- 			compatible = "renesas,thermal-r8a7795",
- 				"renesas,rcar-gen3-thermal";
- 			reg = <0 0xe61a0000 0 0x5c>;
--			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 522>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#thermal-sensor-cells = <0>;
-@@ -1650,7 +1652,8 @@
- 			compatible = "renesas,thermal-r8a7795",
- 				"renesas,rcar-gen3-thermal";
- 			reg = <0 0xe61a8000 0 0x5c>;
--			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 522>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			#thermal-sensor-cells = <0>;
+On Friday 17 Jun 2016 09:25:23 Chris Wilson wrote:
+> Up to now, the recommendation was for drivers to call drm_dev_register()
+> followed by drm_connector_register_all(). Now that
+> drm_connector_register() is safe against multiple invocations, we can
+> move drm_connector_register_all() to drm_dev_register() and not suffer
+> from any backwards compatibility issues with drivers not following the
+> more rigorous init ordering.
+> 
+> Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-renesas-soc@vger.kernel.org
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 48ec4b6e8b26..36d390093c92
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -278,7 +278,6 @@ static int rcar_du_remove(struct platform_device *pdev)
+>  	struct rcar_du_device *rcdu = platform_get_drvdata(pdev);
+>  	struct drm_device *ddev = rcdu->ddev;
+> 
+> -	drm_connector_unregister_all(ddev);
+>  	drm_dev_unregister(ddev);
+> 
+>  	if (rcdu->fbdev)
+> @@ -360,10 +359,6 @@ static int rcar_du_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto error;
+> 
+> -	ret = drm_connector_register_all(ddev);
+> -	if (ret < 0)
+> -		goto error;
+> -
+>  	DRM_INFO("Device %s probed\n", dev_name(&pdev->dev));
+> 
+>  	return 0;
+
 -- 
-1.9.1
+Regards,
 
+Laurent Pinchart
