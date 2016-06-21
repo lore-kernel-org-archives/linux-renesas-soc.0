@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:56633 "EHLO
+Received: from down.free-electrons.com ([37.187.137.238]:45936 "EHLO
 	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750770AbcFVIPE convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1751756AbcFUV3d (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 22 Jun 2016 04:15:04 -0400
-Date: Wed, 22 Jun 2016 10:04:22 +0200
+	Tue, 21 Jun 2016 17:29:33 -0400
+Date: Tue, 21 Jun 2016 23:22:58 +0200
 From: Boris Brezillon <boris.brezillon@free-electrons.com>
 To: Brian Norris <briannorris@chromium.org>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -16,14 +16,14 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Subject: Re: [PATCH v2] pwm: improve args checking in pwm_apply_state()
-Message-ID: <20160622100422.5c34f975@bbrezillon>
+Message-ID: <20160621232258.62105f7a@bbrezillon>
 In-Reply-To: <20160621183730.GA130978@google.com>
 References: <1464367549-111530-1-git-send-email-briannorris@chromium.org>
 	<CAMuHMdUVgwb8QwKcORDuoJUCJJKE7Xmzg3R45S1VdnupAXUx0w@mail.gmail.com>
 	<20160621183730.GA130978@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -134,82 +134,21 @@ Brian Norris <briannorris@chromium.org> wrote:
 > if pwm_apply_args() were to configure the period for us?
 > 
 > Boris, any thoughts?
-> 
 
-I had second thoughts and I think you're right: pwm_apply_args()
-should set the pargs.period period for us.
+I think this is partly caused by this commit:
 
-Here is a patch addressing that.
+a8c3862551e0 ("pwm: Keep PWM state in sync with hardware state")
 
-Geert, can you test it?
+But again, we need that one if we don't want to override the current
+PWM period with the pwm_args one when the driver support hardware
+readout.
 
---->8---
->From 0610f7e24976e176054bce20445ff42d8aea9513 Mon Sep 17 00:00:00 2001
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Date: Wed, 22 Jun 2016 09:25:14 +0200
-Subject: [PATCH] pwm: Fix pwm_apply_args()
+This leaves 2 choices:
 
-Commit 5ec803edcb70 ("pwm: Add core infrastructure to allow atomic
-updates"), implemented pwm_disable() as a wrapper around
-pwm_apply_state(), and then, commit ef2bf4997f7d ("pwm: Improve args
-checking in pwm_apply_state()") added missing checks on the ->period
-value in pwm_apply_state() to ensure we were not passing inappropriate
-values to the ->config() or ->apply() methods.
+1/ assign the period to pargs->period if ->get_state() is not
+   implemented
+2/ remove the !period check in pwm_apply_state() when state->enabled is
+   false (do we really care if period = 0 when all we want to do is
+   disable the PWM?)
 
-The conjunction of these 2 commits led to a case where pwm_disable()
-was no longer succeeding, thus preventing the polarity setting done
-in pwm_apply_args().
-
-Set a valid period in pwm_apply_args() to ensure polarity setting
-won't be rejected.
-
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Suggested-by: Brian Norris <briannorris@chromium.org>
-Fixes: 5ec803edcb70 ("pwm: Add core infrastructure to allow atomic updates")
----
- include/linux/pwm.h | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index 908b67c847cd..c038ae36b10e 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -464,6 +464,8 @@ static inline bool pwm_can_sleep(struct pwm_device *pwm)
- 
- static inline void pwm_apply_args(struct pwm_device *pwm)
- {
-+	struct pwm_state state = { };
-+
- 	/*
- 	 * PWM users calling pwm_apply_args() expect to have a fresh config
- 	 * where the polarity and period are set according to pwm_args info.
-@@ -476,18 +478,20 @@ static inline void pwm_apply_args(struct pwm_device *pwm)
- 	 * at startup (even if they are actually enabled), thus authorizing
- 	 * polarity setting.
- 	 *
--	 * Instead of setting ->enabled to false, we call pwm_disable()
--	 * before pwm_set_polarity() to ensure that everything is configured
--	 * as expected, and the PWM is really disabled when the user request
--	 * it.
-+	 * To fulfill this requirement, we apply a new state which disables
-+	 * the PWM device and set the reference period and polarity config.
- 	 *
- 	 * Note that PWM users requiring a smooth handover between the
- 	 * bootloader and the kernel (like critical regulators controlled by
- 	 * PWM devices) will have to switch to the atomic API and avoid calling
- 	 * pwm_apply_args().
- 	 */
--	pwm_disable(pwm);
--	pwm_set_polarity(pwm, pwm->args.polarity);
-+
-+	state.enabled = false;
-+	state.polarity = pwm->args.polarity;
-+	state.period = pwm->args.period;
-+
-+	pwm_apply_state(pwm, &state);
- }
- 
- struct pwm_lookup {
--- 
-2.7.4
+Thierry, what's you're opinion.
