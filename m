@@ -1,51 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:51399 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933303AbcFJNBQ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57514 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751855AbcFVDyL (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 09:01:16 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 09/19] ARM: dts: koelsch: Name serial port pfc subnodes after device names
-Date: Fri, 10 Jun 2016 15:00:55 +0200
-Message-Id: <1465563665-2231-10-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
-References: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
+	Tue, 21 Jun 2016 23:54:11 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 02/13] ARM: dts: lager: use demuxer for IIC1/I2C1
+Date: Wed, 22 Jun 2016 12:43:40 +0900
+Message-Id: <1466567031-20381-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
+References: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Name the Pin Function Controller subnodes for SCIF0 and SCIF1 after
-their device names, instead of after the serial port aliases.
+Make it possible to select which I2C1 IP core you want to run on the
+EXIO-A connector.
 
-This avoids conflicts when enabling support for more serial ports later,
-either here or in a DT overlay.
+This is based on reference work for the I2C0 core of the lager board
+by Wolfram Sang.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v3
+* Add GPIO fallback
+* Re-order buses to facilitate grouping of additional GPIO buses
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 20fbc8c36a785bd3..73e5ecf036e1b968 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -332,12 +332,12 @@
- 		function = "du";
+v2
+* No change
+---
+ arch/arm/boot/dts/r8a7790-lager.dts | 39 +++++++++++++++++++++++++++++++++++--
+ 1 file changed, 37 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 6b25d9e7d21b..05302d0d7e33 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -50,7 +50,9 @@
+ 	aliases {
+ 		serial0 = &scif0;
+ 		serial1 = &scifa1;
++		i2c8 = "gpioi2c1";
+ 		i2c10 = "i2cexio0";
++		i2c11 = "i2cexio1";
  	};
  
--	scif0_pins: serial0 {
-+	scif0_pins: scif0 {
- 		groups = "scif0_data_d";
- 		function = "scif0";
+ 	chosen {
+@@ -254,6 +256,17 @@
+ 		clock-frequency = <148500000>;
  	};
  
--	scif1_pins: serial1 {
-+	scif1_pins: scif1 {
- 		groups = "scif1_data_d";
- 		function = "scif1";
++	gpioi2c1: i2c-8 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		gpios = <&gpio1 17 GPIO_ACTIVE_HIGH /* sda */
++			 &gpio1 16 GPIO_ACTIVE_HIGH /* scl */
++			>;
++		i2c-gpio,delay-us = <5>;
++	};
++
+ 	/*
+ 	 * IIC0/I2C0 is routed to EXIO connector A, pins 114 (SCL) + 116 (SDA) only.
+ 	 * We use the I2C demuxer, so the desired IP core can be selected at runtime
+@@ -272,6 +285,19 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  	};
++
++	/*
++	 * IIC1/I2C1 is routed to EXIO connector A, pins 78 (SCL) + 80 (SDA).
++	 * This is similar to the arangement described for i2cexio0 (above)
++	 * with a fallback to GPIO also provided.
++	 */
++	i2cexio1: i2c-11 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&iic1>, <&i2c1>, <&gpioi2c1>;
++		i2c-bus-name = "i2c-exio1";
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
+ };
+ 
+ &du {
+@@ -394,6 +420,11 @@
+ 		function = "iic0";
+ 	};
+ 
++	i2c1_pins: i2c1 {
++		groups = "i2c1";
++		function = "i2c1";
++	};
++
+ 	iic1_pins: iic1 {
+ 		groups = "iic1";
+ 		function = "iic1";
+@@ -590,10 +621,14 @@
+ 	pinctrl-names = "i2c-exio0";
+ };
+ 
++&i2c1	{
++	pinctrl-0 = <&i2c1_pins>;
++	pinctrl-names = "i2c-exio1";
++};
++
+ &iic1	{
+-	status = "okay";
+ 	pinctrl-0 = <&iic1_pins>;
+-	pinctrl-names = "default";
++	pinctrl-names = "i2c-exio1";
+ };
+ 
+ &iic2	{
 -- 
-1.9.1
+2.1.4
