@@ -1,62 +1,123 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:32872 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751748AbcF0R5g (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57320 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751671AbcFVDtu (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 27 Jun 2016 13:57:36 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	laurent.pinchart@ideasonboard.com
-Cc: ulrich.hecht+renesas@gmail.com, hans.verkuil@cisco.com,
-	Michal Simek <michal.simek@xilinx.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [RFC 1/2] media: entity: Add has_route entity operation
-Date: Mon, 27 Jun 2016 19:56:56 +0200
-Message-Id: <20160627175657.25391-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160627175657.25391-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160627175657.25391-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+	Tue, 21 Jun 2016 23:49:50 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 11/13] ARM: dts: alt: use demuxer for I2C1
+Date: Wed, 22 Jun 2016 12:43:49 +0900
+Message-Id: <1466567031-20381-12-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
+References: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
 
-The optional operation can be used by entities to report whether two
-pads are internally connected.
+Based on work for the r8a7790/lager by Wolfram Sang.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- include/media/media-entity.h | 5 +++++
- 1 file changed, 5 insertions(+)
+v3
+* New patch
+---
+ arch/arm/boot/dts/r8a7794-alt.dts | 54 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 39 insertions(+), 15 deletions(-)
 
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index cbb266f..c4b2dca 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -179,6 +179,9 @@ struct media_pad {
-  * @link_validate:	Return whether a link is valid from the entity point of
-  *			view. The media_entity_pipeline_start() function
-  *			validates all links by calling this operation. Optional.
-+ * @has_route:		Return whether a route exists inside the entity between
-+ *			two given pads. Optional. If the operation isn't
-+ *			implemented all pads will be considered as connected.
-  *
-  * Note: Those these callbacks are called with struct media_device.@graph_mutex
-  * mutex held.
-@@ -188,6 +191,8 @@ struct media_entity_operations {
- 			  const struct media_pad *local,
- 			  const struct media_pad *remote, u32 flags);
- 	int (*link_validate)(struct media_link *link);
-+	bool (*has_route)(struct media_entity *entity, unsigned int pad0,
-+			  unsigned int pad1);
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index 1ad37d431a2a..d00b1b33f6ed 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -10,6 +10,7 @@
+ 
+ /dts-v1/;
+ #include "r8a7794.dtsi"
++#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	model = "Alt";
+@@ -17,6 +18,8 @@
+ 
+ 	aliases {
+ 		serial0 = &scif2;
++		i2c9 = "gpioi2c1";
++		i2c11 = "i2chdmi";
+ 	};
+ 
+ 	chosen {
+@@ -77,6 +80,41 @@
+ 		#clock-cells = <0>;
+ 		clock-frequency = <148500000>;
+ 	};
++
++	gpioi2c1: i2c-9 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		gpios = <&gpio4 1 GPIO_ACTIVE_HIGH /* sda */
++			 &gpio4 0 GPIO_ACTIVE_HIGH /* scl */
++			>;
++		i2c-gpio,delay-us = <5>;
++	};
++
++	/*
++	 * A fallback to GPIO is provided for I2C1.
++	 */
++	i2chdmi: i2c-11 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c1>, <&gpioi2c1>;
++		i2c-bus-name = "i2c-hdmi";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		composite-in@20 {
++			compatible = "adi,adv7180";
++			reg = <0x20>;
++			remote = <&vin0>;
++
++			port {
++				adv7180: endpoint {
++					bus-width = <8>;
++					remote-endpoint = <&vin0ep>;
++				};
++			};
++		};
++	};
  };
  
- /**
+ &du {
+@@ -171,23 +209,9 @@
+ 
+ &i2c1 {
+ 	pinctrl-0 = <&i2c1_pins>;
+-	pinctrl-names = "default";
++	pinctrl-names = "i2c-hdmi";
+ 
+-	status = "okay";
+ 	clock-frequency = <400000>;
+-
+-	composite-in@20 {
+-		compatible = "adi,adv7180";
+-		reg = <0x20>;
+-		remote = <&vin0>;
+-
+-		port {
+-			adv7180: endpoint {
+-				bus-width = <8>;
+-				remote-endpoint = <&vin0ep>;
+-			};
+-		};
+-	};
+ };
+ 
+ &vin0 {
 -- 
-2.8.3
+2.1.4
