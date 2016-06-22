@@ -1,72 +1,192 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56493 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:57320 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750810AbcFHA7w (ORCPT
+	with ESMTP id S1751572AbcFVDtq (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 20:59:52 -0400
+	Tue, 21 Jun 2016 23:49:46 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM64 Based SoC DT Updates for v4.8
-Date: Wed,  8 Jun 2016 09:59:42 +0900
-Message-Id: <cover.1465347183.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH v3 08/13] ARM: dts: porter: use demuxer for I2C2
+Date: Wed, 22 Jun 2016 12:43:46 +0900
+Message-Id: <1466567031-20381-9-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
+References: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Create a separate bus for HDMI related I2C2 and provide fallback to GPIO.
 
-Please consider these Renesas ARM64 based SoC DT updates for v4.8.
+Based on work for the r8a7790/lager by Wolfram Sang.
 
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v3
+* New patch
+* Compile tested only
+---
+ arch/arm/boot/dts/r8a7791-porter.dts | 129 +++++++++++++++++++++--------------
+ 1 file changed, 76 insertions(+), 53 deletions(-)
 
-The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
-
-  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt-for-v4.8
-
-for you to fetch changes up to 21cc405c8a6332ddad2d2751a9723b2b3e227a05:
-
-  arm64: dts: r8a7795: Drop 0x from unit address of gic (2016-05-30 10:18:01 +0900)
-
-----------------------------------------------------------------
-Renesas ARM64 Based SoC DT Updates for v4.8
-
-* Fix W=1 dtc warnings and other cleanups
-* Enable watchdog timer
-* Enable DMA for I2C
-* Increase the size of GIC-400 mapped registers: be nicer to hypervisors
-* Support RTS/CTS hardware flow control
-
-----------------------------------------------------------------
-Geert Uytterhoeven (4):
-      arm64: dts: salvator-x: SCIF1 supports RTS/CTS hardware flow control
-      arm64: dts: r8a7795: Use SYSC "always-on" PM Domain for RWDT node
-      arm64: dts: r8a7795: Fix W=1 dtc warnings
-      arm64: dts: salvator-x: Fix W=1 dtc warnings
-
-Niklas Söderlund (1):
-      arm64: dts: r8a7795: enable DMA for I2C
-
-Pooya Keshavarzi (1):
-      arm64: dts: r8a7795: Increase the size of GIC-400 mapped registers
-
-Simon Horman (1):
-      arm64: dts: r8a7795: Drop 0x from unit address of gic
-
-Wolfram Sang (2):
-      arm64: dts: r8a7795: Add RWDT node
-      arm64: dts: salvator-x: Enable watchdog timer
-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 14 +++-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 98 ++++++++++++++--------
- 2 files changed, 71 insertions(+), 41 deletions(-)
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index 6761d11d3f9e..dea3c1a103a5 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -29,6 +29,8 @@
+ 
+ 	aliases {
+ 		serial0 = &scif0;
++		i2c9 = "gpioi2c2";
++		i2c10 = "i2chdmi";
+ 	};
+ 
+ 	chosen {
+@@ -135,6 +137,79 @@
+ 			clocks = <&x14_clk>;
+ 		};
+ 	};
++
++	gpioi2c2: i2c-9 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		gpios = <&gpio2 7 GPIO_ACTIVE_HIGH /* sda */
++			 &gpio2 6 GPIO_ACTIVE_HIGH /* scl */
++			>;
++		i2c-gpio,delay-us = <5>;
++	};
++
++	/*
++	 * A fallback to GPIO is provided for I2C2.
++	 */
++	i2chdmi: i2c-10 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c2>, <&gpioi2c2>;
++		i2c-bus-name = "i2c-hdmi";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ak4642: codec@12 {
++			compatible = "asahi-kasei,ak4642";
++			#sound-dai-cells = <0>;
++			reg = <0x12>;
++		};
++
++		composite-in@20 {
++			compatible = "adi,adv7180";
++			reg = <0x20>;
++			remote = <&vin0>;
++
++			port {
++				adv7180: endpoint {
++					bus-width = <8>;
++					remote-endpoint = <&vin0ep>;
++				};
++			};
++		};
++
++		hdmi@39 {
++			compatible = "adi,adv7511w";
++			reg = <0x39>;
++			interrupt-parent = <&gpio3>;
++			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
++
++			adi,input-depth = <8>;
++			adi,input-colorspace = "rgb";
++			adi,input-clock = "1x";
++			adi,input-style = <1>;
++			adi,input-justification = "evenly";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					adv7511_in: endpoint {
++						remote-endpoint = <&du_out_rgb>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					adv7511_out: endpoint {
++						remote-endpoint = <&hdmi_con>;
++					};
++				};
++			};
++		};
++	};
+ };
+ 
+ &extal_clk {
+@@ -296,61 +371,9 @@
+ 
+ &i2c2 {
+ 	pinctrl-0 = <&i2c2_pins>;
+-	pinctrl-names = "default";
++	pinctrl-names = "i2c-hdmi";
+ 
+-	status = "okay";
+ 	clock-frequency = <400000>;
+-
+-	ak4642: codec@12 {
+-		compatible = "asahi-kasei,ak4642";
+-		#sound-dai-cells = <0>;
+-		reg = <0x12>;
+-	};
+-
+-	composite-in@20 {
+-		compatible = "adi,adv7180";
+-		reg = <0x20>;
+-		remote = <&vin0>;
+-
+-		port {
+-			adv7180: endpoint {
+-				bus-width = <8>;
+-				remote-endpoint = <&vin0ep>;
+-			};
+-		};
+-	};
+-
+-	hdmi@39 {
+-		compatible = "adi,adv7511w";
+-		reg = <0x39>;
+-		interrupt-parent = <&gpio3>;
+-		interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
+-
+-		adi,input-depth = <8>;
+-		adi,input-colorspace = "rgb";
+-		adi,input-clock = "1x";
+-		adi,input-style = <1>;
+-		adi,input-justification = "evenly";
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7511_in: endpoint {
+-					remote-endpoint = <&du_out_rgb>;
+-				};
+-			};
+-
+-			port@1 {
+-				reg = <1>;
+-				adv7511_out: endpoint {
+-					remote-endpoint = <&hdmi_con>;
+-				};
+-			};
+-		};
+-	};
+ };
+ 
+ &sata0 {
+-- 
+2.1.4
