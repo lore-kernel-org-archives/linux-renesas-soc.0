@@ -1,180 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57320 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751671AbcFVDtw (ORCPT
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:45926 "EHLO
+	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752285AbcFVUes (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 21 Jun 2016 23:49:52 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 13/13] ARM: dts: silk: use demuxer for I2C1
-Date: Wed, 22 Jun 2016 12:43:51 +0900
-Message-Id: <1466567031-20381-14-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
-References: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
+	Wed, 22 Jun 2016 16:34:48 -0400
+Subject: Re: [PATCH v2 0/2] can: rcar_canfd: Add Classical CAN & lower state
+ transition support
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+	wg@grandegger.com, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org
+References: <1466434007-50873-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1466598707-44076-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Cc: ulrich.hecht+renesas@gmail.com, horms@verge.net.au,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	chris.paterson2@renesas.com, magnus.damm@gmail.com,
+	socketcan@hartkopp.net
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Message-ID: <602d4286-754f-f02f-4bd2-3e238cc4789a@pengutronix.de>
+Date: Wed, 22 Jun 2016 22:34:09 +0200
+MIME-Version: 1.0
+In-Reply-To: <1466598707-44076-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="sHCbUQ4mJTiSdMAk7lsULQ5m8agaXj9Dn"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--sHCbUQ4mJTiSdMAk7lsULQ5m8agaXj9Dn
+Content-Type: multipart/mixed; boundary="sPmXpiwEJs9x3qPRuaurOL4wcxhPk5T6h"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+ wg@grandegger.com, robh+dt@kernel.org, pawel.moll@arm.com,
+ mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+Cc: ulrich.hecht+renesas@gmail.com, horms@verge.net.au,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ chris.paterson2@renesas.com, magnus.damm@gmail.com, socketcan@hartkopp.net
+Message-ID: <602d4286-754f-f02f-4bd2-3e238cc4789a@pengutronix.de>
+Subject: Re: [PATCH v2 0/2] can: rcar_canfd: Add Classical CAN & lower state
+ transition support
+References: <1466434007-50873-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1466598707-44076-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1466598707-44076-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 
-Based on work for the r8a7790/lager by Wolfram Sang.
+--sPmXpiwEJs9x3qPRuaurOL4wcxhPk5T6h
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v3
-* New patch
-* Compile tested only
----
- arch/arm/boot/dts/r8a7794-silk.dts | 117 ++++++++++++++++++++++---------------
- 1 file changed, 70 insertions(+), 47 deletions(-)
+On 06/22/2016 02:31 PM, Ramesh Shanmugasundaram wrote:
+> This patch is based on latest can-next(tag:linux-can-next-for-4.8-20160=
+617).
+>=20
+> Changes since v1:
+>  - property named changed from "can-nofd" to "no-can-fd" (Rob H)
+>  - added new patch(0002) that support lower state transitions (Wolfgang=
+ G)
+>    (http://marc.info/?l=3Dlinux-can&m=3D146650325116971&w=3D2)
+>=20
+> Ramesh Shanmugasundaram (2):
+>   can: rcar_canfd: Add Classical CAN only mode support
+>   can: rcar_canfd: Add back-to-error-active support
+>=20
+>  .../devicetree/bindings/net/can/rcar_canfd.txt     |  21 +-
+>  drivers/net/can/rcar/rcar_canfd.c                  | 429 +++++++++++++=
++-------
+>  2 files changed, 310 insertions(+), 140 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index cf24f45fff22..b1beb22cb980 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -20,6 +20,8 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		i2c9 = "gpioi2c1";
-+		i2c10 = "i2chdmi";
- 	};
- 
- 	chosen {
-@@ -119,6 +121,73 @@
- 		#clock-cells = <0>;
- 		clock-frequency = <74250000>;
- 	};
-+
-+	gpioi2c1: i2c-9 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "i2c-gpio";
-+		status = "disabled";
-+		gpios = <&gpio4 1 GPIO_ACTIVE_HIGH /* sda */
-+			 &gpio4 0 GPIO_ACTIVE_HIGH /* scl */
-+			>;
-+		i2c-gpio,delay-us = <5>;
-+	};
-+
-+	/*
-+	 * A fallback to GPIO is provided for I2C1.
-+	 */
-+	i2chdmi: i2c-10 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&i2c1>, <&gpioi2c1>;
-+		i2c-bus-name = "i2c-hdmi";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		composite-in@20 {
-+			compatible = "adi,adv7180";
-+			reg = <0x20>;
-+			remote = <&vin0>;
-+
-+			port {
-+				adv7180: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&vin0ep>;
-+				};
-+			};
-+		};
-+
-+		hdmi@39 {
-+			compatible = "adi,adv7511w";
-+			reg = <0x39>;
-+			interrupt-parent = <&gpio5>;
-+			interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
-+
-+			adi,input-depth = <8>;
-+			adi,input-colorspace = "rgb";
-+			adi,input-clock = "1x";
-+			adi,input-style = <1>;
-+			adi,input-justification = "evenly";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					adv7511_in: endpoint {
-+						remote-endpoint = <&du_out_rgb0>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					adv7511_out: endpoint {
-+						remote-endpoint = <&hdmi_con>;
-+					};
-+				};
-+			};
-+		};
-+	};
- };
- 
- &extal_clk {
-@@ -225,55 +294,9 @@
- 
- &i2c1 {
- 	pinctrl-0 = <&i2c1_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-hdmi";
- 
--	status = "okay";
- 	clock-frequency = <400000>;
--
--	composite-in@20 {
--		compatible = "adi,adv7180";
--		reg = <0x20>;
--		remote = <&vin0>;
--
--		port {
--			adv7180: endpoint {
--				bus-width = <8>;
--				remote-endpoint = <&vin0ep>;
--			};
--		};
--	};
--
--	hdmi@39 {
--		compatible = "adi,adv7511w";
--		reg = <0x39>;
--		interrupt-parent = <&gpio5>;
--		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
--
--		adi,input-depth = <8>;
--		adi,input-colorspace = "rgb";
--		adi,input-clock = "1x";
--		adi,input-style = <1>;
--		adi,input-justification = "evenly";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7511_in: endpoint {
--					remote-endpoint = <&du_out_rgb0>;
--				};
--			};
--
--			port@1 {
--				reg = <1>;
--				adv7511_out: endpoint {
--					remote-endpoint = <&hdmi_con>;
--				};
--			};
--		};
--	};
- };
- 
- &mmcif0 {
--- 
-2.1.4
+Applied to can-next.
+
+Tnx,
+Marc
+
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--sPmXpiwEJs9x3qPRuaurOL4wcxhPk5T6h--
+
+--sHCbUQ4mJTiSdMAk7lsULQ5m8agaXj9Dn
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBCgAGBQJXavZBAAoJED07qiWsqSVqqgIH/1b8DgsnztQETaJ8WYLkokQz
+ZOcUOwpDOXGxA5BdYxHCyO74hoLIqvgR78ToxveujVynHPgR/gbUBjMR/QWp4S1G
+AoN8sBLWY2121DF362KAQ5QGje18Bx502V0X0CFGHZUMUuH1MnoSXVmNp9nC8Cwk
+XzEO66M/AgB8Zto2u6por+Y3r2mkuWWMrcIhzMKlGN0HWnTD1RckqxlxMOdXWDct
+h1nnyCtG8imb1N0Wh707xRiBjaBbdzcj+mxKf/f1adQXJVsZjPFL9ojvsnVbxcP8
+V6ucN9hlNwSXuSFE2qFTG1ny6ihOoLmK30BcyHu5vFWmk5WVpqz3+HvgwR582sU=
+=4uYv
+-----END PGP SIGNATURE-----
+
+--sHCbUQ4mJTiSdMAk7lsULQ5m8agaXj9Dn--
