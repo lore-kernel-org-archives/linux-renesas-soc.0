@@ -1,59 +1,84 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Sender: Kieran Bingham <kieran@ksquared.org.uk>
-From: Kieran Bingham <kieran@bingham.xyz>
-To: Geert Uytterhoeven <geert@glider.be>,
-	linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran@bingham.xyz>
-Subject: [GIT PULL FOR renesas-drivers] FDP1 Fine Display Processor support
-Date: Thu, 30 Jun 2016 10:29:04 +0100
-Message-Id: <1467278944-17042-1-git-send-email-kieran@bingham.xyz>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57514 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752057AbcFVDyN (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 21 Jun 2016 23:54:13 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 01/13] ARM: dts: lager: rename and reindex i2cexio
+Date: Wed, 22 Jun 2016 12:43:39 +0900
+Message-Id: <1466567031-20381-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
+References: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+The rename from i2cexio to i2cexio0 is in in preparation for adding
+i2cexio1 which will use the dmuxer for IIC1/I2C1.
 
-The following changes since commit f50e3d0720c0f27476153c2c7129b18639228d1b:
+The reindexing from i2c8 to i2c10 is to allow space for grouping of
+additional GPIO buses to added by follow-up patches to support demuxing of
+other i2c buses.
 
-  Merge branch 'drm/next/dt' into for/renesas-drivers (2016-06-21 18:01:05 +0300)
+Also note that fallback to GPIO is not provided by the hardware for IIC1/I2C1.
 
-are available in the git repository at:
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v2:
+* Reindex i2c
+* Add note that GPIO fallback is not provided by hardware
+---
+ arch/arm/boot/dts/r8a7790-lager.dts | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-  https://github.com/kbingham/linux.git renesas/fdp1
-
-for you to fetch changes up to 06f3e8e204a41e68ab649a26c557e7bc4c01c0f0:
-
-  Merge branches 'renesas/fdp1-dt' and 'renesas/fdp1-driver' into renesas/fdp1 (2016-06-30 10:13:43 +0100)
-
-----------------------------------------------------------------
-Kieran Bingham (9):
-      dt-bindings: Update Renesas R-Car FCP DT binding
-      dt-bindings: Document Renesas R-Car FCP power-domains usage
-      dt-bindings: Add Renesas R-Car FDP1 bindings
-      arm64: dts: r8a7795: add FCPF device nodes
-      arm64: dts: r8a7795: add FDP1 device nodes
-      clk: renesas: r8a7795: Provide FDP1 clocks
-      v4l: Extend FCP compatible list to support the FDP
-      v4l: platform: Add Renesas R-Car FDP1 Driver
-      Merge branches 'renesas/fdp1-dt' and 'renesas/fdp1-driver' into renesas/fdp1
-
-Laurent Pinchart (1):
-      v4l: ioctl: Clear the v4l2_pix_format_mplane reserved field
-
- .../devicetree/bindings/media/renesas,fcp.txt      |    5 +-
- .../devicetree/bindings/media/renesas,fdp1.txt     |   30 +
- MAINTAINERS                                        |    9 +
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           |   48 +
- drivers/clk/renesas/r8a7795-cpg-mssr.c             |    3 +
- drivers/media/platform/Kconfig                     |   13 +
- drivers/media/platform/Makefile                    |    1 +
- drivers/media/platform/rcar-fcp.c                  |    1 +
- drivers/media/platform/rcar_fdp1.c                 | 2395 ++++++++++++++++++++
- drivers/media/v4l2-core/v4l2-ioctl.c               |    8 +-
- 10 files changed, 2508 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,fdp1.txt
- create mode 100644 drivers/media/platform/rcar_fdp1.c
-
-Regards
---
-Kieran Bingham
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 52b56fcaddf2..6b25d9e7d21b 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -50,7 +50,7 @@
+ 	aliases {
+ 		serial0 = &scif0;
+ 		serial1 = &scifa1;
+-		i2c8 = "i2cexio";
++		i2c10 = "i2cexio0";
+ 	};
+ 
+ 	chosen {
+@@ -262,11 +262,13 @@
+ 	 * bus with IIC3 on pins 110 (SCL) + 112 (SDA), select I2C0 at runtime, and
+ 	 * instantiate the slave device at runtime according to the documentation.
+ 	 * You can then communicate with the slave via IIC3.
++	 *
++	 * IIC0/I2C0 does not appear to support fallback to GPIO.
+ 	 */
+-	i2cexio: i2c-8 {
++	i2cexio0: i2c-10 {
+ 		compatible = "i2c-demux-pinctrl";
+ 		i2c-parent = <&iic0>, <&i2c0>;
+-		i2c-bus-name = "i2c-exio";
++		i2c-bus-name = "i2c-exio0";
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
+@@ -580,12 +582,12 @@
+ 
+ &i2c0	{
+ 	pinctrl-0 = <&i2c0_pins>;
+-	pinctrl-names = "i2c-exio";
++	pinctrl-names = "i2c-exio0";
+ };
+ 
+ &iic0	{
+ 	pinctrl-0 = <&iic0_pins>;
+-	pinctrl-names = "i2c-exio";
++	pinctrl-names = "i2c-exio0";
+ };
+ 
+ &iic1	{
+-- 
+2.1.4
