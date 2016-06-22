@@ -1,72 +1,162 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:60245 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752576AbcFNOP3 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 14 Jun 2016 10:15:29 -0400
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
+To: Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>,
+	Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/5] ARM: dts: renesas: Update console parameters
-Date: Tue, 14 Jun 2016 16:15:19 +0200
-Message-Id: <1465913724-26172-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH/RFC 0/6] spi: Add slave mode support
+Date: Wed, 22 Jun 2016 15:42:03 +0200
+Message-Id: <1466602929-4191-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+	Hi all,
 
-This patch series updates the console parameters in the DTSes for
-various Renesas ARM boards.
+This is a first take at adding support for SPI slave controllers to the
+Linux SPI subsystem, including:
+  - DT binding updates for SPI slave support,
+  - Core support for SPI slave controllers,
+  - SPI slave support for the Renesas MSIOF device driver (thanks to
+    Nakamura-san for the initial implementation in the R-Car BSP!),
+  - Sample SPI slave handlers.
 
-  - For all of them, the serial port config is added to
-    chosen/stdout-path, as per current best practices,
-  - On some boards (armadillo, genmai, kzm9g), the console alias is
-    changed to "serial0", for consistency with other boards, and to
-    match current best practices (the first serial port should be called
-    "serial0", unless labeled otherwise).
-    This does mean the device changes its name to /dev/ttySC0 in
-    userspace.  I believe it's OK to make this change, as we did the
-    same for koelsch, lager, and marzen before.
-  - On some boards (armadillo, kzm9d, kzm9g), "console=" parameters are
-    removed from the kernel command lines, as they're no longer needed
-    for DT-only platforms.
-    Beware leftover parameters in bootargs environment variables!
-  - On kzm9d, a console alias is added.
+Due to the naure of SPI slave (simultaneous transmit and receive, while
+everything runs at the pace of the master), it has hard real-time
+requirements: once an SPI transfer is started by the SPI master, a
+software SPI slave must have prepared all data to be sent back to the
+SPI master.  Hence without additional hardware support, an SPI slave
+response can never be a reply to a command being simultaneously
+transmitted, and SPI slave replies must be received by the SPI master in
+a subsequent SPI transfer.
 
-Changes compared to v1:
-  - Drop patches that have been applied,
-  - Change one-line summary prefixes to match current arm-soc practices,
-  - Drop name changes of pfc subnodes,
-  - Reword patch descriptions.
+Examples of possible use cases:
+  - Receiving streams of data in fixed-size messages (e.g. from a
+    tuner),
+  - Receiving and transmitting fixed-size messages of data (e.g. network
+    frames),
+  - Sending commands, and querying for responses,
+  - ...
 
-Dependencies:
-  - Due to dropping the name changes of pfc subnodes, this has an
-    esthetic (never realized before this does exist ;-) dependency on
-    "[PATCH 00/19] ARM: dts: renesas: Name pfc subnodes after device
-    names".
+Originally I wanted to implement a simple SPI slave handler that could
+interface with an existing Linux SPI slave driver, cfr. Wolfram Sang's
+I2C slave mode EEPROM simulator for the i2c subsystem.
+Unfortunately I couldn't find any existing driver using an SPI slave
+protocol that fulfills the above requirements. The Nordic Semiconductor
+nRF8001 BLE controller seems to use a suitable protocol, but I couldn't
+find a Linux driver for it.  Hence I created two sample SPI slave
+protocols and drivers myself:
+  1. "spi-slave-time" responds with the time of reception of the
+     last SPI message, which can be used by an external microcontroller
+     as a dead man's switch.
+  2. "spi-slave-system-control" allows remote control of system reboot,
+     power off, halt, and suspend.
 
-Tested on all five affected boards (some with remote access), to verify
-there is no other impact to userspace than the change of the console
-device to /dev/ttySC0, which may be handled automatically, depending on
-your userspace.
+For some use cases, using spidev from user space may be a more appropriate
+solution than an in-kernel SPI protocol handler.
 
-Thanks for applying!
+>From the point of view of an SPI slave protocol handler, an SPI slave
+controller looks exactly like an ordinary SPI master controller. Hence
+"struct spi_master" may have become a misnomer. For now I didn't bother
+fixing that.  Should we rename spi_master (and the spi_*master()
+functions) to spi_controller? Or create wrappers/defines with "slave"
+in their name?
+
+For now, the MSIOF SPI slave driver only supports the transmission of
+messages with a size that is known in advance (the hardware can provide
+an interrupt when CS is deasserted before, though).
+I.e. when the SPI master sends a shorter message, the slave won't
+receive it.  When the SPI master sends a longer message, the slave will
+receive the first part, and the rest will remain in the FIFO.
+
+Handshaking (5-pin SPI, RDY-signal) is optional. An RDY-signal may be
+used for one or both of:
+  1. The SPI slave asserts RDY when it has data available, and wants to
+     be queried by the SPI master.
+       -> This can be handled on top, in the SPI slave protocol handler,
+	  using a GPIO.
+  2. After the SPI master has asserted CS, the SPI slave asserts RDY
+     when it is ready to accept the transfer.
+       -> This may need hardware support in the SPI slave controller,
+	  or dynamic GPIO vs. CS pinmuxing.
+
+This patch series applies to both v4.7-rc1 and next-20160622, with the
+following 2 patches applied:
+      1. [PATCH] spi: Improve DT binding documentation,
+      2. [PATCH] spi: sh-msiof: Remove sh_msiof_spi_priv.chipdata.
+For your convenience, I've pushed this series and its dependencies to
+the topic/spi-slave-v1 branch of the git repository at
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+
+For testing, device tree overlays enabling SPI master and slave
+controllers on an expansion I/O connector on r8a7791/koelsch are
+available in the topic/renesas-overlays branch of my renesas-drivers git
+repository.  Please see http://elinux.org/R-Car/DT-Overlays for more
+information about using these overlays.
+
+Test wiring on r8a7791/koelsch, between MSIOF1 and MSIOF2 on EXIO
+connector A:
+   - Connect pin 48 (MSIOF1 CS#) to pin 63 (MSIOF2 CS#),
+   - Connect pin 46 (MSIOF1 SCK) to pin 61 (MSIOF2 SCK),
+   - Connect pin 54 (MSIOF1 TX/MOSI) to pin 70 (MSIOF2 RX/MOSI),
+   - Connect pin 56 (MSIOF1 RX/MISO) to pin 68 (MSIOF2 TX/MISO).
+
+Example 1:
+
+    # overlay add a-msiof1-spidev
+    # overlay add a-msiof2-slave-time
+    # spidev_test -D /dev/spidev2.0 -p dummy-8B
+    spi mode: 0x0
+    bits per word: 8
+    max speed: 500000 Hz (500 KHz)
+    RX | 00 00 04 6D 00 09 5B BB __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __  | ...m..[�
+               ^^^^^    ^^^^^^^^
+	       seconds  microseconds
+
+Example 2:
+
+    # overlay add a-msiof1-spidev
+    # overlay add a-msiof2-slave-system-control
+    # reboot='\x7c\x50'
+    # poweroff='\x71\x3f'
+    # halt='\x38\x76'
+    # suspend='\x1b\x1b'
+    # spidev_test -D /dev/spidev2.0 -p $suspend # or $reboot, $poweroff, $halt
+
+Thanks for your comments!
 
 Geert Uytterhoeven (5):
-  ARM: dts: armadillo800eva: Update console parameters
-  ARM: dts: genmai: Update console parameters
-  ARM: dts: marzen: Add serial port config to chosen/stdout-path
-  ARM: dts: kzm9d: Update console parameters
-  ARM: dts: kzm9g: Update console parameters
+  [RFC] spi: Document DT bindings for SPI controllers in slave mode
+  [RFC] spi: core: Add support for registering SPI slave controllers
+  [RFC] spi: slave: Add SPI slave handler reporting boot up time
+  [RFC] spi: slave: Add SPI slave handler controlling system state
+  [RFC] spi: spidev: Allow direct references in DT from SPI slave
+    controllers
 
- arch/arm/boot/dts/emev2-kzm9d.dts             | 8 ++++++--
- arch/arm/boot/dts/r7s72100-genmai.dts         | 4 ++--
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 6 +++---
- arch/arm/boot/dts/r8a7779-marzen.dts          | 2 +-
- arch/arm/boot/dts/sh73a0-kzm9g.dts            | 6 +++---
- 5 files changed, 15 insertions(+), 11 deletions(-)
+Hisashi Nakamura (1):
+  [RFC] spi: sh-msiof: Add slave mode support
+
+ Documentation/devicetree/bindings/spi/spi-bus.txt |  31 +++--
+ drivers/spi/Kconfig                               |  26 ++++-
+ drivers/spi/Makefile                              |   4 +
+ drivers/spi/spi-sh-msiof.c                        |  52 +++++++--
+ drivers/spi/spi-slave-system-control.c            | 134 ++++++++++++++++++++++
+ drivers/spi/spi-slave-time.c                      | 103 +++++++++++++++++
+ drivers/spi/spi.c                                 |  39 ++++---
+ drivers/spi/spidev.c                              |   3 +-
+ include/linux/spi/sh_msiof.h                      |   6 +
+ include/linux/spi/spi.h                           |   5 +-
+ 10 files changed, 360 insertions(+), 43 deletions(-)
+ create mode 100644 drivers/spi/spi-slave-system-control.c
+ create mode 100644 drivers/spi/spi-slave-time.c
 
 -- 
 1.9.1
