@@ -1,104 +1,245 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54562 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54543 "EHLO
 	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751647AbcFVQup (ORCPT
+	with ESMTP id S1750880AbcFVQb5 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 22 Jun 2016 12:50:45 -0400
+	Wed, 22 Jun 2016 12:31:57 -0400
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
 	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Sakari Ailus <sakari.ailus@iki.fi>,
 	Hans Verkuil <hans.verkuil@cisco.com>,
 	Mauro Carvalho Chehab <mchehab@osg.samsung.com>
 Subject: Re: [PATCH/RFC v2 1/4] v4l: Add metadata buffer type and format
-Date: Wed, 22 Jun 2016 19:51:06 +0300
-Message-ID: <1591724.fl6z3cA6YR@avalon>
-In-Reply-To: <20160524162632.GG26360@valkosipuli.retiisi.org.uk>
-References: <1463012283-3078-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <5744750A.5070205@xs4all.nl> <20160524162632.GG26360@valkosipuli.retiisi.org.uk>
+Date: Wed, 22 Jun 2016 19:32:16 +0300
+Message-ID: <1728823.iiGB2m7upr@avalon>
+In-Reply-To: <5742D6CC.8040909@xs4all.nl>
+References: <1463012283-3078-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1463012283-3078-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <5742D6CC.8040909@xs4all.nl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Hi Hans,
 
-On Tuesday 24 May 2016 19:26:32 Sakari Ailus wrote:
-> On Tue, May 24, 2016 at 05:36:42PM +0200, Hans Verkuil wrote:
-> > On 05/24/2016 05:28 PM, Sakari Ailus wrote:
-> > > Hi Hans,
-> > > 
-> > >> Should it be mentioned here that changing the video format might change
-> > >> the buffersize? In case the buffersize is always a multiple of the
-> > >> width?
-> > > 
-> > > Isn't that the case in general, as with pixel formats? buffersize could
-> > > also be something else than a multiple of width (there's no width for
-> > > metadata formats) due to e.g. padding required by hardware.
-> > 
-> > Well, I don't think it is obvious that the metadata buffersize depends on
-> > the video width. Perhaps developers who are experienced with CSI know
-> > this, but if you know little or nothing about CSI, then it can be
-> > unexpected (hey, that was the case for me!).
-> > 
-> > I think it doesn't hurt to mention this relation.
+Thank you for the review.
+
+On Monday 23 May 2016 12:09:16 Hans Verkuil wrote:
+> On 05/12/2016 02:18 AM, Laurent Pinchart wrote:
+> > The metadata buffer type is used to transfer metadata between userspace
+> > and kernelspace through a V4L2 buffers queue. It comes with a new
+> > metadata capture capability and format description.
 > 
-> Ah, I think I misunderstood you first.
+> Thanks for the patch! I have some comments/suggestions below:
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> > 
+> >  Documentation/DocBook/media/v4l/dev-meta.xml  | 93 ++++++++++++++++++++++
+> >  Documentation/DocBook/media/v4l/v4l2.xml      |  1 +
+> >  drivers/media/v4l2-core/v4l2-compat-ioctl32.c | 19 ++++++
+> >  drivers/media/v4l2-core/v4l2-dev.c            | 16 +++--
+> >  drivers/media/v4l2-core/v4l2-ioctl.c          | 34 ++++++++++
+> >  drivers/media/v4l2-core/videobuf2-v4l2.c      |  3 +
+> >  include/media/v4l2-ioctl.h                    |  8 +++
+> >  include/uapi/linux/videodev2.h                | 14 ++++
+> >  8 files changed, 182 insertions(+), 6 deletions(-)
+> >  create mode 100644 Documentation/DocBook/media/v4l/dev-meta.xml
+> > 
+> > diff --git a/Documentation/DocBook/media/v4l/dev-meta.xml
+> > b/Documentation/DocBook/media/v4l/dev-meta.xml new file mode 100644
+> > index 000000000000..9b5b1fba2007
+> > --- /dev/null
+> > +++ b/Documentation/DocBook/media/v4l/dev-meta.xml
+> > @@ -0,0 +1,93 @@
+> > +  <title>Metadata Interface</title>
+> > +
+> > +  <note>
+> > +    <title>Experimental</title>
+> > +    <para>This is an <link linkend="experimental"> experimental </link>
 > 
-> Typically the metadata width is the same as the image data width, that's
-> true. And it's how the hardware works. This is still visible in the media
-> bus format and the solution belongs rather to how multiple streams over a
-> single link are supported.
+> No space before/after 'experimental'. It will look ugly in the docbook (I
+> tried it :-) ).
 
-Let me clarify on this.
+Will be fixed in the next version.
 
-In the general case there's no concept of metadata width when stored in 
-memory. The two most common use cases for metadata store register values (or 
-similar) information, or statistics. The former is just a byte stream in some 
-kind of TLV (Type Length Value) format. The latter a set of values or arrays 
-computed either on the full image or on subwindows, possibly laid out as a 
-grid.
+> > +    interface and may change in the future.</para>
+> > +  </note>
+> > +
+> > +  <para>
+> > +Metadata refers to any non-image data that supplements video frames with
+> > +additional information. This may include statistics computed over the
+> > +image or frame capture parameters supplied by the image source. This
+> > +interface is intended for transfer of metadata to userspace and control
+> > +of that operation.
+>
+> I think it can also be in the other direction. I'm thinking of metadata
+> needed by codecs. I'm not sure if it should be mentioned that this is not
+> supported at the moment and that the ML should be contacted for more info
+> if someone wants this.
 
-When transported over a bus, however, metadata can sometimes have a width and 
-height. That's the case for CSI-2, which is a line-oriented format. Metadata 
-then need to be broken into chunks transmitted in a CSI-2 line packet, even if 
-they don't correspond to a line of an image. The line width on the bus is just 
-the number of bytes transmitted in a single packet, which could be chosen 
-freely (within the range allowed by CSI-2). In practice, to simplify the 
-implementation, the line width is chosen to be identical to the line width of 
-the image frames that the metadata correspond to, but that's not a requirement 
-of either CSI-2 or the metadata format itself.
+Metadata for codecs make sense, but given that the topic hasn't been 
+researched yet, I've kept metadata support focused on the capture side only 
+for now. I propose revisiting the topic if (or rather when) someone needs 
+metadata support on output video nodes.
 
-We thus need to expose metadata width and height on subdevs to ensure proper 
-configuration of the transmitter and receiver, but that's not strictly 
-mandatory on video nodes.
+> > +  </para>
+> > +
+> > +  <para>
+> > +The metadata interface is implemented on video capture devices. The
+> > device can
+>
+> s/on/for/?
 
-The metadata buffer size itself doesn't depend on the width and height of the 
-corresponding image frames. A histogram using 64 bins on 3 components will be 
-stored exactly the same way regardless of whether it's computed on a VGA or 
-1080p frame. The buffer size depends on the configuration of the metadata 
-source only, which in the case of the histogram generator in the VSP would 
-include a control that decides whether to compute the histogram with 64 bins 
-or 256 bins (the latter needs a 4 times larger buffer).
+I meant "on video capture device nodes", I'll fix that.
+ 
+> > +be dedicated to metadata or can implement both video and metadata capture
+> > +as specified in its reported capabilities.
+> > +  </para>
+> > +
+> > +  <section>
+> > +    <title>Querying Capabilities</title>
+> > +
+> > +    <para>
+> > +Devices supporting the metadata interface set the
+> > +<constant>V4L2_CAP_META_CAPTURE</constant> flag in the
+> > +<structfield>capabilities</structfield> field of &v4l2-capability;
+> > +returned by the &VIDIOC-QUERYCAP; ioctl. That flag means the device can
+> > +capture metadata to memory.
+> > +    </para>
+> 
+> I know this is a copy and paste from the other interface descriptions, but
+> it is rather outdated. I would write this instead:
+> 
+>  <para>
+> Device nodes supporting the metadata interface set the
+> <constant>V4L2_CAP_META_CAPTURE</constant> flag in the
+> <structfield>device_caps</structfield> field of &v4l2-capability;
+> returned by the &VIDIOC-QUERYCAP; ioctl. That flag means the device node can
+> capture metadata to memory.
+>  </para>
 
-For metadata computed on a variable number of subwindows the buffer size will 
-depend on the number of subwindows, which will in turn be possibly influenced 
-by the size of the image. It could make sense to use fewer subwindows to 
-compute AF data on a VGA image than on a 4k image. That is not however a 
-requirement, and there's no direct mapping between image size and metadata 
-size, the number of subwindows being usually configured by userspace.
+Will be fixed in the next version.
+ 
+> Any driver using this will be recent and always have a valid device_caps
+> field (which, as you know, didn't exist in old kernels).
+> 
+> I find the capabilities field fairly useless in most cases due to the fact
+> that it contains the capabilities of all device nodes created by the device
+> driver.
 
-I hope this clarifies the problem. Please let me know if you have additional 
-questions or thoughts, and if you see anything that should be worded 
-differently in the documentation (or even structures that should get new 
-fields).
+I agree.
 
-> It's just that setting the image media bus format affects the metadata media
-> bus format. I guess that could be mentioned albeit it's hardware specific,
-> on some sensors metadata width is independent of the image width. Even then
-> this is not where I'd put it. I'd get back to the topic when documenting
-> how the API for multiple streams over a single link works.
+> > +    <para>
+> > +At least one of the read/write or streaming I/O methods must be
+> > supported.
+> > +    </para>
+> > +  </section>
+> > +
+> > +  <section>
+> > +    <title>Data Format Negotiation</title>
+> > +
+> > +    <para>
+> > +The metadata device uses the <link linkend="format">format</link> ioctls
+> > to +select the capture format. The metadata buffer content format is
+> > bound to that +selectable format. In addition to the basic
+> > +<link linkend="format">format</link> ioctls, the &VIDIOC-ENUM-FMT; ioctl
+> > +must be supported as well.
+> > +    </para>
+> > +
+> > +    <para>
+> > +To use the <link linkend="format">format</link> ioctls applications set
+> > the +<structfield>type</structfield> field of a &v4l2-format; to
+> > +<constant>V4L2_BUF_TYPE_META_CAPTURE</constant> and use the
+> > &v4l2-meta-format; +<structfield>meta</structfield> member of the
+> > <structfield>fmt</structfield> +union as needed per the desired
+> > operation.
+> > +Currently there are two fields, <structfield>dataformat</structfield> and
+> > +<structfield>buffersize</structfield>, of struct &v4l2-meta-format; that
+> > are +used. Content of the <structfield>dataformat</structfield> is the
+> > V4L2 FourCC +code of the data format. The
+> > <structfield>buffersize</structfield> field is the +maximum buffer size
+> > in bytes required for data transfer, set by the driver in +order to
+> > inform applications.
+> 
+> Should it be mentioned here that changing the video format might change the
+> buffersize? In case the buffersize is always a multiple of the width?
+
+I'll reply to Sakari's mail further down in this thread about this.
+
+> > +    </para>
+> > +
+> > +    <table pgwide="1" frame="none" id="v4l2-meta-format">
+> > +      <title>struct <structname>v4l2_meta_format</structname></title>
+> > +      <tgroup cols="3">
+> > +        &cs-str;
+> > +        <tbody valign="top">
+> > +          <row>
+> > +            <entry>__u32</entry>
+> > +            <entry><structfield>dataformat</structfield></entry>
+> > +            <entry>
+> > +The data format, set by the application. This is a little endian
+> > +<link linkend="v4l2-fourcc">four character code</link>.
+> > +V4L2 defines metadata formats in <xref linkend="meta-formats" />.
+> > +           </entry>
+> > +          </row>
+> > +          <row>
+> > +            <entry>__u32</entry>
+> > +            <entry><structfield>buffersize</structfield></entry>
+> > +            <entry>
+> > +Maximum size in bytes required for data. Value is set by the driver.
+> > +           </entry>
+> > +          </row>
+> > +          <row>
+> > +            <entry>__u8</entry>
+> > +            <entry><structfield>reserved[24]</structfield></entry>
+> > +            <entry>This array is reserved for future extensions.
+> > +Drivers and applications must set it to zero.</entry>
+> > +          </row>
+> > +        </tbody>
+> > +      </tgroup>
+> > +    </table>
+> > +
+> > +  </section>
+
+[snip]
+
+> > diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c
+> > b/drivers/media/v4l2-core/v4l2-ioctl.c index 28e5be2c2eef..5d003152ff68
+> > 100644
+> > --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> > +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+
+[snip]
+
+> > @@ -1534,6 +1558,11 @@ static int v4l_s_fmt(const struct v4l2_ioctl_ops
+> > *ops,
+> >  			break;
+> >  		CLEAR_AFTER_FIELD(p, fmt.sdr);
+> >  		return ops->vidioc_s_fmt_sdr_out(file, fh, arg);
+> > +	case V4L2_BUF_TYPE_META_CAPTURE:
+> > +		if (unlikely(!is_rx || !is_vid ||
+> > !ops->vidioc_s_fmt_meta_cap))
+> > +			break;
+> > +		CLEAR_AFTER_FIELD(p, fmt.meta);
+> 
+> I would suggest using "CLEAR_FROM_FIELD(p, fmt.meta.reserved)" here. Of
+> course, you'd need to add a new CLEAR_FROM_FIELD macro for this.
+> 
+> I think this also should be used for the SDR_CAPTURE/OUTPUT types and
+> possibly for other types as well (can be done later of course).
+> 
+> This would also zero the reserved field, so drivers don't need to care about
+> it.
+
+Will be fixed in the next version (in v4l_g_fmt() too).
+
+> > +		return ops->vidioc_s_fmt_meta_cap(file, fh, arg);
+> >  	}
+> >  	return -EINVAL;
+> >  }
 
 -- 
 Regards,
