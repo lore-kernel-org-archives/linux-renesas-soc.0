@@ -1,18 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:57320 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751572AbcFVDtq (ORCPT
+	with ESMTP id S1751523AbcFVDtp (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 21 Jun 2016 23:49:46 -0400
+	Tue, 21 Jun 2016 23:49:45 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 08/13] ARM: dts: porter: use demuxer for I2C2
-Date: Wed, 22 Jun 2016 12:43:46 +0900
-Message-Id: <1466567031-20381-9-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH v3 09/13] ARM: dts: porter: use demuxer for I2C2
+Date: Wed, 22 Jun 2016 12:43:47 +0900
+Message-Id: <1466567031-20381-10-git-send-email-horms+renesas@verge.net.au>
 In-Reply-To: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
 References: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -27,27 +27,26 @@ Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
 v3
 * New patch
-* Compile tested only
 ---
- arch/arm/boot/dts/r8a7791-porter.dts | 129 +++++++++++++++++++++--------------
- 1 file changed, 76 insertions(+), 53 deletions(-)
+ arch/arm/boot/dts/r8a7793-gose.dts | 114 ++++++++++++++++++++++---------------
+ 1 file changed, 69 insertions(+), 45 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index 6761d11d3f9e..dea3c1a103a5 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -29,6 +29,8 @@
- 
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 90af18600124..2c8c8a4852c8 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -48,6 +48,8 @@
  	aliases {
  		serial0 = &scif0;
+ 		serial1 = &scif1;
 +		i2c9 = "gpioi2c2";
-+		i2c10 = "i2chdmi";
++		i2c11 = "i2chdmi";
  	};
  
  	chosen {
-@@ -135,6 +137,79 @@
- 			clocks = <&x14_clk>;
- 		};
+@@ -275,6 +277,72 @@
+ 		#clock-cells = <0>;
+ 		clock-frequency = <148500000>;
  	};
 +
 +	gpioi2c2: i2c-9 {
@@ -64,30 +63,17 @@ index 6761d11d3f9e..dea3c1a103a5 100644
 +	/*
 +	 * A fallback to GPIO is provided for I2C2.
 +	 */
-+	i2chdmi: i2c-10 {
++	i2chdmi: i2c-11 {
 +		compatible = "i2c-demux-pinctrl";
 +		i2c-parent = <&i2c2>, <&gpioi2c2>;
 +		i2c-bus-name = "i2c-hdmi";
 +		#address-cells = <1>;
 +		#size-cells = <0>;
 +
-+		ak4642: codec@12 {
-+			compatible = "asahi-kasei,ak4642";
++		ak4643: codec@12 {
++			compatible = "asahi-kasei,ak4643";
 +			#sound-dai-cells = <0>;
 +			reg = <0x12>;
-+		};
-+
-+		composite-in@20 {
-+			compatible = "adi,adv7180";
-+			reg = <0x20>;
-+			remote = <&vin0>;
-+
-+			port {
-+				adv7180: endpoint {
-+					bus-width = <8>;
-+					remote-endpoint = <&vin0ep>;
-+				};
-+			};
 +		};
 +
 +		hdmi@39 {
@@ -121,37 +107,30 @@ index 6761d11d3f9e..dea3c1a103a5 100644
 +				};
 +			};
 +		};
++
++		eeprom@50 {
++			compatible = "renesas,r1ex24002", "atmel,24c02";
++			reg = <0x50>;
++			pagesize = <16>;
++		};
 +	};
  };
  
- &extal_clk {
-@@ -296,61 +371,9 @@
+ &du {
+@@ -488,54 +556,10 @@
  
  &i2c2 {
  	pinctrl-0 = <&i2c2_pins>;
 -	pinctrl-names = "default";
 +	pinctrl-names = "i2c-hdmi";
  
--	status = "okay";
- 	clock-frequency = <400000>;
+ 	status = "okay";
+ 	clock-frequency = <100000>;
 -
--	ak4642: codec@12 {
--		compatible = "asahi-kasei,ak4642";
+-	ak4643: codec@12 {
+-		compatible = "asahi-kasei,ak4643";
 -		#sound-dai-cells = <0>;
 -		reg = <0x12>;
--	};
--
--	composite-in@20 {
--		compatible = "adi,adv7180";
--		reg = <0x20>;
--		remote = <&vin0>;
--
--		port {
--			adv7180: endpoint {
--				bus-width = <8>;
--				remote-endpoint = <&vin0ep>;
--			};
--		};
 -	};
 -
 -	hdmi@39 {
@@ -185,8 +164,14 @@ index 6761d11d3f9e..dea3c1a103a5 100644
 -			};
 -		};
 -	};
+-
+-	eeprom@50 {
+-		compatible = "renesas,r1ex24002", "atmel,24c02";
+-		reg = <0x50>;
+-		pagesize = <16>;
+-	};
  };
  
- &sata0 {
+ &rcar_sound {
 -- 
 2.1.4
