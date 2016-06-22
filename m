@@ -1,17 +1,12 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34377 "EHLO
-	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751485AbcFWILH (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 23 Jun 2016 04:11:07 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWY+hZMFQo7iGaeZkbVnK1cZ9=oyM7RvX_8mhyCuCxD9Q@mail.gmail.com>
+In-Reply-To: <adbc6358-d3fb-c608-15c2-c425332435f3@cogentembedded.com>
 References: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
  <27171008.uuY7altQup@wasted.cogentembedded.com> <CAMuHMdWcVRBxZO85_MhYVvODcbi-GYDNKfQH9LJEcrJRd=p7Vw@mail.gmail.com>
- <adbc6358-d3fb-c608-15c2-c425332435f3@cogentembedded.com> <CAMuHMdWY+hZMFQo7iGaeZkbVnK1cZ9=oyM7RvX_8mhyCuCxD9Q@mail.gmail.com>
+ <adbc6358-d3fb-c608-15c2-c425332435f3@cogentembedded.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 23 Jun 2016 10:11:04 +0200
-Message-ID: <CAMuHMdXb8dVPbOv0-cskN+owKJbgjcdFwLRW6J8+=XDO3EfCWw@mail.gmail.com>
+Date: Wed, 22 Jun 2016 12:20:57 +0200
+Message-ID: <CAMuHMdWY+hZMFQo7iGaeZkbVnK1cZ9=oyM7RvX_8mhyCuCxD9Q@mail.gmail.com>
 Subject: Re: [PATCH] ARM: dts: r8a7794: add SMP support
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Simon Horman <horms@verge.net.au>,
@@ -24,56 +19,36 @@ Cc: Simon Horman <horms@verge.net.au>,
 	"linux-arm-kernel@lists.infradead.org"
 	<linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Sergei,
 
-On Wed, Jun 22, 2016 at 12:20 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Wed, Jun 22, 2016 at 12:08 PM, Sergei Shtylyov
-> <sergei.shtylyov@cogentembedded.com> wrote:
->> On 6/22/2016 10:20 AM, Geert Uytterhoeven wrote:
->>
->>>> Add the device tree node for the Advanced Power Management Unit (APMU).
->>>> Use the "enable-method" prop to  point out that the APMU should be used
->>>> for the SMP support.
->>>>
->>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>>
->>>
->>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>>
->>>> SMP/PM basically works but you can't offline CPU0 (system hangs)...
->>>
->>>
->>> On #renesas-soc you said it hangs on SILK only, and succeeds on Porter,
->>> with a WARNING in the clk core (which one?) during suspend?
->>
->>    Porter is based on R8A7791 (WARNING seemed to be caused by the CAN
->> driver). :-)
+On Wed, Jun 22, 2016 at 12:08 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 6/22/2016 10:20 AM, Geert Uytterhoeven wrote:
 >
-> Oh right, mixing up boards.
+>>> Add the device tree node for the Advanced Power Management Unit (APMU).
+>>> Use the "enable-method" prop to  point out that the APMU should be used
+>>> for the SMP support.
+>>>
+>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>
+>>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
+>>> SMP/PM basically works but you can't offline CPU0 (system hangs)...
+>>
+>>
+>> On #renesas-soc you said it hangs on SILK only, and succeeds on Porter,
+>> with a WARNING in the clk core (which one?) during suspend?
 >
-> Will try on (remote) ALT when I find some time...
+>    Porter is based on R8A7791 (WARNING seemed to be caused by the CAN
+> driver). :-)
 
-The second CPU boots (irrespective of MD21 setting), but the kernel
-starts spewing:
+Oh right, mixing up boards.
 
-    clocksource: Switched to clocksource arch_sys_counter
-    WARNING: Underflow in clocksource 'arch_sys_counter' observed,
-time update ignored.
-             Please report this, consider using a different
-clocksource, if possible.
-             Your kernel is probably still fine.
-    WARNING: Underflow in clocksource 'arch_sys_counter' observed,
-time update ignored.
-             Please report this, consider using a different
-clocksource, if possible.
-             Your kernel is probably still fine.
-
-Seems like the secondary CPU also needs CNTVOFF initialization,
-which is done in the BSP in arch/arm/mach-shmobile/headsmp.S.
+Will try on (remote) ALT when I find some time...
 
 Gr{oetje,eeting}s,
 
