@@ -1,80 +1,96 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: [PATCH 2/2] PCI: rcar: Drop gen2 dummy I/O port region
-To: Simon Horman <horms@verge.net.au>,
-	Russell King <linux@armlinux.org.uk>
-From: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:45515 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750910AbcFVOVq (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 22 Jun 2016 10:21:46 -0400
+Date: Wed, 22 Jun 2016 16:21:10 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	Valentine Barshak <valentine.barshak@cogentembedded.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-arm-kernel@lists.infradead.org
-Date: Tue, 21 Jun 2016 12:01:50 -0500
-Message-ID: <20160621170150.7997.4821.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-In-Reply-To: <20160621165646.7997.44001.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20160621165646.7997.44001.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH/RFC 3/4] mmc: renesas_sdhi: rename DMA source file as
+ renesas_sdhi_dma.c
+Message-ID: <20160622142110.GC1645@katana>
+References: <1465963317-28672-1-git-send-email-horms+renesas@verge.net.au>
+ <1465963317-28672-4-git-send-email-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="69pVuxX8awAiJ7fD"
+Content-Disposition: inline
+In-Reply-To: <1465963317-28672-4-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Previously we added a dummy I/O port region even though the R-Car
-controller doesn't support PCI port I/O.  This resulted in bogus root bus
-resources like this:
 
-  pci_bus 0000:00: root bus resource [io  0xee080000-0xee0810ff]
-  pci_bus 0000:00: root bus resource [mem 0xee080000-0xee0810ff]
+--69pVuxX8awAiJ7fD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Drop the unused dummy I/O port region and set struct hw_pci.io_optional so
-the ARM PCI code doesn't add a default one for us.
+On Wed, Jun 15, 2016 at 01:01:56PM +0900, Simon Horman wrote:
+> Rename the source file for DMA for Renesas SDHI as a follow-up to attachi=
+ng
+> DMA code to the renesas_sdhi driver rather than the tmio_core driver.
+>=20
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  drivers/mmc/host/Makefile                               | 2 +-
+>  drivers/mmc/host/{tmio_mmc_dma.c =3D> renesas_sdhi_dma.c} | 0
+>  2 files changed, 1 insertion(+), 1 deletion(-)
+>  rename drivers/mmc/host/{tmio_mmc_dma.c =3D> renesas_sdhi_dma.c} (100%)
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/host/pci-rcar-gen2.c |   11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+Because of the modularization, I think the rename makes a lot of sense
+here and is worth renaming the functions inside, too. What do you think?
+I think the rename should include the DMA type used, though. Like
+'renesas_sdhi_sysc_dmac.c' here and 'renesas_sdhi_internal_dmac.c' for
+the new one in the next patch?
 
-diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
-index 9980a4b..ddf7765 100644
---- a/drivers/pci/host/pci-rcar-gen2.c
-+++ b/drivers/pci/host/pci-rcar-gen2.c
-@@ -97,7 +97,6 @@
- struct rcar_pci_priv {
- 	struct device *dev;
- 	void __iomem *reg;
--	struct resource io_res;
- 	struct resource mem_res;
- 	struct resource *cfg_res;
- 	unsigned busnr;
-@@ -273,7 +272,6 @@ static int rcar_pci_setup(int nr, struct pci_sys_data *sys)
- 		rcar_pci_setup_errirq(priv);
- 
- 	/* Add PCI resources */
--	pci_add_resource(&sys->resources, &priv->io_res);
- 	pci_add_resource(&sys->resources, &priv->mem_res);
- 
- 	/* Setup bus number based on platform device id / of bus-range */
-@@ -371,14 +369,6 @@ static int rcar_pci_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	priv->mem_res = *mem_res;
--	/*
--	 * The controller does not support/use port I/O,
--	 * so setup a dummy port I/O region here.
--	 */
--	priv->io_res.start = priv->mem_res.start;
--	priv->io_res.end = priv->mem_res.end;
--	priv->io_res.flags = IORESOURCE_IO;
--
- 	priv->cfg_res = cfg_res;
- 
- 	priv->irq = platform_get_irq(pdev, 0);
-@@ -421,6 +411,7 @@ static int rcar_pci_probe(struct platform_device *pdev)
- 	hw_private[0] = priv;
- 	memset(&hw, 0, sizeof(hw));
- 	hw.nr_controllers = ARRAY_SIZE(hw_private);
-+	hw.io_optional = 1;
- 	hw.private_data = hw_private;
- 	hw.map_irq = rcar_pci_map_irq;
- 	hw.ops = &rcar_pci_ops;
+>=20
+> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+> index 4f7903fbef26..0ea7fb6f3d5e 100644
+> --- a/drivers/mmc/host/Makefile
+> +++ b/drivers/mmc/host/Makefile
+> @@ -38,7 +38,7 @@ obj-$(CONFIG_MMC_TMIO)		+=3D tmio_mmc.o
+>  obj-$(CONFIG_MMC_TMIO_CORE)	+=3D tmio_mmc_core.o
+>  tmio_mmc_core-y			:=3D tmio_mmc_pio.o
+>  obj-$(CONFIG_MMC_SDHI)		+=3D renesas_sdhi.o
+> -renesas_sdhi-$(subst m,y,$(CONFIG_MMC_SDHI_DMA))	+=3D tmio_mmc_dma.o
+> +renesas_sdhi-$(subst m,y,$(CONFIG_MMC_SDHI_DMA))	+=3D renesas_sdhi_dma.o
+>  obj-$(CONFIG_MMC_CB710)		+=3D cb710-mmc.o
+>  obj-$(CONFIG_MMC_VIA_SDMMC)	+=3D via-sdmmc.o
+>  obj-$(CONFIG_SDH_BFIN)		+=3D bfin_sdh.o
+> diff --git a/drivers/mmc/host/tmio_mmc_dma.c b/drivers/mmc/host/renesas_s=
+dhi_dma.c
+> similarity index 100%
+> rename from drivers/mmc/host/tmio_mmc_dma.c
+> rename to drivers/mmc/host/renesas_sdhi_dma.c
+> --=20
+> 2.1.4
+>=20
+
+--69pVuxX8awAiJ7fD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXap7WAAoJEBQN5MwUoCm2uYIP/iLnk9mXdhaVAmiRszM1wNQK
+U5O/eeKMpbntBc5G8qLJ+NtT3KiPpPSERF055fSF7YTKwaWzYaaPGTA2bCyq3r2I
+/UpiKMWmIwlRpxTnDrEx7TVAIPpcwimM/d23lYSVfzOLT0YJr1RdpPtFnrf663qL
+7npo0eKIogVzxxIdzANicXlTJrk8FFwbXWe31NrQVroUX2q35OUcHWw4lhYTFSxm
+nDb6uUqtH3q0pTPmtW7LhaejZA9HpqFoo9Egq8RSKpB8V2IOmuFUlF4mcgI48Hq6
+2A/zJUK9WeEX1UiON005yDIo1PC/LgqItEVG4lUpJ21lwAmN2Kd4lsMTv6Zo7JF+
+qDvxC5KVRRPsz3vXHxk/tlY30yn6Zt13LmJbrZVLmtkumWYeDPwypKUa33TIbx8P
+m+Lax7xy0w4OXk5UfwO0znuqSu/k+CTnPLHo0VQBYQlGE8N5KGBrWpPe8xAHAeGF
+e7U/zFD2EXyrj1/NADbbFZBo4nDtRaOtp7OM9RkQ/Kvue/M9W8SAuIGPVsrtoFl6
+2Co1UV0jXCv+yH0Rja+dV3Gu4MBirIcvqF7KoPEfugY64RNc097DXuu8uC7cWxRm
+Dojix1usAklXyJwt8P159KqhWo/lzgsCD5MzOq458ESYmo6iVLGV5U0C2zT+zOZa
+qzGirB0gkgMF+njI4KpZ
+=tLfm
+-----END PGP SIGNATURE-----
+
+--69pVuxX8awAiJ7fD--
