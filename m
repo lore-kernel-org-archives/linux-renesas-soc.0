@@ -1,185 +1,115 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56302 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751696AbcF2SU6 (ORCPT
+Received: from sauhun.de ([89.238.76.85]:45484 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750910AbcFVOLX (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 14:20:58 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Wed, 22 Jun 2016 10:11:23 -0400
+Date: Wed, 22 Jun 2016 16:11:10 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87a8j6sj4w.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bIK6S-0004hf-4U@finisterre>
-Date: Wed, 29 Jun 2016 19:20:48 +0100
-Subject: Applied "ASoC: add new simple-card-utils.c" to the asoc tree
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH/RFC 1/4] mmc: renesas_sdhi: rename sh_mobile_sdhi as
+ renesas_sdhi
+Message-ID: <20160622141110.GA1645@katana>
+References: <1465963317-28672-1-git-send-email-horms+renesas@verge.net.au>
+ <1465963317-28672-2-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
+Content-Disposition: inline
+In-Reply-To: <1465963317-28672-2-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
 
-   ASoC: add new simple-card-utils.c
+--sdtB3X0nJg68CQEu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been applied to the asoc tree at
+On Wed, Jun 15, 2016 at 01:01:54PM +0900, Simon Horman wrote:
+> The SDHI driver is applicable to a wider range of SoCs than SH-Mobile,
+> Renesas seems to be a more appropriate name.
+>=20
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+It feels strange to rename the file and leaving all the naming inside
+the file still 'sh_mobile_*'. On the other hand, renaming all those,
+too, is intrusive, so I wonder if we can't keep the filename "for
+historic reasons"?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> ---
+>  drivers/mmc/host/Kconfig                              | 4 ++--
+>  drivers/mmc/host/Makefile                             | 2 +-
+>  drivers/mmc/host/{sh_mobile_sdhi.c =3D> renesas_sdhi.c} | 0
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+>  rename drivers/mmc/host/{sh_mobile_sdhi.c =3D> renesas_sdhi.c} (100%)
+>=20
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 0aa484c10c0a..840b17150263 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -560,13 +560,13 @@ config MMC_TMIO
+>  	  T7L66XB and also HTC ASIC3
+> =20
+>  config MMC_SDHI
+> -	tristate "SH-Mobile SDHI SD/SDIO controller support"
+> +	tristate "Renesas SDHI SD/SDIO controller support"
+>  	depends on SUPERH || ARM || ARM64
+>  	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
+>  	select MMC_TMIO_CORE
+>  	help
+>  	  This provides support for the SDHI SD/SDIO controller found in
+> -	  SuperH and ARM SH-Mobile SoCs
+> +	  SuperH, and Renesas ARM and arm64 based SoCs.
+> =20
+>  config MMC_CB710
+>  	tristate "ENE CB710 MMC/SD Interface support"
+> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+> index af918d261ff9..206233218781 100644
+> --- a/drivers/mmc/host/Makefile
+> +++ b/drivers/mmc/host/Makefile
+> @@ -38,7 +38,7 @@ obj-$(CONFIG_MMC_TMIO)		+=3D tmio_mmc.o
+>  obj-$(CONFIG_MMC_TMIO_CORE)	+=3D tmio_mmc_core.o
+>  tmio_mmc_core-y			:=3D tmio_mmc_pio.o
+>  tmio_mmc_core-$(subst m,y,$(CONFIG_MMC_SDHI))	+=3D tmio_mmc_dma.o
+> -obj-$(CONFIG_MMC_SDHI)		+=3D sh_mobile_sdhi.o
+> +obj-$(CONFIG_MMC_SDHI)		+=3D renesas_sdhi.o
+>  obj-$(CONFIG_MMC_CB710)		+=3D cb710-mmc.o
+>  obj-$(CONFIG_MMC_VIA_SDMMC)	+=3D via-sdmmc.o
+>  obj-$(CONFIG_SDH_BFIN)		+=3D bfin_sdh.o
+> diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/renesas=
+_sdhi.c
+> similarity index 100%
+> rename from drivers/mmc/host/sh_mobile_sdhi.c
+> rename to drivers/mmc/host/renesas_sdhi.c
+> --=20
+> 2.1.4
+>=20
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--sdtB3X0nJg68CQEu
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+iQIcBAEBAgAGBQJXapx+AAoJEBQN5MwUoCm2RR0QALYGGH14CiSQhmPdT6PMguei
+Aq2Pru0V4/k1/qDeCJ+vZGtfx/scQguOc10Q61D6lVqOVDDmyRNNFtcPcO7e41mQ
+QfjOBw0QojEPc+nzIdhR9vEoNuDR7vyzSqgpRmWeKZh6Y5yWIpk9tT20FU5PmWSw
+mzvynP11P5mCmoyHWoXJqU8gViAaIORNlVA6MN5Bz6bxwlM6XgbQzQuBf7Qk4bln
+SBJKjV9cRGs9eIhYxvCSf10JQuEOv+3NpaTrUbzx7KTcPv2ygS0ydcIBCQ5J2a7E
+8DHXBNHXsK/VsV3OvdR+OTkTSpIbgtilnCQQZ49rTNNeZFYL5no6E0RTx2M4osGi
+wAKi1JYSTQE5bdUwnv/ya8iFg3pxJLMn+MX2KjGkRMpqYI/RiHPPh2cbdc3gkJ7h
+6IUei/AUr8X/I3ufERGUQkm8wywr8fwB5xZLZj3awoYk8mbfzI6ZER/7svAWJX+Q
+PL+OZi0w+OlZrbscItJLEjusI5tJpTg7iXv8XQrDhopPDoyUOJjsT+z2CoN9Y/pp
+tkjUdQyeX2U+B4NwM3+l5A2bumZG7y8AFy5JtO/Bge5LZshEq4pxVO2fa5/L8CKQ
+wG17MPc1/j1kWYwr5PNnKRX3TAsUKgVacs2+XfBdoA2Q0zqCpgO0bmmJCMuSQsng
+9UZ1bWF88+vrPfwC5+8+
+=WN1J
+-----END PGP SIGNATURE-----
 
-Thanks,
-Mark
-
->From abd3147e69481caade441e8d8296fa3f541aea03 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Tue, 31 May 2016 09:00:14 +0000
-Subject: [PATCH] ASoC: add new simple-card-utils.c
-
-Current ALSA SoC has simple-card driver which is supporting both
-platform and DT probe.
-Now, some sound cards driver are created based on simple-card.
-They have similar feature or function, but implemented separately
-on each drivers. This is a waste of code.
-OTOH, merging these driver into same driver is highly risk,
-because it will be very difficult to keep compatibility.
-More over, ALSA SoC want to have graph base of DT feature in the
-future. Maybe it want to use simple-card like feature / function.
-Because of these background, this patch creates simple-card
-helper utils, and provides common function to each drivers.
-1st is asoc_simple_card_parse_daifmt()
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- include/sound/simple_card_utils.h     | 21 ++++++++++++++
- sound/soc/generic/Kconfig             |  3 ++
- sound/soc/generic/Makefile            |  2 ++
- sound/soc/generic/simple-card-utils.c | 54 +++++++++++++++++++++++++++++++++++
- 4 files changed, 80 insertions(+)
- create mode 100644 include/sound/simple_card_utils.h
- create mode 100644 sound/soc/generic/simple-card-utils.c
-
-diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
-new file mode 100644
-index 000000000000..7acc798016e0
---- /dev/null
-+++ b/include/sound/simple_card_utils.h
-@@ -0,0 +1,21 @@
-+/*
-+ * simple_card_core.h
-+ *
-+ * Copyright (c) 2016 Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#ifndef __SIMPLE_CARD_CORE_H
-+#define __SIMPLE_CARD_CORE_H
-+
-+#include <sound/soc.h>
-+
-+int asoc_simple_card_parse_daifmt(struct device *dev,
-+				  struct device_node *node,
-+				  struct device_node *codec,
-+				  char *prefix,
-+				  unsigned int *retfmt);
-+
-+#endif /* __SIMPLE_CARD_CORE_H */
-diff --git a/sound/soc/generic/Kconfig b/sound/soc/generic/Kconfig
-index 610f61251640..26c2fe6a0b93 100644
---- a/sound/soc/generic/Kconfig
-+++ b/sound/soc/generic/Kconfig
-@@ -1,3 +1,6 @@
-+config SND_SIMPLE_CARD_UTILS
-+       tristate
-+
- config SND_SIMPLE_CARD
- 	tristate "ASoC Simple sound card support"
- 	help
-diff --git a/sound/soc/generic/Makefile b/sound/soc/generic/Makefile
-index 9c3b246792bf..45602ca8536e 100644
---- a/sound/soc/generic/Makefile
-+++ b/sound/soc/generic/Makefile
-@@ -1,3 +1,5 @@
-+obj-$(CONFIG_SND_SIMPLE_CARD_UTILS) := simple-card-utils.o
-+
- snd-soc-simple-card-objs	:= simple-card.o
- 
- obj-$(CONFIG_SND_SIMPLE_CARD)	+= snd-soc-simple-card.o
-diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
-new file mode 100644
-index 000000000000..3f6b72526f71
---- /dev/null
-+++ b/sound/soc/generic/simple-card-utils.c
-@@ -0,0 +1,54 @@
-+/*
-+ * simple-card-core.c
-+ *
-+ * Copyright (c) 2016 Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#include <linux/of.h>
-+#include <sound/simple_card_utils.h>
-+
-+int asoc_simple_card_parse_daifmt(struct device *dev,
-+				  struct device_node *node,
-+				  struct device_node *codec,
-+				  char *prefix,
-+				  unsigned int *retfmt)
-+{
-+	struct device_node *bitclkmaster = NULL;
-+	struct device_node *framemaster = NULL;
-+	int prefix_len = prefix ? strlen(prefix) : 0;
-+	unsigned int daifmt;
-+
-+	daifmt = snd_soc_of_parse_daifmt(node, prefix,
-+					 &bitclkmaster, &framemaster);
-+	daifmt &= ~SND_SOC_DAIFMT_MASTER_MASK;
-+
-+	if (prefix_len && !bitclkmaster && !framemaster) {
-+		/*
-+		 * No dai-link level and master setting was not found from
-+		 * sound node level, revert back to legacy DT parsing and
-+		 * take the settings from codec node.
-+		 */
-+		dev_dbg(dev, "Revert to legacy daifmt parsing\n");
-+
-+		daifmt = snd_soc_of_parse_daifmt(codec, NULL, NULL, NULL) |
-+			(daifmt & ~SND_SOC_DAIFMT_CLOCK_MASK);
-+	} else {
-+		if (codec == bitclkmaster)
-+			daifmt |= (codec == framemaster) ?
-+				SND_SOC_DAIFMT_CBM_CFM : SND_SOC_DAIFMT_CBM_CFS;
-+		else
-+			daifmt |= (codec == framemaster) ?
-+				SND_SOC_DAIFMT_CBS_CFM : SND_SOC_DAIFMT_CBS_CFS;
-+	}
-+
-+	of_node_put(bitclkmaster);
-+	of_node_put(framemaster);
-+
-+	*retfmt = daifmt;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(asoc_simple_card_parse_daifmt);
--- 
-2.8.1
+--sdtB3X0nJg68CQEu--
