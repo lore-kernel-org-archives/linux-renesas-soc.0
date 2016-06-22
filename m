@@ -1,63 +1,181 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <balbi@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 3/3] usb: renesas_usbhs: Use devm_usb_get_phy_by_phandle()
-Date: Mon, 27 Jun 2016 21:09:19 +0900
-Message-ID: <1467029359-6812-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1467029359-6812-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1467029359-6812-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:24940 "EHLO
+	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752722AbcFVMiu (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 22 Jun 2016 08:38:50 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: mkl@pengutronix.de, wg@grandegger.com, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org
+Cc: ulrich.hecht+renesas@gmail.com, horms@verge.net.au,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	chris.paterson2@renesas.com, magnus.damm@gmail.com,
+	socketcan@hartkopp.net,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v2 2/2] can: rcar_canfd: Add back-to-error-active support
+Date: Wed, 22 Jun 2016 13:31:47 +0100
+Message-Id: <1466598707-44076-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1466598707-44076-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1466434007-50873-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1466598707-44076-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch uses devm_usb_get_phy_by_phandle() instead of usb_get_phy()
-for device tree environment. This change is not compabile with the
-previous code, but it is no problem because nobody calls usb_bind_phy()
-for this driver now.
+As per Wolfgang G, all new drivers should support decreasing state
+transition(back-to-error-active). This patch adds this support.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This driver configures the controller to halt on bus-off entry. Hence,
+when in error states less than bus off state, the TEC/REC counters
+are checked for lower state transition eligibility and action.
+
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/usb/renesas_usbhs.txt | 3 ++-
- drivers/usb/renesas_usbhs/mod_gadget.c                  | 7 ++++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ drivers/net/can/rcar/rcar_canfd.c | 76 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 56 insertions(+), 20 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-index b604056..a419aea 100644
---- a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-+++ b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-@@ -24,8 +24,9 @@ Optional properties:
-   - renesas,buswait: Integer to use BUSWAIT register
-   - renesas,enable-gpio: A gpio specifier to check GPIO determining if USB
- 			 function should be enabled
--  - phys: phandle + phy specifier pair
-+  - phys: phandle of *Generic PHY* + phy specifier pair
-   - phy-names: must be "usb"
-+  - usb-phy: phandle of usb phy
-   - dmas: Must contain a list of references to DMA specifiers.
-   - dma-names : named "ch%d", where %d is the channel number ranging from zero
-                 to the number of channels (DnFIFOs) minus one.
-diff --git a/drivers/usb/renesas_usbhs/mod_gadget.c b/drivers/usb/renesas_usbhs/mod_gadget.c
-index 6e60297..ba1da69 100644
---- a/drivers/usb/renesas_usbhs/mod_gadget.c
-+++ b/drivers/usb/renesas_usbhs/mod_gadget.c
-@@ -1071,7 +1071,12 @@ int usbhs_mod_gadget_probe(struct usbhs_priv *priv)
- 		goto usbhs_mod_gadget_probe_err_gpriv;
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index 6bcc474..43cdd55 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -917,16 +917,17 @@ static void rcar_canfd_global_error(struct net_device *ndev)
+ 	rcar_canfd_write(priv->base, RCANFD_GERFL, 0);
+ }
+ 
+-static void rcar_canfd_error(struct net_device *ndev)
++static void rcar_canfd_error(struct net_device *ndev, u32 cerfl,
++			     u16 txerr, u16 rxerr)
+ {
+ 	struct rcar_canfd_channel *priv = netdev_priv(ndev);
+ 	struct net_device_stats *stats = &ndev->stats;
+ 	struct can_frame *cf;
+ 	struct sk_buff *skb;
+-	u32 cerfl, csts;
+-	u32 txerr = 0, rxerr = 0;
+ 	u32 ch = priv->channel;
+ 
++	netdev_dbg(ndev, "ch erfl %x txerr %u rxerr %u\n", cerfl, txerr, rxerr);
++
+ 	/* Propagate the error condition to the CAN stack */
+ 	skb = alloc_can_err_skb(ndev, &cf);
+ 	if (!skb) {
+@@ -934,15 +935,7 @@ static void rcar_canfd_error(struct net_device *ndev)
+ 		return;
  	}
  
--	gpriv->transceiver = usb_get_phy(USB_PHY_TYPE_UNDEFINED);
-+	gpriv->transceiver = devm_usb_get_phy_by_phandle(dev, "usb-phy", 0);
-+	if (PTR_ERR(gpriv->transceiver) == -EPROBE_DEFER) {
-+		ret = -EPROBE_DEFER;
-+		goto err_add_udc;
-+	}
-+
- 	dev_info(dev, "%stransceiver found\n",
- 		 !IS_ERR_OR_NULL(gpriv->transceiver) ? "" : "no ");
+-	/* Channel error interrupt */
+-	cerfl = rcar_canfd_read(priv->base, RCANFD_CERFL(ch));
+-	csts = rcar_canfd_read(priv->base, RCANFD_CSTS(ch));
+-	txerr = RCANFD_CSTS_TECCNT(csts);
+-	rxerr = RCANFD_CSTS_RECCNT(csts);
+-
+-	netdev_dbg(ndev, "ch erfl %x sts %x txerr %u rxerr %u\n",
+-		   cerfl, csts, txerr, rxerr);
+-
++	/* Channel error interrupts */
+ 	if (cerfl & RCANFD_CERFL_BEF) {
+ 		netdev_dbg(ndev, "Bus error\n");
+ 		cf->can_id |= CAN_ERR_BUSERROR | CAN_ERR_PROT;
+@@ -1032,8 +1025,9 @@ static void rcar_canfd_error(struct net_device *ndev)
+ 		cf->data[2] |= CAN_ERR_PROT_OVERLOAD;
+ 	}
  
+-	/* Clear all channel error interrupts */
+-	rcar_canfd_write(priv->base, RCANFD_CERFL(ch), 0);
++	/* Clear channel error interrupts that are handled */
++	rcar_canfd_write(priv->base, RCANFD_CERFL(ch),
++			 RCANFD_CERFL_ERR(~cerfl));
+ 	stats->rx_packets++;
+ 	stats->rx_bytes += cf->can_dlc;
+ 	netif_rx(skb);
+@@ -1098,12 +1092,12 @@ static irqreturn_t rcar_canfd_global_interrupt(int irq, void *dev_id)
+ 
+ 		/* Global error interrupts */
+ 		gerfl = rcar_canfd_read(priv->base, RCANFD_GERFL);
+-		if (RCANFD_GERFL_ERR(gpriv, gerfl))
++		if (unlikely(RCANFD_GERFL_ERR(gpriv, gerfl)))
+ 			rcar_canfd_global_error(ndev);
+ 
+ 		/* Handle Rx interrupts */
+ 		sts = rcar_canfd_read(priv->base, RCANFD_RFSTS(ridx));
+-		if (sts & RCANFD_RFSTS_RFIF) {
++		if (likely(sts & RCANFD_RFSTS_RFIF)) {
+ 			if (napi_schedule_prep(&priv->napi)) {
+ 				/* Disable Rx FIFO interrupts */
+ 				rcar_canfd_clear_bit(priv->base,
+@@ -1116,12 +1110,46 @@ static irqreturn_t rcar_canfd_global_interrupt(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
++static void rcar_canfd_state_change(struct net_device *ndev,
++				    u16 txerr, u16 rxerr)
++{
++	struct rcar_canfd_channel *priv = netdev_priv(ndev);
++	struct net_device_stats *stats = &ndev->stats;
++	enum can_state rx_state, tx_state, state = priv->can.state;
++	struct can_frame *cf;
++	struct sk_buff *skb;
++
++	/* Handle transition from error to normal states */
++	if (txerr < 96 && rxerr < 96)
++		state = CAN_STATE_ERROR_ACTIVE;
++	else if (txerr < 128 && rxerr < 128)
++		state = CAN_STATE_ERROR_WARNING;
++
++	if (state != priv->can.state) {
++		netdev_dbg(ndev, "state: new %d, old %d: txerr %u, rxerr %u\n",
++			   state, priv->can.state, txerr, rxerr);
++		skb = alloc_can_err_skb(ndev, &cf);
++		if (!skb) {
++			stats->rx_dropped++;
++			return;
++		}
++		tx_state = txerr >= rxerr ? state : 0;
++		rx_state = txerr <= rxerr ? state : 0;
++
++		can_change_state(ndev, cf, tx_state, rx_state);
++		stats->rx_packets++;
++		stats->rx_bytes += cf->can_dlc;
++		netif_rx(skb);
++	}
++}
++
+ static irqreturn_t rcar_canfd_channel_interrupt(int irq, void *dev_id)
+ {
+ 	struct rcar_canfd_global *gpriv = dev_id;
+ 	struct net_device *ndev;
+ 	struct rcar_canfd_channel *priv;
+-	u32 sts, cerfl, ch;
++	u32 sts, ch, cerfl;
++	u16 txerr, rxerr;
+ 
+ 	/* Common FIFO is a per channel resource */
+ 	for_each_set_bit(ch, &gpriv->channels_mask, RCANFD_NUM_CHANNELS) {
+@@ -1130,13 +1158,21 @@ static irqreturn_t rcar_canfd_channel_interrupt(int irq, void *dev_id)
+ 
+ 		/* Channel error interrupts */
+ 		cerfl = rcar_canfd_read(priv->base, RCANFD_CERFL(ch));
+-		if (RCANFD_CERFL_ERR(cerfl))
+-			rcar_canfd_error(ndev);
++		sts = rcar_canfd_read(priv->base, RCANFD_CSTS(ch));
++		txerr = RCANFD_CSTS_TECCNT(sts);
++		rxerr = RCANFD_CSTS_RECCNT(sts);
++		if (unlikely(RCANFD_CERFL_ERR(cerfl)))
++			rcar_canfd_error(ndev, cerfl, txerr, rxerr);
++
++		/* Handle state change to lower states */
++		if (unlikely((priv->can.state != CAN_STATE_ERROR_ACTIVE) &&
++			     (priv->can.state != CAN_STATE_BUS_OFF)))
++			rcar_canfd_state_change(ndev, txerr, rxerr);
+ 
+ 		/* Handle Tx interrupts */
+ 		sts = rcar_canfd_read(priv->base,
+ 				      RCANFD_CFSTS(ch, RCANFD_CFFIFO_IDX));
+-		if (sts & RCANFD_CFSTS_CFTXIF)
++		if (likely(sts & RCANFD_CFSTS_CFTXIF))
+ 			rcar_canfd_tx_done(ndev);
+ 	}
+ 	return IRQ_HANDLED;
 -- 
 1.9.1
-
