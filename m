@@ -1,88 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail2.asahi-net.or.jp ([202.224.39.198]:38724 "EHLO
-	mail2.asahi-net.or.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750704AbcF1HXC (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57320 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751671AbcFVDtt (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 03:23:02 -0400
-From: Yoshinori Sato <ysato@users.sourceforge.jp>
-To: linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Subject: [PATCH] sh-sci: Separate sci_port on earlycon
-Date: Tue, 28 Jun 2016 16:22:58 +0900
-Message-Id: <1467098578-10364-1-git-send-email-ysato@users.sourceforge.jp>
+	Tue, 21 Jun 2016 23:49:49 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 07/13] ARM: dts: koelsch: use demuxer for I2C4
+Date: Wed, 22 Jun 2016 12:43:45 +0900
+Message-Id: <1466567031-20381-8-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
+References: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-sci0 and earlycon use same sci_port.
-So earlycon dead after sci0 initialize.
+Make it possible to fallback to GPIO for I2C4 on the EXIO-E connector.
 
-This fix assign separate sci_port for earlycon.
+This is based on reference work for the I2C0 core of the lager/r8a7790
+by Wolfram Sang.
 
-Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/tty/serial/sh-sci.c | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+v3
+* New Patch
+---
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 5a73620..210c95e 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -146,6 +146,8 @@ struct sci_port {
- #define SCI_NPORTS CONFIG_SERIAL_SH_SCI_NR_UARTS
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index 0beb9556fe01..980f41b70fed 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -52,8 +52,10 @@
+ 		serial1 = &scif1;
+ 		i2c9 = "gpioi2c1";
+ 		i2c10 = "gpioi2c2";
++		i2c11 = "gpioi2c4";
+ 		i2c12 = "i2cexio1";
+ 		i2c13 = "i2chdmi";
++		i2c14 = "i2cexio4";
+ 	};
  
- static struct sci_port sci_ports[SCI_NPORTS];
-+#define EARLY_INDEX 256
-+static struct sci_port earlycon_port;
- static struct uart_driver sci_uart_driver;
+ 	chosen {
+@@ -314,6 +316,17 @@
+ 		i2c-gpio,delay-us = <5>;
+ 	};
  
- static inline struct sci_port *
-@@ -2510,7 +2512,6 @@ static int sci_init_single(struct platform_device *dev,
- 	int ret;
- 
- 	sci_port->cfg	= p;
--
- 	port->ops	= &sci_uart_ops;
- 	port->iotype	= UPIO_MEM;
- 	port->line	= index;
-@@ -2668,12 +2669,16 @@ static void serial_console_putchar(struct uart_port *port, int ch)
- static void serial_console_write(struct console *co, const char *s,
- 				 unsigned count)
- {
--	struct sci_port *sci_port = &sci_ports[co->index];
--	struct uart_port *port = &sci_port->port;
-+	struct sci_port *sci_port;
-+	struct uart_port *port;
- 	unsigned short bits, ctrl, ctrl_temp;
- 	unsigned long flags;
- 	int locked = 1;
- 
-+	sci_port = (co->index != EARLY_INDEX) ? 
-+		&sci_ports[co->index] :  &earlycon_port;
-+	port = &sci_port->port;
++	gpioi2c4: i2c-11 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		gpios = <&gpio7 14 GPIO_ACTIVE_HIGH /* sda */
++			 &gpio7 13 GPIO_ACTIVE_HIGH /* scl */
++			>;
++		i2c-gpio,delay-us = <5>;
++	};
 +
- 	local_irq_save(flags);
- #if defined(SUPPORT_SYSRQ)
- 	if (port->sysrq)
-@@ -3036,13 +3041,14 @@ static int __init early_console_setup(struct earlycon_device *device,
- 	device->port.serial_in = sci_serial_in;
- 	device->port.serial_out	= sci_serial_out;
- 	device->port.type = type;
--	memcpy(&sci_ports[0].port, &device->port, sizeof(struct uart_port));
--	sci_ports[0].cfg = &port_cfg;
--	sci_ports[0].cfg->type = type;
--	sci_probe_regmap(sci_ports[0].cfg);
--	port_cfg.scscr = sci_serial_in(&sci_ports[0].port, SCSCR) |
-+	device->con->index = EARLY_INDEX;
-+	memcpy(&earlycon_port.port, &device->port, sizeof(struct uart_port));
-+	earlycon_port.cfg = &port_cfg;
-+	earlycon_port.cfg->type = type;
-+	sci_probe_regmap(earlycon_port.cfg);
-+	port_cfg.scscr = sci_serial_in(&earlycon_port.port, SCSCR) |
- 			 SCSCR_RE | SCSCR_TE;
--	sci_serial_out(&sci_ports[0].port, SCSCR, port_cfg.scscr);
-+	sci_serial_out(&earlycon_port.port, SCSCR, port_cfg.scscr);
+ 	/*
+ 	 * I2C1 is routed to EXIO connector B, pins 64 (SCL) + 66 (SDA).
+ 	 * A fallback to GPIO is provided.
+@@ -393,6 +406,18 @@
+ 			pagesize = <16>;
+ 		};
+ 	};
++
++	/*
++	 * I2C4 is routed to EXIO connector E, pins 37 (SCL) + 39 (SDA).
++	 * A fallback to GPIO is provided.
++	 */
++	i2cexio4: i2c-14 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c4>, <&gpioi2c4>;
++		i2c-bus-name = "i2c-exio4";
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
+ };
  
- 	device->con->write = serial_console_write;
- 	return 0;
+ &du {
+@@ -438,6 +463,11 @@
+ 		function = "i2c2";
+ 	};
+ 
++	i2c4_pins: i2c4 {
++		groups = "i2c4";
++		function = "i2c4";
++	};
++
+ 	du_pins: du {
+ 		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
+ 		function = "du";
+@@ -661,6 +691,11 @@
+ 	clock-frequency = <100000>;
+ };
+ 
++&i2c4 {
++	pinctrl-0 = <&i2c4_pins>;
++	pinctrl-names = "i2c-exio4";
++};
++
+ &i2c6 {
+ 	status = "okay";
+ 	clock-frequency = <100000>;
 -- 
-2.7.0
+2.1.4
