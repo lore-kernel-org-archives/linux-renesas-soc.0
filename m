@@ -1,84 +1,180 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 05/20] drm: fsl-dcu: Rely on the default ->best_encoder() behavior
-Date: Thu,  2 Jun 2016 16:31:32 +0200
-Message-Id: <1464877907-27723-6-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57320 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751671AbcFVDtw (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 21 Jun 2016 23:49:52 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 13/13] ARM: dts: silk: use demuxer for I2C1
+Date: Wed, 22 Jun 2016 12:43:51 +0900
+Message-Id: <1466567031-20381-14-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
+References: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We have a 1:1 relationship between connectors and encoders and the
-driver is relying on the atomic helpers: we can drop the custom
-->best_encoder() and let the core call drm_atomic_helper_best_encoder()
-for us.
+Create a separate bus for HDMI related I2C1 and provide fallback to GPIO.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Based on work for the r8a7790/lager by Wolfram Sang.
+
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c | 9 ---------
- 1 file changed, 9 deletions(-)
+v3
+* New patch
+* Compile tested only
+---
+ arch/arm/boot/dts/r8a7794-silk.dts | 117 ++++++++++++++++++++++---------------
+ 1 file changed, 70 insertions(+), 47 deletions(-)
 
-diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c
-index 98c998d..0b0989e 100644
---- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c
-+++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c
-@@ -102,14 +102,6 @@ static const struct drm_connector_funcs fsl_dcu_drm_connector_funcs = {
- 	.reset = drm_atomic_helper_connector_reset,
+diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
+index cf24f45fff22..b1beb22cb980 100644
+--- a/arch/arm/boot/dts/r8a7794-silk.dts
++++ b/arch/arm/boot/dts/r8a7794-silk.dts
+@@ -20,6 +20,8 @@
+ 
+ 	aliases {
+ 		serial0 = &scif2;
++		i2c9 = "gpioi2c1";
++		i2c10 = "i2chdmi";
+ 	};
+ 
+ 	chosen {
+@@ -119,6 +121,73 @@
+ 		#clock-cells = <0>;
+ 		clock-frequency = <74250000>;
+ 	};
++
++	gpioi2c1: i2c-9 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		gpios = <&gpio4 1 GPIO_ACTIVE_HIGH /* sda */
++			 &gpio4 0 GPIO_ACTIVE_HIGH /* scl */
++			>;
++		i2c-gpio,delay-us = <5>;
++	};
++
++	/*
++	 * A fallback to GPIO is provided for I2C1.
++	 */
++	i2chdmi: i2c-10 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c1>, <&gpioi2c1>;
++		i2c-bus-name = "i2c-hdmi";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		composite-in@20 {
++			compatible = "adi,adv7180";
++			reg = <0x20>;
++			remote = <&vin0>;
++
++			port {
++				adv7180: endpoint {
++					bus-width = <8>;
++					remote-endpoint = <&vin0ep>;
++				};
++			};
++		};
++
++		hdmi@39 {
++			compatible = "adi,adv7511w";
++			reg = <0x39>;
++			interrupt-parent = <&gpio5>;
++			interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
++
++			adi,input-depth = <8>;
++			adi,input-colorspace = "rgb";
++			adi,input-clock = "1x";
++			adi,input-style = <1>;
++			adi,input-justification = "evenly";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					adv7511_in: endpoint {
++						remote-endpoint = <&du_out_rgb0>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					adv7511_out: endpoint {
++						remote-endpoint = <&hdmi_con>;
++					};
++				};
++			};
++		};
++	};
  };
  
--static struct drm_encoder *
--fsl_dcu_drm_connector_best_encoder(struct drm_connector *connector)
--{
--	struct fsl_dcu_drm_connector *fsl_con = to_fsl_dcu_connector(connector);
--
--	return fsl_con->encoder;
--}
--
- static int fsl_dcu_drm_connector_get_modes(struct drm_connector *connector)
- {
- 	struct fsl_dcu_drm_connector *fsl_connector;
-@@ -136,7 +128,6 @@ static int fsl_dcu_drm_connector_mode_valid(struct drm_connector *connector,
- }
+ &extal_clk {
+@@ -225,55 +294,9 @@
  
- static const struct drm_connector_helper_funcs connector_helper_funcs = {
--	.best_encoder = fsl_dcu_drm_connector_best_encoder,
- 	.get_modes = fsl_dcu_drm_connector_get_modes,
- 	.mode_valid = fsl_dcu_drm_connector_mode_valid,
+ &i2c1 {
+ 	pinctrl-0 = <&i2c1_pins>;
+-	pinctrl-names = "default";
++	pinctrl-names = "i2c-hdmi";
+ 
+-	status = "okay";
+ 	clock-frequency = <400000>;
+-
+-	composite-in@20 {
+-		compatible = "adi,adv7180";
+-		reg = <0x20>;
+-		remote = <&vin0>;
+-
+-		port {
+-			adv7180: endpoint {
+-				bus-width = <8>;
+-				remote-endpoint = <&vin0ep>;
+-			};
+-		};
+-	};
+-
+-	hdmi@39 {
+-		compatible = "adi,adv7511w";
+-		reg = <0x39>;
+-		interrupt-parent = <&gpio5>;
+-		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
+-
+-		adi,input-depth = <8>;
+-		adi,input-colorspace = "rgb";
+-		adi,input-clock = "1x";
+-		adi,input-style = <1>;
+-		adi,input-justification = "evenly";
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7511_in: endpoint {
+-					remote-endpoint = <&du_out_rgb0>;
+-				};
+-			};
+-
+-			port@1 {
+-				reg = <1>;
+-				adv7511_out: endpoint {
+-					remote-endpoint = <&hdmi_con>;
+-				};
+-			};
+-		};
+-	};
  };
+ 
+ &mmcif0 {
 -- 
-2.7.4
+2.1.4
