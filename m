@@ -1,94 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:52165 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932752AbcFBOcW (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57320 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751523AbcFVDto (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 2 Jun 2016 10:32:22 -0400
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 20/20] drm/bridge: dw-hdmi: Use drm_atomic_helper_best_encoder()
-Date: Thu,  2 Jun 2016 16:31:47 +0200
-Message-Id: <1464877907-27723-21-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+	Tue, 21 Jun 2016 23:49:44 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v3 05/13] ARM: dts: koelsch: use demuxer for I2C1
+Date: Wed, 22 Jun 2016 12:43:43 +0900
+Message-Id: <1466567031-20381-6-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
+References: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We have a 1:1 relationship between connectors and encoders, which means
-we can rely on the drm_atomic_helper_best_encoder() behavior.
+Make it possible to fallback to GPIO for I2C1 on the EXIO-C connector.
 
-We still have to explicitly assign ->best_encoder() to
-drm_atomic_helper_best_encoder(), because the automated fallback to
-drm_atomic_helper_best_encoder() when ->best_encoder() is NULL is only
-available when the DRM device is using the atomic helpers, and this bridge
-is compatible with non-atomic and atomic devices.
+This is based on reference work for the I2C0 core of the lager/r8a7790
+by Wolfram Sang.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpu/drm/bridge/dw-hdmi.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+v3
+* New Patch
+---
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index c9d9412..70b1f7d 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -1476,15 +1476,6 @@ dw_hdmi_connector_mode_valid(struct drm_connector *connector,
- 	return mode_status;
- }
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index f8a7d090fd01..744a6e2be2d2 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -50,6 +50,8 @@
+ 	aliases {
+ 		serial0 = &scif0;
+ 		serial1 = &scif1;
++		i2c9 = "gpioi2c1";
++		i2c12 = "i2cexio1";
+ 	};
  
--static struct drm_encoder *dw_hdmi_connector_best_encoder(struct drm_connector
--							   *connector)
--{
--	struct dw_hdmi *hdmi = container_of(connector, struct dw_hdmi,
--					     connector);
--
--	return hdmi->encoder;
--}
--
- static void dw_hdmi_connector_destroy(struct drm_connector *connector)
- {
- 	drm_connector_unregister(connector);
-@@ -1525,7 +1516,7 @@ static const struct drm_connector_funcs dw_hdmi_atomic_connector_funcs = {
- static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs = {
- 	.get_modes = dw_hdmi_connector_get_modes,
- 	.mode_valid = dw_hdmi_connector_mode_valid,
--	.best_encoder = dw_hdmi_connector_best_encoder,
-+	.best_encoder = drm_atomic_helper_best_encoder,
+ 	chosen {
+@@ -287,6 +289,29 @@
+ 		#clock-cells = <0>;
+ 		clock-frequency = <148500000>;
+ 	};
++
++	gpioi2c1: i2c-9 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "i2c-gpio";
++		status = "disabled";
++		gpios = <&gpio7 16 GPIO_ACTIVE_HIGH /* sda */
++			 &gpio7 15 GPIO_ACTIVE_HIGH /* scl */
++			>;
++		i2c-gpio,delay-us = <5>;
++	};
++
++	/*
++	 * I2C1 is routed to EXIO connector B, pins 64 (SCL) + 66 (SDA).
++	 * A fallback to GPIO is provided.
++	 */
++	i2cexio1: i2c-12 {
++		compatible = "i2c-demux-pinctrl";
++		i2c-parent = <&i2c1>, <&gpioi2c1>;
++		i2c-bus-name = "i2c-exio1";
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
  };
  
- static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
+ &du {
+@@ -322,6 +347,11 @@
+ 	pinctrl-0 = <&scif_clk_pins>;
+ 	pinctrl-names = "default";
+ 
++	i2c1_pins: i2c1 {
++		groups = "i2c1";
++		function = "i2c1";
++	};
++
+ 	i2c2_pins: i2c2 {
+ 		groups = "i2c2";
+ 		function = "i2c2";
+@@ -538,6 +568,11 @@
+ 	};
+ };
+ 
++&i2c1 {
++	pinctrl-0 = <&i2c1_pins>;
++	pinctrl-names = "i2c-exio1";
++};
++
+ &i2c2 {
+ 	pinctrl-0 = <&i2c2_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.7.4
+2.1.4
