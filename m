@@ -1,175 +1,293 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:34147 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752568AbcFPK1t (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54488 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751749AbcFVAW0 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 16 Jun 2016 06:27:49 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 07/13] ARM: shmobile: apmu: Add APMU DT support via Enable method
-Date: Thu, 16 Jun 2016 12:27:36 +0200
-Message-Id: <1466072862-28030-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1466072862-28030-1-git-send-email-geert+renesas@glider.be>
-References: <1466072862-28030-1-git-send-email-geert+renesas@glider.be>
+	Tue, 21 Jun 2016 20:22:26 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	mchehab@kernel.org, hans.verkuil@cisco.com,
+	laurent.pinchart@ideasonboard.com
+Cc: linux-samsung-soc@vger.kernel.org,
+	mjpeg-users@lists.sourceforge.net, devel@driverdev.osuosl.org,
+	lars@metafoo.de,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 0/2] move s_stream from v4l2_subdev_video_ops to move s_stream from v4l2_subdev_pad_ops
+Date: Wed, 22 Jun 2016 02:19:23 +0200
+Message-Id: <20160622001925.30077-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi all,
 
-Allow DT configuration of the APMU hardware in the case when the APMU is
-pointed out in the DTB via the enable-method. The ability to configure
-the APMU via C code is still kept intact to prevent DTB breakage for older
-SoCs that do not rely on the enable-method for SMP support.
+This series moves s_stream from struct v4l2_subdev_video_ops to struct
+v4l2_subdev_pad_ops. The reason for this is that there are devices 
+(adv7482 for example) which can support more then one video pipeline 
+connected to two different output pads to run simultaneously. In order 
+to be able to be able to start and stop streams on a pad level the 
+s_stream operation needs to be extended with a pad argument.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-[geert: Fix CONFIG_SMP=n build]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - Remove bogus of_node_put(),
-  - Fix CONFIG_SMP=n build,
-  - Correct whitespace,
+The series is based on the master branch of the media_tree.
 
-v3:
-  - Move is_allowed declaration, break when allowed,
+It have been suggested by both Laurent Pinchart and Hans Verkuil that if 
+a pad aware s_stream is needed the operation should be moved from the 
+video struct to the pad ops struct and not just add a s_stream to the 
+pad ops struct.
 
-v2:
-  - Adjust to use .cpu_can_disable instead of .cpu_disable.
----
- arch/arm/mach-shmobile/platsmp-apmu.c | 92 +++++++++++++++++++++++++++++++++--
- 1 file changed, 88 insertions(+), 4 deletions(-)
+The change to v4l framework is trivial and only moves s_stream between 
+the two structs and adds a 'pad' argument. The majority of the changes 
+is updating all users of the s_stream operation to use the one from 
+v4l2_subdev_pad_ops.
 
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index c1558ef0c590dd3e..0c6bb458b7a45128 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -24,6 +24,7 @@
- #include <asm/suspend.h>
- #include "common.h"
- #include "platsmp-apmu.h"
-+#include "rcar-gen2.h"
- 
- static struct {
- 	void __iomem *iomem;
-@@ -118,14 +119,66 @@ static void apmu_parse_cfg(void (*fn)(struct resource *res, int cpu, int bit),
- 	}
- }
- 
--void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
--					   struct rcar_apmu_config *apmu_config,
--					   int num)
-+static const struct of_device_id apmu_ids[] = {
-+	{ .compatible = "renesas,apmu" },
-+	{ /*sentinel*/ }
-+};
-+
-+static void apmu_parse_dt(void (*fn)(struct resource *res, int cpu, int bit))
-+{
-+	struct device_node *np_apmu, *np_cpu;
-+	struct resource res;
-+	int bit, index;
-+	u32 id;
-+
-+	for_each_matching_node(np_apmu, apmu_ids) {
-+		/* only enable the cluster that includes the boot CPU */
-+		bool is_allowed = false;
-+
-+		for (bit = 0; bit < CONFIG_NR_CPUS; bit++) {
-+			np_cpu = of_parse_phandle(np_apmu, "cpus", bit);
-+			if (np_cpu) {
-+				if (!of_property_read_u32(np_cpu, "reg", &id)) {
-+					if (id == cpu_logical_map(0)) {
-+						is_allowed = true;
-+						of_node_put(np_cpu);
-+						break;
-+					}
-+
-+				}
-+				of_node_put(np_cpu);
-+			}
-+		}
-+		if (!is_allowed)
-+			continue;
-+
-+		for (bit = 0; bit < CONFIG_NR_CPUS; bit++) {
-+			np_cpu = of_parse_phandle(np_apmu, "cpus", bit);
-+			if (np_cpu) {
-+				if (!of_property_read_u32(np_cpu, "reg", &id)) {
-+					index = get_logical_index(id);
-+					if ((index >= 0) &&
-+					    !of_address_to_resource(np_apmu,
-+								    0, &res))
-+						fn(&res, index, bit);
-+				}
-+				of_node_put(np_cpu);
-+			}
-+		}
-+	}
-+}
-+
-+static void __init shmobile_smp_apmu_setup_boot(void)
+Patch 1/2 is a preparation of the vsp1 driver where the 
+v4l2_subdev_video_ops struct was shared by two devices which no longer 
+can be shared since only one of them implements s_stream.
+
+Patch 2/2 moves the s_stream operation between the struct and updates 
+all users. The callers have primarily been updated using Coccinelle 
+patch which is attached to this cover letter.
+
+After the spatch run all changes have been manually reviewed and struct 
+v4l2_subdev_pad_ops have been added to drivers which previously did not 
+have one. Likewise struct v4l2_subdev_video_ops which became 'empty' 
+after removing s_stream have been removed. A few drivers needed some 
+code to me moved around (most notably s5k4ecgx) for ordering but nothing 
+in the code itself have changed while moving it except to update calls 
+to s_stream to use the pad version.
+
+I have tested this series to the best of my ability by building 
+allyesconfig configurations for arm, arm64 and x86_64. I have also 
+tested on a R-Car Koelsch board (rcar-vin and adv7180).
+
+>>>>cut<<<<
+@ rule1 @
+identifier fn, s;
+@@
+
+ struct v4l2_subdev_video_ops s = { .s_stream = fn, };
+
+@@
+identifier rule1.fn, rule1.s;
+@@
+
+ struct v4l2_subdev_video_ops s = {
+-.s_stream = fn,
+ };
+
+@@
+identifier rule1.fn, s;
+@@
+
+ struct v4l2_subdev_pad_ops s = {
++.s_stream = fn,
+ };
+
+@@
+identifier rule1.fn, a, b;
+symbol pad;
+@@
+
+-fn(struct v4l2_subdev *a, int b)
++fn(struct v4l2_subdev *a, unsigned int pad, int b)
  {
- 	/* install boot code shared by all CPUs */
- 	shmobile_boot_fn = virt_to_phys(shmobile_smp_boot);
-+}
- 
--	/* perform per-cpu setup */
-+void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
-+					   struct rcar_apmu_config *apmu_config,
-+					   int num)
-+{
-+	shmobile_smp_apmu_setup_boot();
- 	apmu_parse_cfg(apmu_init_cpu, apmu_config, num);
+ ...
  }
- 
-@@ -136,7 +189,38 @@ int shmobile_smp_apmu_boot_secondary(unsigned int cpu, struct task_struct *idle)
- 
- 	return apmu_wrap(cpu, apmu_power_on);
- }
-+
-+static void __init shmobile_smp_apmu_prepare_cpus_dt(unsigned int max_cpus)
-+{
-+	shmobile_smp_apmu_setup_boot();
-+	apmu_parse_dt(apmu_init_cpu);
-+	rcar_gen2_pm_init();
-+}
-+
-+static int shmobile_smp_apmu_boot_secondary_md21(unsigned int cpu,
-+						 struct task_struct *idle)
-+{
-+	/* Error out when hardware debug mode is enabled */
-+	if (rcar_gen2_read_mode_pins() & BIT(21)) {
-+		pr_warn("Unable to boot CPU%u when MD21 is set\n", cpu);
-+		return -ENOTSUPP;
-+	}
-+
-+	return shmobile_smp_apmu_boot_secondary(cpu, idle);
-+}
-+
-+static struct smp_operations apmu_smp_ops __initdata = {
-+	.smp_prepare_cpus	= shmobile_smp_apmu_prepare_cpus_dt,
-+	.smp_boot_secondary	= shmobile_smp_apmu_boot_secondary_md21,
-+#ifdef CONFIG_HOTPLUG_CPU
-+	.cpu_can_disable	= shmobile_smp_cpu_can_disable,
-+	.cpu_die		= shmobile_smp_apmu_cpu_die,
-+	.cpu_kill		= shmobile_smp_apmu_cpu_kill,
- #endif
-+};
-+
-+CPU_METHOD_OF_DECLARE(shmobile_smp_apmu, "renesas,apmu", &apmu_smp_ops);
-+#endif /* CONFIG_SMP */
- 
- #if defined(CONFIG_HOTPLUG_CPU) || defined(CONFIG_SUSPEND)
- /* nicked from arch/arm/mach-exynos/hotplug.c */
+
+@@
+identifier rule1.fn;
+expression e1, e2;
+@@
+
+-fn(e1, e2);
++fn(e1, 0, e2);
+
+@@
+expression e1, e2;
+symbol video, pad, s_stream;
+@@
+
+-v4l2_subdev_call(e1, video, s_stream, e2);
++v4l2_subdev_call(e1, pad, s_stream, 0, e2);
+
+@@
+expression e1, e2, e3;
+symbol video, pad, s_stream;
+@@
+
+-e3 = v4l2_subdev_call(e1, video, s_stream, e2);
++e3 = v4l2_subdev_call(e1, pad, s_stream, 0, e2);
+
+@@
+expression e1, e2;
+@@
+
+-call_all(e1, video, s_stream, e2);
++call_all(e1, pad, s_stream, 0, e2);
+
+@@
+expression e1, e2, e3;
+symbol video, pad, s_stream;
+@@
+
+-ivtv_call_hw(e1, e2, video, s_stream, e3);
++ivtv_call_hw(e1, e2, pad, s_stream, 0, e3);
+
+@@
+expression e1, e2, e3, e4;
+symbol video, pad, s_stream;
+@@
+
+-e1 = v4l2_device_call_until_err(e2, e3, video, s_stream, e4);
++e1 = v4l2_device_call_until_err(e2, e3, pad, s_stream, 0, e4);
+
+@@
+expression e2, e3, e4;
+symbol video, pad, s_stream;
+@@
+
+-v4l2_device_call_until_err(e2, e3, video, s_stream, e4);
++v4l2_device_call_until_err(e2, e3, pad, s_stream, 0, e4);
+
+@@
+expression e1, e2, e3;
+symbol video, pad, s_stream;
+@@
+
+-v4l2_device_call_all(e1, e2, video, s_stream, e3);
++v4l2_device_call_all(e1, e2, pad, s_stream, 0, e3);
+
+@@
+expression e1, e2;
+symbol video, pad, s_stream;
+@@
+
+-cx25840_call(e1, video, s_stream, e2);
++cx25840_call(e1, pad, s_stream, 0, e2);
+>>>>cut<<<<
+
+Niklas Söderlund (2):
+  [media] v4l: vsp1: Split pad operations between rpf and wpf
+  [media] v4l: subdev: move s_stream from v4l2_subdev_video_ops to
+    v4l2_subdev_pad_ops
+
+ drivers/media/dvb-frontends/au8522_decoder.c       |   9 +-
+ drivers/media/i2c/ad9389b.c                        |   7 +-
+ drivers/media/i2c/adv7180.c                        |   5 +-
+ drivers/media/i2c/adv7183.c                        |   5 +-
+ drivers/media/i2c/adv7511.c                        |   7 +-
+ drivers/media/i2c/ak881x.c                         |   5 +-
+ drivers/media/i2c/bt819.c                          |   9 +-
+ drivers/media/i2c/cx25840/cx25840-core.c           |   5 +-
+ drivers/media/i2c/ks0127.c                         |   9 +-
+ drivers/media/i2c/m5mols/m5mols_core.c             |  19 +--
+ drivers/media/i2c/mt9m032.c                        |   5 +-
+ drivers/media/i2c/mt9p031.c                        |   9 +-
+ drivers/media/i2c/mt9t001.c                        |   9 +-
+ drivers/media/i2c/mt9v032.c                        |   9 +-
+ drivers/media/i2c/noon010pc30.c                    |   6 +-
+ drivers/media/i2c/ov2659.c                         |   8 +-
+ drivers/media/i2c/ov9650.c                         |   4 +-
+ drivers/media/i2c/s5c73m3/s5c73m3-core.c           |   5 +-
+ drivers/media/i2c/s5k4ecgx.c                       | 180 ++++++++++-----------
+ drivers/media/i2c/s5k5baf.c                        |   4 +-
+ drivers/media/i2c/s5k6aa.c                         |   4 +-
+ drivers/media/i2c/saa7110.c                        |   9 +-
+ drivers/media/i2c/saa7115.c                        |   5 +-
+ drivers/media/i2c/saa7127.c                        |   9 +-
+ drivers/media/i2c/saa717x.c                        |   5 +-
+ drivers/media/i2c/smiapp/smiapp-core.c             |   9 +-
+ drivers/media/i2c/soc_camera/imx074.c              |   5 +-
+ drivers/media/i2c/soc_camera/mt9m001.c             |   5 +-
+ drivers/media/i2c/soc_camera/mt9t031.c             |   5 +-
+ drivers/media/i2c/soc_camera/mt9t112.c             |   5 +-
+ drivers/media/i2c/soc_camera/mt9v022.c             |   5 +-
+ drivers/media/i2c/soc_camera/ov2640.c              |   5 +-
+ drivers/media/i2c/soc_camera/ov6650.c              |   5 +-
+ drivers/media/i2c/soc_camera/ov772x.c              |   5 +-
+ drivers/media/i2c/soc_camera/ov9640.c              |   5 +-
+ drivers/media/i2c/soc_camera/ov9740.c              |   9 +-
+ drivers/media/i2c/soc_camera/rj54n1cb0c.c          |   5 +-
+ drivers/media/i2c/soc_camera/tw9910.c              |   5 +-
+ drivers/media/i2c/tc358743.c                       |   5 +-
+ drivers/media/i2c/ths7303.c                        |  10 +-
+ drivers/media/i2c/ths8200.c                        |   9 +-
+ drivers/media/i2c/tvp514x.c                        |  10 +-
+ drivers/media/i2c/tvp5150.c                        |   5 +-
+ drivers/media/i2c/tvp7002.c                        |   5 +-
+ drivers/media/i2c/vpx3220.c                        |   9 +-
+ drivers/media/i2c/vs6624.c                         |   5 +-
+ drivers/media/pci/cobalt/cobalt-driver.c           |   2 +-
+ drivers/media/pci/cx18/cx18-av-core.c              |   5 +-
+ drivers/media/pci/ivtv/ivtv-driver.c               |   7 +-
+ drivers/media/pci/ivtv/ivtv-streams.c              |   4 +-
+ drivers/media/pci/ivtv/ivtvfb.c                    |   6 +-
+ drivers/media/pci/zoran/zoran_card.c               |   2 +-
+ drivers/media/pci/zoran/zoran_device.c             |   6 +-
+ drivers/media/pci/zoran/zoran_driver.c             |   2 +-
+ drivers/media/platform/am437x/am437x-vpfe.c        |   4 +-
+ drivers/media/platform/blackfin/bfin_capture.c     |   4 +-
+ drivers/media/platform/davinci/vpfe_capture.c      |   8 +-
+ drivers/media/platform/davinci/vpif_capture.c      |   4 +-
+ drivers/media/platform/exynos4-is/fimc-isp.c       |   7 +-
+ drivers/media/platform/exynos4-is/fimc-lite.c      |   7 +-
+ drivers/media/platform/exynos4-is/media-dev.c      |   4 +-
+ drivers/media/platform/exynos4-is/mipi-csis.c      |   5 +-
+ drivers/media/platform/omap3isp/isp.c              |  28 ++--
+ drivers/media/platform/omap3isp/ispccdc.c          |  10 +-
+ drivers/media/platform/omap3isp/ispccp2.c          |   9 +-
+ drivers/media/platform/omap3isp/ispcsi2.c          |  10 +-
+ drivers/media/platform/omap3isp/isph3a_aewb.c      |   4 +-
+ drivers/media/platform/omap3isp/isph3a_af.c        |   4 +-
+ drivers/media/platform/omap3isp/isphist.c          |   4 +-
+ drivers/media/platform/omap3isp/isppreview.c       |  10 +-
+ drivers/media/platform/omap3isp/ispresizer.c       |  10 +-
+ drivers/media/platform/omap3isp/ispstat.c          |   3 +-
+ drivers/media/platform/omap3isp/ispstat.h          |   3 +-
+ drivers/media/platform/rcar-vin/rcar-dma.c         |   6 +-
+ drivers/media/platform/s3c-camif/camif-capture.c   |   2 +-
+ drivers/media/platform/s5p-tv/hdmi_drv.c           |  16 +-
+ drivers/media/platform/s5p-tv/hdmiphy_drv.c        |   5 +-
+ drivers/media/platform/s5p-tv/mixer_drv.c          |   4 +-
+ drivers/media/platform/s5p-tv/sdo_drv.c            |   4 +-
+ drivers/media/platform/s5p-tv/sii9234_drv.c        |   7 +-
+ drivers/media/platform/sh_vou.c                    |   7 +-
+ .../platform/soc_camera/sh_mobile_ceu_camera.c     |   4 +-
+ drivers/media/platform/soc_camera/soc_camera.c     |   4 +-
+ .../platform/soc_camera/soc_camera_platform.c      |   5 +-
+ drivers/media/platform/ti-vpe/cal.c                |   4 +-
+ drivers/media/platform/vsp1/vsp1_pipe.c            |   2 +-
+ drivers/media/platform/vsp1/vsp1_rpf.c             |  12 +-
+ drivers/media/platform/vsp1/vsp1_rwpf.c            |  40 ++---
+ drivers/media/platform/vsp1/vsp1_rwpf.h            |  20 +++
+ drivers/media/platform/vsp1/vsp1_wpf.c             |  15 +-
+ drivers/media/platform/xilinx/xilinx-dma.c         |   2 +-
+ drivers/media/platform/xilinx/xilinx-tpg.c         |   9 +-
+ drivers/media/usb/au0828/au0828-video.c            |   6 +-
+ drivers/media/usb/cx231xx/cx231xx-cards.c          |   2 +-
+ drivers/media/usb/cx231xx/cx231xx-video.c          |   4 +-
+ drivers/media/usb/em28xx/em28xx-video.c            |   6 +-
+ drivers/media/usb/go7007/go7007-v4l2.c             |   4 +-
+ drivers/media/usb/pvrusb2/pvrusb2-hdw.c            |   2 +-
+ drivers/media/usb/stk1160/stk1160-core.c           |   2 +-
+ drivers/media/usb/stk1160/stk1160-v4l.c            |   4 +-
+ drivers/media/usb/usbvision/usbvision-video.c      |   6 +-
+ drivers/staging/media/davinci_vpfe/dm365_ipipe.c   |  10 +-
+ drivers/staging/media/davinci_vpfe/dm365_ipipeif.c |  10 +-
+ drivers/staging/media/davinci_vpfe/dm365_isif.c    |  10 +-
+ drivers/staging/media/davinci_vpfe/dm365_resizer.c |  10 +-
+ drivers/staging/media/davinci_vpfe/vpfe_video.c    |   4 +-
+ drivers/staging/media/omap4iss/iss.c               |   4 +-
+ drivers/staging/media/omap4iss/iss_csi2.c          |  10 +-
+ drivers/staging/media/omap4iss/iss_ipipe.c         |  10 +-
+ drivers/staging/media/omap4iss/iss_ipipeif.c       |  10 +-
+ drivers/staging/media/omap4iss/iss_resizer.c       |  10 +-
+ include/media/v4l2-subdev.h                        |   8 +-
+ 112 files changed, 482 insertions(+), 472 deletions(-)
+
 -- 
-1.9.1
+2.8.3
