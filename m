@@ -1,127 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:51070 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758633AbcFAPXR (ORCPT
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:32969 "EHLO
+	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751665AbcFWKt5 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 1 Jun 2016 11:23:17 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: hch@infradead.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-	iommu@lists.linux-foundation.org
-Cc: dan.j.williams@intel.com, vinod.koul@intel.com,
-	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	linus.walleij@linaro.org, arnd@arndb.de,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv7 4/6] arm: dma-mapping: add {map,unmap}_resource for iommu ops
-Date: Wed,  1 Jun 2016 17:22:27 +0200
-Message-Id: <1464794549-6601-5-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1464794549-6601-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1464794549-6601-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
+	Thu, 23 Jun 2016 06:49:57 -0400
+Received: by mail-lf0-f47.google.com with SMTP id f6so92593790lfg.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jun 2016 03:49:56 -0700 (PDT)
+Subject: Re: [PATCH 01/13] ARM: shmobile: r8a7792: add clock index macros
+To: Simon Horman <horms@verge.net.au>
+References: <13205049.n7pM8utpHF@wasted.cogentembedded.com>
+ <2280165.siMXMbFrFe@wasted.cogentembedded.com>
+ <20160601005246.GF20527@verge.net.au>
+ <b9619ed2-1ebf-0991-ca90-f9dbe6d1d4f6@cogentembedded.com>
+ <20160622223330.GA15843@verge.net.au>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	pawel.moll@arm.com, mark.rutland@arm.com,
+	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+	devicetree@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <f2050a34-606d-efc0-5927-3a683b903434@cogentembedded.com>
+Date: Thu, 23 Jun 2016 13:49:53 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20160622223330.GA15843@verge.net.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add methods to map/unmap device resources addresses for dma_map_ops that
-are IOMMU aware. This is needed to map a device MMIO register from a
-physical address.
+On 6/23/2016 1:33 AM, Simon Horman wrote:
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- arch/arm/mm/dma-mapping.c | 63 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+>>>> Add macros usable by the device tree sources to reference the R8A7792
+>>>> clocks  by index.
+>>>>
+>>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>>>
+>>>> ---
+>>>> include/dt-bindings/clock/r8a7792-clock.h |  104 ++++++++++++++++++++++++++++++
+>>>> 1 file changed, 104 insertions(+)
+>>>>
+>>>> Index: renesas/include/dt-bindings/clock/r8a7792-clock.h
+>>>> ===================================================================
+>>>> --- /dev/null
+>>>> +++ renesas/include/dt-bindings/clock/r8a7792-clock.h
+>>>> @@ -0,0 +1,104 @@
+>>>> +/*
+>>>> + * Copyright (C) 2016 Cogent Embedded, Inc.
+>>>> + *
+>>>> + * This program is free software; you can redistribute it and/or modify
+>>>> + * it under the terms of the GNU General Public License as published by
+>>>> + * the Free Software Foundation; either version 2 of the License, or
+>>>> + * (at your option) any later version.
+>>>> + */
+>>>> +
+>>>> +#ifndef __DT_BINDINGS_CLOCK_R8A7792_H__
+>>>> +#define __DT_BINDINGS_CLOCK_R8A7792_H__
+>>>> +
+>>>> +/* CPG */
+>>>> +#define R8A7792_CLK_MAIN		0
+>>>> +#define R8A7792_CLK_PLL0		1
+>>>> +#define R8A7792_CLK_PLL1		2
+>>>> +#define R8A7792_CLK_PLL3		3
+>>>> +#define R8A7792_CLK_LB			4
+>>>> +#define R8A7792_CLK_QSPI		5
+>>>> +#define R8A7792_CLK_SDH			6
+>>>> +#define R8A7792_CLK_SD0			7
+>>>> +#define R8A7792_CLK_SD1			8
+>>>> +#define R8A7792_CLK_Z			9
+>>>
+>>> According to my copy of the documentation (v2.00) SDH, SD0 and SD1 do
+>>> not seem to be provided by the r8a7792 CPG.
+>>
+>>    I've just downloaded and opened rev2.00 manual, and still, there's no
+>> CPG registers other than FRQCRB on V2H.
+>>
+>>> It does, however, provide RCAN and ADSP which are supported by the CPG
+>>> driver. You may wish to add them now for completeness though from my point
+>>> of view they could also be added later when they are used.
+>>
+>>    My copy of the manual says there's no ADSP on V2H, and thus no ADSP clock.
+>
+> I was looking at Figure 7.1c. Perhaps it is inaccurate.
 
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index ff7ed56..8f12ec8 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -1951,6 +1951,63 @@ static void arm_iommu_unmap_page(struct device *dev, dma_addr_t handle,
- 	__free_iova(mapping, iova, len);
- }
- 
-+/**
-+ * arm_iommu_map_resource - map a device resource for DMA
-+ * @dev: valid struct device pointer
-+ * @phys_addr: physical address of resource
-+ * @size: size of resource to map
-+ * @dir: DMA transfer direction
-+ */
-+static dma_addr_t arm_iommu_map_resource(struct device *dev,
-+		phys_addr_t phys_addr, size_t size,
-+		enum dma_data_direction dir, struct dma_attrs *attrs)
-+{
-+	struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
-+	dma_addr_t dma_addr;
-+	int ret, prot;
-+	phys_addr_t addr = phys_addr & PAGE_MASK;
-+	int offset = phys_addr & ~PAGE_MASK;
-+	int len = PAGE_ALIGN(size + offset);
-+
-+	dma_addr = __alloc_iova(mapping, size);
-+	if (dma_addr == DMA_ERROR_CODE)
-+		return dma_addr;
-+
-+	prot = __dma_direction_to_prot(dir) | IOMMU_MMIO;
-+
-+	ret = iommu_map(mapping->domain, dma_addr, addr, len, prot);
-+	if (ret < 0)
-+		goto fail;
-+
-+	return dma_addr + offset;
-+fail:
-+	__free_iova(mapping, dma_addr, size);
-+	return DMA_ERROR_CODE;
-+}
-+
-+/**
-+ * arm_iommu_unmap_resource - unmap a device DMA resource
-+ * @dev: valid struct device pointer
-+ * @dma_handle: DMA address to resource
-+ * @size: size of resource to map
-+ * @dir: DMA transfer direction
-+ */
-+static void arm_iommu_unmap_resource(struct device *dev, dma_addr_t dma_handle,
-+		size_t size, enum dma_data_direction dir,
-+		struct dma_attrs *attrs)
-+{
-+	struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
-+	dma_addr_t iova = dma_handle & PAGE_MASK;
-+	int offset = dma_handle & ~PAGE_MASK;
-+	int len = PAGE_ALIGN(size + offset);
-+
-+	if (!iova)
-+		return;
-+
-+	iommu_unmap(mapping->domain, iova, len);
-+	__free_iova(mapping, iova, len);
-+}
-+
- static void arm_iommu_sync_single_for_cpu(struct device *dev,
- 		dma_addr_t handle, size_t size, enum dma_data_direction dir)
- {
-@@ -1994,6 +2051,9 @@ struct dma_map_ops iommu_ops = {
- 	.unmap_sg		= arm_iommu_unmap_sg,
- 	.sync_sg_for_cpu	= arm_iommu_sync_sg_for_cpu,
- 	.sync_sg_for_device	= arm_iommu_sync_sg_for_device,
-+
-+	.map_resource		= arm_iommu_map_resource,
-+	.unmap_resource		= arm_iommu_unmap_resource,
- };
- 
- struct dma_map_ops iommu_coherent_ops = {
-@@ -2007,6 +2067,9 @@ struct dma_map_ops iommu_coherent_ops = {
- 
- 	.map_sg		= arm_coherent_iommu_map_sg,
- 	.unmap_sg	= arm_coherent_iommu_unmap_sg,
-+
-+	.map_resource	= arm_iommu_map_resource,
-+	.unmap_resource	= arm_iommu_unmap_resource,
- };
- 
- /**
--- 
-2.8.2
+    Indeed, it's the only place where the ADSP clock is mentioned for V2H, and 
+it looks like this is in error. I guess I'll try to verify if there's writable 
+ADSPCKCR and then remove the ADSP clock if not.
+
+MBR, Sergei
