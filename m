@@ -1,50 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from 82-70-136-246.dsl.in-addr.zen.co.uk ([82.70.136.246]:46636 "EHLO
-	rainbowdash.ducie.codethink.co.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751704AbcFURxM (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34377 "EHLO
+	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751485AbcFWILH (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 21 Jun 2016 13:53:12 -0400
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-To: linux-kernel@lists.codethink.co.uk
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] usb: renesas_usbhs: make usbhs_write32() static
-Date: Tue, 21 Jun 2016 18:52:54 +0100
-Message-Id: <1466531574-3096-1-git-send-email-ben.dooks@codethink.co.uk>
+	Thu, 23 Jun 2016 04:11:07 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWY+hZMFQo7iGaeZkbVnK1cZ9=oyM7RvX_8mhyCuCxD9Q@mail.gmail.com>
+References: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+ <27171008.uuY7altQup@wasted.cogentembedded.com> <CAMuHMdWcVRBxZO85_MhYVvODcbi-GYDNKfQH9LJEcrJRd=p7Vw@mail.gmail.com>
+ <adbc6358-d3fb-c608-15c2-c425332435f3@cogentembedded.com> <CAMuHMdWY+hZMFQo7iGaeZkbVnK1cZ9=oyM7RvX_8mhyCuCxD9Q@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Jun 2016 10:11:04 +0200
+Message-ID: <CAMuHMdXb8dVPbOv0-cskN+owKJbgjcdFwLRW6J8+=XDO3EfCWw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: r8a7794: add SMP support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	linux-renesas-soc@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The usbhs_write32 function is not used outside of the rcar3.c
-file, so fix the following sparse warning by making it static:
+Hi Sergei,
 
-drivers/usb/renesas_usbhs/rcar3.c:26:6: warning: symbol 'usbhs_write32' was not declared. Should it be static?
+On Wed, Jun 22, 2016 at 12:20 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Wed, Jun 22, 2016 at 12:08 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+>> On 6/22/2016 10:20 AM, Geert Uytterhoeven wrote:
+>>
+>>>> Add the device tree node for the Advanced Power Management Unit (APMU).
+>>>> Use the "enable-method" prop to  point out that the APMU should be used
+>>>> for the SMP support.
+>>>>
+>>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>>
+>>>
+>>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>
+>>>> SMP/PM basically works but you can't offline CPU0 (system hangs)...
+>>>
+>>>
+>>> On #renesas-soc you said it hangs on SILK only, and succeeds on Porter,
+>>> with a WARNING in the clk core (which one?) during suspend?
+>>
+>>    Porter is based on R8A7791 (WARNING seemed to be caused by the CAN
+>> driver). :-)
+>
+> Oh right, mixing up boards.
+>
+> Will try on (remote) ALT when I find some time...
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
----
- drivers/usb/renesas_usbhs/rcar3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The second CPU boots (irrespective of MD21 setting), but the kernel
+starts spewing:
 
-diff --git a/drivers/usb/renesas_usbhs/rcar3.c b/drivers/usb/renesas_usbhs/rcar3.c
-index 38b01f2..1d70add 100644
---- a/drivers/usb/renesas_usbhs/rcar3.c
-+++ b/drivers/usb/renesas_usbhs/rcar3.c
-@@ -23,7 +23,7 @@
- #define UGCTRL2_RESERVED_3	0x00000001	/* bit[3:0] should be B'0001 */
- #define UGCTRL2_USB0SEL_OTG	0x00000030
- 
--void usbhs_write32(struct usbhs_priv *priv, u32 reg, u32 data)
-+static void usbhs_write32(struct usbhs_priv *priv, u32 reg, u32 data)
- {
- 	iowrite32(data, priv->base + reg);
- }
--- 
-2.8.1
+    clocksource: Switched to clocksource arch_sys_counter
+    WARNING: Underflow in clocksource 'arch_sys_counter' observed,
+time update ignored.
+             Please report this, consider using a different
+clocksource, if possible.
+             Your kernel is probably still fine.
+    WARNING: Underflow in clocksource 'arch_sys_counter' observed,
+time update ignored.
+             Please report this, consider using a different
+clocksource, if possible.
+             Your kernel is probably still fine.
+
+Seems like the secondary CPU also needs CNTVOFF initialization,
+which is done in the BSP in arch/arm/mach-shmobile/headsmp.S.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
