@@ -1,40 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:35052 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751710AbcFWJNW (ORCPT
+Received: from mail-io0-f181.google.com ([209.85.223.181]:32865 "EHLO
+	mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751527AbcFWIld (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 23 Jun 2016 05:13:22 -0400
-Received: by mail-oi0-f51.google.com with SMTP id r2so61084319oih.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Jun 2016 02:13:22 -0700 (PDT)
+	Thu, 23 Jun 2016 04:41:33 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXYW5ObuDPm7aCr5uTaPYBrTAREM6Z16XWF3q7YBtFgNw@mail.gmail.com>
+In-Reply-To: <1466669510-26576-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 References: <1466165981-65284-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <CAMuHMdXz5mvR=+iWBap=jV7w94phuLXJSNKtOCqjxCEFNy=QDg@mail.gmail.com>
- <SG2PR06MB103835BE72B262243B46864BC3570@SG2PR06MB1038.apcprd06.prod.outlook.com>
- <CAMuHMdXYW5ObuDPm7aCr5uTaPYBrTAREM6Z16XWF3q7YBtFgNw@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 23 Jun 2016 11:13:21 +0200
-Message-ID: <CACRpkdawgMAdQDgQZJiF6B_ep_xff-LbU+hJSkMpsUfOvEYcGA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add DRIF support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
+ <1466669510-26576-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Jun 2016 10:41:32 +0200
+Message-ID: <CAMuHMdWkMkmnf4KzhXcNdpPxFxogczUHgSZuc5Fn6hAWwkq==Q@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a7795: Add DRIF support
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+	linux-renesas-soc@vger.kernel.org,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	Chris Paterson <chris.paterson2@renesas.com>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jun 21, 2016 at 9:37 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
+On Thu, Jun 23, 2016 at 10:11 AM, Ramesh Shanmugasundaram
+<ramesh.shanmugasundaram@bp.renesas.com> wrote:
+> This patch adds DRIF[0-3] pinmux support for r8a7795 SoC.
+>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> ---
+> Thanks Geert for the review.
+>
+> This patch is based on renesas-drivers repo (tag:renesas-drivers-2016-06-21-v4.7-rc4)
+>
+> Changes since v1:
+>  - Split DRIF data pins as separate groups so that unused data pins can be
+>    configured as GPIO (Geert)
+>  - Fixed DRIF3(A) D1 pin definition typo (Geert)
+>  - Rebased to latest tag renesas-drivers-2016-06-21-v4.7-rc4
 
-> Linus/Laurent: I assume the GPIO also takes precedence in the Linux pinctrl
-> subsystem, or would it return an error, as the pin is claimed by the IP group?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Complicated question. Depends on the .strict property is set on the pin
-controller, see Documentation/pinctrl.txt
+Queued in sh-pfc-for-v4.8.
 
-Yours,
-Linus Walleij
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
