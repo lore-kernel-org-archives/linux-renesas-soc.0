@@ -1,71 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57514 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751374AbcFVDyM (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 21 Jun 2016 23:54:12 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 00/13] ARM: dts: r8a779x: use demuxer for I2C
-Date: Wed, 22 Jun 2016 12:43:38 +0900
-Message-Id: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
+Received: from relmlor2.renesas.com ([210.160.252.172]:34458 "EHLO
+	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751355AbcFXGgM convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 24 Jun 2016 02:36:12 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Ben Dooks <ben.dooks@codethink.co.uk>,
+	"linux-kernel@lists.codethink.co.uk"
+	<linux-kernel@lists.codethink.co.uk>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH] usb: renesas_usbhs: make usbhs_write32() static
+Date: Fri, 24 Jun 2016 06:36:07 +0000
+Message-ID: <SG2PR06MB091976885A718A8F89EC1AE9D82E0@SG2PR06MB0919.apcprd06.prod.outlook.com>
+References: <1466531574-3096-1-git-send-email-ben.dooks@codethink.co.uk>
+In-Reply-To: <1466531574-3096-1-git-send-email-ben.dooks@codethink.co.uk>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi,
 
-the intention of this series is to extend use of the demuxer for I2C
-on the lager, koelsch, porter, koelsch, alt and silk boards  cover all I2C IP
-blocks that are either already used or exposed via an EXIO connector.
+> From: Ben Dooks
+> Sent: Wednesday, June 22, 2016 2:53 AM
+> 
+> The usbhs_write32 function is not used outside of the rcar3.c
+> file, so fix the following sparse warning by making it static:
+> 
+> drivers/usb/renesas_usbhs/rcar3.c:26:6: warning: symbol 'usbhs_write32' was not declared. Should it be static?
+> 
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 
-* This is based on work by Wolfram Sang.
-* Testing:
-  - Underlying driver problems are discussed in the thread
-    "[PATCH v2 0/4] ARM: dts: r8a7790: lager: use demuxer for I2C"
-  - I have only compile tested the silk and porters patches as I do
-    not have access to those boards
-  - For all other boards I have boot tested the code and the
-    the default settings seem to work.
-* This series is based on renesas-next-20160621-v4.7-rc1
-* To aid review it is provided in git at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/i2c-demu x-v3
-* I also intend to add demux for I2C for r8a7792/blanche
+Thank you for the patch.
 
-Changes between v2 and v3
-* Group extra GPIO buses
-* Add GPIO fallback for IIC1/I2C1 on Lager
-* Add patches for koelsch, porter, alt and silk
+Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Changes between v1 and v2
-* Provide GPIO fallback for I2C2,
-  this does not seem appropriate for other I2C blocks on the lager board
+Best regards,
+Yoshihiro Shimoda
 
-Simon Horman (13):
-  ARM: dts: lager: rename and reindex i2cexio
-  ARM: dts: lager: use demuxer for IIC1/I2C1
-  ARM: dts: lager: use demuxer for IIC2/I2C2
-  ARM: dts: lager: use demuxer for IIC3/I2C3
-  ARM: dts: koelsch: use demuxer for I2C1
-  ARM: dts: koelsch: use demuxer for I2C2
-  ARM: dts: koelsch: use demuxer for I2C4
-  ARM: dts: porter: use demuxer for I2C2
-  ARM: dts: porter: use demuxer for I2C2
-  ARM: dts: koelsch: use demuxer for I2C4
-  ARM: dts: alt: use demuxer for I2C1
-  ARM: dts: alt: use demuxer for I2C4
-  ARM: dts: silk: use demuxer for I2C1
-
- arch/arm/boot/dts/r8a7790-lager.dts   | 275 +++++++++++++++++++++++-----------
- arch/arm/boot/dts/r8a7791-koelsch.dts | 209 +++++++++++++++++++-------
- arch/arm/boot/dts/r8a7791-porter.dts  | 129 +++++++++-------
- arch/arm/boot/dts/r8a7793-gose.dts    | 147 ++++++++++++------
- arch/arm/boot/dts/r8a7794-alt.dts     |  87 +++++++++--
- arch/arm/boot/dts/r8a7794-silk.dts    | 117 +++++++++------
- 6 files changed, 658 insertions(+), 306 deletions(-)
-
--- 
-2.1.4
+> ---
+> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-usb@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> ---
+>  drivers/usb/renesas_usbhs/rcar3.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/renesas_usbhs/rcar3.c b/drivers/usb/renesas_usbhs/rcar3.c
+> index 38b01f2..1d70add 100644
+> --- a/drivers/usb/renesas_usbhs/rcar3.c
+> +++ b/drivers/usb/renesas_usbhs/rcar3.c
+> @@ -23,7 +23,7 @@
+>  #define UGCTRL2_RESERVED_3	0x00000001	/* bit[3:0] should be B'0001 */
+>  #define UGCTRL2_USB0SEL_OTG	0x00000030
+> 
+> -void usbhs_write32(struct usbhs_priv *priv, u32 reg, u32 data)
+> +static void usbhs_write32(struct usbhs_priv *priv, u32 reg, u32 data)
+>  {
+>  	iowrite32(data, priv->base + reg);
+>  }
+> --
+> 2.8.1
