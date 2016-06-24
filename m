@@ -1,173 +1,164 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>,
-	Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 0/6] spi: Add slave mode support
-Date: Wed, 22 Jun 2016 15:42:03 +0200
-Message-Id: <1466602929-4191-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
+In-Reply-To: <20160621164947.GA7603@localhost>
+References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+ <20160606230706.20936.13086.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+ <CAMuHMdVgLfTD-BjRZ+gVKgYE8dkDZzQ6DnYtkUs+jVPthJsEdQ@mail.gmail.com>
+ <20160621142623.GA29966@localhost> <20160621154100.GA4782@cogentembedded.com> <20160621164947.GA7603@localhost>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 24 Jun 2016 16:19:34 +0200
+Message-ID: <CAMuHMdVuwniXPZszPH8jTd8x0j+f__JjT6yY04RA_gw87sQidg@mail.gmail.com>
+Subject: Re: [PATCH v1 19/25] PCI: rcar Gen2: Request host bridge window resources
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Valentine Barshak <valentine.barshak@cogentembedded.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci <linux-pci@vger.kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Rob Herring <robh@kernel.org>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Scott Branden <sbranden@broadcom.com>,
+	Jon Mason <jonmason@broadcom.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Pratyush Anand <pratyush.anand@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	rfi@lists.rocketboards.org,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms@verge.net.au>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
+	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
+	Michal Simek <michal.simek@xilinx.com>,
+	=?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi all,
+Hi Bjorn,
 
-This is a first take at adding support for SPI slave controllers to the
-Linux SPI subsystem, including:
-  - DT binding updates for SPI slave support,
-  - Core support for SPI slave controllers,
-  - SPI slave support for the Renesas MSIOF device driver (thanks to
-    Nakamura-san for the initial implementation in the R-Car BSP!),
-  - Sample SPI slave handlers.
+On Tue, Jun 21, 2016 at 6:49 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> On Tue, Jun 21, 2016 at 06:41:00PM +0300, Valentine Barshak wrote:
+>> On Tue, Jun 21, 2016 at 09:26:23AM -0500, Bjorn Helgaas wrote:
+>> > On Tue, Jun 21, 2016 at 12:41:31PM +0200, Geert Uytterhoeven wrote:
+>> > > On Tue, Jun 7, 2016 at 1:07 AM, Bjorn Helgaas <bhelgaas@google.com> wrote:
+>> > > > Request host bridge window resources so they appear in ioport_resource and
+>> > > > iomem_resource and are reflected in /proc/ioports and /proc/iomem.
+>> > > >
+>> > > > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+>> > > > ---
+>> > > >  drivers/pci/host/pci-rcar-gen2.c |    4 ++++
+>> > > >  1 file changed, 4 insertions(+)
+>> > > >
+>> > > > diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
+>> > > > index 9980a4b..617a6b2 100644
+>> > > > --- a/drivers/pci/host/pci-rcar-gen2.c
+>> > > > +++ b/drivers/pci/host/pci-rcar-gen2.c
+>> > > > @@ -194,6 +194,7 @@ static int rcar_pci_setup(int nr, struct pci_sys_data *sys)
+>> > > >         struct rcar_pci_priv *priv = sys->private_data;
+>> > > >         void __iomem *reg = priv->reg;
+>> > > >         u32 val;
+>> > > > +       int ret;
+>> > > >
+>> > > >         pm_runtime_enable(priv->dev);
+>> > > >         pm_runtime_get_sync(priv->dev);
+>> > > > @@ -275,6 +276,9 @@ static int rcar_pci_setup(int nr, struct pci_sys_data *sys)
+>> > > >         /* Add PCI resources */
+>> > > >         pci_add_resource(&sys->resources, &priv->io_res);
+>> > > >         pci_add_resource(&sys->resources, &priv->mem_res);
+>> > > > +       ret = devm_request_pci_bus_resources(priv->dev, &sys->resources);
+>> > > > +       if (ret < 0)
+>> > > > +               return ret;
+>> > > >
+>> > > >         /* Setup bus number based on platform device id / of bus-range */
+>> > > >         sys->busnr = priv->busnr;
+>> > >
+>> > > This patch (commit 1bd019707b7c9249d34c5d348f1ef75eb4d83e89 in pci/next)
+>> > > broke PCI on r8a7791/koelsch. Dmesg differences are:
+>> > >
+>> > >  pci-rcar-gen2 ee090000.pci: PCI: bus0 revision 11
+>> > > -pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0000:00
+>> > > -pci_bus 0000:00: root bus resource [io  0xee080000-0xee0810ff]
+>> > > -pci_bus 0000:00: root bus resource [mem 0xee080000-0xee0810ff]
+>> >
+>> > This is probably a result of this code in drivers/pci/host/pci-rcar-gen2.c:
+>> >
+>> >         /*
+>> >          * The controller does not support/use port I/O,
+>> >          * so setup a dummy port I/O region here.
+>> >          */
+>> >         priv->io_res.start = priv->mem_res.start;
+>> >         priv->io_res.end = priv->mem_res.end;
+>> >         priv->io_res.flags = IORESOURCE_IO;
+>> >
+>> > We try to avoid adding dummy regions like this, but maybe we missed
+>> > this one.  I haven't found any email discussion about it yet, so I
+>> > don't know what the reason for this one is.  Valentine, do you
+>> > remember?
+>>
+>> I do not, but I think I've found something in my mailbox.
+>> Below is the quote from the original conversation with:
+>> (Re: [PATCH] pci: Add R-Car Gen2 internal PCI support)
+>>
+>> [quote starts]
+>>  >>+    priv->mem_res = *mem_res;
+>>  >>+    /*
+>>  >>+     * The controller does not support/use port I/O,
+>>  >>+     * so setup a dummy port I/O region here.
+>>  >>+     */
+>>  >>+    priv->io_res.start = priv->mem_res.start;
+>>  >>+    priv->io_res.end = priv->mem_res.end;
+>>  >>+    priv->io_res.flags = IORESOURCE_IO;
+>>  >>
+>>  > I don't understand this.  There's no requirement (at least as far as the
+>>  > PCI core is concerned) to supply an I/O aperture at all, and I think it
+>>  > would be better if you didn't.
+>>  >
+>>  > Oh, I see ... maybe pcibios_init_resources() forces you to have an
+>>  > I/O resource to avoid having it give you a default one?  And I
+>>  > suppose that since you have several host bridges, these dummy I/O
+>>  > regions have to be distinct.  Ugh.  Well, I guess this is something
+>>  > you'd have to fix here or in the ARM code, it's up to you what to do.
+>>
+>>  Exactly. This is to avoid assigning default I/O resources.
+>> [quote ends]
+>
+> Oh, right, now I remember.  Thanks for digging that out.
+>
+> I propose the patches below to remove the requirement for having an
+> I/O space.  Any chance one of you could test them?
 
-Due to the naure of SPI slave (simultaneous transmit and receive, while
-everything runs at the pace of the master), it has hard real-time
-requirements: once an SPI transfer is started by the SPI master, a
-software SPI slave must have prepared all data to be sent back to the
-SPI master.  Hence without additional hardware support, an SPI slave
-response can never be a reply to a command being simultaneously
-transmitted, and SPI slave replies must be received by the SPI master in
-a subsequent SPI transfer.
+Thanks!
+PCI seems to be working again on r8a7791/koelsch using today's pci/next,
+which includes these patches. Lspci shows the USB controllers again.
 
-Examples of possible use cases:
-  - Receiving streams of data in fixed-size messages (e.g. from a
-    tuner),
-  - Receiving and transmitting fixed-size messages of data (e.g. network
-    frames),
-  - Sending commands, and querying for responses,
-  - ...
+/proc/iomem gained a few entries:
 
-Originally I wanted to implement a simple SPI slave handler that could
-interface with an existing Linux SPI slave driver, cfr. Wolfram Sang's
-I2C slave mode EEPROM simulator for the i2c subsystem.
-Unfortunately I couldn't find any existing driver using an SPI slave
-protocol that fulfills the above requirements. The Nordic Semiconductor
-nRF8001 BLE controller seems to use a suitable protocol, but I couldn't
-find a Linux driver for it.  Hence I created two sample SPI slave
-protocols and drivers myself:
-  1. "spi-slave-time" responds with the time of reception of the
-     last SPI message, which can be used by an external microcontroller
-     as a dead man's switch.
-  2. "spi-slave-system-control" allows remote control of system reboot,
-     power off, halt, and suspend.
+ ec700000-ec70ffff : /dma-controller@ec700000
+ ec720000-ec72ffff : /dma-controller@ec720000
+ ec740000-ec7401ff : audmapp
++ee080000-ee0810ff : /pci@ee090000
++  ee080000-ee080fff : 0000:00:01.0
++  ee081000-ee0810ff : 0000:00:02.0
+ ee090000-ee090bff : /pci@ee090000
++ee0c0000-ee0c10ff : /pci@ee0d0000
++  ee0c0000-ee0c0fff : 0001:01:01.0
++  ee0c1000-ee0c10ff : 0001:01:02.0
+ ee0d0000-ee0d0bff : /pci@ee0d0000
+ ee300000-ee301fff : /sata@ee300000
+ ee700000-ee7003ff : /ethernet@ee700000
 
-For some use cases, using spidev from user space may be a more appropriate
-solution than an in-kernel SPI protocol handler.
-
->From the point of view of an SPI slave protocol handler, an SPI slave
-controller looks exactly like an ordinary SPI master controller. Hence
-"struct spi_master" may have become a misnomer. For now I didn't bother
-fixing that.  Should we rename spi_master (and the spi_*master()
-functions) to spi_controller? Or create wrappers/defines with "slave"
-in their name?
-
-For now, the MSIOF SPI slave driver only supports the transmission of
-messages with a size that is known in advance (the hardware can provide
-an interrupt when CS is deasserted before, though).
-I.e. when the SPI master sends a shorter message, the slave won't
-receive it.  When the SPI master sends a longer message, the slave will
-receive the first part, and the rest will remain in the FIFO.
-
-Handshaking (5-pin SPI, RDY-signal) is optional. An RDY-signal may be
-used for one or both of:
-  1. The SPI slave asserts RDY when it has data available, and wants to
-     be queried by the SPI master.
-       -> This can be handled on top, in the SPI slave protocol handler,
-	  using a GPIO.
-  2. After the SPI master has asserted CS, the SPI slave asserts RDY
-     when it is ready to accept the transfer.
-       -> This may need hardware support in the SPI slave controller,
-	  or dynamic GPIO vs. CS pinmuxing.
-
-This patch series applies to both v4.7-rc1 and next-20160622, with the
-following 2 patches applied:
-      1. [PATCH] spi: Improve DT binding documentation,
-      2. [PATCH] spi: sh-msiof: Remove sh_msiof_spi_priv.chipdata.
-For your convenience, I've pushed this series and its dependencies to
-the topic/spi-slave-v1 branch of the git repository at
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
-
-For testing, device tree overlays enabling SPI master and slave
-controllers on an expansion I/O connector on r8a7791/koelsch are
-available in the topic/renesas-overlays branch of my renesas-drivers git
-repository.  Please see http://elinux.org/R-Car/DT-Overlays for more
-information about using these overlays.
-
-Test wiring on r8a7791/koelsch, between MSIOF1 and MSIOF2 on EXIO
-connector A:
-   - Connect pin 48 (MSIOF1 CS#) to pin 63 (MSIOF2 CS#),
-   - Connect pin 46 (MSIOF1 SCK) to pin 61 (MSIOF2 SCK),
-   - Connect pin 54 (MSIOF1 TX/MOSI) to pin 70 (MSIOF2 RX/MOSI),
-   - Connect pin 56 (MSIOF1 RX/MISO) to pin 68 (MSIOF2 TX/MISO).
-
-Example 1:
-
-    # overlay add a-msiof1-spidev
-    # overlay add a-msiof2-slave-time
-    # spidev_test -D /dev/spidev2.0 -p dummy-8B
-    spi mode: 0x0
-    bits per word: 8
-    max speed: 500000 Hz (500 KHz)
-    RX | 00 00 04 6D 00 09 5B BB __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __ __  | ...m..[�
-               ^^^^^    ^^^^^^^^
-	       seconds  microseconds
-
-Example 2:
-
-    # overlay add a-msiof1-spidev
-    # overlay add a-msiof2-slave-system-control
-    # reboot='\x7c\x50'
-    # poweroff='\x71\x3f'
-    # halt='\x38\x76'
-    # suspend='\x1b\x1b'
-    # spidev_test -D /dev/spidev2.0 -p $suspend # or $reboot, $poweroff, $halt
-
-Thanks for your comments!
-
-Geert Uytterhoeven (5):
-  [RFC] spi: Document DT bindings for SPI controllers in slave mode
-  [RFC] spi: core: Add support for registering SPI slave controllers
-  [RFC] spi: slave: Add SPI slave handler reporting boot up time
-  [RFC] spi: slave: Add SPI slave handler controlling system state
-  [RFC] spi: spidev: Allow direct references in DT from SPI slave
-    controllers
-
-Hisashi Nakamura (1):
-  [RFC] spi: sh-msiof: Add slave mode support
-
- Documentation/devicetree/bindings/spi/spi-bus.txt |  31 +++--
- drivers/spi/Kconfig                               |  26 ++++-
- drivers/spi/Makefile                              |   4 +
- drivers/spi/spi-sh-msiof.c                        |  52 +++++++--
- drivers/spi/spi-slave-system-control.c            | 134 ++++++++++++++++++++++
- drivers/spi/spi-slave-time.c                      | 103 +++++++++++++++++
- drivers/spi/spi.c                                 |  39 ++++---
- drivers/spi/spidev.c                              |   3 +-
- include/linux/spi/sh_msiof.h                      |   6 +
- include/linux/spi/spi.h                           |   5 +-
- 10 files changed, 360 insertions(+), 43 deletions(-)
- create mode 100644 drivers/spi/spi-slave-system-control.c
- create mode 100644 drivers/spi/spi-slave-time.c
-
--- 
-1.9.1
+Hence
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
-						Geert
+                        Geert
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+                                -- Linus Torvalds
