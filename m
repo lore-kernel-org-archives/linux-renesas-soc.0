@@ -1,89 +1,75 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>,
-	Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 1/6] spi: Document DT bindings for SPI controllers in slave mode
-Date: Wed, 22 Jun 2016 15:42:04 +0200
-Message-Id: <1466602929-4191-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1466602929-4191-1-git-send-email-geert+renesas@glider.be>
-References: <1466602929-4191-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:33105 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751211AbcFXDF3 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 23 Jun 2016 23:05:29 -0400
+Date: Fri, 24 Jun 2016 12:05:23 +0900
+From: Simon Horman <horms@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v3 0/3] arm64: Add Renesas R8A7796 SoC support
+Message-ID: <20160624030523.GA14973@verge.net.au>
+References: <1464054880-25843-1-git-send-email-horms+renesas@verge.net.au>
+ <20160606013345.GB6258@verge.net.au>
+ <20160606015201.GA2317@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160606015201.GA2317@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/spi/spi-bus.txt | 31 ++++++++++++++---------
- 1 file changed, 19 insertions(+), 12 deletions(-)
+On Mon, Jun 06, 2016 at 10:52:01AM +0900, Simon Horman wrote:
+> On Mon, Jun 06, 2016 at 10:33:45AM +0900, Simon Horman wrote:
+> > On Tue, May 24, 2016 at 10:54:37AM +0900, Simon Horman wrote:
+> > > Hi,
+> > > 
+> > > this short series aims to add basic support for the
+> > > Gen 3 R-Car M3-W (r8a7796) SoC.
+> > > 
+> > > It has few bells and whistles but is sufficient to bring up
+> > > an r8a7795/salvator-x. I have provided a boot-log at the bottom
+> > > of this email in case it is of interest.
+> > > 
+> > > 
+> > > Dependency:
+> > > 
+> > > "[PATCH 0/4] clk: renesas: cpg-mssr: Add support for R-Car M3-W"
+> > > 
+> > > 
+> > > Availability:
+> > > 
+> > > In order to aid review this series, its dependency (above)
+> > > and the related patch "serial: sh-sci: Document SoC specific bindings for
+> > > r8a7796", which has been posted separately, are available at:
+> > > 
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/r8a7796-v3
+> > > 
+> > > To be entirely clear, at the time of writing I have _not_ queued up this
+> > > series for mainline.
+> > 
+> > I have queued this up for v4.8.
+> > 
+> > 
+> > I acknowledge that there has been some discussion of sharing DT between
+> > the r8a7795 and r8a7796. However it is my considered opinion that the level
+> > of duplication in the approach taken by this patchset is in keeping with
+> > the practice already used in the tree. And that material benefits in terms
+> > of ease of maintenance can only be realised with a solution that goes
+> > beyond breaking common nodes into a shared dtsi file.
+> > 
+> > It is my request that my decision as co-maintainer of the files
+> > in question be respected.
+> 
+> Bother, I spoke to soon.
+> 
+> There is a compile-time dependency on 8a7796-cpg-mssr.h
+> so "[PATCH 0/4] clk: renesas: cpg-mssr: Add support for R-Car M3-W"
+> needs to be present. I have deferred these patches pending that.
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-bus.txt b/Documentation/devicetree/bindings/spi/spi-bus.txt
-index 17822860cb98c34d..bcd024e0bb9e0009 100644
---- a/Documentation/devicetree/bindings/spi/spi-bus.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-bus.txt
-@@ -1,17 +1,23 @@
- SPI (Serial Peripheral Interface) busses
- 
--SPI busses can be described with a node for the SPI master device
--and a set of child nodes for each SPI slave on the bus.  For this
--discussion, it is assumed that the system's SPI controller is in
--SPI master mode.  This binding does not describe SPI controllers
--in slave mode.
-+SPI busses can be described with a node for the SPI controller device
-+and a set of child nodes for each SPI slave on the bus.  The system's SPI
-+controller may be described for use in SPI master mode or in SPI slave mode,
-+but not for both at the same time.
- 
--The SPI master node requires the following properties:
-+The SPI controller node requires the following properties:
-+- compatible      - name of SPI bus controller following generic names
-+		recommended practice.
-+
-+In master mode, the SPI controller node requires the following additional
-+properties:
- - #address-cells  - number of cells required to define a chip select
- 		address on the SPI bus.
- - #size-cells     - should be zero.
--- compatible      - name of SPI bus controller following generic names
--		recommended practice.
-+
-+In slave node, the SPI controller node requires the presence of a child node
-+named "slave", further following the practices for SPI slave nodes below.
-+
- No other properties are required in the SPI bus node.  It is assumed
- that a driver for an SPI bus device will understand that it is an SPI bus.
- However, the binding does not attempt to define the specific method for
-@@ -21,7 +27,7 @@ assumption that board specific platform code will be used to manage
- chip selects.  Individual drivers can define additional properties to
- support describing the chip select layout.
- 
--Optional properties:
-+Optional properties (master mode only):
- - cs-gpios	  - gpios chip select.
- - num-cs	  - total number of chipselects.
- 
-@@ -41,12 +47,13 @@ cs1 : native
- cs2 : &gpio1 1 0
- cs3 : &gpio1 2 0
- 
--SPI slave nodes must be children of the SPI master node and can
-+SPI slave nodes must be children of the SPI controller node and can
- contain the following properties.
--- reg             - (required) chip select address of device.
-+- reg             - (required, master mode only) chip select address of device.
- - compatible      - (required) name of SPI device following generic names
- 		recommended practice.
--- spi-max-frequency - (required) Maximum SPI clocking speed of device in Hz.
-+- spi-max-frequency - (required, master mode only) Maximum SPI clocking speed
-+		of device in Hz.
- - spi-cpol        - (optional) Empty property indicating device requires
- 		inverse clock polarity (CPOL) mode.
- - spi-cpha        - (optional) Empty property indicating device requires
--- 
-1.9.1
+I have requeued this on top of
+"clk: renesas: Add r8a7796 CPG Core Clock Definitions"
