@@ -1,45 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752368AbcFHBAk (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:56156 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751872AbcFXOfb (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 21:00:40 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/30] ARM: dts: r8a7740: Fix W=1 dtc warnings
-Date: Wed,  8 Jun 2016 09:59:42 +0900
-Message-Id: <28c8c0aa095360ec14c3bcbe7f3ed378faf1daac.1465346599.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1465346599.git.horms+renesas@verge.net.au>
-References: <cover.1465346599.git.horms+renesas@verge.net.au>
+	Fri, 24 Jun 2016 10:35:31 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Sakari Ailus <sakari.ailus@iki.fi>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: [PATCH/RFC v2 4/4] v4l: vsp1: Add HGO support
+Date: Fri, 24 Jun 2016 17:35:51 +0300
+Message-ID: <2199003.uUy7t6IokG@avalon>
+In-Reply-To: <Pine.LNX.4.64.1606131726380.18676@axis700.grange>
+References: <1463012283-3078-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1463012283-3078-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <Pine.LNX.4.64.1606131726380.18676@axis700.grange>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Guennadi,
 
-Warning (unit_address_vs_reg): Node /cache-controller has a reg or ranges property, but no unit name
+On Monday 13 Jun 2016 17:33:01 Guennadi Liakhovetski wrote:
+> On Thu, 12 May 2016, Laurent Pinchart wrote:
+> > The HGO is a Histogram Generator One-Dimension. It computes per-channel
+> > histograms over a configurable region of the image with optional
+> > subsampling.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> [snip]
+> 
+> Do I understand this correctly, that with this if such a metadata device
+> is opened, while no video data is streaming, all calls will succeed, but
+> no buffers will be dequeued, i.e. the user-space application will hang in
+> DQBUF or poll() / select() indefinitely?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7740.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That's correct. Same as with a mem-to-mem device, if you open the capture 
+node, queue buffers and start streaming, DQBUF will wait until you start 
+supplying buffers on the node at the other end of the pipeline.
 
-diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
-index 39b2f88ad151..159e04eb1b9e 100644
---- a/arch/arm/boot/dts/r8a7740.dtsi
-+++ b/arch/arm/boot/dts/r8a7740.dtsi
-@@ -39,7 +39,7 @@
- 		      <0xc2000000 0x1000>;
- 	};
- 
--	L2: cache-controller {
-+	L2: cache-controller@f0100000 {
- 		compatible = "arm,pl310-cache";
- 		reg = <0xf0100000 0x1000>;
- 		interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
 -- 
-2.1.4
+Regards,
+
+Laurent Pinchart
