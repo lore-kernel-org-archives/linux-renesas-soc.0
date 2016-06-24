@@ -1,208 +1,126 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:37729 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752289AbcFJKFI (ORCPT
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:56570 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750996AbcFXXPr (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 06:05:08 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+	Fri, 24 Jun 2016 19:15:47 -0400
+Date: Sat, 25 Jun 2016 02:15:42 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] pinctrl: sh-pfc: Improve core and user API separation
-Date: Fri, 10 Jun 2016 12:05:02 +0200
-Message-Id: <1465553103-6345-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
-References: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: [PATCH/RFC v2 1/4] v4l: Add metadata buffer type and format
+Message-ID: <20160624231542.GU24980@valkosipuli.retiisi.org.uk>
+References: <1463012283-3078-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <5744750A.5070205@xs4all.nl>
+ <20160524162632.GG26360@valkosipuli.retiisi.org.uk>
+ <1591724.fl6z3cA6YR@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1591724.fl6z3cA6YR@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas Pin Function Controller uses two header files:
-  - sh_pfc.h, for use by both core code and SoC-specific drivers,
-  - core.h, for internal use by the core code only.
+Hi Laurent,
 
-Several SoC-specific drivers include core.h, as they need the sh_pfc
-structure, which is passed explicitly to the various SoC-specific
-callbacks, and used there.
+On Wed, Jun 22, 2016 at 07:51:06PM +0300, Laurent Pinchart wrote:
+> Hello,
+> 
+> On Tuesday 24 May 2016 19:26:32 Sakari Ailus wrote:
+> > On Tue, May 24, 2016 at 05:36:42PM +0200, Hans Verkuil wrote:
+> > > On 05/24/2016 05:28 PM, Sakari Ailus wrote:
+> > > > Hi Hans,
+> > > > 
+> > > >> Should it be mentioned here that changing the video format might change
+> > > >> the buffersize? In case the buffersize is always a multiple of the
+> > > >> width?
+> > > > 
+> > > > Isn't that the case in general, as with pixel formats? buffersize could
+> > > > also be something else than a multiple of width (there's no width for
+> > > > metadata formats) due to e.g. padding required by hardware.
+> > > 
+> > > Well, I don't think it is obvious that the metadata buffersize depends on
+> > > the video width. Perhaps developers who are experienced with CSI know
+> > > this, but if you know little or nothing about CSI, then it can be
+> > > unexpected (hey, that was the case for me!).
+> > > 
+> > > I think it doesn't hurt to mention this relation.
+> > 
+> > Ah, I think I misunderstood you first.
+> > 
+> > Typically the metadata width is the same as the image data width, that's
+> > true. And it's how the hardware works. This is still visible in the media
+> > bus format and the solution belongs rather to how multiple streams over a
+> > single link are supported.
+> 
+> Let me clarify on this.
+> 
+> In the general case there's no concept of metadata width when stored in 
+> memory. The two most common use cases for metadata store register values (or 
+> similar) information, or statistics. The former is just a byte stream in some 
 
-Hence move its definition from core.h to sh_pfc.h, and remove the
-inclusion of core.h from all SoC-specific files.
+In general case perhaps not.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/core.h        | 33 ---------------------------------
- drivers/pinctrl/sh-pfc/pfc-r8a73a4.c |  1 -
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c |  1 -
- drivers/pinctrl/sh-pfc/pfc-r8a7778.c |  2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c |  1 -
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c |  1 -
- drivers/pinctrl/sh-pfc/sh_pfc.h      | 30 +++++++++++++++++++++++++++++-
- 7 files changed, 30 insertions(+), 39 deletions(-)
+But in specific cases such as sensor produced embedded data is indeed
+line-based, with each line having a preable and a predetermined amount of
+data after the preamble. In this respect it's very much like image data.
 
-diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
-index 539ec7dc0b644dbe..9dde6ea5e28f3a1b 100644
---- a/drivers/pinctrl/sh-pfc/core.h
-+++ b/drivers/pinctrl/sh-pfc/core.h
-@@ -10,48 +10,15 @@
- #ifndef __SH_PFC_CORE_H__
- #define __SH_PFC_CORE_H__
- 
--#include <linux/compiler.h>
--#include <linux/spinlock.h>
- #include <linux/types.h>
- 
- #include "sh_pfc.h"
- 
--struct sh_pfc_window {
--	phys_addr_t phys;
--	void __iomem *virt;
--	unsigned long size;
--};
--
--struct sh_pfc_chip;
--struct sh_pfc_pinctrl;
--
- struct sh_pfc_pin_range {
- 	u16 start;
- 	u16 end;
- };
- 
--struct sh_pfc {
--	struct device *dev;
--	const struct sh_pfc_soc_info *info;
--	spinlock_t lock;
--
--	unsigned int num_windows;
--	struct sh_pfc_window *windows;
--	unsigned int num_irqs;
--	unsigned int *irqs;
--
--	struct sh_pfc_pin_range *ranges;
--	unsigned int nr_ranges;
--
--	unsigned int nr_gpio_pins;
--
--	struct sh_pfc_chip *gpio;
--#ifdef CONFIG_SUPERH
--	struct sh_pfc_chip *func;
--#endif
--
--};
--
- int sh_pfc_register_gpiochip(struct sh_pfc *pfc);
- int sh_pfc_unregister_gpiochip(struct sh_pfc *pfc);
- 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c b/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-index d9d9228b15faf6f3..ff5655dee67e5649 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-@@ -21,7 +21,6 @@
- #include <linux/kernel.h>
- #include <linux/pinctrl/pinconf-generic.h>
- 
--#include "core.h"
- #include "sh_pfc.h"
- 
- #define CPU_ALL_PORT(fn, pfx, sfx)					\
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-index 7f7c8a6e76e88f29..35f436bcb849185a 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-@@ -22,7 +22,6 @@
- #include <linux/kernel.h>
- #include <linux/pinctrl/pinconf-generic.h>
- 
--#include "core.h"
- #include "sh_pfc.h"
- 
- #define CPU_ALL_PORT(fn, pfx, sfx)					\
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-index 411d0887ba19bae6..18ef7042b3d1b047 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-@@ -23,7 +23,7 @@
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/pinctrl/pinconf-generic.h>
--#include "core.h"
-+
- #include "sh_pfc.h"
- 
- #define PORT_GP_PUP_1(bank, pin, fn, sfx)	\
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-index 1537a0779399772f..b769c05480da681e 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-@@ -24,7 +24,6 @@
- #include <linux/io.h>
- #include <linux/kernel.h>
- 
--#include "core.h"
- #include "sh_pfc.h"
- 
- /*
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 01abbd5b4e49a783..0c1a60c9a844c7ee 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -11,7 +11,6 @@
- 
- #include <linux/kernel.h>
- 
--#include "core.h"
- #include "sh_pfc.h"
- 
- #define CPU_ALL_PORT(fn, sfx)						\
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 332d379b302cba70..5732752667e2654a 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -13,6 +13,7 @@
- 
- #include <linux/bug.h>
- #include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/spinlock.h>
- #include <linux/stringify.h>
- 
- enum {
-@@ -182,7 +183,34 @@ struct pinmux_range {
- 	u16 force;
- };
- 
--struct sh_pfc;
-+struct sh_pfc_window {
-+	phys_addr_t phys;
-+	void __iomem *virt;
-+	unsigned long size;
-+};
-+
-+struct sh_pfc_pin_range;
-+
-+struct sh_pfc {
-+	struct device *dev;
-+	const struct sh_pfc_soc_info *info;
-+	spinlock_t lock;
-+
-+	unsigned int num_windows;
-+	struct sh_pfc_window *windows;
-+	unsigned int num_irqs;
-+	unsigned int *irqs;
-+
-+	struct sh_pfc_pin_range *ranges;
-+	unsigned int nr_ranges;
-+
-+	unsigned int nr_gpio_pins;
-+
-+	struct sh_pfc_chip *gpio;
-+#ifdef CONFIG_SUPERH
-+	struct sh_pfc_chip *func;
-+#endif
-+};
- 
- struct sh_pfc_soc_operations {
- 	int (*init)(struct sh_pfc *pfc);
+> kind of TLV (Type Length Value) format. The latter a set of values or arrays 
+> computed either on the full image or on subwindows, possibly laid out as a 
+> grid.
+> 
+> When transported over a bus, however, metadata can sometimes have a width and 
+> height. That's the case for CSI-2, which is a line-oriented format. Metadata 
+> then need to be broken into chunks transmitted in a CSI-2 line packet, even if 
+> they don't correspond to a line of an image. The line width on the bus is just 
+> the number of bytes transmitted in a single packet, which could be chosen 
+> freely (within the range allowed by CSI-2). In practice, to simplify the 
+> implementation, the line width is chosen to be identical to the line width of 
+> the image frames that the metadata correspond to, but that's not a requirement 
+> of either CSI-2 or the metadata format itself.
+> 
+> We thus need to expose metadata width and height on subdevs to ensure proper 
+> configuration of the transmitter and receiver, but that's not strictly 
+> mandatory on video nodes.
+
+To support sensor embedded data, I think we do need bytesperline, width and
+height. They might not be applicable to e.g. some types of statistics.
+
+The rest looks good to me.
+
+> 
+> The metadata buffer size itself doesn't depend on the width and height of the 
+> corresponding image frames. A histogram using 64 bins on 3 components will be 
+> stored exactly the same way regardless of whether it's computed on a VGA or 
+> 1080p frame. The buffer size depends on the configuration of the metadata 
+> source only, which in the case of the histogram generator in the VSP would 
+> include a control that decides whether to compute the histogram with 64 bins 
+> or 256 bins (the latter needs a 4 times larger buffer).
+> 
+> For metadata computed on a variable number of subwindows the buffer size will 
+> depend on the number of subwindows, which will in turn be possibly influenced 
+> by the size of the image. It could make sense to use fewer subwindows to 
+> compute AF data on a VGA image than on a 4k image. That is not however a 
+> requirement, and there's no direct mapping between image size and metadata 
+> size, the number of subwindows being usually configured by userspace.
+> 
+> I hope this clarifies the problem. Please let me know if you have additional 
+> questions or thoughts, and if you see anything that should be worded 
+> differently in the documentation (or even structures that should get new 
+> fields).
+> 
+> > It's just that setting the image media bus format affects the metadata media
+> > bus format. I guess that could be mentioned albeit it's hardware specific,
+> > on some sensors metadata width is independent of the image width. Even then
+> > this is not where I'd put it. I'd get back to the topic when documenting
+> > how the API for multiple streams over a single link works.
+
 -- 
-1.9.1
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
