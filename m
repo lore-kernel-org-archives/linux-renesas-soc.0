@@ -1,146 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:36069 "EHLO
-	mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1423166AbcFHVEs (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 17:04:48 -0400
-Received: by mail-lf0-f54.google.com with SMTP id j5so13838985lfb.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2016 14:04:47 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 24 Jun 2016 12:05:42 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH v3 01/12] ARM: shmobile: r8a7792: add clock index macros
-Date: Thu, 09 Jun 2016 00:04:43 +0300
-Message-ID: <2256036.Aah0Fxjv7E@wasted.cogentembedded.com>
-In-Reply-To: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
-References: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+Subject: Re: [PATCH 0/2] arm64: dts: r8a7796: Add SYSC PM Domains
+Message-ID: <20160624030541.GB14973@verge.net.au>
+References: <1464685726-21611-1-git-send-email-geert+renesas@glider.be>
+ <20160606013359.GE4859@verge.net.au>
+ <20160606015301.GB2317@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160606015301.GB2317@verge.net.au>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by the device tree sources to reference the R8A7792
-clocks  by index.
+On Mon, Jun 06, 2016 at 10:53:02AM +0900, Simon Horman wrote:
+> On Mon, Jun 06, 2016 at 10:33:59AM +0900, Simon Horman wrote:
+> > On Tue, May 31, 2016 at 11:08:43AM +0200, Geert Uytterhoeven wrote:
+> > > 	Hi Simon, Magnus,
+> > > 
+> > > This patch series adds support for the power areas exposed by the System
+> > > Controller on the Renesas R-Car M3-W SoC to the DTS.
+> > > 
+> > > This series is against Simon's "[PATCH v3 0/3] arm64: Add Renesas
+> > > R8A7796 SoC support".  It has a build and runtime dependency on my series
+> > > "[PATCH v2 0/3] soc: renesas: rcar-sysc: Add support for R-Car M3-W power
+> > > areas".
+> > > 
+> > > For your convenience, I've pushed this series to the
+> > > topic/r8a7796-sysc-dt-v1 branch of
+> > > https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git.
+> > > This has been tested on r8a7796/salvator-x.
+> > 
+> > Thanks, I have tentatively queued this up.
+> 
+> Bother, I spoke to soon.
+> 
+> There is a compile-time dependency on 8a7796-cpg-mssr.h in the basic
+> support for r8a7796 which this series depends on.  So "[PATCH 0/4] clk:
+> renesas: cpg-mssr: Add support for R-Car M3-W" needs to be present. I have
+> deferred these patches pending that. 
+> 
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
-Changes in version 2:
-- removed the SDH, SD0, and SD1 clocks;
-- added RCAN and ADSP clock indeces;
-- fixed SYS-DMAC0/1 clock indeces.
-
- include/dt-bindings/clock/r8a7792-clock.h |  103 ++++++++++++++++++++++++++++++
- 1 file changed, 103 insertions(+)
-
-Index: renesas/include/dt-bindings/clock/r8a7792-clock.h
-===================================================================
---- /dev/null
-+++ renesas/include/dt-bindings/clock/r8a7792-clock.h
-@@ -0,0 +1,103 @@
-+/*
-+ * Copyright (C) 2016 Cogent Embedded, Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_R8A7792_H__
-+#define __DT_BINDINGS_CLOCK_R8A7792_H__
-+
-+/* CPG */
-+#define R8A7792_CLK_MAIN		0
-+#define R8A7792_CLK_PLL0		1
-+#define R8A7792_CLK_PLL1		2
-+#define R8A7792_CLK_PLL3		3
-+#define R8A7792_CLK_LB			4
-+#define R8A7792_CLK_QSPI		5
-+#define R8A7792_CLK_Z			6
-+#define R8A7792_CLK_RCAN		7
-+#define R8A7792_CLK_ADSP		8
-+
-+/* MSTP0 */
-+#define R8A7792_CLK_MSIOF0		0
-+
-+/* MSTP1 */
-+#define R8A7792_CLK_TMU1		11
-+#define R8A7792_CLK_TMU3		21
-+#define R8A7792_CLK_TMU2		22
-+#define R8A7792_CLK_CMT0		24
-+#define R8A7792_CLK_TMU0		25
-+#define R8A7792_CLK_VSP1DU1		27
-+#define R8A7792_CLK_VSP1DU0		28
-+#define R8A7792_CLK_VSP1_SY		31
-+
-+/* MSTP2 */
-+#define R8A7792_CLK_MSIOF1		8
-+#define R8A7792_CLK_SYS_DMAC1		18
-+#define R8A7792_CLK_SYS_DMAC0		19
-+
-+/* MSTP3 */
-+#define R8A7792_CLK_TPU0		4
-+#define R8A7792_CLK_SDHI0		14
-+#define R8A7792_CLK_CMT1		29
-+
-+/* MSTP4 */
-+#define R8A7792_CLK_IRQC		7
-+
-+/* MSTP5 */
-+#define R8A7792_CLK_AUDIO_DMAC0		2
-+#define R8A7792_CLK_THERMAL		22
-+#define R8A7792_CLK_PWM			23
-+
-+/* MSTP7 */
-+#define R8A7792_CLK_HSCIF1		16
-+#define R8A7792_CLK_HSCIF0		17
-+#define R8A7792_CLK_SCIF3		18
-+#define R8A7792_CLK_SCIF2		19
-+#define R8A7792_CLK_SCIF1		20
-+#define R8A7792_CLK_SCIF0		21
-+#define R8A7792_CLK_DU1			23
-+#define R8A7792_CLK_DU0			24
-+
-+/* MSTP8 */
-+#define R8A7792_CLK_VIN5		4
-+#define R8A7792_CLK_VIN4		5
-+#define R8A7792_CLK_VIN3		8
-+#define R8A7792_CLK_VIN2		9
-+#define R8A7792_CLK_VIN1		10
-+#define R8A7792_CLK_VIN0		11
-+#define R8A7792_CLK_ETHERAVB		12
-+
-+/* MSTP9 */
-+#define R8A7792_CLK_GPIO7		4
-+#define R8A7792_CLK_GPIO6		5
-+#define R8A7792_CLK_GPIO5		7
-+#define R8A7792_CLK_GPIO4		8
-+#define R8A7792_CLK_GPIO3		9
-+#define R8A7792_CLK_GPIO2		10
-+#define R8A7792_CLK_GPIO1		11
-+#define R8A7792_CLK_GPIO0		12
-+#define R8A7792_CLK_GPIO11		13
-+#define R8A7792_CLK_GPIO10		14
-+#define R8A7792_CLK_CAN1		15
-+#define R8A7792_CLK_CAN0		16
-+#define R8A7792_CLK_QSPI_MOD		17
-+#define R8A7792_CLK_GPIO9		19
-+#define R8A7792_CLK_GPIO8		21
-+#define R8A7792_CLK_I2C5		25
-+#define R8A7792_CLK_IICDVFS		26
-+#define R8A7792_CLK_I2C4		27
-+#define R8A7792_CLK_I2C3		28
-+#define R8A7792_CLK_I2C2		29
-+#define R8A7792_CLK_I2C1		30
-+#define R8A7792_CLK_I2C0		31
-+
-+/* MSTP10 */
-+#define R8A7792_CLK_SSI_ALL		5
-+#define R8A7792_CLK_SSI4		11
-+#define R8A7792_CLK_SSI3		12
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7792_H__ */
+I have requeued this.
