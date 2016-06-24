@@ -1,61 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56390 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751898AbcF2SfH (ORCPT
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:33796 "EHLO
+	mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751082AbcFXQMh (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 14:35:07 -0400
-Date: Wed, 29 Jun 2016 19:34:53 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linux-ALSA <alsa-devel@alsa-project.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org
-Message-ID: <20160629183453.GP6247@sirena.org.uk>
-References: <87fusysjam.wl%kuninori.morimoto.gx@renesas.com>
- <871t4isj0b.wl%kuninori.morimoto.gx@renesas.com>
+	Fri, 24 Jun 2016 12:12:37 -0400
+Date: Fri, 24 Jun 2016 11:12:30 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: mkl@pengutronix.de, wg@grandegger.com, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, ulrich.hecht+renesas@gmail.com,
+	horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-can@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, chris.paterson2@renesas.com,
+	magnus.damm@gmail.com, socketcan@hartkopp.net
+Subject: Re: [PATCH v2 1/2] can: rcar_canfd: Add Classical CAN only mode
+ support
+Message-ID: <20160624161230.GA21437@rob-hp-laptop>
+References: <1466434007-50873-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1466598707-44076-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1466598707-44076-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iq/fWD14IMVFWBCD"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <871t4isj0b.wl%kuninori.morimoto.gx@renesas.com>
-Subject: Re: [PATCH 10/39 v2] ASoC: simple-card-utils: add
- asoc_simple_card_parse_endpoint()
+In-Reply-To: <1466598707-44076-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Wed, Jun 22, 2016 at 01:31:46PM +0100, Ramesh Shanmugasundaram wrote:
+> The controller can operate in one of the two global modes
+>  - CAN FD only mode (default)
+>  - Classical CAN (CAN2.0) only mode
+> 
+> This patch adds support for Classical CAN only mode. It can be enabled
+> by defining the optional device tree property "renesas,no-can-fd" of this
+> node.
+> 
+> Note: R-Car Gen3 h/w manual v0.51E shows bit6 of RSCFDnCFDGCFG as
+> reserved, which is incorrect. This bit is same as RSCFDnGCFG.
+> 
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> ---
+>  .../devicetree/bindings/net/can/rcar_canfd.txt     |  21 +-
 
---iq/fWD14IMVFWBCD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Rob Herring <robh@kernel.org>
 
-On Tue, May 31, 2016 at 09:03:00AM +0000, Kuninori Morimoto wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->=20
-> simple-card needs to get its dai name and endpoint node.
-> This patch makes it simple style standard
-
-I'm finding these descriptions very clear and hard to follow, and the
-lack of any changes to the simple-card code is a bit unclear.  Can I
-suggest that future versions of this should have patches that move code
-out of simple-card to helper functions as a single patch rather than
-adding the helper in one and (I presume) the use in another?
-
-In this case I'm not entirely clear what an endpoint is.
-
---iq/fWD14IMVFWBCD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXdBTMAAoJECTWi3JdVIfQ7TAIAIIUqmyFB4QxGCa11Q9tOtpJ
-FYSbhiU5uRiWHzDIN9WoZQlCiHDB4hZvNFhs6Zh3Ym6/riatkN7I5ZCaTtmZu9Oz
-yG3aLJZD61qR7Y9MDg0OUXvnejX51qwobFAy7eACZszDcPs/UUn8Ew/Ln+vbv2E+
-TBRJp3J0OpSjSm5rZlZ+IvWB8T6Yjx+UMiie2jPRsOjD0geGQ2+D9OhoxIAtOZO6
-ZaoUzyynCUrX/GHUsZxU2y87VIAR72FG80rFnkLBsHlducg320L6e/sHVBNQJe/E
-hvqzIirtnldYJd8D4HNmFvJ5U8EY+/nxRH5KVJ7S7ttDOlDPsXUhPgxB3VqrWOM=
-=nxV0
------END PGP SIGNATURE-----
-
---iq/fWD14IMVFWBCD--
+>  drivers/net/can/rcar/rcar_canfd.c                  | 355 ++++++++++++++-------
+>  2 files changed, 255 insertions(+), 121 deletions(-)
