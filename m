@@ -1,157 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57589 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751002AbcFVD64 (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:50657 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751132AbcFXO7W (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 21 Jun 2016 23:58:56 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v3 04/13] ARM: dts: lager: use demuxer for IIC3/I2C3
-Date: Wed, 22 Jun 2016 12:43:42 +0900
-Message-Id: <1466567031-20381-5-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
-References: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
+	Fri, 24 Jun 2016 10:59:22 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>
+Cc: Magnus Damm <damm+renesas@opensource.se>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org, uclinux-h8-devel@lists.sourceforge.jp,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 4/4] serial: sh-sci: Clear (H)SCIF timeout and overrun during reset
+Date: Fri, 24 Jun 2016 16:59:16 +0200
+Message-Id: <1466780356-12623-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1466780356-12623-1-git-send-email-geert+renesas@glider.be>
+References: <1466780356-12623-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Create a separate bus for dla98063 PMIC and da9210 regulator
-related I2C slaves.
+Add the missing timeout bit definition for (H)SCIF.
+Clear the timeout and overrun flag bits during UART reset, cfr. the
+initialization flowchart in the datasheet.
 
-Based on similar work for HDMI by Wolfram Sang.
-
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v3
-* Add a small commend documenting that IIC3/I2C3 may be switched
-  and that a GPIO fallback not provided.
-
-v2
-* No change
+v2:
+  - No changes.
 ---
- arch/arm/boot/dts/r8a7790-lager.dts | 84 +++++++++++++++++++++++--------------
- 1 file changed, 53 insertions(+), 31 deletions(-)
+ drivers/tty/serial/sh-sci.c | 5 +++++
+ drivers/tty/serial/sh-sci.h | 1 +
+ 2 files changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 862d766b932b..626b55369871 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -55,6 +55,7 @@
- 		i2c10 = "i2cexio0";
- 		i2c11 = "i2cexio1";
- 		i2c12 = "i2chdmi";
-+		i2c13 = "i2cpwr";
- 	};
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 0a2be5d293220e08..cf2a7903d2f0270b 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2059,6 +2059,11 @@ static void sci_reset(struct uart_port *port)
+ 	sci_clear_SCxSR(port,
+ 			SCxSR_RDxF_CLEAR(port) & SCxSR_ERROR_CLEAR(port) &
+ 			SCxSR_BREAK_CLEAR(port));
++	if (sci_getreg(port, SCLSR)->size) {
++		status = serial_port_in(port, SCLSR);
++		status &= ~(SCLSR_TO | SCLSR_ORER);
++		serial_port_out(port, SCLSR, status);
++	}
+ }
  
- 	chosen {
-@@ -374,6 +375,46 @@
- 			};
- 		};
- 	};
-+
-+	/*
-+	 * IIC3 and I2C3 may be switched using pinmux.
-+	 * IIC3/I2C3 does not appear to support fallback to GPIO.
-+	 */
-+	i2cpwr: i2c-13 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&iic3>, <&i2c3>;
-+		i2c-bus-name = "i2c-pwr";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		pmic@58 {
-+			compatible = "dlg,da9063";
-+			reg = <0x58>;
-+			interrupt-parent = <&irqc0>;
-+			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+			interrupt-controller;
-+
-+			rtc {
-+				compatible = "dlg,da9063-rtc";
-+			};
-+
-+			wdt {
-+				compatible = "dlg,da9063-watchdog";
-+			};
-+		};
-+
-+		vdd_dvfs: regulator@68 {
-+			compatible = "dlg,da9210";
-+			reg = <0x68>;
-+			interrupt-parent = <&irqc0>;
-+			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+
-+			regulator-min-microvolt = <1000000>;
-+			regulator-max-microvolt = <1000000>;
-+			regulator-boot-on;
-+			regulator-always-on;
-+		};
-+	};
- };
+ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+diff --git a/drivers/tty/serial/sh-sci.h b/drivers/tty/serial/sh-sci.h
+index 7a4fa185b93ef307..c590418d2a40d78b 100644
+--- a/drivers/tty/serial/sh-sci.h
++++ b/drivers/tty/serial/sh-sci.h
+@@ -105,6 +105,7 @@ enum {
+ #define SCFCR_LOOP	BIT(0)	/* Loopback Test */
  
- &du {
-@@ -516,6 +557,11 @@
- 		function = "iic2";
- 	};
+ /* SCLSR (Line Status Register) on (H)SCIF */
++#define SCLSR_TO	BIT(2)	/* Timeout */
+ #define SCLSR_ORER	BIT(0)	/* Overrun Error */
  
-+	i2c3_pins: i2c3 {
-+		groups = "i2c3";
-+		function = "i2c3";
-+	};
-+
- 	iic3_pins: iic3 {
- 		groups = "iic3";
- 		function = "iic3";
-@@ -726,38 +772,14 @@
- 	clock-frequency = <100000>;
- };
- 
--&iic3 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&iic3_pins>;
--	status = "okay";
--
--	pmic@58 {
--		compatible = "dlg,da9063";
--		reg = <0x58>;
--		interrupt-parent = <&irqc0>;
--		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
--		interrupt-controller;
--
--		rtc {
--			compatible = "dlg,da9063-rtc";
--		};
--
--		wdt {
--			compatible = "dlg,da9063-watchdog";
--		};
--	};
--
--	vdd_dvfs: regulator@68 {
--		compatible = "dlg,da9210";
--		reg = <0x68>;
--		interrupt-parent = <&irqc0>;
--		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+&i2c3	{
-+	pinctrl-0 = <&i2c3_pins>;
-+	pinctrl-names = "i2c-pwr";
-+};
- 
--		regulator-min-microvolt = <1000000>;
--		regulator-max-microvolt = <1000000>;
--		regulator-boot-on;
--		regulator-always-on;
--	};
-+&iic3	{
-+	pinctrl-0 = <&iic3_pins>;
-+	pinctrl-names = "i2c-pwr";
- };
- 
- &pci0 {
+ /* SCSPTR (Serial Port Register), optional */
 -- 
-2.1.4
+1.9.1
