@@ -1,7 +1,7 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:50663 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751025AbcFXO7W (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:55843 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751037AbcFXO7W (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
 	Fri, 24 Jun 2016 10:59:22 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -12,73 +12,59 @@ Cc: Magnus Damm <damm+renesas@opensource.se>,
 	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
 	linux-sh@vger.kernel.org, uclinux-h8-devel@lists.sourceforge.jp,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/4] serial: sh-sci: FIFO initialization fixes
-Date: Fri, 24 Jun 2016 16:59:12 +0200
-Message-Id: <1466780356-12623-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 1/4] serial: sh-sci: Do not start transfers from sci_startup()
+Date: Fri, 24 Jun 2016 16:59:13 +0200
+Message-Id: <1466780356-12623-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1466780356-12623-1-git-send-email-geert+renesas@glider.be>
+References: <1466780356-12623-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Greg, Jiri,
+FIFO reset is done in sci_reset(), called from sci_set_termios(), while
+sci_start_tx() and sci_start_rx() are called before, from sci_startup().
+However, starting transfers before the UART's FIFOs have been reset may
+cause reading of stale data.
 
-When opening a Renesas SCIF serial port after it has been used before,
-stale data may be read.  This has been observed on R-Car Gen2 and R-Car
-Gen3, with all SCIF variants present (SCIF, SCIFA, SCIFB, and HSCIF). It
-is much more likely to happen when DMA is enabled, although it has been
-seen with PIO, too.
+Remove the calls to sci_start_tx() and sci_start_rx() from sci_startup()
+to fix this.
 
-There are actually two reasons why stale data is received:
-  1. Transfers are started, or are still activated, before the FIFO is
-     reset, causing one or more (up to the RX FIFO size) stale bytes
-     (fixed by patches 1 and 2),
-  2. FIFO reset lacked clearing the RDF flag, causing one byte of stale
-     data (fixed by patch 3).
-While at it, patch 4 adds the missing clearing of two other flags in the
-initialization sequence on (H)SCIF.
+Transfers are still started when needed:
+  - sci_start_rx() is called from sci_set_termios() after FIFO reset, if
+    the CREAD flag is set,
+  - sci_start_tx() is called from uart_change_speed() immediately
+    thereafter, if transmission is enabled.
 
-While the issue can be reproduced using subsequent runs of sertest[1],
-I wrote a new test program, fifotest[2], to trigger it more easily.
-More detailed test information can be found on the eLinux wiki[3].
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - No changes.
+---
+ drivers/tty/serial/sh-sci.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-I have verified that this series fixes the issue on SCIF, SCIFA, SCIFB,
-and HSCIF, on R-Car Gen2 (r8a7791/koelsch) and R-Car Gen3
-(r8a7795/salvator-x).
-Basic regression testing has been done with SCIFA on sh73a0/kzm9g.
-Regression testing on other variants (notably SCI) would be appreciated.
-
-Changes compared to v1:
-  - Do not clear clock source bits, since the serial console relies on
-    them, as reported by Shimoda-san.
-
-This series applies against both v4.6 and next-20160526.
-For testing, it's also available in a topic branch at
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/scif-fifo-v2.
-
-Please apply, thanks!
-
-[1] https://github.com/geertu/sertest
-[2] https://github.com/geertu/fifotest
-[3] http://elinux.org/Tests:SCIF-FIFO
-
-Geert Uytterhoeven (4):
-  serial: sh-sci: Do not start transfers from sci_startup()
-  serial: sh-sci: Stop transfers in sci_shutdown()
-  serial: sh-sci: Clear RX, error, and break flags during reset
-  serial: sh-sci: Clear (H)SCIF timeout and overrun during reset
-
- drivers/tty/serial/sh-sci.c | 20 ++++++++++++++------
- drivers/tty/serial/sh-sci.h |  1 +
- 2 files changed, 15 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 0130feb069aee02f..d6ba90c572f7475c 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1873,7 +1873,6 @@ static void sci_break_ctl(struct uart_port *port, int break_state)
+ static int sci_startup(struct uart_port *port)
+ {
+ 	struct sci_port *s = to_sci_port(port);
+-	unsigned long flags;
+ 	int ret;
+ 
+ 	dev_dbg(port->dev, "%s(%d)\n", __func__, port->line);
+@@ -1884,11 +1883,6 @@ static int sci_startup(struct uart_port *port)
+ 
+ 	sci_request_dma(port);
+ 
+-	spin_lock_irqsave(&port->lock, flags);
+-	sci_start_tx(port);
+-	sci_start_rx(port);
+-	spin_unlock_irqrestore(&port->lock, flags);
+-
+ 	return 0;
+ }
+ 
 -- 
 1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
