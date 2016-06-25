@@ -1,324 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35071 "EHLO
-	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752157AbcF1JfG (ORCPT
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49758 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750997AbcFYRBv (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 05:35:06 -0400
-Received: by mail-wm0-f66.google.com with SMTP id a66so4240283wme.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Jun 2016 02:35:05 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
-	horms@verge.net.au
-Cc: magnus.damm@gmail.com,
-	Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: [PATCH 2/4] pinctrl: sh-pfc: r8a7796: Add SCIF pins, groups and functions
-Date: Tue, 28 Jun 2016 11:34:50 +0200
-Message-Id: <1467106492-1341-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1467106492-1341-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1467106492-1341-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+	Sat, 25 Jun 2016 13:01:51 -0400
+Date: Sat, 25 Jun 2016 10:01:53 -0700
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Jiri Slaby <jslaby@suse.com>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org, uclinux-h8-devel@lists.sourceforge.jp
+Subject: Re: [PATCH v2 2/4] serial: sh-sci: Stop transfers in sci_shutdown()
+Message-ID: <20160625170153.GA9544@kroah.com>
+References: <1466780356-12623-1-git-send-email-geert+renesas@glider.be>
+ <1466780356-12623-3-git-send-email-geert+renesas@glider.be>
+ <20160625160939.GA29593@kroah.com>
+ <20160625161051.GA30995@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160625161051.GA30995@kroah.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Sat, Jun 25, 2016 at 09:10:51AM -0700, Greg Kroah-Hartman wrote:
+> On Sat, Jun 25, 2016 at 09:09:39AM -0700, Greg Kroah-Hartman wrote:
+> > On Fri, Jun 24, 2016 at 04:59:14PM +0200, Geert Uytterhoeven wrote:
+> > > Make sure the transmitter and receiver are stopped when shutting down
+> > > the port, and related interrupts are disabled.
+> > > 
+> > > Without this:
+> > >   - New input data may be received into the RX FIFO, possibly
+> > >     triggering a new RX DMA completion,
+> > >   - Transfers will still be enabled on a subsequent startup of the UART,
+> > >     before the UART's FIFOs have been reset, causing reading of stale
+> > >     data.
+> > > 
+> > > Inspired by a patch in the BSP by Koji Matsuoka
+> > > <koji.matsuoka.xm@renesas.com>.
+> > > 
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> > > v2:
+> > >   - Do not clear clock source bits, since the serial console relies on
+> > >     them, as reported by Shimoda-san.
+> > > 
+> > > v1 was extracted from "[PATCH/RFC v3 0/4] serial: sh-sci: Add DT DMA
+> > > support".  The issues with the serial console seen before on
+> > > r8a7740/armadillo and sh73a0/kzm9g seem to be gone.  Changes after
+> > > resurrection:
+> > >   - Write zero to also disable related interrupts, as suggested by
+> > >     Laurent Pinchart,
+> > >   - Enhanced patch description.
+> > > ---
+> > >  drivers/tty/serial/sh-sci.c | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > 
+> > This patch does not apply to my tree :(
+> 
+> But I don't have access to my 2-factor token for about 24 hours, so my
+> tree will not be public until after then, sorry about that, I'll email
+> you when it gets synced up to kernel.org...
 
-This patch adds SCIF{0,1,2,3,4,5} pins, groups and functions to R8A7796
-SoC.
+It's synced now, sorry for the noise.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 276 +++++++++++++++++++++++++++++++++++
- 1 file changed, 276 insertions(+)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index b510937..939e3fc 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -1486,10 +1486,286 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	PINMUX_GPIO_GP_ALL(),
- };
- 
-+/* - SCIF0 ------------------------------------------------------------------ */
-+static const unsigned int scif0_data_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
-+};
-+static const unsigned int scif0_data_mux[] = {
-+	RX0_MARK, TX0_MARK,
-+};
-+static const unsigned int scif0_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 0),
-+};
-+static const unsigned int scif0_clk_mux[] = {
-+	SCK0_MARK,
-+};
-+static const unsigned int scif0_ctrl_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 3),
-+};
-+static const unsigned int scif0_ctrl_mux[] = {
-+	RTS0_N_TANS_MARK, CTS0_N_MARK,
-+};
-+/* - SCIF1 ------------------------------------------------------------------ */
-+static const unsigned int scif1_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 5), RCAR_GP_PIN(5, 6),
-+};
-+static const unsigned int scif1_data_a_mux[] = {
-+	RX1_A_MARK, TX1_A_MARK,
-+};
-+static const unsigned int scif1_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(6, 21),
-+};
-+static const unsigned int scif1_clk_mux[] = {
-+	SCK1_MARK,
-+};
-+static const unsigned int scif1_ctrl_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 7),
-+};
-+static const unsigned int scif1_ctrl_mux[] = {
-+	RTS1_N_TANS_MARK, CTS1_N_MARK,
-+};
-+
-+static const unsigned int scif1_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 24), RCAR_GP_PIN(5, 25),
-+};
-+static const unsigned int scif1_data_b_mux[] = {
-+	RX1_B_MARK, TX1_B_MARK,
-+};
-+/* - SCIF2 ------------------------------------------------------------------ */
-+static const unsigned int scif2_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 11), RCAR_GP_PIN(5, 10),
-+};
-+static const unsigned int scif2_data_a_mux[] = {
-+	RX2_A_MARK, TX2_A_MARK,
-+};
-+static const unsigned int scif2_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 9),
-+};
-+static const unsigned int scif2_clk_mux[] = {
-+	SCK2_MARK,
-+};
-+static const unsigned int scif2_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 16),
-+};
-+static const unsigned int scif2_data_b_mux[] = {
-+	RX2_B_MARK, TX2_B_MARK,
-+};
-+/* - SCIF3 ------------------------------------------------------------------ */
-+static const unsigned int scif3_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 23), RCAR_GP_PIN(1, 24),
-+};
-+static const unsigned int scif3_data_a_mux[] = {
-+	RX3_A_MARK, TX3_A_MARK,
-+};
-+static const unsigned int scif3_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(1, 22),
-+};
-+static const unsigned int scif3_clk_mux[] = {
-+	SCK3_MARK,
-+};
-+static const unsigned int scif3_ctrl_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(1, 26), RCAR_GP_PIN(1, 25),
-+};
-+static const unsigned int scif3_ctrl_mux[] = {
-+	RTS3_N_TANS_MARK, CTS3_N_MARK,
-+};
-+static const unsigned int scif3_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 11),
-+};
-+static const unsigned int scif3_data_b_mux[] = {
-+	RX3_B_MARK, TX3_B_MARK,
-+};
-+/* - SCIF4 ------------------------------------------------------------------ */
-+static const unsigned int scif4_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(2, 11), RCAR_GP_PIN(2, 12),
-+};
-+static const unsigned int scif4_data_a_mux[] = {
-+	RX4_A_MARK, TX4_A_MARK,
-+};
-+static const unsigned int scif4_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(2, 10),
-+};
-+static const unsigned int scif4_clk_a_mux[] = {
-+	SCK4_A_MARK,
-+};
-+static const unsigned int scif4_ctrl_a_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(2, 14), RCAR_GP_PIN(2, 13),
-+};
-+static const unsigned int scif4_ctrl_a_mux[] = {
-+	RTS4_N_TANS_A_MARK, CTS4_N_A_MARK,
-+};
-+static const unsigned int scif4_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
-+};
-+static const unsigned int scif4_data_b_mux[] = {
-+	RX4_B_MARK, TX4_B_MARK,
-+};
-+static const unsigned int scif4_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(1, 5),
-+};
-+static const unsigned int scif4_clk_b_mux[] = {
-+	SCK4_B_MARK,
-+};
-+static const unsigned int scif4_ctrl_b_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(1, 10), RCAR_GP_PIN(1, 9),
-+};
-+static const unsigned int scif4_ctrl_b_mux[] = {
-+	RTS4_N_TANS_B_MARK, CTS4_N_B_MARK,
-+};
-+static const unsigned int scif4_data_c_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
-+};
-+static const unsigned int scif4_data_c_mux[] = {
-+	RX4_C_MARK, TX4_C_MARK,
-+};
-+static const unsigned int scif4_clk_c_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(0, 8),
-+};
-+static const unsigned int scif4_clk_c_mux[] = {
-+	SCK4_C_MARK,
-+};
-+static const unsigned int scif4_ctrl_c_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
-+};
-+static const unsigned int scif4_ctrl_c_mux[] = {
-+	RTS4_N_TANS_C_MARK, CTS4_N_C_MARK,
-+};
-+/* - SCIF5 ------------------------------------------------------------------ */
-+static const unsigned int scif5_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 21),
-+};
-+static const unsigned int scif5_data_a_mux[] = {
-+	RX5_A_MARK, TX5_A_MARK,
-+};
-+static const unsigned int scif5_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(6, 21),
-+};
-+static const unsigned int scif5_clk_a_mux[] = {
-+	SCK5_A_MARK,
-+};
-+
-+static const unsigned int scif5_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 18),
-+};
-+static const unsigned int scif5_data_b_mux[] = {
-+	RX5_B_MARK, TX5_B_MARK,
-+};
-+static const unsigned int scif5_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 0),
-+};
-+static const unsigned int scif5_clk_b_mux[] = {
-+	SCK5_B_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(scif0_data),
-+	SH_PFC_PIN_GROUP(scif0_clk),
-+	SH_PFC_PIN_GROUP(scif0_ctrl),
-+	SH_PFC_PIN_GROUP(scif1_data_a),
-+	SH_PFC_PIN_GROUP(scif1_clk),
-+	SH_PFC_PIN_GROUP(scif1_ctrl),
-+	SH_PFC_PIN_GROUP(scif1_data_b),
-+	SH_PFC_PIN_GROUP(scif2_data_a),
-+	SH_PFC_PIN_GROUP(scif2_clk),
-+	SH_PFC_PIN_GROUP(scif2_data_b),
-+	SH_PFC_PIN_GROUP(scif3_data_a),
-+	SH_PFC_PIN_GROUP(scif3_clk),
-+	SH_PFC_PIN_GROUP(scif3_ctrl),
-+	SH_PFC_PIN_GROUP(scif3_data_b),
-+	SH_PFC_PIN_GROUP(scif4_data_a),
-+	SH_PFC_PIN_GROUP(scif4_clk_a),
-+	SH_PFC_PIN_GROUP(scif4_ctrl_a),
-+	SH_PFC_PIN_GROUP(scif4_data_b),
-+	SH_PFC_PIN_GROUP(scif4_clk_b),
-+	SH_PFC_PIN_GROUP(scif4_ctrl_b),
-+	SH_PFC_PIN_GROUP(scif4_data_c),
-+	SH_PFC_PIN_GROUP(scif4_clk_c),
-+	SH_PFC_PIN_GROUP(scif4_ctrl_c),
-+	SH_PFC_PIN_GROUP(scif5_data_a),
-+	SH_PFC_PIN_GROUP(scif5_clk_a),
-+	SH_PFC_PIN_GROUP(scif5_data_b),
-+	SH_PFC_PIN_GROUP(scif5_clk_b),
-+};
-+
-+static const char * const scif0_groups[] = {
-+	"scif0_data",
-+	"scif0_clk",
-+	"scif0_ctrl",
-+};
-+
-+static const char * const scif1_groups[] = {
-+	"scif1_data_a",
-+	"scif1_clk",
-+	"scif1_ctrl",
-+	"scif1_data_b",
-+};
-+
-+static const char * const scif2_groups[] = {
-+	"scif2_data_a",
-+	"scif2_clk",
-+	"scif2_data_b",
-+};
-+
-+static const char * const scif3_groups[] = {
-+	"scif3_data_a",
-+	"scif3_clk",
-+	"scif3_ctrl",
-+	"scif3_data_b",
-+};
-+
-+static const char * const scif4_groups[] = {
-+	"scif4_data_a",
-+	"scif4_clk_a",
-+	"scif4_ctrl_a",
-+	"scif4_data_b",
-+	"scif4_clk_b",
-+	"scif4_ctrl_b",
-+	"scif4_data_c",
-+	"scif4_clk_c",
-+	"scif4_ctrl_c",
-+};
-+
-+static const char * const scif5_groups[] = {
-+	"scif5_data_a",
-+	"scif5_clk_a",
-+	"scif5_data_b",
-+	"scif5_clk_b",
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(scif0),
-+	SH_PFC_FUNCTION(scif1),
-+	SH_PFC_FUNCTION(scif2),
-+	SH_PFC_FUNCTION(scif3),
-+	SH_PFC_FUNCTION(scif4),
-+	SH_PFC_FUNCTION(scif5),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
--- 
-2.7.4
+greg k-h
