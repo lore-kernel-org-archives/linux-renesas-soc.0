@@ -1,51 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33465 "EHLO
-	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752070AbcF1Je6 (ORCPT
+Received: from sauhun.de ([89.238.76.85]:42032 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751601AbcF0SYF (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 05:34:58 -0400
-Received: by mail-wm0-f65.google.com with SMTP id r201so4256545wme.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Jun 2016 02:34:57 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
-	horms@verge.net.au
-Cc: magnus.damm@gmail.com,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 0/4] Initial r8a7796 PFC support
-Date: Tue, 28 Jun 2016 11:34:48 +0200
-Message-Id: <1467106492-1341-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+	Mon, 27 Jun 2016 14:24:05 -0400
+Date: Mon, 27 Jun 2016 20:23:51 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Wim Van Sebroeck <wim@iguana.be>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/3] arm64: dts: r8a7796/salvator-x: Enable watchdog timer
+Message-ID: <20160627182351.GE3505@katana>
+References: <1467049847-7469-1-git-send-email-geert+renesas@glider.be>
+ <1467049847-7469-4-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Qz2CZ664xQdCRdPu"
+Content-Disposition: inline
+In-Reply-To: <1467049847-7469-4-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
 
-This implements a minimal set of PFC functionality for the M3 and sits on
-top of renesas-drivers-2016-06-21-v4.7-rc4.  It includes the SCIF pin groups
-and enables pin control for the serial console (SCIF2) on the Salvator-X
-board.
+--Qz2CZ664xQdCRdPu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-CU
-Uli
+On Mon, Jun 27, 2016 at 07:50:47PM +0200, Geert Uytterhoeven wrote:
+> Enable the Watchdog Timer (WDT) controller on the Renesas Salvator-X
+> board equipped with an R-Car M3-W (r8a7796) SoC.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
-Takeshi Kihara (3):
-  pinctrl: sh-pfc: Initial R8A7796 PFC support
-  pinctrl: sh-pfc: r8a7796: Add SCIF pins, groups and functions
-  arm64: dts: r8a7796: Add pinctrl device node
+--Qz2CZ664xQdCRdPu
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Ulrich Hecht (1):
-  arm64: dts: r8a7795: salvator: add serial console pins
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |    9 +
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           |    5 +
- drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
- drivers/pinctrl/sh-pfc/Makefile                    |    1 +
- drivers/pinctrl/sh-pfc/core.c                      |    6 +
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c               | 2348 ++++++++++++++++++++
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |   10 +-
- 8 files changed, 2383 insertions(+), 2 deletions(-)
- create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+iQIcBAEBAgAGBQJXcW83AAoJEBQN5MwUoCm2PIIQAKytv+a+ZqIwJ6lLn1imAxu0
+G1nxkYSdorg79QIW7kGSrXneR1TXfsIjSs7r+4FhmtdPrj0Nyo6yj1alLVS/dcif
+6jWagpCmWfg2Q12Gf9InzDmvO/vqYoH7dve8Li5RlPlJdW1JTWZa769cJnLM92NV
+qyDYK5Jj0eFBkieKZvN70BieyS+ulIKpIfGU/wrAqSMsutJ+ZLN7Nxc+Zr3aCP/e
+IUR6EKgE/0KRilGIsDB0oqhdwvt1A3XbOJ3vVpYVQi95tMMLAm3B88SawygfjOTo
+eQLSfXkqSi525VqxZBcRS7IhvujhSE7k+ndy9Gvn80NSD9lNco3fxxFfyZ8Y1maM
+KLmgVTNOSkxKJhMiUEMP7VcbZ1OaFKLyOOl8PllOhHphPFAhxeYoVlcq51onBVYu
+FAVwKl0CIJXYvNag7ik1Af12w5Bw+mEJkrs9inNkK2wqDTLqQtksOj+vjvv7cOGu
+hDAhq9t6DaFHwecLE7WFlV+FO0e1hwQakXtemC3JykQRlq2Ib50pBub8gDBRBu8M
+6aoHX90bO/avtkND9yib4LqFf8piCn1kV8UIGDmEdNVX0lnIOEVbeityKDY6PZkA
+zSsQrs5/15mYTkzL/waPOwahiD+XRIZo2iVEq1hybwVC0IZJuSqndaZs5N1ZXF2x
+NNbPYZ6Mh+UUWFmU2kmP
+=nFGM
+-----END PGP SIGNATURE-----
 
--- 
-2.7.4
+--Qz2CZ664xQdCRdPu--
