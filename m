@@ -1,148 +1,58 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: [PATCH v1 22/25] PCI: tegra: Remove top-level resource from
- hierarchy
-To: linux-pci@vger.kernel.org
-From: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Herring <robh@kernel.org>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Pratyush Anand <pratyush.anand@gmail.com>,
-	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
-	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
-	Michal Simek <michal.simek@xilinx.com>,
-	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
-	linux-arm-kernel@lists.infradead.org
-Date: Mon, 06 Jun 2016 18:07:28 -0500
-Message-ID: <20160606230728.20936.53648.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from lb1-smtp-cloud2.xs4all.net ([194.109.24.21]:36954 "EHLO
+	lb1-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751511AbcF0Jav (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 27 Jun 2016 05:30:51 -0400
+Subject: Re: [PATCH v4 6/8] media: rcar-vin: initialize EDID data
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	niklas.soderlund@ragnatech.se
+References: <1462975376-491-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1462975376-491-7-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <573591F4.4050901@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+	ian.molton@codethink.co.uk, lars@metafoo.de,
+	william.towle@codethink.co.uk
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <fb91b675-d87f-4b7a-ae3b-ab7a61759393@xs4all.nl>
+Date: Mon, 27 Jun 2016 11:30:45 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <573591F4.4050901@xs4all.nl>
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-41534e53786d ("PCI: tegra: Implement a proper resource hierarchy") did two
-things:
+Hi Ulrich,
 
-  1) It added a top-level resource that encloses all resources declared in
-     the DT description, including registers and bridge apertures, and
+On 05/13/2016 10:36 AM, Hans Verkuil wrote:
+> On 05/11/2016 04:02 PM, Ulrich Hecht wrote:
+>> Initializes the decoder subdevice with a fixed EDID blob.
+>>
+>> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> 
+> Nacked-by: Hans Verkuil <hans.verkuil@cisco.com>
+> 
+> Instead implement the g/s_edid ioctls.
+> 
+> You truly cannot default to an EDID. When an EDID is set the HPD will go high.
+> But you don't know the EDID here, the contents of the EDID is something that
+> only userspace will know depending on the type of device you're building.
+> 
+> In practice userspace will overwrite the EDID with the real one and so the HPD
+> will go down and up again. And while transmitters are supposed to handle that
+> cleanly, in reality this is a different story.
+> 
+> Just add the g/s_edid ioctls and you can use 'v4l2-ctl --set-edid=edid=hdmi' to
+> fill in a default EDID.
+> 
+> I won't accept this patch since I know from my own experience that this doesn't
+> work.
 
-  2) It requested the bridge apertures, which means the PCI core can track
-     the resources used by PCI devices below the bridge.
+I haven't seen a follow-up on this. Can you do a v5? It's likely that will be the
+last version and I can commit this.
 
-The latter is necessary, but the former is questionable because there's no
-guarantee that the bridge registers and the apertures are contiguous.  In
-this example:
+Thanks!
 
-  # cat /proc/iomem
-  00000000-3fffffff : /pcie-controller@00003000
-    00000000-00000fff : /pcie-controller@00003000/pci@1,0
-    00003000-000037ff : pads
-    00003800-000039ff : afi
-    10000000-1fffffff : cs
-
-the resource tree claims that [mem 0x00003a00-0x0fffffff] is consumed by
-/pcie-controller@00003000, but it's not mentioned in the DT, and it might
-actually be used by other devices.
-
-Remove the top-level resource so we don't claim more than the device
-actually consumes.
-
-This reintroduces the problem that we can't match the resources, e.g.,
-"pads", "afi", "cs", etc., to the DT device.  I think this should be solved
-by having the DT core request all resources of all devices in the DT (it
-does not do that today).  If a driver claims the device, it can request the
-resources it uses.  For example:
-
-  # cat /proc/iomem
-  00000000-00000fff : /pcie-controller@00003000
-    00000000-00000fff : /pcie-controller@00003000/pci@1,0
-  00003000-000037ff : /pcie-controller@00003000
-    00003000-000037ff : pads
-  00003800-000039ff : /pcie-controller@00003000
-    00003800-000039ff : afi
-  10000000-1fffffff : /pcie-controller@00003000
-    10000000-1fffffff : cs
-  ...
-
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/host/pci-tegra.c |   23 +++--------------------
- 1 file changed, 3 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index c388468..920a899 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -274,7 +274,6 @@ struct tegra_pcie {
- 	struct list_head buses;
- 	struct resource *cs;
- 
--	struct resource all;
- 	struct resource io;
- 	struct resource pio;
- 	struct resource mem;
-@@ -623,7 +622,7 @@ static int tegra_pcie_setup(int nr, struct pci_sys_data *sys)
- 	sys->mem_offset = pcie->offset.mem;
- 	sys->io_offset = pcie->offset.io;
- 
--	err = devm_request_resource(pcie->dev, &pcie->all, &pcie->io);
-+	err = devm_request_resource(pcie->dev, &iomem_resource, &pcie->io);
- 	if (err < 0)
- 		return err;
- 
-@@ -631,11 +630,11 @@ static int tegra_pcie_setup(int nr, struct pci_sys_data *sys)
- 	if (err < 0)
- 		return err;
- 
--	err = devm_request_resource(pcie->dev, &pcie->all, &pcie->mem);
-+	err = devm_request_resource(pcie->dev, &iomem_resource, &pcie->mem);
- 	if (err < 0)
- 		return err;
- 
--	err = devm_request_resource(pcie->dev, &pcie->all, &pcie->prefetch);
-+	err = devm_request_resource(pcie->dev, &iomem_resource, &pcie->prefetch);
- 	if (err)
- 		return err;
- 
-@@ -1822,12 +1821,6 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
- 	struct resource res;
- 	int err;
- 
--	memset(&pcie->all, 0, sizeof(pcie->all));
--	pcie->all.flags = IORESOURCE_MEM;
--	pcie->all.name = np->full_name;
--	pcie->all.start = ~0;
--	pcie->all.end = 0;
--
- 	if (of_pci_range_parser_init(&parser, np)) {
- 		dev_err(pcie->dev, "missing \"ranges\" property\n");
- 		return -EINVAL;
-@@ -1880,18 +1873,8 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
- 			}
- 			break;
- 		}
--
--		if (res.start <= pcie->all.start)
--			pcie->all.start = res.start;
--
--		if (res.end >= pcie->all.end)
--			pcie->all.end = res.end;
- 	}
- 
--	err = devm_request_resource(pcie->dev, &iomem_resource, &pcie->all);
--	if (err < 0)
--		return err;
--
- 	err = of_pci_parse_bus_range(np, &pcie->busn);
- 	if (err < 0) {
- 		dev_err(pcie->dev, "failed to parse ranges property: %d\n",
+	Hans
