@@ -1,58 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb1-smtp-cloud2.xs4all.net ([194.109.24.21]:36954 "EHLO
-	lb1-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751511AbcF0Jav (ORCPT
+Received: from sauhun.de ([89.238.76.85]:42023 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751862AbcF0SXs (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 27 Jun 2016 05:30:51 -0400
-Subject: Re: [PATCH v4 6/8] media: rcar-vin: initialize EDID data
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-	niklas.soderlund@ragnatech.se
-References: <1462975376-491-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1462975376-491-7-git-send-email-ulrich.hecht+renesas@gmail.com>
- <573591F4.4050901@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-	ian.molton@codethink.co.uk, lars@metafoo.de,
-	william.towle@codethink.co.uk
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <fb91b675-d87f-4b7a-ae3b-ab7a61759393@xs4all.nl>
-Date: Mon, 27 Jun 2016 11:30:45 +0200
+	Mon, 27 Jun 2016 14:23:48 -0400
+Date: Mon, 27 Jun 2016 20:23:34 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Wim Van Sebroeck <wim@iguana.be>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64: dts: r8a7796: Add RWDT node
+Message-ID: <20160627182334.GD3505@katana>
+References: <1467049847-7469-1-git-send-email-geert+renesas@glider.be>
+ <1467049847-7469-3-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <573591F4.4050901@xs4all.nl>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="BI5RvnYi6R4T2M87"
+Content-Disposition: inline
+In-Reply-To: <1467049847-7469-3-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulrich,
 
-On 05/13/2016 10:36 AM, Hans Verkuil wrote:
-> On 05/11/2016 04:02 PM, Ulrich Hecht wrote:
->> Initializes the decoder subdevice with a fixed EDID blob.
->>
->> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> 
-> Nacked-by: Hans Verkuil <hans.verkuil@cisco.com>
-> 
-> Instead implement the g/s_edid ioctls.
-> 
-> You truly cannot default to an EDID. When an EDID is set the HPD will go high.
-> But you don't know the EDID here, the contents of the EDID is something that
-> only userspace will know depending on the type of device you're building.
-> 
-> In practice userspace will overwrite the EDID with the real one and so the HPD
-> will go down and up again. And while transmitters are supposed to handle that
-> cleanly, in reality this is a different story.
-> 
-> Just add the g/s_edid ioctls and you can use 'v4l2-ctl --set-edid=edid=hdmi' to
-> fill in a default EDID.
-> 
-> I won't accept this patch since I know from my own experience that this doesn't
-> work.
+--BI5RvnYi6R4T2M87
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I haven't seen a follow-up on this. Can you do a v5? It's likely that will be the
-last version and I can commit this.
+On Mon, Jun 27, 2016 at 07:50:46PM +0200, Geert Uytterhoeven wrote:
+> Add a device node for the Watchdog Timer (WDT) controller on the Renesas
+> R-Car M3-W (r8a7796) SoC.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks!
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-	Hans
+
+--BI5RvnYi6R4T2M87
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXcW8lAAoJEBQN5MwUoCm2YE8QAJGB8B6fXG4SrvcNN+6AH4Qd
+DPohfsVBjoCNtisBbSP+T8HHTjZ0uP6sSUQgudqNgnpQQQBo4ffcGZAJzuSvmfeh
+Fp2NMwknwnC9JTzxMKcD4nzyl9HVzqx6FgclVCl3j2ZyrP/sb5e0wuKgivBAThwV
+bniUGU5XJu4hkVqR+PnCW1im5aOsWfDvq0bsCzhLD1RxNDuYMbSMHtWYrlfjR+Z2
+PSA4Gy/1Y6r7PsXYfh4ujCBSqLgp9T3cuIhO8DrP/VZ4b1k2Rx3+twdEdV0gk6x+
+4qNTPkRSy0PbKYiZ3EO5yuygKST8TLhXL5a3SS3+PkRZnOVJ6UeL5Dm72YaqEQvm
+3B5aT2D5AngxZJxf0UTDVxIEbLq0wCCBsJNy9A5yBYPWRSwQZozD2ZtmwUdFjydD
+G87l/R4pwgWg2DeOTtsjpE8aED7hbjgZo2VFXW8oTjhEcW5AnqVIDR4Qneg3pzYd
+k6OllusMZpwHqU7KjMMtQWNZR34MTkEf1NPJIro0qT0XS56MaOmwh21T+RfEwhcm
+jXTzX6mI1CyvJ7NEY78yK0VAGt2VGzD7ggN+miMGUSyOwB4aflnl9zoTrl8I9a0T
+urhGp2+2yWA0fmPKBVmukHxbyV326WB+UDK8wTxQbfBYBaYoaWUJnq9ltYFpIyS8
+ts/Oz+tmjlBUjNjQ3XL6
+=NVIa
+-----END PGP SIGNATURE-----
+
+--BI5RvnYi6R4T2M87--
