@@ -1,56 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59942 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751230AbcF2XtZ (ORCPT
+Received: from sauhun.de ([89.238.76.85]:40898 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751511AbcF0MSM (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 19:49:25 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Simon Horman <simon@horms.net>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/4] R-Car Gen3 DU enablement on Salvator-X board
-Date: Thu, 30 Jun 2016 02:49:45 +0300
-Message-ID: <16321774.A4HfHXgEKJ@avalon>
-In-Reply-To: <1461458095-12212-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1461458095-12212-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Mon, 27 Jun 2016 08:18:12 -0400
+Date: Mon, 27 Jun 2016 14:18:05 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Ai Kyuse <ai.kyuse.uw@renesas.com>
+Subject: Re: [PATCH/RFC 4/4] mmc: renesas_sdhi: add support for R-Car Gen3
+ SDHI DMAC
+Message-ID: <20160627121805.GC1648@katana>
+References: <1465963317-28672-1-git-send-email-horms+renesas@verge.net.au>
+ <1465963317-28672-5-git-send-email-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="wLAMOaPNJ0fu1fTG"
+Content-Disposition: inline
+In-Reply-To: <1465963317-28672-5-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
 
-The FCP DT bindings have been merged upstream, could you apply patches 1/4 and 
-2/4 from this series to your tree ? I'll retest patch 3/4 and 4/4 and then ask 
-you to apply them as well.
+--wLAMOaPNJ0fu1fTG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sunday 24 Apr 2016 03:34:51 Laurent Pinchart wrote:
-> Hello,
-> 
-> This patch series enables DU support on the Salvator-X board. The first
-> three patches add the FCPV, VSP and DU devices to the r8a7795 .dtsi, while
-> the last patch enables DU support for the board. Only the VGA output is
-> currently supported, support for HDMI is work in progress.
-> 
-> The FCP DT bindings have been posted for review [1] but haven't been
-> approved yet. As the bindings are simple I expect that last missing
-> dependency to be accepted very soon, in which case this series could be
-> merged for v4.7. Early review would be appreciated to make sure this could
-> happen.
-> 
-> [1] https://patchwork.linuxtv.org/patch/33006/
-> 
-> Laurent Pinchart (4):
->   arm64: dts: renesas: r8a7795: Add FCPV nodes
->   arm64: dts: renesas: r8a7795: Add VSP instances
->   arm64: dts: renesas: r8a7795: Add DU device to DT
->   arm64: dts: renesas: salvator-x: Enable DU
-> 
->  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  44 +++++
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 199 ++++++++++++++++++
->  2 files changed, 243 insertions(+)
 
--- 
-Regards,
+> +static struct tmio_mmc_dma_ops tmio_mmc_dma_ops __initdata = {
 
-Laurent Pinchart
+__initdata causes a section mismatch in both DMA drivers.
+
+
+--wLAMOaPNJ0fu1fTG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXcRl9AAoJEBQN5MwUoCm2OvwQAIHTKVh1YxuY/Fx9lhw8JfLI
+WE4EZLrN2oNeEr1RNuXTKbushLKmtCgT5+cY/VIpWJ1d6vUc1PDV8r4WDpgZXzSr
++ITHS1ioqZZ4ct9Ryutm4fvFm3zwx3q9e3aoY77ilT8e5rAR8ACUeQct+r74Hbay
+gRazVQj/urpPFeN3KR7X3qshHwWog3HS49xE6h3XFg3P2/apCshCY826MYa49SzZ
+CWCzelr5yw3hkuBPS9i8lD61W4nQj8W/RuM9A8ZkVl/KDjqReHzKFViM+Z9lhY2P
+ChiZy5Pci1B9YQq2qJioPzqyMQIgMkLg2z5FYW+2GZ5AClodJHWrV7H4Cu41bLN5
+YhRW0mJUGylFYA9onEl/nW//HzDBKU1kdD7I+ssTWcN8SbxJwKKNnKv0dkbSx2t5
+8JmnyBCfD99zGaEWN9aUIq92JXs92z8hAQze2eIYdan8c3QhpAnhoBT4kBs/y1p7
+boYmjomW5EG6RapExGg+EU/SnMCg+5wnAn8OPzZBktyT8O5vY3csoIx9NeSprcDv
+kuyjsXQWaXCU9Ye+o7JgC6jxkVGd7RMjgHpDWg27aEyvs8GJ79uO+b3XOdeSJ7gD
+2zjt1LVP7xHI6O5bXPkFIgsabadj47+Qm5NJfBbyrKJb8kYTGnWV7WL6LPWPXaCx
+rbl0MUXuLmtKgbQ67Oyk
+=JB1c
+-----END PGP SIGNATURE-----
+
+--wLAMOaPNJ0fu1fTG--
