@@ -1,178 +1,149 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:59848 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752496AbcF1OLK (ORCPT
+Received: from lb3-smtp-cloud2.xs4all.net ([194.109.24.29]:42991 "EHLO
+	lb3-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751664AbcF0J26 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 10:11:10 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 07/13] ARM: shmobile: apmu: Add APMU DT support via Enable method
-Date: Tue, 28 Jun 2016 16:10:36 +0200
-Message-Id: <1467123042-8468-8-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
-References: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
+	Mon, 27 Jun 2016 05:28:58 -0400
+Subject: Re: [PATCH v4 5/8] media: rcar-vin: add DV timings support
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
+References: <1462975376-491-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1462975376-491-6-git-send-email-ulrich.hecht+renesas@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+	ian.molton@codethink.co.uk, lars@metafoo.de,
+	william.towle@codethink.co.uk
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <5af387b3-76ac-9007-71b1-bf694c78fcb3@xs4all.nl>
+Date: Mon, 27 Jun 2016 11:28:52 +0200
+MIME-Version: 1.0
+In-Reply-To: <1462975376-491-6-git-send-email-ulrich.hecht+renesas@gmail.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 05/11/2016 04:02 PM, Ulrich Hecht wrote:
+> Adds ioctls DV_TIMINGS_CAP, ENUM_DV_TIMINGS, G_DV_TIMINGS, S_DV_TIMINGS,
+> and QUERY_DV_TIMINGS.
+> 
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Allow DT configuration of the APMU hardware in the case when the APMU is
-pointed out in the DTB via the enable-method. The ability to configure
-the APMU via C code is still kept intact to prevent DTB breakage for older
-SoCs that do not rely on the enable-method for SMP support.
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-[geert: Fix CONFIG_SMP=n build]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v5:
-  - No changes,
+Regards,
 
-v4:
-  - Remove bogus of_node_put(),
-  - Fix CONFIG_SMP=n build,
-  - Correct whitespace,
+	Hans
 
-v3:
-  - Move is_allowed declaration, break when allowed,
-
-v2:
-  - Adjust to use .cpu_can_disable instead of .cpu_disable.
----
- arch/arm/mach-shmobile/platsmp-apmu.c | 92 +++++++++++++++++++++++++++++++++--
- 1 file changed, 88 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index c1558ef0c590dd3e..0c6bb458b7a45128 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -24,6 +24,7 @@
- #include <asm/suspend.h>
- #include "common.h"
- #include "platsmp-apmu.h"
-+#include "rcar-gen2.h"
- 
- static struct {
- 	void __iomem *iomem;
-@@ -118,14 +119,66 @@ static void apmu_parse_cfg(void (*fn)(struct resource *res, int cpu, int bit),
- 	}
- }
- 
--void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
--					   struct rcar_apmu_config *apmu_config,
--					   int num)
-+static const struct of_device_id apmu_ids[] = {
-+	{ .compatible = "renesas,apmu" },
-+	{ /*sentinel*/ }
-+};
-+
-+static void apmu_parse_dt(void (*fn)(struct resource *res, int cpu, int bit))
-+{
-+	struct device_node *np_apmu, *np_cpu;
-+	struct resource res;
-+	int bit, index;
-+	u32 id;
-+
-+	for_each_matching_node(np_apmu, apmu_ids) {
-+		/* only enable the cluster that includes the boot CPU */
-+		bool is_allowed = false;
-+
-+		for (bit = 0; bit < CONFIG_NR_CPUS; bit++) {
-+			np_cpu = of_parse_phandle(np_apmu, "cpus", bit);
-+			if (np_cpu) {
-+				if (!of_property_read_u32(np_cpu, "reg", &id)) {
-+					if (id == cpu_logical_map(0)) {
-+						is_allowed = true;
-+						of_node_put(np_cpu);
-+						break;
-+					}
-+
-+				}
-+				of_node_put(np_cpu);
-+			}
-+		}
-+		if (!is_allowed)
-+			continue;
-+
-+		for (bit = 0; bit < CONFIG_NR_CPUS; bit++) {
-+			np_cpu = of_parse_phandle(np_apmu, "cpus", bit);
-+			if (np_cpu) {
-+				if (!of_property_read_u32(np_cpu, "reg", &id)) {
-+					index = get_logical_index(id);
-+					if ((index >= 0) &&
-+					    !of_address_to_resource(np_apmu,
-+								    0, &res))
-+						fn(&res, index, bit);
-+				}
-+				of_node_put(np_cpu);
-+			}
-+		}
-+	}
-+}
-+
-+static void __init shmobile_smp_apmu_setup_boot(void)
- {
- 	/* install boot code shared by all CPUs */
- 	shmobile_boot_fn = virt_to_phys(shmobile_smp_boot);
-+}
- 
--	/* perform per-cpu setup */
-+void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
-+					   struct rcar_apmu_config *apmu_config,
-+					   int num)
-+{
-+	shmobile_smp_apmu_setup_boot();
- 	apmu_parse_cfg(apmu_init_cpu, apmu_config, num);
- }
- 
-@@ -136,7 +189,38 @@ int shmobile_smp_apmu_boot_secondary(unsigned int cpu, struct task_struct *idle)
- 
- 	return apmu_wrap(cpu, apmu_power_on);
- }
-+
-+static void __init shmobile_smp_apmu_prepare_cpus_dt(unsigned int max_cpus)
-+{
-+	shmobile_smp_apmu_setup_boot();
-+	apmu_parse_dt(apmu_init_cpu);
-+	rcar_gen2_pm_init();
-+}
-+
-+static int shmobile_smp_apmu_boot_secondary_md21(unsigned int cpu,
-+						 struct task_struct *idle)
-+{
-+	/* Error out when hardware debug mode is enabled */
-+	if (rcar_gen2_read_mode_pins() & BIT(21)) {
-+		pr_warn("Unable to boot CPU%u when MD21 is set\n", cpu);
-+		return -ENOTSUPP;
-+	}
-+
-+	return shmobile_smp_apmu_boot_secondary(cpu, idle);
-+}
-+
-+static struct smp_operations apmu_smp_ops __initdata = {
-+	.smp_prepare_cpus	= shmobile_smp_apmu_prepare_cpus_dt,
-+	.smp_boot_secondary	= shmobile_smp_apmu_boot_secondary_md21,
-+#ifdef CONFIG_HOTPLUG_CPU
-+	.cpu_can_disable	= shmobile_smp_cpu_can_disable,
-+	.cpu_die		= shmobile_smp_apmu_cpu_die,
-+	.cpu_kill		= shmobile_smp_apmu_cpu_kill,
- #endif
-+};
-+
-+CPU_METHOD_OF_DECLARE(shmobile_smp_apmu, "renesas,apmu", &apmu_smp_ops);
-+#endif /* CONFIG_SMP */
- 
- #if defined(CONFIG_HOTPLUG_CPU) || defined(CONFIG_SUSPEND)
- /* nicked from arch/arm/mach-exynos/hotplug.c */
--- 
-1.9.1
+> ---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 82 +++++++++++++++++++++++++++++
+>  1 file changed, 82 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index 3788f8a..10a5c10 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -400,6 +400,10 @@ static int rvin_enum_input(struct file *file, void *priv,
+>  
+>  	i->type = V4L2_INPUT_TYPE_CAMERA;
+>  	i->std = vin->vdev.tvnorms;
+> +
+> +	if (v4l2_subdev_has_op(sd, pad, dv_timings_cap))
+> +		i->capabilities = V4L2_IN_CAP_DV_TIMINGS;
+> +
+>  	strlcpy(i->name, "Camera", sizeof(i->name));
+>  
+>  	return 0;
+> @@ -478,6 +482,78 @@ static int rvin_subscribe_event(struct v4l2_fh *fh,
+>  	return v4l2_ctrl_subscribe_event(fh, sub);
+>  }
+>  
+> +static int rvin_enum_dv_timings(struct file *file, void *priv_fh,
+> +				    struct v4l2_enum_dv_timings *timings)
+> +{
+> +	struct rvin_dev *vin = video_drvdata(file);
+> +	struct v4l2_subdev *sd = vin_to_source(vin);
+> +	int pad, ret;
+> +
+> +	pad = timings->pad;
+> +	timings->pad = vin->src_pad_idx;
+> +
+> +	ret = v4l2_subdev_call(sd, pad, enum_dv_timings, timings);
+> +
+> +	timings->pad = pad;
+> +
+> +	return ret;
+> +}
+> +
+> +static int rvin_s_dv_timings(struct file *file, void *priv_fh,
+> +				    struct v4l2_dv_timings *timings)
+> +{
+> +	struct rvin_dev *vin = video_drvdata(file);
+> +	struct v4l2_subdev *sd = vin_to_source(vin);
+> +	int err;
+> +
+> +	err = v4l2_subdev_call(sd,
+> +			video, s_dv_timings, timings);
+> +	if (!err) {
+> +		vin->source.width = timings->bt.width;
+> +		vin->source.height = timings->bt.height;
+> +		vin->format.width = timings->bt.width;
+> +		vin->format.height = timings->bt.height;
+> +	}
+> +	return err;
+> +}
+> +
+> +static int rvin_g_dv_timings(struct file *file, void *priv_fh,
+> +				    struct v4l2_dv_timings *timings)
+> +{
+> +	struct rvin_dev *vin = video_drvdata(file);
+> +	struct v4l2_subdev *sd = vin_to_source(vin);
+> +
+> +	return v4l2_subdev_call(sd,
+> +			video, g_dv_timings, timings);
+> +}
+> +
+> +static int rvin_query_dv_timings(struct file *file, void *priv_fh,
+> +				    struct v4l2_dv_timings *timings)
+> +{
+> +	struct rvin_dev *vin = video_drvdata(file);
+> +	struct v4l2_subdev *sd = vin_to_source(vin);
+> +
+> +	return v4l2_subdev_call(sd,
+> +			video, query_dv_timings, timings);
+> +}
+> +
+> +static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
+> +				    struct v4l2_dv_timings_cap *cap)
+> +{
+> +	struct rvin_dev *vin = video_drvdata(file);
+> +	struct v4l2_subdev *sd = vin_to_source(vin);
+> +	int pad, ret;
+> +
+> +	pad = cap->pad;
+> +	cap->pad = vin->src_pad_idx;
+> +
+> +	ret = v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
+> +
+> +	cap->pad = pad;
+> +
+> +	return ret;
+> +}
+> +
+>  static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
+>  	.vidioc_querycap		= rvin_querycap,
+>  	.vidioc_try_fmt_vid_cap		= rvin_try_fmt_vid_cap,
+> @@ -494,6 +570,12 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
+>  	.vidioc_g_input			= rvin_g_input,
+>  	.vidioc_s_input			= rvin_s_input,
+>  
+> +	.vidioc_dv_timings_cap		= rvin_dv_timings_cap,
+> +	.vidioc_enum_dv_timings		= rvin_enum_dv_timings,
+> +	.vidioc_g_dv_timings		= rvin_g_dv_timings,
+> +	.vidioc_s_dv_timings		= rvin_s_dv_timings,
+> +	.vidioc_query_dv_timings	= rvin_query_dv_timings,
+> +
+>  	.vidioc_querystd		= rvin_querystd,
+>  	.vidioc_g_std			= rvin_g_std,
+>  	.vidioc_s_std			= rvin_s_std,
+> 
