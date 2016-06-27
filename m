@@ -1,105 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:39046 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964910AbcFMK3l (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:40080 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751638AbcF0Rjl (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 13 Jun 2016 06:29:41 -0400
+	Mon, 27 Jun 2016 13:39:41 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: shmobile: rcar-gen2: Obtain extal frequency from DT
-Date: Mon, 13 Jun 2016 12:29:37 +0200
-Message-Id: <1465813777-11837-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 1/2] clk: renesas: r8a7796: Add watchdog core clocks
+Date: Mon, 27 Jun 2016 19:39:24 +0200
+Message-Id: <1467049165-7025-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1467049165-7025-1-git-send-email-geert+renesas@glider.be>
+References: <1467049165-7025-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On some R-Car Gen2 SoCs, the frequency of the ARM architecture timer
-depends on the frequency of the external clock crystal.  Currently the
-latter is determined indirectly from the state of the mode pins, which
-is a relic predating DT.
-
-Obtain the external clock crystal frequency from DT instead, removing
-the dependency on the mode pins.
+Add all core clocks related to the Watchdog Timer (WDT) controller on
+the Renesas R-Car M3-W (r8a7796) SoC: OSC, Internal RCLK, and RCLK.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Against renesas-devel-20160613-v4.7-rc3.
-Tested on r8a7790/lager and r8a7791/koelsch.
----
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 42 +++++++++++++++++---------------
- 1 file changed, 22 insertions(+), 20 deletions(-)
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 1c6fd11c2f824019..ea092d5dd475042d 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -46,6 +46,26 @@ u32 rcar_gen2_read_mode_pins(void)
- 	return mode;
- }
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index c84b549c14d2e57d..ea9ed38943a3969c 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -45,6 +45,7 @@ enum clk_ids {
+ 	CLK_S3,
+ 	CLK_SDSRC,
+ 	CLK_SSPSRC,
++	CLK_RINT,
  
-+static unsigned int __init get_extal_freq(void)
-+{
-+	struct device_node *cpg, *extal;
-+	u32 freq = 20000000;
-+
-+	cpg = of_find_compatible_node(NULL, NULL,
-+				      "renesas,rcar-gen2-cpg-clocks");
-+	if (!cpg)
-+		return freq;
-+
-+	extal = of_parse_phandle(cpg, "clocks", 0);
-+	of_node_put(cpg);
-+	if (!extal)
-+		return freq;
-+
-+	of_property_read_u32(extal, "clock-frequency", &freq);
-+	of_node_put(extal);
-+	return freq;
-+}
-+
- #define CNTCR 0
- #define CNTFID0 0x20
+ 	/* Module Clocks */
+ 	MOD_CLK_BASE
+@@ -94,6 +95,11 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
  
-@@ -54,7 +74,6 @@ void __init rcar_gen2_timer_init(void)
- 	u32 mode = rcar_gen2_read_mode_pins();
- #ifdef CONFIG_ARM_ARCH_TIMER
- 	void __iomem *base;
--	int extal_mhz = 0;
- 	u32 freq;
+ 	DEF_FIXED("cl",         R8A7796_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
+ 	DEF_FIXED("cp",         R8A7796_CLK_CP,    CLK_EXTAL,      2, 1),
++
++	DEF_DIV6_RO("osc",      R8A7796_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
++	DEF_DIV6_RO("r_int",    CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
++
++	DEF_BASE("r",           R8A7796_CLK_R,     CLK_TYPE_GEN3_R, CLK_RINT),
+ };
  
- 	if (of_machine_is_compatible("renesas,r8a7794")) {
-@@ -82,26 +101,9 @@ void __init rcar_gen2_timer_init(void)
- 		 * with the counter disabled. Moreover, it may also report
- 		 * a potentially incorrect fixed 13 MHz frequency. To be
- 		 * correct these registers need to be updated to use the
--		 * frequency EXTAL / 2 which can be determined by the MD pins.
-+		 * frequency EXTAL / 2.
- 		 */
--
--		switch (mode & (MD(14) | MD(13))) {
--		case 0:
--			extal_mhz = 15;
--			break;
--		case MD(13):
--			extal_mhz = 20;
--			break;
--		case MD(14):
--			extal_mhz = 26;
--			break;
--		case MD(13) | MD(14):
--			extal_mhz = 30;
--			break;
--		}
--
--		/* The arch timer frequency equals EXTAL / 2 */
--		freq = extal_mhz * (1000000 / 2);
-+		freq = get_extal_freq() / 2;
- 	}
- 
- 	/* Remap "armgcnt address map" space */
+ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
 -- 
 1.9.1
