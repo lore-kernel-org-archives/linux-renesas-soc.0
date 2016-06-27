@@ -1,67 +1,51 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:42023 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751862AbcF0SXs (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 27 Jun 2016 14:23:48 -0400
-Date: Mon, 27 Jun 2016 20:23:34 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Wim Van Sebroeck <wim@iguana.be>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Wim Van Sebroeck <wim@iguana.be>,
 	Guenter Roeck <linux@roeck-us.net>,
 	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
 	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/3] arm64: dts: r8a7796: Add RWDT node
-Message-ID: <20160627182334.GD3505@katana>
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/3] arm64: dts: r8a7796: Add RWDT node
+Date: Mon, 27 Jun 2016 19:50:46 +0200
+Message-Id: <1467049847-7469-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1467049847-7469-1-git-send-email-geert+renesas@glider.be>
 References: <1467049847-7469-1-git-send-email-geert+renesas@glider.be>
- <1467049847-7469-3-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BI5RvnYi6R4T2M87"
-Content-Disposition: inline
-In-Reply-To: <1467049847-7469-3-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Add a device node for the Watchdog Timer (WDT) controller on the Renesas
+R-Car M3-W (r8a7796) SoC.
 
---BI5RvnYi6R4T2M87
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-On Mon, Jun 27, 2016 at 07:50:46PM +0200, Geert Uytterhoeven wrote:
-> Add a device node for the Watchdog Timer (WDT) controller on the Renesas
-> R-Car M3-W (r8a7796) SoC.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index fab61eddede3818c..1edf82440d784592 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -98,6 +98,15 @@
+ 					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
+ 		};
+ 
++		wdt0: watchdog@e6020000 {
++			compatible = "renesas,r8a7796-wdt",
++				     "renesas,rcar-gen3-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a7796-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
+-- 
+1.9.1
 
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---BI5RvnYi6R4T2M87
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXcW8lAAoJEBQN5MwUoCm2YE8QAJGB8B6fXG4SrvcNN+6AH4Qd
-DPohfsVBjoCNtisBbSP+T8HHTjZ0uP6sSUQgudqNgnpQQQBo4ffcGZAJzuSvmfeh
-Fp2NMwknwnC9JTzxMKcD4nzyl9HVzqx6FgclVCl3j2ZyrP/sb5e0wuKgivBAThwV
-bniUGU5XJu4hkVqR+PnCW1im5aOsWfDvq0bsCzhLD1RxNDuYMbSMHtWYrlfjR+Z2
-PSA4Gy/1Y6r7PsXYfh4ujCBSqLgp9T3cuIhO8DrP/VZ4b1k2Rx3+twdEdV0gk6x+
-4qNTPkRSy0PbKYiZ3EO5yuygKST8TLhXL5a3SS3+PkRZnOVJ6UeL5Dm72YaqEQvm
-3B5aT2D5AngxZJxf0UTDVxIEbLq0wCCBsJNy9A5yBYPWRSwQZozD2ZtmwUdFjydD
-G87l/R4pwgWg2DeOTtsjpE8aED7hbjgZo2VFXW8oTjhEcW5AnqVIDR4Qneg3pzYd
-k6OllusMZpwHqU7KjMMtQWNZR34MTkEf1NPJIro0qT0XS56MaOmwh21T+RfEwhcm
-jXTzX6mI1CyvJ7NEY78yK0VAGt2VGzD7ggN+miMGUSyOwB4aflnl9zoTrl8I9a0T
-urhGp2+2yWA0fmPKBVmukHxbyV326WB+UDK8wTxQbfBYBaYoaWUJnq9ltYFpIyS8
-ts/Oz+tmjlBUjNjQ3XL6
-=NVIa
------END PGP SIGNATURE-----
-
---BI5RvnYi6R4T2M87--
