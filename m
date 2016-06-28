@@ -1,46 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f182.google.com ([209.85.223.182]:36371 "EHLO
-	mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752240AbcF1NDh (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33465 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752070AbcF1Je6 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 09:03:37 -0400
-Received: by mail-io0-f182.google.com with SMTP id s63so15758177ioi.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Jun 2016 06:03:18 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1467106492-1341-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1467106492-1341-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 28 Jun 2016 15:03:16 +0200
-Message-ID: <CAMuHMdXVeHAYAJy1R-gRDr7emWTqYO34x=n=kQPsVkyMFdK3Cg@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Initial r8a7796 PFC support
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+	Tue, 28 Jun 2016 05:34:58 -0400
+Received: by mail-wm0-f65.google.com with SMTP id r201so4256545wme.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Jun 2016 02:34:57 -0700 (PDT)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
+	horms@verge.net.au
+Cc: magnus.damm@gmail.com,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 0/4] Initial r8a7796 PFC support
+Date: Tue, 28 Jun 2016 11:34:48 +0200
+Message-Id: <1467106492-1341-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Uli,
+Hi!
 
-On Tue, Jun 28, 2016 at 11:34 AM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> This implements a minimal set of PFC functionality for the M3 and sits on
-> top of renesas-drivers-2016-06-21-v4.7-rc4.  It includes the SCIF pin groups
-> and enables pin control for the serial console (SCIF2) on the Salvator-X
-> board.
+This implements a minimal set of PFC functionality for the M3 and sits on
+top of renesas-drivers-2016-06-21-v4.7-rc4.  It includes the SCIF pin groups
+and enables pin control for the serial console (SCIF2) on the Salvator-X
+board.
 
-Thanks, I've imported this into the topic/r8a7796-pfc-v1 branch of my
-renesas-drivers repository.
+CU
+Uli
 
-Gr{oetje,eeting}s,
 
-                        Geert
+Takeshi Kihara (3):
+  pinctrl: sh-pfc: Initial R8A7796 PFC support
+  pinctrl: sh-pfc: r8a7796: Add SCIF pins, groups and functions
+  arm64: dts: r8a7796: Add pinctrl device node
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Ulrich Hecht (1):
+  arm64: dts: r8a7795: salvator: add serial console pins
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |    9 +
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           |    5 +
+ drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
+ drivers/pinctrl/sh-pfc/Makefile                    |    1 +
+ drivers/pinctrl/sh-pfc/core.c                      |    6 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c               | 2348 ++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |   10 +-
+ 8 files changed, 2383 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+
+-- 
+2.7.4
