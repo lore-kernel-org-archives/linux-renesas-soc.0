@@ -1,64 +1,63 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: [PATCH/RFC 0/3] thermal: rcar_gen3_thermal: Apply shared interrupts
- for thermal sensors
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-References: <57661211.7010900@rvc.renesas.com>
-CC: Wolfram Sang <wsa@the-dreams.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:58289 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752307AbcF1OKt (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 28 Jun 2016 10:10:49 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
 	Magnus Damm <damm+renesas@opensource.se>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Thao Phuong Le. Nguyen" <thao.nguyen.yb@rvc.renesas.com>,
-	"Hien Duy. Dang" <hien.dang.eb@rvc.renesas.com>,
-	Toru Oishi <toru.oishi.zj@rvc.renesas.com>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-	"Khiem Trong. Nguyen" <khiem.nguyen.xt@rvc.renesas.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Simon Horman <horms@verge.net.au>
-From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Message-ID: <57661BB1.3060401@rvc.renesas.com>
-Date: Sun, 19 Jun 2016 11:12:33 +0700
-MIME-Version: 1.0
-In-Reply-To: <57661211.7010900@rvc.renesas.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: linux-kernel-owner@vger.kernel.org
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v5 09/13] ARM: shmobile: r8a7790: Prioritize DT APMU support
+Date: Tue, 28 Jun 2016 16:10:38 +0200
+Message-Id: <1467123042-8468-10-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
+References: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patchset intents to improve thermal driver operation in interrupt mode,
-which has been introduced in [1].
+From: Magnus Damm <damm+renesas@opensource.se>
 
-The original idea is using 1 interrupt for each thermal sensor, to detect both up
-and down temperature. It caused issue when the temperature is changing rapidly.
+Adjust the r8a7790 SoC support code to not configure any non-DT SMP code
+in case the DT-based enable-method has been installed already.
 
-The new idea is about using shared interrupt I/F for all three sensors.
-Two interrupts will be set to detect temperature up and down. When interrupt occurs,
-the temperature will be updated in all 3 sensors, if the temperature value is changed. 
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v5:
+  - No changes,
 
-All comments are welcome.
+v4:
+  - No changes,
 
-[1]
-[PATCH 0/4] thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal support
-https://www.spinics.net/lists/kernel/msg2282663.html
+v3:
+  - No changes,
 
---
-Gaku Inami (3):
-  thermal: rcar_gen3_thermal: Modify the shared irq with initialization
-  thermal: rcar_gen3_thermal: Modify the way to detect the interrupts
-  arm64: dts: r8a7795: Support shared irq for thermal sensors
+v2:
+  - New.
+---
+ arch/arm/mach-shmobile/setup-r8a7790.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi |  9 ++--
- drivers/thermal/rcar_gen3_thermal.c      | 89 ++++++++++++++++++++------------
- 2 files changed, 63 insertions(+), 35 deletions(-)
-
+diff --git a/arch/arm/mach-shmobile/setup-r8a7790.c b/arch/arm/mach-shmobile/setup-r8a7790.c
+index 3a18af4922b42577..3506327e0bed2422 100644
+--- a/arch/arm/mach-shmobile/setup-r8a7790.c
++++ b/arch/arm/mach-shmobile/setup-r8a7790.c
+@@ -28,6 +28,7 @@ static const char * const r8a7790_boards_compat_dt[] __initconst = {
+ };
+ 
+ DT_MACHINE_START(R8A7790_DT, "Generic R8A7790 (Flattened Device Tree)")
++	.smp_init	= shmobile_smp_init_fallback_ops,
+ 	.smp		= smp_ops(r8a7790_smp_ops),
+ 	.init_early	= shmobile_init_delay,
+ 	.init_time	= rcar_gen2_timer_init,
 -- 
 1.9.1
