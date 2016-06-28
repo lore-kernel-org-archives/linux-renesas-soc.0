@@ -1,148 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:33033 "EHLO
-	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755743AbcFHVPW (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:49243 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752421AbcF1OKt (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 17:15:22 -0400
-Received: by mail-lf0-f53.google.com with SMTP id s64so14033679lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2016 14:15:21 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	magnus.damm@gmail.com
-Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 05/12] ARM: shmobile: r8a7792: add SMP support
-Date: Thu, 09 Jun 2016 00:15:17 +0300
-Message-ID: <7848375.HIECFST0Ua@wasted.cogentembedded.com>
-In-Reply-To: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
-References: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Tue, 28 Jun 2016 10:10:49 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v5 03/13] soc: renesas: rcar-sysc: Make rcar_sysc_init() init the PM domains
+Date: Tue, 28 Jun 2016 16:10:32 +0200
+Message-Id: <1467123042-8468-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
+References: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add R8A7792 SMP support using the shared APMU code. This SoC has 2 ARM
-Cortex-A15  CPU cores.
+Let rcar_sysc_init() trigger initialization of the SYSC PM domains from
+DT if called before the early_initcall.
+On failure, it falls back to mapping the passed register block, as
+before.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes in version 3:
-- new patch.
+v5:
+  - No changes,
 
- arch/arm/mach-shmobile/Makefile        |    1 
- arch/arm/mach-shmobile/r8a7792.h       |    6 +++
- arch/arm/mach-shmobile/setup-r8a7792.c |    2 +
- arch/arm/mach-shmobile/smp-r8a7792.c   |   62 +++++++++++++++++++++++++++++++++
- 4 files changed, 71 insertions(+)
+v4:
+  - New.
+---
+ drivers/soc/renesas/rcar-sysc.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-Index: renesas/arch/arm/mach-shmobile/Makefile
-===================================================================
---- renesas.orig/arch/arm/mach-shmobile/Makefile
-+++ renesas/arch/arm/mach-shmobile/Makefile
-@@ -35,6 +35,7 @@ smp-$(CONFIG_ARCH_SH73A0)	+= smp-sh73a0.
- smp-$(CONFIG_ARCH_R8A7779)	+= smp-r8a7779.o headsmp-scu.o platsmp-scu.o
- smp-$(CONFIG_ARCH_R8A7790)	+= smp-r8a7790.o
- smp-$(CONFIG_ARCH_R8A7791)	+= smp-r8a7791.o
-+smp-$(CONFIG_ARCH_R8A7792)	+= smp-r8a7792.o
- smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 59a8152681a59a5c..68d6856c9d3cd192 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -164,15 +164,6 @@ static bool rcar_sysc_power_is_off(const struct rcar_sysc_ch *sysc_ch)
+ 	return false;
+ }
  
- # PM objects
-Index: renesas/arch/arm/mach-shmobile/r8a7792.h
-===================================================================
---- /dev/null
-+++ renesas/arch/arm/mach-shmobile/r8a7792.h
-@@ -0,0 +1,6 @@
-+#ifndef __ASM_R8A7792_H__
-+#define __ASM_R8A7792_H__
-+
-+extern const struct smp_operations r8a7792_smp_ops;
-+
-+#endif /* __ASM_R8A7792_H__ */
-Index: renesas/arch/arm/mach-shmobile/setup-r8a7792.c
-===================================================================
---- renesas.orig/arch/arm/mach-shmobile/setup-r8a7792.c
-+++ renesas/arch/arm/mach-shmobile/setup-r8a7792.c
-@@ -20,6 +20,7 @@
+-void __iomem *rcar_sysc_init(phys_addr_t base)
+-{
+-	rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
+-	if (!rcar_sysc_base)
+-		panic("unable to ioremap R-Car SYSC hardware block\n");
+-
+-	return rcar_sysc_base;
+-}
+-
+ struct rcar_sysc_pd {
+ 	struct generic_pm_domain genpd;
+ 	struct rcar_sysc_ch ch;
+@@ -328,6 +319,9 @@ static int __init rcar_sysc_pd_init(void)
+ 	unsigned int i;
+ 	int error;
  
- #include "common.h"
- #include "rcar-gen2.h"
-+#include "r8a7792.h"
- 
- static const char * const r8a7792_boards_compat_dt[] __initconst = {
- 	"renesas,r8a7792",
-@@ -27,6 +28,7 @@ static const char * const r8a7792_boards
- };
- 
- DT_MACHINE_START(R8A7792_DT, "Generic R8A7792 (Flattened Device Tree)")
-+	.smp		= smp_ops(r8a7792_smp_ops),
- 	.init_early	= shmobile_init_delay,
- 	.init_late	= shmobile_init_late,
- 	.init_time	= rcar_gen2_timer_init,
-Index: renesas/arch/arm/mach-shmobile/smp-r8a7792.c
-===================================================================
---- /dev/null
-+++ renesas/arch/arm/mach-shmobile/smp-r8a7792.c
-@@ -0,0 +1,62 @@
-+/*
-+ * SMP support for r8a7792
-+ *
-+ * Copyright (C) 2014 Renesas Electronics Corporation
-+ * Copyright (C) 2016 Cogent  Embedded, Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
++	if (rcar_sysc_base)
++		return 0;
 +
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/smp.h>
-+#include <linux/io.h>
-+#include <linux/soc/renesas/rcar-sysc.h>
+ 	np = of_find_matching_node_and_match(NULL, rcar_sysc_matches, &match);
+ 	if (!np)
+ 		return -ENODEV;
+@@ -405,3 +399,11 @@ out_put:
+ 	return error;
+ }
+ early_initcall(rcar_sysc_pd_init);
 +
-+#include <asm/smp_plat.h>
-+
-+#include "common.h"
-+#include "platsmp-apmu.h"
-+#include "rcar-gen2.h"
-+#include "r8a7792.h"
-+
-+static struct rcar_sysc_ch r8a7792_ca15_scu = {
-+	.chan_offs	= 0x180,	/* PWRSR5 .. PWRER5 */
-+	.isr_bit	= 12,		/* CA15-SCU */
-+};
-+
-+static struct rcar_apmu_config r8a7792_apmu_config[] = {
-+	{
-+		.iomem	= DEFINE_RES_MEM(0xe6152000, 0x188),
-+		.cpus	= { 0, 1 },
-+	},
-+};
-+
-+static void __init r8a7792_smp_prepare_cpus(unsigned int max_cpus)
++void __iomem * __init rcar_sysc_init(phys_addr_t base)
 +{
-+	/* let APMU code install data related to shmobile_boot_vector */
-+	shmobile_smp_apmu_prepare_cpus(max_cpus,
-+				       r8a7792_apmu_config,
-+				       ARRAY_SIZE(r8a7792_apmu_config));
++	if (rcar_sysc_pd_init())
++		rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
 +
-+	/* turn on power to SCU */
-+	rcar_gen2_pm_init();
-+	rcar_sysc_power_up(&r8a7792_ca15_scu);
++	return rcar_sysc_base;
 +}
-+
-+const struct smp_operations r8a7792_smp_ops __initconst = {
-+	.smp_prepare_cpus	= r8a7792_smp_prepare_cpus,
-+	.smp_boot_secondary	= shmobile_smp_apmu_boot_secondary,
-+#ifdef CONFIG_HOTPLUG_CPU
-+	.cpu_can_disable	= shmobile_smp_cpu_can_disable,
-+	.cpu_die		= shmobile_smp_apmu_cpu_die,
-+	.cpu_kill		= shmobile_smp_apmu_cpu_kill,
-+#endif
-+};
+-- 
+1.9.1
