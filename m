@@ -1,49 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932102AbcF3ORN (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:34531 "EHLO
+	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752442AbcF1OKu (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:17:13 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
+	Tue, 28 Jun 2016 10:10:50 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 26/41] ARM: dts: blanche: document Blanche board
-Date: Thu, 30 Jun 2016 16:15:46 +0200
-Message-Id: <6bc734c64631d21fd4d95a25cc3c1283ac721bb8.1467294011.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
-References: <cover.1467294011.git.horms+renesas@verge.net.au>
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org
+Subject: [PATCH v5 01/13] devicetree: bindings: Renesas APMU and SMP Enable method
+Date: Tue, 28 Jun 2016 16:10:30 +0200
+Message-Id: <1467123042-8468-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
+References: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Document the Blanche device tree bindings, listing it as a supported board.
+Add DT binding documentation for the APMU hardware and add "renesas,apmu"
+to the list of enable methods for the ARM cpus.
 
-This allows to use checkpatch.pl to validate .dts files referring to the
-Blanche board.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Cc: devicetree@vger.kernel.org
 ---
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
+v5:
+  - Add Acked-by,
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 9cf67e48f222..6adb9d549fce 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -39,6 +39,8 @@ Boards:
-     compatible = "renesas,ape6evm", "renesas,r8a73a4"
-   - Atmark Techno Armadillo-800 EVA
-     compatible = "renesas,armadillo800eva"
-+  - Blanche (RTP0RC7792SEB00010S)
-+    compatible = "renesas,blanche", "renesas,r8a7792"
-   - BOCK-W
-     compatible = "renesas,bockw", "renesas,r8a7778"
-   - Genmai (RTK772100BC00000BR)
+v4:
+  - s/reigsters/registers/,
+  - Use "renesas,<soctype>-apmu" instead of "renesas,apmu-<soctype>",
+
+v3:
+  - s/Until/Unit/g,
+
+v2:
+  - No changes.
+---
+ Documentation/devicetree/bindings/arm/cpus.txt     |  1 +
+ .../devicetree/bindings/power/renesas,apmu.txt     | 31 ++++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/renesas,apmu.txt
+
+diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
+index 3f0cbbb8395f84ef..fa7520eb6387edbe 100644
+--- a/Documentation/devicetree/bindings/arm/cpus.txt
++++ b/Documentation/devicetree/bindings/arm/cpus.txt
+@@ -204,6 +204,7 @@ nodes to be present and contain the properties described below.
+ 			    "qcom,gcc-msm8660"
+ 			    "qcom,kpss-acc-v1"
+ 			    "qcom,kpss-acc-v2"
++			    "renesas,apmu"
+ 			    "rockchip,rk3036-smp"
+ 			    "rockchip,rk3066-smp"
+ 			    "ste,dbx500-smp"
+diff --git a/Documentation/devicetree/bindings/power/renesas,apmu.txt b/Documentation/devicetree/bindings/power/renesas,apmu.txt
+new file mode 100644
+index 0000000000000000..84404c9edff73d97
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/renesas,apmu.txt
+@@ -0,0 +1,31 @@
++DT bindings for the Renesas Advanced Power Management Unit
++
++Renesas R-Car line of SoCs utilize one or more APMU hardware units
++for CPU core power domain control including SMP boot and CPU Hotplug.
++
++Required properties:
++
++- compatible: Should be "renesas,<soctype>-apmu", "renesas,apmu" as fallback.
++	      Examples with soctypes are:
++		- "renesas,r8a7790-apmu" (R-Car H2)
++		- "renesas,r8a7791-apmu" (R-Car M2-W)
++		- "renesas,r8a7792-apmu" (R-Car V2H)
++		- "renesas,r8a7793-apmu" (R-Car M2-N)
++		- "renesas,r8a7794-apmu" (R-Car E2)
++
++- reg: Base address and length of the I/O registers used by the APMU.
++
++- cpus: This node contains a list of CPU cores, which should match the order
++  of CPU cores used by the WUPCR and PSTR registers in the Advanced Power
++  Management Unit section of the device's datasheet.
++
++
++Example:
++
++This shows the r8a7791 APMU that can control CPU0 and CPU1.
++
++	apmu@e6152000 {
++		compatible = "renesas,r8a7791-apmu", "renesas,apmu";
++		reg = <0 0xe6152000 0 0x188>;
++		cpus = <&cpu0 &cpu1>;
++	};
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
