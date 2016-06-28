@@ -1,47 +1,63 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v5 10/12] DT: arm: shmobile: document Blanche board
-Date: Mon, 13 Jun 2016 00:14:01 +0300
-Message-ID: <3154028.qktcf3gHzt@wasted.cogentembedded.com>
-In-Reply-To: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
-References: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from laurent.telenet-ops.be ([195.130.137.89]:33603 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752506AbcF1OLK (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 28 Jun 2016 10:11:10 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v5 10/13] ARM: shmobile: r8a7791: Prioritize DT APMU support
+Date: Tue, 28 Jun 2016 16:10:39 +0200
+Message-Id: <1467123042-8468-11-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
+References: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the Blanche device tree bindings, listing it as a supported board.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-This allows to use checkpatch.pl to validate .dts files referring to the
-Blanche board.
+Adjust the r8a7791 SoC support code to not configure any non-DT SMP code
+in case the DT-based enable-method has been installed already.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Rob Herring <robh@kernel.org>
-
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes in version 2:
-- added Rob's ACK.
+v5:
+  - No changes,
 
-Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
- Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
- 1 file changed, 2 insertions(+)
+v4:
+  - No changes,
 
-Index: renesas/Documentation/devicetree/bindings/arm/shmobile.txt
-===================================================================
---- renesas.orig/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ renesas/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -39,6 +39,8 @@ Boards:
-     compatible = "renesas,ape6evm", "renesas,r8a73a4"
-   - Atmark Techno Armadillo-800 EVA
-     compatible = "renesas,armadillo800eva"
-+  - Blanche (RTP0RC7792SEB00010S)
-+    compatible = "renesas,blanche", "renesas,r8a7792"
-   - BOCK-W
-     compatible = "renesas,bockw", "renesas,r8a7778"
-   - Genmai (RTK772100BC00000BR)
+v3:
+  - No changes,
 
+v2:
+  - New.
+---
+ arch/arm/mach-shmobile/setup-r8a7791.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/mach-shmobile/setup-r8a7791.c b/arch/arm/mach-shmobile/setup-r8a7791.c
+index 3b8dbaf07777145e..110e8b588e563fca 100644
+--- a/arch/arm/mach-shmobile/setup-r8a7791.c
++++ b/arch/arm/mach-shmobile/setup-r8a7791.c
+@@ -29,6 +29,7 @@ static const char *const r8a7791_boards_compat_dt[] __initconst = {
+ };
+ 
+ DT_MACHINE_START(R8A7791_DT, "Generic R8A7791 (Flattened Device Tree)")
++	.smp_init	= shmobile_smp_init_fallback_ops,
+ 	.smp		= smp_ops(r8a7791_smp_ops),
+ 	.init_early	= shmobile_init_delay,
+ 	.init_time	= rcar_gen2_timer_init,
+-- 
+1.9.1
