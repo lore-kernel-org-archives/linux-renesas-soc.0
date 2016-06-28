@@ -1,82 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36101 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752702AbcF3OPz (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:37394 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752256AbcF1M77 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:15:55 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v4.8
-Date: Thu, 30 Jun 2016 16:15:06 +0200
-Message-Id: <cover.1467291676.git.horms+renesas@verge.net.au>
+	Tue, 28 Jun 2016 08:59:59 -0400
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+	by ayla.of.borg with esmtp (Exim 4.82)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1bHscQ-0002Bw-2T
+	for linux-renesas-soc@vger.kernel.org; Tue, 28 Jun 2016 14:59:58 +0200
+Received: from geert by ramsan with local (Exim 4.82)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1bHscP-0001RD-Tw
+	for linux-renesas-soc@vger.kernel.org; Tue, 28 Jun 2016 14:59:57 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2016-06-28-v4.7-rc5
+Date: Tue, 28 Jun 2016 14:59:57 +0200
+Message-Id: <1467118797-5492-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+I have pushed renesas-drivers-2016-06-28-v4.7-rc5 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-Please consider these second round of Renesas ARM64 based SoC DT updates
-for v4.8.
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-The support for the new r8a7796 SoC depends on clk definitions which
-I have taken the liberty of including in this branch to avoid depending
-on another branch. The definitions in question are derived from the
-datasheet and in keeping with the approach taken for other Renesas SoCs.
+Today's version is based on renesas-devel-20160627-v4.7-rc5.
 
-This pull request is based on the previous round of
-such requests, tagged as renesas-arm64-dt-for-v4.8,
-which you have already pulled.
+Included branches with driver code:
+  - clk-renesas-for-v4.8
+  - sh-pfc-for-v4.8
+  - topic/r8a7796-clk-wdt-v1
+  - topic/r8a7796-rwdt-v1
+  - topic/rcar-dmac-niklas
+  - topic/ipmmu-multi-arch-v4
+  - topic/r8a7795-ipmmu-v2-rebased1
+  - topic/r8a7796-ipmmu-v1-rebased1
+  - topic/salvator-x-ipmmu-rfc-v3-rebased4
+  - topic/spi-slave-v1
+  - topic/apmu-dt-v5
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-v3
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/pretimeout
+  - topic/h3-pfc-set-voltage-v1-rebased2~1
+  - https://git.ragnatech.se/linux#for-renesas-drivers
+  - git://linuxtv.org/pinchartl/media.git#for/renesas-drivers
+  - topic/fcpf-v1-rebased4
+  - topic/r8a7796-pfc-v1
 
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/mchehab/media-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git#mmc-next
+  - git://git.linaro.org/people/ulf.hansson/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/djbw/dmaengine.git#next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.infradead.org/battery-2.6.git#master
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm-intel#topic/drm-misc
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
 
-The following changes since commit 21cc405c8a6332ddad2d2751a9723b2b3e227a05:
+Gr{oetje,eeting}s,
 
-  arm64: dts: r8a7795: Drop 0x from unit address of gic (2016-05-30 10:18:01 +0900)
+						Geert
 
-are available in the git repository at:
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt2-for-v4.8
-
-for you to fetch changes up to 2c9616a1fc01c656f04f03feb58fa12d9b30802a:
-
-  arm64: dts: r8a7796/salvator-x: Enable watchdog timer (2016-06-28 07:04:44 +0200)
-
-----------------------------------------------------------------
-Second Round of Renesas ARM64 Based SoC DT Updates for v4.8
-
-* Add support for  r8a7796/salvator-x (R-Car Gen 3 M3-W)
-* Add CAN support to r8a7795 ((R-Car Gen 3 H3)
-
-----------------------------------------------------------------
-Geert Uytterhoeven (6):
-      arm64: dts: r8a7795: Add missing blank lines between cpu nodes
-      clk: renesas: Add r8a7796 CPG Core Clock Definitions
-      arm64: dts: r8a7796: Add SYSC PM Domains
-      arm64: dts: r8a7796: Use SYSC "always-on" PM Domain
-      arm64: dts: r8a7796: Add RWDT node
-      arm64: dts: r8a7796/salvator-x: Enable watchdog timer
-
-Ramesh Shanmugasundaram (1):
-      arm64: dts: r8a7795: Add CAN FD support
-
-Simon Horman (1):
-      arm64: dts: r8a7796: Add Renesas R8A7796 SoC support
-
-Takeshi Kihara (1):
-      arm64: dts: salvator-x: add Salvator-X board on R8A7796 SoC
-
- Documentation/devicetree/bindings/arm/shmobile.txt |   4 +
- arch/arm64/Kconfig.platforms                       |   6 +
- arch/arm64/boot/dts/renesas/Makefile               |   1 +
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  26 ++++
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  50 ++++++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 138 +++++++++++++++++++++
- include/dt-bindings/clock/r8a7796-cpg-mssr.h       |  69 +++++++++++
- 7 files changed, 294 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7796.dtsi
- create mode 100644 include/dt-bindings/clock/r8a7796-cpg-mssr.h
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
