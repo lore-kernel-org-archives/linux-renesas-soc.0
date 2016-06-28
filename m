@@ -1,63 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34135 "EHLO
-	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751193AbcF1L7Y (ORCPT
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:45342
+	"EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751956AbcF1Lcq (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 07:59:24 -0400
-MIME-Version: 1.0
-In-Reply-To: <20160628083238.5fe7e32b@recife.lan>
+	Tue, 28 Jun 2016 07:32:46 -0400
+Date: Tue, 28 Jun 2016 08:32:38 -0300
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se,
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+	ian.molton@codethink.co.uk, lars@metafoo.de,
+	william.towle@codethink.co.uk
+Subject: Re: [PATCH v4 3/8] media: rcar_vin: Use correct pad number in
+ try_fmt
+Message-ID: <20160628083238.5fe7e32b@recife.lan>
+In-Reply-To: <1462975376-491-4-git-send-email-ulrich.hecht+renesas@gmail.com>
 References: <1462975376-491-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1462975376-491-4-git-send-email-ulrich.hecht+renesas@gmail.com> <20160628083238.5fe7e32b@recife.lan>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 28 Jun 2016 13:59:22 +0200
-Message-ID: <CAMuHMdUWjTe53bR-u39vn_TKjdWiB5UwO+jJmmk3_u-fe94Jgw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/8] media: rcar_vin: Use correct pad number in try_fmt
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Ian Molton <ian.molton@codethink.co.uk>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	William Towle <william.towle@codethink.co.uk>
-Content-Type: text/plain; charset=UTF-8
+	<1462975376-491-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Mauro,
+Em Wed, 11 May 2016 16:02:51 +0200
+Ulrich Hecht <ulrich.hecht+renesas@gmail.com> escreveu:
 
-On Tue, Jun 28, 2016 at 1:32 PM, Mauro Carvalho Chehab
-<mchehab@s-opensource.com> wrote:
-> Em Wed, 11 May 2016 16:02:51 +0200
-> Ulrich Hecht <ulrich.hecht+renesas@gmail.com> escreveu:
->
->> Fix rcar_vin_try_fmt's use of an inappropriate pad number when calling
->> the subdev set_fmt function - for the ADV7612, IDs should be non-zero.
->>
->> Signed-off-by: William Towle <william.towle@codethink.co.uk>
->> Reviewed-by: Rob Taylor <rob.taylor@codethink.co.uk>
->> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
->> [uli: adapted to rcar-vin rewrite]
->
-> Please use [email@domain: some revierwer note], as stated at Documentation/SubmittingPatches.
+> Fix rcar_vin_try_fmt's use of an inappropriate pad number when calling
+> the subdev set_fmt function - for the ADV7612, IDs should be non-zero.
+> 
+> Signed-off-by: William Towle <william.towle@codethink.co.uk>
+> Reviewed-by: Rob Taylor <rob.taylor@codethink.co.uk>
+> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+> [uli: adapted to rcar-vin rewrite]
 
-"While there is nothing mandatory about this, it
- seems like prepending the description with your mail and/or name, all
- enclosed in square brackets, is noticeable enough to make it obvious that
- you are responsible for last-minute changes."
+Please use [email@domain: some revierwer note], as stated at Documentation/SubmittingPatches.
 
-Hence a name should be sufficient.
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Gr{oetje,eeting}s,
+This patch breaks compilation:
 
-                        Geert
+drivers/media/platform/rcar-vin/rcar-v4l2.c: In function '__rvin_try_format_source':
+drivers/media/platform/rcar-vin/rcar-v4l2.c:115:18: error: 'struct rvin_dev' has no member named 'src_pad_idx'
+  format.pad = vin->src_pad_idx;
+                  ^~
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index 0bc4487..42dbd35 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -98,7 +98,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+>  					struct rvin_source_fmt *source)
+>  {
+>  	struct v4l2_subdev *sd;
+> -	struct v4l2_subdev_pad_config pad_cfg;
+> +	struct v4l2_subdev_pad_config *pad_cfg;
+>  	struct v4l2_subdev_format format = {
+>  		.which = which,
+>  	};
+> @@ -108,10 +108,16 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+>  
+>  	v4l2_fill_mbus_format(&format.format, pix, vin->source.code);
+>  
+> +	pad_cfg = v4l2_subdev_alloc_pad_config(sd);
+> +	if (pad_cfg == NULL)
+> +		return -ENOMEM;
+> +
+> +	format.pad = vin->src_pad_idx;
+> +
+>  	ret = v4l2_device_call_until_err(sd->v4l2_dev, 0, pad, set_fmt,
+> -					 &pad_cfg, &format);
+> +					 pad_cfg, &format);
+>  	if (ret < 0)
+> -		return ret;
+> +		goto cleanup;
+>  
+>  	v4l2_fill_pix_format(pix, &format.format);
+>  
+> @@ -121,6 +127,8 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+>  	vin_dbg(vin, "Source resolution: %ux%u\n", source->width,
+>  		source->height);
+>  
+> +cleanup:
+> +	v4l2_subdev_free_pad_config(pad_cfg);
+>  	return 0;
+>  }
+>  
+
+
+
+Thanks,
+Mauro
