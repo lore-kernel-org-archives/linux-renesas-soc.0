@@ -1,57 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:59852 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752242AbcF1OKt (ORCPT
+Received: from mail2.asahi-net.or.jp ([202.224.39.198]:38724 "EHLO
+	mail2.asahi-net.or.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750704AbcF1HXC (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 10:10:49 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 02/13] soc: renesas: rcar-sysc: Fix uninitialized error code in rcar_sysc_pd_init()
-Date: Tue, 28 Jun 2016 16:10:31 +0200
-Message-Id: <1467123042-8468-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
-References: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
+	Tue, 28 Jun 2016 03:23:02 -0400
+From: Yoshinori Sato <ysato@users.sourceforge.jp>
+To: linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Subject: [PATCH] sh-sci: Separate sci_port on earlycon
+Date: Tue, 28 Jun 2016 16:22:58 +0900
+Message-Id: <1467098578-10364-1-git-send-email-ysato@users.sourceforge.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On success, rcar_sysc_pd_init() returns an uninitialized error code.
-Use the return value of of_genpd_add_provider_onecell() to fix this.
+sci0 and earlycon use same sci_port.
+So earlycon dead after sci0 initialize.
 
-This went unnoticed, as early_initcall() doesn't care about the return
-value.
+This fix assign separate sci_port for earlycon.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
 ---
-v5:
-  - No changes,
+ drivers/tty/serial/sh-sci.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
-v4:
-  - New.
----
- drivers/soc/renesas/rcar-sysc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index a43ca24699bed1ec..59a8152681a59a5c 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -398,7 +398,7 @@ static int __init rcar_sysc_pd_init(void)
- 		domains->domains[area->isr_bit] = &pd->genpd;
- 	}
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 5a73620..210c95e 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -146,6 +146,8 @@ struct sci_port {
+ #define SCI_NPORTS CONFIG_SERIAL_SH_SCI_NR_UARTS
  
--	of_genpd_add_provider_onecell(np, &domains->onecell_data);
-+	error = of_genpd_add_provider_onecell(np, &domains->onecell_data);
+ static struct sci_port sci_ports[SCI_NPORTS];
++#define EARLY_INDEX 256
++static struct sci_port earlycon_port;
+ static struct uart_driver sci_uart_driver;
  
- out_put:
- 	of_node_put(np);
+ static inline struct sci_port *
+@@ -2510,7 +2512,6 @@ static int sci_init_single(struct platform_device *dev,
+ 	int ret;
+ 
+ 	sci_port->cfg	= p;
+-
+ 	port->ops	= &sci_uart_ops;
+ 	port->iotype	= UPIO_MEM;
+ 	port->line	= index;
+@@ -2668,12 +2669,16 @@ static void serial_console_putchar(struct uart_port *port, int ch)
+ static void serial_console_write(struct console *co, const char *s,
+ 				 unsigned count)
+ {
+-	struct sci_port *sci_port = &sci_ports[co->index];
+-	struct uart_port *port = &sci_port->port;
++	struct sci_port *sci_port;
++	struct uart_port *port;
+ 	unsigned short bits, ctrl, ctrl_temp;
+ 	unsigned long flags;
+ 	int locked = 1;
+ 
++	sci_port = (co->index != EARLY_INDEX) ? 
++		&sci_ports[co->index] :  &earlycon_port;
++	port = &sci_port->port;
++
+ 	local_irq_save(flags);
+ #if defined(SUPPORT_SYSRQ)
+ 	if (port->sysrq)
+@@ -3036,13 +3041,14 @@ static int __init early_console_setup(struct earlycon_device *device,
+ 	device->port.serial_in = sci_serial_in;
+ 	device->port.serial_out	= sci_serial_out;
+ 	device->port.type = type;
+-	memcpy(&sci_ports[0].port, &device->port, sizeof(struct uart_port));
+-	sci_ports[0].cfg = &port_cfg;
+-	sci_ports[0].cfg->type = type;
+-	sci_probe_regmap(sci_ports[0].cfg);
+-	port_cfg.scscr = sci_serial_in(&sci_ports[0].port, SCSCR) |
++	device->con->index = EARLY_INDEX;
++	memcpy(&earlycon_port.port, &device->port, sizeof(struct uart_port));
++	earlycon_port.cfg = &port_cfg;
++	earlycon_port.cfg->type = type;
++	sci_probe_regmap(earlycon_port.cfg);
++	port_cfg.scscr = sci_serial_in(&earlycon_port.port, SCSCR) |
+ 			 SCSCR_RE | SCSCR_TE;
+-	sci_serial_out(&sci_ports[0].port, SCSCR, port_cfg.scscr);
++	sci_serial_out(&earlycon_port.port, SCSCR, port_cfg.scscr);
+ 
+ 	device->con->write = serial_console_write;
+ 	return 0;
 -- 
-1.9.1
+2.7.0
