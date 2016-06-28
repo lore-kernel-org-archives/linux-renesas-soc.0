@@ -1,80 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:35485 "EHLO
-	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751628AbcFTWc3 (ORCPT
+Received: from mail-io0-f182.google.com ([209.85.223.182]:36371 "EHLO
+	mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752240AbcF1NDh (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 20 Jun 2016 18:32:29 -0400
-Received: by mail-lf0-f53.google.com with SMTP id l188so49269047lfe.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Jun 2016 15:31:08 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: dts: r8a7792: add SMP support
-Date: Tue, 21 Jun 2016 01:31:01 +0300
-Message-ID: <1627631.X1bJtVQHBF@wasted.cogentembedded.com>
-In-Reply-To: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
-References: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+	Tue, 28 Jun 2016 09:03:37 -0400
+Received: by mail-io0-f182.google.com with SMTP id s63so15758177ioi.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Jun 2016 06:03:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1467106492-1341-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1467106492-1341-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 28 Jun 2016 15:03:16 +0200
+Message-ID: <CAMuHMdXVeHAYAJy1R-gRDr7emWTqYO34x=n=kQPsVkyMFdK3Cg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Initial r8a7796 PFC support
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the device tree nodes for the Advanced Power Management Unit (APMU)
-and the second Cortex-A15 CPU core.
-Use the "enable-method" prop  to point out that the APMU should be used
-for the SMP support.
+Hi Uli,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Tue, Jun 28, 2016 at 11:34 AM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> This implements a minimal set of PFC functionality for the M3 and sits on
+> top of renesas-drivers-2016-06-21-v4.7-rc4.  It includes the SCIF pin groups
+> and enables pin control for the serial console (SCIF2) on the Salvator-X
+> board.
 
----
-This patch is against the 'renesas-devel-20160620-v4.7-rc4' tag of Simon
-Horman's 'renesas.git' repo.  It depends on Magnus'/Geert's SMP patchset...
+Thanks, I've imported this into the topic/r8a7796-pfc-v1 branch of my
+renesas-drivers repository.
 
- arch/arm/boot/dts/r8a7792.dtsi |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Gr{oetje,eeting}s,
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -21,6 +21,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "renesas,apmu";
- 
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-@@ -32,6 +33,15 @@
- 			next-level-cache = <&L2_CA15>;
- 		};
- 
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <1>;
-+			clock-frequency = <1000000000>;
-+			power-domains = <&sysc R8A7792_PD_CA15_CPU1>;
-+			next-level-cache = <&L2_CA15>;
-+		};
-+
- 		L2_CA15: cache-controller@0 {
- 			compatible = "cache";
- 			reg = <0>;
-@@ -49,6 +59,12 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		apmu@e6152000 {
-+			compatible = "renesas,r8a7792-apmu", "renesas,apmu";
-+			reg = <0 0xe6152000 0 0x188>;
-+			cpus = <&cpu0 &cpu1>;
-+		};
-+
- 		gic: interrupt-controller@f1001000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
