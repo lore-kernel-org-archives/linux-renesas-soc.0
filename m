@@ -1,82 +1,84 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: [PATCH v1 17/25] PCI: generic: Simplify host bridge window iteration
-To: linux-pci@vger.kernel.org
-From: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	Rob Herring <robh@kernel.org>,
-	Jason Cooper <jason@lakedaemon.net>,
-	Scott Branden <sbranden@broadcom.com>,
-	Jon Mason <jonmason@broadcom.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Pratyush Anand <pratyush.anand@gmail.com>,
-	linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:58291 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752257AbcF1OKt (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 28 Jun 2016 10:10:49 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
 	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>,
-	linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
-	Michal Simek <michal.simek@xilinx.com>,
-	=?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
-	linux-arm-kernel@lists.infradead.org
-Date: Mon, 06 Jun 2016 18:06:51 -0500
-Message-ID: <20160606230651.20936.73053.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: linux-kernel-owner@vger.kernel.org
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v5 11/13] ARM: dts: r8a7790: Add APMU nodes
+Date: Tue, 28 Jun 2016 16:10:40 +0200
+Message-Id: <1467123042-8468-12-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
+References: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The switch is the only statement in the resource_list_for_each_entry()
-loop, so remove unnecessary "continue" statements in the switch.  Simplify
-checking for the required non-prefetchable memory aperture.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-No functional change intended.
+Add DT nodes for the Advanced Power Management Units (APMU), and use the
+enable-method to point out that the APMU should be used for SMP
+support.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pci/host/pci-host-common.c |   17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+v5:
+  - No changes,
 
-diff --git a/drivers/pci/host/pci-host-common.c b/drivers/pci/host/pci-host-common.c
-index e7515fd..bb03120 100644
---- a/drivers/pci/host/pci-host-common.c
-+++ b/drivers/pci/host/pci-host-common.c
-@@ -46,29 +46,24 @@ static int gen_pci_parse_request_of_pci_ranges(struct device *dev,
- 		switch (resource_type(res)) {
- 		case IORESOURCE_IO:
- 			err = pci_remap_iospace(res, iobase);
--			if (err) {
-+			if (err)
- 				dev_warn(dev, "error %d: failed to map resource %pR\n",
- 					 err, res);
--				continue;
--			}
- 			break;
- 		case IORESOURCE_MEM:
- 			res_valid |= !(res->flags & IORESOURCE_PREFETCH);
- 			break;
- 		case IORESOURCE_BUS:
- 			*bus_range = res;
--		default:
--			continue;
-+			break;
- 		}
- 	}
+v4:
+  - Improve patch description,
+  - Use "renesas,<soctype>-apmu" instead of "renesas,apmu-<soctype>",
+
+v3:
+  - No changes,
+
+v2:
+  - New.
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 9997e7dfabe2250c..d18558f211022826 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -44,6 +44,7 @@
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		enable-method = "renesas,apmu";
  
--	if (!res_valid) {
--		dev_err(dev, "non-prefetchable memory resource required\n");
--		err = -EINVAL;
--		goto out_release_res;
--	}
-+	if (res_valid)
-+		return 0;
+ 		cpu0: cpu@0 {
+ 			device_type = "cpu";
+@@ -164,6 +165,18 @@
+ 		};
+ 	};
  
--	return 0;
-+	dev_err(dev, "non-prefetchable memory resource required\n");
-+	err = -EINVAL;
- 
- out_release_res:
- 	pci_free_resource_list(resources);
++	apmu@e6151000 {
++		compatible = "renesas,r8a7790-apmu", "renesas,apmu";
++		reg = <0 0xe6151000 0 0x188>;
++		cpus = <&cpu4 &cpu5 &cpu6 &cpu7>;
++	};
++
++	apmu@e6152000 {
++		compatible = "renesas,r8a7790-apmu", "renesas,apmu";
++		reg = <0 0xe6152000 0 0x188>;
++		cpus = <&cpu0 &cpu1 &cpu2 &cpu3>;
++	};
++
+ 	gic: interrupt-controller@f1001000 {
+ 		compatible = "arm,gic-400";
+ 		#interrupt-cells = <3>;
+-- 
+1.9.1
