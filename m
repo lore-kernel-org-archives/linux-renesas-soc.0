@@ -1,42 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52954 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753723AbcFTTLu (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35247 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752401AbcF1MVu convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 20 Jun 2016 15:11:50 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 04/24] v4l: vsp1: Don't create HGO entity when the userspace API is disabled
-Date: Mon, 20 Jun 2016 22:10:22 +0300
-Message-Id: <1466449842-29502-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Tue, 28 Jun 2016 08:21:50 -0400
+MIME-Version: 1.0
+In-Reply-To: <20160627174533.16029-2-niklas.soderlund+renesas@ragnatech.se>
+References: <20160627174533.16029-1-niklas.soderlund+renesas@ragnatech.se> <20160627174533.16029-2-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 28 Jun 2016 14:21:10 +0200
+Message-ID: <CAMuHMdVsXL7vR+-DVgy5N+MkG0C9HYpz7Fmght0KyRvOi9Vv1w@mail.gmail.com>
+Subject: Re: [PATCH] [media] rcar-csi2: add Renesas R-Car MIPI CSI-2 driver
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	Hans Verkuil <hans.verkuil@cisco.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The HGO is never used in the DRM pipeline, there is thus no need to
-create an HGO entity when the userspace API is disabled.
+Hi Niklas,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Jun 27, 2016 at 7:45 PM, Niklas Söderlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/rcar-csi2.txt
+> @@ -0,0 +1,79 @@
+> +Renesas R-Car MIPI CSI-2 driver (rcar-csi2)
+> +-------------------------------------------
+> +
+> +The rcar-csi2 device provides MIPI CSI-2 capabilities for the Renesas R-Car
+> +family of devices. It is to be used in conjunction with the rcar-vin driver which
+> +provides the video input capabilities.
+> +
+> + - compatible: Must be one or more of the following
+> +   - "renesas,csi2-r8a7795" for the R8A7795 device
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index 3e94e1921656..0d3624a05ef1 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -282,7 +282,7 @@ static int vsp1_create_entities(struct vsp1_device *vsp1)
- 
- 	list_add_tail(&vsp1->hst->entity.list_dev, &vsp1->entities);
- 
--	if (vsp1->info->features & VSP1_HAS_HGO) {
-+	if (vsp1->info->features & VSP1_HAS_HGO && vsp1->info->uapi) {
- 		vsp1->hgo = vsp1_hgo_create(vsp1);
- 		if (IS_ERR(vsp1->hgo)) {
- 			ret = PTR_ERR(vsp1->hgo);
--- 
-Regards,
+Please use "renesas,<soctype>-<device>" for new bindings, i.e.
+"renesas,r8a7795-csi2".
 
-Laurent Pinchart
+> +   - "renesas,rcar-gen3-csi2" for a generic R-Car Gen3 compatible device.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
