@@ -1,108 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:35620 "EHLO
-	mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932196AbcFBQCA (ORCPT
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:35880 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751636AbcF2IrV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 2 Jun 2016 12:02:00 -0400
+	Wed, 29 Jun 2016 04:47:21 -0400
+Received: by mail-ob0-f176.google.com with SMTP id mu6so16225568obc.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jun 2016 01:47:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1464860702-46087-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1456824849-7987-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-	<1464860702-46087-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-	<1464860702-46087-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Date: Thu, 2 Jun 2016 18:01:59 +0200
-Message-ID: <CAO3366wP+tBaGbrMceupcJu0agW5Euo3NBNwijNCmpM1XcDGmQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH v5 1/2] can: rcar_canfd: Add Renesas R-Car CAN FD driver
-From: Ulrich Hecht <ulrich.hecht@gmail.com>
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: mkl@pengutronix.de, wg@grandegger.com, socketcan@hartkopp.net,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	chris.paterson2@renesas.com, Simon Horman <horms@verge.net.au>,
+In-Reply-To: <5771D5DA.1020702@jinso.co.jp>
+References: <56FE29DC.4060605@jinso.co.jp> <571DE43D.3020308@jinso.co.jp>
+ <CACRpkdYMD-XZ3w9n=EaSK12xXhiTvStS61a86RYezew_-HYUvA@mail.gmail.com>
+ <57204CDA.6030403@jinso.co.jp> <5771D5DA.1020702@jinso.co.jp>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 29 Jun 2016 10:47:19 +0200
+Message-ID: <CACRpkda4YZyYvFJZtYndgGjrOve1D7e1=Xay78m9is987VjRcg@mail.gmail.com>
+Subject: Re: [Bug]:LAGER: GPIO-KEYS: Warning occurs after unbinding the e6051000.gpio
+To: Hiep Cao Minh <cm-hiep@jinso.co.jp>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
+	Sakato Ryusuke <ryusuke.sakato.bx@renesas.com>,
+	kuninori morimoto <kuninori.morimoto.gx@renesas.com>,
+	Nguyen Viet Dung <nv-dung@jinso.co.jp>,
+	LE MINH DUC <lm-duc@jinso.co.jp>,
+	=?UTF-8?B?56iy5ZCJ77ya5Lq644K9?= <h-inayoshi@jinso.co.jp>,
+	"M.Miura" <m-miura@jinso.co.jp>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Thank you for your patch.
+On Tue, Jun 28, 2016 at 3:41 AM, Hiep Cao Minh <cm-hiep@jinso.co.jp> wrote:
 
-On Thu, Jun 2, 2016 at 11:45 AM, Ramesh Shanmugasundaram
-<ramesh.shanmugasundaram@bp.renesas.com> wrote:
-[...]
-> diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-> new file mode 100644
-> index 0000000..e198732
-> --- /dev/null
-> +++ b/drivers/net/can/rcar/rcar_canfd.c
-> @@ -0,0 +1,1624 @@
-> +/* Renesas R-Car CAN FD device driver
-> + *
-> + * Copyright (C) 2015 Renesas Electronics Corp.
-> + *
-> + * This program is free software; you can redistribute  it and/or modify it
-> + * under  the terms of  the GNU General  Public License as published by the
-> + * Free Software Foundation;  either version 2 of the  License, or (at your
-> + * option) any later version.
-> + */
-> +
-> +/* The R-Car CAN FD controller can operate in either one of the below two modes
-> + *  - CAN FD only mode
-> + *  - Classical CAN (CAN 2.0) only mode
-> + *
-> + * This driver puts the controller in CAN FD only mode by default. In this
-> + * mode, the controller acts as a CAN FD node that can also interoperate with
-> + * CAN 2.0 nodes.
-> + *
-> + * As of now, this driver does not support the Classical CAN (CAN 2.0) mode,
-> + * which is handled by a different register map compared to CAN FD only mode.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/moduleparam.h>
-> +#include <linux/kernel.h>
-> +#include <linux/types.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/errno.h>
-> +#include <linux/netdevice.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/can/led.h>
-> +#include <linux/can/dev.h>
-> +#include <linux/clk.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/bitmap.h>
-> +#include <linux/bitops.h>
-> +#include <linux/iopoll.h>
-> +
-> +#define RCANFD_DRV_NAME                        "rcar_canfd"
-> +
-> +#define RCANFD_FIFO_DEPTH              8       /* Tx FIFO depth */
-> +#define RCANFD_NAPI_WEIGHT             8       /* Rx poll quota */
-> +
-> +#define RCANFD_NUM_CHANNELS            2       /* Two channels max */
-> +#define RCANFD_CHANNELS_MASK           BIT((RCANFD_NUM_CHANNELS) - 1)
-> +
-> +/* Rx FIFO is a global resource of the controller. There are 8 such FIFOs
-> + * available. Each channel gets a dedicated Rx FIFO (i.e.) the channel
-> + * number is added to RFFIFO index.
-> + */
-> +#define RCANFD_RFFIFO_IDX              0
-> +
-> +/* Tx/Rx or Common FIFO is a per channel resource. Each channel has 3 Common
-> + * FIFOs dedicated to them. Use the first (index 0) FIFO out of the 3 for Tx.
-> + */
-> +#define RCANFD_CFFIFO_IDX              0
-> +
-> +/* Global register bits */
-> +#define RCANFD_GINTF_CANFD             BIT(0)
-> +
-> +#define RCANFD_GCFG_TPRI               BIT(0)
-> +#define RCANFD_GCFG_DCE                        BIT(1)
-> +#define RCANFD_GCFG_DCS                        BIT(4)
-> +#define RCANFD_GCFG_CMPOC              BIT(5)
+> As I have reported you the issue that related to your released patch.
+> Could you please consider this issue and tell me how to resolve this
+> problem?
+>
+> This issue still happens on Rcar-H2 and Rcar-M2 (Renesas's SOC) at the Linux
+> upstream version v4.7-rc2.
 
-What reference are the register layouts based on? This bit, for
-instance, is marked reserved in R-Car-Gen3-rev0.51e.pdf, and many are
-named differently.
+I think the patches that Torvalds merged for v4.7-rc3
+http://lwn.net/Articles/690987/ especially these two:
 
-CU
-Uli
+Ricardo Ribalda Delgado (2):
+      gpiolib: Fix NULL pointer deference
+      gpiolib: Fix unaligned used of reference counters
+
+Solves the issue.
+
+Can you verify?
+
+Yours,
+Linus Walleij
