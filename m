@@ -1,181 +1,172 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:24940 "EHLO
-	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752722AbcFVMiu (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:56463 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750873AbcF2H66 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 22 Jun 2016 08:38:50 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: mkl@pengutronix.de, wg@grandegger.com, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org
-Cc: ulrich.hecht+renesas@gmail.com, horms@verge.net.au,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	chris.paterson2@renesas.com, magnus.damm@gmail.com,
-	socketcan@hartkopp.net,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v2 2/2] can: rcar_canfd: Add back-to-error-active support
-Date: Wed, 22 Jun 2016 13:31:47 +0100
-Message-Id: <1466598707-44076-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1466598707-44076-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1466434007-50873-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <1466598707-44076-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+	Wed, 29 Jun 2016 03:58:58 -0400
+Subject: Re: [PATCH v2 2/4] clk: renesas: Add r8a7796 CPG Core Clock
+ Definitions
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1464625737-6646-1-git-send-email-geert+renesas@glider.be>
+ <1464625737-6646-3-git-send-email-geert+renesas@glider.be>
+ <574C6C16.3020703@gmail.com>
+ <6b57d59f-d17b-a6c3-41d5-e975db544adc@de.bosch.com>
+ <CAMuHMdWByGTDcG62qTg5N69FACx4FiuVuRrF_woyFAoNOpbjSw@mail.gmail.com>
+ <77a45dc7-59f0-23fc-f30d-b3daab34d689@de.bosch.com>
+ <CAMuHMdW6kTMQoVO15Eve2Er5pfSiEc4LkwvQ72WU1LmdSK+CxQ@mail.gmail.com>
+ <94042cf8-5364-8426-a5de-b83fe291fee1@de.bosch.com>
+ <CAMuHMdVBu-ecbisZWfx0uKMx=M0zjT+u=j-uF=85_gaDt2u7Jg@mail.gmail.com>
+ <743e32de-037b-de4d-98c3-ea7a2738343a@de.bosch.com>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	TOSHIAKI KOMATSU <toshiaki.komatsu.ud@renesas.com>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <3db87dd5-23a0-56c9-27b5-efac9f8d8023@de.bosch.com>
+Date: Wed, 29 Jun 2016 09:58:55 +0200
+MIME-Version: 1.0
+In-Reply-To: <743e32de-037b-de4d-98c3-ea7a2738343a@de.bosch.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As per Wolfgang G, all new drivers should support decreasing state
-transition(back-to-error-active). This patch adds this support.
+Hi Geert,
 
-This driver configures the controller to halt on bus-off entry. Hence,
-when in error states less than bus off state, the TEC/REC counters
-are checked for lower state transition eligibility and action.
+On 10.06.2016 08:34, Dirk Behme wrote:
+> Hi Geert,
+>
+> On 09.06.2016 10:54, Geert Uytterhoeven wrote:
+>> Hi Dirk,
+>>
+>> On Thu, Jun 9, 2016 at 10:31 AM, Dirk Behme <dirk.behme@de.bosch.com>
+>> wrote:
+>>> On 07.06.2016 10:17, Geert Uytterhoeven wrote:
+>>>> On Tue, Jun 7, 2016 at 9:53 AM, Dirk Behme <dirk.behme@de.bosch.com>
+>>>> wrote:
+>>>>>
+>>>>> I think I just want to discuss if we have a clever idea to further
+>>>>> improve
+>>>>> one detail. That is, if we have a clever idea to avoid the copy &
+>>>>> paste
+>>>>> between the family members using anything like a hierarchical way of
+>>>>> defining the clocks in r8a779x-cpg-mssr.h.
+>>>>>
+>>>>>> Given the small amount of work needed to bootstrap r8a7796, I
+>>>>>> think they still hold on their promises.
+>>>>>
+>>>>> Well, regarding the r8a779x-cpg-mssr.h the small amount of work needed
+>>>>> isn't
+>>>>> a really good argument if you are good with cp & sed for the copy &
+>>>>> paste
+>>>>> done ;)
+>>>>
+>>>> They're not really created by cp & sed, as they must match the table in
+>>>> the
+>>>> datasheet (the latter may have been created by copy & paste though :-)
+>>>>
+>>>>> What I fear we end up the way we are doing the copy & paste
+>>>>> r8a779x-cpg-mssr.h is having 5 or 6 or even more of these files, all >
+>>>>> 90%
+>>>>> identical. And once you have to change anything, you either have to
+>>>>> change
+>>>>> all these files. Or you miss anything, ending up with subtle bugs when
+>>>>> one
+>>>>> SoC does behave differently than an other one.
+>>>>
+>>>> The point is these files are stable ABI: no single value can be
+>>>> changed.
+>>>> No value can be reused. Only new values can be appended at the bottom
+>>>> (if a newer revision of the datasheet documents more clocks than the
+>>>> old
+>>>>  version, which happens from time to time).
+>>>>
+>>>> IMHO a hierarchical way of defining the clocks has more opportunity of
+>>>> accidentally referring to a clock that doesn't exist on a particular
+>>>> SoC.
+>>>>
+>>>> Furthermore, r8a779x-cpg-mssr.h is not a good name to be part of a DT
+>>>> binding,
+>>>> due to the wildcard.
+>>>> A future SoC may will match r8a779x and even be called (R-Car
+>>>> <something>3?),
+>>>> while using a completely different CPG block.
+>>>
+>>> Just to give an example about what we are talking, I've done [1]
+>>> below. This
+>>> should just be an *example*, though. I'm sure that we might need a more
+>>> clever way.
+>>
+>> Thanks, it matches with what I had in mind what you wanted to do ;-)
+>>
+>>> --- a/include/dt-bindings/clock/r8a7796-cpg-mssr.h
+>>> +++ b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
+>>
+>>> +#include <dt-bindings/clock/rcar3-cpg-mssr.h>
+>>
+>>> +#define R8A7796_CLK_ZB3D4              47
+>>> +#define R8A7796_CLK_S0D2               48
+>>> +#define R8A7796_CLK_S0D3               49
+>>> +#define R8A7796_CLK_S0D6               50
+>>> +#define R8A7796_CLK_S0D8               51
+>>> +#define R8A7796_CLK_S0D12              53
+>>
+>> This means on M3-W, clocks may have different prefixes:
+>>   - RCAR3_CLK_* if they are defined as common R-Car Gen3 clocks,
+>>   - R8A7796_CLK_* if they are defined as M3-W-specific clocks.
+>>
+>> Not such a big issue, it that can be worked around using
+>>
+>>     #define R8A7796_CLK_Z RCAR3_CLK_Z
+>>     [...]
+>>
+>>> +++ b/include/dt-bindings/clock/rcar3-cpg-mssr.h
+>>> @@ -0,0 +1,63 @@
+>>> +/*
+>>> + * Copyright (C) 2015 Renesas Electronics Corp.
+>>> + *
+>>> + * This program is free software; you can redistribute it and/or modify
+>>> + * it under the terms of the GNU General Public License as published by
+>>> + * the Free Software Foundation; either version 2 of the License, or
+>>> + * (at your option) any later version.
+>>> + */
+>>> +#ifndef __DT_BINDINGS_CLOCK_RCAR3_CPG_MSSR_H__
+>>> +#define __DT_BINDINGS_CLOCK_RCAR3_CPG_MSSR_H__
+>>> +
+>>> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+>>> +
+>>> +/* RCar3 CPG Core Clocks */
+>>> +#define RCAR3_CLK_Z            0
+>>> +#define RCAR3_CLK_Z2           1
+>>> +#define RCAR3_CLK_ZR           2
+>>> +#define RCAR3_CLK_ZG           3
+>>> +#define RCAR3_CLK_ZTR          4
+>>> +#define RCAR3_CLK_ZTRD2                5
+>>
+>> While this approach allows to add SoC-specific clocks to the
+>> family-specific
+>> base list, it does not allow to remove family-specific clocks that are
+>> not
+>> present on unknown future species of the family.
+>
+>
+> If I answer with
+>
+> #undef
+>
+> that would be too easy? ;)
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- drivers/net/can/rcar/rcar_canfd.c | 76 ++++++++++++++++++++++++++++-----------
- 1 file changed, 56 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index 6bcc474..43cdd55 100644
---- a/drivers/net/can/rcar/rcar_canfd.c
-+++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -917,16 +917,17 @@ static void rcar_canfd_global_error(struct net_device *ndev)
- 	rcar_canfd_write(priv->base, RCANFD_GERFL, 0);
- }
- 
--static void rcar_canfd_error(struct net_device *ndev)
-+static void rcar_canfd_error(struct net_device *ndev, u32 cerfl,
-+			     u16 txerr, u16 rxerr)
- {
- 	struct rcar_canfd_channel *priv = netdev_priv(ndev);
- 	struct net_device_stats *stats = &ndev->stats;
- 	struct can_frame *cf;
- 	struct sk_buff *skb;
--	u32 cerfl, csts;
--	u32 txerr = 0, rxerr = 0;
- 	u32 ch = priv->channel;
- 
-+	netdev_dbg(ndev, "ch erfl %x txerr %u rxerr %u\n", cerfl, txerr, rxerr);
-+
- 	/* Propagate the error condition to the CAN stack */
- 	skb = alloc_can_err_skb(ndev, &cf);
- 	if (!skb) {
-@@ -934,15 +935,7 @@ static void rcar_canfd_error(struct net_device *ndev)
- 		return;
- 	}
- 
--	/* Channel error interrupt */
--	cerfl = rcar_canfd_read(priv->base, RCANFD_CERFL(ch));
--	csts = rcar_canfd_read(priv->base, RCANFD_CSTS(ch));
--	txerr = RCANFD_CSTS_TECCNT(csts);
--	rxerr = RCANFD_CSTS_RECCNT(csts);
--
--	netdev_dbg(ndev, "ch erfl %x sts %x txerr %u rxerr %u\n",
--		   cerfl, csts, txerr, rxerr);
--
-+	/* Channel error interrupts */
- 	if (cerfl & RCANFD_CERFL_BEF) {
- 		netdev_dbg(ndev, "Bus error\n");
- 		cf->can_id |= CAN_ERR_BUSERROR | CAN_ERR_PROT;
-@@ -1032,8 +1025,9 @@ static void rcar_canfd_error(struct net_device *ndev)
- 		cf->data[2] |= CAN_ERR_PROT_OVERLOAD;
- 	}
- 
--	/* Clear all channel error interrupts */
--	rcar_canfd_write(priv->base, RCANFD_CERFL(ch), 0);
-+	/* Clear channel error interrupts that are handled */
-+	rcar_canfd_write(priv->base, RCANFD_CERFL(ch),
-+			 RCANFD_CERFL_ERR(~cerfl));
- 	stats->rx_packets++;
- 	stats->rx_bytes += cf->can_dlc;
- 	netif_rx(skb);
-@@ -1098,12 +1092,12 @@ static irqreturn_t rcar_canfd_global_interrupt(int irq, void *dev_id)
- 
- 		/* Global error interrupts */
- 		gerfl = rcar_canfd_read(priv->base, RCANFD_GERFL);
--		if (RCANFD_GERFL_ERR(gpriv, gerfl))
-+		if (unlikely(RCANFD_GERFL_ERR(gpriv, gerfl)))
- 			rcar_canfd_global_error(ndev);
- 
- 		/* Handle Rx interrupts */
- 		sts = rcar_canfd_read(priv->base, RCANFD_RFSTS(ridx));
--		if (sts & RCANFD_RFSTS_RFIF) {
-+		if (likely(sts & RCANFD_RFSTS_RFIF)) {
- 			if (napi_schedule_prep(&priv->napi)) {
- 				/* Disable Rx FIFO interrupts */
- 				rcar_canfd_clear_bit(priv->base,
-@@ -1116,12 +1110,46 @@ static irqreturn_t rcar_canfd_global_interrupt(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+static void rcar_canfd_state_change(struct net_device *ndev,
-+				    u16 txerr, u16 rxerr)
-+{
-+	struct rcar_canfd_channel *priv = netdev_priv(ndev);
-+	struct net_device_stats *stats = &ndev->stats;
-+	enum can_state rx_state, tx_state, state = priv->can.state;
-+	struct can_frame *cf;
-+	struct sk_buff *skb;
-+
-+	/* Handle transition from error to normal states */
-+	if (txerr < 96 && rxerr < 96)
-+		state = CAN_STATE_ERROR_ACTIVE;
-+	else if (txerr < 128 && rxerr < 128)
-+		state = CAN_STATE_ERROR_WARNING;
-+
-+	if (state != priv->can.state) {
-+		netdev_dbg(ndev, "state: new %d, old %d: txerr %u, rxerr %u\n",
-+			   state, priv->can.state, txerr, rxerr);
-+		skb = alloc_can_err_skb(ndev, &cf);
-+		if (!skb) {
-+			stats->rx_dropped++;
-+			return;
-+		}
-+		tx_state = txerr >= rxerr ? state : 0;
-+		rx_state = txerr <= rxerr ? state : 0;
-+
-+		can_change_state(ndev, cf, tx_state, rx_state);
-+		stats->rx_packets++;
-+		stats->rx_bytes += cf->can_dlc;
-+		netif_rx(skb);
-+	}
-+}
-+
- static irqreturn_t rcar_canfd_channel_interrupt(int irq, void *dev_id)
- {
- 	struct rcar_canfd_global *gpriv = dev_id;
- 	struct net_device *ndev;
- 	struct rcar_canfd_channel *priv;
--	u32 sts, cerfl, ch;
-+	u32 sts, ch, cerfl;
-+	u16 txerr, rxerr;
- 
- 	/* Common FIFO is a per channel resource */
- 	for_each_set_bit(ch, &gpriv->channels_mask, RCANFD_NUM_CHANNELS) {
-@@ -1130,13 +1158,21 @@ static irqreturn_t rcar_canfd_channel_interrupt(int irq, void *dev_id)
- 
- 		/* Channel error interrupts */
- 		cerfl = rcar_canfd_read(priv->base, RCANFD_CERFL(ch));
--		if (RCANFD_CERFL_ERR(cerfl))
--			rcar_canfd_error(ndev);
-+		sts = rcar_canfd_read(priv->base, RCANFD_CSTS(ch));
-+		txerr = RCANFD_CSTS_TECCNT(sts);
-+		rxerr = RCANFD_CSTS_RECCNT(sts);
-+		if (unlikely(RCANFD_CERFL_ERR(cerfl)))
-+			rcar_canfd_error(ndev, cerfl, txerr, rxerr);
-+
-+		/* Handle state change to lower states */
-+		if (unlikely((priv->can.state != CAN_STATE_ERROR_ACTIVE) &&
-+			     (priv->can.state != CAN_STATE_BUS_OFF)))
-+			rcar_canfd_state_change(ndev, txerr, rxerr);
- 
- 		/* Handle Tx interrupts */
- 		sts = rcar_canfd_read(priv->base,
- 				      RCANFD_CFSTS(ch, RCANFD_CFFIFO_IDX));
--		if (sts & RCANFD_CFSTS_CFTXIF)
-+		if (likely(sts & RCANFD_CFSTS_CFTXIF))
- 			rcar_canfd_tx_done(ndev);
- 	}
- 	return IRQ_HANDLED;
--- 
-1.9.1
+How do we continue the discussion about a hierarchical structure of the 
+RCar3 CPG clock definitions?
+
+
+Best regards
+
+Dirk
