@@ -1,165 +1,255 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:36685 "EHLO
-	mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751610AbcF2VUW (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55002 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751837AbcF2WGG (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 17:20:22 -0400
-Received: by mail-lf0-f43.google.com with SMTP id q132so42182841lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jun 2016 14:20:21 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org,
-	laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org,
-	geert+renesas@glider.be
-Subject: [PATCH 1/2] pinctrl: sh-pfc: fix overly long lines
-Date: Thu, 30 Jun 2016 00:20:18 +0300
-Message-ID: <6941131.ZKfJHhvm82@wasted.cogentembedded.com>
-In-Reply-To: <1748403.xeiuK39ynx@wasted.cogentembedded.com>
-References: <1748403.xeiuK39ynx@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Wed, 29 Jun 2016 18:06:06 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH/RFC v2 2/5] mmc: sh_mobile_sdhi: rename DMA source file as renesas_sdhi_sysc_dmac.c
+Date: Thu, 30 Jun 2016 00:05:37 +0200
+Message-Id: <1467237940-24388-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1467237940-24388-1-git-send-email-horms+renesas@verge.net.au>
+References: <1467237940-24388-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The PORT_GP_CFG_<n>() macros take up more than 80 columns -- and not for
-a good reason. Make the header file checkpatch.pl-proof at least in this
-respect...
+Rename the source file for DMA for SDHI as a follow-up to attaching
+DMA code to the SDHI driver rather than the tmio_core driver and
+prepartation for allowing more than one DMA provider.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The name Renesas is chosen as the the SDHI driver is applicable to a wider
+range of SoCs than SH-Mobile, Renesas seems to be a more appropriate name.
+However, the SDHI driver source itself, is left as sh_mobile_sdhi to
+avoid unnecessary churn.
 
+The name sysc_dmac was chosen to reflect the type of DMA used.
+
+Internal symbols have also been renamed to reflect the filename change.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/pinctrl/sh-pfc/sh_pfc.h |   95 +++++++++++++++++++++++-----------------
- 1 file changed, 55 insertions(+), 40 deletions(-)
+v2
+* Use renesas_sdhi_sysc_dmac rather than renesas_sdhi_dmac as file name
+* Rename symbols to reflect filename change
+* Drop bogus use of __initdata
+---
+ drivers/mmc/host/Makefile                          |  2 +-
+ .../{tmio_mmc_dma.c => renesas_sdhi_sysc_dmac.c}   | 57 +++++++++++-----------
+ drivers/mmc/host/sh_mobile_sdhi.c                  |  6 +--
+ 3 files changed, 33 insertions(+), 32 deletions(-)
+ rename drivers/mmc/host/{tmio_mmc_dma.c => renesas_sdhi_sysc_dmac.c} (83%)
 
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/sh_pfc.h
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -354,72 +354,87 @@ extern const struct sh_pfc_soc_info shx3
-  * GP port style (32 ports banks)
-  */
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index 4ed6f250213a..da5377e3ee4e 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -39,7 +39,7 @@ obj-$(CONFIG_MMC_TMIO_CORE)	+= tmio_mmc_core.o
+ tmio_mmc_core-y			:= tmio_mmc_pio.o
+ obj-$(CONFIG_MMC_SDHI)		+= sh_mobile_sdhi.o
+ ifeq ($(subst m,y,$(CONFIG_MMC_SDHI_SYSC_DMA)),y)
+-obj-$(CONFIG_MMC_SDHI)		+= tmio_mmc_dma.o
++obj-$(CONFIG_MMC_SDHI)		+= renesas_sdhi_sysc_dmac.o
+ endif
+ obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
+ obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
+diff --git a/drivers/mmc/host/tmio_mmc_dma.c b/drivers/mmc/host/renesas_sdhi_sysc_dmac.c
+similarity index 83%
+rename from drivers/mmc/host/tmio_mmc_dma.c
+rename to drivers/mmc/host/renesas_sdhi_sysc_dmac.c
+index 381bc40e506b..a73055924c52 100644
+--- a/drivers/mmc/host/tmio_mmc_dma.c
++++ b/drivers/mmc/host/renesas_sdhi_sysc_dmac.c
+@@ -1,5 +1,5 @@
+ /*
+- * linux/drivers/mmc/tmio_mmc_dma.c
++ * linux/drivers/mmc/renesas_sdhi_sysc_dmac_dma.c
+  *
+  * Copyright (C) 2010-2011 Guennadi Liakhovetski
+  *
+@@ -22,7 +22,8 @@
  
--#define PORT_GP_CFG_1(bank, pin, fn, sfx, cfg) fn(bank, pin, GP_##bank##_##pin, sfx, cfg)
-+#define PORT_GP_CFG_1(bank, pin, fn, sfx, cfg)				\
-+	fn(bank, pin, GP_##bank##_##pin, sfx, cfg)
- #define PORT_GP_1(bank, pin, fn, sfx)	PORT_GP_CFG_1(bank, pin, fn, sfx, 0)
+ #define TMIO_MMC_MIN_DMA_LEN 8
  
--#define PORT_GP_CFG_4(bank, fn, sfx, cfg)						\
--	PORT_GP_CFG_1(bank, 0,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 1,  fn, sfx, cfg),	\
--	PORT_GP_CFG_1(bank, 2,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 3,  fn, sfx, cfg)
-+#define PORT_GP_CFG_4(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_1(bank, 0,  fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 1,  fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 2,  fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 3,  fn, sfx, cfg)
- #define PORT_GP_4(bank, fn, sfx)	PORT_GP_CFG_4(bank, fn, sfx, 0)
+-static void tmio_mmc_enable_dma(struct tmio_mmc_host *host, bool enable)
++static void sdhi_sysc_dmac_enable_dma(struct tmio_mmc_host *host,
++				      bool enable)
+ {
+ 	if (!host->chan_tx || !host->chan_rx)
+ 		return;
+@@ -31,19 +32,19 @@ static void tmio_mmc_enable_dma(struct tmio_mmc_host *host, bool enable)
+ 		host->dma->enable(host, enable);
+ }
  
--#define PORT_GP_CFG_8(bank, fn, sfx, cfg)						\
--	PORT_GP_CFG_4(bank, fn, sfx, cfg),						\
--	PORT_GP_CFG_1(bank, 4,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 5,  fn, sfx, cfg),	\
--	PORT_GP_CFG_1(bank, 6,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 7,  fn, sfx, cfg)
-+#define PORT_GP_CFG_8(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_4(bank, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 4,  fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 5,  fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 6,  fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 7,  fn, sfx, cfg)
- #define PORT_GP_8(bank, fn, sfx)	PORT_GP_CFG_8(bank, fn, sfx, 0)
+-static void tmio_mmc_abort_dma(struct tmio_mmc_host *host)
++static void sdhi_sysc_dmac_abort_dma(struct tmio_mmc_host *host)
+ {
+-	tmio_mmc_enable_dma(host, false);
++	sdhi_sysc_dmac_enable_dma(host, false);
  
--#define PORT_GP_CFG_9(bank, fn, sfx, cfg)						\
--	PORT_GP_CFG_8(bank, fn, sfx, cfg),						\
-+#define PORT_GP_CFG_9(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_8(bank, fn, sfx, cfg),				\
- 	PORT_GP_CFG_1(bank, 8,  fn, sfx, cfg)
- #define PORT_GP_9(bank, fn, sfx)	PORT_GP_CFG_9(bank, fn, sfx, 0)
+ 	if (host->chan_rx)
+ 		dmaengine_terminate_all(host->chan_rx);
+ 	if (host->chan_tx)
+ 		dmaengine_terminate_all(host->chan_tx);
  
--#define PORT_GP_CFG_12(bank, fn, sfx, cfg)						\
--	PORT_GP_CFG_8(bank, fn, sfx, cfg),						\
--	PORT_GP_CFG_1(bank, 8,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 9,  fn, sfx, cfg),	\
--	PORT_GP_CFG_1(bank, 10, fn, sfx, cfg), PORT_GP_CFG_1(bank, 11, fn, sfx, cfg)
-+#define PORT_GP_CFG_12(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_9(bank, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 9,  fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 10, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 11, fn, sfx, cfg)
- #define PORT_GP_12(bank, fn, sfx)	PORT_GP_CFG_12(bank, fn, sfx, 0)
+-	tmio_mmc_enable_dma(host, true);
++	sdhi_sysc_dmac_enable_dma(host, true);
+ }
  
--#define PORT_GP_CFG_14(bank, fn, sfx, cfg)						\
--	PORT_GP_CFG_12(bank, fn, sfx, cfg),						\
--	PORT_GP_CFG_1(bank, 12, fn, sfx, cfg), PORT_GP_CFG_1(bank, 13, fn, sfx, cfg)
-+#define PORT_GP_CFG_14(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_12(bank, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 12, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 13, fn, sfx, cfg)
- #define PORT_GP_14(bank, fn, sfx)	PORT_GP_CFG_14(bank, fn, sfx, 0)
+-static void tmio_mmc_start_dma_rx(struct tmio_mmc_host *host)
++static void sdhi_sysc_dmac_start_dma_rx(struct tmio_mmc_host *host)
+ {
+ 	struct scatterlist *sg = host->sg_ptr, *sg_tmp;
+ 	struct dma_async_tx_descriptor *desc = NULL;
+@@ -97,7 +98,7 @@ static void tmio_mmc_start_dma_rx(struct tmio_mmc_host *host)
+ pio:
+ 	if (!desc) {
+ 		/* DMA failed, fall back to PIO */
+-		tmio_mmc_enable_dma(host, false);
++		sdhi_sysc_dmac_enable_dma(host, false);
+ 		if (ret >= 0)
+ 			ret = -EIO;
+ 		host->chan_rx = NULL;
+@@ -113,7 +114,7 @@ pio:
+ 	}
+ }
  
--#define PORT_GP_CFG_15(bank, fn, sfx, cfg)						\
--	PORT_GP_CFG_14(bank, fn, sfx, cfg),						\
-+#define PORT_GP_CFG_15(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_14(bank, fn, sfx, cfg),				\
- 	PORT_GP_CFG_1(bank, 14, fn, sfx, cfg)
- #define PORT_GP_15(bank, fn, sfx)	PORT_GP_CFG_15(bank, fn, sfx, 0)
+-static void tmio_mmc_start_dma_tx(struct tmio_mmc_host *host)
++static void sdhi_sysc_dmac_start_dma_tx(struct tmio_mmc_host *host)
+ {
+ 	struct scatterlist *sg = host->sg_ptr, *sg_tmp;
+ 	struct dma_async_tx_descriptor *desc = NULL;
+@@ -171,7 +172,7 @@ static void tmio_mmc_start_dma_tx(struct tmio_mmc_host *host)
+ pio:
+ 	if (!desc) {
+ 		/* DMA failed, fall back to PIO */
+-		tmio_mmc_enable_dma(host, false);
++		sdhi_sysc_dmac_enable_dma(host, false);
+ 		if (ret >= 0)
+ 			ret = -EIO;
+ 		host->chan_tx = NULL;
+@@ -187,19 +188,19 @@ pio:
+ 	}
+ }
  
--#define PORT_GP_CFG_16(bank, fn, sfx, cfg)						\
--	PORT_GP_CFG_14(bank, fn, sfx, cfg),						\
--	PORT_GP_CFG_1(bank, 14, fn, sfx, cfg), PORT_GP_CFG_1(bank, 15, fn, sfx, cfg)
-+#define PORT_GP_CFG_16(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_15(bank, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 15, fn, sfx, cfg)
- #define PORT_GP_16(bank, fn, sfx)	PORT_GP_CFG_16(bank, fn, sfx, 0)
+-static void tmio_mmc_start_dma(struct tmio_mmc_host *host,
++static void sdhi_sysc_dmac_start_dma(struct tmio_mmc_host *host,
+ 			       struct mmc_data *data)
+ {
+ 	if (data->flags & MMC_DATA_READ) {
+ 		if (host->chan_rx)
+-			tmio_mmc_start_dma_rx(host);
++			sdhi_sysc_dmac_start_dma_rx(host);
+ 	} else {
+ 		if (host->chan_tx)
+-			tmio_mmc_start_dma_tx(host);
++			sdhi_sysc_dmac_start_dma_tx(host);
+ 	}
+ }
  
--#define PORT_GP_CFG_18(bank, fn, sfx, cfg)						\
--	PORT_GP_CFG_16(bank, fn, sfx, cfg),						\
--	PORT_GP_CFG_1(bank, 16, fn, sfx, cfg), PORT_GP_CFG_1(bank, 17, fn, sfx, cfg)
-+#define PORT_GP_CFG_18(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_16(bank, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 16, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 17, fn, sfx, cfg)
- #define PORT_GP_18(bank, fn, sfx)	PORT_GP_CFG_18(bank, fn, sfx, 0)
+-static void tmio_mmc_issue_tasklet_fn(unsigned long priv)
++static void sdhi_sysc_dmac_issue_tasklet_fn(unsigned long priv)
+ {
+ 	struct tmio_mmc_host *host = (struct tmio_mmc_host *)priv;
+ 	struct dma_chan *chan = NULL;
+@@ -221,7 +222,7 @@ static void tmio_mmc_issue_tasklet_fn(unsigned long priv)
+ 		dma_async_issue_pending(chan);
+ }
  
--#define PORT_GP_CFG_26(bank, fn, sfx, cfg)						\
--	PORT_GP_CFG_18(bank, fn, sfx, cfg),						\
--	PORT_GP_CFG_1(bank, 18, fn, sfx, cfg), PORT_GP_CFG_1(bank, 19, fn, sfx, cfg),	\
--	PORT_GP_CFG_1(bank, 20, fn, sfx, cfg), PORT_GP_CFG_1(bank, 21, fn, sfx, cfg),	\
--	PORT_GP_CFG_1(bank, 22, fn, sfx, cfg), PORT_GP_CFG_1(bank, 23, fn, sfx, cfg),	\
--	PORT_GP_CFG_1(bank, 24, fn, sfx, cfg), PORT_GP_CFG_1(bank, 25, fn, sfx, cfg)
-+#define PORT_GP_CFG_26(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_18(bank, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 18, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 19, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 20, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 21, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 22, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 23, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 24, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 25, fn, sfx, cfg)
- #define PORT_GP_26(bank, fn, sfx)	PORT_GP_CFG_26(bank, fn, sfx, 0)
+-static void tmio_mmc_tasklet_fn(unsigned long arg)
++static void sdhi_sysc_dmac_tasklet_fn(unsigned long arg)
+ {
+ 	struct tmio_mmc_host *host = (struct tmio_mmc_host *)arg;
  
--#define PORT_GP_CFG_28(bank, fn, sfx, cfg)						\
--	PORT_GP_CFG_26(bank, fn, sfx, cfg),						\
--	PORT_GP_CFG_1(bank, 26, fn, sfx, cfg), PORT_GP_CFG_1(bank, 27, fn, sfx, cfg)
-+#define PORT_GP_CFG_28(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_26(bank, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 26, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 27, fn, sfx, cfg)
- #define PORT_GP_28(bank, fn, sfx)	PORT_GP_CFG_28(bank, fn, sfx, 0)
+@@ -244,8 +245,8 @@ out:
+ 	spin_unlock_irq(&host->lock);
+ }
  
--#define PORT_GP_CFG_30(bank, fn, sfx, cfg)						\
--	PORT_GP_CFG_28(bank, fn, sfx, cfg),						\
--	PORT_GP_CFG_1(bank, 28, fn, sfx, cfg), PORT_GP_CFG_1(bank, 29, fn, sfx, cfg)
-+#define PORT_GP_CFG_30(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_28(bank, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 28, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 29, fn, sfx, cfg)
- #define PORT_GP_30(bank, fn, sfx)	PORT_GP_CFG_30(bank, fn, sfx, 0)
+-static void tmio_mmc_request_dma(struct tmio_mmc_host *host,
+-				 struct tmio_mmc_data *pdata)
++static void sdhi_sysc_dmac_request_dma(struct tmio_mmc_host *host,
++				       struct tmio_mmc_data *pdata)
+ {
+ 	/* We can only either use DMA for both Tx and Rx or not use it at all */
+ 	if (!host->dma || (!host->pdev->dev.of_node &&
+@@ -307,11 +308,11 @@ static void tmio_mmc_request_dma(struct tmio_mmc_host *host,
+ 		if (!host->bounce_buf)
+ 			goto ebouncebuf;
  
--#define PORT_GP_CFG_32(bank, fn, sfx, cfg)						\
--	PORT_GP_CFG_30(bank, fn, sfx, cfg),						\
--	PORT_GP_CFG_1(bank, 30, fn, sfx, cfg), PORT_GP_CFG_1(bank, 31, fn, sfx, cfg)
-+#define PORT_GP_CFG_32(bank, fn, sfx, cfg)				\
-+	PORT_GP_CFG_30(bank, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 30, fn, sfx, cfg),				\
-+	PORT_GP_CFG_1(bank, 31, fn, sfx, cfg)
- #define PORT_GP_32(bank, fn, sfx)	PORT_GP_CFG_32(bank, fn, sfx, 0)
+-		tasklet_init(&host->dma_complete, tmio_mmc_tasklet_fn, (unsigned long)host);
+-		tasklet_init(&host->dma_issue, tmio_mmc_issue_tasklet_fn, (unsigned long)host);
++		tasklet_init(&host->dma_complete, sdhi_sysc_dmac_tasklet_fn, (unsigned long)host);
++		tasklet_init(&host->dma_issue, sdhi_sysc_dmac_issue_tasklet_fn, (unsigned long)host);
+ 	}
  
- #define PORT_GP_32_REV(bank, fn, sfx)					\
+-	tmio_mmc_enable_dma(host, true);
++	sdhi_sysc_dmac_enable_dma(host, true);
+ 
+ 	return;
+ 
+@@ -325,7 +326,7 @@ ecfgtx:
+ 	host->chan_tx = NULL;
+ }
+ 
+-static void tmio_mmc_release_dma(struct tmio_mmc_host *host)
++static void sdhi_sysc_dmac_release_dma(struct tmio_mmc_host *host)
+ {
+ 	if (host->chan_tx) {
+ 		struct dma_chan *chan = host->chan_tx;
+@@ -343,17 +344,17 @@ static void tmio_mmc_release_dma(struct tmio_mmc_host *host)
+ 	}
+ }
+ 
+-static struct tmio_mmc_dma_ops tmio_mmc_dma_ops __initdata = {
+-	.start = tmio_mmc_start_dma,
+-	.enable = tmio_mmc_enable_dma,
+-	.request = tmio_mmc_request_dma,
+-	.release = tmio_mmc_release_dma,
+-	.abort = tmio_mmc_abort_dma,
++static struct tmio_mmc_dma_ops sdhi_sysc_dmac_dma_ops = {
++	.start = sdhi_sysc_dmac_start_dma,
++	.enable = sdhi_sysc_dmac_enable_dma,
++	.request = sdhi_sysc_dmac_request_dma,
++	.release = sdhi_sysc_dmac_release_dma,
++	.abort = sdhi_sysc_dmac_abort_dma,
+ };
+ 
+-int tmio_mmc_init_dma(void)
++int sdhi_sysc_dmac_init_dma(void)
+ {
+-	tmio_set_dma_ops(&tmio_mmc_dma_ops);
++	tmio_set_dma_ops(&sdhi_sysc_dmac_dma_ops);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index 45543ed37e5f..320059c61c6c 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -107,9 +107,9 @@ struct sh_mobile_sdhi {
+ };
+ 
+ #if IS_ENABLED(MMC_SDHI_SYSC_DMA)
+-int tmio_mmc_init_dma(void);
++int sdhi_sysc_dmac_init_dma(void);
+ #else
+-static int tmio_mmc_init_dma(void)
++static int sdhi_sysc_dmac_init_dma(void)
+ {
+        return -EINVAL;
+ }
+@@ -372,7 +372,7 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+ 		host->bus_shift = of_data->bus_shift;
+ 	}
+ 
+-	ret = tmio_mmc_init_dma();
++	ret = sdhi_sysc_dmac_init_dma();
+ 	if (ret < 0)
+ 		goto efree;
+ 
+-- 
+2.7.0.rc3.207.g0ac5344
