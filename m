@@ -1,15 +1,22 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f177.google.com ([209.85.192.177]:33083 "EHLO
-	mail-pf0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752547AbcF3WkU (ORCPT
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:38093 "EHLO
+	mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750921AbcF2Rfr (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 18:40:20 -0400
-Received: by mail-pf0-f177.google.com with SMTP id i123so33557412pfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Jun 2016 15:40:19 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
+	Wed, 29 Jun 2016 13:35:47 -0400
+Received: by mail-wm0-f46.google.com with SMTP id r201so84209403wme.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jun 2016 10:35:46 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVM66516s_+Ups7fng5xpasdiUnW=3Ybz+vGHbgN+5mpQ@mail.gmail.com>
+References: <1463485296-22742-1-git-send-email-ulf.hansson@linaro.org>
+ <1463485296-22742-5-git-send-email-ulf.hansson@linaro.org> <CAMuHMdVM66516s_+Ups7fng5xpasdiUnW=3Ybz+vGHbgN+5mpQ@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 29 Jun 2016 19:30:03 +0200
+Message-ID: <CAPDyKFotR6dk+ntMWH4nCjg2mFJe3YzVqw=M-6Vy7b8tdMFxsw@mail.gmail.com>
+Subject: Re: [PATCH 4/4] PM / Runtime: Defer resuming of the device in pm_runtime_force_resume()
 To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
 	Linux PM list <linux-pm@vger.kernel.org>,
 	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -20,23 +27,11 @@ Cc: Ulf Hansson <ulf.hansson@linaro.org>,
 	Andy Gross <andy.gross@linaro.org>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 4/4] PM / Runtime: Defer resuming of the device in pm_runtime_force_resume()
-References: <1463485296-22742-1-git-send-email-ulf.hansson@linaro.org>
-	<1463485296-22742-5-git-send-email-ulf.hansson@linaro.org>
-	<CAMuHMdVM66516s_+Ups7fng5xpasdiUnW=3Ybz+vGHbgN+5mpQ@mail.gmail.com>
-Date: Thu, 30 Jun 2016 15:40:15 -0700
-In-Reply-To: <CAMuHMdVM66516s_+Ups7fng5xpasdiUnW=3Ybz+vGHbgN+5mpQ@mail.gmail.com>
-	(Geert Uytterhoeven's message of "Tue, 28 Jun 2016 18:26:36 +0200")
-Message-ID: <m2twgaqp0w.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
-
-Geert Uytterhoeven <geert@linux-m68k.org> writes:
-
+On 28 June 2016 at 18:26, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 > Hi Ulf, Rafael,
 >
 > On Tue, May 17, 2016 at 1:41 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
@@ -88,6 +83,9 @@ Geert Uytterhoeven <geert@linux-m68k.org> writes:
 >>                 goto out;
 >
 > This patch (commit eb13a0a1b6d5d5c2 in pm/linux-next) breaks resume on
+
+Thanks for reporting!
+
 > sh73a0/kzm9g and r8a73a4/ape6evm. On these boards, the Ethernet controller is a
 > child of a local bus (bsc), whose clock (zb) is controlled through pm_clk and
 > simple-pm-bus, cfr.
@@ -98,45 +96,108 @@ Geert Uytterhoeven <geert@linux-m68k.org> writes:
 >     arch/arm/boot/dts/sh73a0.dtsi
 >
 > During resume, the bus clock is not enabled, causing an imprecise abort
-> when accessing the Ethernet controller's registers.
+> when accessing the Ethernet controller's registers. With some debug code
+> added:
 
-I have a hunch (without too much digging) that this may be an odd
-interaction with the direct_complete stuff since the simple-pm-bus has
-no callbacks.
+I was looking into this in some more detail.
 
-For kicks, could you add something like the hack below (untested) which
-will avoid the direct_complete path, and at least help indicate if
-that path is worth investigating further.
+As you are stating that Ethernet device is a child device to the local
+bus device, I would have expected that the pm_runtime_get_sync()
+invoked during ->probe() in the Ethernet driver should cause its
+parent device (the bus device) to be "forced" resumed.
 
-Thanks,
+That's because the pm_runtime_get_sync() should trigger an increased
+usage count of the parent device. Later, when
+pm_runtime_force_resume() validates the count for the bus device, it
+should be 2 and thus it should lead to that it decides to *not* defer
+the resume of the device. Apparently this isn't happening for some
+reason...
 
-Kevin
+Perhaps there's a pm_suspend_ignore_children() set for the parent?
+Or perhaps the parent/child relationship isn't set up correctly?
 
-diff --git a/drivers/bus/simple-pm-bus.c b/drivers/bus/simple-pm-bus.c
-index c5eb46cbf388..63b95fb21510 100644
---- a/drivers/bus/simple-pm-bus.c
-+++ b/drivers/bus/simple-pm-bus.c
-@@ -36,6 +36,15 @@ static int simple_pm_bus_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int simple_pm_bus_prepare(struct device *dev)
-+{
-+	return pm_generic_prepare(dev);
-+}
-+
-+static const struct dev_pm_ops simple_pm_bus_ops = {
-+	.prepare = simple_pm_bus_prepare,
-+};
-+
- static const struct of_device_id simple_pm_bus_of_match[] = {
- 	{ .compatible = "simple-pm-bus", },
- 	{ /* sentinel */ }
-@@ -48,6 +57,7 @@ static struct platform_driver simple_pm_bus_driver = {
- 	.driver = {
- 		.name = "simple-pm-bus",
- 		.of_match_table = simple_pm_bus_of_match,
-+		.pm = &simple_pm_bus_ops,
- 	},
- };
- 
+>
+>     PM: Syncing filesystems ... done.
+>     PM: Preparing system for sleep (mem)
+>     Freezing user space processes ... (elapsed 0.001 seconds) done.
+>     Double checking all user space processes after OOM killer
+> disable... (elapsed 0.000 seconds)
+>     Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+>     PM: Suspending system (mem)
+>     smsc911x: smsc911x_suspend
+>     simple-pm-bus fec10000.bus: simple_pm_bus_suspend
+>     PM: suspend of devices complete after 21.484 msecs
+>     PM: suspend devices took 0.030 seconds
+>     PM: late suspend of devices complete after 0.488 msecs
+>     cpg_div6_clock_disable: zb
+>     rmobile_pd_power_down: a3sp
+>     PM: noirq suspend of devices complete after 8.300 msecs
+>     Disabling non-boot CPUs ...
+>     CPU1: shutdown
+>
+>     PM: early resume of devices complete after 0.488 msecs
+>     simple-pm-bus fec10000.bus: simple_pm_bus_resume
+>     smsc911x: smsc911x_resume
+>     Unhandled fault: imprecise external abort (0x1406) at 0xb6f40068
+>     pgd = deedc000
+>     [b6f40068] *pgd=5f774831, *pte=4087659f, *ppte=40876e7e
+>     Internal error: : 1406 [#1] SMP ARM
+>     Modules linked in:
+>     CPU: 0 PID: 1062 Comm: s2ram Not tainted
+> 4.7.0-rc5-kzm9g-00391-g87777f5105e9303a-dirty #765
+>     Hardware name: Generic SH73A0 (Flattened Device Tree)
+>     task: dedc0840 ti: deee6000 task.ti: deee6000
+>     PC is at __smsc911x_reg_read+0x1c/0x60
+>     LR is at smsc911x_resume+0x78/0xd0
+>
+> After reverting this patch, resume succeeds again, as the zb clock is enabled
+> first:
+>
+>     PM: Syncing filesystems ... done.
+>     PM: Preparing system for sleep (mem)
+>     Freezing user space processes ... (elapsed 0.001 seconds) done.
+>     Double checking all user space processes after OOM killer
+> disable... (elapsed 0.000 seconds)
+>     Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+>     PM: Suspending system (mem)
+>     smsc911x: smsc911x_suspend
+>     simple-pm-bus fec10000.bus: simple_pm_bus_suspend
+>     PM: suspend of devices complete after 22.460 msecs
+>     PM: suspend devices took 0.030 seconds
+>     PM: late suspend of devices complete after 0.488 msecs
+>     cpg_div6_clock_disable: zb
+>     rmobile_pd_power_down: a3sp
+>     PM: noirq suspend of devices complete after 8.300 msecs
+>     Disabling non-boot CPUs ...
+>     CPU1: shutdown
+>
+>     Enabling non-boot CPUs ...
+>     CPU1 is up
+>     rmobile_pd_power_up: a3sp
+>     rmobile_pd_power_up: a4mp
+>     a4mp: Power on, 0x00000100 -> PSTR = 0x007b3133
+>     cpg_div6_clock_enable: zb
+>     PM: noirq resume of devices complete after 92.773 msecs
+>     PM: early resume of devices complete after 0.488 msecs
+>     simple-pm-bus fec10000.bus: simple_pm_bus_resume
+>     smsc911x: smsc911x_resume
+>     PM: resume of devices complete after 28.564 msecs
+>     PM: resume devices took 0.040 seconds
+>     PM: Finishing wakeup.
+>     Restarting tasks ...
+>     rmobile_pd_power_down: a4mp
+>     a4mp: Power off, 0x00000100 -> PSTR = 0x007b3033
+>     done.
+
+Thanks for the detailed explanation of what is happening!
+
+Unless we can fix this in the Ethernet driver/local bus, I have some
+ideas of how we could change genpd, to still allow $subject patch to
+be applied. Although I will wait a day or two before I propose
+something. In the meantime I will also try to collect some more
+information.
+
+Thanks!
+
+Kind regards
+Uffe
