@@ -1,32 +1,303 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Sender: Kieran Bingham <kieran@ksquared.org.uk>
-From: Kieran Bingham <kieran@bingham.xyz>
-To: laurent.pinchart@ideasonboard.com,
-	mchehab@osg.samsung.com,
-	linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kieran Bingham <kieran@bingham.xyz>
-Subject: [PATCH] v4l: Extend FCP compatible list to support the FDP
-Date: Thu,  9 Jun 2016 18:06:42 +0100
-Message-Id: <1465492003-1554-1-git-send-email-kieran@bingham.xyz>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:57078 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751047AbcF2IPa (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 29 Jun 2016 04:15:30 -0400
+Subject: Re: [PATCH v3 1/3] arm64: dts: r8a7796: Add Renesas R8A7796 SoC
+ support
+To: Simon Horman <horms@verge.net.au>
+References: <1464054880-25843-1-git-send-email-horms+renesas@verge.net.au>
+ <1464054880-25843-2-git-send-email-horms+renesas@verge.net.au>
+ <b30c9c84-23b6-b088-4983-b2498317492b@de.bosch.com>
+ <20160525004825.GC7292@verge.net.au>
+ <c0fd13d5-c5c4-579b-6fad-c637bda92398@de.bosch.com>
+ <20160526022833.GE18393@verge.net.au>
+ <59e6225a-6dfa-8bde-dd2e-3428d6fedfe2@de.bosch.com>
+ <20160527004256.GD14269@verge.net.au>
+ <b03c68c9-6949-519d-2c44-c140eac727a4@de.bosch.com>
+CC: <linux-renesas-soc@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <d0b2edc9-c191-d61c-add0-85f189083931@de.bosch.com>
+Date: Wed, 29 Jun 2016 10:15:27 +0200
+MIME-Version: 1.0
+In-Reply-To: <b03c68c9-6949-519d-2c44-c140eac727a4@de.bosch.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The following patch extends Laurents FCP driver to support the FCP for
-FDP (FCPF) which is used by the FDP driver currently in development
+Hi Simon,
 
-This patch is of course dependant upon Laurents FCP driver series [0]
-which has not yet hit mainline
+On 27.05.2016 09:32, Dirk Behme wrote:
+> Hi Simon,
+>
+> On 27.05.2016 02:42, Simon Horman wrote:
+>> On Thu, May 26, 2016 at 09:14:16AM +0200, Dirk Behme wrote:
+>>> Hi Simon,
+>>>
+>>> On 26.05.2016 04:28, Simon Horman wrote:
+>>>> Hi Dirk,
+>>>>
+>>>> On Wed, May 25, 2016 at 07:10:26AM +0200, Dirk Behme wrote:
+>>>>> Hi Simon,
+>>>>>
+>>>>> On 25.05.2016 02:48, Simon Horman wrote:
+>>>>>> Hi Dirk,
+>>>>>>
+>>>>>> On Tue, May 24, 2016 at 07:30:17AM +0200, Dirk Behme wrote:
+>>>>>>> Hi Simon,
+>>>>>>
+>>>>>> [...]
+>>>>>>
+>>>>>>> With Renesas R-Car3 we will get a whole family of SoCs. I.e.
+>>>>>>> different
+>>>>>>> computing power (e.g. different number of Cores) with more or
+>>>>>>> less similar
+>>>>>>> peripherals.
+>>>>>>>
+>>>>>>> I would think that we want to reflect this in the device tree, too.
+>>>>>>> Therefore I think what we want is a hierarchy of device trees.
+>>>>>>> Similar
+>>>>>>> what's done with other SoC families (compare e.g. i.MX6).
+>>>>>>>
+>>>>>>> E.g. we want an initial rcar3.dtsi, which contains all common
+>>>>>>> parts of all
+>>>>>>> R-Car3 SoCs. E.g. one CA57 core, the SCIF where its common etc.
+>>>>>>>
+>>>>>>> Then you will have the r8a779x.dtsi which includes the rcar3.dtsi
+>>>>>>> and
+>>>>>>> extends it for SoC specific parts. Which then will be included by
+>>>>>>> the board
+>>>>>>> device trees, as already done, now.
+>>>>>>>
+>>>>>>> Or in other words: As soon as you have similar parts in the
+>>>>>>> r8a779x.dtsi's,
+>>>>>>> it's time to think about moving the parts one hierarchy level up
+>>>>>>> into the
+>>>>>>> rcar3.dtsi. Else you will end up in a maintenance hell once you
+>>>>>>> have to
+>>>>>>> change/fix anything.
+>>>>>>
+>>>>>> Thanks for raising this issue.
+>>>>>>
+>>>>>> I agree entirely that we should work towards a situation where
+>>>>>> maintenance
+>>>>>> is as easy as it can be. However, due to the per-SoC binding
+>>>>>> scheme that
+>>>>>> we are using for IP related to Renesas SoCs I suspect that very
+>>>>>> few DT nodes
+>>>>>> can be shared between SoCs verbatim.
+>>>>>
+>>>>>
+>>>>> Could you kindly share an example for this? Looking into the H3 and
+>>>>> the M3-W
+>>>>> manual, it looks to me that ~90% (?) of the peripherals are the same.
+>>>>
+>>>> The background is that this is a conversation that has been going
+>>>> around
+>>>> for years. The basic thinking is that at this point we have
+>>>> documentation
+>>>> that indicates that many hardware blocks on the H3 and M3-W are the
+>>>> same.
+>>>> But we do not have insight into the internal versioning of the IP
+>>>> blocks
+>>>> nor if they are really the same. And furthermore even if they are
+>>>> currently
+>>>> the same we don't really know if that will continue to be the case.
+>>>>
+>>>> Probably it is. Maybe it isn't. The response has been to take a
+>>>> conservative approach to DT bindings to give us the flexibility to
+>>>> update
+>>>> the driver implementation to reflect any differences that subsequently
+>>>> surface. And by providing per-SoC bindings these driver changes can be
+>>>> activated on a per-SoC basis without updating DTB files (which may be
+>>>> burned into ROMs).
+>>>
+>>>
+>>> Sorry, but I don't think that these are good arguments for this kind of
+>>> discussion ;)
+>>
+>>> From my point of view this is the central point. It is my believe
+>>> that we
+>> simply do not have enough information to conclude that the IP blocks will
+>> be the same in perpetuity.
+>>
+>>> The discussion has to be based on facts. And not on "maybe" or
+>>> "probably".
+>>> The fact is that the documentation tells us that the IPs are the
+>>> same. And
+>>> the documentation tells us where this isn't the case. This is what we
+>>> can
+>>> reflect in the code and the device trees.
+>>>
+>>> Or the other way around: I don't ask to not have any SoC specific device
+>>> trees (r8a7795.dtsi, r8a7796.dtsi etc). So we *always* have the
+>>> option to
+>>> move anything to them, once there might be any difference found or
+>>> documented. But maintaining x (x > 5?) quite similar device trees just
+>>> because there *might* be the possibility that one or two device
+>>> *might* be
+>>> different doesn't sound like a good argument to me.
+>>>
+>>> Or again, an other way: If I understood correctly, you are working
+>>> already
+>>> since some time on R-Car, e.g. R-Car Gen2. How many examples do you have
+>>> from the Gen2 family where the IP blocks are different that they need
+>>> to be
+>>> distinguished in the device tree?
+>>
+>> I think the question is different. The question is, if a difference comes
+>> up, how do we handle it?
+>>
+>> So far we have a solution. Not an ideal one, but a solution none the
+>> less.
+>> I do agree entirely that replicated DTs leads to significant maintenance
+>> overhead. But lets not throw the baby out with the bath water.
+>
+>
+> Well, we could continue this kind of discussion infinite ;)
+>
+> But I agree to your below point "Lets discuss the change on its merits"
+> and therefore stop here and continue with the technical aspects below ....
+>
+>
+>>>>>> Probably some sort of scheme can be cooked up using preprocessor
+>>>>>> macros.
+>>>>>> And probably there are other ways to resolve this problem. But I
+>>>>>> would
+>>>>>> prefer if we worked towards resolving this maintenance problem in
+>>>>>> parallel
+>>>>>> with rather than as a dependency of merging r8a7796 support into
+>>>>>> mainline.
+>>>>>
+>>>>>
+>>>>> I'd propose to do it correct from the beginning.
+>>>>>
+>>>>> Doing it later would either be more work or forgotten, and never be
+>>>>> done,
+>>>>> then.
+>>>>
+>>>> I'm sorry but I don't agree. I think that having r8a7796 support
+>>>> in mainline is a higher priority than sorting this out.
+>>>
+>>>
+>>> Looking at the example I gave in
+>>>
+>>> http://article.gmane.org/gmane.linux.kernel.renesas-soc/4013
+>>>
+>>> which took me < 1h to create, I'm not sure what would block us from
+>>> mainlining the r8a7796 *including* this.
+>>
+>> Point taken. Lets discuss the change on its merits.
+>
+>
+> I totally agree, thanks! Let's continue below ...
+>
+>
+>>>>> For a starting point, I'd propose to put the r8a7795.dtsi and
+>>>>> r8a7796.dtsi
+>>>>> into a graphical diff tool and move all common parts to a
+>>>>> rcar3.dtsi (I'd be
+>>>>> happy to discuss the name, though)
+>>>>
+>>>> I'm not opposed to that. But being consistent with my statement above
+>>>> I would prefer it to be done as follow-up work.
+>>>>
+>>>> My suspicion is that right now much of the proposed r8a7796.dtsi can be
+>>>> moved into a hypothetical rcar3.dtsi. But that this is because the
+>>>> proposed
+>>>> r8a7796.dtsi is very small. I would not expect nearly such a large
+>>>> proportion of r8a7795.dtsi to be able to be moved into rcar3.dtsi
+>>>> because
+>>>> it enables more hardware blocks and they typically have (or should
+>>>> have in
+>>>> keeping with the prevailing policy as described above) per-SoC
+>>>> bindings.
+>>>
+>>>
+>>> What doesn't prevent us to use a rcar3.dtsi like given in
+>>>
+>>> http://article.gmane.org/gmane.linux.kernel.renesas-soc/4013
+>>>
+>>>
+>>> Having a rcar3.dtsi gives us *both* options. It doesn't force us to
+>>> use the
+>>> one or the other. I.e. we have for each IP block the *option* to
+>>> declare it
+>>> as common (put it onto rcar3.dtsi) *or* SoC specific (put it into
+>>> r8a779x.dtsi).
+>>>
+>>> Without having a common rcar3.dtsi we don't have this option at all.
+>>>
+>>> So I think the conclusion is: Let's have all options (by adding a
+>>> rcar3.dtsi) and then decide for each IP block individually where to
+>>> place it
+>>> best. Or move it later from the common dtsi to the individual dtsi once
+>>> there is an issue found (what I really doubt that it will happen that
+>>> often,
+>>> but this is an other topic ;) )
+>>
+>> I think that most of the nodes you have moved into the common dtsi file
+>> make sense. But there are some I am less sure about:
+>>
+>> * cpus
+>>
+>>   Probably there are some central aspects of cpus that are shared
+>>   between the r8a7795 and r8a7796. And I think that your patch captures
+>>   that. But I also think that there will be non-shared aspects and
+>>   perhaps the complexity of splitting the cpus node between per-SoC
+>>   and common dtsi files isn't worth it.
+>>
+>>   I don't feel strongly about this at this point.
+>>
+>>   I am also particularly sensitive about enabling CPU features across
+>>   multiple SoCs. But I think that the scheme you propose allows for
+>>   per-SoC control of features in per-SoC dtsi files. So I think
+>>   I am ok about that at this point.
+>>
+>>   Lastly, shouldn't the cache-controller go inside the cpu node
+>>   in the common dtsi file to reflect the change recently made
+>>   upstream to r8a7795.dtsi and the structure of r8a7796.dtsi in
+>>   the current patchset (v3).
+>
+>
+> We already talked about that in an other thread, and I think I missed
+> that change you mentioned. So I'm fine with your proposal. I just saw
+> that it's different between r8a7795 and r8a7796 and wanted to highlight
+> that it should be the same.
+>
+>
+>> * cpg, scif2
+>>
+>>   This is the compatibility string issue.
+>>
+>>   Could we at least agree to defer this part of the discussion
+>>   and thus omit these nodes from the common dtsi file at this time?
+>
+>
+> Fine with me :)
+>
+>
+>>   I understand that you are concerned that if we don't handle this
+>>   now it will be forgotten. FWIW I strongly doubt this particular
+>>   problem will be forgotten.
+>
+>
+> Ok.
+>
+> Thanks!
 
-[0] http://www.spinics.net/lists/linux-media/msg97302.html
 
-Kieran Bingham (1):
-  v4l: Extend FCP compatible list to support the FDP
+Hmm, could you kindly help me to remember what's the recent status of 
+your discussion above regarding a hierarchical structure of the RCar3 
+device trees?
 
- drivers/media/platform/rcar-fcp.c | 1 +
- 1 file changed, 1 insertion(+)
 
--- 
-2.7.4
+Best regards
+
+Dirk
