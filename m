@@ -1,46 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:33170 "EHLO
-	mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1425758AbcFHVBg (ORCPT
+Received: from mail-io0-f193.google.com ([209.85.223.193]:34802 "EHLO
+	mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752399AbcF2MHd (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 17:01:36 -0400
-Received: by mail-lf0-f43.google.com with SMTP id s64so13833530lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2016 14:01:36 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 00/12] Add R8A7792/Blanche board support
-Date: Thu, 09 Jun 2016 00:01:32 +0300
-Message-ID: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+	Wed, 29 Jun 2016 08:07:33 -0400
+Received: by mail-io0-f193.google.com with SMTP id 100so5035972ioh.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 29 Jun 2016 05:07:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1467106492-1341-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1467106492-1341-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1467106492-1341-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 29 Jun 2016 14:07:32 +0200
+Message-ID: <CAMuHMdX7chhsWKanVq1o+mfucPitYMaTKHAQkbTa7caF8u2Nnw@mail.gmail.com>
+Subject: Re: [PATCH 4/4] arm64: dts: r8a7795: salvator: add serial console pins
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+Hi Ulrich,
 
-   Here's the set of 12 patches against Simon Horman's 'renesas.git' repo,
-'renesas-devel-20160606-v4.7-rc2' tag. We add the device tree support for
-the R8A7792-based Blanche board. Added in this version is the SMP support.
-The R-Car 'clk' driver patch was posted separately and 2 'clk' binding patches
-were split from this series...
+On Tue, Jun 28, 2016 at 11:34 AM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Adds pin control for SCIF2.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+> index 9c52613..10fceaf 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+> @@ -31,11 +31,20 @@
+>         };
+>  };
+>
+> +&pfc {
+> +       scif2_pins: scif2 {
+> +               groups = "scif2_data_a";
+> +               function = "scif2";
+> +       };
 
-[01/12] ARM: shmobile: r8a7792: add clock index macros
-[02/12] ARM: shmobile: r8a7792: add power domain index macros
-[03/12] soc: renesas: rcar-sysc: add R8A7792 support
-[04/12] ARM: shmobile: r8a7792: basic SoC support
-[05/12] ARM: shmobile: r8a7792: add SMP support
-[06/12] ARM: dts: r8a7792: initial SoC device tree
-[07/12] ARM: dts: r8a7792: add SYS-DMAC support
-[08/12] ARM: dts: r8a7792: add [H]SCIF support
-[09/12] ARM dts: r8a7792: add IRQC support
-[10/12] DT: arm: shmobile: document Blanche board
-[11/12] ARM: dts: blanche: initial device tree
-[12/12] ARM: dts: blanche: add Ethernet support
+Given the driver configures the SCIF to use scif_clk for 115200 bps, I think
+you should add support for the scif_clk pins, too. Currently it relies on the
+boot loader having configured pinctrl for scif_clk.
 
-WBR, Sergei
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
