@@ -1,64 +1,107 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:50283 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751604AbcF2KjP (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:57281 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751565AbcF2IUm (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 06:39:15 -0400
-Date: Wed, 29 Jun 2016 12:39:09 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: linux-renesas-soc@vger.kernel.org,
+	Wed, 29 Jun 2016 04:20:42 -0400
+Subject: Re: [PATCH 3/3] arm64: dts: r8a7795: salvator: enable UHS for SDHI 0
+ & 3
+To: Wolfram Sang <wsa@the-dreams.de>
+References: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
+ <1465229307-1961-4-git-send-email-wsa@the-dreams.de>
+CC: <linux-renesas-soc@vger.kernel.org>,
 	Geert Uytterhoeven <geert@linux-m68k.org>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH 3/3] arm64: dts: r8a7795: salvator: enable UHS for SDHI 0
- & 3
-Message-ID: <20160629103909.GA1793@katana>
-References: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
- <1465229307-1961-4-git-send-email-wsa@the-dreams.de>
- <e34fd0e6-603b-584b-0aa6-09aa46ada041@de.bosch.com>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <e34fd0e6-603b-584b-0aa6-09aa46ada041@de.bosch.com>
+Date: Wed, 29 Jun 2016 10:20:38 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="liOOAslEiF7prFVr"
-Content-Disposition: inline
-In-Reply-To: <e34fd0e6-603b-584b-0aa6-09aa46ada041@de.bosch.com>
+In-Reply-To: <1465229307-1961-4-git-send-email-wsa@the-dreams.de>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---liOOAslEiF7prFVr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 06.06.2016 18:08, Wolfram Sang wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 22 ++++++++++++++++++++--
+>  1 file changed, 20 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> index abb25cfc20bd57..726426693f1fa0 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> @@ -229,11 +229,25 @@
+>  	sdhi0_pins: sd0 {
+>  		groups = "sdhi0_data4", "sdhi0_ctrl";
+>  		function = "sdhi0";
+> +		power-source = <3300>;
+> +	};
+> +
+> +	sdhi0_pins_uhs: sd0_uhs {
+> +		groups = "sdhi0_data4", "sdhi0_ctrl";
+> +		function = "sdhi0";
+> +		power-source = <1800>;
+>  	};
+>
+>  	sdhi3_pins: sd3 {
+>  		groups = "sdhi3_data4", "sdhi3_ctrl";
+>  		function = "sdhi3";
+> +		power-source = <3300>;
+> +	};
+> +
+> +	sdhi3_pins_uhs: sd3_uhs {
+> +		groups = "sdhi3_data4", "sdhi3_ctrl";
+> +		function = "sdhi3";
+> +		power-source = <1800>;
+>  	};
+>
+>  	sound_pins: sound {
+> @@ -374,25 +388,29 @@
+>
+>  &sdhi0 {
+>  	pinctrl-0 = <&sdhi0_pins>;
+> -	pinctrl-names = "default";
+> +	pinctrl-1 = <&sdhi0_pins_uhs>;
+> +	pinctrl-names = "default", "state_uhs";
+>
+>  	vmmc-supply = <&vcc_sdhi0>;
+>  	vqmmc-supply = <&vccq_sdhi0>;
+>  	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
+>  	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
+>  	bus-width = <4>;
+> +	sd-uhs-sdr50;
+>  	status = "okay";
+>  };
+>
+>  &sdhi3 {
+>  	pinctrl-0 = <&sdhi3_pins>;
+> -	pinctrl-names = "default";
+> +	pinctrl-1 = <&sdhi3_pins_uhs>;
+> +	pinctrl-names = "default", "state_uhs";
+>
+>  	vmmc-supply = <&vcc_sdhi3>;
+>  	vqmmc-supply = <&vccq_sdhi3>;
+>  	cd-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
+>  	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
+>  	bus-width = <4>;
+> +	sd-uhs-sdr50;
+>  	status = "okay";
+>  };
 
 
-> Could you kindly share the recent status of the MMC support for RCar3? Esp.
-> the eMMC support on the Salvator-X? From time to time I get this question
-> from several people ;)
-
-Nothing changed since last time. Meaning that it could work in 4-bit
-mode (haven't tested it, though, and am on the road right now), it
-probably won't with 8-bit.
+Could you kindly share the recent status of the MMC support for RCar3? 
+Esp. the eMMC support on the Salvator-X? From time to time I get this 
+question from several people ;)
 
 
---liOOAslEiF7prFVr
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXc6VNAAoJEBQN5MwUoCm2dkEQAJdNdJXXTmNg+iIsPwhwIY8O
-bIVgHC+B8I0NptZTHYK40nOJb/ttuUopcEilgXHJCWyyODAtFH4pYGn6dCHW7loK
-IfmqzqKwSE5xrnYGA4tbyDZCYFL5spA6MG0Rnm+RO1HRsfh4EvqqIbFhN8fvrIhr
-fbINtO3H7YpPsKcpp2LzQWNV5Mx+gDnFxmQgGj2x/shI+RvNJa44DXS7EVoJZybv
-xTYDAkGp8kaNN/BPR8H8GQi0C4zCUrYFmObfgBYO7ZNvrBecVxPwpHm9cabEtksD
-oPKQSb8k/ZhnAQx7ns3ssFFLwFcQHZAB4phwVS0IuevCMCiEskAht+LTWhBOrSqm
-bj7Gjf6cb37FvGfVQeinNzJmqycwXV0Eq/IlZbUOq6GZTtiVduaOh3frwPsfMKCS
-60+NTZ39kY1CQgZ+VPgdl7a1eTawfa/hmlodOHmu2xAdrP7+DVtev5OGl/sAy75m
-dKL0bwADuvPvn9NbVEh0ORo+VNWgkfCjdBx0caJa9xx5USp66iXCCkN67LzaNbD/
-s8wM4p9ylxnqaBPpy+Mg6oedft1hJuU9QBng7st109t2LY2JO8H/9iyDfL9rNWLo
-X6fE6+SFvW3n0RFzKQISx0Y3aRiyhSBq5x1utlhX8OpGj8Fhw2PfUOBHYJ+ky/9G
-PTjvV2/YJjIPLvn0LLRI
-=f8/V
------END PGP SIGNATURE-----
-
---liOOAslEiF7prFVr--
+Dirk
