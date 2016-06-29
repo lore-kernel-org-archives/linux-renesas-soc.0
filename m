@@ -1,51 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55231 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:55002 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751505AbcF2W3e (ORCPT
+	with ESMTP id S1751728AbcF2WGE (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 18:29:34 -0400
+	Wed, 29 Jun 2016 18:06:04 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert@glider.be>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [GIT PULL FOR renesas-drivers v2] mmc: renesas_sdhi: add R-Car Gen-3 DMA support
-Date: Thu, 30 Jun 2016 00:12:31 +0200
-Message-Id: <1467238351-25267-1-git-send-email-horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH/RFC v2 0/5] mmc: renesas_sdhi: add R-Car Gen-3 DMA support
+Date: Thu, 30 Jun 2016 00:05:35 +0200
+Message-Id: <1467237940-24388-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+Hi,
 
-please consider pulling a prototype to modularise SDHI DMA to the extent
-that multiple providers may be built into the same kernel/module and
-provide SDHI DMA support for R-Car Gen3.
+this short series adds support for R-Car Gen-3 Internal DMAC to the SDHI
+driver.
 
-As these changes rename files, which may lead to conflicts with mainline,
-I will entirely understand if you decide against accepting this request.
+The approach taken is as follows:
 
-This pull request is based on mmc/next
+1. Refactor the TMIO DMA code so that it is provided by a set of callbacks
+   rather than compiled-in function calls; Refactor the DMA SDHI to use
+   this.
+2. Rename tmio_mmc_dma.c as renesas_sdhi_sysc_dmac.c which better reflects
+   what it is is, particularly after step 2.
+3. Add max_segs restriction
+4. Add Gen3 DMA code as a separate set of callbacks
 
-The following changes since commit 466780648db4aed7722de91e9d9749c6c5969327:
+Changes since v3:
+* Cleanup and more renaming as suggested by Wolfram Sang
+* max_segs restriction
 
-  mmc: sh_mmcif: Use a 10s timeout in the error recovery path (2016-06-27 11:19:29 +0200)
+Testing:
 
-are available in the git repository at:
+As described on http://elinux.org/Tests:r-car-gen3-sdhi-dma
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdhi-gen3-dma-v2
+Performance appears to be less than expected,
+4.7Mb/s read for a card observed to read at 20Mb/s on r8a7790/Koelsch.
 
-for you to fetch changes up to 8af14f568146e167ad76dbf416246cd3be557f7c:
+I will inviestigate this further.
 
-  mmc: renesas_sdhi: add support for R-Car Gen3 SDHI DMAC (2016-06-29 23:25:10 +0200)
 
-----------------------------------------------------------------
 Simon Horman (2):
-      mmc: sh_mobile_sdhi, tmio: make dma more modular
-      mmc: sh_mobile_sdhi: rename DMA source file as renesas_sdhi_sysc_dmac.c
+  mmc: sh_mobile_sdhi, tmio: make dma more modular
+  mmc: sh_mobile_sdhi: rename DMA source file as
+    renesas_sdhi_sysc_dmac.c
 
 Yoshihiro Shimoda (3):
-      mmc: tmio: add max_segs and max_blk_count in tmio_mmc_data
-      mmc: sh_mobile_sdhi: add some SoC specific data for R-Car Gen3
-      mmc: renesas_sdhi: add support for R-Car Gen3 SDHI DMAC
+  mmc: tmio: add max_segs and max_blk_count in tmio_mmc_data
+  mmc: sh_mobile_sdhi: add some SoC specific data for R-Car Gen3
+  mmc: renesas_sdhi: add support for R-Car Gen3 SDHI DMAC
 
  drivers/mmc/host/Kconfig                           |  18 ++
  drivers/mmc/host/Makefile                          |   7 +-
@@ -58,3 +66,6 @@ Yoshihiro Shimoda (3):
  8 files changed, 360 insertions(+), 51 deletions(-)
  create mode 100644 drivers/mmc/host/renesas_sdhi_internal_dmac.c
  rename drivers/mmc/host/{tmio_mmc_dma.c => renesas_sdhi_sysc_dmac.c} (83%)
+
+-- 
+2.7.0.rc3.207.g0ac5344
