@@ -1,391 +1,144 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56528 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752089AbcFHBAW (ORCPT
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:56454 "EHLO
+	smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751047AbcF2H6j (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 21:00:22 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 06/30] ARM: dts: r8a7791: Reference both DMA controllers
-Date: Wed,  8 Jun 2016 09:59:36 +0900
-Message-Id: <4aed4c9f01e1112d88ec82e666febe49715e5f33.1465346599.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1465346599.git.horms+renesas@verge.net.au>
-References: <cover.1465346599.git.horms+renesas@verge.net.au>
+	Wed, 29 Jun 2016 03:58:39 -0400
+Subject: Re: [PATCH 0/4] ARM: Renesas: R-Car3: Add product register support
+To: Magnus Damm <magnus.damm@gmail.com>
+References: <1464166708-18320-1-git-send-email-dirk.behme@de.bosch.com>
+ <CAMuHMdWoBv-13eNMr_ymtmRo-LPdznarRMyXFw0pG7xF_07A6A@mail.gmail.com>
+ <c0890925-f003-8aa5-22fd-315229593037@de.bosch.com>
+ <CANqRtoSHkH2N6_UJ_mjij9k3GaAsSBDuUxjTTLZryHzy74Sh1Q@mail.gmail.com>
+ <eccba76d-465c-ca86-bda2-1f0ededc6918@de.bosch.com>
+ <CANqRtoR5008j-W2wbz2oVkYZv=-P4j6OZMQGz2fTXO1PwSeCtw@mail.gmail.com>
+CC: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	<linux-renesas-soc@vger.kernel.org>,
+	Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
+	TOSHIAKI KOMATSU <toshiaki.komatsu.ud@renesas.com>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <834f6a64-7c7b-c4d9-d577-2614b39eeb08@de.bosch.com>
+Date: Wed, 29 Jun 2016 09:58:36 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANqRtoR5008j-W2wbz2oVkYZv=-P4j6OZMQGz2fTXO1PwSeCtw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Hi Magnus,
 
-R-Car Gen2 have two DMA controllers, which are equivalent. Add
-references to both dmac0 and dmac1 so the driver can choose which one to
-use.
+On 01.06.2016 07:19, Magnus Damm wrote:
+> Hi Dirk,
+>
+> On Fri, May 27, 2016 at 4:56 PM, Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>> On 27.05.2016 05:13, Magnus Damm wrote:
+>>> I don't think anyone disagrees that it makes sense to be able to
+>>> determine ES version during runtime. The questions in my mind are how
+>>> to do it
+>>
+>>
+>>
+>> I've made a proposal ;) And I'm happy to discuss technically about it.
+>
+> Thanks! It would be interesting to know the reason behind your
+> interest in these things.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7791.dtsi | 145 ++++++++++++++++++++++++-----------------
- 1 file changed, 87 insertions(+), 58 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index db67e342c585..2f924146d381 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -514,8 +514,9 @@
- 		reg = <0 0xe60b0000 0 0x425>;
- 		interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7791_CLK_IICDVFS>;
--		dmas = <&dmac0 0x77>, <&dmac0 0x78>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x77>, <&dmac0 0x78>,
-+		       <&dmac1 0x77>, <&dmac1 0x78>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -527,8 +528,9 @@
- 		reg = <0 0xe6500000 0 0x425>;
- 		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7791_CLK_IIC0>;
--		dmas = <&dmac0 0x61>, <&dmac0 0x62>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x61>, <&dmac0 0x62>,
-+		       <&dmac1 0x61>, <&dmac1 0x62>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -540,8 +542,9 @@
- 		reg = <0 0xe6510000 0 0x425>;
- 		interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7791_CLK_IIC1>;
--		dmas = <&dmac0 0x65>, <&dmac0 0x66>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x65>, <&dmac0 0x66>,
-+		       <&dmac1 0x65>, <&dmac1 0x66>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -556,8 +559,9 @@
- 		reg = <0 0xee200000 0 0x80>;
- 		interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7791_CLK_MMCIF0>;
--		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xd1>, <&dmac0 0xd2>,
-+		       <&dmac1 0xd1>, <&dmac1 0xd2>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		reg-io-width = <4>;
- 		status = "disabled";
-@@ -569,8 +573,9 @@
- 		reg = <0 0xee100000 0 0x328>;
- 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7791_CLK_SDHI0>;
--		dmas = <&dmac1 0xcd>, <&dmac1 0xce>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
-+		       <&dmac1 0xcd>, <&dmac1 0xce>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -580,8 +585,9 @@
- 		reg = <0 0xee140000 0 0x100>;
- 		interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7791_CLK_SDHI1>;
--		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xc1>, <&dmac0 0xc2>,
-+		       <&dmac1 0xc1>, <&dmac1 0xc2>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -591,8 +597,9 @@
- 		reg = <0 0xee160000 0 0x100>;
- 		interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7791_CLK_SDHI2>;
--		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
-+		       <&dmac1 0xd3>, <&dmac1 0xd4>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -604,8 +611,9 @@
- 		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA0>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x21>, <&dmac0 0x22>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x21>, <&dmac0 0x22>,
-+		       <&dmac1 0x21>, <&dmac1 0x22>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -617,8 +625,9 @@
- 		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA1>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x25>, <&dmac0 0x26>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x25>, <&dmac0 0x26>,
-+		       <&dmac1 0x25>, <&dmac1 0x26>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -630,8 +639,9 @@
- 		interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFA2>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x27>, <&dmac0 0x28>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x27>, <&dmac0 0x28>,
-+		       <&dmac1 0x27>, <&dmac1 0x28>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -643,8 +653,9 @@
- 		interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA3>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x1b>, <&dmac0 0x1c>,
-+		       <&dmac1 0x1b>, <&dmac1 0x1c>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -656,8 +667,9 @@
- 		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA4>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x1f>, <&dmac0 0x20>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x1f>, <&dmac0 0x20>,
-+		       <&dmac1 0x1f>, <&dmac1 0x20>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -669,8 +681,9 @@
- 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp11_clks R8A7791_CLK_SCIFA5>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x23>, <&dmac0 0x24>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x23>, <&dmac0 0x24>,
-+		       <&dmac1 0x23>, <&dmac1 0x24>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -682,8 +695,9 @@
- 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB0>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
-+		       <&dmac1 0x3d>, <&dmac1 0x3e>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -695,8 +709,9 @@
- 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB1>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x19>, <&dmac0 0x1a>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x19>, <&dmac0 0x1a>,
-+		       <&dmac1 0x19>, <&dmac1 0x1a>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -708,8 +723,9 @@
- 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB2>;
- 		clock-names = "fck";
--		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x1d>, <&dmac0 0x1e>,
-+		       <&dmac1 0x1d>, <&dmac1 0x1e>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -722,8 +738,9 @@
- 		clocks = <&mstp7_clks R8A7791_CLK_SCIF0>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0x29>, <&dmac0 0x2a>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
-+		       <&dmac1 0x29>, <&dmac1 0x2a>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -736,8 +753,9 @@
- 		clocks = <&mstp7_clks R8A7791_CLK_SCIF1>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
-+		       <&dmac1 0x2d>, <&dmac1 0x2e>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -750,8 +768,9 @@
- 		clocks = <&mstp7_clks R8A7791_CLK_SCIF2>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
-+		       <&dmac1 0x2b>, <&dmac1 0x2c>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -764,8 +783,9 @@
- 		clocks = <&mstp7_clks R8A7791_CLK_SCIF3>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0x2f>, <&dmac0 0x30>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
-+		       <&dmac1 0x2f>, <&dmac1 0x30>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -778,8 +798,9 @@
- 		clocks = <&mstp7_clks R8A7791_CLK_SCIF4>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
-+		       <&dmac1 0xfb>, <&dmac1 0xfc>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -792,8 +813,9 @@
- 		clocks = <&mstp7_clks R8A7791_CLK_SCIF5>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
-+		       <&dmac1 0xfd>, <&dmac1 0xfe>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -806,8 +828,9 @@
- 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF0>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0x39>, <&dmac0 0x3a>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
-+		       <&dmac1 0x39>, <&dmac1 0x3a>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -820,8 +843,9 @@
- 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF1>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
-+		       <&dmac1 0x4d>, <&dmac1 0x4e>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -834,8 +858,9 @@
- 		clocks = <&mstp7_clks R8A7791_CLK_HSCIF2>, <&zs_clk>,
- 			 <&scif_clk>;
- 		clock-names = "fck", "brg_int", "scif_clk";
--		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x3b>, <&dmac0 0x3c>,
-+		       <&dmac1 0x3b>, <&dmac1 0x3c>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		status = "disabled";
- 	};
-@@ -1478,8 +1503,9 @@
- 		reg = <0 0xe6b10000 0 0x2c>;
- 		interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp9_clks R8A7791_CLK_QSPI_MOD>;
--		dmas = <&dmac0 0x17>, <&dmac0 0x18>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x17>, <&dmac0 0x18>,
-+		       <&dmac1 0x17>, <&dmac1 0x18>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		num-cs = <1>;
- 		#address-cells = <1>;
-@@ -1492,8 +1518,9 @@
- 		reg = <0 0xe6e20000 0 0x0064>;
- 		interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp0_clks R8A7791_CLK_MSIOF0>;
--		dmas = <&dmac0 0x51>, <&dmac0 0x52>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x51>, <&dmac0 0x52>,
-+		       <&dmac1 0x51>, <&dmac1 0x52>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -1505,8 +1532,9 @@
- 		reg = <0 0xe6e10000 0 0x0064>;
- 		interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_MSIOF1>;
--		dmas = <&dmac0 0x55>, <&dmac0 0x56>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x55>, <&dmac0 0x56>,
-+		       <&dmac1 0x55>, <&dmac1 0x56>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -1518,8 +1546,9 @@
- 		reg = <0 0xe6e00000 0 0x0064>;
- 		interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_MSIOF2>;
--		dmas = <&dmac0 0x41>, <&dmac0 0x42>;
--		dma-names = "tx", "rx";
-+		dmas = <&dmac0 0x41>, <&dmac0 0x42>,
-+		       <&dmac1 0x41>, <&dmac1 0x42>;
-+		dma-names = "tx", "rx", "tx", "rx";
- 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--- 
-2.1.4
+Regarding the general removal of hard coded registers:
+
+This breaks virtualization. If you use a virtualization solution, e.g. 
+Xen, which does the memory access rights based on the device tree, each 
+peripheral memory access done by the Linux kernel is trapped by the 
+hypervisor, then. Because it doesn't know anything about the memory 
+range accessed.
+
+
+Regarding the PRODUCTREG specifically, we already see that it's used for 
+engineering sample (ES) detection in some drivers. So not having a 
+(device tree) based solution for this, does block all driver development 
+(upstreaming) where some ES detection might be needed.
+
+
+>>> and the urgency.
+>>
+>>
+>>
+>> Regarding the urgency: Someone has accepted the hard coded PRODUCT register
+>> (and MODEMR) being in renesas-drivers, now:
+>>
+>> https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/tree/drivers/gpu/drm/rcar-du/rcar_du_crtc.c?h=topic/gen3-latest#n177
+>>
+>> This does really hurts us.
+>>
+>> Therefore, I try to get this removed as soon as possible to hopefully get a
+>> Renesas BSP without this, the next time.
+>>
+>> If anybody finds an other way to remove that, that would be fine, too.
+>
+> Please share the underlying issue so we can fix that.
+
+
+See above.
+
+
+>>> So far we have decided to use the compatible string since it is a
+>>> common driver model abstraction already used by device drivers and
+>>> hardware description in DT. Using DT compat string matching we can
+>>> have logic in the drivers to handle ES differences if needed. As for
+>>> how to enable the workaround, my opinion is that the missing piece
+>>> consists of ES workaround code that appends ES suffix information to
+>>> the DT compat strings automatically during boot.
+>>
+>> Technically this sounds slightly too complicated to me. As I have to
+>> advocate my proposal (inspired from an other mainline SoC family) I'd think
+>> that my proposal is easier.
+>
+> It may indeed be easier in the short term, but I feel we need to
+> consider how to support a wide range of SoCs in a consistent way.
+>
+>>> I suppose the workaround is not yet implemented because no one has
+>>> deemed this topic as particularly urgent. Until it becomes urgent or a
+>>> new ES version appears the affected users can simply adjust the DT
+>>> binding themselves. This is what happened to the "sata-r8a7790-es1"
+>>> case above.
+>
+> Can you see any technical reason why using DT compat strings wouldn't
+> solve your case?
+
+
+It most probably will work technically, but I see a lot overhead 
+regarding boot time and maintenance in the proposed DT compat strings 
+solution.
+
+That solution would mean that for each ESx "workaround" we have to do in 
+a driver
+
+a) the generic detection code has to be extended to create the driver 
+specific *and* ESx specific compatible node
+
+b) the driver has to be extended to contain the new runtime compatible node
+
+c) the driver has to be extended to handle the ESx specific "workaround"
+
+d) the device tree documentation has to be extended for the new compatible
+
+These are the implementation / maintenance steps. Additionally, 
+regarding the runtime (boot time does matter!) this does mean that at 
+kernel's boot time the ESx information from the hardware register is 
+"translated" into a device tree compatible, this is added to the device 
+tree at runtime, the device driver has to check the device tree and then 
+apply the specific ESx handling.
+
+With my solution, from above list only (c) has to be done. That means 
+that you don't have to touch any generic code. And the driver has just 
+to call one function.
+
+If you like, compare the mainline i.MX6 way of doing this.
+
+
+Best regards
+
+Dirk
