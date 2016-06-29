@@ -1,110 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:35967 "EHLO
-	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751736AbcFHVLd (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:51604 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751525AbcF2R55 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 17:11:33 -0400
-Received: by mail-lf0-f53.google.com with SMTP id j5so13938261lfb.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 Jun 2016 14:11:32 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 04/12] ARM: shmobile: r8a7792: basic SoC support
-Date: Thu, 09 Jun 2016 00:11:29 +0300
-Message-ID: <63725827.hh7OmSSScd@wasted.cogentembedded.com>
-In-Reply-To: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
-References: <12536856.AsKMEpuejQ@wasted.cogentembedded.com>
+	Wed, 29 Jun 2016 13:57:57 -0400
+Date: Wed, 29 Jun 2016 10:57:55 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [git pull] clk: renesas: Updates for v4.8 (take two)
+Message-ID: <20160629175755.GK1521@codeaurora.org>
+References: <1466690683-28949-1-git-send-email-geert+renesas@glider.be>
+ <20160628233504.GH1521@codeaurora.org>
+ <CAMuHMdXshxJMkHXHGo8gCujfNsqJU=LeZPjtB9tjNErKwn7_Cg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXshxJMkHXHGo8gCujfNsqJU=LeZPjtB9tjNErKwn7_Cg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add minimal support for the R-Car V2H (R8A7792) SoC.
+On 06/29, Geert Uytterhoeven wrote:
+> 
+> Thanks, but it seems something went wrong: commit d9cce3a8ebb871c5 is not a
+> merge commit, but the combination of all 7 commits from the pull request?
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hmm... weird. I fixed it now.
 
----
-Changes in version 3:
-- added Cogent Embedded's copyright;
-- removed a supefluous space in Renesas Electronics' copyright.
+> 
+> > unless you really need it. Just use readl/writel directly. I
+> > should put a big fat warning over those functions that they
+> > shouldn't be used.
+> 
+> Hence all users under drivers/clk/renesas/ should be converted to readl()?
 
-Changes in version 2:
-- removed 'select I2C';
-- added Simon's ACK and Geert's tag too.
+Probably.
 
- arch/arm/mach-shmobile/Kconfig         |    4 +++
- arch/arm/mach-shmobile/Makefile        |    1 
- arch/arm/mach-shmobile/setup-r8a7792.c |   35 +++++++++++++++++++++++++++++++++
- 3 files changed, 40 insertions(+)
-
-Index: renesas/arch/arm/mach-shmobile/Kconfig
-===================================================================
---- renesas.orig/arch/arm/mach-shmobile/Kconfig
-+++ renesas/arch/arm/mach-shmobile/Kconfig
-@@ -86,6 +86,10 @@ config ARCH_R8A7791
- 	select ARCH_RCAR_GEN2
- 	select I2C
- 
-+config ARCH_R8A7792
-+	bool "R-Car V2H (R8A77920)"
-+	select ARCH_RCAR_GEN2
-+
- config ARCH_R8A7793
- 	bool "R-Car M2-N (R8A7793)"
- 	select ARCH_RCAR_GEN2
-Index: renesas/arch/arm/mach-shmobile/Makefile
-===================================================================
---- renesas.orig/arch/arm/mach-shmobile/Makefile
-+++ renesas/arch/arm/mach-shmobile/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7
- obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
- obj-$(CONFIG_ARCH_R8A7790)	+= setup-r8a7790.o
- obj-$(CONFIG_ARCH_R8A7791)	+= setup-r8a7791.o
-+obj-$(CONFIG_ARCH_R8A7792)	+= setup-r8a7792.o
- obj-$(CONFIG_ARCH_R8A7793)	+= setup-r8a7793.o
- obj-$(CONFIG_ARCH_R8A7794)	+= setup-r8a7794.o
- obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
-Index: renesas/arch/arm/mach-shmobile/setup-r8a7792.c
-===================================================================
---- /dev/null
-+++ renesas/arch/arm/mach-shmobile/setup-r8a7792.c
-@@ -0,0 +1,35 @@
-+/*
-+ * r8a7792 processor support
-+ *
-+ * Copyright (C) 2014 Renesas Electronics Corporation
-+ * Copyright (C) 2016 Cogent  Embedded, Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/of_platform.h>
-+
-+#include <asm/mach/arch.h>
-+
-+#include "common.h"
-+#include "rcar-gen2.h"
-+
-+static const char * const r8a7792_boards_compat_dt[] __initconst = {
-+	"renesas,r8a7792",
-+	NULL,
-+};
-+
-+DT_MACHINE_START(R8A7792_DT, "Generic R8A7792 (Flattened Device Tree)")
-+	.init_early	= shmobile_init_delay,
-+	.init_late	= shmobile_init_late,
-+	.init_time	= rcar_gen2_timer_init,
-+	.reserve	= rcar_gen2_reserve,
-+	.dt_compat	= r8a7792_boards_compat_dt,
-+MACHINE_END
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
