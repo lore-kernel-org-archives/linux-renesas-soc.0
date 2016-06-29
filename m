@@ -1,389 +1,303 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52953 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933025AbcFTTN7 (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35673 "EHLO
+	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752346AbcF2QHM (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 20 Jun 2016 15:13:59 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 22/24] v4l: vsp1: wpf: Add flipping support
-Date: Mon, 20 Jun 2016 22:10:40 +0300
-Message-Id: <1466449842-29502-23-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1466449842-29502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Wed, 29 Jun 2016 12:07:12 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be
+Cc: horms@verge.net.au, magnus.damm@gmail.com,
+	linux-gpio@vger.kernel.org,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Add bias pinconf support
+Date: Wed, 29 Jun 2016 18:06:04 +0200
+Message-Id: <1467216364-27235-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Vertical flipping is available on both Gen2 and Gen3, while horizontal
-flipping is only available on Gen3.
+Implements pull-up and pull-down. On this SoC there is no simple mapping of
+GP pins to bias register bits, so we need a table.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
- drivers/media/platform/vsp1/vsp1.h      |   2 +
- drivers/media/platform/vsp1/vsp1_drv.c  |  15 ++--
- drivers/media/platform/vsp1/vsp1_regs.h |   7 ++
- drivers/media/platform/vsp1/vsp1_rpf.c  |   2 +-
- drivers/media/platform/vsp1/vsp1_rwpf.c |   4 +-
- drivers/media/platform/vsp1/vsp1_rwpf.h |  11 ++-
- drivers/media/platform/vsp1/vsp1_wpf.c  | 143 ++++++++++++++++++++++++++++++--
- 7 files changed, 167 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1.h b/drivers/media/platform/vsp1/vsp1.h
-index f5e58cea36cc..a9b1d251f71a 100644
---- a/drivers/media/platform/vsp1/vsp1.h
-+++ b/drivers/media/platform/vsp1/vsp1.h
-@@ -50,6 +50,8 @@ struct vsp1_uds;
- #define VSP1_HAS_BRU		(1 << 3)
- #define VSP1_HAS_HGO		(1 << 4)
- #define VSP1_HAS_CLU		(1 << 5)
-+#define VSP1_HAS_WPF_VFLIP	(1 << 6)
-+#define VSP1_HAS_WPF_HFLIP	(1 << 7)
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 254 +++++++++++++++++++++++++++++++++--
+ 1 file changed, 242 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index b74cdd3..0f1a111 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -13,19 +13,23 @@
+ #include "core.h"
+ #include "sh_pfc.h"
  
- struct vsp1_device_info {
- 	u32 version;
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index 7e5bd48db2d6..dae1fa47acd7 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -585,7 +585,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.version = VI6_IP_VERSION_MODEL_VSPS_H2,
- 		.gen = 2,
- 		.features = VSP1_HAS_BRU | VSP1_HAS_CLU | VSP1_HAS_HGO
--			  | VSP1_HAS_LUT | VSP1_HAS_SRU,
-+			  | VSP1_HAS_LUT | VSP1_HAS_SRU | VSP1_HAS_WPF_VFLIP,
- 		.rpf_count = 5,
- 		.uds_count = 3,
- 		.wpf_count = 4,
-@@ -594,7 +594,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 	}, {
- 		.version = VI6_IP_VERSION_MODEL_VSPR_H2,
- 		.gen = 2,
--		.features = VSP1_HAS_BRU | VSP1_HAS_SRU,
-+		.features = VSP1_HAS_BRU | VSP1_HAS_SRU | VSP1_HAS_WPF_VFLIP,
- 		.rpf_count = 5,
- 		.uds_count = 3,
- 		.wpf_count = 4,
-@@ -614,7 +614,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.version = VI6_IP_VERSION_MODEL_VSPS_M2,
- 		.gen = 2,
- 		.features = VSP1_HAS_BRU | VSP1_HAS_CLU | VSP1_HAS_HGO
--			  | VSP1_HAS_LUT | VSP1_HAS_SRU,
-+			  | VSP1_HAS_LUT | VSP1_HAS_SRU | VSP1_HAS_WPF_VFLIP,
- 		.rpf_count = 5,
- 		.uds_count = 1,
- 		.wpf_count = 4,
-@@ -624,7 +624,8 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.version = VI6_IP_VERSION_MODEL_VSPI_GEN3,
- 		.gen = 3,
- 		.features = VSP1_HAS_CLU | VSP1_HAS_HGO | VSP1_HAS_LUT
--			  | VSP1_HAS_SRU,
-+			  | VSP1_HAS_SRU | VSP1_HAS_WPF_HFLIP
-+			  | VSP1_HAS_WPF_VFLIP,
- 		.rpf_count = 1,
- 		.uds_count = 1,
- 		.wpf_count = 1,
-@@ -632,7 +633,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 	}, {
- 		.version = VI6_IP_VERSION_MODEL_VSPBD_GEN3,
- 		.gen = 3,
--		.features = VSP1_HAS_BRU,
-+		.features = VSP1_HAS_BRU | VSP1_HAS_WPF_VFLIP,
- 		.rpf_count = 5,
- 		.wpf_count = 1,
- 		.num_bru_inputs = 5,
-@@ -641,7 +642,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.version = VI6_IP_VERSION_MODEL_VSPBC_GEN3,
- 		.gen = 3,
- 		.features = VSP1_HAS_BRU | VSP1_HAS_CLU | VSP1_HAS_HGO
--			  | VSP1_HAS_LUT,
-+			  | VSP1_HAS_LUT | VSP1_HAS_WPF_VFLIP,
- 		.rpf_count = 5,
- 		.wpf_count = 1,
- 		.num_bru_inputs = 5,
-@@ -649,7 +650,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 	}, {
- 		.version = VI6_IP_VERSION_MODEL_VSPD_GEN3,
- 		.gen = 3,
--		.features = VSP1_HAS_BRU | VSP1_HAS_LIF,
-+		.features = VSP1_HAS_BRU | VSP1_HAS_LIF | VSP1_HAS_WPF_VFLIP,
- 		.rpf_count = 5,
- 		.wpf_count = 2,
- 		.num_bru_inputs = 5,
-diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
-index 517a2a6606a3..d8213481edbe 100644
---- a/drivers/media/platform/vsp1/vsp1_regs.h
-+++ b/drivers/media/platform/vsp1/vsp1_regs.h
-@@ -255,6 +255,8 @@
- #define VI6_WPF_OUTFMT_PDV_MASK		(0xff << 24)
- #define VI6_WPF_OUTFMT_PDV_SHIFT	24
- #define VI6_WPF_OUTFMT_PXA		(1 << 23)
-+#define VI6_WPF_OUTFMT_ROT		(1 << 18)
-+#define VI6_WPF_OUTFMT_HFLP		(1 << 17)
- #define VI6_WPF_OUTFMT_FLP		(1 << 16)
- #define VI6_WPF_OUTFMT_SPYCS		(1 << 15)
- #define VI6_WPF_OUTFMT_SPUVS		(1 << 14)
-@@ -289,6 +291,11 @@
- #define VI6_WPF_RNDCTRL_CLMD_EXT	(2 << 12)
- #define VI6_WPF_RNDCTRL_CLMD_MASK	(3 << 12)
- 
-+#define VI6_WPF_ROT_CTRL		0x1018
-+#define VI6_WPF_ROT_CTRL_LN16		(1 << 17)
-+#define VI6_WPF_ROT_CTRL_LMEM_WD_MASK	(0x1fff << 0)
-+#define VI6_WPF_ROT_CTRL_LMEM_WD_SHIFT	0
++#define CFG_FLAGS (SH_PFC_PIN_CFG_DRIVE_STRENGTH | \
++		   SH_PFC_PIN_CFG_PULL_UP | \
++		   SH_PFC_PIN_CFG_PULL_DOWN)
 +
- #define VI6_WPF_DSTM_STRIDE_Y		0x101c
- #define VI6_WPF_DSTM_STRIDE_C		0x1020
- #define VI6_WPF_DSTM_ADDR_Y		0x1024
-diff --git a/drivers/media/platform/vsp1/vsp1_rpf.c b/drivers/media/platform/vsp1/vsp1_rpf.c
-index 39b0580878ce..a4bf6e1bcaea 100644
---- a/drivers/media/platform/vsp1/vsp1_rpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_rpf.c
-@@ -247,7 +247,7 @@ struct vsp1_rwpf *vsp1_rpf_create(struct vsp1_device *vsp1, unsigned int index)
- 		return ERR_PTR(ret);
+ #define CPU_ALL_PORT(fn, sfx)						\
+-	PORT_GP_CFG_16(0, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_28(1, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_15(2, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_12(3, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_IO_VOLTAGE),	\
+-	PORT_GP_CFG_1(3, 12, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_1(3, 13, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_1(3, 14, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_1(3, 15, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_18(4, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH | SH_PFC_PIN_CFG_IO_VOLTAGE),	\
+-	PORT_GP_CFG_26(5, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_32(6, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH),	\
+-	PORT_GP_CFG_4(7, fn, sfx, SH_PFC_PIN_CFG_DRIVE_STRENGTH)
++	PORT_GP_CFG_16(0, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_28(1, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_15(2, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_12(3, fn, sfx, CFG_FLAGS | SH_PFC_PIN_CFG_IO_VOLTAGE),	\
++	PORT_GP_CFG_1(3, 12, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_1(3, 13, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_1(3, 14, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_1(3, 15, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_18(4, fn, sfx, CFG_FLAGS | SH_PFC_PIN_CFG_IO_VOLTAGE),	\
++	PORT_GP_CFG_26(5, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_32(6, fn, sfx, CFG_FLAGS),	\
++	PORT_GP_CFG_4(7, fn, sfx, CFG_FLAGS)
+ /*
+  * F_() : just information
+  * FM() : macro for FN_xxx / xxx_MARK
+@@ -5073,8 +5077,234 @@ static int r8a7795_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *poc
+ 	return bit;
+ }
  
- 	/* Initialize the control handler. */
--	ret = vsp1_rwpf_init_ctrls(rpf);
-+	ret = vsp1_rwpf_init_ctrls(rpf, 0);
- 	if (ret < 0) {
- 		dev_err(vsp1->dev, "rpf%u: failed to initialize controls\n",
- 			index);
-diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.c b/drivers/media/platform/vsp1/vsp1_rwpf.c
-index cd3562d1d9cf..8d461b375e91 100644
---- a/drivers/media/platform/vsp1/vsp1_rwpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_rwpf.c
-@@ -241,9 +241,9 @@ static const struct v4l2_ctrl_ops vsp1_rwpf_ctrl_ops = {
- 	.s_ctrl = vsp1_rwpf_s_ctrl,
++#define PUEN	0xe6060400
++#define PUD	0xe6060440
++
++#define PU0	0x00
++#define PU1	0x04
++#define PU2	0x08
++#define PU3	0x0c
++#define PU4	0x10
++#define PU5	0x14
++#define PU6	0x18
++
++static const struct {
++	u16 reg : 11;
++	u16 bit : 5;
++} pullups[] = {
++	[RCAR_GP_PIN(2, 11)] = { PU0, 31 },	/* AVB_PHY_INT */
++	[RCAR_GP_PIN(2, 10)] = { PU0, 30 },	/* AVB_MAGIC */
++	[RCAR_GP_PIN(2,  9)] = { PU0, 29 },	/* AVB_MDC */
++
++	[RCAR_GP_PIN(1, 19)] = { PU1, 31 },	/* A19 */
++	[RCAR_GP_PIN(1, 18)] = { PU1, 30 },	/* A18 */
++	[RCAR_GP_PIN(1, 17)] = { PU1, 29 },	/* A17 */
++	[RCAR_GP_PIN(1, 16)] = { PU1, 28 },	/* A16 */
++	[RCAR_GP_PIN(1, 15)] = { PU1, 27 },	/* A15 */
++	[RCAR_GP_PIN(1, 14)] = { PU1, 26 },	/* A14 */
++	[RCAR_GP_PIN(1, 13)] = { PU1, 25 },	/* A13 */
++	[RCAR_GP_PIN(1, 12)] = { PU1, 24 },	/* A12 */
++	[RCAR_GP_PIN(1, 11)] = { PU1, 23 },	/* A11 */
++	[RCAR_GP_PIN(1, 10)] = { PU1, 22 },	/* A10 */
++	[RCAR_GP_PIN(1,  9)] = { PU1, 21 },	/* A9 */
++	[RCAR_GP_PIN(1,  8)] = { PU1, 20 },	/* A8 */
++	[RCAR_GP_PIN(1,  7)] = { PU1, 19 },	/* A7 */
++	[RCAR_GP_PIN(1,  6)] = { PU1, 18 },	/* A6 */
++	[RCAR_GP_PIN(1,  5)] = { PU1, 17 },	/* A5 */
++	[RCAR_GP_PIN(1,  4)] = { PU1, 16 },	/* A4 */
++	[RCAR_GP_PIN(1,  3)] = { PU1, 15 },	/* A3 */
++	[RCAR_GP_PIN(1,  2)] = { PU1, 14 },	/* A2 */
++	[RCAR_GP_PIN(1,  1)] = { PU1, 13 },	/* A1 */
++	[RCAR_GP_PIN(1,  0)] = { PU1, 12 },	/* A0 */
++	[RCAR_GP_PIN(2,  8)] = { PU1, 11 },	/* PWM2_A */
++	[RCAR_GP_PIN(2,  7)] = { PU1, 10 },	/* PWM1_A */
++	[RCAR_GP_PIN(2,  6)] = { PU1,  9 },	/* PWM0 */
++	[RCAR_GP_PIN(2,  5)] = { PU1,  8 },	/* IRQ5 */
++	[RCAR_GP_PIN(2,  4)] = { PU1,  7 },	/* IRQ4 */
++	[RCAR_GP_PIN(2,  3)] = { PU1,  6 },	/* IRQ3 */
++	[RCAR_GP_PIN(2,  2)] = { PU1,  5 },	/* IRQ2 */
++	[RCAR_GP_PIN(2,  1)] = { PU1,  4 },	/* IRQ1 */
++	[RCAR_GP_PIN(2,  0)] = { PU1,  3 },	/* IRQ0 */
++	[RCAR_GP_PIN(2, 14)] = { PU1,  2 },	/* AVB_AVTP_CAPTURE_A */
++	[RCAR_GP_PIN(2, 13)] = { PU1,  1 },	/* AVB_AVTP_MATCH_A */
++	[RCAR_GP_PIN(2, 12)] = { PU1,  0 },	/* AVB_LINK */
++
++	[RCAR_GP_PIN(7,  3)] = { PU2, 29 },	/* HDMI1_CEC */
++	[RCAR_GP_PIN(7,  2)] = { PU2, 28 },	/* HDMI0_CEC */
++	[RCAR_GP_PIN(7,  1)] = { PU2, 27 },	/* AVS2 */
++	[RCAR_GP_PIN(7,  0)] = { PU2, 26 },	/* AVS1 */
++	[RCAR_GP_PIN(0, 15)] = { PU2, 25 },	/* D15 */
++	[RCAR_GP_PIN(0, 14)] = { PU2, 24 },	/* D14 */
++	[RCAR_GP_PIN(0, 13)] = { PU2, 23 },	/* D13 */
++	[RCAR_GP_PIN(0, 12)] = { PU2, 22 },	/* D12 */
++	[RCAR_GP_PIN(0, 11)] = { PU2, 21 },	/* D11 */
++	[RCAR_GP_PIN(0, 10)] = { PU2, 20 },	/* D10 */
++	[RCAR_GP_PIN(0,  9)] = { PU2, 19 },	/* D9 */
++	[RCAR_GP_PIN(0,  8)] = { PU2, 18 },	/* D8 */
++	[RCAR_GP_PIN(0,  7)] = { PU2, 17 },	/* D7 */
++	[RCAR_GP_PIN(0,  6)] = { PU2, 16 },	/* D6 */
++	[RCAR_GP_PIN(0,  5)] = { PU2, 15 },	/* D5 */
++	[RCAR_GP_PIN(0,  4)] = { PU2, 14 },	/* D4 */
++	[RCAR_GP_PIN(0,  3)] = { PU2, 13 },	/* D3 */
++	[RCAR_GP_PIN(0,  2)] = { PU2, 12 },	/* D2 */
++	[RCAR_GP_PIN(0,  1)] = { PU2, 11 },	/* D1 */
++	[RCAR_GP_PIN(0,  0)] = { PU2, 10 },	/* D0 */
++	[RCAR_GP_PIN(1, 27)] = { PU2,  8 },	/* EX_WAIT0_A */
++	[RCAR_GP_PIN(1, 26)] = { PU2,  7 },	/* WE1_N */
++	[RCAR_GP_PIN(1, 25)] = { PU2,  6 },	/* WE0_N */
++	[RCAR_GP_PIN(1, 24)] = { PU2,  5 },	/* RD_WR_N */
++	[RCAR_GP_PIN(1, 23)] = { PU2,  4 },	/* RD_N */
++	[RCAR_GP_PIN(1, 22)] = { PU2,  3 },	/* BS_N */
++	[RCAR_GP_PIN(1, 21)] = { PU2,  2 },	/* CS1_N_A26 */
++	[RCAR_GP_PIN(1, 20)] = { PU2,  1 },	/* CS0_N */
++
++	[RCAR_GP_PIN(4,  9)] = { PU3, 31 },	/* SD3_DAT0 */
++	[RCAR_GP_PIN(4,  8)] = { PU3, 30 },	/* SD3_CMD */
++	[RCAR_GP_PIN(4,  7)] = { PU3, 29 },	/* SD3_CLK */
++	[RCAR_GP_PIN(4,  6)] = { PU3, 28 },	/* SD2_DS */
++	[RCAR_GP_PIN(4,  5)] = { PU3, 27 },	/* SD2_DAT3 */
++	[RCAR_GP_PIN(4,  4)] = { PU3, 26 },	/* SD2_DAT2 */
++	[RCAR_GP_PIN(4,  3)] = { PU3, 25 },	/* SD2_DAT1 */
++	[RCAR_GP_PIN(4,  2)] = { PU3, 24 },	/* SD2_DAT0 */
++	[RCAR_GP_PIN(4,  1)] = { PU3, 23 },	/* SD2_CMD */
++	[RCAR_GP_PIN(4,  0)] = { PU3, 22 },	/* SD2_CLK */
++	[RCAR_GP_PIN(3, 11)] = { PU3, 21 },	/* SD1_DAT3 */
++	[RCAR_GP_PIN(3, 10)] = { PU3, 20 },	/* SD1_DAT2 */
++	[RCAR_GP_PIN(3,  9)] = { PU3, 19 },	/* SD1_DAT1 */
++	[RCAR_GP_PIN(3,  8)] = { PU3, 18 },	/* SD1_DAT0 */
++	[RCAR_GP_PIN(3,  7)] = { PU3, 17 },	/* SD1_CMD */
++	[RCAR_GP_PIN(3,  6)] = { PU3, 16 },	/* SD1_CLK */
++	[RCAR_GP_PIN(3,  5)] = { PU3, 15 },	/* SD0_DAT3 */
++	[RCAR_GP_PIN(3,  4)] = { PU3, 14 },	/* SD0_DAT2 */
++	[RCAR_GP_PIN(3,  3)] = { PU3, 13 },	/* SD0_DAT1 */
++	[RCAR_GP_PIN(3,  2)] = { PU3, 12 },	/* SD0_DAT0 */
++	[RCAR_GP_PIN(3,  1)] = { PU3, 11 },	/* SD0_CMD */
++	[RCAR_GP_PIN(3,  0)] = { PU3, 10 },	/* SD0_CLK */
++
++	[RCAR_GP_PIN(5, 19)] = { PU4, 31 },	/* MSIOF0_SS1 */
++	[RCAR_GP_PIN(5, 18)] = { PU4, 30 },	/* MSIOF0_SYNC */
++	[RCAR_GP_PIN(5, 17)] = { PU4, 29 },	/* MSIOF0_SCK */
++	[RCAR_GP_PIN(5, 16)] = { PU4, 28 },	/* HRTS0_N */
++	[RCAR_GP_PIN(5, 15)] = { PU4, 27 },	/* HCTS0_N */
++	[RCAR_GP_PIN(5, 14)] = { PU4, 26 },	/* HTX0 */
++	[RCAR_GP_PIN(5, 13)] = { PU4, 25 },	/* HRX0 */
++	[RCAR_GP_PIN(5, 12)] = { PU4, 24 },	/* HSCK0 */
++	[RCAR_GP_PIN(5, 11)] = { PU4, 23 },	/* RX2_A */
++	[RCAR_GP_PIN(5, 10)] = { PU4, 22 },	/* TX2_A */
++	[RCAR_GP_PIN(5,  9)] = { PU4, 21 },	/* SCK2 */
++	[RCAR_GP_PIN(5,  8)] = { PU4, 20 },	/* RTS1_N_TANS */
++	[RCAR_GP_PIN(5,  7)] = { PU4, 19 },	/* CTS1_N */
++	[RCAR_GP_PIN(5,  6)] = { PU4, 18 },	/* TX1_A */
++	[RCAR_GP_PIN(5,  5)] = { PU4, 17 },	/* RX1_A */
++	[RCAR_GP_PIN(5,  4)] = { PU4, 16 },	/* RTS0_N_TANS */
++	[RCAR_GP_PIN(5,  3)] = { PU4, 15 },	/* CTS0_N */
++	[RCAR_GP_PIN(5,  2)] = { PU4, 14 },	/* TX0 */
++	[RCAR_GP_PIN(5,  1)] = { PU4, 13 },	/* RX0 */
++	[RCAR_GP_PIN(5,  0)] = { PU4, 12 },	/* SCK0 */
++	[RCAR_GP_PIN(3, 15)] = { PU4, 11 },	/* SD1_WP */
++	[RCAR_GP_PIN(3, 14)] = { PU4, 10 },	/* SD1_CD */
++	[RCAR_GP_PIN(3, 13)] = { PU4,  9 },	/* SD0_WP */
++	[RCAR_GP_PIN(3, 12)] = { PU4,  8 },	/* SD0_CD */
++	[RCAR_GP_PIN(4, 17)] = { PU4,  7 },	/* SD3_DS */
++	[RCAR_GP_PIN(4, 16)] = { PU4,  6 },	/* SD3_DAT7 */
++	[RCAR_GP_PIN(4, 15)] = { PU4,  5 },	/* SD3_DAT6 */
++	[RCAR_GP_PIN(4, 14)] = { PU4,  4 },	/* SD3_DAT5 */
++	[RCAR_GP_PIN(4, 13)] = { PU4,  3 },	/* SD3_DAT4 */
++	[RCAR_GP_PIN(4, 12)] = { PU4,  2 },	/* SD3_DAT3 */
++	[RCAR_GP_PIN(4, 11)] = { PU4,  1 },	/* SD3_DAT2 */
++	[RCAR_GP_PIN(4, 10)] = { PU4,  0 },	/* SD3_DAT1 */
++
++	[RCAR_GP_PIN(6, 24)] = { PU5, 31 },	/* USB0_PWEN */
++	[RCAR_GP_PIN(6, 23)] = { PU5, 30 },	/* AUDIO_CLKB_B */
++	[RCAR_GP_PIN(6, 22)] = { PU5, 29 },	/* AUDIO_CLKA_A */
++	[RCAR_GP_PIN(6, 21)] = { PU5, 28 },	/* SSI_SDATA9_A */
++	[RCAR_GP_PIN(6, 20)] = { PU5, 27 },	/* SSI_SDATA8 */
++	[RCAR_GP_PIN(6, 19)] = { PU5, 26 },	/* SSI_SDATA7 */
++	[RCAR_GP_PIN(6, 18)] = { PU5, 25 },	/* SSI_WS78 */
++	[RCAR_GP_PIN(6, 17)] = { PU5, 24 },	/* SSI_SCK78 */
++	[RCAR_GP_PIN(6, 16)] = { PU5, 23 },	/* SSI_SDATA6 */
++	[RCAR_GP_PIN(6, 15)] = { PU5, 22 },	/* SSI_WS6 */
++	[RCAR_GP_PIN(6, 14)] = { PU5, 21 },	/* SSI_SCK6 */
++	[RCAR_GP_PIN(6, 13)] = { PU5, 20 },	/* SSI_SDATA5 */
++	[RCAR_GP_PIN(6, 12)] = { PU5, 19 },	/* SSI_WS5 */
++	[RCAR_GP_PIN(6, 11)] = { PU5, 18 },	/* SSI_SCK5 */
++	[RCAR_GP_PIN(6, 10)] = { PU5, 17 },	/* SSI_SDATA4 */
++	[RCAR_GP_PIN(6,  9)] = { PU5, 16 },	/* SSI_WS4 */
++	[RCAR_GP_PIN(6,  8)] = { PU5, 15 },	/* SSI_SCK4 */
++	[RCAR_GP_PIN(6,  7)] = { PU5, 14 },	/* SSI_SDATA3 */
++	[RCAR_GP_PIN(6,  6)] = { PU5, 13 },	/* SSI_WS34 */
++	[RCAR_GP_PIN(6,  5)] = { PU5, 12 },	/* SSI_SCK34 */
++	[RCAR_GP_PIN(6,  4)] = { PU5, 11 },	/* SSI_SDATA2_A */
++	[RCAR_GP_PIN(6,  3)] = { PU5, 10 },	/* SSI_SDATA1_A */
++	[RCAR_GP_PIN(6,  2)] = { PU5,  9 },	/* SSI_SDATA0 */
++	[RCAR_GP_PIN(6,  1)] = { PU5,  8 },	/* SSI_WS01239 */
++	[RCAR_GP_PIN(6,  0)] = { PU5,  7 },	/* SSI_SCK01239 */
++	[RCAR_GP_PIN(5, 25)] = { PU5,  5 },	/* MLB_DAT */
++	[RCAR_GP_PIN(5, 24)] = { PU5,  4 },	/* MLB_SIG */
++	[RCAR_GP_PIN(5, 23)] = { PU5,  3 },	/* MLB_CLK */
++	[RCAR_GP_PIN(5, 22)] = { PU5,  2 },	/* MSIOF0_RXD */
++	[RCAR_GP_PIN(5, 21)] = { PU5,  1 },	/* MSIOF0_SS2 */
++	[RCAR_GP_PIN(5, 20)] = { PU5,  0 },	/* MSIOF0_TXD */
++
++	[RCAR_GP_PIN(6, 31)] = { PU6,  6 },	/* USB31_OVC */
++	[RCAR_GP_PIN(6, 30)] = { PU6,  5 },	/* USB31_PWEN */
++	[RCAR_GP_PIN(6, 29)] = { PU6,  4 },	/* USB30_OVC */
++	[RCAR_GP_PIN(6, 28)] = { PU6,  3 },	/* USB30_PWEN */
++	[RCAR_GP_PIN(6, 27)] = { PU6,  2 },	/* USB1_OVC */
++	[RCAR_GP_PIN(6, 26)] = { PU6,  1 },	/* USB1_PWEN */
++	[RCAR_GP_PIN(6, 25)] = { PU6,  0 },	/* USB0_OVC */
++};
++
++static unsigned int r8a7795_pinmux_get_bias(struct sh_pfc *pfc,
++					    unsigned int pin)
++{
++	u32 reg;
++	u32 bit;
++
++	if (WARN_ON_ONCE(!pullups[pin].reg))
++		return PIN_CONFIG_BIAS_DISABLE;
++
++	reg = pullups[pin].reg;
++	bit = BIT(pullups[pin].bit);
++
++	if (sh_pfc_read_reg(pfc, PUEN + reg, 32) & bit) {
++		if (sh_pfc_read_reg(pfc, PUD + reg, 32) & bit)
++			return PIN_CONFIG_BIAS_PULL_UP;
++		else
++			return PIN_CONFIG_BIAS_PULL_DOWN;
++	} else
++		return PIN_CONFIG_BIAS_DISABLE;
++}
++
++static void r8a7795_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
++				   unsigned int bias)
++{
++	u32 enable, updown;
++	u32 reg;
++	u32 bit;
++
++	if (WARN_ON_ONCE(!pullups[pin].reg))
++		return;
++
++	reg = pullups[pin].reg;
++	bit = BIT(pullups[pin].bit);
++
++	enable = sh_pfc_read_reg(pfc, PUEN + reg, 32) & ~bit;
++	if (bias != PIN_CONFIG_BIAS_DISABLE)
++		enable |= bit;
++
++	updown = sh_pfc_read_reg(pfc, PUD + reg, 32) & ~bit;
++	if (bias == PIN_CONFIG_BIAS_PULL_UP)
++		updown |= bit;
++
++	sh_pfc_write_reg(pfc, PUD + reg, 32, updown);
++	sh_pfc_write_reg(pfc, PUEN + reg, 32, enable);
++}
++
+ static const struct sh_pfc_soc_operations r8a7795_pinmux_ops = {
+ 	.pin_to_pocctrl = r8a7795_pin_to_pocctrl,
++	.get_bias = r8a7795_pinmux_get_bias,
++	.set_bias = r8a7795_pinmux_set_bias,
  };
  
--int vsp1_rwpf_init_ctrls(struct vsp1_rwpf *rwpf)
-+int vsp1_rwpf_init_ctrls(struct vsp1_rwpf *rwpf, unsigned int ncontrols)
- {
--	v4l2_ctrl_handler_init(&rwpf->ctrls, 1);
-+	v4l2_ctrl_handler_init(&rwpf->ctrls, ncontrols + 1);
- 	v4l2_ctrl_new_std(&rwpf->ctrls, &vsp1_rwpf_ctrl_ops,
- 			  V4L2_CID_ALPHA_COMPONENT, 0, 255, 1, 255);
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.h b/drivers/media/platform/vsp1/vsp1_rwpf.h
-index 801cacc12e07..cb20484e80da 100644
---- a/drivers/media/platform/vsp1/vsp1_rwpf.h
-+++ b/drivers/media/platform/vsp1/vsp1_rwpf.h
-@@ -13,6 +13,8 @@
- #ifndef __VSP1_RWPF_H__
- #define __VSP1_RWPF_H__
- 
-+#include <linux/spinlock.h>
-+
- #include <media/media-entity.h>
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-subdev.h>
-@@ -52,6 +54,13 @@ struct vsp1_rwpf {
- 	u32 mult_alpha;
- 	u32 outfmt;
- 
-+	struct {
-+		spinlock_t lock;
-+		struct v4l2_ctrl *ctrls[2];
-+		unsigned int pending;
-+		unsigned int active;
-+	} flip;
-+
- 	unsigned int offsets[2];
- 	struct vsp1_rwpf_memory mem;
- 
-@@ -71,7 +80,7 @@ static inline struct vsp1_rwpf *entity_to_rwpf(struct vsp1_entity *entity)
- struct vsp1_rwpf *vsp1_rpf_create(struct vsp1_device *vsp1, unsigned int index);
- struct vsp1_rwpf *vsp1_wpf_create(struct vsp1_device *vsp1, unsigned int index);
- 
--int vsp1_rwpf_init_ctrls(struct vsp1_rwpf *rwpf);
-+int vsp1_rwpf_init_ctrls(struct vsp1_rwpf *rwpf, unsigned int ncontrols);
- 
- extern const struct v4l2_subdev_pad_ops vsp1_rwpf_pad_ops;
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
-index dab902c2e676..1281ab3fa59c 100644
---- a/drivers/media/platform/vsp1/vsp1_wpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-@@ -37,6 +37,95 @@ static inline void vsp1_wpf_write(struct vsp1_rwpf *wpf,
- }
- 
- /* -----------------------------------------------------------------------------
-+ * Controls
-+ */
-+
-+enum wpf_flip_ctrl {
-+	WPF_CTRL_VFLIP = 0,
-+	WPF_CTRL_HFLIP = 1,
-+	WPF_CTRL_MAX,
-+};
-+
-+static int vsp1_wpf_s_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct vsp1_rwpf *wpf =
-+		container_of(ctrl->handler, struct vsp1_rwpf, ctrls);
-+	unsigned int i;
-+	u32 flip = 0;
-+
-+	switch (ctrl->id) {
-+	case V4L2_CID_HFLIP:
-+	case V4L2_CID_VFLIP:
-+		for (i = 0; i < WPF_CTRL_MAX; ++i) {
-+			if (wpf->flip.ctrls[i])
-+				flip |= wpf->flip.ctrls[i]->val ? BIT(i) : 0;
-+		}
-+
-+		spin_lock_irq(&wpf->flip.lock);
-+		wpf->flip.pending = flip;
-+		spin_unlock_irq(&wpf->flip.lock);
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_ctrl_ops vsp1_wpf_ctrl_ops = {
-+	.s_ctrl = vsp1_wpf_s_ctrl,
-+};
-+
-+static int wpf_init_controls(struct vsp1_rwpf *wpf)
-+{
-+	struct vsp1_device *vsp1 = wpf->entity.vsp1;
-+	unsigned int num_flip_ctrls;
-+
-+	if (wpf->entity.index != 0) {
-+		/* Only WPF0 supports flipping. */
-+		num_flip_ctrls = 0;
-+	} else if (vsp1->info->features & VSP1_HAS_WPF_HFLIP) {
-+		/* When horizontal flip is supported the WPF implements two
-+		 * controls (horizontal flip and vertical flip).
-+		 */
-+		num_flip_ctrls = 2;
-+	} else if (vsp1->info->features & VSP1_HAS_WPF_VFLIP) {
-+		/* When only vertical flip is supported the WPF implements a
-+		 * single control (vertical flip).
-+		 */
-+		num_flip_ctrls = 1;
-+	} else {
-+		/* Otherwise flipping is not supported. */
-+		num_flip_ctrls = 0;
-+	}
-+
-+	vsp1_rwpf_init_ctrls(wpf, num_flip_ctrls);
-+
-+	if (num_flip_ctrls >= 1) {
-+		wpf->flip.ctrls[WPF_CTRL_VFLIP] =
-+			v4l2_ctrl_new_std(&wpf->ctrls, &vsp1_wpf_ctrl_ops,
-+					  V4L2_CID_VFLIP, 0, 1, 1, 0);
-+	}
-+
-+	if (num_flip_ctrls == 2) {
-+		wpf->flip.ctrls[WPF_CTRL_HFLIP] =
-+			v4l2_ctrl_new_std(&wpf->ctrls, &vsp1_wpf_ctrl_ops,
-+					  V4L2_CID_HFLIP, 0, 1, 1, 0);
-+
-+		v4l2_ctrl_cluster(2, wpf->flip.ctrls);
-+	}
-+
-+	if (wpf->ctrls.error) {
-+		dev_err(vsp1->dev, "wpf%u: failed to initialize controls\n",
-+			wpf->entity.index);
-+		return wpf->ctrls.error;
-+	}
-+
-+	return 0;
-+}
-+
-+/* -----------------------------------------------------------------------------
-  * V4L2 Subdevice Core Operations
-  */
- 
-@@ -85,10 +174,32 @@ static void vsp1_wpf_destroy(struct vsp1_entity *entity)
- static void wpf_set_memory(struct vsp1_entity *entity, struct vsp1_dl_list *dl)
- {
- 	struct vsp1_rwpf *wpf = entity_to_rwpf(entity);
-+	const struct v4l2_pix_format_mplane *format = &wpf->format;
-+	struct vsp1_rwpf_memory mem = wpf->mem;
-+	unsigned int flip = wpf->flip.active;
-+	unsigned int offset;
-+
-+	/* Update the memory offsets based on flipping configuration. The
-+	 * destination addresses point to the locations where the VSP starts
-+	 * writing to memory, which can be different corners of the image
-+	 * depending on vertical flipping. Horizontal flipping is handled
-+	 * through a line buffer and doesn't modify the start address.
-+	 */
-+	if (flip & BIT(WPF_CTRL_VFLIP)) {
-+		mem.addr[0] += (format->height - 1)
-+			     * format->plane_fmt[0].bytesperline;
-+
-+		if (format->num_planes > 1) {
-+			offset = (format->height / wpf->fmtinfo->vsub - 1)
-+			       * format->plane_fmt[1].bytesperline;
-+			mem.addr[1] += offset;
-+			mem.addr[2] += offset;
-+		}
-+	}
- 
--	vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_ADDR_Y, wpf->mem.addr[0]);
--	vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_ADDR_C0, wpf->mem.addr[1]);
--	vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_ADDR_C1, wpf->mem.addr[2]);
-+	vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_ADDR_Y, mem.addr[0]);
-+	vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_ADDR_C0, mem.addr[1]);
-+	vsp1_wpf_write(wpf, dl, VI6_WPF_DSTM_ADDR_C1, mem.addr[2]);
- }
- 
- static void wpf_configure(struct vsp1_entity *entity,
-@@ -105,8 +216,22 @@ static void wpf_configure(struct vsp1_entity *entity,
- 	u32 srcrpf = 0;
- 
- 	if (!full) {
--		vsp1_wpf_write(wpf, dl, VI6_WPF_OUTFMT, wpf->outfmt |
--			       (wpf->alpha << VI6_WPF_OUTFMT_PDV_SHIFT));
-+		const unsigned int mask = BIT(WPF_CTRL_VFLIP)
-+					| BIT(WPF_CTRL_HFLIP);
-+
-+		spin_lock(&wpf->flip.lock);
-+		wpf->flip.active = (wpf->flip.active & ~mask)
-+				 | (wpf->flip.pending & mask);
-+		spin_unlock(&wpf->flip.lock);
-+
-+		outfmt = (wpf->alpha << VI6_WPF_OUTFMT_PDV_SHIFT) | wpf->outfmt;
-+
-+		if (wpf->flip.active & BIT(WPF_CTRL_VFLIP))
-+			outfmt |= VI6_WPF_OUTFMT_FLP;
-+		if (wpf->flip.active & BIT(WPF_CTRL_HFLIP))
-+			outfmt |= VI6_WPF_OUTFMT_HFLP;
-+
-+		vsp1_wpf_write(wpf, dl, VI6_WPF_OUTFMT, outfmt);
- 		return;
- 	}
- 
-@@ -149,6 +274,12 @@ static void wpf_configure(struct vsp1_entity *entity,
- 				       format->plane_fmt[1].bytesperline);
- 
- 		vsp1_wpf_write(wpf, dl, VI6_WPF_DSWAP, fmtinfo->swap);
-+
-+		if (vsp1->info->features & VSP1_HAS_WPF_HFLIP &&
-+		    wpf->entity.index == 0)
-+			vsp1_wpf_write(wpf, dl, VI6_WPF_ROT_CTRL,
-+				       VI6_WPF_ROT_CTRL_LN16 |
-+				       (256 << VI6_WPF_ROT_CTRL_LMEM_WD_SHIFT));
- 	}
- 
- 	if (sink_format->code != source_format->code)
-@@ -234,7 +365,7 @@ struct vsp1_rwpf *vsp1_wpf_create(struct vsp1_device *vsp1, unsigned int index)
- 	}
- 
- 	/* Initialize the control handler. */
--	ret = vsp1_rwpf_init_ctrls(wpf);
-+	ret = wpf_init_controls(wpf);
- 	if (ret < 0) {
- 		dev_err(vsp1->dev, "wpf%u: failed to initialize controls\n",
- 			index);
+ const struct sh_pfc_soc_info r8a7795_pinmux_info = {
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
