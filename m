@@ -1,77 +1,284 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932165AbcF3ORl (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56322 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751696AbcF2SVG (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:17:41 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/5] soc: renesas: rcar-sysc: Make rcar_sysc_init() init the PM domains
-Date: Thu, 30 Jun 2016 16:16:10 +0200
-Message-Id: <b1e52287a29cf0673e1a60210d55edccc756e44a.1467292648.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467292648.git.horms+renesas@verge.net.au>
-References: <cover.1467292648.git.horms+renesas@verge.net.au>
+	Wed, 29 Jun 2016 14:21:06 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87bn3msj5o.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bIK6W-0004iT-6S@finisterre>
+Date: Wed, 29 Jun 2016 19:20:52 +0100
+Subject: Applied "ASoC: simple-card: add new asoc_simple_jack and use it" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The patch
 
-Let rcar_sysc_init() trigger initialization of the SYSC PM domains from
-DT if called before the early_initcall.
-On failure, it falls back to mapping the passed register block, as
-before.
+   ASoC: simple-card: add new asoc_simple_jack and use it
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 9eac361877b3c96c8f68dffd7a7a3e92a2b85d0b Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Tue, 31 May 2016 08:59:46 +0000
+Subject: [PATCH] ASoC: simple-card: add new asoc_simple_jack and use it
+
+Current simple-card supports snd_soc_jack/pin/gpio.
+These code are very similar, but driver has verbosity code.
+So, this patch adds new snd_soc_jack and cleanups code
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/soc/renesas/rcar-sysc.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ sound/soc/generic/simple-card.c | 153 ++++++++++++++++++++--------------------
+ 1 file changed, 78 insertions(+), 75 deletions(-)
 
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 59a8152681a5..68d6856c9d3c 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -164,15 +164,6 @@ static bool rcar_sysc_power_is_off(const struct rcar_sysc_ch *sysc_ch)
- 	return false;
- }
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index b6e6d9a12ec2..8d0311ceded1 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -21,6 +21,12 @@
+ #include <sound/soc-dai.h>
+ #include <sound/soc.h>
  
--void __iomem *rcar_sysc_init(phys_addr_t base)
--{
--	rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
--	if (!rcar_sysc_base)
--		panic("unable to ioremap R-Car SYSC hardware block\n");
--
--	return rcar_sysc_base;
--}
--
- struct rcar_sysc_pd {
- 	struct generic_pm_domain genpd;
- 	struct rcar_sysc_ch ch;
-@@ -328,6 +319,9 @@ static int __init rcar_sysc_pd_init(void)
- 	unsigned int i;
- 	int error;
++struct asoc_simple_jack {
++	struct snd_soc_jack jack;
++	struct snd_soc_jack_pin pin;
++	struct snd_soc_jack_gpio gpio;
++};
++
+ struct simple_card_data {
+ 	struct snd_soc_card snd_card;
+ 	struct simple_dai_props {
+@@ -29,10 +35,8 @@ struct simple_card_data {
+ 		unsigned int mclk_fs;
+ 	} *dai_props;
+ 	unsigned int mclk_fs;
+-	int gpio_hp_det;
+-	int gpio_hp_det_invert;
+-	int gpio_mic_det;
+-	int gpio_mic_det_invert;
++	struct asoc_simple_jack hp_jack;
++	struct asoc_simple_jack mic_jack;
+ 	struct snd_soc_dai_link dai_link[];	/* dynamically allocated */
+ };
  
-+	if (rcar_sysc_base)
-+		return 0;
-+
- 	np = of_find_matching_node_and_match(NULL, rcar_sysc_matches, &match);
- 	if (!np)
- 		return -ENODEV;
-@@ -405,3 +399,11 @@ out_put:
- 	return error;
- }
- early_initcall(rcar_sysc_pd_init);
-+
-+void __iomem * __init rcar_sysc_init(phys_addr_t base)
+@@ -42,6 +46,67 @@ struct simple_card_data {
+ 
+ #define PREFIX	"simple-audio-card,"
+ 
++#define asoc_simple_card_init_hp(card, sjack, prefix)\
++	asoc_simple_card_init_jack(card, sjack, 1, prefix)
++#define asoc_simple_card_init_mic(card, sjack, prefix)\
++	asoc_simple_card_init_jack(card, sjack, 0, prefix)
++static int asoc_simple_card_init_jack(struct snd_soc_card *card,
++				      struct asoc_simple_jack *sjack,
++				      int is_hp, char *prefix)
 +{
-+	if (rcar_sysc_pd_init())
-+		rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
++	struct device *dev = card->dev;
++	enum of_gpio_flags flags;
++	char prop[128];
++	char *pin_name;
++	char *gpio_name;
++	int mask;
++	int det;
 +
-+	return rcar_sysc_base;
++	sjack->gpio.gpio = -ENOENT;
++
++	if (is_hp) {
++		snprintf(prop, sizeof(prop), "%shp-det-gpio", prefix);
++		pin_name	= "Headphones";
++		gpio_name	= "Headphone detection";
++		mask		= SND_JACK_HEADPHONE;
++	} else {
++		snprintf(prop, sizeof(prop), "%smic-det-gpio", prefix);
++		pin_name	= "Mic Jack";
++		gpio_name	= "Mic detection";
++		mask		= SND_JACK_MICROPHONE;
++	}
++
++	det = of_get_named_gpio_flags(dev->of_node, prop, 0, &flags);
++	if (det == -EPROBE_DEFER)
++		return -EPROBE_DEFER;
++
++	if (gpio_is_valid(det)) {
++		sjack->pin.pin		= pin_name;
++		sjack->pin.mask		= mask;
++
++		sjack->gpio.name	= gpio_name;
++		sjack->gpio.report	= mask;
++		sjack->gpio.gpio	= det;
++		sjack->gpio.invert	= !!(flags & OF_GPIO_ACTIVE_LOW);
++		sjack->gpio.debounce_time = 150;
++
++		snd_soc_card_jack_new(card, pin_name, mask,
++				      &sjack->jack,
++				      &sjack->pin, 1);
++
++		snd_soc_jack_add_gpios(&sjack->jack, 1,
++				       &sjack->gpio);
++	}
++
++	return 0;
 +}
++
++static void asoc_simple_card_remove_jack(struct asoc_simple_jack *sjack)
++{
++	if (gpio_is_valid(sjack->gpio.gpio))
++		snd_soc_jack_free_gpios(&sjack->jack, 1, &sjack->gpio);
++}
++
+ static int asoc_simple_card_startup(struct snd_pcm_substream *substream)
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+@@ -112,32 +177,6 @@ static struct snd_soc_ops asoc_simple_card_ops = {
+ 	.hw_params = asoc_simple_card_hw_params,
+ };
+ 
+-static struct snd_soc_jack simple_card_hp_jack;
+-static struct snd_soc_jack_pin simple_card_hp_jack_pins[] = {
+-	{
+-		.pin = "Headphones",
+-		.mask = SND_JACK_HEADPHONE,
+-	},
+-};
+-static struct snd_soc_jack_gpio simple_card_hp_jack_gpio = {
+-	.name = "Headphone detection",
+-	.report = SND_JACK_HEADPHONE,
+-	.debounce_time = 150,
+-};
+-
+-static struct snd_soc_jack simple_card_mic_jack;
+-static struct snd_soc_jack_pin simple_card_mic_jack_pins[] = {
+-	{
+-		.pin = "Mic Jack",
+-		.mask = SND_JACK_MICROPHONE,
+-	},
+-};
+-static struct snd_soc_jack_gpio simple_card_mic_jack_gpio = {
+-	.name = "Mic detection",
+-	.report = SND_JACK_MICROPHONE,
+-	.debounce_time = 150,
+-};
+-
+ static int __asoc_simple_card_dai_init(struct snd_soc_dai *dai,
+ 				       struct asoc_simple_dai *set)
+ {
+@@ -186,30 +225,14 @@ static int asoc_simple_card_dai_init(struct snd_soc_pcm_runtime *rtd)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	if (gpio_is_valid(priv->gpio_hp_det)) {
+-		snd_soc_card_jack_new(rtd->card, "Headphones",
+-				      SND_JACK_HEADPHONE,
+-				      &simple_card_hp_jack,
+-				      simple_card_hp_jack_pins,
+-				      ARRAY_SIZE(simple_card_hp_jack_pins));
+-
+-		simple_card_hp_jack_gpio.gpio = priv->gpio_hp_det;
+-		simple_card_hp_jack_gpio.invert = priv->gpio_hp_det_invert;
+-		snd_soc_jack_add_gpios(&simple_card_hp_jack, 1,
+-				       &simple_card_hp_jack_gpio);
+-	}
++	ret = asoc_simple_card_init_hp(rtd->card, &priv->hp_jack, PREFIX);
++	if (ret < 0)
++		return ret;
++
++	ret = asoc_simple_card_init_mic(rtd->card, &priv->hp_jack, PREFIX);
++	if (ret < 0)
++		return ret;
+ 
+-	if (gpio_is_valid(priv->gpio_mic_det)) {
+-		snd_soc_card_jack_new(rtd->card, "Mic Jack",
+-				      SND_JACK_MICROPHONE,
+-				      &simple_card_mic_jack,
+-				      simple_card_mic_jack_pins,
+-				      ARRAY_SIZE(simple_card_mic_jack_pins));
+-		simple_card_mic_jack_gpio.gpio = priv->gpio_mic_det;
+-		simple_card_mic_jack_gpio.invert = priv->gpio_mic_det_invert;
+-		snd_soc_jack_add_gpios(&simple_card_mic_jack, 1,
+-				       &simple_card_mic_jack_gpio);
+-	}
+ 	return 0;
+ }
+ 
+@@ -447,7 +470,6 @@ static int asoc_simple_card_parse_of(struct device_node *node,
+ 				     struct simple_card_data *priv)
+ {
+ 	struct device *dev = simple_priv_to_dev(priv);
+-	enum of_gpio_flags flags;
+ 	u32 val;
+ 	int ret;
+ 
+@@ -503,18 +525,6 @@ static int asoc_simple_card_parse_of(struct device_node *node,
+ 			return ret;
+ 	}
+ 
+-	priv->gpio_hp_det = of_get_named_gpio_flags(node,
+-				PREFIX "hp-det-gpio", 0, &flags);
+-	priv->gpio_hp_det_invert = !!(flags & OF_GPIO_ACTIVE_LOW);
+-	if (priv->gpio_hp_det == -EPROBE_DEFER)
+-		return -EPROBE_DEFER;
+-
+-	priv->gpio_mic_det = of_get_named_gpio_flags(node,
+-				PREFIX "mic-det-gpio", 0, &flags);
+-	priv->gpio_mic_det_invert = !!(flags & OF_GPIO_ACTIVE_LOW);
+-	if (priv->gpio_mic_det == -EPROBE_DEFER)
+-		return -EPROBE_DEFER;
+-
+ 	if (!priv->snd_card.name)
+ 		priv->snd_card.name = priv->snd_card.dai_link->name;
+ 
+@@ -564,9 +574,6 @@ static int asoc_simple_card_probe(struct platform_device *pdev)
+ 	priv->snd_card.dai_link = dai_link;
+ 	priv->snd_card.num_links = num_links;
+ 
+-	priv->gpio_hp_det = -ENOENT;
+-	priv->gpio_mic_det = -ENOENT;
+-
+ 	/* Get room for the other properties */
+ 	priv->dai_props = devm_kzalloc(dev,
+ 			sizeof(*priv->dai_props) * num_links,
+@@ -633,12 +640,8 @@ static int asoc_simple_card_remove(struct platform_device *pdev)
+ 	struct snd_soc_card *card = platform_get_drvdata(pdev);
+ 	struct simple_card_data *priv = snd_soc_card_get_drvdata(card);
+ 
+-	if (gpio_is_valid(priv->gpio_hp_det))
+-		snd_soc_jack_free_gpios(&simple_card_hp_jack, 1,
+-					&simple_card_hp_jack_gpio);
+-	if (gpio_is_valid(priv->gpio_mic_det))
+-		snd_soc_jack_free_gpios(&simple_card_mic_jack, 1,
+-					&simple_card_mic_jack_gpio);
++	asoc_simple_card_remove_jack(&priv->hp_jack);
++	asoc_simple_card_remove_jack(&priv->mic_jack);
+ 
+ 	return asoc_simple_card_unref(card);
+ }
 -- 
-2.7.0.rc3.207.g0ac5344
+2.8.1
