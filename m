@@ -1,63 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47875 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751804AbcFOEC1 (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.133]:54019 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751885AbcF3MHC (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 15 Jun 2016 00:02:27 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	Thu, 30 Jun 2016 08:07:02 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFC 0/4] mmc: renesas_sdhi: add R-Car Gen-3 DMA support
-Date: Wed, 15 Jun 2016 13:01:53 +0900
-Message-Id: <1465963317-28672-1-git-send-email-horms+renesas@verge.net.au>
+	Ai Kyuse <ai.kyuse.uw@renesas.com>
+Subject: Re: [PATCH/RFC v2 5/5] mmc: renesas_sdhi: add support for R-Car Gen3 SDHI DMAC
+Date: Thu, 30 Jun 2016 13:50:24 +0200
+Message-ID: <4198735.C1rpRVa8xf@wuerfel>
+In-Reply-To: <1467237940-24388-6-git-send-email-horms+renesas@verge.net.au>
+References: <1467237940-24388-1-git-send-email-horms+renesas@verge.net.au> <1467237940-24388-6-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Thursday, June 30, 2016 12:05:40 AM CEST Simon Horman wrote:
+> @@ -120,6 +127,26 @@ static int sdhi_sysc_dmac_init_dma(void)
+>  }
+>  #endif
+>  
+> +#if IS_ENABLED(CONFIG_MMC_SDHI_INTERNAL_DMA)
+> +int sdhi_internal_dmac_init_dma(void);
+> +#else
+> +static int sdhi_internal_dmac_init_dma(void)
+> +{
+> +       return -EINVAL;
+> +}
+> +#endif
+> +
+> +static int sh_mobile_sdhi_init_dma(enum tmio_mmc_dmac_type dmac_type)
+> +{
+> +       switch (dmac_type) {
+> +       case TMIO_MMC_INTERNAL_DMAC:
+> +               return sdhi_internal_dmac_init_dma();
+> +
+> +       case TMIO_MMC_SYSC_DMAC:
+> +               return sdhi_sysc_dmac_init_dma();
+> +       }
+> +}
+> +
 
-this short series adds support for  R-Car Gen-3 DMA to the SDHI driver.
+I think it would be nicer to turn the logic around and handle the
+different kinds of TMIO hardware like we do it for the sdhci types:
 
-The approach taken is as follows:
+Make the common portion of the driver a module that just exports
+functions but doesn't register a driver, and then put each variant
+(PIO, internal DMA, SYSC-DMA) into a separate module that registers
+its own driver.
 
-1. Rename sh_mobile_sdhi.c as renesas_sdhi.c
-2. Refactor the TMIO DMA code so that it is provided by a set of callbacks
-   rather than compiled-in function calls; Refactor the DMA SDHI to use this.
-3. Rename tmio_mmc_dma.c as renesas_sdhi_dma.c which reflects more closely
-   what it is is, particularly after step 2.
-4. Add Gen3 DMA code as a separate set of callbacks
+Do you think that makes sense in this case?
 
-Please note that currently the DMA callbacks used are determined based
-on the SDHI compat string in effect.
-
-Based on mmc/next
-
-Provided as:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdhi-gen3-dma
-
-Simon Horman (3):
-  mmc: renesas_sdhi: rename sh_mobile_sdhi as renesas_sdhi
-  mmc: renesas_sdhi, tmio: make dma more modular
-  mmc: renesas_sdhi: rename DMA source file as renesas_sdhi_dma.c
-
-Yoshihiro Shimoda (1):
-  mmc: renesas_sdhi: add support for R-Car Gen3 SDHI DMAC
-
- drivers/mmc/host/Kconfig                           |  22 ++-
- drivers/mmc/host/Makefile                          |   5 +-
- .../mmc/host/{sh_mobile_sdhi.c => renesas_sdhi.c}  |  43 +++++
- .../host/{tmio_mmc_dma.c => renesas_sdhi_dma.c}    |  26 ++-
- drivers/mmc/host/renesas_sdhi_dma_gen3.c           | 190 +++++++++++++++++++++
- drivers/mmc/host/tmio_mmc.h                        |  39 +----
- drivers/mmc/host/tmio_mmc_pio.c                    |  47 +++++
- 7 files changed, 333 insertions(+), 39 deletions(-)
- rename drivers/mmc/host/{sh_mobile_sdhi.c => renesas_sdhi.c} (93%)
- rename drivers/mmc/host/{tmio_mmc_dma.c => renesas_sdhi_dma.c} (92%)
- create mode 100644 drivers/mmc/host/renesas_sdhi_dma_gen3.c
-
--- 
-2.1.4
+	Arnd
