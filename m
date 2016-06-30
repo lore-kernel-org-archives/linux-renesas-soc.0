@@ -1,48 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34028 "EHLO
-	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752353AbcF1JfH (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 05:35:07 -0400
-Received: by mail-wm0-f66.google.com with SMTP id 187so4261662wmz.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Jun 2016 02:35:06 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
-	horms@verge.net.au
-Cc: magnus.damm@gmail.com,
-	Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: [PATCH 3/4] arm64: dts: r8a7796: Add pinctrl device node
-Date: Tue, 28 Jun 2016 11:34:51 +0200
-Message-Id: <1467106492-1341-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1467106492-1341-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1467106492-1341-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Received: from relmlor1.renesas.com ([210.160.252.171]:24382 "EHLO
+	relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751669AbcF3IuZ convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 30 Jun 2016 04:50:25 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Rob Herring <robh@kernel.org>
+CC: "balbi@kernel.org" <balbi@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH 3/3] usb: renesas_usbhs: Use devm_usb_get_phy_by_phandle()
+Date: Thu, 30 Jun 2016 08:44:17 +0000
+Message-ID: <HK2PR06MB09134C4686D8BECF2D18E874D8240@HK2PR06MB0913.apcprd06.prod.outlook.com>
+References: <1467029359-6812-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1467029359-6812-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20160628205710.GU3737@rob-hp-laptop>
+In-Reply-To: <20160628205710.GU3737@rob-hp-laptop>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi,
 
-This patch adds pinctrl device node for R8A7796 SoC.
+> From: Rob Herring
+> Sent: Wednesday, June 29, 2016 5:57 AM
+> 
+> On Mon, Jun 27, 2016 at 09:09:19PM +0900, Yoshihiro Shimoda wrote:
+> > This patch uses devm_usb_get_phy_by_phandle() instead of usb_get_phy()
+> > for device tree environment. This change is not compabile with the
+> > previous code, but it is no problem because nobody calls usb_bind_phy()
+> > for this driver now.
+> >
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > ---
+> >  Documentation/devicetree/bindings/usb/renesas_usbhs.txt | 3 ++-
+> >  drivers/usb/renesas_usbhs/mod_gadget.c                  | 7 ++++++-
+> >  2 files changed, 8 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+> b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+> > index b604056..a419aea 100644
+> > --- a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+> > +++ b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+> > @@ -24,8 +24,9 @@ Optional properties:
+> >    - renesas,buswait: Integer to use BUSWAIT register
+> >    - renesas,enable-gpio: A gpio specifier to check GPIO determining if USB
+> >  			 function should be enabled
+> > -  - phys: phandle + phy specifier pair
+> > +  - phys: phandle of *Generic PHY* + phy specifier pair
+> >    - phy-names: must be "usb"
+> > +  - usb-phy: phandle of usb phy
+> 
+> No. The binding should not change based on which kernel subsystem
+> handles this. The USB-PHY code should learn to parse 'phys' if you want
+> to use that subsystem.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Thank you for the review.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index fab61ed..31b370c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -98,6 +98,11 @@
- 					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
- 		};
- 
-+		pfc: pfc@e6060000 {
-+			compatible = "renesas,pfc-r8a7796";
-+			reg = <0 0xe6060000 0 0x50c>;
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a7796-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
--- 
-2.7.4
+The "phys" is for Generic PHY even if this patch is applied.
+So, I think that I should make a patch to revise the explanation at first?
+
+I would to write overview of renesas_usbhs driver and a question below:
+
+< phys >
+ - This is a generic phy property.
+ - The renesas_usbhs driver will use it to turn on/off the PHY 
+ - Almost all platforms use this generic phy instance.
+
+< usb-phy >
+ - This is a USB-PHY property.
+ - The renesas_usbhs driver will use it to call an OTG related function.
+   (otg_set_peripheral)
+ - The renesas_usbhs driver will NOT use it to turn the power on/off.
+ - Some platforms don't use this USB-PHY instance.
+  - In other words, some platforms use both a generic phy and USB-PHY.
+   - Is it not suitable from the device tree point of view?
+
+Best regards,
+Yoshihiro Shimoda
+
+
+> >    - dmas: Must contain a list of references to DMA specifiers.
+> >    - dma-names : named "ch%d", where %d is the channel number ranging from zero
+> >                  to the number of channels (DnFIFOs) minus one.
