@@ -1,49 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36179 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752656AbcF3OQy (ORCPT
+	with ESMTP id S1752064AbcF3OQL (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:16:54 -0400
+	Thu, 30 Jun 2016 10:16:11 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/41] ARM: dts: porter: Name spi pfc subnode after device name
-Date: Thu, 30 Jun 2016 16:15:32 +0200
-Message-Id: <2d3e17013ba58a5f092133794694d2f50a4f0564.1467294011.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
-References: <cover.1467294011.git.horms+renesas@verge.net.au>
+Subject: [PATCH 1/2] ARM: shmobile: defconfig: Enable r8a7792 SoC
+Date: Thu, 30 Jun 2016 16:15:39 +0200
+Message-Id: <c39f2947bf063fd6f4e2c02fd3c16c2f2b3d666b.1467292079.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467292079.git.horms+renesas@verge.net.au>
+References: <cover.1467292079.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Enable support for r8a7792 SoC in shmobile_defconfig.
 
-Name the Pin Function Controller subnode for QSPI after its device name,
-instead of after the spi interface alias.
-
-This avoids conflicts when enabling support for more spi interfaces
-later, either here or in a DT overlay.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791-porter.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index 85d109a5f43c..6761d11d3f9e 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -167,7 +167,7 @@
- 		function = "sdhi2";
- 	};
- 
--	qspi_pins: spi0 {
-+	qspi_pins: qspi {
- 		groups = "qspi_ctrl", "qspi_data4";
- 		function = "qspi";
- 	};
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index f2d635566a13..baa07a46a88b 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -17,6 +17,7 @@ CONFIG_ARCH_R8A7778=y
+ CONFIG_ARCH_R8A7779=y
+ CONFIG_ARCH_R8A7790=y
+ CONFIG_ARCH_R8A7791=y
++CONFIG_ARCH_R8A7792=y
+ CONFIG_ARCH_R8A7793=y
+ CONFIG_ARCH_R8A7794=y
+ CONFIG_ARCH_SH73A0=y
 -- 
 2.7.0.rc3.207.g0ac5344
