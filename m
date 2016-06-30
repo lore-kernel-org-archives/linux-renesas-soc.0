@@ -1,114 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:35523 "EHLO
-	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752873AbcFCVU7 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932123AbcF3ORh (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 3 Jun 2016 17:20:59 -0400
-Received: by mail-lf0-f53.google.com with SMTP id w16so62164320lfd.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Jun 2016 14:20:58 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org
-Cc: magnus.damm@gmail.com
-Subject: [PATCH v2 03/11] soc: renesas: rcar-sysc: add R8A7792 support
-Date: Sat, 04 Jun 2016 00:20:56 +0300
-Message-ID: <1804747.guPt6uMETd@wasted.cogentembedded.com>
-In-Reply-To: <3446154.oZ24315zaL@wasted.cogentembedded.com>
-References: <3446154.oZ24315zaL@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Thu, 30 Jun 2016 10:17:37 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Second Round of Renesas ARM Based SoC R-Car SYSC Updates for v4.8
+Date: Thu, 30 Jun 2016 16:16:11 +0200
+Message-Id: <cover.1467292648.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for R-Car V2H (R8A7792) SoC power areas to the SYSC driver.
+Hi Olof, Hi Kevin, Hi Arnd,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Please consider these second round of Renesas ARM based SoC R-Car SYSC
+updates for v4.8.
 
----
-Changes in version 2:
-- added Geert's tag.
+This pull request is based on the previous round of
+such requests, tagged as renesas-rcar-sysc-for-v4.8,
+which you have already pulled.
 
- drivers/soc/renesas/Makefile       |    1 +
- drivers/soc/renesas/r8a7792-sysc.c |   34 ++++++++++++++++++++++++++++++++++
- drivers/soc/renesas/rcar-sysc.c    |    3 +++
- drivers/soc/renesas/rcar-sysc.h    |    1 +
- 4 files changed, 39 insertions(+)
 
-Index: renesas/drivers/soc/renesas/Makefile
-===================================================================
---- renesas.orig/drivers/soc/renesas/Makefile
-+++ renesas/drivers/soc/renesas/Makefile
-@@ -1,6 +1,7 @@
- obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
- obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
- obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
-+obj-$(CONFIG_ARCH_R8A7792)	+= rcar-sysc.o r8a7792-sysc.o
- # R-Car M2-N is identical to R-Car M2-W w.r.t. power domains.
- obj-$(CONFIG_ARCH_R8A7793)	+= rcar-sysc.o r8a7791-sysc.o
- obj-$(CONFIG_ARCH_R8A7794)	+= rcar-sysc.o r8a7794-sysc.o
-Index: renesas/drivers/soc/renesas/r8a7792-sysc.c
-===================================================================
---- /dev/null
-+++ renesas/drivers/soc/renesas/r8a7792-sysc.c
-@@ -0,0 +1,34 @@
-+/*
-+ * Renesas R-Car V2H (R8A7792) System Controller
-+ *
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ */
-+
-+#include <linux/bug.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/power/r8a7792-sysc.h>
-+
-+#include "rcar-sysc.h"
-+
-+static const struct rcar_sysc_area r8a7792_areas[] __initconst = {
-+	{ "always-on",	    0, 0, R8A7792_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
-+	{ "ca15-scu",	0x180, 0, R8A7792_PD_CA15_SCU,	R8A7792_PD_ALWAYS_ON,
-+	  PD_SCU },
-+	{ "ca15-cpu0",	 0x40, 0, R8A7792_PD_CA15_CPU0,	R8A7792_PD_CA15_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca15-cpu1",	 0x40, 1, R8A7792_PD_CA15_CPU1,	R8A7792_PD_CA15_SCU,
-+	  PD_CPU_NOCR },
-+	{ "sgx",	 0xc0, 0, R8A7792_PD_SGX,	R8A7792_PD_ALWAYS_ON },
-+	{ "imp",	0x140, 0, R8A7792_PD_IMP,	R8A7792_PD_ALWAYS_ON },
-+};
-+
-+const struct rcar_sysc_info r8a7792_sysc_info __initconst = {
-+	.areas = r8a7792_areas,
-+	.num_areas = ARRAY_SIZE(r8a7792_areas),
-+};
-Index: renesas/drivers/soc/renesas/rcar-sysc.c
-===================================================================
---- renesas.orig/drivers/soc/renesas/rcar-sysc.c
-+++ renesas/drivers/soc/renesas/rcar-sysc.c
-@@ -293,6 +293,9 @@ static const struct of_device_id rcar_sy
- #ifdef CONFIG_ARCH_R8A7791
- 	{ .compatible = "renesas,r8a7791-sysc", .data = &r8a7791_sysc_info },
- #endif
-+#ifdef CONFIG_ARCH_R8A7792
-+	{ .compatible = "renesas,r8a7792-sysc", .data = &r8a7792_sysc_info },
-+#endif
- #ifdef CONFIG_ARCH_R8A7793
- 	/* R-Car M2-N is identical to R-Car M2-W w.r.t. power domains. */
- 	{ .compatible = "renesas,r8a7793-sysc", .data = &r8a7791_sysc_info },
-Index: renesas/drivers/soc/renesas/rcar-sysc.h
-===================================================================
---- renesas.orig/drivers/soc/renesas/rcar-sysc.h
-+++ renesas/drivers/soc/renesas/rcar-sysc.h
-@@ -53,6 +53,7 @@ struct rcar_sysc_info {
- extern const struct rcar_sysc_info r8a7779_sysc_info;
- extern const struct rcar_sysc_info r8a7790_sysc_info;
- extern const struct rcar_sysc_info r8a7791_sysc_info;
-+extern const struct rcar_sysc_info r8a7792_sysc_info;
- extern const struct rcar_sysc_info r8a7794_sysc_info;
- extern const struct rcar_sysc_info r8a7795_sysc_info;
- #endif /* __SOC_RENESAS_RCAR_SYSC_H__ */
+The following changes since commit e0c98b9171eecf1745eda08de86081db8ec41d51:
+
+  soc: renesas: rcar-sysc: Add support for R-Car M3-W power areas (2016-06-06 10:14:21 +0900)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-rcar-sysc2-for-v4.8
+
+for you to fetch changes up to ced42730d19dd140a76f86c3761f646b83a35d09:
+
+  soc: renesas: rcar-sysc: Improve SYSC interrupt config in legacy wrapper (2016-06-29 14:37:24 +0200)
+
+----------------------------------------------------------------
+Second Round of Renesas ARM Based SoC R-Car SYSC Updates for v4.8
+
+* Prepare for handling SYSC interrupt configuration purely
+  from DT in the rcar-sysc driver for new SoCs, while preserving
+  backward compatibility with old DTBs for R-Car H1, H2, and M2-W
+* Add R8A7792 support
+
+----------------------------------------------------------------
+Geert Uytterhoeven (4):
+      soc: renesas: rcar-sysc: Fix uninitialized error code in rcar_sysc_pd_init()
+      soc: renesas: rcar-sysc: Make rcar_sysc_init() init the PM domains
+      soc: renesas: rcar-sysc: Move SYSC interrupt config to rcar-sysc driver
+      soc: renesas: rcar-sysc: Improve SYSC interrupt config in legacy wrapper
+
+Sergei Shtylyov (1):
+      soc: renesas: rcar-sysc: add R8A7792 support
+
+ arch/arm/mach-shmobile/pm-r8a7779.c   |  6 +----
+ arch/arm/mach-shmobile/pm-rcar-gen2.c |  6 +----
+ drivers/soc/renesas/Makefile          |  1 +
+ drivers/soc/renesas/r8a7792-sysc.c    | 34 ++++++++++++++++++++++++++++
+ drivers/soc/renesas/rcar-sysc.c       | 42 ++++++++++++++++++++++++++---------
+ drivers/soc/renesas/rcar-sysc.h       |  1 +
+ include/linux/soc/renesas/rcar-sysc.h |  2 +-
+ 7 files changed, 71 insertions(+), 21 deletions(-)
+ create mode 100644 drivers/soc/renesas/r8a7792-sysc.c
