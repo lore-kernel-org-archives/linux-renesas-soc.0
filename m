@@ -1,66 +1,129 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55002 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36231 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751610AbcF2WGA (ORCPT
+	with ESMTP id S1752335AbcF3OQ1 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 18:06:00 -0400
+	Thu, 30 Jun 2016 10:16:27 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Ai Kyuse <ai.kyuse.uw@renesas.com>,
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFC v2 3/5] mmc: tmio: add max_segs and max_blk_count in tmio_mmc_data
-Date: Thu, 30 Jun 2016 00:05:38 +0200
-Message-Id: <1467237940-24388-4-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1467237940-24388-1-git-send-email-horms+renesas@verge.net.au>
-References: <1467237940-24388-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [GIT PULL] Second Round of Renesas ARM Based SoC DT Updates for v4.8
+Date: Thu, 30 Jun 2016 16:15:54 +0200
+Message-Id: <cover.1467294011.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Hi Olof, Hi Kevin, Hi Arnd,
 
-To change each value from related driver (e.g. sh_mobile_sdhi driver),
-this patch adds these member in the struct tmio_mmc_data.
+Please consider these second round of Renesas ARM based SoC DT updates for v4.8.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2
-* First post
----
- drivers/mmc/host/tmio_mmc_pio.c | 2 +-
- include/linux/mfd/tmio.h        | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+This pull request is based on the previous round of
+such requests, tagged as renesas-dt-for-v4.8,
+which you have already pulled.
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index c0020c331595..39dd8402e126 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -1124,7 +1124,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 
- 	mmc->caps |= MMC_CAP_4_BIT_DATA | pdata->capabilities;
- 	mmc->caps2 |= pdata->capabilities2;
--	mmc->max_segs = 32;
-+	mmc->max_segs = pdata->max_segs ? pdata->max_segs : 32;
- 	mmc->max_blk_size = 512;
- 	mmc->max_blk_count = (PAGE_SIZE / mmc->max_blk_size) *
- 		mmc->max_segs;
-diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
-index 7a26286db895..3b95dc7eb314 100644
---- a/include/linux/mfd/tmio.h
-+++ b/include/linux/mfd/tmio.h
-@@ -125,6 +125,8 @@ struct tmio_mmc_data {
- 	unsigned int			cd_gpio;
- 	int				alignment_shift;
- 	dma_addr_t			dma_rx_offset;
-+	unsigned int			max_blk_count;
-+	unsigned short			max_segs;
- 	void (*set_pwr)(struct platform_device *host, int state);
- 	void (*set_clk_div)(struct platform_device *host, int state);
- };
--- 
-2.7.0.rc3.207.g0ac5344
+
+The following changes since commit b6960f19676e19f37a5e5a8af059fdf3b435d2f4:
+
+  ARM: dts: silk: Fix W=1 dtc warnings (2016-05-30 09:37:13 +0900)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt2-for-v4.8
+
+for you to fetch changes up to 8fd763c75c3ab8e72e5d7f0d4c53531e6ff76197:
+
+  ARM: dts: r8a7792: add SMP support (2016-06-30 14:26:14 +0200)
+
+----------------------------------------------------------------
+Second Round of Renesas ARM Based SoC DT Updates for v4.8
+
+* Use APMU on R-Car Gen2 and provide SMP for r8a7793 SoC
+* Update console parameters to uniformly use chosen/stdout-path,
+  serial0, not provide kernel unnecessary command line parameters
+* Add DU pins to silk board
+* Add support for blanche/r8a7792
+* Name pfc subnodes after device name
+
+----------------------------------------------------------------
+Geert Uytterhoeven (24):
+      ARM: dts: ape6evm: Name serial port pfc subnode after device name
+      ARM: dts: ape6evm: Name mmc pfc subnode after device name
+      ARM: dts: armadillo800eva: Name serial port pfc subnode after device name
+      ARM: dts: bockw: Name serial port pfc subnode after device name
+      ARM: dts: marzen: Name serial port pfc subnodes after device names
+      ARM: dts: lager: Name serial port pfc subnodes after device names
+      ARM: dts: lager: Name spi pfc subnodes after device names
+      ARM: dts: lager: Name vin pfc subnode after device name
+      ARM: dts: koelsch: Name serial port pfc subnodes after device names
+      ARM: dts: koelsch: Name spi pfc subnodes after device names
+      ARM: dts: porter: Name serial port pfc subnode after device name
+      ARM: dts: porter: Name spi pfc subnode after device name
+      ARM: dts: gose: Name serial port pfc subnodes after device names
+      ARM: dts: gose: Name spi pfc subnode after device name
+      ARM: dts: alt: Name serial port pfc subnode after device name
+      ARM: dts: alt: Name spi pfc subnode after device name
+      ARM: dts: silk: Name serial port pfc subnode after device name
+      ARM: dts: silk: Name spi pfc subnode after device name
+      ARM: dts: kzm9g: Name serial port pfc subnode after device name
+      ARM: dts: armadillo800eva: Update console parameters
+      ARM: dts: genmai: Update console parameters
+      ARM: dts: marzen: Add serial port config to chosen/stdout-path
+      ARM: dts: kzm9d: Update console parameters
+      ARM: dts: kzm9g: Update console parameters
+
+Magnus Damm (4):
+      devicetree: bindings: Renesas APMU and SMP Enable method
+      ARM: dts: r8a7790: Add APMU nodes
+      ARM: dts: r8a7791: Add APMU node
+      ARM: dts: r8a7793: Add APMU node and second CPU core
+
+Sergei Shtylyov (13):
+      ARM: dts: r8a7792: add clock index macros
+      ARM: dts: r8a7792: add power domain index macros
+      ARM: dts: r8a7792: initial SoC device tree
+      ARM: dts: r8a7792: add SYS-DMAC support
+      ARM: dts: r8a7792: add [H]SCIF support
+      ARM: dts: r8a7792: add IRQC support
+      ARM: dts: blanche: document Blanche board
+      ARM: dts: blanche: initial device tree
+      ARM: dts: blanche: add Ethernet support
+      ARM: dts: silk: add DU pins
+      ARM: dts: r8a7792: add JPU clocks
+      ARM: dts: r8a7792: add JPU support
+      ARM: dts: r8a7792: add SMP support
+
+ Documentation/devicetree/bindings/arm/cpus.txt     |   1 +
+ Documentation/devicetree/bindings/arm/shmobile.txt |   2 +
+ .../devicetree/bindings/power/renesas,apmu.txt     |  31 ++
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/emev2-kzm9d.dts                  |   8 +-
+ arch/arm/boot/dts/r7s72100-genmai.dts              |   4 +-
+ arch/arm/boot/dts/r8a73a4-ape6evm.dts              |   4 +-
+ arch/arm/boot/dts/r8a7740-armadillo800eva.dts      |   8 +-
+ arch/arm/boot/dts/r8a7778-bockw.dts                |   2 +-
+ arch/arm/boot/dts/r8a7779-marzen.dts               |   6 +-
+ arch/arm/boot/dts/r8a7790-lager.dts                |  10 +-
+ arch/arm/boot/dts/r8a7790.dtsi                     |  13 +
+ arch/arm/boot/dts/r8a7791-koelsch.dts              |   8 +-
+ arch/arm/boot/dts/r8a7791-porter.dts               |   4 +-
+ arch/arm/boot/dts/r8a7791.dtsi                     |   7 +
+ arch/arm/boot/dts/r8a7792-blanche.dts              |  66 ++++
+ arch/arm/boot/dts/r8a7792.dtsi                     | 378 +++++++++++++++++++++
+ arch/arm/boot/dts/r8a7793-gose.dts                 |   6 +-
+ arch/arm/boot/dts/r8a7793.dtsi                     |  15 +
+ arch/arm/boot/dts/r8a7794-alt.dts                  |   4 +-
+ arch/arm/boot/dts/r8a7794-silk.dts                 |  16 +-
+ arch/arm/boot/dts/sh73a0-kzm9g.dts                 |   8 +-
+ include/dt-bindings/clock/r8a7792-clock.h          | 103 ++++++
+ include/dt-bindings/power/r8a7792-sysc.h           |  26 ++
+ 24 files changed, 695 insertions(+), 36 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/renesas,apmu.txt
+ create mode 100644 arch/arm/boot/dts/r8a7792-blanche.dts
+ create mode 100644 arch/arm/boot/dts/r8a7792.dtsi
+ create mode 100644 include/dt-bindings/clock/r8a7792-clock.h
+ create mode 100644 include/dt-bindings/power/r8a7792-sysc.h
