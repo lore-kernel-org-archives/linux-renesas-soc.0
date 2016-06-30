@@ -1,88 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:40272 "EHLO
-	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932597AbcFJNBP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752302AbcF3ORB (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 09:01:15 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 00/19] ARM: dts: renesas: Name pfc subnodes after device names
-Date: Fri, 10 Jun 2016 15:00:46 +0200
-Message-Id: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
+	Thu, 30 Jun 2016 10:17:01 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 19/41] ARM: dts: kzm9g: Name serial port pfc subnode after device name
+Date: Thu, 30 Jun 2016 16:15:39 +0200
+Message-Id: <970a62e07e5cfba58a571e4ba671f438065fcb19.1467294011.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
+References: <cover.1467294011.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Currently board DTS files use various naming conventions for the Pin
-Function Controller subnodes.  This may cause conflicts when enabling
-support for more instances later, either directly in board DT files, or
-in DT overlays.  These conflicts are most likely to happen for devices
-that use/require aliases (e.g. "serial1"), or when using generic and
-indexless names (e.g. "mmc").  Hence this series changes the names of
-(most of) the submodes, to match the corresponding device names, which
-are unique on a specific SoC.
+Name the Pin Function Controller subnode for SCIFA4 after its device
+name, instead of after the serial port alias.
 
-I did not change the following node names:
-  - "sdX", as they always matched the corresponding "sdhiX" name,
-  - "touchscreen", as there's not much opportunity for conflicts,
-  - "mmc", for "mmcif_pins" on sh73a0/kzm9g (which has a single mmc
-    instance),
-  - "sounda" for fsia_pins on SH-Mobile,
-If you think these should be changed too, please let me know.
+This avoids conflicts when adding support for more serial ports later,
+either here or in a DT overlay.
 
-This series is against renesas-devel-20160606-v4.7-rc2.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/sh73a0-kzm9g.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-
-Geert Uytterhoeven (19):
-  ARM: dts: ape6evm: Name serial port pfc subnode after device name
-  ARM: dts: ape6evm: Name mmc pfc subnode after device name
-  ARM: dts: armadillo800eva: Name serial port pfc subnode after device
-    name
-  ARM: dts: bockw: Name serial port pfc subnode after device name
-  ARM: dts: marzen: Name serial port pfc subnodes after device names
-  ARM: dts: lager: Name serial port pfc subnodes after device names
-  ARM: dts: lager: Name spi pfc subnodes after device names
-  ARM: dts: lager: Name vin pfc subnode after device name
-  ARM: dts: koelsch: Name serial port pfc subnodes after device names
-  ARM: dts: koelsch: Name spi pfc subnodes after device names
-  ARM: dts: porter: Name serial port pfc subnode after device name
-  ARM: dts: porter: Name spi pfc subnode after device name
-  ARM: dts: gose: Name serial port pfc subnodes after device names
-  ARM: dts: gose: Name spi pfc subnode after device name
-  ARM: dts: alt: Name serial port pfc subnode after device name
-  ARM: dts: alt: Name spi pfc subnode after device name
-  ARM: dts: silk: Name serial port pfc subnode after device name
-  ARM: dts: silk: Name spi pfc subnode after device name
-  ARM: dts: kzm9g: Name serial port pfc subnode after device name
-
- arch/arm/boot/dts/r8a73a4-ape6evm.dts         |  4 ++--
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts |  2 +-
- arch/arm/boot/dts/r8a7778-bockw.dts           |  2 +-
- arch/arm/boot/dts/r8a7779-marzen.dts          |  4 ++--
- arch/arm/boot/dts/r8a7790-lager.dts           | 10 +++++-----
- arch/arm/boot/dts/r8a7791-koelsch.dts         |  8 ++++----
- arch/arm/boot/dts/r8a7791-porter.dts          |  4 ++--
- arch/arm/boot/dts/r8a7793-gose.dts            |  6 +++---
- arch/arm/boot/dts/r8a7794-alt.dts             |  4 ++--
- arch/arm/boot/dts/r8a7794-silk.dts            |  4 ++--
- arch/arm/boot/dts/sh73a0-kzm9g.dts            |  2 +-
- 11 files changed, 25 insertions(+), 25 deletions(-)
-
+diff --git a/arch/arm/boot/dts/sh73a0-kzm9g.dts b/arch/arm/boot/dts/sh73a0-kzm9g.dts
+index 36567cbf2e1c..1df68b167033 100644
+--- a/arch/arm/boot/dts/sh73a0-kzm9g.dts
++++ b/arch/arm/boot/dts/sh73a0-kzm9g.dts
+@@ -352,7 +352,7 @@
+ 		};
+ 	};
+ 
+-	scifa4_pins: serial4 {
++	scifa4_pins: scifa4 {
+ 		groups = "scifa4_data", "scifa4_ctrl";
+ 		function = "scifa4";
+ 	};
 -- 
-1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.7.0.rc3.207.g0ac5344
