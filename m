@@ -1,110 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:44922 "EHLO
-	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752320AbcFJKFI (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932165AbcF3ORl (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 06:05:08 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] pinctrl: sh-pfc: Move SoC-specific forward declarations to sh_pfc.h
-Date: Fri, 10 Jun 2016 12:05:01 +0200
-Message-Id: <1465553103-6345-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
-References: <1465553103-6345-1-git-send-email-geert+renesas@glider.be>
+	Thu, 30 Jun 2016 10:17:41 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/5] soc: renesas: rcar-sysc: Make rcar_sysc_init() init the PM domains
+Date: Thu, 30 Jun 2016 16:16:10 +0200
+Message-Id: <b1e52287a29cf0673e1a60210d55edccc756e44a.1467292648.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467292648.git.horms+renesas@verge.net.au>
+References: <cover.1467292648.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-With C=1:
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-    drivers/pinctrl/sh-pfc/pfc-emev2.c:1695:30: warning: symbol 'emev2_pinmux_info' was not declared. Should it be static?
-    drivers/pinctrl/sh-pfc/pfc-r8a7779.c:3888:30: warning: symbol 'r8a7779_pinmux_info' was not declared. Should it be static?
+Let rcar_sysc_init() trigger initialization of the SYSC PM domains from
+DT if called before the early_initcall.
+On failure, it falls back to mapping the passed register block, as
+before.
 
-Note that there are more warnings on SH.
-
-The sh_pfc_soc_info structure is defined in sh_pfc.h, while all forward
-declarations for the SoC-specific versions are in core.h.
-Move the forward declarations from core.h to sh_pfc.h to fix this.
-
-Reported-by: Ben Dooks <ben.dooks@codethink.co.uk>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/pinctrl/sh-pfc/core.h   | 24 ------------------------
- drivers/pinctrl/sh-pfc/sh_pfc.h | 24 ++++++++++++++++++++++++
- 2 files changed, 24 insertions(+), 24 deletions(-)
+ drivers/soc/renesas/rcar-sysc.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
-index dc1b2adb24c5c588..539ec7dc0b644dbe 100644
---- a/drivers/pinctrl/sh-pfc/core.h
-+++ b/drivers/pinctrl/sh-pfc/core.h
-@@ -67,28 +67,4 @@ void sh_pfc_write_reg(struct sh_pfc *pfc, u32 reg, unsigned int width,
- int sh_pfc_get_pin_index(struct sh_pfc *pfc, unsigned int pin);
- int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type);
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 59a8152681a5..68d6856c9d3c 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -164,15 +164,6 @@ static bool rcar_sysc_power_is_off(const struct rcar_sysc_ch *sysc_ch)
+ 	return false;
+ }
  
--extern const struct sh_pfc_soc_info emev2_pinmux_info;
--extern const struct sh_pfc_soc_info r8a73a4_pinmux_info;
--extern const struct sh_pfc_soc_info r8a7740_pinmux_info;
--extern const struct sh_pfc_soc_info r8a7778_pinmux_info;
--extern const struct sh_pfc_soc_info r8a7779_pinmux_info;
--extern const struct sh_pfc_soc_info r8a7790_pinmux_info;
--extern const struct sh_pfc_soc_info r8a7791_pinmux_info;
--extern const struct sh_pfc_soc_info r8a7793_pinmux_info;
--extern const struct sh_pfc_soc_info r8a7794_pinmux_info;
--extern const struct sh_pfc_soc_info r8a7795_pinmux_info;
--extern const struct sh_pfc_soc_info sh7203_pinmux_info;
--extern const struct sh_pfc_soc_info sh7264_pinmux_info;
--extern const struct sh_pfc_soc_info sh7269_pinmux_info;
--extern const struct sh_pfc_soc_info sh73a0_pinmux_info;
--extern const struct sh_pfc_soc_info sh7720_pinmux_info;
--extern const struct sh_pfc_soc_info sh7722_pinmux_info;
--extern const struct sh_pfc_soc_info sh7723_pinmux_info;
--extern const struct sh_pfc_soc_info sh7724_pinmux_info;
--extern const struct sh_pfc_soc_info sh7734_pinmux_info;
--extern const struct sh_pfc_soc_info sh7757_pinmux_info;
--extern const struct sh_pfc_soc_info sh7785_pinmux_info;
--extern const struct sh_pfc_soc_info sh7786_pinmux_info;
--extern const struct sh_pfc_soc_info shx3_pinmux_info;
+-void __iomem *rcar_sysc_init(phys_addr_t base)
+-{
+-	rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
+-	if (!rcar_sysc_base)
+-		panic("unable to ioremap R-Car SYSC hardware block\n");
 -
- #endif /* __SH_PFC_CORE_H__ */
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index ea3a527514558add..332d379b302cba70 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -225,6 +225,30 @@ struct sh_pfc_soc_info {
- 	u32 unlock_reg;
- };
+-	return rcar_sysc_base;
+-}
+-
+ struct rcar_sysc_pd {
+ 	struct generic_pm_domain genpd;
+ 	struct rcar_sysc_ch ch;
+@@ -328,6 +319,9 @@ static int __init rcar_sysc_pd_init(void)
+ 	unsigned int i;
+ 	int error;
  
-+extern const struct sh_pfc_soc_info emev2_pinmux_info;
-+extern const struct sh_pfc_soc_info r8a73a4_pinmux_info;
-+extern const struct sh_pfc_soc_info r8a7740_pinmux_info;
-+extern const struct sh_pfc_soc_info r8a7778_pinmux_info;
-+extern const struct sh_pfc_soc_info r8a7779_pinmux_info;
-+extern const struct sh_pfc_soc_info r8a7790_pinmux_info;
-+extern const struct sh_pfc_soc_info r8a7791_pinmux_info;
-+extern const struct sh_pfc_soc_info r8a7793_pinmux_info;
-+extern const struct sh_pfc_soc_info r8a7794_pinmux_info;
-+extern const struct sh_pfc_soc_info r8a7795_pinmux_info;
-+extern const struct sh_pfc_soc_info sh7203_pinmux_info;
-+extern const struct sh_pfc_soc_info sh7264_pinmux_info;
-+extern const struct sh_pfc_soc_info sh7269_pinmux_info;
-+extern const struct sh_pfc_soc_info sh73a0_pinmux_info;
-+extern const struct sh_pfc_soc_info sh7720_pinmux_info;
-+extern const struct sh_pfc_soc_info sh7722_pinmux_info;
-+extern const struct sh_pfc_soc_info sh7723_pinmux_info;
-+extern const struct sh_pfc_soc_info sh7724_pinmux_info;
-+extern const struct sh_pfc_soc_info sh7734_pinmux_info;
-+extern const struct sh_pfc_soc_info sh7757_pinmux_info;
-+extern const struct sh_pfc_soc_info sh7785_pinmux_info;
-+extern const struct sh_pfc_soc_info sh7786_pinmux_info;
-+extern const struct sh_pfc_soc_info shx3_pinmux_info;
++	if (rcar_sysc_base)
++		return 0;
 +
- /* -----------------------------------------------------------------------------
-  * Helper macros to create pin and port lists
-  */
+ 	np = of_find_matching_node_and_match(NULL, rcar_sysc_matches, &match);
+ 	if (!np)
+ 		return -ENODEV;
+@@ -405,3 +399,11 @@ out_put:
+ 	return error;
+ }
+ early_initcall(rcar_sysc_pd_init);
++
++void __iomem * __init rcar_sysc_init(phys_addr_t base)
++{
++	if (rcar_sysc_pd_init())
++		rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
++
++	return rcar_sysc_base;
++}
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
