@@ -1,93 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60721 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752321AbcFHHOh (ORCPT
+	with ESMTP id S1752656AbcF3OQ7 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 8 Jun 2016 03:14:37 -0400
+	Thu, 30 Jun 2016 10:16:59 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 2/4] ARM: dts: r8a7790: lager: use demuxer for IIC1/I2C1
-Date: Wed,  8 Jun 2016 16:14:24 +0900
-Message-Id: <1465370066-8450-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1465370066-8450-1-git-send-email-horms+renesas@verge.net.au>
-References: <1465370066-8450-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 16/41] ARM: dts: alt: Name spi pfc subnode after device name
+Date: Thu, 30 Jun 2016 16:15:36 +0200
+Message-Id: <fc10f3c93b2d32a490fcbf89329179d9d8320beb.1467294011.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
+References: <cover.1467294011.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Make it possible to select which I2C1 IP core you want to run on the
-EXIO-A connector.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This is based on reference work for the I2C0 core of the lager by Wolfram Sang.
+Name the Pin Function Controller subnode for QSPI after its device name,
+instead of after the spi interface alias.
 
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This avoids conflicts when enabling support for more spi interfaces later,
+either here or in a DT overlay.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790-lager.dts | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7794-alt.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 71d62ca282ea..20abb1470f91 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -51,6 +51,7 @@
- 		serial0 = &scif0;
- 		serial1 = &scifa1;
- 		i2c8 = "i2cexio0";
-+		i2c9 = "i2cexio1";
- 	};
- 
- 	chosen {
-@@ -270,6 +271,18 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 	};
-+
-+	/*
-+	 * IIC1/I2C1 is routed to EXIO connector A, pins 78 (SCL) + 80 (SDA).
-+	 * For further notes see i2cexio0.
-+	 */
-+	i2cexio1: i2c-9 {
-+		compatible = "i2c-demux-pinctrl";
-+		i2c-parent = <&iic1>, <&i2c1>;
-+		i2c-bus-name = "i2c-exio1";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index 1335664b2f88..1ad37d431a2a 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -147,7 +147,7 @@
  };
  
- &du {
-@@ -392,6 +405,11 @@
- 		function = "iic0";
+ &pfc {
+-	qspi_pins: spi0 {
++	qspi_pins: qspi {
+ 		groups = "qspi_ctrl", "qspi_data4";
+ 		function = "qspi";
  	};
- 
-+	i2c1_pins: i2c1 {
-+		groups = "i2c1";
-+		function = "i2c1";
-+	};
-+
- 	iic1_pins: iic1 {
- 		groups = "iic1";
- 		function = "iic1";
-@@ -588,10 +606,14 @@
- 	pinctrl-names = "i2c-exio0";
- };
- 
-+&i2c1	{
-+	pinctrl-0 = <&i2c1_pins>;
-+	pinctrl-names = "i2c-exio1";
-+};
-+
- &iic1	{
--	status = "okay";
- 	pinctrl-0 = <&iic1_pins>;
--	pinctrl-names = "default";
-+	pinctrl-names = "i2c-exio1";
- };
- 
- &iic2	{
 -- 
-2.1.4
+2.7.0.rc3.207.g0ac5344
