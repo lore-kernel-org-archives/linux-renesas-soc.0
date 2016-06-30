@@ -1,44 +1,75 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>
-Date: Tue, 07 Jun 2016 12:39:18 +0900
-Message-Id: <20160607033918.28687.98260.sendpatchset@little-apple>
-Subject: [PATCH 0/3] iommu/ipmmu-vmsa: Initial r8a7796 support
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36101 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752708AbcF3OP7 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 30 Jun 2016 10:15:59 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 6/9] arm64: dts: r8a7796: Add SYSC PM Domains
+Date: Thu, 30 Jun 2016 16:15:04 +0200
+Message-Id: <fbb099e4ec724e320bec0126a47dbb683ca3cab0.1467291676.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467291676.git.horms+renesas@verge.net.au>
+References: <cover.1467291676.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-iommu/ipmmu-vmsa: Initial r8a7796 support
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[PATCH 1/3] iommu/ipmmu-vmsa: Add r8a7796 DT binding
-[PATCH 2/3] iommu/ipmmu-vmsa: Increase maximum micro-TLBS to 48
-[PATCH 3/3] iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
+Add a device node for the System Controller.
+Hook up the Cortex-A57 CPU core and L2 cache/SCU to their respective PM
+Domains.
 
-This series adds r8a7796 support to the IPMMU driver. The DT binding
-gets updated, maximum number of micro-TLBs are increased and the
-driver is adjusted to match on the new DT binding.
-
-The main differences between r8a7795 and r8a7796 IPMMUs are:
-1) Number of on-chip IPMMU device instances
-2) Interrupt register bit assignment for IPMMU-MM
-3) Maximum number of micro-TLBs
-4) Micro-TLB assignment
-
-DT binding extension and change number 3 above are part of this patch
-series. Other changes will be part of DT integration code that will be
-submitted separately.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
- Developed on top of next-20160602 and:
- [PATCH v3 00/06] iommu/ipmmu-vmsa: IPMMU multi-arch update V3
- [PATCH v2 00/11] iommu/ipmmu-vmsa: r8a7795 support V2
-
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |    1 
- drivers/iommu/ipmmu-vmsa.c                                     |   11 +++++++---
- 2 files changed, 9 insertions(+), 3 deletions(-)
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 178debf68318..85f0843ddd87 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -10,6 +10,7 @@
+ 
+ #include <dt-bindings/clock/r8a7796-cpg-mssr.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/power/r8a7796-sysc.h>
+ 
+ / {
+ 	compatible = "renesas,r8a7796";
+@@ -30,6 +31,7 @@
+ 			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x0>;
+ 			device_type = "cpu";
++			power-domains = <&sysc R8A7796_PD_CA57_CPU0>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+ 		};
+@@ -37,6 +39,7 @@
+ 		L2_CA57: cache-controller@0 {
+ 			compatible = "cache";
+ 			reg = <0>;
++			power-domains = <&sysc R8A7796_PD_CA57_SCU>;
+ 			cache-unified;
+ 			cache-level = <2>;
+ 		};
+@@ -104,6 +107,12 @@
+ 			#power-domain-cells = <0>;
+ 		};
+ 
++		sysc: system-controller@e6180000 {
++			compatible = "renesas,r8a7796-sysc";
++			reg = <0 0xe6180000 0 0x0400>;
++			#power-domain-cells = <1>;
++		};
++
+ 		scif2: serial@e6e88000 {
+ 			compatible = "renesas,scif-r8a7796",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
+-- 
+2.7.0.rc3.207.g0ac5344
