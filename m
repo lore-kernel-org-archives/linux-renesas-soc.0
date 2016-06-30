@@ -1,76 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932123AbcF3ORg (ORCPT
+	with ESMTP id S1752069AbcF3ORa (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:17:36 -0400
+	Thu, 30 Jun 2016 10:17:30 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Magnus Damm <damm+renesas@opensource.se>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 40/41] ARM: dts: r8a7793: Add APMU node and second CPU core
-Date: Thu, 30 Jun 2016 16:16:00 +0200
-Message-Id: <65b133cd79cfde9f4e0157deb0e0f88f92811ad3.1467294011.git.horms+renesas@verge.net.au>
+Subject: [PATCH 36/41] ARM: dts: kzm9g: Update console parameters
+Date: Thu, 30 Jun 2016 16:15:56 +0200
+Message-Id: <54389e981cdfd081de67de083df451b70651f821.1467294011.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
 References: <cover.1467294011.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add DT nodes for the Advanced Power Management Unit (APMU) and the
-second CPU core.  Use the enable-method to point out that the APMU
-should be used for SMP support.
+Change the console alias to "serial0", for consistency with other
+boards (the first unlabeled serial port is always called "serial0").
+This does change the serial console from /dev/ttySC4 to /dev/ttySC0.
+Add the serial port config to "chosen/stdout-path", which requires
+referring to the port by alias.
+Drop the "console=" parameters from the kernel command line, as they're
+no longer needed for DT-based platforms.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm/boot/dts/sh73a0-kzm9g.dts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 9b55c1c6ee31..8d02aacf2892 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -35,6 +35,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "renesas,apmu";
+diff --git a/arch/arm/boot/dts/sh73a0-kzm9g.dts b/arch/arm/boot/dts/sh73a0-kzm9g.dts
+index 1df68b167033..3d65f1f6d78b 100644
+--- a/arch/arm/boot/dts/sh73a0-kzm9g.dts
++++ b/arch/arm/boot/dts/sh73a0-kzm9g.dts
+@@ -22,7 +22,7 @@
+ 	compatible = "renesas,kzm9g", "renesas,sh73a0";
  
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-@@ -56,6 +57,14 @@
- 			next-level-cache = <&L2_CA15>;
- 		};
- 
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <1>;
-+			clock-frequency = <1500000000>;
-+			power-domains = <&sysc R8A7793_PD_CA15_CPU1>;
-+		};
-+
- 		L2_CA15: cache-controller@0 {
- 			compatible = "cache";
- 			reg = <0>;
-@@ -65,6 +74,12 @@
- 		};
+ 	aliases {
+-		serial4 = &scifa4;
++		serial0 = &scifa4;
  	};
  
-+	apmu@e6152000 {
-+		compatible = "renesas,r8a7793-apmu", "renesas,apmu";
-+		reg = <0 0xe6152000 0 0x188>;
-+		cpus = <&cpu0 &cpu1>;
-+	};
-+
- 	thermal-zones {
- 		cpu_thermal: cpu-thermal {
- 			polling-delay-passive	= <0>;
+ 	cpus {
+@@ -39,8 +39,8 @@
+ 	};
+ 
+ 	chosen {
+-		bootargs = "console=tty0 console=ttySC4,115200 root=/dev/nfs ip=dhcp ignore_loglevel rw";
+-		stdout-path = &scifa4;
++		bootargs = "root=/dev/nfs ip=dhcp ignore_loglevel rw";
++		stdout-path = "serial0:115200n8";
+ 	};
+ 
+ 	memory@40000000 {
 -- 
 2.7.0.rc3.207.g0ac5344
