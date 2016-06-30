@@ -1,84 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:37571 "EHLO
-	mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751544AbcFCIcu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752069AbcF3ORc (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 3 Jun 2016 04:32:50 -0400
-Received: by mail-wm0-f44.google.com with SMTP id z87so98842561wmh.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Jun 2016 01:32:50 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1462970760-3471-1-git-send-email-wsa@the-dreams.de>
-References: <1462970760-3471-1-git-send-email-wsa@the-dreams.de>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 3 Jun 2016 10:32:47 +0200
-Message-ID: <CAPDyKFrs9RaRAp8n7QWx+dtK3sAJZG4Xckxueip=-qXbJc3kpQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sh_mobile_sdhi: properly document R-Car versions
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+	Thu, 30 Jun 2016 10:17:32 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 37/41] devicetree: bindings: Renesas APMU and SMP Enable method
+Date: Thu, 30 Jun 2016 16:15:57 +0200
+Message-Id: <e454b359b7a0a6f59e3d83394e6d4e598554cb33.1467294011.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
+References: <cover.1467294011.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 11 May 2016 at 14:46, Wolfram Sang <wsa@the-dreams.de> wrote:
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> Replace hardcoded values with meaningful names and document what we
-> know.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Thanks, applied for next!
+Add DT binding documentation for the APMU hardware and add "renesas,apmu"
+to the list of enable methods for the ARM cpus.
 
-Kind regards
-Uffe
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/arm/cpus.txt     |  1 +
+ .../devicetree/bindings/power/renesas,apmu.txt     | 31 ++++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/renesas,apmu.txt
 
-> ---
->  drivers/mmc/host/sh_mobile_sdhi.c | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-> index f750f9494410b0..c3b651bf89cb4a 100644
-> --- a/drivers/mmc/host/sh_mobile_sdhi.c
-> +++ b/drivers/mmc/host/sh_mobile_sdhi.c
-> @@ -39,6 +39,12 @@
->
->  #define EXT_ACC           0xe4
->
-> +#define SDHI_VER_GEN2_SDR50    0x490c
-> +/* very old datasheets said 0x490c for SDR104, too. They are wrong! */
-> +#define SDHI_VER_GEN2_SDR104   0xcb0d
-> +#define SDHI_VER_GEN3_SD       0xcc10
-> +#define SDHI_VER_GEN3_SDMMC    0xcd10
-> +
->  #define host_to_priv(host) container_of((host)->pdata, struct sh_mobile_sdhi, mmc_data)
->
->  struct sh_mobile_sdhi_of_data {
-> @@ -109,14 +115,14 @@ static void sh_mobile_sdhi_sdbuf_width(struct tmio_mmc_host *host, int width)
->          *      sh_mobile_sdhi_of_data :: dma_buswidth
->          */
->         switch (sd_ctrl_read16(host, CTL_VERSION)) {
-> -       case 0x490C:
-> +       case SDHI_VER_GEN2_SDR50:
->                 val = (width == 32) ? 0x0001 : 0x0000;
->                 break;
-> -       case 0xCB0D:
-> +       case SDHI_VER_GEN2_SDR104:
->                 val = (width == 32) ? 0x0000 : 0x0001;
->                 break;
-> -       case 0xCC10: /* Gen3, SD only */
-> -       case 0xCD10: /* Gen3, SD + MMC */
-> +       case SDHI_VER_GEN3_SD:
-> +       case SDHI_VER_GEN3_SDMMC:
->                 if (width == 64)
->                         val = 0x0000;
->                 else if (width == 32)
-> --
-> 2.8.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
+index 3f0cbbb8395f..fa7520eb6387 100644
+--- a/Documentation/devicetree/bindings/arm/cpus.txt
++++ b/Documentation/devicetree/bindings/arm/cpus.txt
+@@ -204,6 +204,7 @@ nodes to be present and contain the properties described below.
+ 			    "qcom,gcc-msm8660"
+ 			    "qcom,kpss-acc-v1"
+ 			    "qcom,kpss-acc-v2"
++			    "renesas,apmu"
+ 			    "rockchip,rk3036-smp"
+ 			    "rockchip,rk3066-smp"
+ 			    "ste,dbx500-smp"
+diff --git a/Documentation/devicetree/bindings/power/renesas,apmu.txt b/Documentation/devicetree/bindings/power/renesas,apmu.txt
+new file mode 100644
+index 000000000000..84404c9edff7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/renesas,apmu.txt
+@@ -0,0 +1,31 @@
++DT bindings for the Renesas Advanced Power Management Unit
++
++Renesas R-Car line of SoCs utilize one or more APMU hardware units
++for CPU core power domain control including SMP boot and CPU Hotplug.
++
++Required properties:
++
++- compatible: Should be "renesas,<soctype>-apmu", "renesas,apmu" as fallback.
++	      Examples with soctypes are:
++		- "renesas,r8a7790-apmu" (R-Car H2)
++		- "renesas,r8a7791-apmu" (R-Car M2-W)
++		- "renesas,r8a7792-apmu" (R-Car V2H)
++		- "renesas,r8a7793-apmu" (R-Car M2-N)
++		- "renesas,r8a7794-apmu" (R-Car E2)
++
++- reg: Base address and length of the I/O registers used by the APMU.
++
++- cpus: This node contains a list of CPU cores, which should match the order
++  of CPU cores used by the WUPCR and PSTR registers in the Advanced Power
++  Management Unit section of the device's datasheet.
++
++
++Example:
++
++This shows the r8a7791 APMU that can control CPU0 and CPU1.
++
++	apmu@e6152000 {
++		compatible = "renesas,r8a7791-apmu", "renesas,apmu";
++		reg = <0 0xe6152000 0 0x188>;
++		cpus = <&cpu0 &cpu1>;
++	};
+-- 
+2.7.0.rc3.207.g0ac5344
