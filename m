@@ -1,56 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:38669 "EHLO
-	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753707AbcFGHy4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36559 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752069AbcF3OR4 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 03:54:56 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-	iommu@lists.linux-foundation.org, linux@armlinux.org.uk
-Cc: hch@infradead.org, dan.j.williams@intel.com, vinod.koul@intel.com,
-	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	linus.walleij@linaro.org, arnd@arndb.de,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv8 1/6] dma-mapping: add {map,unmap}_resource to dma_map_ops
-Date: Tue,  7 Jun 2016 09:54:08 +0200
-Message-Id: <1465286053-27258-2-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <1465286053-27258-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-References: <1465286053-27258-1-git-send-email-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+	Thu, 30 Jun 2016 10:17:56 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 4/8] ARM: shmobile: apmu: Move #ifdef CONFIG_SMP to cover more functions
+Date: Thu, 30 Jun 2016 16:16:20 +0200
+Message-Id: <d3f3fb0cfdcf4cbf69af65e8bfdde65cedf4e53a.1467293089.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467293089.git.horms+renesas@verge.net.au>
+References: <cover.1467293089.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add methods to handle mapping of device resources from a physical
-address. This is needed for example to be able to map MMIO FIFO
-registers to a IOMMU.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+shmobile_smp_apmu_prepare_cpus() is used only if CONFIG_SMP=y.
+
+Hence move the #ifdef to cover shmobile_smp_apmu_prepare_cpus() and all
+functions only called by it (apmu_init_cpu() and apmu_parse_cfg()).
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- include/linux/dma-mapping.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/mach-shmobile/platsmp-apmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index c980a92..a11ff9d 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -49,6 +49,12 @@ struct dma_map_ops {
- 			 struct scatterlist *sg, int nents,
- 			 enum dma_data_direction dir,
- 			 struct dma_attrs *attrs);
-+	dma_addr_t (*map_resource)(struct device *dev, phys_addr_t phys_addr,
-+			       size_t size, enum dma_data_direction dir,
-+			       struct dma_attrs *attrs);
-+	void (*unmap_resource)(struct device *dev, dma_addr_t dma_handle,
-+			   size_t size, enum dma_data_direction dir,
-+			   struct dma_attrs *attrs);
- 	void (*sync_single_for_cpu)(struct device *dev,
- 				    dma_addr_t dma_handle, size_t size,
- 				    enum dma_data_direction dir);
+diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
+index aba75c89f9c1..c1558ef0c590 100644
+--- a/arch/arm/mach-shmobile/platsmp-apmu.c
++++ b/arch/arm/mach-shmobile/platsmp-apmu.c
+@@ -74,6 +74,7 @@ static int __maybe_unused apmu_wrap(int cpu, int (*fn)(void __iomem *p, int cpu)
+ 	return p ? fn(p, apmu_cpus[cpu].bit) : -EINVAL;
+ }
+ 
++#ifdef CONFIG_SMP
+ static void apmu_init_cpu(struct resource *res, int cpu, int bit)
+ {
+ 	if ((cpu >= ARRAY_SIZE(apmu_cpus)) || apmu_cpus[cpu].iomem)
+@@ -128,7 +129,6 @@ void __init shmobile_smp_apmu_prepare_cpus(unsigned int max_cpus,
+ 	apmu_parse_cfg(apmu_init_cpu, apmu_config, num);
+ }
+ 
+-#ifdef CONFIG_SMP
+ int shmobile_smp_apmu_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ {
+ 	/* For this particular CPU register boot vector */
 -- 
-2.8.2
+2.7.0.rc3.207.g0ac5344
