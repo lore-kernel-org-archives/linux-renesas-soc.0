@@ -1,72 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56282 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752007AbcF2SSy (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36546 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932182AbcF3ORw (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 14:18:54 -0400
-Date: Wed, 29 Jun 2016 19:18:43 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linux-ALSA <alsa-devel@alsa-project.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org
-Message-ID: <20160629181843.GM6247@sirena.org.uk>
-References: <87fusysjam.wl%kuninori.morimoto.gx@renesas.com>
- <8737oysj1d.wl%kuninori.morimoto.gx@renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="kunpHVz1op/+13PW"
-Content-Disposition: inline
-In-Reply-To: <8737oysj1d.wl%kuninori.morimoto.gx@renesas.com>
-Subject: Re: [PATCH 09/39 v2] ASoC: simple-card-utils: add
- asoc_simple_card_parse_clk()
+	Thu, 30 Jun 2016 10:17:52 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/8] ARM: shmobile: rcar-gen2: Obtain extal frequency from DT
+Date: Thu, 30 Jun 2016 16:16:18 +0200
+Message-Id: <9f5ce39ddb8f68b30cd65ae33d32f3b47a58d350.1467293089.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467293089.git.horms+renesas@verge.net.au>
+References: <cover.1467293089.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
---kunpHVz1op/+13PW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On some R-Car Gen2 SoCs, the frequency of the ARM architecture timer
+depends on the frequency of the external clock crystal.  Currently the
+latter is determined indirectly from the state of the mode pins, which
+is a relic predating DT.
 
-On Tue, May 31, 2016 at 09:02:22AM +0000, Kuninori Morimoto wrote:
+Obtain the external clock crystal frequency from DT instead, removing
+the dependency on the mode pins.
 
-> +	struct clk *clk;
-> +	u32 val;
-> +
-> +	/*
-> +	 * Parse dai->sysclk come from "clocks = <&xxx>"
-> +	 * (if system has common clock)
-> +	 *  or "system-clock-frequency = <xxx>"
-> +	 *  or device's module clock.
-> +	 */
-> +	clk = of_clk_get(port_np, 0);
-> +	if (!IS_ERR(clk)) {
-> +		simple_dai->sysclk = clk_get_rate(clk);
-> +		simple_dai->clk = clk;
-> +	} else if (!of_property_read_u32(port_np, "system-clock-frequency", &val)) {
-> +		simple_dai->sysclk = val;
-> +	} else {
-> +		clk = of_clk_get(endpoint_np, 0);
-> +		if (!IS_ERR(clk))
-> +			simple_dai->sysclk = clk_get_rate(clk);
-> +	}
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/mach-shmobile/setup-rcar-gen2.c | 42 +++++++++++++++++---------------
+ 1 file changed, 22 insertions(+), 20 deletions(-)
 
-This looks like we're leaking the clocks - devm_ might help here
-perhaps?
-
---kunpHVz1op/+13PW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXdBEBAAoJECTWi3JdVIfQJq4H+wYo25+Urw2BDs9+rBahpLJH
-iUhUs1PaaLY1B6yUPd8nsu3I8rMe3rKl+AyZjUqnYJQxc5cvAqEdlGVJNgMfdGwF
-ccAUxa5oLqrL3T8mMC/R7JeuTiHmsbH3FoxCv3tmQZDT5OHPidvKDEX4zCmy+v75
-vxcX8oDpvDxuDN4A2zpmYn+cLhBvziKiWJoVQEFaav/7/MAgxIRkneWKVLNrICvk
-zew6FniTdE09tBsLyHGn/P+peENNRkEz+UV6ur2NMlqEoxIiLaPXhUs0p5lDZMTj
-GXoMSd8L3Jer10FbeiiG7xAumgCJ3ARu8s/TfYBxpTmAgEQPmvOZHrNoaTT7TTw=
-=ffm8
------END PGP SIGNATURE-----
-
---kunpHVz1op/+13PW--
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index 1c6fd11c2f82..ea092d5dd475 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -46,6 +46,26 @@ u32 rcar_gen2_read_mode_pins(void)
+ 	return mode;
+ }
+ 
++static unsigned int __init get_extal_freq(void)
++{
++	struct device_node *cpg, *extal;
++	u32 freq = 20000000;
++
++	cpg = of_find_compatible_node(NULL, NULL,
++				      "renesas,rcar-gen2-cpg-clocks");
++	if (!cpg)
++		return freq;
++
++	extal = of_parse_phandle(cpg, "clocks", 0);
++	of_node_put(cpg);
++	if (!extal)
++		return freq;
++
++	of_property_read_u32(extal, "clock-frequency", &freq);
++	of_node_put(extal);
++	return freq;
++}
++
+ #define CNTCR 0
+ #define CNTFID0 0x20
+ 
+@@ -54,7 +74,6 @@ void __init rcar_gen2_timer_init(void)
+ 	u32 mode = rcar_gen2_read_mode_pins();
+ #ifdef CONFIG_ARM_ARCH_TIMER
+ 	void __iomem *base;
+-	int extal_mhz = 0;
+ 	u32 freq;
+ 
+ 	if (of_machine_is_compatible("renesas,r8a7794")) {
+@@ -82,26 +101,9 @@ void __init rcar_gen2_timer_init(void)
+ 		 * with the counter disabled. Moreover, it may also report
+ 		 * a potentially incorrect fixed 13 MHz frequency. To be
+ 		 * correct these registers need to be updated to use the
+-		 * frequency EXTAL / 2 which can be determined by the MD pins.
++		 * frequency EXTAL / 2.
+ 		 */
+-
+-		switch (mode & (MD(14) | MD(13))) {
+-		case 0:
+-			extal_mhz = 15;
+-			break;
+-		case MD(13):
+-			extal_mhz = 20;
+-			break;
+-		case MD(14):
+-			extal_mhz = 26;
+-			break;
+-		case MD(13) | MD(14):
+-			extal_mhz = 30;
+-			break;
+-		}
+-
+-		/* The arch timer frequency equals EXTAL / 2 */
+-		freq = extal_mhz * (1000000 / 2);
++		freq = get_extal_freq() / 2;
+ 	}
+ 
+ 	/* Remap "armgcnt address map" space */
+-- 
+2.7.0.rc3.207.g0ac5344
