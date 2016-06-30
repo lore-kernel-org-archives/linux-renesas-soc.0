@@ -1,67 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from 82-70-136-246.dsl.in-addr.zen.co.uk ([82.70.136.246]:36890 "EHLO
-	rainbowdash.ducie.codethink.co.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1755428AbcFGRdN (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36087 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752574AbcF3OPi (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 7 Jun 2016 13:33:13 -0400
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-To: linux-kernel@lists.codethink.co.uk
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Alessandro Rubini <rubini@unipv.it>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Subject: [PATCH] pinctrl: sh-pfc: fix warnings by include core.h
-Date: Tue,  7 Jun 2016 18:33:06 +0100
-Message-Id: <1465320786-10333-1-git-send-email-ben.dooks@codethink.co.uk>
+	Thu, 30 Jun 2016 10:15:38 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/9] arm64: dts: r8a7795: Add CAN FD support
+Date: Thu, 30 Jun 2016 16:15:00 +0200
+Message-Id: <341eb484b14a16fd32086e7dd82a9f7fdea2d040.1467291676.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467291676.git.horms+renesas@verge.net.au>
+References: <cover.1467291676.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fix warnings about emev2_pinmux_info and r8a7779_pinmux_info
-by using core.h instead of sh_pfc.h in these files. This gives
-the declarations of the two structures and removes the following
-warnings:
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-drivers/pinctrl/sh-pfc/pfc-emev2.c:1695:30: warning: symbol 'emev2_pinmux_info' was not declared. Should it be static?
-drivers/pinctrl/sh-pfc/pfc-r8a7779.c:3888:30: warning: symbol 'r8a7779_pinmux_info' was not declared. Should it be static?
+Adds CAN FD controller node for r8a7795.
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+Note: CAN FD controller register base address specified in R-Car Gen3
+Hardware User Manual v0.5E is incorrect. The correct address is:
+
+CAN FD - 0xe66c0000
+
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alessandro Rubini <rubini@unipv.it>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org
----
- drivers/pinctrl/sh-pfc/pfc-emev2.c   | 2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7779.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-emev2.c b/drivers/pinctrl/sh-pfc/pfc-emev2.c
-index 1cbbe04..f943854 100644
---- a/drivers/pinctrl/sh-pfc/pfc-emev2.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-emev2.c
-@@ -10,7 +10,7 @@
- #include <linux/init.h>
- #include <linux/kernel.h>
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index fad6dd8b7771..b902356873c2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -583,6 +583,30 @@
+ 			status = "disabled";
+ 		};
  
--#include "sh_pfc.h"
-+#include "core.h"
- 
- #define CPU_ALL_PORT(fn, pfx, sfx)					\
- 	PORT_10(0,  fn, pfx, sfx),	PORT_90(0,  fn, pfx, sfx),	\
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-index 5bef934..098d01e 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-@@ -21,7 +21,7 @@
- 
- #include <linux/kernel.h>
- 
--#include "sh_pfc.h"
-+#include "core.h"
- 
- #define CPU_ALL_PORT(fn, sfx)						\
- 	PORT_GP_32(0, fn, sfx),						\
++		canfd: can@e66c0000 {
++			compatible = "renesas,r8a7795-canfd",
++				     "renesas,rcar-gen3-canfd";
++			reg = <0 0xe66c0000 0 0x8000>;
++			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
++				   <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 914>,
++			       <&cpg CPG_CORE R8A7795_CLK_CANFD>,
++			       <&can_clk>;
++			clock-names = "fck", "canfd", "can_clk";
++			assigned-clocks = <&cpg CPG_CORE R8A7795_CLK_CANFD>;
++			assigned-clock-rates = <40000000>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			status = "disabled";
++
++			channel0 {
++				status = "disabled";
++			};
++
++			channel1 {
++				status = "disabled";
++			};
++		};
++
+ 		hscif0: serial@e6540000 {
+ 			compatible = "renesas,hscif-r8a7795",
+ 				     "renesas,rcar-gen3-hscif",
 -- 
-2.8.1
+2.7.0.rc3.207.g0ac5344
