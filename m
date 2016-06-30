@@ -1,92 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:49372 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751837AbcFFQIm (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752656AbcF3OQ4 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 6 Jun 2016 12:08:42 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] arm64: dts: r8a7795: salvator: enable UHS for SDHI 0 & 3
-Date: Mon,  6 Jun 2016 18:08:27 +0200
-Message-Id: <1465229307-1961-4-git-send-email-wsa@the-dreams.de>
-In-Reply-To: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
-References: <1465229307-1961-1-git-send-email-wsa@the-dreams.de>
+	Thu, 30 Jun 2016 10:16:56 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 13/41] ARM: dts: gose: Name serial port pfc subnodes after device names
+Date: Thu, 30 Jun 2016 16:15:33 +0200
+Message-Id: <167d34af3d8b3b66dc57f60f473a1a1f4ca3cb9d.1467294011.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
+References: <cover.1467294011.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Name the Pin Function Controller subnodes for SCIF0 and SCIF1 after
+their device names, instead of after the serial port aliases.
+
+This avoids conflicts when enabling support for more serial ports later,
+either here or in a DT overlay.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7793-gose.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index abb25cfc20bd57..726426693f1fa0 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -229,11 +229,25 @@
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi0_pins_uhs: sd0_uhs {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <1800>;
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index f748360ee857..995e1e0fb1ff 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -320,12 +320,12 @@
+ 		function = "du";
  	};
  
- 	sdhi3_pins: sd3 {
- 		groups = "sdhi3_data4", "sdhi3_ctrl";
- 		function = "sdhi3";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi3_pins_uhs: sd3_uhs {
-+		groups = "sdhi3_data4", "sdhi3_ctrl";
-+		function = "sdhi3";
-+		power-source = <1800>;
+-	scif0_pins: serial0 {
++	scif0_pins: scif0 {
+ 		groups = "scif0_data_d";
+ 		function = "scif0";
  	};
  
- 	sound_pins: sound {
-@@ -374,25 +388,29 @@
- 
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
--	pinctrl-names = "default";
-+	pinctrl-1 = <&sdhi0_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi0>;
- 	vqmmc-supply = <&vccq_sdhi0>;
- 	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
- 
- &sdhi3 {
- 	pinctrl-0 = <&sdhi3_pins>;
--	pinctrl-names = "default";
-+	pinctrl-1 = <&sdhi3_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi3>;
- 	vqmmc-supply = <&vccq_sdhi3>;
- 	cd-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
- 
+-	scif1_pins: serial1 {
++	scif1_pins: scif1 {
+ 		groups = "scif1_data_d";
+ 		function = "scif1";
+ 	};
 -- 
-2.8.1
+2.7.0.rc3.207.g0ac5344
