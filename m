@@ -1,75 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932124AbcF3ORX (ORCPT
+	with ESMTP id S932165AbcF3ORn (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:17:23 -0400
+	Thu, 30 Jun 2016 10:17:43 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 30/41] ARM: dts: r8a7792: add JPU clocks
-Date: Thu, 30 Jun 2016 16:15:50 +0200
-Message-Id: <eebc8e2c5b7a3db19075a02730db8b73be933485.1467294011.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
-References: <cover.1467294011.git.horms+renesas@verge.net.au>
+Subject: [PATCH 4/5] soc: renesas: rcar-sysc: Move SYSC interrupt config to rcar-sysc driver
+Date: Thu, 30 Jun 2016 16:16:11 +0200
+Message-Id: <053239987f89f9a6299e78610bad010764bccd71.1467292648.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467292648.git.horms+renesas@verge.net.au>
+References: <cover.1467292648.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add JPU clock and its parent, M2 clock to the R8A7792 device tree.
+On R-Car H1 and Gen2, the SYSC interrupt registers are always configured
+using hardcoded values in platform code. For R-Car Gen2, values are
+provided for H2 and M2-W only, other SoCs are not yet supported, and
+never will be.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Move this configuration from SoC-specific platform code to the
+rcar_sysc_init() wrapper, so it can be skipped if the SYSC is configured
+from DT. This would be the case not only for H1, H2, and M2-W using a
+modern DTS, but also for other R-Car Gen2 SoCs not supported by the
+platform code, relying purely on DT.
+
+There is no longer a need to return the mapped register block, hence
+make the function return void.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7792.dtsi            | 16 ++++++++++++++++
- include/dt-bindings/clock/r8a7792-clock.h |  1 +
- 2 files changed, 17 insertions(+)
+ arch/arm/mach-shmobile/pm-r8a7779.c   |  6 +-----
+ arch/arm/mach-shmobile/pm-rcar-gen2.c |  6 +-----
+ drivers/soc/renesas/rcar-sysc.c       | 12 ++++++++----
+ include/linux/soc/renesas/rcar-sysc.h |  2 +-
+ 4 files changed, 11 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 18b4e50521c3..7077c5db2678 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -280,8 +280,24 @@
- 			clock-div = <48>;
- 			clock-mult = <1>;
- 		};
-+		m2_clk: m2 {
-+			compatible = "fixed-factor-clock";
-+			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
-+			#clock-cells = <0>;
-+			clock-div = <8>;
-+			clock-mult = <1>;
-+		};
+diff --git a/arch/arm/mach-shmobile/pm-r8a7779.c b/arch/arm/mach-shmobile/pm-r8a7779.c
+index 4174cbcbc467..5c9a93f5e650 100644
+--- a/arch/arm/mach-shmobile/pm-r8a7779.c
++++ b/arch/arm/mach-shmobile/pm-r8a7779.c
+@@ -23,11 +23,7 @@
  
- 		/* Gate clocks */
-+		mstp1_clks: mstp1_clks@e6150134 {
-+			compatible = "renesas,r8a7792-mstp-clocks",
-+				     "renesas,cpg-mstp-clocks";
-+			reg = <0 0xe6150134 0 4>, <0 0xe6150038 0 4>;
-+			clocks = <&m2_clk>;
-+			#clock-cells = <1>;
-+			clock-indices = <R8A7792_CLK_JPU>;
-+			clock-output-names = "jpu";
-+		};
- 		mstp2_clks: mstp2_clks@e6150138 {
- 			compatible = "renesas,r8a7792-mstp-clocks",
- 				     "renesas,cpg-mstp-clocks";
-diff --git a/include/dt-bindings/clock/r8a7792-clock.h b/include/dt-bindings/clock/r8a7792-clock.h
-index 949801eb0652..89a5155913f6 100644
---- a/include/dt-bindings/clock/r8a7792-clock.h
-+++ b/include/dt-bindings/clock/r8a7792-clock.h
-@@ -24,6 +24,7 @@
- #define R8A7792_CLK_MSIOF0		0
+ static void __init r8a7779_sysc_init(void)
+ {
+-	void __iomem *base = rcar_sysc_init(0xffd85000);
+-
+-	/* enable all interrupt sources, but do not use interrupt handler */
+-	iowrite32(0x0131000e, base + SYSCIER);
+-	iowrite32(0, base + SYSCIMR);
++	rcar_sysc_init(0xffd85000, 0x0131000e);
+ }
  
- /* MSTP1 */
-+#define R8A7792_CLK_JPU			6
- #define R8A7792_CLK_TMU1		11
- #define R8A7792_CLK_TMU3		21
- #define R8A7792_CLK_TMU2		22
+ #else /* CONFIG_PM || CONFIG_SMP */
+diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+index 691ac166a277..7768fd1bce65 100644
+--- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
+@@ -37,11 +37,7 @@
+ 
+ static void __init rcar_gen2_sysc_init(u32 syscier)
+ {
+-	void __iomem *base = rcar_sysc_init(0xe6180000);
+-
+-	/* enable all interrupt sources, but do not use interrupt handler */
+-	iowrite32(syscier, base + SYSCIER);
+-	iowrite32(0, base + SYSCIMR);
++	rcar_sysc_init(0xe6180000, syscier);
+ }
+ 
+ #else /* CONFIG_SMP */
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 68d6856c9d3c..22f0d646225c 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -400,10 +400,14 @@ out_put:
+ }
+ early_initcall(rcar_sysc_pd_init);
+ 
+-void __iomem * __init rcar_sysc_init(phys_addr_t base)
++void __init rcar_sysc_init(phys_addr_t base, u32 syscier)
+ {
+-	if (rcar_sysc_pd_init())
+-		rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
++	if (!rcar_sysc_pd_init())
++		return;
+ 
+-	return rcar_sysc_base;
++	rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
++
++	/* enable all interrupt sources, but do not use interrupt handler */
++	iowrite32(syscier, rcar_sysc_base + SYSCIER);
++	iowrite32(0, rcar_sysc_base + SYSCIMR);
+ }
+diff --git a/include/linux/soc/renesas/rcar-sysc.h b/include/linux/soc/renesas/rcar-sysc.h
+index 92fc613ab23d..7b8b280c181b 100644
+--- a/include/linux/soc/renesas/rcar-sysc.h
++++ b/include/linux/soc/renesas/rcar-sysc.h
+@@ -11,6 +11,6 @@ struct rcar_sysc_ch {
+ 
+ int rcar_sysc_power_down(const struct rcar_sysc_ch *sysc_ch);
+ int rcar_sysc_power_up(const struct rcar_sysc_ch *sysc_ch);
+-void __iomem *rcar_sysc_init(phys_addr_t base);
++void rcar_sysc_init(phys_addr_t base, u32 syscier);
+ 
+ #endif /* __LINUX_SOC_RENESAS_RCAR_SYSC_H__ */
 -- 
 2.7.0.rc3.207.g0ac5344
