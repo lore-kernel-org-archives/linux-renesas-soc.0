@@ -1,211 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932106AbcF3ORO (ORCPT
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:35151 "EHLO
+	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751424AbcF3NQ0 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:17:14 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
+	Thu, 30 Jun 2016 09:16:26 -0400
+Received: by mail-oi0-f44.google.com with SMTP id r2so64020900oih.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Jun 2016 06:16:26 -0700 (PDT)
+MIME-Version: 1.0
+From: Ulrich Hecht <ulrich.hecht@gmail.com>
+Date: Thu, 30 Jun 2016 15:16:24 +0200
+Message-ID: <CAO3366w+UpbOEijqjnggL2hzZjEnMXYfneSbCf9Ca_JGe_OwKQ@mail.gmail.com>
+Subject: Loopback video test
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 22/41] ARM: dts: r8a7792: initial SoC device tree
-Date: Thu, 30 Jun 2016 16:15:42 +0200
-Message-Id: <7c4163aae3d8e5b9bd72508f542a44d707f308b5.1467294011.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
-References: <cover.1467294011.git.horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hi!
 
-The initial R8A7792 SoC device tree including CPU cores, GIC, timer, SYSC,
-and the required  clock descriptions.
+At https://github.com/uli/looptest you can find a script to verify
+video output using a V4L input device. It creates a test pattern in
+various resolutions using modetest, captures it on a given video input
+device, and then does a fuzzy compare to verify that the captured
+frame sorta kinda looks the way it should. The README file explains
+how to use it and what external tools it relies on.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7792.dtsi | 170 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 170 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7792.dtsi
+I have run these tests on a Lager board with an HDMI cable connecting
+HDMI OUT and HDMI IN; I have found these issues with the output
+signal:
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-new file mode 100644
-index 000000000000..33f2362a1f52
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -0,0 +1,170 @@
-+/*
-+ * Device Tree Source for the r8a7792 SoC
-+ *
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+#include <dt-bindings/clock/r8a7792-clock.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/r8a7792-sysc.h>
-+
-+/ {
-+	compatible = "renesas,r8a7792";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <0>;
-+			clock-frequency = <1000000000>;
-+			clocks = <&cpg_clocks R8A7792_CLK_Z>;
-+			power-domains = <&sysc R8A7792_PD_CA15_CPU0>;
-+			next-level-cache = <&L2_CA15>;
-+		};
-+
-+		L2_CA15: cache-controller@0 {
-+			compatible = "cache";
-+			reg = <0>;
-+			cache-unified;
-+			cache-level = <2>;
-+			power-domains = <&sysc R8A7792_PD_CA15_SCU>;
-+		};
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gic: interrupt-controller@f1001000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			interrupt-controller;
-+			reg = <0 0xf1001000 0 0x1000>,
-+			      <0 0xf1002000 0 0x1000>,
-+			      <0 0xf1004000 0 0x2000>,
-+			      <0 0xf1006000 0 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) |
-+				      IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+
-+		timer {
-+			compatible = "arm,armv7-timer";
-+			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
-+				      IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
-+				      IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
-+				      IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
-+				      IRQ_TYPE_LEVEL_LOW)>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a7792-sysc";
-+			reg = <0 0xe6180000 0 0x0200>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		/* Special CPG clocks */
-+		cpg_clocks: cpg_clocks@e6150000 {
-+			compatible = "renesas,r8a7792-cpg-clocks",
-+				     "renesas,rcar-gen2-cpg-clocks";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>;
-+			#clock-cells = <1>;
-+			clock-output-names = "main", "pll0", "pll1", "pll3",
-+					     "lb", "qspi", "z", "adsp";
-+			#power-domain-cells = <0>;
-+		};
-+
-+		/* Fixed factor clocks */
-+		zs_clk: zs {
-+			compatible = "fixed-factor-clock";
-+			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
-+			#clock-cells = <0>;
-+			clock-div = <6>;
-+			clock-mult = <1>;
-+		};
-+		p_clk: p {
-+			compatible = "fixed-factor-clock";
-+			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
-+			#clock-cells = <0>;
-+			clock-div = <24>;
-+			clock-mult = <1>;
-+		};
-+		cp_clk: cp {
-+			compatible = "fixed-factor-clock";
-+			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
-+			#clock-cells = <0>;
-+			clock-div = <48>;
-+			clock-mult = <1>;
-+		};
-+
-+		/* Gate clocks */
-+		mstp2_clks: mstp2_clks@e6150138 {
-+			compatible = "renesas,r8a7792-mstp-clocks",
-+				     "renesas,cpg-mstp-clocks";
-+			reg = <0 0xe6150138 0 4>, <0 0xe6150040 0 4>;
-+			clocks = <&zs_clk>, <&zs_clk>;
-+			#clock-cells = <1>;
-+			clock-indices = <
-+				R8A7792_CLK_SYS_DMAC1 R8A7792_CLK_SYS_DMAC0
-+			>;
-+			clock-output-names = "sys-dmac1", "sys-dmac0";
-+		};
-+		mstp4_clks: mstp4_clks@e6150140 {
-+			compatible = "renesas,r8a7792-mstp-clocks",
-+				     "renesas,cpg-mstp-clocks";
-+			reg = <0 0xe6150140 0 4>, <0 0xe615004c 0 4>;
-+			clocks = <&cp_clk>;
-+			#clock-cells = <1>;
-+			clock-indices = <R8A7792_CLK_IRQC>;
-+			clock-output-names = "irqc";
-+		};
-+		mstp7_clks: mstp7_clks@e615014c {
-+			compatible = "renesas,r8a7792-mstp-clocks",
-+				     "renesas,cpg-mstp-clocks";
-+			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
-+			clocks = <&zs_clk>, <&zs_clk>, <&p_clk>, <&p_clk>,
-+				 <&p_clk>, <&p_clk>;
-+			#clock-cells = <1>;
-+			clock-indices = <
-+				R8A7792_CLK_HSCIF1 R8A7792_CLK_HSCIF0
-+				R8A7792_CLK_SCIF3 R8A7792_CLK_SCIF2
-+				R8A7792_CLK_SCIF1 R8A7792_CLK_SCIF0
-+			>;
-+			clock-output-names = "hscif1", "hscif0", "scif3",
-+					     "scif2", "scif1", "scif0";
-+		};
-+	};
-+
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+};
--- 
-2.7.0.rc3.207.g0ac5344
+- Mode 640x480-60, of all things, does not work.
+- After switching a couple of times between resolutions that otherwise
+work, sometimes no valid output is produced anymore.
+- Two more exotic modes that are in the default mode list (that is
+used when the input device does not send a valid EDID blob), namely
+848x480-60 and 800x600-56, do not produce valid output.
+
+When any of these things happen, the output remains invalid until the
+next reboot, i.e. switching back to a working mode does not help.
+
+(There is also an issue with the VIN input, which sometimes fails to
+use up-to-date DV timings when capturing the first frame after
+switching modes. This is worked around by capturing the frame twice.)
+
+CU
+Uli
