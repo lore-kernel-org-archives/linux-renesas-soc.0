@@ -3,38 +3,70 @@ Return-Path: <kieran@ksquared.org.uk>
 Return-Path: <kieran@ksquared.org.uk>
 Sender: Kieran Bingham <kieran@ksquared.org.uk>
 From: Kieran Bingham <kieran@bingham.xyz>
-To: laurent.pinchart@ideasonboard.com,
+To: horms@verge.net.au,
+	linux-renesas-soc@vger.kernel.org
+Cc: magnus.damm@gmail.com,
 	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	mark.rutland@arm.com,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
 	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	kieran@bingham.xyz
-Subject: [PATCH v2 0/3] dt-bindings: RCar FCP and FDP1 bindings
-Date: Thu, 30 Jun 2016 17:50:27 +0100
-Message-Id: <1467305430-25660-1-git-send-email-kieran@bingham.xyz>
+Subject: [PATCH 2/2] arm64: dts: r8a7795: add FDP1 device nodes
+Date: Thu, 30 Jun 2016 14:32:43 +0100
+Message-Id: <1467293563-940-3-git-send-email-kieran@bingham.xyz>
+In-Reply-To: <1467293563-940-1-git-send-email-kieran@bingham.xyz>
+References: <1467293563-940-1-git-send-email-kieran@bingham.xyz>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This updated series, has collected the Acked and Reviewed tags for the
-FCPF binding addition, and adds documention of the optional power-domain
-property for the FCP.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+--
+changes for v2
+ - channel labels dropped
 
-Finally the FDP1 bindings have been updated following review from Laurent.
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-Specifically, this removes the version specific compatibles as we have a
-HW version register available to us in the hardware so we can detect at
-run-time what device version we are running on.
-
-Kieran Bingham (3):
-  dt-bindings: Update Renesas R-Car FCP DT binding
-  dt-bindings: Document Renesas R-Car FCP power-domains usage
-  dt-bindings: Add Renesas R-Car FDP1 bindings
-
- .../devicetree/bindings/media/renesas,fcp.txt      |  9 +++++-
- .../devicetree/bindings/media/renesas,fdp1.txt     | 33 ++++++++++++++++++++++
- 2 files changed, 41 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,fdp1.txt
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index a451bd217f05..8bc87e09efd7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1443,5 +1443,32 @@
+ 			clocks = <&cpg CPG_MOD 613>;
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 		};
++
++		fdp1@fe940000 {
++			compatible = "renesas,fdp1";
++			reg = <0 0xfe940000 0 0x2400>;
++			interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 119>;
++			power-domains = <&sysc R8A7795_PD_A3VP>;
++			renesas,fcp = <&fcpf0>;
++		};
++
++		fdp1@fe944000 {
++			compatible = "renesas,fdp1";
++			reg = <0 0xfe944000 0 0x2400>;
++			interrupts = <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 118>;
++			power-domains = <&sysc R8A7795_PD_A3VP>;
++			renesas,fcp = <&fcpf1>;
++		};
++
++		fdp1@fe948000 {
++			compatible = "renesas,fdp1";
++			reg = <0 0xfe948000 0 0x2400>;
++			interrupts = <GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 117>;
++			power-domains = <&sysc R8A7795_PD_A3VP>;
++			renesas,fcp = <&fcpf2>;
++		};
+ 	};
+ };
 -- 
 2.7.4
