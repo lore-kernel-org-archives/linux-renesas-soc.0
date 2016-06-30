@@ -1,54 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36179 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752783AbcF3OQH (ORCPT
+	with ESMTP id S932124AbcF3ORX (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:16:07 -0400
+	Thu, 30 Jun 2016 10:17:23 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 8/9] arm64: dts: r8a7796: Add RWDT node
-Date: Thu, 30 Jun 2016 16:15:06 +0200
-Message-Id: <a28f1b7cf38b62acb94cdf8346590e2cd08ef53f.1467291676.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467291676.git.horms+renesas@verge.net.au>
-References: <cover.1467291676.git.horms+renesas@verge.net.au>
+Subject: [PATCH 30/41] ARM: dts: r8a7792: add JPU clocks
+Date: Thu, 30 Jun 2016 16:15:50 +0200
+Message-Id: <eebc8e2c5b7a3db19075a02730db8b73be933485.1467294011.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
+References: <cover.1467294011.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Add a device node for the Watchdog Timer (WDT) controller on the Renesas
-R-Car M3-W (r8a7796) SoC.
+Add JPU clock and its parent, M2 clock to the R8A7792 device tree.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/boot/dts/r8a7792.dtsi            | 16 ++++++++++++++++
+ include/dt-bindings/clock/r8a7792-clock.h |  1 +
+ 2 files changed, 17 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index fab61eddede3..1edf82440d78 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -98,6 +98,15 @@
- 					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 18b4e50521c3..7077c5db2678 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -280,8 +280,24 @@
+ 			clock-div = <48>;
+ 			clock-mult = <1>;
  		};
- 
-+		wdt0: watchdog@e6020000 {
-+			compatible = "renesas,r8a7796-wdt",
-+				     "renesas,rcar-gen3-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
++		m2_clk: m2 {
++			compatible = "fixed-factor-clock";
++			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
++			#clock-cells = <0>;
++			clock-div = <8>;
++			clock-mult = <1>;
 +		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a7796-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
+ 
+ 		/* Gate clocks */
++		mstp1_clks: mstp1_clks@e6150134 {
++			compatible = "renesas,r8a7792-mstp-clocks",
++				     "renesas,cpg-mstp-clocks";
++			reg = <0 0xe6150134 0 4>, <0 0xe6150038 0 4>;
++			clocks = <&m2_clk>;
++			#clock-cells = <1>;
++			clock-indices = <R8A7792_CLK_JPU>;
++			clock-output-names = "jpu";
++		};
+ 		mstp2_clks: mstp2_clks@e6150138 {
+ 			compatible = "renesas,r8a7792-mstp-clocks",
+ 				     "renesas,cpg-mstp-clocks";
+diff --git a/include/dt-bindings/clock/r8a7792-clock.h b/include/dt-bindings/clock/r8a7792-clock.h
+index 949801eb0652..89a5155913f6 100644
+--- a/include/dt-bindings/clock/r8a7792-clock.h
++++ b/include/dt-bindings/clock/r8a7792-clock.h
+@@ -24,6 +24,7 @@
+ #define R8A7792_CLK_MSIOF0		0
+ 
+ /* MSTP1 */
++#define R8A7792_CLK_JPU			6
+ #define R8A7792_CLK_TMU1		11
+ #define R8A7792_CLK_TMU3		21
+ #define R8A7792_CLK_TMU2		22
 -- 
 2.7.0.rc3.207.g0ac5344
