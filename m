@@ -1,143 +1,143 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 09/20] drm: rcar-du: Rely on the default ->best_encoder() behavior
-Date: Tue,  7 Jun 2016 13:48:04 +0200
-Message-Id: <1465300095-16971-10-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932115AbcF3ORQ (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 30 Jun 2016 10:17:16 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 20/41] ARM: dts: r8a7792: add clock index macros
+Date: Thu, 30 Jun 2016 16:15:40 +0200
+Message-Id: <de0fae60b35d405d3aa2e9acf5914770cd328338.1467294011.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
+References: <cover.1467294011.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All outputs have a 1:1 relationship between connectors and encoders,
-and the driver is relying on the atomic helpers: we can drop the custom
-->best_encoder() implementations and let the core call
-drm_atomic_helper_best_encoder() for us.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Add macros usable by the device tree sources to reference the R8A7792
+clocks  by index.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 12 ------------
- drivers/gpu/drm/rcar-du/rcar_du_encoder.h |  3 ---
- drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c |  1 -
- drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c |  1 -
- drivers/gpu/drm/rcar-du/rcar_du_vgacon.c  |  3 ---
- 5 files changed, 20 deletions(-)
+ include/dt-bindings/clock/r8a7792-clock.h | 102 ++++++++++++++++++++++++++++++
+ 1 file changed, 102 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7792-clock.h
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-index 4e939e4..55149e9 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-@@ -27,18 +27,6 @@
- #include "rcar_du_vgacon.h"
- 
- /* -----------------------------------------------------------------------------
-- * Common connector functions
-- */
--
--struct drm_encoder *
--rcar_du_connector_best_encoder(struct drm_connector *connector)
--{
--	struct rcar_du_connector *rcon = to_rcar_connector(connector);
--
--	return rcar_encoder_to_drm_encoder(rcon->encoder);
--}
--
--/* -----------------------------------------------------------------------------
-  * Encoder
-  */
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-index 719b6f2a..a8669c3 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-@@ -49,9 +49,6 @@ struct rcar_du_connector {
- #define to_rcar_connector(c) \
- 	container_of(c, struct rcar_du_connector, connector)
- 
--struct drm_encoder *
--rcar_du_connector_best_encoder(struct drm_connector *connector);
--
- int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 			 enum rcar_du_encoder_type type,
- 			 enum rcar_du_output output,
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c b/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c
-index 6c92714..612b4d5 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c
-@@ -52,7 +52,6 @@ static int rcar_du_hdmi_connector_mode_valid(struct drm_connector *connector,
- static const struct drm_connector_helper_funcs connector_helper_funcs = {
- 	.get_modes = rcar_du_hdmi_connector_get_modes,
- 	.mode_valid = rcar_du_hdmi_connector_mode_valid,
--	.best_encoder = rcar_du_connector_best_encoder,
- };
- 
- static enum drm_connector_status
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-index e905f5d..6afd0af 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-@@ -59,7 +59,6 @@ static int rcar_du_lvds_connector_get_modes(struct drm_connector *connector)
- 
- static const struct drm_connector_helper_funcs connector_helper_funcs = {
- 	.get_modes = rcar_du_lvds_connector_get_modes,
--	.best_encoder = rcar_du_connector_best_encoder,
- };
- 
- static enum drm_connector_status
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c b/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
-index 9d7e5c9..8d6125c 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
-@@ -28,7 +28,6 @@ static int rcar_du_vga_connector_get_modes(struct drm_connector *connector)
- 
- static const struct drm_connector_helper_funcs connector_helper_funcs = {
- 	.get_modes = rcar_du_vga_connector_get_modes,
--	.best_encoder = rcar_du_connector_best_encoder,
- };
- 
- static enum drm_connector_status
-@@ -79,7 +78,5 @@ int rcar_du_vga_connector_init(struct rcar_du_device *rcdu,
- 	if (ret < 0)
- 		return ret;
- 
--	rcon->encoder = renc;
--
- 	return 0;
- }
+diff --git a/include/dt-bindings/clock/r8a7792-clock.h b/include/dt-bindings/clock/r8a7792-clock.h
+new file mode 100644
+index 000000000000..949801eb0652
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a7792-clock.h
+@@ -0,0 +1,102 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_R8A7792_H__
++#define __DT_BINDINGS_CLOCK_R8A7792_H__
++
++/* CPG */
++#define R8A7792_CLK_MAIN		0
++#define R8A7792_CLK_PLL0		1
++#define R8A7792_CLK_PLL1		2
++#define R8A7792_CLK_PLL3		3
++#define R8A7792_CLK_LB			4
++#define R8A7792_CLK_QSPI		5
++#define R8A7792_CLK_Z			6
++#define R8A7792_CLK_ADSP		7
++
++/* MSTP0 */
++#define R8A7792_CLK_MSIOF0		0
++
++/* MSTP1 */
++#define R8A7792_CLK_TMU1		11
++#define R8A7792_CLK_TMU3		21
++#define R8A7792_CLK_TMU2		22
++#define R8A7792_CLK_CMT0		24
++#define R8A7792_CLK_TMU0		25
++#define R8A7792_CLK_VSP1DU1		27
++#define R8A7792_CLK_VSP1DU0		28
++#define R8A7792_CLK_VSP1_SY		31
++
++/* MSTP2 */
++#define R8A7792_CLK_MSIOF1		8
++#define R8A7792_CLK_SYS_DMAC1		18
++#define R8A7792_CLK_SYS_DMAC0		19
++
++/* MSTP3 */
++#define R8A7792_CLK_TPU0		4
++#define R8A7792_CLK_SDHI0		14
++#define R8A7792_CLK_CMT1		29
++
++/* MSTP4 */
++#define R8A7792_CLK_IRQC		7
++
++/* MSTP5 */
++#define R8A7792_CLK_AUDIO_DMAC0		2
++#define R8A7792_CLK_THERMAL		22
++#define R8A7792_CLK_PWM			23
++
++/* MSTP7 */
++#define R8A7792_CLK_HSCIF1		16
++#define R8A7792_CLK_HSCIF0		17
++#define R8A7792_CLK_SCIF3		18
++#define R8A7792_CLK_SCIF2		19
++#define R8A7792_CLK_SCIF1		20
++#define R8A7792_CLK_SCIF0		21
++#define R8A7792_CLK_DU1			23
++#define R8A7792_CLK_DU0			24
++
++/* MSTP8 */
++#define R8A7792_CLK_VIN5		4
++#define R8A7792_CLK_VIN4		5
++#define R8A7792_CLK_VIN3		8
++#define R8A7792_CLK_VIN2		9
++#define R8A7792_CLK_VIN1		10
++#define R8A7792_CLK_VIN0		11
++#define R8A7792_CLK_ETHERAVB		12
++
++/* MSTP9 */
++#define R8A7792_CLK_GPIO7		4
++#define R8A7792_CLK_GPIO6		5
++#define R8A7792_CLK_GPIO5		7
++#define R8A7792_CLK_GPIO4		8
++#define R8A7792_CLK_GPIO3		9
++#define R8A7792_CLK_GPIO2		10
++#define R8A7792_CLK_GPIO1		11
++#define R8A7792_CLK_GPIO0		12
++#define R8A7792_CLK_GPIO11		13
++#define R8A7792_CLK_GPIO10		14
++#define R8A7792_CLK_CAN1		15
++#define R8A7792_CLK_CAN0		16
++#define R8A7792_CLK_QSPI_MOD		17
++#define R8A7792_CLK_GPIO9		19
++#define R8A7792_CLK_GPIO8		21
++#define R8A7792_CLK_I2C5		25
++#define R8A7792_CLK_IICDVFS		26
++#define R8A7792_CLK_I2C4		27
++#define R8A7792_CLK_I2C3		28
++#define R8A7792_CLK_I2C2		29
++#define R8A7792_CLK_I2C1		30
++#define R8A7792_CLK_I2C0		31
++
++/* MSTP10 */
++#define R8A7792_CLK_SSI_ALL		5
++#define R8A7792_CLK_SSI4		11
++#define R8A7792_CLK_SSI3		12
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7792_H__ */
 -- 
-2.7.4
+2.7.0.rc3.207.g0ac5344
