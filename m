@@ -1,201 +1,199 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36101 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752712AbcF3OQC (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 30 Jun 2016 10:16:02 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>,
-	Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 5/6] spi: slave: Add SPI slave handler controlling system state
-Date: Wed, 22 Jun 2016 15:42:08 +0200
-Message-Id: <1466602929-4191-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1466602929-4191-1-git-send-email-geert+renesas@glider.be>
-References: <1466602929-4191-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 4/9] arm64: dts: r8a7796: Add Renesas R8A7796 SoC support
+Date: Thu, 30 Jun 2016 16:15:02 +0200
+Message-Id: <a7558225fc55aa7df94ec530698b285bce96423b.1467291676.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467291676.git.horms+renesas@verge.net.au>
+References: <cover.1467291676.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add an SPI slave handler to allow remote control of system reboot, power
-off, halt, and suspend.
+Basic support for the Gen 3 R-Car M3-W SoC.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-FIXME kthread_stop() hangs, as spi_write() is blocked on a completion
----
- drivers/spi/Kconfig                    |   6 ++
- drivers/spi/Makefile                   |   1 +
- drivers/spi/spi-slave-system-control.c | 134 +++++++++++++++++++++++++++++++++
- 3 files changed, 141 insertions(+)
- create mode 100644 drivers/spi/spi-slave-system-control.c
+Based on work for the r8a7795 and r8a7796 SoCs by
+Takeshi Kihara, Dirk Behme and Geert Uytterhoeven.
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index e9b2f48574464949..9657415125ccb631 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -754,6 +754,12 @@ config SPI_SLAVE_TIME
- 	  SPI slave handler responding with the time of reception of the last
- 	  SPI message.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt |   4 +
+ arch/arm64/Kconfig.platforms                       |   6 ++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 120 +++++++++++++++++++++
+ 3 files changed, 130 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7796.dtsi
+
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 9cf67e48f222..d5ed554830d7 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -29,6 +29,8 @@ SoCs:
+     compatible = "renesas,r8a7794"
+   - R-Car H3 (R8A77950)
+     compatible = "renesas,r8a7795"
++  - R-Car M3-W (R8A77960)
++    compatible = "renesas,r8a7796"
  
-+config SPI_SLAVE_SYSTEM_CONTROL
-+	tristate "SPI slave handler controlling system state"
+ 
+ Boards:
+@@ -61,5 +63,7 @@ Boards:
+     compatible = "renesas,porter", "renesas,r8a7791"
+   - Salvator-X (RTP0RC7795SIPB0010S)
+     compatible = "renesas,salvator-x", "renesas,r8a7795";
++  - Salvator-X
++    compatible = "renesas,salvator-x", "renesas,r8a7796";
+   - SILK (RTP0RC7794LCB00011S)
+     compatible = "renesas,silk", "renesas,r8a7794"
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 7ef1d05859ae..2182fd5c8153 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -121,6 +121,12 @@ config ARCH_R8A7795
+ 	help
+ 	  This enables support for the Renesas R-Car H3 SoC.
+ 
++config ARCH_R8A7796
++	bool "Renesas R-Car M3-W SoC Platform"
++	depends on ARCH_RENESAS
 +	help
-+	  SPI slave handler to allow remote control of system reboot, power
-+	  off, halt, and suspend.
++	  This enables support for the Renesas R-Car M3-W SoC.
 +
- endif # SPI_SLAVE
- 
- endif # SPI
-diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-index dc67b8f137e2ced0..3b0487a9da91dfa8 100644
---- a/drivers/spi/Makefile
-+++ b/drivers/spi/Makefile
-@@ -100,3 +100,4 @@ obj-$(CONFIG_SPI_ZYNQMP_GQSPI)		+= spi-zynqmp-gqspi.o
- 
- # SPI slave protocol handlers
- obj-$(CONFIG_SPI_SLAVE_TIME)		+= spi-slave-time.o
-+obj-$(CONFIG_SPI_SLAVE_SYSTEM_CONTROL)	+= spi-slave-system-control.o
-diff --git a/drivers/spi/spi-slave-system-control.c b/drivers/spi/spi-slave-system-control.c
+ config ARCH_STRATIX10
+ 	bool "Altera's Stratix 10 SoCFPGA Family"
+ 	help
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
 new file mode 100644
-index 0000000000000000..350711dec1281675
+index 000000000000..178debf68318
 --- /dev/null
-+++ b/drivers/spi/spi-slave-system-control.c
-@@ -0,0 +1,134 @@
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -0,0 +1,120 @@
 +/*
-+ * SPI slave handler controlling system state
++ * Device Tree Source for the r8a7796 SoC
 + *
-+ * This SPI slave handler allows remote control of system reboot, power off,
-+ * halt, and suspend.
++ * Copyright (C) 2016 Renesas Electronics Corp.
 + *
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This file is subject to the terms and conditions of the GNU General Public
-+ * License.  See the file "COPYING" in the main directory of this archive
-+ * for more details.
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
 + */
 +
-+#include <linux/module.h>
-+#include <linux/reboot.h>
-+#include <linux/sched.h>
-+#include <linux/suspend.h>
-+#include <linux/spi/spi.h>
++#include <dt-bindings/clock/r8a7796-cpg-mssr.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
 +
-+/*
-+ * The numbers are chosen to display something human-readable on two 7-segment
-+ * displays connected to two 74HC595 shift registers
-+ */
-+#define CMD_REBOOT	0x507c	/* rb */
-+#define CMD_POWEROFF	0x3f71	/* OF */
-+#define CMD_HALT	0x7638	/* HL */
-+#define CMD_SUSPEND	0x1b1b	/* ZZ */
++/ {
++	compatible = "renesas,r8a7796";
++	#address-cells = <2>;
++	#size-cells = <2>;
 +
-+struct spi_slave_system_control_priv {
-+	struct spi_device *spi;
-+	struct task_struct *thread;
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		/* 1 core only at this point */
++		a57_0: cpu@0 {
++			compatible = "arm,cortex-a57", "arm,armv8";
++			reg = <0x0>;
++			device_type = "cpu";
++			next-level-cache = <&L2_CA57>;
++			enable-method = "psci";
++		};
++
++		L2_CA57: cache-controller@0 {
++			compatible = "cache";
++			reg = <0>;
++			cache-unified;
++			cache-level = <2>;
++		};
++	};
++
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	extalr_clk: extalr {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	/* External SCIF clock - to be overridden by boards that provide it */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	soc {
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		gic: interrupt-controller@f1010000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0x0 0xf1010000 0 0x1000>,
++			      <0x0 0xf1020000 0 0x20000>,
++			      <0x0 0xf1040000 0 0x20000>,
++			      <0x0 0xf1060000 0 0x20000>;
++			interrupts = <GIC_PPI 9
++					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
++		};
++
++		timer {
++			compatible = "arm,armv8-timer";
++			interrupts = <GIC_PPI 13
++					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 14
++					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 11
++					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				     <GIC_PPI 10
++					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
++		};
++
++		cpg: clock-controller@e6150000 {
++			compatible = "renesas,r8a7796-cpg-mssr";
++			reg = <0 0xe6150000 0 0x1000>;
++			clocks = <&extal_clk>, <&extalr_clk>;
++			clock-names = "extal", "extalr";
++			#clock-cells = <2>;
++			#power-domain-cells = <0>;
++		};
++
++		scif2: serial@e6e88000 {
++			compatible = "renesas,scif-r8a7796",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6e88000 0 64>;
++			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 310>,
++				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++	};
 +};
-+
-+static int spi_slave_system_control_send(struct spi_device *spi)
-+{
-+	__le16 cmd;
-+	int error;
-+
-+	error = spi_read(spi, &cmd, sizeof(cmd));
-+	if (error)
-+		return error;
-+
-+	switch (le16_to_cpu(cmd)) {
-+	case CMD_REBOOT:
-+		pr_info("Rebooting system...\n");
-+		kernel_restart(NULL);
-+
-+	case CMD_POWEROFF:
-+		pr_info("Powering off system...\n");
-+		kernel_power_off();
-+		break;
-+
-+	case CMD_HALT:
-+		pr_info("Halting system...\n");
-+		kernel_halt();
-+		break;
-+
-+	case CMD_SUSPEND:
-+		pr_info("Suspending system...\n");
-+		pm_suspend(PM_SUSPEND_MEM);
-+		break;
-+
-+	default:
-+		pr_warn("%s: Unknown command 0x%x\n", __func__, cmd);
-+		break;
-+	}
-+	return 0;
-+}
-+
-+static int spi_slave_system_control_thread(void *data)
-+{
-+	struct spi_slave_system_control_priv *priv = data;
-+	int error;
-+
-+	while (!kthread_should_stop()) {
-+		error = spi_slave_system_control_send(priv->spi);
-+		if (error)
-+			pr_err("%s: SPI transfer failed %d\n", __func__, error);
-+	}
-+
-+	return 0;
-+}
-+
-+static int spi_slave_system_control_probe(struct spi_device *spi)
-+{
-+	struct spi_slave_system_control_priv *priv;
-+	int ret;
-+
-+	/*
-+	 * bits_per_word cannot be configured in platform data
-+	 */
-+	spi->bits_per_word = 8;
-+
-+	ret = spi_setup(spi);
-+	if (ret < 0)
-+		return ret;
-+
-+	priv = devm_kzalloc(&spi->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->spi = spi;
-+	priv->thread = kthread_run(spi_slave_system_control_thread, priv,
-+				   "spi-slave-system-control/%s",
-+				   dev_name(&spi->dev));
-+	if (IS_ERR(priv->thread))
-+		return PTR_ERR(priv->thread);
-+
-+	spi_set_drvdata(spi, priv);
-+
-+	return 0;
-+}
-+
-+static int spi_slave_system_control_remove(struct spi_device *spi)
-+{
-+	struct spi_slave_system_control_priv *priv = spi_get_drvdata(spi);
-+
-+	/* FIXME Doesn't work, as spi_read() is blocked on a completion */
-+	kthread_stop(priv->thread);
-+	return 0;
-+}
-+
-+static struct spi_driver spi_slave_system_control_driver = {
-+	.driver = {
-+		.name	= "spi-slave-system-control",
-+	},
-+	.probe		= spi_slave_system_control_probe,
-+	.remove		= spi_slave_system_control_remove,
-+};
-+module_spi_driver(spi_slave_system_control_driver);
-+
-+MODULE_AUTHOR("Geert Uytterhoeven <geert+renesas@glider.be>");
-+MODULE_DESCRIPTION("SPI slave reporting boot up time");
-+MODULE_LICENSE("GPL v2");
 -- 
-1.9.1
-
+2.7.0.rc3.207.g0ac5344
