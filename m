@@ -1,106 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36546 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932182AbcF3ORw (ORCPT
+	with ESMTP id S932123AbcF3ORg (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:17:52 -0400
+	Thu, 30 Jun 2016 10:17:36 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
+	Magnus Damm <damm+renesas@opensource.se>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/8] ARM: shmobile: rcar-gen2: Obtain extal frequency from DT
-Date: Thu, 30 Jun 2016 16:16:18 +0200
-Message-Id: <9f5ce39ddb8f68b30cd65ae33d32f3b47a58d350.1467293089.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467293089.git.horms+renesas@verge.net.au>
-References: <cover.1467293089.git.horms+renesas@verge.net.au>
+Subject: [PATCH 40/41] ARM: dts: r8a7793: Add APMU node and second CPU core
+Date: Thu, 30 Jun 2016 16:16:00 +0200
+Message-Id: <65b133cd79cfde9f4e0157deb0e0f88f92811ad3.1467294011.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
+References: <cover.1467294011.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-On some R-Car Gen2 SoCs, the frequency of the ARM architecture timer
-depends on the frequency of the external clock crystal.  Currently the
-latter is determined indirectly from the state of the mode pins, which
-is a relic predating DT.
+Add DT nodes for the Advanced Power Management Unit (APMU) and the
+second CPU core.  Use the enable-method to point out that the APMU
+should be used for SMP support.
 
-Obtain the external clock crystal frequency from DT instead, removing
-the dependency on the mode pins.
-
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 42 +++++++++++++++++---------------
- 1 file changed, 22 insertions(+), 20 deletions(-)
+ arch/arm/boot/dts/r8a7793.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 1c6fd11c2f82..ea092d5dd475 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -46,6 +46,26 @@ u32 rcar_gen2_read_mode_pins(void)
- 	return mode;
- }
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 9b55c1c6ee31..8d02aacf2892 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -35,6 +35,7 @@
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		enable-method = "renesas,apmu";
  
-+static unsigned int __init get_extal_freq(void)
-+{
-+	struct device_node *cpg, *extal;
-+	u32 freq = 20000000;
-+
-+	cpg = of_find_compatible_node(NULL, NULL,
-+				      "renesas,rcar-gen2-cpg-clocks");
-+	if (!cpg)
-+		return freq;
-+
-+	extal = of_parse_phandle(cpg, "clocks", 0);
-+	of_node_put(cpg);
-+	if (!extal)
-+		return freq;
-+
-+	of_property_read_u32(extal, "clock-frequency", &freq);
-+	of_node_put(extal);
-+	return freq;
-+}
-+
- #define CNTCR 0
- #define CNTFID0 0x20
+ 		cpu0: cpu@0 {
+ 			device_type = "cpu";
+@@ -56,6 +57,14 @@
+ 			next-level-cache = <&L2_CA15>;
+ 		};
  
-@@ -54,7 +74,6 @@ void __init rcar_gen2_timer_init(void)
- 	u32 mode = rcar_gen2_read_mode_pins();
- #ifdef CONFIG_ARM_ARCH_TIMER
- 	void __iomem *base;
--	int extal_mhz = 0;
- 	u32 freq;
++		cpu1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a15";
++			reg = <1>;
++			clock-frequency = <1500000000>;
++			power-domains = <&sysc R8A7793_PD_CA15_CPU1>;
++		};
++
+ 		L2_CA15: cache-controller@0 {
+ 			compatible = "cache";
+ 			reg = <0>;
+@@ -65,6 +74,12 @@
+ 		};
+ 	};
  
- 	if (of_machine_is_compatible("renesas,r8a7794")) {
-@@ -82,26 +101,9 @@ void __init rcar_gen2_timer_init(void)
- 		 * with the counter disabled. Moreover, it may also report
- 		 * a potentially incorrect fixed 13 MHz frequency. To be
- 		 * correct these registers need to be updated to use the
--		 * frequency EXTAL / 2 which can be determined by the MD pins.
-+		 * frequency EXTAL / 2.
- 		 */
--
--		switch (mode & (MD(14) | MD(13))) {
--		case 0:
--			extal_mhz = 15;
--			break;
--		case MD(13):
--			extal_mhz = 20;
--			break;
--		case MD(14):
--			extal_mhz = 26;
--			break;
--		case MD(13) | MD(14):
--			extal_mhz = 30;
--			break;
--		}
--
--		/* The arch timer frequency equals EXTAL / 2 */
--		freq = extal_mhz * (1000000 / 2);
-+		freq = get_extal_freq() / 2;
- 	}
- 
- 	/* Remap "armgcnt address map" space */
++	apmu@e6152000 {
++		compatible = "renesas,r8a7793-apmu", "renesas,apmu";
++		reg = <0 0xe6152000 0 0x188>;
++		cpus = <&cpu0 &cpu1>;
++	};
++
+ 	thermal-zones {
+ 		cpu_thermal: cpu-thermal {
+ 			polling-delay-passive	= <0>;
 -- 
 2.7.0.rc3.207.g0ac5344
