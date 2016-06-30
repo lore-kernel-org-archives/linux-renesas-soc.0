@@ -1,90 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:33601 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752306AbcF1OKt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752335AbcF3OQo (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 10:10:49 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Keita Kobayashi <keita.kobayashi.ym@renesas.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	Magnus Damm <damm+renesas@opensource.se>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 13/13] ARM: dts: r8a7793: Add APMU node and second CPU core
-Date: Tue, 28 Jun 2016 16:10:42 +0200
-Message-Id: <1467123042-8468-14-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
-References: <1467123042-8468-1-git-send-email-geert+renesas@glider.be>
+	Thu, 30 Jun 2016 10:16:44 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/41] ARM: dts: lager: Name spi pfc subnodes after device names
+Date: Thu, 30 Jun 2016 16:15:27 +0200
+Message-Id: <85c5e4c4296bc35686334efc4eddf563ba687127.1467294011.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
+References: <cover.1467294011.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add DT nodes for the Advanced Power Management Unit (APMU) and the
-second CPU core.  Use the enable-method to point out that the APMU
-should be used for SMP support.
+Name the Pin Function Controller subnodes for QSPI and MSIOF1 after
+their device names, instead of after the spi interface aliases.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+This avoids conflicts when enabling support for more spi interfaces
+later, either here or in a DT overlay.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v5:
-  - Add missing power-domains property to cpu1 node,
+ arch/arm/boot/dts/r8a7790-lager.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-v4:
-  - Improve patch description,
-  - Use "renesas,<soctype>-apmu" instead of "renesas,apmu-<soctype>",
-
-v3:
-  - New.
----
- arch/arm/boot/dts/r8a7793.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index 9b55c1c6ee31a49d..8d02aacf28926271 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -35,6 +35,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "renesas,apmu";
- 
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-@@ -56,6 +57,14 @@
- 			next-level-cache = <&L2_CA15>;
- 		};
- 
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <1>;
-+			clock-frequency = <1500000000>;
-+			power-domains = <&sysc R8A7793_PD_CA15_CPU1>;
-+		};
-+
- 		L2_CA15: cache-controller@0 {
- 			compatible = "cache";
- 			reg = <0>;
-@@ -65,6 +74,12 @@
- 		};
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index c6803977b427..09b633f5ad07 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -371,12 +371,12 @@
+ 		function = "mmc1";
  	};
  
-+	apmu@e6152000 {
-+		compatible = "renesas,r8a7793-apmu", "renesas,apmu";
-+		reg = <0 0xe6152000 0 0x188>;
-+		cpus = <&cpu0 &cpu1>;
-+	};
-+
- 	thermal-zones {
- 		cpu_thermal: cpu-thermal {
- 			polling-delay-passive	= <0>;
+-	qspi_pins: spi0 {
++	qspi_pins: qspi {
+ 		groups = "qspi_ctrl", "qspi_data4";
+ 		function = "qspi";
+ 	};
+ 
+-	msiof1_pins: spi2 {
++	msiof1_pins: msiof1 {
+ 		groups = "msiof1_clk", "msiof1_sync", "msiof1_rx",
+ 				 "msiof1_tx";
+ 		function = "msiof1";
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
