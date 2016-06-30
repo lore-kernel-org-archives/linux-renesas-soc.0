@@ -1,49 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36559 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932255AbcF3OSA (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:54540 "EHLO
+	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932421AbcF3PZJ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:18:00 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/8] ARM: shmobile: rcar-gen2: Correct arch timer frequency on R-Car V2H
-Date: Thu, 30 Jun 2016 16:16:19 +0200
-Message-Id: <2477a356dd245bbbde74c81edc5f16a6d8192023.1467293089.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467293089.git.horms+renesas@verge.net.au>
-References: <cover.1467293089.git.horms+renesas@verge.net.au>
+	Thu, 30 Jun 2016 11:25:09 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: vinod.koul@intel.com, geert+renesas@glider.be,
+	laurent.pinchart+renesas@ideasonboard.com, mfarooq@visteon.com,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 3/4] dmaengine: rcar-dmac: Fixed active descriptor initializing
+Date: Thu, 30 Jun 2016 17:15:17 +0200
+Message-Id: <20160630151518.32329-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160630151518.32329-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160630151518.32329-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Muhammad Hamza Farooq <mfarooq@visteon.com>
 
-According to the datasheet, the frequency of the ARM architecture timer
-on R-Car V2H depends on the frequency of the ZS clock, just like on
-R-Car E2.
+Running descriptor pointer is set to NULL upon freeing resources. Other-
+wise, rcar_dmac_issue_pending might not start new transfers
 
+Signed-off-by: Muhammad Hamza Farooq <mfarooq@visteon.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/dma/sh/rcar-dmac.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index ea092d5dd475..afb9fdcd3d90 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -76,7 +76,8 @@ void __init rcar_gen2_timer_init(void)
- 	void __iomem *base;
- 	u32 freq;
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index 7f26576..59951fb 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -990,6 +990,8 @@ static void rcar_dmac_free_chan_resources(struct dma_chan *chan)
+ 	list_splice_init(&rchan->desc.done, &list);
+ 	list_splice_init(&rchan->desc.wait, &list);
  
--	if (of_machine_is_compatible("renesas,r8a7794")) {
-+	if (of_machine_is_compatible("renesas,r8a7792") ||
-+	    of_machine_is_compatible("renesas,r8a7794")) {
- 		freq = 260000000 / 8;	/* ZS / 8 */
- 		/* CNTVOFF has to be initialized either from non-secure
- 		 * Hypervisor mode or secure Monitor mode with SCR.NS==1.
++	rchan->desc.running = NULL;
++
+ 	list_for_each_entry(desc, &list, node)
+ 		rcar_dmac_realloc_hwdesc(rchan, desc, 0);
+ 
 -- 
-2.7.0.rc3.207.g0ac5344
+2.9.0
