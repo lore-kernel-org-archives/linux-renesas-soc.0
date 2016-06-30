@@ -1,176 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:35545 "EHLO
-	mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752054AbcF1Q0i (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:54536 "EHLO
+	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932450AbcF3PZJ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 28 Jun 2016 12:26:38 -0400
+	Thu, 30 Jun 2016 11:25:09 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: vinod.koul@intel.com, geert+renesas@glider.be,
+	laurent.pinchart+renesas@ideasonboard.com, mfarooq@visteon.com,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 4/4] dmaengine: rcar-dmac: Fix residue reporting for pending descriptors
+Date: Thu, 30 Jun 2016 17:15:18 +0200
+Message-Id: <20160630151518.32329-5-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160630151518.32329-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160630151518.32329-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <1463485296-22742-5-git-send-email-ulf.hansson@linaro.org>
-References: <1463485296-22742-1-git-send-email-ulf.hansson@linaro.org> <1463485296-22742-5-git-send-email-ulf.hansson@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 28 Jun 2016 18:26:36 +0200
-Message-ID: <CAMuHMdVM66516s_+Ups7fng5xpasdiUnW=3Ybz+vGHbgN+5mpQ@mail.gmail.com>
-Subject: Re: [PATCH 4/4] PM / Runtime: Defer resuming of the device in pm_runtime_force_resume()
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Kevin Hilman <khilman@kernel.org>,
-	Linux PM list <linux-pm@vger.kernel.org>,
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Lina Iyer <lina.iyer@linaro.org>,
-	Axel Haslam <ahaslam@baylibre.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ulf, Rafael,
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-On Tue, May 17, 2016 at 1:41 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> When the pm_runtime_force_suspend|resume() helpers were invented, we still
-> had CONFIG_PM_RUNTIME and CONFIG_PM_SLEEP as separate Kconfig options.
->
-> To make sure these helpers worked for all combinations and without
-> introducing too much of complexity, the device was always resumed in
-> pm_runtime_force_resume().
->
-> More precisely, when CONFIG_PM_SLEEP was set and CONFIG_PM_RUNTIME was
-> unset, we needed to resume the device as the subsystem/driver couldn't
-> rely on using runtime PM to do it.
->
-> As the CONFIG_PM_RUNTIME option was merged into CONFIG_PM a while ago, it
-> removed this combination, of using CONFIG_PM_SLEEP without the earlier
-> CONFIG_PM_RUNTIME.
->
-> For this reason we can now rely on the subsystem/driver to use runtime PM
-> to resume the device, instead of forcing that to be done in all cases. In
-> other words, let's defer this to a later point when it's actually needed.
->
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  drivers/base/power/runtime.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> index 09e4eb1..1db7b46 100644
-> --- a/drivers/base/power/runtime.c
-> +++ b/drivers/base/power/runtime.c
-> @@ -1509,6 +1509,17 @@ int pm_runtime_force_resume(struct device *dev)
->         if (!pm_runtime_status_suspended(dev))
->                 goto out;
->
-> +       /*
-> +        * The PM core increases the runtime PM usage count in the system PM
-> +        * prepare phase. If the count is greather than 1 at this point, someone
-> +        * else has also increased it. In that case, invoke the runtime resume
-> +        * callback for the device as that is likely what is expected. In other
-> +        * case we trust the subsystem/driver to runtime resume the device when
-> +        * it's actually needed.
-> +        */
-> +       if (atomic_read(&dev->power.usage_count) < 2)
-> +               goto out;
-> +
->         ret = pm_runtime_set_active(dev);
->         if (ret)
->                 goto out;
+Cookies corresponding to pending transfers have a residue value equal to
+the full size of the corresponding descriptor. The driver miscomputes
+that and uses the size of the active descriptor instead. Fix it.
 
-This patch (commit eb13a0a1b6d5d5c2 in pm/linux-next) breaks resume on
-sh73a0/kzm9g and r8a73a4/ape6evm. On these boards, the Ethernet controller is a
-child of a local bus (bsc), whose clock (zb) is controlled through pm_clk and
-simple-pm-bus, cfr.
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+[geert: Also check desc.active list]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/dma/sh/rcar-dmac.c | 31 +++++++++++++++++++++++++++++--
+ 1 file changed, 29 insertions(+), 2 deletions(-)
 
-    arch/arm/boot/dts/r8a73a4-ape6evm.dts
-    arch/arm/boot/dts/r8a73a4.dtsi
-    arch/arm/boot/dts/sh73a0-kzm9g.dts
-    arch/arm/boot/dts/sh73a0.dtsi
-
-During resume, the bus clock is not enabled, causing an imprecise abort
-when accessing the Ethernet controller's registers. With some debug code
-added:
-
-    PM: Syncing filesystems ... done.
-    PM: Preparing system for sleep (mem)
-    Freezing user space processes ... (elapsed 0.001 seconds) done.
-    Double checking all user space processes after OOM killer
-disable... (elapsed 0.000 seconds)
-    Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-    PM: Suspending system (mem)
-    smsc911x: smsc911x_suspend
-    simple-pm-bus fec10000.bus: simple_pm_bus_suspend
-    PM: suspend of devices complete after 21.484 msecs
-    PM: suspend devices took 0.030 seconds
-    PM: late suspend of devices complete after 0.488 msecs
-    cpg_div6_clock_disable: zb
-    rmobile_pd_power_down: a3sp
-    PM: noirq suspend of devices complete after 8.300 msecs
-    Disabling non-boot CPUs ...
-    CPU1: shutdown
-
-    PM: early resume of devices complete after 0.488 msecs
-    simple-pm-bus fec10000.bus: simple_pm_bus_resume
-    smsc911x: smsc911x_resume
-    Unhandled fault: imprecise external abort (0x1406) at 0xb6f40068
-    pgd = deedc000
-    [b6f40068] *pgd=5f774831, *pte=4087659f, *ppte=40876e7e
-    Internal error: : 1406 [#1] SMP ARM
-    Modules linked in:
-    CPU: 0 PID: 1062 Comm: s2ram Not tainted
-4.7.0-rc5-kzm9g-00391-g87777f5105e9303a-dirty #765
-    Hardware name: Generic SH73A0 (Flattened Device Tree)
-    task: dedc0840 ti: deee6000 task.ti: deee6000
-    PC is at __smsc911x_reg_read+0x1c/0x60
-    LR is at smsc911x_resume+0x78/0xd0
-
-After reverting this patch, resume succeeds again, as the zb clock is enabled
-first:
-
-    PM: Syncing filesystems ... done.
-    PM: Preparing system for sleep (mem)
-    Freezing user space processes ... (elapsed 0.001 seconds) done.
-    Double checking all user space processes after OOM killer
-disable... (elapsed 0.000 seconds)
-    Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-    PM: Suspending system (mem)
-    smsc911x: smsc911x_suspend
-    simple-pm-bus fec10000.bus: simple_pm_bus_suspend
-    PM: suspend of devices complete after 22.460 msecs
-    PM: suspend devices took 0.030 seconds
-    PM: late suspend of devices complete after 0.488 msecs
-    cpg_div6_clock_disable: zb
-    rmobile_pd_power_down: a3sp
-    PM: noirq suspend of devices complete after 8.300 msecs
-    Disabling non-boot CPUs ...
-    CPU1: shutdown
-
-    Enabling non-boot CPUs ...
-    CPU1 is up
-    rmobile_pd_power_up: a3sp
-    rmobile_pd_power_up: a4mp
-    a4mp: Power on, 0x00000100 -> PSTR = 0x007b3133
-    cpg_div6_clock_enable: zb
-    PM: noirq resume of devices complete after 92.773 msecs
-    PM: early resume of devices complete after 0.488 msecs
-    simple-pm-bus fec10000.bus: simple_pm_bus_resume
-    smsc911x: smsc911x_resume
-    PM: resume of devices complete after 28.564 msecs
-    PM: resume devices took 0.040 seconds
-    PM: Finishing wakeup.
-    Restarting tasks ...
-    rmobile_pd_power_down: a4mp
-    a4mp: Power off, 0x00000100 -> PSTR = 0x007b3033
-    done.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index 59951fb..d536dbf 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1145,6 +1145,7 @@ static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
+ 	struct rcar_dmac_desc *desc = chan->desc.running;
+ 	struct rcar_dmac_xfer_chunk *running = NULL;
+ 	struct rcar_dmac_xfer_chunk *chunk;
++	enum dma_status status;
+ 	unsigned int residue = 0;
+ 	unsigned int dptr = 0;
+ 
+@@ -1152,12 +1153,38 @@ static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
+ 		return 0;
+ 
+ 	/*
++	 * If the cookie corresponds to a descriptor that has been completed
++	 * there is no residue. The same check has already been performed by the
++	 * caller but without holding the channel lock, so the descriptor could
++	 * now be complete.
++	 */
++	status = dma_cookie_status(&chan->chan, cookie, NULL);
++	if (status == DMA_COMPLETE)
++		return 0;
++
++	/*
+ 	 * If the cookie doesn't correspond to the currently running transfer
+ 	 * then the descriptor hasn't been processed yet, and the residue is
+ 	 * equal to the full descriptor size.
+ 	 */
+-	if (cookie != desc->async_tx.cookie)
+-		return desc->size;
++	if (cookie != desc->async_tx.cookie) {
++		list_for_each_entry(desc, &chan->desc.pending, node) {
++			if (cookie == desc->async_tx.cookie)
++				return desc->size;
++		}
++		list_for_each_entry(desc, &chan->desc.active, node) {
++			if (cookie == desc->async_tx.cookie)
++				return desc->size;
++		}
++
++		/*
++		 * No descriptor found for the cookie, there's thus no residue.
++		 * This shouldn't happen if the calling driver passes a correct
++		 * cookie value.
++		 */
++		WARN(1, "No descriptor for cookie!");
++		return 0;
++	}
+ 
+ 	/*
+ 	 * In descriptor mode the descriptor running pointer is not maintained
+-- 
+2.9.0
