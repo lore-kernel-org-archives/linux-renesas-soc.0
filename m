@@ -1,47 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:35151 "EHLO
-	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751424AbcF3NQ0 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752335AbcF3OQu (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 09:16:26 -0400
-Received: by mail-oi0-f44.google.com with SMTP id r2so64020900oih.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Jun 2016 06:16:26 -0700 (PDT)
-MIME-Version: 1.0
-From: Ulrich Hecht <ulrich.hecht@gmail.com>
-Date: Thu, 30 Jun 2016 15:16:24 +0200
-Message-ID: <CAO3366w+UpbOEijqjnggL2hzZjEnMXYfneSbCf9Ca_JGe_OwKQ@mail.gmail.com>
-Subject: Loopback video test
+	Thu, 30 Jun 2016 10:16:50 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/41] ARM: dts: bockw: Name serial port pfc subnode after device name
+Date: Thu, 30 Jun 2016 16:15:24 +0200
+Message-Id: <c32149c7fd9d3716c38954bc3a99fff90a74abf7.1467294011.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
+References: <cover.1467294011.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-At https://github.com/uli/looptest you can find a script to verify
-video output using a V4L input device. It creates a test pattern in
-various resolutions using modetest, captures it on a given video input
-device, and then does a fuzzy compare to verify that the captured
-frame sorta kinda looks the way it should. The README file explains
-how to use it and what external tools it relies on.
+Name the Pin Function Controller subnode for SCIF0 after its device
+name, instead of after the serial port alias.
 
-I have run these tests on a Lager board with an HDMI cable connecting
-HDMI OUT and HDMI IN; I have found these issues with the output
-signal:
+This avoids conflicts when enabling support for more serial ports later,
+either here or in a DT overlay.
 
-- Mode 640x480-60, of all things, does not work.
-- After switching a couple of times between resolutions that otherwise
-work, sometimes no valid output is produced anymore.
-- Two more exotic modes that are in the default mode list (that is
-used when the input device does not send a valid EDID blob), namely
-848x480-60 and 800x600-56, do not produce valid output.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7778-bockw.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-When any of these things happen, the output remains invalid until the
-next reboot, i.e. switching back to a working mode does not help.
-
-(There is also an issue with the VIN input, which sometimes fails to
-use up-to-date DV timings when capturing the first frame after
-switching modes. This is worked around by capturing the frame twice.)
-
-CU
-Uli
+diff --git a/arch/arm/boot/dts/r8a7778-bockw.dts b/arch/arm/boot/dts/r8a7778-bockw.dts
+index 0a0bd3b6bb40..211d239d9041 100644
+--- a/arch/arm/boot/dts/r8a7778-bockw.dts
++++ b/arch/arm/boot/dts/r8a7778-bockw.dts
+@@ -129,7 +129,7 @@
+ 	pinctrl-0 = <&scif_clk_pins>;
+ 	pinctrl-names = "default";
+ 
+-	scif0_pins: serial0 {
++	scif0_pins: scif0 {
+ 		groups = "scif0_data_a", "scif0_ctrl";
+ 		function = "scif0";
+ 	};
+-- 
+2.7.0.rc3.207.g0ac5344
