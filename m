@@ -1,44 +1,63 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:34323 "EHLO
-	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750725AbcFQUx0 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 17 Jun 2016 16:53:26 -0400
-Received: by mail-lf0-f45.google.com with SMTP id h129so4700204lfh.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jun 2016 13:53:25 -0700 (PDT)
-Subject: Re: [PATCH] ARM: dts: silk: add DU pins
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-References: <1674850.BZpGW9kEud@wasted.cogentembedded.com>
- <2415333.mtLdVEoB2G@wasted.cogentembedded.com>
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <f9aee8b5-7f78-acd0-e544-3d5977c01246@cogentembedded.com>
-Date: Fri, 17 Jun 2016 23:53:21 +0300
-MIME-Version: 1.0
-In-Reply-To: <2415333.mtLdVEoB2G@wasted.cogentembedded.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <kieran@ksquared.org.uk>
+Return-Path: <kieran@ksquared.org.uk>
+Sender: Kieran Bingham <kieran@ksquared.org.uk>
+From: Kieran Bingham <kieran@bingham.xyz>
+To: horms@verge.net.au,
+	linux-renesas-soc@vger.kernel.org
+Cc: magnus.damm@gmail.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kieran@bingham.xyz
+Subject: [PATCH v2 0/2] arm64: dts: r8a7795: FCPF and FDP1 device nodes
+Date: Thu, 30 Jun 2016 14:32:41 +0100
+Message-Id: <1467293563-940-1-git-send-email-kieran@bingham.xyz>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+Hi Simon,
 
-On 04/13/2016 10:36 PM, Sergei Shtylyov wrote:
+Here is my updated series for the dts updates in relation to the RCar/FDP1.
 
-> Add the (previously omitted) DU pin data to the SILK board's device tree.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
-> ---
-> This patch is against the 'renesas-devel-20160411-v4.6-rc3' tag of Simon
-> Horman's 'renesas.git' repo. It depends on the R8A7794 DU PFC driver patch
-> just posted for the pins to be configured...
+The fcpf patch has collected a reviewed-by from Geert, whilst the fdp1
+patch has collected a reviewed by from both Laurent and Geert, with a
+small change to remove the labels, as they will not be referenced.
 
-    Simon, this patch seems stuck while the PFC driver patch hit Linus' tree 
-long ago. :-(
+You responded to my previous set for these with the following comment:
 
-MBR, Sergei
+> These patches look good to me. My assumption is that they
+> can be applied without causing any breakage and that the
+> relevant features will start working once driver support
+> shows up in the kernel.
+> 
+> If the above assumption is correct then please let me know when the
+> bindings have been accepted by the relevant subsystem maintainer(s).
+> 
+> If the patches need rebasing at that time then please repost them.
+> Otherwise you can either repost them or ping me as a response to this thread.
+
+Your assumption was correct, and they could be applied without breakage.
+
+RobH has acked the binding for the RCar FCPF, but I have not seen an ack for
+the FDP1 binding yet. I'll follow that up, and ping you on the fdp1 dts patch
+when it resolved.
+
+Regards
+
+Kieran
+
+--
+
+Kieran Bingham (2):
+  arm64: dts: r8a7795: add FCPF device nodes
+  arm64: dts: r8a7795: add FDP1 device nodes
+
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 48 ++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+
+-- 
+2.7.4
