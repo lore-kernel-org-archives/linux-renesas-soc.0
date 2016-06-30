@@ -1,62 +1,67 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/3] ARM: dts: blanche: add Ethernet pins
-Date: Fri, 01 Jul 2016 02:08:55 +0300
-Message-ID: <3303208.PZCWAdujda@wasted.cogentembedded.com>
-In-Reply-To: <2144803.0K8qXzjIFq@wasted.cogentembedded.com>
-References: <2144803.0K8qXzjIFq@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932085AbcF3ORH (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 30 Jun 2016 10:17:07 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 21/41] ARM: dts: r8a7792: add power domain index macros
+Date: Thu, 30 Jun 2016 16:15:41 +0200
+Message-Id: <5258bb5d980024dae22f4256329caec4fe5e98b3.1467294011.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
+References: <cover.1467294011.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the (previously omitted) pin data for the SMSC LAN89218 Ethernet chip
-to the Blanche board's device tree: the chip's IRQ output is connected to
-the SoC's IRQ0 pin and its nCS input is connected to the SoC's EX_CS0# pin.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+Add macros usable by the device tree sources to reference R8A7792 SYSC power
+domains by index.
 
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7792-blanche.dts |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ include/dt-bindings/power/r8a7792-sysc.h | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+ create mode 100644 include/dt-bindings/power/r8a7792-sysc.h
 
-Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
-+++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-@@ -50,6 +50,9 @@
- 		reg-io-width = <4>;
- 		vddvario-supply = <&d3_3v>;
- 		vdd33a-supply = <&d3_3v>;
+diff --git a/include/dt-bindings/power/r8a7792-sysc.h b/include/dt-bindings/power/r8a7792-sysc.h
+new file mode 100644
+index 000000000000..74f4a78e29aa
+--- /dev/null
++++ b/include/dt-bindings/power/r8a7792-sysc.h
+@@ -0,0 +1,26 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ */
++#ifndef __DT_BINDINGS_POWER_R8A7792_SYSC_H__
++#define __DT_BINDINGS_POWER_R8A7792_SYSC_H__
 +
-+		pinctrl-0 = <&lan89218_pins>;
-+		pinctrl-names = "default";
- 	};
- };
- 
-@@ -67,6 +70,18 @@
- 		groups = "scif3_data";
- 		function = "scif3";
- 	};
++/*
++ * These power domain indices match the numbers of the interrupt bits
++ * representing the power areas in the various Interrupt Registers
++ * (e.g. SYSCISR, Interrupt Status Register)
++ */
 +
-+	lan89218_pins: lan89218 {
-+		intc {
-+			groups = "intc_irq0";
-+			function = "intc";
-+		};
-+		lbsc {
-+			groups = "lbsc_ex_cs0";
-+			function = "lbsc";
-+		};
-+	};
++#define R8A7792_PD_CA15_CPU0		0
++#define R8A7792_PD_CA15_CPU1		1
++#define R8A7792_PD_CA15_SCU		12
++#define R8A7792_PD_SGX			20
++#define R8A7792_PD_IMP			24
 +
- };
- 
- &scif0 {
-
++/* Always-on power area */
++#define R8A7792_PD_ALWAYS_ON		32
++
++#endif /* __DT_BINDINGS_POWER_R8A7792_SYSC_H__ */
+-- 
+2.7.0.rc3.207.g0ac5344
