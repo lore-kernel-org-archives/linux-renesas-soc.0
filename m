@@ -1,147 +1,104 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@freescale.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mark Yao <mark.yao@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-	Vincent Abriou <vincent.abriou@st.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Alexandre Courbot <gnurou@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 04/20] drm: exynos: Rely on the default ->best_encoder() behavior
-Date: Tue,  7 Jun 2016 13:47:59 +0200
-Message-Id: <1465300095-16971-5-git-send-email-boris.brezillon@free-electrons.com>
-In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36559 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752069AbcF3ORy (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 30 Jun 2016 10:17:54 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/8] ARM: shmobile: r8a7792: basic SoC support
+Date: Thu, 30 Jun 2016 16:16:17 +0200
+Message-Id: <a57ac4c16b261d63b5c957353acdca92628b2ca5.1467293089.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467293089.git.horms+renesas@verge.net.au>
+References: <cover.1467293089.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We have 1:1 relationship between connectors and encoders and the driver
-is relying on the atomic helpers: we can drop the custom ->best_encoder()
-implementations and let the core call drm_atomic_helper_best_encoder()
-for us.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Add minimal support for the R-Car V2H (R8A7792) SoC.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dpi.c  | 9 ---------
- drivers/gpu/drm/exynos/exynos_drm_dsi.c  | 9 ---------
- drivers/gpu/drm/exynos/exynos_drm_vidi.c | 8 --------
- drivers/gpu/drm/exynos/exynos_hdmi.c     | 8 --------
- 4 files changed, 34 deletions(-)
+ arch/arm/mach-shmobile/Kconfig         |  4 ++++
+ arch/arm/mach-shmobile/Makefile        |  1 +
+ arch/arm/mach-shmobile/setup-r8a7792.c | 35 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 40 insertions(+)
+ create mode 100644 arch/arm/mach-shmobile/setup-r8a7792.c
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-index 5e38e74..ad6b73c 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-@@ -93,17 +93,8 @@ static int exynos_dpi_get_modes(struct drm_connector *connector)
- 	return 0;
- }
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index fe4ccb52f921..88e91583f3fb 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -86,6 +86,10 @@ config ARCH_R8A7791
+ 	select ARCH_RCAR_GEN2
+ 	select I2C
  
--static struct drm_encoder *
--exynos_dpi_best_encoder(struct drm_connector *connector)
--{
--	struct exynos_dpi *ctx = connector_to_dpi(connector);
--
--	return &ctx->encoder;
--}
--
- static const struct drm_connector_helper_funcs exynos_dpi_connector_helper_funcs = {
- 	.get_modes = exynos_dpi_get_modes,
--	.best_encoder = exynos_dpi_best_encoder,
- };
- 
- static int exynos_dpi_create_connector(struct drm_encoder *encoder)
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 601ecf8..e07cb1f 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1566,17 +1566,8 @@ static int exynos_dsi_get_modes(struct drm_connector *connector)
- 	return 0;
- }
- 
--static struct drm_encoder *
--exynos_dsi_best_encoder(struct drm_connector *connector)
--{
--	struct exynos_dsi *dsi = connector_to_dsi(connector);
--
--	return &dsi->encoder;
--}
--
- static const struct drm_connector_helper_funcs exynos_dsi_connector_helper_funcs = {
- 	.get_modes = exynos_dsi_get_modes,
--	.best_encoder = exynos_dsi_best_encoder,
- };
- 
- static int exynos_dsi_create_connector(struct drm_encoder *encoder)
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index 608b0af..e8f6c92 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -378,16 +378,8 @@ static int vidi_get_modes(struct drm_connector *connector)
- 	return drm_add_edid_modes(connector, edid);
- }
- 
--static struct drm_encoder *vidi_best_encoder(struct drm_connector *connector)
--{
--	struct vidi_context *ctx = ctx_from_connector(connector);
--
--	return &ctx->encoder;
--}
--
- static const struct drm_connector_helper_funcs vidi_connector_helper_funcs = {
- 	.get_modes = vidi_get_modes,
--	.best_encoder = vidi_best_encoder,
- };
- 
- static int vidi_create_connector(struct drm_encoder *encoder)
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 58de5a4..1625d7c 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -937,17 +937,9 @@ static int hdmi_mode_valid(struct drm_connector *connector,
- 	return MODE_OK;
- }
- 
--static struct drm_encoder *hdmi_best_encoder(struct drm_connector *connector)
--{
--	struct hdmi_context *hdata = connector_to_hdmi(connector);
--
--	return &hdata->encoder;
--}
--
- static const struct drm_connector_helper_funcs hdmi_connector_helper_funcs = {
- 	.get_modes = hdmi_get_modes,
- 	.mode_valid = hdmi_mode_valid,
--	.best_encoder = hdmi_best_encoder,
- };
- 
- static int hdmi_create_connector(struct drm_encoder *encoder)
++config ARCH_R8A7792
++	bool "R-Car V2H (R8A77920)"
++	select ARCH_RCAR_GEN2
++
+ config ARCH_R8A7793
+ 	bool "R-Car M2-N (R8A7793)"
+ 	select ARCH_RCAR_GEN2
+diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
+index fc95f7bd2dd9..3fc48b02eb4f 100644
+--- a/arch/arm/mach-shmobile/Makefile
++++ b/arch/arm/mach-shmobile/Makefile
+@@ -13,6 +13,7 @@ obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7778.o
+ obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
+ obj-$(CONFIG_ARCH_R8A7790)	+= setup-r8a7790.o
+ obj-$(CONFIG_ARCH_R8A7791)	+= setup-r8a7791.o
++obj-$(CONFIG_ARCH_R8A7792)	+= setup-r8a7792.o
+ obj-$(CONFIG_ARCH_R8A7793)	+= setup-r8a7793.o
+ obj-$(CONFIG_ARCH_R8A7794)	+= setup-r8a7794.o
+ obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
+diff --git a/arch/arm/mach-shmobile/setup-r8a7792.c b/arch/arm/mach-shmobile/setup-r8a7792.c
+new file mode 100644
+index 000000000000..a0910395da09
+--- /dev/null
++++ b/arch/arm/mach-shmobile/setup-r8a7792.c
+@@ -0,0 +1,35 @@
++/*
++ * r8a7792 processor support
++ *
++ * Copyright (C) 2014 Renesas Electronics Corporation
++ * Copyright (C) 2016 Cogent  Embedded, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/of_platform.h>
++
++#include <asm/mach/arch.h>
++
++#include "common.h"
++#include "rcar-gen2.h"
++
++static const char * const r8a7792_boards_compat_dt[] __initconst = {
++	"renesas,r8a7792",
++	NULL,
++};
++
++DT_MACHINE_START(R8A7792_DT, "Generic R8A7792 (Flattened Device Tree)")
++	.init_early	= shmobile_init_delay,
++	.init_late	= shmobile_init_late,
++	.init_time	= rcar_gen2_timer_init,
++	.reserve	= rcar_gen2_reserve,
++	.dt_compat	= r8a7792_boards_compat_dt,
++MACHINE_END
 -- 
-2.7.4
+2.7.0.rc3.207.g0ac5344
