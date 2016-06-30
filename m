@@ -1,75 +1,67 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Sender: Kieran Bingham <kieran@ksquared.org.uk>
-From: Kieran Bingham <kieran@bingham.xyz>
-To: Kieran Bingham <kieran@bingham.xyz>,
-	Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	linux-media@vger.kernel.org (open list:MEDIA DRIVERS FOR RENESAS - FDP1),
-	linux-renesas-soc@vger.kernel.org (open list:MEDIA DRIVERS FOR RENESAS - FDP1),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 3/3] dt-bindings: Add Renesas R-Car FDP1 bindings
-Date: Thu,  9 Jun 2016 14:41:34 +0100
-Message-Id: <1465479695-18644-4-git-send-email-kieran@bingham.xyz>
-In-Reply-To: <1465479695-18644-1-git-send-email-kieran@bingham.xyz>
-References: <1465479695-18644-1-git-send-email-kieran@bingham.xyz>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932123AbcF3OR3 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 30 Jun 2016 10:17:29 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 38/41] ARM: dts: r8a7790: Add APMU nodes
+Date: Thu, 30 Jun 2016 16:15:58 +0200
+Message-Id: <dc378795156d980ca701aab761457089dae84706.1467294011.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
+References: <cover.1467294011.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The FDP1 is a de-interlacing module which converts interlaced video to
-progressive video. It is also capable of performing pixel format conversion
-between YCbCr/YUV formats and RGB formats.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+Add DT nodes for the Advanced Power Management Units (APMU), and use the
+enable-method to point out that the APMU should be used for SMP
+support.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- .../devicetree/bindings/media/renesas,fdp1.txt     | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,fdp1.txt
+ arch/arm/boot/dts/r8a7790.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,fdp1.txt b/Documentation/devicetree/bindings/media/renesas,fdp1.txt
-new file mode 100644
-index 000000000000..e2da2aec5e9f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/renesas,fdp1.txt
-@@ -0,0 +1,34 @@
-+Renesas R-Car Fine Display Processor (FDP1)
-+-----------------------------------------------
-+
-+The FDP1 is a de-interlacing module which converts interlaced video to
-+progressive video. It is capable of performing pixel format conversion between
-+YCbCr/YUV formats and RGB formats. Only YCbCr/YUV formats are supported as
-+an input to the module.
-+
-+ - compatible: Must be one or more of the following
-+
-+   - "renesas,r8a7795-fdp1" for R8A7795 (R-Car H3)
-+   - "renesas,r8a7796-fdp1" for R8A7796 (R-Car M3-W)
-+   - "renesas,fdp1" for generic compatible
-+
-+   When compatible with the generic version, nodes must list the
-+   SoC-specific version corresponding to the platform first, followed by the
-+   family-specific and/or generic versions.
-+
-+ - reg: the register base and size for the device registers
-+ - clocks: Reference to the functional clock
-+ - renesas,fcp: Reference to the FCPF connected to the FDP1
-+
-+
-+Device node example
-+-------------------
-+
-+	fdp1ch1: fdp1@fe940000 {
-+		compatible = "renesas,r8a7795-fdp1", "renesas,fdp1";
-+		reg = <0 0xfe940000 0 0x2400>;
-+		interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cpg CPG_MOD 119>;
-+		power-domains = <&sysc R8A7795_PD_A3VP>;
-+		renesas,fcp = <&fcpf0>;
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 9997e7dfabe2..d18558f21102 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -44,6 +44,7 @@
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		enable-method = "renesas,apmu";
+ 
+ 		cpu0: cpu@0 {
+ 			device_type = "cpu";
+@@ -164,6 +165,18 @@
+ 		};
+ 	};
+ 
++	apmu@e6151000 {
++		compatible = "renesas,r8a7790-apmu", "renesas,apmu";
++		reg = <0 0xe6151000 0 0x188>;
++		cpus = <&cpu4 &cpu5 &cpu6 &cpu7>;
 +	};
-\ No newline at end of file
++
++	apmu@e6152000 {
++		compatible = "renesas,r8a7790-apmu", "renesas,apmu";
++		reg = <0 0xe6152000 0 0x188>;
++		cpus = <&cpu0 &cpu1 &cpu2 &cpu3>;
++	};
++
+ 	gic: interrupt-controller@f1001000 {
+ 		compatible = "arm,gic-400";
+ 		#interrupt-cells = <3>;
 -- 
-2.7.4
+2.7.0.rc3.207.g0ac5344
