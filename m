@@ -1,54 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56400 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751372AbcF2Sh2 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932123AbcF3ORk (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 14:37:28 -0400
-Date: Wed, 29 Jun 2016 19:15:55 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linux-ALSA <alsa-devel@alsa-project.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org
-Message-ID: <20160629181555.GJ6247@sirena.org.uk>
-References: <87fusysjam.wl%kuninori.morimoto.gx@renesas.com>
- <8760tusj2q.wl%kuninori.morimoto.gx@renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5me2qT3T17SWzdxI"
-Content-Disposition: inline
-In-Reply-To: <8760tusj2q.wl%kuninori.morimoto.gx@renesas.com>
-Subject: Re: [PATCH 07/39 v2] ASoC: simple-card-utils: add
- asoc_simple_card_parse_card_name()
+	Thu, 30 Jun 2016 10:17:40 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/5] soc: renesas: rcar-sysc: Improve SYSC interrupt config in legacy wrapper
+Date: Thu, 30 Jun 2016 16:16:12 +0200
+Message-Id: <ced42730d19dd140a76f86c3761f646b83a35d09.1467292648.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467292648.git.horms+renesas@verge.net.au>
+References: <cover.1467292648.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
---5me2qT3T17SWzdxI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Align SYSC interrupt configuration in the legacy wrapper with the DT
+version:
+  - Mask SYSC interrupt sources before enabling them (doesn't matter
+    much as they're disabled at the GIC level anyway),
+  - Make sure not to clear reserved SYSCIMR bits that were set before.
 
-On Tue, May 31, 2016 at 09:01:34AM +0000, Kuninori Morimoto wrote:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/soc/renesas/rcar-sysc.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-> +	if (!card->name)
-> +		card->name = card->dai_link->name;
-
-This will unconditionally defererence dai_link but it's optional - we
-can have analogue only cards.
-
---5me2qT3T17SWzdxI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXdBBaAAoJECTWi3JdVIfQ3GEH/RH0oGLwrYYalsdPRadzCoBN
-D6AH08hIOLh30I0gAQK1hpnUsHvp2BQFsl8GjC4jdftUh39BQWRPujEh7TZtpCRl
-nZXDjzh2fBaWSnw0LmnQ+WoXXyyI2AX2Rge5CFrxbc8EnZF5N6dxQJoHWVNlsZb9
-upyWpBmKYbP2iF909aG9tFKnHlgnj++90+zAwAELZLD3ymgSlvBTonBKDulkBGF2
-oG5b44CXP+W9D+vbfysH5/S2yV2fD0qGAEMR0xE+RxPOtVvp4bI2lcsF5GHXBWzg
-zt31WiH1bFqZ9ya5f7EZRcIZkMMG2TXAeYliFlaeXuovgVAv9GxeIVw+f4j9pOQ=
-=seZS
------END PGP SIGNATURE-----
-
---5me2qT3T17SWzdxI--
+diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
+index 22f0d646225c..65c8e1eb90c0 100644
+--- a/drivers/soc/renesas/rcar-sysc.c
++++ b/drivers/soc/renesas/rcar-sysc.c
+@@ -402,12 +402,25 @@ early_initcall(rcar_sysc_pd_init);
+ 
+ void __init rcar_sysc_init(phys_addr_t base, u32 syscier)
+ {
++	u32 syscimr;
++
+ 	if (!rcar_sysc_pd_init())
+ 		return;
+ 
+ 	rcar_sysc_base = ioremap_nocache(base, PAGE_SIZE);
+ 
+-	/* enable all interrupt sources, but do not use interrupt handler */
++	/*
++	 * Mask all interrupt sources to prevent the CPU from receiving them.
++	 * Make sure not to clear reserved bits that were set before.
++	 */
++	syscimr = ioread32(rcar_sysc_base + SYSCIMR);
++	syscimr |= syscier;
++	pr_debug("%s: syscimr = 0x%08x\n", __func__, syscimr);
++	iowrite32(syscimr, rcar_sysc_base + SYSCIMR);
++
++	/*
++	 * SYSC needs all interrupt sources enabled to control power.
++	 */
++	pr_debug("%s: syscier = 0x%08x\n", __func__, syscier);
+ 	iowrite32(syscier, rcar_sysc_base + SYSCIER);
+-	iowrite32(0, rcar_sysc_base + SYSCIMR);
+ }
+-- 
+2.7.0.rc3.207.g0ac5344
