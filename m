@@ -1,65 +1,52 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36101 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752705AbcF3OP4 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 30 Jun 2016 10:15:56 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v3 11/22] clk: renesas: r8a7778: Obtain mode pin values using R-Car RST driver
-Date: Wed,  1 Jun 2016 21:21:09 +0200
-Message-Id: <1464808880-343-12-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/9] arm64: dts: r8a7795: Add missing blank lines between cpu nodes
+Date: Thu, 30 Jun 2016 16:14:59 +0200
+Message-Id: <3bb1acd1eb312c99f3b60d1f591668d00ff007ab.1467291676.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467291676.git.horms+renesas@verge.net.au>
+References: <cover.1467291676.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Obtain the values of the mode pins from the R-Car RST driver, which
-relies on the presence in DT of a device node for the RESET/WDT module.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+
+For consistency with a57_0/a57_1 cpu nodes, and all other nodes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v3:
-  - New.
----
- drivers/clk/renesas/clk-r8a7778.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/renesas/clk-r8a7778.c b/drivers/clk/renesas/clk-r8a7778.c
-index 40e3a501a50e200f..07ea411098a75ad1 100644
---- a/drivers/clk/renesas/clk-r8a7778.c
-+++ b/drivers/clk/renesas/clk-r8a7778.c
-@@ -12,6 +12,7 @@
- #include <linux/clk/renesas.h>
- #include <linux/of_address.h>
- #include <linux/slab.h>
-+#include <linux/soc/renesas/rcar-rst.h>
- 
- struct r8a7778_cpg {
- 	struct clk_onecell_data data;
-@@ -83,6 +84,18 @@ static void __init r8a7778_cpg_clocks_init(struct device_node *np)
- 	struct clk **clks;
- 	unsigned int i;
- 	int num_clks;
-+	u32 mode;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 04eb0bc65634..fad6dd8b7771 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -53,6 +53,7 @@
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+ 		};
 +
-+	if (rcar_rst_read_mode_pins(&mode))
-+		return;
+ 		a57_2: cpu@2 {
+ 			compatible = "arm,cortex-a57","arm,armv8";
+ 			reg = <0x2>;
+@@ -61,6 +62,7 @@
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+ 		};
 +
-+	BUG_ON(!(mode & BIT(19)));
-+
-+	cpg_mode_rates = (!!(mode & BIT(18)) << 2) |
-+			 (!!(mode & BIT(12)) << 1) |
-+			 (!!(mode & BIT(11)));
-+	cpg_mode_divs = (!!(mode & BIT(2)) << 1) |
-+			(!!(mode & BIT(1)));
- 
- 	num_clks = of_property_count_strings(np, "clock-output-names");
- 	if (num_clks < 0) {
+ 		a57_3: cpu@3 {
+ 			compatible = "arm,cortex-a57","arm,armv8";
+ 			reg = <0x3>;
 -- 
-1.9.1
-
+2.7.0.rc3.207.g0ac5344
