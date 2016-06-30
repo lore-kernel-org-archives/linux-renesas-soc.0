@@ -1,42 +1,48 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>
-Date: Mon, 06 Jun 2016 12:58:31 +0900
-Message-Id: <20160606035831.31763.45061.sendpatchset@little-apple>
-In-Reply-To: <20160606035723.31763.66500.sendpatchset@little-apple>
-References: <20160606035723.31763.66500.sendpatchset@little-apple>
-Subject: [PATCH v2 07/11] iommu/ipmmu-vmsa: IPMMU device is 64-bit bus master
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36051 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752250AbcF3OP3 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 30 Jun 2016 10:15:29 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Renesas ARM64 Based SoC Defconfig Updates for v4.8
+Date: Thu, 30 Jun 2016 16:14:56 +0200
+Message-Id: <cover.1467291186.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Olof, Hi Kevin, Hi Arnd,
 
-The r8a7795 IPMMU supports 64-bit bus mastering. Both
-the coherent DMA mask and the streaming DMA mask are
-set to unlock the 64-bit address space for coherent
-allocations and streaming operations.
+Please consider these Renesas ARM64 based SoC defconfig updates for v4.8.
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
 
- Changes since V1:
- - Updated the commit message
+The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 
- drivers/iommu/ipmmu-vmsa.c |    1 +
+  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-defconfig-for-v4.8
+
+for you to fetch changes up to 62bcf9087150f9588456d941d4ee444ead8ed6f2:
+
+  arm64: defconfig: enable Renesas R8A7796 SoC (2016-06-06 10:26:04 +0900)
+
+----------------------------------------------------------------
+Renesas ARM64 Based SoC Defconfig Updates for v4.8
+
+* Enable Renesas R8A7796 SoC in ARM64 defcnfig
+
+----------------------------------------------------------------
+Takeshi Kihara (1):
+      arm64: defconfig: enable Renesas R8A7796 SoC
+
+ arch/arm64/configs/defconfig | 1 +
  1 file changed, 1 insertion(+)
-
---- 0019/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-06 11:01:28.730607110 +0900
-@@ -1082,6 +1082,7 @@ static int ipmmu_probe(struct platform_d
- 	spin_lock_init(&mmu->lock);
- 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
- 	mmu->features = match->data;
-+	dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
- 
- 	/* Map I/O memory and request IRQ. */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
