@@ -1,60 +1,46 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-	joro@8bytes.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-	Magnus Damm <magnus.damm@gmail.com>
-Date: Tue, 07 Jun 2016 12:39:45 +0900
-Message-Id: <20160607033945.28687.70956.sendpatchset@little-apple>
-In-Reply-To: <20160607033918.28687.98260.sendpatchset@little-apple>
-References: <20160607033918.28687.98260.sendpatchset@little-apple>
-Subject: [PATCH 3/3] iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:34533 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752432AbcF3UOJ (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 30 Jun 2016 16:14:09 -0400
+Date: Thu, 30 Jun 2016 13:14:08 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Dirk Behme <dirk.behme@de.bosch.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH/RFC v3 00/22] soc: renesas: Add R-Car RST driver for
+ obtaining mode pin state
+Message-ID: <20160630201407.GA27880@codeaurora.org>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On 06/01, Geert Uytterhoeven wrote:
+> 	Hi all,
+> 
+> Currently the R-Car Clock Pulse Generator (CPG) drivers obtains the
+> state of the mode pins either by a call from the board code, or directly
+> by using a hardcoded register access. This is a bit messy, and creates a
+> dependency between driver and platform code.
+> 
+> This RFC patch series converts the various Renesas R-Car clock drivers
+> and support code from reading the mode pin states using a hardcoded
+> register access to using a new R-Car RST driver.
 
-Support the r8a7796 IPMMU by sharing feature flags between
-r8a7795 and r8a7796. Also update IOMMU_OF_DECLARE to hook
-up the updated compat string.
+Dumb question, can we use the nvmem reading APIs instead of an
+SoC specific function to read the modes?
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- drivers/iommu/ipmmu-vmsa.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
---- 0031/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-06-06 11:19:40.210607110 +0900
-@@ -1074,7 +1074,7 @@ static const struct ipmmu_features ipmmu
- 	.twobit_imttbcr_sl0 = false,
- };
- 
--static const struct ipmmu_features ipmmu_features_r8a7795 = {
-+static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
- 	.use_ns_alias_offset = false,
- 	.has_cache_leaf_nodes = true,
- 	.has_eight_ctx = true,
-@@ -1088,7 +1088,10 @@ static const struct of_device_id ipmmu_o
- 		.data = &ipmmu_features_default,
- 	}, {
- 		.compatible = "renesas,ipmmu-r8a7795",
--		.data = &ipmmu_features_r8a7795,
-+		.data = &ipmmu_features_rcar_gen3,
-+	}, {
-+		.compatible = "renesas,ipmmu-r8a7796",
-+		.data = &ipmmu_features_rcar_gen3,
- 	}, {
- 		/* Terminator */
- 	},
-@@ -1268,6 +1271,8 @@ IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "r
- 		 ipmmu_vmsa_iommu_of_setup);
- IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795",
- 		 ipmmu_vmsa_iommu_of_setup);
-+IOMMU_OF_DECLARE(ipmmu_r8a7796_iommu_of, "renesas,ipmmu-r8a7796",
-+		 ipmmu_vmsa_iommu_of_setup);
- #endif
- 
- MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
