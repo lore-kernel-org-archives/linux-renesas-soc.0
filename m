@@ -1,53 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:35634 "EHLO
-	mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752103AbcFIVro (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752069AbcF3ORd (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 9 Jun 2016 17:47:44 -0400
-Received: by mail-lf0-f46.google.com with SMTP id u74so34777452lff.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Jun 2016 14:47:43 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-	pawel.moll@arm.com, mark.rutland@arm.com,
-	ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v4 10/12] DT: arm: shmobile: document Blanche board
-Date: Fri, 10 Jun 2016 00:47:40 +0300
-Message-ID: <2146434.eRmd3OT4fB@wasted.cogentembedded.com>
-In-Reply-To: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
-References: <1879394.3zBGLpF2nv@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Thu, 30 Jun 2016 10:17:33 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 35/41] ARM: dts: kzm9d: Update console parameters
+Date: Thu, 30 Jun 2016 16:15:55 +0200
+Message-Id: <20fc3188ac35f4afe52d24d02a0750c5e9307c98.1467294011.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
+References: <cover.1467294011.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the Blanche device tree bindings, listing it as a supported board.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This allows to use checkpatch.pl to validate .dts files referring to the
-Blanche board.
+Add a "serial1" alias for the serial console (it is labeled "uart1").
+Add the serial port config to "chosen/stdout-path", which requires
+referring to the port by alias.
+Drop the "console=" parameter from the kernel command line, as it's no
+longer needed for DT-based platforms.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Rob Herring <robh@kernel.org>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes in version 2:
-- added Rob's ACK.
+ arch/arm/boot/dts/emev2-kzm9d.dts | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
- Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
- 1 file changed, 2 insertions(+)
-
-Index: renesas/Documentation/devicetree/bindings/arm/shmobile.txt
-===================================================================
---- renesas.orig/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ renesas/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -39,6 +39,8 @@ Boards:
-     compatible = "renesas,ape6evm", "renesas,r8a73a4"
-   - Atmark Techno Armadillo-800 EVA
-     compatible = "renesas,armadillo800eva"
-+  - Blanche (RTP0RC7792SEB00010S)
-+    compatible = "renesas,blanche", "renesas,r8a7792"
-   - BOCK-W
-     compatible = "renesas,bockw", "renesas,r8a7778"
-   - Genmai (RTK772100BC00000BR)
+diff --git a/arch/arm/boot/dts/emev2-kzm9d.dts b/arch/arm/boot/dts/emev2-kzm9d.dts
+index 9eb86f8f32c5..60d0a732833a 100644
+--- a/arch/arm/boot/dts/emev2-kzm9d.dts
++++ b/arch/arm/boot/dts/emev2-kzm9d.dts
+@@ -23,9 +23,13 @@
+ 		reg = <0x40000000 0x8000000>;
+ 	};
+ 
++	aliases {
++		serial1 = &uart1;
++	};
++
+ 	chosen {
+-		bootargs = "console=ttyS1,115200n81 ignore_loglevel root=/dev/nfs ip=dhcp";
+-		stdout-path = &uart1;
++		bootargs = "ignore_loglevel root=/dev/nfs ip=dhcp";
++		stdout-path = "serial1:115200n8";
+ 	};
+ 
+ 	gpio_keys {
+-- 
+2.7.0.rc3.207.g0ac5344
