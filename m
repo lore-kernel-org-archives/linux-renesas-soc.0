@@ -1,59 +1,277 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56228 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751525AbcF2SO7 (ORCPT
+Received: from mga04.intel.com ([192.55.52.120]:14118 "EHLO mga04.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751424AbcF3MvG (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 14:14:59 -0400
-Date: Wed, 29 Jun 2016 19:14:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linux-ALSA <alsa-devel@alsa-project.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org
-Message-ID: <20160629181441.GI6247@sirena.org.uk>
-References: <87fusysjam.wl%kuninori.morimoto.gx@renesas.com>
- <877feasj3i.wl%kuninori.morimoto.gx@renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+PbGPm1eXpwOoWkI"
-Content-Disposition: inline
-In-Reply-To: <877feasj3i.wl%kuninori.morimoto.gx@renesas.com>
-Subject: Re: [PATCH 06/39 v2] ASoC: simple-card-utils: add
- asoc_simple_card_parse_dailink_name()
+	Thu, 30 Jun 2016 08:51:06 -0400
+Message-ID: <1467290871.5576.15.camel@intel.com>
+Subject: Re: [PATCH] backlight: Avoid double fbcon backlight handling
+From: Imre Deak <imre.deak@intel.com>
+Reply-To: imre.deak@intel.com
+To: Chris Wilson <chris@chris-wilson.co.uk>,
+	intel-gfx@lists.freedesktop.org
+Cc: Zhang Rui <rui.zhang@intel.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@linux.ie>,
+	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Ben Skeggs <bskeggs@redhat.com>,
+	Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Bruno =?ISO-8859-1?Q?Pr=E9mont?= <bonbons@linux-vserver.org>,
+	Jiri Kosina <jikos@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Noralf =?ISO-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+	Jens Frederich <jfrederich@gmail.com>,
+	Daniel Drake <dsd@laptop.org>,
+	Jon Nettleton <jon.nettleton@gmail.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Milo Kim <milo.kim@ti.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Paul Mackerras <paulus@samba.org>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Antonino Daplas <adaplas@gmail.com>,
+	linux-acpi@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org
+Date: Thu, 30 Jun 2016 15:47:51 +0300
+In-Reply-To: <1467286256-8870-1-git-send-email-chris@chris-wilson.co.uk>
+References: <1467286256-8870-1-git-send-email-chris@chris-wilson.co.uk>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On to, 2016-06-30 at 12:30 +0100, Chris Wilson wrote:
+> Backlights controlled by i915.ko and only associated with its
+> connectors
+> and also only associated with the intel_drmfb fbcon, controlled by
+> i915.ko. In this situation, we already handle adjusting the backlight
+> when the fbcon is blanked/unblanked and do not require backlight
+> trying
+> to do the same.
+> 
+> Attempting to register with the fbdev as a client causes lockdep to
+> warn
+> about a dependency cycle:
+> 
+> [   18.983763] ======================================================
+> [   18.983763] [ INFO: possible circular locking dependency detected
+> ]
+> [   18.983766] 4.7.0-rc5+ #524 Tainted: G           O
+> [   18.983767] ------------------------------------------------------
+> -
+> [   18.983767] kworker/u8:0/6 is trying to acquire lock:
+> [   18.983777]  (&dev->mode_config.mutex){+.+.+.}, at:
+> [<ffffffff815afde0>] drm_modeset_lock_all+0x40/0x120
+> [   18.983777]
+>                but task is already holding lock:
+> [   18.983782]  ((fb_notifier_list).rwsem){++++.+}, at:
+> [<ffffffff810ac195>] __blocking_notifier_call_chain+0x35/0x70
+> [   18.983783]
+>                which lock already depends on the new lock.
+> 
+> [   18.983783]
+>                the existing dependency chain (in reverse order) is:
+> [   18.983785]
+>                -> #1 ((fb_notifier_list).rwsem){++++.+}:
+> [   18.983789]        [<ffffffff810df611>] lock_acquire+0xb1/0x200
+> [   18.983792]        [<ffffffff819a55b4>] down_write+0x44/0x80
+> [   18.983795]        [<ffffffff810abf91>]
+> blocking_notifier_chain_register+0x21/0xb0
+> [   18.983798]        [<ffffffff814c7448>]
+> fb_register_client+0x18/0x20
+> [   18.983800]        [<ffffffff814c6c86>]
+> backlight_device_register+0x136/0x260
+> [   18.983852]        [<ffffffffa0127eb2>]
+> intel_backlight_device_register+0xa2/0x160 [i915]
+> [   18.983892]        [<ffffffffa00f46be>]
+> intel_connector_register+0xe/0x10 [i915]
+> [   18.983932]        [<ffffffffa0112bfb>]
+> intel_dp_connector_register+0x1b/0x80 [i915]
+> [   18.983936]        [<ffffffff8159dfea>]
+> drm_connector_register+0x4a/0x80
+> [   18.983938]        [<ffffffff8159fe44>]
+> drm_connector_register_all+0x64/0xf0
+> [   18.983940]        [<ffffffff815a2a64>]
+> drm_modeset_register_all+0x174/0x1c0
+> [   18.983942]        [<ffffffff81599b72>] drm_dev_register+0xc2/0xd0
+> [   18.983976]        [<ffffffffa00621d7>]
+> i915_driver_load+0x1547/0x2200 [i915]
+> [   18.984010]        [<ffffffffa006d80f>] i915_pci_probe+0x4f/0x70
+> [i915]
+> [   18.984014]        [<ffffffff814a2135>] local_pci_probe+0x45/0xa0
+> [   18.984015]        [<ffffffff814a349b>]
+> pci_device_probe+0xdb/0x130
+> [   18.984018]        [<ffffffff815c07e3>]
+> driver_probe_device+0x223/0x440
+> [   18.984020]        [<ffffffff815c0ad5>] __driver_attach+0xd5/0x100
+> [   18.984022]        [<ffffffff815be386>] bus_for_each_dev+0x66/0xa0
+> [   18.984023]        [<ffffffff815c002e>] driver_attach+0x1e/0x20
+> [   18.984025]        [<ffffffff815bf9be>] bus_add_driver+0x1ee/0x280
+> [   18.984028]        [<ffffffff815c1810>] driver_register+0x60/0xe0
+> [   18.984030]        [<ffffffff814a1a10>]
+> __pci_register_driver+0x60/0x70
+> [   18.984063]        [<ffffffffa01a905b>] i915_init+0x5b/0x62 [i915]
+> [   18.984067]        [<ffffffff8100042d>] do_one_initcall+0x3d/0x150
+> [   18.984070]        [<ffffffff811a935b>] do_init_module+0x5f/0x1d9
+> [   18.984073]        [<ffffffff81124416>] load_module+0x20e6/0x27e0
+> [   18.984075]        [<ffffffff81124d63>]
+> SYSC_finit_module+0xc3/0xf0
+> [   18.984076]        [<ffffffff81124dae>] SyS_finit_module+0xe/0x10
+> [   18.984079]        [<ffffffff819a83a9>]
+> entry_SYSCALL_64_fastpath+0x1c/0xac
+> [   18.984081]
+>                -> #0 (&dev->mode_config.mutex){+.+.+.}:
+> [   18.984083]        [<ffffffff810df0ac>]
+> __lock_acquire+0x10fc/0x1260
+> [   18.984085]        [<ffffffff810df611>] lock_acquire+0xb1/0x200
+> [   18.984088]        [<ffffffff819a3097>]
+> mutex_lock_nested+0x67/0x3c0
+> [   18.984090]        [<ffffffff815afde0>]
+> drm_modeset_lock_all+0x40/0x120
+> [   18.984093]        [<ffffffff8158f79b>]
+> drm_fb_helper_restore_fbdev_mode_unlocked+0x2b/0x80
+> [   18.984095]        [<ffffffff8158f81d>]
+> drm_fb_helper_set_par+0x2d/0x50
+> [   18.984134]        [<ffffffffa0105f7a>]
+> intel_fbdev_set_par+0x1a/0x60 [i915]
+> [   18.984136]        [<ffffffff814c13c6>] fbcon_init+0x586/0x610
+> [   18.984139]        [<ffffffff8154d16a>] visual_init+0xca/0x130
+> [   18.984141]        [<ffffffff8154e611>]
+> do_bind_con_driver+0x1c1/0x3a0
+> [   18.984143]        [<ffffffff8154eaf6>]
+> do_take_over_console+0x116/0x180
+> [   18.984145]        [<ffffffff814bd3a7>]
+> do_fbcon_takeover+0x57/0xb0
+> [   18.984147]        [<ffffffff814c1e48>]
+> fbcon_event_notify+0x658/0x750
+> [   18.984150]        [<ffffffff810abcae>]
+> notifier_call_chain+0x3e/0xb0
+> [   18.984152]        [<ffffffff810ac1ad>]
+> __blocking_notifier_call_chain+0x4d/0x70
+> [   18.984154]        [<ffffffff810ac1e6>]
+> blocking_notifier_call_chain+0x16/0x20
+> [   18.984156]        [<ffffffff814c748b>]
+> fb_notifier_call_chain+0x1b/0x20
+> [   18.984158]        [<ffffffff814c86b1>]
+> register_framebuffer+0x251/0x330
+> [   18.984160]        [<ffffffff8158fa9f>]
+> drm_fb_helper_initial_config+0x25f/0x3f0
+> [   18.984199]        [<ffffffffa0106b48>]
+> intel_fbdev_initial_config+0x18/0x30 [i915]
+> [   18.984201]        [<ffffffff810adfd8>]
+> async_run_entry_fn+0x48/0x150
+> [   18.984203]        [<ffffffff810a3947>]
+> process_one_work+0x1e7/0x750
+> [   18.984205]        [<ffffffff810a3efb>] worker_thread+0x4b/0x4f0
+> [   18.984207]        [<ffffffff810aad4f>] kthread+0xef/0x110
+> [   18.984208]        [<ffffffff819a85ef>] ret_from_fork+0x1f/0x40
+> [   18.984209]
+>                other info that might help us debug this:
+> 
+> [   18.984210]  Possible unsafe locking scenario:
+> 
+> [   18.984210]        CPU0                    CPU1
+> [   18.984211]        ----                    ----
+> [   18.984212]   lock((fb_notifier_list).rwsem);
+> [   18.984213]                                lock(&dev-
+> >mode_config.mutex);
+> [   18.984215]                                lock((fb_notifier_list)
+> .rwsem);
+> [   18.984216]   lock(&dev->mode_config.mutex);
+> [   18.984216]
+>                 *** DEADLOCK ***
+> 
+> [   18.984217] 6 locks held by kworker/u8:0/6:
+> [   18.984220]  #0:  ("events_unbound"){.+.+.+}, at:
+> [<ffffffff810a38c9>] process_one_work+0x169/0x750
+> [   18.984223]  #1:  ((&entry->work)){+.+.+.}, at:
+> [<ffffffff810a38c9>] process_one_work+0x169/0x750
+> [   18.984227]  #2:  (registration_lock){+.+.+.}, at:
+> [<ffffffff814c8487>] register_framebuffer+0x27/0x330
+> [   18.984231]  #3:  (console_lock){+.+.+.}, at: [<ffffffff814c86ce>]
+> register_framebuffer+0x26e/0x330
+> [   18.984234]  #4:  (&fb_info->lock){+.+.+.}, at:
+> [<ffffffff814c78dd>] lock_fb_info+0x1d/0x40
+> [   18.984238]  #5:  ((fb_notifier_list).rwsem){++++.+}, at:
+> [<ffffffff810ac195>] __blocking_notifier_call_chain+0x35/0x70
+> [   18.984238]
+>                stack backtrace:
+> [   18.984241] CPU: 2 PID: 6 Comm: kworker/u8:0 Tainted:
+> G           O    4.7.0-rc5+ #524
+> [   18.984242] Hardware name: Intel Corp. Broxton P/NOTEBOOK, BIOS
+> APLKRVPA.X64.0138.B33.1606250842 06/25/2016
+> [   18.984244] Workqueue: events_unbound async_run_entry_fn
+> [   18.984248]  0000000000000000 ffff8800758577f0 ffffffff814507a5
+> ffffffff828b9900
+> [   18.984250]  ffffffff828b9900 ffff880075857830 ffffffff810dc6fa
+> ffff880075857880
+> [   18.984252]  ffff88007584d688 0000000000000005 0000000000000006
+> ffff88007584d6b0
+> [   18.984253] Call Trace:
+> [   18.984257]  [<ffffffff814507a5>] dump_stack+0x67/0x92
+> [   18.984259]  [<ffffffff810dc6fa>] print_circular_bug+0x1aa/0x200
+> [   18.984261]  [<ffffffff810df0ac>] __lock_acquire+0x10fc/0x1260
+> [   18.984264]  [<ffffffff810df611>] lock_acquire+0xb1/0x200
+> [   18.984266]  [<ffffffff815afde0>] ?
+> drm_modeset_lock_all+0x40/0x120
+> [   18.984267]  [<ffffffff815afde0>] ?
+> drm_modeset_lock_all+0x40/0x120
+> [   18.984269]  [<ffffffff819a3097>] mutex_lock_nested+0x67/0x3c0
+> [   18.984271]  [<ffffffff815afde0>] ?
+> drm_modeset_lock_all+0x40/0x120
+> [   18.984273]  [<ffffffff810fa85f>] ?
+> rcu_read_lock_sched_held+0x7f/0x90
+> [   18.984276]  [<ffffffff81208218>] ?
+> kmem_cache_alloc_trace+0x248/0x2b0
+> [   18.984277]  [<ffffffff815afdc5>] ?
+> drm_modeset_lock_all+0x25/0x120
+> [   18.984279]  [<ffffffff815afde0>] drm_modeset_lock_all+0x40/0x120
+> [   18.984281]  [<ffffffff8158f79b>]
+> drm_fb_helper_restore_fbdev_mode_unlocked+0x2b/0x80
+> [   18.984283]  [<ffffffff8158f81d>] drm_fb_helper_set_par+0x2d/0x50
+> [   18.984322]  [<ffffffffa0105f7a>] intel_fbdev_set_par+0x1a/0x60
+> [i915]
+> [   18.984324]  [<ffffffff814c13c6>] fbcon_init+0x586/0x610
+> [   18.984326]  [<ffffffff8154d16a>] visual_init+0xca/0x130
+> [   18.984328]  [<ffffffff8154e611>] do_bind_con_driver+0x1c1/0x3a0
+> [   18.984330]  [<ffffffff8154eaf6>] do_take_over_console+0x116/0x180
+> [   18.984332]  [<ffffffff814bd3a7>] do_fbcon_takeover+0x57/0xb0
+> [   18.984334]  [<ffffffff814c1e48>] fbcon_event_notify+0x658/0x750
+> [   18.984336]  [<ffffffff810abcae>] notifier_call_chain+0x3e/0xb0
+> [   18.984338]  [<ffffffff810ac1ad>]
+> __blocking_notifier_call_chain+0x4d/0x70
+> [   18.984340]  [<ffffffff810ac1e6>]
+> blocking_notifier_call_chain+0x16/0x20
+> [   18.984342]  [<ffffffff814c748b>] fb_notifier_call_chain+0x1b/0x20
+> [   18.984344]  [<ffffffff814c86b1>] register_framebuffer+0x251/0x330
+> [   18.984347]  [<ffffffff815b7e8d>] ?
+> vga_switcheroo_client_fb_set+0x5d/0x70
+> [   18.984349]  [<ffffffff8158fa9f>]
+> drm_fb_helper_initial_config+0x25f/0x3f0
+> [   18.984388]  [<ffffffffa0106b48>]
+> intel_fbdev_initial_config+0x18/0x30 [i915]
+> [   18.984389]  [<ffffffff810adfd8>] async_run_entry_fn+0x48/0x150
+> [   18.984391]  [<ffffffff810a3947>] process_one_work+0x1e7/0x750
+> [   18.984392]  [<ffffffff810a38c9>] ? process_one_work+0x169/0x750
+> [   18.984394]  [<ffffffff810a3efb>] worker_thread+0x4b/0x4f0
+> [   18.984396]  [<ffffffff810a3eb0>] ? process_one_work+0x750/0x750
+> [   18.984398]  [<ffffffff810aad4f>] kthread+0xef/0x110
+> [   18.984401]  [<ffffffff819a85ef>] ret_from_fork+0x1f/0x40
+> [   18.984402]  [<ffffffff810aac60>] ? kthread_stop+0x2e0/0x2e0
+> 
+> Reported-by: Imre Deak <imre.deak@intel.com>
 
---+PbGPm1eXpwOoWkI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks, it gets rid of the problem:
+Tested-by: Imre Deak <imre.deak@intel.com>
 
-On Tue, May 31, 2016 at 09:01:09AM +0000, Kuninori Morimoto wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->=20
-> Current simple-card is creating dai_link->name / dai_link->stream_name.
-> These are based on CPU + Codec name.
-> It can be "fe.CPU" or "be.Codec" if it was DPCM.
-> This patch adds simple card common function for it.
-
-This looks like it's about putting DPCM into the DT.  Given that DPCM is
-very much an implementation detail we're trying to get rid of this seems
-like it's going in the wrong direction.  What's the intended use?
-
---+PbGPm1eXpwOoWkI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXdBAQAAoJECTWi3JdVIfQEEEH/22e1dgC5bgePMbHjyxKMOfD
-JAV1yZ9phYyfdTxkaW90grxqLPF0UqoN3nvj2zLXHqhyL8vKDq8UakTcEHExoxvw
-ip80SjBzTl95YrIZCRrFC+efsvsFVAZ7eJidGSJVX9qT5Q8qiSSHI9M8GS+2ari1
-HzfAJdeYFwj9GeySX8ribG9HYUOpZs3y4NjNlzH15QBi0KzS7V3B3o71MErh56LU
-qDMMBH11MMP8xOGjM06ERxu0G+vESBhScoY++oXwwVUr3KvNlVYem22SL0MOvj5Z
-+WMTnX6Pp+hXSJ2pELv2ZfBEjE8N+N2AkgW0QUDhd2zXwf9CZFRq/+OottapItA=
-=7wMO
------END PGP SIGNATURE-----
-
---+PbGPm1eXpwOoWkI--
+--Imre
