@@ -1,46 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:45291 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751419AbcFJKGt (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36286 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751959AbcF3OQe (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 06:06:49 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: dts: r8a7795: Add missing blank lines between cpu nodes
-Date: Fri, 10 Jun 2016 12:06:45 +0200
-Message-Id: <1465553205-7159-1-git-send-email-geert+renesas@glider.be>
+	Thu, 30 Jun 2016 10:16:34 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/41] ARM: dts: lager: Name vin pfc subnode after device name
+Date: Thu, 30 Jun 2016 16:15:28 +0200
+Message-Id: <da84fd93486b4cd2a32c6a2effc5368bcb2269bc.1467294011.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
+References: <cover.1467294011.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-For consistency with a57_0/a57_1 cpu nodes, and all other nodes.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Name the Pin Function Controller subnode for VIN1 after its device name,
+instead of using the generic and indexless "vin".
+
+This avoids conflicts when enabling support for more video inputs later,
+either here or in a DT overlay.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/r8a7790-lager.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index fca68d7b047dfa1d..2edc38a0d0ae7f38 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -53,6 +53,7 @@
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-+
- 		a57_2: cpu@2 {
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x2>;
-@@ -61,6 +62,7 @@
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-+
- 		a57_3: cpu@3 {
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x3>;
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 09b633f5ad07..52b56fcaddf2 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -427,7 +427,7 @@
+ 		function = "usb2";
+ 	};
+ 
+-	vin1_pins: vin {
++	vin1_pins: vin1 {
+ 		groups = "vin1_data8", "vin1_clk";
+ 		function = "vin1";
+ 	};
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
