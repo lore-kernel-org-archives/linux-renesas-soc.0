@@ -1,105 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:34459 "EHLO
-	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751678AbcFCVX0 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36559 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932165AbcF3ORz (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 3 Jun 2016 17:23:26 -0400
-Received: by mail-lf0-f47.google.com with SMTP id k98so62302790lfi.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Jun 2016 14:23:25 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	magnus.damm@gmail.com
-Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 04/11] ARM: shmobile: r8a7792: basic SoC support
-Date: Sat, 04 Jun 2016 00:23:22 +0300
-Message-ID: <2184018.VuMqgqkuBr@wasted.cogentembedded.com>
-In-Reply-To: <3446154.oZ24315zaL@wasted.cogentembedded.com>
-References: <3446154.oZ24315zaL@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Thu, 30 Jun 2016 10:17:55 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 6/8] ARM: shmobile: smp: Add function to prioritize DT SMP
+Date: Thu, 30 Jun 2016 16:16:22 +0200
+Message-Id: <c21af444eace56619e33df0b1fc67ec2e33481ac.1467293089.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467293089.git.horms+renesas@verge.net.au>
+References: <cover.1467293089.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add minimal support for the R-Car V2H (R8A7792) SoC.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add a function to check if other DT based method is available, and
+if so return false to not hook up smp_ops from the machine vector.
 
+This results in that DT-based SMP support has priority over older
+C-based smp_ops code, and in case DT-based SMP support code does not
+exist in the DTB then the old smp_ops code will still work as-is.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes in version 2:
-- removed 'select I2C';
-- added Simon's ACK and Geert's tag too.
+ arch/arm/mach-shmobile/common.h  | 1 +
+ arch/arm/mach-shmobile/platsmp.c | 6 ++++++
+ 2 files changed, 7 insertions(+)
 
- arch/arm/mach-shmobile/Kconfig         |    4 +++
- arch/arm/mach-shmobile/Makefile        |    1 
- arch/arm/mach-shmobile/setup-r8a7792.c |   34 +++++++++++++++++++++++++++++++++
- 3 files changed, 39 insertions(+)
-
-Index: renesas/arch/arm/mach-shmobile/Kconfig
-===================================================================
---- renesas.orig/arch/arm/mach-shmobile/Kconfig
-+++ renesas/arch/arm/mach-shmobile/Kconfig
-@@ -86,6 +86,10 @@ config ARCH_R8A7791
- 	select ARCH_RCAR_GEN2
- 	select I2C
- 
-+config ARCH_R8A7792
-+	bool "R-Car V2H (R8A77920)"
-+	select ARCH_RCAR_GEN2
+diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
+index 3b562d87826d..1a8f7b3ab449 100644
+--- a/arch/arm/mach-shmobile/common.h
++++ b/arch/arm/mach-shmobile/common.h
+@@ -10,6 +10,7 @@ extern void shmobile_smp_sleep(void);
+ extern void shmobile_smp_hook(unsigned int cpu, unsigned long fn,
+ 			      unsigned long arg);
+ extern bool shmobile_smp_cpu_can_disable(unsigned int cpu);
++extern bool shmobile_smp_init_fallback_ops(void);
+ extern void shmobile_boot_scu(void);
+ extern void shmobile_smp_scu_prepare_cpus(phys_addr_t scu_base_phys,
+ 					  unsigned int max_cpus);
+diff --git a/arch/arm/mach-shmobile/platsmp.c b/arch/arm/mach-shmobile/platsmp.c
+index b23378f3d7e1..f3dba6f356e2 100644
+--- a/arch/arm/mach-shmobile/platsmp.c
++++ b/arch/arm/mach-shmobile/platsmp.c
+@@ -36,3 +36,9 @@ bool shmobile_smp_cpu_can_disable(unsigned int cpu)
+ 	return true; /* Hotplug of any CPU is supported */
+ }
+ #endif
 +
- config ARCH_R8A7793
- 	bool "R-Car M2-N (R8A7793)"
- 	select ARCH_RCAR_GEN2
-Index: renesas/arch/arm/mach-shmobile/Makefile
-===================================================================
---- renesas.orig/arch/arm/mach-shmobile/Makefile
-+++ renesas/arch/arm/mach-shmobile/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7
- obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
- obj-$(CONFIG_ARCH_R8A7790)	+= setup-r8a7790.o
- obj-$(CONFIG_ARCH_R8A7791)	+= setup-r8a7791.o
-+obj-$(CONFIG_ARCH_R8A7792)	+= setup-r8a7792.o
- obj-$(CONFIG_ARCH_R8A7793)	+= setup-r8a7793.o
- obj-$(CONFIG_ARCH_R8A7794)	+= setup-r8a7794.o
- obj-$(CONFIG_ARCH_EMEV2)	+= setup-emev2.o
-Index: renesas/arch/arm/mach-shmobile/setup-r8a7792.c
-===================================================================
---- /dev/null
-+++ renesas/arch/arm/mach-shmobile/setup-r8a7792.c
-@@ -0,0 +1,34 @@
-+/*
-+ * r8a7792 processor support
-+ *
-+ * Copyright (C) 2014  Renesas Electronics Corporation
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/of_platform.h>
-+
-+#include <asm/mach/arch.h>
-+
-+#include "common.h"
-+#include "rcar-gen2.h"
-+
-+static const char * const r8a7792_boards_compat_dt[] __initconst = {
-+	"renesas,r8a7792",
-+	NULL,
-+};
-+
-+DT_MACHINE_START(R8A7792_DT, "Generic R8A7792 (Flattened Device Tree)")
-+	.init_early	= shmobile_init_delay,
-+	.init_late	= shmobile_init_late,
-+	.init_time	= rcar_gen2_timer_init,
-+	.reserve	= rcar_gen2_reserve,
-+	.dt_compat	= r8a7792_boards_compat_dt,
-+MACHINE_END
++bool __init shmobile_smp_init_fallback_ops(void)
++{
++	/* fallback on PSCI/smp_ops if no other DT based method is detected */
++	return platform_can_secondary_boot() ? true : false;
++}
+-- 
+2.7.0.rc3.207.g0ac5344
