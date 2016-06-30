@@ -1,50 +1,36 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Gustavo Padovan <gustavo@padovan.org>
-To: dri-devel@lists.freedesktop.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	David Airlie <airlied@linux.ie>,
-	linux-renesas-soc@vger.kernel.org (open list:DRM DRIVERS FOR RENESAS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 14/14] drm/shmobile: use drm_crtc_vblank_{get,put}()
-Date: Mon,  6 Jun 2016 11:41:45 -0300
-Message-Id: <1465224105-21485-14-git-send-email-gustavo@padovan.org>
-In-Reply-To: <1465224105-21485-1-git-send-email-gustavo@padovan.org>
-References: <1465224105-21485-1-git-send-email-gustavo@padovan.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:34203 "EHLO
+	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752043AbcF3XLO (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 30 Jun 2016 19:11:14 -0400
+Received: by mail-lf0-f49.google.com with SMTP id h129so65942120lfh.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Jun 2016 16:11:13 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/3] Add R8A7792/Blanche PFC support
+Date: Fri, 01 Jul 2016 02:05:15 +0300
+Message-ID: <2144803.0K8qXzjIFq@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Hello.
 
-Replace the legacy drm_vblank_{get,put}() with the new helper functions.
+   Here's the set of 3 patches against Simon Horman's 'renesas.git' repo,
+'renesas-devel-20160630-v4.7-rc5' tag. We're adding the R8A7792 PFC node and
+the describe the pins for the SCIFs and SMSC LAN89218 Ethernet chip found on
+the Blanche board). These patches depend on the R8A7792 PFC driver patchset
+in order to work properly.
 
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/shmobile/shmob_drm_crtc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+[1/3] ARM: dts: r8a7792: add PFC support
+[2/3] ARM: dts: blanche: add SCIF pins
+[3/3] ARM: dts: blanche: add Ethernet pins
 
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-index 1e154fc..6547b1d 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-@@ -441,7 +441,7 @@ void shmob_drm_crtc_finish_page_flip(struct shmob_drm_crtc *scrtc)
- 	scrtc->event = NULL;
- 	if (event) {
- 		drm_crtc_send_vblank_event(&scrtc->crtc, event);
--		drm_vblank_put(dev, 0);
-+		drm_crtc_vblank_put(&scrtc->crtc);
- 	}
- 	spin_unlock_irqrestore(&dev->event_lock, flags);
- }
-@@ -467,7 +467,7 @@ static int shmob_drm_crtc_page_flip(struct drm_crtc *crtc,
- 
- 	if (event) {
- 		event->pipe = 0;
--		drm_vblank_get(dev, 0);
-+		drm_crtc_vblank_get(&scrtc->crtc);
- 		spin_lock_irqsave(&dev->event_lock, flags);
- 		scrtc->event = event;
- 		spin_unlock_irqrestore(&dev->event_lock, flags);
--- 
-2.5.5
+WBR, Sergei
