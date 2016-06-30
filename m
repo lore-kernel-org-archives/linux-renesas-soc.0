@@ -1,84 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:42331 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750926AbcFEJsb (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36559 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932165AbcF3OR7 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sun, 5 Jun 2016 05:48:31 -0400
-Date: Sun, 5 Jun 2016 11:48:23 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Robin Gong <b38343@freescale.com>
-Subject: Re: [PATCH 1/7] watchdog: add watchdog pretimeout framework
-Message-ID: <20160605094823.GB1497@katana>
-References: <1464183151-4912-1-git-send-email-wsa@the-dreams.de>
- <1464183151-4912-2-git-send-email-wsa@the-dreams.de>
- <5747041B.2050707@mentor.com>
- <20160526164136.GB1631@katana>
- <20160526223717.GA6659@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MfFXiAuoTsnnDAfZ"
-Content-Disposition: inline
-In-Reply-To: <20160526223717.GA6659@roeck-us.net>
+	Thu, 30 Jun 2016 10:17:59 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 7/8] ARM: shmobile: r8a7790: Prioritize DT APMU support
+Date: Thu, 30 Jun 2016 16:16:23 +0200
+Message-Id: <f5d70b9cee2282ecbd98c60e5faf46a896c188a3.1467293089.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467293089.git.horms+renesas@verge.net.au>
+References: <cover.1467293089.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Magnus Damm <damm+renesas@opensource.se>
 
---MfFXiAuoTsnnDAfZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Adjust the r8a7790 SoC support code to not configure any non-DT SMP code
+in case the DT-based enable-method has been installed already.
 
-On Thu, May 26, 2016 at 03:37:17PM -0700, Guenter Roeck wrote:
-> On Thu, May 26, 2016 at 06:41:36PM +0200, Wolfram Sang wrote:
-> [ ... ]
-> >=20
-> > No doubt about that. I had some ideas and thought it is easier to talk
-> > over code. If you want to rebase it, too, I'd be happy to check what you
-> > came up with to solve the problems. I might still argue that I prefer
-> > the less-code approach, but it will be Guenter's / Wim's decision, of
-> > course.
-> >=20
-> I have a large back-log of patches to review. Simple patches with less co=
-de
-> will get preferential treating. The more complex, the higher the likelyho=
-od
-> that the patches get pushed to the end of the queue.
->=20
-> Giving a quick glance, I liked Wolfram's patches because they seemed to
-> be simple and straightforward. I hope the next version won't add too much
-> additional complexity.
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/mach-shmobile/setup-r8a7790.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Vladimir, did you have time to look into this?
-
-I can offer to resend this series on-top of v4.7-rc1 with the core patch
-re-attributed to Vladimir. Then we can review the basic stuff now, and
-can discuss/deal with the bottom half handling incrementally.
-
-Sounds good?
-
-
---MfFXiAuoTsnnDAfZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXU/VnAAoJEBQN5MwUoCm2rUMP/j4Qduipn3DYN0XWDI8OOeT7
-8S+gVrr8fblUFZpUtpEj7kBQDX2otOqlWYZptDUQcKqhfNcjaExq7PjoZsZ9t3ud
-f17Tq1QllNGSPAKBpNio9+ou3FblmGFYuLrg5Ic2bD6r5wVlE3LKLyiDtYk6tIbq
-V5wuuIGh0oHWrBQ7zzrOcrqKy4BHDtQqfkIS3luBe/+AOXMRFTMGifZ7UOm7i/qf
-SWhPe0hafFIyzkklAqtLGkbKSQ9y6wJyPy22NrAjNqtQ0WgXV7pKA6Ijl+ziRM3F
-bDBDBwLyg/sR7lGc4axjdWM9It32Uqy/YN4M9Xp3MIpANq4YuP+CjvtEUQw0e/Mj
-QmflosgIK83QKDg2JW1Z8BVJzvkQ+W6Qyv3pp8ZS0YrEIRqqjmmmS64kAQOs8C2e
-ogAG+lhLyTiOgPoogN7TBfaGC26cAf6YDtTJok2pg+s27RSZdqAY7mmolbeSnsrS
-ya8DboyTmm7L7KXyF8CnGvc05dmpIFASOvu+GhymlasqFz2V0TdGEjPMfga41627
-DYa8Ug7mukemymVM6AdPxgCwaMNbn63/RB585u6jL2Hd6Rth2f3A8AF6xQdSHZXC
-mKz9iiww/OjQn3vKfVWVdlluKozy4Vjbc6PMCw1utxs/ACpF/g18gxVonayZyUc4
-MBIJgpk3w5a9610kS3Av
-=t/3i
------END PGP SIGNATURE-----
-
---MfFXiAuoTsnnDAfZ--
+diff --git a/arch/arm/mach-shmobile/setup-r8a7790.c b/arch/arm/mach-shmobile/setup-r8a7790.c
+index 3a18af4922b4..3506327e0bed 100644
+--- a/arch/arm/mach-shmobile/setup-r8a7790.c
++++ b/arch/arm/mach-shmobile/setup-r8a7790.c
+@@ -28,6 +28,7 @@ static const char * const r8a7790_boards_compat_dt[] __initconst = {
+ };
+ 
+ DT_MACHINE_START(R8A7790_DT, "Generic R8A7790 (Flattened Device Tree)")
++	.smp_init	= shmobile_smp_init_fallback_ops,
+ 	.smp		= smp_ops(r8a7790_smp_ops),
+ 	.init_early	= shmobile_init_delay,
+ 	.init_time	= rcar_gen2_timer_init,
+-- 
+2.7.0.rc3.207.g0ac5344
