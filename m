@@ -1,52 +1,115 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Return-Path: <kieran@ksquared.org.uk>
-Sender: Kieran Bingham <kieran@ksquared.org.uk>
-From: Kieran Bingham <kieran@bingham.xyz>
-To: laurent.pinchart@ideasonboard.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kieran@bingham.xyz
-Subject: [PATCH v2 1/3] dt-bindings: Update Renesas R-Car FCP DT binding
-Date: Thu, 30 Jun 2016 17:50:28 +0100
-Message-Id: <1467305430-25660-2-git-send-email-kieran@bingham.xyz>
-In-Reply-To: <1467305430-25660-1-git-send-email-kieran@bingham.xyz>
-References: <1467305430-25660-1-git-send-email-kieran@bingham.xyz>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36101 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752702AbcF3OQA (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 30 Jun 2016 10:16:00 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/9] clk: renesas: Add r8a7796 CPG Core Clock Definitions
+Date: Thu, 30 Jun 2016 16:15:01 +0200
+Message-Id: <aba4d56352addfdd8778d9c3ae79f5e4899622fc.1467291676.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467291676.git.horms+renesas@verge.net.au>
+References: <cover.1467291676.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The FCP driver can also support the FCPF variant for FDP1 compatible
-processing.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+Add all R-Car M3-W Clock Pulse Generator Core Clock Outputs, as listed
+in Table 8.2b ("List of Clocks [R-Car M3-W]") of the R-Car Gen3
+datasheet (rev. 0.51 + Errata for Rev051 Mar 31 2016).
+
+Note that internal CPG clocks (S0, S1, S2, S3, SDSRC, and SSPSRC) are
+not included, as they are used as internal clock sources only, and never
+referenced from DT.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/media/renesas,fcp.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ include/dt-bindings/clock/r8a7796-cpg-mssr.h | 69 ++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a7796-cpg-mssr.h
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-index 6a12960609d8..271dcfdb5a76 100644
---- a/Documentation/devicetree/bindings/media/renesas,fcp.txt
-+++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-@@ -7,12 +7,14 @@ conversion of AXI transactions in order to reduce the memory bandwidth.
- 
- There are three types of FCP: FCP for Codec (FCPC), FCP for VSP (FCPV) and FCP
- for FDP (FCPF). Their configuration and behaviour depend on the module they
--are paired with. These DT bindings currently support the FCPV only.
-+are paired with. These DT bindings currently support the FCPV and FCPF.
- 
-  - compatible: Must be one or more of the following
- 
-    - "renesas,r8a7795-fcpv" for R8A7795 (R-Car H3) compatible 'FCP for VSP'
-+   - "renesas,r8a7795-fcpf" for R8A7795 (R-Car H3) compatible 'FCP for FDP'
-    - "renesas,fcpv" for generic compatible 'FCP for VSP'
-+   - "renesas,fcpf" for generic compatible 'FCP for FDP'
- 
-    When compatible with the generic version, nodes must list the
-    SoC-specific version corresponding to the platform first, followed by the
+diff --git a/include/dt-bindings/clock/r8a7796-cpg-mssr.h b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
+new file mode 100644
+index 000000000000..1e5942695f0d
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
+@@ -0,0 +1,69 @@
++/*
++ * Copyright (C) 2016 Renesas Electronics Corp.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7796 CPG Core Clocks */
++#define R8A7796_CLK_Z			0
++#define R8A7796_CLK_Z2			1
++#define R8A7796_CLK_ZR			2
++#define R8A7796_CLK_ZG			3
++#define R8A7796_CLK_ZTR			4
++#define R8A7796_CLK_ZTRD2		5
++#define R8A7796_CLK_ZT			6
++#define R8A7796_CLK_ZX			7
++#define R8A7796_CLK_S0D1		8
++#define R8A7796_CLK_S0D2		9
++#define R8A7796_CLK_S0D3		10
++#define R8A7796_CLK_S0D4		11
++#define R8A7796_CLK_S0D6		12
++#define R8A7796_CLK_S0D8		13
++#define R8A7796_CLK_S0D12		14
++#define R8A7796_CLK_S1D1		15
++#define R8A7796_CLK_S1D2		16
++#define R8A7796_CLK_S1D4		17
++#define R8A7796_CLK_S2D1		18
++#define R8A7796_CLK_S2D2		19
++#define R8A7796_CLK_S2D4		20
++#define R8A7796_CLK_S3D1		21
++#define R8A7796_CLK_S3D2		22
++#define R8A7796_CLK_S3D4		23
++#define R8A7796_CLK_LB			24
++#define R8A7796_CLK_CL			25
++#define R8A7796_CLK_ZB3			26
++#define R8A7796_CLK_ZB3D2		27
++#define R8A7796_CLK_ZB3D4		28
++#define R8A7796_CLK_CR			29
++#define R8A7796_CLK_CRD2		30
++#define R8A7796_CLK_SD0H		31
++#define R8A7796_CLK_SD0			32
++#define R8A7796_CLK_SD1H		33
++#define R8A7796_CLK_SD1			34
++#define R8A7796_CLK_SD2H		35
++#define R8A7796_CLK_SD2			36
++#define R8A7796_CLK_SD3H		37
++#define R8A7796_CLK_SD3			38
++#define R8A7796_CLK_SSP2		39
++#define R8A7796_CLK_SSP1		40
++#define R8A7796_CLK_SSPRS		41
++#define R8A7796_CLK_RPC			42
++#define R8A7796_CLK_RPCD2		43
++#define R8A7796_CLK_MSO			44
++#define R8A7796_CLK_CANFD		45
++#define R8A7796_CLK_HDMI		46
++#define R8A7796_CLK_CSI0		47
++#define R8A7796_CLK_CSIREF		48
++#define R8A7796_CLK_CP			49
++#define R8A7796_CLK_CPEX		50
++#define R8A7796_CLK_R			51
++#define R8A7796_CLK_OSC			52
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7796_CPG_MSSR_H__ */
 -- 
-2.7.4
+2.7.0.rc3.207.g0ac5344
