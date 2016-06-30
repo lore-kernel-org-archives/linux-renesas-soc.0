@@ -1,53 +1,75 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:40080 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751638AbcF0Rjl (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 27 Jun 2016 13:39:41 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] clk: renesas: r8a7796: Add watchdog core clocks
-Date: Mon, 27 Jun 2016 19:39:24 +0200
-Message-Id: <1467049165-7025-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1467049165-7025-1-git-send-email-geert+renesas@glider.be>
-References: <1467049165-7025-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] [media] vsp1: use __maybe_unused for PM handlers
+Date: Thu, 30 Jun 2016 14:23:02 +0200
+Message-Id: <20160630122325.4002029-1-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add all core clocks related to the Watchdog Timer (WDT) controller on
-the Renesas R-Car M3-W (r8a7796) SoC: OSC, Internal RCLK, and RCLK.
+Building without CONFIG_PM results in a harmless warning from
+slightly incorrect #ifdef guards:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+drivers/media/platform/vsp1/vsp1_drv.c:525:12: error: 'vsp1_pm_runtime_resume' defined but not used [-Werror=unused-function]
+drivers/media/platform/vsp1/vsp1_drv.c:516:12: error: 'vsp1_pm_runtime_suspend' defined but not used [-Werror=unused-function]
+
+This removes the existing #ifdef and instead marks all four
+PM functions as __maybe_unused.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 1e6af546ee66 ("[media] v4l: vsp1: Implement runtime PM support")
 ---
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/media/platform/vsp1/vsp1_drv.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index c84b549c14d2e57d..ea9ed38943a3969c 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -45,6 +45,7 @@ enum clk_ids {
- 	CLK_S3,
- 	CLK_SDSRC,
- 	CLK_SSPSRC,
-+	CLK_RINT,
+diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
+index e655639af7e2..0c7fd43d6fb7 100644
+--- a/drivers/media/platform/vsp1/vsp1_drv.c
++++ b/drivers/media/platform/vsp1/vsp1_drv.c
+@@ -491,8 +491,7 @@ void vsp1_device_put(struct vsp1_device *vsp1)
+  * Power Management
+  */
  
- 	/* Module Clocks */
- 	MOD_CLK_BASE
-@@ -94,6 +95,11 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+-#ifdef CONFIG_PM_SLEEP
+-static int vsp1_pm_suspend(struct device *dev)
++static int __maybe_unused vsp1_pm_suspend(struct device *dev)
+ {
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
  
- 	DEF_FIXED("cl",         R8A7796_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
- 	DEF_FIXED("cp",         R8A7796_CLK_CP,    CLK_EXTAL,      2, 1),
-+
-+	DEF_DIV6_RO("osc",      R8A7796_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
-+	DEF_DIV6_RO("r_int",    CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
-+
-+	DEF_BASE("r",           R8A7796_CLK_R,     CLK_TYPE_GEN3_R, CLK_RINT),
- };
+@@ -502,7 +501,7 @@ static int vsp1_pm_suspend(struct device *dev)
+ 	return 0;
+ }
  
- static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+-static int vsp1_pm_resume(struct device *dev)
++static int __maybe_unused vsp1_pm_resume(struct device *dev)
+ {
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+ 
+@@ -511,9 +510,8 @@ static int vsp1_pm_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-#endif
+ 
+-static int vsp1_pm_runtime_suspend(struct device *dev)
++static int __maybe_unused vsp1_pm_runtime_suspend(struct device *dev)
+ {
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+ 
+@@ -522,7 +520,7 @@ static int vsp1_pm_runtime_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int vsp1_pm_runtime_resume(struct device *dev)
++static int __maybe_unused vsp1_pm_runtime_resume(struct device *dev)
+ {
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+ 	int ret;
 -- 
-1.9.1
+2.9.0
