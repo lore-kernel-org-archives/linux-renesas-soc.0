@@ -1,49 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752335AbcF3OQu (ORCPT
+	with ESMTP id S932124AbcF3ORW (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:16:50 -0400
+	Thu, 30 Jun 2016 10:17:22 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/41] ARM: dts: bockw: Name serial port pfc subnode after device name
-Date: Thu, 30 Jun 2016 16:15:24 +0200
-Message-Id: <c32149c7fd9d3716c38954bc3a99fff90a74abf7.1467294011.git.horms+renesas@verge.net.au>
+Subject: [PATCH 28/41] ARM: dts: blanche: add Ethernet support
+Date: Thu, 30 Jun 2016 16:15:48 +0200
+Message-Id: <f80b6dfd5e56f3908832ce89f96ae94352b616c2.1467294011.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
 References: <cover.1467294011.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Name the Pin Function Controller subnode for SCIF0 after its device
-name, instead of after the serial port alias.
+R8A7792  SoC  doesn't have the EtherMAC core, so SMSC  LAN89218  Ethernet
+chip was used instead on the Blanche board; this chip  is compatible with
+SMSC LAN9115  for  which there's a (device tree aware) driver. Describe
+the  chip in  the  Blanche device tree;  enable DHCP and NFS root in the
+kernel command line for the kernel booting.
 
-This avoids conflicts when enabling support for more serial ports later,
-either here or in a DT overlay.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7778-bockw.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7792-blanche.dts | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7778-bockw.dts b/arch/arm/boot/dts/r8a7778-bockw.dts
-index 0a0bd3b6bb40..211d239d9041 100644
---- a/arch/arm/boot/dts/r8a7778-bockw.dts
-+++ b/arch/arm/boot/dts/r8a7778-bockw.dts
-@@ -129,7 +129,7 @@
- 	pinctrl-0 = <&scif_clk_pins>;
- 	pinctrl-names = "default";
- 
--	scif0_pins: serial0 {
-+	scif0_pins: scif0 {
- 		groups = "scif0_data_a", "scif0_ctrl";
- 		function = "scif0";
+diff --git a/arch/arm/boot/dts/r8a7792-blanche.dts b/arch/arm/boot/dts/r8a7792-blanche.dts
+index e277d924441b..e7b40f0e7da6 100644
+--- a/arch/arm/boot/dts/r8a7792-blanche.dts
++++ b/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -22,7 +22,7 @@
  	};
+ 
+ 	chosen {
+-		bootargs = "ignore_loglevel";
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+@@ -30,6 +30,27 @@
+ 		device_type = "memory";
+ 		reg = <0 0x40000000 0 0x40000000>;
+ 	};
++
++	d3_3v: regulator-3v3 {
++		compatible = "regulator-fixed";
++		regulator-name = "D3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	ethernet@18000000 {
++		compatible = "smsc,lan89218", "smsc,lan9115";
++		reg = <0 0x18000000 0 0x100>;
++		phy-mode = "mii";
++		interrupt-parent = <&irqc>;
++		interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
++		smsc,irq-push-pull;
++		reg-io-width = <4>;
++		vddvario-supply = <&d3_3v>;
++		vdd33a-supply = <&d3_3v>;
++	};
+ };
+ 
+ &extal_clk {
 -- 
 2.7.0.rc3.207.g0ac5344
