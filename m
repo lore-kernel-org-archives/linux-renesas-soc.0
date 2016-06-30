@@ -1,52 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:59387 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933307AbcFJNBQ (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:54541 "EHLO
+	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932451AbcF3PZJ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 10 Jun 2016 09:01:16 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 05/19] ARM: dts: marzen: Name serial port pfc subnodes after device names
-Date: Fri, 10 Jun 2016 15:00:51 +0200
-Message-Id: <1465563665-2231-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
-References: <1465563665-2231-1-git-send-email-geert+renesas@glider.be>
+	Thu, 30 Jun 2016 11:25:09 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: vinod.koul@intel.com, geert+renesas@glider.be,
+	laurent.pinchart+renesas@ideasonboard.com, mfarooq@visteon.com,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 2/4] dmaengine: rcar-dmac: warn if transfer cannot start as TE = 1
+Date: Thu, 30 Jun 2016 17:15:16 +0200
+Message-Id: <20160630151518.32329-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160630151518.32329-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160630151518.32329-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Name the Pin Function Controller subnodes for SCIF2 and SCIF4 after
-their device names, instead of using some arbitrary names that look like
-serial port aliases, but differ from the actual aliases.
+The documentation states one should make sure both DE and TE are cleared
+before starting a transaction. This patch extends the current warning to
+look at both DE and TE.
 
-This avoids conflicts when enabling support for more serial ports later,
-either here or in a DT overlay.
+Based on previous work from Muhammad Hamza Farooq.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Suggested-by: Muhammad Hamza Farooq <mfarooq@visteon.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7779-marzen.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/dma/sh/rcar-dmac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7779-marzen.dts b/arch/arm/boot/dts/r8a7779-marzen.dts
-index cec79a6347c036f7..013e6f510b0faae4 100644
---- a/arch/arm/boot/dts/r8a7779-marzen.dts
-+++ b/arch/arm/boot/dts/r8a7779-marzen.dts
-@@ -195,12 +195,12 @@
- 		};
- 	};
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index 791a064..7f26576 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -311,7 +311,7 @@ static bool rcar_dmac_chan_is_busy(struct rcar_dmac_chan *chan)
+ {
+ 	u32 chcr = rcar_dmac_chan_read(chan, RCAR_DMACHCR);
  
--	scif2_pins: serial2 {
-+	scif2_pins: scif2 {
- 		groups = "scif2_data_c";
- 		function = "scif2";
- 	};
+-	return (chcr & (RCAR_DMACHCR_DE | RCAR_DMACHCR_TE)) == RCAR_DMACHCR_DE;
++	return !!(chcr & (RCAR_DMACHCR_DE | RCAR_DMACHCR_TE));
+ }
  
--	scif4_pins: serial4 {
-+	scif4_pins: scif4 {
- 		groups = "scif4_data";
- 		function = "scif4";
- 	};
+ static void rcar_dmac_chan_start_xfer(struct rcar_dmac_chan *chan)
 -- 
-1.9.1
+2.9.0
