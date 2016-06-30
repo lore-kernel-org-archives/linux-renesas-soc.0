@@ -1,57 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45933 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751057AbcF2J6u (ORCPT
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:35391 "EHLO
+	mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751922AbcF3Rw6 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 29 Jun 2016 05:58:50 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL FOR renesas-drivers] mmc: renesas_sdhi: add R-Car Gen-3 DMA support
-Date: Wed, 29 Jun 2016 11:57:49 +0200
-Message-Id: <1467194269-24098-1-git-send-email-horms+renesas@verge.net.au>
+	Thu, 30 Jun 2016 13:52:58 -0400
+Received: by mail-lf0-f43.google.com with SMTP id l188so60913188lfe.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Jun 2016 10:52:57 -0700 (PDT)
+Subject: Re: [PATCH] ARM: dts: r8a7792: add SMP support
+To: Simon Horman <horms@verge.net.au>
+References: <14666252.G84Ipxe6EL@wasted.cogentembedded.com>
+ <1627631.X1bJtVQHBF@wasted.cogentembedded.com>
+ <7c23396f-f880-40ac-654d-cffc82df021e@cogentembedded.com>
+ <20160630122718.GA24035@verge.net.au>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, devicetree@vger.kernel.org,
+	magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <c2c3584d-9a3b-bfd6-b795-6373e92c9dca@cogentembedded.com>
+Date: Thu, 30 Jun 2016 20:52:53 +0300
+MIME-Version: 1.0
+In-Reply-To: <20160630122718.GA24035@verge.net.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+On 06/30/2016 03:27 PM, Simon Horman wrote:
 
-please consider pulling a prototype to modularise SDHI DMA to the extent
-that multiple providers may be built into the same kernel/module and
-provide SDHI DMA support for R-Car Gen3.
+>>> Add the device tree nodes for the Advanced Power Management Unit (APMU)
+>>> and the second Cortex-A15 CPU core.
+>>> Use the "enable-method" prop  to point out that the APMU should be used
+>>> for the SMP support.
+>>>
+>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>>
+>>> ---
+>>> This patch is against the 'renesas-devel-20160620-v4.7-rc4' tag of Simon
+>>> Horman's 'renesas.git' repo.  It depends on Magnus'/Geert's SMP patchset...
+>>
+>>    simon, now that this patchset has been merged (for 4.8?), could you also
+>> merge this patch?
+>
+> Sure, as this is for a new board I'll make a last minute exception and take
+> this.
 
-As these changes rename files, which may lead to conflicts with mainline,
-I will entirely understand if you decide against accepting this request.
+    Thank you! :-)
 
-The following changes since commit b281733437037559aec39be0c0699b044571bddf:
+> I am trusting that cpu hotplug and suspend/resume have been adequately
+> tested.
 
-  mmc: tmio: make a cast explicit (2016-06-07 12:31:11 +0200)
+    Don't worry, all tests suggested by you have passed on this board.
+Only the R8A7794/SILK board had trouble with hot-unplugging CPU0...
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdhi-gen3-dma
-
-for you to fetch changes up to e88b79845ed4e7738a0431abffbcfd52b751257c:
-
-  mmc: renesas_sdhi: add support for R-Car Gen3 SDHI DMAC (2016-06-15 12:52:22 +0900)
-
-----------------------------------------------------------------
-Simon Horman (3):
-      mmc: renesas_sdhi: rename sh_mobile_sdhi as renesas_sdhi
-      mmc: renesas_sdhi, tmio: make dma more modular
-      mmc: renesas_sdhi: rename DMA source file as renesas_sdhi_dma.c
-
-Yoshihiro Shimoda (1):
-      mmc: renesas_sdhi: add support for R-Car Gen3 SDHI DMAC
-
- drivers/mmc/host/Kconfig                           |  22 ++-
- drivers/mmc/host/Makefile                          |   5 +-
- .../mmc/host/{sh_mobile_sdhi.c => renesas_sdhi.c}  |  43 +++++
- .../host/{tmio_mmc_dma.c => renesas_sdhi_dma.c}    |  26 ++-
- drivers/mmc/host/renesas_sdhi_dma_gen3.c           | 190 +++++++++++++++++++++
- drivers/mmc/host/tmio_mmc.h                        |  39 +----
- drivers/mmc/host/tmio_mmc_pio.c                    |  47 +++++
- 7 files changed, 333 insertions(+), 39 deletions(-)
- rename drivers/mmc/host/{sh_mobile_sdhi.c => renesas_sdhi.c} (93%)
- rename drivers/mmc/host/{tmio_mmc_dma.c => renesas_sdhi_dma.c} (92%)
- create mode 100644 drivers/mmc/host/renesas_sdhi_dma_gen3.c
+MBR, Sergei
