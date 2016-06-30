@@ -1,18 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:36179 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752064AbcF3OQI (ORCPT
+	with ESMTP id S1752783AbcF3OQH (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 30 Jun 2016 10:16:08 -0400
+	Thu, 30 Jun 2016 10:16:07 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 9/9] arm64: dts: r8a7796/salvator-x: Enable watchdog timer
-Date: Thu, 30 Jun 2016 16:15:07 +0200
-Message-Id: <2c9616a1fc01c656f04f03feb58fa12d9b30802a.1467291676.git.horms+renesas@verge.net.au>
+Subject: [PATCH 8/9] arm64: dts: r8a7796: Add RWDT node
+Date: Thu, 30 Jun 2016 16:15:06 +0200
+Message-Id: <a28f1b7cf38b62acb94cdf8346590e2cd08ef53f.1467291676.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1467291676.git.horms+renesas@verge.net.au>
 References: <cover.1467291676.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -20,28 +20,35 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Enable the Watchdog Timer (WDT) controller on the Renesas Salvator-X
-board equipped with an R-Car M3-W (r8a7796) SoC.
+Add a device node for the Watchdog Timer (WDT) controller on the Renesas
+R-Car M3-W (r8a7796) SoC.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index 9c52613fb88c..e72be3856d79 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -43,3 +43,8 @@
- 	clock-frequency = <14745600>;
- 	status = "okay";
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index fab61eddede3..1edf82440d78 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -98,6 +98,15 @@
+ 					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
+ 		};
+ 
++		wdt0: watchdog@e6020000 {
++			compatible = "renesas,r8a7796-wdt",
++				     "renesas,rcar-gen3-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
 +
-+&wdt0 {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a7796-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
 -- 
 2.7.0.rc3.207.g0ac5344
