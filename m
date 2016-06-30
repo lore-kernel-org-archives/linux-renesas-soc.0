@@ -1,56 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:35181 "EHLO
-	mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751963AbcFCIeK (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36294 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932123AbcF3ORf (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 3 Jun 2016 04:34:10 -0400
-Received: by mail-wm0-f53.google.com with SMTP id a136so264874574wme.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Jun 2016 01:34:09 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1464351029-6863-1-git-send-email-wsa@the-dreams.de>
-References: <1464351029-6863-1-git-send-email-wsa@the-dreams.de>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 3 Jun 2016 10:34:07 +0200
-Message-ID: <CAPDyKFreujWc2YNO-xr+pZr2beKJegCsK_eSOQXTwHXRwEzAKw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: tmio: make a cast explicit
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
+	Thu, 30 Jun 2016 10:17:35 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Magnus Damm <damm+renesas@opensource.se>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 39/41] ARM: dts: r8a7791: Add APMU node
+Date: Thu, 30 Jun 2016 16:15:59 +0200
+Message-Id: <477cbcbd8f089ab72721a90760bc5d7987d3a713.1467294011.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
+References: <cover.1467294011.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 27 May 2016 at 14:10, Wolfram Sang <wsa@the-dreams.de> wrote:
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> Sparse complains about the implicit cast. Making it explicit is indeed
-> better coding style.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Thanks, applied for next!
+Add a DT node for the Advanced Power Management Units (APMU), and use
+the enable-method to point out that the APMU should be used for SMP
+support.
 
-Kind regards
-Uffe
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> ---
->  drivers/mmc/host/tmio_mmc.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-> index 7d1174c789219a..5f2919ceced12d 100644
-> --- a/drivers/mmc/host/tmio_mmc.h
-> +++ b/drivers/mmc/host/tmio_mmc.h
-> @@ -265,7 +265,7 @@ static inline void sd_ctrl_write16_rep(struct tmio_mmc_host *host, int addr,
->
->  static inline void sd_ctrl_write32_as_16_and_16(struct tmio_mmc_host *host, int addr, u32 val)
->  {
-> -       writew(val, host->ctl + (addr << host->bus_shift));
-> +       writew(val & 0xffff, host->ctl + (addr << host->bus_shift));
->         writew(val >> 16, host->ctl + ((addr + 2) << host->bus_shift));
->  }
->
-> --
-> 2.8.1
->
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 1985bd0dc32c..8f0086bbd96b 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -43,6 +43,7 @@
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		enable-method = "renesas,apmu";
+ 
+ 		cpu0: cpu@0 {
+ 			device_type = "cpu";
+@@ -101,6 +102,12 @@
+ 		};
+ 	};
+ 
++	apmu@e6152000 {
++		compatible = "renesas,r8a7791-apmu", "renesas,apmu";
++		reg = <0 0xe6152000 0 0x188>;
++		cpus = <&cpu0 &cpu1>;
++	};
++
+ 	gic: interrupt-controller@f1001000 {
+ 		compatible = "arm,gic-400";
+ 		#interrupt-cells = <3>;
+-- 
+2.7.0.rc3.207.g0ac5344
