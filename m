@@ -1,65 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:34282 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932503AbcGDVLZ (ORCPT
+Received: from mail-bl2nam02on0046.outbound.protection.outlook.com ([104.47.38.46]:62183
+	"EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751280AbcGANZH (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 4 Jul 2016 17:11:25 -0400
-Received: by mail-lf0-f49.google.com with SMTP id h129so123442711lfh.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Jul 2016 14:11:25 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/2] ARM: dts: r8a7792: add GPIO clocks
-Date: Tue, 05 Jul 2016 00:11:22 +0300
-Message-ID: <2050251.DJM1C0SRyY@wasted.cogentembedded.com>
-In-Reply-To: <2706182.6XMBucurvj@wasted.cogentembedded.com>
-References: <2706182.6XMBucurvj@wasted.cogentembedded.com>
+	Fri, 1 Jul 2016 09:25:07 -0400
+From: Peter Chen <peter.chen@nxp.com>
+To: <linux-renesas-soc@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>
+CC: Peter Chen <peter.chen@nxp.com>
+Subject: [PATCH 0/7] add missing of_node_put after calling of_parse_phandle (1st)
+Date: Fri, 1 Jul 2016 17:41:54 +0800
+Message-ID: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the GPIO clocks in the R8A7792 device tree.
+Hi all,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+of_node_put needs to be called when the device node which is got
+from of_parse_phandle has finished using, but there are many codes
+do not follow that, this patch set fixes some of them.
 
----
- arch/arm/boot/dts/r8a7792.dtsi |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Peter Chen (7):
+  extcon: add missing of_node_put after calling of_parse_phandle
+  arm: mach-shmobile: pm-rmobile: add missing of_node_put after calling
+    of_parse_phandle
+  arm: mach-u300: regulator: add missing of_node_put after calling
+    of_parse_phandle
+  bus: arm-cci: add missing of_node_put after calling of_parse_phandle
+  bus: vexpress-config: add missing of_node_put after calling
+    of_parse_phandle
+  devfreq: add missing of_node_put after calling of_parse_phandle
+  devfreq: exynos-bus: add missing of_node_put after calling
+    of_parse_phandle
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -363,6 +363,27 @@
- 			clock-output-names = "hscif1", "hscif0", "scif3",
- 					     "scif2", "scif1", "scif0";
- 		};
-+		mstp9_clks: mstp9_clks@e6150994 {
-+			compatible = "renesas,r8a7792-mstp-clocks",
-+				     "renesas,cpg-mstp-clocks";
-+			reg = <0 0xe6150994 0 4>, <0 0xe61509a4 0 4>;
-+			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
-+			         <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
-+				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>;
-+			#clock-cells = <1>;
-+			clock-indices = <
-+				R8A7792_CLK_GPIO7 R8A7792_CLK_GPIO6
-+				R8A7792_CLK_GPIO5 R8A7792_CLK_GPIO4
-+				R8A7792_CLK_GPIO3 R8A7792_CLK_GPIO2
-+				R8A7792_CLK_GPIO1 R8A7792_CLK_GPIO0
-+				R8A7792_CLK_GPIO11 R8A7792_CLK_GPIO10
-+				R8A7792_CLK_GPIO9 R8A7792_CLK_GPIO8
-+			>;
-+			clock-output-names =
-+				"gpio7", "gpio6", "gpio5", "gpio4",
-+				"gpio3", "gpio2", "gpio1", "gpio0",
-+				"gpio11", "gpio10", "gpio9", "gpio8";
-+		};
- 	};
- 
- 	/* External root clock */
+ arch/arm/mach-shmobile/pm-rmobile.c |  1 +
+ arch/arm/mach-u300/regulator.c      | 12 +++++++++---
+ drivers/bus/arm-cci.c               |  5 ++++-
+ drivers/bus/vexpress-config.c       |  1 +
+ drivers/devfreq/devfreq.c           |  2 ++
+ drivers/devfreq/exynos-bus.c        |  9 ++++++---
+ drivers/extcon/extcon.c             |  2 ++
+ 7 files changed, 25 insertions(+), 7 deletions(-)
+
+-- 
+1.9.1
