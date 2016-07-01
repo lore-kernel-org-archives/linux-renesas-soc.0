@@ -1,44 +1,49 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-id: <1979940416.433337.1467772681910.JavaMail.weblogic@ep2ml104d>
-MIME-version: 1.0
-Subject: =?UTF-8?B?UkU6IFtQQVRDSCA2LzddIGRldmZyZXE6IGFkZCBtaXNzaW5n?=
- =?UTF-8?B?IG9mX25vZGVfcHV0IGFmdGVyIGNhbGxpbmcgb2ZfcGFyc2Vf?=
- =?UTF-8?B?cGhhbmRsZQ==?=
-Reply-to: myungjoo.ham@samsung.com
-From: =?UTF-8?B?TXl1bmdKb28gSGFt?= <myungjoo.ham@samsung.com>
-Cc: =?UTF-8?B?S3l1bmdtaW4gUGFyaw==?= <kyungmin.park@samsung.com>
-To: =?UTF-8?B?UGV0ZXIgQ2hlbg==?= <peter.chen@nxp.com>,
-	=?UTF-8?B?bGludXgtcmVuZXNhcy1zb2NAdmdlci5rZXJuZWwub3Jn?=
-	<linux-renesas-soc@vger.kernel.org>,
-	=?UTF-8?B?bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn?=
+From: Peter Chen <peter.chen@nxp.com>
+To: <linux-renesas-soc@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>,
-	=?UTF-8?B?bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw==?=
-	<linux-kernel@vger.kernel.org>,
-	=?UTF-8?B?bGludXgtcG1Admdlci5rZXJuZWwub3Jn?=
-	<linux-pm@vger.kernel.org>,
-	=?UTF-8?B?bGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwub3Jn?=
+	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
 	<linux-samsung-soc@vger.kernel.org>
-Date: Wed, 06 Jul 2016 02:38:01 +0000
-Content-type: multipart/related;
- boundary="----=_Part_433336_944744841.1467772681910"
+CC: Peter Chen <peter.chen@nxp.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>
+Subject: [PATCH 6/7] devfreq: add missing of_node_put after calling of_parse_phandle
+Date: Fri, 1 Jul 2016 17:42:00 +0800
+Message-ID: <1467366121-14120-7-git-send-email-peter.chen@nxp.com>
+In-Reply-To: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
 References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
- <CGME20160701094923epcas1p164cc8773ec44a00dfc506a6192df3409@epcas1p1.samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-------=_Part_433336_944744841.1467772681910
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="utf-8"
+of_node_put needs to be called when the device node which is got
+from of_parse_phandle has finished using.
 
-PiAtLS0tLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAtLS0tLS0tLS0NCj4gU2VuZGVyIDogUGV0ZXIg
-Q2hlbiA8cGV0ZXIuY2hlbkBueHAuY29tPg0KPiBEYXRlICAgOiAyMDE2LTA3LTAxIDE4OjQ5IChH
-TVQrOSkNCj4gVGl0bGUgIDogW1BBVENIIDYvN10gZGV2ZnJlcTogYWRkIG1pc3Npbmcgb2Zfbm9k
-ZV9wdXQgYWZ0ZXIgY2FsbGluZyBvZl9wYXJzZV9waGFuZGxlDQo+ICANCj4gb2Zfbm9kZV9wdXQg
-bmVlZHMgdG8gYmUgY2FsbGVkIHdoZW4gdGhlIGRldmljZSBub2RlIHdoaWNoIGlzIGdvdA0KPiBm
-cm9tIG9mX3BhcnNlX3BoYW5kbGUgaGFzIGZpbmlzaGVkIHVzaW5nLg0KPiAgDQo+IENjOiBNeXVu
-Z0pvbyBIYW0gPG15dW5nam9vLmhhbUBzYW1zdW5nLmNvbT4NCj4gQ2M6IEt5dW5nbWluIFBhcmsg
-PGt5dW5nbWluLnBhcmtAc2Ftc3VuZy5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IFBldGVyIENoZW4g
-PHBldGVyLmNoZW5AbnhwLmNvbT4NCg0KVGhhbmsgeW91IQ0KDQoNClNpZ25lZC1vZmYtYnk6IE15
-dW5nSm9vIEhhbSA8bXl1bmdqb28uaGFtQHNhbXN1bmcuY29tPg0KDQo=
-------=_Part_433336_944744841.1467772681910--
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Peter Chen <peter.chen@nxp.com>
+---
+ drivers/devfreq/devfreq.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 1d6c803..3f2142f 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -706,10 +706,12 @@ struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev, int index)
+ 		if (devfreq->dev.parent
+ 			&& devfreq->dev.parent->of_node == node) {
+ 			mutex_unlock(&devfreq_list_lock);
++			of_node_put(node);
+ 			return devfreq;
+ 		}
+ 	}
+ 	mutex_unlock(&devfreq_list_lock);
++	of_node_put(node);
+ 
+ 	return ERR_PTR(-EPROBE_DEFER);
+ }
+-- 
+1.9.1
