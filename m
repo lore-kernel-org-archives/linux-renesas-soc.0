@@ -1,61 +1,43 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1467366121-14120-3-git-send-email-peter.chen@nxp.com>
-References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com> <1467366121-14120-3-git-send-email-peter.chen@nxp.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 1 Jul 2016 14:31:58 +0200
-Message-ID: <CAMuHMdVE8VzPunLzr7WO-kzcg25rKvFkoQcjJ4czwrQxX_obiw@mail.gmail.com>
-Subject: Re: [PATCH 2/7] arm: mach-shmobile: pm-rmobile: add missing
- of_node_put after calling of_parse_phandle
-To: Peter Chen <peter.chen@nxp.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
+From: Peter Chen <peter.chen@nxp.com>
+To: <linux-renesas-soc@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Linux PM list <linux-pm@vger.kernel.org>,
-	"linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>,
-	Simon Horman <horms@verge.net.au>,
+	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>
+CC: Peter Chen <peter.chen@nxp.com>, Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH 2/7] arm: mach-shmobile: pm-rmobile: add missing of_node_put after calling of_parse_phandle
+Date: Fri, 1 Jul 2016 17:41:56 +0800
+Message-ID: <1467366121-14120-3-git-send-email-peter.chen@nxp.com>
+In-Reply-To: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
+References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Peter,
+of_node_put needs to be called when the device node which is got
+from of_parse_phandle has finished using.
 
-On Fri, Jul 1, 2016 at 11:41 AM, Peter Chen <peter.chen@nxp.com> wrote:
-> of_node_put needs to be called when the device node which is got
-> from of_parse_phandle has finished using.
->
-> Cc: Simon Horman <horms@verge.net.au>
-> Cc: Magnus Damm <magnus.damm@gmail.com>
-> Signed-off-by: Peter Chen <peter.chen@nxp.com>
+Cc: Simon Horman <horms@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Signed-off-by: Peter Chen <peter.chen@nxp.com>
+---
+ arch/arm/mach-shmobile/pm-rmobile.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-NAKed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> --- a/arch/arm/mach-shmobile/pm-rmobile.c
-> +++ b/arch/arm/mach-shmobile/pm-rmobile.c
-> @@ -209,6 +209,7 @@ static void __init add_special_pd(struct device_node *np, enum pd_types type)
->         special_pds[num_special_pds].pd = pd;
-
-The pd pointer is stored in the line above, and released later in
-put_special_pds().
-
->         special_pds[num_special_pds].type = type;
->         num_special_pds++;
-> +       of_node_put(pd);
-
-Hence it must not be released here, as that would cause a double release
-when put_special_pds() is executed.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
+index c0b05e9..8eb2cb6 100644
+--- a/arch/arm/mach-shmobile/pm-rmobile.c
++++ b/arch/arm/mach-shmobile/pm-rmobile.c
+@@ -209,6 +209,7 @@ static void __init add_special_pd(struct device_node *np, enum pd_types type)
+ 	special_pds[num_special_pds].pd = pd;
+ 	special_pds[num_special_pds].type = type;
+ 	num_special_pds++;
++	of_node_put(pd);
+ }
+ 
+ static void __init get_special_pds(void)
+-- 
+1.9.1
