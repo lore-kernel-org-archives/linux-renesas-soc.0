@@ -1,40 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41249 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750701AbcG0ENl (ORCPT
+Received: from mail-io0-f177.google.com ([209.85.223.177]:32890 "EHLO
+	mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751994AbcGALlG (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Jul 2016 00:13:41 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 4/4] ARM: dts: r8a7790: lager: Enable UHS-I SDR-104
-Date: Wed, 27 Jul 2016 13:13:23 +0900
-Message-Id: <1469592803-13842-5-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1469592803-13842-1-git-send-email-horms+renesas@verge.net.au>
-References: <1469592803-13842-1-git-send-email-horms+renesas@verge.net.au>
+	Fri, 1 Jul 2016 07:41:06 -0400
+MIME-Version: 1.0
+In-Reply-To: <1467216364-27235-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1467216364-27235-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 1 Jul 2016 09:45:11 +0200
+Message-ID: <CAMuHMdVh3E3qf7q0T1A3stVtbgA4m_FBwRz_KFTNE4HpeObG4Q@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add bias pinconf support
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the sd-uhs-sdr104 property to SDHI0.
+Hi Ulrich,
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7790-lager.dts | 1 +
- 1 file changed, 1 insertion(+)
+On Wed, Jun 29, 2016 at 6:06 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Implements pull-up and pull-down. On this SoC there is no simple mapping of
+> GP pins to bias register bits, so we need a table.
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 749ba02b6a53..05d1ff7acee2 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -559,6 +559,7 @@
- 	vqmmc-supply = <&vccq_sdhi0>;
- 	cd-gpios = <&gpio3 6 GPIO_ACTIVE_LOW>;
- 	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
- 	status = "okay";
- };
- 
--- 
-2.7.0.rc3.207.g0ac5344
+Thanks for your patch!
+
+This covers bias for pins that can be used as a GPIO only, just like the
+existing drive strength support, right?
+
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
