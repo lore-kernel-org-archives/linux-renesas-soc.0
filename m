@@ -1,49 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:34392 "EHLO
-	mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751427AbcGELGG (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36540 "EHLO
+	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752216AbcGAIEv (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 5 Jul 2016 07:06:06 -0400
+	Fri, 1 Jul 2016 04:04:51 -0400
 MIME-Version: 1.0
-In-Reply-To: <1467237940-24388-6-git-send-email-horms+renesas@verge.net.au>
-References: <1467237940-24388-1-git-send-email-horms+renesas@verge.net.au> <1467237940-24388-6-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <19325938.k24uiBRvOQ@wasted.cogentembedded.com>
+References: <1748403.xeiuK39ynx@wasted.cogentembedded.com> <19325938.k24uiBRvOQ@wasted.cogentembedded.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 5 Jul 2016 13:06:04 +0200
-Message-ID: <CAMuHMdXEuZyrZUQbjBB600Fp+skKcHr8=FAzzqLv5_ttSeTmiA@mail.gmail.com>
-Subject: Re: [PATCH/RFC v2 5/5] mmc: renesas_sdhi: add support for R-Car Gen3
- SDHI DMAC
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Linux MMC List <linux-mmc@vger.kernel.org>,
+Date: Fri, 1 Jul 2016 10:04:50 +0200
+Message-ID: <CAMuHMdX3VnYBM+xmSrgnAudeH+-ghcLt2GKbGLemGt+SzfQ4zg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: add R8A7792 PFC support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Ai Kyuse <ai.kyuse.uw@renesas.com>
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jun 30, 2016 at 12:05 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> --- a/drivers/mmc/host/sh_mobile_sdhi.c
-> +++ b/drivers/mmc/host/sh_mobile_sdhi.c
+Hi Sergei,
 
-> +static int sh_mobile_sdhi_init_dma(enum tmio_mmc_dmac_type dmac_type)
-> +{
-> +       switch (dmac_type) {
-> +       case TMIO_MMC_INTERNAL_DMAC:
-> +               return sdhi_internal_dmac_init_dma();
-> +
-> +       case TMIO_MMC_SYSC_DMAC:
-> +               return sdhi_sysc_dmac_init_dma();
-> +       }
-> +}
+On Wed, Jun 29, 2016 at 11:21 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the PFC support for the R8A7792 SoC including pin groups for some
+> on-chip devices such as SCIF, INTC, and LBSC...
 
-Depending on compiler version and optimization level:
+Thanks for your patch!
 
-drivers/mmc/host/sh_mobile_sdhi.c:172:1: warning: control reaches end
-of non-void function [-Wreturn-type]
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+> --- /dev/null
+> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
+
+
+> +/* - LSBC ------------------------------------------------------------------- */
+
+LBSC
+
+> +static const unsigned int lbsc_cs0_pins[] = {
+> +       /* CS0# */
+> +       RCAR_GP_PIN(3, 27),
+> +};
+
+I've only reviewed the numbers of GPIOs per bank, and the pins.
 
 Gr{oetje,eeting}s,
 
