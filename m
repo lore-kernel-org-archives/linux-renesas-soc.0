@@ -1,39 +1,72 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:33093 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932846AbcGEVYd (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 5 Jul 2016 17:24:33 -0400
-Received: by mail-oi0-f48.google.com with SMTP id u201so246801607oie.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Jul 2016 14:24:33 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1467366121-14120-4-git-send-email-peter.chen@nxp.com>
-References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com> <1467366121-14120-4-git-send-email-peter.chen@nxp.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 5 Jul 2016 23:24:31 +0200
-Message-ID: <CACRpkdYMn94brCXUzS2b+4GBTx7WVhKririVzmHjjeVb9CC7NQ@mail.gmail.com>
-Subject: Re: [PATCH 3/7] arm: mach-u300: regulator: add missing of_node_put
- after calling of_parse_phandle
-To: Peter Chen <peter.chen@nxp.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Peter Chen <peter.chen@nxp.com>
+To: <linux-renesas-soc@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>
+CC: Peter Chen <peter.chen@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 3/7] arm: mach-u300: regulator: add missing of_node_put after calling of_parse_phandle
+Date: Fri, 1 Jul 2016 17:41:57 +0800
+Message-ID: <1467366121-14120-4-git-send-email-peter.chen@nxp.com>
+In-Reply-To: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
+References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jul 1, 2016 at 11:41 AM, Peter Chen <peter.chen@nxp.com> wrote:
+of_node_put needs to be called when the device node which is got
+from of_parse_phandle has finished using.
 
-> of_node_put needs to be called when the device node which is got
-> from of_parse_phandle has finished using.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Peter Chen <peter.chen@nxp.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Peter Chen <peter.chen@nxp.com>
+---
+ arch/arm/mach-u300/regulator.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+diff --git a/arch/arm/mach-u300/regulator.c b/arch/arm/mach-u300/regulator.c
+index 595b574..509643e 100644
+--- a/arch/arm/mach-u300/regulator.c
++++ b/arch/arm/mach-u300/regulator.c
+@@ -71,19 +71,21 @@ static int __init __u300_init_boardpower(struct platform_device *pdev)
+ 	regmap = syscon_node_to_regmap(syscon_np);
+ 	if (IS_ERR(regmap)) {
+ 		pr_crit("U300: could not locate syscon regmap\n");
+-		return PTR_ERR(regmap);
++		err = PTR_ERR(regmap);
++		goto error;
+ 	}
+ 
+ 	main_power_15 = regulator_get(&pdev->dev, "vana15");
+ 
+ 	if (IS_ERR(main_power_15)) {
+ 		pr_err("could not get vana15");
+-		return PTR_ERR(main_power_15);
++		err = PTR_ERR(main_power_15);
++		goto error;
+ 	}
+ 	err = regulator_enable(main_power_15);
+ 	if (err) {
+ 		pr_err("could not enable vana15\n");
+-		return err;
++		goto error;
+ 	}
+ 
+ 	/*
+@@ -99,8 +101,12 @@ static int __init __u300_init_boardpower(struct platform_device *pdev)
+ 
+ 	/* Register globally exported PM poweroff hook */
+ 	pm_power_off = u300_pm_poweroff;
++	of_node_put(syscon_np);
+ 
+ 	return 0;
++error:
++	of_node_put(syscon_np);
++	return err;
+ }
+ 
+ static int __init s365_board_probe(struct platform_device *pdev)
+-- 
+1.9.1
