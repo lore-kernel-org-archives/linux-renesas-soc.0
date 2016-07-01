@@ -1,80 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:36518 "EHLO
-	mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750766AbcGBExl (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sat, 2 Jul 2016 00:53:41 -0400
-MIME-Version: 1.0
-Reply-To: chanwoo@kernel.org
-In-Reply-To: <1467366121-14120-8-git-send-email-peter.chen@nxp.com>
-References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com> <1467366121-14120-8-git-send-email-peter.chen@nxp.com>
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Date: Sat, 2 Jul 2016 13:53:39 +0900
-Message-ID: <CAGTfZH2HmmEbbmvm9pqMKv_chzPfZvrRvk+g-fkYPQ7pDfGa0Q@mail.gmail.com>
-Subject: Re: [PATCH 7/7] devfreq: exynos-bus: add missing of_node_put after
- calling of_parse_phandle
-To: Peter Chen <peter.chen@nxp.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Peter Chen <peter.chen@nxp.com>
+To: <linux-renesas-soc@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>
+CC: Peter Chen <peter.chen@nxp.com>,
 	Chanwoo Choi <cw00.choi@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
 	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kukjin Kim <kgene@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	"Krzysztof Kozlowski" <k.kozlowski@samsung.com>
+Subject: [PATCH 7/7] devfreq: exynos-bus: add missing of_node_put after calling of_parse_phandle
+Date: Fri, 1 Jul 2016 17:42:01 +0800
+Message-ID: <1467366121-14120-8-git-send-email-peter.chen@nxp.com>
+In-Reply-To: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
+References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Peter,
+of_node_put needs to be called when the device node which is got
+from of_parse_phandle has finished using.
 
-2016-07-01 18:42 GMT+09:00 Peter Chen <peter.chen@nxp.com>:
-> of_node_put needs to be called when the device node which is got
-> from of_parse_phandle has finished using.
->
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Peter Chen <peter.chen@nxp.com>
-> ---
->  drivers/devfreq/exynos-bus.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-> index 2363d0a..a38b5ec 100644
-> --- a/drivers/devfreq/exynos-bus.c
-> +++ b/drivers/devfreq/exynos-bus.c
-> @@ -383,7 +383,7 @@ err_clk:
->  static int exynos_bus_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
-> -       struct device_node *np = dev->of_node;
-> +       struct device_node *np = dev->of_node, node;
->         struct devfreq_dev_profile *profile;
->         struct devfreq_simple_ondemand_data *ondemand_data;
->         struct devfreq_passive_data *passive_data;
-> @@ -415,10 +415,13 @@ static int exynos_bus_probe(struct platform_device *pdev)
->                 goto err;
->         }
->
-> -       if (of_parse_phandle(dev->of_node, "devfreq", 0))
-> +       node = of_parse_phandle(dev->of_node, "devfreq", 0);
-> +       if (node) {
-> +               of_node_put(node);
->                 goto passive;
-> -       else
-> +       } else {
->                 ret = exynos_bus_parent_parse_of(np, bus);
-> +       }
->
->         if (ret < 0)
->                 goto err;
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Peter Chen <peter.chen@nxp.com>
+---
+ drivers/devfreq/exynos-bus.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-Regards,
-Chanwoo Choi
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index 2363d0a..a38b5ec 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -383,7 +383,7 @@ err_clk:
+ static int exynos_bus_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct device_node *np = dev->of_node;
++	struct device_node *np = dev->of_node, node;
+ 	struct devfreq_dev_profile *profile;
+ 	struct devfreq_simple_ondemand_data *ondemand_data;
+ 	struct devfreq_passive_data *passive_data;
+@@ -415,10 +415,13 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
+-	if (of_parse_phandle(dev->of_node, "devfreq", 0))
++	node = of_parse_phandle(dev->of_node, "devfreq", 0);
++	if (node) {
++		of_node_put(node);
+ 		goto passive;
+-	else
++	} else {
+ 		ret = exynos_bus_parent_parse_of(np, bus);
++	}
+ 
+ 	if (ret < 0)
+ 		goto err;
+-- 
+1.9.1
