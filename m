@@ -1,65 +1,80 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-id: <2060150880.435118.1467773265031.JavaMail.weblogic@ep2ml104d>
-MIME-version: 1.0
-Subject: =?UTF-8?B?UkU6IFtQQVRDSCA3LzddIGRldmZyZXE6IGV4eW5vcy1idXM6?=
- =?UTF-8?B?IGFkZCBtaXNzaW5nIG9mX25vZGVfcHV0IGFmdGVyIGNhbGxp?=
- =?UTF-8?B?bmcgb2ZfcGFyc2VfcGhhbmRsZQ==?=
-Reply-to: myungjoo.ham@samsung.com
-From: =?UTF-8?B?TXl1bmdKb28gSGFt?= <myungjoo.ham@samsung.com>
-Cc: =?UTF-8?B?Q2hhbndvbyBDaG9p?= <cw00.choi@samsung.com>,
-	=?UTF-8?B?S3l1bmdtaW4gUGFyaw==?= <kyungmin.park@samsung.com>,
-	=?UTF-8?B?S3VramluIEtpbQ==?= <kgene@kernel.org>,
-	=?UTF-8?B?S3J6eXN6dG9mIEtvemxvd3NraQ==?= <k.kozlowski@samsung.com>
-To: =?UTF-8?B?UGV0ZXIgQ2hlbg==?= <peter.chen@nxp.com>,
-	=?UTF-8?B?bGludXgtcmVuZXNhcy1zb2NAdmdlci5rZXJuZWwub3Jn?=
-	<linux-renesas-soc@vger.kernel.org>,
-	=?UTF-8?B?bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn?=
-	<linux-arm-kernel@lists.infradead.org>,
-	=?UTF-8?B?bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw==?=
-	<linux-kernel@vger.kernel.org>,
-	=?UTF-8?B?bGludXgtcG1Admdlci5rZXJuZWwub3Jn?=
-	<linux-pm@vger.kernel.org>,
-	=?UTF-8?B?bGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwub3Jn?=
-	<linux-samsung-soc@vger.kernel.org>
-Date: Wed, 06 Jul 2016 02:47:45 +0000
-Content-type: multipart/related;
- boundary="----=_Part_435117_1020135783.1467773265031"
-References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
- <CGME20160701094927epcas1p43f956ee3465f96e2f9c99b44c0f5b49d@epcas1p4.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:36518 "EHLO
+	mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750766AbcGBExl (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Sat, 2 Jul 2016 00:53:41 -0400
+MIME-Version: 1.0
+Reply-To: chanwoo@kernel.org
+In-Reply-To: <1467366121-14120-8-git-send-email-peter.chen@nxp.com>
+References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com> <1467366121-14120-8-git-send-email-peter.chen@nxp.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Date: Sat, 2 Jul 2016 13:53:39 +0900
+Message-ID: <CAGTfZH2HmmEbbmvm9pqMKv_chzPfZvrRvk+g-fkYPQ7pDfGa0Q@mail.gmail.com>
+Subject: Re: [PATCH 7/7] devfreq: exynos-bus: add missing of_node_put after
+ calling of_parse_phandle
+To: Peter Chen <peter.chen@nxp.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kukjin Kim <kgene@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-------=_Part_435117_1020135783.1467773265031
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="utf-8"
+Hi Peter,
 
-PiANCj4gLS0tLS0tLS0tIE9yaWdpbmFsIE1lc3NhZ2UgLS0tLS0tLS0tDQo+IFNlbmRlciA6IFBl
-dGVyIENoZW4gPHBldGVyLmNoZW5AbnhwLmNvbT4NCj4gRGF0ZSAgIDogMjAxNi0wNy0wMSAxODo0
-OSAoR01UKzkpDQo+IFRpdGxlICA6IFtQQVRDSCA3LzddIGRldmZyZXE6IGV4eW5vcy1idXM6IGFk
-ZCBtaXNzaW5nIG9mX25vZGVfcHV0IGFmdGVyIGNhbGxpbmcgb2ZfcGFyc2VfcGhhbmRsZQ0KPiAg
-DQo+IG9mX25vZGVfcHV0IG5lZWRzIHRvIGJlIGNhbGxlZCB3aGVuIHRoZSBkZXZpY2Ugbm9kZSB3
-aGljaCBpcyBnb3QNCj4gZnJvbSBvZl9wYXJzZV9waGFuZGxlIGhhcyBmaW5pc2hlZCB1c2luZy4N
-Cj4gIA0KPiBDYzogQ2hhbndvbyBDaG9pIDxjdzAwLmNob2lAc2Ftc3VuZy5jb20+DQo+IENjOiBN
-eXVuZ0pvbyBIYW0gPG15dW5nam9vLmhhbUBzYW1zdW5nLmNvbT4NCj4gQ2M6IEt5dW5nbWluIFBh
-cmsgPGt5dW5nbWluLnBhcmtAc2Ftc3VuZy5jb20+DQo+IENjOiBLdWtqaW4gS2ltIDxrZ2VuZUBr
-ZXJuZWwub3JnPg0KPiBDYzogS3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dza2lAc2Ftc3Vu
-Zy5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IFBldGVyIENoZW4gPHBldGVyLmNoZW5AbnhwLmNvbT4N
-Cg0KV2l0aCB0aGUgY2hhbmdlIChidWlsZCBlcnJvciBmaXgpIG9mIHRoZSBmb2xsb3dpbmcgYWRk
-ZWQsIChJJ2xsIHVwZGF0ZSkNClNpZ25lZC1vZmYtYnk6IE15dW5nSm9vIEhhbSA8bXl1bmdqb28u
-aGFtQHNhbXN1bmcuY29tPg0KDQoNCkNoZWVycywNCk15dW5nSm9vDQoNCj4gLS0tDQo+ICBkcml2
-ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5jIHwgOSArKysrKystLS0NCj4gIDEgZmlsZSBjaGFuZ2Vk
-LCA2IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+ICANCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZGV2ZnJlcS9leHlub3MtYnVzLmMgYi9kcml2ZXJzL2RldmZyZXEvZXh5bm9zLWJ1cy5j
-DQo+IGluZGV4IDIzNjNkMGEuLmEzOGI1ZWMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZGV2ZnJl
-cS9leHlub3MtYnVzLmMNCj4gKysrIGIvZHJpdmVycy9kZXZmcmVxL2V4eW5vcy1idXMuYw0KPiBA
-QCAtMzgzLDcgKzM4Myw3IEBAIGVycl9jbGs6DQo+ICBzdGF0aWMgaW50IGV4eW5vc19idXNfcHJv
-YmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gIHsNCj4gICAgICAgICAgc3RydWN0
-IGRldmljZSAqZGV2ID0gJnBkZXYtPmRldjsNCj4gLSAgICAgICAgc3RydWN0IGRldmljZV9ub2Rl
-ICpucCA9IGRldi0+b2Zfbm9kZTsNCj4gKyAgICAgICAgc3RydWN0IGRldmljZV9ub2RlICpucCA9
-IGRldi0+b2Zfbm9kZSwgbm9kZTsNCg0KKwlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wID0gZGV2LT5v
-Zl9ub2RlLCAqbm9kZTsNCg0KPiAgICAgICAgICBzdHJ1Y3QgZGV2ZnJlcV9kZXZfcHJvZmlsZSAq
-cHJvZmlsZTsNCj4gICAgICAgICAgc3RydWN0IGRldmZyZXFfc2ltcGxlX29uZGVtYW5kX2RhdGEg
-Km9uZGVtYW5kX2RhdGE7DQo+ICAgICAgICAgIHN0cnVjdCBkZXZmcmVxX3Bhc3NpdmVfZGF0YSAq
-cGFzc2l2ZV9kYXRhOw0KLi4uDQo=
-------=_Part_435117_1020135783.1467773265031--
+2016-07-01 18:42 GMT+09:00 Peter Chen <peter.chen@nxp.com>:
+> of_node_put needs to be called when the device node which is got
+> from of_parse_phandle has finished using.
+>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Peter Chen <peter.chen@nxp.com>
+> ---
+>  drivers/devfreq/exynos-bus.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+> index 2363d0a..a38b5ec 100644
+> --- a/drivers/devfreq/exynos-bus.c
+> +++ b/drivers/devfreq/exynos-bus.c
+> @@ -383,7 +383,7 @@ err_clk:
+>  static int exynos_bus_probe(struct platform_device *pdev)
+>  {
+>         struct device *dev = &pdev->dev;
+> -       struct device_node *np = dev->of_node;
+> +       struct device_node *np = dev->of_node, node;
+>         struct devfreq_dev_profile *profile;
+>         struct devfreq_simple_ondemand_data *ondemand_data;
+>         struct devfreq_passive_data *passive_data;
+> @@ -415,10 +415,13 @@ static int exynos_bus_probe(struct platform_device *pdev)
+>                 goto err;
+>         }
+>
+> -       if (of_parse_phandle(dev->of_node, "devfreq", 0))
+> +       node = of_parse_phandle(dev->of_node, "devfreq", 0);
+> +       if (node) {
+> +               of_node_put(node);
+>                 goto passive;
+> -       else
+> +       } else {
+>                 ret = exynos_bus_parent_parse_of(np, bus);
+> +       }
+>
+>         if (ret < 0)
+>                 goto err;
+
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+Regards,
+Chanwoo Choi
