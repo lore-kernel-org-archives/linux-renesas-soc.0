@@ -1,60 +1,83 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran@ksquared.org.uk>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: Document Renesas R-Car FCP power-domains usage
-Date: Sun, 17 Jul 2016 19:31:12 +0300
-Message-ID: <5049690.gmjd5cAaeQ@avalon>
-In-Reply-To: <1467305430-25660-3-git-send-email-kieran@bingham.xyz>
-References: <1467305430-25660-1-git-send-email-kieran@bingham.xyz> <1467305430-25660-3-git-send-email-kieran@bingham.xyz>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Peter Chen <peter.chen@nxp.com>
+To: Will Deacon <will.deacon@arm.com>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>
+CC: "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>,
+	Sudeep Holla <Sudeep.Holla@arm.com>
+Subject: RE: [PATCH 4/7] bus: arm-cci: add missing of_node_put after calling
+ of_parse_phandle
+Date: Mon, 4 Jul 2016 02:48:08 +0000
+Message-ID: <HE1PR04MB1450113E1D3A5B0BBF9269C88B380@HE1PR04MB1450.eurprd04.prod.outlook.com>
+References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
+ <1467366121-14120-5-git-send-email-peter.chen@nxp.com>
+ <57764626.4060800@arm.com> <20160701103346.GF12735@arm.com>
+In-Reply-To: <20160701103346.GF12735@arm.com>
+Content-Language: en-US
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+ 
+>
+>On Fri, Jul 01, 2016 at 11:29:58AM +0100, Suzuki K Poulose wrote:
+>> On 01/07/16 10:41, Peter Chen wrote:
+>> >of_node_put needs to be called when the device node which is got from
+>> >of_parse_phandle has finished using.
+>> >
+>> >Cc: Will Deacon <will.deacon@arm.com>
+>> >Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> >Signed-off-by: Peter Chen <peter.chen@nxp.com>
+>>
+>> Thanks for the fix.
+>>
+>> >---
+>> >  drivers/bus/arm-cci.c | 5 ++++-
+>> >  1 file changed, 4 insertions(+), 1 deletion(-)
+>> >
+>> >diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c index
+>> >a49b283..e7b0b8c 100644
+>> >--- a/drivers/bus/arm-cci.c
+>> >+++ b/drivers/bus/arm-cci.c
+>> >@@ -1912,9 +1912,12 @@ static int __cci_ace_get_port(struct device_node *dn,
+>int type)
+>> >  	cci_portn = of_parse_phandle(dn, "cci-control-port", 0);
+>> >  	for (i = 0; i < nb_cci_ports; i++) {
+>> >  		ace_match = ports[i].type == type;
+>> >-		if (ace_match && cci_portn == ports[i].dn)
+>> >+		if (ace_match && cci_portn == ports[i].dn) {
+>> >+			of_node_put(cci_portn);
+>> >  			return i;
+>> >+		}
+>> >  	}
+>> >+	of_node_put(cci_portn);
+>>
+>> nit: Could we please do some thing like this ?
+>> 		if (ace_match && cci_portn == ports[i].dn)
+>> 			break;
+>> 	}
+>>
+>> 	of_node_put(cci_portn);
+>> 	return (i < nb_cci_ports) ? i : -ENODEV ;
+>>
+>> Either way,
+>>
+>> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>
+>Please route this via arm-soc once you've addressed Suzuki's comment.
+>
 
-Thank you for the patch.
+Hi Will, how to route patch via arm-soc?
 
-On Thursday 30 Jun 2016 17:50:29 Kieran Bingham wrote:
-> The power domain must be specified to bring the device out of module
-> standby. Document this in the bindings provided, so that new additions
-> are not missed.
-> 
-> Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
+Does it mean sending patch by adding arm@kernel.org at To or Cc list?
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  Documentation/devicetree/bindings/media/renesas,fcp.txt | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt
-> b/Documentation/devicetree/bindings/media/renesas,fcp.txt index
-> 271dcfdb5a76..5be21b6411ba 100644
-> --- a/Documentation/devicetree/bindings/media/renesas,fcp.txt
-> +++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-> @@ -23,6 +23,10 @@ are paired with. These DT bindings currently support the
-> FCPV and FCPF. - reg: the register base and size for the device registers
->   - clocks: Reference to the functional clock
-> 
-> +Optional properties:
-> + - power-domains : power-domain property defined with a power domain
-> specifier
-> +                            to respective power domain.
-> +
-> 
->  Device node example
->  -------------------
-> @@ -31,4 +35,5 @@ Device node example
->  		compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
->  		reg = <0 0xfea2f000 0 0x200>;
->  		clocks = <&cpg CPG_MOD 602>;
-> +		power-domains = <&sysc R8A7795_PD_A3VP>;
->  	};
-
--- 
-Regards,
-
-Laurent Pinchart
+Peter
