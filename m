@@ -1,60 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36775 "EHLO
-	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753362AbcGDTSx (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:32877 "EHLO
+	mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753362AbcGDTP2 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 4 Jul 2016 15:18:53 -0400
-MIME-Version: 1.0
-In-Reply-To: <37b292fe-3a14-62d6-bdc5-7f7e5e93d958@cogentembedded.com>
-References: <1748403.xeiuK39ynx@wasted.cogentembedded.com> <6941131.ZKfJHhvm82@wasted.cogentembedded.com>
- <CAMuHMdXYLg7nQ1rTHnuTG2-2J1veApAcizA6j_5-UE1jPs2TPA@mail.gmail.com> <37b292fe-3a14-62d6-bdc5-7f7e5e93d958@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Jul 2016 21:18:52 +0200
-Message-ID: <CAMuHMdV2rmsNt-3SLWoHTsHgGjMsF+AdjmFHKdoEL4xNVca-yA@mail.gmail.com>
+	Mon, 4 Jul 2016 15:15:28 -0400
+Received: by mail-lf0-f52.google.com with SMTP id f6so122071618lfg.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Jul 2016 12:15:27 -0700 (PDT)
 Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: fix overly long lines
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1748403.xeiuK39ynx@wasted.cogentembedded.com>
+ <6941131.ZKfJHhvm82@wasted.cogentembedded.com>
+ <CAMuHMdXYLg7nQ1rTHnuTG2-2J1veApAcizA6j_5-UE1jPs2TPA@mail.gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <37b292fe-3a14-62d6-bdc5-7f7e5e93d958@cogentembedded.com>
+Date: Mon, 4 Jul 2016 22:15:23 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdXYLg7nQ1rTHnuTG2-2J1veApAcizA6j_5-UE1jPs2TPA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+On 07/01/2016 10:50 AM, Geert Uytterhoeven wrote:
 
-On Mon, Jul 4, 2016 at 9:15 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 07/01/2016 10:50 AM, Geert Uytterhoeven wrote:
->>> The PORT_GP_CFG_<n>() macros take up more than 80 columns -- and not for
->>> a good reason. Make the header file checkpatch.pl-proof at least in this
->>> respect...
->>>
->>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>> The PORT_GP_CFG_<n>() macros take up more than 80 columns -- and not for
+>> a good reason. Make the header file checkpatch.pl-proof at least in this
+>> respect...
 >>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>
->> But it doesn't apply, due to "pinctrl: sh-pfc: Initial R8A7796 PFC
->> support"
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 >
->    ... and *still* not merged? Or am I looking at a wrong tree? :-/
-
-No, it's not yet merged. IIRC, there were review comments ;-)
-
->> which was submitted one day earlier.
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 >
->    I don't think that matters... What matters are the order of merges.
+> But it doesn't apply, due to "pinctrl: sh-pfc: Initial R8A7796 PFC support"
 
-Right... It's getting a bit late for v4.8, though...
+    ... and *still* not merged? Or am I looking at a wrong tree? :-/
 
-Gr{oetje,eeting}s,
+> which was submitted one day earlier.
 
-                        Geert
+    I don't think that matters... What matters are the order of merges.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> Gr{oetje,eeting}s,
+>
+>                         Geert
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MBR, Sergei
