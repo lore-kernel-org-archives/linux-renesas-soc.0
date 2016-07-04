@@ -1,47 +1,113 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36686 "EHLO
-	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751356AbcGROTX (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34551 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753025AbcGDN5w (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 18 Jul 2016 10:19:23 -0400
-Received: by mail-io0-f195.google.com with SMTP id y34so11059105ioi.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Jul 2016 07:19:10 -0700 (PDT)
+	Mon, 4 Jul 2016 09:57:52 -0400
 MIME-Version: 1.0
-In-Reply-To: <3404781.poC9HarVFn@avalon>
-References: <3404781.poC9HarVFn@avalon>
+In-Reply-To: <CAPDyKFotR6dk+ntMWH4nCjg2mFJe3YzVqw=M-6Vy7b8tdMFxsw@mail.gmail.com>
+References: <1463485296-22742-1-git-send-email-ulf.hansson@linaro.org>
+ <1463485296-22742-5-git-send-email-ulf.hansson@linaro.org>
+ <CAMuHMdVM66516s_+Ups7fng5xpasdiUnW=3Ybz+vGHbgN+5mpQ@mail.gmail.com> <CAPDyKFotR6dk+ntMWH4nCjg2mFJe3YzVqw=M-6Vy7b8tdMFxsw@mail.gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 18 Jul 2016 16:19:09 +0200
-Message-ID: <CAMuHMdWCcUjY_AHrWAuqrZ0L58y3uU+Zb1O8D3sXngZahWc4Tg@mail.gmail.com>
-Subject: Re: [GIT PULL FOR renesas-drivers] Latest VSP code
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Date: Mon, 4 Jul 2016 15:57:50 +0200
+Message-ID: <CAMuHMdU+nGmU0TJXtRxvfjsdFokhsh3e0m1DPXnU20k141BN5Q@mail.gmail.com>
+Subject: Re: [PATCH 4/4] PM / Runtime: Defer resuming of the device in pm_runtime_force_resume()
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Kevin Hilman <khilman@kernel.org>,
+	Linux PM list <linux-pm@vger.kernel.org>,
+	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Lina Iyer <lina.iyer@linaro.org>,
+	Axel Haslam <ahaslam@baylibre.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hi Ulf,
 
-On Tue, Jun 21, 2016 at 1:31 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> The following changes since commit a0877f52035280370707bdefeddc6faa6478b892:
+On Wed, Jun 29, 2016 at 7:30 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 28 June 2016 at 18:26, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> This patch (commit eb13a0a1b6d5d5c2 in pm/linux-next) breaks resume on
 >
->   Merge tag 'topic/drm-misc-2016-06-15' of git://anongit.freedesktop.org/drm-
-> intel into drm-next (2016-06-16 05:49:32 +1000)
+> Thanks for reporting!
 >
-> are available in the git repository at:
+>> sh73a0/kzm9g and r8a73a4/ape6evm. On these boards, the Ethernet controller is a
+>> child of a local bus (bsc), whose clock (zb) is controlled through pm_clk and
+>> simple-pm-bus, cfr.
+>>
+>>     arch/arm/boot/dts/r8a73a4-ape6evm.dts
+>>     arch/arm/boot/dts/r8a73a4.dtsi
+>>     arch/arm/boot/dts/sh73a0-kzm9g.dts
+>>     arch/arm/boot/dts/sh73a0.dtsi
+>>
+>> During resume, the bus clock is not enabled, causing an imprecise abort
+>> when accessing the Ethernet controller's registers. With some debug code
+>> added:
 >
->   git://linuxtv.org/pinchartl/media.git for/renesas-drivers
+> I was looking into this in some more detail.
 >
-> for you to fetch changes up to a0c43cc96e4f42cd192ca957991419497a8432ec:
+> As you are stating that Ethernet device is a child device to the local
+> bus device, I would have expected that the pm_runtime_get_sync()
+> invoked during ->probe() in the Ethernet driver should cause its
+> parent device (the bus device) to be "forced" resumed.
 >
->   Merge branch 'drm/next/dt' into for/renesas-drivers (2016-06-21 02:05:28
-> +0300)
+> That's because the pm_runtime_get_sync() should trigger an increased
+> usage count of the parent device. Later, when
+> pm_runtime_force_resume() validates the count for the bus device, it
+> should be 2 and thus it should lead to that it decides to *not* defer
+> the resume of the device. Apparently this isn't happening for some
+> reason...
+>
+> Perhaps there's a pm_suspend_ignore_children() set for the parent?
+> Or perhaps the parent/child relationship isn't set up correctly?
 
-I'm afraid I'll have to drop this for tomorrow's renesas-drivers release,
-as integrating it involves more than a simple rebase and dropping some
-commits already queued for upstream.
+No, ignore_children = 0. I've dumped all fields from the bus' prepare
+callback I had added for Kevin's test:
 
-Thanks for your understanding.
+PM: Suspending system (mem)
+simple-pm-bus fec10000.bus: simple_pm_bus_prepare
+can_wakeup = 0
+async_suspend = 0
+is_prepared = 0
+is_suspended = 0
+is_noirq_suspended = 0
+is_late_suspended = 0
+early_init = 1
+direct_complete = 0
+wakeup_path = 0
+syscore = 0
+no_pm_callbacks = 0
+timer_expires = 0
+usage_count = 1
+child_count = 1
+disable_depth = 0
+idle_notification = 0
+request_pending = 0
+deferred_resume = 0
+run_wake = 0
+runtime_auto = 1
+ignore_children = 0
+no_callbacks = 0
+irq_safe = 0
+use_autosuspend = 0
+timer_autosuspends = 0
+memalloc_noio = 1
+request = 0
+runtime_status = 0
+runtime_error = 0
+autosuspend_delay = 0
+last_busy = 4294937777
+active_jiffies = 0
+suspended_jiffies = 430
+accounting_timestamp = 4294937777
+PM: suspend of devices complete after 4.394 msecs
 
 Gr{oetje,eeting}s,
 
