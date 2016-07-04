@@ -1,45 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33283 "EHLO
-	mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751354AbcGEHcr (ORCPT
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:34282 "EHLO
+	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932503AbcGDVLZ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 5 Jul 2016 03:32:47 -0400
+	Mon, 4 Jul 2016 17:11:25 -0400
+Received: by mail-lf0-f49.google.com with SMTP id h129so123442711lfh.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Jul 2016 14:11:25 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/2] ARM: dts: r8a7792: add GPIO clocks
+Date: Tue, 05 Jul 2016 00:11:22 +0300
+Message-ID: <2050251.DJM1C0SRyY@wasted.cogentembedded.com>
+In-Reply-To: <2706182.6XMBucurvj@wasted.cogentembedded.com>
+References: <2706182.6XMBucurvj@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <2050251.DJM1C0SRyY@wasted.cogentembedded.com>
-References: <2706182.6XMBucurvj@wasted.cogentembedded.com> <2050251.DJM1C0SRyY@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 5 Jul 2016 09:32:45 +0200
-Message-ID: <CAMuHMdUN-8=B9jZV-xQXVNW=1NuGUpmnj3FR1fRNnrWFy9xumA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: r8a7792: add GPIO clocks
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Jul 4, 2016 at 11:11 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Describe the GPIO clocks in the R8A7792 device tree.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Describe the GPIO clocks in the R8A7792 device tree.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
+---
+ arch/arm/boot/dts/r8a7792.dtsi |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -363,6 +363,27 @@
+ 			clock-output-names = "hscif1", "hscif0", "scif3",
+ 					     "scif2", "scif1", "scif0";
+ 		};
++		mstp9_clks: mstp9_clks@e6150994 {
++			compatible = "renesas,r8a7792-mstp-clocks",
++				     "renesas,cpg-mstp-clocks";
++			reg = <0 0xe6150994 0 4>, <0 0xe61509a4 0 4>;
++			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
++			         <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
++				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>;
++			#clock-cells = <1>;
++			clock-indices = <
++				R8A7792_CLK_GPIO7 R8A7792_CLK_GPIO6
++				R8A7792_CLK_GPIO5 R8A7792_CLK_GPIO4
++				R8A7792_CLK_GPIO3 R8A7792_CLK_GPIO2
++				R8A7792_CLK_GPIO1 R8A7792_CLK_GPIO0
++				R8A7792_CLK_GPIO11 R8A7792_CLK_GPIO10
++				R8A7792_CLK_GPIO9 R8A7792_CLK_GPIO8
++			>;
++			clock-output-names =
++				"gpio7", "gpio6", "gpio5", "gpio4",
++				"gpio3", "gpio2", "gpio1", "gpio0",
++				"gpio11", "gpio10", "gpio9", "gpio8";
++		};
+ 	};
+ 
+ 	/* External root clock */
