@@ -1,75 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58720 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751516AbcGRRDD (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:33298 "EHLO
+	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753515AbcGDUvP (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 18 Jul 2016 13:03:03 -0400
-Date: Mon, 18 Jul 2016 18:02:33 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>,
-	Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <20160718170233.GU30372@sirena.org.uk>
-References: <1466602929-4191-1-git-send-email-geert+renesas@glider.be>
- <1466602929-4191-3-git-send-email-geert+renesas@glider.be>
+	Mon, 4 Jul 2016 16:51:15 -0400
+Received: by mail-lf0-f53.google.com with SMTP id f6so123113899lfg.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Jul 2016 13:51:14 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/3] Add R8A7792/Blanche PFC support
+Date: Mon, 04 Jul 2016 23:51:11 +0300
+Message-ID: <2793535.9X0Tq7I1Mq@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="uUozbLrG2OP+gMtx"
-Content-Disposition: inline
-In-Reply-To: <1466602929-4191-3-git-send-email-geert+renesas@glider.be>
-Subject: Re: [PATCH/RFC 2/6] spi: core: Add support for registering SPI slave
- controllers
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hello.
 
---uUozbLrG2OP+gMtx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   Here's the set of 3 patches against Simon Horman's 'renesas.git' repo,
+'renesas-devel-20160704-v4.7-rc6' tag. We're adding the R8A7792 PFC node and
+then describe the pins for the SCIFs and SMSC LAN89218 Ethernet chip found on
+the Blanche board. These patches depend on the R8A7792 PFC driver patchset
+in order to work properly.
 
-On Wed, Jun 22, 2016 at 03:42:05PM +0200, Geert Uytterhoeven wrote:
-> Add support for registering SPI slave controllers using the existing SPI
-> master framework:
->   - SPI slave controllers must set the SPI_MASTER_IS_SLAVE flag in
->     spi_master.flags,
->   - The "cs-gpios" property is ignored,
->   - The bus is described in DT as having a single slave node, "reg" and
->     "spi-max-frequency" properties are ignored.
->=20
-> From the point of view of an SPI slave protocol handler, an SPI slave
-> controller looks exactly like an ordinary SPI master controller.
+[1/3] ARM: dts: r8a7792: add PFC support
+[2/3] ARM: dts: blanche: add SCIF pins
+[3/3] ARM: dts: blanche: add Ethernet pins
 
-I think this needs a *bit* more fleshing out around cancellation of
-transfers, the inability to remove any of the modules due to them being
-blocked in SPI calls.  Probably just an API call that allows us to
-inject a timeout/cancellation but I think it does need to be there and
-used before we start getting bad practice propagating around.
-
-I'm also wondering about supporting varible length transfers but that's
-going to be rather controller specific I fear and I'm not sure there's
-much demand.
-
-Otherwise the basic idea looks OK.
-
---uUozbLrG2OP+gMtx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXjQuoAAoJECTWi3JdVIfQyBUIAIY3+xCkGmBQI4DeFSF3pEng
-h3h5G8oSxRlKd/NxWlpVsFq7ZB92U5pimpKLTHoRVgvAj2a0SZcGmcryqYPfgpDT
-tgoECSRAL1aZJ4Jk5wTxSJMBug8sQZiLWQsg4r02GVyKEkCc93B4QrqB9xN7ceCq
-z5z5xTmDSIjqwt4N8OwNkFRfW4E20cvtUHjk9K7jPq90NJHqB3//gSdbSVpZ87Nz
-W+dqAos5mf+uF2ebi8TzOu6hoCePAEAgrcBRR5SF4vtgmTEAnvkDlgLbuO7B8GmB
-EK4ZzZnDif9u949TsjT6TSFA9a4j7f1DUSkl0Wz8r62O23FG0+m7sHELQf2Cw7Q=
-=tfa9
------END PGP SIGNATURE-----
-
---uUozbLrG2OP+gMtx--
+WBR, Sergei
