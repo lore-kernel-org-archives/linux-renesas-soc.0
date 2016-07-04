@@ -1,111 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52416 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751447AbcGPMEb (ORCPT
+Received: from mail-db5eur01on0051.outbound.protection.outlook.com ([104.47.2.51]:59776
+	"EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752661AbcGDHnr (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sat, 16 Jul 2016 08:04:31 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87eg6zn3a5.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bOOKY-0004vm-Px@debutante>
-Date: Sat, 16 Jul 2016 13:04:26 +0100
-Subject: Applied "ASoC: simple-card-utils: add asoc_simple_card_set_dailink_name()" to the asoc tree
+	Mon, 4 Jul 2016 03:43:47 -0400
+From: Peter Chen <peter.chen@nxp.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Linux PM list <linux-pm@vger.kernel.org>,
+	"linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Subject: RE: [PATCH 2/7] arm: mach-shmobile: pm-rmobile: add missing
+ of_node_put after calling of_parse_phandle
+Date: Mon, 4 Jul 2016 02:10:04 +0000
+Message-ID: <HE1PR04MB14504D0A5905A777452DC57D8B380@HE1PR04MB1450.eurprd04.prod.outlook.com>
+References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
+ <1467366121-14120-3-git-send-email-peter.chen@nxp.com>
+ <CAMuHMdVE8VzPunLzr7WO-kzcg25rKvFkoQcjJ4czwrQxX_obiw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVE8VzPunLzr7WO-kzcg25rKvFkoQcjJ4czwrQxX_obiw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
-
-   ASoC: simple-card-utils: add asoc_simple_card_set_dailink_name()
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 1db3312e3ab1a776ae8f414640dd7c180ce38a75 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 11 Jul 2016 23:57:14 +0000
-Subject: [PATCH] ASoC: simple-card-utils: add
- asoc_simple_card_set_dailink_name()
-
-Current simple-card is creating dai_link->name / dai_link->stream_name.
-These are based on CPU + Codec name, or "fe.CPU" or "be.Codec" if it
-was DPCM.
-This patch adds asoc_simple_card_set_dailink_name() and set dailink
-name as common method.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- include/sound/simple_card_utils.h     |  3 +++
- sound/soc/generic/simple-card-utils.c | 23 +++++++++++++++++++++++
- 2 files changed, 26 insertions(+)
-
-diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
-index 50aa7b22a94c..b88a8dcfe4ba 100644
---- a/include/sound/simple_card_utils.h
-+++ b/include/sound/simple_card_utils.h
-@@ -27,5 +27,8 @@ int asoc_simple_card_parse_daifmt(struct device *dev,
- 				  struct device_node *codec,
- 				  char *prefix,
- 				  unsigned int *retfmt);
-+int asoc_simple_card_set_dailink_name(struct device *dev,
-+				      struct snd_soc_dai_link *dai_link,
-+				      const char *fmt, ...);
- 
- #endif /* __SIMPLE_CARD_CORE_H */
-diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
-index 3f6b72526f71..48c73660b66a 100644
---- a/sound/soc/generic/simple-card-utils.c
-+++ b/sound/soc/generic/simple-card-utils.c
-@@ -52,3 +52,26 @@ int asoc_simple_card_parse_daifmt(struct device *dev,
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(asoc_simple_card_parse_daifmt);
-+
-+int asoc_simple_card_set_dailink_name(struct device *dev,
-+				      struct snd_soc_dai_link *dai_link,
-+				      const char *fmt, ...)
-+{
-+	va_list ap;
-+	char *name = NULL;
-+	int ret = -ENOMEM;
-+
-+	va_start(ap, fmt);
-+	name = devm_kvasprintf(dev, GFP_KERNEL, fmt, ap);
-+	va_end(ap);
-+
-+	if (name) {
-+		ret = 0;
-+
-+		dai_link->name		= name;
-+		dai_link->stream_name	= name;
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(asoc_simple_card_set_dailink_name);
--- 
-2.8.1
+IA0KPk9uIEZyaSwgSnVsIDEsIDIwMTYgYXQgMTE6NDEgQU0sIFBldGVyIENoZW4gPHBldGVyLmNo
+ZW5AbnhwLmNvbT4gd3JvdGU6DQo+PiBvZl9ub2RlX3B1dCBuZWVkcyB0byBiZSBjYWxsZWQgd2hl
+biB0aGUgZGV2aWNlIG5vZGUgd2hpY2ggaXMgZ290IGZyb20NCj4+IG9mX3BhcnNlX3BoYW5kbGUg
+aGFzIGZpbmlzaGVkIHVzaW5nLg0KPj4NCj4+IENjOiBTaW1vbiBIb3JtYW4gPGhvcm1zQHZlcmdl
+Lm5ldC5hdT4NCj4+IENjOiBNYWdudXMgRGFtbSA8bWFnbnVzLmRhbW1AZ21haWwuY29tPg0KPj4g
+U2lnbmVkLW9mZi1ieTogUGV0ZXIgQ2hlbiA8cGV0ZXIuY2hlbkBueHAuY29tPg0KPg0KPk5BS2Vk
+LWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg0KPg0KPj4g
+LS0tIGEvYXJjaC9hcm0vbWFjaC1zaG1vYmlsZS9wbS1ybW9iaWxlLmMNCj4+ICsrKyBiL2FyY2gv
+YXJtL21hY2gtc2htb2JpbGUvcG0tcm1vYmlsZS5jDQo+PiBAQCAtMjA5LDYgKzIwOSw3IEBAIHN0
+YXRpYyB2b2lkIF9faW5pdCBhZGRfc3BlY2lhbF9wZChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wLA0K
+PmVudW0gcGRfdHlwZXMgdHlwZSkNCj4+ICAgICAgICAgc3BlY2lhbF9wZHNbbnVtX3NwZWNpYWxf
+cGRzXS5wZCA9IHBkOw0KPg0KPlRoZSBwZCBwb2ludGVyIGlzIHN0b3JlZCBpbiB0aGUgbGluZSBh
+Ym92ZSwgYW5kIHJlbGVhc2VkIGxhdGVyIGluIHB1dF9zcGVjaWFsX3BkcygpLg0KPg0KPj4gICAg
+ICAgICBzcGVjaWFsX3Bkc1tudW1fc3BlY2lhbF9wZHNdLnR5cGUgPSB0eXBlOw0KPj4gICAgICAg
+ICBudW1fc3BlY2lhbF9wZHMrKzsNCj4+ICsgICAgICAgb2Zfbm9kZV9wdXQocGQpOw0KPg0KPkhl
+bmNlIGl0IG11c3Qgbm90IGJlIHJlbGVhc2VkIGhlcmUsIGFzIHRoYXQgd291bGQgY2F1c2UgYSBk
+b3VibGUgcmVsZWFzZSB3aGVuDQo+cHV0X3NwZWNpYWxfcGRzKCkgaXMgZXhlY3V0ZWQuDQo+DQoN
+ClRoYW5rcywgR2VlcnQsIGl0IGlzIG15IGNhcmVsZXNzLg0KDQpQbGVhc2UgZm9yZ2V0IHRoaXMg
+cGF0Y2guDQoNClBldGVyDQo=
