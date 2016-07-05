@@ -1,76 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43946 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751629AbcGFUXy (ORCPT
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:33093 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932846AbcGEVYd (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 6 Jul 2016 16:23:54 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/RFC v3 0/6] mmc: renesas_sdhi: add R-Car Gen-3 DMA support
-Date: Wed,  6 Jul 2016 22:23:24 +0200
-Message-Id: <1467836610-18539-1-git-send-email-horms+renesas@verge.net.au>
+	Tue, 5 Jul 2016 17:24:33 -0400
+Received: by mail-oi0-f48.google.com with SMTP id u201so246801607oie.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Jul 2016 14:24:33 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1467366121-14120-4-git-send-email-peter.chen@nxp.com>
+References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com> <1467366121-14120-4-git-send-email-peter.chen@nxp.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 5 Jul 2016 23:24:31 +0200
+Message-ID: <CACRpkdYMn94brCXUzS2b+4GBTx7WVhKririVzmHjjeVb9CC7NQ@mail.gmail.com>
+Subject: Re: [PATCH 3/7] arm: mach-u300: regulator: add missing of_node_put
+ after calling of_parse_phandle
+To: Peter Chen <peter.chen@nxp.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Fri, Jul 1, 2016 at 11:41 AM, Peter Chen <peter.chen@nxp.com> wrote:
 
-this short series adds support for R-Car Gen-3 Internal DMAC to the SDHI
-driver.
+> of_node_put needs to be called when the device node which is got
+> from of_parse_phandle has finished using.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Peter Chen <peter.chen@nxp.com>
 
-The approach taken is as follows:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-1. Refactor the TMIO DMA code so that it is provided by a set of callbacks
-   rather than compiled-in function calls; Refactor the DMA SDHI to use
-   this.
-2. Rename tmio_mmc_dma.c as renesas_sdhi_sysc_dmac.c which better reflects
-   what it is is, particularly after step 2.
-3. Add max_segs restriction
-4. Add Gen3 DMA code as a separate set of callbacks
-
-Changes since v2:
-* Correct discrepancies with BSP v3.2.2 in intermal DMAC implementation.
-* Correctly set mmc->max_blk_count in accordance with max_segs.
-  This appears to boost performance from ~4.7Mb/s to ~11Mb/s.
-* Allow fallback to PIO
-* Correct name of SYS DMAC
-
-Changes since v1:
-* Cleanup and more renaming as suggested by Wolfram Sang
-* max_segs restriction
-
-Testing:
-
-As described on http://elinux.org/Tests:r-car-gen3-sdhi-dma
-
-Previously performance of 4.7Mb/s was reported.
-With this series performance of 11Mb/s has been achieved.
-However, this is still lower than the 20Mb/s I originally expected.
-
-Simon Horman (3):
-  mmc: sh_mobile_sdhi, tmio: make dma more modular
-  mmc: sh_mobile_sdhi: rename DMA source file as renesas_sdhi_sys_dmac.c
-  arm64: defconfig: Enable SDHI SD/SDIO controller
-
-Yoshihiro Shimoda (3):
-  mmc: tmio: add max_segs and max_blk_count in tmio_mmc_data
-  mmc: sh_mobile_sdhi: add some SoC specific data for R-Car Gen3
-  mmc: renesas_sdhi: add support for R-Car Gen3 SDHI DMAC
-
- arch/arm64/configs/defconfig                       |   1 +
- drivers/mmc/host/Kconfig                           |  18 ++
- drivers/mmc/host/Makefile                          |   7 +-
- drivers/mmc/host/renesas_sdhi_internal_dmac.c      | 196 +++++++++++++++++++++
- .../{tmio_mmc_dma.c => renesas_sdhi_sys_dmac.c}    |  53 ++++--
- drivers/mmc/host/sh_mobile_sdhi.c                  |  41 +++++
- drivers/mmc/host/tmio_mmc.h                        |  39 +---
- drivers/mmc/host/tmio_mmc_pio.c                    |  53 +++++-
- include/linux/mfd/tmio.h                           |   2 +
- 9 files changed, 357 insertions(+), 53 deletions(-)
- create mode 100644 drivers/mmc/host/renesas_sdhi_internal_dmac.c
- rename drivers/mmc/host/{tmio_mmc_dma.c => renesas_sdhi_sys_dmac.c} (83%)
-
--- 
-2.7.0.rc3.207.g0ac5344
+Yours,
+Linus Walleij
