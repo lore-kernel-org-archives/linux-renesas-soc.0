@@ -1,103 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:34473 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754781AbcGEOwn (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33156 "EHLO
+	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932729AbcGEKHj convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 5 Jul 2016 10:52:43 -0400
-Received: by mail-oi0-f48.google.com with SMTP id s66so232120129oif.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Jul 2016 07:52:43 -0700 (PDT)
+	Tue, 5 Jul 2016 06:07:39 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXVEjyctU88-u=FJcY0AwLKvFxdizkPTTjt_X=xM_H6UQ@mail.gmail.com>
-References: <1466630758-26231-1-git-send-email-linus.walleij@linaro.org> <CAMuHMdXVEjyctU88-u=FJcY0AwLKvFxdizkPTTjt_X=xM_H6UQ@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 5 Jul 2016 16:52:41 +0200
-Message-ID: <CACRpkdZpRSrt4u_h11ROavVFZDh6OYJ49gJ6eD0y4gGuOxzMYg@mail.gmail.com>
+In-Reply-To: <1466630758-26231-1-git-send-email-linus.walleij@linaro.org>
+References: <1466630758-26231-1-git-send-email-linus.walleij@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 Jul 2016 12:07:37 +0200
+Message-ID: <CAMuHMdXVEjyctU88-u=FJcY0AwLKvFxdizkPTTjt_X=xM_H6UQ@mail.gmail.com>
 Subject: Re: [PATCH v2] gpio: convince line to become input in irq helper
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
 	Alexandre Courbot <acourbot@nvidia.com>,
 	=?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>,
 	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I sent a patch for the direction setter to be more careful, but
-it's no silver bullet for strange semantics.
+Hi Linus,
 
-On Tue, Jul 5, 2016 at 12:07 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
+On Wed, Jun 22, 2016 at 11:25 PM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> The generic IRQ helper library just checks if the IRQ line is
+> set as input before activating it for interrupts. As we
+> recently started to check things better with .get_dir() it
+> turns out that it's good to try to convince the line to become
+> an input before attempting to lock it as IRQ.
+>
+> Cc: Björn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - Propagate the error from .direction_input() so we can rely on
+>   it being used.
 
-> [1] gpio_rcar e6052000.gpio: sense irq = 11, type = 8
->     ravb e6800000.ethernet eth0: Base address at 0xe6800000,
-> 2e:09:0a:00:83:1e, IRQ 131.
->     ...
-> [2] gpiochip_irq_reqres: gpiochip e6052000.gpio
-> [3] gpio_rcar e6052000.gpio: gpio_rcar_direction_input: 11
-> [4] gpiochip_irq_reqres: desc->flags = 0x0
-(...)
-> This configures the GPIO for plain input mode, cfr. [3] above, basically
-> undoing the configuration from [1]. Hence interrupts no longer come through,
-> and Ethernet fails.
+This patch (commit 7e7c059cb50c7c72 in gpio/for-next) breaks Ethernet on
+r8a7795/salvator-x:
 
-The driver is a bit fragile in that it relies on a certain call semantic,
-I guess it is not a widespread problem so we should be able to make
-a local fix if necessary.
+    libphy: ravb_mii: probed
+[1] gpio_rcar e6052000.gpio: sense irq = 11, type = 8
+    ravb e6800000.ethernet eth0: Base address at 0xe6800000,
+2e:09:0a:00:83:1e, IRQ 131.
+    ...
+[2] gpiochip_irq_reqres: gpiochip e6052000.gpio
+[3] gpio_rcar e6052000.gpio: gpio_rcar_direction_input: 11
+[4] gpiochip_irq_reqres: desc->flags = 0x0
+    ravb e6800000.ethernet eth0: limited PHY to 100Mbit/s
+    Micrel KSZ9031 Gigabit PHY e6800000.etherne:00: attached PHY
+driver [Micrel KSZ9031 Gigabit PHY]
+(mii_bus:phy_addr=e6800000.etherne:00, irq=206)
+    Waiting up to 110 more seconds for network.
+    Waiting up to 100 more seconds for network.
+    ...
 
-The .set_direction() call should
-set the direction. Why is it turning off interrupts as a side effect?
+Reverting it fixes the issue.
 
-What happens if you apply this, making the .request() function handle
-the pin setup and .set_direction() really just setting the
-direction?
+phy0 in arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
 
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 681c93fb9e70..68fb0147caf4 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -221,7 +221,20 @@ static void
-gpio_rcar_config_general_input_output_mode(struct gpio_chip *chip,
-     struct gpio_rcar_priv *p = gpiochip_get_data(chip);
-     unsigned long flags;
+        phy0: ethernet-phy@0 {
+                ...
+                interrupt-parent = <&gpio2>;
+                interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+        };
 
--    /* follow steps in the GPIO documentation for
-+    spin_lock_irqsave(&p->lock, flags);
-+
-+    /* Select Input Mode or Output Mode in INOUTSEL */
-+    gpio_rcar_modify_bit(p, INOUTSEL, gpio, output);
-+
-+    spin_unlock_irqrestore(&p->lock, flags);
-+}
-+
-+static int gpio_rcar_request(struct gpio_chip *chip, unsigned offset)
-+{
-+    struct gpio_rcar_priv *p = gpiochip_get_data(chip);
-+
-+    /*
-+     * follow steps in the GPIO documentation for
-      * "Setting General Output Mode" and
-      * "Setting General Input Mode"
-      */
-@@ -234,14 +247,8 @@ static void
-gpio_rcar_config_general_input_output_mode(struct gpio_chip *chip,
-     /* Select "General Input/Output Mode" in IOINTSEL */
-     gpio_rcar_modify_bit(p, IOINTSEL, gpio, false);
+sets up the GPIO for interrupt mode, cfr. [1] in the kernel output above.
 
--    /* Select Input Mode or Output Mode in INOUTSEL */
--    gpio_rcar_modify_bit(p, INOUTSEL, gpio, output);
--
-     spin_unlock_irqrestore(&p->lock, flags);
--}
+> ---
+>  drivers/gpio/gpiolib.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 5a21a6acf8af..b195ec406ff4 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1505,6 +1505,25 @@ static int gpiochip_irq_reqres(struct irq_data *d)
+>         if (!try_module_get(chip->gpiodev->owner))
+>                 return -ENODEV;
+>
+> +       /*
+> +        * If it is possible to switch this GPIO to an input
+> +        * this is a good time to do it.
+> +        */
+> +       if (chip->direction_input) {
+> +               struct gpio_desc *desc;
+> +               int ret;
+> +
+> +               desc = gpiochip_get_desc(chip, d->hwirq);
+> +               if (IS_ERR(desc))
+> +                       return PTR_ERR(desc);
+> +
+> +               ret = chip->direction_input(chip, d->hwirq);
 
--static int gpio_rcar_request(struct gpio_chip *chip, unsigned offset)
--{
-     return pinctrl_request_gpio(chip->base + offset);
- }
+This configures the GPIO for plain input mode, cfr. [3] above, basically
+undoing the configuration from [1]. Hence interrupts no longer come through,
+and Ethernet fails.
 
-.request() is always called before .set_direction() when issuing
-gpiod_get() anyways, so the order required according to the comment
-will be satisfied when the GPIO is first requested, but if we're just
-using the interrupt, we still will be able to set the direction right.
+> +               if (ret)
+> +                       return ret;
+> +
+> +               clear_bit(FLAG_IS_OUT, &desc->flags);
 
-Yours,
-Linus Walleij
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
