@@ -1,57 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:56083 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753948AbcGSOXP (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36419 "EHLO
+	mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754378AbcGEHkG (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 19 Jul 2016 10:23:15 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
-	hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 15/16] [media] rcar-vin: enable Gen3
-Date: Tue, 19 Jul 2016 16:21:06 +0200
-Message-Id: <20160719142107.22358-16-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
+	Tue, 5 Jul 2016 03:40:06 -0400
 MIME-Version: 1.0
+In-Reply-To: <3522881.tHt9KiJA1l@wasted.cogentembedded.com>
+References: <2706182.6XMBucurvj@wasted.cogentembedded.com> <3522881.tHt9KiJA1l@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 Jul 2016 09:40:05 +0200
+Message-ID: <CAMuHMdUYYhGmFqSXziRd9QQfFFAD-29MnZT_HGP8Y5ySk5Jq7A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: r8a7792: add GPIO support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/Kconfig     | 2 +-
- drivers/media/platform/rcar-vin/rcar-core.c | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+On Mon, Jul 4, 2016 at 11:12 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Describe all 12 GPIO controllers in the R8A7792 device tree.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
-index 111d2a1..e0e981c 100644
---- a/drivers/media/platform/rcar-vin/Kconfig
-+++ b/drivers/media/platform/rcar-vin/Kconfig
-@@ -5,7 +5,7 @@ config VIDEO_RCAR_VIN
- 	select VIDEOBUF2_DMA_CONTIG
- 	---help---
- 	  Support for Renesas R-Car Video Input (VIN) driver.
--	  Supports R-Car Gen2 SoCs.
-+	  Supports R-Car Gen2 and Gen3 SoCs.
- 
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called rcar-vin.
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 8842777..eab3009 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -336,6 +336,7 @@ static int rvin_digital_graph_init(struct rvin_dev *vin)
-  */
- 
- static const struct of_device_id rvin_of_id_table[] = {
-+	{ .compatible = "renesas,vin-r8a7795", .data = (void *)RCAR_GEN3 },
- 	{ .compatible = "renesas,vin-r8a7794", .data = (void *)RCAR_GEN2 },
- 	{ .compatible = "renesas,vin-r8a7793", .data = (void *)RCAR_GEN2 },
- 	{ .compatible = "renesas,vin-r8a7791", .data = (void *)RCAR_GEN2 },
--- 
-2.9.0
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
