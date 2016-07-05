@@ -1,93 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34946 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932366AbcG0TJv (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34392 "EHLO
+	mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751427AbcGELGG (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Jul 2016 15:09:51 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Mark Brown <broonie@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	tomoharu.fukawa.eb@renesas.com,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	naoya.shiiba.nx@renesas.com, mitsuhiro.kimura.kc@renesas.com,
-	hideya.tanaka.nx@renesas.com, tomohiro.komagata.aj@renesas.com,
-	khiem.nguyen.xt@rvc.renesas.com, hien.dang.eb@renesas.com,
-	ryo.kodama.vz@renesas.com, takeshi.kihara.df@renesas.com,
-	ryo.kataoka.wt@renesas.com, takamitsu.honda.pv@renesas.com,
-	hiroyuki.yokoyama.vx@renesas.com, Chris.Paterson2@renesas.com,
-	kouei.abe.cp@renesas.com, ren.imaoka.vj@renesas.com,
-	Simon <horms@verge.net.au>, takahiko.gomi.yn@renesas.com,
-	yuta.wakasawa.pv@renesas.com, yoshifumi.hosoya.wj@renesas.com,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, harunobu.kurokawa.dn@renesas.com
-In-Reply-To: <87h9bewkwu.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bSUD7-0003qv-0l@debutante>
-Date: Wed, 27 Jul 2016 20:09:41 +0100
-Subject: Applied "ASoC: rsnd: Fixup SRCm_IFSVR calculate method" to the asoc tree
+	Tue, 5 Jul 2016 07:06:06 -0400
+MIME-Version: 1.0
+In-Reply-To: <1467237940-24388-6-git-send-email-horms+renesas@verge.net.au>
+References: <1467237940-24388-1-git-send-email-horms+renesas@verge.net.au> <1467237940-24388-6-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 Jul 2016 13:06:04 +0200
+Message-ID: <CAMuHMdXEuZyrZUQbjBB600Fp+skKcHr8=FAzzqLv5_ttSeTmiA@mail.gmail.com>
+Subject: Re: [PATCH/RFC v2 5/5] mmc: renesas_sdhi: add support for R-Car Gen3
+ SDHI DMAC
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Linux MMC List <linux-mmc@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Ai Kyuse <ai.kyuse.uw@renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Thu, Jun 30, 2016 at 12:05 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> --- a/drivers/mmc/host/sh_mobile_sdhi.c
+> +++ b/drivers/mmc/host/sh_mobile_sdhi.c
 
-   ASoC: rsnd: Fixup SRCm_IFSVR calculate method
+> +static int sh_mobile_sdhi_init_dma(enum tmio_mmc_dmac_type dmac_type)
+> +{
+> +       switch (dmac_type) {
+> +       case TMIO_MMC_INTERNAL_DMAC:
+> +               return sdhi_internal_dmac_init_dma();
+> +
+> +       case TMIO_MMC_SYSC_DMAC:
+> +               return sdhi_sysc_dmac_init_dma();
+> +       }
+> +}
 
-has been applied to the asoc tree at
+Depending on compiler version and optimization level:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+drivers/mmc/host/sh_mobile_sdhi.c:172:1: warning: control reaches end
+of non-void function [-Wreturn-type]
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Gr{oetje,eeting}s,
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+                        Geert
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 24e06559a8f52889b3dd581d2ddd572421a73ae0 Mon Sep 17 00:00:00 2001
-From: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Date: Mon, 25 Jul 2016 01:52:43 +0000
-Subject: [PATCH] ASoC: rsnd: Fixup SRCm_IFSVR calculate method
-
-This patch fixes the calculation accuracy degradation of SRCm_IFSVR
-register value.
-
-Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sh/rcar/src.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/sound/soc/sh/rcar/src.c b/sound/soc/sh/rcar/src.c
-index e39f916d0f2f..969a5169de25 100644
---- a/sound/soc/sh/rcar/src.c
-+++ b/sound/soc/sh/rcar/src.c
-@@ -226,8 +226,12 @@ static void rsnd_src_set_convert_rate(struct rsnd_dai_stream *io,
- 	ifscr = 0;
- 	fsrate = 0;
- 	if (fin != fout) {
-+		u64 n;
-+
- 		ifscr = 1;
--		fsrate = 0x0400000 / fout * fin;
-+		n = (u64)0x0400000 * fin;
-+		do_div(n, fout);
-+		fsrate = n;
- 	}
- 
- 	/*
--- 
-2.8.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
