@@ -1,80 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36645 "EHLO
-	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753137AbcGVJJn (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33283 "EHLO
+	mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751354AbcGEHcr (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 22 Jul 2016 05:09:43 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-	william.towle@codethink.co.uk, geert@linux-m68k.org,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v6 4/4] rcar-vin: implement EDID control ioctls
-Date: Fri, 22 Jul 2016 11:09:14 +0200
-Message-Id: <1469178554-20719-5-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1469178554-20719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1469178554-20719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+	Tue, 5 Jul 2016 03:32:47 -0400
+MIME-Version: 1.0
+In-Reply-To: <2050251.DJM1C0SRyY@wasted.cogentembedded.com>
+References: <2706182.6XMBucurvj@wasted.cogentembedded.com> <2050251.DJM1C0SRyY@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 Jul 2016 09:32:45 +0200
+Message-ID: <CAMuHMdUN-8=B9jZV-xQXVNW=1NuGUpmnj3FR1fRNnrWFy9xumA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: r8a7792: add GPIO clocks
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Adds G_EDID and S_EDID.
+On Mon, Jul 4, 2016 at 11:11 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Describe the GPIO clocks in the R8A7792 device tree.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 33 +++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 396eabc..57e040c 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -661,6 +661,36 @@ static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
- 	return ret;
- }
- 
-+static int rvin_g_edid(struct file *file, void *fh, struct v4l2_edid *edid)
-+{
-+	struct rvin_dev *vin = video_drvdata(file);
-+	int input, ret;
-+
-+	input = edid->pad;
-+	edid->pad = vin->inputs[input].sink_idx;
-+
-+	ret = rvin_subdev_call(vin, pad, get_edid, edid);
-+
-+	edid->pad = input;
-+
-+	return ret;
-+}
-+
-+static int rvin_s_edid(struct file *file, void *fh, struct v4l2_edid *edid)
-+{
-+	struct rvin_dev *vin = video_drvdata(file);
-+	int input, ret;
-+
-+	input = edid->pad;
-+	edid->pad = vin->inputs[input].sink_idx;
-+
-+	ret = rvin_subdev_call(vin, pad, set_edid, edid);
-+
-+	edid->pad = input;
-+
-+	return ret;
-+}
-+
- static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
- 	.vidioc_querycap		= rvin_querycap,
- 	.vidioc_try_fmt_vid_cap		= rvin_try_fmt_vid_cap,
-@@ -683,6 +713,9 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
- 	.vidioc_s_dv_timings		= rvin_s_dv_timings,
- 	.vidioc_query_dv_timings	= rvin_query_dv_timings,
- 
-+	.vidioc_g_edid			= rvin_g_edid,
-+	.vidioc_s_edid			= rvin_s_edid,
-+
- 	.vidioc_querystd		= rvin_querystd,
- 	.vidioc_g_std			= rvin_g_std,
- 	.vidioc_s_std			= rvin_s_std,
--- 
-2.7.4
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
