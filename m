@@ -1,130 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:56012 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753630AbcGSOXK (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36084 "EHLO
+	mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751266AbcGEHmm (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 19 Jul 2016 10:23:10 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
-	hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 03/16] [media] rcar-vin: add legacy mode for wrong media bus formats
-Date: Tue, 19 Jul 2016 16:20:54 +0200
-Message-Id: <20160719142107.22358-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
+	Tue, 5 Jul 2016 03:42:42 -0400
 MIME-Version: 1.0
+In-Reply-To: <1541732.nlEXTHQe9F@wasted.cogentembedded.com>
+References: <3308853.O8HBuWdbK9@wasted.cogentembedded.com> <1541732.nlEXTHQe9F@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 Jul 2016 09:42:41 +0200
+Message-ID: <CAMuHMdUq4uCt1gGGXv5o20d-n+s_W0wk9B2a61nEbm0+1ZAScg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: r8a7792: add EtherAVB clocks
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-A recent bugfix to adv7180 brought to light that the rcar-vin driver are
-looking for the wrong media bus format. It was looking for a YUVU format
-but then expecting UYVY data. The bugfix for adv7180 will break the
-usage of rcar-vin together with a adv7180 as found on Renesas R-Car2
-Koelsch boards for example.
+On Mon, Jul 4, 2016 at 11:22 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the EtherAVB clock and its parent, HP clock to the R8A7792 device tree.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This patch fix the rcar-vin driver to look for the correct UYVU formats
-and adds a legacy mode. The legacy mode is needed since I don't know if
-other devices provide a incorrect media bus format and I don't want to
-break any working configurations. Hopefully the legacy mode can be
-removed sometime in the future.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 39 +++++++++++++++++++++++++++--
- drivers/media/platform/rcar-vin/rcar-dma.c  |  4 +--
- 2 files changed, 39 insertions(+), 4 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 4b2007b..481d82a 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -37,6 +37,7 @@ static int rvin_mbus_supported(struct rvin_dev *vin)
- 	struct v4l2_subdev_mbus_code_enum code = {
- 		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
- 	};
-+	bool found;
- 
- 	sd = vin_to_source(vin);
- 
-@@ -45,8 +46,8 @@ static int rvin_mbus_supported(struct rvin_dev *vin)
- 		code.index++;
- 		switch (code.code) {
- 		case MEDIA_BUS_FMT_YUYV8_1X16:
--		case MEDIA_BUS_FMT_YUYV8_2X8:
--		case MEDIA_BUS_FMT_YUYV10_2X10:
-+		case MEDIA_BUS_FMT_UYVY8_2X8:
-+		case MEDIA_BUS_FMT_UYVY10_2X10:
- 		case MEDIA_BUS_FMT_RGB888_1X24:
- 			vin->source.code = code.code;
- 			vin_dbg(vin, "Found supported media bus format: %d\n",
-@@ -57,6 +58,40 @@ static int rvin_mbus_supported(struct rvin_dev *vin)
- 		}
- 	}
- 
-+	/*
-+	 * Older versions where looking for the wrong media bus format.
-+	 * It where looking for a YUVY format but then treated it as a
-+	 * UYVY format. This was not noticed since atlest one subdevice
-+	 * used for testing (adv7180) reported a YUVY media bus format
-+	 * but provided UYVY data. There might be other unknown subdevices
-+	 * which also do this, to not break compatibility try to use them
-+	 * in legacy mode.
-+	 */
-+	found = false;
-+	code.index = 0;
-+	while (!v4l2_subdev_call(sd, pad, enum_mbus_code, NULL, &code)) {
-+		code.index++;
-+		switch (code.code) {
-+		case MEDIA_BUS_FMT_YUYV8_2X8:
-+			vin->source.code = MEDIA_BUS_FMT_UYVY8_2X8;
-+			found = true;
-+			break;
-+		case MEDIA_BUS_FMT_YUYV10_2X10:
-+			vin->source.code = MEDIA_BUS_FMT_UYVY10_2X10;
-+			found = true;
-+			break;
-+		default:
-+			break;
-+		}
-+
-+		if (found) {
-+			vin_err(vin,
-+				"media bus %d not supported, trying legacy mode %d\n",
-+				code.code, vin->source.code);
-+			return true;
-+		}
-+	}
-+
- 	return false;
- }
- 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index dad3b03..0836b15 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -169,7 +169,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 		vnmc |= VNMC_INF_YUV16;
- 		input_is_yuv = true;
- 		break;
--	case MEDIA_BUS_FMT_YUYV8_2X8:
-+	case MEDIA_BUS_FMT_UYVY8_2X8:
- 		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
- 		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
- 			VNMC_INF_YUV8_BT656 : VNMC_INF_YUV8_BT601;
-@@ -178,7 +178,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 	case MEDIA_BUS_FMT_RGB888_1X24:
- 		vnmc |= VNMC_INF_RGB888;
- 		break;
--	case MEDIA_BUS_FMT_YUYV10_2X10:
-+	case MEDIA_BUS_FMT_UYVY10_2X10:
- 		/* BT.656 10bit YCbCr422 or BT.601 10bit YCbCr422 */
- 		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
- 			VNMC_INF_YUV10_BT656 : VNMC_INF_YUV10_BT601;
--- 
-2.9.0
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
