@@ -1,61 +1,69 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
 Subject: Re: [PATCH v2 3/3] ARM: dts: blanche: add Ethernet pins
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 References: <2793535.9X0Tq7I1Mq@wasted.cogentembedded.com>
  <3279336.lifIduxqUW@wasted.cogentembedded.com>
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
+ <CAMuHMdU3yDe7fFtVArMGqMc6oyHXtFxeR8t6cqPranSg7R+12g@mail.gmail.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <106a5c67-94d2-07ff-723d-4cf8cb4978a5@cogentembedded.com>
-Date: Wed, 6 Jul 2016 22:12:20 +0300
+Message-ID: <9dc3a8b0-540b-9777-fce4-813eb6c2578e@cogentembedded.com>
+Date: Tue, 5 Jul 2016 16:43:02 +0300
 MIME-Version: 1.0
-In-Reply-To: <3279336.lifIduxqUW@wasted.cogentembedded.com>
+In-Reply-To: <CAMuHMdU3yDe7fFtVArMGqMc6oyHXtFxeR8t6cqPranSg7R+12g@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 07/04/2016 11:55 PM, Sergei Shtylyov wrote:
+On 07/05/2016 10:29 AM, Geert Uytterhoeven wrote:
 
-> Add the (previously omitted) pin data for the SMSC LAN89218 Ethernet chip
-> to the Blanche board's device tree: the chip's IRQ output is connected to
-> the SoC's IRQ0 pin and its nCS input is connected to the SoC's EX_CS0# pin.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
-> ---
->  arch/arm/boot/dts/r8a7792-blanche.dts |   15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-> ===================================================================
-> --- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
-> +++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+>> Add the (previously omitted) pin data for the SMSC LAN89218 Ethernet chip
+>> to the Blanche board's device tree: the chip's IRQ output is connected to
+>> the SoC's IRQ0 pin and its nCS input is connected to the SoC's EX_CS0# pin.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>
+>> ---
+>>  arch/arm/boot/dts/r8a7792-blanche.dts |   15 +++++++++++++++
+>>  1 file changed, 15 insertions(+)
+>>
+>> Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+>> ===================================================================
+>> --- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
+>> +++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
 [...]
-> @@ -67,6 +70,18 @@
->  		groups = "scif3_data";
->  		function = "scif3";
->  	};
-> +
-> +	lan89218_pins: lan89218 {
-> +		intc {
-> +			groups = "intc_irq0";
-> +			function = "intc";
-> +		};
-> +		lbsc {
-> +			groups = "lbsc_ex_cs0";
-> +			function = "lbsc";
-> +		};
-> +	};
-> +
-
-    Oops, stray newline... will fix!
-
->  };
+>> @@ -67,6 +70,18 @@
+>>                 groups = "scif3_data";
+>>                 function = "scif3";
+>>         };
+>> +
+>> +       lan89218_pins: lan89218 {
+>> +               intc {
+>> +                       groups = "intc_irq0";
+>> +                       function = "intc";
+>> +               };
+>> +               lbsc {
+>> +                       groups = "lbsc_ex_cs0";
+>> +                       function = "lbsc";
 >
->  &scif0 {
+> Don't you need pinctrl for the other LBSC pins, like the address and data lines
+> (Ax and Dy)?
+>
+
+    Unlike the chip selects, the address/data lines are not "monopolized" by a 
+single device, so I'm not sure what to do with them...
+
+> Gr{oetje,eeting}s,
+>
+>                         Geert
 
 MBR, Sergei
 
