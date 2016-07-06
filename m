@@ -1,65 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:35005 "EHLO
-	mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751090AbcGGOMG (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33137 "EHLO
+	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754648AbcGFPkv (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 7 Jul 2016 10:12:06 -0400
-Received: by mail-lf0-f43.google.com with SMTP id l188so12247721lfe.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Jul 2016 07:11:54 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
-	gnurou@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com,
-	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
-	galak@codeaurora.org, devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] gpio: rcar: add R8A7792 support
-Date: Thu, 07 Jul 2016 17:11:45 +0300
-Message-ID: <3799541.jpRKLHA1Qm@wasted.cogentembedded.com>
-In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Wed, 6 Jul 2016 11:40:51 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: hans.verkuil@cisco.com
+Cc: niklas.soderlund@ragnatech.se, linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
+	laurent.pinchart@ideasonboard.com, william.towle@codethink.co.uk,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v5 1/4] media: adv7604: automatic "default-input" selection
+Date: Wed,  6 Jul 2016 17:39:33 +0200
+Message-Id: <1467819576-17743-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1467819576-17743-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1467819576-17743-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renesas  R8A7792 SoC is a member of the R-Car gen2 family, add support for
-its GPIO controllers.
+Fall back to input 0 if "default-input" property is not present.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Additionally, documentation in commit bf9c82278c34 ("[media]
+media: adv7604: ability to read default input port from DT") states
+that the "default-input" property should reside directly in the node
+for adv7612. Hence, also adjust the parsing to make the implementation
+consistent with this.
 
+Based on patch by William Towle <william.towle@codethink.co.uk>.
+
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
-The patch is against the 'devel' branch of Linus Walleij's 'linux-gpio.git'
-repo.  It replaces previously posted patch "gpio: rcar: document R8A7792
-support."
+ drivers/media/i2c/adv7604.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
- Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt |    1 +
- drivers/gpio/gpio-rcar.c                                     |    3 +++
- 2 files changed, 4 insertions(+)
-
-Index: linux-gpio/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-===================================================================
---- linux-gpio.orig/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-+++ linux-gpio/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-@@ -7,6 +7,7 @@ Required Properties:
-     - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO controller.
-     - "renesas,gpio-r8a7790": for R8A7790 (R-Car H2) compatible GPIO controller.
-     - "renesas,gpio-r8a7791": for R8A7791 (R-Car M2-W) compatible GPIO controller.
-+    - "renesas,gpio-r8a7792": for R8A7792 (R-Car V2H) compatible GPIO controller.
-     - "renesas,gpio-r8a7793": for R8A7793 (R-Car M2-N) compatible GPIO controller.
-     - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO controller.
-     - "renesas,gpio-r8a7795": for R8A7795 (R-Car H3) compatible GPIO controller.
-Index: linux-gpio/drivers/gpio/gpio-rcar.c
-===================================================================
---- linux-gpio.orig/drivers/gpio/gpio-rcar.c
-+++ linux-gpio/drivers/gpio/gpio-rcar.c
-@@ -335,6 +335,9 @@ static const struct of_device_id gpio_rc
- 		.compatible = "renesas,gpio-r8a7791",
- 		.data = &gpio_rcar_info_gen2,
- 	}, {
-+		.compatible = "renesas,gpio-r8a7792",
-+		.data = &gpio_rcar_info_gen2,
-+	}, {
- 		.compatible = "renesas,gpio-r8a7793",
- 		.data = &gpio_rcar_info_gen2,
- 	}, {
+diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
+index 3f1ab49..2e8f036 100644
+--- a/drivers/media/i2c/adv7604.c
++++ b/drivers/media/i2c/adv7604.c
+@@ -2830,10 +2830,13 @@ static int adv76xx_parse_dt(struct adv76xx_state *state)
+ 	if (!of_property_read_u32(endpoint, "default-input", &v))
+ 		state->pdata.default_input = v;
+ 	else
+-		state->pdata.default_input = -1;
++		state->pdata.default_input = 0;
+ 
+ 	of_node_put(endpoint);
+ 
++	if (!of_property_read_u32(np, "default-input", &v))
++		state->pdata.default_input = v;
++
+ 	flags = bus_cfg.bus.parallel.flags;
+ 
+ 	if (flags & V4L2_MBUS_HSYNC_ACTIVE_HIGH)
+-- 
+2.7.4
