@@ -1,142 +1,277 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34078 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750715AbcGAP7w (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43971 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755452AbcGFUYB (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 1 Jul 2016 11:59:52 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87fusyr45m.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bJ0qu-0006Uz-4G@finisterre>
-Date: Fri, 01 Jul 2016 17:59:36 +0200
-Subject: Applied "ASoC: rsrc-card: use asoc_simple_card_parse_daifmt()" to the asoc tree
+	Wed, 6 Jul 2016 16:24:01 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH/RFC v3 2/6] mmc: sh_mobile_sdhi: rename DMA source file as renesas_sdhi_sys_dmac.c
+Date: Wed,  6 Jul 2016 22:23:26 +0200
+Message-Id: <1467836610-18539-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1467836610-18539-1-git-send-email-horms+renesas@verge.net.au>
+References: <1467836610-18539-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Rename the source file for DMA for SDHI as a follow-up to attaching
+DMA code to the SDHI driver rather than the tmio_core driver and
+prepartation for allowing more than one DMA provider.
 
-   ASoC: rsrc-card: use asoc_simple_card_parse_daifmt()
+The name Renesas is chosen as the the SDHI driver is applicable to a wider
+range of SoCs than SH-Mobile, Renesas seems to be a more appropriate name.
+However, the SDHI driver source itself, is left as sh_mobile_sdhi to
+avoid unnecessary churn.
 
-has been applied to the asoc tree at
+The name sys_dmac was chosen to reflect the type of DMA used.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Internal symbols have also been renamed to reflect the filename change.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From d6a4a9a45d072e3a27ea6e5f98192d78be621a9c Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Thu, 30 Jun 2016 06:03:13 +0000
-Subject: [PATCH] ASoC: rsrc-card: use asoc_simple_card_parse_daifmt()
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- sound/soc/sh/Kconfig          |  1 +
- sound/soc/sh/rcar/rsrc-card.c | 38 ++++----------------------------------
- 2 files changed, 5 insertions(+), 34 deletions(-)
+v3
+* Update names to SYS DMAC instead of SYSC DMAC
+* Allow fallback to PIO
+* Allow selection of SYS DMAC via Kconfig
 
-diff --git a/sound/soc/sh/Kconfig b/sound/soc/sh/Kconfig
-index c9902a6d6fa0..9311f119feb5 100644
---- a/sound/soc/sh/Kconfig
-+++ b/sound/soc/sh/Kconfig
-@@ -44,6 +44,7 @@ config SND_SOC_RCAR
+v2
+* Use renesas_sdhi_sysc_dmac rather than renesas_sdhi_dmac as file name
+* Rename symbols to reflect filename change
+* Drop bogus use of __initdata
+---
+ drivers/mmc/host/Kconfig                           |  8 +++
+ drivers/mmc/host/Makefile                          |  2 +-
+ .../{tmio_mmc_dma.c => renesas_sdhi_sys_dmac.c}    | 57 +++++++++++-----------
+ drivers/mmc/host/sh_mobile_sdhi.c                  |  6 +--
+ 4 files changed, 41 insertions(+), 32 deletions(-)
+ rename drivers/mmc/host/{tmio_mmc_dma.c => renesas_sdhi_sys_dmac.c} (83%)
+
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 0d2ac04d98ed..fd3c4b2a0576 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -567,6 +567,14 @@ config MMC_SDHI_SYS_DMAC
+ 	  This provides DMA support for the SDHI SD/SDIO controller
+ 	  found in SuperH and Renesas ARM based SoCs.
  
- config SND_SOC_RSRC_CARD
- 	tristate "Renesas Sampling Rate Convert Sound Card"
-+	select SND_SIMPLE_CARD_UTILS
- 	help
- 	  This option enables simple sound if you need sampling rate convert
++config MMC_SDHI_INTERNAL_DMA
++	tristate "DMA support for Internal DMAC with SDHI SD/SDIO controller"
++	depends on ARM64
++	depends on MMC_SDHI
++	help
++	  This provides DMA support for the SDHI SD/SDIO controller
++	  found in Renesas arm64 based SoCs.
++
+ config MMC_CB710
+ 	tristate "ENE CB710 MMC/SD Interface support"
+ 	depends on PCI
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index c72d442908a2..5a67643d5e3d 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -39,7 +39,7 @@ obj-$(CONFIG_MMC_TMIO_CORE)	+= tmio_mmc_core.o
+ tmio_mmc_core-y			:= tmio_mmc_pio.o
+ obj-$(CONFIG_MMC_SDHI)		+= sh_mobile_sdhi.o
+ ifeq ($(subst m,y,$(CONFIG_MMC_SDHI_SYS_DMAC)),y)
+-obj-$(CONFIG_MMC_SDHI)		+= tmio_mmc_dma.o
++obj-$(CONFIG_MMC_SDHI)		+= renesas_sdhi_sys_dmac.o
+ endif
+ obj-$(CONFIG_MMC_CB710)		+= cb710-mmc.o
+ obj-$(CONFIG_MMC_VIA_SDMMC)	+= via-sdmmc.o
+diff --git a/drivers/mmc/host/tmio_mmc_dma.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+similarity index 83%
+rename from drivers/mmc/host/tmio_mmc_dma.c
+rename to drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index a866842f607c..0e2f29b7d31c 100644
+--- a/drivers/mmc/host/tmio_mmc_dma.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -1,5 +1,5 @@
+ /*
+- * linux/drivers/mmc/tmio_mmc_dma.c
++ * linux/drivers/mmc/renesas_sdhi_sys_dmac_dma.c
+  *
+  * Copyright (C) 2010-2011 Guennadi Liakhovetski
+  *
+@@ -22,7 +22,8 @@
  
-diff --git a/sound/soc/sh/rcar/rsrc-card.c b/sound/soc/sh/rcar/rsrc-card.c
-index 1bc7ecfc42a9..984d8fed0dbd 100644
---- a/sound/soc/sh/rcar/rsrc-card.c
-+++ b/sound/soc/sh/rcar/rsrc-card.c
-@@ -20,6 +20,7 @@
- #include <sound/jack.h>
- #include <sound/soc.h>
- #include <sound/soc-dai.h>
-+#include <sound/simple_card_utils.h>
+ #define TMIO_MMC_MIN_DMA_LEN 8
  
- struct rsrc_card_of_data {
- 	const char *prefix;
-@@ -159,38 +160,6 @@ static int rsrc_card_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
- 	return 0;
+-static void tmio_mmc_enable_dma(struct tmio_mmc_host *host, bool enable)
++static void sdhi_sys_dmac_enable_dma(struct tmio_mmc_host *host,
++				      bool enable)
+ {
+ 	if (!host->chan_tx || !host->chan_rx)
+ 		return;
+@@ -31,19 +32,19 @@ static void tmio_mmc_enable_dma(struct tmio_mmc_host *host, bool enable)
+ 		host->dma->enable(host, enable);
  }
  
--static int rsrc_card_parse_daifmt(struct device_node *node,
--				  struct device_node *codec,
--				  struct rsrc_card_priv *priv,
--				  struct snd_soc_dai_link *dai_link,
--				  unsigned int *retfmt)
--{
--	struct device_node *bitclkmaster = NULL;
--	struct device_node *framemaster = NULL;
--	unsigned int daifmt;
--
--	daifmt = snd_soc_of_parse_daifmt(node, NULL,
--					 &bitclkmaster, &framemaster);
--	daifmt &= ~SND_SOC_DAIFMT_MASTER_MASK;
--
--	if (!bitclkmaster && !framemaster)
--		return -EINVAL;
--
--	if (codec == bitclkmaster)
--		daifmt |= (codec == framemaster) ?
--			SND_SOC_DAIFMT_CBM_CFM : SND_SOC_DAIFMT_CBM_CFS;
--	else
--		daifmt |= (codec == framemaster) ?
--			SND_SOC_DAIFMT_CBS_CFM : SND_SOC_DAIFMT_CBS_CFS;
--
--	of_node_put(bitclkmaster);
--	of_node_put(framemaster);
--
--	*retfmt = daifmt;
--
--	return 0;
--}
--
- static int rsrc_card_parse_links(struct device_node *np,
- 				 struct rsrc_card_priv *priv,
- 				 int idx, bool is_fe)
-@@ -358,6 +327,7 @@ static int rsrc_card_dai_sub_link_of(struct device_node *node,
- static int rsrc_card_dai_link_of(struct device_node *node,
- 				 struct rsrc_card_priv *priv)
+-static void tmio_mmc_abort_dma(struct tmio_mmc_host *host)
++static void sdhi_sys_dmac_abort_dma(struct tmio_mmc_host *host)
  {
-+	struct device *dev = rsrc_priv_to_dev(priv);
- 	struct snd_soc_dai_link *dai_link;
- 	struct device_node *np;
- 	unsigned int daifmt = 0;
-@@ -370,8 +340,8 @@ static int rsrc_card_dai_link_of(struct device_node *node,
- 		dai_link = rsrc_priv_to_link(priv, i);
+-	tmio_mmc_enable_dma(host, false);
++	sdhi_sys_dmac_enable_dma(host, false);
  
- 		if (strcmp(np->name, "codec") == 0) {
--			ret = rsrc_card_parse_daifmt(node, np, priv,
--						     dai_link, &daifmt);
-+			ret = asoc_simple_card_parse_daifmt(dev, node, np,
-+							    NULL, &daifmt);
- 			if (ret < 0)
- 				return ret;
- 			break;
+ 	if (host->chan_rx)
+ 		dmaengine_terminate_all(host->chan_rx);
+ 	if (host->chan_tx)
+ 		dmaengine_terminate_all(host->chan_tx);
+ 
+-	tmio_mmc_enable_dma(host, true);
++	sdhi_sys_dmac_enable_dma(host, true);
+ }
+ 
+-static void tmio_mmc_start_dma_rx(struct tmio_mmc_host *host)
++static void sdhi_sys_dmac_start_dma_rx(struct tmio_mmc_host *host)
+ {
+ 	struct scatterlist *sg = host->sg_ptr, *sg_tmp;
+ 	struct dma_async_tx_descriptor *desc = NULL;
+@@ -97,7 +98,7 @@ static void tmio_mmc_start_dma_rx(struct tmio_mmc_host *host)
+ pio:
+ 	if (!desc) {
+ 		/* DMA failed, fall back to PIO */
+-		tmio_mmc_enable_dma(host, false);
++		sdhi_sys_dmac_enable_dma(host, false);
+ 		if (ret >= 0)
+ 			ret = -EIO;
+ 		host->chan_rx = NULL;
+@@ -113,7 +114,7 @@ pio:
+ 	}
+ }
+ 
+-static void tmio_mmc_start_dma_tx(struct tmio_mmc_host *host)
++static void sdhi_sys_dmac_start_dma_tx(struct tmio_mmc_host *host)
+ {
+ 	struct scatterlist *sg = host->sg_ptr, *sg_tmp;
+ 	struct dma_async_tx_descriptor *desc = NULL;
+@@ -171,7 +172,7 @@ static void tmio_mmc_start_dma_tx(struct tmio_mmc_host *host)
+ pio:
+ 	if (!desc) {
+ 		/* DMA failed, fall back to PIO */
+-		tmio_mmc_enable_dma(host, false);
++		sdhi_sys_dmac_enable_dma(host, false);
+ 		if (ret >= 0)
+ 			ret = -EIO;
+ 		host->chan_tx = NULL;
+@@ -187,19 +188,19 @@ pio:
+ 	}
+ }
+ 
+-static void tmio_mmc_start_dma(struct tmio_mmc_host *host,
++static void sdhi_sys_dmac_start_dma(struct tmio_mmc_host *host,
+ 			       struct mmc_data *data)
+ {
+ 	if (data->flags & MMC_DATA_READ) {
+ 		if (host->chan_rx)
+-			tmio_mmc_start_dma_rx(host);
++			sdhi_sys_dmac_start_dma_rx(host);
+ 	} else {
+ 		if (host->chan_tx)
+-			tmio_mmc_start_dma_tx(host);
++			sdhi_sys_dmac_start_dma_tx(host);
+ 	}
+ }
+ 
+-static void tmio_mmc_issue_tasklet_fn(unsigned long priv)
++static void sdhi_sys_dmac_issue_tasklet_fn(unsigned long priv)
+ {
+ 	struct tmio_mmc_host *host = (struct tmio_mmc_host *)priv;
+ 	struct dma_chan *chan = NULL;
+@@ -221,7 +222,7 @@ static void tmio_mmc_issue_tasklet_fn(unsigned long priv)
+ 		dma_async_issue_pending(chan);
+ }
+ 
+-static void tmio_mmc_tasklet_fn(unsigned long arg)
++static void sdhi_sys_dmac_tasklet_fn(unsigned long arg)
+ {
+ 	struct tmio_mmc_host *host = (struct tmio_mmc_host *)arg;
+ 
+@@ -244,8 +245,8 @@ out:
+ 	spin_unlock_irq(&host->lock);
+ }
+ 
+-static void tmio_mmc_request_dma(struct tmio_mmc_host *host,
+-				 struct tmio_mmc_data *pdata)
++static void sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
++				       struct tmio_mmc_data *pdata)
+ {
+ 	/* We can only either use DMA for both Tx and Rx or not use it at all */
+ 	if (!host->dma || (!host->pdev->dev.of_node &&
+@@ -307,11 +308,11 @@ static void tmio_mmc_request_dma(struct tmio_mmc_host *host,
+ 		if (!host->bounce_buf)
+ 			goto ebouncebuf;
+ 
+-		tasklet_init(&host->dma_complete, tmio_mmc_tasklet_fn, (unsigned long)host);
+-		tasklet_init(&host->dma_issue, tmio_mmc_issue_tasklet_fn, (unsigned long)host);
++		tasklet_init(&host->dma_complete, sdhi_sys_dmac_tasklet_fn, (unsigned long)host);
++		tasklet_init(&host->dma_issue, sdhi_sys_dmac_issue_tasklet_fn, (unsigned long)host);
+ 	}
+ 
+-	tmio_mmc_enable_dma(host, true);
++	sdhi_sys_dmac_enable_dma(host, true);
+ 
+ 	return;
+ 
+@@ -325,7 +326,7 @@ ecfgtx:
+ 	host->chan_tx = NULL;
+ }
+ 
+-static void tmio_mmc_release_dma(struct tmio_mmc_host *host)
++static void sdhi_sys_dmac_release_dma(struct tmio_mmc_host *host)
+ {
+ 	if (host->chan_tx) {
+ 		struct dma_chan *chan = host->chan_tx;
+@@ -343,15 +344,15 @@ static void tmio_mmc_release_dma(struct tmio_mmc_host *host)
+ 	}
+ }
+ 
+-static struct tmio_mmc_dma_ops tmio_mmc_dma_ops = {
+-	.start = tmio_mmc_start_dma,
+-	.enable = tmio_mmc_enable_dma,
+-	.request = tmio_mmc_request_dma,
+-	.release = tmio_mmc_release_dma,
+-	.abort = tmio_mmc_abort_dma,
++static struct tmio_mmc_dma_ops sdhi_sys_dmac_dma_ops = {
++	.start = sdhi_sys_dmac_start_dma,
++	.enable = sdhi_sys_dmac_enable_dma,
++	.request = sdhi_sys_dmac_request_dma,
++	.release = sdhi_sys_dmac_release_dma,
++	.abort = sdhi_sys_dmac_abort_dma,
+ };
+ 
+-void tmio_mmc_init_dma(void)
++void sdhi_sys_dmac_init_dma(void)
+ {
+-	tmio_set_dma_ops(&tmio_mmc_dma_ops);
++	tmio_set_dma_ops(&sdhi_sys_dmac_dma_ops);
+ }
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index b2ab8c3d27af..394e018e6f39 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -107,9 +107,9 @@ struct sh_mobile_sdhi {
+ };
+ 
+ #if IS_ENABLED(CONFIG_MMC_SDHI_SYS_DMAC)
+-void tmio_mmc_init_dma(void);
++void sdhi_sys_dmac_init_dma(void);
+ #else
+-static void tmio_mmc_init_dma(void) { }
++static void sdhi_sys_dmac_init_dma(void) { }
+ #endif
+ 
+ static void sh_mobile_sdhi_sdbuf_width(struct tmio_mmc_host *host, int width)
+@@ -369,7 +369,7 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+ 		host->bus_shift = of_data->bus_shift;
+ 	}
+ 
+-	tmio_mmc_init_dma();
++	sdhi_sys_dmac_init_dma();
+ 
+ 	host->dma		= dma_priv;
+ 	host->write16_hook	= sh_mobile_sdhi_write16_hook;
 -- 
-2.8.1
+2.7.0.rc3.207.g0ac5344
