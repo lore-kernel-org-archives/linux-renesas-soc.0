@@ -1,71 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:36636 "EHLO
-	mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751051AbcGNVCD (ORCPT
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:33360 "EHLO
+	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754212AbcGFMix (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 14 Jul 2016 17:02:03 -0400
-Received: by mail-lf0-f50.google.com with SMTP id q132so73331559lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Jul 2016 14:02:03 -0700 (PDT)
-Date: Thu, 14 Jul 2016 14:02:01 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 3/3] ARM: dts: blanche: add Ethernet pins
-Message-ID: <2472815.TZ6Lha6VX2@wasted.cogentembedded.com>
-In-Reply-To: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
-References: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
+	Wed, 6 Jul 2016 08:38:53 -0400
+Received: by mail-oi0-f42.google.com with SMTP id u201so268120953oie.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Jul 2016 05:38:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <577CCA48.7090003@ti.com>
+References: <1466630758-26231-1-git-send-email-linus.walleij@linaro.org>
+ <CAMuHMdXVEjyctU88-u=FJcY0AwLKvFxdizkPTTjt_X=xM_H6UQ@mail.gmail.com>
+ <CACRpkdZpRSrt4u_h11ROavVFZDh6OYJ49gJ6eD0y4gGuOxzMYg@mail.gmail.com> <577CCA48.7090003@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 6 Jul 2016 14:38:51 +0200
+Message-ID: <CACRpkdaVa_NXv5FokcTxKxXfekp=aaE3QM1pe3+49ErTwbJHVQ@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: convince line to become input in irq helper
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	=?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the (previously omitted) pin data for the SMSC LAN89218 Ethernet chip
-to  the Blanche board's device tree:  the chip's IRQ output is connected to
-the SoC's IRQ0 pin and its nCS input is connected to the SoC's EX_CS0# pin.
+On Wed, Jul 6, 2016 at 11:07 AM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> first of all for slow GPIO controllers (like pcf857x) it might be unsafe to call
+> .direction_input() from .irq_request_resources() callback because it
+> will be called in atomic context under raw_spin_lock_irqsave().
+>
+>
+> __setup_irq
+>    |- raw_spin_lock_irqsave()
+>         |- irq_request_resources()
+>         |- [ __irq_set_trigger() ]
+>         |- [ irq_startup() ]
+>         |- [ __enable_irq() ]
+>    |- raw_spin_unlock_irqrestore()
+>
+> [and it can be unsafe for fast GPIO chips also ;( , for example if it's
+> required to do some kind of PM management actions before accessing HW - most of
+> drivers expect their GPIOchip callbacks to be called only after gpiochip.request() or
+> .irq_startup().]
+>
+> In  my opinion this change breaks orthogonality of IRQchip vs GPIOchip interfaces
+> because it adds and (what is more important) hides call of GPIOchip callback
+> from inside IRQchip interface somewhere in  the depths of gpiolib framework.
+> As result, GPIO drivers lose possibility to properly handle GPIO vs IRQ interface's
+> differences like: locking, slow vs fast, hw specific settings, features of frameworks.
+>
+> I propose to revert it, sry,
 
----
-Changes in version 3:
-- killed extra empty line;
-- reformatted the changelog.
+Aw typical, you are right.
 
- arch/arm/boot/dts/r8a7792-blanche.dts |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+OK I'll take this patch and it's fixes out of the GPIO tree :(
 
-Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
-+++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-@@ -50,6 +50,9 @@
- 		reg-io-width = <4>;
- 		vddvario-supply = <&d3_3v>;
- 		vdd33a-supply = <&d3_3v>;
-+
-+		pinctrl-0 = <&lan89218_pins>;
-+		pinctrl-names = "default";
- 	};
- };
- 
-@@ -67,6 +70,17 @@
- 		groups = "scif3_data";
- 		function = "scif3";
- 	};
-+
-+	lan89218_pins: lan89218 {
-+		intc {
-+			groups = "intc_irq0";
-+			function = "intc";
-+		};
-+		lbsc {
-+			groups = "lbsc_ex_cs0";
-+			function = "lbsc";
-+		};
-+	};
- };
- 
- &scif0 {
+Yours,
+Linus Walleij
