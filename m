@@ -1,45 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:3203 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751269AbcGHFdB (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:43971 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755452AbcGFUX7 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 8 Jul 2016 01:33:01 -0400
-Date: Fri, 8 Jul 2016 11:09:38 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Niklas =?iso-8859-1?Q?S=F6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Cc: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	geert+renesas@glider.be, laurent.pinchart+renesas@ideasonboard.com,
-	mfarooq@visteon.com
-Subject: Re: [PATCHv2 0/4] Residue patches for rcar-dmac from renesas-drivers
-Message-ID: <20160708053937.GO12591@localhost>
-References: <20160630151518.32329-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20160630151518.32329-1-niklas.soderlund+renesas@ragnatech.se>
+	Wed, 6 Jul 2016 16:23:59 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH/RFC v3 3/6] mmc: tmio: add max_segs and max_blk_count in tmio_mmc_data
+Date: Wed,  6 Jul 2016 22:23:27 +0200
+Message-Id: <1467836610-18539-4-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1467836610-18539-1-git-send-email-horms+renesas@verge.net.au>
+References: <1467836610-18539-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jun 30, 2016 at 05:15:14PM +0200, Niklas S�derlund wrote:
-> Hi all,
-> 
-> I have looked over the DMA residue branches in renesas-drivers tree
-> (topic/rcar-dmac-hamza-v3 and topic/rcar-dmac-residue-v1) hoping to
-> bring them to upstream. The original author for the bulk of the patches
-> Hamza Farooq have not shown any activity since autumn 2015.
-> 
-> In this cover letter I talk about all the patches in the above branches
-> but for obvious reasons only patches I think should be forwarded to
-> upstream are included in the series. All patches are based on top of
-> v4.7-rc1 and are tested on Koelsch using Geerts sertest tool to generate
-> DMA traffic. The highest baud I could get to work at was 921600 bps.
-> From reading the original mail threads my conclusion is that this is
-> good enough since all errors reported by Hamza Farooq where related to
-> the serial sh-sci driver.
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Applied all, thanks
+To change each value from related driver (e.g. sh_mobile_sdhi driver),
+this patch adds these member in the struct tmio_mmc_data.
 
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v3
+* Add missing hunk to set mmc->max_blk_count
+
+v2
+* First post
+---
+ drivers/mmc/host/tmio_mmc_pio.c | 6 +++---
+ include/linux/mfd/tmio.h        | 2 ++
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index c0020c331595..30d136c72005 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -1124,10 +1124,10 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 
+ 	mmc->caps |= MMC_CAP_4_BIT_DATA | pdata->capabilities;
+ 	mmc->caps2 |= pdata->capabilities2;
+-	mmc->max_segs = 32;
++	mmc->max_segs = pdata->max_segs ? pdata->max_segs : 32;
+ 	mmc->max_blk_size = 512;
+-	mmc->max_blk_count = (PAGE_SIZE / mmc->max_blk_size) *
+-		mmc->max_segs;
++	mmc->max_blk_count = pdata->max_blk_count ? :
++		(PAGE_SIZE / mmc->max_blk_size) * mmc->max_segs;
+ 	mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
+ 	mmc->max_seg_size = mmc->max_req_size;
+ 
+diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
+index 7a26286db895..3b95dc7eb314 100644
+--- a/include/linux/mfd/tmio.h
++++ b/include/linux/mfd/tmio.h
+@@ -125,6 +125,8 @@ struct tmio_mmc_data {
+ 	unsigned int			cd_gpio;
+ 	int				alignment_shift;
+ 	dma_addr_t			dma_rx_offset;
++	unsigned int			max_blk_count;
++	unsigned short			max_segs;
+ 	void (*set_pwr)(struct platform_device *host, int state);
+ 	void (*set_clk_div)(struct platform_device *host, int state);
+ };
 -- 
-~Vinod
+2.7.0.rc3.207.g0ac5344
