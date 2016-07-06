@@ -1,49 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33185 "EHLO
-	mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751897AbcGIRqG (ORCPT
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33165 "EHLO
+	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754974AbcGFPkv (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sat, 9 Jul 2016 13:46:06 -0400
-MIME-Version: 1.0
-In-Reply-To: <1467819576-17743-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1467819576-17743-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1467819576-17743-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sat, 9 Jul 2016 19:46:03 +0200
-Message-ID: <CAMuHMdWRkSyv6wNZeW0cY7C6L=W6bdbK3yqLpfyggaDzq3N9mw@mail.gmail.com>
-Subject: Re: [PATCH v5 3/4] ARM: dts: koelsch: add HDMI input
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>,
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	William Towle <william.towle@codethink.co.uk>,
-	Hans Verkuil <hverkuil@xs4all.nl>
-Content-Type: text/plain; charset=UTF-8
+	Wed, 6 Jul 2016 11:40:51 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: hans.verkuil@cisco.com
+Cc: niklas.soderlund@ragnatech.se, linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
+	laurent.pinchart@ideasonboard.com, william.towle@codethink.co.uk,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v5 3/4] ARM: dts: koelsch: add HDMI input
+Date: Wed,  6 Jul 2016 17:39:35 +0200
+Message-Id: <1467819576-17743-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1467819576-17743-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1467819576-17743-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jul 6, 2016 at 5:39 PM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> From: Hans Verkuil <hverkuil@xs4all.nl>
->
-> Add support in the dts for the HDMI input. Based on the Lager dts
-> patch from Ultich Hecht.
+From: Hans Verkuil <hverkuil@xs4all.nl>
 
-I assume he's the third son in the Hecht family? ;-)
+Add support in the dts for the HDMI input. Based on the Lager dts
+patch from Ultich Hecht.
 
-> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-> [uli: removed "renesas," prefixes from pfc nodes]
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+[uli: removed "renesas," prefixes from pfc nodes]
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 41 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index f8a7d09..097322a 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -393,6 +393,11 @@
+ 		function = "usb1";
+ 	};
+ 
++	vin0_pins: vin0 {
++		groups = "vin0_data24", "vin0_sync", "vin0_clkenb", "vin0_clk";
++		function = "vin0";
++	};
++
+ 	vin1_pins: vin1 {
+ 		groups = "vin1_data8", "vin1_clk";
+ 		function = "vin1";
+@@ -551,6 +556,21 @@
+ 		reg = <0x12>;
+ 	};
+ 
++	hdmi-in@4c {
++		compatible = "adi,adv7612";
++		reg = <0x4c>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
++		remote = <&vin0>;
++		default-input = <0>;
++
++		port {
++			adv7612: endpoint {
++				remote-endpoint = <&vin0ep>;
++			};
++		};
++	};
++
+ 	composite-in@20 {
+ 		compatible = "adi,adv7180";
+ 		reg = <0x20>;
+@@ -672,6 +692,27 @@
+ 	cpu0-supply = <&vdd_dvfs>;
+ };
+ 
++/* HDMI video input */
++&vin0 {
++	status = "okay";
++	pinctrl-0 = <&vin0_pins>;
++	pinctrl-names = "default";
++
++	port {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		vin0ep: endpoint {
++			remote-endpoint = <&adv7612>;
++			bus-width = <24>;
++			hsync-active = <0>;
++			vsync-active = <0>;
++			pclk-sample = <1>;
++			data-active = <1>;
++		};
++	};
++};
++
+ /* composite video input */
+ &vin1 {
+ 	status = "okay";
+-- 
+2.7.4
