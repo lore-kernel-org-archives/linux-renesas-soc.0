@@ -1,78 +1,44 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:58983 "EHLO
-	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751279AbcGOCtR (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 14 Jul 2016 22:49:17 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <davem@davemloft.net>
-CC: <daniel@iogearbox.net>, <willemb@google.com>, <ast@plumgrid.com>,
-	<tklauser@distanz.ch>, <fruggeri@aristanetworks.com>,
-	<netdev@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH/RFC] packet: fix sock_tx_timestamp() in packet_snd() via sendto syscall
-Date: Fri, 15 Jul 2016 11:49:04 +0900
-Message-ID: <1468550944-4584-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-id: <1979940416.433337.1467772681910.JavaMail.weblogic@ep2ml104d>
+MIME-version: 1.0
+Subject: =?UTF-8?B?UkU6IFtQQVRDSCA2LzddIGRldmZyZXE6IGFkZCBtaXNzaW5n?=
+ =?UTF-8?B?IG9mX25vZGVfcHV0IGFmdGVyIGNhbGxpbmcgb2ZfcGFyc2Vf?=
+ =?UTF-8?B?cGhhbmRsZQ==?=
+Reply-to: myungjoo.ham@samsung.com
+From: =?UTF-8?B?TXl1bmdKb28gSGFt?= <myungjoo.ham@samsung.com>
+Cc: =?UTF-8?B?S3l1bmdtaW4gUGFyaw==?= <kyungmin.park@samsung.com>
+To: =?UTF-8?B?UGV0ZXIgQ2hlbg==?= <peter.chen@nxp.com>,
+	=?UTF-8?B?bGludXgtcmVuZXNhcy1zb2NAdmdlci5rZXJuZWwub3Jn?=
+	<linux-renesas-soc@vger.kernel.org>,
+	=?UTF-8?B?bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn?=
+	<linux-arm-kernel@lists.infradead.org>,
+	=?UTF-8?B?bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw==?=
+	<linux-kernel@vger.kernel.org>,
+	=?UTF-8?B?bGludXgtcG1Admdlci5rZXJuZWwub3Jn?=
+	<linux-pm@vger.kernel.org>,
+	=?UTF-8?B?bGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwub3Jn?=
+	<linux-samsung-soc@vger.kernel.org>
+Date: Wed, 06 Jul 2016 02:38:01 +0000
+Content-type: multipart/related;
+ boundary="----=_Part_433336_944744841.1467772681910"
+References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
+ <CGME20160701094923epcas1p164cc8773ec44a00dfc506a6192df3409@epcas1p1.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since the sendto syscall doesn't have msg_control buffer,
-the sock_tx_timestamp() in packet_snd() cannot work correctly because
-the socks.fsflags is set to 0.
-So, this patch sets the fsflags from sk.sk_tsflags if the msg_control
-buffer doesn't exist.
+------=_Part_433336_944744841.1467772681910
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
 
-Fixes: c14ac9451c34 ("sock: enable timestamping using control messages")
-Cc: <stable@vger.kernel.org>
-Reported-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Reported-by: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
-I'm not sure the network stack world. So, I submit this patch as RFC.
-This patch looks like a quick hack, but it could resolve an our issue.
-
-This issue happens on our platform (r8a7795-salvator-x).
-The test command is:
- # ptp4l -i eth0 -p /dev/ptp0 -m -q -f /etc/linuxptp/gPTP.cfg
-
-The failure result:
-ptp4l[26.815]: selected /dev/ptp0 as PTP clock
-ptp4l[26.872]: port 1: INITIALIZING to LISTENING on INITIALIZE
-ptp4l[26.872]: port 0: INITIALIZING to LISTENING on INITIALIZE
-ptp4l[27.873]: timed out while polling for tx timestamp
-ptp4l[27.873]: increasing tx_timestamp_timeout may correct this issue, but it is likely caused by a driver bug
-ptp4l[27.873]: port 1: send peer delay request failed
-ptp4l[27.873]: port 1: LISTENING to FAULTY on FAULT_DETECTED (FT_UNSPECIFIED)
-
-The result after the patch is applied (or the c14ac9451c34 is reverted):
-ptp4l[64.639]: selected /dev/ptp0 as PTP clock
-ptp4l[64.688]: port 1: INITIALIZING to LISTENING on INITIALIZE
-ptp4l[64.688]: port 0: INITIALIZING to LISTENING on INITIALIZE
-ptp4l[71.841]: port 1: LISTENING to MASTER on ANNOUNCE_RECEIPT_TIMEOUT_EXPIRES
-ptp4l[71.841]: selected best master clock 2e090a.fffe.00a2df
-ptp4l[71.841]: assuming the grand master role
-
- net/packet/af_packet.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index 9f0983f..d76fd41 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2887,6 +2887,11 @@ static int packet_snd(struct socket *sock, struct msghdr *msg, size_t len)
- 		err = sock_cmsg_send(sk, msg, &sockc);
- 		if (unlikely(err))
- 			goto out_unlock;
-+	} else {
-+		/* Set tsflags from sk because a syscall (e.g. sendto) doesn't
-+		 * have msg_control buffer.
-+		 */
-+		sockc.tsflags = sk->sk_tsflags;
- 	}
- 
- 	if (sock->type == SOCK_RAW)
--- 
-1.9.1
+PiAtLS0tLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAtLS0tLS0tLS0NCj4gU2VuZGVyIDogUGV0ZXIg
+Q2hlbiA8cGV0ZXIuY2hlbkBueHAuY29tPg0KPiBEYXRlICAgOiAyMDE2LTA3LTAxIDE4OjQ5IChH
+TVQrOSkNCj4gVGl0bGUgIDogW1BBVENIIDYvN10gZGV2ZnJlcTogYWRkIG1pc3Npbmcgb2Zfbm9k
+ZV9wdXQgYWZ0ZXIgY2FsbGluZyBvZl9wYXJzZV9waGFuZGxlDQo+ICANCj4gb2Zfbm9kZV9wdXQg
+bmVlZHMgdG8gYmUgY2FsbGVkIHdoZW4gdGhlIGRldmljZSBub2RlIHdoaWNoIGlzIGdvdA0KPiBm
+cm9tIG9mX3BhcnNlX3BoYW5kbGUgaGFzIGZpbmlzaGVkIHVzaW5nLg0KPiAgDQo+IENjOiBNeXVu
+Z0pvbyBIYW0gPG15dW5nam9vLmhhbUBzYW1zdW5nLmNvbT4NCj4gQ2M6IEt5dW5nbWluIFBhcmsg
+PGt5dW5nbWluLnBhcmtAc2Ftc3VuZy5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IFBldGVyIENoZW4g
+PHBldGVyLmNoZW5AbnhwLmNvbT4NCg0KVGhhbmsgeW91IQ0KDQoNClNpZ25lZC1vZmYtYnk6IE15
+dW5nSm9vIEhhbSA8bXl1bmdqb28uaGFtQHNhbXN1bmcuY29tPg0KDQo=
+------=_Part_433336_944744841.1467772681910--
