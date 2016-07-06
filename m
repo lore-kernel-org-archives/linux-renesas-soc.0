@@ -1,48 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:56006 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753636AbcGSOXK (ORCPT
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:36794 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751640AbcGFIez (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 19 Jul 2016 10:23:10 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
-	hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 04/16] [media] rcar-vin: return correct error from platform_get_irq
-Date: Tue, 19 Jul 2016 16:20:55 +0200
-Message-Id: <20160719142107.22358-5-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
+	Wed, 6 Jul 2016 04:34:55 -0400
+Received: by mail-oi0-f52.google.com with SMTP id f189so262278540oig.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Jul 2016 01:34:55 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <d16661e9-3a6f-7118-c7d7-d6b501ce4120@cogentembedded.com>
+References: <1467728126-26131-1-git-send-email-linus.walleij@linaro.org> <d16661e9-3a6f-7118-c7d7-d6b501ce4120@cogentembedded.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 6 Jul 2016 10:34:54 +0200
+Message-ID: <CACRpkdZpF7fNMULDkMK60xh_=+X8PJ5+fyPoDJtA2vTDwiakhw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: be more careful when forcing IRQ line to input
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fix a error from the original driver where the wrong error code is
-returned if the driver fails to get a IRQ number from
-platform_get_irq().
+On Tue, Jul 5, 2016 at 7:36 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Hello.
+>
+> On 07/05/2016 05:15 PM, Linus Walleij wrote:
+>
+>> We need to convince the IRQ line to become input unless there
+>> is a reason for. Also fixes up reference counting on the
+>
+>
+>    For what?
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Module refcount in its kobject. I'll update the commitlog.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 481d82a..ff27d75 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -318,7 +318,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq <= 0)
--		return ret;
-+		return irq;
- 
- 	ret = rvin_dma_probe(vin, irq);
- 	if (ret)
--- 
-2.9.0
+Yours,
+Linus Walleij
