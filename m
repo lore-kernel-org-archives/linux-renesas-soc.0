@@ -1,52 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:48013 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751290AbcGTXoS (ORCPT
+Received: from mail-pa0-f66.google.com ([209.85.220.66]:36510 "EHLO
+	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750844AbcGGFnL (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 20 Jul 2016 19:44:18 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH v2] ARM: dts: r8a7794: Correct SDHI register size
-Date: Thu, 21 Jul 2016 08:44:08 +0900
-Message-Id: <1469058248-27880-1-git-send-email-horms+renesas@verge.net.au>
+	Thu, 7 Jul 2016 01:43:11 -0400
+Received: by mail-pa0-f66.google.com with SMTP id ib6so847746pad.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Jul 2016 22:43:11 -0700 (PDT)
+Date: Wed, 6 Jul 2016 22:11:09 -0700
+From: Olof Johansson <olof@lixom.net>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+	Kevin Hilman <khilman@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL] Second Round of Renesas ARM Based SoC DT Updates for
+ v4.8
+Message-ID: <20160707051109.GF32389@localhost>
+References: <cover.1467294011.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-r8a7794 SDHI ch0 has SD_DMACR which is located in 0x324.
-This patch updates register size
+On Thu, Jun 30, 2016 at 04:15:54PM +0200, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these second round of Renesas ARM based SoC DT updates for v4.8.
+> 
+> This pull request is based on the previous round of
+> such requests, tagged as renesas-dt-for-v4.8,
+> which you have already pulled.
+> 
+> 
+> The following changes since commit b6960f19676e19f37a5e5a8af059fdf3b435d2f4:
+> 
+>   ARM: dts: silk: Fix W=1 dtc warnings (2016-05-30 09:37:13 +0900)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt2-for-v4.8
+> 
+> for you to fetch changes up to 8fd763c75c3ab8e72e5d7f0d4c53531e6ff76197:
+> 
+>   ARM: dts: r8a7792: add SMP support (2016-06-30 14:26:14 +0200)
 
-Based on work for the r8a7790 by Kuninori Morimoto.
+This one also introduces header files but I don't see any dependent driver
+changes posted so far, so I'm going to presume that those changes will happen
+after this is merged to avoid the cross-tree dependency.
 
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-Found by inspection
-Compile tested only
 
-v2
-* Correct register size: some how I messed it up the first time around
----
- arch/arm/boot/dts/r8a7794.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Merged, thanks.
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 685f986cf962..55737bca4e63 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -697,7 +697,7 @@
- 
- 	sdhi0: sd@ee100000 {
- 		compatible = "renesas,sdhi-r8a7794";
--		reg = <0 0xee100000 0 0x200>;
-+		reg = <0 0xee100000 0 0x328>;
- 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI0>;
- 		dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
--- 
-2.7.0.rc3.207.g0ac5344
+
+-Olof
