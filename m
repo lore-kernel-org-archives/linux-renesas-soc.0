@@ -1,69 +1,31 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:58148 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1030536AbcGGIdR (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 7 Jul 2016 04:33:17 -0400
-Date: Thu, 7 Jul 2016 10:33:08 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Chris Wilson <chris@chris-wilson.co.uk>
-cc: intel-gfx@lists.freedesktop.org, Imre Deak <imre.deak@intel.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@linux.ie>,
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-	Daniel Vetter <daniel.vetter@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Ben Skeggs <bskeggs@redhat.com>,
-	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	=?ISO-8859-15?Q?Bruno_Pr=E9mont?= <bonbons@linux-vserver.org>,
-	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-	=?ISO-8859-15?Q?Noralf_Tr=F8nnes?= <noralf@tronnes.org>,
-	Jens Frederich <jfrederich@gmail.com>,
-	Daniel Drake <dsd@laptop.org>,
-	Jon Nettleton <jon.nettleton@gmail.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Milo Kim <milo.kim@ti.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Paul Mackerras <paulus@samba.org>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Antonino Daplas <adaplas@gmail.com>,
-	linux-acpi@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH] backlight: Avoid double fbcon backlight handling
-In-Reply-To: <1467286256-8870-1-git-send-email-chris@chris-wilson.co.uk>
-Message-ID: <alpine.LNX.2.00.1607071032280.24757@cbobk.fhfr.pm>
-References: <1467286256-8870-1-git-send-email-chris@chris-wilson.co.uk>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH] gpio: rcar: document R8A7792 support
+To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
+	gnurou@gmail.com, robh+dt@kernel.org, pawel.moll@arm.com,
+	mark.rutland@arm.com, ijc+devicetree@hellion.org.uk,
+	galak@codeaurora.org, devicetree@vger.kernel.org
+References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+ <1977343.FhZjzuj3ub@wasted.cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <2093a885-b69f-482f-c7de-14fe6911273d@cogentembedded.com>
+Date: Thu, 7 Jul 2016 14:10:54 +0300
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1977343.FhZjzuj3ub@wasted.cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, 30 Jun 2016, Chris Wilson wrote:
+On 7/6/2016 12:53 AM, Sergei Shtylyov wrote:
 
-> Backlights controlled by i915.ko and only associated with its connectors
-> and also only associated with the intel_drmfb fbcon, controlled by
-> i915.ko. In this situation, we already handle adjusting the backlight
-> when the fbcon is blanked/unblanked and do not require backlight trying
-> to do the same.
-> 
-> Attempting to register with the fbdev as a client causes lockdep to warn
-> about a dependency cycle:
-[ ... snip ... ]
->  drivers/hid/hid-picolcd_backlight.c                  |  3 ++-
+> Renesas R8A7792 SoC is a member of the R-Car gen2 family that is supported
+> by  the Renesas R-Car GPIO driver.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+[...]
 
-For this one:
+    Scratch this, the driver needs modification too... :-/
 
-	Acked-by: Jiri Kosina <jkosina@suse.cz>
+MBR, Sergei
 
--- 
-Jiri Kosina
-SUSE Labs
