@@ -1,72 +1,75 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Peter Chen <peter.chen@nxp.com>
-To: <linux-renesas-soc@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>
-CC: Peter Chen <peter.chen@nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 3/7] arm: mach-u300: regulator: add missing of_node_put after calling of_parse_phandle
-Date: Fri, 1 Jul 2016 17:41:57 +0800
-Message-ID: <1467366121-14120-4-git-send-email-peter.chen@nxp.com>
-In-Reply-To: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
-References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56082 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751439AbcGGOkH (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 7 Jul 2016 10:40:07 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/8] arm64: dts: r8a7796: Add SYSC PM Domains
+Date: Thu,  7 Jul 2016 16:39:48 +0200
+Message-Id: <56aebae0003f8987cf1f07238ec9e6243fe88080.1467900241.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467900241.git.horms+renesas@verge.net.au>
+References: <cover.1467900241.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-of_node_put needs to be called when the device node which is got
-from of_parse_phandle has finished using.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Peter Chen <peter.chen@nxp.com>
+Add a device node for the System Controller.
+Hook up the Cortex-A57 CPU core and L2 cache/SCU to their respective PM
+Domains.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-u300/regulator.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/mach-u300/regulator.c b/arch/arm/mach-u300/regulator.c
-index 595b574..509643e 100644
---- a/arch/arm/mach-u300/regulator.c
-+++ b/arch/arm/mach-u300/regulator.c
-@@ -71,19 +71,21 @@ static int __init __u300_init_boardpower(struct platform_device *pdev)
- 	regmap = syscon_node_to_regmap(syscon_np);
- 	if (IS_ERR(regmap)) {
- 		pr_crit("U300: could not locate syscon regmap\n");
--		return PTR_ERR(regmap);
-+		err = PTR_ERR(regmap);
-+		goto error;
- 	}
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 178debf68318..85f0843ddd87 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -10,6 +10,7 @@
  
- 	main_power_15 = regulator_get(&pdev->dev, "vana15");
+ #include <dt-bindings/clock/r8a7796-cpg-mssr.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/power/r8a7796-sysc.h>
  
- 	if (IS_ERR(main_power_15)) {
- 		pr_err("could not get vana15");
--		return PTR_ERR(main_power_15);
-+		err = PTR_ERR(main_power_15);
-+		goto error;
- 	}
- 	err = regulator_enable(main_power_15);
- 	if (err) {
- 		pr_err("could not enable vana15\n");
--		return err;
-+		goto error;
- 	}
+ / {
+ 	compatible = "renesas,r8a7796";
+@@ -30,6 +31,7 @@
+ 			compatible = "arm,cortex-a57", "arm,armv8";
+ 			reg = <0x0>;
+ 			device_type = "cpu";
++			power-domains = <&sysc R8A7796_PD_CA57_CPU0>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+ 		};
+@@ -37,6 +39,7 @@
+ 		L2_CA57: cache-controller@0 {
+ 			compatible = "cache";
+ 			reg = <0>;
++			power-domains = <&sysc R8A7796_PD_CA57_SCU>;
+ 			cache-unified;
+ 			cache-level = <2>;
+ 		};
+@@ -104,6 +107,12 @@
+ 			#power-domain-cells = <0>;
+ 		};
  
- 	/*
-@@ -99,8 +101,12 @@ static int __init __u300_init_boardpower(struct platform_device *pdev)
- 
- 	/* Register globally exported PM poweroff hook */
- 	pm_power_off = u300_pm_poweroff;
-+	of_node_put(syscon_np);
- 
- 	return 0;
-+error:
-+	of_node_put(syscon_np);
-+	return err;
- }
- 
- static int __init s365_board_probe(struct platform_device *pdev)
++		sysc: system-controller@e6180000 {
++			compatible = "renesas,r8a7796-sysc";
++			reg = <0 0xe6180000 0 0x0400>;
++			#power-domain-cells = <1>;
++		};
++
+ 		scif2: serial@e6e88000 {
+ 			compatible = "renesas,scif-r8a7796",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
