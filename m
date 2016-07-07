@@ -1,36 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:33298 "EHLO
-	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753515AbcGDUvP (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56082 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751439AbcGGOkI (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 4 Jul 2016 16:51:15 -0400
-Received: by mail-lf0-f53.google.com with SMTP id f6so123113899lfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Jul 2016 13:51:14 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 0/3] Add R8A7792/Blanche PFC support
-Date: Mon, 04 Jul 2016 23:51:11 +0300
-Message-ID: <2793535.9X0Tq7I1Mq@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Thu, 7 Jul 2016 10:40:08 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 7/8] arm64: dts: r8a7796: Add RWDT node
+Date: Thu,  7 Jul 2016 16:39:50 +0200
+Message-Id: <c8ce8007e5c0678fe40e3e401f68ee0b9e74ee92.1467900241.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1467900241.git.horms+renesas@verge.net.au>
+References: <cover.1467900241.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-   Here's the set of 3 patches against Simon Horman's 'renesas.git' repo,
-'renesas-devel-20160704-v4.7-rc6' tag. We're adding the R8A7792 PFC node and
-then describe the pins for the SCIFs and SMSC LAN89218 Ethernet chip found on
-the Blanche board. These patches depend on the R8A7792 PFC driver patchset
-in order to work properly.
+Add a device node for the Watchdog Timer (WDT) controller on the Renesas
+R-Car M3-W (r8a7796) SoC.
 
-[1/3] ARM: dts: r8a7792: add PFC support
-[2/3] ARM: dts: blanche: add SCIF pins
-[3/3] ARM: dts: blanche: add Ethernet pins
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-WBR, Sergei
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index fab61eddede3..1edf82440d78 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -98,6 +98,15 @@
+ 					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
+ 		};
+ 
++		wdt0: watchdog@e6020000 {
++			compatible = "renesas,r8a7796-wdt",
++				     "renesas,rcar-gen3-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a7796-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
+-- 
+2.7.0.rc3.207.g0ac5344
