@@ -1,58 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f66.google.com ([209.85.220.66]:36510 "EHLO
-	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750844AbcGGFnL (ORCPT
+Received: from lb1-smtp-cloud2.xs4all.net ([194.109.24.21]:45406 "EHLO
+	lb1-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750993AbcGGGjI (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 7 Jul 2016 01:43:11 -0400
-Received: by mail-pa0-f66.google.com with SMTP id ib6so847746pad.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Jul 2016 22:43:11 -0700 (PDT)
-Date: Wed, 6 Jul 2016 22:11:09 -0700
-From: Olof Johansson <olof@lixom.net>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
-	Kevin Hilman <khilman@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [GIT PULL] Second Round of Renesas ARM Based SoC DT Updates for
- v4.8
-Message-ID: <20160707051109.GF32389@localhost>
-References: <cover.1467294011.git.horms+renesas@verge.net.au>
+	Thu, 7 Jul 2016 02:39:08 -0400
+Subject: Re: [PATCH v5 4/4] rcar-vin: implement EDID control ioctls
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+References: <1467819576-17743-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1467819576-17743-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <20160707001658.GL20356@bigcity.dyn.berto.se>
+Cc: hans.verkuil@cisco.com, linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
+	laurent.pinchart@ideasonboard.com, william.towle@codethink.co.uk
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <ac9d2b07-ccbc-0e4d-b3fc-081fd1ef25bf@xs4all.nl>
+Date: Thu, 7 Jul 2016 08:39:02 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1467294011.git.horms+renesas@verge.net.au>
+In-Reply-To: <20160707001658.GL20356@bigcity.dyn.berto.se>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jun 30, 2016 at 04:15:54PM +0200, Simon Horman wrote:
-> Hi Olof, Hi Kevin, Hi Arnd,
+On 07/07/2016 02:16 AM, Niklas S�derlund wrote:
+> Hi Ulrich,
 > 
-> Please consider these second round of Renesas ARM based SoC DT updates for v4.8.
+> Thanks for your patch.
 > 
-> This pull request is based on the previous round of
-> such requests, tagged as renesas-dt-for-v4.8,
-> which you have already pulled.
+> On 2016-07-06 17:39:36 +0200, Ulrich Hecht wrote:
+>> Adds G_EDID and S_EDID.
+>>
+>> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+>> ---
+>>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 17 +++++++++++++++++
+>>  1 file changed, 17 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+>> index 396eabc..bd8f14c 100644
+>> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+>> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+>> @@ -661,6 +661,20 @@ static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
+>>  	return ret;
+>>  }
+>>  
+>> +static int rvin_g_edid(struct file *file, void *fh, struct v4l2_edid *edid)
+>> +{
+>> +	struct rvin_dev *vin = video_drvdata(file);
+>> +
+>> +	return rvin_subdev_call(vin, pad, get_edid, edid);
 > 
+> You need to add a translation from the rcar-vin drivers view of it's 
+> current input to the subdevices view of how it's pads are arranged. I 
+> think something like this would work:
 > 
-> The following changes since commit b6960f19676e19f37a5e5a8af059fdf3b435d2f4:
+>     struct rvin_dev *vin = video_drvdata(file);
+>     unsigned int input;
+>     int ret;
 > 
->   ARM: dts: silk: Fix W=1 dtc warnings (2016-05-30 09:37:13 +0900)
+>     input = edid->pad;
 > 
-> are available in the git repository at:
+>     edid->pad = vin->inputs[input].sink_idx;
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt2-for-v4.8
+>     ret = vin_subdev_call(vin, pad, get_edid, edid);
 > 
-> for you to fetch changes up to 8fd763c75c3ab8e72e5d7f0d4c53531e6ff76197:
+>     edid->pad = input;
 > 
->   ARM: dts: r8a7792: add SMP support (2016-06-30 14:26:14 +0200)
+>     return ret;
+> 
+> I know it's not obvious you need this and I can't figure out a better 
+> way to solve runtime switching of subdevices. Any ideas on how to 
+> improve the situation are more then welcome :-)
 
-This one also introduces header files but I don't see any dependent driver
-changes posted so far, so I'm going to presume that those changes will happen
-after this is merged to avoid the cross-tree dependency.
+I agree it is ugly, but it isn't used often enough to warrant the extra
+work. I am thinking that the pad should be an extra argument in the subdev
+op instead of using edid->pad. That should simplify the code.
 
+Regards,
 
-Merged, thanks.
-
-
--Olof
+	Hans
