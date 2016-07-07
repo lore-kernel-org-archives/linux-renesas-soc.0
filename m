@@ -1,54 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:58409 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753194AbcGSLq4 (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:46323 "EHLO
+	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1756719AbcGGIdl (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 19 Jul 2016 07:46:56 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Wim Van Sebroeck <wim@iguana.be>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] watchdog: renesas-wdt: Add support for the r8a7796 wdt
-Date: Tue, 19 Jul 2016 13:46:54 +0200
-Message-Id: <1468928814-18817-1-git-send-email-geert+renesas@glider.be>
+	Thu, 7 Jul 2016 04:33:41 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC 3/4] usb: gadget: f_ncm: add support for no_skb_reserve
+Date: Thu, 7 Jul 2016 17:32:41 +0900
+Message-ID: <1467880362-4844-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1467880362-4844-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1467880362-4844-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document support for the Watchdog Timer (WDT) Controller in the Renesas
-R-Car M3-W (r8a7796) SoC.
+This patch adds to support no_skb_reserve function to improve
+performance for some platforms. About the detail, please refer to
+the commit log of "quirk_avoids_skb_reserve" in
+include/linux/usb/gadget.h.
 
-No driver update is needed.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-v2:
-  - Add Acked-by.
+ drivers/usb/gadget/function/f_ncm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-index b9512f1eb80a0205..da24e31334177768 100644
---- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-@@ -1,7 +1,11 @@
- Renesas Watchdog Timer (WDT) Controller
- 
- Required properties:
--- compatible : Should be "renesas,r8a7795-wdt", or "renesas,rcar-gen3-wdt"
-+- compatible : Should be "renesas,<soctype>-wdt", and
-+	       "renesas,rcar-gen3-wdt" as fallback.
-+	       Examples with soctypes are:
-+	         - "renesas,r8a7795-wdt" (R-Car H3)
-+	         - "renesas,r8a7796-wdt" (R-Car M3-W)
- 
-   When compatible with the generic version, nodes must list the SoC-specific
-   version corresponding to the platform first, followed by the generic
+diff --git a/drivers/usb/gadget/function/f_ncm.c b/drivers/usb/gadget/function/f_ncm.c
+index 97f0a9b..8c43298 100644
+--- a/drivers/usb/gadget/function/f_ncm.c
++++ b/drivers/usb/gadget/function/f_ncm.c
+@@ -852,6 +852,8 @@ static int ncm_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
+ 			 */
+ 			ncm->port.is_zlp_ok =
+ 				gadget_is_zlp_supported(cdev->gadget);
++			ncm->port.no_skb_reserve =
++				gadget_avoids_skb_reserve(cdev->gadget);
+ 			ncm->port.cdc_filter = DEFAULT_FILTER;
+ 			DBG(cdev, "activate ncm\n");
+ 			net = gether_connect(&ncm->port);
 -- 
 1.9.1
