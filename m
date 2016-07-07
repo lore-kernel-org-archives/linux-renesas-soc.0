@@ -1,45 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:33527 "EHLO
-	mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751089AbcGQNIr (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:25408 "EHLO
+	relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1030454AbcGGIdW (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sun, 17 Jul 2016 09:08:47 -0400
-Received: by mail-lf0-f54.google.com with SMTP id b199so115561670lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 17 Jul 2016 06:08:46 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/2] ravb: fix DMA channel misreporting
-Date: Sun, 17 Jul 2016 16:08:43 +0300
-Message-ID: <1708843.0O4nJpZ8zM@wasted.cogentembedded.com>
-In-Reply-To: <8592210.gMERdmUlCp@wasted.cogentembedded.com>
-References: <8592210.gMERdmUlCp@wasted.cogentembedded.com>
+	Thu, 7 Jul 2016 04:33:22 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH/RFC 2/4] usb: gadget: u_ether: add a flag to avoid skb_reserve() calling
+Date: Thu, 7 Jul 2016 17:32:40 +0900
+Message-ID: <1467880362-4844-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1467880362-4844-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1467880362-4844-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently 'ifconfig' for the Ethernet devices handled by this driver  shows
-"DMA chan: ff" while the driver doesn't use any DMA channels. Not assigning
-a value to 'net_device::dma' causes 'ifconfig'  to  correctly not report  a
-DMA channel.
+This patch adds a flag "no_skb_reserve" in struct eth_dev.
+So, if a peripheral driver sets the quirk_avoids_skb_reserve flag,
+upper network gadget drivers (e.g. f_ncm.c) can avoid skb_reserve()
+calling using the flag as well.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/usb/gadget/function/u_ether.c | 5 ++++-
+ drivers/usb/gadget/function/u_ether.h | 1 +
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-Index: net/drivers/net/ethernet/renesas/ravb_main.c
-===================================================================
---- net.orig/drivers/net/ethernet/renesas/ravb_main.c
-+++ net/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1909,7 +1909,6 @@ static int ravb_probe(struct platform_de
+diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
+index a3f7e7c..04e30c6 100644
+--- a/drivers/usb/gadget/function/u_ether.c
++++ b/drivers/usb/gadget/function/u_ether.c
+@@ -82,6 +82,7 @@ struct eth_dev {
+ #define	WORK_RX_MEMORY		0
  
- 	/* The Ether-specific entries in the device structure. */
- 	ndev->base_addr = res->start;
--	ndev->dma = -1;
+ 	bool			zlp;
++	bool			no_skb_reserve;
+ 	u8			host_mac[ETH_ALEN];
+ 	u8			dev_mac[ETH_ALEN];
+ };
+@@ -233,7 +234,8 @@ rx_submit(struct eth_dev *dev, struct usb_request *req, gfp_t gfp_flags)
+ 	 * but on at least one, checksumming fails otherwise.  Note:
+ 	 * RNDIS headers involve variable numbers of LE32 values.
+ 	 */
+-	skb_reserve(skb, NET_IP_ALIGN);
++	if (likely(!dev->no_skb_reserve))
++		skb_reserve(skb, NET_IP_ALIGN);
  
- 	chip_id = (enum ravb_chip_id)of_device_get_match_data(&pdev->dev);
+ 	req->buf = skb->data;
+ 	req->length = size;
+@@ -1062,6 +1064,7 @@ struct net_device *gether_connect(struct gether *link)
  
+ 	if (result == 0) {
+ 		dev->zlp = link->is_zlp_ok;
++		dev->no_skb_reserve = link->no_skb_reserve;
+ 		DBG(dev, "qlen %d\n", qlen(dev->gadget, dev->qmult));
+ 
+ 		dev->header_len = link->header_len;
+diff --git a/drivers/usb/gadget/function/u_ether.h b/drivers/usb/gadget/function/u_ether.h
+index c77145b..81d94a7 100644
+--- a/drivers/usb/gadget/function/u_ether.h
++++ b/drivers/usb/gadget/function/u_ether.h
+@@ -64,6 +64,7 @@ struct gether {
+ 	struct usb_ep			*out_ep;
+ 
+ 	bool				is_zlp_ok;
++	bool				no_skb_reserve;
+ 
+ 	u16				cdc_filter;
+ 
+-- 
+1.9.1
