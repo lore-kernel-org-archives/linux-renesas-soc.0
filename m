@@ -1,103 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:36513 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751284AbcGNTvp (ORCPT
+Received: from mga01.intel.com ([192.55.52.88]:3203 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751269AbcGHFdB (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 14 Jul 2016 15:51:45 -0400
-Received: by mail-lf0-f49.google.com with SMTP id q132so72163150lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Jul 2016 12:51:44 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org,
-	laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org,
-	geert+renesas@glider.be
-Subject: [PATCH] pinctrl: sh-pfc: r8a7792: add CAN pin groups
-Date: Thu, 14 Jul 2016 22:51:40 +0300
-Message-ID: <9478063.142ffU0CUS@wasted.cogentembedded.com>
-In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+	Fri, 8 Jul 2016 01:33:01 -0400
+Date: Fri, 8 Jul 2016 11:09:38 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Cc: dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	geert+renesas@glider.be, laurent.pinchart+renesas@ideasonboard.com,
+	mfarooq@visteon.com
+Subject: Re: [PATCHv2 0/4] Residue patches for rcar-dmac from renesas-drivers
+Message-ID: <20160708053937.GO12591@localhost>
+References: <20160630151518.32329-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20160630151518.32329-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add CAN0/1 data/clock pin groups to R8A7792 PFC driver.
+On Thu, Jun 30, 2016 at 05:15:14PM +0200, Niklas S�derlund wrote:
+> Hi all,
+> 
+> I have looked over the DMA residue branches in renesas-drivers tree
+> (topic/rcar-dmac-hamza-v3 and topic/rcar-dmac-residue-v1) hoping to
+> bring them to upstream. The original author for the bulk of the patches
+> Hamza Farooq have not shown any activity since autumn 2015.
+> 
+> In this cover letter I talk about all the patches in the above branches
+> but for obvious reasons only patches I think should be forwarded to
+> upstream are included in the series. All patches are based on top of
+> v4.7-rc1 and are tested on Koelsch using Geerts sertest tool to generate
+> DMA traffic. The highest baud I could get to work at was 921600 bps.
+> From reading the original mail threads my conclusion is that this is
+> good enough since all errors reported by Hamza Farooq where related to
+> the serial sh-sci driver.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Applied all, thanks
 
----
-The patch is against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
-repo plus my 4 R8A7792 PFC patches posted before...
-
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c |   37 +++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
-
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-@@ -809,6 +809,28 @@ static const unsigned int avb_avtp_match
- static const unsigned int avb_avtp_match_mux[] = {
- 	AVB_AVTP_MATCH_MARK,
- };
-+/* - CAN -------------------------------------------------------------------- */
-+static const unsigned int can0_data_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(10, 27), RCAR_GP_PIN(10, 28),
-+};
-+static const unsigned int can0_data_mux[] = {
-+	CAN0_TX_MARK, CAN0_RX_MARK,
-+};
-+static const unsigned int can1_data_pins[] = {
-+	/* TX, RX */
-+	RCAR_GP_PIN(10, 30), RCAR_GP_PIN(10, 31),
-+};
-+static const unsigned int can1_data_mux[] = {
-+	CAN1_TX_MARK, CAN1_RX_MARK,
-+};
-+static const unsigned int can_clk_pins[] = {
-+	/* CAN_CLK */
-+	RCAR_GP_PIN(10, 29),
-+};
-+static const unsigned int can_clk_mux[] = {
-+	CAN_CLK_MARK,
-+};
- /* - INTC ------------------------------------------------------------------- */
- static const unsigned int intc_irq0_pins[] = {
- 	/* IRQ0 */
-@@ -978,6 +1000,9 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(avb_mii),
- 	SH_PFC_PIN_GROUP(avb_gmii),
- 	SH_PFC_PIN_GROUP(avb_avtp_match),
-+	SH_PFC_PIN_GROUP(can0_data),
-+	SH_PFC_PIN_GROUP(can1_data),
-+	SH_PFC_PIN_GROUP(can_clk),
- 	SH_PFC_PIN_GROUP(intc_irq0),
- 	SH_PFC_PIN_GROUP(intc_irq1),
- 	SH_PFC_PIN_GROUP(intc_irq2),
-@@ -1012,6 +1037,16 @@ static const char * const avb_groups[] =
- 	"avb_avtp_match",
- };
- 
-+static const char * const can0_groups[] = {
-+	"can0_data",
-+	"can_clk",
-+};
-+
-+static const char * const can1_groups[] = {
-+	"can1_data",
-+	"can_clk",
-+};
-+
- static const char * const intc_groups[] = {
- 	"intc_irq0",
- 	"intc_irq1",
-@@ -1051,6 +1086,8 @@ static const char * const sdhi0_groups[]
- 
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
-+	SH_PFC_FUNCTION(can0),
-+	SH_PFC_FUNCTION(can1),
- 	SH_PFC_FUNCTION(intc),
- 	SH_PFC_FUNCTION(lbsc),
- 	SH_PFC_FUNCTION(scif0),
+-- 
+~Vinod
