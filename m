@@ -1,49 +1,49 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Peter Chen <peter.chen@nxp.com>
-To: <linux-renesas-soc@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>
-CC: Peter Chen <peter.chen@nxp.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 1/7] extcon: add missing of_node_put after calling of_parse_phandle
-Date: Fri, 1 Jul 2016 17:41:55 +0800
-Message-ID: <1467366121-14120-2-git-send-email-peter.chen@nxp.com>
-In-Reply-To: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
-References: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33185 "EHLO
+	mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751897AbcGIRqG (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Sat, 9 Jul 2016 13:46:06 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1467819576-17743-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1467819576-17743-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1467819576-17743-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sat, 9 Jul 2016 19:46:03 +0200
+Message-ID: <CAMuHMdWRkSyv6wNZeW0cY7C6L=W6bdbK3yqLpfyggaDzq3N9mw@mail.gmail.com>
+Subject: Re: [PATCH v5 3/4] ARM: dts: koelsch: add HDMI input
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>,
+	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	William Towle <william.towle@codethink.co.uk>,
+	Hans Verkuil <hverkuil@xs4all.nl>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-of_node_put needs to be called when the device node which is got
-from of_parse_phandle has finished using.
+On Wed, Jul 6, 2016 at 5:39 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> From: Hans Verkuil <hverkuil@xs4all.nl>
+>
+> Add support in the dts for the HDMI input. Based on the Lager dts
+> patch from Ultich Hecht.
 
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Peter Chen <peter.chen@nxp.com>
----
- drivers/extcon/extcon.c | 2 ++
- 1 file changed, 2 insertions(+)
+I assume he's the third son in the Hecht family? ;-)
 
-diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
-index 21a123c..86ea14d 100644
---- a/drivers/extcon/extcon.c
-+++ b/drivers/extcon/extcon.c
-@@ -1107,10 +1107,12 @@ struct extcon_dev *extcon_get_edev_by_phandle(struct device *dev, int index)
- 	list_for_each_entry(edev, &extcon_dev_list, entry) {
- 		if (edev->dev.parent && edev->dev.parent->of_node == node) {
- 			mutex_unlock(&extcon_dev_list_lock);
-+			of_node_put(node);
- 			return edev;
- 		}
- 	}
- 	mutex_unlock(&extcon_dev_list_lock);
-+	of_node_put(node);
- 
- 	return ERR_PTR(-EPROBE_DEFER);
- }
--- 
-1.9.1
+> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> [uli: removed "renesas," prefixes from pfc nodes]
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
