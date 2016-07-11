@@ -1,44 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:46927 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751126AbcGUJfU (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 21 Jul 2016 05:35:20 -0400
-Date: Thu, 21 Jul 2016 10:35:14 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [RFC] pci: Provide a domain limited version of pdev_fixup_irq
-Message-ID: <20160721093514.GA7982@red-moon>
+Received: from relmlor3.renesas.com ([210.160.252.173]:38579 "EHLO
+	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750779AbcGKIj0 convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 11 Jul 2016 04:39:26 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Bjorn Helgaas <bhelgaas@google.com>
+CC: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: RE: [RFC] pci: Provide a domain limited version of pdev_fixup_irq
+Date: Mon, 11 Jul 2016 08:39:20 +0000
+Message-ID: <HK2PR0601MB139310D5AF6ECA1817FA4ADBF53F0@HK2PR0601MB1393.apcprd06.prod.outlook.com>
 References: <1467978595-25386-1-git-send-email-phil.edworthy@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <1467978595-25386-1-git-send-email-phil.edworthy@renesas.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Phil,
+Note that kbuild test failed because domain_nr is only available when we
+have CONFIG_PCI_DOMAINS_GENERIC defined, so the patch will definitely
+have to change.
 
-On Fri, Jul 08, 2016 at 12:49:55PM +0100, Phil Edworthy wrote:
+Phil
+
+On 08 July 2016 12:50, Phil Edworthy wrote:
 > Hi Bjorn,
 > 
 > I've marked this as RFC as I guess there might be a better way to do
 > this, but I'm not sure how. I would appreciate your thoughts on this.
-
-There is a more generic solution to this issue, that has been
-hanging in the balance for a while:
-
-http://marc.info/?l=linux-pci&m=144557674601373&w=2
-
-We should bring it to completion since pci_fixup_irqs() should
-really be replaced, this is just another example of the bugs
-it can trigger.
-
-Thanks,
-Lorenzo
-
+> 
 > Thanks
 > Phil
 > 
@@ -68,10 +62,11 @@ Lorenzo
 > index 95c225b..90ea8fa 100644
 > --- a/drivers/pci/setup-irq.c
 > +++ b/drivers/pci/setup-irq.c
-> @@ -22,7 +22,8 @@ void __weak pcibios_update_irq(struct pci_dev *dev, int irq)
+> @@ -22,7 +22,8 @@ void __weak pcibios_update_irq(struct pci_dev *dev, int
+> irq)
 >  	pci_write_config_byte(dev, PCI_INTERRUPT_LINE, irq);
 >  }
->  
+> 
 > -static void pdev_fixup_irq(struct pci_dev *dev,
 > +static void pdev_fixup_irq(int domain_nr,
 > +			   struct pci_dev *dev,
@@ -90,14 +85,14 @@ Lorenzo
 > +	 */
 > +	if (domain_nr >= 0 && dev->bus->domain_nr != domain_nr)
 > +		return;
->  
+> 
 > +	dev->irq = irq;
 >  	dev_dbg(&dev->dev, "fixup irq: got %d\n", dev->irq);
->  
+> 
 >  	/* Always tell the device, so the driver knows what is
 > @@ -63,6 +71,17 @@ void pci_fixup_irqs(u8 (*swizzle)(struct pci_dev *, u8 *),
 >  	struct pci_dev *dev = NULL;
->  
+> 
 >  	for_each_pci_dev(dev)
 > -		pdev_fixup_irq(dev, swizzle, map_irq);
 > +		pdev_fixup_irq(-1, dev, swizzle, map_irq);
@@ -128,11 +123,5 @@ Lorenzo
 >  #define HAVE_PCI_REQ_REGIONS	2
 >  int __must_check pci_request_regions(struct pci_dev *, const char *);
 >  int __must_check pci_request_regions_exclusive(struct pci_dev *, const char *);
-> -- 
-> 2.5.0
-> 
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> 2.5.0
