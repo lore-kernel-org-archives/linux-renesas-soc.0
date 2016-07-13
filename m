@@ -1,72 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56082 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751826AbcGGOkB (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33700 "EHLO
+	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751014AbcGMBaS (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 7 Jul 2016 10:40:01 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+	Tue, 12 Jul 2016 21:30:18 -0400
+MIME-Version: 1.0
+In-Reply-To: <5720002.roQESv2v7G@wasted.cogentembedded.com>
+References: <2441635.ESeLhIjWEX@wasted.cogentembedded.com> <5720002.roQESv2v7G@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 13 Jul 2016 03:29:57 +0200
+Message-ID: <CAMuHMdXcu3-ReeMBjarQ4QYZ+jbeSF6ooWUavTmgM-xLUOZjLA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: r8a7792: add SD clocks
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/8] arm64: dts: r8a7795: Add CAN FD support
-Date: Thu,  7 Jul 2016 16:39:45 +0200
-Message-Id: <162cd7845d5e9e16663079cc589046b3e588c104.1467900241.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467900241.git.horms+renesas@verge.net.au>
-References: <cover.1467900241.git.horms+renesas@verge.net.au>
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+On Tue, Jul 12, 2016 at 11:10 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Describe the SDHI0 clock and its parent, SD clock in the R8A7792 device tree.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Adds CAN FD controller node for r8a7795.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Note: CAN FD controller register base address specified in R-Car Gen3
-Hardware User Manual v0.5E is incorrect. The correct address is:
+Gr{oetje,eeting}s,
 
-CAN FD - 0xe66c0000
+                        Geert
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index fad6dd8b7771..b902356873c2 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -583,6 +583,30 @@
- 			status = "disabled";
- 		};
- 
-+		canfd: can@e66c0000 {
-+			compatible = "renesas,r8a7795-canfd",
-+				     "renesas,rcar-gen3-canfd";
-+			reg = <0 0xe66c0000 0 0x8000>;
-+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>,
-+				   <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 914>,
-+			       <&cpg CPG_CORE R8A7795_CLK_CANFD>,
-+			       <&can_clk>;
-+			clock-names = "fck", "canfd", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R8A7795_CLK_CANFD>;
-+			assigned-clock-rates = <40000000>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			status = "disabled";
-+
-+			channel0 {
-+				status = "disabled";
-+			};
-+
-+			channel1 {
-+				status = "disabled";
-+			};
-+		};
-+
- 		hscif0: serial@e6540000 {
- 			compatible = "renesas,hscif-r8a7795",
- 				     "renesas,rcar-gen3-hscif",
--- 
-2.7.0.rc3.207.g0ac5344
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
