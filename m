@@ -1,89 +1,54 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:33464 "EHLO
+	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751224AbcGNMJL (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 14 Jul 2016 08:09:11 -0400
+Received: by mail-lf0-f49.google.com with SMTP id b199so61917997lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Jul 2016 05:09:10 -0700 (PDT)
+Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a7792: add EtherAVB pin groups
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+ <1525017.NKJprrWkDB@wasted.cogentembedded.com>
+ <CAMuHMdV086grEjTUxkhihF5t5NcO-pKt_8GfXhUWrMsq1zVbYg@mail.gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/3] ARM: dts: r8a7792: add CAN clocks
-Date: Thu, 14 Jul 2016 23:19:44 +0300
-Message-ID: <2649698.YI9UQEvgG8@wasted.cogentembedded.com>
-In-Reply-To: <34968644.DhifNderY8@wasted.cogentembedded.com>
-References: <34968644.DhifNderY8@wasted.cogentembedded.com>
+Message-ID: <c97c4dfe-9db0-d8ec-0bd1-6b26911e653e@cogentembedded.com>
+Date: Thu, 14 Jul 2016 15:09:08 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <CAMuHMdV086grEjTUxkhihF5t5NcO-pKt_8GfXhUWrMsq1zVbYg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car CAN controllers can derive  the CAN  bus  clock not only from
-their peripheral  clock input (clkp1) but also from the other internal
-clock (clkp2) and the external clock fed on the CAN_CLK pin.  Describe
-those  clocks in  the R8A7792 device tree.
+Hello.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On 7/13/2016 9:13 AM, Geert Uytterhoeven wrote:
 
----
- arch/arm/boot/dts/r8a7792.dtsi |   22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+>> Add the EtherAVB pin groups to the R8A7792 PFC driver.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+>> ---
+>> The patch is against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
+>> repo plus my 2 R8A7792 PFC patches posted before...
+>>
+>> Changes in version 2:
+>> - added AVB_AVTP_MATCH pin group.
+>
+> Thanks for the update!
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -530,6 +530,13 @@
- 			clock-div = <8>;
- 			clock-mult = <1>;
- 		};
-+		rcan_clk: rcan {
-+			compatible = "fixed-factor-clock";
-+			clocks = <&pll1_div2_clk>;
-+			#clock-cells = <0>;
-+			clock-div = <49>;
-+			clock-mult = <1>;
-+		};
- 
- 		/* Gate clocks */
- 		mstp1_clks: mstp1_clks@e6150134 {
-@@ -600,7 +607,8 @@
- 			reg = <0 0xe6150994 0 4>, <0 0xe61509a4 0 4>;
- 			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
- 				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
--				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>;
-+				 <&cp_clk>, <&cp_clk>, <&p_clk>, <&p_clk>,
-+				 <&cp_clk>, <&cp_clk>;
- 			#clock-cells = <1>;
- 			clock-indices = <
- 				R8A7792_CLK_GPIO7 R8A7792_CLK_GPIO6
-@@ -608,12 +616,14 @@
- 				R8A7792_CLK_GPIO3 R8A7792_CLK_GPIO2
- 				R8A7792_CLK_GPIO1 R8A7792_CLK_GPIO0
- 				R8A7792_CLK_GPIO11 R8A7792_CLK_GPIO10
-+				R8A7792_CLK_CAN1 R8A7792_CLK_CAN0
- 				R8A7792_CLK_GPIO9 R8A7792_CLK_GPIO8
- 			>;
- 			clock-output-names =
- 				"gpio7", "gpio6", "gpio5", "gpio4",
- 				"gpio3", "gpio2", "gpio1", "gpio0",
--				"gpio11", "gpio10", "gpio9", "gpio8";
-+				"gpio11", "gpio10", "can1", "can0",
-+				"gpio9", "gpio8";
- 		};
- 	};
- 
-@@ -630,6 +640,14 @@
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
- 		clock-frequency = <0>;
- 	};
- };
+    Not at all. How about queuing the PFC patches? :-)
 
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+
+MBR, Sergei
