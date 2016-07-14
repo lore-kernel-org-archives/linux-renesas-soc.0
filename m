@@ -1,69 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:56020 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753791AbcGSOXL (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:36516 "EHLO
+	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751394AbcGNUVT (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 19 Jul 2016 10:23:11 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
-	hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 05/16] [media] rcar-vin: do not use v4l2_device_call_until_err()
-Date: Tue, 19 Jul 2016 16:20:56 +0200
-Message-Id: <20160719142107.22358-6-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
+	Thu, 14 Jul 2016 16:21:19 -0400
+Received: by mail-lf0-f45.google.com with SMTP id q132so72670843lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Jul 2016 13:21:18 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 3/3] ARM: dts: blanche: add CAN0 support
+Date: Thu, 14 Jul 2016 23:21:15 +0300
+Message-ID: <14988679.oTJc4uy6At@wasted.cogentembedded.com>
+In-Reply-To: <34968644.DhifNderY8@wasted.cogentembedded.com>
+References: <34968644.DhifNderY8@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fix a error from the original driver where v4l2_device_call_until_err()
-where used for the pad specific v4l2 operation set_fmt.  Also fix up the
-error path from this fix so if there is an error it will be propagated
-to the caller.
+Define the Blanche board dependent part of the CAN0 device node along with
+the CAN_CLK crystal...
 
-The error path label have also been renamed as a result from a
-nitpicking review comment since we are fixing other issues here.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a7792-blanche.dts |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 10a5c10..5dceff8 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -114,10 +114,9 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
++++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -60,6 +60,10 @@
+ 	clock-frequency = <20000000>;
+ };
  
- 	format.pad = vin->src_pad_idx;
++&can_clk {
++	clock-frequency = <48000000>;
++};
++
+ &pfc {
+ 	scif0_pins: scif0 {
+ 		groups = "scif0_data";
+@@ -81,6 +85,11 @@
+ 			function = "lbsc";
+ 		};
+ 	};
++
++	can0_pins: can0 {
++		groups = "can0_data", "can_clk";
++		function = "can0";
++	};
+ };
  
--	ret = v4l2_device_call_until_err(sd->v4l2_dev, 0, pad, set_fmt,
--					 pad_cfg, &format);
--	if (ret < 0)
--		goto cleanup;
-+	ret = v4l2_subdev_call(sd, pad, set_fmt, pad_cfg, &format);
-+	if (ret < 0 && ret != -ENOIOCTLCMD)
-+		goto done;
+ &scif0 {
+@@ -95,4 +104,11 @@
+ 	pinctrl-names = "default";
  
- 	v4l2_fill_pix_format(pix, &format.format);
- 
-@@ -127,9 +126,9 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 	vin_dbg(vin, "Source resolution: %ux%u\n", source->width,
- 		source->height);
- 
--cleanup:
-+done:
- 	v4l2_subdev_free_pad_config(pad_cfg);
--	return 0;
-+	return ret;
- }
- 
- static int __rvin_try_format(struct rvin_dev *vin,
--- 
-2.9.0
+ 	status = "okay";
++};
++
++&can0 {
++	pinctrl-0 = <&can0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
+ };
