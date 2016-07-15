@@ -1,76 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56131 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752687AbcGYCaD (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:33735 "EHLO
+	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751459AbcGODVl (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sun, 24 Jul 2016 22:30:03 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thu, 14 Jul 2016 23:21:41 -0400
+MIME-Version: 1.0
+In-Reply-To: <18830980.VXHu8E8Ec7@wasted.cogentembedded.com>
+References: <34968644.DhifNderY8@wasted.cogentembedded.com> <18830980.VXHu8E8Ec7@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 15 Jul 2016 05:21:40 +0200
+Message-ID: <CAMuHMdV1nYzEKowJzD97VFMdWK7-s2iS4O3uM9X5UH-VVPFqYQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: r8a7792: add CAN support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/2] drivers: sh: Stop using the legacy clock domain on ARM
-Date: Mon, 25 Jul 2016 11:29:38 +0900
-Message-Id: <4c6d7e228968bdc238ae7213d919f34b7838fe59.1469413328.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1469413328.git.horms+renesas@verge.net.au>
-References: <cover.1469413328.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1469413328.git.horms+renesas@verge.net.au>
-References: <cover.1469413328.git.horms+renesas@verge.net.au>
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, Jul 14, 2016 at 10:20 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Define the generic R8A7792 parts of the CAN0/1 device nodes.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Since commits 71d076ceb245f0d9 ("ARM: shmobile: Enable PM and
-PM_GENERIC_DOMAINS for SoCs with PM Domains") and 2ee98234b88174f2
-("arm64: renesas: Enable PM and PM_GENERIC_DOMAINS for SoCs with PM
-Domains"), CONFIG_PM and CONFIG_PM_GENERIC_DOMAINS are enabled
-unconditionally for Renesas ARM-based SoCs. Hence the legacy clock
-domain is no longer used on these SoCs.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Remove the related support code, and stop entering drivers/sh/ on ARM.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/Makefile        | 1 -
- drivers/sh/pm_runtime.c | 9 ---------
- 2 files changed, 10 deletions(-)
+                        Geert
 
-diff --git a/drivers/Makefile b/drivers/Makefile
-index 0b6f3d60193d..a7187b999c5e 100644
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@ -128,7 +128,6 @@ obj-$(CONFIG_SGI_SN)		+= sn/
- obj-y				+= firmware/
- obj-$(CONFIG_CRYPTO)		+= crypto/
- obj-$(CONFIG_SUPERH)		+= sh/
--obj-$(CONFIG_ARCH_SHMOBILE)	+= sh/
- ifndef CONFIG_ARCH_USES_GETTIMEOFFSET
- obj-y				+= clocksource/
- endif
-diff --git a/drivers/sh/pm_runtime.c b/drivers/sh/pm_runtime.c
-index a9bac3bf20de..c887ecdaf19b 100644
---- a/drivers/sh/pm_runtime.c
-+++ b/drivers/sh/pm_runtime.c
-@@ -34,15 +34,6 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
- 
- static int __init sh_pm_runtime_init(void)
- {
--	if (IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_ARCH_SHMOBILE)) {
--		if (!of_find_compatible_node(NULL, NULL,
--					     "renesas,cpg-mstp-clocks"))
--			return 0;
--		if (IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS_OF) &&
--		    of_find_node_with_property(NULL, "#power-domain-cells"))
--			return 0;
--	}
--
- 	pm_clk_add_notifier(&platform_bus_type, &platform_bus_notifier);
- 	return 0;
- }
--- 
-2.7.0.rc3.207.g0ac5344
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
