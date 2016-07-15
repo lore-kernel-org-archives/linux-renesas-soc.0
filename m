@@ -1,39 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:33533 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752276AbcGUM0F (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33920 "EHLO
+	mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752176AbcGODTJ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 21 Jul 2016 08:26:05 -0400
-Received: by mail-lf0-f48.google.com with SMTP id b199so60517379lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Jul 2016 05:26:04 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
+	Thu, 14 Jul 2016 23:19:09 -0400
+MIME-Version: 1.0
+In-Reply-To: <2649698.YI9UQEvgG8@wasted.cogentembedded.com>
+References: <34968644.DhifNderY8@wasted.cogentembedded.com> <2649698.YI9UQEvgG8@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 15 Jul 2016 05:19:07 +0200
+Message-ID: <CAMuHMdVUqt=CyKeaudR2vo3tbB0K-iugyshT2mNEMkn6WRJi1g@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ARM: dts: r8a7792: add CAN clocks
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
 	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 0/2] arm64: renesas: add H3ULCB board
-Date: Thu, 21 Jul 2016 15:26:02 +0300
-Message-Id: <1469103962-20378-1-git-send-email-vladimir.barinov@cogentembedded.com>
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+On Thu, Jul 14, 2016 at 10:19 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> The R-Car CAN controllers can derive  the CAN  bus  clock not only from
+> their peripheral  clock input (clkp1) but also from the other internal
+> clock (clkp2) and the external clock fed on the CAN_CLK pin.  Describe
+> those  clocks in  the R8A7792 device tree.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This adds the folowing:
-- R8A7795 SoC based H3ULCB low cost board initial device tree
-- Document DT bindings
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Vladimir Barinov (2):
-[1/2] arm64: renesas: h3ulcb: initial device tree
-[2/2] dt: arm: shmobile: add H3ULCB board DT bindings
+Gr{oetje,eeting}s,
 
----
-This patchset is against the 'kernel/git/horms/renesas.git' repo.
+                        Geert
 
- arch/arm64/boot/dts/renesas/Makefile           |   2 +-
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 326 +++++++++++++++++++++++++
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 3 files changed, 329 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
