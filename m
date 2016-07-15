@@ -1,68 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:34117 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753620AbcGDUzR (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:58983 "EHLO
+	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751279AbcGOCtR (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 4 Jul 2016 16:55:17 -0400
-Received: by mail-lf0-f48.google.com with SMTP id h129so123275924lfh.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Jul 2016 13:55:16 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 3/3] ARM: dts: blanche: add Ethernet pins
-Date: Mon, 04 Jul 2016 23:55:13 +0300
-Message-ID: <3279336.lifIduxqUW@wasted.cogentembedded.com>
-In-Reply-To: <2793535.9X0Tq7I1Mq@wasted.cogentembedded.com>
-References: <2793535.9X0Tq7I1Mq@wasted.cogentembedded.com>
+	Thu, 14 Jul 2016 22:49:17 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <davem@davemloft.net>
+CC: <daniel@iogearbox.net>, <willemb@google.com>, <ast@plumgrid.com>,
+	<tklauser@distanz.ch>, <fruggeri@aristanetworks.com>,
+	<netdev@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH/RFC] packet: fix sock_tx_timestamp() in packet_snd() via sendto syscall
+Date: Fri, 15 Jul 2016 11:49:04 +0900
+Message-ID: <1468550944-4584-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the (previously omitted) pin data for the SMSC LAN89218 Ethernet chip
-to the Blanche board's device tree: the chip's IRQ output is connected to
-the SoC's IRQ0 pin and its nCS input is connected to the SoC's EX_CS0# pin.
+Since the sendto syscall doesn't have msg_control buffer,
+the sock_tx_timestamp() in packet_snd() cannot work correctly because
+the socks.fsflags is set to 0.
+So, this patch sets the fsflags from sk.sk_tsflags if the msg_control
+buffer doesn't exist.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Fixes: c14ac9451c34 ("sock: enable timestamping using control messages")
+Cc: <stable@vger.kernel.org>
+Reported-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Reported-by: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm/boot/dts/r8a7792-blanche.dts |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+I'm not sure the network stack world. So, I submit this patch as RFC.
+This patch looks like a quick hack, but it could resolve an our issue.
 
-Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
-+++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-@@ -50,6 +50,9 @@
- 		reg-io-width = <4>;
- 		vddvario-supply = <&d3_3v>;
- 		vdd33a-supply = <&d3_3v>;
-+
-+		pinctrl-0 = <&lan89218_pins>;
-+		pinctrl-names = "default";
- 	};
- };
+This issue happens on our platform (r8a7795-salvator-x).
+The test command is:
+ # ptp4l -i eth0 -p /dev/ptp0 -m -q -f /etc/linuxptp/gPTP.cfg
+
+The failure result:
+ptp4l[26.815]: selected /dev/ptp0 as PTP clock
+ptp4l[26.872]: port 1: INITIALIZING to LISTENING on INITIALIZE
+ptp4l[26.872]: port 0: INITIALIZING to LISTENING on INITIALIZE
+ptp4l[27.873]: timed out while polling for tx timestamp
+ptp4l[27.873]: increasing tx_timestamp_timeout may correct this issue, but it is likely caused by a driver bug
+ptp4l[27.873]: port 1: send peer delay request failed
+ptp4l[27.873]: port 1: LISTENING to FAULTY on FAULT_DETECTED (FT_UNSPECIFIED)
+
+The result after the patch is applied (or the c14ac9451c34 is reverted):
+ptp4l[64.639]: selected /dev/ptp0 as PTP clock
+ptp4l[64.688]: port 1: INITIALIZING to LISTENING on INITIALIZE
+ptp4l[64.688]: port 0: INITIALIZING to LISTENING on INITIALIZE
+ptp4l[71.841]: port 1: LISTENING to MASTER on ANNOUNCE_RECEIPT_TIMEOUT_EXPIRES
+ptp4l[71.841]: selected best master clock 2e090a.fffe.00a2df
+ptp4l[71.841]: assuming the grand master role
+
+ net/packet/af_packet.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index 9f0983f..d76fd41 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -2887,6 +2887,11 @@ static int packet_snd(struct socket *sock, struct msghdr *msg, size_t len)
+ 		err = sock_cmsg_send(sk, msg, &sockc);
+ 		if (unlikely(err))
+ 			goto out_unlock;
++	} else {
++		/* Set tsflags from sk because a syscall (e.g. sendto) doesn't
++		 * have msg_control buffer.
++		 */
++		sockc.tsflags = sk->sk_tsflags;
+ 	}
  
-@@ -67,6 +70,18 @@
- 		groups = "scif3_data";
- 		function = "scif3";
- 	};
-+
-+	lan89218_pins: lan89218 {
-+		intc {
-+			groups = "intc_irq0";
-+			function = "intc";
-+		};
-+		lbsc {
-+			groups = "lbsc_ex_cs0";
-+			function = "lbsc";
-+		};
-+	};
-+
- };
- 
- &scif0 {
+ 	if (sock->type == SOCK_RAW)
+-- 
+1.9.1
