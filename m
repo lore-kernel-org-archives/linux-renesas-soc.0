@@ -1,62 +1,111 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:55985 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753385AbcGSOXJ (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52416 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751447AbcGPMEb (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 19 Jul 2016 10:23:09 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
-	hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	Michal Simek <michal.simek@xilinx.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 01/16] media: entity: Add has_route entity operation
-Date: Tue, 19 Jul 2016 16:20:52 +0200
-Message-Id: <20160719142107.22358-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+	Sat, 16 Jul 2016 08:04:31 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87eg6zn3a5.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bOOKY-0004vm-Px@debutante>
+Date: Sat, 16 Jul 2016 13:04:26 +0100
+Subject: Applied "ASoC: simple-card-utils: add asoc_simple_card_set_dailink_name()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+The patch
 
-The optional operation can be used by entities to report whether two
-pads are internally connected.
+   ASoC: simple-card-utils: add asoc_simple_card_set_dailink_name()
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 1db3312e3ab1a776ae8f414640dd7c180ce38a75 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 11 Jul 2016 23:57:14 +0000
+Subject: [PATCH] ASoC: simple-card-utils: add
+ asoc_simple_card_set_dailink_name()
+
+Current simple-card is creating dai_link->name / dai_link->stream_name.
+These are based on CPU + Codec name, or "fe.CPU" or "be.Codec" if it
+was DPCM.
+This patch adds asoc_simple_card_set_dailink_name() and set dailink
+name as common method.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- include/media/media-entity.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ include/sound/simple_card_utils.h     |  3 +++
+ sound/soc/generic/simple-card-utils.c | 23 +++++++++++++++++++++++
+ 2 files changed, 26 insertions(+)
 
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index cbb266f..c4b2dca 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -179,6 +179,9 @@ struct media_pad {
-  * @link_validate:	Return whether a link is valid from the entity point of
-  *			view. The media_entity_pipeline_start() function
-  *			validates all links by calling this operation. Optional.
-+ * @has_route:		Return whether a route exists inside the entity between
-+ *			two given pads. Optional. If the operation isn't
-+ *			implemented all pads will be considered as connected.
-  *
-  * Note: Those these callbacks are called with struct media_device.@graph_mutex
-  * mutex held.
-@@ -188,6 +191,8 @@ struct media_entity_operations {
- 			  const struct media_pad *local,
- 			  const struct media_pad *remote, u32 flags);
- 	int (*link_validate)(struct media_link *link);
-+	bool (*has_route)(struct media_entity *entity, unsigned int pad0,
-+			  unsigned int pad1);
- };
+diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
+index 50aa7b22a94c..b88a8dcfe4ba 100644
+--- a/include/sound/simple_card_utils.h
++++ b/include/sound/simple_card_utils.h
+@@ -27,5 +27,8 @@ int asoc_simple_card_parse_daifmt(struct device *dev,
+ 				  struct device_node *codec,
+ 				  char *prefix,
+ 				  unsigned int *retfmt);
++int asoc_simple_card_set_dailink_name(struct device *dev,
++				      struct snd_soc_dai_link *dai_link,
++				      const char *fmt, ...);
  
- /**
+ #endif /* __SIMPLE_CARD_CORE_H */
+diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
+index 3f6b72526f71..48c73660b66a 100644
+--- a/sound/soc/generic/simple-card-utils.c
++++ b/sound/soc/generic/simple-card-utils.c
+@@ -52,3 +52,26 @@ int asoc_simple_card_parse_daifmt(struct device *dev,
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(asoc_simple_card_parse_daifmt);
++
++int asoc_simple_card_set_dailink_name(struct device *dev,
++				      struct snd_soc_dai_link *dai_link,
++				      const char *fmt, ...)
++{
++	va_list ap;
++	char *name = NULL;
++	int ret = -ENOMEM;
++
++	va_start(ap, fmt);
++	name = devm_kvasprintf(dev, GFP_KERNEL, fmt, ap);
++	va_end(ap);
++
++	if (name) {
++		ret = 0;
++
++		dai_link->name		= name;
++		dai_link->stream_name	= name;
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(asoc_simple_card_set_dailink_name);
 -- 
-2.9.0
+2.8.1
