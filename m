@@ -1,61 +1,97 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/2] ARM: dts: r8a7792: add SD clocks
-Date: Wed, 13 Jul 2016 00:10:18 +0300
-Message-ID: <5720002.roQESv2v7G@wasted.cogentembedded.com>
-In-Reply-To: <2441635.ESeLhIjWEX@wasted.cogentembedded.com>
-References: <2441635.ESeLhIjWEX@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52404 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751447AbcGPME3 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Sat, 16 Jul 2016 08:04:29 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>
+In-Reply-To: <87wpkzlgu3.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bOOKV-0004us-T7@debutante>
+Date: Sat, 16 Jul 2016 13:04:23 +0100
+Subject: Applied "ASoC: simple-card: use asoc_simple_card_parse_dailink_name()" to the asoc tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the SDHI0 clock and its parent, SD clock in the R8A7792 device tree.
+The patch
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+   ASoC: simple-card: use asoc_simple_card_parse_dailink_name()
 
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 2e8d1c7d544089fe4894c504020d7ac7eb1de531 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 11 Jul 2016 23:57:34 +0000
+Subject: [PATCH] ASoC: simple-card: use asoc_simple_card_parse_dailink_name()
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7792.dtsi |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ sound/soc/generic/simple-card.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -511,6 +511,13 @@
- 			clock-div = <8>;
- 			clock-mult = <1>;
- 		};
-+		sd_clk: sd {
-+			compatible = "fixed-factor-clock";
-+			clocks = <&pll1_div2_clk>;
-+			#clock-cells = <0>;
-+			clock-div = <8>;
-+			clock-mult = <1>;
-+		};
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index e3a32d340482..07469cd9272c 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -319,7 +319,6 @@ static int asoc_simple_card_dai_link_of(struct device_node *node,
+ 	struct device_node *cpu = NULL;
+ 	struct device_node *plat = NULL;
+ 	struct device_node *codec = NULL;
+-	char *name;
+ 	char prop[128];
+ 	char *prefix = "";
+ 	int ret, cpu_args;
+@@ -380,19 +379,13 @@ static int asoc_simple_card_dai_link_of(struct device_node *node,
+ 	if (!dai_link->platform_of_node)
+ 		dai_link->platform_of_node = dai_link->cpu_of_node;
  
- 		/* Gate clocks */
- 		mstp1_clks: mstp1_clks@e6150134 {
-@@ -533,6 +540,15 @@
- 			>;
- 			clock-output-names = "sys-dmac1", "sys-dmac0";
- 		};
-+		mstp3_clks: mstp3_clks@e615013c {
-+			compatible = "renesas,r8a7792-mstp-clocks",
-+				     "renesas,cpg-mstp-clocks";
-+			reg = <0 0xe615013c 0 4>, <0 0xe6150048 0 4>;
-+			clocks = <&sd_clk>;
-+			#clock-cells = <1>;
-+			renesas,clock-indices = <R8A7792_CLK_SDHI0>;
-+			clock-output-names = "sdhi0";
-+		};
- 		mstp4_clks: mstp4_clks@e6150140 {
- 			compatible = "renesas,r8a7792-mstp-clocks",
- 				     "renesas,cpg-mstp-clocks";
-
+-	/* DAI link name is created from CPU/CODEC dai name */
+-	name = devm_kzalloc(dev,
+-			    strlen(dai_link->cpu_dai_name)   +
+-			    strlen(dai_link->codec_dai_name) + 2,
+-			    GFP_KERNEL);
+-	if (!name) {
+-		ret = -ENOMEM;
++	ret = asoc_simple_card_set_dailink_name(dev, dai_link,
++						"%s-%s",
++						dai_link->cpu_dai_name,
++						dai_link->codec_dai_name);
++	if (ret < 0)
+ 		goto dai_link_of_err;
+-	}
+ 
+-	sprintf(name, "%s-%s", dai_link->cpu_dai_name,
+-				dai_link->codec_dai_name);
+-	dai_link->name = dai_link->stream_name = name;
+ 	dai_link->ops = &asoc_simple_card_ops;
+ 	dai_link->init = asoc_simple_card_dai_init;
+ 
+-- 
+2.8.1
