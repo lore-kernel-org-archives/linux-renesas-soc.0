@@ -1,116 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33156 "EHLO
-	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932729AbcGEKHj convert rfc822-to-8bit (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52390 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751447AbcGPME1 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 5 Jul 2016 06:07:39 -0400
-MIME-Version: 1.0
-In-Reply-To: <1466630758-26231-1-git-send-email-linus.walleij@linaro.org>
-References: <1466630758-26231-1-git-send-email-linus.walleij@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 5 Jul 2016 12:07:37 +0200
-Message-ID: <CAMuHMdXVEjyctU88-u=FJcY0AwLKvFxdizkPTTjt_X=xM_H6UQ@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: convince line to become input in irq helper
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	=?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+	Sat, 16 Jul 2016 08:04:27 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>
+In-Reply-To: <87shvnlgrh.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bOOKS-0004u1-Uk@debutante>
+Date: Sat, 16 Jul 2016 13:04:20 +0100
+Subject: Applied "ASoC: simple-card-utils: add asoc_simple_card_parse_card_name()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Linus,
+The patch
 
-On Wed, Jun 22, 2016 at 11:25 PM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> The generic IRQ helper library just checks if the IRQ line is
-> set as input before activating it for interrupts. As we
-> recently started to check things better with .get_dir() it
-> turns out that it's good to try to convince the line to become
-> an input before attempting to lock it as IRQ.
->
-> Cc: Björn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v1->v2:
-> - Propagate the error from .direction_input() so we can rely on
->   it being used.
+   ASoC: simple-card-utils: add asoc_simple_card_parse_card_name()
 
-This patch (commit 7e7c059cb50c7c72 in gpio/for-next) breaks Ethernet on
-r8a7795/salvator-x:
+has been applied to the asoc tree at
 
-    libphy: ravb_mii: probed
-[1] gpio_rcar e6052000.gpio: sense irq = 11, type = 8
-    ravb e6800000.ethernet eth0: Base address at 0xe6800000,
-2e:09:0a:00:83:1e, IRQ 131.
-    ...
-[2] gpiochip_irq_reqres: gpiochip e6052000.gpio
-[3] gpio_rcar e6052000.gpio: gpio_rcar_direction_input: 11
-[4] gpiochip_irq_reqres: desc->flags = 0x0
-    ravb e6800000.ethernet eth0: limited PHY to 100Mbit/s
-    Micrel KSZ9031 Gigabit PHY e6800000.etherne:00: attached PHY
-driver [Micrel KSZ9031 Gigabit PHY]
-(mii_bus:phy_addr=e6800000.etherne:00, irq=206)
-    Waiting up to 110 more seconds for network.
-    Waiting up to 100 more seconds for network.
-    ...
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Reverting it fixes the issue.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-phy0 in arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-        phy0: ethernet-phy@0 {
-                ...
-                interrupt-parent = <&gpio2>;
-                interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-        };
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-sets up the GPIO for interrupt mode, cfr. [1] in the kernel output above.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-> ---
->  drivers/gpio/gpiolib.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 5a21a6acf8af..b195ec406ff4 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1505,6 +1505,25 @@ static int gpiochip_irq_reqres(struct irq_data *d)
->         if (!try_module_get(chip->gpiodev->owner))
->                 return -ENODEV;
->
-> +       /*
-> +        * If it is possible to switch this GPIO to an input
-> +        * this is a good time to do it.
-> +        */
-> +       if (chip->direction_input) {
-> +               struct gpio_desc *desc;
-> +               int ret;
-> +
-> +               desc = gpiochip_get_desc(chip, d->hwirq);
-> +               if (IS_ERR(desc))
-> +                       return PTR_ERR(desc);
-> +
-> +               ret = chip->direction_input(chip, d->hwirq);
+Thanks,
+Mark
 
-This configures the GPIO for plain input mode, cfr. [3] above, basically
-undoing the configuration from [1]. Hence interrupts no longer come through,
-and Ethernet fails.
+>From fc55c9b5a2ea794c4b6be937522bcfe98be4770a Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 11 Jul 2016 23:59:16 +0000
+Subject: [PATCH] ASoC: simple-card-utils: add
+ asoc_simple_card_parse_card_name()
 
-> +               if (ret)
-> +                       return ret;
-> +
-> +               clear_bit(FLAG_IS_OUT, &desc->flags);
+simple-card needs to get its card name.
+This patch makes this method simple style standard.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ include/sound/simple_card_utils.h     |  2 ++
+ sound/soc/generic/simple-card-utils.c | 20 ++++++++++++++++++++
+ 2 files changed, 22 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
+index b88a8dcfe4ba..86088aed9002 100644
+--- a/include/sound/simple_card_utils.h
++++ b/include/sound/simple_card_utils.h
+@@ -30,5 +30,7 @@ int asoc_simple_card_parse_daifmt(struct device *dev,
+ int asoc_simple_card_set_dailink_name(struct device *dev,
+ 				      struct snd_soc_dai_link *dai_link,
+ 				      const char *fmt, ...);
++int asoc_simple_card_parse_card_name(struct snd_soc_card *card,
++				     char *prefix);
+ 
+ #endif /* __SIMPLE_CARD_CORE_H */
+diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
+index 48c73660b66a..d89a9a1b2471 100644
+--- a/sound/soc/generic/simple-card-utils.c
++++ b/sound/soc/generic/simple-card-utils.c
+@@ -75,3 +75,23 @@ int asoc_simple_card_set_dailink_name(struct device *dev,
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(asoc_simple_card_set_dailink_name);
++
++int asoc_simple_card_parse_card_name(struct snd_soc_card *card,
++				     char *prefix)
++{
++	char prop[128];
++	int ret;
++
++	snprintf(prop, sizeof(prop), "%sname", prefix);
++
++	/* Parse the card name from DT */
++	ret = snd_soc_of_parse_card_name(card, prop);
++	if (ret < 0)
++		return ret;
++
++	if (!card->name && card->dai_link)
++		card->name = card->dai_link->name;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(asoc_simple_card_parse_card_name);
+-- 
+2.8.1
