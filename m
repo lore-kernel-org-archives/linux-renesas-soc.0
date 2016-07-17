@@ -1,49 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39183 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752670AbcGTITh (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 20 Jul 2016 04:19:37 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH] ARM: shmobile: r8a7794: tidyup SDHI register size on DTSI
-Date: Wed, 20 Jul 2016 17:19:19 +0900
-Message-Id: <1469002759-2860-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran@ksquared.org.uk>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: Document Renesas R-Car FCP power-domains usage
+Date: Sun, 17 Jul 2016 19:31:12 +0300
+Message-ID: <5049690.gmjd5cAaeQ@avalon>
+In-Reply-To: <1467305430-25660-3-git-send-email-kieran@bingham.xyz>
+References: <1467305430-25660-1-git-send-email-kieran@bingham.xyz> <1467305430-25660-3-git-send-email-kieran@bingham.xyz>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-r8a7794 SDHI ch0 has SD_DMACR which is located in 0x324.
-This patch updates register size
+Hi Kieran,
 
-Based on work for the r8a7790 by Kuninori Morimoto.
+Thank you for the patch.
 
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-Found by inspection
-Compile tested only
----
- arch/arm/boot/dts/r8a7794.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thursday 30 Jun 2016 17:50:29 Kieran Bingham wrote:
+> The power domain must be specified to bring the device out of module
+> standby. Document this in the bindings provided, so that new additions
+> are not missed.
+> 
+> Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 685f986cf962..9b36f58dff41 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -697,7 +697,7 @@
- 
- 	sdhi0: sd@ee100000 {
- 		compatible = "renesas,sdhi-r8a7794";
--		reg = <0 0xee100000 0 0x200>;
-+		reg = <0 0xee100000 0 0x384>;
- 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks R8A7794_CLK_SDHI0>;
- 		dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  Documentation/devicetree/bindings/media/renesas,fcp.txt | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt
+> b/Documentation/devicetree/bindings/media/renesas,fcp.txt index
+> 271dcfdb5a76..5be21b6411ba 100644
+> --- a/Documentation/devicetree/bindings/media/renesas,fcp.txt
+> +++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
+> @@ -23,6 +23,10 @@ are paired with. These DT bindings currently support the
+> FCPV and FCPF. - reg: the register base and size for the device registers
+>   - clocks: Reference to the functional clock
+> 
+> +Optional properties:
+> + - power-domains : power-domain property defined with a power domain
+> specifier
+> +                            to respective power domain.
+> +
+> 
+>  Device node example
+>  -------------------
+> @@ -31,4 +35,5 @@ Device node example
+>  		compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
+>  		reg = <0 0xfea2f000 0 0x200>;
+>  		clocks = <&cpg CPG_MOD 602>;
+> +		power-domains = <&sysc R8A7795_PD_A3VP>;
+>  	};
+
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
