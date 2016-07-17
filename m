@@ -1,212 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:33473 "EHLO
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:36674 "EHLO
 	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932503AbcGDVMV (ORCPT
+	with ESMTP id S1751104AbcGQNJX (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 4 Jul 2016 17:12:21 -0400
-Received: by mail-lf0-f48.google.com with SMTP id f6so123333055lfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Jul 2016 14:12:20 -0700 (PDT)
+	Sun, 17 Jul 2016 09:09:23 -0400
+Received: by mail-lf0-f48.google.com with SMTP id g62so5489340lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 17 Jul 2016 06:09:23 -0700 (PDT)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] ARM: dts: r8a7792: add GPIO support
-Date: Tue, 05 Jul 2016 00:12:17 +0300
-Message-ID: <3522881.tHt9KiJA1l@wasted.cogentembedded.com>
-In-Reply-To: <2706182.6XMBucurvj@wasted.cogentembedded.com>
-References: <2706182.6XMBucurvj@wasted.cogentembedded.com>
+To: netdev@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 2/2] sh_eth: fix DMA channel misreporting
+Date: Sun, 17 Jul 2016 16:09:19 +0300
+Message-ID: <3458874.GvGScMe9De@wasted.cogentembedded.com>
+In-Reply-To: <8592210.gMERdmUlCp@wasted.cogentembedded.com>
+References: <8592210.gMERdmUlCp@wasted.cogentembedded.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe all 12 GPIO controllers in the R8A7792 device tree.
+Currently 'ifconfig' for the Ethernet devices handled by this driver  shows
+"DMA chan: ff" while the driver doesn't use any DMA channels. Not assigning
+a value to 'net_device::dma' causes 'ifconfig'  to  correctly not report  a
+DMA channel.
 
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
 ---
- arch/arm/boot/dts/r8a7792.dtsi |  168 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 168 insertions(+)
+ drivers/net/ethernet/renesas/sh_eth.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+Index: net/drivers/net/ethernet/renesas/sh_eth.c
 ===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -113,6 +113,174 @@
- 			reg = <0 0xe6060000 0 0x144>;
- 		};
+--- net.orig/drivers/net/ethernet/renesas/sh_eth.c
++++ net/drivers/net/ethernet/renesas/sh_eth.c
+@@ -2996,7 +2996,6 @@ static int sh_eth_drv_probe(struct platf
+ 	if (devno < 0)
+ 		devno = 0;
  
-+		gpio0: gpio@e6050000 {
-+			compatible = "renesas,gpio-r8a7792",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6050000 0 0x50>;
-+			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 0 29>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7792_CLK_GPIO0>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		gpio1: gpio@e6051000 {
-+			compatible = "renesas,gpio-r8a7792",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6051000 0 0x50>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 32 23>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7792_CLK_GPIO1>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		gpio2: gpio@e6052000 {
-+			compatible = "renesas,gpio-r8a7792",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6052000 0 0x50>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 64 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7792_CLK_GPIO2>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		gpio3: gpio@e6053000 {
-+			compatible = "renesas,gpio-r8a7792",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6053000 0 0x50>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 96 28>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7792_CLK_GPIO3>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		gpio4: gpio@e6054000 {
-+			compatible = "renesas,gpio-r8a7792",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6054000 0 0x50>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 128 17>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7792_CLK_GPIO4>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		gpio5: gpio@e6055000 {
-+			compatible = "renesas,gpio-r8a7792",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6055000 0 0x50>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 160 17>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7792_CLK_GPIO5>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		gpio6: gpio@e6055100 {
-+			compatible = "renesas,gpio-r8a7792",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6055100 0 0x50>;
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 192 17>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7792_CLK_GPIO6>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		gpio7: gpio@e6055200 {
-+			compatible = "renesas,gpio-r8a7792",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6055200 0 0x50>;
-+			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 224 17>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7792_CLK_GPIO7>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		gpio8: gpio@e6055300 {
-+			compatible = "renesas,gpio-r8a7792",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6055300 0 0x50>;
-+			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 256 17>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7792_CLK_GPIO8>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		gpio9: gpio@e6055400 {
-+			compatible = "renesas,gpio-r8a7792",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6055400 0 0x50>;
-+			interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 288 17>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7792_CLK_GPIO9>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		gpio10: gpio@e6055500 {
-+			compatible = "renesas,gpio-r8a7792",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6055500 0 0x50>;
-+			interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 320 32>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7792_CLK_GPIO10>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
-+		gpio11: gpio@e6055600 {
-+			compatible = "renesas,gpio-r8a7792",
-+				     "renesas,gpio-rcar";
-+			reg = <0 0xe6055600 0 0x50>;
-+			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 352 30>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&mstp9_clks R8A7792_CLK_GPIO11>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+		};
-+
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a7792",
- 				     "renesas,rcar-dmac";
+-	ndev->dma = -1;
+ 	ret = platform_get_irq(pdev, 0);
+ 	if (ret < 0)
+ 		goto out_release;
