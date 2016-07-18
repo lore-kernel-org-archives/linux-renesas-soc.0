@@ -1,71 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:56036 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753863AbcGSOXL (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36915 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751756AbcGRCju (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 19 Jul 2016 10:23:11 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
-	hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 08/16] [media] rcar-vin: move chip check for pixelformat support
-Date: Tue, 19 Jul 2016 16:20:59 +0200
-Message-Id: <20160719142107.22358-9-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+	Sun, 17 Jul 2016 22:39:50 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/2] ARM: dts: r8a7792: remove ADSP clock
+Date: Mon, 18 Jul 2016 11:39:43 +0900
+Message-Id: <e0c3f92a08f3e0a95024d0d032564fdc1ee96f54.1468808109.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1468808109.git.horms+renesas@verge.net.au>
+References: <cover.1468808109.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The check for if the specific pixelformat is supported on the current
-chip should happen in VIDIOC_S_FMT and VIDIOC_TRY_FMT and not when we
-try to setup the hardware for streaming.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Simon Horman told me that R8A7792 has ADSP clock based on an incorrect
+table in the most recent R-Car gen2 manual. But when I received that manual
+I discovered that this is false: R8A7792 is the only Gen 2 SoC that doesn't
+have ADSP at all.  Accordingly remove the ADSP clock from DT for the
+r8a7792.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-dma.c  | 8 +++-----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 5 +++++
- 2 files changed, 8 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/r8a7792.dtsi            | 2 +-
+ include/dt-bindings/clock/r8a7792-clock.h | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 0836b15..7249c4f 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -225,11 +225,9 @@ static int rvin_setup(struct rvin_dev *vin)
- 		dmr = 0;
- 		break;
- 	case V4L2_PIX_FMT_XBGR32:
--		if (vin->chip == RCAR_GEN2 || vin->chip == RCAR_H1) {
--			dmr = VNDMR_EXRGB;
--			break;
--		}
--		/* fall through */
-+		/* Note: not supported on M1 */
-+		dmr = VNDMR_EXRGB;
-+		break;
- 	default:
- 		vin_err(vin, "Invalid pixelformat (0x%x)\n",
- 			vin->format.pixelformat);
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 09df396..ef3464d 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -192,6 +192,11 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	pix->sizeimage = max_t(u32, pix->sizeimage,
- 			       rvin_format_sizeimage(pix));
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index d5fd0762e2d6..3fd61d7ab906 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -279,7 +279,7 @@
+ 			clocks = <&extal_clk>;
+ 			#clock-cells = <1>;
+ 			clock-output-names = "main", "pll0", "pll1", "pll3",
+-					     "lb", "qspi", "z", "adsp";
++					     "lb", "qspi", "z";
+ 			#power-domain-cells = <0>;
+ 		};
  
-+	if (vin->chip == RCAR_M1 && pix->pixelformat == V4L2_PIX_FMT_XBGR32) {
-+		vin_err(vin, "pixel format XBGR32 not supported on M1\n");
-+		return -EINVAL;
-+	}
-+
- 	vin_dbg(vin, "Requested %ux%u Got %ux%u bpl: %d size: %d\n",
- 		rwidth, rheight, pix->width, pix->height,
- 		pix->bytesperline, pix->sizeimage);
+diff --git a/include/dt-bindings/clock/r8a7792-clock.h b/include/dt-bindings/clock/r8a7792-clock.h
+index 89a5155913f6..9a8b392ceb00 100644
+--- a/include/dt-bindings/clock/r8a7792-clock.h
++++ b/include/dt-bindings/clock/r8a7792-clock.h
+@@ -18,7 +18,6 @@
+ #define R8A7792_CLK_LB			4
+ #define R8A7792_CLK_QSPI		5
+ #define R8A7792_CLK_Z			6
+-#define R8A7792_CLK_ADSP		7
+ 
+ /* MSTP0 */
+ #define R8A7792_CLK_MSIOF0		0
 -- 
-2.9.0
+2.7.0.rc3.207.g0ac5344
