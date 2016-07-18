@@ -1,45 +1,83 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:34680 "EHLO
-	mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752018AbcGAIHT (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 1 Jul 2016 04:07:19 -0400
-MIME-Version: 1.0
-In-Reply-To: <7894702.b5qeLxoHdo@wasted.cogentembedded.com>
-References: <2144803.0K8qXzjIFq@wasted.cogentembedded.com> <7894702.b5qeLxoHdo@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 1 Jul 2016 10:07:17 +0200
-Message-ID: <CAMuHMdUeQCX5m2gGj3fj2kybaeVAUq+M8YQfQgrX+NgL8G5vCw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ARM: dts: r8a7792: add PFC support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 18 Jul 2016 13:14:27 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>,
+	Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <20160718121427.GS30372@sirena.org.uk>
+References: <1466602929-4191-1-git-send-email-geert+renesas@glider.be>
+ <1466602929-4191-5-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="GFHULmA0mO3kKGOo"
+Content-Disposition: inline
+In-Reply-To: <1466602929-4191-5-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH/RFC 4/6] spi: slave: Add SPI slave handler reporting boot
+ up time
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Jul 1, 2016 at 1:06 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Define the generic R8A7792 part of the PFC device node.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+--GFHULmA0mO3kKGOo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Gr{oetje,eeting}s,
+On Wed, Jun 22, 2016 at 03:42:07PM +0200, Geert Uytterhoeven wrote:
+> Add an SPI slave handler responding with the time of reception of the
+> last SPI message.
+>=20
+> This can be used by an external microcontroller as a dead man's switch.
 
-                        Geert
+The subject says boot up time, this says time of reception of the last
+message.  Which is it?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> +static int spi_slave_time_send(struct spi_device *spi)
+> +{
+> +	__be32 msg[2];
+> +	u32 rem_ns;
+> +	u64 ts;
+> +
+> +	ts =3D local_clock();
+> +	rem_ns =3D do_div(ts, 1000000000) / 1000;
+> +
+> +	msg[0] =3D cpu_to_be32(ts);
+> +	msg[1] =3D cpu_to_be32(rem_ns);
+> +
+> +	return spi_write(spi, &msg, sizeof(msg));
+> +}
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Looks like uptime which is a third thing.
+
+> +static int spi_slave_time_remove(struct spi_device *spi)
+> +{
+> +	struct spi_slave_time_priv *priv =3D spi_get_drvdata(spi);
+> +
+> +	/* FIXME Doesn't work, as spi_write() is blocked on a completion */
+> +	kthread_stop(priv->thread);
+
+spi_async()?  Still no cancellation on the actual operation but it
+pushes it more inside the framework.
+
+--GFHULmA0mO3kKGOo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXjMgiAAoJECTWi3JdVIfQxN8H/iTfhmcWrE0RQpPOF9FQ4WLA
+45W5GkH13mncePGwfWt4pHlpWfCSRp6E0c2gYKJqd+QA7OZOBihaLJEpLY0Fc8pJ
+5qv0bYjCIb8fQcqrmUYo4KkzkgchEqIZ+OlHmTAgWPyOiiDS/doGxPzgjQK3W8XO
+EJijsscQXazBrgEjGlqpiJ6U/jRXi/qELJ8UUlfqYV7QdCHV2IUl2yaRghgOQNMf
+3uQ59kL9E4tzWLZywxpwkL5HOHL16dAZRphxs//IYgWE/a6KHxKuN3e7kcuDGiwZ
+KoTankimBu9HW4v7/8IGxwCg6RywDVRkl4seau7QwFTpyrlTeRwY75og0ixB+1I=
+=tjIp
+-----END PGP SIGNATURE-----
+
+--GFHULmA0mO3kKGOo--
