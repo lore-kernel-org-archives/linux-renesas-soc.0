@@ -1,70 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:35684 "EHLO
-	mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751962AbcGEWBZ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36565 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751345AbcGRCJv (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 5 Jul 2016 18:01:25 -0400
-Received: by mail-lf0-f42.google.com with SMTP id l188so143383817lfe.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Jul 2016 15:01:25 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	Sun, 17 Jul 2016 22:09:51 -0400
+Date: Mon, 18 Jul 2016 11:09:45 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, devicetree@vger.kernel.org,
+	magnus.damm@gmail.com, linux@arm.linux.org.uk,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 1/2] ARM: dts: r8a7792: add GPIO clocks
-Date: Wed, 06 Jul 2016 01:01:22 +0300
-Message-ID: <11061301.qvrr4LnqPm@wasted.cogentembedded.com>
-In-Reply-To: <19087307.ZHtRY0pPL5@wasted.cogentembedded.com>
-References: <19087307.ZHtRY0pPL5@wasted.cogentembedded.com>
+Subject: Re: [PATCH v2 0/3] Add R8A7792/Blanche PFC support
+Message-ID: <20160718020944.GB25133@verge.net.au>
+References: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the GPIO clocks in the R8A7792 device tree.
+On Thu, Jul 14, 2016 at 11:58:49PM +0300, Sergei Shtylyov wrote:
+> Hello.
+> 
+>    Here's the set of 3 patches against Simon Horman's 'renesas.git' repo,
+> 'renesas-devel-20160711-v4.7-rc7' tag. We're adding the R8A7792 PFC node and
+> then describe the pins for the SCIFs and SMSC LAN89218 Ethernet chip found on
+> the Blanche board. These patches depend on the R8A7792 PFC driver patchset
+> in order to work properly.
+> 
+> [1/3] ARM: dts: r8a7792: add PFC support
+> [2/3] ARM: dts: blanche: add SCIF0/3 pins
+> [3/3] ARM: dts: blanche: add Ethernet pins
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
----
-Changes in version 2:
-- converted stray spaces to a tab;
-- added Geert's tag.
-
- arch/arm/boot/dts/r8a7792.dtsi |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -363,6 +363,27 @@
- 			clock-output-names = "hscif1", "hscif0", "scif3",
- 					     "scif2", "scif1", "scif0";
- 		};
-+		mstp9_clks: mstp9_clks@e6150994 {
-+			compatible = "renesas,r8a7792-mstp-clocks",
-+				     "renesas,cpg-mstp-clocks";
-+			reg = <0 0xe6150994 0 4>, <0 0xe61509a4 0 4>;
-+			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
-+				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
-+				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>;
-+			#clock-cells = <1>;
-+			clock-indices = <
-+				R8A7792_CLK_GPIO7 R8A7792_CLK_GPIO6
-+				R8A7792_CLK_GPIO5 R8A7792_CLK_GPIO4
-+				R8A7792_CLK_GPIO3 R8A7792_CLK_GPIO2
-+				R8A7792_CLK_GPIO1 R8A7792_CLK_GPIO0
-+				R8A7792_CLK_GPIO11 R8A7792_CLK_GPIO10
-+				R8A7792_CLK_GPIO9 R8A7792_CLK_GPIO8
-+			>;
-+			clock-output-names =
-+				"gpio7", "gpio6", "gpio5", "gpio4",
-+				"gpio3", "gpio2", "gpio1", "gpio0",
-+				"gpio11", "gpio10", "gpio9", "gpio8";
-+		};
- 	};
- 
- 	/* External root clock */
+Thanks, I have queued this up.
