@@ -1,75 +1,35 @@
-Return-Path: <kieranbingham@gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: r8a7795: add FDP1 device nodes
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org
-References: <1467293563-940-1-git-send-email-kieran@bingham.xyz>
- <1467293563-940-3-git-send-email-kieran@bingham.xyz>
-Cc: magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
- catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Kieran Bingham <kieran@bingham.xyz>
-Message-ID: <57768023.8010507@bingham.xyz>
-Date: Fri, 1 Jul 2016 15:37:23 +0100
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:36590 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751345AbcGRCKG (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Sun, 17 Jul 2016 22:10:06 -0400
+Date: Mon, 18 Jul 2016 11:10:03 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, devicetree@vger.kernel.org,
+	magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/2] Add R8A7792 EtherAVB support
+Message-ID: <20160718021002.GD25133@verge.net.au>
+References: <3308853.O8HBuWdbK9@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <1467293563-940-3-git-send-email-kieran@bingham.xyz>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3308853.O8HBuWdbK9@wasted.cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
-
-The bindings for this have now been acked by RobH.
-
---
-Cheers
-
-Kieran
-
-On 30/06/16 14:32, Kieran Bingham wrote:
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
-> --
-> changes for v2
->  - channel labels dropped
+On Tue, Jul 05, 2016 at 12:21:31AM +0300, Sergei Shtylyov wrote:
+> Hello.
 > 
->  arch/arm64/boot/dts/renesas/r8a7795.dtsi | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
+>    Here's the set of 2 patches against Simon Horman's 'renesas.git' repo,
+> 'renesas-devel-20160704-v4.7-rc6' tag plus the R8A7792 PFC/GPIO patchsets.
+> We're adding the R8A7792 EtherAVB clocks and device nodes. They have been
+> tested on the Blanche board (along with the EtherAVB patches)...
 > 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> index a451bd217f05..8bc87e09efd7 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> @@ -1443,5 +1443,32 @@
->  			clocks = <&cpg CPG_MOD 613>;
->  			power-domains = <&sysc R8A7795_PD_A3VP>;
->  		};
-> +
-> +		fdp1@fe940000 {
-> +			compatible = "renesas,fdp1";
-> +			reg = <0 0xfe940000 0 0x2400>;
-> +			interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 119>;
-> +			power-domains = <&sysc R8A7795_PD_A3VP>;
-> +			renesas,fcp = <&fcpf0>;
-> +		};
-> +
-> +		fdp1@fe944000 {
-> +			compatible = "renesas,fdp1";
-> +			reg = <0 0xfe944000 0 0x2400>;
-> +			interrupts = <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 118>;
-> +			power-domains = <&sysc R8A7795_PD_A3VP>;
-> +			renesas,fcp = <&fcpf1>;
-> +		};
-> +
-> +		fdp1@fe948000 {
-> +			compatible = "renesas,fdp1";
-> +			reg = <0 0xfe948000 0 0x2400>;
-> +			interrupts = <GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 117>;
-> +			power-domains = <&sysc R8A7795_PD_A3VP>;
-> +			renesas,fcp = <&fcpf2>;
-> +		};
->  	};
->  };
-> 
+> [1/2] ARM: dts: r8a7792: add EtherAVB clocks
+> [2/2] ARM: dts: r8a7792: add EtherAVB support
+
+Thanks, I have queued these up.
