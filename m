@@ -1,99 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www1246.sakura.ne.jp ([219.94.162.56]:37019 "EHLO
-	www1246.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751598AbcGAIiA (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36686 "EHLO
+	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751356AbcGROTX (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 1 Jul 2016 04:38:00 -0400
-Subject: Re: [Bug]:LAGER: GPIO-KEYS: Warning occurs after unbinding the
- e6051000.gpio
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <56FE29DC.4060605@jinso.co.jp> <571DE43D.3020308@jinso.co.jp>
- <CACRpkdYMD-XZ3w9n=EaSK12xXhiTvStS61a86RYezew_-HYUvA@mail.gmail.com>
- <57204CDA.6030403@jinso.co.jp> <5771D5DA.1020702@jinso.co.jp>
- <CACRpkda4YZyYvFJZtYndgGjrOve1D7e1=Xay78m9is987VjRcg@mail.gmail.com>
- <577622AA.4060105@jinso.co.jp>
- <CAMuHMdXeB1OxWL03KFJ-B1GeFbK_UxoBqzfHM5h_uw7RYMqGeg@mail.gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sakato Ryusuke <ryusuke.sakato.bx@renesas.com>,
-	kuninori morimoto <kuninori.morimoto.gx@renesas.com>,
-	Nguyen Viet Dung <nv-dung@jinso.co.jp>,
-	LE MINH DUC <lm-duc@jinso.co.jp>,
-	=?UTF-8?B?56iy5ZCJ77ya5Lq644K9?= <h-inayoshi@jinso.co.jp>,
-	"M.Miura" <m-miura@jinso.co.jp>
-From: Hiep Cao Minh <cm-hiep@jinso.co.jp>
-Message-ID: <50966dd2-dca3-ac35-acc9-e436a07c07ad@jinso.co.jp>
-Date: Fri, 1 Jul 2016 17:37:46 +0900
+	Mon, 18 Jul 2016 10:19:23 -0400
+Received: by mail-io0-f195.google.com with SMTP id y34so11059105ioi.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Jul 2016 07:19:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXeB1OxWL03KFJ-B1GeFbK_UxoBqzfHM5h_uw7RYMqGeg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <3404781.poC9HarVFn@avalon>
+References: <3404781.poC9HarVFn@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 18 Jul 2016 16:19:09 +0200
+Message-ID: <CAMuHMdWCcUjY_AHrWAuqrZ0L58y3uU+Zb1O8D3sXngZahWc4Tg@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] Latest VSP code
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert-san
+Hi Laurent,
 
-Thanks for your quick reply!
-
-On 2016/07/01 17:13, Geert Uytterhoeven wrote:
-> Hi Hiep,
+On Tue, Jun 21, 2016 at 1:31 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> The following changes since commit a0877f52035280370707bdefeddc6faa6478b892:
 >
-> On Fri, Jul 1, 2016 at 9:58 AM, Hiep Cao Minh <cm-hiep@jinso.co.jp> wrote:
->>>> As I have reported you the issue that related to your released patch.
->>>> Could you please consider this issue and tell me how to resolve this
->>>> problem?
->>>>
->>>> This issue still happens on Rcar-H2 and Rcar-M2 (Renesas's SOC) at the
->>>> Linux
->>>> upstream version v4.7-rc2.
->>> I think the patches that Torvalds merged for v4.7-rc3
->>> http://lwn.net/Articles/690987/ especially these two:
->>>
->>> Ricardo Ribalda Delgado (2):
->>>         gpiolib: Fix NULL pointer deference
->>>         gpiolib: Fix unaligned used of reference counters
->>>
->>> Solves the issue.
->>>
->>> Can you verify?
->>
->> I have just verified this on v4.7-rc5, this issue still happens.
->> But we find out that the issue had already happened before your following
->> patch was released.
->> "ff2b1359 gpio: make the gpiochip a real device" (the patch that you have
->> created before)
->> I mean, your patch helped us to find out the issue.
->>
->> To Geert-san.
->>
->> I'd like to divide Unbind-Rebind test  into two cases of Normal Test and
->> Abnormal Test.
->>
->> First, If we try to unbind/rebind the gpio device(ex: key, hdmi..) then
->> unbind/rebind the gpio-rcar,
->> It works normally without error message. This test case is normal test.
->> Refer to (GPIO_Unbind-Rebind_Abnormal-Test_log.txt)
->>
->> But on the other hand, If we try to unbind/rebind the gpio-rcar without
->> unbinding/rebinding gpio device,
->> The warning message looks like from kernel will happens. This test case is
->> abnormal test.
->> (Refer to GPIO_Unbind-Rebind_Normal-Test_logs.txt)
->>
->> In abnormal Test case, an error message occurs definitely from the driver or
->> the core class of the driver.
->> But I think we should consider the error or warning message looks like a
->> kernel warning message.
-> Quoting Linus Walleij:
->> It is not OK to unbind a driver providing IRQs.
-> The irqchip subsystem has no protection against removing devices
-> providing interrupt controllers. Trying to do so anyway while an interrupt
-> is in use will go boom.
-I understood!, Thanks for your explain!
-I'll remove these test case out of the Program Check List.
+>   Merge tag 'topic/drm-misc-2016-06-15' of git://anongit.freedesktop.org/drm-
+> intel into drm-next (2016-06-16 05:49:32 +1000)
+>
+> are available in the git repository at:
+>
+>   git://linuxtv.org/pinchartl/media.git for/renesas-drivers
+>
+> for you to fetch changes up to a0c43cc96e4f42cd192ca957991419497a8432ec:
+>
+>   Merge branch 'drm/next/dt' into for/renesas-drivers (2016-06-21 02:05:28
+> +0300)
 
-Thank you!
-Jinso/Hiep.
+I'm afraid I'll have to drop this for tomorrow's renesas-drivers release,
+as integrating it involves more than a simple rebase and dropping some
+commits already queued for upstream.
+
+Thanks for your understanding.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
