@@ -1,52 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56082 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751200AbcGGOkA (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34911 "EHLO
+	mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753577AbcGSOYV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 7 Jul 2016 10:40:00 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/8] arm64: dts: r8a7795: Add missing blank lines between cpu nodes
-Date: Thu,  7 Jul 2016 16:39:44 +0200
-Message-Id: <a5547642a4e08c98edeaf4b62f6da0ac8ed2f6bd.1467900241.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1467900241.git.horms+renesas@verge.net.au>
-References: <cover.1467900241.git.horms+renesas@verge.net.au>
+	Tue, 19 Jul 2016 10:24:21 -0400
+MIME-Version: 1.0
+In-Reply-To: <578E2F40.1000309@arm.com>
+References: <1467815627-4061-1-git-send-email-marc.zyngier@arm.com>
+ <CAMuHMdXU6C=jFD16Jj3NFNawiY0YEpQDZSbL+T4bLgUOG3nTUQ@mail.gmail.com> <578E2F40.1000309@arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 19 Jul 2016 16:24:07 +0200
+Message-ID: <CAMuHMdV6tUvegGebYkdL0Z+h0a7qf=hFDW2xUJESt_68-SV2Yg@mail.gmail.com>
+Subject: Re: [PATCH v2] drivers/perf: arm-pmu: Handle per-interrupt affinity mask
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	Heiko Stuebner <heiko@sntech.de>, cf@rock-chips.com,
+	huangtao@rock-chips.com, Xu Jianqun <jay.xu@rock-chips.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	David Wu <david.wu@rock-chips.com>,
+	Brian Norris <briannorris@chromium.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Marc,
 
-For consistency with a57_0/a57_1 cpu nodes, and all other nodes.
+On Tue, Jul 19, 2016 at 3:46 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> On 19/07/16 14:25, Geert Uytterhoeven wrote:
+>> On Wed, Jul 6, 2016 at 4:33 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>>> On a big-little system, PMUs can be wired to CPUs using per CPU
+>>> interrups (PPI). In this case, it is important to make sure that
+>>> the enable/disable do happen on the right set of CPUs.
+>>>
+>>> So instead of relying on the interrupt-affinity property, we can
+>>> use the actual percpu affinity that DT exposes as part of the
+>>> interrupt specifier. The DT binding is also updated to reflect
+>>> the fact that the interrupt-affinity property shouldn't be used
+>>> in that case.
+>>>
+>>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>>> ---
+>>> * From v1:
+>>>   - propagate the error if irq_get_percpu_devid_partition fails
+>>
+>> This patch, which is commit 19a469a58720ea96 in arm64/for-next/core, broke
+>> the PMU on r8a7740/armadillo800eva:
+>>
+>>     -hw perfevents: enabled with armv7_cortex_a9 PMU driver, 7
+>> counters available
+>>     +hw perfevents: /pmu: failed to probe PMU!
+>>     +hw perfevents: /pmu: failed to register PMU devices!
+>>     +armv7-pmu: probe of pmu failed with error -22
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+> Thanks for the thorough analysis. Could you please give the following
+> patchlet a go:
+>
+> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+> index 2513365..9275e08 100644
+> --- a/drivers/perf/arm_pmu.c
+> +++ b/drivers/perf/arm_pmu.c
+> @@ -958,11 +958,12 @@ static int of_pmu_irq_cfg(struct arm_pmu *pmu)
+>
+>         /* If we didn't manage to parse anything, try the interrupt affinity */
+>         if (cpumask_weight(&pmu->supported_cpus) == 0) {
+> -               if (!using_spi) {
+> +               int irq = platform_get_irq(pdev, 0);
+> +
+> +               if (irq_is_percpu(irq)) {
+>                         /* If using PPIs, check the affinity of the partition */
+> -                       int ret, irq;
+> +                       int ret;
+>
+> -                       irq = platform_get_irq(pdev, 0);
+>                         ret = irq_get_percpu_devid_partition(irq, &pmu->supported_cpus);
+>                         if (ret) {
+>                                 kfree(irqs);
+>
+>
+> and let me know if that helps?
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 04eb0bc65634..fad6dd8b7771 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -53,6 +53,7 @@
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-+
- 		a57_2: cpu@2 {
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x2>;
-@@ -61,6 +62,7 @@
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
- 		};
-+
- 		a57_3: cpu@3 {
- 			compatible = "arm,cortex-a57","arm,armv8";
- 			reg = <0x3>;
--- 
-2.7.0.rc3.207.g0ac5344
+Thanks, that fixes it, as expected.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
