@@ -1,101 +1,130 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33165 "EHLO
-	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754974AbcGFPkv (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:56012 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753630AbcGSOXK (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 6 Jul 2016 11:40:51 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: hans.verkuil@cisco.com
-Cc: niklas.soderlund@ragnatech.se, linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-	laurent.pinchart@ideasonboard.com, william.towle@codethink.co.uk,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v5 3/4] ARM: dts: koelsch: add HDMI input
-Date: Wed,  6 Jul 2016 17:39:35 +0200
-Message-Id: <1467819576-17743-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1467819576-17743-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1467819576-17743-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+	Tue, 19 Jul 2016 10:23:10 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
+	hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 03/16] [media] rcar-vin: add legacy mode for wrong media bus formats
+Date: Tue, 19 Jul 2016 16:20:54 +0200
+Message-Id: <20160719142107.22358-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hans Verkuil <hverkuil@xs4all.nl>
+A recent bugfix to adv7180 brought to light that the rcar-vin driver are
+looking for the wrong media bus format. It was looking for a YUVU format
+but then expecting UYVY data. The bugfix for adv7180 will break the
+usage of rcar-vin together with a adv7180 as found on Renesas R-Car2
+Koelsch boards for example.
 
-Add support in the dts for the HDMI input. Based on the Lager dts
-patch from Ultich Hecht.
+This patch fix the rcar-vin driver to look for the correct UYVU formats
+and adds a legacy mode. The legacy mode is needed since I don't know if
+other devices provide a incorrect media bus format and I don't want to
+break any working configurations. Hopefully the legacy mode can be
+removed sometime in the future.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-[uli: removed "renesas," prefixes from pfc nodes]
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 41 +++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-core.c | 39 +++++++++++++++++++++++++++--
+ drivers/media/platform/rcar-vin/rcar-dma.c  |  4 +--
+ 2 files changed, 39 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index f8a7d09..097322a 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -393,6 +393,11 @@
- 		function = "usb1";
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 4b2007b..481d82a 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -37,6 +37,7 @@ static int rvin_mbus_supported(struct rvin_dev *vin)
+ 	struct v4l2_subdev_mbus_code_enum code = {
+ 		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
  	};
++	bool found;
  
-+	vin0_pins: vin0 {
-+		groups = "vin0_data24", "vin0_sync", "vin0_clkenb", "vin0_clk";
-+		function = "vin0";
-+	};
-+
- 	vin1_pins: vin1 {
- 		groups = "vin1_data8", "vin1_clk";
- 		function = "vin1";
-@@ -551,6 +556,21 @@
- 		reg = <0x12>;
- 	};
+ 	sd = vin_to_source(vin);
  
-+	hdmi-in@4c {
-+		compatible = "adi,adv7612";
-+		reg = <0x4c>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-+		remote = <&vin0>;
-+		default-input = <0>;
-+
-+		port {
-+			adv7612: endpoint {
-+				remote-endpoint = <&vin0ep>;
-+			};
-+		};
-+	};
-+
- 	composite-in@20 {
- 		compatible = "adi,adv7180";
- 		reg = <0x20>;
-@@ -672,6 +692,27 @@
- 	cpu0-supply = <&vdd_dvfs>;
- };
+@@ -45,8 +46,8 @@ static int rvin_mbus_supported(struct rvin_dev *vin)
+ 		code.index++;
+ 		switch (code.code) {
+ 		case MEDIA_BUS_FMT_YUYV8_1X16:
+-		case MEDIA_BUS_FMT_YUYV8_2X8:
+-		case MEDIA_BUS_FMT_YUYV10_2X10:
++		case MEDIA_BUS_FMT_UYVY8_2X8:
++		case MEDIA_BUS_FMT_UYVY10_2X10:
+ 		case MEDIA_BUS_FMT_RGB888_1X24:
+ 			vin->source.code = code.code;
+ 			vin_dbg(vin, "Found supported media bus format: %d\n",
+@@ -57,6 +58,40 @@ static int rvin_mbus_supported(struct rvin_dev *vin)
+ 		}
+ 	}
  
-+/* HDMI video input */
-+&vin0 {
-+	status = "okay";
-+	pinctrl-0 = <&vin0_pins>;
-+	pinctrl-names = "default";
++	/*
++	 * Older versions where looking for the wrong media bus format.
++	 * It where looking for a YUVY format but then treated it as a
++	 * UYVY format. This was not noticed since atlest one subdevice
++	 * used for testing (adv7180) reported a YUVY media bus format
++	 * but provided UYVY data. There might be other unknown subdevices
++	 * which also do this, to not break compatibility try to use them
++	 * in legacy mode.
++	 */
++	found = false;
++	code.index = 0;
++	while (!v4l2_subdev_call(sd, pad, enum_mbus_code, NULL, &code)) {
++		code.index++;
++		switch (code.code) {
++		case MEDIA_BUS_FMT_YUYV8_2X8:
++			vin->source.code = MEDIA_BUS_FMT_UYVY8_2X8;
++			found = true;
++			break;
++		case MEDIA_BUS_FMT_YUYV10_2X10:
++			vin->source.code = MEDIA_BUS_FMT_UYVY10_2X10;
++			found = true;
++			break;
++		default:
++			break;
++		}
 +
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++		if (found) {
++			vin_err(vin,
++				"media bus %d not supported, trying legacy mode %d\n",
++				code.code, vin->source.code);
++			return true;
++		}
++	}
 +
-+		vin0ep: endpoint {
-+			remote-endpoint = <&adv7612>;
-+			bus-width = <24>;
-+			hsync-active = <0>;
-+			vsync-active = <0>;
-+			pclk-sample = <1>;
-+			data-active = <1>;
-+		};
-+	};
-+};
-+
- /* composite video input */
- &vin1 {
- 	status = "okay";
+ 	return false;
+ }
+ 
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index dad3b03..0836b15 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -169,7 +169,7 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		vnmc |= VNMC_INF_YUV16;
+ 		input_is_yuv = true;
+ 		break;
+-	case MEDIA_BUS_FMT_YUYV8_2X8:
++	case MEDIA_BUS_FMT_UYVY8_2X8:
+ 		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
+ 		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
+ 			VNMC_INF_YUV8_BT656 : VNMC_INF_YUV8_BT601;
+@@ -178,7 +178,7 @@ static int rvin_setup(struct rvin_dev *vin)
+ 	case MEDIA_BUS_FMT_RGB888_1X24:
+ 		vnmc |= VNMC_INF_RGB888;
+ 		break;
+-	case MEDIA_BUS_FMT_YUYV10_2X10:
++	case MEDIA_BUS_FMT_UYVY10_2X10:
+ 		/* BT.656 10bit YCbCr422 or BT.601 10bit YCbCr422 */
+ 		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
+ 			VNMC_INF_YUV10_BT656 : VNMC_INF_YUV10_BT601;
 -- 
-2.7.4
+2.9.0
