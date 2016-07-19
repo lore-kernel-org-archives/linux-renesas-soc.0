@@ -1,60 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:22708 "EHLO
-	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750816AbcGMDVL (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:55994 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753497AbcGSOXJ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 12 Jul 2016 23:21:11 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<linux-clk@vger.kernel.org>
-CC: <geert+renesas@glider.be>, <horms@verge.net.au>,
-	<linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] clk: renesas: r8a7795: Fix SD clocks
-Date: Wed, 13 Jul 2016 12:20:49 +0900
-Message-ID: <1468380049-5712-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+	Tue, 19 Jul 2016 10:23:09 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
+	hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	Michal Simek <michal.simek@xilinx.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 02/16] media: entity: Add media_entity_has_route() function
+Date: Tue, 19 Jul 2016 16:20:53 +0200
+Message-Id: <20160719142107.22358-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-According to the datasheet, SDn clocks are from the SDSRC clock. And
-the SDSRC has a 1/2 divider. So, we should have ".sdsrc" as an internal
-core clock. Otherwise, since the sdhi driver will calculate clock for
-a sd card using the wrong parent clock rate, and then performance will
-be not good.
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This is a wrapper around the media entity has_route operation.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/media/media-entity.c | 29 +++++++++++++++++++++++++++++
+ include/media/media-entity.h |  3 +++
+ 2 files changed, 32 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index ca5519c..5f99f7c 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -91,6 +91,7 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
- 	DEF_FIXED(".s1",        CLK_S1,            CLK_PLL1_DIV2,  3, 1),
- 	DEF_FIXED(".s2",        CLK_S2,            CLK_PLL1_DIV2,  4, 1),
- 	DEF_FIXED(".s3",        CLK_S3,            CLK_PLL1_DIV2,  6, 1),
-+	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index d8a2299..8732579 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -240,6 +240,35 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
+  * Graph traversal
+  */
  
- 	/* Core Clock Outputs */
- 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
-@@ -109,10 +110,10 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
- 	DEF_FIXED("s3d2",       R8A7795_CLK_S3D2,  CLK_S3,         2, 1),
- 	DEF_FIXED("s3d4",       R8A7795_CLK_S3D4,  CLK_S3,         4, 1),
++/**
++ * media_entity_has_route - Check if two entity pads are connected internally
++ * @entity: The entity
++ * @pad0: The first pad index
++ * @pad1: The second pad index
++ *
++ * This function can be used to check whether two pads of an entity are
++ * connected internally in the entity.
++ *
++ * The caller must hold entity->source->parent->mutex.
++ *
++ * Return: true if the pads are connected internally and false otherwise.
++ */
++bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
++			    unsigned int pad1)
++{
++	if (pad0 >= entity->num_pads || pad1 >= entity->num_pads)
++		return false;
++
++	if (pad0 == pad1)
++		return true;
++
++	if (!entity->ops || !entity->ops->has_route)
++		return true;
++
++	return entity->ops->has_route(entity, pad0, pad1);
++}
++EXPORT_SYMBOL_GPL(media_entity_has_route);
++
+ static struct media_entity *
+ media_entity_other(struct media_entity *entity, struct media_link *link)
+ {
+diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+index c4b2dca..68af160 100644
+--- a/include/media/media-entity.h
++++ b/include/media/media-entity.h
+@@ -796,6 +796,9 @@ void media_entity_graph_walk_cleanup(struct media_entity_graph *graph);
+  */
+ void media_entity_put(struct media_entity *entity);
  
--	DEF_GEN3_SD("sd0",      R8A7795_CLK_SD0,   CLK_PLL1_DIV2, 0x0074),
--	DEF_GEN3_SD("sd1",      R8A7795_CLK_SD1,   CLK_PLL1_DIV2, 0x0078),
--	DEF_GEN3_SD("sd2",      R8A7795_CLK_SD2,   CLK_PLL1_DIV2, 0x0268),
--	DEF_GEN3_SD("sd3",      R8A7795_CLK_SD3,   CLK_PLL1_DIV2, 0x026c),
-+	DEF_GEN3_SD("sd0",      R8A7795_CLK_SD0,   CLK_SDSRC, 0x0074),
-+	DEF_GEN3_SD("sd1",      R8A7795_CLK_SD1,   CLK_SDSRC, 0x0078),
-+	DEF_GEN3_SD("sd2",      R8A7795_CLK_SD2,   CLK_SDSRC, 0x0268),
-+	DEF_GEN3_SD("sd3",      R8A7795_CLK_SD3,   CLK_SDSRC, 0x026c),
- 
- 	DEF_FIXED("cl",         R8A7795_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
- 	DEF_FIXED("cp",         R8A7795_CLK_CP,    CLK_EXTAL,      2, 1),
++bool media_entity_has_route(struct media_entity *entity, unsigned int sink,
++			    unsigned int source);
++
+ /**
+  * media_entity_graph_walk_start - Start walking the media graph at a given entity
+  * @graph: Media graph structure that will be used to walk the graph
 -- 
-1.9.1
+2.9.0
