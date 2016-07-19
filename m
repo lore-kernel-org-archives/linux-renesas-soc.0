@@ -1,57 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:33202 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753072AbcGSQsc (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:56006 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753636AbcGSOXK (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 19 Jul 2016 12:48:32 -0400
-Received: by mail-lf0-f48.google.com with SMTP id b199so19518719lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Jul 2016 09:48:31 -0700 (PDT)
-Subject: Re: [PATCHv2 04/16] [media] rcar-vin: return correct error from
- platform_get_irq
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>,
-	linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
+	Tue, 19 Jul 2016 10:23:10 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
 	hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 04/16] [media] rcar-vin: return correct error from platform_get_irq
+Date: Tue, 19 Jul 2016 16:20:55 +0200
+Message-Id: <20160719142107.22358-5-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
- <20160719142107.22358-5-niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-renesas-soc@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <d08dada8-1ff2-de7f-aaac-7193a283102e@cogentembedded.com>
-Date: Tue, 19 Jul 2016 19:48:27 +0300
 MIME-Version: 1.0
-In-Reply-To: <20160719142107.22358-5-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+Fix a error from the original driver where the wrong error code is
+returned if the driver fails to get a IRQ number from
+platform_get_irq().
 
-On 07/19/2016 05:20 PM, Niklas Söderlund wrote:
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Fix a error from the original driver where the wrong error code is
-> returned if the driver fails to get a IRQ number from
-> platform_get_irq().
->
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/platform/rcar-vin/rcar-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-> index 481d82a..ff27d75 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -318,7 +318,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
->
->  	irq = platform_get_irq(pdev, 0);
->  	if (irq <= 0)
-> -		return ret;
-> +		return irq;
-
-    This is still wrong, i.e. it'll return 0 from the probe() method if 'irq' 
-is 0 (and you consider that an error).
-
-[...]
-
-MBR, Sergei
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 481d82a..ff27d75 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -318,7 +318,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq <= 0)
+-		return ret;
++		return irq;
+ 
+ 	ret = rvin_dma_probe(vin, irq);
+ 	if (ret)
+-- 
+2.9.0
