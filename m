@@ -1,53 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33352 "EHLO
-	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753319AbcGSMCy (ORCPT
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:37956 "EHLO
+	pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752364AbcGSL5R (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 19 Jul 2016 08:02:54 -0400
-Received: by mail-it0-f66.google.com with SMTP id d65so1263891ith.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Jul 2016 05:02:54 -0700 (PDT)
+	Tue, 19 Jul 2016 07:57:17 -0400
+Date: Tue, 19 Jul 2016 12:57:03 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>, arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] Fix shmobile build with CONFIG_SMP=n
+Message-ID: <20160719115703.GJ1041@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20160719115703.GJ1041@n2100.armlinux.org.uk>
-References: <20160719115703.GJ1041@n2100.armlinux.org.uk>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Jul 2016 14:02:53 +0200
-Message-ID: <CAMuHMdWfqbv4MXuThRPL2hsdN4Hq53Ng=1cp8DBB7o7XGzM9Zw@mail.gmail.com>
-Subject: Re: [PATCH] Fix shmobile build with CONFIG_SMP=n
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"arm@kernel.org" <arm@kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Russell,
+Shmobile currently fails to build when CONFIG_SMP is disabled:
 
-On Tue, Jul 19, 2016 at 1:57 PM, Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
-> Shmobile currently fails to build when CONFIG_SMP is disabled:
->
-> arch/arm/mach-shmobile/built-in.o: In function `shmobile_smp_init_fallback_ops':
-> pm-rcar-gen2.c:(.init.text+0x744): undefined reference to `platform_can_secondary_boot'
-> make[1]: *** [vmlinux] Error 1
->
-> Fix this by providing a stub for this function.
->
-> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+arch/arm/mach-shmobile/built-in.o: In function `shmobile_smp_init_fallback_ops':
+pm-rcar-gen2.c:(.init.text+0x744): undefined reference to `platform_can_secondary_boot'
+make[1]: *** [vmlinux] Error 1
 
-Arnd send a smaller one https://patchwork.kernel.org/patch/9207413/,
-which seems have fallen through the cracks.
+Fix this by providing a stub for this function.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+---
+Untested, please test.
 
-                        Geert
+ arch/arm/mach-shmobile/common.h  | 7 +++++++
+ arch/arm/mach-shmobile/platsmp.c | 2 ++
+ 2 files changed, 9 insertions(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
+index 1a8f7b3ab449..6badb3e41cfa 100644
+--- a/arch/arm/mach-shmobile/common.h
++++ b/arch/arm/mach-shmobile/common.h
+@@ -10,7 +10,14 @@ extern void shmobile_smp_sleep(void);
+ extern void shmobile_smp_hook(unsigned int cpu, unsigned long fn,
+ 			      unsigned long arg);
+ extern bool shmobile_smp_cpu_can_disable(unsigned int cpu);
++#ifdef CONFIG_SMP
+ extern bool shmobile_smp_init_fallback_ops(void);
++#else
++static inline bool shmobile_smp_init_fallback_ops(void)
++{
++	return false;
++}
++#endif
+ extern void shmobile_boot_scu(void);
+ extern void shmobile_smp_scu_prepare_cpus(phys_addr_t scu_base_phys,
+ 					  unsigned int max_cpus);
+diff --git a/arch/arm/mach-shmobile/platsmp.c b/arch/arm/mach-shmobile/platsmp.c
+index f3dba6f356e2..44d91f5624a3 100644
+--- a/arch/arm/mach-shmobile/platsmp.c
++++ b/arch/arm/mach-shmobile/platsmp.c
+@@ -37,8 +37,10 @@ bool shmobile_smp_cpu_can_disable(unsigned int cpu)
+ }
+ #endif
+ 
++#ifdef CONFIG_SMP
+ bool __init shmobile_smp_init_fallback_ops(void)
+ {
+ 	/* fallback on PSCI/smp_ops if no other DT based method is detected */
+ 	return platform_can_secondary_boot() ? true : false;
+ }
++#endif
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
