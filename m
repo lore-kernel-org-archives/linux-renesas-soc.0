@@ -1,50 +1,40 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] ARM: dts: r8a7792: add SDHI support
-Date: Wed, 13 Jul 2016 00:11:12 +0300
-Message-ID: <8030361.FnpbGzHVP8@wasted.cogentembedded.com>
-In-Reply-To: <2441635.ESeLhIjWEX@wasted.cogentembedded.com>
-References: <2441635.ESeLhIjWEX@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:56025 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753287AbcGSH3e (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 19 Jul 2016 03:29:34 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Correct header from R-Car Gen3 to R8A7795
+Date: Tue, 19 Jul 2016 09:29:34 +0200
+Message-Id: <1468913374-32065-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A7792 part of the SDHI0 device node.
+This source file handles r8a7795 only, which is not the sole member of
+the R-Car Gen3 family.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7792.dtsi |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+To be queued up in sh-pfc-for-v4.9.
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -435,6 +435,18 @@
- 			status = "disabled";
- 		};
- 
-+		sdhi0: sd@ee100000 {
-+			compatible = "renesas,sdhi-r8a7792";
-+			reg = <0 0xee100000 0 0x200>;
-+			interrupts = <0 165 IRQ_TYPE_LEVEL_HIGH>;
-+			dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
-+			       <&dmac1 0xcd>, <&dmac1 0xce>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			clocks = <&mstp3_clks R8A7792_CLK_SDHI0>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
- 		jpu: jpeg-codec@fe980000 {
- 			compatible = "renesas,jpu-r8a7792",
- 				     "renesas,rcar-gen2-jpu";
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 0f1a111447c30732..1b35ad9b538de544 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -1,5 +1,5 @@
+ /*
+- * R-Car Gen3 processor support - PFC hardware block.
++ * R8A7795 processor support - PFC hardware block.
+  *
+  * Copyright (C) 2015  Renesas Electronics Corporation
+  *
+-- 
+1.9.1
