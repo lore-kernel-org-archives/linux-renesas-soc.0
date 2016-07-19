@@ -1,46 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47586 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932218AbcGTXOV (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33352 "EHLO
+	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753319AbcGSMCy (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 20 Jul 2016 19:14:21 -0400
-Date: Thu, 21 Jul 2016 08:14:17 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
+	Tue, 19 Jul 2016 08:02:54 -0400
+Received: by mail-it0-f66.google.com with SMTP id d65so1263891ith.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Jul 2016 05:02:54 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20160719115703.GJ1041@n2100.armlinux.org.uk>
+References: <20160719115703.GJ1041@n2100.armlinux.org.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 19 Jul 2016 14:02:53 +0200
+Message-ID: <CAMuHMdWfqbv4MXuThRPL2hsdN4Hq53Ng=1cp8DBB7o7XGzM9Zw@mail.gmail.com>
+Subject: Re: [PATCH] Fix shmobile build with CONFIG_SMP=n
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	"arm@kernel.org" <arm@kernel.org>,
 	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
 	"linux-arm-kernel@lists.infradead.org"
 	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] Fix shmobile build with CONFIG_SMP=n
-Message-ID: <20160720231416.GC9599@verge.net.au>
-References: <20160719115703.GJ1041@n2100.armlinux.org.uk>
- <CAMuHMdWfqbv4MXuThRPL2hsdN4Hq53Ng=1cp8DBB7o7XGzM9Zw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWfqbv4MXuThRPL2hsdN4Hq53Ng=1cp8DBB7o7XGzM9Zw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jul 19, 2016 at 02:02:53PM +0200, Geert Uytterhoeven wrote:
-> Hi Russell,
-> 
-> On Tue, Jul 19, 2016 at 1:57 PM, Russell King - ARM Linux
-> <linux@armlinux.org.uk> wrote:
-> > Shmobile currently fails to build when CONFIG_SMP is disabled:
-> >
-> > arch/arm/mach-shmobile/built-in.o: In function `shmobile_smp_init_fallback_ops':
-> > pm-rcar-gen2.c:(.init.text+0x744): undefined reference to `platform_can_secondary_boot'
-> > make[1]: *** [vmlinux] Error 1
-> >
-> > Fix this by providing a stub for this function.
-> >
-> > Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> 
-> Arnd send a smaller one https://patchwork.kernel.org/patch/9207413/,
-> which seems have fallen through the cracks.
+Hi Russell,
 
-Sorry for missing that. I have queued up Arnd's patch as a fix for v4.8
-with Acked-by Geert and a Reported-by Russel tags.
+On Tue, Jul 19, 2016 at 1:57 PM, Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
+> Shmobile currently fails to build when CONFIG_SMP is disabled:
+>
+> arch/arm/mach-shmobile/built-in.o: In function `shmobile_smp_init_fallback_ops':
+> pm-rcar-gen2.c:(.init.text+0x744): undefined reference to `platform_can_secondary_boot'
+> make[1]: *** [vmlinux] Error 1
+>
+> Fix this by providing a stub for this function.
+>
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+
+Arnd send a smaller one https://patchwork.kernel.org/patch/9207413/,
+which seems have fallen through the cracks.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
