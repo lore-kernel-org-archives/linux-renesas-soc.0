@@ -1,80 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:34253 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751762AbcGEOPd (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:56033 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753851AbcGSOXL (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 5 Jul 2016 10:15:33 -0400
-Received: by mail-lf0-f49.google.com with SMTP id h129so135796219lfh.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Jul 2016 07:15:32 -0700 (PDT)
-From: Linus Walleij <linus.walleij@linaro.org>
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH] gpio: be more careful when forcing IRQ line to input
-Date: Tue,  5 Jul 2016 16:15:26 +0200
-Message-Id: <1467728126-26131-1-git-send-email-linus.walleij@linaro.org>
+	Tue, 19 Jul 2016 10:23:11 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
+	hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 07/16] [media] rcar-vin: add dependency on MEDIA_CONTROLLER
+Date: Tue, 19 Jul 2016 16:20:58 +0200
+Message-Id: <20160719142107.22358-8-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We need to convince the IRQ line to become input unless there
-is a reason for. Also fixes up reference counting on the
-errorpath.
+This is done in preparation for Gen3 support where media controller
+support will be mandatory for the driver.
 
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-Geert: does this solve the problem you saw in the RCAR
-in "gpio: convince line to become input in irq helper"?
----
- drivers/gpio/gpiolib.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ drivers/media/platform/rcar-vin/Kconfig     | 2 +-
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 7 +------
+ 2 files changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 69efe278f74d..e3e3cc19b8b0 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1505,25 +1505,32 @@ static const struct irq_domain_ops gpiochip_domain_ops = {
- static int gpiochip_irq_reqres(struct irq_data *d)
- {
- 	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-+	struct gpio_desc *desc;
+diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
+index b2ff2d4..111d2a1 100644
+--- a/drivers/media/platform/rcar-vin/Kconfig
++++ b/drivers/media/platform/rcar-vin/Kconfig
+@@ -1,6 +1,6 @@
+ config VIDEO_RCAR_VIN
+ 	tristate "R-Car Video Input (VIN) Driver"
+-	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && OF && HAS_DMA
++	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && OF && HAS_DMA && MEDIA_CONTROLLER
+ 	depends on ARCH_RENESAS || COMPILE_TEST
+ 	select VIDEOBUF2_DMA_CONTIG
+ 	---help---
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 3f80a0b..09df396 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -771,10 +771,7 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+ 	struct v4l2_mbus_framefmt *mf = &fmt.format;
+ 	struct video_device *vdev = &vin->vdev;
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+-#if defined(CONFIG_MEDIA_CONTROLLER)
+-	int pad_idx;
+-#endif
+-	int ret;
++	int pad_idx, ret;
  
- 	if (!try_module_get(chip->gpiodev->owner))
- 		return -ENODEV;
+ 	v4l2_set_subdev_hostdata(sd, vin);
  
-+	/* Look up the corresponding descriptor */
-+	desc = gpiochip_get_desc(chip, d->hwirq);
-+	if (IS_ERR(desc)) {
-+		module_put(chip->gpiodev->owner);
-+		return PTR_ERR(desc);
-+	}
-+
- 	/*
--	 * If it is possible to switch this GPIO to an input
--	 * this is a good time to do it.
-+	 * If the pin is flagged as output and it is possible to
-+	 * switch this GPIO to an input this is a good time to
-+	 * do it.
- 	 */
--	if (chip->direction_input) {
--		struct gpio_desc *desc;
-+	if (test_bit(FLAG_IS_OUT, &desc->flags) &&
-+	    chip->direction_input) {
- 		int ret;
+@@ -821,7 +818,6 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+ 		V4L2_CAP_READWRITE;
  
--		desc = gpiochip_get_desc(chip, d->hwirq);
--		if (IS_ERR(desc))
--			return PTR_ERR(desc);
--
- 	        ret = chip->direction_input(chip, d->hwirq);
--		if (ret)
-+		if (ret) {
-+			module_put(chip->gpiodev->owner);
- 			return ret;
-+		}
+ 	vin->src_pad_idx = 0;
+-#if defined(CONFIG_MEDIA_CONTROLLER)
+ 	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
+ 		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
+ 			break;
+@@ -829,7 +825,6 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+ 		return -EINVAL;
  
- 		clear_bit(FLAG_IS_OUT, &desc->flags);
- 	}
+ 	vin->src_pad_idx = pad_idx;
+-#endif
+ 	fmt.pad = vin->src_pad_idx;
+ 
+ 	/* Try to improve our guess of a reasonable window format */
 -- 
-2.4.11
+2.9.0
