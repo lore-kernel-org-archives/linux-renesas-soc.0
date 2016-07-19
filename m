@@ -1,56 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:55964 "EHLO
-	relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751892AbcGUKrX (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:56020 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753791AbcGSOXL (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 21 Jul 2016 06:47:23 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 1/5] arm64: dts: r8a7795: Add HSUSB device node
-Date: Thu, 21 Jul 2016 19:46:57 +0900
-Message-ID: <1469098021-7692-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1469098021-7692-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1469098021-7692-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+	Tue, 19 Jul 2016 10:23:11 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
+	hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 05/16] [media] rcar-vin: do not use v4l2_device_call_until_err()
+Date: Tue, 19 Jul 2016 16:20:56 +0200
+Message-Id: <20160719142107.22358-6-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Fix a error from the original driver where v4l2_device_call_until_err()
+where used for the pad specific v4l2 operation set_fmt.  Also fix up the
+error path from this fix so if there is an error it will be propagated
+to the caller.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 99953ca..6f0a4ad 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1224,6 +1224,23 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
-+
-+		hsusb: usb@e6590000 {
-+			compatible = "renesas,usbhs-r8a7795",
-+				     "renesas,rcar-gen3-usbhs";
-+			reg = <0 0xe6590000 0 0x100>;
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 704>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
-+			renesas,buswait = <11>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
- 		pciec0: pcie@fe000000 {
- 			compatible = "renesas,pcie-r8a7795";
- 			reg = <0 0xfe000000 0 0x80000>;
+The error path label have also been renamed as a result from a
+nitpicking review comment since we are fixing other issues here.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 10a5c10..5dceff8 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -114,10 +114,9 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 
+ 	format.pad = vin->src_pad_idx;
+ 
+-	ret = v4l2_device_call_until_err(sd->v4l2_dev, 0, pad, set_fmt,
+-					 pad_cfg, &format);
+-	if (ret < 0)
+-		goto cleanup;
++	ret = v4l2_subdev_call(sd, pad, set_fmt, pad_cfg, &format);
++	if (ret < 0 && ret != -ENOIOCTLCMD)
++		goto done;
+ 
+ 	v4l2_fill_pix_format(pix, &format.format);
+ 
+@@ -127,9 +126,9 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 	vin_dbg(vin, "Source resolution: %ux%u\n", source->width,
+ 		source->height);
+ 
+-cleanup:
++done:
+ 	v4l2_subdev_free_pad_config(pad_cfg);
+-	return 0;
++	return ret;
+ }
+ 
+ static int __rvin_try_format(struct rvin_dev *vin,
 -- 
-1.9.1
+2.9.0
