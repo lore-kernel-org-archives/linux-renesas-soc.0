@@ -1,66 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:43401 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750995AbcGUG2z (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:48013 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751290AbcGTXoS (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 21 Jul 2016 02:28:55 -0400
-Date: Thu, 21 Jul 2016 08:28:50 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	Wed, 20 Jul 2016 19:44:18 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
 	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: Re: [PATCH v2] ARM: dts: r8a7794: Correct SDHI register size
-Message-ID: <20160721062849.GD1664@katana>
-References: <1469058248-27880-1-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BRE3mIcgqKzpedwo"
-Content-Disposition: inline
-In-Reply-To: <1469058248-27880-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH v2] ARM: dts: r8a7794: Correct SDHI register size
+Date: Thu, 21 Jul 2016 08:44:08 +0900
+Message-Id: <1469058248-27880-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+r8a7794 SDHI ch0 has SD_DMACR which is located in 0x324.
+This patch updates register size
 
---BRE3mIcgqKzpedwo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Based on work for the r8a7790 by Kuninori Morimoto.
 
-On Thu, Jul 21, 2016 at 08:44:08AM +0900, Simon Horman wrote:
-> r8a7794 SDHI ch0 has SD_DMACR which is located in 0x324.
-> This patch updates register size
->=20
-> Based on work for the r8a7790 by Kuninori Morimoto.
->=20
-> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+Found by inspection
+Compile tested only
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+v2
+* Correct register size: some how I messed it up the first time around
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
---BRE3mIcgqKzpedwo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXkGuhAAoJEBQN5MwUoCm2PgoP/0tmLxws//tw+btUSpSJOKQd
-VqqHKwHGqQwclG+KGZXUraPwnxheKRv23lj5fyEDhu5ulnZ8qAbzGGtRyvbVOJO8
-ee8ufh28mWRRMWYlmWedA923f1pXG6uxdz2kg7snXO1PbCsc6kJAZTKwsDkPLRKE
-xZKo5Z8Vf6btgziV7f6Dn8E9hF61S3QcWR+1VF1yRoZmpMUYxjDVgJyNAtaJPX+J
-8vFer9ZCC2Tms5M2ubwkvU9wC42LpS4ee0H0ld1eU8/wmkELTWPYW2iFsCLKrxku
-0q0E0OX7AnpDcCHLliFvxVk/X8IC16XvPkUFBGob4mhGpjulC/ipupMpgWYJ2tgW
-ecoRZZPt22yotdaJGZOEOUYlp3bjkMmrID45HMaf/miZPS/V4eER3Qf8jKTYH0xv
-bmtWw8mlpEvcyRMmgR4ZmwjajEO0orb3gOKJaiOL14vFSfVXz3yAwT5nIpnLS1nc
-djcOcSvN+rzqihaHv+ztcW6sxNODlPGJgs9bExFggYX7VgQU1iXodsC5JFYFiC7I
-tgqHoLE3RzczpsZMtqXOvUqSib7Ghr890NgRJg0xn2U2y//71nqqVSm7GMbp5XuO
-+1ZBD70hXdYcFxUsEl5cL0C1mdWoTD7BSgnyRX00kIkQ4a68qGnhuc4KdKplmbSh
-TC/hTN+agZ9xr7oNWCD4
-=xF/0
------END PGP SIGNATURE-----
-
---BRE3mIcgqKzpedwo--
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 685f986cf962..55737bca4e63 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -697,7 +697,7 @@
+ 
+ 	sdhi0: sd@ee100000 {
+ 		compatible = "renesas,sdhi-r8a7794";
+-		reg = <0 0xee100000 0 0x200>;
++		reg = <0 0xee100000 0 0x328>;
+ 		interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp3_clks R8A7794_CLK_SDHI0>;
+ 		dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
+-- 
+2.7.0.rc3.207.g0ac5344
