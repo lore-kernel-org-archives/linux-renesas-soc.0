@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:45927 "EHLO pokefinder.org"
+Received: from sauhun.de ([89.238.76.85]:36606 "EHLO pokefinder.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753738AbcGUQ5z (ORCPT
+	id S1752598AbcGTMGk (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 21 Jul 2016 12:57:55 -0400
-Date: Thu, 21 Jul 2016 18:57:45 +0200
+	Wed, 20 Jul 2016 08:06:40 -0400
+Date: Wed, 20 Jul 2016 14:06:24 +0200
 From: Wolfram Sang <wsa@the-dreams.de>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
@@ -17,31 +17,52 @@ Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
 	Simon Horman <horms@verge.net.au>,
 	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Subject: Re: [PATCH] clk: renesas: r8a7795: Fix SD clocks
-Message-ID: <20160721165744.GB1911@katana>
+Message-ID: <20160720120623.GA1601@katana>
 References: <1468380049-5712-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
  <CAMuHMdWkD96cVe14ps8B0BbRUzA7pQuMogat25PehnDaoqhS=w@mail.gmail.com>
- <20160720120623.GA1601@katana>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
 Content-Disposition: inline
-In-Reply-To: <20160720120623.GA1601@katana>
+In-Reply-To: <CAMuHMdWkD96cVe14ps8B0BbRUzA7pQuMogat25PehnDaoqhS=w@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Jul 20, 2016 at 02:06:24PM +0200, Wolfram Sang wrote:
-> 
-> > Wolfram, Dirk: any comments?
-> 
-> Looks proper.
-> 
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> 
-> I couldn't really test it, though, since I still have problems with the
-> Gen3 DMA series.
 
-... which are gone now since this series landed in renesas-drivers.
-Dunno why but DMA works now, so I can see Shimoda-san's patch makes a
-difference if we apply a missing fix which I will send in a second. Long
-story short:
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+> Wolfram, Dirk: any comments?
+
+Looks proper.
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+I couldn't really test it, though, since I still have problems with the
+Gen3 DMA series.
+
+
+--CE+1k2dSO48ffgeK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXj2k/AAoJEBQN5MwUoCm21YYP/ioazhJAkJyw77MbJXLTlfkr
+szRAuwknUp8L8pYtr+eDjONLY8OdsjEE8yRICIG9vcYF/IYtvot53gFCLdwN7ACD
+ZyhLOcmDwjZ0FG6Bo2Qpi5VM3P1UuDDV9DBV2XgVQWv1TbU9uwpV6R6VSTnbRLvg
+DGXN83BliesWzv04M+1kBRVlolhwdk1EJawi9bM1ZrsJkV1C2KMAE4LrV9GuF7Fs
+n8RwIln12zggS/nSH38FN2kZ2PKPvPGPBugDTQpvRfS0/e9ik2dHK4aqxuwbSVbV
+4Wa+iiHjs3hOzzKyxf2yd+yUE0pVSBjjIS8Bygr9zuwZmBOfAGqOgh5eoPJhAXCx
+JWS2DnSChRktDzfNNeRNSVaxVuo/zboqrlf8K9GQoR+JvdfslW7isQ/cA3+1aLSW
+hvOpIcikKnCwu4g9IILzF3J/BIxuk4GakHtRVxPwUu1WwM61vJ/1HVj5ZA+4tNUc
++rC6lBF5nT7AangPhgaULfuKVLUP2ZiJhMJSu/SvyXBbUsSHxEV5JiAsUpNi7G2a
+F+sc0EqTzh3U/rJ28/N6KnifpVhk6qZiLWDpdiyX+YyeEatSAXyNE09KjyPzajPh
+hgk4PNwMRMIUSkKXlF97I8J9YdwI+j2OqzKEqZiE280nsRne7EDC3KFWwXnsyDSo
+xbTigF3UJAwo53UX9p3j
+=lcLq
+-----END PGP SIGNATURE-----
+
+--CE+1k2dSO48ffgeK--
