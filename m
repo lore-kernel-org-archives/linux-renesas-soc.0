@@ -1,57 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:29758 "EHLO
-	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752285AbcGUKri (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:38233 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752044AbcGTGY7 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 21 Jul 2016 06:47:38 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 3/5] arm64: dts: salvator-x: enable USB 2.0 Host channel 0
-Date: Thu, 21 Jul 2016 19:46:59 +0900
-Message-ID: <1469098021-7692-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1469098021-7692-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1469098021-7692-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+	Wed, 20 Jul 2016 02:24:59 -0400
+Date: Wed, 20 Jul 2016 15:24:54 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Ai Kyuse <ai.kyuse.uw@renesas.com>
+Subject: Re: [PATCH v3 3/4] mmc: sh_mobile_sdhi: Add tuning support
+Message-ID: <20160720062454.GA24635@verge.net.au>
+References: <1464057797-29951-1-git-send-email-horms+renesas@verge.net.au>
+ <1464057797-29951-4-git-send-email-horms+renesas@verge.net.au>
+ <20160527115933.GD1663@katana>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160527115933.GD1663@katana>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We have to set SW15 to pin 2-3 side on the board before we use CN9
-as USB host or peripheral.
+On Fri, May 27, 2016 at 01:59:34PM +0200, Wolfram Sang wrote:
+> On Tue, May 24, 2016 at 11:43:16AM +0900, Simon Horman wrote:
+> > From: Ai Kyuse <ai.kyuse.uw@renesas.com>
+> 
+> I wonder if you shouldn't take over ownership of this and the previous
+> patch? You changed quite a lot.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Sure, will do.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 8c8bfdc..c0e6e8f 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -407,6 +407,10 @@
- 	status = "okay";
- };
- 
-+&ehci0 {
-+	status = "okay";
-+};
-+
- &ehci1 {
- 	status = "okay";
- };
-@@ -415,6 +419,10 @@
- 	status = "okay";
- };
- 
-+&ohci0 {
-+	status = "okay";
-+};
-+
- &ohci1 {
- 	status = "okay";
- };
--- 
-1.9.1
+[snip]
+
+> > +
+> > +static unsigned int sh_mobile_sdhi_init_tuning(struct tmio_mmc_host *host)
+> > +{
+> > +	if (!(host->mmc->caps & MMC_CAP_UHS_SDR104))
+> > +		return 0;
+> 
+> Will the core call us if MMC_CAP_UHS_SDR104 was not set?
+
+Empirically, yes, that appears to be the case.
+
+
+For all your other suggestions: thanks, I will update things as you suggest.
