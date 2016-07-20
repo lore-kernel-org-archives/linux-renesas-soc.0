@@ -1,147 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:35172 "EHLO
-	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758319AbcG0VBJ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47586 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932218AbcGTXOV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Jul 2016 17:01:09 -0400
-Received: by mail-lf0-f53.google.com with SMTP id f93so35956060lfi.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Jul 2016 14:01:03 -0700 (PDT)
-Date: Wed, 27 Jul 2016 14:01:01 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 3/6] ARM: dts: r8a7794: add MSTP10 clocks
-Message-ID: <5158815.xFJQ7LtYb1@wasted.cogentembedded.com>
-In-Reply-To: <3910788.ckTpUWEs6B@wasted.cogentembedded.com>
-References: <3910788.ckTpUWEs6B@wasted.cogentembedded.com>
+	Wed, 20 Jul 2016 19:14:21 -0400
+Date: Thu, 21 Jul 2016 08:14:17 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	"arm@kernel.org" <arm@kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] Fix shmobile build with CONFIG_SMP=n
+Message-ID: <20160720231416.GC9599@verge.net.au>
+References: <20160719115703.GJ1041@n2100.armlinux.org.uk>
+ <CAMuHMdWfqbv4MXuThRPL2hsdN4Hq53Ng=1cp8DBB7o7XGzM9Zw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWfqbv4MXuThRPL2hsdN4Hq53Ng=1cp8DBB7o7XGzM9Zw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add MSTP10 clocks to the R8A7794 device tree.
+On Tue, Jul 19, 2016 at 02:02:53PM +0200, Geert Uytterhoeven wrote:
+> Hi Russell,
+> 
+> On Tue, Jul 19, 2016 at 1:57 PM, Russell King - ARM Linux
+> <linux@armlinux.org.uk> wrote:
+> > Shmobile currently fails to build when CONFIG_SMP is disabled:
+> >
+> > arch/arm/mach-shmobile/built-in.o: In function `shmobile_smp_init_fallback_ops':
+> > pm-rcar-gen2.c:(.init.text+0x744): undefined reference to `platform_can_secondary_boot'
+> > make[1]: *** [vmlinux] Error 1
+> >
+> > Fix this by providing a stub for this function.
+> >
+> > Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> 
+> Arnd send a smaller one https://patchwork.kernel.org/patch/9207413/,
+> which seems have fallen through the cracks.
 
-This patch is based on the commit ee9141522dcf ("ARM: shmobile: r8a7791:
-add MSTP10 support on DTSI").
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
-Changes in version 4:
-- removed non-existing SRC0/7/8/9 clocks;
-- reparented SSI[0-9] clocks;
-- refreshed the patch.
-
-Changes in version 3:
-- refreshed the patch.
-
-Changes in version 2:
-- fixed the SoC model in the change log;
-- added "the" article to the change log.
-
- arch/arm/boot/dts/r8a7794.dtsi            |   52 ++++++++++++++++++++++++++++++
- include/dt-bindings/clock/r8a7794-clock.h |   24 +++++++++++++
- 2 files changed, 76 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1267,6 +1267,58 @@
- 				"gpio1", "gpio0", "rcan1", "rcan0", "qspi_mod",
- 				"i2c5", "i2c4", "i2c3", "i2c2", "i2c1", "i2c0";
- 		};
-+		mstp10_clks: mstp10_clks@e6150998 {
-+			compatible = "renesas,r8a7794-mstp-clocks",
-+				     "renesas,cpg-mstp-clocks";
-+			reg = <0 0xe6150998 0 4>, <0 0xe61509a8 0 4>;
-+			clocks = <&p_clk>,
-+				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SSI_ALL>,
-+				 <&p_clk>,
-+				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SCU_ALL>,
-+				 <&mstp10_clks R8A7794_CLK_SCU_ALL>;
-+			#clock-cells = <1>;
-+			clock-indices = <R8A7794_CLK_SSI_ALL
-+					 R8A7794_CLK_SSI9 R8A7794_CLK_SSI8
-+					 R8A7794_CLK_SSI7 R8A7794_CLK_SSI6
-+					 R8A7794_CLK_SSI5 R8A7794_CLK_SSI4
-+					 R8A7794_CLK_SSI3 R8A7794_CLK_SSI2
-+					 R8A7794_CLK_SSI1 R8A7794_CLK_SSI0
-+					 R8A7794_CLK_SCU_ALL
-+					 R8A7794_CLK_SCU_DVC1
-+					 R8A7794_CLK_SCU_DVC0
-+					 R8A7794_CLK_SCU_CTU1_MIX1
-+					 R8A7794_CLK_SCU_CTU0_MIX0
-+					 R8A7794_CLK_SCU_SRC6
-+					 R8A7794_CLK_SCU_SRC5
-+					 R8A7794_CLK_SCU_SRC4
-+					 R8A7794_CLK_SCU_SRC3
-+					 R8A7794_CLK_SCU_SRC2
-+					 R8A7794_CLK_SCU_SRC1>;
-+			clock-output-names = "ssi-all", "ssi9", "ssi8", "ssi7",
-+					     "ssi6", "ssi5", "ssi4", "ssi3",
-+					     "ssi2", "ssi1", "ssi0",
-+					     "scu-all", "scu-dvc1", "scu-dvc0",
-+					     "scu-ctu1-mix1", "scu-ctu0-mix0",
-+					     "scu-src6", "scu-src5", "scu-src4",
-+					     "scu-src3", "scu-src2", "scu-src1";
-+		};
- 		mstp11_clks: mstp11_clks@e615099c {
- 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe615099c 0 4>, <0 0xe61509ac 0 4>;
-Index: renesas/include/dt-bindings/clock/r8a7794-clock.h
-===================================================================
---- renesas.orig/include/dt-bindings/clock/r8a7794-clock.h
-+++ renesas/include/dt-bindings/clock/r8a7794-clock.h
-@@ -108,6 +108,30 @@
- #define R8A7794_CLK_I2C1		30
- #define R8A7794_CLK_I2C0		31
- 
-+/* MSTP10 */
-+#define R8A7794_CLK_SSI_ALL		5
-+#define R8A7794_CLK_SSI9		6
-+#define R8A7794_CLK_SSI8		7
-+#define R8A7794_CLK_SSI7		8
-+#define R8A7794_CLK_SSI6		9
-+#define R8A7794_CLK_SSI5		10
-+#define R8A7794_CLK_SSI4		11
-+#define R8A7794_CLK_SSI3		12
-+#define R8A7794_CLK_SSI2		13
-+#define R8A7794_CLK_SSI1		14
-+#define R8A7794_CLK_SSI0		15
-+#define R8A7794_CLK_SCU_ALL		17
-+#define R8A7794_CLK_SCU_DVC1		18
-+#define R8A7794_CLK_SCU_DVC0		19
-+#define R8A7794_CLK_SCU_CTU1_MIX1	20
-+#define R8A7794_CLK_SCU_CTU0_MIX0	21
-+#define R8A7794_CLK_SCU_SRC6		25
-+#define R8A7794_CLK_SCU_SRC5		26
-+#define R8A7794_CLK_SCU_SRC4		27
-+#define R8A7794_CLK_SCU_SRC3		28
-+#define R8A7794_CLK_SCU_SRC2		29
-+#define R8A7794_CLK_SCU_SRC1		30
-+
- /* MSTP11 */
- #define R8A7794_CLK_SCIFA3		6
- #define R8A7794_CLK_SCIFA4		7
+Sorry for missing that. I have queued up Arnd's patch as a fix for v4.8
+with Acked-by Geert and a Reported-by Russel tags.
