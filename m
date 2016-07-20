@@ -1,117 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:34268 "EHLO
-	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750867AbcGLVk2 (ORCPT
+Received: from mail-it0-f46.google.com ([209.85.214.46]:38253 "EHLO
+	mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752956AbcGTH6k (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 12 Jul 2016 17:40:28 -0400
-Received: by mail-lf0-f45.google.com with SMTP id h129so24292067lfh.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Jul 2016 14:40:26 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org,
-	laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org,
-	geert+renesas@glider.be
-Subject: [PATCH] pinctrl: sh-pfc: r8a7792: add SDHI pin groups
-Date: Wed, 13 Jul 2016 00:40:03 +0300
-Message-ID: <3437294.RhgABMHgKt@wasted.cogentembedded.com>
-In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+	Wed, 20 Jul 2016 03:58:40 -0400
+Received: by mail-it0-f46.google.com with SMTP id j124so43050863ith.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Jul 2016 00:58:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1468930224-12300-1-git-send-email-geert+renesas@glider.be>
+References: <1468930224-12300-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Jul 2016 09:58:38 +0200
+Message-ID: <CAMuHMdXQTQSC0O2RSbMV7bXbw7UfZ32zzNaNF72BhfXAmT4jeQ@mail.gmail.com>
+Subject: Re: renesas-drivers-2016-07-19-v4.7-rc7
+To: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add SDHI0 pin groups to the R8A7792 PFC driver.
+On Tue, Jul 19, 2016 at 2:10 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> I have pushed renesas-drivers-2016-07-19-v4.7-rc7 to
+> https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+>
+> This tree is meant to ease development of platform support and drivers
+> for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+> of various subsystem trees and (b) branches with driver code submitted
+> or planned for submission to maintainers into the development branch of
+> Simon Horman's renesas.git tree.
+>
+> Today's version is based on renesas-devel-20160718-v4.7-rc7.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+BTW, thanks to the holiday season, I expect next release to be
+renesas-drivers-2016-08-09-v4.8-rc1.
 
----
-The patch is against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
-repo plus my 2 R8A7792 PFC patches posted before and the EtherAVB patch  just
-reposted...
+Gr{oetje,eeting}s,
 
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c |   51 +++++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+                        Geert
 
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-@@ -932,6 +932,43 @@ static const unsigned int scif3_clk_pins
- static const unsigned int scif3_clk_mux[] = {
- 	SCK3_MARK,
- };
-+/* - SDHI0 ------------------------------------------------------------------ */
-+static const unsigned int sdhi0_data1_pins[] = {
-+	/* DAT0 */
-+	RCAR_GP_PIN(11, 7),
-+};
-+static const unsigned int sdhi0_data1_mux[] = {
-+	SD0_DAT0_MARK,
-+};
-+static const unsigned int sdhi0_data4_pins[] = {
-+	/* DAT[0-3] */
-+	RCAR_GP_PIN(11, 7), RCAR_GP_PIN(11, 8),
-+	RCAR_GP_PIN(11, 9), RCAR_GP_PIN(11, 10),
-+};
-+static const unsigned int sdhi0_data4_mux[] = {
-+	SD0_DAT0_MARK, SD0_DAT1_MARK, SD0_DAT2_MARK, SD0_DAT3_MARK,
-+};
-+static const unsigned int sdhi0_ctrl_pins[] = {
-+	/* CLK, CMD */
-+	RCAR_GP_PIN(11, 5), RCAR_GP_PIN(11, 6),
-+};
-+static const unsigned int sdhi0_ctrl_mux[] = {
-+	SD0_CLK_MARK, SD0_CMD_MARK,
-+};
-+static const unsigned int sdhi0_cd_pins[] = {
-+	/* CD */
-+	RCAR_GP_PIN(11, 11),
-+};
-+static const unsigned int sdhi0_cd_mux[] = {
-+	SD0_CD_MARK,
-+};
-+static const unsigned int sdhi0_wp_pins[] = {
-+	/* WP */
-+	RCAR_GP_PIN(11, 12),
-+};
-+static const unsigned int sdhi0_wp_mux[] = {
-+	SD0_WP_MARK,
-+};
- 
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_link),
-@@ -958,6 +995,11 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(scif0_ctrl),
- 	SH_PFC_PIN_GROUP(scif3_data),
- 	SH_PFC_PIN_GROUP(scif3_clk),
-+	SH_PFC_PIN_GROUP(sdhi0_data1),
-+	SH_PFC_PIN_GROUP(sdhi0_data4),
-+	SH_PFC_PIN_GROUP(sdhi0_ctrl),
-+	SH_PFC_PIN_GROUP(sdhi0_cd),
-+	SH_PFC_PIN_GROUP(sdhi0_wp),
- };
- 
- static const char * const avb_groups[] = {
-@@ -999,12 +1041,21 @@ static const char * const scif3_groups[]
- 	"scif3_clk",
- };
- 
-+static const char * const sdhi0_groups[] = {
-+	"sdhi0_data1",
-+	"sdhi0_data4",
-+	"sdhi0_ctrl",
-+	"sdhi0_cd",
-+	"sdhi0_wp",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(intc),
- 	SH_PFC_FUNCTION(lbsc),
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif3),
-+	SH_PFC_FUNCTION(sdhi0),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
