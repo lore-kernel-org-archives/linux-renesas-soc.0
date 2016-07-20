@@ -1,48 +1,46 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:55987 "EHLO
-	relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752333AbcGUKrx (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 21 Jul 2016 06:47:53 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 5/5] arm64: defconfig: Add Renesas R-Car HSUSB driver support as module
-Date: Thu, 21 Jul 2016 19:47:01 +0900
-Message-ID: <1469098021-7692-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1469098021-7692-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1469098021-7692-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 21 Jul 2016 08:15:24 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Magnus Damm <magnus.damm@gmail.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ARM: shmobile: don't call platform_can_secondary_boot on
+ UP
+Message-ID: <20160720231523.GD9599@verge.net.au>
+References: <20160630122529.4031024-1-arnd@arndb.de>
+ <CAMuHMdWJOVs_pzDHWVHN8=mguUPETbq2m8LAG_N6mUFk+UA_og@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWJOVs_pzDHWVHN8=mguUPETbq2m8LAG_N6mUFk+UA_og@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+On Thu, Jun 30, 2016 at 03:09:46PM +0200, Geert Uytterhoeven wrote:
+> Hi Arnd,
+> 
+> On Thu, Jun 30, 2016 at 2:25 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > For rcar-gen2, we build the SMP files even for UP configurations,
+> > and that just broke:
+> >
+> > arch/arm/mach-shmobile/built-in.o: In function `shmobile_smp_init_fallback_ops':
+> > pm-rcar-gen2.c:(.init.text+0x40c): undefined reference to `platform_can_secondary_boot'
+> >
+> > This adds an compile-time check before the call to platform_can_secondary_boot,
+> > turning the function into an empty stub for UP configurations.
+> >
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > Fixes: c21af444eace ("ARM: shmobile: smp: Add function to prioritize DT SMP")
+> 
+> Crap, I think I took the shortcut of only compile-testing
+> arch/arm/mach-shmobile,
+> not link-testing the whole kernel, with CONFIG_SMP=n...
+> 
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index aa47366..9d23ff9 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -232,6 +232,7 @@ CONFIG_USB_EHCI_MSM=y
- CONFIG_USB_EHCI_HCD_PLATFORM=y
- CONFIG_USB_OHCI_HCD=y
- CONFIG_USB_OHCI_HCD_PLATFORM=y
-+CONFIG_USB_RENESAS_USBHS=m
- CONFIG_USB_STORAGE=y
- CONFIG_USB_DWC2=y
- CONFIG_USB_CHIPIDEA=y
-@@ -242,6 +243,7 @@ CONFIG_USB_HSIC_USB3503=y
- CONFIG_USB_MSM_OTG=y
- CONFIG_USB_ULPI=y
- CONFIG_USB_GADGET=y
-+CONFIG_USB_RENESAS_USBHS_UDC=m
- CONFIG_MMC=y
- CONFIG_MMC_BLOCK_MINORS=32
- CONFIG_MMC_ARMMMCI=y
--- 
-1.9.1
+Sorry for missing this until now.
+I have queued it up as a fix for v4.7.
