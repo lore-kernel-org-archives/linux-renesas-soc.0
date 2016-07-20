@@ -1,47 +1,71 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from aer-iport-1.cisco.com ([173.38.203.51]:62943 "EHLO
+	aer-iport-1.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752728AbcGTMgk (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 20 Jul 2016 08:36:40 -0400
+Subject: Re: [PATCH] [media] rcar-vin: add legacy mode for wrong media bus
+ formats
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+	Hans Verkuil <hverkuil@xs4all.nl>
+References: <20160708104327.6329-1-niklas.soderlund+renesas@ragnatech.se>
+ <4776c0f7-22da-6e72-f0c8-c02fc07b38dc@xs4all.nl>
+ <20160720122907.GC20569@bigcity.dyn.berto.se>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	slongerbeam@gmail.com, lars@metafoo.de, hans.verkuil@cisco.com,
+	mchehab@kernel.org
+From: Hans Verkuil <hansverk@cisco.com>
+Message-ID: <578F7054.2000302@cisco.com>
+Date: Wed, 20 Jul 2016 14:36:36 +0200
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1467278944-17042-1-git-send-email-kieran@bingham.xyz>
-References: <1467278944-17042-1-git-send-email-kieran@bingham.xyz>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 18 Jul 2016 16:31:24 +0200
-Message-ID: <CAMuHMdWp1hvvkfB1wLwvORdtKf4ANUUDorvOqXqunCZYTFOAgw@mail.gmail.com>
-Subject: Re: [GIT PULL FOR renesas-drivers] FDP1 Fine Display Processor support
-To: Kieran Bingham <kieran@bingham.xyz>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20160720122907.GC20569@bigcity.dyn.berto.se>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
-
-On Thu, Jun 30, 2016 at 11:29 AM, Kieran Bingham <kieran@bingham.xyz> wrote:
-> The following changes since commit f50e3d0720c0f27476153c2c7129b18639228d1b:
+On 07/20/2016 02:29 PM, Niklas S�derlund wrote:
+> Hi Hans,
 >
->   Merge branch 'drm/next/dt' into for/renesas-drivers (2016-06-21 18:01:05 +0300)
+> Thanks for your feedback.
 >
-> are available in the git repository at:
+> On 2016-07-20 11:48:40 +0200, Hans Verkuil wrote:
+>> On 07/08/2016 12:43 PM, Niklas S�derlund wrote:
+>>> A recent bugfix to adv7180 brought to light that the rcar-vin driver are
+>>> looking for the wrong media bus format. It was looking for a YUVU format
+>>> but then expecting UYVY data. The bugfix for adv7180 will break the
+>>> usage of rcar-vin together with a adv7180 as found on Renesas R-Car2
+>>> Koelsch boards for example.
+>>>
+>>> This patch fix the rcar-vin driver to look for the correct UYVU formats
+>>> and adds a legacy mode. The legacy mode is needed since I don't know if
+>>> other devices provide a incorrect media bus format and I don't want to
+>>> break any working configurations. Hopefully the legacy mode can be
+>>> removed sometime in the future.
+>>
+>> I'd rather have a version without the legacy code. You have to assume that
+>> subdevs return correct values otherwise what's the point of the mediabus
+>> formats?
+>>
+>> So this is simply an adv7180 bug fix + this r-car fix to stay consistent
+>> with the adv7180.
 >
->   https://github.com/kbingham/linux.git renesas/fdp1
+> On principal I agree with you. My goal with this patch is just to make
+> sure there is no case where the rcar-vin driver won't work with the
+> adv7180. The plan was to drop the legacy mode in a separate patch after
+> both the adv7182 and rcar-vin patches where picked up.
 >
-> for you to fetch changes up to 06f3e8e204a41e68ab649a26c557e7bc4c01c0f0:
->
->   Merge branches 'renesas/fdp1-dt' and 'renesas/fdp1-driver' into renesas/fdp1 (2016-06-30 10:13:43 +0100)
+> I'm happy to drop the 'legacy support' for the wrong formats from this
+> patch as long as I can be sure that there is no breaking. Should I
+> rewrite this patch to drop the wrong formats and submit it as a series
+> together with the adv7180 patch so they can be picked up together? Or do
+> you know of a better way?
 
-I'm afraid I'll have to drop this for tomorrow's renesas-drivers release,
-as this seems to depend heavily on Laurent's for/renesas-drivers, which
-requires an update before I can integrate it.
+Why not combine this patch and the adv7180 patch in a single patch? Just keep
+Steve's Signed-off-by line together with yours. That way everything stays
+in sync. The only other user of the adv7180 doesn't look at the mediabus
+formats at all, so it isn't affected.
 
-Thanks for your understanding.
+Regards,
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+	Hans
