@@ -1,13 +1,19 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34863 "EHLO
+	mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753267AbcGTNuV (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 20 Jul 2016 09:50:21 -0400
+MIME-Version: 1.0
+In-Reply-To: <e6246060-fa54-37c1-949d-b93da109dbb9@cogentembedded.com>
+References: <2441635.ESeLhIjWEX@wasted.cogentembedded.com> <8030361.FnpbGzHVP8@wasted.cogentembedded.com>
+ <20160717225842.GA25133@verge.net.au> <cece2545-52f9-7ddb-36d2-df364a272092@cogentembedded.com>
+ <CAMuHMdUUZ=gopWOir9PMiDgJ8o+CMp+qG=FLhGg_gHrMYzwgFg@mail.gmail.com> <e6246060-fa54-37c1-949d-b93da109dbb9@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Jul 2016 15:50:20 +0200
+Message-ID: <CAMuHMdXez5KZMH=3=egqWWP9Dp9gSRKw=kqHBMPnNjwwAv=Jdg@mail.gmail.com>
 Subject: Re: [PATCH 2/2] ARM: dts: r8a7792: add SDHI support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <2441635.ESeLhIjWEX@wasted.cogentembedded.com>
- <8030361.FnpbGzHVP8@wasted.cogentembedded.com>
- <20160717225842.GA25133@verge.net.au>
- <cece2545-52f9-7ddb-36d2-df364a272092@cogentembedded.com>
- <CAMuHMdUUZ=gopWOir9PMiDgJ8o+CMp+qG=FLhGg_gHrMYzwgFg@mail.gmail.com>
- <e6246060-fa54-37c1-949d-b93da109dbb9@cogentembedded.com>
- <CAMuHMdXez5KZMH=3=egqWWP9Dp9gSRKw=kqHBMPnNjwwAv=Jdg@mail.gmail.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Simon Horman <horms@verge.net.au>,
 	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
 	Rob Herring <robh+dt@kernel.org>,
@@ -17,38 +23,34 @@ Cc: Simon Horman <horms@verge.net.au>,
 	Russell King <linux@arm.linux.org.uk>,
 	"linux-arm-kernel@lists.infradead.org"
 	<linux-arm-kernel@lists.infradead.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <772f56cd-15ad-e4d6-69c1-e96da2c50300@cogentembedded.com>
-Date: Wed, 20 Jul 2016 16:57:05 +0300
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXez5KZMH=3=egqWWP9Dp9gSRKw=kqHBMPnNjwwAv=Jdg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 07/20/2016 04:50 PM, Geert Uytterhoeven wrote:
+Hi Sergei,
 
->>> BTW, given SDHI on V2H doesn't support SDR50/SDR104, unlike the instances
->>> on other R-Car Gen2 SoCs, can you please tell us the version value, as
->>> read
->>> from CTL_VERSION in sh_mobile_sdhi_sdbuf_width()?
->>
->>    It's 0xCB0D, the same as on other SoCs.
+On Wed, Jul 20, 2016 at 3:40 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+>> BTW, given SDHI on V2H doesn't support SDR50/SDR104, unlike the instances
+>> on other R-Car Gen2 SoCs, can you please tell us the version value, as
+>> read
+>> from CTL_VERSION in sh_mobile_sdhi_sdbuf_width()?
 >
-> Thanks!
->
-> #define SDHI_VER_GEN2_SDR104    0xcb0d
+>    It's 0xCB0D, the same as on other SoCs.
 
-    Not seeing this #define, where is it?
+Thanks!
 
-> Not good, as it doesn't support SDR50/SDR104....
+#define SDHI_VER_GEN2_SDR104    0xcb0d
 
-    Does it have the register at 0x324 tho?
+Not good, as it doesn't support SDR50/SDR104....
 
-> Gr{oetje,eeting}s,
->
->                         Geert
+Gr{oetje,eeting}s,
 
-MBR, Sergei
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
