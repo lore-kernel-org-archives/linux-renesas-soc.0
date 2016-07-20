@@ -1,69 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:32910 "EHLO
-	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752550AbcGVJJ0 (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:42586 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750703AbcGTEBQ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 22 Jul 2016 05:09:26 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-	william.towle@codethink.co.uk, geert@linux-m68k.org,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v6 0/4] Lager/Koelsch board HDMI input support
-Date: Fri, 22 Jul 2016 11:09:10 +0200
-Message-Id: <1469178554-20719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+	Wed, 20 Jul 2016 00:01:16 -0400
+Date: Tue, 19 Jul 2016 21:01:14 -0700 (PDT)
+Message-Id: <20160719.210114.348102018460162904.davem@davemloft.net>
+To: yoshihiro.shimoda.uh@renesas.com
+Cc: daniel@iogearbox.net, willemb@google.com, ast@plumgrid.com,
+	tklauser@distanz.ch, fruggeri@aristanetworks.com,
+	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3] packet: fix second argument of sock_tx_timestamp()
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1468906851-8424-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1468906851-8424-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Date: Tue, 19 Jul 2016 14:40:51 +0900
 
-This revision implements the pad translation between rcar-vin and subdevices
-as suggested by Niklas.  It also moves around the i2c devices, following the
-introduction of i2c multiplexing in the Gen2 device trees.
+> This patch fixes an issue that a syscall (e.g. sendto syscall) cannot
+> work correctly. Since the sendto syscall doesn't have msg_control buffer,
+> the sock_tx_timestamp() in packet_snd() cannot work correctly because
+> the socks.tsflags is set to 0.
+> So, this patch sets the socks.tsflags to sk->sk_tsflags as default.
+> 
+> Fixes: c14ac9451c34 ("sock: enable timestamping using control messages")
+> Cc: <stable@vger.kernel.org>
+> Reported-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> Reported-by: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Based on renesas-drivers-2016-07-19-v4.7-rc7.
-
-CU
-Uli
-
-
-Changes since v5:
-- implement vin/subdev pad translation
-- move i2c devices
-
-Changes since v4:
-- drop merged patches
-- adv7604: always fall back to input 0 if nothing else is specified
-- rcar-vin: implement G_EDID, S_EDID in place of hard-coded EDID blob
-
-Changes since v3:
-- rvin_enum_dv_timings(): use vin->src_pad_idx
-- rvin_dv_timings_cap(): likewise
-- rvin_s_dv_timings(): update vin->format
-- add Koelsch support
-
-Changes since v2:
-- rebased on top of rcar-vin driver v4
-- removed "adv7604: fix SPA register location for ADV7612" (picked up)
-- changed prefix of dts patch to "ARM: dts: lager: "
-
-
-Hans Verkuil (1):
-  ARM: dts: koelsch: add HDMI input
-
-Ulrich Hecht (2):
-  media: adv7604: automatic "default-input" selection
-  rcar-vin: implement EDID control ioctls
-
-William Towle (1):
-  ARM: dts: lager: Add entries for VIN HDMI input support
-
- arch/arm/boot/dts/r8a7790-lager.dts         | 39 +++++++++++++++++++++++++++
- arch/arm/boot/dts/r8a7791-koelsch.dts       | 41 +++++++++++++++++++++++++++++
- drivers/media/i2c/adv7604.c                 |  5 +++-
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 33 +++++++++++++++++++++++
- 4 files changed, 117 insertions(+), 1 deletion(-)
-
--- 
-2.7.4
+Applied.
