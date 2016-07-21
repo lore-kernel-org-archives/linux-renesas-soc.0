@@ -1,78 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:27203 "EHLO
-	relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752004AbcGSFPi (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:29758 "EHLO
+	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752285AbcGUKri (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 19 Jul 2016 01:15:38 -0400
+	Thu, 21 Jul 2016 06:47:38 -0400
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <davem@davemloft.net>
-CC: <daniel@iogearbox.net>, <willemb@google.com>, <ast@plumgrid.com>,
-	<tklauser@distanz.ch>, <fruggeri@aristanetworks.com>,
-	<netdev@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	"Yoshihiro Shimoda" <yoshihiro.shimoda.uh@renesas.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH] packet: fix second argument of sock_tx_timestamp()
-Date: Tue, 19 Jul 2016 14:15:20 +0900
-Message-ID: <1468905320-8132-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
+	<robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3 3/5] arm64: dts: salvator-x: enable USB 2.0 Host channel 0
+Date: Thu, 21 Jul 2016 19:46:59 +0900
+Message-ID: <1469098021-7692-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1469098021-7692-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1469098021-7692-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch fixes an issue that a syscall (e.g. sendto syscall) cannot
-work correctly. Since the sendto syscall doesn't have msg_control buffer,
-the sock_tx_timestamp() in packet_snd() cannot work correctly because
-the socks.tsflags is set to 0.
-So, this patch sets the socks.tsflags to sk->sk_tsflags as default.
+We have to set SW15 to pin 2-3 side on the board before we use CN9
+as USB host or peripheral.
 
-Fixes: c14ac9451c34 ("sock: enable timestamping using control messages")
-Cc: <stable@vger.kernel.org>
-Reported-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Reported-by: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- Changes from v1:
-  - Set socks.tsflags to sk->sk_tsflags as default instead of a condition.
-  - Fix other socks.tsflags values in the af_packet.c.
-  - Revise the commit log.
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- About v1 (as RFC):
-  - http://thread.gmane.org/gmane.linux.kernel.renesas-soc/5646
-
-
- net/packet/af_packet.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index 9f0983f..50ea97e 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -1927,7 +1927,7 @@ retry:
- 		goto out_unlock;
- 	}
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 8c8bfdc..c0e6e8f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -407,6 +407,10 @@
+ 	status = "okay";
+ };
  
--	sockc.tsflags = 0;
-+	sockc.tsflags = sk->sk_tsflags;
- 	if (msg->msg_controllen) {
- 		err = sock_cmsg_send(sk, msg, &sockc);
- 		if (unlikely(err)) {
-@@ -2678,7 +2678,7 @@ static int tpacket_snd(struct packet_sock *po, struct msghdr *msg)
- 		dev = dev_get_by_index(sock_net(&po->sk), saddr->sll_ifindex);
- 	}
++&ehci0 {
++	status = "okay";
++};
++
+ &ehci1 {
+ 	status = "okay";
+ };
+@@ -415,6 +419,10 @@
+ 	status = "okay";
+ };
  
--	sockc.tsflags = 0;
-+	sockc.tsflags = sk->sk_tsflags;
- 	if (msg->msg_controllen) {
- 		err = sock_cmsg_send(&po->sk, msg, &sockc);
- 		if (unlikely(err))
-@@ -2881,7 +2881,7 @@ static int packet_snd(struct socket *sock, struct msghdr *msg, size_t len)
- 	if (unlikely(!(dev->flags & IFF_UP)))
- 		goto out_unlock;
- 
--	sockc.tsflags = 0;
-+	sockc.tsflags = sk->sk_tsflags;
- 	sockc.mark = sk->sk_mark;
- 	if (msg->msg_controllen) {
- 		err = sock_cmsg_send(sk, msg, &sockc);
++&ohci0 {
++	status = "okay";
++};
++
+ &ohci1 {
+ 	status = "okay";
+ };
 -- 
 1.9.1
