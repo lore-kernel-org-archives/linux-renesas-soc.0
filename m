@@ -1,85 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:41747 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753219AbcG2Rki (ORCPT
+Received: from lb3-smtp-cloud6.xs4all.net ([194.109.24.31]:48132 "EHLO
+	lb3-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752059AbcGVJh2 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 29 Jul 2016 13:40:38 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	sergei.shtylyov@cogentembedded.com, slongerbeam@gmail.com
-Cc: lars@metafoo.de, mchehab@kernel.org, hans.verkuil@cisco.com,
-	Steve Longerbeam <steve_longerbeam@mentor.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 6/6] media: adv7180: fix field type
-Date: Fri, 29 Jul 2016 19:40:12 +0200
-Message-Id: <20160729174012.14331-7-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
+	Fri, 22 Jul 2016 05:37:28 -0400
+Subject: Re: [PATCH v6 0/4] Lager/Koelsch board HDMI input support
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
+References: <1469178554-20719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+	william.towle@codethink.co.uk, geert@linux-m68k.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <67e414b4-7e1d-946e-2975-b3e3bb32c966@xs4all.nl>
+Date: Fri, 22 Jul 2016 11:37:19 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1469178554-20719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Steve Longerbeam <slongerbeam@gmail.com>
+Looks good to me. I plan to queue this for 4.9.
 
-The ADV7180 and ADV7182 transmit whole fields, bottom field followed
-by top (or vice-versa, depending on detected video standard). So
-for chips that do not have support for explicitly setting the field
-mode, set the field mode to V4L2_FIELD_ALTERNATE.
+Regards,
 
-Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
-[Niklas: changed filed type from V4L2_FIELD_SEQ_{TB,BT} to
-V4L2_FIELD_ALTERNATE]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/i2c/adv7180.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+	Hans
 
-diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
-index a8b434b..c6fed71 100644
---- a/drivers/media/i2c/adv7180.c
-+++ b/drivers/media/i2c/adv7180.c
-@@ -680,10 +680,13 @@ static int adv7180_set_pad_format(struct v4l2_subdev *sd,
- 	switch (format->format.field) {
- 	case V4L2_FIELD_NONE:
- 		if (!(state->chip_info->flags & ADV7180_FLAG_I2P))
--			format->format.field = V4L2_FIELD_INTERLACED;
-+			format->format.field = V4L2_FIELD_ALTERNATE;
- 		break;
- 	default:
--		format->format.field = V4L2_FIELD_INTERLACED;
-+		if (state->chip_info->flags & ADV7180_FLAG_I2P)
-+			format->format.field = V4L2_FIELD_INTERLACED;
-+		else
-+			format->format.field = V4L2_FIELD_ALTERNATE;
- 		break;
- 	}
- 
-@@ -1253,8 +1256,13 @@ static int adv7180_probe(struct i2c_client *client,
- 		return -ENOMEM;
- 
- 	state->client = client;
--	state->field = V4L2_FIELD_INTERLACED;
- 	state->chip_info = (struct adv7180_chip_info *)id->driver_data;
-+	state->curr_norm = V4L2_STD_NTSC;
-+
-+	if (state->chip_info->flags & ADV7180_FLAG_I2P)
-+		state->field = V4L2_FIELD_INTERLACED;
-+	else
-+		state->field = V4L2_FIELD_ALTERNATE;
- 
- 	if (state->chip_info->flags & ADV7180_FLAG_MIPI_CSI2) {
- 		state->csi_client = i2c_new_dummy(client->adapter,
-@@ -1274,7 +1282,6 @@ static int adv7180_probe(struct i2c_client *client,
- 
- 	state->irq = client->irq;
- 	mutex_init(&state->mutex);
--	state->curr_norm = V4L2_STD_NTSC;
- 	if (state->chip_info->flags & ADV7180_FLAG_RESET_POWERED)
- 		state->powered = true;
- 	else
--- 
-2.9.0
+On 07/22/2016 11:09 AM, Ulrich Hecht wrote:
+> Hi!
+> 
+> This revision implements the pad translation between rcar-vin and subdevices
+> as suggested by Niklas.  It also moves around the i2c devices, following the
+> introduction of i2c multiplexing in the Gen2 device trees.
+> 
+> Based on renesas-drivers-2016-07-19-v4.7-rc7.
+> 
+> CU
+> Uli
+> 
+> 
+> Changes since v5:
+> - implement vin/subdev pad translation
+> - move i2c devices
+> 
+> Changes since v4:
+> - drop merged patches
+> - adv7604: always fall back to input 0 if nothing else is specified
+> - rcar-vin: implement G_EDID, S_EDID in place of hard-coded EDID blob
+> 
+> Changes since v3:
+> - rvin_enum_dv_timings(): use vin->src_pad_idx
+> - rvin_dv_timings_cap(): likewise
+> - rvin_s_dv_timings(): update vin->format
+> - add Koelsch support
+> 
+> Changes since v2:
+> - rebased on top of rcar-vin driver v4
+> - removed "adv7604: fix SPA register location for ADV7612" (picked up)
+> - changed prefix of dts patch to "ARM: dts: lager: "
+> 
+> 
+> Hans Verkuil (1):
+>   ARM: dts: koelsch: add HDMI input
+> 
+> Ulrich Hecht (2):
+>   media: adv7604: automatic "default-input" selection
+>   rcar-vin: implement EDID control ioctls
+> 
+> William Towle (1):
+>   ARM: dts: lager: Add entries for VIN HDMI input support
+> 
+>  arch/arm/boot/dts/r8a7790-lager.dts         | 39 +++++++++++++++++++++++++++
+>  arch/arm/boot/dts/r8a7791-koelsch.dts       | 41 +++++++++++++++++++++++++++++
+>  drivers/media/i2c/adv7604.c                 |  5 +++-
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 33 +++++++++++++++++++++++
+>  4 files changed, 117 insertions(+), 1 deletion(-)
+> 
