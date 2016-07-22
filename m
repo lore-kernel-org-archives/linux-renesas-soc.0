@@ -1,77 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f66.google.com ([209.85.220.66]:33160 "EHLO
-	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750844AbcGGFnI (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:35527 "EHLO
+	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751751AbcGVTuE (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 7 Jul 2016 01:43:08 -0400
-Received: by mail-pa0-f66.google.com with SMTP id ts6so864979pac.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Jul 2016 22:43:07 -0700 (PDT)
-Date: Wed, 6 Jul 2016 22:06:29 -0700
-From: Olof Johansson <olof@lixom.net>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
-	Kevin Hilman <khilman@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates
- for v4.8
-Message-ID: <20160707050629.GD32389@localhost>
-References: <cover.1467291676.git.horms+renesas@verge.net.au>
+	Fri, 22 Jul 2016 15:50:04 -0400
+Received: by mail-lf0-f45.google.com with SMTP id f93so92475711lfi.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Jul 2016 12:50:03 -0700 (PDT)
+Subject: Re: [PATCH v6 1/4] media: adv7604: automatic "default-input"
+ selection
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+	hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
+References: <1469178554-20719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <1469178554-20719-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+	william.towle@codethink.co.uk, geert@linux-m68k.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <42f525c3-9d1c-80c4-0e9f-b8242484ffc7@cogentembedded.com>
+Date: Fri, 22 Jul 2016 22:50:00 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1467291676.git.horms+renesas@verge.net.au>
+In-Reply-To: <1469178554-20719-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jun 30, 2016 at 04:15:06PM +0200, Simon Horman wrote:
-> Hi Olof, Hi Kevin, Hi Arnd,
-> 
-> Please consider these second round of Renesas ARM64 based SoC DT updates
-> for v4.8.
-> 
-> The support for the new r8a7796 SoC depends on clk definitions which
-> I have taken the liberty of including in this branch to avoid depending
-> on another branch. The definitions in question are derived from the
-> datasheet and in keeping with the approach taken for other Renesas SoCs.
-> 
-> This pull request is based on the previous round of
-> such requests, tagged as renesas-arm64-dt-for-v4.8,
-> which you have already pulled.
-> 
-> 
-> The following changes since commit 21cc405c8a6332ddad2d2751a9723b2b3e227a05:
-> 
->   arm64: dts: r8a7795: Drop 0x from unit address of gic (2016-05-30 10:18:01 +0900)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt2-for-v4.8
-> 
-> for you to fetch changes up to 2c9616a1fc01c656f04f03feb58fa12d9b30802a:
-> 
->   arm64: dts: r8a7796/salvator-x: Enable watchdog timer (2016-06-28 07:04:44 +0200)
-> 
-> ----------------------------------------------------------------
-> Second Round of Renesas ARM64 Based SoC DT Updates for v4.8
-> 
-> * Add support for  r8a7796/salvator-x (R-Car Gen 3 M3-W)
-> * Add CAN support to r8a7795 ((R-Car Gen 3 H3)
-> 
-> ----------------------------------------------------------------
-> Geert Uytterhoeven (6):
->       arm64: dts: r8a7795: Add missing blank lines between cpu nodes
->       clk: renesas: Add r8a7796 CPG Core Clock Definitions
+On 07/22/2016 12:09 PM, Ulrich Hecht wrote:
 
-This is just applied here as a patch, but will be needed on the clk
-driver side too.
+> Fall back to input 0 if "default-input" property is not present.
+>
+> Additionally, documentation in commit bf9c82278c34 ("[media]
+> media: adv7604: ability to read default input port from DT") states
+> that the "default-input" property should reside directly in the node
+> for adv7612. Hence, also adjust the parsing to make the implementation
+> consistent with this.
+>
+> Based on patch by William Towle <william.towle@codethink.co.uk>.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>  drivers/media/i2c/adv7604.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
+> index 4003831..055c9df 100644
+> --- a/drivers/media/i2c/adv7604.c
+> +++ b/drivers/media/i2c/adv7604.c
+> @@ -3077,10 +3077,13 @@ static int adv76xx_parse_dt(struct adv76xx_state *state)
+>  	if (!of_property_read_u32(endpoint, "default-input", &v))
+>  		state->pdata.default_input = v;
+>  	else
+> -		state->pdata.default_input = -1;
+> +		state->pdata.default_input = 0;
+>
+>  	of_node_put(endpoint);
+>
+> +	if (!of_property_read_u32(np, "default-input", &v))
+> +		state->pdata.default_input = v;
 
-The patch should be shared between the two trees, not applied twice. So you'll
-need to provide a stable branch from either side that has this applied, and
-base the dts changes and the clk changes on that.
+	of_property_read_u32(np, "default-input",
+			     &state->pdata.default_input));
 
-(Pull request not merged due to this).
+should be equivalent...
 
-
--Olof
+MBR, Sergei
