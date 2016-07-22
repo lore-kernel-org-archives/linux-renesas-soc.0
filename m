@@ -1,40 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:56025 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753287AbcGSH3e (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33959 "EHLO
+	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752850AbcGVJJo (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 19 Jul 2016 03:29:34 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Correct header from R-Car Gen3 to R8A7795
-Date: Tue, 19 Jul 2016 09:29:34 +0200
-Message-Id: <1468913374-32065-1-git-send-email-geert+renesas@glider.be>
+	Fri, 22 Jul 2016 05:09:44 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+	william.towle@codethink.co.uk, geert@linux-m68k.org,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v6 3/4] ARM: dts: koelsch: add HDMI input
+Date: Fri, 22 Jul 2016 11:09:13 +0200
+Message-Id: <1469178554-20719-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1469178554-20719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1469178554-20719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This source file handles r8a7795 only, which is not the sole member of
-the R-Car Gen3 family.
+From: Hans Verkuil <hverkuil@xs4all.nl>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add support in the dts for the HDMI input. Based on the Lager dts
+patch from Ulrich Hecht.
+
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+[uli: removed "renesas," prefixes from pfc nodes]
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
-To be queued up in sh-pfc-for-v4.9.
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 41 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 0f1a111447c30732..1b35ad9b538de544 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -1,5 +1,5 @@
- /*
-- * R-Car Gen3 processor support - PFC hardware block.
-+ * R8A7795 processor support - PFC hardware block.
-  *
-  * Copyright (C) 2015  Renesas Electronics Corporation
-  *
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index 980f41b..28ec3a8 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -400,6 +400,21 @@
+ 			};
+ 		};
+ 
++		hdmi-in@4c {
++			compatible = "adi,adv7612";
++			reg = <0x4c>;
++			interrupt-parent = <&gpio1>;
++			interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
++			remote = <&vin0>;
++			default-input = <0>;
++
++			port {
++				adv7612: endpoint {
++					remote-endpoint = <&vin0ep>;
++				};
++			};
++		};
++
+ 		eeprom@50 {
+ 			compatible = "renesas,24c02";
+ 			reg = <0x50>;
+@@ -534,6 +549,11 @@
+ 		function = "usb1";
+ 	};
+ 
++	vin0_pins: vin0 {
++		groups = "vin0_data24", "vin0_sync", "vin0_clkenb", "vin0_clk";
++		function = "vin0";
++	};
++
+ 	vin1_pins: vin1 {
+ 		groups = "vin1_data8", "vin1_clk";
+ 		function = "vin1";
+@@ -765,6 +785,27 @@
+ 	cpu0-supply = <&vdd_dvfs>;
+ };
+ 
++/* HDMI video input */
++&vin0 {
++	status = "okay";
++	pinctrl-0 = <&vin0_pins>;
++	pinctrl-names = "default";
++
++	port {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		vin0ep: endpoint {
++			remote-endpoint = <&adv7612>;
++			bus-width = <24>;
++			hsync-active = <0>;
++			vsync-active = <0>;
++			pclk-sample = <1>;
++			data-active = <1>;
++		};
++	};
++};
++
+ /* composite video input */
+ &vin1 {
+ 	status = "okay";
 -- 
-1.9.1
+2.7.4
