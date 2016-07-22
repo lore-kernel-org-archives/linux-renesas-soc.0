@@ -1,101 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33959 "EHLO
-	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752850AbcGVJJo (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35486 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753161AbcGVBrF (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 22 Jul 2016 05:09:44 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-	william.towle@codethink.co.uk, geert@linux-m68k.org,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v6 3/4] ARM: dts: koelsch: add HDMI input
-Date: Fri, 22 Jul 2016 11:09:13 +0200
-Message-Id: <1469178554-20719-4-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1469178554-20719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1469178554-20719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+	Thu, 21 Jul 2016 21:47:05 -0400
+Date: Fri, 22 Jul 2016 10:47:00 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH v3 1/3] arm64: dts: r8a7796: Add Renesas R8A7796 SoC
+ support
+Message-ID: <20160722014700.GE21943@verge.net.au>
+References: <b30c9c84-23b6-b088-4983-b2498317492b@de.bosch.com>
+ <20160525004825.GC7292@verge.net.au>
+ <c0fd13d5-c5c4-579b-6fad-c637bda92398@de.bosch.com>
+ <20160526022833.GE18393@verge.net.au>
+ <59e6225a-6dfa-8bde-dd2e-3428d6fedfe2@de.bosch.com>
+ <20160527004256.GD14269@verge.net.au>
+ <b03c68c9-6949-519d-2c44-c140eac727a4@de.bosch.com>
+ <d0b2edc9-c191-d61c-add0-85f189083931@de.bosch.com>
+ <20160720235154.GA21407@verge.net.au>
+ <69c8673e-4f9f-9dac-42ab-2557ab62f8b2@de.bosch.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <69c8673e-4f9f-9dac-42ab-2557ab62f8b2@de.bosch.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hans Verkuil <hverkuil@xs4all.nl>
+Hi Dirk,
 
-Add support in the dts for the HDMI input. Based on the Lager dts
-patch from Ulrich Hecht.
+On Thu, Jul 21, 2016 at 07:20:30AM +0200, Dirk Behme wrote:
+> Hi Simon,
+> 
+> On 21.07.2016 01:51, Simon Horman wrote:
+> >On Wed, Jun 29, 2016 at 10:15:27AM +0200, Dirk Behme wrote:
+> >>Hi Simon,
+> >
+> >...
+> >
+> >>Hmm, could you kindly help me to remember what's the recent status of your
+> >>discussion above regarding a hierarchical structure of the RCar3 device
+> >>trees?
+> >
+> >Hi Dirk,
+> >
+> >>From my point of view the most promising avenue at this time is work that
+> >Geert has been doing to explore making things more flexible by updating the
+> >DT automatically at run time. He can expand on this but the idea is to add
+> >per-soc compat strings and otherwise update the DT into a per-SoC version.
+> >This ought to allow significant portions of the DT to be common between
+> >SoCs in the same R-Car generation for at lest Gen 2 and Gen 3.
+> 
+> 
+> There are two topics:
+> 
+> a) Hierarchical static structure of devices trees and clock definitions for
+> RCar3 SoCs
+> b) Detecting of RCar3 SoC type and engineering sample revisions at runtime
+> 
+> About which topic do you talk here? I think we shouldn't mix them.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-[uli: removed "renesas," prefixes from pfc nodes]
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm/boot/dts/r8a7791-koelsch.dts | 41 +++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+I was referring to topic a) which I would describe as consolidation of
+static DT descriptions.  However, I believe that the same or a similar
+approach to DT fixups can also be used for problem b). I agree
+we should discuss these topics separately.
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 980f41b..28ec3a8 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -400,6 +400,21 @@
- 			};
- 		};
- 
-+		hdmi-in@4c {
-+			compatible = "adi,adv7612";
-+			reg = <0x4c>;
-+			interrupt-parent = <&gpio1>;
-+			interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-+			remote = <&vin0>;
-+			default-input = <0>;
-+
-+			port {
-+				adv7612: endpoint {
-+					remote-endpoint = <&vin0ep>;
-+				};
-+			};
-+		};
-+
- 		eeprom@50 {
- 			compatible = "renesas,24c02";
- 			reg = <0x50>;
-@@ -534,6 +549,11 @@
- 		function = "usb1";
- 	};
- 
-+	vin0_pins: vin0 {
-+		groups = "vin0_data24", "vin0_sync", "vin0_clkenb", "vin0_clk";
-+		function = "vin0";
-+	};
-+
- 	vin1_pins: vin1 {
- 		groups = "vin1_data8", "vin1_clk";
- 		function = "vin1";
-@@ -765,6 +785,27 @@
- 	cpu0-supply = <&vdd_dvfs>;
- };
- 
-+/* HDMI video input */
-+&vin0 {
-+	status = "okay";
-+	pinctrl-0 = <&vin0_pins>;
-+	pinctrl-names = "default";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		vin0ep: endpoint {
-+			remote-endpoint = <&adv7612>;
-+			bus-width = <24>;
-+			hsync-active = <0>;
-+			vsync-active = <0>;
-+			pclk-sample = <1>;
-+			data-active = <1>;
-+		};
-+	};
-+};
-+
- /* composite video input */
- &vin1 {
- 	status = "okay";
--- 
-2.7.4
+> Best regards
+> 
+> Dirk
+> 
+> P.S.: If you like, we could have a chat in #renesas-soc, too :)
+
+Sure. In general I am there when I am at my desk and not completely
+consumed by work at hand.
