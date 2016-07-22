@@ -1,80 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:29758 "EHLO
-	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752282AbcGUKrd (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36645 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753137AbcGVJJn (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 21 Jul 2016 06:47:33 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <horms@verge.net.au>, <magnus.damm@gmail.com>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 2/5] arm64: dts: salvator-x: enable usb2_phy of channel 0
-Date: Thu, 21 Jul 2016 19:46:58 +0900
-Message-ID: <1469098021-7692-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1469098021-7692-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1469098021-7692-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	Fri, 22 Jul 2016 05:09:43 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+	william.towle@codethink.co.uk, geert@linux-m68k.org,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v6 4/4] rcar-vin: implement EDID control ioctls
+Date: Fri, 22 Jul 2016 11:09:14 +0200
+Message-Id: <1469178554-20719-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1469178554-20719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1469178554-20719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch also adds a regulator node for USB2.0 to handle VBUS on/off
-by the phy-rcar-gen3-usb2 driver.
+Adds G_EDID and S_EDID.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 33 +++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 98f0263..8c8bfdc 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -110,6 +110,17 @@
- 			  1800000 0>;
- 	};
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 396eabc..57e040c 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -661,6 +661,36 @@ static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
+ 	return ret;
+ }
  
-+	vbus0_usb2: regulator-vbus0-usb2 {
-+		compatible = "regulator-fixed";
++static int rvin_g_edid(struct file *file, void *fh, struct v4l2_edid *edid)
++{
++	struct rvin_dev *vin = video_drvdata(file);
++	int input, ret;
 +
-+		regulator-name = "USB20_VBUS0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
++	input = edid->pad;
++	edid->pad = vin->inputs[input].sink_idx;
 +
-+		gpio = <&gpio6 16 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
++	ret = rvin_subdev_call(vin, pad, get_edid, edid);
 +
- 	audio_clkout: audio_clkout {
- 		/*
- 		 * This is same as <&rcar_sound 0>
-@@ -193,6 +204,11 @@
- 		function = "audio_clk";
- 	};
++	edid->pad = input;
++
++	return ret;
++}
++
++static int rvin_s_edid(struct file *file, void *fh, struct v4l2_edid *edid)
++{
++	struct rvin_dev *vin = video_drvdata(file);
++	int input, ret;
++
++	input = edid->pad;
++	edid->pad = vin->inputs[input].sink_idx;
++
++	ret = rvin_subdev_call(vin, pad, set_edid, edid);
++
++	edid->pad = input;
++
++	return ret;
++}
++
+ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
+ 	.vidioc_querycap		= rvin_querycap,
+ 	.vidioc_try_fmt_vid_cap		= rvin_try_fmt_vid_cap,
+@@ -683,6 +713,9 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
+ 	.vidioc_s_dv_timings		= rvin_s_dv_timings,
+ 	.vidioc_query_dv_timings	= rvin_query_dv_timings,
  
-+	usb0_pins: usb0 {
-+		groups = "usb0";
-+		function = "usb0";
-+	};
++	.vidioc_g_edid			= rvin_g_edid,
++	.vidioc_s_edid			= rvin_s_edid,
 +
- 	usb1_pins: usb1 {
- 		groups = "usb1";
- 		function = "usb1";
-@@ -369,6 +385,14 @@
- 	status = "okay";
- };
- 
-+&usb2_phy0 {
-+	pinctrl-0 = <&usb0_pins>;
-+	pinctrl-names = "default";
-+
-+	vbus-supply = <&vbus0_usb2>;
-+	status = "okay";
-+};
-+
- &usb2_phy1 {
- 	pinctrl-0 = <&usb1_pins>;
- 	pinctrl-names = "default";
+ 	.vidioc_querystd		= rvin_querystd,
+ 	.vidioc_g_std			= rvin_g_std,
+ 	.vidioc_s_std			= rvin_s_std,
 -- 
-1.9.1
+2.7.4
