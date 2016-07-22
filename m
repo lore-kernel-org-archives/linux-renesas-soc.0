@@ -1,47 +1,102 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, devicetree@vger.kernel.org,
-	horms@verge.net.au
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/2] ARM: dts: r8a7792: add PLL1 divided by 2 clock
-Date: Tue, 12 Jul 2016 00:51:58 +0300
-Message-ID: <40786877.3MNoIeTZcz@wasted.cogentembedded.com>
-In-Reply-To: <1529351.Fac5N2tKoF@wasted.cogentembedded.com>
-References: <1529351.Fac5N2tKoF@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33937 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752850AbcGVJJk (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 22 Jul 2016 05:09:40 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+	william.towle@codethink.co.uk, geert@linux-m68k.org,
+	Rob Taylor <rob.taylor@codethink.co.uk>,
+	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v6 2/4] ARM: dts: lager: Add entries for VIN HDMI input support
+Date: Fri, 22 Jul 2016 11:09:12 +0200
+Message-Id: <1469178554-20719-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1469178554-20719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1469178554-20719-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Despite the QSPI clock has PLL1/VCOx1/4 clock as a parent, the latter
-hasn't been added to the R8A7792 device tree  -- fix this overlook at
-last...
+From: William Towle <william.towle@codethink.co.uk>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add DT entries for vin0, vin0_pins, and adv7612.
 
+Sets the 'default-input' property for ADV7612, enabling image and video
+capture without the need to have userspace specifying routing.
+
+Signed-off-by: William Towle <william.towle@codethink.co.uk>
+Signed-off-by: Rob Taylor <rob.taylor@codethink.co.uk>
+[uli: added interrupt, renamed endpoint, merged default-input]
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
- arch/arm/boot/dts/r8a7792.dtsi |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/r8a7790-lager.dts | 39 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -469,6 +469,13 @@
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index ffc2f4e..16e86d0 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -374,6 +374,21 @@
+ 				};
+ 			};
  		};
- 
- 		/* Fixed factor clocks */
-+		pll1_div2_clk: pll1_div2 {
-+			compatible = "fixed-factor-clock";
-+			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
-+			#clock-cells = <0>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
++
++		hdmi-in@4c {
++			compatible = "adi,adv7612";
++			reg = <0x4c>;
++			interrupt-parent = <&gpio1>;
++			interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
++			remote = <&vin0>;
++			default-input = <0>;
++
++			port {
++				adv7612: endpoint {
++					remote-endpoint = <&vin0ep0>;
++				};
++			};
 +		};
- 		zs_clk: zs {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
-
+ 	};
+ 
+ 	/*
+@@ -587,6 +602,11 @@
+ 		function = "usb2";
+ 	};
+ 
++	vin0_pins: vin0 {
++		groups = "vin0_data24", "vin0_sync", "vin0_clkenb", "vin0_clk";
++		function = "vin0";
++	};
++
+ 	vin1_pins: vin1 {
+ 		groups = "vin1_data8", "vin1_clk";
+ 		function = "vin1";
+@@ -818,6 +838,25 @@
+ 	status = "okay";
+ };
+ 
++/* HDMI video input */
++&vin0 {
++	pinctrl-0 = <&vin0_pins>;
++	pinctrl-names = "default";
++
++	status = "ok";
++
++	port {
++		vin0ep0: endpoint {
++			remote-endpoint = <&adv7612>;
++			bus-width = <24>;
++			hsync-active = <0>;
++			vsync-active = <0>;
++			pclk-sample = <1>;
++			data-active = <1>;
++		};
++	};
++};
++
+ /* composite video input */
+ &vin1 {
+ 	pinctrl-0 = <&vin1_pins>;
+-- 
+2.7.4
