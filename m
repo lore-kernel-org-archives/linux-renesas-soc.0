@@ -1,374 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f169.google.com ([209.85.223.169]:34441 "EHLO
-	mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752436AbcGXRqq (ORCPT
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:32964 "EHLO
+	mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751212AbcGWSLa (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sun, 24 Jul 2016 13:46:46 -0400
-Received: by mail-io0-f169.google.com with SMTP id q83so144639370iod.1
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 24 Jul 2016 10:46:45 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH v2 1/2] arm64: renesas: h3ulcb: initial device tree
-Date: Sun, 24 Jul 2016 20:46:43 +0300
-Message-Id: <1469382403-14895-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1469382353-14847-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1469382353-14847-1-git-send-email-vladimir.barinov@cogentembedded.com>
+	Sat, 23 Jul 2016 14:11:30 -0400
+Received: by mail-lf0-f42.google.com with SMTP id b199so104805430lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 23 Jul 2016 11:11:29 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 2/2] ARM: dts: r8a7792: add SDHI support
+Date: Sat, 23 Jul 2016 21:11:26 +0300
+Message-ID: <1922758.B8NbWTKjoY@wasted.cogentembedded.com>
+In-Reply-To: <4468057.gGDuR4B4DF@wasted.cogentembedded.com>
+References: <4468057.gGDuR4B4DF@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the initial device tree for the R8A7795 SoC based H3ULCB low cost
-board.
+Define the generic R8A7792 part of the SDHI0 device node.
 
-This commit supports the following peripherals:
-- SCIF (console), Ethernet, SD, USB Host, Audio, GPIO LEDs
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 ---
 Changes in version 2:
-- removed bootargs property
-- removed comment related to amixer
+- fixed up the size in the "reg" property.
 
- arch/arm64/boot/dts/renesas/Makefile           |   2 +-
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 316 +++++++++++++++++++++++++
- 2 files changed, 317 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+ arch/arm/boot/dts/r8a7792.dtsi |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 17139f7..eb72830 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -1,4 +1,4 @@
--dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb
-+dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -435,6 +435,18 @@
+ 			status = "disabled";
+ 		};
  
- always		:= $(dtb-y)
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-new file mode 100644
-index 0000000..aec430a
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -0,0 +1,316 @@
-+/*
-+ * Device Tree Source for the H3ULCB board
-+ *
-+ * Copyright (C) 2016 Renesas Electronics Corp.
-+ * Copyright (C) 2016 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r8a7795.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	model = "Renesas H3ULCB board based on r8a7795";
-+	compatible = "renesas,h3ulcb", "renesas,r8a7795";
-+
-+	aliases {
-+		serial0 = &scif2;
-+		ethernet0 = &avb;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		led4 {
-+			gpios = <&gpio6 11 GPIO_ACTIVE_HIGH>;
-+		};
-+		led5 {
-+			gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
-+		};
-+		led6 {
-+			gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
-+	x12_clk: x12_clk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <24576000>;
-+	};
-+
-+	vcc_sdhi0: regulator-vcc-sdhi0 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI0 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio5 2 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	vccq_sdhi0: regulator-vccq-sdhi0 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI0 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
-+
-+	audio_clkout: audio_clkout {
-+		/*
-+		 * This is same as <&rcar_sound 0>
-+		 * but needed to avoid cs2000/rcar_sound probe dead-lock
-+		 */
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <11289600>;
-+	};
-+
-+	rsnd_ak4613: sound {
-+		compatible = "simple-audio-card";
-+
-+		simple-audio-card,format = "left_j";
-+		simple-audio-card,bitclock-master = <&sndcpu>;
-+		simple-audio-card,frame-master = <&sndcpu>;
-+
-+		sndcpu: simple-audio-card,cpu {
-+			sound-dai = <&rcar_sound>;
++		sdhi0: sd@ee100000 {
++			compatible = "renesas,sdhi-r8a7792";
++			reg = <0 0xee100000 0 0x328>;
++			interrupts = <0 165 IRQ_TYPE_LEVEL_HIGH>;
++			dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
++			       <&dmac1 0xcd>, <&dmac1 0xce>;
++			dma-names = "tx", "rx", "tx", "rx";
++			clocks = <&mstp3_clks R8A7792_CLK_SDHI0>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
 +		};
 +
-+		sndcodec: simple-audio-card,codec {
-+			sound-dai = <&ak4613>;
-+		};
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <16666666>;
-+};
-+
-+&extalr_clk {
-+	clock-frequency = <32768>;
-+};
-+
-+&pfc {
-+	pinctrl-0 = <&scif_clk_pins>;
-+	pinctrl-names = "default";
-+
-+	scif2_pins: scif2 {
-+		groups = "scif2_data_a";
-+		function = "scif2";
-+	};
-+
-+	scif_clk_pins: scif_clk {
-+		groups = "scif_clk_a";
-+		function = "scif_clk";
-+	};
-+
-+	i2c2_pins: i2c2 {
-+		groups = "i2c2_a";
-+		function = "i2c2";
-+	};
-+
-+	avb_pins: avb {
-+		groups = "avb_mdc";
-+		function = "avb";
-+	};
-+
-+	sdhi0_pins_3v3: sd0_3v3 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi0_pins_1v8: sd0_1v8 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <1800>;
-+	};
-+
-+	sound_pins: sound {
-+		groups = "ssi01239_ctrl", "ssi0_data", "ssi1_data_a";
-+		function = "ssi";
-+	};
-+
-+	sound_clk_pins: sound_clk {
-+		groups = "audio_clk_a_a", "audio_clk_b_a", "audio_clk_c_a",
-+			 "audio_clkout_a", "audio_clkout3_a";
-+		function = "audio_clk";
-+	};
-+
-+	usb1_pins: usb1 {
-+		groups = "usb1";
-+		function = "usb1";
-+	};
-+};
-+
-+&scif2 {
-+	pinctrl-0 = <&scif2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&scif_clk {
-+	clock-frequency = <14745600>;
-+	status = "okay";
-+};
-+
-+&i2c2 {
-+	pinctrl-0 = <&i2c2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	clock-frequency = <100000>;
-+
-+	ak4613: codec@10 {
-+		compatible = "asahi-kasei,ak4613";
-+		#sound-dai-cells = <0>;
-+		reg = <0x10>;
-+		clocks = <&rcar_sound 3>;
-+
-+		asahi-kasei,in1-single-end;
-+		asahi-kasei,in2-single-end;
-+		asahi-kasei,out1-single-end;
-+		asahi-kasei,out2-single-end;
-+		asahi-kasei,out3-single-end;
-+		asahi-kasei,out4-single-end;
-+		asahi-kasei,out5-single-end;
-+		asahi-kasei,out6-single-end;
-+	};
-+
-+	cs2000: clk_multiplier@4f {
-+		#clock-cells = <0>;
-+		compatible = "cirrus,cs2000-cp";
-+		reg = <0x4f>;
-+		clocks = <&audio_clkout>, <&x12_clk>;
-+		clock-names = "clk_in", "ref_clk";
-+
-+		assigned-clocks = <&cs2000>;
-+		assigned-clock-rates = <24576000>; /* 1/1 divide */
-+	};
-+};
-+
-+&rcar_sound {
-+	pinctrl-0 = <&sound_pins &sound_clk_pins>;
-+	pinctrl-names = "default";
-+
-+	/* Single DAI */
-+	#sound-dai-cells = <0>;
-+
-+	/* audio_clkout0/1/2/3 */
-+	#clock-cells = <1>;
-+	clock-frequency = <11289600>;
-+
-+	status = "okay";
-+
-+	/* update <audio_clk_b> to <cs2000> */
-+	clocks = <&cpg CPG_MOD 1005>,
-+		 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
-+		 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
-+		 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
-+		 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
-+		 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
-+		 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
-+		 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
-+		 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
-+		 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
-+		 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
-+		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
-+		 <&audio_clk_a>, <&cs2000>,
-+		 <&audio_clk_c>,
-+		 <&cpg CPG_CORE R8A7795_CLK_S0D4>;
-+
-+	rcar_sound,dai {
-+		dai0 {
-+			playback = <&ssi0 &src0 &dvc0>;
-+			capture  = <&ssi1 &src1 &dvc1>;
-+		};
-+	};
-+};
-+
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins_3v3>;
-+	pinctrl-1 = <&sdhi0_pins_1v8>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&vcc_sdhi0>;
-+	vqmmc-supply = <&vccq_sdhi0>;
-+	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
-+	bus-width = <4>;
-+	status = "okay";
-+};
-+
-+&ssi1 {
-+	shared-pin;
-+};
-+
-+&wdt0 {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
-+
-+&audio_clk_a {
-+	clock-frequency = <22579200>;
-+};
-+
-+&avb {
-+	pinctrl-0 = <&avb_pins>;
-+	pinctrl-names = "default";
-+	renesas,no-ether-link;
-+	phy-handle = <&phy0>;
-+	status = "okay";
-+
-+	phy0: ethernet-phy@0 {
-+		rxc-skew-ps = <900>;
-+		rxdv-skew-ps = <0>;
-+		rxd0-skew-ps = <0>;
-+		rxd1-skew-ps = <0>;
-+		rxd2-skew-ps = <0>;
-+		rxd3-skew-ps = <0>;
-+		txc-skew-ps = <900>;
-+		txen-skew-ps = <0>;
-+		txd0-skew-ps = <0>;
-+		txd1-skew-ps = <0>;
-+		txd2-skew-ps = <0>;
-+		txd3-skew-ps = <0>;
-+		reg = <0>;
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
-+
-+&usb2_phy1 {
-+	pinctrl-0 = <&usb1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&ehci1 {
-+	status = "okay";
-+};
-+
-+&ohci1 {
-+	status = "okay";
-+};
--- 
-1.9.1
+ 		jpu: jpeg-codec@fe980000 {
+ 			compatible = "renesas,jpu-r8a7792",
+ 				     "renesas,rcar-gen2-jpu";
