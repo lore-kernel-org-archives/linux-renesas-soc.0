@@ -1,32 +1,49 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 26 Jul 2016 14:09:21 -0500
-From: Rob Herring <robh@kernel.org>
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f54.google.com ([209.85.214.54]:34455 "EHLO
+	mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752329AbcGXRqz (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Sun, 24 Jul 2016 13:46:55 -0400
+Received: by mail-it0-f54.google.com with SMTP id j8so10915551itb.1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 24 Jul 2016 10:46:54 -0700 (PDT)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt: arm: shmobile: add H3ULCB board DT bindings
-Message-ID: <20160726190921.GA18831@rob-hp-laptop>
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH v2 2/2] dt: arm: shmobile: add H3ULCB board DT bindings
+Date: Sun, 24 Jul 2016 20:46:52 +0300
+Message-Id: <1469382412-14935-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1469382353-14847-1-git-send-email-vladimir.barinov@cogentembedded.com>
 References: <1469382353-14847-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1469382412-14935-1-git-send-email-vladimir.barinov@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1469382412-14935-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Jul 24, 2016 at 08:46:52PM +0300, Vladimir Barinov wrote:
-> Add H3ULCB Device tree bindings Documentation, listing it as a supported
-> board.
-> 
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> ---
-> Changes in version 2:
-> - none
-> 
->  Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
->  1 file changed, 2 insertions(+)
+Add H3ULCB Device tree bindings Documentation, listing it as a supported
+board.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+---
+Changes in version 2:
+- none
+
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 1df32d3..69e4246 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -49,6 +49,8 @@ Boards:
+     compatible = "renesas,genmai", "renesas,r7s72100"
+   - Gose
+     compatible = "renesas,gose", "renesas,r8a7793"
++  - H3ULCB (RTP0RC7795SKB00010S)
++    compatible = "renesas,h3ulcb", "renesas,r8a7795";
+   - Henninger
+     compatible = "renesas,henninger", "renesas,r8a7791"
+   - Koelsch (RTP0RC7791SEB00010S)
+-- 
+1.9.1
