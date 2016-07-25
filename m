@@ -1,92 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:41720 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753023AbcG2Rkg (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56119 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752582AbcGYC35 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 29 Jul 2016 13:40:36 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	sergei.shtylyov@cogentembedded.com, slongerbeam@gmail.com
-Cc: lars@metafoo.de, mchehab@kernel.org, hans.verkuil@cisco.com,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 3/6] media: rcar-vin: fix height for TOP and BOTTOM fields
-Date: Fri, 29 Jul 2016 19:40:09 +0200
-Message-Id: <20160729174012.14331-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+	Sun, 24 Jul 2016 22:29:57 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] SH Drivers Updates for v4.8
+Date: Mon, 25 Jul 2016 11:29:37 +0900
+Message-Id: <cover.1469413328.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The height used for V4L2_FIELD_TOP and V4L2_FIELD_BOTTOM where wrong.
-The frames only contain one filed so the height should be half of the
-frame.
+Hi Linus,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+Please consider these SH drivers updates for v4.8.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index b8c3836..b6e40ea 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -125,6 +125,8 @@ static int rvin_reset_format(struct rvin_dev *vin)
- 	switch (vin->format.field) {
- 	case V4L2_FIELD_TOP:
- 	case V4L2_FIELD_BOTTOM:
-+		vin->format.height /= 2;
-+		break;
- 	case V4L2_FIELD_NONE:
- 	case V4L2_FIELD_INTERLACED_TB:
- 	case V4L2_FIELD_INTERLACED_BT:
-@@ -217,21 +219,13 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	/* Limit to source capabilities */
- 	__rvin_try_format_source(vin, which, pix, source);
- 
--	/* If source can't match format try if VIN can scale */
--	if (source->width != rwidth || source->height != rheight)
--		rvin_scale_try(vin, pix, rwidth, rheight);
--
--	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
--	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
--
--	/* Limit to VIN capabilities */
--	v4l_bound_align_image(&pix->width, 2, RVIN_MAX_WIDTH, walign,
--			      &pix->height, 4, RVIN_MAX_HEIGHT, 2, 0);
--
- 	switch (pix->field) {
--	case V4L2_FIELD_NONE:
- 	case V4L2_FIELD_TOP:
- 	case V4L2_FIELD_BOTTOM:
-+		pix->height /= 2;
-+		source->height /= 2;
-+		break;
-+	case V4L2_FIELD_NONE:
- 	case V4L2_FIELD_INTERLACED_TB:
- 	case V4L2_FIELD_INTERLACED_BT:
- 	case V4L2_FIELD_INTERLACED:
-@@ -241,6 +235,17 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 		break;
- 	}
- 
-+	/* If source can't match format try if VIN can scale */
-+	if (source->width != rwidth || source->height != rheight)
-+		rvin_scale_try(vin, pix, rwidth, rheight);
-+
-+	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
-+	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
-+
-+	/* Limit to VIN capabilities */
-+	v4l_bound_align_image(&pix->width, 2, RVIN_MAX_WIDTH, walign,
-+			      &pix->height, 4, RVIN_MAX_HEIGHT, 2, 0);
-+
- 	pix->bytesperline = max_t(u32, pix->bytesperline,
- 				  rvin_format_bytesperline(pix));
- 	pix->sizeimage = max_t(u32, pix->sizeimage,
--- 
-2.9.0
+I expect this to be my last pull request for these drivers as
+it removes usage of them from Renesas ARM Based SoCs and my
+co-maintenance of them.
+
+The drivers are still used by some SH SoCs and listed under SUPERH
+in the MAINTAINERS file.
+
+
+The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+
+  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-sh-drivers-for-v4.8
+
+for you to fetch changes up to 3fd0498b842f2932558797ec297dc30f6eb5cec0:
+
+  MAINTAINERS: Drop drivers/sh/ for Renesas ARM (2016-05-30 09:41:39 +0900)
+
+----------------------------------------------------------------
+SH Drivers Updates for v4.8
+
+* Drop us of SH Drivers on Renesas ARM Based SoCs
+
+----------------------------------------------------------------
+Geert Uytterhoeven (2):
+      drivers: sh: Stop using the legacy clock domain on ARM
+      MAINTAINERS: Drop drivers/sh/ for Renesas ARM
+
+ MAINTAINERS             | 1 -
+ drivers/Makefile        | 1 -
+ drivers/sh/pm_runtime.c | 9 ---------
+ 3 files changed, 11 deletions(-)
