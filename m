@@ -1,46 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:33476 "EHLO
-	mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751303AbcGUM1z (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56131 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752646AbcGYC37 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 21 Jul 2016 08:27:55 -0400
-Received: by mail-lf0-f46.google.com with SMTP id b199so60561281lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 21 Jul 2016 05:27:55 -0700 (PDT)
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+	Sun, 24 Jul 2016 22:29:59 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH 2/2] dt: arm: shmobile: add H3ULCB board DT bindings
-Date: Thu, 21 Jul 2016 15:27:53 +0300
-Message-Id: <1469104073-20490-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1469103962-20378-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1469103962-20378-1-git-send-email-vladimir.barinov@cogentembedded.com>
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] MAINTAINERS: Drop drivers/sh/ for Renesas ARM
+Date: Mon, 25 Jul 2016 11:29:39 +0900
+Message-Id: <3fd0498b842f2932558797ec297dc30f6eb5cec0.1469413328.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1469413328.git.horms+renesas@verge.net.au>
+References: <cover.1469413328.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1469413328.git.horms+renesas@verge.net.au>
+References: <cover.1469413328.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add H3ULCB Device tree bindings Documentation, listing it as a supported
-board.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+None of the code under drivers/sh/ is used anymore on Renesas ARM.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 1df32d3..69e4246 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -49,6 +49,8 @@ Boards:
-     compatible = "renesas,genmai", "renesas,r7s72100"
-   - Gose
-     compatible = "renesas,gose", "renesas,r8a7793"
-+  - H3ULCB (RTP0RC7795SKB00010S)
-+    compatible = "renesas,h3ulcb", "renesas,r8a7795";
-   - Henninger
-     compatible = "renesas,henninger", "renesas,r8a7791"
-   - Koelsch (RTP0RC7791SEB00010S)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7304d2e37a98..e6bf58769b49 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1664,7 +1664,6 @@ F:	arch/arm/boot/dts/sh*
+ F:	arch/arm/configs/shmobile_defconfig
+ F:	arch/arm/include/debug/renesas-scif.S
+ F:	arch/arm/mach-shmobile/
+-F:	drivers/sh/
+ F:	drivers/soc/renesas/
+ F:	include/linux/soc/renesas/
+ 
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
