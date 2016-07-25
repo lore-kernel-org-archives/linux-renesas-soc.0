@@ -1,55 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:35592 "EHLO
-	mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753295AbcGaNHu (ORCPT
+Received: from mail-it0-f43.google.com ([209.85.214.43]:36850 "EHLO
+	mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750742AbcGYEar (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sun, 31 Jul 2016 09:07:50 -0400
-Received: by mail-lf0-f52.google.com with SMTP id f93so99043969lfi.2
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 31 Jul 2016 06:07:49 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: mchehab@kernel.org, linux-media@vger.kernel.org,
-	g.liakhovetski@gmx.de
-Cc: linux-renesas-soc@vger.kernel.org, niklas.soderlund@ragnatech.se
-Subject: [PATCH] rcar_vin: add support for V4L2_FIELD_ALTERNATE
-Date: Sun, 31 Jul 2016 16:07:45 +0300
-Message-ID: <4854742.fOvMrCAxeI@wasted.cogentembedded.com>
+	Mon, 25 Jul 2016 00:30:47 -0400
+Received: by mail-it0-f43.google.com with SMTP id f6so76283295ith.1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 24 Jul 2016 21:30:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20160725021552.GJ12825@verge.net.au>
+References: <cover.1468808109.git.horms+renesas@verge.net.au>
+ <7322553.kXvQYPfzzh@wuerfel> <20160722015924.GH21943@verge.net.au>
+ <4175400.eEqji2rNII@wuerfel> <20160725021552.GJ12825@verge.net.au>
+From: Olof Johansson <olof@lixom.net>
+Date: Sun, 24 Jul 2016 21:30:46 -0700
+Message-ID: <CAOesGMjQN=kM1iwmXYQpQ4-VdnqJbf3FPZhJFB0LjUuh31qfpw@mail.gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC DT Fixes for v4.8
+To: Simon Horman <horms@verge.net.au>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"arm@kernel.org" <arm@kernel.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The hardware  can capture both odd and even fields in  the separate buffers,
-so  it's possible to support  this field mode. However, if the subdevice
-presents data  in this mode,  we prefer to use the hardware deinterlacing...
+[resending as non-HTML]
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Sun, Jul 24, 2016 at 7:15 PM, Simon Horman <horms@verge.net.au> wrote:
+> On Fri, Jul 22, 2016 at 09:30:58PM +0200, Arnd Bergmann wrote:
+>> On Friday, July 22, 2016 10:59:24 AM CEST Simon Horman wrote:
+>> > On Thu, Jul 21, 2016 at 02:41:52PM +0200, Arnd Bergmann wrote:
+>> > > On Monday, July 18, 2016 11:39:35 AM CEST Simon Horman wrote:
+>> > > > Renesas ARM Based SoC DT Fixes for v4.8
+>> > > >
+>> > > > * Corrections to r8a7792
+>> > > >
+>> > >
+>> > > Merged into next/dt, thanks!
+>> >
+>> > Thanks!
+>> >
+>> > I have queued up another fix for v4.8 since sending the above to you.
+>> > This time it is an SoC (C-code) rather than a DT fix. I am wondering
+>> > if you could offer guidance on:
+>> >
+>> > * If you would prefer me to split fixes out into separate (DT, SoC, ...)
+>> >   branches? If so is that until around rc1 when everything has been
+>> >   merged into the forthcoming release and thereafter you would prefer
+>> >   a single fixes branch?
+>>
+>> I prefer a separate fixes branch. It's fine for all other branches
+>> to be based on top of this branch so you have a working baseline
+>> for testing.
+>
+> Is some sort of minimal base for the fixes branch desired?
+> If should the base be a merge of all the tags you have pulled for v4.8?
+>
+> Currently I have DT fixes and SoC fixes which depend on
+> respective tags that have been accepted for v4.8.
 
----
-This patch is against the 'media_tree.git' repo's 'master' branch.
-This patch needs to be merged before the following ADV7180 driver patch is
-merged: http://www.mail-archive.com/linux-media@vger.kernel.org/msg100410.html
 
- drivers/media/platform/soc_camera/rcar_vin.c |    2 ++
- 1 file changed, 2 insertions(+)
+It's hard to make those one branch without doing your own merge. You
+can't take a merge out of our for-next branch as a base, since those
+aren't stable.
 
-Index: media_tree/drivers/media/platform/soc_camera/rcar_vin.c
-===================================================================
---- media_tree.orig/drivers/media/platform/soc_camera/rcar_vin.c
-+++ media_tree/drivers/media/platform/soc_camera/rcar_vin.c
-@@ -585,6 +585,7 @@ static int rcar_vin_setup(struct rcar_vi
- 		vnmc = VNMC_IM_FULL | VNMC_FOC;
- 		break;
- 	case V4L2_FIELD_NONE:
-+	case V4L2_FIELD_ALTERNATE:
- 		if (is_continuous_transfer(priv)) {
- 			vnmc = VNMC_IM_ODD_EVEN;
- 			progressive = true;
-@@ -1595,6 +1596,7 @@ static int rcar_vin_set_fmt(struct soc_c
- 	case V4L2_FIELD_INTERLACED_BT:
- 		field = pix->field;
- 		break;
-+	case V4L2_FIELD_ALTERNATE:
- 	case V4L2_FIELD_INTERLACED:
- 		/* Query for standard if not explicitly mentioned _TB/_BT */
- 		ret = v4l2_subdev_call(sd, video, querystd, &std);
+Wait for our merges to go into Linus' tree, then use his last merge
+commit as the base (before -rc1 is out).
+
+
+-Olof
