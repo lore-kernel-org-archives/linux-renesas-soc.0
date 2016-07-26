@@ -1,36 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:34656 "EHLO
-	mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751213AbcGZKAa (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:33774 "EHLO
+	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751199AbcGZGFX (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 26 Jul 2016 06:00:30 -0400
-Received: by mail-lf0-f51.google.com with SMTP id l69so1402385lfg.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Jul 2016 03:00:29 -0700 (PDT)
-Subject: Re: [PATCH] rcar-vin: add R-Car gen2 fallback compatibility string
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
-References: <2381051.RUpesOs1q9@wasted.cogentembedded.com>
- <20160726060519.GB17189@bigcity.dyn.berto.se>
+	Tue, 26 Jul 2016 02:05:23 -0400
+Received: by mail-lf0-f45.google.com with SMTP id b199so143022687lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 Jul 2016 23:05:22 -0700 (PDT)
+Date: Tue, 26 Jul 2016 08:05:20 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+	<niklas.soderlund@ragnatech.se>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <f42205ba-18d8-b510-8cd1-17b09098cb43@cogentembedded.com>
-Date: Tue, 26 Jul 2016 13:00:26 +0300
+Subject: Re: [PATCH] rcar-vin: add R-Car gen2 fallback compatibility string
+Message-ID: <20160726060519.GB17189@bigcity.dyn.berto.se>
+References: <2381051.RUpesOs1q9@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <20160726060519.GB17189@bigcity.dyn.berto.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <2381051.RUpesOs1q9@wasted.cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 7/26/2016 9:05 AM, Niklas Söderlund wrote:
+On 2016-07-25 22:19:33 +0300, Sergei Shtylyov wrote:
+> Such fallback string is present in the 'soc_camera' version of the R-Car VIN
+> driver, so need  to add it here as well...
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
->> Such fallback string is present in the 'soc_camera' version of the R-Car VIN
->> driver, so need  to add it here as well...
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
-> Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-    Thanks and sorry for forgetting to CC you.
+> 
+> ---
+> This patch is against the 'media_tree.git' repo's 'master' branch.
+> This patch conflicts with Niklas Soderlund's former patch "[media] rcar-vin:
+> add  Gen2 and Gen3 fallback compatibility strings"), I got his consent about
+> splitting the gen2 part  of that patch to a separate patch...
+> 
+>  drivers/media/platform/rcar-vin/rcar-core.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> Index: media_tree/drivers/media/platform/rcar-vin/rcar-core.c
+> ===================================================================
+> --- media_tree.orig/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ media_tree/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -209,6 +209,7 @@ static const struct of_device_id rvin_of
+>  	{ .compatible = "renesas,vin-r8a7790", .data = (void *)RCAR_GEN2 },
+>  	{ .compatible = "renesas,vin-r8a7779", .data = (void *)RCAR_H1 },
+>  	{ .compatible = "renesas,vin-r8a7778", .data = (void *)RCAR_M1 },
+> +	{ .compatible = "renesas,rcar-gen2-vin", .data = (void *)RCAR_GEN2 },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, rvin_of_id_table);
+> 
 
-MBR, Sergei
+-- 
+Regards,
+Niklas S�derlund
