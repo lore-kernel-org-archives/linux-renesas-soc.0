@@ -1,81 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56051 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:44794 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751200AbcGGOj5 (ORCPT
+	with ESMTP id S932380AbcGZAkm (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 7 Jul 2016 10:39:57 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL v2] Second Round of Renesas ARM64 Based SoC DT Updates for v4.8
-Date: Thu,  7 Jul 2016 16:39:45 +0200
-Message-Id: <cover.1467900241.git.horms+renesas@verge.net.au>
+	Mon, 25 Jul 2016 20:40:42 -0400
+Date: Tue, 26 Jul 2016 09:40:38 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, devicetree@vger.kernel.org,
+	magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] ARM: dts: r8a7792: add I2C clocks
+Message-ID: <20160726004038.GB8754@verge.net.au>
+References: <1618499.8bcj8adpVO@wasted.cogentembedded.com>
+ <1841031.5KOUl1WdV5@wasted.cogentembedded.com>
+ <20160725015137.GH12825@verge.net.au>
+ <90b02c03-151d-4480-cb61-495979557078@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <90b02c03-151d-4480-cb61-495979557078@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+On Mon, Jul 25, 2016 at 01:37:23PM +0300, Sergei Shtylyov wrote:
+> On 7/25/2016 4:51 AM, Simon Horman wrote:
+> 
+> >>Describe the I2C[0-5] clocks in the R8A7792 device tree.
+> >>
+> >>Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >
+> >Thanks, I have queued this up for v4.8.
+> 
+>    4.9 you mean?
 
-Please consider these second round of Renesas ARM64 based SoC DT updates for v4.8.
-
-This pull request is based on a merge of:
-
-* The previous round of such requests, tagged as renesas-arm64-dt2-for-v4.8,
-  which you have already pulled.
-
-* The clk-renesas-for-v4.8-tag2 tag of Geert Uytterhoeven's
-  renesas-driver's tree which has been accepted into clk-next.
-
-  This tag provides clock definitions needed by the r8a7796 DT files.
-
-This is v2 of this pull request. v1 did not include the
-clk-renesas-for-v4.8-tag2 tag and instead provided a duplicate clk patch.
-
-The following changes since commit fffae950cf00a60ff584618ecc939c6a931e4bbb:
-
-  Merge tag 'clk-renesas-for-v4.8-tag2' into HEAD (2016-07-07 10:21:07 +0200)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt2-for-v4.8
-
-for you to fetch changes up to c805f1a7013a76ae63c002e52cc667d7c37228ea:
-
-  arm64: dts: r8a7796/salvator-x: Enable watchdog timer (2016-07-07 10:21:28 +0200)
-
-----------------------------------------------------------------
-Second Round of Renesas ARM64 Based SoC DT Updates for v4.8
-
-* Add support for  r8a7796/salvator-x (R-Car Gen 3 M3-W)
-* Add CAN support to r8a7795 (R-Car Gen 3 H3)
-
-----------------------------------------------------------------
-Geert Uytterhoeven (5):
-      arm64: dts: r8a7795: Add missing blank lines between cpu nodes
-      arm64: dts: r8a7796: Add SYSC PM Domains
-      arm64: dts: r8a7796: Use SYSC "always-on" PM Domain
-      arm64: dts: r8a7796: Add RWDT node
-      arm64: dts: r8a7796/salvator-x: Enable watchdog timer
-
-Ramesh Shanmugasundaram (1):
-      arm64: dts: r8a7795: Add CAN FD support
-
-Simon Horman (1):
-      arm64: dts: r8a7796: Add Renesas R8A7796 SoC support
-
-Takeshi Kihara (1):
-      arm64: dts: salvator-x: add Salvator-X board on R8A7796 SoC
-
- Documentation/devicetree/bindings/arm/shmobile.txt |   4 +
- arch/arm64/Kconfig.platforms                       |   6 +
- arch/arm64/boot/dts/renesas/Makefile               |   1 +
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  26 ++++
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  50 ++++++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 138 +++++++++++++++++++++
- 6 files changed, 225 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7796.dtsi
+Yes, 4.9.
