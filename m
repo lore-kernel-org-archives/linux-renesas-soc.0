@@ -1,71 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33462 "EHLO
-	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751847AbcGKJoz (ORCPT
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:33768 "EHLO
+	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758417AbcG0VAD (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 11 Jul 2016 05:44:55 -0400
-Date: Mon, 11 Jul 2016 11:44:52 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
-	linux-pwm@vger.kernel.org, magnus.damm@gmail.com,
-	Ryo Kodama <ryo.kodama.vz@renesas.com>,
-	Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-Subject: Re: [PATCH v3 1/6] pwm: rcar: Use ARCH_RENESAS
-Message-ID: <20160711094452.GF5823@ulmo.ba.sec>
-References: <1459424356-26061-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <1459424356-26061-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+	Wed, 27 Jul 2016 17:00:03 -0400
+Received: by mail-lf0-f47.google.com with SMTP id b199so35981212lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Jul 2016 14:00:02 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 2/6] ARM: dts: r8a7794: add MSTP5 clocks
+Date: Wed, 27 Jul 2016 23:59:59 +0300
+Message-ID: <3560619.yXVhzgu5Aq@wasted.cogentembedded.com>
+In-Reply-To: <3910788.ckTpUWEs6B@wasted.cogentembedded.com>
+References: <3910788.ckTpUWEs6B@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XIiC+We3v3zHqZ6Z"
-Content-Disposition: inline
-In-Reply-To: <1459424356-26061-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Add some MSTP5 clocks to the R8A7794 device tree.
 
---XIiC+We3v3zHqZ6Z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-On Thu, Mar 31, 2016 at 01:39:11PM +0200, Ulrich Hecht wrote:
-> From: Ryo Kodama <ryo.kodama.vz@renesas.com>
->=20
-> Replace ARCH_RCAR_GEN{1,2} with ARCH_RENESAS in order to support R-Car Ge=
-n3.
->=20
-> Signed-off-by: Ryo Kodama <ryo.kodama.vz@renesas.com>
-> Signed-off-by: Harunobu Kurokawa <harunobu.kurokawa.dn@renesas.com>
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/pwm/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+---
+Changes in version 4:
+- removed non-existant thermal sensor clock;
+- refreshed the patch.
 
-Applied, thanks.
+Changes in version 3:
+- refreshed the patch.
 
-Thierry
+Changes in version 2:
+- added "the" article to the change log.
 
---XIiC+We3v3zHqZ6Z
-Content-Type: application/pgp-signature; name="signature.asc"
+ arch/arm/boot/dts/r8a7794.dtsi            |    9 +++++++++
+ include/dt-bindings/clock/r8a7794-clock.h |    1 +
+ 2 files changed, 10 insertions(+)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXg2qTAAoJEN0jrNd/PrOhrAMP/0gM8YBM6POHbWuPMv1b1cfN
-gPlKk+HFFKka4IvGcJZN80jcGypyaE9On74zXNv9VCwSpAS1shuQFpExLme9+t6X
-J0sdO1gPzxjTMIFWTfwzUg82QW23NMpK1qWIDcWvgg6FxT4vWEKgZrfRaInxLQ+C
-S//cQhuSkrji5HkPo0kYKSd/Y0o7DTWFv8bgTzLzzRzjSLvO/gcKBX5pBHRPr71A
-ll6ohOSJlARGoY2sloUgbpczzEGpSfQmM4c5RB/VHllKNDtJB498G3EKLp0Q2zmr
-AGpBqdkgclThVKMHYLFLew9qzcP9+PkbPrPbCFlTMu7ODpBYl1iFRYvDpVe7lRmz
-EtIMPYzA0Yg9Q5eM4J8J6//rmqtYTtYmenrTFyZvXN/hfpynohyfuWdPdW2/u5C/
-/Cu9jzT16qc1CXZRFwoejEanX4eu3/F/M7DUrZ5K4b66A5Z2dzQwVy2jn6Z/o2q9
-tikEFr9C3ZKLnv6IAB8hHc5NdizmM5qZVhi/WxozKnVkJns+dm0kG21Ibx/R6OxP
-o/NcD/LmhDIUpmR50OHUAySEj2nR7gWjAt4JD8fZib7vn+DVS1OnX5AZVEQhqZbc
-0iYCRV/U2hHIllyxdXLZjf5V7AQzTFyw0tXi1t9J0mGc6QatuRgA3IdbGexJNSn/
-OIxFtfnoLPQ+O9P+xthx
-=AFMx
------END PGP SIGNATURE-----
-
---XIiC+We3v3zHqZ6Z--
+Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
++++ renesas/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1204,6 +1204,15 @@
+ 			clock-indices = <R8A7794_CLK_IRQC>;
+ 			clock-output-names = "irqc";
+ 		};
++		mstp5_clks: mstp5_clks@e6150144 {
++			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
++			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
++			clocks = <&hp_clk>, <&extal_clk>, <&p_clk>;
++			#clock-cells = <1>;
++			clock-indices = <R8A7794_CLK_AUDIO_DMAC0
++					 R8A7794_CLK_PWM>;
++			clock-output-names = "audmac0", "pwm";
++		};
+ 		mstp7_clks: mstp7_clks@e615014c {
+ 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
+Index: renesas/include/dt-bindings/clock/r8a7794-clock.h
+===================================================================
+--- renesas.orig/include/dt-bindings/clock/r8a7794-clock.h
++++ renesas/include/dt-bindings/clock/r8a7794-clock.h
+@@ -67,6 +67,7 @@
+ #define R8A7794_CLK_IRQC		7
+ 
+ /* MSTP5 */
++#define R8A7794_CLK_AUDIO_DMAC0		2
+ #define R8A7794_CLK_PWM			23
+ 
+ /* MSTP7 */
