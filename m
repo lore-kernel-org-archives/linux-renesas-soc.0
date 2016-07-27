@@ -1,110 +1,145 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41245 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750701AbcG0ENh (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Jul 2016 00:13:37 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 1/4] mmc: tmio: enhance illegal sequence handling
-Date: Wed, 27 Jul 2016 13:13:20 +0900
-Message-Id: <1469592803-13842-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1469592803-13842-1-git-send-email-horms+renesas@verge.net.au>
-References: <1469592803-13842-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 6/6] ARM: dts: silk: add sound support
+Date: Thu, 28 Jul 2016 00:05:58 +0300
+Message-ID: <1642375.kgEH5qZZyN@wasted.cogentembedded.com>
+In-Reply-To: <3910788.ckTpUWEs6B@wasted.cogentembedded.com>
+References: <3910788.ckTpUWEs6B@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ai Kyuse <ai.kyuse.uw@renesas.com>
+Define the SILK board dependent part of the R8A7794 sound  device node.
+Add device node for Asahi Kasei AK4643 stereo codec to the I2C1 bus.
+Add the "simple-audio-card" device node to interconnect the SoC sound
+device  and the codec.
 
-An illegal sequence command error may occur if there is a stopbit or
-cmd_index error as well as a CRC error. The correct course of action
-is to re-enable IRQs
+This patch is based on the commit 493b4da7c10c ("ARM: dts: porter: add
+sound support").
 
-An illegal sequence data error may occur if there is a CRC or stopbit
-error,  or underrun. In this case set data->error correctly.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This is in preparation for enabling tuning support which relies on
-differentiating between illegal sequence and other errors.
-
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-[simon: broken out of a larger patch]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v4
-* Added Ack from Wolfram Sang
+Changes in version 3:
+- new patch in this series;
+- renamed the X9 clock node, getting rid of the "clock-output-names" property;
+- removed the "renesas," prefix from the pin properties;
+- refreshed the patch.
 
-v3
-* No change
+ arch/arm/boot/dts/r8a7794-silk.dts |   70 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-v2
-* Broken out of a larger patch (but forgot to post)
----
- drivers/mmc/host/tmio_mmc_pio.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+Index: renesas/arch/arm/boot/dts/r8a7794-silk.dts
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7794-silk.dts
++++ renesas/arch/arm/boot/dts/r8a7794-silk.dts
+@@ -10,6 +10,17 @@
+  * kind, whether express or implied.
+  */
+ 
++/*
++ * SSI-AK4643
++ *
++ * SW1: 2-1: AK4643
++ *      2-3: ADV7511
++ *
++ * This command is required before playback/capture:
++ *
++ *	amixer set "LINEOUT Mixer DACL" on
++ */
++
+ /dts-v1/;
+ #include "r8a7794.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
+@@ -119,6 +130,29 @@
+ 		#clock-cells = <0>;
+ 		clock-frequency = <74250000>;
+ 	};
++
++	x9_clk: audio_clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <12288000>;
++	};
++
++	sound {
++		compatible = "simple-audio-card";
++
++		simple-audio-card,format = "left_j";
++		simple-audio-card,bitclock-master = <&soundcodec>;
++		simple-audio-card,frame-master = <&soundcodec>;
++
++		simple-audio-card,cpu {
++			sound-dai = <&rcar_sound>;
++		};
++
++		soundcodec: simple-audio-card,codec {
++			sound-dai = <&ak4643>;
++			clocks = <&x9_clk>;
++		};
++	};
+ };
+ 
+ &extal_clk {
+@@ -193,6 +227,16 @@
+ 		groups = "du1_rgb666", "du1_sync", "du1_disp", "du1_clk0_out";
+ 		function = "du1";
+ 	};
++
++	ssi_pins: sound {
++		groups = "ssi0129_ctrl", "ssi0_data", "ssi1_data";
++		function = "ssi";
++	};
++
++	audio_clk_pins: audio_clk {
++		groups = "audio_clkc";
++		function = "audio_clk";
++	};
+ };
+ 
+ &scif2 {
+@@ -230,6 +274,12 @@
+ 	status = "okay";
+ 	clock-frequency = <400000>;
+ 
++	ak4643: codec@12 {
++		compatible = "asahi-kasei,ak4643";
++		#sound-dai-cells = <0>;
++		reg = <0x12>;
++	};
++
+ 	composite-in@20 {
+ 		compatible = "adi,adv7180";
+ 		reg = <0x20>;
+@@ -392,3 +442,23 @@
+ 		};
+ 	};
+ };
++
++&rcar_sound {
++	pinctrl-0 = <&ssi_pins &audio_clk_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	/* Single DAI */
++	#sound-dai-cells = <0>;
++
++	rcar_sound,dai {
++		dai0 {
++			playback = <&ssi0>;
++			capture  = <&ssi1>;
++		};
++	};
++};
++
++&ssi1 {
++	shared-pin;
++};
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 92467efc4e2c..a9d07b5f3c63 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -520,7 +520,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 	schedule_work(&host->done);
- }
- 
--static void tmio_mmc_data_irq(struct tmio_mmc_host *host)
-+static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
- {
- 	struct mmc_data *data;
- 	spin_lock(&host->lock);
-@@ -529,6 +529,9 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host)
- 	if (!data)
- 		goto out;
- 
-+	if (stat & TMIO_STAT_CRCFAIL || stat & TMIO_STAT_STOPBIT_ERR ||
-+	    stat & TMIO_STAT_TXUNDERRUN)
-+		data->error = -EILSEQ;
- 	if (host->chan_tx && (data->flags & MMC_DATA_WRITE) && !host->force_pio) {
- 		u32 status = sd_ctrl_read16_and_16_as_32(host, CTL_STATUS);
- 		bool done = false;
-@@ -577,8 +580,6 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host,
- 		goto out;
- 	}
- 
--	host->cmd = NULL;
--
- 	/* This controller is sicker than the PXA one. Not only do we need to
- 	 * drop the top 8 bits of the first response word, we also need to
- 	 * modify the order of the response for short response command types.
-@@ -598,14 +599,16 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host,
- 
- 	if (stat & TMIO_STAT_CMDTIMEOUT)
- 		cmd->error = -ETIMEDOUT;
--	else if (stat & TMIO_STAT_CRCFAIL && cmd->flags & MMC_RSP_CRC)
-+	else if ((stat & TMIO_STAT_CRCFAIL && cmd->flags & MMC_RSP_CRC) ||
-+		 stat & TMIO_STAT_STOPBIT_ERR ||
-+		 stat & TMIO_STAT_CMD_IDX_ERR)
- 		cmd->error = -EILSEQ;
- 
- 	/* If there is data to handle we enable data IRQs here, and
- 	 * we will ultimatley finish the request in the data_end handler.
- 	 * If theres no data or we encountered an error, finish now.
- 	 */
--	if (host->data && !cmd->error) {
-+	if (host->data && (!cmd->error || cmd->error == -EILSEQ)) {
- 		if (host->data->flags & MMC_DATA_READ) {
- 			if (host->force_pio || !host->chan_rx)
- 				tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_READOP);
-@@ -666,7 +669,7 @@ static bool __tmio_mmc_sdcard_irq(struct tmio_mmc_host *host,
- 	/* Data transfer completion */
- 	if (ireg & TMIO_STAT_DATAEND) {
- 		tmio_mmc_ack_mmc_irqs(host, TMIO_STAT_DATAEND);
--		tmio_mmc_data_irq(host);
-+		tmio_mmc_data_irq(host, status);
- 		return true;
- 	}
- 
--- 
-2.7.0.rc3.207.g0ac5344
