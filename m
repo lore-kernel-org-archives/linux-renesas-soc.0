@@ -1,57 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:36904 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751756AbcGRCjq (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59278 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752142AbcG0Kr5 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Sun, 17 Jul 2016 22:39:46 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC DT Fixes for v4.8
-Date: Mon, 18 Jul 2016 11:39:35 +0900
-Message-Id: <cover.1468808109.git.horms+renesas@verge.net.au>
+	Wed, 27 Jul 2016 06:47:57 -0400
+Date: Wed, 27 Jul 2016 11:47:41 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Linux-ALSA <alsa-devel@alsa-project.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org
+Message-ID: <20160727104741.GJ11806@sirena.org.uk>
+References: <8760rrdb10.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="1EKig6ypoSyM7jaD"
+Content-Disposition: inline
+In-Reply-To: <8760rrdb10.wl%kuninori.morimoto.gx@renesas.com>
+Subject: Re: Is this bug ? dev_set/get_drvdata() of rtd
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
 
-Please consider these Renesas ARM based SoC DT fixes for v4.8.
+--1EKig6ypoSyM7jaD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This fixes some problems with clock descriptions in DT for the r8a7792 SoC
-which is new in v4.8.
+On Wed, Jul 27, 2016 at 03:25:41AM +0000, Kuninori Morimoto wrote:
 
-This pull request is based on "Second Round of Renesas ARM Based SoC DT
-Updates for v4.8", tagged as renesas-dt2-for-v4.8, which you have already
-pulled.
+> I think device data of "rtd->dev" is set as "rtd" on soc_post_component_i=
+nit()
+> by using dev_set_drvdata(),
+> and many soc-core functions are based on it (=3D they are using dev_get_d=
+rvdata())
 
+> But, soc.h has snd_soc_pcm_set_drvdata().=20
+> device data of rtd->dev will be overwrite by this function ?
+> But is this OK ? or bug ?
 
-The following changes since commit 8fd763c75c3ab8e72e5d7f0d4c53531e6ff76197:
+Looks like a bug, I suspect there's some confusion caused by old code
+expecting there to be a soc-card device there and getting confused.
 
-  ARM: dts: r8a7792: add SMP support (2016-06-30 14:26:14 +0200)
+> static ssize_t codec_reg_show(xxx)
+> {
+> 	struct snd_soc_pcm_runtime *rtd =3D dev_get_drvdata(dev);
+> 	...
+> }
 
-are available in the git repository at:
+We can probably kill this file now, everything is on regmap now.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-fixes-for-v4.8
+>=20
+> static ssize_t pmdown_time_show(xxx)
+> {
+> 	struct snd_soc_pcm_runtime *rtd =3D dev_get_drvdata(dev);
+> 	...
+> }
 
-for you to fetch changes up to e0c3f92a08f3e0a95024d0d032564fdc1ee96f54:
+These ones will need a bit more looking at, they probably want to be on
+the card using the card device I think.
 
-  ARM: dts: r8a7792: remove ADSP clock (2016-07-15 13:22:45 +0900)
+--1EKig6ypoSyM7jaD
+Content-Type: application/pgp-signature; name="signature.asc"
 
-----------------------------------------------------------------
-Renesas ARM Based SoC DT Fixes for v4.8
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-* Corrections to r8a7792
+iQEcBAEBCAAGBQJXmJFMAAoJECTWi3JdVIfQBnEH/0IS7/GObfcuu56346lBU+on
+krZhUHd/kd4M+WbhLdhgBIsVno1VFM75Qlaw1hZJdh8Dx+suwPUNS1lnxA4l9SRx
+N8Rq6ArL7U6JiNBO7jw6Fj+uCli4IE5uYOPm2MUMMqrEnQpvXCbUd7P3B2B0zmJ9
+UgEU4nPdRr0zq9giMNVV4NdUYdgHtpp0SGe32Vp6sRE8VPRumAYmIpoVaOYU+k54
+UrEsY1q7CO1aVwrBDAIhZjyDjYNrMsk/D+yQdNLDV8iq44QBhOzhOpQaWGNVVm/a
+yusMvmbQpP0QrY1Wvg4SRP/MADyLhfCFuoNFsezYTOaSnD0LU07Z9++dMSQWMEc=
+=g/hZ
+-----END PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Sergei Shtylyov (2):
-      ARM: dts: r8a7792: add PLL1 divided by 2 clock
-      ARM: dts: r8a7792: remove ADSP clock
-
- arch/arm/boot/dts/r8a7792.dtsi            | 9 ++++++++-
- include/dt-bindings/clock/r8a7792-clock.h | 1 -
- 2 files changed, 8 insertions(+), 2 deletions(-)
+--1EKig6ypoSyM7jaD--
