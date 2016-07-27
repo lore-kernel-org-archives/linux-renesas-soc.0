@@ -1,64 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:41696 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752283AbcG2Rkf (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34946 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932366AbcG0TJv (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 29 Jul 2016 13:40:35 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	sergei.shtylyov@cogentembedded.com, slongerbeam@gmail.com
-Cc: lars@metafoo.de, mchehab@kernel.org, hans.verkuil@cisco.com,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/6] media: rcar-vin: allow field to be changed
-Date: Fri, 29 Jul 2016 19:40:07 +0200
-Message-Id: <20160729174012.14331-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+	Wed, 27 Jul 2016 15:09:51 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Mark Brown <broonie@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	tomoharu.fukawa.eb@renesas.com,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	naoya.shiiba.nx@renesas.com, mitsuhiro.kimura.kc@renesas.com,
+	hideya.tanaka.nx@renesas.com, tomohiro.komagata.aj@renesas.com,
+	khiem.nguyen.xt@rvc.renesas.com, hien.dang.eb@renesas.com,
+	ryo.kodama.vz@renesas.com, takeshi.kihara.df@renesas.com,
+	ryo.kataoka.wt@renesas.com, takamitsu.honda.pv@renesas.com,
+	hiroyuki.yokoyama.vx@renesas.com, Chris.Paterson2@renesas.com,
+	kouei.abe.cp@renesas.com, ren.imaoka.vj@renesas.com,
+	Simon <horms@verge.net.au>, takahiko.gomi.yn@renesas.com,
+	yuta.wakasawa.pv@renesas.com, yoshifumi.hosoya.wj@renesas.com,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-renesas-soc@vger.kernel.org, harunobu.kurokawa.dn@renesas.com
+In-Reply-To: <87h9bewkwu.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bSUD7-0003qv-0l@debutante>
+Date: Wed, 27 Jul 2016 20:09:41 +0100
+Subject: Applied "ASoC: rsnd: Fixup SRCm_IFSVR calculate method" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The driver forced whatever field was set by the source subdevice to be
-used. This patch allows the user to change from the default field.
+The patch
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+   ASoC: rsnd: Fixup SRCm_IFSVR calculate method
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 24e06559a8f52889b3dd581d2ddd572421a73ae0 Mon Sep 17 00:00:00 2001
+From: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Date: Mon, 25 Jul 2016 01:52:43 +0000
+Subject: [PATCH] ASoC: rsnd: Fixup SRCm_IFSVR calculate method
+
+This patch fixes the calculation accuracy degradation of SRCm_IFSVR
+register value.
+
+Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ sound/soc/sh/rcar/src.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 10a5c10..346339f 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -102,6 +102,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 	struct v4l2_subdev_format format = {
- 		.which = which,
- 	};
-+	enum v4l2_field field;
- 	int ret;
- 
- 	sd = vin_to_source(vin);
-@@ -114,6 +115,8 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 
- 	format.pad = vin->src_pad_idx;
- 
-+	field = pix->field;
+diff --git a/sound/soc/sh/rcar/src.c b/sound/soc/sh/rcar/src.c
+index e39f916d0f2f..969a5169de25 100644
+--- a/sound/soc/sh/rcar/src.c
++++ b/sound/soc/sh/rcar/src.c
+@@ -226,8 +226,12 @@ static void rsnd_src_set_convert_rate(struct rsnd_dai_stream *io,
+ 	ifscr = 0;
+ 	fsrate = 0;
+ 	if (fin != fout) {
++		u64 n;
 +
- 	ret = v4l2_device_call_until_err(sd->v4l2_dev, 0, pad, set_fmt,
- 					 pad_cfg, &format);
- 	if (ret < 0)
-@@ -121,6 +124,8 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 		ifscr = 1;
+-		fsrate = 0x0400000 / fout * fin;
++		n = (u64)0x0400000 * fin;
++		do_div(n, fout);
++		fsrate = n;
+ 	}
  
- 	v4l2_fill_pix_format(pix, &format.format);
- 
-+	pix->field = field;
-+
- 	source->width = pix->width;
- 	source->height = pix->height;
- 
+ 	/*
 -- 
-2.9.0
+2.8.1
