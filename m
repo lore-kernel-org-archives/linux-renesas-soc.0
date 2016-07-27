@@ -1,198 +1,243 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:56074 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753901AbcGSOXP (ORCPT
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:34732 "EHLO
+	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758377AbcG0VDP (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 19 Jul 2016 10:23:15 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
-	hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 10/16] [media] rcar-vin: move media bus information to struct rvin_graph_entity
-Date: Tue, 19 Jul 2016 16:21:01 +0200
-Message-Id: <20160719142107.22358-11-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
+	Wed, 27 Jul 2016 17:03:15 -0400
+Received: by mail-lf0-f48.google.com with SMTP id l69so35959473lfg.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Jul 2016 14:03:15 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 5/6] ARM: dts: r8a7794: add sound support
+Date: Thu, 28 Jul 2016 00:03:10 +0300
+Message-ID: <13007919.NiWnfcEmq5@wasted.cogentembedded.com>
+In-Reply-To: <3910788.ckTpUWEs6B@wasted.cogentembedded.com>
+References: <3910788.ckTpUWEs6B@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The primary reason for this change is to prepare for Gen3 support where
-there will be more then one possible video source. Each source will have
-its own media bus format and code, so it needs to be moved from the per
-device structure to a structure used to represent an individual
-connection to a video source.
+Define the generic R8A7794 part of  the sound device node.
+This sound device  is a complex one and comprises the Audio Clock Generator
+(ADG), Sampling Rate Converter Unit (SCU), Serial Sound Interface [Unit]
+(SSI[U]), and Audio DMAC-Peripheral-Peripheral.
+It is up  to the board file to enable the device.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+This patch is based on the R8A7791 sound work by Kuninori Morimoto.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 12 ++++++------
- drivers/media/platform/rcar-vin/rcar-dma.c  | 10 +++++-----
- drivers/media/platform/rcar-vin/rcar-v4l2.c |  2 +-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  9 +++++----
- 4 files changed, 17 insertions(+), 16 deletions(-)
+Changes in version 4:
+- removed the SRC0/7/8/9 clocks;
+- refreshed the patch.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 6934940..fa1fa53 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -31,9 +31,9 @@
- 
- #define notifier_to_vin(n) container_of(n, struct rvin_dev, notifier)
- 
--static bool rvin_mbus_supported(struct rvin_dev *vin)
-+static bool rvin_mbus_supported(struct rvin_graph_entity *entity)
- {
--	struct v4l2_subdev *sd = vin->digital.subdev;
-+	struct v4l2_subdev *sd = entity->subdev;
- 	struct v4l2_subdev_mbus_code_enum code = {
- 		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+Changes in version 3:
+- added back (now disabled) SRC0 node;
+- refreshed the patch.
+
+Changes in version 2:
+- added "ctu.[01]", "mix.[01]", "dvc.[01]" to the "clock-names" prop;
+- added  CTU/DVC/MIX subnodes;
+- removed SRC0/7/8/9 subnodes;
+- added missing colon to the subject.
+
+ arch/arm/boot/dts/r8a7794.dtsi |  181 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 181 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
++++ renesas/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1416,4 +1416,185 @@
+ 		#iommu-cells = <1>;
+ 		status = "disabled";
  	};
-@@ -47,7 +47,7 @@ static bool rvin_mbus_supported(struct rvin_dev *vin)
- 		case MEDIA_BUS_FMT_UYVY8_2X8:
- 		case MEDIA_BUS_FMT_UYVY10_2X10:
- 		case MEDIA_BUS_FMT_RGB888_1X24:
--			vin->source.code = code.code;
-+			entity->code = code.code;
- 			return true;
- 		default:
- 			break;
-@@ -97,14 +97,14 @@ static int rvin_digital_notify_complete(struct v4l2_async_notifier *notifier)
- 	int ret;
- 
- 	/* Verify subdevices mbus format */
--	if (!rvin_mbus_supported(vin)) {
-+	if (!rvin_mbus_supported(&vin->digital)) {
- 		vin_err(vin, "Unsupported media bus format for %s\n",
- 			vin->digital.subdev->name);
- 		return -EINVAL;
- 	}
- 
- 	vin_dbg(vin, "Found media bus format for %s: %d\n",
--		vin->digital.subdev->name, vin->source.code);
-+		vin->digital.subdev->name, vin->digital.code);
- 
- 	ret = v4l2_device_register_subdev_nodes(&vin->v4l2_dev);
- 	if (ret < 0) {
-@@ -205,7 +205,7 @@ static int rvin_digital_graph_parse(struct rvin_dev *vin)
- 	}
- 	of_node_put(np);
- 
--	ret = rvin_digitial_parse_v4l2(vin, ep, &vin->mbus_cfg);
-+	ret = rvin_digitial_parse_v4l2(vin, ep, &vin->digital.mbus_cfg);
- 	of_node_put(ep);
- 	if (ret)
- 		return ret;
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 7249c4f..79e7963 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -163,7 +163,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 	/*
- 	 * Input interface
- 	 */
--	switch (vin->source.code) {
-+	switch (vin->digital.code) {
- 	case MEDIA_BUS_FMT_YUYV8_1X16:
- 		/* BT.601/BT.1358 16bit YCbCr422 */
- 		vnmc |= VNMC_INF_YUV16;
-@@ -171,7 +171,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	case MEDIA_BUS_FMT_UYVY8_2X8:
- 		/* BT.656 8bit YCbCr422 or BT.601 8bit YCbCr422 */
--		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
-+		vnmc |= vin->digital.mbus_cfg.type == V4L2_MBUS_BT656 ?
- 			VNMC_INF_YUV8_BT656 : VNMC_INF_YUV8_BT601;
- 		input_is_yuv = true;
- 		break;
-@@ -180,7 +180,7 @@ static int rvin_setup(struct rvin_dev *vin)
- 		break;
- 	case MEDIA_BUS_FMT_UYVY10_2X10:
- 		/* BT.656 10bit YCbCr422 or BT.601 10bit YCbCr422 */
--		vnmc |= vin->mbus_cfg.type == V4L2_MBUS_BT656 ?
-+		vnmc |= vin->digital.mbus_cfg.type == V4L2_MBUS_BT656 ?
- 			VNMC_INF_YUV10_BT656 : VNMC_INF_YUV10_BT601;
- 		input_is_yuv = true;
- 		break;
-@@ -192,11 +192,11 @@ static int rvin_setup(struct rvin_dev *vin)
- 	dmr2 = VNDMR2_FTEV | VNDMR2_VLV(1);
- 
- 	/* Hsync Signal Polarity Select */
--	if (!(vin->mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
-+	if (!(vin->digital.mbus_cfg.flags & V4L2_MBUS_HSYNC_ACTIVE_LOW))
- 		dmr2 |= VNDMR2_HPS;
- 
- 	/* Vsync Signal Polarity Select */
--	if (!(vin->mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
-+	if (!(vin->digital.mbus_cfg.flags & V4L2_MBUS_VSYNC_ACTIVE_LOW))
- 		dmr2 |= VNDMR2_VPS;
- 
- 	/*
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index ef3464d..d0e9d65 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -106,7 +106,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 
- 	sd = vin_to_source(vin);
- 
--	v4l2_fill_mbus_format(&format.format, pix, vin->source.code);
-+	v4l2_fill_mbus_format(&format.format, pix, vin->digital.code);
- 
- 	pad_cfg = v4l2_subdev_alloc_pad_config(sd);
- 	if (pad_cfg == NULL)
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 8f25c4b..972eb30 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -50,12 +50,10 @@ enum rvin_dma_state {
- 
- /**
-  * struct rvin_source_fmt - Source information
-- * @code:	Media bus format from source
-  * @width:	Width from source
-  * @height:	Height from source
-  */
- struct rvin_source_fmt {
--	u32 code;
- 	u32 width;
- 	u32 height;
- };
-@@ -74,10 +72,15 @@ struct rvin_video_format {
-  * struct rvin_graph_entity - Video endpoint from async framework
-  * @asd:	sub-device descriptor for async framework
-  * @subdev:	subdevice matched using async framework
-+ * @code:	Media bus format from source
-+ * @mbus_cfg:	Media bus format from DT
-  */
- struct rvin_graph_entity {
- 	struct v4l2_async_subdev asd;
- 	struct v4l2_subdev *subdev;
 +
-+	u32 code;
-+	struct v4l2_mbus_config mbus_cfg;
++	rcar_sound: sound@ec500000 {
++		/*
++		 * #sound-dai-cells is required
++		 *
++		 * Single DAI : #sound-dai-cells = <0>;         <&rcar_sound>;
++		 * Multi  DAI : #sound-dai-cells = <1>;         <&rcar_sound N>;
++		 */
++		compatible = "renesas,rcar_sound-r8a7794",
++			     "renesas,rcar_sound-gen2";
++		reg =	<0 0xec500000 0 0x1000>, /* SCU */
++			<0 0xec5a0000 0 0x100>,  /* ADG */
++			<0 0xec540000 0 0x1000>, /* SSIU */
++			<0 0xec541000 0 0x280>,  /* SSI */
++			<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri */
++		reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
++
++		clocks = <&mstp10_clks R8A7794_CLK_SSI_ALL>,
++			 <&mstp10_clks R8A7794_CLK_SSI9>,
++			 <&mstp10_clks R8A7794_CLK_SSI8>,
++			 <&mstp10_clks R8A7794_CLK_SSI7>,
++			 <&mstp10_clks R8A7794_CLK_SSI6>,
++			 <&mstp10_clks R8A7794_CLK_SSI5>,
++			 <&mstp10_clks R8A7794_CLK_SSI4>,
++			 <&mstp10_clks R8A7794_CLK_SSI3>,
++			 <&mstp10_clks R8A7794_CLK_SSI2>,
++			 <&mstp10_clks R8A7794_CLK_SSI1>,
++			 <&mstp10_clks R8A7794_CLK_SSI0>,
++			 <&mstp10_clks R8A7794_CLK_SCU_SRC6>,
++			 <&mstp10_clks R8A7794_CLK_SCU_SRC5>,
++			 <&mstp10_clks R8A7794_CLK_SCU_SRC4>,
++			 <&mstp10_clks R8A7794_CLK_SCU_SRC3>,
++			 <&mstp10_clks R8A7794_CLK_SCU_SRC2>,
++			 <&mstp10_clks R8A7794_CLK_SCU_SRC1>,
++			 <&mstp10_clks R8A7794_CLK_SCU_CTU0_MIX0>,
++			 <&mstp10_clks R8A7794_CLK_SCU_CTU1_MIX1>,
++			 <&mstp10_clks R8A7794_CLK_SCU_CTU0_MIX0>,
++			 <&mstp10_clks R8A7794_CLK_SCU_CTU1_MIX1>,
++			 <&mstp10_clks R8A7794_CLK_SCU_DVC0>,
++			 <&mstp10_clks R8A7794_CLK_SCU_DVC1>,
++			 <&audio_clka>, <&audio_clkb>, <&audio_clkc>,
++			 <&m2_clk>;
++		clock-names = "ssi-all",
++			      "ssi.9", "ssi.8", "ssi.7", "ssi.6", "ssi.5",
++			      "ssi.4", "ssi.3", "ssi.2", "ssi.1", "ssi.0",
++			      "src.6", "src.5", "src.4", "src.3", "src.2",
++			      "src.1",
++			      "ctu.0", "ctu.1",
++			      "mix.0", "mix.1",
++			      "dvc.0", "dvc.1",
++			      "clk_a", "clk_b", "clk_c", "clk_i";
++		power-domains = <&cpg_clocks>;
++
++		status = "disabled";
++
++		rcar_sound,dvc {
++			dvc0: dvc@0 {
++				dmas = <&audma0 0xbc>;
++				dma-names = "tx";
++			};
++			dvc1: dvc@1 {
++				dmas = <&audma0 0xbe>;
++				dma-names = "tx";
++			};
++		};
++
++		rcar_sound,mix {
++			mix0: mix@0 { };
++			mix1: mix@1 { };
++		};
++
++		rcar_sound,ctu {
++			ctu00: ctu@0 { };
++			ctu01: ctu@1 { };
++			ctu02: ctu@2 { };
++			ctu03: ctu@3 { };
++			ctu10: ctu@4 { };
++			ctu11: ctu@5 { };
++			ctu12: ctu@6 { };
++			ctu13: ctu@7 { };
++		};
++
++		rcar_sound,src {
++			src@0 {
++				status = "disabled";
++			};
++			src1: src@1 {
++				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x87>, <&audma0 0x9c>;
++				dma-names = "rx", "tx";
++			};
++			src2: src@2 {
++				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x89>, <&audma0 0x9e>;
++				dma-names = "rx", "tx";
++			};
++			src3: src@3 {
++				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x8b>, <&audma0 0xa0>;
++				dma-names = "rx", "tx";
++			};
++			src4: src@4 {
++				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x8d>, <&audma0 0xb0>;
++				dma-names = "rx", "tx";
++			};
++			src5: src@5 {
++				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x8f>, <&audma0 0xb2>;
++				dma-names = "rx", "tx";
++			};
++			src6: src@6 {
++				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x91>, <&audma0 0xb4>;
++				dma-names = "rx", "tx";
++			};
++		};
++
++		rcar_sound,ssi {
++			ssi0: ssi@0 {
++				interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x01>, <&audma0 0x02>,
++				       <&audma0 0x15>, <&audma0 0x16>;
++				dma-names = "rx", "tx", "rxu", "txu";
++			};
++			ssi1: ssi@1 {
++				interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x03>, <&audma0 0x04>,
++				       <&audma0 0x49>, <&audma0 0x4a>;
++				dma-names = "rx", "tx", "rxu", "txu";
++			};
++			ssi2: ssi@2 {
++				interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x05>, <&audma0 0x06>,
++				       <&audma0 0x63>, <&audma0 0x64>;
++				dma-names = "rx", "tx", "rxu", "txu";
++			};
++			ssi3: ssi@3 {
++				interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x07>, <&audma0 0x08>,
++				       <&audma0 0x6f>, <&audma0 0x70>;
++				dma-names = "rx", "tx", "rxu", "txu";
++			};
++			ssi4: ssi@4 {
++				interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x09>, <&audma0 0x0a>,
++				       <&audma0 0x71>, <&audma0 0x72>;
++				dma-names = "rx", "tx", "rxu", "txu";
++			};
++			ssi5: ssi@5 {
++				interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x0b>, <&audma0 0x0c>,
++				       <&audma0 0x73>, <&audma0 0x74>;
++				dma-names = "rx", "tx", "rxu", "txu";
++			};
++			ssi6: ssi@6 {
++				interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x0d>, <&audma0 0x0e>,
++				       <&audma0 0x75>, <&audma0 0x76>;
++				dma-names = "rx", "tx", "rxu", "txu";
++			};
++			ssi7: ssi@7 {
++				interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x0f>, <&audma0 0x10>,
++				       <&audma0 0x79>, <&audma0 0x7a>;
++				dma-names = "rx", "tx", "rxu", "txu";
++			};
++			ssi8: ssi@8 {
++				interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x11>, <&audma0 0x12>,
++				       <&audma0 0x7b>, <&audma0 0x7c>;
++				dma-names = "rx", "tx", "rxu", "txu";
++			};
++			ssi9: ssi@9 {
++				interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
++				dmas = <&audma0 0x13>, <&audma0 0x14>,
++				       <&audma0 0x7d>, <&audma0 0x7e>;
++				dma-names = "rx", "tx", "rxu", "txu";
++			};
++		};
++	};
  };
- 
- /**
-@@ -85,7 +88,6 @@ struct rvin_graph_entity {
-  * @dev:		(OF) device
-  * @base:		device I/O register space remapped to virtual memory
-  * @chip:		type of VIN chip
-- * @mbus_cfg		media bus configuration
-  *
-  * @vdev:		V4L2 video device associated with VIN
-  * @v4l2_dev:		V4L2 device
-@@ -116,7 +118,6 @@ struct rvin_dev {
- 	struct device *dev;
- 	void __iomem *base;
- 	enum chip_id chip;
--	struct v4l2_mbus_config mbus_cfg;
- 
- 	struct video_device vdev;
- 	struct v4l2_device v4l2_dev;
--- 
-2.9.0
