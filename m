@@ -1,83 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www381.your-server.de ([78.46.137.84]:49952 "EHLO
-	www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757475AbcG1UYr (ORCPT
+Received: from mga11.intel.com ([192.55.52.93]:43843 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758967AbcG1DjQ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 28 Jul 2016 16:24:47 -0400
+	Wed, 27 Jul 2016 23:39:16 -0400
+Date: Thu, 28 Jul 2016 09:16:43 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Mark Brown <broonie@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Simon <horms@verge.net.au>
 Subject: Re: [alsa-devel] Question about struct snd_soc_dai() ::
  cpu_dai->codec
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Mark Brown <broonie@kernel.org>
+Message-ID: <20160728034643.GH9681@localhost>
 References: <878twpj739.wl%kuninori.morimoto.gx@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-From: Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <579A69EC.9060205@metafoo.de>
-Date: Thu, 28 Jul 2016 22:24:12 +0200
+ <20160727032111.GY9681@localhost>
+ <s5hh9bb7he6.wl-tiwai@suse.de>
+ <20160727172125.GF9681@localhost>
+ <20160727180456.GQ11806@sirena.org.uk>
+ <s5h1t2f6jdm.wl-tiwai@suse.de>
+ <20160727182233.GV11806@sirena.org.uk>
+ <s5hpopy6dbi.wl-tiwai@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <878twpj739.wl%kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <s5hpopy6dbi.wl-tiwai@suse.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 07/26/2016 07:41 AM, Kuninori Morimoto wrote:
-> 
-> Hi ALSA SoC
-> 
-> My current headache is ALSA SoC's each modules (= Card/Codec/CPU/Platform)
-> doesn't care about "unbind/rmmod".
-> For example, if someone unbinded/rmmoded "Codec", Card or other modules
-> doesn't know about it. Thus, user can continue to use this sound card,
-> and kernel will be Oops.
-> 
-> So, I would like to solve this issue, and for this purpose,
-> now I'm investigating about ALSA SoC structures.
-> It is now super complex, and I noticed that it is having duplicated
-> struct members.
-> 
-> If possible, I would like to cleanup this issue.
-> 
-> During this investigating, I noticed 1 strange operation
-> 
-> ${LINUX}/sound/soc/soc-core.c :: snd_soc_runtime_set_dai_fmt
-> 
-> int snd_soc_runtime_set_dai_fmt(xxx)
-> {
-> 	...
-> 	/* Flip the polarity for the "CPU" end of a CODEC<->CODEC link */
-> 	if (cpu_dai->codec) {
-> 		...
-> 	}
-> 	...
-> }
-> 
-> struct snd_soc_dai {
->        ...
-> 	/* parent platform/codec */
-> 	struct snd_soc_codec *codec;
-> 	struct snd_soc_component *component;
-> 	...
-> }
-> 
-> According to snd_soc_dai, *codec is its "parent".
-> I wonder does "cpu_dai" really can have "codec" parent ??
-> I think this is not correct, and we can remove this operation ?
+On Wed, Jul 27, 2016 at 10:22:41PM +0200, Takashi Iwai wrote:
+> On Wed, 27 Jul 2016 20:22:33 +0200,
+> Mark Brown wrote:
+> > 
+> > On Wed, Jul 27, 2016 at 08:11:49PM +0200, Takashi Iwai wrote:
+> > 
+> > > I'm wondering whether it's a better option to block the unbind
+> > > behavior, either in driver base (allowing to return an error) or in
+> > > the sound side (waiting in remove() until the sane point). 
+> > 
+> > That's certainly going to be a lot easier and part of the reason it's
+> > never been looked at much is that (unlike USB) there's very little
+> > reason why an ASoC sound card would ever be hotplugged - even in
+> > development these days the normal development flow involves rebooting.
 
-This is for CODEC<->CODEC links where no CPU DAI is involved and the
-"CPU" side of the DAI link is actually a CODEC.
+I agree, it makese no sense for devices to be hotplugged. And for
+developement flows people can do rmmond and insmod. That works fine!
 
-Ideally we'd make the DAI links agnostic to what is connected, e.g. it
-shouldn't matter what type is connected to what side. But that does not
-work since things are anti-symmetric between CPU and CODEC DAIs. On
-CODEC DAIs the capture stream is output, on CPU DAIs the capture stream
-is input, similar thing for playback. So we need to know whether the DAI
-is a CPU DAI or a CODEC DAI.
+> Actually there is already the suppress_bind_attr flag in struct
+> device_driver.  For a simple platform driver like snd-soc-rcar, it's
+> easy like:
 
-Fixing this at this point is near to impossible since it requires
-invasive changes to all existing drivers. So we need this code and can't
-drop it.
+I like this idea, should we do this per driver or in core? I think we should
+let drivers decide..
 
-The best we can do is try to come up with a generic interface that is
-DAI type independent and recommend this interface for new drivers.
+> diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+> index 3351a701c60e..d019824927de 100644
+> --- a/sound/soc/sh/rcar/core.c
+> +++ b/sound/soc/sh/rcar/core.c
+> @@ -1251,6 +1251,7 @@ static struct platform_driver rsnd_driver = {
+>  	.driver	= {
+>  		.name	= "rcar_sound",
+>  		.of_match_table = rsnd_of_match,
+> +		.suppress_bind_attrs = true,
+>  	},
+>  	.probe		= rsnd_probe,
+>  	.remove		= rsnd_remove,
+> 
+> Then there will be no sysfs bind/unbind for this driver.
+> (Note: totally untested: let me know if it really works.)
+> 
+> The same technique is likely available for i2c and spi codec drivers.
+> But it's another open question whether we should suppress the sysfs
+> bind/unbind of these devices at all.  My gut feeling is that sysfs
+> bind/unbind are mostly useless for drivers like ASoC codecs.  At
+> least, it would be much safer to disable for now.
+
+-- 
+~Vinod
