@@ -1,51 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-bl2nam02on0046.outbound.protection.outlook.com ([104.47.38.46]:62183
-	"EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751280AbcGANZH (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:33504 "EHLO
+	mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751600AbcG2VEi (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 1 Jul 2016 09:25:07 -0400
-From: Peter Chen <peter.chen@nxp.com>
-To: <linux-renesas-soc@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>
-CC: Peter Chen <peter.chen@nxp.com>
-Subject: [PATCH 0/7] add missing of_node_put after calling of_parse_phandle (1st)
-Date: Fri, 1 Jul 2016 17:41:54 +0800
-Message-ID: <1467366121-14120-1-git-send-email-peter.chen@nxp.com>
+	Fri, 29 Jul 2016 17:04:38 -0400
+Received: by mail-lf0-f54.google.com with SMTP id b199so79345462lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Jul 2016 14:04:37 -0700 (PDT)
+Subject: Re: [PATCH 1/6] media: rcar-vin: allow field to be changed
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>,
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	slongerbeam@gmail.com
+References: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
+ <20160729174012.14331-2-niklas.soderlund+renesas@ragnatech.se>
+Cc: lars@metafoo.de, mchehab@kernel.org, hans.verkuil@cisco.com
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <1f735458-9ff3-f3fc-e349-20ac0b57cde1@cogentembedded.com>
+Date: Sat, 30 Jul 2016 00:04:33 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20160729174012.14331-2-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi all,
+On 07/29/2016 08:40 PM, Niklas Söderlund wrote:
 
-of_node_put needs to be called when the device node which is got
-from of_parse_phandle has finished using, but there are many codes
-do not follow that, this patch set fixes some of them.
+> The driver forced whatever field was set by the source subdevice to be
+> used. This patch allows the user to change from the default field.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Peter Chen (7):
-  extcon: add missing of_node_put after calling of_parse_phandle
-  arm: mach-shmobile: pm-rmobile: add missing of_node_put after calling
-    of_parse_phandle
-  arm: mach-u300: regulator: add missing of_node_put after calling
-    of_parse_phandle
-  bus: arm-cci: add missing of_node_put after calling of_parse_phandle
-  bus: vexpress-config: add missing of_node_put after calling
-    of_parse_phandle
-  devfreq: add missing of_node_put after calling of_parse_phandle
-  devfreq: exynos-bus: add missing of_node_put after calling
-    of_parse_phandle
+    I didn't apply this patch at first (thinking it was unnecessary), and the 
+capture worked fine. The field order appeared swapped again after I did import 
+this patch as well. :-(
 
- arch/arm/mach-shmobile/pm-rmobile.c |  1 +
- arch/arm/mach-u300/regulator.c      | 12 +++++++++---
- drivers/bus/arm-cci.c               |  5 ++++-
- drivers/bus/vexpress-config.c       |  1 +
- drivers/devfreq/devfreq.c           |  2 ++
- drivers/devfreq/exynos-bus.c        |  9 ++++++---
- drivers/extcon/extcon.c             |  2 ++
- 7 files changed, 25 insertions(+), 7 deletions(-)
-
--- 
-1.9.1
+MBR, Sergei
