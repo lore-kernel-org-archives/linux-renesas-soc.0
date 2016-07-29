@@ -1,76 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:33768 "EHLO
-	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758417AbcG0VAD (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:41681 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752681AbcG2Rkg (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 27 Jul 2016 17:00:03 -0400
-Received: by mail-lf0-f47.google.com with SMTP id b199so35981212lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Jul 2016 14:00:02 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 2/6] ARM: dts: r8a7794: add MSTP5 clocks
-Date: Wed, 27 Jul 2016 23:59:59 +0300
-Message-ID: <3560619.yXVhzgu5Aq@wasted.cogentembedded.com>
-In-Reply-To: <3910788.ckTpUWEs6B@wasted.cogentembedded.com>
-References: <3910788.ckTpUWEs6B@wasted.cogentembedded.com>
+	Fri, 29 Jul 2016 13:40:36 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	sergei.shtylyov@cogentembedded.com, slongerbeam@gmail.com
+Cc: lars@metafoo.de, mchehab@kernel.org, hans.verkuil@cisco.com,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 0/6] Fix adv7180 and rcar-vin field handling
+Date: Fri, 29 Jul 2016 19:40:06 +0200
+Message-Id: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add some MSTP5 clocks to the R8A7794 device tree.
+Hi,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This series add V4L2_FIELD_ALTERNATE support to the rcar-vin driver and 
+changes the field mode reported by adv7180 from V4L2_FIELD_INTERLACED to 
+V4L2_FIELD_ALTERNATE.
 
----
-Changes in version 4:
-- removed non-existant thermal sensor clock;
-- refreshed the patch.
+The change field mode reported by adv7180 was first done by Steve 
+Longerbeam (https://lkml.org/lkml/2016/7/23/107), I have keept and 
+reworked Steves patch to report V4L2_FIELD_ALTERNATE instead of 
+V4L2_FIELD_SEQ_{TB,BT}, after discussions on #v4l this seems more
+correct.
 
-Changes in version 3:
-- refreshed the patch.
+The rcar-vin changes contains some bug fixes needed to enable 
+V4L2_FIELD_ALTERNATE.
 
-Changes in version 2:
-- added "the" article to the change log.
+All work is based on top of media-next and is tested on Koelsch.
 
- arch/arm/boot/dts/r8a7794.dtsi            |    9 +++++++++
- include/dt-bindings/clock/r8a7794-clock.h |    1 +
- 2 files changed, 10 insertions(+)
+This series touch two drivers which is not a good thing. But I could not 
+figure out a good way to post them separately since if the adv7180 parts 
+where too be merged before the rcar-vin changes the driver would stop to 
+work on the Koelsch. If some one wants this series split in two let me 
+know.
 
-Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1204,6 +1204,15 @@
- 			clock-indices = <R8A7794_CLK_IRQC>;
- 			clock-output-names = "irqc";
- 		};
-+		mstp5_clks: mstp5_clks@e6150144 {
-+			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
-+			clocks = <&hp_clk>, <&extal_clk>, <&p_clk>;
-+			#clock-cells = <1>;
-+			clock-indices = <R8A7794_CLK_AUDIO_DMAC0
-+					 R8A7794_CLK_PWM>;
-+			clock-output-names = "audmac0", "pwm";
-+		};
- 		mstp7_clks: mstp7_clks@e615014c {
- 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
-Index: renesas/include/dt-bindings/clock/r8a7794-clock.h
-===================================================================
---- renesas.orig/include/dt-bindings/clock/r8a7794-clock.h
-+++ renesas/include/dt-bindings/clock/r8a7794-clock.h
-@@ -67,6 +67,7 @@
- #define R8A7794_CLK_IRQC		7
- 
- /* MSTP5 */
-+#define R8A7794_CLK_AUDIO_DMAC0		2
- #define R8A7794_CLK_PWM			23
- 
- /* MSTP7 */
+Niklas Söderlund (5):
+  media: rcar-vin: allow field to be changed
+  media: rcar-vin: fix bug in scaling
+  media: rcar-vin: fix height for TOP and BOTTOM fields
+  media: rcar-vin: add support for V4L2_FIELD_ALTERNATE
+  media: adv7180: fill in mbus format in set_fmt
+
+Steve Longerbeam (1):
+  media: adv7180: fix field type
+
+ drivers/media/i2c/adv7180.c                 |  21 ++--
+ drivers/media/platform/rcar-vin/rcar-dma.c  |  26 +++--
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 151 ++++++++++++++++------------
+ 3 files changed, 123 insertions(+), 75 deletions(-)
+
+-- 
+2.9.0
