@@ -1,76 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:25408 "EHLO
-	relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1030454AbcGGIdW (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:41738 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752283AbcG2Rkh (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 7 Jul 2016 04:33:22 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC 2/4] usb: gadget: u_ether: add a flag to avoid skb_reserve() calling
-Date: Thu, 7 Jul 2016 17:32:40 +0900
-Message-ID: <1467880362-4844-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1467880362-4844-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1467880362-4844-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+	Fri, 29 Jul 2016 13:40:37 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	sergei.shtylyov@cogentembedded.com, slongerbeam@gmail.com
+Cc: lars@metafoo.de, mchehab@kernel.org, hans.verkuil@cisco.com,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 5/6] media: adv7180: fill in mbus format in set_fmt
+Date: Fri, 29 Jul 2016 19:40:11 +0200
+Message-Id: <20160729174012.14331-6-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds a flag "no_skb_reserve" in struct eth_dev.
-So, if a peripheral driver sets the quirk_avoids_skb_reserve flag,
-upper network gadget drivers (e.g. f_ncm.c) can avoid skb_reserve()
-calling using the flag as well.
+If the V4L2_SUBDEV_FORMAT_TRY is used in set_fmt the width, height etc
+would not be filled.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/usb/gadget/function/u_ether.c | 5 ++++-
- drivers/usb/gadget/function/u_ether.h | 1 +
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ drivers/media/i2c/adv7180.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
-index a3f7e7c..04e30c6 100644
---- a/drivers/usb/gadget/function/u_ether.c
-+++ b/drivers/usb/gadget/function/u_ether.c
-@@ -82,6 +82,7 @@ struct eth_dev {
- #define	WORK_RX_MEMORY		0
+diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
+index b77b0a4..a8b434b 100644
+--- a/drivers/media/i2c/adv7180.c
++++ b/drivers/media/i2c/adv7180.c
+@@ -675,6 +675,7 @@ static int adv7180_set_pad_format(struct v4l2_subdev *sd,
+ {
+ 	struct adv7180_state *state = to_state(sd);
+ 	struct v4l2_mbus_framefmt *framefmt;
++	int ret;
  
- 	bool			zlp;
-+	bool			no_skb_reserve;
- 	u8			host_mac[ETH_ALEN];
- 	u8			dev_mac[ETH_ALEN];
- };
-@@ -233,7 +234,8 @@ rx_submit(struct eth_dev *dev, struct usb_request *req, gfp_t gfp_flags)
- 	 * but on at least one, checksumming fails otherwise.  Note:
- 	 * RNDIS headers involve variable numbers of LE32 values.
- 	 */
--	skb_reserve(skb, NET_IP_ALIGN);
-+	if (likely(!dev->no_skb_reserve))
-+		skb_reserve(skb, NET_IP_ALIGN);
+ 	switch (format->format.field) {
+ 	case V4L2_FIELD_NONE:
+@@ -686,8 +687,9 @@ static int adv7180_set_pad_format(struct v4l2_subdev *sd,
+ 		break;
+ 	}
  
- 	req->buf = skb->data;
- 	req->length = size;
-@@ -1062,6 +1064,7 @@ struct net_device *gether_connect(struct gether *link)
++	ret = adv7180_mbus_fmt(sd,  &format->format);
++
+ 	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
+-		framefmt = &format->format;
+ 		if (state->field != format->format.field) {
+ 			state->field = format->format.field;
+ 			adv7180_set_power(state, false);
+@@ -699,7 +701,7 @@ static int adv7180_set_pad_format(struct v4l2_subdev *sd,
+ 		*framefmt = format->format;
+ 	}
  
- 	if (result == 0) {
- 		dev->zlp = link->is_zlp_ok;
-+		dev->no_skb_reserve = link->no_skb_reserve;
- 		DBG(dev, "qlen %d\n", qlen(dev->gadget, dev->qmult));
+-	return adv7180_mbus_fmt(sd, framefmt);
++	return ret;
+ }
  
- 		dev->header_len = link->header_len;
-diff --git a/drivers/usb/gadget/function/u_ether.h b/drivers/usb/gadget/function/u_ether.h
-index c77145b..81d94a7 100644
---- a/drivers/usb/gadget/function/u_ether.h
-+++ b/drivers/usb/gadget/function/u_ether.h
-@@ -64,6 +64,7 @@ struct gether {
- 	struct usb_ep			*out_ep;
- 
- 	bool				is_zlp_ok;
-+	bool				no_skb_reserve;
- 
- 	u16				cdc_filter;
- 
+ static int adv7180_g_mbus_config(struct v4l2_subdev *sd,
 -- 
-1.9.1
+2.9.0
