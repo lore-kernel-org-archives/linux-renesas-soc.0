@@ -1,93 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:55994 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753497AbcGSOXJ (ORCPT
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:36670 "EHLO
+	mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753621AbcG2UQh (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 19 Jul 2016 10:23:09 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
-	hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	Michal Simek <michal.simek@xilinx.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 02/16] media: entity: Add media_entity_has_route() function
-Date: Tue, 19 Jul 2016 16:20:53 +0200
-Message-Id: <20160719142107.22358-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160719142107.22358-1-niklas.soderlund+renesas@ragnatech.se>
+	Fri, 29 Jul 2016 16:16:37 -0400
+Received: by mail-lf0-f46.google.com with SMTP id g62so78507807lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Jul 2016 13:16:36 -0700 (PDT)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Fri, 29 Jul 2016 22:16:34 +0200
+To: Steve Longerbeam <steve_longerbeam@mentor.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	slongerbeam@gmail.com, lars@metafoo.de, mchehab@kernel.org,
+	hans.verkuil@cisco.com
+Subject: Re: [PATCH 6/6] media: adv7180: fix field type
+Message-ID: <20160729201634.GC3672@bigcity.dyn.berto.se>
+References: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
+ <20160729174012.14331-7-niklas.soderlund+renesas@ragnatech.se>
+ <cc084571-3063-a883-b731-0ffe01c4fefa@cogentembedded.com>
+ <df2a330f-30a3-e296-006e-204fa1771bb5@mentor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <df2a330f-30a3-e296-006e-204fa1771bb5@mentor.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+On 2016-07-29 12:32:30 -0700, Steve Longerbeam wrote:
+> 
+> On 07/29/2016 12:10 PM, Sergei Shtylyov wrote:
+> > On 07/29/2016 08:40 PM, Niklas S�derlund wrote:
+> > 
+> > > From: Steve Longerbeam <slongerbeam@gmail.com>
+> > > 
+> > > The ADV7180 and ADV7182 transmit whole fields, bottom field followed
+> > > by top (or vice-versa, depending on detected video standard). So
+> > > for chips that do not have support for explicitly setting the field
+> > > mode, set the field mode to V4L2_FIELD_ALTERNATE.
+> > > 
+> > > Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+> > > [Niklas: changed filed type from V4L2_FIELD_SEQ_{TB,BT} to
+> > > V4L2_FIELD_ALTERNATE]
+> > > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > 
+> > Tested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > 
+> >    IIUC, it's a 4th version of this patch; you should have kept the
+> > original change log (below --- tearline) and indicated that in the
+> > subject.
+> > 
+> > MBR, Sergei
+> 
+> This version is fine with me. The i.mx6 h/w motion-compensation deinterlacer
+> (VDIC)
+> needs to know the field order, and it can't get that info from
+> V4L2_FIELD_ALTERNATE,
+> but it can still determine the order via querystd().
+> 
+> But I agree the change log should be preserved, and the V4L2_FIELD_ALTERNATE
+> change
+> added to the change log.
 
-This is a wrapper around the media entity has_route operation.
+Yes, I will send a v2 containing the changelog. My bad for dropping it.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/media-entity.c | 29 +++++++++++++++++++++++++++++
- include/media/media-entity.h |  3 +++
- 2 files changed, 32 insertions(+)
+> 
+> Acked-by: Steve Longerbeam <slongerbeam@gmail.com>
+> 
+> Steve
+> 
+> 
 
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index d8a2299..8732579 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -240,6 +240,35 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
-  * Graph traversal
-  */
- 
-+/**
-+ * media_entity_has_route - Check if two entity pads are connected internally
-+ * @entity: The entity
-+ * @pad0: The first pad index
-+ * @pad1: The second pad index
-+ *
-+ * This function can be used to check whether two pads of an entity are
-+ * connected internally in the entity.
-+ *
-+ * The caller must hold entity->source->parent->mutex.
-+ *
-+ * Return: true if the pads are connected internally and false otherwise.
-+ */
-+bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
-+			    unsigned int pad1)
-+{
-+	if (pad0 >= entity->num_pads || pad1 >= entity->num_pads)
-+		return false;
-+
-+	if (pad0 == pad1)
-+		return true;
-+
-+	if (!entity->ops || !entity->ops->has_route)
-+		return true;
-+
-+	return entity->ops->has_route(entity, pad0, pad1);
-+}
-+EXPORT_SYMBOL_GPL(media_entity_has_route);
-+
- static struct media_entity *
- media_entity_other(struct media_entity *entity, struct media_link *link)
- {
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index c4b2dca..68af160 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -796,6 +796,9 @@ void media_entity_graph_walk_cleanup(struct media_entity_graph *graph);
-  */
- void media_entity_put(struct media_entity *entity);
- 
-+bool media_entity_has_route(struct media_entity *entity, unsigned int sink,
-+			    unsigned int source);
-+
- /**
-  * media_entity_graph_walk_start - Start walking the media graph at a given entity
-  * @graph: Media graph structure that will be used to walk the graph
 -- 
-2.9.0
+Regards,
+Niklas S�derlund
