@@ -1,62 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33208 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752240AbcGAJxD (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:41720 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753023AbcG2Rkg (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 1 Jul 2016 05:53:03 -0400
-Date: Fri, 1 Jul 2016 11:52:49 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linux-ALSA <alsa-devel@alsa-project.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org
-Message-ID: <20160701095249.GJ6247@sirena.org.uk>
-References: <87fusysjam.wl%kuninori.morimoto.gx@renesas.com>
- <8760tusj2q.wl%kuninori.morimoto.gx@renesas.com>
- <20160629181555.GJ6247@sirena.org.uk>
- <874m8bbdei.wl%kuninori.morimoto.gx@renesas.com>
+	Fri, 29 Jul 2016 13:40:36 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	sergei.shtylyov@cogentembedded.com, slongerbeam@gmail.com
+Cc: lars@metafoo.de, mchehab@kernel.org, hans.verkuil@cisco.com,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 3/6] media: rcar-vin: fix height for TOP and BOTTOM fields
+Date: Fri, 29 Jul 2016 19:40:09 +0200
+Message-Id: <20160729174012.14331-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="D85EWoRcDXv1uhH1"
-Content-Disposition: inline
-In-Reply-To: <874m8bbdei.wl%kuninori.morimoto.gx@renesas.com>
-Subject: Re: [PATCH 07/39 v2] ASoC: simple-card-utils: add
- asoc_simple_card_parse_card_name()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+The height used for V4L2_FIELD_TOP and V4L2_FIELD_BOTTOM where wrong.
+The frames only contain one filed so the height should be half of the
+frame.
 
---D85EWoRcDXv1uhH1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
-On Thu, Jun 30, 2016 at 02:55:06AM +0000, Kuninori Morimoto wrote:
-
-> > > +	if (!card->name)
-> > > +		card->name = card->dai_link->name;
-
-> > This will unconditionally defererence dai_link but it's optional - we
-> > can have analogue only cards.
-
-> This is not new feature. Current simple-card already has it.
-
-Right, but simple-card does need DAIs IIRC while this is intended to be
-more general.  All it needs is a check before the dereference to be safe
-so it's trivial to handle.
-
---D85EWoRcDXv1uhH1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXdj1vAAoJECTWi3JdVIfQTqsH/jCfCs8imQ75dgsRDjAJTiKJ
-1Smd/XtGaIfT+O5vEPwcWQsPpczOH076IvZ2hjVPElNlQL2fwryjzHUoiGBTmOXl
-tWiHkAPVqnchjvi9YTxORBuuMX557IPty1LySQSRkl8KDZoP3YulEU8S3g1DP6bg
-Agkef9EmdMTr/9m+o32pkcLsKijvNcT5VzmDdvas4azUWY9MtxGYpW6iCgVS+G0R
-HqfsyKOCZpv7tN6yPhFO8CEdjT1qL9SRFfIf+KQfyLSF2q9SNY6HtmYue9Q2s+ug
-Wfi4RNABb0cyCilcGfpWMWA9bGua8+BQ3zCGwV04orpcWOyRioPUiGIGpkcufsw=
-=aMJw
------END PGP SIGNATURE-----
-
---D85EWoRcDXv1uhH1--
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index b8c3836..b6e40ea 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -125,6 +125,8 @@ static int rvin_reset_format(struct rvin_dev *vin)
+ 	switch (vin->format.field) {
+ 	case V4L2_FIELD_TOP:
+ 	case V4L2_FIELD_BOTTOM:
++		vin->format.height /= 2;
++		break;
+ 	case V4L2_FIELD_NONE:
+ 	case V4L2_FIELD_INTERLACED_TB:
+ 	case V4L2_FIELD_INTERLACED_BT:
+@@ -217,21 +219,13 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	/* Limit to source capabilities */
+ 	__rvin_try_format_source(vin, which, pix, source);
+ 
+-	/* If source can't match format try if VIN can scale */
+-	if (source->width != rwidth || source->height != rheight)
+-		rvin_scale_try(vin, pix, rwidth, rheight);
+-
+-	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
+-	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
+-
+-	/* Limit to VIN capabilities */
+-	v4l_bound_align_image(&pix->width, 2, RVIN_MAX_WIDTH, walign,
+-			      &pix->height, 4, RVIN_MAX_HEIGHT, 2, 0);
+-
+ 	switch (pix->field) {
+-	case V4L2_FIELD_NONE:
+ 	case V4L2_FIELD_TOP:
+ 	case V4L2_FIELD_BOTTOM:
++		pix->height /= 2;
++		source->height /= 2;
++		break;
++	case V4L2_FIELD_NONE:
+ 	case V4L2_FIELD_INTERLACED_TB:
+ 	case V4L2_FIELD_INTERLACED_BT:
+ 	case V4L2_FIELD_INTERLACED:
+@@ -241,6 +235,17 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 		break;
+ 	}
+ 
++	/* If source can't match format try if VIN can scale */
++	if (source->width != rwidth || source->height != rheight)
++		rvin_scale_try(vin, pix, rwidth, rheight);
++
++	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
++	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
++
++	/* Limit to VIN capabilities */
++	v4l_bound_align_image(&pix->width, 2, RVIN_MAX_WIDTH, walign,
++			      &pix->height, 4, RVIN_MAX_HEIGHT, 2, 0);
++
+ 	pix->bytesperline = max_t(u32, pix->bytesperline,
+ 				  rvin_format_bytesperline(pix));
+ 	pix->sizeimage = max_t(u32, pix->sizeimage,
+-- 
+2.9.0
