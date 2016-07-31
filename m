@@ -1,48 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:33715 "EHLO
-	mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751953AbcGAH1l (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:35592 "EHLO
+	mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753295AbcGaNHu (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 1 Jul 2016 03:27:41 -0400
+	Sun, 31 Jul 2016 09:07:50 -0400
+Received: by mail-lf0-f52.google.com with SMTP id f93so99043969lfi.2
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 31 Jul 2016 06:07:49 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mchehab@kernel.org, linux-media@vger.kernel.org,
+	g.liakhovetski@gmx.de
+Cc: linux-renesas-soc@vger.kernel.org, niklas.soderlund@ragnatech.se
+Subject: [PATCH] rcar_vin: add support for V4L2_FIELD_ALTERNATE
+Date: Sun, 31 Jul 2016 16:07:45 +0300
+Message-ID: <4854742.fOvMrCAxeI@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <20160629175755.GK1521@codeaurora.org>
-References: <1466690683-28949-1-git-send-email-geert+renesas@glider.be>
- <20160628233504.GH1521@codeaurora.org> <CAMuHMdXshxJMkHXHGo8gCujfNsqJU=LeZPjtB9tjNErKwn7_Cg@mail.gmail.com>
- <20160629175755.GK1521@codeaurora.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 1 Jul 2016 09:09:38 +0200
-Message-ID: <CAMuHMdV3-6edQ84B_-rcXaAEuZj1NX__c+NpG5Tbct=P4J2jWw@mail.gmail.com>
-Subject: Re: [git pull] clk: renesas: Updates for v4.8 (take two)
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Magnus Damm <damm+renesas@opensource.se>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Stephen,
+The hardware  can capture both odd and even fields in  the separate buffers,
+so  it's possible to support  this field mode. However, if the subdevice
+presents data  in this mode,  we prefer to use the hardware deinterlacing...
 
-On Wed, Jun 29, 2016 at 7:57 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 06/29, Geert Uytterhoeven wrote:
->>
->> Thanks, but it seems something went wrong: commit d9cce3a8ebb871c5 is not a
->> merge commit, but the combination of all 7 commits from the pull request?
->
-> Hmm... weird. I fixed it now.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Thanks, much better now.
+---
+This patch is against the 'media_tree.git' repo's 'master' branch.
+This patch needs to be merged before the following ADV7180 driver patch is
+merged: http://www.mail-archive.com/linux-media@vger.kernel.org/msg100410.html
 
-Gr{oetje,eeting}s,
+ drivers/media/platform/soc_camera/rcar_vin.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: media_tree/drivers/media/platform/soc_camera/rcar_vin.c
+===================================================================
+--- media_tree.orig/drivers/media/platform/soc_camera/rcar_vin.c
++++ media_tree/drivers/media/platform/soc_camera/rcar_vin.c
+@@ -585,6 +585,7 @@ static int rcar_vin_setup(struct rcar_vi
+ 		vnmc = VNMC_IM_FULL | VNMC_FOC;
+ 		break;
+ 	case V4L2_FIELD_NONE:
++	case V4L2_FIELD_ALTERNATE:
+ 		if (is_continuous_transfer(priv)) {
+ 			vnmc = VNMC_IM_ODD_EVEN;
+ 			progressive = true;
+@@ -1595,6 +1596,7 @@ static int rcar_vin_set_fmt(struct soc_c
+ 	case V4L2_FIELD_INTERLACED_BT:
+ 		field = pix->field;
+ 		break;
++	case V4L2_FIELD_ALTERNATE:
+ 	case V4L2_FIELD_INTERLACED:
+ 		/* Query for standard if not explicitly mentioned _TB/_BT */
+ 		ret = v4l2_subdev_call(sd, video, querystd, &std);
