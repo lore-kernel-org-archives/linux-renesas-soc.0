@@ -1,90 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51708 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLBu (ORCPT
+Received: from devils.ext.ti.com ([198.47.26.153]:53219 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752128AbcHALPh (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:01:50 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87vazb39sv.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiJT-0002rV-Mh@debutante>
-Date: Mon, 08 Aug 2016 12:01:43 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on wm9850" to the asoc tree
+	Mon, 1 Aug 2016 07:15:37 -0400
+From: Kishon Vijay Abraham I <kishon@ti.com>
+To: Tony Lindgren <tony@atomide.com>,
+	Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Krzysztof Halasa <khalasa@piap.pl>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>
+CC: <helgaas@kernel.org>, Benoit Cousson <bcousson@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Greg Ungerer <gerg@uclinux.org>,
+	<linux-samsung-soc@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<kishon@ti.com>, <nsekhar@ti.com>
+Subject: [PATCH v2 0/3] ARM: cleanup PCI specific configs
+Date: Mon, 1 Aug 2016 16:42:27 +0530
+Message-ID: <1470049950-4697-1-git-send-email-kishon@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+This series was initially sent to add support for two PCIe
+ports in dra7. This included selecting PCI_DOMAINS config
+in SOC_DRA7XX.
 
-   ASoC: codec duplicated callback function goes to component on wm9850
+However from the review, PCI_DOMAINS can instead be selected
+from ARCH_MULTIPLATFORM. This is fixed in this series along
+with removing PCI_DOMAINS from other configs.
 
-has been applied to the asoc tree at
+Since this series was initially sent to add support for
+two PCIe ports in dra7, it has been tested to see if there
+are regressions with 1 PCIe port. Though testing of 2 PCIe ports
+is not done while sending this patch series, it has been verified
+before in few of the customer boards.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+The 2nd and 3rd patch has been marked as RFT since it modifies
+the configs of other platforms I can't test though this
+series shouldn't break anything.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Kishon Vijay Abraham I (3):
+  ARM: dts: DRA7: Add "linux,pci-domain" property for pci dt nodes
+  ARM: Fix *MIGHT_HAVE_PCI* config from being selected redundantly
+  ARM: select PCI_DOMAINS config from ARCH_MULTIPLATFORM
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+ arch/arm/Kconfig                 |    3 +--
+ arch/arm/boot/dts/dra7.dtsi      |    2 ++
+ arch/arm/mach-at91/Kconfig       |    1 -
+ arch/arm/mach-axxia/Kconfig      |    2 --
+ arch/arm/mach-cns3xxx/Kconfig    |    1 -
+ arch/arm/mach-exynos/Kconfig     |    2 --
+ arch/arm/mach-imx/Kconfig        |    2 --
+ arch/arm/mach-integrator/Kconfig |    1 -
+ arch/arm/mach-keystone/Kconfig   |    2 --
+ arch/arm/mach-ks8695/Kconfig     |    5 -----
+ arch/arm/mach-pxa/Kconfig        |    1 -
+ arch/arm/mach-shmobile/Kconfig   |    1 -
+ arch/arm/mach-spear/Kconfig      |    1 -
+ arch/arm/mach-versatile/Kconfig  |    1 -
+ 14 files changed, 3 insertions(+), 22 deletions(-)
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 9d32d3dca9f377f8dbfb03413cea5af5482e412c Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:18:52 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- wm9850
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/max9850.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/codecs/max9850.c b/sound/soc/codecs/max9850.c
-index c14a79d026a1..0610840733d1 100644
---- a/sound/soc/codecs/max9850.c
-+++ b/sound/soc/codecs/max9850.c
-@@ -306,12 +306,14 @@ static struct snd_soc_codec_driver soc_codec_dev_max9850 = {
- 	.set_bias_level = max9850_set_bias_level,
- 	.suspend_bias_off = true,
- 
--	.controls = max9850_controls,
--	.num_controls = ARRAY_SIZE(max9850_controls),
--	.dapm_widgets = max9850_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(max9850_dapm_widgets),
--	.dapm_routes = max9850_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(max9850_dapm_routes),
-+	.component_driver = {
-+		.controls		= max9850_controls,
-+		.num_controls		= ARRAY_SIZE(max9850_controls),
-+		.dapm_widgets		= max9850_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(max9850_dapm_widgets),
-+		.dapm_routes		= max9850_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(max9850_dapm_routes),
-+	},
- };
- 
- static int max9850_i2c_probe(struct i2c_client *i2c,
 -- 
-2.8.1
+1.7.9.5
