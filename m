@@ -1,76 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753016AbcHOI4p (ORCPT
+Received: from lb3-smtp-cloud3.xs4all.net ([194.109.24.30]:59984 "EHLO
+	lb3-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754220AbcHAR5I (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 15 Aug 2016 04:56:45 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 21/26] ARM: dts: r8a7794: add Audio-DMAC support
-Date: Mon, 15 Aug 2016 10:55:40 +0200
-Message-Id: <298e4ee3d213a0764e8d4baa5336d4d1649a5bc5.1471251169.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
-References: <cover.1471251169.git.horms+renesas@verge.net.au>
+	Mon, 1 Aug 2016 13:57:08 -0400
+Subject: Re: [PATCH 1/6] media: rcar-vin: allow field to be changed
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+References: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
+ <20160729174012.14331-2-niklas.soderlund+renesas@ragnatech.se>
+ <1f735458-9ff3-f3fc-e349-20ac0b57cde1@cogentembedded.com>
+ <20160801165207.GD3672@bigcity.dyn.berto.se>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	slongerbeam@gmail.com, lars@metafoo.de, mchehab@kernel.org,
+	hans.verkuil@cisco.com
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <eee47ba9-b37d-e18f-0ede-815f47bb92d2@xs4all.nl>
+Date: Mon, 1 Aug 2016 19:55:34 +0200
+MIME-Version: 1.0
+In-Reply-To: <20160801165207.GD3672@bigcity.dyn.berto.se>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Describe Audio-DMAC in the R8A7794 device tree.
 
-This patch is loosely based on the commit 8994fff67761 ("ARM: shmobile:
-r8a7791: Add Audio DMAC devices to DT").
+On 08/01/2016 06:52 PM, Niklas S�derlund wrote:
+> Hi Sergei,
+> 
+> Thanks for testing!
+> 
+> On 2016-07-30 00:04:33 +0300, Sergei Shtylyov wrote:
+>> On 07/29/2016 08:40 PM, Niklas S�derlund wrote:
+>>
+>>> The driver forced whatever field was set by the source subdevice to be
+>>> used. This patch allows the user to change from the default field.
+>>>
+>>> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+>>
+>>    I didn't apply this patch at first (thinking it was unnecessary), and the
+>> capture worked fine. The field order appeared swapped again after I did
+>> import this patch as well. :-(
+> 
+> I had a look at the test tool you told me you use 
+> (https://linuxtv.org/downloads/v4l-dvb-apis/capture-example.html) and 
+> the reason the field order is swapped is a combination of that tool and 
+> how the rcar-vin driver interprets V4L2_FIELD_INTERLACED.
+> 
+> 1. The tool you use asks for V4L2_FIELD_INTERLACED if the -f switch is 
+>    used. You told me #v4l that you do use that switch, but have modified 
+>    the tool to use a different pixelformat than used in the link above, 
+>    correct?
+> 
+> 2. The rcar-vin driver interprets V4L2_FIELD_INTERLACED as 
+>    V4L2_FIELD_INTERLACED_TB. If this is correct or not I do not know, 
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7794.dtsi | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+That's wrong. FIELD_INTERLACED is standard dependent: it is effectively
+equal to INTERLACED_TB for 50 Hz formats and equal to INTERLACED_BT for
+60 Hz formats. For non-SDTV timings (e.g. 720i) it is equal to INTERLACED_TB.
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index cba41c199fd8..668e1383dd09 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -296,6 +296,34 @@
- 		dma-channels = <15>;
- 	};
- 
-+	audma0: dma-controller@ec700000 {
-+		compatible = "renesas,dmac-r8a7794", "renesas,rcar-dmac";
-+		reg = <0 0xec700000 0 0x10000>;
-+		interrupts =	<GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
-+				 GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "error",
-+				  "ch0", "ch1", "ch2", "ch3", "ch4", "ch5",
-+				  "ch6", "ch7", "ch8", "ch9", "ch10", "ch11",
-+				  "ch12";
-+		clocks = <&mstp5_clks R8A7794_CLK_AUDIO_DMAC0>;
-+		clock-names = "fck";
-+		power-domains = <&cpg_clocks>;
-+		#dma-cells = <1>;
-+		dma-channels = <13>;
-+	};
-+
- 	scifa0: serial@e6c40000 {
- 		compatible = "renesas,scifa-r8a7794",
- 			     "renesas,rcar-gen2-scifa", "renesas,scifa";
--- 
-2.7.0.rc3.207.g0ac5344
+Stick to FIELD_INTERLACED, that's what you normally want to use.
+
+>    the old soc-camera version of the driver do it this way so I have 
+>    kept that logic.
+> 
+> This is the reason why the field order is wrong when you apply this 
+> patch. Without it the field order would be locked to whatever the 
+> subdevice reports, V4L2_FIELD_ALTERNATE in this case.
+> 
+> I don't know if it's correct to treat V4L2_FIELD_INTERLACED as 
+> V4L2_FIELD_INTERLACED_TB or if I should try and use G_STD if 
+> V4L2_FIELD_INTERLACED is requested and change the field to _TB or _BT 
+> according to the result of that. I feel this will only push the problem 
+> further down. What if G_STD is not implemented by the subdevice? Then a 
+> default fallback interpretation to ether _TB or _BT would still be 
+> needed. I'm open to suggestion on how to handle this case.
+> 
+> There is also a feature missing in this patch. The field order was set 
+> to V4L2_FIELD_NONE if the requested format asks for V4L2_FIELD_ANY.  
+> This have no effect for how you test but i did run into it while trying 
+> to figure this out. I will send out a v2 which solves this by retaining 
+> the current field mode if V4L2_FIELD_ANY is asked for.
+> 
+>>
+>> MBR, Sergei
+>>
+> 
+
+I plan on reviewing all these field-related patches tomorrow.
+
+Regards,
+
+	Hans
