@@ -1,18 +1,10 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([198.47.19.12]:39039 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752037AbcHBGPJ (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 2 Aug 2016 02:15:09 -0400
-Subject: Re: [RFT PATCH v2 2/3] ARM: Fix *MIGHT_HAVE_PCI* config from being
- selected redundantly
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-References: <1470049950-4697-1-git-send-email-kishon@ti.com>
- <1470049950-4697-3-git-send-email-kishon@ti.com>
- <20160801152430.GM5783@n2100.arm.linux.org.uk>
-CC: Tony Lindgren <tony@atomide.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 1 Aug 2016 22:26:51 +0200
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+	Tony Lindgren <tony@atomide.com>,
 	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
 	Krzysztof Halasa <khalasa@piap.pl>,
 	Kukjin Kim <kgene@kernel.org>,
@@ -27,42 +19,45 @@ CC: Tony Lindgren <tony@atomide.com>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Viresh Kumar <vireshk@kernel.org>,
 	Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, <helgaas@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, helgaas@kernel.org,
 	Benoit Cousson <bcousson@baylibre.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
 	Fabio Estevam <fabio.estevam@nxp.com>,
 	Greg Ungerer <gerg@uclinux.org>,
-	<linux-samsung-soc@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<nsekhar@ti.com>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <57A039A2.7030406@ti.com>
-Date: Tue, 2 Aug 2016 11:41:46 +0530
+	linux-samsung-soc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	nsekhar@ti.com
+Subject: Re: [RFT PATCH v2 2/3] ARM: Fix *MIGHT_HAVE_PCI* config from being
+ selected redundantly
+Message-ID: <20160801202651.GB13682@piout.net>
+References: <1470049950-4697-1-git-send-email-kishon@ti.com>
+ <1470049950-4697-3-git-send-email-kishon@ti.com>
+ <579F6FAF.7010001@atmel.com>
 MIME-Version: 1.0
-In-Reply-To: <20160801152430.GM5783@n2100.arm.linux.org.uk>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <579F6FAF.7010001@atmel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
-
-On Monday 01 August 2016 08:54 PM, Russell King - ARM Linux wrote:
-> On Mon, Aug 01, 2016 at 04:42:29PM +0530, Kishon Vijay Abraham I wrote:
->> *MIGHT_HAVE_PCI* config is already selected in ARCH_MULTIPLATFORM.
->> Fix it from getting redundantly selected in all
->> ARCH_MULTIPLATFORM based machines.
+On 01/08/2016 at 17:50:07 +0200, Nicolas Ferre wrote :
+> Le 01/08/2016 13:12, Kishon Vijay Abraham I a �crit :
+> > *MIGHT_HAVE_PCI* config is already selected in ARCH_MULTIPLATFORM.
+> > Fix it from getting redundantly selected in all
+> > ARCH_MULTIPLATFORM based machines.
 > 
-> You're changing more than just platforms that are part of
-> ARCH_MULTIPLATFORM.  Eg, ARCH_DOVE and ARCH_IXP4XX.  So, these will
-> probably end up losing PCI support as a result of this change.
+> And what happens if we select just one platform independently?
+> 
 
-Okay. Initially assumed ARCH_MULTIPLATFORM will be set if MMU is set. But looks
-like that's not true for some of the platforms. Will fix it and resend the series.
+That is fine for us because SOC_AT91RM9200 can only be selected once
+ARCH_MULTIPLATFORM is selected anyway.
 
-Thanks
-Kishon
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
