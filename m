@@ -1,9 +1,7 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 1 Aug 2016 16:24:30 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>,
+From: Kishon Vijay Abraham I <kishon@ti.com>
+To: Tony Lindgren <tony@atomide.com>,
 	Nicolas Ferre <nicolas.ferre@atmel.com>,
 	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
 	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
@@ -20,39 +18,206 @@ Cc: Tony Lindgren <tony@atomide.com>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Viresh Kumar <vireshk@kernel.org>,
 	Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, helgaas@kernel.org,
-	Benoit Cousson <bcousson@baylibre.com>,
+	Arnd Bergmann <arnd@arndb.de>
+CC: <helgaas@kernel.org>, Benoit Cousson <bcousson@baylibre.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
 	Fabio Estevam <fabio.estevam@nxp.com>,
 	Greg Ungerer <gerg@uclinux.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	nsekhar@ti.com
-Subject: Re: [RFT PATCH v2 2/3] ARM: Fix *MIGHT_HAVE_PCI* config from being
- selected redundantly
-Message-ID: <20160801152430.GM5783@n2100.arm.linux.org.uk>
+	<linux-samsung-soc@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<kishon@ti.com>, <nsekhar@ti.com>
+Subject: [RFT PATCH v2 2/3] ARM: Fix *MIGHT_HAVE_PCI* config from being selected redundantly
+Date: Mon, 1 Aug 2016 16:42:29 +0530
+Message-ID: <1470049950-4697-3-git-send-email-kishon@ti.com>
+In-Reply-To: <1470049950-4697-1-git-send-email-kishon@ti.com>
 References: <1470049950-4697-1-git-send-email-kishon@ti.com>
- <1470049950-4697-3-git-send-email-kishon@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1470049950-4697-3-git-send-email-kishon@ti.com>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Aug 01, 2016 at 04:42:29PM +0530, Kishon Vijay Abraham I wrote:
-> *MIGHT_HAVE_PCI* config is already selected in ARCH_MULTIPLATFORM.
-> Fix it from getting redundantly selected in all
-> ARCH_MULTIPLATFORM based machines.
+*MIGHT_HAVE_PCI* config is already selected in ARCH_MULTIPLATFORM.
+Fix it from getting redundantly selected in all
+ARCH_MULTIPLATFORM based machines.
 
-You're changing more than just platforms that are part of
-ARCH_MULTIPLATFORM.  Eg, ARCH_DOVE and ARCH_IXP4XX.  So, these will
-probably end up losing PCI support as a result of this change.
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+---
+ arch/arm/Kconfig                 |    2 --
+ arch/arm/mach-at91/Kconfig       |    1 -
+ arch/arm/mach-axxia/Kconfig      |    1 -
+ arch/arm/mach-exynos/Kconfig     |    1 -
+ arch/arm/mach-integrator/Kconfig |    1 -
+ arch/arm/mach-keystone/Kconfig   |    1 -
+ arch/arm/mach-ks8695/Kconfig     |    5 -----
+ arch/arm/mach-pxa/Kconfig        |    1 -
+ arch/arm/mach-spear/Kconfig      |    1 -
+ arch/arm/mach-versatile/Kconfig  |    1 -
+ 10 files changed, 15 deletions(-)
 
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 90542db..538b032 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -474,7 +474,6 @@ config ARCH_IXP4XX
+ 	select CPU_XSCALE
+ 	select DMABOUNCE if PCI
+ 	select GENERIC_CLOCKEVENTS
+-	select MIGHT_HAVE_PCI
+ 	select NEED_MACH_IO_H
+ 	select USB_EHCI_BIG_ENDIAN_DESC
+ 	select USB_EHCI_BIG_ENDIAN_MMIO
+@@ -486,7 +485,6 @@ config ARCH_DOVE
+ 	select ARCH_REQUIRE_GPIOLIB
+ 	select CPU_PJ4
+ 	select GENERIC_CLOCKEVENTS
+-	select MIGHT_HAVE_PCI
+ 	select MULTI_IRQ_HANDLER
+ 	select MVEBU_MBUS
+ 	select PINCTRL
+diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
+index 08047af..4013427 100644
+--- a/arch/arm/mach-at91/Kconfig
++++ b/arch/arm/mach-at91/Kconfig
+@@ -55,7 +55,6 @@ config SOC_AT91RM9200
+ 	select ATMEL_ST
+ 	select CPU_ARM920T
+ 	select HAVE_AT91_USB_CLK
+-	select MIGHT_HAVE_PCI
+ 	select PINCTRL_AT91
+ 	select SOC_SAM_V4_V5
+ 	select SRAM if PM
+diff --git a/arch/arm/mach-axxia/Kconfig b/arch/arm/mach-axxia/Kconfig
+index 6c6d5e7..ee2e131 100644
+--- a/arch/arm/mach-axxia/Kconfig
++++ b/arch/arm/mach-axxia/Kconfig
+@@ -7,7 +7,6 @@ config ARCH_AXXIA
+ 	select ARM_TIMER_SP804
+ 	select HAVE_ARM_ARCH_TIMER
+ 	select MFD_SYSCON
+-	select MIGHT_HAVE_PCI
+ 	select PCI_DOMAINS if PCI
+ 	select ZONE_DMA
+ 	help
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 20dcf6e..a03daf5 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -125,7 +125,6 @@ config SOC_EXYNOS5440
+ 	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
+ 	select HAVE_ARM_ARCH_TIMER
+ 	select AUTO_ZRELADDR
+-	select MIGHT_HAVE_PCI
+ 	select PCI_DOMAINS if PCI
+ 	select PINCTRL_EXYNOS5440
+ 	select PM_OPP
+diff --git a/arch/arm/mach-integrator/Kconfig b/arch/arm/mach-integrator/Kconfig
+index b2a85ba..4ed202c 100644
+--- a/arch/arm/mach-integrator/Kconfig
++++ b/arch/arm/mach-integrator/Kconfig
+@@ -21,7 +21,6 @@ if ARCH_INTEGRATOR
+ config ARCH_INTEGRATOR_AP
+ 	bool "Support Integrator/AP and Integrator/PP2 platforms"
+ 	select CLKSRC_MMIO
+-	select MIGHT_HAVE_PCI
+ 	select SERIAL_AMBA_PL010 if TTY
+ 	select SERIAL_AMBA_PL010_CONSOLE if TTY
+ 	select SOC_BUS
+diff --git a/arch/arm/mach-keystone/Kconfig b/arch/arm/mach-keystone/Kconfig
+index ea955f6db..6bd14da 100644
+--- a/arch/arm/mach-keystone/Kconfig
++++ b/arch/arm/mach-keystone/Kconfig
+@@ -9,7 +9,6 @@ config ARCH_KEYSTONE
+ 	select COMMON_CLK_KEYSTONE
+ 	select ARCH_SUPPORTS_BIG_ENDIAN
+ 	select ZONE_DMA if ARM_LPAE
+-	select MIGHT_HAVE_PCI
+ 	select PCI_DOMAINS if PCI
+ 	help
+ 	  Support for boards based on the Texas Instruments Keystone family of
+diff --git a/arch/arm/mach-ks8695/Kconfig b/arch/arm/mach-ks8695/Kconfig
+index a545976..4ef06bc 100644
+--- a/arch/arm/mach-ks8695/Kconfig
++++ b/arch/arm/mach-ks8695/Kconfig
+@@ -4,7 +4,6 @@ menu "Kendin/Micrel KS8695 Implementations"
+ 
+ config MACH_KS8695
+ 	bool "KS8695 development board"
+-	select MIGHT_HAVE_PCI
+ 	help
+ 	  Say 'Y' here if you want your kernel to run on the original
+ 	  Kendin-Micrel KS8695 development board.
+@@ -52,7 +51,6 @@ config MACH_CM4002
+ 
+ config MACH_CM4008
+ 	bool "OpenGear CM4008"
+-	select MIGHT_HAVE_PCI
+ 	help
+ 	  Say 'Y' here if you want your kernel to support the OpenGear
+ 	  CM4008 Console Server. See http://www.opengear.com for more
+@@ -60,7 +58,6 @@ config MACH_CM4008
+ 
+ config MACH_CM41xx
+ 	bool "OpenGear CM41xx"
+-	select MIGHT_HAVE_PCI
+ 	help
+ 	  Say 'Y' here if you want your kernel to support the OpenGear
+ 	  CM4016 or CM4048 Console Servers. See http://www.opengear.com for
+@@ -68,7 +65,6 @@ config MACH_CM41xx
+ 
+ config MACH_IM4004
+ 	bool "OpenGear IM4004"
+-	select MIGHT_HAVE_PCI
+ 	help
+ 	  Say 'Y' here if you want your kernel to support the OpenGear
+ 	  IM4004 Secure Access Server. See http://www.opengear.com for
+@@ -76,7 +72,6 @@ config MACH_IM4004
+ 
+ config MACH_IM42xx
+ 	bool "OpenGear IM42xx"
+-	select MIGHT_HAVE_PCI
+ 	help
+ 	  Say 'Y' here if you want your kernel to support the OpenGear
+ 	  IM4216 or IM4248 Console Servers. See http://www.opengear.com for
+diff --git a/arch/arm/mach-pxa/Kconfig b/arch/arm/mach-pxa/Kconfig
+index cd894d6..39f7755 100644
+--- a/arch/arm/mach-pxa/Kconfig
++++ b/arch/arm/mach-pxa/Kconfig
+@@ -113,7 +113,6 @@ config MACH_ARMCORE
+ 	bool "CompuLab CM-X255/CM-X270 modules"
+ 	select ARCH_HAS_DMA_SET_COHERENT_MASK if PCI
+ 	select IWMMXT
+-	select MIGHT_HAVE_PCI
+ 	select NEED_MACH_IO_H if PCI
+ 	select PXA25x
+ 	select PXA27x
+diff --git a/arch/arm/mach-spear/Kconfig b/arch/arm/mach-spear/Kconfig
+index ea9ea95..f8af720 100644
+--- a/arch/arm/mach-spear/Kconfig
++++ b/arch/arm/mach-spear/Kconfig
+@@ -20,7 +20,6 @@ config ARCH_SPEAR13XX
+ 	select HAVE_ARM_TWD if SMP
+ 	select PINCTRL
+ 	select MFD_SYSCON
+-	select MIGHT_HAVE_PCI
+ 	help
+ 	  Supports for ARM's SPEAR13XX family
+ 
+diff --git a/arch/arm/mach-versatile/Kconfig b/arch/arm/mach-versatile/Kconfig
+index b0cc262..c257d40 100644
+--- a/arch/arm/mach-versatile/Kconfig
++++ b/arch/arm/mach-versatile/Kconfig
+@@ -9,7 +9,6 @@ config ARCH_VERSATILE
+ 	select CPU_ARM926T
+ 	select ICST
+ 	select MFD_SYSCON
+-	select MIGHT_HAVE_PCI
+ 	select PLAT_VERSATILE
+ 	select POWER_RESET
+ 	select POWER_RESET_VERSATILE
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+1.7.9.5
