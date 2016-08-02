@@ -1,15 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([198.47.19.11]:35745 "EHLO bear.ext.ti.com"
+Received: from arroyo.ext.ti.com ([198.47.19.12]:39039 "EHLO arroyo.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751501AbcHBGQ2 (ORCPT
+	id S1752037AbcHBGPJ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 2 Aug 2016 02:16:28 -0400
+	Tue, 2 Aug 2016 02:15:09 -0400
 Subject: Re: [RFT PATCH v2 2/3] ARM: Fix *MIGHT_HAVE_PCI* config from being
  selected redundantly
-To: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
 References: <1470049950-4697-1-git-send-email-kishon@ti.com>
  <1470049950-4697-3-git-send-email-kishon@ti.com>
- <87oa5cxq3l.fsf@belgarion.home>
+ <20160801152430.GM5783@n2100.arm.linux.org.uk>
 CC: Tony Lindgren <tony@atomide.com>,
 	Nicolas Ferre <nicolas.ferre@atmel.com>,
 	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
@@ -22,6 +22,7 @@ CC: Tony Lindgren <tony@atomide.com>,
 	Santosh Shilimkar <ssantosh@kernel.org>,
 	Daniel Mack <daniel@zonque.org>,
 	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
 	Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Viresh Kumar <vireshk@kernel.org>,
@@ -30,7 +31,6 @@ CC: Tony Lindgren <tony@atomide.com>,
 	Benoit Cousson <bcousson@baylibre.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
 	Fabio Estevam <fabio.estevam@nxp.com>,
 	Greg Ungerer <gerg@uclinux.org>,
 	<linux-samsung-soc@vger.kernel.org>,
@@ -40,30 +40,29 @@ CC: Tony Lindgren <tony@atomide.com>,
 	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
 	<nsekhar@ti.com>
 From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <57A03A6E.3010905@ti.com>
-Date: Tue, 2 Aug 2016 11:45:10 +0530
+Message-ID: <57A039A2.7030406@ti.com>
+Date: Tue, 2 Aug 2016 11:41:46 +0530
 MIME-Version: 1.0
-In-Reply-To: <87oa5cxq3l.fsf@belgarion.home>
+In-Reply-To: <20160801152430.GM5783@n2100.arm.linux.org.uk>
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi,
 
-
-On Tuesday 02 August 2016 12:40 AM, Robert Jarzmik wrote:
-> Kishon Vijay Abraham I <kishon@ti.com> writes:
-> 
+On Monday 01 August 2016 08:54 PM, Russell King - ARM Linux wrote:
+> On Mon, Aug 01, 2016 at 04:42:29PM +0530, Kishon Vijay Abraham I wrote:
 >> *MIGHT_HAVE_PCI* config is already selected in ARCH_MULTIPLATFORM.
 >> Fix it from getting redundantly selected in all
 >> ARCH_MULTIPLATFORM based machines.
 > 
-> If that's the purpose, then CM-X255 and CM-X270 don't fall in that category, as
-> they are not part of ARCH_MULTIPLATFORM nor ready for it AFAIK. So the change
-> below shouldn't be done according to the commit message.
+> You're changing more than just platforms that are part of
+> ARCH_MULTIPLATFORM.  Eg, ARCH_DOVE and ARCH_IXP4XX.  So, these will
+> probably end up losing PCI support as a result of this change.
 
-yeah, got that now. Looks like ARCH_PXA is not converted to multiplatform. Will
-fix and repost the series.
+Okay. Initially assumed ARCH_MULTIPLATFORM will be set if MMU is set. But looks
+like that's not true for some of the platforms. Will fix it and resend the series.
 
 Thanks
 Kishon
