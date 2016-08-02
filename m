@@ -1,40 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:36366 "EHLO
-	mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752017AbcHCR6I (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:52997 "EHLO
+	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935026AbcHBOvf (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 3 Aug 2016 13:58:08 -0400
-Received: by mail-lf0-f41.google.com with SMTP id g62so166633858lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Aug 2016 10:57:38 -0700 (PDT)
-Subject: Re: [PATCHv2 4/7] media: rcar-vin: fix height for TOP and BOTTOM
- fields
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	slongerbeam@gmail.com
+	Tue, 2 Aug 2016 10:51:35 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	sergei.shtylyov@cogentembedded.com, slongerbeam@gmail.com
+Cc: lars@metafoo.de, mchehab@kernel.org, hans.verkuil@cisco.com,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2 4/7] media: rcar-vin: fix height for TOP and BOTTOM fields
+Date: Tue,  2 Aug 2016 16:51:04 +0200
+Message-Id: <20160802145107.24829-5-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160802145107.24829-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20160802145107.24829-1-niklas.soderlund+renesas@ragnatech.se>
- <20160802145107.24829-5-niklas.soderlund+renesas@ragnatech.se>
-Cc: lars@metafoo.de, mchehab@kernel.org, hans.verkuil@cisco.com
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <b343cd90-05db-a6d5-2e4d-ba345e18bde9@cogentembedded.com>
-Date: Wed, 3 Aug 2016 19:54:11 +0300
 MIME-Version: 1.0
-In-Reply-To: <20160802145107.24829-5-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 08/02/2016 05:51 PM, Niklas Söderlund wrote:
+The height used for V4L2_FIELD_TOP and V4L2_FIELD_BOTTOM where wrong.
+The frames only contain one filed so the height should be half of the
+frame.
 
-> The height used for V4L2_FIELD_TOP and V4L2_FIELD_BOTTOM where wrong.
-> The frames only contain one filed so the height should be half of the
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
-    s/filed/field/.
-
-> frame.
->
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-[...]
-
-MBR, Sergei
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 33435d7..c31ac73 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -125,6 +125,8 @@ static int rvin_reset_format(struct rvin_dev *vin)
+ 	switch (vin->format.field) {
+ 	case V4L2_FIELD_TOP:
+ 	case V4L2_FIELD_BOTTOM:
++		vin->format.height /= 2;
++		break;
+ 	case V4L2_FIELD_NONE:
+ 	case V4L2_FIELD_INTERLACED_TB:
+ 	case V4L2_FIELD_INTERLACED_BT:
+@@ -221,21 +223,13 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	/* Limit to source capabilities */
+ 	__rvin_try_format_source(vin, which, pix, source);
+ 
+-	/* If source can't match format try if VIN can scale */
+-	if (source->width != rwidth || source->height != rheight)
+-		rvin_scale_try(vin, pix, rwidth, rheight);
+-
+-	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
+-	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
+-
+-	/* Limit to VIN capabilities */
+-	v4l_bound_align_image(&pix->width, 2, RVIN_MAX_WIDTH, walign,
+-			      &pix->height, 4, RVIN_MAX_HEIGHT, 2, 0);
+-
+ 	switch (pix->field) {
+-	case V4L2_FIELD_NONE:
+ 	case V4L2_FIELD_TOP:
+ 	case V4L2_FIELD_BOTTOM:
++		pix->height /= 2;
++		source->height /= 2;
++		break;
++	case V4L2_FIELD_NONE:
+ 	case V4L2_FIELD_INTERLACED_TB:
+ 	case V4L2_FIELD_INTERLACED_BT:
+ 	case V4L2_FIELD_INTERLACED:
+@@ -245,6 +239,17 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 		break;
+ 	}
+ 
++	/* If source can't match format try if VIN can scale */
++	if (source->width != rwidth || source->height != rheight)
++		rvin_scale_try(vin, pix, rwidth, rheight);
++
++	/* HW limit width to a multiple of 32 (2^5) for NV16 else 2 (2^1) */
++	walign = vin->format.pixelformat == V4L2_PIX_FMT_NV16 ? 5 : 1;
++
++	/* Limit to VIN capabilities */
++	v4l_bound_align_image(&pix->width, 2, RVIN_MAX_WIDTH, walign,
++			      &pix->height, 4, RVIN_MAX_HEIGHT, 2, 0);
++
+ 	pix->bytesperline = max_t(u32, pix->bytesperline,
+ 				  rvin_format_bytesperline(pix));
+ 	pix->sizeimage = max_t(u32, pix->sizeimage,
+-- 
+2.9.0
