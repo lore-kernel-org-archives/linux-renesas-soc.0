@@ -1,8 +1,16 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([198.47.19.11]:35745 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751501AbcHBGQ2 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 2 Aug 2016 02:16:28 -0400
 Subject: Re: [RFT PATCH v2 2/3] ARM: Fix *MIGHT_HAVE_PCI* config from being
  selected redundantly
-To: Tony Lindgren <tony@atomide.com>,
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+References: <1470049950-4697-1-git-send-email-kishon@ti.com>
+ <1470049950-4697-3-git-send-email-kishon@ti.com>
+ <87oa5cxq3l.fsf@belgarion.home>
+CC: Tony Lindgren <tony@atomide.com>,
 	Nicolas Ferre <nicolas.ferre@atmel.com>,
 	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
 	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
@@ -14,15 +22,12 @@ To: Tony Lindgren <tony@atomide.com>,
 	Santosh Shilimkar <ssantosh@kernel.org>,
 	Daniel Mack <daniel@zonque.org>,
 	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
 	Simon Horman <horms@verge.net.au>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Viresh Kumar <vireshk@kernel.org>,
 	Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>
-References: <1470049950-4697-1-git-send-email-kishon@ti.com>
- <1470049950-4697-3-git-send-email-kishon@ti.com>
-CC: <helgaas@kernel.org>, Benoit Cousson <bcousson@baylibre.com>,
+	Arnd Bergmann <arnd@arndb.de>, <helgaas@kernel.org>,
+	Benoit Cousson <bcousson@baylibre.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Russell King <linux@armlinux.org.uk>,
@@ -35,38 +40,30 @@ CC: <helgaas@kernel.org>, Benoit Cousson <bcousson@baylibre.com>,
 	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
 	<nsekhar@ti.com>
 From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <57A03C2B.2080407@ti.com>
-Date: Tue, 2 Aug 2016 11:52:35 +0530
+Message-ID: <57A03A6E.3010905@ti.com>
+Date: Tue, 2 Aug 2016 11:45:10 +0530
 MIME-Version: 1.0
-In-Reply-To: <1470049950-4697-3-git-send-email-kishon@ti.com>
+In-Reply-To: <87oa5cxq3l.fsf@belgarion.home>
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
 
-On Monday 01 August 2016 04:42 PM, Kishon Vijay Abraham I wrote:
-> *MIGHT_HAVE_PCI* config is already selected in ARCH_MULTIPLATFORM.
-> Fix it from getting redundantly selected in all
-> ARCH_MULTIPLATFORM based machines.
+
+On Tuesday 02 August 2016 12:40 AM, Robert Jarzmik wrote:
+> Kishon Vijay Abraham I <kishon@ti.com> writes:
 > 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  arch/arm/Kconfig                 |    2 --
->  arch/arm/mach-at91/Kconfig       |    1 -
->  arch/arm/mach-axxia/Kconfig      |    1 -
->  arch/arm/mach-exynos/Kconfig     |    1 -
->  arch/arm/mach-integrator/Kconfig |    1 -
->  arch/arm/mach-keystone/Kconfig   |    1 -
->  arch/arm/mach-ks8695/Kconfig     |    5 -----
->  arch/arm/mach-pxa/Kconfig        |    1 -
->  arch/arm/mach-spear/Kconfig      |    1 -
->  arch/arm/mach-versatile/Kconfig  |    1 -
+>> *MIGHT_HAVE_PCI* config is already selected in ARCH_MULTIPLATFORM.
+>> Fix it from getting redundantly selected in all
+>> ARCH_MULTIPLATFORM based machines.
+> 
+> If that's the purpose, then CM-X255 and CM-X270 don't fall in that category, as
+> they are not part of ARCH_MULTIPLATFORM nor ready for it AFAIK. So the change
+> below shouldn't be done according to the commit message.
 
-Thank you everyone for reviewing this patch.
-Looks like ARCH_IXP4XX, ARCH_DOVE, ARCH_KS8695, ARCH_PXA are not converted to
-multiplatform. I'll fix this patch accordingly and repost the series.
+yeah, got that now. Looks like ARCH_PXA is not converted to multiplatform. Will
+fix and repost the series.
 
 Thanks
 Kishon
