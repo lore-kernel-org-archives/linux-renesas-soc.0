@@ -1,11 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www381.your-server.de ([78.46.137.84]:40970 "EHLO
-	www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932285AbcHCOaG (ORCPT
+Received: from lb2-smtp-cloud2.xs4all.net ([194.109.24.25]:39503 "EHLO
+	lb2-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932398AbcHCOaJ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 3 Aug 2016 10:30:06 -0400
+	Wed, 3 Aug 2016 10:30:09 -0400
 Subject: Re: [PATCHv2 7/7] [PATCHv5] media: adv7180: fix field type
-To: Hans Verkuil <hverkuil@xs4all.nl>,
+To: Lars-Peter Clausen <lars@metafoo.de>,
 	=?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
 	Steve Longerbeam <steve_longerbeam@mentor.com>
 References: <20160802145107.24829-1-niklas.soderlund+renesas@ragnatech.se>
@@ -17,15 +17,17 @@ References: <20160802145107.24829-1-niklas.soderlund+renesas@ragnatech.se>
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
 	sergei.shtylyov@cogentembedded.com, slongerbeam@gmail.com,
 	mchehab@kernel.org, hans.verkuil@cisco.com
-From: Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <c0754004-76bb-bcb4-0816-d986d0ff53d4@metafoo.de>
-Date: Wed, 3 Aug 2016 16:29:02 +0200
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <1cbfbbab-7366-74e5-a111-f7e9bc6528e8@xs4all.nl>
+Date: Wed, 3 Aug 2016 16:30:02 +0200
 MIME-Version: 1.0
 In-Reply-To: <d7f16469-a4a4-b2cc-2af1-2c3efcd8aac6@metafoo.de>
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
+
+
 
 On 08/03/2016 04:23 PM, Lars-Peter Clausen wrote:
 > On 08/03/2016 04:11 PM, Hans Verkuil wrote:
@@ -70,9 +72,11 @@ On 08/03/2016 04:23 PM, Lars-Peter Clausen wrote:
 > 
 > The output of the I2P core are frames like (A,B) (C,B) (C,D) (E,D) (E, F) ...
 
-Just for completeness the output expected for INTERLACED would be
+Yuck.
 
-(A, B), (C, D), (E, F), ...
+What most devices do is (A,B) (C,D) (E,F) ...
+
+That's FIELD_INTERLACED.
 
 > 
 > The first frame is INTERLACED_TB, the second INTERLACED_BT, the third
@@ -80,8 +84,12 @@ Just for completeness the output expected for INTERLACED would be
 > a progressive setup so the data-output-rate is higher. Maybe we need a
 > FIELD_DEINTERLACED to denote such a setup?
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+
+Yeah, this is a completely different mode. Do we even want to support this?
+
+Does anyone need this mode? I think we should leave it out until someone actually
+wants to use it. And then we need to come up with a new FIELD_ mode.
+
+Regards,
+
+	Hans
