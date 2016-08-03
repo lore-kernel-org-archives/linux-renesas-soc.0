@@ -1,105 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:37509 "EHLO
-	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752523AbcHQTDK (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:46190 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932820AbcHCUbj (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 17 Aug 2016 15:03:10 -0400
-Received: by mail-wm0-f43.google.com with SMTP id i5so491288wmg.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 17 Aug 2016 12:03:10 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: dts: blanche: add support for general purpose switches
-Date: Wed, 17 Aug 2016 22:03:06 +0300
-Message-ID: <10166368.YKl2X2iyOO@wasted.cogentembedded.com>
-In-Reply-To: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
-References: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Wed, 3 Aug 2016 16:31:39 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, David Airlie <airlied@linux.ie>,
+	Archit Taneja <architt@codeaurora.org>
+Subject: [PATCH] drm: rcar-du: Link HDMI encoder with bridge
+Date: Wed,  3 Aug 2016 23:31:36 +0300
+Message-Id: <1470256296-8476-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support  for the  general purpose  software switches  SW2 and tactile
-switches SW24/25 as a virtual keyboard (like it was done with the Lager/
-Koelsch boards).
+The conversion of the rcar-du driver from the I2C slave encoder to the
+DRM bridge API left the HDMI encoder's bridge pointer NULL, preventing
+the bridge from being handled automatically by the DRM core. Fix it.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Fixes: 1d926114d8f4 ("drm: rcar-du: Remove i2c slave encoder interface for hdmi encoder")
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-This patch is against the 'renesas-devel-20160817-v4.8-rc2' of Simon Horman's
-'renesas.git' repo.
+ drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- arch/arm/boot/dts/r8a7792-blanche.dts |   49 ++++++++++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+Dave, this is a candidate for v4.8 as the offending patch just made it
+upstream during the merge window.
 
-Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
-+++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-@@ -11,6 +11,8 @@
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c b/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
+index 4de3ff0dbebd..e03004f4588d 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
+@@ -125,6 +125,7 @@ int rcar_du_hdmienc_init(struct rcar_du_device *rcdu,
  
- /dts-v1/;
- #include "r8a7792.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
+ 	/* Link drm_bridge to encoder */
+ 	bridge->encoder = encoder;
++	encoder->bridge = bridge;
  
- / {
- 	model = "Blanche";
-@@ -54,6 +56,53 @@
- 		pinctrl-0 = <&lan89218_pins>;
- 		pinctrl-names = "default";
- 	};
-+
-+	keyboard {
-+		compatible = "gpio-keys";
-+
-+		key-1 {
-+			linux,code = <KEY_1>;
-+			label = "SW2-1";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio3 10 GPIO_ACTIVE_LOW>;
-+		};
-+		key-2 {
-+			linux,code = <KEY_2>;
-+			label = "SW2-2";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio3 11 GPIO_ACTIVE_LOW>;
-+		};
-+		key-3 {
-+			linux,code = <KEY_3>;
-+			label = "SW2-3";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
-+		};
-+		key-4 {
-+			linux,code = <KEY_4>;
-+			label = "SW2-4";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio3 15 GPIO_ACTIVE_LOW>;
-+		};
-+		key-a {
-+			linux,code = <KEY_A>;
-+			label = "SW24";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio3 20 GPIO_ACTIVE_LOW>;
-+		};
-+		key-b {
-+			linux,code = <KEY_B>;
-+			label = "SW25";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio11 2 GPIO_ACTIVE_LOW>;
-+		};
-+	};
- };
- 
- &extal_clk {
+ 	ret = drm_bridge_attach(rcdu->ddev, bridge);
+ 	if (ret) {
+-- 
+Regards,
+
+Laurent Pinchart
