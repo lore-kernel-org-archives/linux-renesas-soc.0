@@ -1,55 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34049 "EHLO
-	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933492AbcHDNdg convert rfc822-to-8bit (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:39084 "EHLO
+	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752995AbcHCOyn (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 4 Aug 2016 09:33:36 -0400
-MIME-Version: 1.0
-In-Reply-To: <20160803135647.23242-2-niklas.soderlund+renesas@ragnatech.se>
-References: <20160803135647.23242-1-niklas.soderlund+renesas@ragnatech.se> <20160803135647.23242-2-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 4 Aug 2016 15:33:18 +0200
-Message-ID: <CAMuHMdU-czrkroEKkWg-WFJ7ayqhGntDtuaRXFoyQnm_wDdxvw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ravb: use SET_RUNTIME_PM_OPS macro
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+	Wed, 3 Aug 2016 10:54:43 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
 	<niklas.soderlund+renesas@ragnatech.se>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Wolfram Sang <wsa@the-dreams.de>
+To: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	sergei.shtylyov@cogentembedded.com
+Cc: davem@davemloft.net, wsa@the-dreams.de,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/2] ravb: use SET_RUNTIME_PM_OPS macro
+Date: Wed,  3 Aug 2016 15:56:46 +0200
+Message-Id: <20160803135647.23242-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160803135647.23242-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160803135647.23242-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 3, 2016 at 3:56 PM, Niklas Söderlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> Use macro to define the runtime PM operations.
->
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Use macro to define the runtime PM operations.
 
-Duplicate of  commit 524c6f691b99065577b245b250efe93fb0cda5c4
-Author: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Date:   Mon May 30 05:25:43 2016 +0900
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/net/ethernet/renesas/ravb_main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-    ravb: Add SET_RUNTIME_PM_OPS macro
-
-    Use SET_RUNTIME_PM_OPS macro instead of assigning a member of
-    dev_pm_ops directly.
-
-    Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-    Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-    Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 867caf6..da8da86 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -2111,8 +2111,7 @@ static int ravb_runtime_nop(struct device *dev)
+ }
+ 
+ static const struct dev_pm_ops ravb_dev_pm_ops = {
+-	.runtime_suspend = ravb_runtime_nop,
+-	.runtime_resume = ravb_runtime_nop,
++	SET_RUNTIME_PM_OPS(ravb_runtime_nop, ravb_runtime_nop, NULL)
+ };
+ 
+ #define RAVB_PM_OPS (&ravb_dev_pm_ops)
+-- 
+2.9.0
