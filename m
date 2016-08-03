@@ -1,44 +1,75 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <kishon@ti.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] phy: rcar-gen3-usb2: revise the example of device tree doc
-Date: Wed, 24 Aug 2016 15:49:21 +0900
-Message-ID: <1472021362-8085-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1472021362-8085-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1472021362-8085-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:46100 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751479AbcHCRrh convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 3 Aug 2016 13:47:37 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hiep Cao Minh <cm-hiep@jinso.co.jp>
+Cc: Ryusuke Sakato <ryusuke.sakato.bx@renesas.com>,
+	kuninori morimoto <kuninori.morimoto.gx@renesas.com>,
+	magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	=?utf-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	=?utf-8?B?J0R1bmfvvJrkurrjgr0n?= <nv-dung@jinso.co.jp>,
+	Xuan Truong Nguyen <nx-truong@jinso.co.jp>,
+	laurent.pinchart+renesas@ideasonboard.com,
+	horms+renesas@verge.net.au, linux-renesas-soc@vger.kernel.org
+Subject: Re: The failure summary report for linux stable v4.7
+Date: Wed, 03 Aug 2016 20:38:26 +0300
+Message-ID: <14575379.WoFtKTTBW3@avalon>
+In-Reply-To: <9ba4b58f-173f-71a7-8868-d577a5789a7e@jinso.co.jp>
+References: <9ba4b58f-173f-71a7-8868-d577a5789a7e@jinso.co.jp>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The clocks property should be set to &cpg, not &mstpX_clks.
+Hello Hiep-san,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Wednesday 03 Aug 2016 20:27:07 Hiep Cao Minh wrote:
+> Hi all,
+> 
+> We would like to report the summary of the failure to ML, starting from
+> Linux stable v4.7.
+> 
+> Before, we only reported each issue to the person in charge at the time
+> of issue detection.
+> 
+> Now we think that the upstream version’s failure status quo should be
+> updated usually to all upstream members.
+> 
+> So, first, we are going to report the Linux upstream issue summary for
+> each version full test, then we report each issue to the person in charge.
+> 
+> Currently, we have full tests of upstream v4.x-rc2 and stable version,
+> and reconfirm the issue of rc2 version on v4.x-rc7 (before stable
+> version is released).
+> 
+> Between full test versions, we investigate and analyze the issue. We
+> will report the investigated results if find out any useful information.
+> 
+> Before:
+> 
+> Only report the issue to the person in charge at the time of issue
+> detection.
+> 
+> Sometimes re-report the issue to the person in charge.
+> 
+> After:
+> 
+> Usually update and report the summary of the issue to all members.
+> 
+> Usually report each issue and update the status quo to the person in charge.
 
-diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-index 2281d6c..b54fb36 100644
---- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-+++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-@@ -30,11 +30,11 @@ Example (R-Car H3):
- 		compatible = "renesas,usb2-phy-r8a7795", "renesas,rcar-gen3-usb2-phy";
- 		reg = <0 0xee080200 0 0x700>;
- 		interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&mstp7_clks R8A7795_CLK_EHCI0>;
-+		clocks = <&cpg CPG_MOD 703>;
- 	};
- 
- 	usb-phy@ee0a0200 {
- 		compatible = "renesas,usb2-phy-r8a7795", "renesas,rcar-gen3-usb2-phy";
- 		reg = <0 0xee0a0200 0 0x700>;
--		clocks = <&mstp7_clks R8A7795_CLK_EHCI0>;
-+		clocks = <&cpg CPG_MOD 702>;
- 	};
+Thank you for the report. I tried to reproduce the Lager HDMI output issue on 
+mainline, and got blocked by the fact that HDMI output seems completely 
+broken. I'm investigating that and will provide a fix, and then move on to the 
+issue you've reported.
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
