@@ -1,55 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:53849 "EHLO
-	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1758758AbcHDR4c (ORCPT
+Received: from mail-ua0-f175.google.com ([209.85.217.175]:33427 "EHLO
+	mail-ua0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758170AbcHCVPt (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 4 Aug 2016 13:56:32 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Daniel Palmer <danieruru@gmail.com>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>
-Subject: RE: spi-rspi mixes DMA and PIO transfers causing PIO transfer to
- fail.
-Date: Thu, 4 Aug 2016 17:56:26 +0000
-Message-ID: <KL1PR06MB174925EF47C3CB04495A88FC8A070@KL1PR06MB1749.apcprd06.prod.outlook.com>
-References: <CAO64nm4ozZHoB5uKn8pKsShUOezrWAQwbk2XNSpKejTqPSPOtw@mail.gmail.com>
-In-Reply-To: <CAO64nm4ozZHoB5uKn8pKsShUOezrWAQwbk2XNSpKejTqPSPOtw@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	Wed, 3 Aug 2016 17:15:49 -0400
+Received: by mail-ua0-f175.google.com with SMTP id k90so161975112uak.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Aug 2016 14:15:22 -0700 (PDT)
 MIME-Version: 1.0
+From: Daniel Palmer <danieruru@gmail.com>
+Date: Thu, 4 Aug 2016 06:15:20 +0900
+Message-ID: <CAO64nm4ozZHoB5uKn8pKsShUOezrWAQwbk2XNSpKejTqPSPOtw@mail.gmail.com>
+Subject: spi-rspi mixes DMA and PIO transfers causing PIO transfer to fail.
+To: linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-V2VsbCwgaXQncyBhIDE2IGJ5dGUgRklGTywgc28gaWYgeW91IGNhbiBqdXN0IGZpbGwgaXQgdXAg
-YW5kIGxlYXZlIHRoYXQncyB0aGUgZWFzaWVzdCBmcm9tIGEgU1cvSFcgc3RhbmRwb2ludC4NCg0K
-SG93ZXZlciwgaWYgeW91IGp1c3QgdXNlZCBETUEgZXZlcnkgdGltZSwgaXQgd291bGQgc3RpbGwg
-ZmluaXNoIGp1c3QgYXMgZmFzdCB3aXRob3V0IGFueSBDUFUgaW52b2x2ZW1lbnQgc28gdGhhdCdz
-IHRoZSBzYW1lLg0KDQpTbywgbWF5YmUgdXNpbmcgdGhlIEZJRk8gaW5zdGVhZCBvZiBETUEgd2Fz
-IGEgZnVuIGlkZWEsIGJ1dCBJIGRvbid0IHNlZSB0aGUgdGVjaG5pY2FsIGFkdmFudGFnZSwgc28g
-bWF5YmUgbWFrZSBfX3JzcGlfY2FuX2RtYSBhbHdheXMgcmV0dXJuIHRydWUgaXMgZmluZSAodW5s
-ZXNzIHNvbWVvbmUgY2FuIHRoaW5rIG9mIGFuIGlkZWEgd2h5IGl0J3MgYmV0dGVyIHRvIHVzZSB0
-aGUgRklGTyBpbnN0ZWFkIG9mIERNQSBmb3IgdHJhbnNmZXJzIHVuZGVyIDE2IGJ5dGVzKQ0KDQpU
-aGUgb25seSBvdGhlciB0aGluZyB0byBkbyB3b3VsZCBiZSB0byBhZGQgYW4gZXh0cmEgZmxhZyAo
-aW4gc3RydWN0IHJzcGlfZGF0YSApIHRoYXQga2VlcHMgdHJhY2sgaWYgdGhlIGN1cnJlbnQgdHJh
-bnNmZXIgaXMgUElPIG9yIERNQS4gSSd2ZSBkb25lIHRoYXQgYmVmb3JlIGZvciB0aGluZ3MgbGlr
-ZSBJMkMgZHJpdmVycyB3aGVyZSBkb2luZyBETUEgaXMgaGFyZCBmb3Igc21hbGwgcGFja2V0cy4g
-QnV0LCB0aGVuIHlvdSBhcmUgYWRkaW5nIG1vcmUgY29kZSBhbmQgcG90ZW50aWFsIG5ldyBidWdz
-Lg0KDQoNCkNocmlzDQoNCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IGxpbnV4
-LXJlbmVzYXMtc29jLW93bmVyQHZnZXIua2VybmVsLm9yZyBbbWFpbHRvOmxpbnV4LXJlbmVzYXMt
-c29jLW93bmVyQHZnZXIua2VybmVsLm9yZ10gT24gQmVoYWxmIE9mIERhbmllbCBQYWxtZXINClNl
-bnQ6IFdlZG5lc2RheSwgQXVndXN0IDAzLCAyMDE2IDU6MTUgUE0NClRvOiBsaW51eC1yZW5lc2Fz
-LXNvY0B2Z2VyLmtlcm5lbC5vcmcNClN1YmplY3Q6IHNwaS1yc3BpIG1peGVzIERNQSBhbmQgUElP
-IHRyYW5zZmVycyBjYXVzaW5nIFBJTyB0cmFuc2ZlciB0byBmYWlsLg0KDQpJIGdvdCBETUEgd29y
-a2luZyBvbiB0aGUgUlovQTFIIGFuZCBzdGFydGVkIHRvIG5vdGljZSB0aGlzOg0KDQpzcGlfbWFz
-dGVyIHNwaTA6IHJlY2VpdmUgdGltZW91dA0KDQpXaGF0IHNlZW1zIHRvIGJlIGhhcHBlbmluZyBp
-cyB0aGF0IHRoZXJlIGlzIGEgRE1BIHRyYW5zZmVyIGZvciB0aGUgU1BJIGJ1cyBoYXBwZW5pbmcg
-c28gdGhlIGludGVycnVwdHMgYXJlIG1hc2tlZC4gQSBzbWFsbCB0cmFuc2ZlciB0aGF0IGlzIHNt
-YWxsZXIgdGhhbiB0aGUgZmlmbyBzaXplIGNvbWVzIGFsb25nIHNvIF9fcnNwaV9jYW5fZG1hIHJl
-dHVybnMgZmFsc2UgYW5kIGEgUElPIHRyYW5zZmVyIGlzIHN0YXJ0ZWQgYnV0IHRoZSBpbnRlcnJ1
-cHQgdG8gc2F5IGl0J3MgZmluaXNoZWQgaXMgaGFuZGxlZCBieSB0aGUgRE1BIGNvbnRyb2xsZXIg
-c28gdGhlIHNwaSBkcml2ZXIgbmV2ZXIgc2VlcyB0aGF0IGl0IGZpbmlzaGVkLiBNYWtpbmcgX19y
-c3BpX2Nhbl9kbWEgYWx3YXlzIHJldHVybiB0cnVlIG1ha2VzIHRoZSBwcm9ibGVtIGdvIGF3YXku
-DQoNCkRvZXMgYW55b25lIGhhdmUgYW55IHN1Z2dlc3Rpb25zIHRvIGZpeCBpdCBwcm9wZXJseT8N
-Cg0KSSdtIG5vdCBvbiB0aGUgbGlzdCBzbyBwbGVhc2UgQ0MgbWUuDQoNCkNoZWVycywNCg0KRGFu
-aWVsDQo=
+I got DMA working on the RZ/A1H and started to notice this:
+
+spi_master spi0: receive timeout
+
+What seems to be happening is that there is a DMA transfer for the SPI
+bus happening so the interrupts are masked. A small transfer that is
+smaller than the fifo size comes along so __rspi_can_dma returns false
+and a PIO transfer is started but the interrupt to say it's finished
+is handled by the DMA controller so the spi driver never sees that it
+finished. Making __rspi_can_dma always return true makes the problem
+go away.
+
+Does anyone have any suggestions to fix it properly?
+
+I'm not on the list so please CC me.
+
+Cheers,
+
+Daniel
