@@ -1,50 +1,38 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran@ksquared.org.uk>
-Cc: mchehab@osg.samsung.com, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] v4l: Extend FCP compatible list to support the FDP
-Date: Thu, 04 Aug 2016 14:44:05 +0300
-Message-ID: <3571037.vkY2aLVIRq@avalon>
-In-Reply-To: <1465492003-1554-2-git-send-email-kieran@bingham.xyz>
-References: <1465492003-1554-1-git-send-email-kieran@bingham.xyz> <1465492003-1554-2-git-send-email-kieran@bingham.xyz>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:32836 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750736AbcHDICQ (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 4 Aug 2016 04:02:16 -0400
+Received: by mail-oi0-f49.google.com with SMTP id j185so312265823oih.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Aug 2016 01:02:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1468913374-32065-1-git-send-email-geert+renesas@glider.be>
+References: <1468913374-32065-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 4 Aug 2016 09:57:03 +0200
+Message-ID: <CACRpkdayXYjGRh_Dh_UrmfPyCKKS7LpubBnzbzxM_woW_Zpisw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Correct header from R-Car Gen3
+ to R8A7795
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+On Tue, Jul 19, 2016 at 9:29 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-Thank you for the patch.
-
-On Thursday 09 Jun 2016 18:06:43 Kieran Bingham wrote:
-> The FCP must be powered up for the FDP1 to function, even when the FDP1
-> does not make use of the FCNL features. Extend the compatible list
-> to allow us to use the power domain and runtime-pm support.
-> 
-> Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-and applied to my tree.
-
+> This source file handles r8a7795 only, which is not the sole member of
+> the R-Car Gen3 family.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  drivers/media/platform/rcar-fcp.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/media/platform/rcar-fcp.c
-> b/drivers/media/platform/rcar-fcp.c index 6a7bcc3028b1..0ff6b1edf1db 100644
-> --- a/drivers/media/platform/rcar-fcp.c
-> +++ b/drivers/media/platform/rcar-fcp.c
-> @@ -160,6 +160,7 @@ static int rcar_fcp_remove(struct platform_device *pdev)
-> 
->  static const struct of_device_id rcar_fcp_of_match[] = {
->  	{ .compatible = "renesas,fcpv" },
-> +	{ .compatible = "renesas,fcpf" },
->  	{ },
->  };
+> To be queued up in sh-pfc-for-v4.9.
 
--- 
-Regards,
+OK! Acked-by.
 
-Laurent Pinchart
+Yours,
+Linus Walleij
