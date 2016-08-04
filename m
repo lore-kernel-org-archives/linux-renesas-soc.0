@@ -1,125 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www381.your-server.de ([78.46.137.84]:48484 "EHLO
-	www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757229AbcHDIon (ORCPT
+Received: from smtp-proxy001.phy.lolipop.jp ([157.7.104.42]:45220 "EHLO
+	smtp-proxy001.phy.lolipop.jp" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753319AbcHDD1A (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 4 Aug 2016 04:44:43 -0400
-Subject: Re: [alsa-devel] Question about struct snd_soc_dai() ::
- cpu_dai->codec
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-References: <878twpj739.wl%kuninori.morimoto.gx@renesas.com>
- <579A69EC.9060205@metafoo.de>
- <87popx2nbb.wl%kuninori.morimoto.gx@renesas.com>
- <4ad31e53-188a-8a40-cea9-b89df5f3535e@metafoo.de>
- <20160729144145.GF10376@sirena.org.uk>
- <87popt9n1w.wl%kuninori.morimoto.gx@renesas.com>
- <87y44fhdxt.wl%kuninori.morimoto.gx@renesas.com>
- <49dd216c-d63c-693e-92ed-6abf1865eeb0@metafoo.de>
- <87r3a5mfjd.wl%kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Liam Girdwood <lgirdwood@gmail.com>
-From: Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <2c894b35-9c57-6212-c8c5-f97ec1e1d263@metafoo.de>
-Date: Thu, 4 Aug 2016 10:21:10 +0200
+	Wed, 3 Aug 2016 23:27:00 -0400
+Subject: Re: Question about struct snd_soc_dai() :: cpu_dai->codec
+To: Mark Brown <broonie@kernel.org>
+References: <s5h1t2f6jdm.wl-tiwai@suse.de>
+ <20160727182233.GV11806@sirena.org.uk> <s5hpopy6dbi.wl-tiwai@suse.de>
+ <20160728034643.GH9681@localhost> <579A6C1B.2060904@metafoo.de>
+ <579AA39B.5030100@sakamocchi.jp>
+ <884bd15f-da5e-49f5-73ee-d8173dc0720a@metafoo.de>
+ <20160729160702.GK9681@localhost> <s5hy44k41oa.wl-tiwai@suse.de>
+ <ab6b5a69-9d36-b4a5-0b8f-10a7dcf1ea40@sakamocchi.jp>
+ <20160729220854.GN10376@sirena.org.uk>
+Cc: Linux-ALSA <alsa-devel@alsa-project.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Vinod Koul <vinod.koul@intel.com>, Simon <horms@verge.net.au>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Message-ID: <5152607b-90ab-1675-6be8-986be880a8eb@sakamocchi.jp>
+Date: Thu, 4 Aug 2016 12:17:57 +0900
 MIME-Version: 1.0
-In-Reply-To: <87r3a5mfjd.wl%kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20160729220854.GN10376@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 08/04/2016 04:38 AM, Kuninori Morimoto wrote:
-> 
-> Hi Lars
-> 
->> I think moving forward we should get rid of the whole CPU/CODEC/platform
->> concept. This is an outdated view of how the hardware looks like. When ASoC
->> was initially introduce all hardware basically had a CPU side DAI, a CODEC
->> side DAI and a DMA. The DMA was connected to the CPU DAI and the CPU DAI was
->> connected to the CODEC DAI and that was it. The CPU side was also really
->> simple, no signal processing, no signal routing, just the raw audio data
->> directly transferred via DMA (or PIO sometimes) to the CPU DAI controller.
->> And all digital audio was assumed to be in a single digital domain running
->> at them same clock rate.
->>
->> This no longer reflects todays typical systems. Sometimes you have more than
->> those three components (e.g. additional amplifier IC, BT chip ...),
->> sometimes you less (just a DAC or ADC directly connected to a DMA in the
->> SoC). You often have complex routing and processing capabilities on the host
->> side. Also you have often multiple digital domains with sample-rate
->> converters between them.
->>
->> Yet still at the core ASoC keeps the CPU/CODEC/platform concept. DPCM e.g.
->> tries to work with these concepts by introducing frontend and backend DAIs
->> and use dummy components to compensate for when the software model does not
->> match the hardware model. This makes it code more complicated than it has to
->> be and less efficient than it can be.
-> 
-> I agree to your opinion.
-> OTOH, we would like to use/keep existing current all drivers.
-> Thus, I think we need super many small and slow steps.
-> Or, we need new ASoC2 ?
-> 
-> I can agree that we should get rid of current CPU/Codec/Platform,
-> but, removing all of them is a little bit over-kill for me.
-> I think ALSA SoC "framework" should care "component" only,
-> and it doesn't care what it was.
-> OTOH "driver" side can use existing CPU/Codec/Platform and/or AUX/compr
-> etc as helper ? (I'm not sure detail of AUX/compr actually...)
-> And each "component" has "dai".
-> 
-> My image is like this.
-> This allows many / few components, and many / few DAIs.
-> Current DPCM style is automatically supported,
-> and it is easy to add new style device.
-> What do you think ?
+On Jul 30 2016 07:08, Mark Brown wrote:
+>> But I think it's logically difficult to manage state of sound card; e.g.
+>> disconnect. When one sound card instance consists of instances of
+>> several 'DAI', 'Codecs' and 'Components' (this 'component' is not in
+>> ALSA core contexts[1]) and we try to unload one of them, then which
+>> state the card should be assigned to? Or no 'Codecs' drivers are loaded,
+>> then which state should be assigned to the card?
+>
+> The card only instantiates when all the components of the card are
+> present, until then it defers probe.
 
-To be honest I'd also get rid of DAIs has a top level concept. This image
-(http://metafoo.de/the_new_asoc.svg) is something I've put together awhile
-ago how I think we should lay things out if we do a major refactoring of the
-ASoC core.
+Oops. I forgot ALSA soc part utilizes EPROBE_DEFER. Thanks for your 
+correction.
 
-The big green and blue boxes are components. Green are On-SoC components,
-blue are external components.
+>> Additionally, when old Codec driver is unloaded and new Codec driver is
+>> loaded, then what should we do for corresponding PCM character devices
+>> are? Currently, once snd_card_regsiter() is called, we cannot
+>> insert/delete ALSA components such like PCM.
+>
+> The card should be deinstantiated and reinstantiated whenever a
+> component driver unbinds and rebinds (respectively).  You'd need to
+> completely deregister the card to change the list of things it's
+> expecting currently.
 
-The light grey boxes are domains. Domains have certain properties, like e.g.
-samplerates. There are different types of domains and different types have
-different kinds of properties. E.g. in the PCM domain we care about the
-memory layout of the samples in addition to the samplerate and the number of
-channels, while in the digital domain however we do no longer care about the
-memory layout since here data is processed one sample at a time. In the I2S
-link domain we care about which I2S mode is used (I2S, LJ, ...), while in a
-SPDIF link domain we don't care about such properties.
+In a point of application interfaces, I guess that current 
+implementation of ALSA soc part includes a bug that it's possible to 
+unload codec or component modules when any ALSA character devices are 
+opened. The framework has no codes to manage reference counting of 
+character devices or loaded codecs, components.
 
-The dark grey boxes are bridges between domains and they translate
-properties from one domain to another. This can either be straight forward
-propagation like a PCM device where the samplerate in the source and target
-domain are the same, or it can modify the properties, e.g. a samplerate
-converter between two digital domains will change the samplerate according
-to the interpolation/decimation factor of the SRC.
+Here, any of suggestions comes from my code reading. I apologize if 
+they're wrong.
 
-In addition to just translating the properties a bridge can also translate
-the constraints on properties from one domain to another or even add its own
-constraints. E.g. if a CODEC has a constraint that it can run either with
-48kHz or 96kHz this constraint is propagated through the bridges to the PCM
-devices so that the userspace application using the PCM is aware of this.
-Bridges can also add their own constraints e.g. a SRC might have multiple
-interpolation/decimation rates available, so it might say the samplerate in
-the target domain must be 1x or 2x that of the source domain. Going back to
-the example that means for a CODEC that supports either 48kHz or 96kHz and
-there is a SRC with interpolation factors of 1 or 2 then the PCM device will
-present the list of either 24kHz, 48kHz or 96kHz to the userspace application.
 
-A bridge is also not limited to one source and one sink. It can have
-multiple sources and multiple sinks e.g. for a crossbar with a complex
-routing matrix.
+Regards
 
-Obviously we can't convert everything at the same time and it will take a
-lot of time and effort to update all drivers to this new model. This is
-where the legacy bridge kicks in which still keeps the concept of 1 CPU, 1
-CODEC, 1 platform. If you want to use the advanced features of the new
-framework you have to update your driver, if you are OK with the current set
-of features just keep the drivers the way they are and use the legacy bridge
-that is automatically managed by the ASoC core.
+Takashi Sakamoto
