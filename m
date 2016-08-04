@@ -1,57 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:44119 "EHLO
-	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S964796AbcHDTU1 (ORCPT
+Received: from mail-ua0-f176.google.com ([209.85.217.176]:33817 "EHLO
+	mail-ua0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758969AbcHDS7W (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 4 Aug 2016 15:20:27 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Daniel Palmer <danieruru@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>
-Subject: RE: spi-rspi mixes DMA and PIO transfers causing PIO transfer to
- fail.
-Date: Thu, 4 Aug 2016 19:13:49 +0000
-Message-ID: <KL1PR06MB174903281FA1D587BFC9F0CC8A070@KL1PR06MB1749.apcprd06.prod.outlook.com>
+	Thu, 4 Aug 2016 14:59:22 -0400
+Received: by mail-ua0-f176.google.com with SMTP id 35so181210446uap.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Aug 2016 11:58:59 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdXfK4kdBqr8gDngoZ5Nug66gDAf90nMJZe2qDVKxtPN8g@mail.gmail.com>
 References: <CAO64nm4ozZHoB5uKn8pKsShUOezrWAQwbk2XNSpKejTqPSPOtw@mail.gmail.com>
  <KL1PR06MB174925EF47C3CB04495A88FC8A070@KL1PR06MB1749.apcprd06.prod.outlook.com>
- <CAO64nm52MSOe5Zk-m0gfiOV=sQCeZra5MvuGcTNY8BSb9Ls64A@mail.gmail.com>
- <CAMuHMdXfK4kdBqr8gDngoZ5Nug66gDAf90nMJZe2qDVKxtPN8g@mail.gmail.com>
- <CAO64nm5dwJ2m__2QA40Gdr4rZQiQE+WYMzO0crfbYFvnB48ASQ@mail.gmail.com>
-In-Reply-To: <CAO64nm5dwJ2m__2QA40Gdr4rZQiQE+WYMzO0crfbYFvnB48ASQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+ <CAO64nm52MSOe5Zk-m0gfiOV=sQCeZra5MvuGcTNY8BSb9Ls64A@mail.gmail.com> <CAMuHMdXfK4kdBqr8gDngoZ5Nug66gDAf90nMJZe2qDVKxtPN8g@mail.gmail.com>
+From: Daniel Palmer <danieruru@gmail.com>
+Date: Fri, 5 Aug 2016 03:58:58 +0900
+Message-ID: <CAO64nm5dwJ2m__2QA40Gdr4rZQiQE+WYMzO0crfbYFvnB48ASQ@mail.gmail.com>
+Subject: Re: spi-rspi mixes DMA and PIO transfers causing PIO transfer to fail.
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Chris Brandt <Chris.Brandt@renesas.com>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SXMgeW91ciBzb3VyY2UgYnVmZmVyIGluIGV4dGVybmFsIFNEUkFNPw0KDQpUaGUgb25lIGlzc3Vl
-IHdpdGggRE1BIGlzIHRoYXQgYWZ0ZXIgZWFjaCBieXRlIHRyYW5zZmVyLCB0aGUgRE1BIG11c3Qg
-Zmlyc3QgYWNxdWlyZSBhIG5ldyB2YWx1ZSBvdmVyIFNEUkFNIChubyBjYWNoZSkgYW5kIHRoZW4g
-d3JpdGUgaXQgdG8gdGhlIFJTUEkgSVAgYmxvY2sgc2l0dGluZyBvbiB0aGUgcGVyaXBoZXJhbCBi
-dXMuIEkgZmlndXJlZCB0aGF0IHdvdWxkIG1ha2Ugc29tZSBsYXRlbmN5IGJldHdlZW4gYnl0ZXMs
-IGJ1dCBtYXliZSBpdCB0YWtlcyBsb25nZXIgdGhhbiBJIGFzc3VtZWQuDQoNCklmIHlvdSBhcmUg
-dXNpbmcgU0RSQU0gZm9yIHRoZSBzb3VyY2UgYnVmZmVyLCBpdCB3b3VsZCBiZSBpbnRlcmVzdGlu
-ZyBpZiB5b3UgdHJpZWQgaW50ZXJuYWwgUkFNIGZvciB0aGUgc291cmNlIGJ1ZmZlciBpbnN0ZWFk
-ICh5b3UgY291bGQganVzdCBoYXJkIGNvZGUgdGhlIGFkZHJlc3MgZm9yIHRlc3RpbmcpLg0KDQpJ
-bnRlcm5hbGx5LCB0aGUgUi1DYXIgR2VuMiBidXNzZXMgKGFuZCBleHRlcm5hbCBtZW1vcnkgaW50
-ZXJmYWNlKSBhcmUgd2F5IGZhc3RlciB0aGFuIFJaL0ExLg0KDQpDaHJpcw0KDQoNCg0KDQoNCi0t
-LS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBEYW5pZWwgUGFsbWVyIFttYWlsdG86ZGFu
-aWVydXJ1QGdtYWlsLmNvbV0gDQpTZW50OiBUaHVyc2RheSwgQXVndXN0IDA0LCAyMDE2IDI6NTkg
-UE0NClRvOiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0QGxpbnV4LW02OGsub3JnPg0KQ2M6IENo
-cmlzIEJyYW5kdCA8Q2hyaXMuQnJhbmR0QHJlbmVzYXMuY29tPjsgbGludXgtcmVuZXNhcy1zb2NA
-dmdlci5rZXJuZWwub3JnDQpTdWJqZWN0OiBSZTogc3BpLXJzcGkgbWl4ZXMgRE1BIGFuZCBQSU8g
-dHJhbnNmZXJzIGNhdXNpbmcgUElPIHRyYW5zZmVyIHRvIGZhaWwuDQoNCk9uIDUgQXVndXN0IDIw
-MTYgYXQgMDM6NDYsIEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnRAbGludXgtbTY4ay5vcmc+IHdy
-b3RlOg0KDQo+ICAgICBQZXJmb3JtYW5jZSBmaWd1cmVzIGZvciByZWFkaW5nIGZyb20gYSBRU1BJ
-IEZMQVNIIGRyaXZlbiBhdCAyNC4zNzUgTUh6DQo+ICAgICBvbiByOGE3NzkxL2tvZWxzY2g6DQo+
-ICAgICAgIC0gU2luZ2xlOiAgMS4xIE1icHMgUElPLCAyMyBNYnBzIERNQQ0KPiAgICAgICAtIER1
-YWwgIDogMTIuNyBNYnBzIFBJTywgNDggTWJwcyBETUENCj4gICAgICAgLSBRdWFkICA6IDEzICAg
-TWJwcyBQSU8sIDcwIE1icHMgRE1BDQoNClRoYW5rcyBmb3IgdGhvc2UgbnVtYmVycy4gSSBoYXZl
-IHNvbWV0aGluZyB0byBhaW0gZm9yIG5vdy4gOikgV2hhdCBJJ20gc2VlaW5nIG9uIG15IGxvZ2lj
-IGFuYWx5c2VyIHdpdGggdGhlIGJ1cyBhdCAxME1IeiBpcyA4IGNsb2NrcyB0YWtpbmcgfjUwMG5z
-LCB+MTcwMG5zIG9mIGlkbGUgYW5kIHRoZW4gOCBtb3JlIGNsb2Nrcy4gc3BpLXJwaSBkb2Vzbid0
-IHNlZW0gdG8gc2V0IGFueSBvZiB0aGUgcmVnaXN0ZXJzIGZvciBhZGRpbmcgaW4gZGVsYXlzIHNv
-IEkgZ3Vlc3MgaXQncyB0byBkbyB3aXRoIHRoZSBETUEgY29udHJvbGxlci4NCg0KQ2hlZXJzLA0K
-DQpEYW5pZWwNCg==
+On 5 August 2016 at 03:46, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+
+>     Performance figures for reading from a QSPI FLASH driven at 24.375 MHz
+>     on r8a7791/koelsch:
+>       - Single:  1.1 Mbps PIO, 23 Mbps DMA
+>       - Dual  : 12.7 Mbps PIO, 48 Mbps DMA
+>       - Quad  : 13   Mbps PIO, 70 Mbps DMA
+
+Thanks for those numbers. I have something to aim for now. :)
+What I'm seeing on my logic analyser with the bus at 10MHz is 8 clocks
+taking ~500ns,
+~1700ns of idle and then 8 more clocks. spi-rpi doesn't seem to set
+any of the registers
+for adding in delays so I guess it's to do with the DMA controller.
+
+Cheers,
+
+Daniel
