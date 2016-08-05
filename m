@@ -1,13 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk0-f49.google.com ([209.85.213.49]:34961 "EHLO
-	mail-vk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934849AbcHEPGP (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:60291 "EHLO
+	relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1759797AbcHEOUJ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 5 Aug 2016 11:06:15 -0400
-Received: by mail-vk0-f49.google.com with SMTP id w127so194017317vkh.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 05 Aug 2016 08:06:15 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <KL1PR06MB17491404850EDA552933EC288A180@KL1PR06MB1749.apcprd06.prod.outlook.com>
+	Fri, 5 Aug 2016 10:20:09 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Daniel Palmer <danieruru@gmail.com>
+CC: Geert Uytterhoeven <geert@linux-m68k.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: RE: spi-rspi mixes DMA and PIO transfers causing PIO transfer to
+ fail.
+Date: Fri, 5 Aug 2016 14:20:03 +0000
+Message-ID: <KL1PR06MB17491404850EDA552933EC288A180@KL1PR06MB1749.apcprd06.prod.outlook.com>
 References: <CAO64nm4ozZHoB5uKn8pKsShUOezrWAQwbk2XNSpKejTqPSPOtw@mail.gmail.com>
  <KL1PR06MB174925EF47C3CB04495A88FC8A070@KL1PR06MB1749.apcprd06.prod.outlook.com>
  <CAO64nm52MSOe5Zk-m0gfiOV=sQCeZra5MvuGcTNY8BSb9Ls64A@mail.gmail.com>
@@ -16,23 +21,20 @@ References: <CAO64nm4ozZHoB5uKn8pKsShUOezrWAQwbk2XNSpKejTqPSPOtw@mail.gmail.com>
  <KL1PR06MB174903281FA1D587BFC9F0CC8A070@KL1PR06MB1749.apcprd06.prod.outlook.com>
  <CAO64nm4oCFoYUPZHDaDEJRCg9jEA5k2+S8yzAuHhS26mBmGhRw@mail.gmail.com>
  <KL1PR06MB1749B1F2FF9AD5FDFF82CA9C8A070@KL1PR06MB1749.apcprd06.prod.outlook.com>
- <CAO64nm6MA8dtJ07zm4C4XRHP2UGdBJ2Fmg73Kwp7_O3L43vCKw@mail.gmail.com> <KL1PR06MB17491404850EDA552933EC288A180@KL1PR06MB1749.apcprd06.prod.outlook.com>
-From: Daniel Palmer <danieruru@gmail.com>
-Date: Sat, 6 Aug 2016 00:06:13 +0900
-Message-ID: <CAO64nm6uk-nRV+DzOmxM9MK8DxcEiBWs6pQJYUofNetj=FbaiA@mail.gmail.com>
-Subject: Re: spi-rspi mixes DMA and PIO transfers causing PIO transfer to fail.
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+ <CAO64nm6MA8dtJ07zm4C4XRHP2UGdBJ2Fmg73Kwp7_O3L43vCKw@mail.gmail.com>
+In-Reply-To: <CAO64nm6MA8dtJ07zm4C4XRHP2UGdBJ2Fmg73Kwp7_O3L43vCKw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I tried it out. Not a massive difference but at 10MHz (in reality
-~8.6MHz) the delay between bytes goes from 1.36us down to 1.24us.
-I didn't notice this before as I was looking at much longer buffer
-being written and couldn't see CS go high again but if I write 32
-bytes of data that is complete in ~80us but the chip select is held
-low for 2ms after that. I think that's probably a bigger issue than
-the delay between bytes. :)
+PiBUaGUgRE1BIGNvbnRyb2xsZXIgaW4gdGhlIFJaL0ExIGNhbiBhcHBhcmVudGx5IHJlYWQgYSBs
+b25nIGZyb20gdGhlIHNvdXJjZSBpbiBvbmUNCj4gdHJhbnNhY3Rpb24gYW5kIGZlZWQgaXQgdG9v
+IHRoZSBkZXN0aW5hdGlvbiBhcyA0IGJ5dGUgd3JpdGVzIHNvIEknbSB0aGlua2luZyBtYXliZQ0K
+PiBJIGNhbiBzZXR1cCB0aGUgRE1BIGNvbnRyb2xsZXIgdG8gcmVhZCAyIGxvbmdzIGFuZCB3cml0
+ZSB0aGF0IGFzIDggYnl0ZXMgaW4gb25lIGdvDQo+IHNvIHRoYXQgZWFjaCBETUEgdHJhbnNhY3Rp
+b24gZmlsbHMgdGhlIFNQSSBjb250cm9sbGVyJ3MgRklGTy4NCg0KSW50ZXJlc3RpbmcgZXhwZXJp
+bWVudC4gSWYgeW91IHRyeSBpdCwgbGV0IG1lIGtub3cgaG93IGl0IGdvZXMuDQoNCg0KQ2hyaXMN
+Cg==
