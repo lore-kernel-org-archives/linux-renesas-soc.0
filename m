@@ -1,29 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50918 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57818 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752014AbcHHLAX (ORCPT
+	with ESMTP id S1759655AbcHEMUW (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:00:23 -0400
+	Fri, 5 Aug 2016 08:20:22 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87oa531usw.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiI4-0002R0-1i@debutante>
-Date: Mon, 08 Aug 2016 12:00:16 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on wm0010" to the asoc tree
+	Magnus Damm <magnus.damm@gmail.com>,
+	Nobuhiro Iwamatsu <iwamatsu@nigauri.org>,
+	Ulrich Hecht <ulrich.hecht@gmail.com>,
+	linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+In-Reply-To: <1470385072-1313-1-git-send-email-geert+renesas@glider.be>
+Message-Id: <E1bVd9k-0001RH-Qo@debutante>
+Date: Fri, 05 Aug 2016 12:19:12 +0100
+Subject: Applied "spi: sh-msiof: Avoid invalid clock generator parameters" to the spi tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on wm0010
+   spi: sh-msiof: Avoid invalid clock generator parameters
 
-has been applied to the asoc tree at
+has been applied to the spi tree at
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -44,43 +45,41 @@ to this mail.
 Thanks,
 Mark
 
->From 022f86d6f3b15bcd4865bccf837d309eb336f5a2 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:28:08 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- wm0010
+>From c3ccf357c3d75bd2924e049b6a991f7c0c111068 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Fri, 5 Aug 2016 10:17:52 +0200
+Subject: [PATCH] spi: sh-msiof: Avoid invalid clock generator parameters
 
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
+The conversion from a look-up table to a calculation for clock generator
+parameters forgot to take into account that BRDV x 1/1 is valid only if
+BRPS is x 1/1 or x 1/2, leading to undefined behavior (e.g. arbitrary
+clock rates).
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+This limitation is documented for the MSIOF module in all supported
+SH/R-Mobile and R-Car Gen2/Gen3 ARM SoCs.
+
+Tested on r8a7791/koelsch and r8a7795/salvator-x.
+
+Fixes: 65d5665bb260b034 ("spi: sh-msiof: Update calculation of frequency dividing")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/wm0010.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/spi/spi-sh-msiof.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/sound/soc/codecs/wm0010.c b/sound/soc/codecs/wm0010.c
-index e3c34bdc2772..4ef6919ab1a1 100644
---- a/sound/soc/codecs/wm0010.c
-+++ b/sound/soc/codecs/wm0010.c
-@@ -795,10 +795,12 @@ static struct snd_soc_codec_driver soc_codec_dev_wm0010 = {
- 	.set_sysclk = wm0010_set_sysclk,
- 	.idle_bias_off = true,
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index 0f83ad1d5a58..1de3a772eb7d 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -262,6 +262,9 @@ static void sh_msiof_spi_set_clk_regs(struct sh_msiof_spi_priv *p,
  
--	.dapm_widgets = wm0010_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(wm0010_dapm_widgets),
--	.dapm_routes = wm0010_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(wm0010_dapm_routes),
-+	.component_driver = {
-+		.dapm_widgets		= wm0010_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(wm0010_dapm_widgets),
-+		.dapm_routes		= wm0010_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(wm0010_dapm_routes),
-+	},
- };
- 
- #define WM0010_RATES (SNDRV_PCM_RATE_44100 | SNDRV_PCM_RATE_48000)
+ 	for (k = 0; k < ARRAY_SIZE(sh_msiof_spi_div_table); k++) {
+ 		brps = DIV_ROUND_UP(div, sh_msiof_spi_div_table[k].div);
++		/* SCR_BRDV_DIV_1 is valid only if BRPS is x 1/1 or x 1/2 */
++		if (sh_msiof_spi_div_table[k].div == 1 && brps > 2)
++			continue;
+ 		if (brps <= 32) /* max of brdv is 32 */
+ 			break;
+ 	}
 -- 
 2.8.1
