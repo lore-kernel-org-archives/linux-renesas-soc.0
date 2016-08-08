@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50146 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52236 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751985AbcHHKrA (ORCPT
+	with ESMTP id S1752002AbcHHLCy (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 06:47:00 -0400
+	Mon, 8 Aug 2016 07:02:54 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87fur6mjic.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWi57-0000Ko-JI@debutante>
-Date: Mon, 08 Aug 2016 11:46:53 +0100
-Subject: Applied "ASoC: simple-card: use asoc_simple_card_parse_dai()" to the asoc tree
+In-Reply-To: <87r39z4oob.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiKW-0003B0-0E@debutante>
+Date: Mon, 08 Aug 2016 12:02:48 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on adav80x" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: simple-card: use asoc_simple_card_parse_dai()
+   ASoC: codec duplicated callback function goes to component on adav80x
 
 has been applied to the asoc tree at
 
@@ -44,106 +44,47 @@ to this mail.
 Thanks,
 Mark
 
->From 44c16af1fa8a5b1464fd76834ee6943f721748fa Mon Sep 17 00:00:00 2001
+>From c5946fcf84bf71f4c0bc08a6bce3781e6b281737 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 06:02:07 +0000
-Subject: [PATCH] ASoC: simple-card: use asoc_simple_card_parse_dai()
+Date: Mon, 8 Aug 2016 09:12:11 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ adav80x
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/generic/simple-card.c | 43 +++++++++++++++++------------------------
- 1 file changed, 18 insertions(+), 25 deletions(-)
+ sound/soc/codecs/adav80x.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index b37c81b09203..05d6e02c42f3 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -44,6 +44,8 @@ struct simple_card_data {
- #define simple_priv_to_link(priv, i) ((priv)->snd_card.dai_link + i)
- #define simple_priv_to_props(priv, i) ((priv)->dai_props + i)
+diff --git a/sound/soc/codecs/adav80x.c b/sound/soc/codecs/adav80x.c
+index acff8d62059c..6e793ebb5883 100644
+--- a/sound/soc/codecs/adav80x.c
++++ b/sound/soc/codecs/adav80x.c
+@@ -834,12 +834,14 @@ static struct snd_soc_codec_driver adav80x_codec_driver = {
+ 	.set_pll = adav80x_set_pll,
+ 	.set_sysclk = adav80x_set_sysclk,
  
-+#define DAI	"sound-dai"
-+#define CELL	"#sound-dai-cells"
- #define PREFIX	"simple-audio-card,"
+-	.controls = adav80x_controls,
+-	.num_controls = ARRAY_SIZE(adav80x_controls),
+-	.dapm_widgets = adav80x_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(adav80x_dapm_widgets),
+-	.dapm_routes = adav80x_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(adav80x_dapm_routes),
++	.component_driver = {
++		.controls		= adav80x_controls,
++		.num_controls		= ARRAY_SIZE(adav80x_controls),
++		.dapm_widgets		= adav80x_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(adav80x_dapm_widgets),
++		.dapm_routes		= adav80x_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(adav80x_dapm_routes),
++	},
+ };
  
- #define asoc_simple_card_init_hp(card, sjack, prefix)\
-@@ -243,33 +245,11 @@ asoc_simple_card_sub_parse_of(struct device_node *np,
- 			      const char **name,
- 			      int *args_count)
- {
--	struct of_phandle_args args;
- 	int ret;
- 
- 	if (!np)
- 		return 0;
- 
--	/*
--	 * Get node via "sound-dai = <&phandle port>"
--	 * it will be used as xxx_of_node on soc_bind_dai_link()
--	 */
--	ret = of_parse_phandle_with_args(np, "sound-dai",
--					 "#sound-dai-cells", 0, &args);
--	if (ret)
--		return ret;
--
--	*p_node = args.np;
--
--	if (args_count)
--		*args_count = args.args_count;
--
--	/* Get dai->name */
--	if (name) {
--		ret = snd_soc_of_get_dai_name(np, name);
--		if (ret < 0)
--			return ret;
--	}
--
- 	if (!dai)
- 		return 0;
- 
-@@ -298,7 +278,7 @@ static int asoc_simple_card_dai_link_of(struct device_node *node,
- 	struct device_node *codec = NULL;
- 	char prop[128];
- 	char *prefix = "";
--	int ret, cpu_args;
-+	int ret, single_cpu;
- 	u32 val;
- 
- 	/* For single DAI link & old style of DT node */
-@@ -328,10 +308,23 @@ static int asoc_simple_card_dai_link_of(struct device_node *node,
- 	if (!of_property_read_u32(node, "mclk-fs", &val))
- 		dai_props->mclk_fs = val;
- 
-+	ret = asoc_simple_card_parse_cpu(cpu, dai_link,
-+					 DAI, CELL, &single_cpu);
-+	if (ret < 0)
-+		goto dai_link_of_err;
-+
-+	ret = asoc_simple_card_parse_codec(codec, dai_link, DAI, CELL);
-+	if (ret < 0)
-+		goto dai_link_of_err;
-+
-+	ret = asoc_simple_card_parse_platform(plat, dai_link, DAI, CELL);
-+	if (ret < 0)
-+		goto dai_link_of_err;
-+
- 	ret = asoc_simple_card_sub_parse_of(cpu, &dai_props->cpu_dai,
- 					    &dai_link->cpu_of_node,
- 					    &dai_link->cpu_dai_name,
--					    &cpu_args);
-+					    &single_cpu);
- 	if (ret < 0)
- 		goto dai_link_of_err;
- 
-@@ -392,7 +385,7 @@ static int asoc_simple_card_dai_link_of(struct device_node *node,
- 	 *	fmt_single_name()
- 	 *	fmt_multiple_name()
- 	 */
--	if (!cpu_args)
-+	if (single_cpu)
- 		dai_link->cpu_dai_name = NULL;
- 
- dai_link_of_err:
+ int adav80x_bus_probe(struct device *dev, struct regmap *regmap)
 -- 
 2.8.1
