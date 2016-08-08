@@ -1,86 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52620 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLDk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:60848 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979AbcHHLBR (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:03:40 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87eg5z63h5.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiLG-0003Ov-Qd@debutante>
-Date: Mon, 08 Aug 2016 12:03:34 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on ak4104" to the asoc tree
+	Mon, 8 Aug 2016 07:01:17 -0400
+Date: Mon, 8 Aug 2016 13:01:11 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Olof Johansson <olof@lixom.net>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Russell King - ARM Linux <linux@armlinux.org.uk>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	"arm@kernel.org" <arm@kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] Fix shmobile build with CONFIG_SMP=n
+Message-ID: <20160808110111.GI17838@verge.net.au>
+References: <20160719115703.GJ1041@n2100.armlinux.org.uk>
+ <CAMuHMdWfqbv4MXuThRPL2hsdN4Hq53Ng=1cp8DBB7o7XGzM9Zw@mail.gmail.com>
+ <20160720231416.GC9599@verge.net.au>
+ <20160802193524.GA6423@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160802193524.GA6423@localhost>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Tue, Aug 02, 2016 at 12:35:24PM -0700, Olof Johansson wrote:
+> Hi,
+> 
+> On Thu, Jul 21, 2016 at 08:14:17AM +0900, Simon Horman wrote:
+> > On Tue, Jul 19, 2016 at 02:02:53PM +0200, Geert Uytterhoeven wrote:
+> > > Hi Russell,
+> > > 
+> > > On Tue, Jul 19, 2016 at 1:57 PM, Russell King - ARM Linux
+> > > <linux@armlinux.org.uk> wrote:
+> > > > Shmobile currently fails to build when CONFIG_SMP is disabled:
+> > > >
+> > > > arch/arm/mach-shmobile/built-in.o: In function `shmobile_smp_init_fallback_ops':
+> > > > pm-rcar-gen2.c:(.init.text+0x744): undefined reference to `platform_can_secondary_boot'
+> > > > make[1]: *** [vmlinux] Error 1
+> > > >
+> > > > Fix this by providing a stub for this function.
+> > > >
+> > > > Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> > > 
+> > > Arnd send a smaller one https://patchwork.kernel.org/patch/9207413/,
+> > > which seems have fallen through the cracks.
+> > 
+> > Sorry for missing that. I have queued up Arnd's patch as a fix for v4.8
+> > with Acked-by Geert and a Reported-by Russel tags.
+> 
+> Since I haven't seen this patch yet, I've applied it (Arnd's version) directly
+> to our fixes branch.
 
-   ASoC: codec duplicated callback function goes to component on ak4104
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 1cd5e361736664302285850a327d52ef7f70e74a Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:07:11 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- ak4104
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/ak4104.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/sound/soc/codecs/ak4104.c b/sound/soc/codecs/ak4104.c
-index 595d02d7602c..bdca8793e630 100644
---- a/sound/soc/codecs/ak4104.c
-+++ b/sound/soc/codecs/ak4104.c
-@@ -245,10 +245,12 @@ static struct snd_soc_codec_driver soc_codec_device_ak4104 = {
- 	.suspend = ak4104_soc_suspend,
- 	.resume = ak4104_soc_resume,
- 
--	.dapm_widgets = ak4104_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(ak4104_dapm_widgets),
--	.dapm_routes = ak4104_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(ak4104_dapm_routes),
-+	.component_driver = {
-+		.dapm_widgets		= ak4104_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(ak4104_dapm_widgets),
-+		.dapm_routes		= ak4104_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(ak4104_dapm_routes),
-+	}
- };
- 
- static const struct regmap_config ak4104_regmap = {
--- 
-2.8.1
+Thanks. The progression through my tree got delayed by me taking
+a holiday last week. I'll drop it from my tree as you have picked it up.
