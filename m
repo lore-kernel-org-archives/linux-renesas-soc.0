@@ -1,74 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from newton.telenet-ops.be ([195.130.132.45]:51533 "EHLO
-	newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932295AbcHJTRf (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53538 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979AbcHHLF1 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 10 Aug 2016 15:17:35 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-	by newton.telenet-ops.be (Postfix) with ESMTP id 3s8N8j4Qh7zMs1DJ
-	for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Aug 2016 09:30:13 +0200 (CEST)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a7795: Fix SD clocks
-Date: Wed, 10 Aug 2016 09:29:43 +0200
-Message-Id: <1470814183-17834-1-git-send-email-geert+renesas@glider.be>
+	Mon, 8 Aug 2016 07:05:27 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87twev7ik8.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiMy-0003uY-Tr@debutante>
+Date: Mon, 08 Aug 2016 12:05:20 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on tas2552" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+The patch
 
-According to the datasheet, SDn clocks are from the SDSRC clock. And
-the SDSRC has a 1/2 divider. So, we should have ".sdsrc" as an internal
-core clock. Otherwise, since the sdhi driver will calculate clock for
-a sd card using the wrong parent clock rate, and then performance will
-be not good.
+   ASoC: codec duplicated callback function goes to component on tas2552
 
-Fixes: 90c073e53909da85 ("clk: shmobile: r8a7795: Add SD divider support")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: stable@vger.kernel.org
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From e5538659c81991b9074ccb842e8af901c908b79b Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 08:55:58 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ tas2552
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-SDHI was enabled on r8a7795/salvator-x in v4.6.
-Please apply as a fix for v4.8.
+ sound/soc/codecs/tas2552.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-Thanks!
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index d359c92e13a65c00..e38bf60c0ff4e28c 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -69,6 +69,7 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
- 	DEF_FIXED(".s1",        CLK_S1,            CLK_PLL1_DIV2,  3, 1),
- 	DEF_FIXED(".s2",        CLK_S2,            CLK_PLL1_DIV2,  4, 1),
- 	DEF_FIXED(".s3",        CLK_S3,            CLK_PLL1_DIV2,  6, 1),
-+	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
+diff --git a/sound/soc/codecs/tas2552.c b/sound/soc/codecs/tas2552.c
+index cc1d3981fa4b..baf455e8c2f7 100644
+--- a/sound/soc/codecs/tas2552.c
++++ b/sound/soc/codecs/tas2552.c
+@@ -667,12 +667,14 @@ static struct snd_soc_codec_driver soc_codec_dev_tas2552 = {
+ 	.resume = tas2552_resume,
+ 	.ignore_pmdown_time = true,
  
- 	/* Core Clock Outputs */
- 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
-@@ -87,10 +88,10 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
- 	DEF_FIXED("s3d2",       R8A7795_CLK_S3D2,  CLK_S3,         2, 1),
- 	DEF_FIXED("s3d4",       R8A7795_CLK_S3D4,  CLK_S3,         4, 1),
+-	.controls = tas2552_snd_controls,
+-	.num_controls = ARRAY_SIZE(tas2552_snd_controls),
+-	.dapm_widgets = tas2552_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(tas2552_dapm_widgets),
+-	.dapm_routes = tas2552_audio_map,
+-	.num_dapm_routes = ARRAY_SIZE(tas2552_audio_map),
++	.component_driver = {
++		.controls		= tas2552_snd_controls,
++		.num_controls		= ARRAY_SIZE(tas2552_snd_controls),
++		.dapm_widgets		= tas2552_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(tas2552_dapm_widgets),
++		.dapm_routes		= tas2552_audio_map,
++		.num_dapm_routes	= ARRAY_SIZE(tas2552_audio_map),
++	},
+ };
  
--	DEF_GEN3_SD("sd0",      R8A7795_CLK_SD0,   CLK_PLL1_DIV2, 0x0074),
--	DEF_GEN3_SD("sd1",      R8A7795_CLK_SD1,   CLK_PLL1_DIV2, 0x0078),
--	DEF_GEN3_SD("sd2",      R8A7795_CLK_SD2,   CLK_PLL1_DIV2, 0x0268),
--	DEF_GEN3_SD("sd3",      R8A7795_CLK_SD3,   CLK_PLL1_DIV2, 0x026c),
-+	DEF_GEN3_SD("sd0",      R8A7795_CLK_SD0,   CLK_SDSRC,     0x0074),
-+	DEF_GEN3_SD("sd1",      R8A7795_CLK_SD1,   CLK_SDSRC,     0x0078),
-+	DEF_GEN3_SD("sd2",      R8A7795_CLK_SD2,   CLK_SDSRC,     0x0268),
-+	DEF_GEN3_SD("sd3",      R8A7795_CLK_SD3,   CLK_SDSRC,     0x026c),
- 
- 	DEF_FIXED("cl",         R8A7795_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
- 	DEF_FIXED("cp",         R8A7795_CLK_CP,    CLK_EXTAL,      2, 1),
+ static const struct regmap_config tas2552_regmap_config = {
 -- 
-1.9.1
+2.8.1
