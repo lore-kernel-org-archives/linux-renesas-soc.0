@@ -1,87 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:35769 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753596AbcHWP2h (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 Aug 2016 11:28:37 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] i2c: mux: demux-pinctrl: run properly with multiple instances
-Date: Tue, 23 Aug 2016 17:28:03 +0200
-Message-Id: <20160823152803.2051-1-wsa+renesas@sang-engineering.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52404 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979AbcHHLDO (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 8 Aug 2016 07:03:14 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <871t1z63cd.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiKq-0003H1-FL@debutante>
+Date: Mon, 08 Aug 2016 12:03:08 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on 88pm860x-codec" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We can't use a static property for all the changesets, so we now create
-dynamic ones for each changeset.
+The patch
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Fixes: 50a5ba87690814 ("i2c: mux: demux-pinctrl: add driver")
+   ASoC: codec duplicated callback function goes to component on 88pm860x-codec
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 33398b509aafe936ec57cb1023f7ff1ba9e48586 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:10:02 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ 88pm860x-codec
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
+ sound/soc/codecs/88pm860x-codec.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-Finally fixed this one!
-
-Simon: I think you can retest your demuxer-dts-series now.
-
-Pantelis: What happened to your series with the changeset helpers? It would
-have fixed this bug, too, and would still make this code easier to read, so a
-welcome addition. Also, I still haven't fully understood when it is safe to use
-a static property? It would be helpful to document this. I spent quite some
-time on this one because randomly broken pointers are hard to debug.
-
- drivers/i2c/muxes/i2c-demux-pinctrl.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/i2c/muxes/i2c-demux-pinctrl.c b/drivers/i2c/muxes/i2c-demux-pinctrl.c
-index 215ac87f606d2d..e999125ce37d77 100644
---- a/drivers/i2c/muxes/i2c-demux-pinctrl.c
-+++ b/drivers/i2c/muxes/i2c-demux-pinctrl.c
-@@ -37,8 +37,6 @@ struct i2c_demux_pinctrl_priv {
- 	struct i2c_demux_pinctrl_chan chan[];
+diff --git a/sound/soc/codecs/88pm860x-codec.c b/sound/soc/codecs/88pm860x-codec.c
+index e8bed6b0c9db..b013a4c62b63 100644
+--- a/sound/soc/codecs/88pm860x-codec.c
++++ b/sound/soc/codecs/88pm860x-codec.c
+@@ -1361,12 +1361,14 @@ static struct snd_soc_codec_driver soc_codec_dev_pm860x = {
+ 	.set_bias_level	= pm860x_set_bias_level,
+ 	.get_regmap	= pm860x_get_regmap,
+ 
+-	.controls = pm860x_snd_controls,
+-	.num_controls = ARRAY_SIZE(pm860x_snd_controls),
+-	.dapm_widgets = pm860x_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(pm860x_dapm_widgets),
+-	.dapm_routes = pm860x_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(pm860x_dapm_routes),
++	.component_driver = {
++		.controls		= pm860x_snd_controls,
++		.num_controls		= ARRAY_SIZE(pm860x_snd_controls),
++		.dapm_widgets		= pm860x_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(pm860x_dapm_widgets),
++		.dapm_routes		= pm860x_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(pm860x_dapm_routes),
++	},
  };
  
--static struct property status_okay = { .name = "status", .length = 3, .value = "ok" };
--
- static int i2c_demux_master_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- {
- 	struct i2c_demux_pinctrl_priv *priv = adap->algo_data;
-@@ -192,6 +190,7 @@ static int i2c_demux_pinctrl_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
- 	struct i2c_demux_pinctrl_priv *priv;
-+	struct property *props;
- 	int num_chan, i, j, err;
- 
- 	num_chan = of_count_phandle_with_args(np, "i2c-parent", NULL);
-@@ -202,7 +201,10 @@ static int i2c_demux_pinctrl_probe(struct platform_device *pdev)
- 
- 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv)
- 			   + num_chan * sizeof(struct i2c_demux_pinctrl_chan), GFP_KERNEL);
--	if (!priv)
-+
-+	props = devm_kcalloc(&pdev->dev, num_chan, sizeof(*props), GFP_KERNEL);
-+
-+	if (!priv || !props)
- 		return -ENOMEM;
- 
- 	err = of_property_read_string(np, "i2c-bus-name", &priv->bus_name);
-@@ -220,8 +222,12 @@ static int i2c_demux_pinctrl_probe(struct platform_device *pdev)
- 		}
- 		priv->chan[i].parent_np = adap_np;
- 
-+		props[i].name = devm_kstrdup(&pdev->dev, "status", GFP_KERNEL);
-+		props[i].value = devm_kstrdup(&pdev->dev, "ok", GFP_KERNEL);
-+		props[i].length = 3;
-+
- 		of_changeset_init(&priv->chan[i].chgset);
--		of_changeset_update_property(&priv->chan[i].chgset, adap_np, &status_okay);
-+		of_changeset_update_property(&priv->chan[i].chgset, adap_np, &props[i]);
- 	}
- 
- 	priv->num_chan = num_chan;
+ static int pm860x_codec_probe(struct platform_device *pdev)
 -- 
-2.9.3
+2.8.1
