@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52956 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52858 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLEW (ORCPT
+	with ESMTP id S1752044AbcHHLEK (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:04:22 -0400
+	Mon, 8 Aug 2016 07:04:10 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87y44763of.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiLv-0003an-OP@debutante>
-Date: Mon, 08 Aug 2016 12:04:15 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on cs42l73" to the asoc tree
+In-Reply-To: <87shuf63ma.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiLk-0003XQ-2G@debutante>
+Date: Mon, 08 Aug 2016 12:04:04 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on cs4271" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on cs42l73
+   ASoC: codec duplicated callback function goes to component on cs4271
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 951cd7e6ffda4dc86ed6fb6ff10e0ca8f3b67c2b Mon Sep 17 00:00:00 2001
+>From 228a57aea80b5dfc4624ad29952a8168317a1884 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:02:48 +0000
+Date: Mon, 8 Aug 2016 09:04:04 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- cs42l73
+ cs4271
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,34 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/cs42l73.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ sound/soc/codecs/cs4271.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/cs42l73.c b/sound/soc/codecs/cs42l73.c
-index 42a8fd4e1f9b..01b573ab7036 100644
---- a/sound/soc/codecs/cs42l73.c
-+++ b/sound/soc/codecs/cs42l73.c
-@@ -1257,13 +1257,14 @@ static const struct snd_soc_codec_driver soc_codec_dev_cs42l73 = {
- 	.set_bias_level = cs42l73_set_bias_level,
- 	.suspend_bias_off = true,
+diff --git a/sound/soc/codecs/cs4271.c b/sound/soc/codecs/cs4271.c
+index 0c0010b25421..8c0f3b89b5bc 100644
+--- a/sound/soc/codecs/cs4271.c
++++ b/sound/soc/codecs/cs4271.c
+@@ -645,12 +645,14 @@ static struct snd_soc_codec_driver soc_codec_dev_cs4271 = {
+ 	.suspend		= cs4271_soc_suspend,
+ 	.resume			= cs4271_soc_resume,
  
--	.dapm_widgets = cs42l73_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(cs42l73_dapm_widgets),
--	.dapm_routes = cs42l73_audio_map,
--	.num_dapm_routes = ARRAY_SIZE(cs42l73_audio_map),
--
--	.controls = cs42l73_snd_controls,
--	.num_controls = ARRAY_SIZE(cs42l73_snd_controls),
+-	.controls		= cs4271_snd_controls,
+-	.num_controls		= ARRAY_SIZE(cs4271_snd_controls),
+-	.dapm_widgets		= cs4271_dapm_widgets,
+-	.num_dapm_widgets	= ARRAY_SIZE(cs4271_dapm_widgets),
+-	.dapm_routes		= cs4271_dapm_routes,
+-	.num_dapm_routes	= ARRAY_SIZE(cs4271_dapm_routes),
 +	.component_driver = {
-+		.controls		= cs42l73_snd_controls,
-+		.num_controls		= ARRAY_SIZE(cs42l73_snd_controls),
-+		.dapm_widgets		= cs42l73_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(cs42l73_dapm_widgets),
-+		.dapm_routes		= cs42l73_audio_map,
-+		.num_dapm_routes	= ARRAY_SIZE(cs42l73_audio_map),
++		.controls		= cs4271_snd_controls,
++		.num_controls		= ARRAY_SIZE(cs4271_snd_controls),
++		.dapm_widgets		= cs4271_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(cs4271_dapm_widgets),
++		.dapm_routes		= cs4271_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(cs4271_dapm_routes),
 +	},
  };
  
- static const struct regmap_config cs42l73_regmap = {
+ static int cs4271_common_probe(struct device *dev,
 -- 
 2.8.1
