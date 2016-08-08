@@ -1,65 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752959AbcHOI43 (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51342 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979AbcHHLBG (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 15 Aug 2016 04:56:29 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 14/26] ARM: dts: r8a7792: add I2C clocks
-Date: Mon, 15 Aug 2016 10:55:33 +0200
-Message-Id: <eedee25c2181ffd5463a994d456349dd39dc1b54.1471251169.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
-References: <cover.1471251169.git.horms+renesas@verge.net.au>
+	Mon, 8 Aug 2016 07:01:06 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87a8gn39l6.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiIl-0002e7-RE@debutante>
+Date: Mon, 08 Aug 2016 12:00:59 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on rt5670" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The patch
 
-Describe the I2C[0-5] clocks in the R8A7792 device tree.
+   ASoC: codec duplicated callback function goes to component on rt5670
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 462fe79468ccc79d9d639f03c666b5c117b4957c Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:23:24 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ rt5670
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7792.dtsi | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ sound/soc/codecs/rt5670.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 228860d9464a..353bc303b165 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -632,7 +632,8 @@
- 			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
- 				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
- 				 <&cp_clk>, <&cp_clk>, <&p_clk>, <&p_clk>,
--				 <&cp_clk>, <&cp_clk>;
-+				 <&cp_clk>, <&cp_clk>, <&hp_clk>, <&hp_clk>,
-+				 <&hp_clk>, <&hp_clk>, <&hp_clk>, <&hp_clk>;
- 			#clock-cells = <1>;
- 			clock-indices = <
- 				R8A7792_CLK_GPIO7 R8A7792_CLK_GPIO6
-@@ -642,12 +643,16 @@
- 				R8A7792_CLK_GPIO11 R8A7792_CLK_GPIO10
- 				R8A7792_CLK_CAN1 R8A7792_CLK_CAN0
- 				R8A7792_CLK_GPIO9 R8A7792_CLK_GPIO8
-+				R8A7792_CLK_I2C5 R8A7792_CLK_I2C4
-+				R8A7792_CLK_I2C3 R8A7792_CLK_I2C2
-+				R8A7792_CLK_I2C1 R8A7792_CLK_I2C0
- 			>;
- 			clock-output-names =
- 				"gpio7", "gpio6", "gpio5", "gpio4",
- 				"gpio3", "gpio2", "gpio1", "gpio0",
- 				"gpio11", "gpio10", "can1", "can0",
--				"gpio9", "gpio8";
-+				"gpio9", "gpio8", "i2c5", "i2c4",
-+				"i2c3",	"i2c2", "i2c1", "i2c0";
- 		};
- 	};
+diff --git a/sound/soc/codecs/rt5670.c b/sound/soc/codecs/rt5670.c
+index 8ef467f64f03..49caf1393aeb 100644
+--- a/sound/soc/codecs/rt5670.c
++++ b/sound/soc/codecs/rt5670.c
+@@ -2777,12 +2777,14 @@ static struct snd_soc_codec_driver soc_codec_dev_rt5670 = {
+ 	.resume = rt5670_resume,
+ 	.set_bias_level = rt5670_set_bias_level,
+ 	.idle_bias_off = true,
+-	.controls = rt5670_snd_controls,
+-	.num_controls = ARRAY_SIZE(rt5670_snd_controls),
+-	.dapm_widgets = rt5670_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(rt5670_dapm_widgets),
+-	.dapm_routes = rt5670_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(rt5670_dapm_routes),
++	.component_driver = {
++		.controls		= rt5670_snd_controls,
++		.num_controls		= ARRAY_SIZE(rt5670_snd_controls),
++		.dapm_widgets		= rt5670_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(rt5670_dapm_widgets),
++		.dapm_routes		= rt5670_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(rt5670_dapm_routes),
++	},
+ };
  
+ static const struct regmap_config rt5670_regmap = {
 -- 
-2.7.0.rc3.207.g0ac5344
+2.8.1
