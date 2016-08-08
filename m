@@ -1,103 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50254 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934876AbcHJUED (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:17334 "EHLO
+	relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752007AbcHHMyb (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 10 Aug 2016 16:04:03 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87a8jlqco1.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bXZj8-0000OL-9N@debutante>
-Date: Wed, 10 Aug 2016 21:03:46 +0100
-Subject: Applied "ASoC: simple-card: use asoc_simple_card_clean_reference()" to the asoc tree
+	Mon, 8 Aug 2016 08:54:31 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <stable@vger.kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/3] usb: renesas_usbhs: fix the driver for v4.8
+Date: Mon, 8 Aug 2016 21:50:50 +0900
+Message-ID: <1470660653-21743-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+This patch set is based on the latest Felipe's usb.git / testing/fixes branch.
+(The commit id = 10493a3c0718 ("usb: dwc3: gadget: increment request->actual once")
 
-   ASoC: simple-card: use asoc_simple_card_clean_reference()
+Yoshihiro Shimoda (3):
+  usb: renesas_usbhs: Fix receiving data corrupt on R-Car Gen3 with dmac
+  usb: renesas_usbhs: clear the BRDYSTS in usbhsg_ep_enable()
+  usb: renesas_usbhs: Use dmac only if the pipe type is bulk
 
-has been applied to the asoc tree at
+ drivers/usb/renesas_usbhs/common.c     | 3 ++-
+ drivers/usb/renesas_usbhs/fifo.c       | 4 ++--
+ drivers/usb/renesas_usbhs/mod_gadget.c | 7 +++++--
+ 3 files changed, 9 insertions(+), 5 deletions(-)
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 885fc0595a3e91ed7b6f78ea419952345be0222b Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 10 Aug 2016 02:21:42 +0000
-Subject: [PATCH] ASoC: simple-card: use asoc_simple_card_clean_reference()
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/generic/simple-card.c | 19 ++-----------------
- 1 file changed, 2 insertions(+), 17 deletions(-)
-
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 64896e361bde..55638a800f20 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -378,21 +378,6 @@ static int asoc_simple_card_parse_of(struct device_node *node,
- 	return 0;
- }
- 
--/* Decrease the reference count of the device nodes */
--static int asoc_simple_card_unref(struct snd_soc_card *card)
--{
--	struct snd_soc_dai_link *dai_link;
--	int num_links;
--
--	for (num_links = 0, dai_link = card->dai_link;
--	     num_links < card->num_links;
--	     num_links++, dai_link++) {
--		of_node_put(dai_link->cpu_of_node);
--		of_node_put(dai_link->codec_of_node);
--	}
--	return 0;
--}
--
- static int asoc_simple_card_probe(struct platform_device *pdev)
- {
- 	struct simple_card_data *priv;
-@@ -478,7 +463,7 @@ static int asoc_simple_card_probe(struct platform_device *pdev)
- 		return ret;
- 
- err:
--	asoc_simple_card_unref(&priv->snd_card);
-+	asoc_simple_card_clean_reference(&priv->snd_card);
- 	return ret;
- }
- 
-@@ -490,7 +475,7 @@ static int asoc_simple_card_remove(struct platform_device *pdev)
- 	asoc_simple_card_remove_jack(&priv->hp_jack);
- 	asoc_simple_card_remove_jack(&priv->mic_jack);
- 
--	return asoc_simple_card_unref(card);
-+	return asoc_simple_card_clean_reference(card);
- }
- 
- static const struct of_device_id asoc_simple_of_match[] = {
 -- 
-2.8.1
+1.9.1
