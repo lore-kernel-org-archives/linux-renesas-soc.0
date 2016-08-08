@@ -1,58 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57786 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53054 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750846AbcHHNQg (ORCPT
+	with ESMTP id S1752101AbcHHLEd (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 09:16:36 -0400
-Date: Mon, 8 Aug 2016 14:16:20 +0100
+	Mon, 8 Aug 2016 07:04:33 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linux-ALSA <alsa-devel@alsa-project.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org,
-	Jie Yang <yang.jie@linux.intel.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org
-Message-ID: <20160808131620.GG10383@sirena.org.uk>
-References: <87lh0h9gh0.wl%kuninori.morimoto.gx@renesas.com>
- <87k2g19gd8.wl%kuninori.morimoto.gx@renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0rEjiS+nMGFQ7Kkj"
-Content-Disposition: inline
-In-Reply-To: <87k2g19gd8.wl%kuninori.morimoto.gx@renesas.com>
-Subject: Re: [PATCH 1/3] ASoC: sst-haswell-pcm: don't use
- snd_soc_pcm_set_drvdata()
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <874m6v7ib1.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiM7-0003eW-DE@debutante>
+Date: Mon, 08 Aug 2016 12:04:27 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on es8328" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+The patch
 
---0rEjiS+nMGFQ7Kkj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   ASoC: codec duplicated callback function goes to component on es8328
 
-On Mon, Aug 01, 2016 at 06:09:54AM +0000, Kuninori Morimoto wrote:
->=20
-> snd_soc_pcm_set_drvdata() will set driver data to rtd->dev,
-> but driver data of rtd->dev is already used as "rtd" on
-> soc_post_component_init().
+has been applied to the asoc tree at
 
-This doesn't apply against current code, please check and resend.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
---0rEjiS+nMGFQ7Kkj
-Content-Type: application/pgp-signature; name="signature.asc"
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-iQEcBAEBCAAGBQJXqIYjAAoJECTWi3JdVIfQxBcH/RS0SnuysMzYdVV9PO6tUit+
-JKgxzfUnUvQCjoshmwoRz8KiX8zRD8u6s9BLcHd42wW3VvVz+En3die2ZK87MhcQ
-mxteonJZYekn4fM6RlpDeY4zA52dN3B+fevIKTgMdNhDMYwH3Xhz7iuqg9yY73W0
-KMkRs0azhvLFZDtyfFyq0jBc6VVw2Q5HHKjS/FBp2xGmI28V3vK3LBewLBK/0IwU
-qAKlTBXevp51Y0zEw+XYzTGqMZLZUVW4t7+lUq62HH83Y2uuoNCNhxRwewyjDN7b
-dc4etCgS/2J50eNPrxIgSn+NJ93f5nlK0NtwRT7NBL9DzcJmdrJd+lupHMG+6+g=
-=h0jC
------END PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---0rEjiS+nMGFQ7Kkj--
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 87869e4fadcaf6f4eac48bfb4a417720af8325a0 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:01:30 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ es8328
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/es8328.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/sound/soc/codecs/es8328.c b/sound/soc/codecs/es8328.c
+index 2086d7107622..37722194b107 100644
+--- a/sound/soc/codecs/es8328.c
++++ b/sound/soc/codecs/es8328.c
+@@ -823,12 +823,14 @@ static struct snd_soc_codec_driver es8328_codec_driver = {
+ 	.set_bias_level	  = es8328_set_bias_level,
+ 	.suspend_bias_off = true,
+ 
+-	.controls	  = es8328_snd_controls,
+-	.num_controls	  = ARRAY_SIZE(es8328_snd_controls),
+-	.dapm_widgets	  = es8328_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(es8328_dapm_widgets),
+-	.dapm_routes	  = es8328_dapm_routes,
+-	.num_dapm_routes  = ARRAY_SIZE(es8328_dapm_routes),
++	.component_driver = {
++		.controls		= es8328_snd_controls,
++		.num_controls		= ARRAY_SIZE(es8328_snd_controls),
++		.dapm_widgets		= es8328_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(es8328_dapm_widgets),
++		.dapm_routes		= es8328_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(es8328_dapm_routes),
++	},
+ };
+ 
+ int es8328_probe(struct device *dev, struct regmap *regmap)
+-- 
+2.8.1
