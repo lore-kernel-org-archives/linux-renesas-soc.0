@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51638 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52884 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLBl (ORCPT
+	with ESMTP id S1752044AbcHHLEN (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:01:41 -0400
+	Mon, 8 Aug 2016 07:04:13 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87r39z39r8.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiJK-0002ov-U3@debutante>
-Date: Mon, 08 Aug 2016 12:01:34 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on max98926" to the asoc tree
+In-Reply-To: <87twev63mv.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiLn-0003YH-0A@debutante>
+Date: Mon, 08 Aug 2016 12:04:07 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on cs42l51" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on max98926
+   ASoC: codec duplicated callback function goes to component on cs42l51
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 3d19c93b7ef6fb76a35a58585df62f9e386a96c2 Mon Sep 17 00:00:00 2001
+>From 9353d25dc8442784b1bc626cb2741965a1f53dad Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:19:48 +0000
+Date: Mon, 8 Aug 2016 09:03:45 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- max98926
+ cs42l51
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/max98926.c | 14 ++++++++------
+ sound/soc/codecs/cs42l51.c | 14 ++++++++------
  1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/max98926.c b/sound/soc/codecs/max98926.c
-index 8d14adae5cc5..5830a81e535a 100644
---- a/sound/soc/codecs/max98926.c
-+++ b/sound/soc/codecs/max98926.c
-@@ -498,12 +498,14 @@ static int max98926_probe(struct snd_soc_codec *codec)
+diff --git a/sound/soc/codecs/cs42l51.c b/sound/soc/codecs/cs42l51.c
+index 35488f14e237..96cfe38943cd 100644
+--- a/sound/soc/codecs/cs42l51.c
++++ b/sound/soc/codecs/cs42l51.c
+@@ -507,12 +507,14 @@ static int cs42l51_codec_probe(struct snd_soc_codec *codec)
+ static struct snd_soc_codec_driver soc_codec_device_cs42l51 = {
+ 	.probe = cs42l51_codec_probe,
  
- static struct snd_soc_codec_driver soc_codec_dev_max98926 = {
- 	.probe	= max98926_probe,
--	.controls = max98926_snd_controls,
--	.num_controls = ARRAY_SIZE(max98926_snd_controls),
--	.dapm_routes = max98926_audio_map,
--	.num_dapm_routes = ARRAY_SIZE(max98926_audio_map),
--	.dapm_widgets = max98926_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(max98926_dapm_widgets),
+-	.controls = cs42l51_snd_controls,
+-	.num_controls = ARRAY_SIZE(cs42l51_snd_controls),
+-	.dapm_widgets = cs42l51_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(cs42l51_dapm_widgets),
+-	.dapm_routes = cs42l51_routes,
+-	.num_dapm_routes = ARRAY_SIZE(cs42l51_routes),
 +	.component_driver = {
-+		.controls		= max98926_snd_controls,
-+		.num_controls		= ARRAY_SIZE(max98926_snd_controls),
-+		.dapm_routes		= max98926_audio_map,
-+		.num_dapm_routes	= ARRAY_SIZE(max98926_audio_map),
-+		.dapm_widgets		= max98926_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(max98926_dapm_widgets),
++		.controls		= cs42l51_snd_controls,
++		.num_controls		= ARRAY_SIZE(cs42l51_snd_controls),
++		.dapm_widgets		= cs42l51_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(cs42l51_dapm_widgets),
++		.dapm_routes		= cs42l51_routes,
++		.num_dapm_routes	= ARRAY_SIZE(cs42l51_routes),
 +	},
  };
  
- static const struct regmap_config max98926_regmap = {
+ const struct regmap_config cs42l51_regmap = {
 -- 
 2.8.1
