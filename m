@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52114 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51896 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLCk (ORCPT
+	with ESMTP id S1751979AbcHHLCN (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:02:40 -0400
+	Mon, 8 Aug 2016 07:02:13 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87k2fr4olr.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiKH-00036g-EZ@debutante>
-Date: Mon, 08 Aug 2016 12:02:33 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on alc5632" to the asoc tree
+In-Reply-To: <877fbr4ohd.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiJr-0002yY-1U@debutante>
+Date: Mon, 08 Aug 2016 12:02:07 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on dmic" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on alc5632
+   ASoC: codec duplicated callback function goes to component on dmic
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From e9474dc634c76d047be84c3dd35bf81213d2d550 Mon Sep 17 00:00:00 2001
+>From a73b8e8955fe7660455aaa20e8452f5322793fab Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:13:44 +0000
+Date: Mon, 8 Aug 2016 09:16:22 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- alc5632
+ dmic
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,29 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/alc5632.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ sound/soc/codecs/dmic.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/codecs/alc5632.c b/sound/soc/codecs/alc5632.c
-index 4d3ba33eb6f9..adb80d8719bd 100644
---- a/sound/soc/codecs/alc5632.c
-+++ b/sound/soc/codecs/alc5632.c
-@@ -1072,12 +1072,14 @@ static const struct snd_soc_codec_driver soc_codec_device_alc5632 = {
- 	.set_bias_level = alc5632_set_bias_level,
- 	.suspend_bias_off = true,
+diff --git a/sound/soc/codecs/dmic.c b/sound/soc/codecs/dmic.c
+index fde53251c047..c82b9dc41e9a 100644
+--- a/sound/soc/codecs/dmic.c
++++ b/sound/soc/codecs/dmic.c
+@@ -51,10 +51,12 @@ static const struct snd_soc_dapm_route intercon[] = {
+ };
  
--	.controls = alc5632_snd_controls,
--	.num_controls = ARRAY_SIZE(alc5632_snd_controls),
--	.dapm_widgets = alc5632_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(alc5632_dapm_widgets),
--	.dapm_routes = alc5632_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(alc5632_dapm_routes),
+ static struct snd_soc_codec_driver soc_dmic = {
+-	.dapm_widgets = dmic_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(dmic_dapm_widgets),
+-	.dapm_routes = intercon,
+-	.num_dapm_routes = ARRAY_SIZE(intercon),
 +	.component_driver = {
-+		.controls		= alc5632_snd_controls,
-+		.num_controls		= ARRAY_SIZE(alc5632_snd_controls),
-+		.dapm_widgets		= alc5632_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(alc5632_dapm_widgets),
-+		.dapm_routes		= alc5632_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(alc5632_dapm_routes),
++		.dapm_widgets		= dmic_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(dmic_dapm_widgets),
++		.dapm_routes		= intercon,
++		.num_dapm_routes	= ARRAY_SIZE(intercon),
 +	},
  };
  
- static const struct regmap_config alc5632_regmap = {
+ static int dmic_dev_probe(struct platform_device *pdev)
 -- 
 2.8.1
