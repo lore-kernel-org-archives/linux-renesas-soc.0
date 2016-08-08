@@ -1,56 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:38777 "EHLO
-	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934886AbcHJSaH (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:33453 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751798AbcHHNPQ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 10 Aug 2016 14:30:07 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-	iommu@lists.linux-foundation.org, linux@armlinux.org.uk
-Cc: hch@infradead.org, dan.j.williams@intel.com, vinod.koul@intel.com,
-	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
-	linus.walleij@linaro.org, arnd@arndb.de,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv9 1/6] dma-mapping: add {map,unmap}_resource to dma_map_ops
-Date: Wed, 10 Aug 2016 13:22:14 +0200
-Message-Id: <20160810112219.17964-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160810112219.17964-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160810112219.17964-1-niklas.soderlund+renesas@ragnatech.se>
+	Mon, 8 Aug 2016 09:15:16 -0400
 MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWofFF9PrBW4n0GTytP8Mm7_mwPU=O7mXRPWUDXBOfOTA@mail.gmail.com>
+References: <3910788.ckTpUWEs6B@wasted.cogentembedded.com> <6419837.qqlciQTB8q@wasted.cogentembedded.com>
+ <CAMuHMdWofFF9PrBW4n0GTytP8Mm7_mwPU=O7mXRPWUDXBOfOTA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 8 Aug 2016 15:15:15 +0200
+Message-ID: <CAMuHMdVdb5EB7Pt3YYKXsRWAdCpKj6cg1dapZd-johzW7axpgg@mail.gmail.com>
+Subject: Re: [PATCH v4 4/6] ARM: dts: r8a7794: add Audio-DMAC support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add methods to handle mapping of device resources from a physical
-address. This is needed for example to be able to map MMIO FIFO
-registers to a IOMMU.
+On Mon, Aug 8, 2016 at 3:14 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Wed, Jul 27, 2016 at 11:02 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+>> Describe Audio-DMAC in the R8A7794 device tree.
+>>
+>> This patch is loosely based on the commit 8994fff67761 ("ARM: shmobile:
+>> r8a7791: Add Audio DMAC devices to DT").
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>
+>> ---
+>> Changes in version 4:
+>> - refreshed the patch.
+>>
+>> Changes in version 3:
+>> - refreshed the patch.
+>>
+>>  arch/arm/boot/dts/r8a7794.dtsi |   28 ++++++++++++++++++++++++++++
+>>  1 file changed, 28 insertions(+)
+>>
+>> Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
+>> ===================================================================
+>> --- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
+>> +++ renesas/arch/arm/boot/dts/r8a7794.dtsi
+>> @@ -296,6 +296,34 @@
+>>                 dma-channels = <15>;
+>>         };
+>>
+>> +       audma0: dma-controller@ec700000 {
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- include/linux/dma-mapping.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+>> +               dma-channels = <13>;
+>> +       };
+>
+> According to R-Car-Gen2-common-v2.00.pdf (Audio-DMAC and INTC-SYS
+> chapters), V2H has only 2 audio DMA channels, not 13.
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index c44f8ee..e3bd27f 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -95,6 +95,12 @@ struct dma_map_ops {
- 			 struct scatterlist *sg, int nents,
- 			 enum dma_data_direction dir,
- 			 unsigned long attrs);
-+	dma_addr_t (*map_resource)(struct device *dev, phys_addr_t phys_addr,
-+			       size_t size, enum dma_data_direction dir,
-+			       unsigned long attrs);
-+	void (*unmap_resource)(struct device *dev, dma_addr_t dma_handle,
-+			   size_t size, enum dma_data_direction dir,
-+			   unsigned long attrs);
- 	void (*sync_single_for_cpu)(struct device *dev,
- 				    dma_addr_t dma_handle, size_t size,
- 				    enum dma_data_direction dir);
--- 
-2.9.2
+Scrap it, this is a patch for E2, not V2H.
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
