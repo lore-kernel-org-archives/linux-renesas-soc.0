@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51992 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52064 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLCZ (ORCPT
+	with ESMTP id S1752002AbcHHLCe (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:02:25 -0400
+	Mon, 8 Aug 2016 07:02:34 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87d1lj4ojd.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiK2-00032O-QV@debutante>
-Date: Mon, 08 Aug 2016 12:02:18 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on da7218" to the asoc tree
+In-Reply-To: <87h9av4okr.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiKB-000350-KL@debutante>
+Date: Mon, 08 Aug 2016 12:02:27 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on cx20442" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on da7218
+   ASoC: codec duplicated callback function goes to component on cx20442
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 91985829cc198dad64b29980aef226e4af2f65c6 Mon Sep 17 00:00:00 2001
+>From a2c9c0f9729be9b0c5d410fd3f9ba2b335d5e868 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:15:10 +0000
+Date: Mon, 8 Aug 2016 09:14:19 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- da7218
+ cx20442
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,34 +58,29 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/da7218.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ sound/soc/codecs/cx20442.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/codecs/da7218.c b/sound/soc/codecs/da7218.c
-index 99ce23e113bf..dcdda6c15cf7 100644
---- a/sound/soc/codecs/da7218.c
-+++ b/sound/soc/codecs/da7218.c
-@@ -3045,13 +3045,14 @@ static struct snd_soc_codec_driver soc_codec_dev_da7218 = {
- 	.resume			= da7218_resume,
- 	.set_bias_level		= da7218_set_bias_level,
- 
--	.controls		= da7218_snd_controls,
--	.num_controls		= ARRAY_SIZE(da7218_snd_controls),
--
--	.dapm_widgets		= da7218_dapm_widgets,
--	.num_dapm_widgets	= ARRAY_SIZE(da7218_dapm_widgets),
--	.dapm_routes		= da7218_audio_map,
--	.num_dapm_routes	= ARRAY_SIZE(da7218_audio_map),
+diff --git a/sound/soc/codecs/cx20442.c b/sound/soc/codecs/cx20442.c
+index fb3885fe0afb..2c12471e42a6 100644
+--- a/sound/soc/codecs/cx20442.c
++++ b/sound/soc/codecs/cx20442.c
+@@ -407,10 +407,12 @@ static struct snd_soc_codec_driver cx20442_codec_dev = {
+ 	.reg_word_size = sizeof(u8),
+ 	.read = cx20442_read_reg_cache,
+ 	.write = cx20442_write,
+-	.dapm_widgets = cx20442_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(cx20442_dapm_widgets),
+-	.dapm_routes = cx20442_audio_map,
+-	.num_dapm_routes = ARRAY_SIZE(cx20442_audio_map),
 +	.component_driver = {
-+		.controls		= da7218_snd_controls,
-+		.num_controls		= ARRAY_SIZE(da7218_snd_controls),
-+		.dapm_widgets		= da7218_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(da7218_dapm_widgets),
-+		.dapm_routes		= da7218_audio_map,
-+		.num_dapm_routes	= ARRAY_SIZE(da7218_audio_map),
++		.dapm_widgets		= cx20442_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(cx20442_dapm_widgets),
++		.dapm_routes		= cx20442_audio_map,
++		.num_dapm_routes	= ARRAY_SIZE(cx20442_audio_map),
 +	},
  };
  
- 
+ static int cx20442_platform_probe(struct platform_device *pdev)
 -- 
 2.8.1
