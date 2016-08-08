@@ -1,81 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:54337 "EHLO
-	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932353AbcHOPHR (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52500 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979AbcHHLD0 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 15 Aug 2016 11:07:17 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
-	hverkuil@xs4all.nl
-Cc: linux-renesas-soc@vger.kernel.org,
-	laurent.pinchart@ideasonboard.com,
-	sergei.shtylyov@cogentembedded.com,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv3 07/10] [media] rcar-vin: add dependency on MEDIA_CONTROLLER
-Date: Mon, 15 Aug 2016 17:06:32 +0200
-Message-Id: <20160815150635.22637-8-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+	Mon, 8 Aug 2016 07:03:26 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <877fbr63ei.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiL2-0003KT-5d@debutante>
+Date: Mon, 08 Aug 2016 12:03:20 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on ad73311" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This is done in preparation for Gen3 support where media controller
-support will be mandatory for the driver.
+The patch
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+   ASoC: codec duplicated callback function goes to component on ad73311
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From f95b81387cac798cf790b47cbb676e0fd8f87a6d Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:08:46 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ ad73311
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/media/platform/rcar-vin/Kconfig     | 2 +-
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 7 +------
- 2 files changed, 2 insertions(+), 7 deletions(-)
+ sound/soc/codecs/ad73311.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
-index b2ff2d4..111d2a1 100644
---- a/drivers/media/platform/rcar-vin/Kconfig
-+++ b/drivers/media/platform/rcar-vin/Kconfig
-@@ -1,6 +1,6 @@
- config VIDEO_RCAR_VIN
- 	tristate "R-Car Video Input (VIN) Driver"
--	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && OF && HAS_DMA
-+	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && OF && HAS_DMA && MEDIA_CONTROLLER
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	---help---
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 3f80a0b..09df396 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -771,10 +771,7 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- 	struct v4l2_mbus_framefmt *mf = &fmt.format;
- 	struct video_device *vdev = &vin->vdev;
- 	struct v4l2_subdev *sd = vin_to_source(vin);
--#if defined(CONFIG_MEDIA_CONTROLLER)
--	int pad_idx;
--#endif
--	int ret;
-+	int pad_idx, ret;
+diff --git a/sound/soc/codecs/ad73311.c b/sound/soc/codecs/ad73311.c
+index a9400aef60b5..3e358a49442d 100644
+--- a/sound/soc/codecs/ad73311.c
++++ b/sound/soc/codecs/ad73311.c
+@@ -55,10 +55,12 @@ static struct snd_soc_dai_driver ad73311_dai = {
+ };
  
- 	v4l2_set_subdev_hostdata(sd, vin);
+ static struct snd_soc_codec_driver soc_codec_dev_ad73311 = {
+-	.dapm_widgets = ad73311_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(ad73311_dapm_widgets),
+-	.dapm_routes = ad73311_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(ad73311_dapm_routes),
++	.component_driver = {
++		.dapm_widgets		= ad73311_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(ad73311_dapm_widgets),
++		.dapm_routes		= ad73311_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(ad73311_dapm_routes),
++	},
+ };
  
-@@ -821,7 +818,6 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- 		V4L2_CAP_READWRITE;
- 
- 	vin->src_pad_idx = 0;
--#if defined(CONFIG_MEDIA_CONTROLLER)
- 	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
- 		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SOURCE)
- 			break;
-@@ -829,7 +825,6 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- 		return -EINVAL;
- 
- 	vin->src_pad_idx = pad_idx;
--#endif
- 	fmt.pad = vin->src_pad_idx;
- 
- 	/* Try to improve our guess of a reasonable window format */
+ static int ad73311_probe(struct platform_device *pdev)
 -- 
-2.9.2
+2.8.1
