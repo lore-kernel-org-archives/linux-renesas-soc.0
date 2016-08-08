@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52236 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52042 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLCy (ORCPT
+	with ESMTP id S1752014AbcHHLCb (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:02:54 -0400
+	Mon, 8 Aug 2016 07:02:31 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87r39z4oob.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiKW-0003B0-0E@debutante>
-Date: Mon, 08 Aug 2016 12:02:48 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on adav80x" to the asoc tree
+In-Reply-To: <87fuqf4oka.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiK8-000348-Mv@debutante>
+Date: Mon, 08 Aug 2016 12:02:24 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on da7210" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on adav80x
+   ASoC: codec duplicated callback function goes to component on da7210
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From c5946fcf84bf71f4c0bc08a6bce3781e6b281737 Mon Sep 17 00:00:00 2001
+>From 57329a3a419273e765f5654c3c8cad9266c5b6f2 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:12:11 +0000
+Date: Mon, 8 Aug 2016 09:14:35 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- adav80x
+ da7210
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,34 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/adav80x.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ sound/soc/codecs/da7210.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/codecs/adav80x.c b/sound/soc/codecs/adav80x.c
-index acff8d62059c..6e793ebb5883 100644
---- a/sound/soc/codecs/adav80x.c
-+++ b/sound/soc/codecs/adav80x.c
-@@ -834,12 +834,14 @@ static struct snd_soc_codec_driver adav80x_codec_driver = {
- 	.set_pll = adav80x_set_pll,
- 	.set_sysclk = adav80x_set_sysclk,
+diff --git a/sound/soc/codecs/da7210.c b/sound/soc/codecs/da7210.c
+index af23a61b7b28..17053dfc94cf 100644
+--- a/sound/soc/codecs/da7210.c
++++ b/sound/soc/codecs/da7210.c
+@@ -1167,13 +1167,14 @@ static int da7210_probe(struct snd_soc_codec *codec)
+ static struct snd_soc_codec_driver soc_codec_dev_da7210 = {
+ 	.probe			= da7210_probe,
  
--	.controls = adav80x_controls,
--	.num_controls = ARRAY_SIZE(adav80x_controls),
--	.dapm_widgets = adav80x_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(adav80x_dapm_widgets),
--	.dapm_routes = adav80x_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(adav80x_dapm_routes),
+-	.controls		= da7210_snd_controls,
+-	.num_controls		= ARRAY_SIZE(da7210_snd_controls),
+-
+-	.dapm_widgets		= da7210_dapm_widgets,
+-	.num_dapm_widgets	= ARRAY_SIZE(da7210_dapm_widgets),
+-	.dapm_routes		= da7210_audio_map,
+-	.num_dapm_routes	= ARRAY_SIZE(da7210_audio_map),
 +	.component_driver = {
-+		.controls		= adav80x_controls,
-+		.num_controls		= ARRAY_SIZE(adav80x_controls),
-+		.dapm_widgets		= adav80x_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(adav80x_dapm_widgets),
-+		.dapm_routes		= adav80x_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(adav80x_dapm_routes),
++		.controls		= da7210_snd_controls,
++		.num_controls		= ARRAY_SIZE(da7210_snd_controls),
++		.dapm_widgets		= da7210_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(da7210_dapm_widgets),
++		.dapm_routes		= da7210_audio_map,
++		.num_dapm_routes	= ARRAY_SIZE(da7210_audio_map),
 +	},
  };
  
- int adav80x_bus_probe(struct device *dev, struct regmap *regmap)
+ #if IS_ENABLED(CONFIG_I2C)
 -- 
 2.8.1
