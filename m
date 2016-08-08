@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53428 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52308 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752041AbcHHLFP (ORCPT
+	with ESMTP id S1752002AbcHHLDD (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:05:15 -0400
+	Mon, 8 Aug 2016 07:03:03 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87oa537ii1.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiMn-0003rB-4V@debutante>
-Date: Mon, 08 Aug 2016 12:05:09 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on ssm4567" to the asoc tree
+In-Reply-To: <87vazb4opu.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiKe-0003Da-Ou@debutante>
+Date: Mon, 08 Aug 2016 12:02:56 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on adau1761" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on ssm4567
+   ASoC: codec duplicated callback function goes to component on adau1761
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From b5fce187a54808861bb24d84301a8d6d2559bca9 Mon Sep 17 00:00:00 2001
+>From c30ca68b9a8625e93c218374bad63c6babe85e3a Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:57:18 +0000
+Date: Mon, 8 Aug 2016 09:11:18 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- ssm4567
+ adau1761
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/ssm4567.c | 14 ++++++++------
+ sound/soc/codecs/adau1761.c | 14 ++++++++------
  1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/ssm4567.c b/sound/soc/codecs/ssm4567.c
-index 080c78e88e10..2bb5a11c9ba1 100644
---- a/sound/soc/codecs/ssm4567.c
-+++ b/sound/soc/codecs/ssm4567.c
-@@ -421,12 +421,14 @@ static struct snd_soc_codec_driver ssm4567_codec_driver = {
- 	.set_bias_level = ssm4567_set_bias_level,
- 	.idle_bias_off = true,
+diff --git a/sound/soc/codecs/adau1761.c b/sound/soc/codecs/adau1761.c
+index b95d29dbd13d..3bc3cc559dde 100644
+--- a/sound/soc/codecs/adau1761.c
++++ b/sound/soc/codecs/adau1761.c
+@@ -719,12 +719,14 @@ static const struct snd_soc_codec_driver adau1761_codec_driver = {
+ 	.set_bias_level	= adau1761_set_bias_level,
+ 	.suspend_bias_off = true,
  
--	.controls = ssm4567_snd_controls,
--	.num_controls = ARRAY_SIZE(ssm4567_snd_controls),
--	.dapm_widgets = ssm4567_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(ssm4567_dapm_widgets),
--	.dapm_routes = ssm4567_routes,
--	.num_dapm_routes = ARRAY_SIZE(ssm4567_routes),
+-	.controls = adau1761_controls,
+-	.num_controls = ARRAY_SIZE(adau1761_controls),
+-	.dapm_widgets = adau1x61_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(adau1x61_dapm_widgets),
+-	.dapm_routes = adau1x61_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(adau1x61_dapm_routes),
 +	.component_driver = {
-+		.controls		= ssm4567_snd_controls,
-+		.num_controls		= ARRAY_SIZE(ssm4567_snd_controls),
-+		.dapm_widgets		= ssm4567_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(ssm4567_dapm_widgets),
-+		.dapm_routes		= ssm4567_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(ssm4567_routes),
++		.controls		= adau1761_controls,
++		.num_controls		= ARRAY_SIZE(adau1761_controls),
++		.dapm_widgets		= adau1x61_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(adau1x61_dapm_widgets),
++		.dapm_routes		= adau1x61_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(adau1x61_dapm_routes),
 +	},
  };
  
- static const struct regmap_config ssm4567_regmap_config = {
+ #define ADAU1761_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE | \
 -- 
 2.8.1
