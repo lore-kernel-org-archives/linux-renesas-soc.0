@@ -1,83 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:49548 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754406AbcHSA7j (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Aug 2016 20:59:39 -0400
-Received: from localhost.localdomain (227.178-201-80.adsl-dyn.isp.belgacom.be [80.201.178.227])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 05B13208D2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Aug 2016 18:03:33 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/HACK 5/7] [HACK] ARM: shmobile: r8a7790: Link the VSP1 and DU
-Date: Thu, 18 Aug 2016 19:03:58 +0300
-Message-Id: <1471536240-25082-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1471536240-25082-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1471536240-25082-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54242 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752389AbcHHLGr (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 8 Aug 2016 07:06:47 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87vazb8xk6.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiOG-0004I0-Tg@debutante>
+Date: Mon, 08 Aug 2016 12:06:40 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on sun4i-codec" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In order to test VSP+DU integration for Gen3 on Gen2, link the VSPD
-instances to the DU and modify their features to match the Gen3 VSPD.
-Remove the IOMMU properties for the DU as memory is now accessed through
-the VSPD.
+The patch
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+   ASoC: codec duplicated callback function goes to component on sun4i-codec
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 180f58fece4be11125e663983ee3388e6512f159 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 08:46:41 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ sun4i-codec
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ sound/soc/sunxi/sun4i-codec.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 637cb8be363f..0ff45867e711 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -969,7 +969,7 @@
- 		renesas,#wpf = <4>;
- 	};
+diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
+index 44f170c73b06..0e19c5070005 100644
+--- a/sound/soc/sunxi/sun4i-codec.c
++++ b/sound/soc/sunxi/sun4i-codec.c
+@@ -628,12 +628,14 @@ static const struct snd_soc_dapm_route sun4i_codec_codec_dapm_routes[] = {
+ };
  
--	vsp1@fe930000 {
-+	vsp1d0: vsp1@fe930000 {
- 		compatible = "renesas,vsp1";
- 		reg = <0 0xfe930000 0 0x8000>;
- 		interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-@@ -979,13 +979,11 @@
- 		iommus = <&ipmmu_mx 5 &ipmmu_mx 13>;
+ static struct snd_soc_codec_driver sun4i_codec_codec = {
+-	.controls		= sun4i_codec_widgets,
+-	.num_controls		= ARRAY_SIZE(sun4i_codec_widgets),
+-	.dapm_widgets		= sun4i_codec_codec_dapm_widgets,
+-	.num_dapm_widgets	= ARRAY_SIZE(sun4i_codec_codec_dapm_widgets),
+-	.dapm_routes		= sun4i_codec_codec_dapm_routes,
+-	.num_dapm_routes	= ARRAY_SIZE(sun4i_codec_codec_dapm_routes),
++	.component_driver = {
++		.controls		= sun4i_codec_widgets,
++		.num_controls		= ARRAY_SIZE(sun4i_codec_widgets),
++		.dapm_widgets		= sun4i_codec_codec_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(sun4i_codec_codec_dapm_widgets),
++		.dapm_routes		= sun4i_codec_codec_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(sun4i_codec_codec_dapm_routes),
++	},
+ };
  
- 		renesas,has-lif;
--		renesas,has-lut;
- 		renesas,#rpf = <4>;
--		renesas,#uds = <1>;
--		renesas,#wpf = <4>;
-+		renesas,#wpf = <1>;
- 	};
- 
--	vsp1@fe938000 {
-+	vsp1d1: vsp1@fe938000 {
- 		compatible = "renesas,vsp1";
- 		reg = <0 0xfe938000 0 0x8000>;
- 		interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
-@@ -995,10 +993,8 @@
- 		iommus = <&ipmmu_mx 5 &ipmmu_mx 14>;
- 
- 		renesas,has-lif;
--		renesas,has-lut;
- 		renesas,#rpf = <4>;
--		renesas,#uds = <1>;
--		renesas,#wpf = <4>;
-+		renesas,#wpf = <1>;
- 	};
- 
- 	du: display@feb00000 {
-@@ -1018,7 +1014,7 @@
- 		clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1";
- 		status = "disabled";
- 
--		iommus = <&ipmmu_mx 15 &ipmmu_mx 16>;
-+		vsps = <&vsp1d0 &vsp1d1>;
- 
- 		ports {
- 			#address-cells = <1>;
+ static const struct snd_soc_component_driver sun4i_codec_component = {
 -- 
-Regards,
-
-Laurent Pinchart
+2.8.1
