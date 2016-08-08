@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52790 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52114 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752043AbcHHLEB (ORCPT
+	with ESMTP id S1752002AbcHHLCk (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:04:01 -0400
+	Mon, 8 Aug 2016 07:02:40 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87oa5363kq.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiLb-0003Uu-Ar@debutante>
-Date: Mon, 08 Aug 2016 12:03:55 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on cs35l33" to the asoc tree
+In-Reply-To: <87k2fr4olr.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiKH-00036g-EZ@debutante>
+Date: Mon, 08 Aug 2016 12:02:33 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on alc5632" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on cs35l33
+   ASoC: codec duplicated callback function goes to component on alc5632
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 133987d66418f09c1d9b010a4a6ae67fdd2d6214 Mon Sep 17 00:00:00 2001
+>From e9474dc634c76d047be84c3dd35bf81213d2d550 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:05:00 +0000
+Date: Mon, 8 Aug 2016 09:13:44 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- cs35l33
+ alc5632
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,34 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/cs35l33.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ sound/soc/codecs/alc5632.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/cs35l33.c b/sound/soc/codecs/cs35l33.c
-index 6f9c1addcd7f..6df29fa30fb9 100644
---- a/sound/soc/codecs/cs35l33.c
-+++ b/sound/soc/codecs/cs35l33.c
-@@ -837,13 +837,14 @@ static struct snd_soc_codec_driver soc_codec_dev_cs35l33 = {
- 	.set_bias_level = cs35l33_set_bias_level,
- 	.set_sysclk = cs35l33_codec_set_sysclk,
+diff --git a/sound/soc/codecs/alc5632.c b/sound/soc/codecs/alc5632.c
+index 4d3ba33eb6f9..adb80d8719bd 100644
+--- a/sound/soc/codecs/alc5632.c
++++ b/sound/soc/codecs/alc5632.c
+@@ -1072,12 +1072,14 @@ static const struct snd_soc_codec_driver soc_codec_device_alc5632 = {
+ 	.set_bias_level = alc5632_set_bias_level,
+ 	.suspend_bias_off = true,
  
--	.dapm_widgets = cs35l33_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(cs35l33_dapm_widgets),
--	.dapm_routes = cs35l33_audio_map,
--	.num_dapm_routes = ARRAY_SIZE(cs35l33_audio_map),
--	.controls = cs35l33_snd_controls,
--	.num_controls = ARRAY_SIZE(cs35l33_snd_controls),
--
+-	.controls = alc5632_snd_controls,
+-	.num_controls = ARRAY_SIZE(alc5632_snd_controls),
+-	.dapm_widgets = alc5632_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(alc5632_dapm_widgets),
+-	.dapm_routes = alc5632_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(alc5632_dapm_routes),
 +	.component_driver = {
-+		.controls		= cs35l33_snd_controls,
-+		.num_controls		= ARRAY_SIZE(cs35l33_snd_controls),
-+		.dapm_widgets		= cs35l33_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(cs35l33_dapm_widgets),
-+		.dapm_routes		= cs35l33_audio_map,
-+		.num_dapm_routes	= ARRAY_SIZE(cs35l33_audio_map),
++		.controls		= alc5632_snd_controls,
++		.num_controls		= ARRAY_SIZE(alc5632_snd_controls),
++		.dapm_widgets		= alc5632_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(alc5632_dapm_widgets),
++		.dapm_routes		= alc5632_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(alc5632_dapm_routes),
 +	},
- 	.idle_bias_off = true,
  };
  
+ static const struct regmap_config alc5632_regmap = {
 -- 
 2.8.1
