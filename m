@@ -1,59 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:36769 "EHLO
-	mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753748AbcHBVNw (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52380 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979AbcHHLDM (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 2 Aug 2016 17:13:52 -0400
-Received: by mail-wm0-f53.google.com with SMTP id q128so424520521wma.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 02 Aug 2016 14:13:17 -0700 (PDT)
-Date: Tue, 2 Aug 2016 12:35:24 -0700
-From: Olof Johansson <olof@lixom.net>
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Russell King - ARM Linux <linux@armlinux.org.uk>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	"arm@kernel.org" <arm@kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] Fix shmobile build with CONFIG_SMP=n
-Message-ID: <20160802193524.GA6423@localhost>
-References: <20160719115703.GJ1041@n2100.armlinux.org.uk>
- <CAMuHMdWfqbv4MXuThRPL2hsdN4Hq53Ng=1cp8DBB7o7XGzM9Zw@mail.gmail.com>
- <20160720231416.GC9599@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20160720231416.GC9599@verge.net.au>
+	Mon, 8 Aug 2016 07:03:12 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87zion4ore.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiKn-0003GB-H5@debutante>
+Date: Mon, 08 Aug 2016 12:03:05 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on atmel-classd" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+The patch
 
-On Thu, Jul 21, 2016 at 08:14:17AM +0900, Simon Horman wrote:
-> On Tue, Jul 19, 2016 at 02:02:53PM +0200, Geert Uytterhoeven wrote:
-> > Hi Russell,
-> > 
-> > On Tue, Jul 19, 2016 at 1:57 PM, Russell King - ARM Linux
-> > <linux@armlinux.org.uk> wrote:
-> > > Shmobile currently fails to build when CONFIG_SMP is disabled:
-> > >
-> > > arch/arm/mach-shmobile/built-in.o: In function `shmobile_smp_init_fallback_ops':
-> > > pm-rcar-gen2.c:(.init.text+0x744): undefined reference to `platform_can_secondary_boot'
-> > > make[1]: *** [vmlinux] Error 1
-> > >
-> > > Fix this by providing a stub for this function.
-> > >
-> > > Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> > 
-> > Arnd send a smaller one https://patchwork.kernel.org/patch/9207413/,
-> > which seems have fallen through the cracks.
-> 
-> Sorry for missing that. I have queued up Arnd's patch as a fix for v4.8
-> with Acked-by Geert and a Reported-by Russel tags.
+   ASoC: codec duplicated callback function goes to component on atmel-classd
 
-Since I haven't seen this patch yet, I've applied it (Arnd's version) directly
-to our fixes branch.
+has been applied to the asoc tree at
 
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
--Olof
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 69295df090a03e406c54ca0dbd67a76355773138 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:10:21 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ atmel-classd
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/atmel/atmel-classd.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/atmel/atmel-classd.c b/sound/soc/atmel/atmel-classd.c
+index 6d9b8b44e2da..89ac5f5a93eb 100644
+--- a/sound/soc/atmel/atmel-classd.c
++++ b/sound/soc/atmel/atmel-classd.c
+@@ -308,9 +308,11 @@ static struct regmap *atmel_classd_codec_get_remap(struct device *dev)
+ 
+ static struct snd_soc_codec_driver soc_codec_dev_classd = {
+ 	.probe		= atmel_classd_codec_probe,
+-	.controls	= atmel_classd_snd_controls,
+-	.num_controls	= ARRAY_SIZE(atmel_classd_snd_controls),
+ 	.get_regmap	= atmel_classd_codec_get_remap,
++	.component_driver = {
++		.controls		= atmel_classd_snd_controls,
++		.num_controls		= ARRAY_SIZE(atmel_classd_snd_controls),
++	},
+ };
+ 
+ /* codec dai component */
+-- 
+2.8.1
