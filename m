@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51850 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52692 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLCH (ORCPT
+	with ESMTP id S1751979AbcHHLDt (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:02:07 -0400
+	Mon, 8 Aug 2016 07:03:49 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <874m6v4ogd.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiJl-0002wi-6o@debutante>
-Date: Mon, 08 Aug 2016 12:02:01 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on isabelle" to the asoc tree
+In-Reply-To: <87invb63ip.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiLP-0003RW-Jz@debutante>
+Date: Mon, 08 Aug 2016 12:03:43 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on ak4642" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on isabelle
+   ASoC: codec duplicated callback function goes to component on ak4642
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 49e774807178c048d34602789f3342e545cc1605 Mon Sep 17 00:00:00 2001
+>From 3a6ce00e2a5b85d558f051b709be9d1952bd7461 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:16:59 +0000
+Date: Mon, 8 Aug 2016 09:06:14 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- isabelle
+ ak4642
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/isabelle.c | 14 ++++++++------
+ sound/soc/codecs/ak4642.c | 14 ++++++++------
  1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/isabelle.c b/sound/soc/codecs/isabelle.c
-index be448373d39a..a4b0eded984a 100644
---- a/sound/soc/codecs/isabelle.c
-+++ b/sound/soc/codecs/isabelle.c
-@@ -1089,12 +1089,14 @@ static struct snd_soc_dai_driver isabelle_dai[] = {
- 
- static struct snd_soc_codec_driver soc_codec_dev_isabelle = {
- 	.set_bias_level = isabelle_set_bias_level,
--	.controls = isabelle_snd_controls,
--	.num_controls = ARRAY_SIZE(isabelle_snd_controls),
--	.dapm_widgets = isabelle_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(isabelle_dapm_widgets),
--	.dapm_routes = isabelle_intercon,
--	.num_dapm_routes = ARRAY_SIZE(isabelle_intercon),
+diff --git a/sound/soc/codecs/ak4642.c b/sound/soc/codecs/ak4642.c
+index cc941d66ec3d..2609f95b7d19 100644
+--- a/sound/soc/codecs/ak4642.c
++++ b/sound/soc/codecs/ak4642.c
+@@ -555,12 +555,14 @@ static struct snd_soc_codec_driver soc_codec_dev_ak4642 = {
+ 	.suspend		= ak4642_suspend,
+ 	.resume			= ak4642_resume,
+ 	.set_bias_level		= ak4642_set_bias_level,
+-	.controls		= ak4642_snd_controls,
+-	.num_controls		= ARRAY_SIZE(ak4642_snd_controls),
+-	.dapm_widgets		= ak4642_dapm_widgets,
+-	.num_dapm_widgets	= ARRAY_SIZE(ak4642_dapm_widgets),
+-	.dapm_routes		= ak4642_intercon,
+-	.num_dapm_routes	= ARRAY_SIZE(ak4642_intercon),
 +	.component_driver = {
-+		.controls		= isabelle_snd_controls,
-+		.num_controls		= ARRAY_SIZE(isabelle_snd_controls),
-+		.dapm_widgets		= isabelle_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(isabelle_dapm_widgets),
-+		.dapm_routes		= isabelle_intercon,
-+		.num_dapm_routes	= ARRAY_SIZE(isabelle_intercon),
++		.controls		= ak4642_snd_controls,
++		.num_controls		= ARRAY_SIZE(ak4642_snd_controls),
++		.dapm_widgets		= ak4642_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(ak4642_dapm_widgets),
++		.dapm_routes		= ak4642_intercon,
++		.num_dapm_routes	= ARRAY_SIZE(ak4642_intercon),
 +	},
- 	.idle_bias_off = true,
  };
  
+ static const struct regmap_config ak4642_regmap = {
 -- 
 2.8.1
