@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53454 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51992 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751320AbcHHLFS (ORCPT
+	with ESMTP id S1751979AbcHHLCZ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:05:18 -0400
+	Mon, 8 Aug 2016 07:02:25 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87popj7iik.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiMq-0003s1-39@debutante>
-Date: Mon, 08 Aug 2016 12:05:12 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on sta32x" to the asoc tree
+In-Reply-To: <87d1lj4ojd.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiK2-00032O-QV@debutante>
+Date: Mon, 08 Aug 2016 12:02:18 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on da7218" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on sta32x
+   ASoC: codec duplicated callback function goes to component on da7218
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 37f112b39d8442a17ecdc7e72d42145d8cf18d37 Mon Sep 17 00:00:00 2001
+>From 91985829cc198dad64b29980aef226e4af2f65c6 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:57:00 +0000
+Date: Mon, 8 Aug 2016 09:15:10 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- sta32x
+ da7218
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,34 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/sta32x.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ sound/soc/codecs/da7218.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/codecs/sta32x.c b/sound/soc/codecs/sta32x.c
-index a9844b2ac829..0790ae8530d9 100644
---- a/sound/soc/codecs/sta32x.c
-+++ b/sound/soc/codecs/sta32x.c
-@@ -991,12 +991,14 @@ static const struct snd_soc_codec_driver sta32x_codec = {
- 	.remove =		sta32x_remove,
- 	.set_bias_level =	sta32x_set_bias_level,
- 	.suspend_bias_off =	true,
--	.controls =		sta32x_snd_controls,
--	.num_controls =		ARRAY_SIZE(sta32x_snd_controls),
--	.dapm_widgets =		sta32x_dapm_widgets,
--	.num_dapm_widgets =	ARRAY_SIZE(sta32x_dapm_widgets),
--	.dapm_routes =		sta32x_dapm_routes,
--	.num_dapm_routes =	ARRAY_SIZE(sta32x_dapm_routes),
+diff --git a/sound/soc/codecs/da7218.c b/sound/soc/codecs/da7218.c
+index 99ce23e113bf..dcdda6c15cf7 100644
+--- a/sound/soc/codecs/da7218.c
++++ b/sound/soc/codecs/da7218.c
+@@ -3045,13 +3045,14 @@ static struct snd_soc_codec_driver soc_codec_dev_da7218 = {
+ 	.resume			= da7218_resume,
+ 	.set_bias_level		= da7218_set_bias_level,
+ 
+-	.controls		= da7218_snd_controls,
+-	.num_controls		= ARRAY_SIZE(da7218_snd_controls),
+-
+-	.dapm_widgets		= da7218_dapm_widgets,
+-	.num_dapm_widgets	= ARRAY_SIZE(da7218_dapm_widgets),
+-	.dapm_routes		= da7218_audio_map,
+-	.num_dapm_routes	= ARRAY_SIZE(da7218_audio_map),
 +	.component_driver = {
-+		.controls =		sta32x_snd_controls,
-+		.num_controls =		ARRAY_SIZE(sta32x_snd_controls),
-+		.dapm_widgets =		sta32x_dapm_widgets,
-+		.num_dapm_widgets =	ARRAY_SIZE(sta32x_dapm_widgets),
-+		.dapm_routes =		sta32x_dapm_routes,
-+		.num_dapm_routes =	ARRAY_SIZE(sta32x_dapm_routes),
++		.controls		= da7218_snd_controls,
++		.num_controls		= ARRAY_SIZE(da7218_snd_controls),
++		.dapm_widgets		= da7218_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(da7218_dapm_widgets),
++		.dapm_routes		= da7218_audio_map,
++		.num_dapm_routes	= ARRAY_SIZE(da7218_audio_map),
 +	},
  };
  
- static const struct regmap_config sta32x_regmap = {
+ 
 -- 
 2.8.1
