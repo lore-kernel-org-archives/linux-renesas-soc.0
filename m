@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53278 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53428 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLE5 (ORCPT
+	with ESMTP id S1752041AbcHHLFP (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:04:57 -0400
+	Mon, 8 Aug 2016 07:05:15 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87fuqf7if4.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiMV-0003lm-C8@debutante>
-Date: Mon, 08 Aug 2016 12:04:51 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on rt5616" to the asoc tree
+In-Reply-To: <87oa537ii1.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiMn-0003rB-4V@debutante>
+Date: Mon, 08 Aug 2016 12:05:09 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on ssm4567" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on rt5616
+   ASoC: codec duplicated callback function goes to component on ssm4567
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 947cd148b43c025bab870f724cba7a17d090f1a5 Mon Sep 17 00:00:00 2001
+>From b5fce187a54808861bb24d84301a8d6d2559bca9 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:59:05 +0000
+Date: Mon, 8 Aug 2016 08:57:18 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- rt5616
+ ssm4567
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rt5616.c | 14 ++++++++------
+ sound/soc/codecs/ssm4567.c | 14 ++++++++------
  1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/rt5616.c b/sound/soc/codecs/rt5616.c
-index f527b5b2817b..e92a1490fa68 100644
---- a/sound/soc/codecs/rt5616.c
-+++ b/sound/soc/codecs/rt5616.c
-@@ -1302,12 +1302,14 @@ static struct snd_soc_codec_driver soc_codec_dev_rt5616 = {
- 	.resume = rt5616_resume,
- 	.set_bias_level = rt5616_set_bias_level,
+diff --git a/sound/soc/codecs/ssm4567.c b/sound/soc/codecs/ssm4567.c
+index 080c78e88e10..2bb5a11c9ba1 100644
+--- a/sound/soc/codecs/ssm4567.c
++++ b/sound/soc/codecs/ssm4567.c
+@@ -421,12 +421,14 @@ static struct snd_soc_codec_driver ssm4567_codec_driver = {
+ 	.set_bias_level = ssm4567_set_bias_level,
  	.idle_bias_off = true,
--	.controls = rt5616_snd_controls,
--	.num_controls = ARRAY_SIZE(rt5616_snd_controls),
--	.dapm_widgets = rt5616_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(rt5616_dapm_widgets),
--	.dapm_routes = rt5616_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(rt5616_dapm_routes),
+ 
+-	.controls = ssm4567_snd_controls,
+-	.num_controls = ARRAY_SIZE(ssm4567_snd_controls),
+-	.dapm_widgets = ssm4567_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(ssm4567_dapm_widgets),
+-	.dapm_routes = ssm4567_routes,
+-	.num_dapm_routes = ARRAY_SIZE(ssm4567_routes),
 +	.component_driver = {
-+		.controls		= rt5616_snd_controls,
-+		.num_controls		= ARRAY_SIZE(rt5616_snd_controls),
-+		.dapm_widgets		= rt5616_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(rt5616_dapm_widgets),
-+		.dapm_routes		= rt5616_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(rt5616_dapm_routes),
++		.controls		= ssm4567_snd_controls,
++		.num_controls		= ARRAY_SIZE(ssm4567_snd_controls),
++		.dapm_widgets		= ssm4567_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(ssm4567_dapm_widgets),
++		.dapm_routes		= ssm4567_routes,
++		.num_dapm_routes	= ARRAY_SIZE(ssm4567_routes),
 +	},
  };
  
- static const struct regmap_config rt5616_regmap = {
+ static const struct regmap_config ssm4567_regmap_config = {
 -- 
 2.8.1
