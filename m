@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52670 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52016 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLDr (ORCPT
+	with ESMTP id S1752014AbcHHLC2 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:03:47 -0400
+	Mon, 8 Aug 2016 07:02:28 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87h9av63i7.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiLM-0003Qd-NY@debutante>
-Date: Mon, 08 Aug 2016 12:03:40 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on ak4613" to the asoc tree
+In-Reply-To: <87eg5z4oju.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiK5-00033G-PA@debutante>
+Date: Mon, 08 Aug 2016 12:02:21 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on da7213" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on ak4613
+   ASoC: codec duplicated callback function goes to component on da7213
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From beb84f75c4d9d069172f32543544d757d59e114b Mon Sep 17 00:00:00 2001
+>From 92d2a233d878c4ddebad805ae4201e8ec335b3af Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:06:34 +0000
+Date: Mon, 8 Aug 2016 09:14:53 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- ak4613
+ da7213
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,34 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/ak4613.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ sound/soc/codecs/da7213.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/codecs/ak4613.c b/sound/soc/codecs/ak4613.c
-index 97798d250f08..e819dd8c82fd 100644
---- a/sound/soc/codecs/ak4613.c
-+++ b/sound/soc/codecs/ak4613.c
-@@ -458,12 +458,14 @@ static struct snd_soc_codec_driver soc_codec_dev_ak4613 = {
- 	.suspend		= ak4613_suspend,
- 	.resume			= ak4613_resume,
- 	.set_bias_level		= ak4613_set_bias_level,
--	.controls		= ak4613_snd_controls,
--	.num_controls		= ARRAY_SIZE(ak4613_snd_controls),
--	.dapm_widgets		= ak4613_dapm_widgets,
--	.num_dapm_widgets	= ARRAY_SIZE(ak4613_dapm_widgets),
--	.dapm_routes		= ak4613_intercon,
--	.num_dapm_routes	= ARRAY_SIZE(ak4613_intercon),
+diff --git a/sound/soc/codecs/da7213.c b/sound/soc/codecs/da7213.c
+index e5527bc570ae..7cfb5da5378d 100644
+--- a/sound/soc/codecs/da7213.c
++++ b/sound/soc/codecs/da7213.c
+@@ -1740,13 +1740,14 @@ static struct snd_soc_codec_driver soc_codec_dev_da7213 = {
+ 	.probe			= da7213_probe,
+ 	.set_bias_level		= da7213_set_bias_level,
+ 
+-	.controls		= da7213_snd_controls,
+-	.num_controls		= ARRAY_SIZE(da7213_snd_controls),
+-
+-	.dapm_widgets		= da7213_dapm_widgets,
+-	.num_dapm_widgets	= ARRAY_SIZE(da7213_dapm_widgets),
+-	.dapm_routes		= da7213_audio_map,
+-	.num_dapm_routes	= ARRAY_SIZE(da7213_audio_map),
 +	.component_driver = {
-+		.controls		= ak4613_snd_controls,
-+		.num_controls		= ARRAY_SIZE(ak4613_snd_controls),
-+		.dapm_widgets		= ak4613_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(ak4613_dapm_widgets),
-+		.dapm_routes		= ak4613_intercon,
-+		.num_dapm_routes	= ARRAY_SIZE(ak4613_intercon),
++		.controls		= da7213_snd_controls,
++		.num_controls		= ARRAY_SIZE(da7213_snd_controls),
++		.dapm_widgets		= da7213_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(da7213_dapm_widgets),
++		.dapm_routes		= da7213_audio_map,
++		.num_dapm_routes	= ARRAY_SIZE(da7213_audio_map),
 +	},
  };
  
- static void ak4613_parse_of(struct ak4613_priv *priv,
+ static const struct regmap_config da7213_regmap_config = {
 -- 
 2.8.1
