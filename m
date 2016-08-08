@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56632 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51366 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161217AbcHEMJG (ORCPT
+	with ESMTP id S1751979AbcHHLBJ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 5 Aug 2016 08:09:06 -0400
+	Mon, 8 Aug 2016 07:01:09 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87k2gimjki.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bVdvu-0002c3-Lq@debutante>
-Date: Fri, 05 Aug 2016 13:08:58 +0100
-Subject: Applied "ASoC: rsrc-card: use asoc_simple_card_parse_clk()" to the asoc tree
+In-Reply-To: <87bn1339ln.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiIo-0002ex-OX@debutante>
+Date: Mon, 08 Aug 2016 12:01:02 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on rt5659" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: rsrc-card: use asoc_simple_card_parse_clk()
+   ASoC: codec duplicated callback function goes to component on rt5659
 
 has been applied to the asoc tree at
 
@@ -44,121 +44,47 @@ to this mail.
 Thanks,
 Mark
 
->From c9a235da8a61cf9af7653fca341ded0881a64eca Mon Sep 17 00:00:00 2001
+>From e0c2b59e83ab98dce500746d482850a2dffdcd22 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Tue, 19 Jul 2016 02:53:32 +0000
-Subject: [PATCH] ASoC: rsrc-card: use asoc_simple_card_parse_clk()
+Date: Mon, 8 Aug 2016 09:23:07 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ rt5659
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sh/rcar/rsrc-card.c | 68 +++++++------------------------------------
- 1 file changed, 10 insertions(+), 58 deletions(-)
+ sound/soc/codecs/rt5659.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/rsrc-card.c b/sound/soc/sh/rcar/rsrc-card.c
-index fa37f842b62f..ed5391f41280 100644
---- a/sound/soc/sh/rcar/rsrc-card.c
-+++ b/sound/soc/sh/rcar/rsrc-card.c
-@@ -190,6 +190,10 @@ static int rsrc_card_parse_links(struct device_node *np,
- 		if (ret < 0)
- 			return ret;
+diff --git a/sound/soc/codecs/rt5659.c b/sound/soc/codecs/rt5659.c
+index 1b30914c2d91..59ddaf34705b 100644
+--- a/sound/soc/codecs/rt5659.c
++++ b/sound/soc/codecs/rt5659.c
+@@ -3722,12 +3722,14 @@ static struct snd_soc_codec_driver soc_codec_dev_rt5659 = {
+ 	.resume = rt5659_resume,
+ 	.set_bias_level = rt5659_set_bias_level,
+ 	.idle_bias_off = true,
+-	.controls = rt5659_snd_controls,
+-	.num_controls = ARRAY_SIZE(rt5659_snd_controls),
+-	.dapm_widgets = rt5659_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(rt5659_dapm_widgets),
+-	.dapm_routes = rt5659_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(rt5659_dapm_routes),
++	.component_driver = {
++		.controls		= rt5659_snd_controls,
++		.num_controls		= ARRAY_SIZE(rt5659_snd_controls),
++		.dapm_widgets		= rt5659_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(rt5659_dapm_widgets),
++		.dapm_routes		= rt5659_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(rt5659_dapm_routes),
++	},
+ };
  
-+		ret = asoc_simple_card_parse_clk_cpu(np, dai_link, dai_props);
-+		if (ret < 0)
-+			return ret;
-+
- 		ret = asoc_simple_card_set_dailink_name(dev, dai_link,
- 							"fe.%s",
- 							dai_link->cpu_dai_name);
-@@ -225,6 +229,10 @@ static int rsrc_card_parse_links(struct device_node *np,
- 		if (ret < 0)
- 			return ret;
  
-+		ret = asoc_simple_card_parse_clk_codec(np, dai_link, dai_props);
-+		if (ret < 0)
-+			return ret;
-+
- 		ret = asoc_simple_card_set_dailink_name(dev, dai_link,
- 							"be.%s",
- 							dai_link->codec_dai_name);
-@@ -250,68 +258,12 @@ static int rsrc_card_parse_links(struct device_node *np,
- 	dai_link->ops			= &rsrc_card_ops;
- 	dai_link->init			= rsrc_card_dai_init;
- 
--	return 0;
--}
--
--static int rsrc_card_parse_clk(struct device_node *np,
--			       struct rsrc_card_priv *priv,
--			       int idx, bool is_fe)
--{
--	struct snd_soc_dai_link *dai_link = rsrc_priv_to_link(priv, idx);
--	struct asoc_simple_dai *dai_props = rsrc_priv_to_props(priv, idx);
--	struct clk *clk;
--	struct device_node *of_np = is_fe ?	dai_link->cpu_of_node :
--						dai_link->codec_of_node;
--	u32 val;
--
--	/*
--	 * Parse dai->sysclk come from "clocks = <&xxx>"
--	 * (if system has common clock)
--	 *  or "system-clock-frequency = <xxx>"
--	 *  or device's module clock.
--	 */
--	if (of_property_read_bool(np, "clocks")) {
--		clk = of_clk_get(np, 0);
--		if (IS_ERR(clk))
--			return PTR_ERR(clk);
--
--		dai_props->sysclk = clk_get_rate(clk);
--		dai_props->clk = clk;
--	} else if (!of_property_read_u32(np, "system-clock-frequency", &val)) {
--		dai_props->sysclk = val;
--	} else {
--		clk = of_clk_get(of_np, 0);
--		if (!IS_ERR(clk))
--			dai_props->sysclk = clk_get_rate(clk);
--	}
--
--	return 0;
--}
--
--static int rsrc_card_dai_sub_link_of(struct device_node *node,
--				     struct device_node *np,
--				     struct rsrc_card_priv *priv,
--				     int idx, bool is_fe)
--{
--	struct device *dev = rsrc_priv_to_dev(priv);
--	struct snd_soc_dai_link *dai_link = rsrc_priv_to_link(priv, idx);
--	struct asoc_simple_dai *dai_props = rsrc_priv_to_props(priv, idx);
--	int ret;
--
--	ret = rsrc_card_parse_links(np, priv, idx, is_fe);
--	if (ret < 0)
--		return ret;
--
--	ret = rsrc_card_parse_clk(np, priv, idx, is_fe);
--	if (ret < 0)
--		return ret;
--
- 	dev_dbg(dev, "\t%s / %04x / %d\n",
- 		dai_link->name,
- 		dai_link->dai_fmt,
- 		dai_props->sysclk);
- 
--	return ret;
-+	return 0;
- }
- 
- static int rsrc_card_dai_link_of(struct device_node *node,
-@@ -348,7 +300,7 @@ static int rsrc_card_dai_link_of(struct device_node *node,
- 		if (strcmp(np->name, "cpu") == 0)
- 			is_fe = true;
- 
--		ret = rsrc_card_dai_sub_link_of(node, np, priv, i, is_fe);
-+		ret = rsrc_card_parse_links(np, priv, i, is_fe);
- 		if (ret < 0)
- 			return ret;
- 		i++;
 -- 
 2.8.1
