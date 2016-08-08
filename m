@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52884 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50978 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752044AbcHHLEN (ORCPT
+	with ESMTP id S1752051AbcHHLA2 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:04:13 -0400
+	Mon, 8 Aug 2016 07:00:28 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87twev63mv.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiLn-0003YH-0A@debutante>
-Date: Mon, 08 Aug 2016 12:04:07 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on cs42l51" to the asoc tree
+In-Reply-To: <87r39z1utv.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiI9-0002Sm-Sg@debutante>
+Date: Mon, 08 Aug 2016 12:00:21 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on uda1380" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on cs42l51
+   ASoC: codec duplicated callback function goes to component on uda1380
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 9353d25dc8442784b1bc626cb2741965a1f53dad Mon Sep 17 00:00:00 2001
+>From 68509ede7e80e6cd1782485f9a91c9641adadc54 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:03:45 +0000
+Date: Mon, 8 Aug 2016 09:27:32 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- cs42l51
+ uda1380
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/cs42l51.c | 14 ++++++++------
+ sound/soc/codecs/uda1380.c | 14 ++++++++------
  1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/cs42l51.c b/sound/soc/codecs/cs42l51.c
-index 35488f14e237..96cfe38943cd 100644
---- a/sound/soc/codecs/cs42l51.c
-+++ b/sound/soc/codecs/cs42l51.c
-@@ -507,12 +507,14 @@ static int cs42l51_codec_probe(struct snd_soc_codec *codec)
- static struct snd_soc_codec_driver soc_codec_device_cs42l51 = {
- 	.probe = cs42l51_codec_probe,
+diff --git a/sound/soc/codecs/uda1380.c b/sound/soc/codecs/uda1380.c
+index 35f0469ebb16..533e3bb444e4 100644
+--- a/sound/soc/codecs/uda1380.c
++++ b/sound/soc/codecs/uda1380.c
+@@ -765,12 +765,14 @@ static struct snd_soc_codec_driver soc_codec_dev_uda1380 = {
+ 	.reg_cache_default = uda1380_reg,
+ 	.reg_cache_step = 1,
  
--	.controls = cs42l51_snd_controls,
--	.num_controls = ARRAY_SIZE(cs42l51_snd_controls),
--	.dapm_widgets = cs42l51_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(cs42l51_dapm_widgets),
--	.dapm_routes = cs42l51_routes,
--	.num_dapm_routes = ARRAY_SIZE(cs42l51_routes),
+-	.controls = uda1380_snd_controls,
+-	.num_controls = ARRAY_SIZE(uda1380_snd_controls),
+-	.dapm_widgets = uda1380_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(uda1380_dapm_widgets),
+-	.dapm_routes = uda1380_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(uda1380_dapm_routes),
 +	.component_driver = {
-+		.controls		= cs42l51_snd_controls,
-+		.num_controls		= ARRAY_SIZE(cs42l51_snd_controls),
-+		.dapm_widgets		= cs42l51_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(cs42l51_dapm_widgets),
-+		.dapm_routes		= cs42l51_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(cs42l51_routes),
++		.controls		= uda1380_snd_controls,
++		.num_controls		= ARRAY_SIZE(uda1380_snd_controls),
++		.dapm_widgets		= uda1380_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(uda1380_dapm_widgets),
++		.dapm_routes		= uda1380_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(uda1380_dapm_routes),
 +	},
  };
  
- const struct regmap_config cs42l51_regmap = {
+ #if IS_ENABLED(CONFIG_I2C)
 -- 
 2.8.1
