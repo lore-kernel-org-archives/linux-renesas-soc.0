@@ -1,49 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:49687 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753911AbcHSCjr (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Aug 2016 22:39:47 -0400
-Received: from localhost.localdomain (227.178-201-80.adsl-dyn.isp.belgacom.be [80.201.178.227])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id EDAEA208A1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Aug 2016 18:03:32 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/HACK 1/7] ARM: shmobile: r8a7790: Enable IOMMU usage for the DU
-Date: Thu, 18 Aug 2016 19:03:54 +0300
-Message-Id: <1471536240-25082-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1471536240-25082-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1471536240-25082-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34279 "EHLO
+	mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752005AbcHHMm5 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 8 Aug 2016 08:42:57 -0400
+MIME-Version: 1.0
+In-Reply-To: <1477310.o5B8uhf3mT@wasted.cogentembedded.com>
+References: <17288006.ERHB6654v5@wasted.cogentembedded.com> <1477310.o5B8uhf3mT@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 8 Aug 2016 14:42:56 +0200
+Message-ID: <CAMuHMdWeq2tH_jpPJ1sPYiutKCcAXynm8tw6vBW7dC9C1seUeg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: r8a7792: add VIN clocks
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm/boot/dts/r8a7790.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Sat, Jul 23, 2016 at 9:16 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Describe the VIN[0-5] clocks and their parent, ZG clock in the R8A7792
+> device  tree.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index d18558f21102..87c4344424a0 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1010,6 +1010,8 @@
- 		clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1";
- 		status = "disabled";
- 
-+		iommus = <&ipmmu_mx 15 &ipmmu_mx 16>;
-+
- 		ports {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -1916,7 +1918,6 @@
- 		interrupts = <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
- 		#iommu-cells = <1>;
--		status = "disabled";
- 	};
- 
- 	ipmmu_rt: mmu@ffc80000 {
--- 
-Regards,
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Laurent Pinchart
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
