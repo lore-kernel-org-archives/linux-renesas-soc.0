@@ -1,82 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56197 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752607AbcHQLcX (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51756 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752002AbcHHLBz (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 17 Aug 2016 07:32:23 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RTF 6/7] arm64: dts: r8a7796: add SDHI nodes
-Date: Wed, 17 Aug 2016 13:31:55 +0200
-Message-Id: <1471433516-4478-7-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au>
-References: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au>
+	Mon, 8 Aug 2016 07:01:55 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87y44739tw.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiJZ-0002tI-Gt@debutante>
+Date: Mon, 08 Aug 2016 12:01:49 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on wm98095" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add SDHI nodes to the DT of the r8a7796 SoC.
+The patch
 
-Based on the DT of the r8a7795 SoC.
+   ASoC: codec duplicated callback function goes to component on wm98095
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 7fb49ebab0a1e50848466096a217bd8f0aa729eb Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:18:12 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ wm98095
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 42 ++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ sound/soc/codecs/max98095.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 2741535f8b15..d2db0c5ba854 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -251,5 +251,47 @@
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
-+
-+		sdhi0: sd@ee100000 {
-+			compatible = "renesas,sdhi-r8a7796";
-+			reg = <0 0xee100000 0 0x2000>;
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 314>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		sdhi1: sd@ee120000 {
-+			compatible = "renesas,sdhi-r8a7796";
-+			reg = <0 0xee120000 0 0x2000>;
-+			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 313>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		sdhi2: sd@ee140000 {
-+			compatible = "renesas,sdhi-r8a7796";
-+			reg = <0 0xee140000 0 0x2000>;
-+			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 312>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			cap-mmc-highspeed;
-+			status = "disabled";
-+		};
-+
-+		sdhi3: sd@ee160000 {
-+			compatible = "renesas,sdhi-r8a7796";
-+			reg = <0 0xee160000 0 0x2000>;
-+			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 311>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			cap-mmc-highspeed;
-+			status = "disabled";
-+		};
- 	};
+diff --git a/sound/soc/codecs/max98095.c b/sound/soc/codecs/max98095.c
+index 3577003f39cf..6f8a757876ed 100644
+--- a/sound/soc/codecs/max98095.c
++++ b/sound/soc/codecs/max98095.c
+@@ -2108,12 +2108,14 @@ static struct snd_soc_codec_driver soc_codec_dev_max98095 = {
+ 	.suspend = max98095_suspend,
+ 	.resume  = max98095_resume,
+ 	.set_bias_level = max98095_set_bias_level,
+-	.controls = max98095_snd_controls,
+-	.num_controls = ARRAY_SIZE(max98095_snd_controls),
+-	.dapm_widgets	  = max98095_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(max98095_dapm_widgets),
+-	.dapm_routes     = max98095_audio_map,
+-	.num_dapm_routes = ARRAY_SIZE(max98095_audio_map),
++	.component_driver = {
++		.controls		= max98095_snd_controls,
++		.num_controls		= ARRAY_SIZE(max98095_snd_controls),
++		.dapm_widgets		= max98095_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(max98095_dapm_widgets),
++		.dapm_routes		= max98095_audio_map,
++		.num_dapm_routes	= ARRAY_SIZE(max98095_audio_map),
++	},
  };
+ 
+ static int max98095_i2c_probe(struct i2c_client *i2c,
 -- 
-2.7.0.rc3.207.g0ac5344
+2.8.1
