@@ -1,90 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51826 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLCE (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:34935 "EHLO
+	relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752020AbcHHMyc (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:02:04 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <8737mf4ofu.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiJi-0002vq-9e@debutante>
-Date: Mon, 08 Aug 2016 12:01:58 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on jz4740" to the asoc tree
+	Mon, 8 Aug 2016 08:54:32 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <stable@vger.kernel.org>,
+	"Yoshihiro Shimoda" <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/3] usb: renesas_usbhs: clear the BRDYSTS in usbhsg_ep_enable()
+Date: Mon, 8 Aug 2016 21:50:52 +0900
+Message-ID: <1470660653-21743-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1470660653-21743-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1470660653-21743-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+This patch fixes an issue that unexpected BRDY interruption happens
+when the usb_ep_{enable,disable}() are called with different direction.
+In this case, the driver will cause the following message:
 
-   ASoC: codec duplicated callback function goes to component on jz4740
+ renesas_usbhs e6590000.usb: irq_ready run_error 1 : -16
 
-has been applied to the asoc tree at
+This issue causes the followings:
+ 1) A pipe is enabled as transmission
+ 2) The pipe sent a data
+ 3) The pipe is disabled and re-enabled as reception.
+ 4) The pipe got a queue
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Since the driver doesn't clear the BRDYSTS flags after 2) above, the issue
+happens. If we add such clearing the flags into the driver, the code will
+become complicate. So, this patch clears the BRDYSTS flag of reception in
+usbhsg_ep_enable() to avoid complicate.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From af15dc71b0c343279678af50543f6a64e84fb569 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:17:19 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- jz4740
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: <stable@vger.kernel.org> # v4.1+ (usbhs_xxxsts_clear() is needed)
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- sound/soc/codecs/jz4740.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/usb/renesas_usbhs/mod_gadget.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/jz4740.c b/sound/soc/codecs/jz4740.c
-index 1f5ab99956ed..0290fab383da 100644
---- a/sound/soc/codecs/jz4740.c
-+++ b/sound/soc/codecs/jz4740.c
-@@ -298,12 +298,14 @@ static struct snd_soc_codec_driver soc_codec_dev_jz4740_codec = {
- 	.set_bias_level = jz4740_codec_set_bias_level,
- 	.suspend_bias_off = true,
+diff --git a/drivers/usb/renesas_usbhs/mod_gadget.c b/drivers/usb/renesas_usbhs/mod_gadget.c
+index 50f3363..92bc83b 100644
+--- a/drivers/usb/renesas_usbhs/mod_gadget.c
++++ b/drivers/usb/renesas_usbhs/mod_gadget.c
+@@ -617,10 +617,13 @@ static int usbhsg_ep_enable(struct usb_ep *ep,
+ 		 * use dmaengine if possible.
+ 		 * It will use pio handler if impossible.
+ 		 */
+-		if (usb_endpoint_dir_in(desc))
++		if (usb_endpoint_dir_in(desc)) {
+ 			pipe->handler = &usbhs_fifo_dma_push_handler;
+-		else
++		} else {
+ 			pipe->handler = &usbhs_fifo_dma_pop_handler;
++			usbhs_xxxsts_clear(priv, BRDYSTS,
++					   usbhs_pipe_number(pipe));
++		}
  
--	.controls = jz4740_codec_controls,
--	.num_controls = ARRAY_SIZE(jz4740_codec_controls),
--	.dapm_widgets = jz4740_codec_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(jz4740_codec_dapm_widgets),
--	.dapm_routes = jz4740_codec_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(jz4740_codec_dapm_routes),
-+	.component_driver = {
-+		.controls		= jz4740_codec_controls,
-+		.num_controls		= ARRAY_SIZE(jz4740_codec_controls),
-+		.dapm_widgets		= jz4740_codec_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(jz4740_codec_dapm_widgets),
-+		.dapm_routes		= jz4740_codec_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(jz4740_codec_dapm_routes),
-+	},
- };
- 
- static const struct regmap_config jz4740_codec_regmap_config = {
+ 		ret = 0;
+ 	}
 -- 
-2.8.1
+1.9.1
