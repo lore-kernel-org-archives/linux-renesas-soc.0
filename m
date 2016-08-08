@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52570 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52428 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLDf (ORCPT
+	with ESMTP id S1751979AbcHHLDR (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:03:35 -0400
+	Mon, 8 Aug 2016 07:03:17 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87bn1363g3.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiLA-0003NE-Uw@debutante>
-Date: Mon, 08 Aug 2016 12:03:28 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on adau1701" to the asoc tree
+In-Reply-To: <8737mf63cv.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiKt-0003Hr-CA@debutante>
+Date: Mon, 08 Aug 2016 12:03:11 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on ad193x" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on adau1701
+   ASoC: codec duplicated callback function goes to component on ad193x
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 637591ecb4468c55489654b698319adb9fbfbe36 Mon Sep 17 00:00:00 2001
+>From 1d09e8c35626ea0b899c1cd1922d8802bd169868 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:07:47 +0000
+Date: Mon, 8 Aug 2016 09:09:43 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- adau1701
+ ad193x
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,34 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/adau1701.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ sound/soc/codecs/ad193x.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/adau1701.c b/sound/soc/codecs/adau1701.c
-index de53c0d7bf10..3bad1bc8c00a 100644
---- a/sound/soc/codecs/adau1701.c
-+++ b/sound/soc/codecs/adau1701.c
-@@ -765,13 +765,14 @@ static struct snd_soc_codec_driver adau1701_codec_drv = {
- 	.set_bias_level		= adau1701_set_bias_level,
- 	.idle_bias_off		= true,
+diff --git a/sound/soc/codecs/ad193x.c b/sound/soc/codecs/ad193x.c
+index 3a3f3f2343d7..d643557d89a7 100644
+--- a/sound/soc/codecs/ad193x.c
++++ b/sound/soc/codecs/ad193x.c
+@@ -410,12 +410,14 @@ static int ad193x_codec_probe(struct snd_soc_codec *codec)
  
--	.controls		= adau1701_controls,
--	.num_controls		= ARRAY_SIZE(adau1701_controls),
--	.dapm_widgets		= adau1701_dapm_widgets,
--	.num_dapm_widgets	= ARRAY_SIZE(adau1701_dapm_widgets),
--	.dapm_routes		= adau1701_dapm_routes,
--	.num_dapm_routes	= ARRAY_SIZE(adau1701_dapm_routes),
--
+ static struct snd_soc_codec_driver soc_codec_dev_ad193x = {
+ 	.probe = ad193x_codec_probe,
+-	.controls = ad193x_snd_controls,
+-	.num_controls = ARRAY_SIZE(ad193x_snd_controls),
+-	.dapm_widgets = ad193x_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(ad193x_dapm_widgets),
+-	.dapm_routes = audio_paths,
+-	.num_dapm_routes = ARRAY_SIZE(audio_paths),
 +	.component_driver = {
-+		.controls		= adau1701_controls,
-+		.num_controls		= ARRAY_SIZE(adau1701_controls),
-+		.dapm_widgets		= adau1701_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(adau1701_dapm_widgets),
-+		.dapm_routes		= adau1701_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(adau1701_dapm_routes),
++		.controls		= ad193x_snd_controls,
++		.num_controls		= ARRAY_SIZE(ad193x_snd_controls),
++		.dapm_widgets		= ad193x_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(ad193x_dapm_widgets),
++		.dapm_routes		= audio_paths,
++		.num_dapm_routes	= ARRAY_SIZE(audio_paths),
 +	},
- 	.set_sysclk		= adau1701_set_sysclk,
  };
  
+ const struct regmap_config ad193x_regmap_config = {
 -- 
 2.8.1
