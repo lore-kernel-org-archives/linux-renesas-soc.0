@@ -1,50 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:33161 "EHLO
-	mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S3002689AbcHEVwo (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52956 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979AbcHHLEW (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 5 Aug 2016 17:52:44 -0400
-Received: by mail-lf0-f42.google.com with SMTP id b199so212601839lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 05 Aug 2016 14:52:43 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: dts: r8a7792: fix misindented line
-Date: Sat, 06 Aug 2016 00:52:39 +0300
-Message-ID: <4152284.qHAgBjWaW0@wasted.cogentembedded.com>
-In-Reply-To: <1618499.8bcj8adpVO@wasted.cogentembedded.com>
-References: <1618499.8bcj8adpVO@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Mon, 8 Aug 2016 07:04:22 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87y44763of.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiLv-0003an-OP@debutante>
+Date: Mon, 08 Aug 2016 12:04:15 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on cs42l73" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commit 2a0900655d5e (ARM: dts: r8a7792: add I2C support) had a wrongly
-indented line at the end of the "aliases" subnode -- fix it.
+The patch
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+   ASoC: codec duplicated callback function goes to component on cs42l73
 
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 951cd7e6ffda4dc86ed6fb6ff10e0ca8f3b67c2b Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:02:48 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ cs42l73
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-This patch is against the 'renesas-devel-20160725-v4.7-rc7' tag of Simon
-Horman's 'renesas.git' repo.
+ sound/soc/codecs/cs42l73.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
- arch/arm/boot/dts/r8a7792.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -31,7 +31,7 @@
- 		vin3 = &vin3;
- 		vin4 = &vin4;
- 		vin5 = &vin5;
--};
-+	};
+diff --git a/sound/soc/codecs/cs42l73.c b/sound/soc/codecs/cs42l73.c
+index 42a8fd4e1f9b..01b573ab7036 100644
+--- a/sound/soc/codecs/cs42l73.c
++++ b/sound/soc/codecs/cs42l73.c
+@@ -1257,13 +1257,14 @@ static const struct snd_soc_codec_driver soc_codec_dev_cs42l73 = {
+ 	.set_bias_level = cs42l73_set_bias_level,
+ 	.suspend_bias_off = true,
  
- 	cpus {
- 		#address-cells = <1>;
+-	.dapm_widgets = cs42l73_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(cs42l73_dapm_widgets),
+-	.dapm_routes = cs42l73_audio_map,
+-	.num_dapm_routes = ARRAY_SIZE(cs42l73_audio_map),
+-
+-	.controls = cs42l73_snd_controls,
+-	.num_controls = ARRAY_SIZE(cs42l73_snd_controls),
++	.component_driver = {
++		.controls		= cs42l73_snd_controls,
++		.num_controls		= ARRAY_SIZE(cs42l73_snd_controls),
++		.dapm_widgets		= cs42l73_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(cs42l73_dapm_widgets),
++		.dapm_routes		= cs42l73_audio_map,
++		.num_dapm_routes	= ARRAY_SIZE(cs42l73_audio_map),
++	},
+ };
+ 
+ static const struct regmap_config cs42l73_regmap = {
+-- 
+2.8.1
