@@ -1,58 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752913AbcHOI4U (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53006 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979AbcHHLE2 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 15 Aug 2016 04:56:20 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/26] ARM: dts: r8a7792: add EtherAVB support
-Date: Mon, 15 Aug 2016 10:55:26 +0200
-Message-Id: <b12dcdcc474977095ce72152b285be7f94d0efd3.1471251169.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
-References: <cover.1471251169.git.horms+renesas@verge.net.au>
+	Mon, 8 Aug 2016 07:04:28 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <871t1z7i9y.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiM1-0003cc-Ii@debutante>
+Date: Mon, 08 Aug 2016 12:04:21 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on cs4349" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The patch
 
-Define the generic R8A7792 part of the EtherAVB device node.
+   ASoC: codec duplicated callback function goes to component on cs4349
 
-Based on the commit 89aac8af1a60 ("ARM: dts: r8a7794: add EtherAVB support").
+has been applied to the asoc tree at
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From b9835ec4a7ebf508cea5e2b5955b830db0fffc5f Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:02:09 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ cs4349
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7792.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ sound/soc/codecs/cs4349.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index f97b034da35f..37c9d95688cf 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -444,6 +444,18 @@
- 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
- 		};
+diff --git a/sound/soc/codecs/cs4349.c b/sound/soc/codecs/cs4349.c
+index 0ac8fc5ed4ae..231ca935cdf3 100644
+--- a/sound/soc/codecs/cs4349.c
++++ b/sound/soc/codecs/cs4349.c
+@@ -256,13 +256,14 @@ static struct snd_soc_dai_driver cs4349_dai = {
+ };
  
-+		avb: ethernet@e6800000 {
-+			compatible = "renesas,etheravb-r8a7792",
-+				     "renesas,etheravb-rcar-gen2";
-+			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
-+			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp8_clks R8A7792_CLK_ETHERAVB>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		/* Special CPG clocks */
- 		cpg_clocks: cpg_clocks@e6150000 {
- 			compatible = "renesas,r8a7792-cpg-clocks",
+ static struct snd_soc_codec_driver soc_codec_dev_cs4349 = {
+-	.controls		= cs4349_snd_controls,
+-	.num_controls		= ARRAY_SIZE(cs4349_snd_controls),
+-
+-	.dapm_widgets		= cs4349_dapm_widgets,
+-	.num_dapm_widgets	= ARRAY_SIZE(cs4349_dapm_widgets),
+-	.dapm_routes		= cs4349_routes,
+-	.num_dapm_routes	= ARRAY_SIZE(cs4349_routes),
++	.component_driver = {
++		.controls		= cs4349_snd_controls,
++		.num_controls		= ARRAY_SIZE(cs4349_snd_controls),
++		.dapm_widgets		= cs4349_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(cs4349_dapm_widgets),
++		.dapm_routes		= cs4349_routes,
++		.num_dapm_routes	= ARRAY_SIZE(cs4349_routes),
++	},
+ };
+ 
+ static const struct regmap_config cs4349_regmap = {
 -- 
-2.7.0.rc3.207.g0ac5344
+2.8.1
