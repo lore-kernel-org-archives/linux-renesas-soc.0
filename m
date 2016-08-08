@@ -1,45 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:35394 "EHLO
-	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHMhJ (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52356 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752002AbcHHLDI (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 08:37:09 -0400
-MIME-Version: 1.0
-In-Reply-To: <2958440.dIj6ehVyCb@wasted.cogentembedded.com>
-References: <4468057.gGDuR4B4DF@wasted.cogentembedded.com> <2958440.dIj6ehVyCb@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 8 Aug 2016 14:37:08 +0200
-Message-ID: <CAMuHMdU+My7TK+duxqtPDpuXCRkUy4f-sn3M8WBkQXu5vDGPyg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] ARM: dts: r8a7792: add SD clocks
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+	Mon, 8 Aug 2016 07:03:08 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87y4474oqv.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiKk-0003FL-Ji@debutante>
+Date: Mon, 08 Aug 2016 12:03:02 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on atmel-pdmic" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Jul 23, 2016 at 8:10 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Describe the SDHI0 clock and its parent, SD clock in the R8A7792 device tree.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The patch
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+   ASoC: codec duplicated callback function goes to component on atmel-pdmic
 
-Gr{oetje,eeting}s,
+has been applied to the asoc tree at
 
-                        Geert
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 72bb3cdf93b1718c9a540fb157890d8639633eca Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:10:41 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ atmel-pdmic
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/atmel/atmel-pdmic.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/atmel/atmel-pdmic.c b/sound/soc/atmel/atmel-pdmic.c
+index 5f56da60c92f..2a3a41fad38d 100644
+--- a/sound/soc/atmel/atmel-pdmic.c
++++ b/sound/soc/atmel/atmel-pdmic.c
+@@ -357,8 +357,10 @@ static int atmel_pdmic_codec_probe(struct snd_soc_codec *codec)
+ 
+ static struct snd_soc_codec_driver soc_codec_dev_pdmic = {
+ 	.probe		= atmel_pdmic_codec_probe,
+-	.controls	= atmel_pdmic_snd_controls,
+-	.num_controls	= ARRAY_SIZE(atmel_pdmic_snd_controls),
++	.component_driver = {
++		.controls		= atmel_pdmic_snd_controls,
++		.num_controls		= ARRAY_SIZE(atmel_pdmic_snd_controls),
++	},
+ };
+ 
+ /* codec dai component */
+-- 
+2.8.1
