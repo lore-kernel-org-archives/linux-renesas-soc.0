@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53636 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53210 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752320AbcHHLFo (ORCPT
+	with ESMTP id S1752002AbcHHLEw (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:05:44 -0400
+	Mon, 8 Aug 2016 07:04:52 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87zion7imc.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiNA-0003xz-RU@debutante>
-Date: Mon, 08 Aug 2016 12:05:32 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on tfa9879" to the asoc tree
+In-Reply-To: <87d1lj7ie2.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiMP-0003jx-Du@debutante>
+Date: Mon, 08 Aug 2016 12:04:45 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on pcm3168a" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on tfa9879
+   ASoC: codec duplicated callback function goes to component on pcm3168a
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From f2dea01ccbfc34a5e631afeb13c7d010d39c2543 Mon Sep 17 00:00:00 2001
+>From d4fff1ba4768dc7b8dd09db0eee19c1ff098ee60 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:54:44 +0000
+Date: Mon, 8 Aug 2016 08:59:41 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- tfa9879
+ pcm3168a
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,34 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/tfa9879.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ sound/soc/codecs/pcm3168a.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/tfa9879.c b/sound/soc/codecs/tfa9879.c
-index cb5310d89c0f..95e0a7abeb7a 100644
---- a/sound/soc/codecs/tfa9879.c
-+++ b/sound/soc/codecs/tfa9879.c
-@@ -231,13 +231,14 @@ static const struct snd_soc_dapm_route tfa9879_dapm_routes[] = {
- };
+diff --git a/sound/soc/codecs/pcm3168a.c b/sound/soc/codecs/pcm3168a.c
+index 992a77edcd5d..39bc02d5bc5d 100644
+--- a/sound/soc/codecs/pcm3168a.c
++++ b/sound/soc/codecs/pcm3168a.c
+@@ -599,12 +599,14 @@ EXPORT_SYMBOL_GPL(pcm3168a_regmap);
  
- static const struct snd_soc_codec_driver tfa9879_codec = {
--	.controls = tfa9879_controls,
--	.num_controls = ARRAY_SIZE(tfa9879_controls),
--
--	.dapm_widgets = tfa9879_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(tfa9879_dapm_widgets),
--	.dapm_routes = tfa9879_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(tfa9879_dapm_routes),
+ static const struct snd_soc_codec_driver pcm3168a_driver = {
+ 	.idle_bias_off = true,
+-	.controls = pcm3168a_snd_controls,
+-	.num_controls = ARRAY_SIZE(pcm3168a_snd_controls),
+-	.dapm_widgets = pcm3168a_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(pcm3168a_dapm_widgets),
+-	.dapm_routes = pcm3168a_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(pcm3168a_dapm_routes)
 +	.component_driver = {
-+		.controls		= tfa9879_controls,
-+		.num_controls		= ARRAY_SIZE(tfa9879_controls),
-+		.dapm_widgets		= tfa9879_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(tfa9879_dapm_widgets),
-+		.dapm_routes		= tfa9879_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(tfa9879_dapm_routes),
++		.controls		= pcm3168a_snd_controls,
++		.num_controls		= ARRAY_SIZE(pcm3168a_snd_controls),
++		.dapm_widgets		= pcm3168a_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(pcm3168a_dapm_widgets),
++		.dapm_routes		= pcm3168a_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(pcm3168a_dapm_routes)
 +	},
  };
  
- static const struct regmap_config tfa9879_regmap = {
+ int pcm3168a_probe(struct device *dev, struct regmap *regmap)
 -- 
 2.8.1
