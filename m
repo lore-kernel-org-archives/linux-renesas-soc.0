@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53210 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51270 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLEw (ORCPT
+	with ESMTP id S1751979AbcHHLA5 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:04:52 -0400
+	Mon, 8 Aug 2016 07:00:57 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87d1lj7ie2.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiMP-0003jx-Du@debutante>
-Date: Mon, 08 Aug 2016 12:04:45 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on pcm3168a" to the asoc tree
+In-Reply-To: <8760rb39ji.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiId-0002bZ-30@debutante>
+Date: Mon, 08 Aug 2016 12:00:51 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on sn95031" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on pcm3168a
+   ASoC: codec duplicated callback function goes to component on sn95031
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From d4fff1ba4768dc7b8dd09db0eee19c1ff098ee60 Mon Sep 17 00:00:00 2001
+>From 486e0763e23d0fc91aac0b5a156a2646ed7c658f Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:59:41 +0000
+Date: Mon, 8 Aug 2016 09:24:24 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- pcm3168a
+ sn95031
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/pcm3168a.c | 14 ++++++++------
+ sound/soc/codecs/sn95031.c | 14 ++++++++------
  1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/pcm3168a.c b/sound/soc/codecs/pcm3168a.c
-index 992a77edcd5d..39bc02d5bc5d 100644
---- a/sound/soc/codecs/pcm3168a.c
-+++ b/sound/soc/codecs/pcm3168a.c
-@@ -599,12 +599,14 @@ EXPORT_SYMBOL_GPL(pcm3168a_regmap);
+diff --git a/sound/soc/codecs/sn95031.c b/sound/soc/codecs/sn95031.c
+index 3a7de0159f24..eae54c37cff9 100644
+--- a/sound/soc/codecs/sn95031.c
++++ b/sound/soc/codecs/sn95031.c
+@@ -888,12 +888,14 @@ static struct snd_soc_codec_driver sn95031_codec = {
+ 	.set_bias_level	= sn95031_set_vaud_bias,
+ 	.idle_bias_off	= true,
  
- static const struct snd_soc_codec_driver pcm3168a_driver = {
- 	.idle_bias_off = true,
--	.controls = pcm3168a_snd_controls,
--	.num_controls = ARRAY_SIZE(pcm3168a_snd_controls),
--	.dapm_widgets = pcm3168a_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(pcm3168a_dapm_widgets),
--	.dapm_routes = pcm3168a_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(pcm3168a_dapm_routes)
+-	.controls	= sn95031_snd_controls,
+-	.num_controls	= ARRAY_SIZE(sn95031_snd_controls),
+-	.dapm_widgets	= sn95031_dapm_widgets,
+-	.num_dapm_widgets	= ARRAY_SIZE(sn95031_dapm_widgets),
+-	.dapm_routes	= sn95031_audio_map,
+-	.num_dapm_routes	= ARRAY_SIZE(sn95031_audio_map),
 +	.component_driver = {
-+		.controls		= pcm3168a_snd_controls,
-+		.num_controls		= ARRAY_SIZE(pcm3168a_snd_controls),
-+		.dapm_widgets		= pcm3168a_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(pcm3168a_dapm_widgets),
-+		.dapm_routes		= pcm3168a_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(pcm3168a_dapm_routes)
++		.controls		= sn95031_snd_controls,
++		.num_controls		= ARRAY_SIZE(sn95031_snd_controls),
++		.dapm_widgets		= sn95031_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(sn95031_dapm_widgets),
++		.dapm_routes		= sn95031_audio_map,
++		.num_dapm_routes	= ARRAY_SIZE(sn95031_audio_map),
 +	},
  };
  
- int pcm3168a_probe(struct device *dev, struct regmap *regmap)
+ static int sn95031_device_probe(struct platform_device *pdev)
 -- 
 2.8.1
