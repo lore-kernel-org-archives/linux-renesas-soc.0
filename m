@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54178 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53958 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLGl (ORCPT
+	with ESMTP id S1752580AbcHHLGP (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:06:41 -0400
+	Mon, 8 Aug 2016 07:06:15 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87fuqm8xur.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiOB-0004G9-1b@debutante>
-Date: Mon, 08 Aug 2016 12:06:35 +0100
-Subject: Applied "ASoC: remove codec duplicated callback function" to the asoc tree
+In-Reply-To: <87h9av8xek.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiNk-00048F-J4@debutante>
+Date: Mon, 08 Aug 2016 12:06:08 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8750" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: remove codec duplicated callback function
+   ASoC: codec duplicated callback function goes to component on wm8750
 
 has been applied to the asoc tree at
 
@@ -44,65 +44,47 @@ to this mail.
 Thanks,
 Mark
 
->From 8073aefa60823acf205a1e6a5ea118297179d766 Mon Sep 17 00:00:00 2001
+>From c107fbaff34eddebeb34714f0334d710ca937091 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:36:49 +0000
-Subject: [PATCH] ASoC: remove codec duplicated callback function
+Date: Mon, 8 Aug 2016 08:50:02 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ wm8750
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
 register timing. This was quick-hack, but no longer needed.
-This patch removes codec side duplicated callback function.
+This patch moves these functions from codec driver to component driver.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- include/sound/soc.h  |  8 --------
- sound/soc/soc-core.c | 13 -------------
- 2 files changed, 21 deletions(-)
+ sound/soc/codecs/wm8750.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/include/sound/soc.h b/include/sound/soc.h
-index 6144882cc96a..5eb2b38c3437 100644
---- a/include/sound/soc.h
-+++ b/include/sound/soc.h
-@@ -898,14 +898,6 @@ struct snd_soc_codec_driver {
- 	int (*resume)(struct snd_soc_codec *);
- 	struct snd_soc_component_driver component_driver;
+diff --git a/sound/soc/codecs/wm8750.c b/sound/soc/codecs/wm8750.c
+index bd9dcd2161bc..a96a1456897b 100644
+--- a/sound/soc/codecs/wm8750.c
++++ b/sound/soc/codecs/wm8750.c
+@@ -713,12 +713,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8750 = {
+ 	.set_bias_level = wm8750_set_bias_level,
+ 	.suspend_bias_off = true,
  
--	/* Default control and setup, added after probe() is run */
--	const struct snd_kcontrol_new *controls;
--	int num_controls;
--	const struct snd_soc_dapm_widget *dapm_widgets;
--	int num_dapm_widgets;
--	const struct snd_soc_dapm_route *dapm_routes;
--	int num_dapm_routes;
--
- 	/* codec wide operations */
- 	int (*set_sysclk)(struct snd_soc_codec *codec,
- 			  int clk_id, int source, unsigned int freq, int dir);
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 16369cad4803..edba975d893e 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -3333,19 +3333,6 @@ int snd_soc_register_codec(struct device *dev,
- 	if (ret)
- 		goto err_free;
+-	.controls = wm8750_snd_controls,
+-	.num_controls = ARRAY_SIZE(wm8750_snd_controls),
+-	.dapm_widgets = wm8750_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(wm8750_dapm_widgets),
+-	.dapm_routes = wm8750_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(wm8750_dapm_routes),
++	.component_driver = {
++		.controls		= wm8750_snd_controls,
++		.num_controls		= ARRAY_SIZE(wm8750_snd_controls),
++		.dapm_widgets		= wm8750_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(wm8750_dapm_widgets),
++		.dapm_routes		= wm8750_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(wm8750_dapm_routes),
++	},
+ };
  
--	if (codec_drv->controls) {
--		codec->component.controls = codec_drv->controls;
--		codec->component.num_controls = codec_drv->num_controls;
--	}
--	if (codec_drv->dapm_widgets) {
--		codec->component.dapm_widgets = codec_drv->dapm_widgets;
--		codec->component.num_dapm_widgets = codec_drv->num_dapm_widgets;
--	}
--	if (codec_drv->dapm_routes) {
--		codec->component.dapm_routes = codec_drv->dapm_routes;
--		codec->component.num_dapm_routes = codec_drv->num_dapm_routes;
--	}
--
- 	if (codec_drv->probe)
- 		codec->component.probe = snd_soc_codec_drv_probe;
- 	if (codec_drv->remove)
+ static const struct of_device_id wm8750_of_match[] = {
 -- 
 2.8.1
