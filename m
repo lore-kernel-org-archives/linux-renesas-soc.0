@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51686 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52284 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLBq (ORCPT
+	with ESMTP id S1752002AbcHHLDA (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:01:46 -0400
+	Mon, 8 Aug 2016 07:03:00 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87twev39s9.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiJQ-0002qb-PD@debutante>
-Date: Mon, 08 Aug 2016 12:01:40 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on wm9867" to the asoc tree
+In-Reply-To: <87twev4opa.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiKb-0003Ck-RK@debutante>
+Date: Mon, 08 Aug 2016 12:02:53 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on adau1781" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on wm9867
+   ASoC: codec duplicated callback function goes to component on adau1781
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From e92b48aa21d41c64ae1a06d69b94c8dfaec9c672 Mon Sep 17 00:00:00 2001
+>From dbd33b16d68bf3ff93fb7965a2e87878ee091e94 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:19:11 +0000
+Date: Mon, 8 Aug 2016 09:11:36 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- wm9867
+ adau1781
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/max9867.c | 14 ++++++++------
+ sound/soc/codecs/adau1781.c | 14 ++++++++------
  1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/max9867.c b/sound/soc/codecs/max9867.c
-index 2a22fddeb6af..c9673235078d 100644
---- a/sound/soc/codecs/max9867.c
-+++ b/sound/soc/codecs/max9867.c
-@@ -417,12 +417,14 @@ static int max9867_probe(struct snd_soc_codec *codec)
+diff --git a/sound/soc/codecs/adau1781.c b/sound/soc/codecs/adau1781.c
+index bc1bb56dae63..546071c6c0d0 100644
+--- a/sound/soc/codecs/adau1781.c
++++ b/sound/soc/codecs/adau1781.c
+@@ -432,12 +432,14 @@ static const struct snd_soc_codec_driver adau1781_codec_driver = {
+ 	.set_bias_level = adau1781_set_bias_level,
+ 	.suspend_bias_off = true,
  
- static struct snd_soc_codec_driver max9867_codec = {
- 	.probe = max9867_probe,
--	.controls = max9867_snd_controls,
--	.num_controls = ARRAY_SIZE(max9867_snd_controls),
--	.dapm_routes = max9867_audio_map,
--	.num_dapm_routes = ARRAY_SIZE(max9867_audio_map),
--	.dapm_widgets = max9867_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(max9867_dapm_widgets),
+-	.controls = adau1781_controls,
+-	.num_controls = ARRAY_SIZE(adau1781_controls),
+-	.dapm_widgets = adau1781_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(adau1781_dapm_widgets),
+-	.dapm_routes = adau1781_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(adau1781_dapm_routes),
 +	.component_driver = {
-+		.controls		= max9867_snd_controls,
-+		.num_controls		= ARRAY_SIZE(max9867_snd_controls),
-+		.dapm_routes		= max9867_audio_map,
-+		.num_dapm_routes	= ARRAY_SIZE(max9867_audio_map),
-+		.dapm_widgets		= max9867_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(max9867_dapm_widgets),
++		.controls		= adau1781_controls,
++		.num_controls		= ARRAY_SIZE(adau1781_controls),
++		.dapm_widgets		= adau1781_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(adau1781_dapm_widgets),
++		.dapm_routes		= adau1781_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(adau1781_dapm_routes),
 +	},
  };
  
- static bool max9867_volatile_register(struct device *dev, unsigned int reg)
+ #define ADAU1781_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE | \
 -- 
 2.8.1
