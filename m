@@ -1,63 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33480 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756561AbcHWHuG (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 Aug 2016 03:50:06 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH/RFT v2 4/8] gpio: rcar: Add r8a7796 (R-Car M3-W) support
-Date: Tue, 23 Aug 2016 09:49:46 +0200
-Message-Id: <1471938590-10650-5-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
-References: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
+Received: from relmlor3.renesas.com ([210.160.252.173]:8802 "EHLO
+	relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752044AbcHHMyd (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 8 Aug 2016 08:54:33 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <stable@vger.kernel.org>,
+	"Yoshihiro Shimoda" <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 3/3] usb: renesas_usbhs: Use dmac only if the pipe type is bulk
+Date: Mon, 8 Aug 2016 21:50:53 +0900
+Message-ID: <1470660653-21743-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1470660653-21743-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1470660653-21743-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen3's GPIO blocks are identical to Gen2's in every respect.
+This patch fixes an issue that isochronous transfer's data is possible to
+be lost as a workaround. Since this driver uses a workqueue to start
+the dmac, the transfer is possible to be delayed when system load is high.
 
-Based on work for the r8a7795 (R-Car H3) by Ulrich Hecht.
-
-Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: 6e4b74e4690d ("usb: renesas: fix scheduling in atomic context bug")
+Cc: <stable@vger.kernel.org> # v3.4+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-v2
-* New patch
----
- Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
- drivers/gpio/gpio-rcar.c                                     | 4 ++++
- 2 files changed, 5 insertions(+)
+ drivers/usb/renesas_usbhs/fifo.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-index 8da26b35b5c3..7c1ab3b3254f 100644
---- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-+++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-@@ -11,6 +11,7 @@ Required Properties:
-     - "renesas,gpio-r8a7793": for R8A7793 (R-Car M2-N) compatible GPIO controller.
-     - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO controller.
-     - "renesas,gpio-r8a7795": for R8A7795 (R-Car H3) compatible GPIO controller.
-+    - "renesas,gpio-r8a7796": for R8A7796 (R-Car M3-W) compatible GPIO controller.
-     - "renesas,gpio-rcar": for generic R-Car GPIO controller.
+diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
+index 280ed5f..857e783 100644
+--- a/drivers/usb/renesas_usbhs/fifo.c
++++ b/drivers/usb/renesas_usbhs/fifo.c
+@@ -871,7 +871,7 @@ static int usbhsf_dma_prepare_push(struct usbhs_pkt *pkt, int *is_done)
  
-   - reg: Base address and length of each memory resource used by the GPIO
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index b96e0b466f74..2be48f5eba36 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -348,6 +348,10 @@ static const struct of_device_id gpio_rcar_of_table[] = {
- 		/* Gen3 GPIO is identical to Gen2. */
- 		.data = &gpio_rcar_info_gen2,
- 	}, {
-+		.compatible = "renesas,gpio-r8a7796",
-+		/* Gen3 GPIO is identical to Gen2. */
-+		.data = &gpio_rcar_info_gen2,
-+	}, {
- 		.compatible = "renesas,gpio-rcar",
- 		.data = &gpio_rcar_info_gen1,
- 	}, {
+ 	/* use PIO if packet is less than pio_dma_border or pipe is DCP */
+ 	if ((len < usbhs_get_dparam(priv, pio_dma_border)) ||
+-	    usbhs_pipe_is_dcp(pipe))
++	    usbhs_pipe_type_is(pipe, USB_ENDPOINT_XFER_ISOC))
+ 		goto usbhsf_pio_prepare_push;
+ 
+ 	/* check data length if this driver don't use USB-DMAC */
+@@ -976,7 +976,7 @@ static int usbhsf_dma_prepare_pop_with_usb_dmac(struct usbhs_pkt *pkt,
+ 
+ 	/* use PIO if packet is less than pio_dma_border or pipe is DCP */
+ 	if ((pkt->length < usbhs_get_dparam(priv, pio_dma_border)) ||
+-	    usbhs_pipe_is_dcp(pipe))
++	    usbhs_pipe_type_is(pipe, USB_ENDPOINT_XFER_ISOC))
+ 		goto usbhsf_pio_prepare_pop;
+ 
+ 	fifo = usbhsf_get_dma_fifo(priv, pkt);
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
