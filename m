@@ -1,76 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb3-smtp-cloud2.xs4all.net ([194.109.24.29]:36125 "EHLO
-	lb3-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751695AbcHBJqi (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54108 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752242AbcHHLGc (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 2 Aug 2016 05:46:38 -0400
-Subject: Re: [PATCH 0/6] Fix adv7180 and rcar-vin field handling
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>,
-	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	sergei.shtylyov@cogentembedded.com, slongerbeam@gmail.com
-References: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
-Cc: lars@metafoo.de, mchehab@kernel.org, hans.verkuil@cisco.com
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <011bd5e7-3da0-4370-10f5-3e37be6a19ba@xs4all.nl>
-Date: Tue, 2 Aug 2016 11:43:54 +0200
-MIME-Version: 1.0
-In-Reply-To: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+	Mon, 8 Aug 2016 07:06:32 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87popj8xhw.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiO2-0004DX-84@debutante>
+Date: Mon, 08 Aug 2016 12:06:26 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8974" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+The patch
 
+   ASoC: codec duplicated callback function goes to component on wm8974
 
-On 07/29/2016 07:40 PM, Niklas Söderlund wrote:
-> Hi,
-> 
-> This series add V4L2_FIELD_ALTERNATE support to the rcar-vin driver and 
-> changes the field mode reported by adv7180 from V4L2_FIELD_INTERLACED to 
-> V4L2_FIELD_ALTERNATE.
-> 
-> The change field mode reported by adv7180 was first done by Steve 
-> Longerbeam (https://lkml.org/lkml/2016/7/23/107), I have keept and 
-> reworked Steves patch to report V4L2_FIELD_ALTERNATE instead of 
-> V4L2_FIELD_SEQ_{TB,BT}, after discussions on #v4l this seems more
-> correct.
-> 
-> The rcar-vin changes contains some bug fixes needed to enable 
-> V4L2_FIELD_ALTERNATE.
-> 
-> All work is based on top of media-next and is tested on Koelsch.
-> 
-> This series touch two drivers which is not a good thing. But I could not 
-> figure out a good way to post them separately since if the adv7180 parts 
-> where too be merged before the rcar-vin changes the driver would stop to 
-> work on the Koelsch. If some one wants this series split in two let me 
-> know.
+has been applied to the asoc tree at
 
-When you post v2, please also run 'v4l2-compliance -f': this will test all
-format/field combinations.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-I also recommend testing with qv4l2 if you can to verify that it looks
-correct. The qv4l2 utility is guaranteed to handle all field settings
-correctly.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Regards,
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-	Hans
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-> 
-> Niklas Söderlund (5):
->   media: rcar-vin: allow field to be changed
->   media: rcar-vin: fix bug in scaling
->   media: rcar-vin: fix height for TOP and BOTTOM fields
->   media: rcar-vin: add support for V4L2_FIELD_ALTERNATE
->   media: adv7180: fill in mbus format in set_fmt
-> 
-> Steve Longerbeam (1):
->   media: adv7180: fix field type
-> 
->  drivers/media/i2c/adv7180.c                 |  21 ++--
->  drivers/media/platform/rcar-vin/rcar-dma.c  |  26 +++--
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 151 ++++++++++++++++------------
->  3 files changed, 123 insertions(+), 75 deletions(-)
-> 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 48b042380e970b70f1c5453d31c6bbff2114974e Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 08:48:05 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ wm8974
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/wm8974.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/sound/soc/codecs/wm8974.c b/sound/soc/codecs/wm8974.c
+index dc8c3b1ebb6f..fbda6e3f8a9d 100644
+--- a/sound/soc/codecs/wm8974.c
++++ b/sound/soc/codecs/wm8974.c
+@@ -681,12 +681,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8974 = {
+ 	.set_bias_level = wm8974_set_bias_level,
+ 	.suspend_bias_off = true,
+ 
+-	.controls = wm8974_snd_controls,
+-	.num_controls = ARRAY_SIZE(wm8974_snd_controls),
+-	.dapm_widgets = wm8974_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(wm8974_dapm_widgets),
+-	.dapm_routes = wm8974_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(wm8974_dapm_routes),
++	.component_driver = {
++		.controls		= wm8974_snd_controls,
++		.num_controls		= ARRAY_SIZE(wm8974_snd_controls),
++		.dapm_widgets		= wm8974_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(wm8974_dapm_widgets),
++		.dapm_routes		= wm8974_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(wm8974_dapm_routes),
++	},
+ };
+ 
+ static int wm8974_i2c_probe(struct i2c_client *i2c,
+-- 
+2.8.1
