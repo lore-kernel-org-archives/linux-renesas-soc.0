@@ -1,99 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:53038 "EHLO
-	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935041AbcHBOvl (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53858 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752041AbcHHLGG (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 2 Aug 2016 10:51:41 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	sergei.shtylyov@cogentembedded.com, slongerbeam@gmail.com
-Cc: lars@metafoo.de, mchehab@kernel.org, hans.verkuil@cisco.com,
-	Steve Longerbeam <steve_longerbeam@mentor.com>,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 7/7] [PATCHv5] media: adv7180: fix field type
-Date: Tue,  2 Aug 2016 16:51:07 +0200
-Message-Id: <20160802145107.24829-8-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160802145107.24829-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160802145107.24829-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+	Mon, 8 Aug 2016 07:06:06 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87d1lj8xd1.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiNb-00045i-Ma@debutante>
+Date: Mon, 08 Aug 2016 12:05:59 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8731" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Steve Longerbeam <slongerbeam@gmail.com>
+The patch
 
-The ADV7180 and ADV7182 transmit whole fields, bottom field followed
-by top (or vice-versa, depending on detected video standard). So
-for chips that do not have support for explicitly setting the field
-mode, set the field mode to V4L2_FIELD_ALTERNATE.
+   ASoC: codec duplicated callback function goes to component on wm8731
 
-Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
-[Niklas: changed filed type from V4L2_FIELD_SEQ_{TB,BT} to
-V4L2_FIELD_ALTERNATE]
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+has been applied to the asoc tree at
 
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 2cb7474b0c74a6ba433afaa4d69d7ccec310c70e Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 08:50:58 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ wm8731
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-v5:
-- Readd patch version and changelog which was dropped in v4.
+ sound/soc/codecs/wm8731.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-v4:
-- Switch V4L2_FIELD_SEQ_TB/V4L2_FIELD_SEQ_BT to V4L2_FIELD_ALTERNATE.
-- Update of Steves patch by Niklas.
-
-v3: no changes
-
-v2:
-- the init of state->curr_norm in probe needs to be moved up, ahead
-  of the init of state->field.
----
- drivers/media/i2c/adv7180.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
-index a8b434b..c6fed71 100644
---- a/drivers/media/i2c/adv7180.c
-+++ b/drivers/media/i2c/adv7180.c
-@@ -680,10 +680,13 @@ static int adv7180_set_pad_format(struct v4l2_subdev *sd,
- 	switch (format->format.field) {
- 	case V4L2_FIELD_NONE:
- 		if (!(state->chip_info->flags & ADV7180_FLAG_I2P))
--			format->format.field = V4L2_FIELD_INTERLACED;
-+			format->format.field = V4L2_FIELD_ALTERNATE;
- 		break;
- 	default:
--		format->format.field = V4L2_FIELD_INTERLACED;
-+		if (state->chip_info->flags & ADV7180_FLAG_I2P)
-+			format->format.field = V4L2_FIELD_INTERLACED;
-+		else
-+			format->format.field = V4L2_FIELD_ALTERNATE;
- 		break;
- 	}
+diff --git a/sound/soc/codecs/wm8731.c b/sound/soc/codecs/wm8731.c
+index d18261a44256..545fc9ae1a94 100644
+--- a/sound/soc/codecs/wm8731.c
++++ b/sound/soc/codecs/wm8731.c
+@@ -632,12 +632,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8731 = {
+ 	.set_bias_level = wm8731_set_bias_level,
+ 	.suspend_bias_off = true,
  
-@@ -1253,8 +1256,13 @@ static int adv7180_probe(struct i2c_client *client,
- 		return -ENOMEM;
+-	.dapm_widgets = wm8731_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(wm8731_dapm_widgets),
+-	.dapm_routes = wm8731_intercon,
+-	.num_dapm_routes = ARRAY_SIZE(wm8731_intercon),
+-	.controls =	wm8731_snd_controls,
+-	.num_controls = ARRAY_SIZE(wm8731_snd_controls),
++	.component_driver = {
++		.controls		= wm8731_snd_controls,
++		.num_controls		= ARRAY_SIZE(wm8731_snd_controls),
++		.dapm_widgets		= wm8731_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(wm8731_dapm_widgets),
++		.dapm_routes		= wm8731_intercon,
++		.num_dapm_routes	= ARRAY_SIZE(wm8731_intercon),
++	},
+ };
  
- 	state->client = client;
--	state->field = V4L2_FIELD_INTERLACED;
- 	state->chip_info = (struct adv7180_chip_info *)id->driver_data;
-+	state->curr_norm = V4L2_STD_NTSC;
-+
-+	if (state->chip_info->flags & ADV7180_FLAG_I2P)
-+		state->field = V4L2_FIELD_INTERLACED;
-+	else
-+		state->field = V4L2_FIELD_ALTERNATE;
- 
- 	if (state->chip_info->flags & ADV7180_FLAG_MIPI_CSI2) {
- 		state->csi_client = i2c_new_dummy(client->adapter,
-@@ -1274,7 +1282,6 @@ static int adv7180_probe(struct i2c_client *client,
- 
- 	state->irq = client->irq;
- 	mutex_init(&state->mutex);
--	state->curr_norm = V4L2_STD_NTSC;
- 	if (state->chip_info->flags & ADV7180_FLAG_RESET_POWERED)
- 		state->powered = true;
- 	else
+ static const struct of_device_id wm8731_of_match[] = {
 -- 
-2.9.0
+2.8.1
