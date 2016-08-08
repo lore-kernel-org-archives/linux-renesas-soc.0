@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52136 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54214 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLCm (ORCPT
+	with ESMTP id S1752356AbcHHLGo (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:02:42 -0400
+	Mon, 8 Aug 2016 07:06:44 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87lh074om9.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiKK-00037Z-Bi@debutante>
-Date: Mon, 08 Aug 2016 12:02:36 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on ak4671" to the asoc tree
+In-Reply-To: <87twev8xjn.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiOE-0004H8-06@debutante>
+Date: Mon, 08 Aug 2016 12:06:37 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on pistachio-internal-dac" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on ak4671
+   ASoC: codec duplicated callback function goes to component on pistachio-internal-dac
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From af06ccaded87dc25c41714004a2d73bfeef0c922 Mon Sep 17 00:00:00 2001
+>From 90eb10fc4fc2d5977879489324e5c4abe099e650 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:13:26 +0000
+Date: Mon, 8 Aug 2016 08:46:59 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- ak4671
+ pistachio-internal-dac
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/ak4671.c | 14 ++++++++------
+ sound/soc/img/pistachio-internal-dac.c | 14 ++++++++------
  1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/ak4671.c b/sound/soc/codecs/ak4671.c
-index c73a9f6914b6..6088afaabf62 100644
---- a/sound/soc/codecs/ak4671.c
-+++ b/sound/soc/codecs/ak4671.c
-@@ -612,12 +612,14 @@ static struct snd_soc_dai_driver ak4671_dai = {
- 
- static struct snd_soc_codec_driver soc_codec_dev_ak4671 = {
- 	.set_bias_level = ak4671_set_bias_level,
--	.controls = ak4671_snd_controls,
--	.num_controls = ARRAY_SIZE(ak4671_snd_controls),
--	.dapm_widgets = ak4671_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(ak4671_dapm_widgets),
--	.dapm_routes = ak4671_intercon,
--	.num_dapm_routes = ARRAY_SIZE(ak4671_intercon),
+diff --git a/sound/soc/img/pistachio-internal-dac.c b/sound/soc/img/pistachio-internal-dac.c
+index 162a0fd68c7b..53e11c6d4e22 100644
+--- a/sound/soc/img/pistachio-internal-dac.c
++++ b/sound/soc/img/pistachio-internal-dac.c
+@@ -134,12 +134,14 @@ static int pistachio_internal_dac_codec_probe(struct snd_soc_codec *codec)
+ static const struct snd_soc_codec_driver pistachio_internal_dac_driver = {
+ 	.probe = pistachio_internal_dac_codec_probe,
+ 	.idle_bias_off = true,
+-	.controls = pistachio_internal_dac_snd_controls,
+-	.num_controls = ARRAY_SIZE(pistachio_internal_dac_snd_controls),
+-	.dapm_widgets = pistachio_internal_dac_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(pistachio_internal_dac_widgets),
+-	.dapm_routes = pistachio_internal_dac_routes,
+-	.num_dapm_routes = ARRAY_SIZE(pistachio_internal_dac_routes),
 +	.component_driver = {
-+		.controls		= ak4671_snd_controls,
-+		.num_controls		= ARRAY_SIZE(ak4671_snd_controls),
-+		.dapm_widgets		= ak4671_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(ak4671_dapm_widgets),
-+		.dapm_routes		= ak4671_intercon,
-+		.num_dapm_routes	= ARRAY_SIZE(ak4671_intercon),
++		.controls		= pistachio_internal_dac_snd_controls,
++		.num_controls		= ARRAY_SIZE(pistachio_internal_dac_snd_controls),
++		.dapm_widgets		= pistachio_internal_dac_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(pistachio_internal_dac_widgets),
++		.dapm_routes		= pistachio_internal_dac_routes,
++		.num_dapm_routes	= ARRAY_SIZE(pistachio_internal_dac_routes),
 +	},
  };
  
- static const struct regmap_config ak4671_regmap = {
+ static int pistachio_internal_dac_probe(struct platform_device *pdev)
 -- 
 2.8.1
