@@ -1,66 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752073AbcHOI4D (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52742 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979AbcHHLDz (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 15 Aug 2016 04:56:03 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/26] ARM: dts: blanche: add Ethernet pins
-Date: Mon, 15 Aug 2016 10:55:22 +0200
-Message-Id: <1d93a8b5a234282724f6f4a3113e1d32bea0ec71.1471251169.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
-References: <cover.1471251169.git.horms+renesas@verge.net.au>
+	Mon, 8 Aug 2016 07:03:55 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87lh0763jq.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiLV-0003TD-GA@debutante>
+Date: Mon, 08 Aug 2016 12:03:49 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on bt-sco" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The patch
 
-Add the (previously omitted) pin data for the SMSC LAN89218 Ethernet chip
-to  the Blanche board's device tree:  the chip's IRQ output is connected to
-the SoC's IRQ0 pin and its nCS input is connected to the SoC's EX_CS0# pin.
+   ASoC: codec duplicated callback function goes to component on bt-sco
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 24fe48d78be574dcd43bc5156f47d37757cfffbd Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:05:36 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ bt-sco
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7792-blanche.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ sound/soc/codecs/bt-sco.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7792-blanche.dts b/arch/arm/boot/dts/r8a7792-blanche.dts
-index 9b550bde939a..4777a609ff81 100644
---- a/arch/arm/boot/dts/r8a7792-blanche.dts
-+++ b/arch/arm/boot/dts/r8a7792-blanche.dts
-@@ -50,6 +50,9 @@
- 		reg-io-width = <4>;
- 		vddvario-supply = <&d3_3v>;
- 		vdd33a-supply = <&d3_3v>;
-+
-+		pinctrl-0 = <&lan89218_pins>;
-+		pinctrl-names = "default";
- 	};
+diff --git a/sound/soc/codecs/bt-sco.c b/sound/soc/codecs/bt-sco.c
+index 2a8d0ee141d4..8014e697d540 100644
+--- a/sound/soc/codecs/bt-sco.c
++++ b/sound/soc/codecs/bt-sco.c
+@@ -63,10 +63,12 @@ static struct snd_soc_dai_driver bt_sco_dai[] = {
  };
  
-@@ -67,6 +70,17 @@
- 		groups = "scif3_data";
- 		function = "scif3";
- 	};
-+
-+	lan89218_pins: lan89218 {
-+		intc {
-+			groups = "intc_irq0";
-+			function = "intc";
-+		};
-+		lbsc {
-+			groups = "lbsc_ex_cs0";
-+			function = "lbsc";
-+		};
-+	};
+ static struct snd_soc_codec_driver soc_codec_dev_bt_sco = {
+-	.dapm_widgets = bt_sco_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(bt_sco_widgets),
+-	.dapm_routes = bt_sco_routes,
+-	.num_dapm_routes = ARRAY_SIZE(bt_sco_routes),
++	.component_driver = {
++		.dapm_widgets		= bt_sco_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(bt_sco_widgets),
++		.dapm_routes		= bt_sco_routes,
++		.num_dapm_routes	= ARRAY_SIZE(bt_sco_routes),
++	},
  };
  
- &scif0 {
+ static int bt_sco_probe(struct platform_device *pdev)
 -- 
-2.7.0.rc3.207.g0ac5344
+2.8.1
