@@ -1,54 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:39085 "EHLO
-	smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755399AbcHCOyn (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51564 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979AbcHHLBc (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 3 Aug 2016 10:54:43 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	sergei.shtylyov@cogentembedded.com
-Cc: davem@davemloft.net, wsa@the-dreams.de,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/2] ravb: add sleep PM suspend/resume support
-Date: Wed,  3 Aug 2016 15:56:45 +0200
-Message-Id: <20160803135647.23242-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+	Mon, 8 Aug 2016 07:01:32 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87mvkn39pl.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiJC-0002mJ-6m@debutante>
+Date: Mon, 08 Aug 2016 12:01:26 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on nau8825" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+The patch
 
-This series adds sleep PM suspend/resume support to the ravb driver. It 
-is based on v4.7 and tested on Salvator-X.
+   ASoC: codec duplicated callback function goes to component on nau8825
 
-I used NFS root filesystem and was able to suspend/resume and keep the 
-system working. I also tested suspend/resume with a initramfs when the 
-interface was down (ifconfig eth0 down) and it was no problems starting 
-after suspend/resume cycle.  Note that there is a known issue on 
-Salvator-X where the system will wake up immediately after it have been 
-suspended so the system is not suspended for long.
+has been applied to the asoc tree at
 
-I was not able to test suspend/resume on a Gen2 board due to lack of 
-daugterboard, so if anyone could do that it would be great. Sergei have 
-promised to try and find the time to test it in his 'copious free time' 
-:-) The test procedure is quiet simple:
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-1. Apply patches
-2. Boot and verify network is working
-3. Suspend system 'echo mem > /sys/power/state'
-4. Wake up system
-5. Verify network is still working
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Niklas Söderlund (2):
-  ravb: use SET_RUNTIME_PM_OPS macro
-  ravb: add sleep PM suspend/resume support
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
- drivers/net/ethernet/renesas/ravb_main.c | 75 +++++++++++++++++++++++++++-----
- 1 file changed, 65 insertions(+), 10 deletions(-)
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 889adf638721a9dcd772e20075697338d65fb2bc Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:20:46 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ nau8825
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/nau8825.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/sound/soc/codecs/nau8825.c b/sound/soc/codecs/nau8825.c
+index 5c9707ac4bbf..822791eb9574 100644
+--- a/sound/soc/codecs/nau8825.c
++++ b/sound/soc/codecs/nau8825.c
+@@ -2270,12 +2270,14 @@ static struct snd_soc_codec_driver nau8825_codec_driver = {
+ 	.suspend = nau8825_suspend,
+ 	.resume = nau8825_resume,
+ 
+-	.controls = nau8825_controls,
+-	.num_controls = ARRAY_SIZE(nau8825_controls),
+-	.dapm_widgets = nau8825_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(nau8825_dapm_widgets),
+-	.dapm_routes = nau8825_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(nau8825_dapm_routes),
++	.component_driver = {
++		.controls		= nau8825_controls,
++		.num_controls		= ARRAY_SIZE(nau8825_controls),
++		.dapm_widgets		= nau8825_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(nau8825_dapm_widgets),
++		.dapm_routes		= nau8825_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(nau8825_dapm_routes),
++	},
+ };
+ 
+ static void nau8825_reset_chip(struct regmap *regmap)
 -- 
-2.9.0
+2.8.1
