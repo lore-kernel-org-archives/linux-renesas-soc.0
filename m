@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52042 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52162 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752014AbcHHLCb (ORCPT
+	with ESMTP id S1752002AbcHHLCp (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:02:31 -0400
+	Mon, 8 Aug 2016 07:02:45 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87fuqf4oka.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiK8-000348-Mv@debutante>
-Date: Mon, 08 Aug 2016 12:02:24 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on da7210" to the asoc tree
+In-Reply-To: <87mvkn4omt.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiKN-00038P-8Z@debutante>
+Date: Mon, 08 Aug 2016 12:02:39 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on ak4641" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on da7210
+   ASoC: codec duplicated callback function goes to component on ak4641
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 57329a3a419273e765f5654c3c8cad9266c5b6f2 Mon Sep 17 00:00:00 2001
+>From f303eb9e1e5d1c9c26cf85274324ce6a863da946 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:14:35 +0000
+Date: Mon, 8 Aug 2016 09:13:06 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- da7210
+ ak4641
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,34 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/da7210.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ sound/soc/codecs/ak4641.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/da7210.c b/sound/soc/codecs/da7210.c
-index af23a61b7b28..17053dfc94cf 100644
---- a/sound/soc/codecs/da7210.c
-+++ b/sound/soc/codecs/da7210.c
-@@ -1167,13 +1167,14 @@ static int da7210_probe(struct snd_soc_codec *codec)
- static struct snd_soc_codec_driver soc_codec_dev_da7210 = {
- 	.probe			= da7210_probe,
- 
--	.controls		= da7210_snd_controls,
--	.num_controls		= ARRAY_SIZE(da7210_snd_controls),
--
--	.dapm_widgets		= da7210_dapm_widgets,
--	.num_dapm_widgets	= ARRAY_SIZE(da7210_dapm_widgets),
--	.dapm_routes		= da7210_audio_map,
--	.num_dapm_routes	= ARRAY_SIZE(da7210_audio_map),
-+	.component_driver = {
-+		.controls		= da7210_snd_controls,
-+		.num_controls		= ARRAY_SIZE(da7210_snd_controls),
-+		.dapm_widgets		= da7210_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(da7210_dapm_widgets),
-+		.dapm_routes		= da7210_audio_map,
-+		.num_dapm_routes	= ARRAY_SIZE(da7210_audio_map),
-+	},
+diff --git a/sound/soc/codecs/ak4641.c b/sound/soc/codecs/ak4641.c
+index b14176f8d884..c91717d08513 100644
+--- a/sound/soc/codecs/ak4641.c
++++ b/sound/soc/codecs/ak4641.c
+@@ -505,12 +505,14 @@ static struct snd_soc_dai_driver ak4641_dai[] = {
  };
  
- #if IS_ENABLED(CONFIG_I2C)
+ static struct snd_soc_codec_driver soc_codec_dev_ak4641 = {
+-	.controls		= ak4641_snd_controls,
+-	.num_controls		= ARRAY_SIZE(ak4641_snd_controls),
+-	.dapm_widgets		= ak4641_dapm_widgets,
+-	.num_dapm_widgets	= ARRAY_SIZE(ak4641_dapm_widgets),
+-	.dapm_routes		= ak4641_audio_map,
+-	.num_dapm_routes	= ARRAY_SIZE(ak4641_audio_map),
++	.component_driver = {
++		.controls		= ak4641_snd_controls,
++		.num_controls		= ARRAY_SIZE(ak4641_snd_controls),
++		.dapm_widgets		= ak4641_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(ak4641_dapm_widgets),
++		.dapm_routes		= ak4641_audio_map,
++		.num_dapm_routes	= ARRAY_SIZE(ak4641_audio_map),
++	},
+ 	.set_bias_level		= ak4641_set_bias_level,
+ 	.suspend_bias_off	= true,
+ };
 -- 
 2.8.1
