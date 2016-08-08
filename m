@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54108 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51416 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752242AbcHHLGc (ORCPT
+	with ESMTP id S1751979AbcHHLBP (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:06:32 -0400
+	Mon, 8 Aug 2016 07:01:15 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87popj8xhw.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiO2-0004DX-84@debutante>
-Date: Mon, 08 Aug 2016 12:06:26 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8974" to the asoc tree
+In-Reply-To: <87eg5z39mo.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiIu-0002gm-JQ@debutante>
+Date: Mon, 08 Aug 2016 12:01:08 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on rt5645" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on wm8974
+   ASoC: codec duplicated callback function goes to component on rt5645
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 48b042380e970b70f1c5453d31c6bbff2114974e Mon Sep 17 00:00:00 2001
+>From 51712de1ea87b794e6e47584a87cda7cfd7a2056 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:48:05 +0000
+Date: Mon, 8 Aug 2016 09:22:33 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- wm8974
+ rt5645
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/wm8974.c | 14 ++++++++------
+ sound/soc/codecs/rt5645.c | 14 ++++++++------
  1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/wm8974.c b/sound/soc/codecs/wm8974.c
-index dc8c3b1ebb6f..fbda6e3f8a9d 100644
---- a/sound/soc/codecs/wm8974.c
-+++ b/sound/soc/codecs/wm8974.c
-@@ -681,12 +681,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8974 = {
- 	.set_bias_level = wm8974_set_bias_level,
- 	.suspend_bias_off = true,
- 
--	.controls = wm8974_snd_controls,
--	.num_controls = ARRAY_SIZE(wm8974_snd_controls),
--	.dapm_widgets = wm8974_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(wm8974_dapm_widgets),
--	.dapm_routes = wm8974_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(wm8974_dapm_routes),
+diff --git a/sound/soc/codecs/rt5645.c b/sound/soc/codecs/rt5645.c
+index 490bfe661346..10c2a564a715 100644
+--- a/sound/soc/codecs/rt5645.c
++++ b/sound/soc/codecs/rt5645.c
+@@ -3484,12 +3484,14 @@ static struct snd_soc_codec_driver soc_codec_dev_rt5645 = {
+ 	.resume = rt5645_resume,
+ 	.set_bias_level = rt5645_set_bias_level,
+ 	.idle_bias_off = true,
+-	.controls = rt5645_snd_controls,
+-	.num_controls = ARRAY_SIZE(rt5645_snd_controls),
+-	.dapm_widgets = rt5645_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(rt5645_dapm_widgets),
+-	.dapm_routes = rt5645_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(rt5645_dapm_routes),
 +	.component_driver = {
-+		.controls		= wm8974_snd_controls,
-+		.num_controls		= ARRAY_SIZE(wm8974_snd_controls),
-+		.dapm_widgets		= wm8974_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(wm8974_dapm_widgets),
-+		.dapm_routes		= wm8974_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(wm8974_dapm_routes),
++		.controls		= rt5645_snd_controls,
++		.num_controls		= ARRAY_SIZE(rt5645_snd_controls),
++		.dapm_widgets		= rt5645_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(rt5645_dapm_widgets),
++		.dapm_routes		= rt5645_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(rt5645_dapm_routes),
 +	},
  };
  
- static int wm8974_i2c_probe(struct i2c_client *i2c,
+ static const struct regmap_config rt5645_regmap = {
 -- 
 2.8.1
