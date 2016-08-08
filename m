@@ -1,50 +1,137 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:49289 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752985AbcHPNm6 (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50174 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752242AbcHHKrD (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 16 Aug 2016 09:42:58 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>
-Cc: Simon Horman <horms@verge.net.au>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-arm-kernel@lists.infradead.org,
+	Mon, 8 Aug 2016 06:47:03 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: debug-ll: Add support for r8a7992
-Date: Tue, 16 Aug 2016 15:42:20 +0200
-Message-Id: <1471354940-18696-1-git-send-email-geert+renesas@glider.be>
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <8737mfajrk.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWi5A-0000Lj-Hs@debutante>
+Date: Mon, 08 Aug 2016 11:46:56 +0100
+Subject: Applied "ASoC: simple-card-utils: add asoc_simple_card_parse_dai()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable low-level debugging support for R-Car V2H (r8a7792).
-V2H uses SCIF0 for the debug console, like most other R-Car Gen2 SoCs.
+The patch
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+   ASoC: simple-card-utils: add asoc_simple_card_parse_dai()
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From ae30a694da4c37b4d0c8b750c9a4104d8da749b3 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 06:01:43 +0000
+Subject: [PATCH] ASoC: simple-card-utils: add asoc_simple_card_parse_dai()
+
+simple-card needs to get its dai name and endpoint node.
+This patch makes it simple style standard
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/Kconfig.debug | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ include/sound/simple_card_utils.h     | 17 ++++++++++++++++
+ sound/soc/generic/simple-card-utils.c | 37 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 54 insertions(+)
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index a9693b6987a6e41c..88440f63c31e434b 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -861,12 +861,12 @@ choice
- 		  via SCIF2 on Renesas R-Car H1 (R8A7779).
+diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
+index 1392eb56cf0e..62b392695d2d 100644
+--- a/include/sound/simple_card_utils.h
++++ b/include/sound/simple_card_utils.h
+@@ -41,4 +41,21 @@ int asoc_simple_card_parse_clk(struct device_node *node,
+ 			       struct device_node *dai_of_node,
+ 			       struct asoc_simple_dai *simple_dai);
  
- 	config DEBUG_RCAR_GEN2_SCIF0
--		bool "Kernel low-level debugging messages via SCIF0 on R8A7790/R8A7791/R8A7793"
--		depends on ARCH_R8A7790 || ARCH_R8A7791 || ARCH_R8A7793
-+		bool "Kernel low-level debugging messages via SCIF0 on R8A7790/R8A7791/R8A7792/R8A7793"
-+		depends on ARCH_R8A7790 || ARCH_R8A7791 || ARCH_R8A7792 || ARCH_R8A7793
- 		help
- 		  Say Y here if you want kernel low-level debugging support
--		  via SCIF0 on Renesas R-Car H2 (R8A7790), M2-W (R8A7791), or
--		  M2-N (R8A7793).
-+		  via SCIF0 on Renesas R-Car H2 (R8A7790), M2-W (R8A7791), V2H
-+		  (R8A7792), or M2-N (R8A7793).
++#define asoc_simple_card_parse_cpu(node, dai_link,				\
++				   list_name, cells_name, is_single_link)	\
++	asoc_simple_card_parse_dai(node, &dai_link->cpu_of_node,		\
++		&dai_link->cpu_dai_name, list_name, cells_name, is_single_link)
++#define asoc_simple_card_parse_codec(node, dai_link, list_name, cells_name)	\
++	asoc_simple_card_parse_dai(node, &dai_link->codec_of_node,		\
++		&dai_link->codec_dai_name, list_name, cells_name, NULL)
++#define asoc_simple_card_parse_platform(node, dai_link, list_name, cells_name)	\
++	asoc_simple_card_parse_dai(node, &dai_link->platform_of_node,		\
++		NULL, list_name, cells_name, NULL)
++int asoc_simple_card_parse_dai(struct device_node *node,
++				  struct device_node **endpoint_np,
++				  const char **dai_name,
++				  const char *list_name,
++				  const char *cells_name,
++				  int *is_single_links);
++
+ #endif /* __SIMPLE_CARD_CORE_H */
+diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
+index 16f65f972d04..27e6d038a902 100644
+--- a/sound/soc/generic/simple-card-utils.c
++++ b/sound/soc/generic/simple-card-utils.c
+@@ -127,6 +127,43 @@ int asoc_simple_card_parse_clk(struct device_node *node,
+ }
+ EXPORT_SYMBOL_GPL(asoc_simple_card_parse_clk);
  
- 	config DEBUG_RCAR_GEN2_SCIF2
- 		bool "Kernel low-level debugging messages via SCIF2 on R8A7794"
++int asoc_simple_card_parse_dai(struct device_node *node,
++				    struct device_node **dai_of_node,
++				    const char **dai_name,
++				    const char *list_name,
++				    const char *cells_name,
++				    int *is_single_link)
++{
++	struct of_phandle_args args;
++	int ret;
++
++	if (!node)
++		return 0;
++
++	/*
++	 * Get node via "sound-dai = <&phandle port>"
++	 * it will be used as xxx_of_node on soc_bind_dai_link()
++	 */
++	ret = of_parse_phandle_with_args(node, list_name, cells_name, 0, &args);
++	if (ret)
++		return ret;
++
++	/* Get dai->name */
++	if (dai_name) {
++		ret = snd_soc_of_get_dai_name(node, dai_name);
++		if (ret < 0)
++			return ret;
++	}
++
++	*dai_of_node = args.np;
++
++	if (is_single_link)
++		*is_single_link = !args.args_count;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(asoc_simple_card_parse_dai);
++
+ /* Module information */
+ MODULE_AUTHOR("Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>");
+ MODULE_DESCRIPTION("ALSA SoC Simple Card Utils");
 -- 
-1.9.1
+2.8.1
