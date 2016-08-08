@@ -1,90 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53614 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752360AbcHHLFg (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36441 "EHLO
+	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751028AbcHHNKJ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:05:36 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87y4477ilt.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiN7-0003x7-SZ@debutante>
-Date: Mon, 08 Aug 2016 12:05:29 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on tas5720" to the asoc tree
+	Mon, 8 Aug 2016 09:10:09 -0400
+MIME-Version: 1.0
+In-Reply-To: <5158815.xFJQ7LtYb1@wasted.cogentembedded.com>
+References: <3910788.ckTpUWEs6B@wasted.cogentembedded.com> <5158815.xFJQ7LtYb1@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 8 Aug 2016 15:10:08 +0200
+Message-ID: <CAMuHMdU1=3L0uRkVVcJCtG-aZ2+AdpFjQ6PmND0ZrjVuQ6L=XQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/6] ARM: dts: r8a7794: add MSTP10 clocks
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hi Sergei,
 
-   ASoC: codec duplicated callback function goes to component on tas5720
+On Wed, Jul 27, 2016 at 11:01 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add MSTP10 clocks to the R8A7794 device tree.
+>
+> This patch is based on the commit ee9141522dcf ("ARM: shmobile: r8a7791:
+> add MSTP10 support on DTSI").
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-has been applied to the asoc tree at
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+> ---
+> Changes in version 4:
+> - removed non-existing SRC0/7/8/9 clocks;
+> - reparented SSI[0-9] clocks;
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Do we want to do that on r8a7790, r8a7791, and r8a7793, too?
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Morimoto-san: Is there a specific reason why the various SCU sub clocks
+are children of the SCU_ALL clock, while the various SSI sub clocks are
+children of the HP clock on those SoCs?
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Gr{oetje,eeting}s,
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+                        Geert
 
-Thanks,
-Mark
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
->From a8f552df807d0c809ec529c8e998a6abbf40f324 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:55:04 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- tas5720
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/tas5720.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/codecs/tas5720.c b/sound/soc/codecs/tas5720.c
-index f54fb46b77c2..c65b917598d2 100644
---- a/sound/soc/codecs/tas5720.c
-+++ b/sound/soc/codecs/tas5720.c
-@@ -489,12 +489,14 @@ static struct snd_soc_codec_driver soc_codec_dev_tas5720 = {
- 	.suspend = tas5720_suspend,
- 	.resume = tas5720_resume,
- 
--	.controls = tas5720_snd_controls,
--	.num_controls = ARRAY_SIZE(tas5720_snd_controls),
--	.dapm_widgets = tas5720_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(tas5720_dapm_widgets),
--	.dapm_routes = tas5720_audio_map,
--	.num_dapm_routes = ARRAY_SIZE(tas5720_audio_map),
-+	.component_driver = {
-+		.controls		= tas5720_snd_controls,
-+		.num_controls		= ARRAY_SIZE(tas5720_snd_controls),
-+		.dapm_widgets		= tas5720_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(tas5720_dapm_widgets),
-+		.dapm_routes		= tas5720_audio_map,
-+		.num_dapm_routes	= ARRAY_SIZE(tas5720_audio_map),
-+	},
- };
- 
- /* PCM rates supported by the TAS5720 driver */
--- 
-2.8.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
