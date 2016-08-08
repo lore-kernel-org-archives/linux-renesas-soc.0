@@ -1,74 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:31244 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753382AbcHXI41 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Aug 2016 04:56:27 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/4] usb: host: xhci: rcar: add a new firmware version for r8a7796
-Date: Wed, 24 Aug 2016 17:52:39 +0900
-Message-ID: <1472028762-6640-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1472028762-6640-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1472028762-6640-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52186 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752002AbcHHLCs (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 8 Aug 2016 07:02:48 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87oa534ona.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiKQ-00039F-63@debutante>
+Date: Mon, 08 Aug 2016 12:02:42 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on ak4535" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds a new firmware version "V3" for r8a7796. This patch also
-revises the explanation of each version's capability using a table.
+The patch
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+   ASoC: codec duplicated callback function goes to component on ak4535
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 301810d0dfbcd1f56c552da6c9234db5003ec344 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:12:48 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ ak4535
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/usb/host/xhci-rcar.c | 17 ++++++++++++-----
- drivers/usb/host/xhci-rcar.h |  1 +
- 2 files changed, 13 insertions(+), 5 deletions(-)
+ sound/soc/codecs/ak4535.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-rcar.c b/drivers/usb/host/xhci-rcar.c
-index 0e4535e..723f575 100644
---- a/drivers/usb/host/xhci-rcar.c
-+++ b/drivers/usb/host/xhci-rcar.c
-@@ -19,13 +19,20 @@
- #include "xhci-rcar.h"
+diff --git a/sound/soc/codecs/ak4535.c b/sound/soc/codecs/ak4535.c
+index 54428c64387b..66cfffde9a12 100644
+--- a/sound/soc/codecs/ak4535.c
++++ b/sound/soc/codecs/ak4535.c
+@@ -395,12 +395,14 @@ static struct snd_soc_codec_driver soc_codec_dev_ak4535 = {
+ 	.set_bias_level = ak4535_set_bias_level,
+ 	.suspend_bias_off = true,
  
- /*
--* - The V2 firmware is possible to use on R-Car Gen2. However, the V2 causes
--*   performance degradation. So, this driver continues to use the V1 if R-Car
--*   Gen2.
--* - The V1 firmware is impossible to use on R-Car Gen3.
--*/
-+ *	   |	Gen2	r8a7795	r8a7796
-+ *	---+----------------------------
-+ *	V3 |	note1	NG	OK
-+ *	V2 |	note1	OK	note1
-+ *	V1 |	OK	NG	NG
-+ *
-+ * Gen2: r8a7790, r8a7791 and r8a7793
-+ * OK: This firmware version works correctly on such SoC(s)
-+ * NG: This firmware version is impossible to use on such SoC(s)
-+ * note1: This firmware version causes performance degradation.
-+ */
- MODULE_FIRMWARE(XHCI_RCAR_FIRMWARE_NAME_V1);
- MODULE_FIRMWARE(XHCI_RCAR_FIRMWARE_NAME_V2);
-+MODULE_FIRMWARE(XHCI_RCAR_FIRMWARE_NAME_V3);
+-	.controls = ak4535_snd_controls,
+-	.num_controls = ARRAY_SIZE(ak4535_snd_controls),
+-	.dapm_widgets = ak4535_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(ak4535_dapm_widgets),
+-	.dapm_routes = ak4535_audio_map,
+-	.num_dapm_routes = ARRAY_SIZE(ak4535_audio_map),
++	.component_driver = {
++		.controls		= ak4535_snd_controls,
++		.num_controls		= ARRAY_SIZE(ak4535_snd_controls),
++		.dapm_widgets		= ak4535_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(ak4535_dapm_widgets),
++		.dapm_routes		= ak4535_audio_map,
++		.num_dapm_routes	= ARRAY_SIZE(ak4535_audio_map),
++	},
+ };
  
- /*** Register Offset ***/
- #define RCAR_USB3_INT_ENA	0x224	/* Interrupt Enable */
-diff --git a/drivers/usb/host/xhci-rcar.h b/drivers/usb/host/xhci-rcar.h
-index 2941a25..d2ffe20 100644
---- a/drivers/usb/host/xhci-rcar.h
-+++ b/drivers/usb/host/xhci-rcar.h
-@@ -13,6 +13,7 @@
- 
- #define XHCI_RCAR_FIRMWARE_NAME_V1	"r8a779x_usb3_v1.dlmem"
- #define XHCI_RCAR_FIRMWARE_NAME_V2	"r8a779x_usb3_v2.dlmem"
-+#define XHCI_RCAR_FIRMWARE_NAME_V3	"r8a779x_usb3_v3.dlmem"
- 
- #if IS_ENABLED(CONFIG_USB_XHCI_RCAR)
- void xhci_rcar_start(struct usb_hcd *hcd);
+ static int ak4535_i2c_probe(struct i2c_client *i2c,
 -- 
-1.9.1
+2.8.1
