@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54132 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50900 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752356AbcHHLGf (ORCPT
+	with ESMTP id S1752047AbcHHLAV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:06:35 -0400
+	Mon, 8 Aug 2016 07:00:21 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87r39z8xin.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiO5-0004EO-4w@debutante>
-Date: Mon, 08 Aug 2016 12:06:29 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8978" to the asoc tree
+In-Reply-To: <87mvkn1usd.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiI1-0002QA-5V@debutante>
+Date: Mon, 08 Aug 2016 12:00:13 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on wm1250-ev1" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on wm8978
+   ASoC: codec duplicated callback function goes to component on wm1250-ev1
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 7a3304ea5c783fba6b68c62e17d041dfe9e57d9c Mon Sep 17 00:00:00 2001
+>From c6c0a214001ecc6c5d42c1226cdd33c07f8a016b Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:47:36 +0000
+Date: Mon, 8 Aug 2016 09:28:25 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- wm8978
+ wm1250-ev1
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,30 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/wm8978.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ sound/soc/codecs/wm1250-ev1.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/codecs/wm8978.c b/sound/soc/codecs/wm8978.c
-index d36d6001fbb7..910b36f11264 100644
---- a/sound/soc/codecs/wm8978.c
-+++ b/sound/soc/codecs/wm8978.c
-@@ -999,12 +999,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8978 = {
- 	.resume =	wm8978_resume,
- 	.set_bias_level = wm8978_set_bias_level,
- 
--	.controls = wm8978_snd_controls,
--	.num_controls = ARRAY_SIZE(wm8978_snd_controls),
--	.dapm_widgets = wm8978_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(wm8978_dapm_widgets),
--	.dapm_routes = wm8978_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(wm8978_dapm_routes),
-+	.component_driver = {
-+		.controls		= wm8978_snd_controls,
-+		.num_controls		= ARRAY_SIZE(wm8978_snd_controls),
-+		.dapm_widgets		= wm8978_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(wm8978_dapm_widgets),
-+		.dapm_routes		= wm8978_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(wm8978_dapm_routes),
-+	},
+diff --git a/sound/soc/codecs/wm1250-ev1.c b/sound/soc/codecs/wm1250-ev1.c
+index ec45c5b220b1..caf501227265 100644
+--- a/sound/soc/codecs/wm1250-ev1.c
++++ b/sound/soc/codecs/wm1250-ev1.c
+@@ -142,11 +142,12 @@ static struct snd_soc_dai_driver wm1250_ev1_dai = {
  };
  
- static const struct regmap_config wm8978_regmap_config = {
+ static struct snd_soc_codec_driver soc_codec_dev_wm1250_ev1 = {
+-	.dapm_widgets = wm1250_ev1_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(wm1250_ev1_dapm_widgets),
+-	.dapm_routes = wm1250_ev1_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(wm1250_ev1_dapm_routes),
+-
++	.component_driver = {
++		.dapm_widgets		= wm1250_ev1_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(wm1250_ev1_dapm_widgets),
++		.dapm_routes		= wm1250_ev1_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(wm1250_ev1_dapm_routes),
++	},
+ 	.set_bias_level = wm1250_ev1_set_bias_level,
+ 	.idle_bias_off = true,
+ };
 -- 
 2.8.1
