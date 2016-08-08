@@ -1,97 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33433 "EHLO
-	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752014AbcHHNOE (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53562 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979AbcHHLFa (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 09:14:04 -0400
-MIME-Version: 1.0
-In-Reply-To: <6419837.qqlciQTB8q@wasted.cogentembedded.com>
-References: <3910788.ckTpUWEs6B@wasted.cogentembedded.com> <6419837.qqlciQTB8q@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 8 Aug 2016 15:14:03 +0200
-Message-ID: <CAMuHMdWofFF9PrBW4n0GTytP8Mm7_mwPU=O7mXRPWUDXBOfOTA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/6] ARM: dts: r8a7794: add Audio-DMAC support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+	Mon, 8 Aug 2016 07:05:30 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87vazb7iks.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiN1-0003vO-SX@debutante>
+Date: Mon, 08 Aug 2016 12:05:23 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on tas5086" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+The patch
 
-On Wed, Jul 27, 2016 at 11:02 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Describe Audio-DMAC in the R8A7794 device tree.
->
-> This patch is loosely based on the commit 8994fff67761 ("ARM: shmobile:
-> r8a7791: Add Audio DMAC devices to DT").
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
-> ---
-> Changes in version 4:
-> - refreshed the patch.
->
-> Changes in version 3:
-> - refreshed the patch.
->
->  arch/arm/boot/dts/r8a7794.dtsi |   28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->
-> Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
-> ===================================================================
-> --- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
-> +++ renesas/arch/arm/boot/dts/r8a7794.dtsi
-> @@ -296,6 +296,34 @@
->                 dma-channels = <15>;
->         };
->
-> +       audma0: dma-controller@ec700000 {
-> +               compatible = "renesas,dmac-r8a7794", "renesas,rcar-dmac";
-> +               reg = <0 0xec700000 0 0x10000>;
-> +               interrupts =    <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH
-> +                                GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
-> +                                GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH
-> +                                GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH
-> +                                GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH
-> +                                GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH
-> +                                GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH
-> +                                GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH
-> +                                GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH
-> +                                GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH
-> +                                GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH
-> +                                GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH
-> +                                GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH
-> +                                GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>;
-> +               interrupt-names = "error",
-> +                                 "ch0", "ch1", "ch2", "ch3", "ch4", "ch5",
-> +                                 "ch6", "ch7", "ch8", "ch9", "ch10", "ch11",
-> +                                 "ch12";
-> +               clocks = <&mstp5_clks R8A7794_CLK_AUDIO_DMAC0>;
-> +               clock-names = "fck";
-> +               power-domains = <&cpg_clocks>;
-> +               #dma-cells = <1>;
-> +               dma-channels = <13>;
-> +       };
+   ASoC: codec duplicated callback function goes to component on tas5086
 
-According to R-Car-Gen2-common-v2.00.pdf (Audio-DMAC and INTC-SYS
-chapters), V2H has only 2 audio DMA channels, not 13.
+has been applied to the asoc tree at
 
-Gr{oetje,eeting}s,
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-                        Geert
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 9a9a069c4445122b98025e8b1003caf5e0eba037 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 08:55:41 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ tas5086
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/tas5086.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/sound/soc/codecs/tas5086.c b/sound/soc/codecs/tas5086.c
+index d49d25d51957..c297b9fc8bf6 100644
+--- a/sound/soc/codecs/tas5086.c
++++ b/sound/soc/codecs/tas5086.c
+@@ -890,12 +890,14 @@ static struct snd_soc_codec_driver soc_codec_dev_tas5086 = {
+ 	.remove			= tas5086_remove,
+ 	.suspend		= tas5086_soc_suspend,
+ 	.resume			= tas5086_soc_resume,
+-	.controls		= tas5086_controls,
+-	.num_controls		= ARRAY_SIZE(tas5086_controls),
+-	.dapm_widgets		= tas5086_dapm_widgets,
+-	.num_dapm_widgets	= ARRAY_SIZE(tas5086_dapm_widgets),
+-	.dapm_routes		= tas5086_dapm_routes,
+-	.num_dapm_routes	= ARRAY_SIZE(tas5086_dapm_routes),
++	.component_driver = {
++		.controls		= tas5086_controls,
++		.num_controls		= ARRAY_SIZE(tas5086_controls),
++		.dapm_widgets		= tas5086_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(tas5086_dapm_widgets),
++		.dapm_routes		= tas5086_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(tas5086_dapm_routes),
++	},
+ };
+ 
+ static const struct i2c_device_id tas5086_i2c_id[] = {
+-- 
+2.8.1
