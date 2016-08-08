@@ -1,68 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752940AbcHOI4Y (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53786 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752320AbcHHLF5 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 15 Aug 2016 04:56:24 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/26] ARM: dts: r8a7792: add CAN support
-Date: Mon, 15 Aug 2016 10:55:28 +0200
-Message-Id: <f947c02a0f86dffa5258ef347c6b6980953a9679.1471251169.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
-References: <cover.1471251169.git.horms+renesas@verge.net.au>
+	Mon, 8 Aug 2016 07:05:57 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <878tw78xbd.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiNS-00043B-Ih@debutante>
+Date: Mon, 08 Aug 2016 12:05:50 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8580" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The patch
 
-Define the generic R8A7792 parts of the CAN0/1 device nodes.
+   ASoC: codec duplicated callback function goes to component on wm8580
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From cc469502fecf023330b21e34aae3268fe763e446 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 08:52:01 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ wm8580
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7792.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ sound/soc/codecs/wm8580.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index af8020bfc030..1b96bf6393fb 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -456,6 +456,30 @@
- 			status = "disabled";
- 		};
+diff --git a/sound/soc/codecs/wm8580.c b/sound/soc/codecs/wm8580.c
+index 66602bf02f6e..2e69270a9015 100644
+--- a/sound/soc/codecs/wm8580.c
++++ b/sound/soc/codecs/wm8580.c
+@@ -904,12 +904,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8580 = {
+ 	.remove =	wm8580_remove,
+ 	.set_bias_level = wm8580_set_bias_level,
  
-+		can0: can@e6e80000 {
-+			compatible = "renesas,can-r8a7792",
-+				     "renesas,rcar-gen2-can";
-+			reg = <0 0xe6e80000 0 0x1000>;
-+			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7792_CLK_CAN0>,
-+				 <&rcan_clk>, <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		can1: can@e6e88000 {
-+			compatible = "renesas,can-r8a7792",
-+				     "renesas,rcar-gen2-can";
-+			reg = <0 0xe6e88000 0 0x1000>;
-+			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7792_CLK_CAN1>,
-+				 <&rcan_clk>, <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
- 		/* Special CPG clocks */
- 		cpg_clocks: cpg_clocks@e6150000 {
- 			compatible = "renesas,r8a7792-cpg-clocks",
+-	.controls = wm8580_snd_controls,
+-	.num_controls = ARRAY_SIZE(wm8580_snd_controls),
+-	.dapm_widgets = wm8580_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(wm8580_dapm_widgets),
+-	.dapm_routes = wm8580_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(wm8580_dapm_routes),
++	.component_driver = {
++		.controls		= wm8580_snd_controls,
++		.num_controls		= ARRAY_SIZE(wm8580_snd_controls),
++		.dapm_widgets		= wm8580_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(wm8580_dapm_widgets),
++		.dapm_routes		= wm8580_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(wm8580_dapm_routes),
++	},
+ };
+ 
+ static const struct of_device_id wm8580_of_match[] = {
 -- 
-2.7.0.rc3.207.g0ac5344
+2.8.1
