@@ -1,29 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58266 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752547AbcHJSOQ (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53028 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979AbcHHLEa (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 10 Aug 2016 14:14:16 -0400
-Date: Wed, 10 Aug 2016 10:44:44 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Dirk Behme <dirk.behme@gmail.com>, linux-mmc@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: r8a7795: set maximum frequency for SDHI
- clocks
-Message-ID: <20160810084443.GC6276@verge.net.au>
-References: <1469120504-2037-1-git-send-email-wsa@the-dreams.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1469120504-2037-1-git-send-email-wsa@the-dreams.de>
+	Mon, 8 Aug 2016 07:04:30 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <8737mf7iai.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiM4-0003dd-FG@debutante>
+Date: Mon, 08 Aug 2016 12:04:24 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on cs53l30" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Jul 21, 2016 at 07:01:44PM +0200, Wolfram Sang wrote:
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> 
-> Define the upper limit otherwise the driver cannot utilize max speeds.
+The patch
 
-Thanks, I have queued this up for v4.9.
+   ASoC: codec duplicated callback function goes to component on cs53l30
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From cbe5cdbf0e07ea563def6dda7acc6d95817949a5 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:01:49 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ cs53l30
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/cs53l30.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/sound/soc/codecs/cs53l30.c b/sound/soc/codecs/cs53l30.c
+index 2c0d9c430a8c..e244e08b7da1 100644
+--- a/sound/soc/codecs/cs53l30.c
++++ b/sound/soc/codecs/cs53l30.c
+@@ -897,13 +897,14 @@ static struct snd_soc_codec_driver cs53l30_driver = {
+ 	.set_bias_level = cs53l30_set_bias_level,
+ 	.idle_bias_off = true,
+ 
+-	.dapm_widgets = cs53l30_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(cs53l30_dapm_widgets),
+-	.dapm_routes = cs53l30_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(cs53l30_dapm_routes),
+-
+-	.controls = cs53l30_snd_controls,
+-	.num_controls = ARRAY_SIZE(cs53l30_snd_controls),
++	.component_driver = {
++		.controls		= cs53l30_snd_controls,
++		.num_controls		= ARRAY_SIZE(cs53l30_snd_controls),
++		.dapm_widgets		= cs53l30_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(cs53l30_dapm_widgets),
++		.dapm_routes		= cs53l30_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(cs53l30_dapm_routes),
++	},
+ };
+ 
+ static struct regmap_config cs53l30_regmap = {
+-- 
+2.8.1
