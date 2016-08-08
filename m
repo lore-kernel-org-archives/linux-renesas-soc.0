@@ -1,51 +1,59 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [RFT RESEND PATCH v3 2/3] ARM: Fix *MIGHT_HAVE_PCI* config from
- being selected redundantly
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Benoit Cousson <bcousson@baylibre.com>,
-	Tony Lindgren <tony@atomide.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-References: <1470832400-11929-1-git-send-email-kishon@ti.com>
- <1470832400-11929-3-git-send-email-kishon@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Krzysztof Halasa <khalasa@piap.pl>,
-	Kukjin Kim <kgene@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Shiraz Hashim <shiraz.linux.kernel@gmail.com>, nsekhar@ti.com
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <e2e7e471-190d-a685-e496-1ab3e1d3a333@samsung.com>
-Date: Wed, 10 Aug 2016 15:08:05 +0200
-MIME-version: 1.0
-In-reply-to: <1470832400-11929-3-git-send-email-kishon@ti.com>
-Content-type: text/plain; charset=windows-1252
-Content-transfer-encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50008 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751158AbcHHKcv (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 8 Aug 2016 06:32:51 -0400
+Date: Mon, 8 Aug 2016 11:32:34 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Linux-ALSA <alsa-devel@alsa-project.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org
+Message-ID: <20160808103234.GD10383@sirena.org.uk>
+References: <878tw7ajwu.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jSXJDi5r/aeatSyx"
+Content-Disposition: inline
+In-Reply-To: <878tw7ajwu.wl%kuninori.morimoto.gx@renesas.com>
+Subject: Re: [PATCH 0/7][REBASE] ASoC: simple-card: add parse_clk / parse_dai
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 08/10/2016 02:33 PM, Kishon Vijay Abraham I wrote:
-> *MIGHT_HAVE_PCI* config is already selected in ARCH_MULTIPLATFORM.
-> Fix it from getting redundantly selected in all
 
-I don't like the "fix" here and in subject. There is no error, no
-warning, no issue to be fixed. Fix might be a candidate to backport
-(stable, vendor etc) but this just removes something which is not needed.
+--jSXJDi5r/aeatSyx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-With the change in subject, for exynos:
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+On Mon, Aug 08, 2016 at 05:58:34AM +0000, Kuninori Morimoto wrote:
 
-Best regards,
-Krzysztof
+> These are rebase version patches for parse_clk / parse_dai on simple utiles.
+> I think today's topic/simple is missing [1/7] patch, but have [2/7] [3/7].
+> Because of this, it has bulid error, and you can't apply [4/7].
 
+Please don't resend already applied patches.
+
+> These patches add new functions on utils.c, and I noticed that
+> it will have conflict with fix/simple branch.
+> Because of these reasons, I think you want to redo topic/simple branch (?).
+> These patches are based on fix/simple branch.
+
+No, I'm not rebasing.  I can merge the fix branch into the main branch.
+
+--jSXJDi5r/aeatSyx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXqFksAAoJECTWi3JdVIfQAn4H/3/fc6Hg9cejdjyVz1g6S+/s
+iLHG9zD4wLnCHFeFfJlrhKKzPNbJBxlbFzNhpE9V0URK9zOu4GkPyIOZSyNAs/U6
+nQGAN7TYvfZtcIgXczKekMjKVnCRpm6fz9MD7/jeWfQa32TwqZXk2gNHkPNipnlp
+A5oSphH8/muUP4+8XjGDkOW5Eda5tUw3zOjPnkPnRlplF6iE7z+QW0H7vcfmdNdf
+K9vh7g/VD0wOhom0Xu9EarUNbQgKU1Wfxepk3exM96wK172BQyz3kek/n/JL2A+q
+kdYL2CKdJ8e8MIHFtFpgRdefyii++4/kuxLbRfSJV7enGPI9vziu/LHHZJr1Alg=
+=XUML
+-----END PGP SIGNATURE-----
+
+--jSXJDi5r/aeatSyx--
