@@ -1,85 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36599 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932289AbcHIM3M (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36060 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752305AbcHHNRA (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 9 Aug 2016 08:29:12 -0400
-Received: from avalon.bb.dnainternet.fi (85-23-193-79.bb.dnainternet.fi [85.23.193.79])
-	by galahad.ideasonboard.com (Postfix) with ESMTPSA id B2552208BF
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  9 Aug 2016 14:28:57 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 4/4] arm64: dts: renesas: salvator-x: Enable DU
-Date: Tue,  9 Aug 2016 15:29:12 +0300
-Message-Id: <1470745752-23738-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1470745752-23738-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1470745752-23738-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Mon, 8 Aug 2016 09:17:00 -0400
+MIME-Version: 1.0
+In-Reply-To: <2482521.XCJrVWGkiq@wasted.cogentembedded.com>
+References: <4031442.KeMCTMarLN@wasted.cogentembedded.com> <2482521.XCJrVWGkiq@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 8 Aug 2016 15:16:59 +0200
+Message-ID: <CAMuHMdXWRUEYE0DYZPmZGtWboGRiF9d77m6U4tYxC7k+oryf-A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: r8a7792: add DU clocks
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Only the VGA output is supported for now.
+On Fri, Aug 5, 2016 at 8:25 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Describe the DU0/1 clocks and their parent, ZX clock in the R8A7792 device
+> tree.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 44 ++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 98f02631a0f0..8f916c52f261 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -135,6 +135,50 @@
- 			sound-dai = <&ak4613>;
- 		};
- 	};
-+
-+	vga-encoder {
-+		compatible = "adi,adv7123";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7123_in: endpoint {
-+					remote-endpoint = <&du_out_rgb>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				adv7123_out: endpoint {
-+					remote-endpoint = <&vga_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	vga {
-+		compatible = "vga-connector";
-+
-+		port {
-+			vga_in: endpoint {
-+				remote-endpoint = <&adv7123_out>;
-+			};
-+		};
-+	};
-+};
-+
-+&du {
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			endpoint {
-+				remote-endpoint = <&adv7123_in>;
-+			};
-+		};
-+	};
- };
- 
- &extal_clk {
--- 
-Regards,
+Gr{oetje,eeting}s,
 
-Laurent Pinchart
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
