@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51366 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51006 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLBJ (ORCPT
+	with ESMTP id S1752014AbcHHLAb (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:01:09 -0400
+	Mon, 8 Aug 2016 07:00:31 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87bn1339ln.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiIo-0002ex-OX@debutante>
-Date: Mon, 08 Aug 2016 12:01:02 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on rt5659" to the asoc tree
+In-Reply-To: <87shuf1uud.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiIC-0002Te-Oy@debutante>
+Date: Mon, 08 Aug 2016 12:00:24 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on uda134x" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on rt5659
+   ASoC: codec duplicated callback function goes to component on uda134x
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From e0c2b59e83ab98dce500746d482850a2dffdcd22 Mon Sep 17 00:00:00 2001
+>From e939fc6c2679c474c31c7e07c73703099bd68f70 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:23:07 +0000
+Date: Mon, 8 Aug 2016 09:27:14 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- rt5659
+ uda134x
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,29 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rt5659.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ sound/soc/codecs/uda134x.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/codecs/rt5659.c b/sound/soc/codecs/rt5659.c
-index 1b30914c2d91..59ddaf34705b 100644
---- a/sound/soc/codecs/rt5659.c
-+++ b/sound/soc/codecs/rt5659.c
-@@ -3722,12 +3722,14 @@ static struct snd_soc_codec_driver soc_codec_dev_rt5659 = {
- 	.resume = rt5659_resume,
- 	.set_bias_level = rt5659_set_bias_level,
- 	.idle_bias_off = true,
--	.controls = rt5659_snd_controls,
--	.num_controls = ARRAY_SIZE(rt5659_snd_controls),
--	.dapm_widgets = rt5659_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(rt5659_dapm_widgets),
--	.dapm_routes = rt5659_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(rt5659_dapm_routes),
+diff --git a/sound/soc/codecs/uda134x.c b/sound/soc/codecs/uda134x.c
+index e4c694c758b8..a4a3e9854086 100644
+--- a/sound/soc/codecs/uda134x.c
++++ b/sound/soc/codecs/uda134x.c
+@@ -523,10 +523,12 @@ static struct snd_soc_codec_driver soc_codec_dev_uda134x = {
+ 	.set_bias_level = uda134x_set_bias_level,
+ 	.suspend_bias_off = true,
+ 
+-	.dapm_widgets = uda134x_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(uda134x_dapm_widgets),
+-	.dapm_routes = uda134x_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(uda134x_dapm_routes),
 +	.component_driver = {
-+		.controls		= rt5659_snd_controls,
-+		.num_controls		= ARRAY_SIZE(rt5659_snd_controls),
-+		.dapm_widgets		= rt5659_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(rt5659_dapm_widgets),
-+		.dapm_routes		= rt5659_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(rt5659_dapm_routes),
++		.dapm_widgets		= uda134x_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(uda134x_dapm_widgets),
++		.dapm_routes		= uda134x_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(uda134x_dapm_routes),
 +	},
  };
  
- 
+ static const struct regmap_config uda134x_regmap_config = {
 -- 
 2.8.1
