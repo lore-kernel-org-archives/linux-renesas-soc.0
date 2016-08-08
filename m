@@ -1,58 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:46045 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752778AbcHLQiy (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36372 "EHLO
+	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751259AbcHHLqp (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 12 Aug 2016 12:38:54 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-spi@vger.kernel.org, linux-clk@vger.kernel.org,
+	Mon, 8 Aug 2016 07:46:45 -0400
+MIME-Version: 1.0
+In-Reply-To: <3792658.DACycCOyRo@wasted.cogentembedded.com>
+References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com> <3792658.DACycCOyRo@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 8 Aug 2016 13:46:43 +0200
+Message-ID: <CAMuHMdVq8WXqJsi3Y7FYMeZLmLv3_Ja5RtMQgZX+H7tUC4ngUQ@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a7792: add VIN pin groups
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/PROTO 1/9 common] spi: sh-msiof: Add support for R-Car H3
-Date: Fri, 12 Aug 2016 18:38:37 +0200
-Message-Id: <1471019925-29083-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
-References: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for MSIOF in r8a7795 (R-Car H3).
+Hi Sergei,
 
-Not-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Not intended for upstream merge.
+On Fri, Aug 5, 2016 at 10:52 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add VIN[0-5] pin groups to the R8A7792 PFC driver.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> ---
+> The patch is against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
+> repo plus my 6 R8A7792 PFC patches  posted before (those should  be collected
+> by Geert)...
+>
+> Changes in version 2:
+> - fixed the SoC model in the changelog.
 
-R-Car H3 ES1.0 has a hardware bug preventing MSIOF from being used with
-real SPI devices. However, this does not affect the generation of clock
-signals on the SPI bus.
----
- Documentation/devicetree/bindings/spi/sh-msiof.txt | 1 +
- drivers/spi/spi-sh-msiof.c                         | 1 +
- 2 files changed, 2 insertions(+)
+Thanks!
 
-diff --git a/Documentation/devicetree/bindings/spi/sh-msiof.txt b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-index aa005c1d10d95756..e4ba96cb45ffff31 100644
---- a/Documentation/devicetree/bindings/spi/sh-msiof.txt
-+++ b/Documentation/devicetree/bindings/spi/sh-msiof.txt
-@@ -10,6 +10,7 @@ Required properties:
- 			 "renesas,msiof-r8a7792" (R-Car V2H)
- 			 "renesas,msiof-r8a7793" (R-Car M2-N)
- 			 "renesas,msiof-r8a7794" (R-Car E2)
-+			 "renesas,msiof-r8a7795" (R-Car H3)
- 			 "renesas,msiof-sh73a0" (SH-Mobile AG5)
- - reg                  : A list of offsets and lengths of the register sets for
- 			 the device.
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 6852552a32ef7457..ffa5efdf266a8276 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -996,6 +996,7 @@ static const struct of_device_id sh_msiof_match[] = {
- 	{ .compatible = "renesas,msiof-r8a7792",   .data = &r8a779x_data },
- 	{ .compatible = "renesas,msiof-r8a7793",   .data = &r8a779x_data },
- 	{ .compatible = "renesas,msiof-r8a7794",   .data = &r8a779x_data },
-+	{ .compatible = "renesas,msiof-r8a7795",   .data = &r8a779x_data },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, sh_msiof_match);
--- 
-1.9.1
+Reviewed-by:  Geert Uytterhoeven <geert+renesas@glider.be>
+
+> Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
+> ===================================================================
+> --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
+> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
+
+> +/* - VIN1 ------------------------------------------------------------------- */
+> +static const union vin_data vin1_data_pins = {
+> +       .data24 = {
+> +               /* B */
+> +               RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 5),
+> +               RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 7),
+> +               RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 9),
+> +               RCAR_GP_PIN(5, 10), RCAR_GP_PIN(5, 11),
+> +               /* G */
+> +               RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 13),
+> +               RCAR_GP_PIN(5, 14), RCAR_GP_PIN(5, 15),
+> +               RCAR_GP_PIN(8, 5), RCAR_GP_PIN(8, 6),
+> +               RCAR_GP_PIN(8, 6), RCAR_GP_PIN(8, 7),
+
+RCAR_GP_PIN(8, 7), RCAR_GP_PIN(8, 8),
+
+> +               /* R */
+> +               RCAR_GP_PIN(9, 5), RCAR_GP_PIN(9, 6),
+> +               RCAR_GP_PIN(9, 7), RCAR_GP_PIN(9, 8),
+> +               RCAR_GP_PIN(9, 9), RCAR_GP_PIN(9, 10),
+> +               RCAR_GP_PIN(9, 11), RCAR_GP_PIN(9, 12),
+> +       },
+> +};
+
+> +static const unsigned int vin1_data18_pins[] = {
+> +       /* B */
+> +       RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 7),
+> +       RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 9),
+> +       RCAR_GP_PIN(5, 10), RCAR_GP_PIN(5, 11),
+> +       /* G */
+> +       RCAR_GP_PIN(5, 14), RCAR_GP_PIN(5, 15),
+> +       RCAR_GP_PIN(8, 5), RCAR_GP_PIN(8, 6),
+> +       RCAR_GP_PIN(8, 6), RCAR_GP_PIN(8, 7),
+
+RCAR_GP_PIN(8, 7), RCAR_GP_PIN(8, 8),
+
+> +       /* R */
+> +       RCAR_GP_PIN(9, 7), RCAR_GP_PIN(9, 8),
+> +       RCAR_GP_PIN(9, 9), RCAR_GP_PIN(9, 10),
+> +       RCAR_GP_PIN(9, 11), RCAR_GP_PIN(9, 12),
+> +};
+
+There's no need to resend. I'll fix it up when queuing in sh-pfc-for-v4.9.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
