@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51802 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52814 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLCB (ORCPT
+	with ESMTP id S1751670AbcHHLEF (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:02:01 -0400
+	Mon, 8 Aug 2016 07:04:05 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <871t1z4of9.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiJf-0002uz-CO@debutante>
-Date: Mon, 08 Aug 2016 12:01:55 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on lm49453" to the asoc tree
+In-Reply-To: <87popj63l7.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiLe-0003Vk-7w@debutante>
+Date: Mon, 08 Aug 2016 12:03:58 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on cs4265" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on lm49453
+   ASoC: codec duplicated callback function goes to component on cs4265
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 2f15de710b44e17fec58880492a2c79b37f09f02 Mon Sep 17 00:00:00 2001
+>From 9f9dc779bca7eb24f0afc8929bf89a4c5cccccea Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:17:38 +0000
+Date: Mon, 8 Aug 2016 09:04:43 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- lm49453
+ cs4265
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,34 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/lm49453.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ sound/soc/codecs/cs4265.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/codecs/lm49453.c b/sound/soc/codecs/lm49453.c
-index 9af5640e3446..8d413c2677cc 100644
---- a/sound/soc/codecs/lm49453.c
-+++ b/sound/soc/codecs/lm49453.c
-@@ -1391,12 +1391,14 @@ static struct snd_soc_dai_driver lm49453_dai[] = {
+diff --git a/sound/soc/codecs/cs4265.c b/sound/soc/codecs/cs4265.c
+index 55db19ddc5ff..fd966bb851cb 100644
+--- a/sound/soc/codecs/cs4265.c
++++ b/sound/soc/codecs/cs4265.c
+@@ -547,13 +547,14 @@ static struct snd_soc_dai_driver cs4265_dai[] = {
+ static const struct snd_soc_codec_driver soc_codec_cs4265 = {
+ 	.set_bias_level = cs4265_set_bias_level,
  
- static struct snd_soc_codec_driver soc_codec_dev_lm49453 = {
- 	.set_bias_level = lm49453_set_bias_level,
--	.controls = lm49453_snd_controls,
--	.num_controls = ARRAY_SIZE(lm49453_snd_controls),
--	.dapm_widgets = lm49453_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(lm49453_dapm_widgets),
--	.dapm_routes = lm49453_audio_map,
--	.num_dapm_routes = ARRAY_SIZE(lm49453_audio_map),
+-	.dapm_widgets = cs4265_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(cs4265_dapm_widgets),
+-	.dapm_routes = cs4265_audio_map,
+-	.num_dapm_routes = ARRAY_SIZE(cs4265_audio_map),
+-
+-	.controls = cs4265_snd_controls,
+-	.num_controls = ARRAY_SIZE(cs4265_snd_controls),
 +	.component_driver = {
-+		.controls		= lm49453_snd_controls,
-+		.num_controls		= ARRAY_SIZE(lm49453_snd_controls),
-+		.dapm_widgets		= lm49453_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(lm49453_dapm_widgets),
-+		.dapm_routes		= lm49453_audio_map,
-+		.num_dapm_routes	= ARRAY_SIZE(lm49453_audio_map),
++		.controls		= cs4265_snd_controls,
++		.num_controls		= ARRAY_SIZE(cs4265_snd_controls),
++		.dapm_widgets		= cs4265_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(cs4265_dapm_widgets),
++		.dapm_routes		= cs4265_audio_map,
++		.num_dapm_routes	= ARRAY_SIZE(cs4265_audio_map),
 +	},
- 	.idle_bias_off = true,
  };
  
+ static const struct regmap_config cs4265_regmap = {
 -- 
 2.8.1
