@@ -1,70 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752961AbcHOI4c (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51686 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979AbcHHLBq (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 15 Aug 2016 04:56:32 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 18/26] ARM: dts: r8a7794: add audio clocks
-Date: Mon, 15 Aug 2016 10:55:37 +0200
-Message-Id: <0b1f0e374404f70b77c0f79c6f16fdcf5484552b.1471251169.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
-References: <cover.1471251169.git.horms+renesas@verge.net.au>
+	Mon, 8 Aug 2016 07:01:46 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87twev39s9.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiJQ-0002qb-PD@debutante>
+Date: Mon, 08 Aug 2016 12:01:40 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on wm9867" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The patch
 
-Describe  the external audio clocks (signals AUDIO_CLK[ABC]) required by
-the sound driver.  Boards that provide audio clocks need to  override the
-clock frequencies.
+   ASoC: codec duplicated callback function goes to component on wm9867
 
-This patch is based on the commit 0d3dbde84a45 ("ARM: shmobile: r8a7791:
-add  audio clock on DTSI").
+has been applied to the asoc tree at
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From e92b48aa21d41c64ae1a06d69b94c8dfaec9c672 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:19:11 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ wm9867
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ sound/soc/codecs/max9867.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 55737bca4e63..5d1fded79633 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -952,6 +952,27 @@
- 			clock-frequency = <0>;
- 		};
+diff --git a/sound/soc/codecs/max9867.c b/sound/soc/codecs/max9867.c
+index 2a22fddeb6af..c9673235078d 100644
+--- a/sound/soc/codecs/max9867.c
++++ b/sound/soc/codecs/max9867.c
+@@ -417,12 +417,14 @@ static int max9867_probe(struct snd_soc_codec *codec)
  
-+		/*
-+		 * The external audio clocks are configured  as 0 Hz fixed
-+		 * frequency clocks by default.  Boards that provide audio
-+		 * clocks should override them.
-+		 */
-+		audio_clka: audio_clka {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <0>;
-+		};
-+		audio_clkb: audio_clkb {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <0>;
-+		};
-+		audio_clkc: audio_clkc {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <0>;
-+		};
-+
- 		/* Special CPG clocks */
- 		cpg_clocks: cpg_clocks@e6150000 {
- 			compatible = "renesas,r8a7794-cpg-clocks",
+ static struct snd_soc_codec_driver max9867_codec = {
+ 	.probe = max9867_probe,
+-	.controls = max9867_snd_controls,
+-	.num_controls = ARRAY_SIZE(max9867_snd_controls),
+-	.dapm_routes = max9867_audio_map,
+-	.num_dapm_routes = ARRAY_SIZE(max9867_audio_map),
+-	.dapm_widgets = max9867_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(max9867_dapm_widgets),
++	.component_driver = {
++		.controls		= max9867_snd_controls,
++		.num_controls		= ARRAY_SIZE(max9867_snd_controls),
++		.dapm_routes		= max9867_audio_map,
++		.num_dapm_routes	= ARRAY_SIZE(max9867_audio_map),
++		.dapm_widgets		= max9867_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(max9867_dapm_widgets),
++	},
+ };
+ 
+ static bool max9867_volatile_register(struct device *dev, unsigned int reg)
 -- 
-2.7.0.rc3.207.g0ac5344
+2.8.1
