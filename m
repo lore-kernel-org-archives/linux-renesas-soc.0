@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51222 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51096 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752047AbcHHLAv (ORCPT
+	with ESMTP id S1752002AbcHHLAk (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:00:51 -0400
+	Mon, 8 Aug 2016 07:00:40 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <8737mf39ii.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiIX-0002Zp-8T@debutante>
-Date: Mon, 08 Aug 2016 12:00:45 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on sta529" to the asoc tree
+In-Reply-To: <87wpjr1uw0.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiIL-0002WL-JQ@debutante>
+Date: Mon, 08 Aug 2016 12:00:33 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on tlv320dac33" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on sta529
+   ASoC: codec duplicated callback function goes to component on tlv320dac33
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 29926fc8e853b6ddfee916d91fe88bec07058107 Mon Sep 17 00:00:00 2001
+>From b04c71e634e6654cf4e52e7a94e98aba27c0e643 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:25:03 +0000
+Date: Mon, 8 Aug 2016 09:26:17 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- sta529
+ tlv320dac33
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,25 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/sta529.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ sound/soc/codecs/tlv320dac33.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/sta529.c b/sound/soc/codecs/sta529.c
-index 2cdaca943a8c..d4b384e4b266 100644
---- a/sound/soc/codecs/sta529.c
-+++ b/sound/soc/codecs/sta529.c
-@@ -317,8 +317,10 @@ static const struct snd_soc_codec_driver sta529_codec_driver = {
- 	.set_bias_level = sta529_set_bias_level,
- 	.suspend_bias_off = true,
+diff --git a/sound/soc/codecs/tlv320dac33.c b/sound/soc/codecs/tlv320dac33.c
+index f7a6ce7e5fb1..d64eac74d1cc 100644
+--- a/sound/soc/codecs/tlv320dac33.c
++++ b/sound/soc/codecs/tlv320dac33.c
+@@ -1453,12 +1453,14 @@ static struct snd_soc_codec_driver soc_codec_dev_tlv320dac33 = {
+ 	.probe = dac33_soc_probe,
+ 	.remove = dac33_soc_remove,
  
--	.controls = sta529_snd_controls,
--	.num_controls = ARRAY_SIZE(sta529_snd_controls),
+-	.controls = dac33_snd_controls,
+-	.num_controls = ARRAY_SIZE(dac33_snd_controls),
+-	.dapm_widgets = dac33_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(dac33_dapm_widgets),
+-	.dapm_routes = audio_map,
+-	.num_dapm_routes = ARRAY_SIZE(audio_map),
 +	.component_driver = {
-+		.controls		= sta529_snd_controls,
-+		.num_controls		= ARRAY_SIZE(sta529_snd_controls),
++		.controls		= dac33_snd_controls,
++		.num_controls		= ARRAY_SIZE(dac33_snd_controls),
++		.dapm_widgets		= dac33_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(dac33_dapm_widgets),
++		.dapm_routes		= audio_map,
++		.num_dapm_routes	= ARRAY_SIZE(audio_map),
 +	},
  };
  
- static const struct regmap_config sta529_regmap = {
+ #define DAC33_RATES	(SNDRV_PCM_RATE_44100 | \
 -- 
 2.8.1
