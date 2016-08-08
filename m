@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52356 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52982 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLDI (ORCPT
+	with ESMTP id S1751979AbcHHLEZ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:03:08 -0400
+	Mon, 8 Aug 2016 07:04:25 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87y4474oqv.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiKk-0003FL-Ji@debutante>
-Date: Mon, 08 Aug 2016 12:03:02 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on atmel-pdmic" to the asoc tree
+In-Reply-To: <87zion63oy.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiLy-0003bm-MD@debutante>
+Date: Mon, 08 Aug 2016 12:04:18 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on cs42xx8" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on atmel-pdmic
+   ASoC: codec duplicated callback function goes to component on cs42xx8
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 72bb3cdf93b1718c9a540fb157890d8639633eca Mon Sep 17 00:00:00 2001
+>From 4d7ee73707ec0b3759039a1d573f7829f94046e7 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:10:41 +0000
+Date: Mon, 8 Aug 2016 09:02:28 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- atmel-pdmic
+ cs42xx8
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,25 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/atmel/atmel-pdmic.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ sound/soc/codecs/cs42xx8.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/atmel/atmel-pdmic.c b/sound/soc/atmel/atmel-pdmic.c
-index 5f56da60c92f..2a3a41fad38d 100644
---- a/sound/soc/atmel/atmel-pdmic.c
-+++ b/sound/soc/atmel/atmel-pdmic.c
-@@ -357,8 +357,10 @@ static int atmel_pdmic_codec_probe(struct snd_soc_codec *codec)
+diff --git a/sound/soc/codecs/cs42xx8.c b/sound/soc/codecs/cs42xx8.c
+index 1179101b2b05..b4d87379d2bc 100644
+--- a/sound/soc/codecs/cs42xx8.c
++++ b/sound/soc/codecs/cs42xx8.c
+@@ -411,12 +411,14 @@ static const struct snd_soc_codec_driver cs42xx8_driver = {
+ 	.probe = cs42xx8_codec_probe,
+ 	.idle_bias_off = true,
  
- static struct snd_soc_codec_driver soc_codec_dev_pdmic = {
- 	.probe		= atmel_pdmic_codec_probe,
--	.controls	= atmel_pdmic_snd_controls,
--	.num_controls	= ARRAY_SIZE(atmel_pdmic_snd_controls),
+-	.controls = cs42xx8_snd_controls,
+-	.num_controls = ARRAY_SIZE(cs42xx8_snd_controls),
+-	.dapm_widgets = cs42xx8_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(cs42xx8_dapm_widgets),
+-	.dapm_routes = cs42xx8_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(cs42xx8_dapm_routes),
 +	.component_driver = {
-+		.controls		= atmel_pdmic_snd_controls,
-+		.num_controls		= ARRAY_SIZE(atmel_pdmic_snd_controls),
++		.controls		= cs42xx8_snd_controls,
++		.num_controls		= ARRAY_SIZE(cs42xx8_snd_controls),
++		.dapm_widgets		= cs42xx8_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(cs42xx8_dapm_widgets),
++		.dapm_routes		= cs42xx8_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(cs42xx8_dapm_routes),
 +	},
  };
  
- /* codec dai component */
+ const struct cs42xx8_driver_data cs42448_data = {
 -- 
 2.8.1
