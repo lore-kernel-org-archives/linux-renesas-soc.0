@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51192 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54132 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLAs (ORCPT
+	with ESMTP id S1752356AbcHHLGf (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:00:48 -0400
+	Mon, 8 Aug 2016 07:06:35 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <871t1z39hx.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiIU-0002Yz-CE@debutante>
-Date: Mon, 08 Aug 2016 12:00:42 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on stac9766" to the asoc tree
+In-Reply-To: <87r39z8xin.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiO5-0004EO-4w@debutante>
+Date: Mon, 08 Aug 2016 12:06:29 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8978" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on stac9766
+   ASoC: codec duplicated callback function goes to component on wm8978
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 70e710d649ce705910885617fda3e37528057300 Mon Sep 17 00:00:00 2001
+>From 7a3304ea5c783fba6b68c62e17d041dfe9e57d9c Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:25:22 +0000
+Date: Mon, 8 Aug 2016 08:47:36 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- stac9766
+ wm8978
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,25 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/stac9766.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ sound/soc/codecs/wm8978.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/stac9766.c b/sound/soc/codecs/stac9766.c
-index 0945c51df003..2c5941f3a234 100644
---- a/sound/soc/codecs/stac9766.c
-+++ b/sound/soc/codecs/stac9766.c
-@@ -320,8 +320,10 @@ static int stac9766_codec_remove(struct snd_soc_codec *codec)
- }
+diff --git a/sound/soc/codecs/wm8978.c b/sound/soc/codecs/wm8978.c
+index d36d6001fbb7..910b36f11264 100644
+--- a/sound/soc/codecs/wm8978.c
++++ b/sound/soc/codecs/wm8978.c
+@@ -999,12 +999,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8978 = {
+ 	.resume =	wm8978_resume,
+ 	.set_bias_level = wm8978_set_bias_level,
  
- static struct snd_soc_codec_driver soc_codec_dev_stac9766 = {
--	.controls = stac9766_snd_ac97_controls,
--	.num_controls = ARRAY_SIZE(stac9766_snd_ac97_controls),
+-	.controls = wm8978_snd_controls,
+-	.num_controls = ARRAY_SIZE(wm8978_snd_controls),
+-	.dapm_widgets = wm8978_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(wm8978_dapm_widgets),
+-	.dapm_routes = wm8978_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(wm8978_dapm_routes),
 +	.component_driver = {
-+		.controls		= stac9766_snd_ac97_controls,
-+		.num_controls		= ARRAY_SIZE(stac9766_snd_ac97_controls),
++		.controls		= wm8978_snd_controls,
++		.num_controls		= ARRAY_SIZE(wm8978_snd_controls),
++		.dapm_widgets		= wm8978_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(wm8978_dapm_widgets),
++		.dapm_routes		= wm8978_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(wm8978_dapm_routes),
 +	},
- 	.write = stac9766_ac97_write,
- 	.read = stac9766_ac97_read,
- 	.set_bias_level = stac9766_set_bias_level,
+ };
+ 
+ static const struct regmap_config wm8978_regmap_config = {
 -- 
 2.8.1
