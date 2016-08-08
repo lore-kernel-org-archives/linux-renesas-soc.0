@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52474 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51438 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLDX (ORCPT
+	with ESMTP id S1752047AbcHHLBR (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:03:23 -0400
+	Mon, 8 Aug 2016 07:01:17 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <8760rb63dy.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiKz-0003JX-7p@debutante>
-Date: Mon, 08 Aug 2016 12:03:17 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on adau1373" to the asoc tree
+In-Reply-To: <87fuqf39n6.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiIx-0002he-Ge@debutante>
+Date: Mon, 08 Aug 2016 12:01:11 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on rt5640" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on adau1373
+   ASoC: codec duplicated callback function goes to component on rt5640
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From adfe0976aadb618acf130564d39e39ec0b0a5b90 Mon Sep 17 00:00:00 2001
+>From b72aa483c4d3668b1e95a1d968e64262c7d876f1 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:09:04 +0000
+Date: Mon, 8 Aug 2016 09:22:11 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- adau1373
+ rt5640
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/adau1373.c | 14 ++++++++------
+ sound/soc/codecs/rt5640.c | 14 ++++++++------
  1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/adau1373.c b/sound/soc/codecs/adau1373.c
-index 1556b360fa15..8fa9045571ff 100644
---- a/sound/soc/codecs/adau1373.c
-+++ b/sound/soc/codecs/adau1373.c
-@@ -1466,12 +1466,14 @@ static struct snd_soc_codec_driver adau1373_codec_driver = {
- 
- 	.set_pll = adau1373_set_pll,
- 
--	.controls = adau1373_controls,
--	.num_controls = ARRAY_SIZE(adau1373_controls),
--	.dapm_widgets = adau1373_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(adau1373_dapm_widgets),
--	.dapm_routes = adau1373_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(adau1373_dapm_routes),
+diff --git a/sound/soc/codecs/rt5640.c b/sound/soc/codecs/rt5640.c
+index 09e8988bbb2d..fbe3af14bd13 100644
+--- a/sound/soc/codecs/rt5640.c
++++ b/sound/soc/codecs/rt5640.c
+@@ -2261,12 +2261,14 @@ static struct snd_soc_codec_driver soc_codec_dev_rt5640 = {
+ 	.resume = rt5640_resume,
+ 	.set_bias_level = rt5640_set_bias_level,
+ 	.idle_bias_off = true,
+-	.controls = rt5640_snd_controls,
+-	.num_controls = ARRAY_SIZE(rt5640_snd_controls),
+-	.dapm_widgets = rt5640_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(rt5640_dapm_widgets),
+-	.dapm_routes = rt5640_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(rt5640_dapm_routes),
 +	.component_driver = {
-+		.controls		= adau1373_controls,
-+		.num_controls		= ARRAY_SIZE(adau1373_controls),
-+		.dapm_widgets		= adau1373_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(adau1373_dapm_widgets),
-+		.dapm_routes		= adau1373_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(adau1373_dapm_routes),
++		.controls		= rt5640_snd_controls,
++		.num_controls		= ARRAY_SIZE(rt5640_snd_controls),
++		.dapm_widgets		= rt5640_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(rt5640_dapm_widgets),
++		.dapm_routes		= rt5640_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(rt5640_dapm_routes),
 +	},
  };
  
- static int adau1373_i2c_probe(struct i2c_client *client,
+ static const struct regmap_config rt5640_regmap = {
 -- 
 2.8.1
