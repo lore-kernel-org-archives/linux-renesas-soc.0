@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51968 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53146 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLCW (ORCPT
+	with ESMTP id S1751320AbcHHLEp (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:02:22 -0400
+	Mon, 8 Aug 2016 07:04:45 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87bn134oiv.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiJz-00031Y-Sx@debutante>
-Date: Mon, 08 Aug 2016 12:02:15 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on da7219" to the asoc tree
+In-Reply-To: <87a8gn7id1.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiMJ-0003i0-2t@debutante>
+Date: Mon, 08 Aug 2016 12:04:39 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on pcm1681" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on da7219
+   ASoC: codec duplicated callback function goes to component on pcm1681
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From b0d9df4dc5f3a690c460bb1bb0799ed85255448e Mon Sep 17 00:00:00 2001
+>From a005fd746b4a257ff650c4ac9651111a5d580abe Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:15:27 +0000
+Date: Mon, 8 Aug 2016 09:00:18 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- da7219
+ pcm1681
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,34 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/da7219.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ sound/soc/codecs/pcm1681.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
-index 50ea94317cb3..b6411bd3c4f2 100644
---- a/sound/soc/codecs/da7219.c
-+++ b/sound/soc/codecs/da7219.c
-@@ -1767,13 +1767,14 @@ static struct snd_soc_codec_driver soc_codec_dev_da7219 = {
- 	.resume			= da7219_resume,
- 	.set_bias_level		= da7219_set_bias_level,
+diff --git a/sound/soc/codecs/pcm1681.c b/sound/soc/codecs/pcm1681.c
+index 33e1fc2d1598..0b14efab6280 100644
+--- a/sound/soc/codecs/pcm1681.c
++++ b/sound/soc/codecs/pcm1681.c
+@@ -289,12 +289,14 @@ static const struct regmap_config pcm1681_regmap = {
+ };
  
--	.controls		= da7219_snd_controls,
--	.num_controls		= ARRAY_SIZE(da7219_snd_controls),
--
--	.dapm_widgets		= da7219_dapm_widgets,
--	.num_dapm_widgets	= ARRAY_SIZE(da7219_dapm_widgets),
--	.dapm_routes		= da7219_audio_map,
--	.num_dapm_routes	= ARRAY_SIZE(da7219_audio_map),
+ static struct snd_soc_codec_driver soc_codec_dev_pcm1681 = {
+-	.controls		= pcm1681_controls,
+-	.num_controls		= ARRAY_SIZE(pcm1681_controls),
+-	.dapm_widgets		= pcm1681_dapm_widgets,
+-	.num_dapm_widgets	= ARRAY_SIZE(pcm1681_dapm_widgets),
+-	.dapm_routes		= pcm1681_dapm_routes,
+-	.num_dapm_routes	= ARRAY_SIZE(pcm1681_dapm_routes),
 +	.component_driver = {
-+		.controls		= da7219_snd_controls,
-+		.num_controls		= ARRAY_SIZE(da7219_snd_controls),
-+		.dapm_widgets		= da7219_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(da7219_dapm_widgets),
-+		.dapm_routes		= da7219_audio_map,
-+		.num_dapm_routes	= ARRAY_SIZE(da7219_audio_map),
++		.controls		= pcm1681_controls,
++		.num_controls		= ARRAY_SIZE(pcm1681_controls),
++		.dapm_widgets		= pcm1681_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(pcm1681_dapm_widgets),
++		.dapm_routes		= pcm1681_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(pcm1681_dapm_routes),
 +	},
  };
  
- 
+ static const struct i2c_device_id pcm1681_i2c_id[] = {
 -- 
 2.8.1
