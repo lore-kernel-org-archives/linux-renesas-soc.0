@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51564 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51638 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLBc (ORCPT
+	with ESMTP id S1751979AbcHHLBl (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:01:32 -0400
+	Mon, 8 Aug 2016 07:01:41 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87mvkn39pl.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiJC-0002mJ-6m@debutante>
-Date: Mon, 08 Aug 2016 12:01:26 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on nau8825" to the asoc tree
+In-Reply-To: <87r39z39r8.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiJK-0002ov-U3@debutante>
+Date: Mon, 08 Aug 2016 12:01:34 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on max98926" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on nau8825
+   ASoC: codec duplicated callback function goes to component on max98926
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 889adf638721a9dcd772e20075697338d65fb2bc Mon Sep 17 00:00:00 2001
+>From 3d19c93b7ef6fb76a35a58585df62f9e386a96c2 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:20:46 +0000
+Date: Mon, 8 Aug 2016 09:19:48 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- nau8825
+ max98926
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/nau8825.c | 14 ++++++++------
+ sound/soc/codecs/max98926.c | 14 ++++++++------
  1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/nau8825.c b/sound/soc/codecs/nau8825.c
-index 5c9707ac4bbf..822791eb9574 100644
---- a/sound/soc/codecs/nau8825.c
-+++ b/sound/soc/codecs/nau8825.c
-@@ -2270,12 +2270,14 @@ static struct snd_soc_codec_driver nau8825_codec_driver = {
- 	.suspend = nau8825_suspend,
- 	.resume = nau8825_resume,
+diff --git a/sound/soc/codecs/max98926.c b/sound/soc/codecs/max98926.c
+index 8d14adae5cc5..5830a81e535a 100644
+--- a/sound/soc/codecs/max98926.c
++++ b/sound/soc/codecs/max98926.c
+@@ -498,12 +498,14 @@ static int max98926_probe(struct snd_soc_codec *codec)
  
--	.controls = nau8825_controls,
--	.num_controls = ARRAY_SIZE(nau8825_controls),
--	.dapm_widgets = nau8825_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(nau8825_dapm_widgets),
--	.dapm_routes = nau8825_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(nau8825_dapm_routes),
+ static struct snd_soc_codec_driver soc_codec_dev_max98926 = {
+ 	.probe	= max98926_probe,
+-	.controls = max98926_snd_controls,
+-	.num_controls = ARRAY_SIZE(max98926_snd_controls),
+-	.dapm_routes = max98926_audio_map,
+-	.num_dapm_routes = ARRAY_SIZE(max98926_audio_map),
+-	.dapm_widgets = max98926_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(max98926_dapm_widgets),
 +	.component_driver = {
-+		.controls		= nau8825_controls,
-+		.num_controls		= ARRAY_SIZE(nau8825_controls),
-+		.dapm_widgets		= nau8825_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(nau8825_dapm_widgets),
-+		.dapm_routes		= nau8825_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(nau8825_dapm_routes),
++		.controls		= max98926_snd_controls,
++		.num_controls		= ARRAY_SIZE(max98926_snd_controls),
++		.dapm_routes		= max98926_audio_map,
++		.num_dapm_routes	= ARRAY_SIZE(max98926_audio_map),
++		.dapm_widgets		= max98926_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(max98926_dapm_widgets),
 +	},
  };
  
- static void nau8825_reset_chip(struct regmap *regmap)
+ static const struct regmap_config max98926_regmap = {
 -- 
 2.8.1
