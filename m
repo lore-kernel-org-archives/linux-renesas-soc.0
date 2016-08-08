@@ -1,191 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:52982 "EHLO
-	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935008AbcHBOvc (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51294 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979AbcHHLBA (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 2 Aug 2016 10:51:32 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	sergei.shtylyov@cogentembedded.com, slongerbeam@gmail.com
-Cc: lars@metafoo.de, mchehab@kernel.org, hans.verkuil@cisco.com,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2 3/7] media: rcar-vin: fix bug in scaling
-Date: Tue,  2 Aug 2016 16:51:03 +0200
-Message-Id: <20160802145107.24829-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160802145107.24829-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160802145107.24829-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+	Mon, 8 Aug 2016 07:01:00 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <877fbr39k2.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiIg-0002cQ-0r@debutante>
+Date: Mon, 08 Aug 2016 12:00:54 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on si476x" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It was not possible to scale beyond the image size of the video source
-limitation. The output frame would be bigger but the captured image was
-limited to the size of the video source.
+The patch
 
-The error was that the crop boundary was set after the requested frame
-size and not the video source size. This patch breaks out the resetting
-of the crop, compose and format to separate functions so the error wont
-creep back.
+   ASoC: codec duplicated callback function goes to component on si476x
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 185c7c005ad89e7c21e9922cc5e92af761d87fb4 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:24:06 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ si476x
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 105 ++++++++++++++--------------
- 1 file changed, 54 insertions(+), 51 deletions(-)
+ sound/soc/codecs/si476x.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 6d4086a..33435d7 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -92,6 +92,54 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
-  * V4L2
-  */
+diff --git a/sound/soc/codecs/si476x.c b/sound/soc/codecs/si476x.c
+index a8402d0af0ea..5344f4aa8fde 100644
+--- a/sound/soc/codecs/si476x.c
++++ b/sound/soc/codecs/si476x.c
+@@ -238,10 +238,12 @@ static struct regmap *si476x_get_regmap(struct device *dev)
  
-+static void rvin_reset_crop_compose(struct rvin_dev *vin)
-+{
-+	vin->crop.top = vin->crop.left = 0;
-+	vin->crop.width = vin->source.width;
-+	vin->crop.height = vin->source.height;
-+
-+	vin->compose.top = vin->compose.left = 0;
-+	vin->compose.width = vin->format.width;
-+	vin->compose.height = vin->format.height;
-+}
-+
-+static int rvin_reset_format(struct rvin_dev *vin)
-+{
-+	struct v4l2_subdev_format fmt = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
-+	struct v4l2_mbus_framefmt *mf = &fmt.format;
-+	int ret;
-+
-+	fmt.pad = vin->src_pad_idx;
-+
-+	ret = v4l2_subdev_call(vin_to_source(vin), pad, get_fmt, NULL, &fmt);
-+	if (ret)
-+		return ret;
-+
-+	vin->format.width	= mf->width;
-+	vin->format.height	= mf->height;
-+	vin->format.colorspace	= mf->colorspace;
-+	vin->format.field	= mf->field;
-+
-+	switch (vin->format.field) {
-+	case V4L2_FIELD_TOP:
-+	case V4L2_FIELD_BOTTOM:
-+	case V4L2_FIELD_NONE:
-+	case V4L2_FIELD_INTERLACED_TB:
-+	case V4L2_FIELD_INTERLACED_BT:
-+	case V4L2_FIELD_INTERLACED:
-+		break;
-+	default:
-+		vin->format.field = V4L2_FIELD_NONE;
-+		break;
-+	}
-+
-+	rvin_reset_crop_compose(vin);
-+
-+	return 0;
-+}
-+
- static int __rvin_try_format_source(struct rvin_dev *vin,
- 					u32 which,
- 					struct v4l2_pix_format *pix,
-@@ -251,6 +299,8 @@ static int rvin_s_fmt_vid_cap(struct file *file, void *priv,
+ static struct snd_soc_codec_driver soc_codec_dev_si476x = {
+ 	.get_regmap = si476x_get_regmap,
+-	.dapm_widgets = si476x_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(si476x_dapm_widgets),
+-	.dapm_routes = si476x_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(si476x_dapm_routes),
++	.component_driver = {
++		.dapm_widgets		= si476x_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(si476x_dapm_widgets),
++		.dapm_routes		= si476x_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(si476x_dapm_routes),
++	},
+ };
  
- 	vin->format = f->fmt.pix;
- 
-+	rvin_reset_crop_compose(vin);
-+
- 	return 0;
- }
- 
-@@ -442,35 +492,14 @@ static int rvin_querystd(struct file *file, void *priv, v4l2_std_id *a)
- static int rvin_s_std(struct file *file, void *priv, v4l2_std_id a)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
--	struct v4l2_subdev *sd = vin_to_source(vin);
--	struct v4l2_subdev_format fmt = {
--		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
--	};
--	struct v4l2_mbus_framefmt *mf = &fmt.format;
--	int ret = v4l2_subdev_call(sd, video, s_std, a);
-+	int ret;
- 
-+	ret = v4l2_subdev_call(vin_to_source(vin), video, s_std, a);
- 	if (ret < 0)
- 		return ret;
- 
- 	/* Changing the standard will change the width/height */
--	ret = v4l2_subdev_call(sd, pad, get_fmt, NULL, &fmt);
--	if (ret) {
--		vin_err(vin, "Failed to get initial format\n");
--		return ret;
--	}
--
--	vin->format.width = mf->width;
--	vin->format.height = mf->height;
--
--	vin->crop.top = vin->crop.left = 0;
--	vin->crop.width = mf->width;
--	vin->crop.height = mf->height;
--
--	vin->compose.top = vin->compose.left = 0;
--	vin->compose.width = mf->width;
--	vin->compose.height = mf->height;
--
--	return 0;
-+	return rvin_reset_format(vin);
- }
- 
- static int rvin_g_std(struct file *file, void *priv, v4l2_std_id *a)
-@@ -776,10 +805,6 @@ static void rvin_notify(struct v4l2_subdev *sd,
- 
- int rvin_v4l2_probe(struct rvin_dev *vin)
- {
--	struct v4l2_subdev_format fmt = {
--		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
--	};
--	struct v4l2_mbus_framefmt *mf = &fmt.format;
- 	struct video_device *vdev = &vin->vdev;
- 	struct v4l2_subdev *sd = vin_to_source(vin);
- #if defined(CONFIG_MEDIA_CONTROLLER)
-@@ -842,31 +867,9 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- 
- 	vin->src_pad_idx = pad_idx;
- #endif
--	fmt.pad = vin->src_pad_idx;
--
--	/* Try to improve our guess of a reasonable window format */
--	ret = v4l2_subdev_call(sd, pad, get_fmt, NULL, &fmt);
--	if (ret) {
--		vin_err(vin, "Failed to get initial format\n");
--		return ret;
--	}
- 
--	/* Set default format */
--	vin->format.width	= mf->width;
--	vin->format.height	= mf->height;
--	vin->format.colorspace	= mf->colorspace;
--	vin->format.field	= mf->field;
- 	vin->format.pixelformat	= RVIN_DEFAULT_FORMAT;
--
--
--	/* Set initial crop and compose */
--	vin->crop.top = vin->crop.left = 0;
--	vin->crop.width = mf->width;
--	vin->crop.height = mf->height;
--
--	vin->compose.top = vin->compose.left = 0;
--	vin->compose.width = mf->width;
--	vin->compose.height = mf->height;
-+	rvin_reset_format(vin);
- 
- 	ret = video_register_device(&vin->vdev, VFL_TYPE_GRABBER, -1);
- 	if (ret) {
+ static int si476x_platform_probe(struct platform_device *pdev)
 -- 
-2.9.0
+2.8.1
