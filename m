@@ -1,119 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:40502 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753803AbcH3Oyt (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Aug 2016 10:54:49 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] ARM: shmobile: fix regulator quirk for Gen2
-Date: Tue, 30 Aug 2016 16:54:30 +0200
-Message-Id: <20160830145430.2182-1-wsa+renesas@sang-engineering.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51708 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979AbcHHLBu (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 8 Aug 2016 07:01:50 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87vazb39sv.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiJT-0002rV-Mh@debutante>
+Date: Mon, 08 Aug 2016 12:01:43 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on wm9850" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The current implementation only works if the da9xxx devices are added
-before their drivers are registered. Only then it can apply the fixes to
-both devices. Otherwise, the driver for the first device gets probed
-before the fix for the second device can be applied. This is what
-fails when using the IP core switcher or when having the i2c master
-driver as a module.
+The patch
 
-So, we need to disable both da9xxx once we detected one of them. We now
-use i2c_transfer with hardcoded i2c_messages and device addresses, so we
-don't need the da9xxx client devices to be instantiated. Because the
-fixup is used on specific boards only, the addresses are not going to
-change.
+   ASoC: codec duplicated callback function goes to component on wm9850
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 9d32d3dca9f377f8dbfb03413cea5af5482e412c Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:18:52 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ wm9850
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 61 +++++++++-------------
- 1 file changed, 25 insertions(+), 36 deletions(-)
+ sound/soc/codecs/max9850.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-index 62437b57813eab..23c84e09490d00 100644
---- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-@@ -41,39 +41,25 @@
+diff --git a/sound/soc/codecs/max9850.c b/sound/soc/codecs/max9850.c
+index c14a79d026a1..0610840733d1 100644
+--- a/sound/soc/codecs/max9850.c
++++ b/sound/soc/codecs/max9850.c
+@@ -306,12 +306,14 @@ static struct snd_soc_codec_driver soc_codec_dev_max9850 = {
+ 	.set_bias_level = max9850_set_bias_level,
+ 	.suspend_bias_off = true,
  
- #define REGULATOR_IRQ_MASK	BIT(2)	/* IRQ2, active low */
- 
--static void __iomem *irqc;
--
--static const u8 da9063_mask_regs[] = {
--	DA9063_REG_IRQ_MASK_A,
--	DA9063_REG_IRQ_MASK_B,
--	DA9063_REG_IRQ_MASK_C,
--	DA9063_REG_IRQ_MASK_D,
--};
--
--/* DA9210 System Control and Event Registers */
-+/* start of DA9210 System Control and Event Registers */
- #define DA9210_REG_MASK_A		0x54
--#define DA9210_REG_MASK_B		0x55
--
--static const u8 da9210_mask_regs[] = {
--	DA9210_REG_MASK_A,
--	DA9210_REG_MASK_B,
--};
--
--static void da9xxx_mask_irqs(struct i2c_client *client, const u8 regs[],
--			     unsigned int nregs)
--{
--	unsigned int i;
- 
--	dev_info(&client->dev, "Masking %s interrupt sources\n", client->name);
-+static void __iomem *irqc;
- 
--	for (i = 0; i < nregs; i++) {
--		int error = i2c_smbus_write_byte_data(client, regs[i], ~0);
--		if (error) {
--			dev_err(&client->dev, "i2c error %d\n", error);
--			return;
--		}
--	}
--}
-+static u8 da9063_irq_clr[] = { DA9063_REG_IRQ_MASK_A, 0xff, 0xff, 0xff, 0xff };
-+static u8 da9210_irq_clr[] = { DA9210_REG_MASK_A, 0xff, 0xff };
-+
-+static struct i2c_msg da9xxx_msgs[2] = {
-+	{
-+		.addr = 0x58,
-+		.len = ARRAY_SIZE(da9063_irq_clr),
-+		.buf = da9063_irq_clr,
-+	}, {
-+		.addr = 0x68,
-+		.len = ARRAY_SIZE(da9210_irq_clr),
-+		.buf = da9210_irq_clr,
+-	.controls = max9850_controls,
+-	.num_controls = ARRAY_SIZE(max9850_controls),
+-	.dapm_widgets = max9850_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(max9850_dapm_widgets),
+-	.dapm_routes = max9850_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(max9850_dapm_routes),
++	.component_driver = {
++		.controls		= max9850_controls,
++		.num_controls		= ARRAY_SIZE(max9850_controls),
++		.dapm_widgets		= max9850_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(max9850_dapm_widgets),
++		.dapm_routes		= max9850_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(max9850_dapm_routes),
 +	},
-+};
+ };
  
- static int regulator_quirk_notify(struct notifier_block *nb,
- 				  unsigned long action, void *data)
-@@ -93,12 +79,15 @@ static int regulator_quirk_notify(struct notifier_block *nb,
- 	client = to_i2c_client(dev);
- 	dev_dbg(dev, "Detected %s\n", client->name);
- 
--	if ((client->addr == 0x58 && !strcmp(client->name, "da9063")))
--		da9xxx_mask_irqs(client, da9063_mask_regs,
--				 ARRAY_SIZE(da9063_mask_regs));
--	else if (client->addr == 0x68 && !strcmp(client->name, "da9210"))
--		da9xxx_mask_irqs(client, da9210_mask_regs,
--				 ARRAY_SIZE(da9210_mask_regs));
-+	if ((client->addr == 0x58 && !strcmp(client->name, "da9063")) ||
-+	    (client->addr == 0x68 && !strcmp(client->name, "da9210"))) {
-+		int ret;
-+
-+		dev_info(&client->dev, "clearing da9063/da9210 interrupts\n");
-+		ret = i2c_transfer(client->adapter, da9xxx_msgs, ARRAY_SIZE(da9xxx_msgs));
-+		if (ret != ARRAY_SIZE(da9xxx_msgs))
-+			dev_err(&client->dev, "i2c error %d\n", ret);
-+	}
- 
- 	mon = ioread32(irqc + IRQC_MONITOR);
- 	if (mon & REGULATOR_IRQ_MASK)
+ static int max9850_i2c_probe(struct i2c_client *i2c,
 -- 
-2.9.3
+2.8.1
