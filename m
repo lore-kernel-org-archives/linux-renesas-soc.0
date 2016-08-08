@@ -1,78 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([198.47.19.12]:60483 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751530AbcHALPh (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50944 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752014AbcHHLA0 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 1 Aug 2016 07:15:37 -0400
-From: Kishon Vijay Abraham I <kishon@ti.com>
-To: Tony Lindgren <tony@atomide.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Krzysztof Halasa <khalasa@piap.pl>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>
-CC: <helgaas@kernel.org>, Benoit Cousson <bcousson@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Greg Ungerer <gerg@uclinux.org>,
-	<linux-samsung-soc@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<kishon@ti.com>, <nsekhar@ti.com>
-Subject: [PATCH v2 1/3] ARM: dts: DRA7: Add "linux,pci-domain" property for pci dt nodes
-Date: Mon, 1 Aug 2016 16:42:28 +0530
-Message-ID: <1470049950-4697-2-git-send-email-kishon@ti.com>
-In-Reply-To: <1470049950-4697-1-git-send-email-kishon@ti.com>
-References: <1470049950-4697-1-git-send-email-kishon@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	Mon, 8 Aug 2016 07:00:26 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87popj1utd.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiI6-0002Rs-VK@debutante>
+Date: Mon, 08 Aug 2016 12:00:18 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on wl1273" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since DRA7 has multiple PCIe Rootcomplex, add "linux,pci-domain"
-property to assign a PCI domain number to each of the host
-bridges.
+The patch
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+   ASoC: codec duplicated callback function goes to component on wl1273
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 23ce0ad98946b6d27d43bec2cc1fb34013761690 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 09:27:49 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ wl1273
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/dra7.dtsi |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/codecs/wl1273.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
-index 40b69a5..45e9d2d 100644
---- a/arch/arm/boot/dts/dra7.dtsi
-+++ b/arch/arm/boot/dts/dra7.dtsi
-@@ -301,6 +301,7 @@
- 					  0x82000000 0 0x20013000 0x13000 0 0xffed000>;
- 				#interrupt-cells = <1>;
- 				num-lanes = <1>;
-+				linux,pci-domain = <0>;
- 				ti,hwmods = "pcie1";
- 				phys = <&pcie1_phy>;
- 				phy-names = "pcie-phy0";
-@@ -336,6 +337,7 @@
- 					  0x82000000 0 0x30013000 0x13000 0 0xffed000>;
- 				#interrupt-cells = <1>;
- 				num-lanes = <1>;
-+				linux,pci-domain = <1>;
- 				ti,hwmods = "pcie2";
- 				phys = <&pcie2_phy>;
- 				phy-names = "pcie-phy0";
+diff --git a/sound/soc/codecs/wl1273.c b/sound/soc/codecs/wl1273.c
+index 1b79778098d2..fcffb6e707d9 100644
+--- a/sound/soc/codecs/wl1273.c
++++ b/sound/soc/codecs/wl1273.c
+@@ -484,12 +484,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wl1273 = {
+ 	.probe = wl1273_probe,
+ 	.remove = wl1273_remove,
+ 
+-	.controls = wl1273_controls,
+-	.num_controls = ARRAY_SIZE(wl1273_controls),
+-	.dapm_widgets = wl1273_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(wl1273_dapm_widgets),
+-	.dapm_routes = wl1273_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(wl1273_dapm_routes),
++	.component_driver = {
++		.controls		= wl1273_controls,
++		.num_controls		= ARRAY_SIZE(wl1273_controls),
++		.dapm_widgets		= wl1273_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(wl1273_dapm_widgets),
++		.dapm_routes		= wl1273_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(wl1273_dapm_routes),
++	},
+ };
+ 
+ static int wl1273_platform_probe(struct platform_device *pdev)
 -- 
-1.7.9.5
+2.8.1
