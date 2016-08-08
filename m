@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51416 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53172 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLBP (ORCPT
+	with ESMTP id S1752002AbcHHLEs (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:01:15 -0400
+	Mon, 8 Aug 2016 07:04:48 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87eg5z39mo.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiIu-0002gm-JQ@debutante>
-Date: Mon, 08 Aug 2016 12:01:08 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on rt5645" to the asoc tree
+In-Reply-To: <87bn137idk.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiMM-0003ir-Cx@debutante>
+Date: Mon, 08 Aug 2016 12:04:42 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on pcm179x" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on rt5645
+   ASoC: codec duplicated callback function goes to component on pcm179x
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 51712de1ea87b794e6e47584a87cda7cfd7a2056 Mon Sep 17 00:00:00 2001
+>From 98773a87e83dfd81c77418f2d0f19a63e7476bac Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:22:33 +0000
+Date: Mon, 8 Aug 2016 08:59:59 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- rt5645
+ pcm179x
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rt5645.c | 14 ++++++++------
+ sound/soc/codecs/pcm179x.c | 14 ++++++++------
  1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/rt5645.c b/sound/soc/codecs/rt5645.c
-index 490bfe661346..10c2a564a715 100644
---- a/sound/soc/codecs/rt5645.c
-+++ b/sound/soc/codecs/rt5645.c
-@@ -3484,12 +3484,14 @@ static struct snd_soc_codec_driver soc_codec_dev_rt5645 = {
- 	.resume = rt5645_resume,
- 	.set_bias_level = rt5645_set_bias_level,
- 	.idle_bias_off = true,
--	.controls = rt5645_snd_controls,
--	.num_controls = ARRAY_SIZE(rt5645_snd_controls),
--	.dapm_widgets = rt5645_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(rt5645_dapm_widgets),
--	.dapm_routes = rt5645_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(rt5645_dapm_routes),
+diff --git a/sound/soc/codecs/pcm179x.c b/sound/soc/codecs/pcm179x.c
+index 88fbdd184aa0..b813a154ddd9 100644
+--- a/sound/soc/codecs/pcm179x.c
++++ b/sound/soc/codecs/pcm179x.c
+@@ -206,12 +206,14 @@ const struct regmap_config pcm179x_regmap_config = {
+ EXPORT_SYMBOL_GPL(pcm179x_regmap_config);
+ 
+ static struct snd_soc_codec_driver soc_codec_dev_pcm179x = {
+-	.controls		= pcm179x_controls,
+-	.num_controls		= ARRAY_SIZE(pcm179x_controls),
+-	.dapm_widgets		= pcm179x_dapm_widgets,
+-	.num_dapm_widgets	= ARRAY_SIZE(pcm179x_dapm_widgets),
+-	.dapm_routes		= pcm179x_dapm_routes,
+-	.num_dapm_routes	= ARRAY_SIZE(pcm179x_dapm_routes),
 +	.component_driver = {
-+		.controls		= rt5645_snd_controls,
-+		.num_controls		= ARRAY_SIZE(rt5645_snd_controls),
-+		.dapm_widgets		= rt5645_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(rt5645_dapm_widgets),
-+		.dapm_routes		= rt5645_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(rt5645_dapm_routes),
++		.controls		= pcm179x_controls,
++		.num_controls		= ARRAY_SIZE(pcm179x_controls),
++		.dapm_widgets		= pcm179x_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(pcm179x_dapm_widgets),
++		.dapm_routes		= pcm179x_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(pcm179x_dapm_routes),
 +	},
  };
  
- static const struct regmap_config rt5645_regmap = {
+ int pcm179x_common_init(struct device *dev, struct regmap *regmap)
 -- 
 2.8.1
