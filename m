@@ -1,147 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36701 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754127AbcHSWwf (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Aug 2016 18:52:35 -0400
-From: Philippe Reynes <tremyfr@gmail.com>
-To: sergei.shtylyov@cogentembedded.com, davem@davemloft.net,
-        kazuya.mizuguchi.ks@renesas.com, ykaneko0929@gmail.com,
-        horms+renesas@verge.net.au, masaru.nagai.vx@renesas.com,
-        geert+renesas@glider.be, niklas.soderlund+renesas@ragnatech.se
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Philippe Reynes <tremyfr@gmail.com>
-Subject: [PATCH 1/2] net: ethernet: renesas: ravb: use phydev from struct net_device
-Date: Sat, 20 Aug 2016 00:52:18 +0200
-Message-Id: <1471647139-1867-1-git-send-email-tremyfr@gmail.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53614 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752360AbcHHLFg (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 8 Aug 2016 07:05:36 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87y4477ilt.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiN7-0003x7-SZ@debutante>
+Date: Mon, 08 Aug 2016 12:05:29 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on tas5720" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The private structure contain a pointer to phydev, but the structure
-net_device already contain such pointer. So we can remove the pointer
-phy_dev in the private structure, and update the driver to use the
-one contained in struct net_device.
+The patch
 
-Signed-off-by: Philippe Reynes <tremyfr@gmail.com>
+   ASoC: codec duplicated callback function goes to component on tas5720
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From a8f552df807d0c809ec529c8e998a6abbf40f324 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 08:55:04 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ tas5720
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/net/ethernet/renesas/ravb.h      |    1 -
- drivers/net/ethernet/renesas/ravb_main.c |   29 ++++++++++++-----------------
- 2 files changed, 12 insertions(+), 18 deletions(-)
+ sound/soc/codecs/tas5720.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index 4e5d5e9..f110966 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -1011,7 +1011,6 @@ struct ravb_private {
- 	struct work_struct work;
- 	/* MII transceiver section. */
- 	struct mii_bus *mii_bus;	/* MDIO bus control */
--	struct phy_device *phydev;	/* PHY device control */
- 	int link;
- 	phy_interface_t phy_interface;
- 	int msg_enable;
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index d4809ad..d21c9a4 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -942,7 +942,7 @@ out:
- static void ravb_adjust_link(struct net_device *ndev)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
--	struct phy_device *phydev = priv->phydev;
-+	struct phy_device *phydev = ndev->phydev;
- 	bool new_state = false;
+diff --git a/sound/soc/codecs/tas5720.c b/sound/soc/codecs/tas5720.c
+index f54fb46b77c2..c65b917598d2 100644
+--- a/sound/soc/codecs/tas5720.c
++++ b/sound/soc/codecs/tas5720.c
+@@ -489,12 +489,14 @@ static struct snd_soc_codec_driver soc_codec_dev_tas5720 = {
+ 	.suspend = tas5720_suspend,
+ 	.resume = tas5720_resume,
  
- 	if (phydev->link) {
-@@ -1032,22 +1032,19 @@ static int ravb_phy_init(struct net_device *ndev)
+-	.controls = tas5720_snd_controls,
+-	.num_controls = ARRAY_SIZE(tas5720_snd_controls),
+-	.dapm_widgets = tas5720_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(tas5720_dapm_widgets),
+-	.dapm_routes = tas5720_audio_map,
+-	.num_dapm_routes = ARRAY_SIZE(tas5720_audio_map),
++	.component_driver = {
++		.controls		= tas5720_snd_controls,
++		.num_controls		= ARRAY_SIZE(tas5720_snd_controls),
++		.dapm_widgets		= tas5720_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(tas5720_dapm_widgets),
++		.dapm_routes		= tas5720_audio_map,
++		.num_dapm_routes	= ARRAY_SIZE(tas5720_audio_map),
++	},
+ };
  
- 	phy_attached_info(phydev);
- 
--	priv->phydev = phydev;
--
- 	return 0;
- }
- 
- /* PHY control start function */
- static int ravb_phy_start(struct net_device *ndev)
- {
--	struct ravb_private *priv = netdev_priv(ndev);
- 	int error;
- 
- 	error = ravb_phy_init(ndev);
- 	if (error)
- 		return error;
- 
--	phy_start(priv->phydev);
-+	phy_start(ndev->phydev);
- 
- 	return 0;
- }
-@@ -1058,9 +1055,9 @@ static int ravb_get_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
- 	int error = -ENODEV;
- 	unsigned long flags;
- 
--	if (priv->phydev) {
-+	if (ndev->phydev) {
- 		spin_lock_irqsave(&priv->lock, flags);
--		error = phy_ethtool_gset(priv->phydev, ecmd);
-+		error = phy_ethtool_gset(ndev->phydev, ecmd);
- 		spin_unlock_irqrestore(&priv->lock, flags);
- 	}
- 
-@@ -1073,7 +1070,7 @@ static int ravb_set_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
- 	unsigned long flags;
- 	int error;
- 
--	if (!priv->phydev)
-+	if (!ndev->phydev)
- 		return -ENODEV;
- 
- 	spin_lock_irqsave(&priv->lock, flags);
-@@ -1081,7 +1078,7 @@ static int ravb_set_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
- 	/* Disable TX and RX */
- 	ravb_rcv_snd_disable(ndev);
- 
--	error = phy_ethtool_sset(priv->phydev, ecmd);
-+	error = phy_ethtool_sset(ndev->phydev, ecmd);
- 	if (error)
- 		goto error_exit;
- 
-@@ -1110,9 +1107,9 @@ static int ravb_nway_reset(struct net_device *ndev)
- 	int error = -ENODEV;
- 	unsigned long flags;
- 
--	if (priv->phydev) {
-+	if (ndev->phydev) {
- 		spin_lock_irqsave(&priv->lock, flags);
--		error = phy_start_aneg(priv->phydev);
-+		error = phy_start_aneg(ndev->phydev);
- 		spin_unlock_irqrestore(&priv->lock, flags);
- 	}
- 
-@@ -1661,10 +1658,9 @@ static int ravb_close(struct net_device *ndev)
- 	}
- 
- 	/* PHY disconnect */
--	if (priv->phydev) {
--		phy_stop(priv->phydev);
--		phy_disconnect(priv->phydev);
--		priv->phydev = NULL;
-+	if (ndev->phydev) {
-+		phy_stop(ndev->phydev);
-+		phy_disconnect(ndev->phydev);
- 	}
- 
- 	if (priv->chip_id != RCAR_GEN2) {
-@@ -1753,8 +1749,7 @@ static int ravb_hwtstamp_set(struct net_device *ndev, struct ifreq *req)
- /* ioctl to device function */
- static int ravb_do_ioctl(struct net_device *ndev, struct ifreq *req, int cmd)
- {
--	struct ravb_private *priv = netdev_priv(ndev);
--	struct phy_device *phydev = priv->phydev;
-+	struct phy_device *phydev = ndev->phydev;
- 
- 	if (!netif_running(ndev))
- 		return -EINVAL;
+ /* PCM rates supported by the TAS5720 driver */
 -- 
-1.7.4.4
+2.8.1
