@@ -1,66 +1,90 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/2] ARM: dts: r8a7792: add DU clocks
-Date: Fri, 05 Aug 2016 21:25:47 +0300
-Message-ID: <2482521.XCJrVWGkiq@wasted.cogentembedded.com>
-In-Reply-To: <4031442.KeMCTMarLN@wasted.cogentembedded.com>
-References: <4031442.KeMCTMarLN@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54034 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752242AbcHHLGY (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 8 Aug 2016 07:06:24 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87lh078xg9.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiNt-0004An-EI@debutante>
+Date: Mon, 08 Aug 2016 12:06:17 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8776" to the asoc tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the DU0/1 clocks and their parent, ZX clock in the R8A7792 device
-tree.
+The patch
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+   ASoC: codec duplicated callback function goes to component on wm8776
 
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 42a60205fff0cacd384ae9497c00de61d5a240bd Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 08:49:02 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ wm8776
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7792.dtsi |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ sound/soc/codecs/wm8776.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -660,6 +660,13 @@
- 			clock-div = <2>;
- 			clock-mult = <1>;
- 		};
-+		zx_clk: zx {
-+			compatible = "fixed-factor-clock";
-+			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
-+			#clock-cells = <0>;
-+			clock-div = <3>;
-+			clock-mult = <1>;
-+		};
- 		zs_clk: zs {
- 			compatible = "fixed-factor-clock";
- 			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
-@@ -761,15 +768,17 @@
- 				     "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
- 			clocks = <&zs_clk>, <&zs_clk>, <&p_clk>, <&p_clk>,
--				 <&p_clk>, <&p_clk>;
-+				 <&p_clk>, <&p_clk>, <&zx_clk>, <&zx_clk>;
- 			#clock-cells = <1>;
- 			clock-indices = <
- 				R8A7792_CLK_HSCIF1 R8A7792_CLK_HSCIF0
- 				R8A7792_CLK_SCIF3 R8A7792_CLK_SCIF2
- 				R8A7792_CLK_SCIF1 R8A7792_CLK_SCIF0
-+				R8A7792_CLK_DU1 R8A7792_CLK_DU0
- 			>;
- 			clock-output-names = "hscif1", "hscif0", "scif3",
--					     "scif2", "scif1", "scif0";
-+					     "scif2", "scif1", "scif0",
-+					     "du1", "du0";
- 		};
- 		mstp8_clks: mstp8_clks@e6150990 {
- 			compatible = "renesas,r8a7792-mstp-clocks",
-
+diff --git a/sound/soc/codecs/wm8776.c b/sound/soc/codecs/wm8776.c
+index 5af44f9a8cf2..f17a3a8fffb0 100644
+--- a/sound/soc/codecs/wm8776.c
++++ b/sound/soc/codecs/wm8776.c
+@@ -430,12 +430,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8776 = {
+ 	.set_bias_level = wm8776_set_bias_level,
+ 	.suspend_bias_off = true,
+ 
+-	.controls = wm8776_snd_controls,
+-	.num_controls = ARRAY_SIZE(wm8776_snd_controls),
+-	.dapm_widgets = wm8776_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(wm8776_dapm_widgets),
+-	.dapm_routes = routes,
+-	.num_dapm_routes = ARRAY_SIZE(routes),
++	.component_driver = {
++		.controls		= wm8776_snd_controls,
++		.num_controls		= ARRAY_SIZE(wm8776_snd_controls),
++		.dapm_widgets		= wm8776_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(wm8776_dapm_widgets),
++		.dapm_routes		= routes,
++		.num_dapm_routes	= ARRAY_SIZE(routes),
++	},
+ };
+ 
+ static const struct of_device_id wm8776_of_match[] = {
+-- 
+2.8.1
