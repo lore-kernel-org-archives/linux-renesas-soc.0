@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52718 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54012 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLDx (ORCPT
+	with ESMTP id S1752242AbcHHLGV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:03:53 -0400
+	Mon, 8 Aug 2016 07:06:21 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87k2fr63j8.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiLS-0003SM-He@debutante>
-Date: Mon, 08 Aug 2016 12:03:46 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on ak5386" to the asoc tree
+In-Reply-To: <87k2fr8xfs.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiNq-00049v-FU@debutante>
+Date: Mon, 08 Aug 2016 12:06:14 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8770" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on ak5386
+   ASoC: codec duplicated callback function goes to component on wm8770
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 5bc4f738018ddcb86b7ac5894d4a9e416dbb65b0 Mon Sep 17 00:00:00 2001
+>From baa484716a59e86065787ae20008703d178dcec5 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:05:56 +0000
+Date: Mon, 8 Aug 2016 08:49:19 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- ak5386
+ wm8770
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,29 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/ak5386.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ sound/soc/codecs/wm8770.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/ak5386.c b/sound/soc/codecs/ak5386.c
-index afa95360826d..0ef2df223336 100644
---- a/sound/soc/codecs/ak5386.c
-+++ b/sound/soc/codecs/ak5386.c
-@@ -74,10 +74,12 @@ static struct snd_soc_codec_driver soc_codec_ak5386 = {
- 	.remove = ak5386_soc_remove,
- 	.suspend = ak5386_soc_suspend,
- 	.resume = ak5386_soc_resume,
--	.dapm_widgets = ak5386_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(ak5386_dapm_widgets),
--	.dapm_routes = ak5386_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(ak5386_dapm_routes),
+diff --git a/sound/soc/codecs/wm8770.c b/sound/soc/codecs/wm8770.c
+index df6178464b00..8783a5fc123e 100644
+--- a/sound/soc/codecs/wm8770.c
++++ b/sound/soc/codecs/wm8770.c
+@@ -613,12 +613,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8770 = {
+ 	.set_bias_level = wm8770_set_bias_level,
+ 	.idle_bias_off = true,
+ 
+-	.controls = wm8770_snd_controls,
+-	.num_controls = ARRAY_SIZE(wm8770_snd_controls),
+-	.dapm_widgets = wm8770_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(wm8770_dapm_widgets),
+-	.dapm_routes = wm8770_intercon,
+-	.num_dapm_routes = ARRAY_SIZE(wm8770_intercon),
 +	.component_driver = {
-+		.dapm_widgets		= ak5386_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(ak5386_dapm_widgets),
-+		.dapm_routes		= ak5386_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(ak5386_dapm_routes),
++		.controls		= wm8770_snd_controls,
++		.num_controls		= ARRAY_SIZE(wm8770_snd_controls),
++		.dapm_widgets		= wm8770_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(wm8770_dapm_widgets),
++		.dapm_routes		= wm8770_intercon,
++		.num_dapm_routes	= ARRAY_SIZE(wm8770_intercon),
 +	},
  };
  
- static int ak5386_set_dai_fmt(struct snd_soc_dai *codec_dai,
+ static const struct of_device_id wm8770_of_match[] = {
 -- 
 2.8.1
