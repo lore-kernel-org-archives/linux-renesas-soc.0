@@ -1,71 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752929AbcHOI4V (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53244 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752002AbcHHLEy (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 15 Aug 2016 04:56:21 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/26] ARM: dts: blanche: add CAN0 support
-Date: Mon, 15 Aug 2016 10:55:29 +0200
-Message-Id: <38584104eafb6ed40ca06c8421dcc369c9015c1d.1471251169.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
-References: <cover.1471251169.git.horms+renesas@verge.net.au>
+	Mon, 8 Aug 2016 07:04:54 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87eg5z7iek.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiMS-0003ko-Db@debutante>
+Date: Mon, 08 Aug 2016 12:04:48 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on pcm512x" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The patch
 
-Define the Blanche board dependent part of the CAN0 device node along with
-the CAN_CLK crystal.
+   ASoC: codec duplicated callback function goes to component on pcm512x
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From d25f113f969eb9a0ae3a61d3937a0fbfe7ecdbdd Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 08:59:23 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ pcm512x
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7792-blanche.dts | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ sound/soc/codecs/pcm512x.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7792-blanche.dts b/arch/arm/boot/dts/r8a7792-blanche.dts
-index 4777a609ff81..eeffba870211 100644
---- a/arch/arm/boot/dts/r8a7792-blanche.dts
-+++ b/arch/arm/boot/dts/r8a7792-blanche.dts
-@@ -60,6 +60,10 @@
- 	clock-frequency = <20000000>;
+diff --git a/sound/soc/codecs/pcm512x.c b/sound/soc/codecs/pcm512x.c
+index 047c48953a20..72b19e62f626 100644
+--- a/sound/soc/codecs/pcm512x.c
++++ b/sound/soc/codecs/pcm512x.c
+@@ -1348,12 +1348,14 @@ static struct snd_soc_codec_driver pcm512x_codec_driver = {
+ 	.set_bias_level = pcm512x_set_bias_level,
+ 	.idle_bias_off = true,
+ 
+-	.controls = pcm512x_controls,
+-	.num_controls = ARRAY_SIZE(pcm512x_controls),
+-	.dapm_widgets = pcm512x_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(pcm512x_dapm_widgets),
+-	.dapm_routes = pcm512x_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(pcm512x_dapm_routes),
++	.component_driver = {
++		.controls		= pcm512x_controls,
++		.num_controls		= ARRAY_SIZE(pcm512x_controls),
++		.dapm_widgets		= pcm512x_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(pcm512x_dapm_widgets),
++		.dapm_routes		= pcm512x_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(pcm512x_dapm_routes),
++	},
  };
  
-+&can_clk {
-+	clock-frequency = <48000000>;
-+};
-+
- &pfc {
- 	scif0_pins: scif0 {
- 		groups = "scif0_data";
-@@ -81,6 +85,11 @@
- 			function = "lbsc";
- 		};
- 	};
-+
-+	can0_pins: can0 {
-+		groups = "can0_data", "can_clk";
-+		function = "can0";
-+	};
- };
- 
- &scif0 {
-@@ -96,3 +105,10 @@
- 
- 	status = "okay";
- };
-+
-+&can0 {
-+	pinctrl-0 = <&can0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
+ static const struct regmap_range_cfg pcm512x_range = {
 -- 
-2.7.0.rc3.207.g0ac5344
+2.8.1
