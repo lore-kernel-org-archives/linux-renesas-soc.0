@@ -1,35 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:34064 "EHLO
-	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760529AbcHESYp (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53762 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752320AbcHHLFy (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 5 Aug 2016 14:24:45 -0400
-Received: by mail-lf0-f47.google.com with SMTP id l69so209169204lfg.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 05 Aug 2016 11:24:44 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/2] Add R8A7792 DU support
-Date: Fri, 05 Aug 2016 21:24:40 +0300
-Message-ID: <4031442.KeMCTMarLN@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+	Mon, 8 Aug 2016 07:05:54 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <877fbr8xas.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiNP-00042K-He@debutante>
+Date: Mon, 08 Aug 2016 12:05:47 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8523" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+The patch
 
-   Here's the set of 2 patches against Simon Horman's 'renesas.git' repo,
-'renesas-devel-20160725-v4.7-rc7' tag. We're adding the R8A7792 DU clocks and
-device nodes. They have been tested on the Blanche board -- I'm not posting the
-Blanche patch only because it also has some strange interaction with the
-Ethernet chip, so that NFS root can't work anymore...
+   ASoC: codec duplicated callback function goes to component on wm8523
 
-[1/2] ARM: dts: r8a7792: add DU clocks
-[2/2] ARM: dts: r8a7792: add DU support
+has been applied to the asoc tree at
 
-WBR, Sergei
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From f8a5c975bd5b7fc5e46fd85b5a65c0028d09f979 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 08:52:19 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ wm8523
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/wm8523.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/sound/soc/codecs/wm8523.c b/sound/soc/codecs/wm8523.c
+index aa287a3965e7..0bb189a3d322 100644
+--- a/sound/soc/codecs/wm8523.c
++++ b/sound/soc/codecs/wm8523.c
+@@ -418,12 +418,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8523 = {
+ 	.set_bias_level = wm8523_set_bias_level,
+ 	.suspend_bias_off = true,
+ 
+-	.controls = wm8523_controls,
+-	.num_controls = ARRAY_SIZE(wm8523_controls),
+-	.dapm_widgets = wm8523_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(wm8523_dapm_widgets),
+-	.dapm_routes = wm8523_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(wm8523_dapm_routes),
++	.component_driver = {
++		.controls		= wm8523_controls,
++		.num_controls		= ARRAY_SIZE(wm8523_controls),
++		.dapm_widgets		= wm8523_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(wm8523_dapm_widgets),
++		.dapm_routes		= wm8523_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(wm8523_dapm_routes),
++	},
+ };
+ 
+ static const struct of_device_id wm8523_of_match[] = {
+-- 
+2.8.1
