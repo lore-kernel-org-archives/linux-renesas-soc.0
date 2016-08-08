@@ -1,62 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:51427 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752870AbcHLQiz (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53636 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752320AbcHHLFo (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 12 Aug 2016 12:38:55 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-spi@vger.kernel.org, linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/PROTO 2/9 common] spi: sh-msiof: Print max and transfer frequency
-Date: Fri, 12 Aug 2016 18:38:38 +0200
-Message-Id: <1471019925-29083-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
-References: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
+	Mon, 8 Aug 2016 07:05:44 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87zion7imc.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiNA-0003xz-RU@debutante>
+Date: Mon, 08 Aug 2016 12:05:32 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on tfa9879" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Not-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Not intended for upstream merge.
----
- drivers/spi/spi-sh-msiof.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+The patch
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index ffa5efdf266a8276..72f80a088cddd395 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -272,6 +272,13 @@ static void sh_msiof_spi_set_clk_regs(struct sh_msiof_spi_priv *p,
- 	k = min_t(int, k, ARRAY_SIZE(sh_msiof_spi_div_table) - 1);
+   ASoC: codec duplicated callback function goes to component on tfa9879
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From f2dea01ccbfc34a5e631afeb13c7d010d39c2543 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 08:54:44 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ tfa9879
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/tfa9879.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/sound/soc/codecs/tfa9879.c b/sound/soc/codecs/tfa9879.c
+index cb5310d89c0f..95e0a7abeb7a 100644
+--- a/sound/soc/codecs/tfa9879.c
++++ b/sound/soc/codecs/tfa9879.c
+@@ -231,13 +231,14 @@ static const struct snd_soc_dapm_route tfa9879_dapm_routes[] = {
+ };
  
- 	scr = sh_msiof_spi_div_table[k].brdv | SCR_BRPS(brps);
-+	dev_info(&p->pdev->dev, "clk at %lu Hz, brps = %u, brdv = %u%s\n",
-+		 parent_rate, brps, sh_msiof_spi_div_table[k].div,
-+		 ((sh_msiof_spi_div_table[k].div == 1 && brps > 2) ||
-+		  (brps > 32)) ? " INVALID!" : "");
-+	dev_info(&p->pdev->dev, "wanted: %u Hz, actual: %lu Hz\n", spi_hz,
-+		 parent_rate / sh_msiof_spi_div_table[k].div / brps);
-+
- 	sh_msiof_write(p, TSCR, scr);
- 	if (!(p->master->flags & SPI_MASTER_MUST_TX))
- 		sh_msiof_write(p, RSCR, scr);
-@@ -523,6 +530,16 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
- {
- 	struct device_node	*np = spi->master->dev.of_node;
- 	struct sh_msiof_spi_priv *p = spi_master_get_devdata(spi->master);
-+	u32 max_speed_hz, min_speed_hz;
-+	unsigned long rate;
-+
-+	rate = clk_get_rate(p->clk);
-+	max_speed_hz = rate;
-+	min_speed_hz = rate / 1024;
-+
-+	dev_info(&p->pdev->dev,
-+		 "%s: master speed min %u max %u, device speed max = %u\n",
-+		 __func__, min_speed_hz, max_speed_hz, spi->max_speed_hz);
+ static const struct snd_soc_codec_driver tfa9879_codec = {
+-	.controls = tfa9879_controls,
+-	.num_controls = ARRAY_SIZE(tfa9879_controls),
+-
+-	.dapm_widgets = tfa9879_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(tfa9879_dapm_widgets),
+-	.dapm_routes = tfa9879_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(tfa9879_dapm_routes),
++	.component_driver = {
++		.controls		= tfa9879_controls,
++		.num_controls		= ARRAY_SIZE(tfa9879_controls),
++		.dapm_widgets		= tfa9879_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(tfa9879_dapm_widgets),
++		.dapm_routes		= tfa9879_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(tfa9879_dapm_routes),
++	},
+ };
  
- 	pm_runtime_get_sync(&p->pdev->dev);
- 
+ static const struct regmap_config tfa9879_regmap = {
 -- 
-1.9.1
+2.8.1
