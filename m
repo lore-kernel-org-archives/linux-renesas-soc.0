@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52982 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53986 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLEZ (ORCPT
+	with ESMTP id S1752356AbcHHLGR (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:04:25 -0400
+	Mon, 8 Aug 2016 07:06:17 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87zion63oy.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiLy-0003bm-MD@debutante>
-Date: Mon, 08 Aug 2016 12:04:18 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on cs42xx8" to the asoc tree
+In-Reply-To: <87invb8xfb.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiNn-000495-HC@debutante>
+Date: Mon, 08 Aug 2016 12:06:11 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8753" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on cs42xx8
+   ASoC: codec duplicated callback function goes to component on wm8753
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 4d7ee73707ec0b3759039a1d573f7829f94046e7 Mon Sep 17 00:00:00 2001
+>From 73238401ee2a344e921165b3d40bab3a89fe0f40 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:02:28 +0000
+Date: Mon, 8 Aug 2016 08:49:44 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- cs42xx8
+ wm8753
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/cs42xx8.c | 14 ++++++++------
+ sound/soc/codecs/wm8753.c | 14 ++++++++------
  1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/cs42xx8.c b/sound/soc/codecs/cs42xx8.c
-index 1179101b2b05..b4d87379d2bc 100644
---- a/sound/soc/codecs/cs42xx8.c
-+++ b/sound/soc/codecs/cs42xx8.c
-@@ -411,12 +411,14 @@ static const struct snd_soc_codec_driver cs42xx8_driver = {
- 	.probe = cs42xx8_codec_probe,
- 	.idle_bias_off = true,
+diff --git a/sound/soc/codecs/wm8753.c b/sound/soc/codecs/wm8753.c
+index cdcc91282e8a..1bb272c36ad9 100644
+--- a/sound/soc/codecs/wm8753.c
++++ b/sound/soc/codecs/wm8753.c
+@@ -1484,12 +1484,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8753 = {
+ 	.set_bias_level = wm8753_set_bias_level,
+ 	.suspend_bias_off = true,
  
--	.controls = cs42xx8_snd_controls,
--	.num_controls = ARRAY_SIZE(cs42xx8_snd_controls),
--	.dapm_widgets = cs42xx8_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(cs42xx8_dapm_widgets),
--	.dapm_routes = cs42xx8_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(cs42xx8_dapm_routes),
+-	.controls = wm8753_snd_controls,
+-	.num_controls = ARRAY_SIZE(wm8753_snd_controls),
+-	.dapm_widgets = wm8753_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(wm8753_dapm_widgets),
+-	.dapm_routes = wm8753_dapm_routes,
+-	.num_dapm_routes = ARRAY_SIZE(wm8753_dapm_routes),
 +	.component_driver = {
-+		.controls		= cs42xx8_snd_controls,
-+		.num_controls		= ARRAY_SIZE(cs42xx8_snd_controls),
-+		.dapm_widgets		= cs42xx8_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(cs42xx8_dapm_widgets),
-+		.dapm_routes		= cs42xx8_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(cs42xx8_dapm_routes),
++		.controls		= wm8753_snd_controls,
++		.num_controls		= ARRAY_SIZE(wm8753_snd_controls),
++		.dapm_widgets		= wm8753_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(wm8753_dapm_widgets),
++		.dapm_routes		= wm8753_dapm_routes,
++		.num_dapm_routes	= ARRAY_SIZE(wm8753_dapm_routes),
 +	},
  };
  
- const struct cs42xx8_driver_data cs42448_data = {
+ static const struct of_device_id wm8753_of_match[] = {
 -- 
 2.8.1
