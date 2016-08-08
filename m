@@ -1,31 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36644 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53660 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932498AbcHIMoP (ORCPT
+	with ESMTP id S1752002AbcHHLFr (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 9 Aug 2016 08:44:15 -0400
+	Mon, 8 Aug 2016 07:05:47 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	Banajit Goswami <bgoswami@codeaurora.org>,
-	linux-kernel@vger.kernel.org, Patrick Lai <plai@codeaurora.org>,
-	Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-In-Reply-To: <87invl9gbq.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bX6O6-0003b8-Av@debutante>
-Date: Tue, 09 Aug 2016 13:44:06 +0100
-Subject: Applied "ASoC: lpass-platform: don't use snd_soc_pcm_set_drvdata()" to the asoc tree
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <871t1z8x7b.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiND-0003yp-OV@debutante>
+Date: Mon, 08 Aug 2016 12:05:35 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on tlv320aic23" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: lpass-platform: don't use snd_soc_pcm_set_drvdata()
+   ASoC: codec duplicated callback function goes to component on tlv320aic23
 
 has been applied to the asoc tree at
 
@@ -50,125 +44,47 @@ to this mail.
 Thanks,
 Mark
 
->From 6adcbdcd4b6e8301c3a4c61284e701f87de9a409 Mon Sep 17 00:00:00 2001
+>From e88e495064e602772afa7b165643866acc6da6bf Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 1 Aug 2016 06:10:54 +0000
-Subject: [PATCH] ASoC: lpass-platform: don't use snd_soc_pcm_set_drvdata()
+Date: Mon, 8 Aug 2016 08:54:25 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ tlv320aic23
 
-snd_soc_pcm_set_drvdata() will set driver data to rtd->dev,
-but driver data of rtd->dev is already used as "rtd" on
-soc_post_component_init().
-
-	static int soc_post_component_init(xxx)
-	{
-		...
-		dev_set_drvdata(rtd->dev, rtd);
-		...
-	}
-
-To remove confusion, snd_soc_pcm_set/get_drvdata() should be
-removed soon. This patch is for it.
-
-qcom/lpass-platform.c sets struct lpass_pcm_data to rtd->dev today,
-but we can replace it to struct lpass_data :: private_data.
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/lpass-platform.c | 14 +++++++-------
- sound/soc/qcom/lpass.h          |  2 ++
- 2 files changed, 9 insertions(+), 7 deletions(-)
+ sound/soc/codecs/tlv320aic23.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/qcom/lpass-platform.c b/sound/soc/qcom/lpass-platform.c
-index db000c6987a1..a144c14c7169 100644
---- a/sound/soc/qcom/lpass-platform.c
-+++ b/sound/soc/qcom/lpass-platform.c
-@@ -84,9 +84,9 @@ static int lpass_platform_pcmops_hw_params(struct snd_pcm_substream *substream,
- 		struct snd_pcm_hw_params *params)
- {
- 	struct snd_soc_pcm_runtime *soc_runtime = substream->private_data;
--	struct lpass_pcm_data *pcm_data = snd_soc_pcm_get_drvdata(soc_runtime);
- 	struct lpass_data *drvdata =
- 		snd_soc_platform_get_drvdata(soc_runtime->platform);
-+	struct lpass_pcm_data *pcm_data = drvdata->private_data;
- 	struct lpass_variant *v = drvdata->variant;
- 	snd_pcm_format_t format = params_format(params);
- 	unsigned int channels = params_channels(params);
-@@ -177,9 +177,9 @@ static int lpass_platform_pcmops_hw_params(struct snd_pcm_substream *substream,
- static int lpass_platform_pcmops_hw_free(struct snd_pcm_substream *substream)
- {
- 	struct snd_soc_pcm_runtime *soc_runtime = substream->private_data;
--	struct lpass_pcm_data *pcm_data = snd_soc_pcm_get_drvdata(soc_runtime);
- 	struct lpass_data *drvdata =
- 		snd_soc_platform_get_drvdata(soc_runtime->platform);
-+	struct lpass_pcm_data *pcm_data = drvdata->private_data;
- 	struct lpass_variant *v = drvdata->variant;
- 	unsigned int reg;
- 	int ret;
-@@ -201,9 +201,9 @@ static int lpass_platform_pcmops_prepare(struct snd_pcm_substream *substream)
- {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct snd_soc_pcm_runtime *soc_runtime = substream->private_data;
--	struct lpass_pcm_data *pcm_data = snd_soc_pcm_get_drvdata(soc_runtime);
- 	struct lpass_data *drvdata =
- 		snd_soc_platform_get_drvdata(soc_runtime->platform);
-+	struct lpass_pcm_data *pcm_data = drvdata->private_data;
- 	struct lpass_variant *v = drvdata->variant;
- 	int ret, ch, dir = substream->stream;
+diff --git a/sound/soc/codecs/tlv320aic23.c b/sound/soc/codecs/tlv320aic23.c
+index cd8c02b6e4de..410cae0f2060 100644
+--- a/sound/soc/codecs/tlv320aic23.c
++++ b/sound/soc/codecs/tlv320aic23.c
+@@ -583,12 +583,14 @@ static struct snd_soc_codec_driver soc_codec_dev_tlv320aic23 = {
+ 	.set_bias_level = tlv320aic23_set_bias_level,
+ 	.suspend_bias_off = true,
  
-@@ -255,9 +255,9 @@ static int lpass_platform_pcmops_trigger(struct snd_pcm_substream *substream,
- 		int cmd)
- {
- 	struct snd_soc_pcm_runtime *soc_runtime = substream->private_data;
--	struct lpass_pcm_data *pcm_data = snd_soc_pcm_get_drvdata(soc_runtime);
- 	struct lpass_data *drvdata =
- 		snd_soc_platform_get_drvdata(soc_runtime->platform);
-+	struct lpass_pcm_data *pcm_data = drvdata->private_data;
- 	struct lpass_variant *v = drvdata->variant;
- 	int ret, ch, dir = substream->stream;
- 
-@@ -331,9 +331,9 @@ static snd_pcm_uframes_t lpass_platform_pcmops_pointer(
- 		struct snd_pcm_substream *substream)
- {
- 	struct snd_soc_pcm_runtime *soc_runtime = substream->private_data;
--	struct lpass_pcm_data *pcm_data = snd_soc_pcm_get_drvdata(soc_runtime);
- 	struct lpass_data *drvdata =
- 			snd_soc_platform_get_drvdata(soc_runtime->platform);
-+	struct lpass_pcm_data *pcm_data = drvdata->private_data;
- 	struct lpass_variant *v = drvdata->variant;
- 	unsigned int base_addr, curr_addr;
- 	int ret, ch, dir = substream->stream;
-@@ -483,7 +483,7 @@ static int lpass_platform_pcm_new(struct snd_soc_pcm_runtime *soc_runtime)
- 		return -ENOMEM;
- 
- 	data->i2s_port = cpu_dai->driver->id;
--	snd_soc_pcm_set_drvdata(soc_runtime, data);
-+	drvdata->private_data = data;
- 
- 	psubstream = pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream;
- 	if (psubstream) {
-@@ -570,8 +570,8 @@ static void lpass_platform_pcm_free(struct snd_pcm *pcm)
- 		substream = pcm->streams[i].substream;
- 		if (substream) {
- 			rt = substream->private_data;
--			data = snd_soc_pcm_get_drvdata(rt);
- 			drvdata = snd_soc_platform_get_drvdata(rt->platform);
-+			data = drvdata->private_data;
- 
- 			ch = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
- 				? data->rdma_ch
-diff --git a/sound/soc/qcom/lpass.h b/sound/soc/qcom/lpass.h
-index 30714ad1e138..35b3cea8207d 100644
---- a/sound/soc/qcom/lpass.h
-+++ b/sound/soc/qcom/lpass.h
-@@ -58,6 +58,8 @@ struct lpass_data {
- 	/* 8016 specific */
- 	struct clk *pcnoc_mport_clk;
- 	struct clk *pcnoc_sway_clk;
-+
-+	void *private_data;
+-	.controls = tlv320aic23_snd_controls,
+-	.num_controls = ARRAY_SIZE(tlv320aic23_snd_controls),
+-	.dapm_widgets = tlv320aic23_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(tlv320aic23_dapm_widgets),
+-	.dapm_routes = tlv320aic23_intercon,
+-	.num_dapm_routes = ARRAY_SIZE(tlv320aic23_intercon),
++	.component_driver = {
++		.controls		= tlv320aic23_snd_controls,
++		.num_controls		= ARRAY_SIZE(tlv320aic23_snd_controls),
++		.dapm_widgets		= tlv320aic23_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(tlv320aic23_dapm_widgets),
++		.dapm_routes		= tlv320aic23_intercon,
++		.num_dapm_routes	= ARRAY_SIZE(tlv320aic23_intercon),
++	},
  };
  
- /* Vairant data per each SOC */
+ int tlv320aic23_probe(struct device *dev, struct regmap *regmap)
 -- 
 2.8.1
