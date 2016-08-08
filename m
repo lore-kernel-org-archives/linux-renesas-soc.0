@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51538 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53710 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLB3 (ORCPT
+	with ESMTP id S1752360AbcHHLFs (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:01:29 -0400
+	Mon, 8 Aug 2016 07:05:48 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87lh0739p3.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiJ9-0002lR-8k@debutante>
-Date: Mon, 08 Aug 2016 12:01:23 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on pcm3008" to the asoc tree
+In-Reply-To: <874m6v8x9e.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiNJ-00040a-ML@debutante>
+Date: Mon, 08 Aug 2016 12:05:41 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on tlv320aic3x" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on pcm3008
+   ASoC: codec duplicated callback function goes to component on tlv320aic3x
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From 4cd747df40c6dfdc61daf22b6457904a3d87213a Mon Sep 17 00:00:00 2001
+>From 786e3a480fa9e04b36191a2529cabfec3e30ad9c Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:21:02 +0000
+Date: Mon, 8 Aug 2016 08:53:08 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- pcm3008
+ tlv320aic3x
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,29 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/pcm3008.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ sound/soc/codecs/tlv320aic3x.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/pcm3008.c b/sound/soc/codecs/pcm3008.c
-index 8fb445f33f6f..708af05486f6 100644
---- a/sound/soc/codecs/pcm3008.c
-+++ b/sound/soc/codecs/pcm3008.c
-@@ -99,10 +99,12 @@ static struct snd_soc_dai_driver pcm3008_dai = {
- };
- 
- static struct snd_soc_codec_driver soc_codec_dev_pcm3008 = {
--	.dapm_widgets = pcm3008_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(pcm3008_dapm_widgets),
--	.dapm_routes = pcm3008_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(pcm3008_dapm_routes),
+diff --git a/sound/soc/codecs/tlv320aic3x.c b/sound/soc/codecs/tlv320aic3x.c
+index a564759845f9..5a8d96ec058c 100644
+--- a/sound/soc/codecs/tlv320aic3x.c
++++ b/sound/soc/codecs/tlv320aic3x.c
+@@ -1670,12 +1670,14 @@ static struct snd_soc_codec_driver soc_codec_dev_aic3x = {
+ 	.idle_bias_off = true,
+ 	.probe = aic3x_probe,
+ 	.remove = aic3x_remove,
+-	.controls = aic3x_snd_controls,
+-	.num_controls = ARRAY_SIZE(aic3x_snd_controls),
+-	.dapm_widgets = aic3x_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(aic3x_dapm_widgets),
+-	.dapm_routes = intercon,
+-	.num_dapm_routes = ARRAY_SIZE(intercon),
 +	.component_driver = {
-+		.dapm_widgets		= pcm3008_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(pcm3008_dapm_widgets),
-+		.dapm_routes		= pcm3008_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(pcm3008_dapm_routes),
++		.controls		= aic3x_snd_controls,
++		.num_controls		= ARRAY_SIZE(aic3x_snd_controls),
++		.dapm_widgets		= aic3x_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(aic3x_dapm_widgets),
++		.dapm_routes		= intercon,
++		.num_dapm_routes	= ARRAY_SIZE(intercon),
 +	},
  };
  
- static int pcm3008_codec_probe(struct platform_device *pdev)
+ /*
 -- 
 2.8.1
