@@ -1,47 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:55969 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755328AbcH2SPT (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Aug 2016 14:15:19 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH] ARM: shmobile: Add RSKRZA1 DT bindings documentation
-Date: Mon, 29 Aug 2016 14:14:29 -0400
-Message-Id: <20160829181429.25115-1-chris.brandt@renesas.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53404 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751320AbcHHLFM (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 8 Aug 2016 07:05:12 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87mvkn7ihj.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiMk-0003qL-5g@debutante>
+Date: Mon, 08 Aug 2016 12:05:06 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on ssm2602" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add RSKRZA1 Device tree bindings Documentation, listing it as a supported
-board.
+The patch
 
-This allows to use checkpatch to validate DTSes referring to the RSKRZA1
-board.
+   ASoC: codec duplicated callback function goes to component on ssm2602
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 21c822343fc001b16c6865af8925c83268801644 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 08:57:35 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ ssm2602
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/codecs/ssm2602.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 1df32d3..2192b1c 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -63,6 +63,8 @@ Boards:
-     compatible = "renesas,marzen", "renesas,r8a7779"
-   - Porter (M2-LCDP)
-     compatible = "renesas,porter", "renesas,r8a7791"
-+  - RSKRZA1 (YR0K77210C000BE)
-+    compatible = "renesas,rskrza1", "renesas,r7s72100"
-   - Salvator-X (RTP0RC7795SIPB0010S)
-     compatible = "renesas,salvator-x", "renesas,r8a7795";
-   - Salvator-X
+diff --git a/sound/soc/codecs/ssm2602.c b/sound/soc/codecs/ssm2602.c
+index 4452fea0b118..993bde29ca1b 100644
+--- a/sound/soc/codecs/ssm2602.c
++++ b/sound/soc/codecs/ssm2602.c
+@@ -597,12 +597,14 @@ static struct snd_soc_codec_driver soc_codec_dev_ssm2602 = {
+ 	.set_bias_level = ssm2602_set_bias_level,
+ 	.suspend_bias_off = true,
+ 
+-	.controls = ssm260x_snd_controls,
+-	.num_controls = ARRAY_SIZE(ssm260x_snd_controls),
+-	.dapm_widgets = ssm260x_dapm_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(ssm260x_dapm_widgets),
+-	.dapm_routes = ssm260x_routes,
+-	.num_dapm_routes = ARRAY_SIZE(ssm260x_routes),
++	.component_driver = {
++		.controls		= ssm260x_snd_controls,
++		.num_controls		= ARRAY_SIZE(ssm260x_snd_controls),
++		.dapm_widgets		= ssm260x_dapm_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(ssm260x_dapm_widgets),
++		.dapm_routes		= ssm260x_routes,
++		.num_dapm_routes	= ARRAY_SIZE(ssm260x_routes),
++	},
+ };
+ 
+ static bool ssm2602_register_volatile(struct device *dev, unsigned int reg)
 -- 
-2.9.2
+2.8.1
