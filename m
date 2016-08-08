@@ -1,52 +1,45 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: [PATCH] PCI: rcar: Consolidate register space lookup and ioremap
-To: Simon Horman <horms@verge.net.au>
-From: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Mon, 22 Aug 2016 14:27:28 -0500
-Message-ID: <20160822192728.5055.58901.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f196.google.com ([209.85.223.196]:33265 "EHLO
+	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750916AbcHHNDG (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 8 Aug 2016 09:03:06 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <3560619.yXVhzgu5Aq@wasted.cogentembedded.com>
+References: <3910788.ckTpUWEs6B@wasted.cogentembedded.com> <3560619.yXVhzgu5Aq@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 8 Aug 2016 15:03:04 +0200
+Message-ID: <CAMuHMdXy6RUL5=ps9kcY9t3opFj2okTDeu_j7qmc22DcE8gukw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/6] ARM: dts: r8a7794: add MSTP5 clocks
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Move the devm_ioremap_resource() of R-Car register space next to the
-of_address_to_resource() that extracts the resource.  No functional change
-intended.
+On Wed, Jul 27, 2016 at 10:59 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add some MSTP5 clocks to the R8A7794 device tree.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/host/pcie-rcar.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 65db7a2..e58bbbc 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -775,6 +775,10 @@ static int rcar_pcie_get_resources(struct platform_device *pdev,
- 	if (err)
- 		return err;
- 
-+	pcie->base = devm_ioremap_resource(&pdev->dev, &res);
-+	if (IS_ERR(pcie->base))
-+		return PTR_ERR(pcie->base);
-+
- 	pcie->clk = devm_clk_get(&pdev->dev, "pcie");
- 	if (IS_ERR(pcie->clk)) {
- 		dev_err(pcie->dev, "cannot get platform clock\n");
-@@ -810,12 +814,6 @@ static int rcar_pcie_get_resources(struct platform_device *pdev,
- 	}
- 	pcie->msi.irq2 = i;
- 
--	pcie->base = devm_ioremap_resource(&pdev->dev, &res);
--	if (IS_ERR(pcie->base)) {
--		err = PTR_ERR(pcie->base);
--		goto err_map_reg;
--	}
--
- 	return 0;
- 
- err_map_reg:
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
