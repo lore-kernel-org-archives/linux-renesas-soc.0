@@ -1,75 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:46100 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751479AbcHCRrh convert rfc822-to-8bit (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53378 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979AbcHHLFJ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 3 Aug 2016 13:47:37 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hiep Cao Minh <cm-hiep@jinso.co.jp>
-Cc: Ryusuke Sakato <ryusuke.sakato.bx@renesas.com>,
-	kuninori morimoto <kuninori.morimoto.gx@renesas.com>,
-	magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	=?utf-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	=?utf-8?B?J0R1bmfvvJrkurrjgr0n?= <nv-dung@jinso.co.jp>,
-	Xuan Truong Nguyen <nx-truong@jinso.co.jp>,
-	laurent.pinchart+renesas@ideasonboard.com,
-	horms+renesas@verge.net.au, linux-renesas-soc@vger.kernel.org
-Subject: Re: The failure summary report for linux stable v4.7
-Date: Wed, 03 Aug 2016 20:38:26 +0300
-Message-ID: <14575379.WoFtKTTBW3@avalon>
-In-Reply-To: <9ba4b58f-173f-71a7-8868-d577a5789a7e@jinso.co.jp>
-References: <9ba4b58f-173f-71a7-8868-d577a5789a7e@jinso.co.jp>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="utf-8"
+	Mon, 8 Aug 2016 07:05:09 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87lh077ih2.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiMh-0003pV-6p@debutante>
+Date: Mon, 08 Aug 2016 12:05:03 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on spdif_transmitter" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Hiep-san,
+The patch
 
-On Wednesday 03 Aug 2016 20:27:07 Hiep Cao Minh wrote:
-> Hi all,
-> 
-> We would like to report the summary of the failure to ML, starting from
-> Linux stable v4.7.
-> 
-> Before, we only reported each issue to the person in charge at the time
-> of issue detection.
-> 
-> Now we think that the upstream version’s failure status quo should be
-> updated usually to all upstream members.
-> 
-> So, first, we are going to report the Linux upstream issue summary for
-> each version full test, then we report each issue to the person in charge.
-> 
-> Currently, we have full tests of upstream v4.x-rc2 and stable version,
-> and reconfirm the issue of rc2 version on v4.x-rc7 (before stable
-> version is released).
-> 
-> Between full test versions, we investigate and analyze the issue. We
-> will report the investigated results if find out any useful information.
-> 
-> Before:
-> 
-> Only report the issue to the person in charge at the time of issue
-> detection.
-> 
-> Sometimes re-report the issue to the person in charge.
-> 
-> After:
-> 
-> Usually update and report the summary of the issue to all members.
-> 
-> Usually report each issue and update the status quo to the person in charge.
+   ASoC: codec duplicated callback function goes to component on spdif_transmitter
 
-Thank you for the report. I tried to reproduce the Lager HDMI output issue on 
-mainline, and got blocked by the fact that HDMI output seems completely 
-broken. I'm investigating that and will provide a fix, and then move on to the 
-issue you've reported.
+has been applied to the asoc tree at
 
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From b9c990da5f258af36acc508f460356e47cd3cb14 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 8 Aug 2016 08:57:52 +0000
+Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
+ spdif_transmitter
+
+codec driver and component driver has duplicated callback functions,
+and codec side functions are just copied to component side when
+register timing. This was quick-hack, but no longer needed.
+This patch moves these functions from codec driver to component driver.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/spdif_transmitter.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/codecs/spdif_transmitter.c b/sound/soc/codecs/spdif_transmitter.c
+index ef634a9ad673..ee367536a498 100644
+--- a/sound/soc/codecs/spdif_transmitter.c
++++ b/sound/soc/codecs/spdif_transmitter.c
+@@ -38,10 +38,12 @@ static const struct snd_soc_dapm_route dit_routes[] = {
+ };
+ 
+ static struct snd_soc_codec_driver soc_codec_spdif_dit = {
+-	.dapm_widgets = dit_widgets,
+-	.num_dapm_widgets = ARRAY_SIZE(dit_widgets),
+-	.dapm_routes = dit_routes,
+-	.num_dapm_routes = ARRAY_SIZE(dit_routes),
++	.component_driver = {
++		.dapm_widgets		= dit_widgets,
++		.num_dapm_widgets	= ARRAY_SIZE(dit_widgets),
++		.dapm_routes		= dit_routes,
++		.num_dapm_routes	= ARRAY_SIZE(dit_routes),
++	},
+ };
+ 
+ static struct snd_soc_dai_driver dit_stub_dai = {
 -- 
-Regards,
-
-Laurent Pinchart
+2.8.1
