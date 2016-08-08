@@ -1,25 +1,25 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53102 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52332 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752101AbcHHLEj (ORCPT
+	with ESMTP id S1752002AbcHHLDF (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:04:39 -0400
+	Mon, 8 Aug 2016 07:03:05 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
 	Linux-ALSA <alsa-devel@alsa-project.org>,
 	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <877fbr7ic1.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiMD-0003gH-84@debutante>
-Date: Mon, 08 Aug 2016 12:04:33 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on inno_rk3036" to the asoc tree
+In-Reply-To: <87wpjr4oqb.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bWiKh-0003ES-LO@debutante>
+Date: Mon, 08 Aug 2016 12:02:59 +0100
+Subject: Applied "ASoC: codec duplicated callback function goes to component on ab8500-codec" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 The patch
 
-   ASoC: codec duplicated callback function goes to component on inno_rk3036
+   ASoC: codec duplicated callback function goes to component on ab8500-codec
 
 has been applied to the asoc tree at
 
@@ -44,11 +44,11 @@ to this mail.
 Thanks,
 Mark
 
->From f410a81d4d5fd4d0e9477c5d7ebd4e6712ed4c42 Mon Sep 17 00:00:00 2001
+>From ed135dd69556c70fb780985c536cc650e7f7b450 Mon Sep 17 00:00:00 2001
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:00:54 +0000
+Date: Mon, 8 Aug 2016 09:10:59 +0000
 Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- inno_rk3036
+ ab8500-codec
 
 codec driver and component driver has duplicated callback functions,
 and codec side functions are just copied to component side when
@@ -58,33 +58,33 @@ This patch moves these functions from codec driver to component driver.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/inno_rk3036.c | 14 ++++++++------
+ sound/soc/codecs/ab8500-codec.c | 14 ++++++++------
  1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/inno_rk3036.c b/sound/soc/codecs/inno_rk3036.c
-index 9b6e8840a1b5..b918ba5c8ce5 100644
---- a/sound/soc/codecs/inno_rk3036.c
-+++ b/sound/soc/codecs/inno_rk3036.c
-@@ -380,12 +380,14 @@ static struct snd_soc_codec_driver rk3036_codec_driver = {
- 	.probe			= rk3036_codec_probe,
- 	.remove			= rk3036_codec_remove,
- 	.set_bias_level		= rk3036_codec_set_bias_level,
--	.controls		= rk3036_codec_dapm_controls,
--	.num_controls		= ARRAY_SIZE(rk3036_codec_dapm_controls),
--	.dapm_routes		= rk3036_codec_dapm_routes,
--	.num_dapm_routes	= ARRAY_SIZE(rk3036_codec_dapm_routes),
--	.dapm_widgets		= rk3036_codec_dapm_widgets,
--	.num_dapm_widgets	= ARRAY_SIZE(rk3036_codec_dapm_widgets),
+diff --git a/sound/soc/codecs/ab8500-codec.c b/sound/soc/codecs/ab8500-codec.c
+index 2fc89155f14a..3056487ed5a9 100644
+--- a/sound/soc/codecs/ab8500-codec.c
++++ b/sound/soc/codecs/ab8500-codec.c
+@@ -2525,12 +2525,14 @@ static int ab8500_codec_probe(struct snd_soc_codec *codec)
+ 
+ static struct snd_soc_codec_driver ab8500_codec_driver = {
+ 	.probe =		ab8500_codec_probe,
+-	.controls =		ab8500_ctrls,
+-	.num_controls =		ARRAY_SIZE(ab8500_ctrls),
+-	.dapm_widgets =		ab8500_dapm_widgets,
+-	.num_dapm_widgets =	ARRAY_SIZE(ab8500_dapm_widgets),
+-	.dapm_routes =		ab8500_dapm_routes,
+-	.num_dapm_routes =	ARRAY_SIZE(ab8500_dapm_routes),
 +	.component_driver = {
-+		.controls		= rk3036_codec_dapm_controls,
-+		.num_controls		= ARRAY_SIZE(rk3036_codec_dapm_controls),
-+		.dapm_routes		= rk3036_codec_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(rk3036_codec_dapm_routes),
-+		.dapm_widgets		= rk3036_codec_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(rk3036_codec_dapm_widgets),
++		.controls =		ab8500_ctrls,
++		.num_controls =		ARRAY_SIZE(ab8500_ctrls),
++		.dapm_widgets =		ab8500_dapm_widgets,
++		.num_dapm_widgets =	ARRAY_SIZE(ab8500_dapm_widgets),
++		.dapm_routes =		ab8500_dapm_routes,
++		.num_dapm_routes =	ARRAY_SIZE(ab8500_dapm_routes),
 +	},
  };
  
- static const struct regmap_config rk3036_codec_regmap_config = {
+ static int ab8500_codec_driver_probe(struct platform_device *pdev)
 -- 
 2.8.1
