@@ -1,90 +1,67 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53306 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLFA (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:05:00 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	iommu@lists.linux-foundation.org,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Joerg Roedel <joro@8bytes.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87h9av7ifm.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiMY-0003mo-Bh@debutante>
-Date: Mon, 08 Aug 2016 12:04:54 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on rt5631" to the asoc tree
-Sender: linux-renesas-soc-owner@vger.kernel.org
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: Re: [PATCH 3/3] iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
+Date: Tue, 09 Aug 2016 16:19:01 +0300
+Message-ID: <14156780.DZdbshsptM@avalon>
+In-Reply-To: <7796705.iS1mBl6Cq9@avalon>
+References: <20160607033918.28687.98260.sendpatchset@little-apple> <CANqRtoSfzZhMXwLpbwr2k22qgcA=GJ5pxV82FPLkB4FKOqsX4g@mail.gmail.com> <7796705.iS1mBl6Cq9@avalon>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Tuesday 09 Aug 2016 16:17:57 Laurent Pinchart wrote:
+> On Wednesday 08 Jun 2016 18:12:31 Magnus Damm wrote:
+> > On Wed, Jun 8, 2016 at 5:48 PM, Laurent Pinchart wrote:
+> >> On Wednesday 08 Jun 2016 09:04:17 Geert Uytterhoeven wrote:
+> >>> On Wed, Jun 8, 2016 at 2:18 AM, Laurent Pinchart wrote:
+> >>>>> --- 0031/drivers/iommu/ipmmu-vmsa.c
+> >>>>> +++ work/drivers/iommu/ipmmu-vmsa.c   2016-06-06 11:19:40.210607110
+> 
+> [snip]
+> 
+> >>>>> @@ -1268,6 +1271,8 @@ IOMMU_OF_DECLARE(ipmmu_vmsa_iommu_of, "r
+> >>>>>                ipmmu_vmsa_iommu_of_setup);
+> >>>>>  IOMMU_OF_DECLARE(ipmmu_r8a7795_iommu_of, "renesas,ipmmu-r8a7795",
+> >>>>>                ipmmu_vmsa_iommu_of_setup);
+> >>>>> +IOMMU_OF_DECLARE(ipmmu_r8a7796_iommu_of, "renesas,ipmmu-r8a7796",
+> >>>>> +              ipmmu_vmsa_iommu_of_setup);
+> >>>> 
+> >>>> How about a Gen3 generic compatible string in addition to the
+> >>>> SoC-specific ones ?
+> >>> 
+> >>> Do we want to specify the number of utlbs here?
+> >>> Does it differ between r8a7795, r8a7796, and future members?
+> >> 
+> >> It differs between IPMMU instances on a given SoC, so if we want to
+> >> specify it it should be a DT property.
+> > 
+> > Can you please point out which documentation that says it varies with
+> > IPMMU instance?
+> > 
+> > Based on IMUCTRn register description "H3-ES1" has 0-31 range while
+> > "Others" have 0-47.
+> 
+> The maximum number of uTLBs is indeed the same according to that part of the
+> documentation, but not all uTLBs are available in all IPMMU instances. We
+> even have holes in the uTLB ranges, maybe a mask would be more appropriate.
 
-   ASoC: codec duplicated callback function goes to component on rt5631
+And the other option is of course to ignore that and accept any uTLB number, 
+in which case we will rely on the IOMMU bus master node providing correct 
+information.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From f78bc2bf1d336246c85fe5a009104fe7c3f586d9 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:58:45 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- rt5631
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/rt5631.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/codecs/rt5631.c b/sound/soc/codecs/rt5631.c
-index 1be2bab7dee3..0e418089c053 100644
---- a/sound/soc/codecs/rt5631.c
-+++ b/sound/soc/codecs/rt5631.c
-@@ -1657,12 +1657,14 @@ static struct snd_soc_codec_driver soc_codec_dev_rt5631 = {
- 	.probe = rt5631_probe,
- 	.set_bias_level = rt5631_set_bias_level,
- 	.suspend_bias_off = true,
--	.controls = rt5631_snd_controls,
--	.num_controls = ARRAY_SIZE(rt5631_snd_controls),
--	.dapm_widgets = rt5631_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(rt5631_dapm_widgets),
--	.dapm_routes = rt5631_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(rt5631_dapm_routes),
-+	.component_driver = {
-+		.controls		= rt5631_snd_controls,
-+		.num_controls		= ARRAY_SIZE(rt5631_snd_controls),
-+		.dapm_widgets		= rt5631_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(rt5631_dapm_widgets),
-+		.dapm_routes		= rt5631_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(rt5631_dapm_routes),
-+	},
- };
- 
- static const struct i2c_device_id rt5631_i2c_id[] = {
 -- 
-2.8.1
+Regards,
+
+Laurent Pinchart
