@@ -1,90 +1,107 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52186 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLCs (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:57858 "EHLO
+	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752441AbcHIPsD (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:02:48 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87oa534ona.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiKQ-00039F-63@debutante>
-Date: Mon, 08 Aug 2016 12:02:42 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on ak4535" to the asoc tree
+	Tue, 9 Aug 2016 11:48:03 -0400
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+	by ayla.of.borg with esmtp (Exim 4.82)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1bX9G5-00009f-9N
+	for linux-renesas-soc@vger.kernel.org; Tue, 09 Aug 2016 17:48:01 +0200
+Received: from geert by ramsan with local (Exim 4.82)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1bX9G5-0001P1-Vr
+	for linux-renesas-soc@vger.kernel.org; Tue, 09 Aug 2016 17:48:01 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2016-08-09-v4.8-rc1
+Date: Tue,  9 Aug 2016 17:48:01 +0200
+Message-Id: <1470757681-5353-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+I have pushed renesas-drivers-2016-08-09-v4.8-rc1 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-   ASoC: codec duplicated callback function goes to component on ak4535
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-has been applied to the asoc tree at
+Today's version is based on renesas-devel-20160808-v4.8-rc1.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Included branches with driver code:
+  - clk-renesas-for-v4.9
+  - sh-pfc-for-v4.9
+  - topic/r8a7796-pfc-v1-rebased3
+  - topic/ipmmu-multi-arch-v4
+  - topic/r8a7795-ipmmu-v2-rebased1
+  - topic/r8a7796-ipmmu-v1-rebased1
+  - topic/salvator-x-ipmmu-rfc-v3-rebased4
+  - topic/spi-slave-v1-rebased1
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-v4
+  - topic/i2c-demux-v3-rebased2
+  - topic/sdhi-gen3-dma-v3-rebased2
+  - topic/pretimeout-v1-rebased1
+  - topic/h3-pfc-set-voltage-v1-rebased2~1
+  - https://git.ragnatech.se/linux#for-renesas-drivers
+  - topic/fcpf-v1-rebased7
+  - topic/fdp1-v2-rebased2
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Included fixes:
+  - clk: renesas: r8a7795: Fix SD clocks
+  - Revert "net: ipconfig: drop inter-device timeout"
+  - Revert "net: ipconfig: Support using "delayed" DHCP replies"
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/mchehab/media-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git#mmc-next
+  - git://git.linaro.org/people/ulf.hansson/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/djbw/dmaengine.git#next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.infradead.org/battery-2.6.git#master
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm-intel#topic/drm-misc
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Gr{oetje,eeting}s,
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+						Geert
 
-Thanks,
-Mark
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
->From 301810d0dfbcd1f56c552da6c9234db5003ec344 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:12:48 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- ak4535
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/ak4535.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/codecs/ak4535.c b/sound/soc/codecs/ak4535.c
-index 54428c64387b..66cfffde9a12 100644
---- a/sound/soc/codecs/ak4535.c
-+++ b/sound/soc/codecs/ak4535.c
-@@ -395,12 +395,14 @@ static struct snd_soc_codec_driver soc_codec_dev_ak4535 = {
- 	.set_bias_level = ak4535_set_bias_level,
- 	.suspend_bias_off = true,
- 
--	.controls = ak4535_snd_controls,
--	.num_controls = ARRAY_SIZE(ak4535_snd_controls),
--	.dapm_widgets = ak4535_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(ak4535_dapm_widgets),
--	.dapm_routes = ak4535_audio_map,
--	.num_dapm_routes = ARRAY_SIZE(ak4535_audio_map),
-+	.component_driver = {
-+		.controls		= ak4535_snd_controls,
-+		.num_controls		= ARRAY_SIZE(ak4535_snd_controls),
-+		.dapm_widgets		= ak4535_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(ak4535_dapm_widgets),
-+		.dapm_routes		= ak4535_audio_map,
-+		.num_dapm_routes	= ARRAY_SIZE(ak4535_audio_map),
-+	},
- };
- 
- static int ak4535_i2c_probe(struct i2c_client *i2c,
--- 
-2.8.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
