@@ -1,172 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:51085 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754472AbcHSIjZ (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Aug 2016 04:39:25 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/6] drm: Don't implement empty prepare_fb()/cleanup_fb()
-Date: Fri, 19 Aug 2016 11:39:29 +0300
-Message-Id: <1471595974-28960-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1471595974-28960-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1471595974-28960-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36500 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932155AbcHIMn7 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 9 Aug 2016 08:43:59 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87twhtoxt0.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bX6No-0003VX-U3@debutante>
+Date: Tue, 09 Aug 2016 13:43:48 +0100
+Subject: Applied "ASoC: rsrc-card: use asoc_simple_card_init_dai()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The plane .prepare_fb() and .cleanup_fb() helpers are optional, there's
-no need to implement empty stubs, and no need to explicitly set the
-function pointers to NULL either.
+The patch
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+   ASoC: rsrc-card: use asoc_simple_card_init_dai()
+
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 600ee2085515c03a7a4a6025034fefccf29e5a24 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Tue, 9 Aug 2016 05:49:21 +0000
+Subject: [PATCH] ASoC: rsrc-card: use asoc_simple_card_init_dai()
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/gpu/drm/arc/arcpgu_crtc.c               |  2 --
- drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_plane.c     | 15 ---------------
- drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c | 15 ---------------
- drivers/gpu/drm/tegra/dc.c                      | 17 -----------------
- drivers/gpu/drm/vc4/vc4_plane.c                 |  2 --
- 5 files changed, 51 deletions(-)
+ sound/soc/sh/rcar/rsrc-card.c | 26 +-------------------------
+ 1 file changed, 1 insertion(+), 25 deletions(-)
 
-diff --git a/drivers/gpu/drm/arc/arcpgu_crtc.c b/drivers/gpu/drm/arc/arcpgu_crtc.c
-index ee0a61c2861b..7130b044b004 100644
---- a/drivers/gpu/drm/arc/arcpgu_crtc.c
-+++ b/drivers/gpu/drm/arc/arcpgu_crtc.c
-@@ -183,8 +183,6 @@ static void arc_pgu_plane_atomic_update(struct drm_plane *plane,
+diff --git a/sound/soc/sh/rcar/rsrc-card.c b/sound/soc/sh/rcar/rsrc-card.c
+index 82187e00eb12..1bf35634ebba 100644
+--- a/sound/soc/sh/rcar/rsrc-card.c
++++ b/sound/soc/sh/rcar/rsrc-card.c
+@@ -97,7 +97,6 @@ static int rsrc_card_dai_init(struct snd_soc_pcm_runtime *rtd)
+ 	struct snd_soc_dai_link *dai_link;
+ 	struct asoc_simple_dai *dai_props;
+ 	int num = rtd->num;
+-	int ret;
+ 
+ 	dai_link	= rsrc_priv_to_link(priv, num);
+ 	dai_props	= rsrc_priv_to_props(priv, num);
+@@ -105,30 +104,7 @@ static int rsrc_card_dai_init(struct snd_soc_pcm_runtime *rtd)
+ 				rtd->cpu_dai :
+ 				rtd->codec_dai;
+ 
+-	if (dai_props->sysclk) {
+-		ret = snd_soc_dai_set_sysclk(dai, 0, dai_props->sysclk, 0);
+-		if (ret && ret != -ENOTSUPP) {
+-			dev_err(dai->dev, "set_sysclk error\n");
+-			goto err;
+-		}
+-	}
+-
+-	if (dai_props->slots) {
+-		ret = snd_soc_dai_set_tdm_slot(dai,
+-					       dai_props->tx_slot_mask,
+-					       dai_props->rx_slot_mask,
+-					       dai_props->slots,
+-					       dai_props->slot_width);
+-		if (ret && ret != -ENOTSUPP) {
+-			dev_err(dai->dev, "set_tdm_slot error\n");
+-			goto err;
+-		}
+-	}
+-
+-	ret = 0;
+-
+-err:
+-	return ret;
++	return asoc_simple_card_init_dai(dai, dai_props);
  }
  
- static const struct drm_plane_helper_funcs arc_pgu_plane_helper_funcs = {
--	.prepare_fb = NULL,
--	.cleanup_fb = NULL,
- 	.atomic_update = arc_pgu_plane_atomic_update,
- };
- 
-diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_plane.c b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_plane.c
-index e50467a0deb0..a7e5486bd1e9 100644
---- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_plane.c
-+++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_plane.c
-@@ -169,25 +169,10 @@ static void fsl_dcu_drm_plane_atomic_update(struct drm_plane *plane,
- 	return;
- }
- 
--static void
--fsl_dcu_drm_plane_cleanup_fb(struct drm_plane *plane,
--			     const struct drm_plane_state *new_state)
--{
--}
--
--static int
--fsl_dcu_drm_plane_prepare_fb(struct drm_plane *plane,
--			     const struct drm_plane_state *new_state)
--{
--	return 0;
--}
--
- static const struct drm_plane_helper_funcs fsl_dcu_drm_plane_helper_funcs = {
- 	.atomic_check = fsl_dcu_drm_plane_atomic_check,
- 	.atomic_disable = fsl_dcu_drm_plane_atomic_disable,
- 	.atomic_update = fsl_dcu_drm_plane_atomic_update,
--	.cleanup_fb = fsl_dcu_drm_plane_cleanup_fb,
--	.prepare_fb = fsl_dcu_drm_plane_prepare_fb,
- };
- 
- static void fsl_dcu_drm_plane_destroy(struct drm_plane *plane)
-diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-index c3707d47cd89..635ead039b8b 100644
---- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-+++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-@@ -815,19 +815,6 @@ static void ade_disable_channel(struct ade_plane *aplane)
- 	ade_compositor_routing_disable(base, ch);
- }
- 
--static int ade_plane_prepare_fb(struct drm_plane *plane,
--				const struct drm_plane_state *new_state)
--{
--	/* do nothing */
--	return 0;
--}
--
--static void ade_plane_cleanup_fb(struct drm_plane *plane,
--				 const struct drm_plane_state *old_state)
--{
--	/* do nothing */
--}
--
- static int ade_plane_atomic_check(struct drm_plane *plane,
- 				  struct drm_plane_state *state)
- {
-@@ -895,8 +882,6 @@ static void ade_plane_atomic_disable(struct drm_plane *plane,
- }
- 
- static const struct drm_plane_helper_funcs ade_plane_helper_funcs = {
--	.prepare_fb = ade_plane_prepare_fb,
--	.cleanup_fb = ade_plane_cleanup_fb,
- 	.atomic_check = ade_plane_atomic_check,
- 	.atomic_update = ade_plane_atomic_update,
- 	.atomic_disable = ade_plane_atomic_disable,
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 8495bd01b544..3de7ce33d3d4 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -480,17 +480,6 @@ static const struct drm_plane_funcs tegra_primary_plane_funcs = {
- 	.atomic_destroy_state = tegra_plane_atomic_destroy_state,
- };
- 
--static int tegra_plane_prepare_fb(struct drm_plane *plane,
--				  const struct drm_plane_state *new_state)
--{
--	return 0;
--}
--
--static void tegra_plane_cleanup_fb(struct drm_plane *plane,
--				   const struct drm_plane_state *old_fb)
--{
--}
--
- static int tegra_plane_state_add(struct tegra_plane *plane,
- 				 struct drm_plane_state *state)
- {
-@@ -624,8 +613,6 @@ static void tegra_plane_atomic_disable(struct drm_plane *plane,
- }
- 
- static const struct drm_plane_helper_funcs tegra_primary_plane_helper_funcs = {
--	.prepare_fb = tegra_plane_prepare_fb,
--	.cleanup_fb = tegra_plane_cleanup_fb,
- 	.atomic_check = tegra_plane_atomic_check,
- 	.atomic_update = tegra_plane_atomic_update,
- 	.atomic_disable = tegra_plane_atomic_disable,
-@@ -796,8 +783,6 @@ static const struct drm_plane_funcs tegra_cursor_plane_funcs = {
- };
- 
- static const struct drm_plane_helper_funcs tegra_cursor_plane_helper_funcs = {
--	.prepare_fb = tegra_plane_prepare_fb,
--	.cleanup_fb = tegra_plane_cleanup_fb,
- 	.atomic_check = tegra_cursor_atomic_check,
- 	.atomic_update = tegra_cursor_atomic_update,
- 	.atomic_disable = tegra_cursor_atomic_disable,
-@@ -866,8 +851,6 @@ static const uint32_t tegra_overlay_plane_formats[] = {
- };
- 
- static const struct drm_plane_helper_funcs tegra_overlay_plane_helper_funcs = {
--	.prepare_fb = tegra_plane_prepare_fb,
--	.cleanup_fb = tegra_plane_cleanup_fb,
- 	.atomic_check = tegra_plane_atomic_check,
- 	.atomic_update = tegra_plane_atomic_update,
- 	.atomic_disable = tegra_plane_atomic_disable,
-diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_plane.c
-index 29e4b400e25e..881bf489478b 100644
---- a/drivers/gpu/drm/vc4/vc4_plane.c
-+++ b/drivers/gpu/drm/vc4/vc4_plane.c
-@@ -735,8 +735,6 @@ void vc4_plane_async_set_fb(struct drm_plane *plane, struct drm_framebuffer *fb)
- }
- 
- static const struct drm_plane_helper_funcs vc4_plane_helper_funcs = {
--	.prepare_fb = NULL,
--	.cleanup_fb = NULL,
- 	.atomic_check = vc4_plane_atomic_check,
- 	.atomic_update = vc4_plane_atomic_update,
- };
+ static int rsrc_card_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
 -- 
-Regards,
-
-Laurent Pinchart
+2.8.1
