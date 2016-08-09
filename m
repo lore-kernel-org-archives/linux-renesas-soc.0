@@ -1,45 +1,174 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f196.google.com ([209.85.223.196]:33513 "EHLO
-	mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752007AbcHHMwe (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36644 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932498AbcHIMoP (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 08:52:34 -0400
-MIME-Version: 1.0
-In-Reply-To: <3648013.0C8PEQFoEL@wasted.cogentembedded.com>
-References: <1618499.8bcj8adpVO@wasted.cogentembedded.com> <3648013.0C8PEQFoEL@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 8 Aug 2016 14:52:33 +0200
-Message-ID: <CAMuHMdU18ycEbuqL-0dccKXDtO-BmPAbMBMOMdt5LVwrGF6BMA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: r8a7792: add I2C support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+	Tue, 9 Aug 2016 08:44:15 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	Banajit Goswami <bgoswami@codeaurora.org>,
+	linux-kernel@vger.kernel.org, Patrick Lai <plai@codeaurora.org>,
+	Takashi Iwai <tiwai@suse.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+In-Reply-To: <87invl9gbq.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bX6O6-0003b8-Av@debutante>
+Date: Tue, 09 Aug 2016 13:44:06 +0100
+Subject: Applied "ASoC: lpass-platform: don't use snd_soc_pcm_set_drvdata()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Jul 23, 2016 at 8:49 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Define the generic R8A7792 parts of the I2C[0-5] device node.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The patch
 
-JFTR, Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+   ASoC: lpass-platform: don't use snd_soc_pcm_set_drvdata()
 
-Gr{oetje,eeting}s,
+has been applied to the asoc tree at
 
-                        Geert
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 6adcbdcd4b6e8301c3a4c61284e701f87de9a409 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 1 Aug 2016 06:10:54 +0000
+Subject: [PATCH] ASoC: lpass-platform: don't use snd_soc_pcm_set_drvdata()
+
+snd_soc_pcm_set_drvdata() will set driver data to rtd->dev,
+but driver data of rtd->dev is already used as "rtd" on
+soc_post_component_init().
+
+	static int soc_post_component_init(xxx)
+	{
+		...
+		dev_set_drvdata(rtd->dev, rtd);
+		...
+	}
+
+To remove confusion, snd_soc_pcm_set/get_drvdata() should be
+removed soon. This patch is for it.
+
+qcom/lpass-platform.c sets struct lpass_pcm_data to rtd->dev today,
+but we can replace it to struct lpass_data :: private_data.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/qcom/lpass-platform.c | 14 +++++++-------
+ sound/soc/qcom/lpass.h          |  2 ++
+ 2 files changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/sound/soc/qcom/lpass-platform.c b/sound/soc/qcom/lpass-platform.c
+index db000c6987a1..a144c14c7169 100644
+--- a/sound/soc/qcom/lpass-platform.c
++++ b/sound/soc/qcom/lpass-platform.c
+@@ -84,9 +84,9 @@ static int lpass_platform_pcmops_hw_params(struct snd_pcm_substream *substream,
+ 		struct snd_pcm_hw_params *params)
+ {
+ 	struct snd_soc_pcm_runtime *soc_runtime = substream->private_data;
+-	struct lpass_pcm_data *pcm_data = snd_soc_pcm_get_drvdata(soc_runtime);
+ 	struct lpass_data *drvdata =
+ 		snd_soc_platform_get_drvdata(soc_runtime->platform);
++	struct lpass_pcm_data *pcm_data = drvdata->private_data;
+ 	struct lpass_variant *v = drvdata->variant;
+ 	snd_pcm_format_t format = params_format(params);
+ 	unsigned int channels = params_channels(params);
+@@ -177,9 +177,9 @@ static int lpass_platform_pcmops_hw_params(struct snd_pcm_substream *substream,
+ static int lpass_platform_pcmops_hw_free(struct snd_pcm_substream *substream)
+ {
+ 	struct snd_soc_pcm_runtime *soc_runtime = substream->private_data;
+-	struct lpass_pcm_data *pcm_data = snd_soc_pcm_get_drvdata(soc_runtime);
+ 	struct lpass_data *drvdata =
+ 		snd_soc_platform_get_drvdata(soc_runtime->platform);
++	struct lpass_pcm_data *pcm_data = drvdata->private_data;
+ 	struct lpass_variant *v = drvdata->variant;
+ 	unsigned int reg;
+ 	int ret;
+@@ -201,9 +201,9 @@ static int lpass_platform_pcmops_prepare(struct snd_pcm_substream *substream)
+ {
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	struct snd_soc_pcm_runtime *soc_runtime = substream->private_data;
+-	struct lpass_pcm_data *pcm_data = snd_soc_pcm_get_drvdata(soc_runtime);
+ 	struct lpass_data *drvdata =
+ 		snd_soc_platform_get_drvdata(soc_runtime->platform);
++	struct lpass_pcm_data *pcm_data = drvdata->private_data;
+ 	struct lpass_variant *v = drvdata->variant;
+ 	int ret, ch, dir = substream->stream;
+ 
+@@ -255,9 +255,9 @@ static int lpass_platform_pcmops_trigger(struct snd_pcm_substream *substream,
+ 		int cmd)
+ {
+ 	struct snd_soc_pcm_runtime *soc_runtime = substream->private_data;
+-	struct lpass_pcm_data *pcm_data = snd_soc_pcm_get_drvdata(soc_runtime);
+ 	struct lpass_data *drvdata =
+ 		snd_soc_platform_get_drvdata(soc_runtime->platform);
++	struct lpass_pcm_data *pcm_data = drvdata->private_data;
+ 	struct lpass_variant *v = drvdata->variant;
+ 	int ret, ch, dir = substream->stream;
+ 
+@@ -331,9 +331,9 @@ static snd_pcm_uframes_t lpass_platform_pcmops_pointer(
+ 		struct snd_pcm_substream *substream)
+ {
+ 	struct snd_soc_pcm_runtime *soc_runtime = substream->private_data;
+-	struct lpass_pcm_data *pcm_data = snd_soc_pcm_get_drvdata(soc_runtime);
+ 	struct lpass_data *drvdata =
+ 			snd_soc_platform_get_drvdata(soc_runtime->platform);
++	struct lpass_pcm_data *pcm_data = drvdata->private_data;
+ 	struct lpass_variant *v = drvdata->variant;
+ 	unsigned int base_addr, curr_addr;
+ 	int ret, ch, dir = substream->stream;
+@@ -483,7 +483,7 @@ static int lpass_platform_pcm_new(struct snd_soc_pcm_runtime *soc_runtime)
+ 		return -ENOMEM;
+ 
+ 	data->i2s_port = cpu_dai->driver->id;
+-	snd_soc_pcm_set_drvdata(soc_runtime, data);
++	drvdata->private_data = data;
+ 
+ 	psubstream = pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream;
+ 	if (psubstream) {
+@@ -570,8 +570,8 @@ static void lpass_platform_pcm_free(struct snd_pcm *pcm)
+ 		substream = pcm->streams[i].substream;
+ 		if (substream) {
+ 			rt = substream->private_data;
+-			data = snd_soc_pcm_get_drvdata(rt);
+ 			drvdata = snd_soc_platform_get_drvdata(rt->platform);
++			data = drvdata->private_data;
+ 
+ 			ch = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+ 				? data->rdma_ch
+diff --git a/sound/soc/qcom/lpass.h b/sound/soc/qcom/lpass.h
+index 30714ad1e138..35b3cea8207d 100644
+--- a/sound/soc/qcom/lpass.h
++++ b/sound/soc/qcom/lpass.h
+@@ -58,6 +58,8 @@ struct lpass_data {
+ 	/* 8016 specific */
+ 	struct clk *pcnoc_mport_clk;
+ 	struct clk *pcnoc_sway_clk;
++
++	void *private_data;
+ };
+ 
+ /* Vairant data per each SOC */
+-- 
+2.8.1
