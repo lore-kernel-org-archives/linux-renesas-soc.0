@@ -1,83 +1,118 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:32798 "EHLO
-	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754115AbcHAQwM (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36558 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932155AbcHIMoD (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 1 Aug 2016 12:52:12 -0400
-Received: by mail-lf0-f47.google.com with SMTP id b199so120029988lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 01 Aug 2016 09:52:10 -0700 (PDT)
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Mon, 1 Aug 2016 18:52:07 +0200
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	slongerbeam@gmail.com, lars@metafoo.de, mchehab@kernel.org,
-	hans.verkuil@cisco.com
-Subject: Re: [PATCH 1/6] media: rcar-vin: allow field to be changed
-Message-ID: <20160801165207.GD3672@bigcity.dyn.berto.se>
-References: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
- <20160729174012.14331-2-niklas.soderlund+renesas@ragnatech.se>
- <1f735458-9ff3-f3fc-e349-20ac0b57cde1@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1f735458-9ff3-f3fc-e349-20ac0b57cde1@cogentembedded.com>
+	Tue, 9 Aug 2016 08:44:03 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87eg8xqcq9.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bX6Nx-0003YA-JX@debutante>
+Date: Tue, 09 Aug 2016 13:43:57 +0100
+Subject: Applied "ASoC: simple-card: use asoc_simple_card_init_dai()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+The patch
 
-Thanks for testing!
+   ASoC: simple-card: use asoc_simple_card_init_dai()
 
-On 2016-07-30 00:04:33 +0300, Sergei Shtylyov wrote:
-> On 07/29/2016 08:40 PM, Niklas S�derlund wrote:
-> 
-> > The driver forced whatever field was set by the source subdevice to be
-> > used. This patch allows the user to change from the default field.
-> > 
-> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> 
->    I didn't apply this patch at first (thinking it was unnecessary), and the
-> capture worked fine. The field order appeared swapped again after I did
-> import this patch as well. :-(
+has been applied to the asoc tree at
 
-I had a look at the test tool you told me you use 
-(https://linuxtv.org/downloads/v4l-dvb-apis/capture-example.html) and 
-the reason the field order is swapped is a combination of that tool and 
-how the rcar-vin driver interprets V4L2_FIELD_INTERLACED.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-1. The tool you use asks for V4L2_FIELD_INTERLACED if the -f switch is 
-   used. You told me #v4l that you do use that switch, but have modified 
-   the tool to use a different pixelformat than used in the link above, 
-   correct?
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-2. The rcar-vin driver interprets V4L2_FIELD_INTERLACED as 
-   V4L2_FIELD_INTERLACED_TB. If this is correct or not I do not know, 
-   the old soc-camera version of the driver do it this way so I have 
-   kept that logic.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-This is the reason why the field order is wrong when you apply this 
-patch. Without it the field order would be locked to whatever the 
-subdevice reports, V4L2_FIELD_ALTERNATE in this case.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-I don't know if it's correct to treat V4L2_FIELD_INTERLACED as 
-V4L2_FIELD_INTERLACED_TB or if I should try and use G_STD if 
-V4L2_FIELD_INTERLACED is requested and change the field to _TB or _BT 
-according to the result of that. I feel this will only push the problem 
-further down. What if G_STD is not implemented by the subdevice? Then a 
-default fallback interpretation to ether _TB or _BT would still be 
-needed. I'm open to suggestion on how to handle this case.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-There is also a feature missing in this patch. The field order was set 
-to V4L2_FIELD_NONE if the requested format asks for V4L2_FIELD_ANY.  
-This have no effect for how you test but i did run into it while trying 
-to figure this out. I will send out a v2 which solves this by retaining 
-the current field mode if V4L2_FIELD_ANY is asked for.
+Thanks,
+Mark
 
-> 
-> MBR, Sergei
-> 
+>From d8cb9354c86dddb1fb67d3f247c9ebbacd6b4c07 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Tue, 9 Aug 2016 05:48:53 +0000
+Subject: [PATCH] ASoC: simple-card: use asoc_simple_card_init_dai()
 
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/generic/simple-card.c | 38 +++-----------------------------------
+ 1 file changed, 3 insertions(+), 35 deletions(-)
+
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index 99028c190ea3..03ecca85a724 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -179,51 +179,19 @@ static struct snd_soc_ops asoc_simple_card_ops = {
+ 	.hw_params = asoc_simple_card_hw_params,
+ };
+ 
+-static int __asoc_simple_card_dai_init(struct snd_soc_dai *dai,
+-				       struct asoc_simple_dai *set)
+-{
+-	int ret;
+-
+-	if (set->sysclk) {
+-		ret = snd_soc_dai_set_sysclk(dai, 0, set->sysclk, 0);
+-		if (ret && ret != -ENOTSUPP) {
+-			dev_err(dai->dev, "simple-card: set_sysclk error\n");
+-			goto err;
+-		}
+-	}
+-
+-	if (set->slots) {
+-		ret = snd_soc_dai_set_tdm_slot(dai,
+-					       set->tx_slot_mask,
+-					       set->rx_slot_mask,
+-						set->slots,
+-						set->slot_width);
+-		if (ret && ret != -ENOTSUPP) {
+-			dev_err(dai->dev, "simple-card: set_tdm_slot error\n");
+-			goto err;
+-		}
+-	}
+-
+-	ret = 0;
+-
+-err:
+-	return ret;
+-}
+-
+ static int asoc_simple_card_dai_init(struct snd_soc_pcm_runtime *rtd)
+ {
+ 	struct simple_card_data *priv =	snd_soc_card_get_drvdata(rtd->card);
+ 	struct snd_soc_dai *codec = rtd->codec_dai;
+ 	struct snd_soc_dai *cpu = rtd->cpu_dai;
+-	struct simple_dai_props *dai_props;
++	struct simple_dai_props *dai_props = &priv->dai_props[rtd->num];
+ 	int ret;
+ 
+-	dai_props = &priv->dai_props[rtd->num];
+-	ret = __asoc_simple_card_dai_init(codec, &dai_props->codec_dai);
++	ret = asoc_simple_card_init_dai(codec, &dai_props->codec_dai);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = __asoc_simple_card_dai_init(cpu, &dai_props->cpu_dai);
++	ret = asoc_simple_card_init_dai(cpu, &dai_props->cpu_dai);
+ 	if (ret < 0)
+ 		return ret;
+ 
 -- 
-Regards,
-Niklas S�derlund
+2.8.1
