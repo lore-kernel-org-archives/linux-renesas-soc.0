@@ -1,73 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33593 "EHLO
-	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932183AbcHIKCp (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52195 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932403AbcHIMou (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 9 Aug 2016 06:02:45 -0400
+	Tue, 9 Aug 2016 08:44:50 -0400
+Date: Tue, 9 Aug 2016 14:38:07 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, devicetree@vger.kernel.org,
+	magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/6] Add R8A7794/SILK sound DT support
+Message-ID: <20160809123807.GB5878@verge.net.au>
+References: <3910788.ckTpUWEs6B@wasted.cogentembedded.com>
+ <87y44l2uy1.wl%kuninori.morimoto.gx@renesas.com>
+ <20160808105901.GH17838@verge.net.au>
+ <f2d0ede3-6776-6c50-cdbc-2825295182ce@cogentembedded.com>
 MIME-Version: 1.0
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 9 Aug 2016 12:02:44 +0200
-Message-ID: <CAMuHMdVjugL0y-C+vet=qbcER8rjuFKwFgrutRUAs=uOk0JZ1A@mail.gmail.com>
-Subject: Regression introduced by "net: ipconfig: Support using "delayed" DHCP replies"
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f2d0ede3-6776-6c50-cdbc-2825295182ce@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Uwe, David,
+On Mon, Aug 08, 2016 at 09:54:54PM +0300, Sergei Shtylyov wrote:
+> On 08/08/2016 01:59 PM, Simon Horman wrote:
+> 
+> >>>   Here's the set of 6 patches against Simon Horman's 'renesas.git' repo,
+> >>>'renesas-devel-20160725-v4.7-rc7' tag. I'm adding the sound device tree support
+> >>>for the R8A7794 SoC based SILK board.
+> >>>
+> >>>[1/6] ARM: dts: r8a7794: add audio clocks
+> >>>[2/6] ARM: dts: r8a7794: add MSTP5 clocks
+> >>>[3/6] ARM: dts: r8a7794: add MSTP10 clocks
+> >>>[4/6] ARM: dts: r8a7794: add Audio-DMAC support
+> >>>[5/6] ARM: dts: r8a7794: add sound support
+> >>>[6/6] ARM: dts: silk: add sound support
+> >>
+> >>For all patches
+> >>
+> >>Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> >
+> >Thanks, I have queued these up.
+> 
+>    Great, TY!
+>    However, I noticed that the the latest devel tag is said to be still
+> based on v4.7-rc7 while in practice it's based on v4.8-rc1...
 
-On current net-next, I see the following corruption during DHCP on
-r8a7791/koelsch, which uses the sh_eth driver:
-
-     Sending DHCP requests ., OK
-     IP-Config: Got DHCP answer from 192.168.97.254, my address is 192.168.97.28
-     IP-Config: Complete:
--         device=eth0, hwaddr=2e:09:0a:00:6d:85, ipaddr=192.168.97.28,
-mask=255.255.255.0, gw=192.168.97.254
-+         device=^M\xffffffc0\xffffffa0\xffffffe1,
-hwaddr=0e:9e:45:ac:dd:b4:3a:88:95:e1:50:af:0c:44:92:c0:6c:46:9f:02:34:1e:58:21:cd:c3:40:0c:ed:80:b1:74:10:0c:04:31:06:9f:04:01:04:93:5c:51:83:18:46:09,
-ipaddr=192.168.97.28, mask=255.255.255.0, gw=192.168.97.254
-
-It may also crash in ip_auto_config() with e.g. "Unable to handle kernel NULL
-pointer dereference at virtual address 0000017d".
-
-I've bisected this to commit 2647cffb2bc6fbed163d377390eb7ca552c7c1cb
-('net: ipconfig: Support using "delayed" DHCP replies').
-Unfortunately just reverting that commit on current net-next is not a
-solution, as
-that may lead to DHCP failures:
-
-    DHCP/BOOTP: Ignoring delayed packet
-    timed out!
-    [...]
-    IP-Config: Retrying forever (NFS root)...
-
-Reverting also commit e068853409aa1720 ("net: ipconfig: drop inter-device
-timeout") fixes that, though.
-
-On r8a7795/salvator-x, which uses the ravb driver, I once saw the following:
-
-     Sending DHCP requests ., OK
-     IP-Config: Got DHCP answer from 192.168.97.254, my address is 192.168.97.44
-     IP-Config: Complete:
--         device=eth0, hwaddr=2e:09:0a:00:83:1e, ipaddr=192.168.97.44,
-mask=255.255.255.0, gw=192.168.97.254
-+         device=, hwaddr=(null), ipaddr=192.168.97.44,
-mask=255.255.255.0, gw=192.168.97.254
-
-This isn't reproducible at will, though.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks for pointing that out, I have fixed it.
