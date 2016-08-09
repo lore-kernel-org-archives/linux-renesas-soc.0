@@ -1,57 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33190 "EHLO
-	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752439AbcHKJRT (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:36599 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932289AbcHIM3M (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 11 Aug 2016 05:17:19 -0400
-Received: by mail-it0-f66.google.com with SMTP id d65so51321ith.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 11 Aug 2016 02:17:18 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1470745752-23738-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Tue, 9 Aug 2016 08:29:12 -0400
+Received: from avalon.bb.dnainternet.fi (85-23-193-79.bb.dnainternet.fi [85.23.193.79])
+	by galahad.ideasonboard.com (Postfix) with ESMTPSA id B2552208BF
+	for <linux-renesas-soc@vger.kernel.org>; Tue,  9 Aug 2016 14:28:57 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 4/4] arm64: dts: renesas: salvator-x: Enable DU
+Date: Tue,  9 Aug 2016 15:29:12 +0300
+Message-Id: <1470745752-23738-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1470745752-23738-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 References: <1470745752-23738-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
- <1470745752-23738-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 11 Aug 2016 11:17:17 +0200
-Message-ID: <CAMuHMdXKVocK4pCF8h6h53263AzFfO9wdmN7wigH5xvLUpTA-g@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] arm64: dts: renesas: salvator-x: Enable DU
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Only the VGA output is supported for now.
 
-On Tue, Aug 9, 2016 at 2:29 PM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> Only the VGA output is supported for now.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 44 ++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 98f02631a0f0..8f916c52f261 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -135,6 +135,50 @@
+ 			sound-dai = <&ak4613>;
+ 		};
+ 	};
++
++	vga-encoder {
++		compatible = "adi,adv7123";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7123_in: endpoint {
++					remote-endpoint = <&du_out_rgb>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				adv7123_out: endpoint {
++					remote-endpoint = <&vga_in>;
++				};
++			};
++		};
++	};
++
++	vga {
++		compatible = "vga-connector";
++
++		port {
++			vga_in: endpoint {
++				remote-endpoint = <&adv7123_out>;
++			};
++		};
++	};
++};
++
++&du {
++	status = "okay";
++
++	ports {
++		port@0 {
++			endpoint {
++				remote-endpoint = <&adv7123_in>;
++			};
++		};
++	};
+ };
+ 
+ &extal_clk {
+-- 
+Regards,
 
-One question below, though...
-
-> --- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-> @@ -135,6 +135,50 @@
-
-> +&du {
-> +       status = "okay";
-
-Don't you need pinctrl properties? Or are you relying on initial settings?
-
-GPSR initial settings for DU depend on MD[4:1] i.e. SW10[5:8].
-The defaults on my board are not 0000, so all DU pins are GPIOs?
-IPSR initial settings don't seem to be documented.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
