@@ -1,90 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53736 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752320AbcHHLFv (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51861 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932165AbcHIMTV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:05:51 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <8760rb8xa9.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiNM-00041T-KT@debutante>
-Date: Mon, 08 Aug 2016 12:05:44 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8510" to the asoc tree
+	Tue, 9 Aug 2016 08:19:21 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa-dev@sang-engineering.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/2] ARM: dts: alt: add MMCIF support
+Date: Tue,  9 Aug 2016 14:19:04 +0200
+Message-Id: <1470745144-5394-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1470745144-5394-1-git-send-email-horms+renesas@verge.net.au>
+References: <1470745144-5394-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Define the Alt board dependent part of the MMCIF device node.
 
-   ASoC: codec duplicated callback function goes to component on wm8510
+Like the Silk the board has eMMC chip along with the  necessary voltage
+regulator (note that the Vcc/Vccq regulator is dummy -- it's required by
+the MMCIF driver but doesn't actually exist on the board).
 
-has been applied to the asoc tree at
+Based on work for the Silk board by Vladimir Barinov and Sergei Shtylyov.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 42c889233d8d5e075fdf8a2643a4ca69a9807075 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:52:40 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- wm8510
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>.
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- sound/soc/codecs/wm8510.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a7794-alt.dts | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/sound/soc/codecs/wm8510.c b/sound/soc/codecs/wm8510.c
-index 99e40e629cca..7f93adf7118d 100644
---- a/sound/soc/codecs/wm8510.c
-+++ b/sound/soc/codecs/wm8510.c
-@@ -586,12 +586,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8510 = {
- 	.set_bias_level = wm8510_set_bias_level,
- 	.suspend_bias_off = true,
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index fe7c128cc965..8d1b35afaf82 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -30,6 +30,15 @@
+ 		reg = <0 0x40000000 0 0x40000000>;
+ 	};
  
--	.controls = wm8510_snd_controls,
--	.num_controls = ARRAY_SIZE(wm8510_snd_controls),
--	.dapm_widgets = wm8510_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(wm8510_dapm_widgets),
--	.dapm_routes = wm8510_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(wm8510_dapm_routes),
-+	.component_driver = {
-+		.controls		= wm8510_snd_controls,
-+		.num_controls		= ARRAY_SIZE(wm8510_snd_controls),
-+		.dapm_widgets		= wm8510_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(wm8510_dapm_widgets),
-+		.dapm_routes		= wm8510_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(wm8510_dapm_routes),
-+	},
++	d3_3v: regulator-d3-3v {
++		compatible = "regulator-fixed";
++		regulator-name = "D3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
+ 	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
+ 
+@@ -190,6 +199,11 @@
+ 		function = "vin0";
+ 	};
+ 
++	mmcif0_pins: mmcif0 {
++		groups = "mmc_data8", "mmc_ctrl";
++		function = "mmc";
++	};
++
+ 	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
+@@ -228,6 +242,17 @@
+ 	};
  };
  
- static const struct of_device_id wm8510_of_match[] = {
++&mmcif0 {
++	pinctrl-0 = <&mmcif0_pins>;
++	pinctrl-names = "default";
++
++	vmmc-supply = <&d3_3v>;
++	vqmmc-supply = <&d3_3v>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
++};
++
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.8.1
+2.7.0.rc3.207.g0ac5344
