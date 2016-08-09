@@ -1,79 +1,36 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:36457 "EHLO
-        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752296AbcH2UL7 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Aug 2016 16:11:59 -0400
-Received: by mail-lf0-f54.google.com with SMTP id g62so108742094lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Aug 2016 13:11:30 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: dts: wheat: add CAN support
-Date: Mon, 29 Aug 2016 23:11:26 +0300
-Message-ID: <5729004.lSWLzbWbOW@wasted.cogentembedded.com>
-In-Reply-To: <34968644.DhifNderY8@wasted.cogentembedded.com>
-References: <34968644.DhifNderY8@wasted.cogentembedded.com>
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:34606 "EHLO
+	mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750909AbcHIXve (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 9 Aug 2016 19:51:34 -0400
+Date: Tue, 9 Aug 2016 18:51:32 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	mark.rutland@arm.com, devicetree@vger.kernel.org
+Subject: Re: [PATCH] rcar-du: add R8A7792 support
+Message-ID: <20160809235132.GA25576@rob-hp-laptop>
+References: <1934824.sESTIjSbbp@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1934824.sESTIjSbbp@wasted.cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the Wheat board dependent part of the CAN0/1 device nodes...
+On Thu, Aug 04, 2016 at 03:01:02PM -0700, Sergei Shtylyov wrote:
+> Add support for the R8A7792 DU; it has 2 DPAD (RGB) outputs.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+> This patch is against the 'drm/next/du' branch of Laurent Pinchart's 'media.git'
+> repo...
+> 
+>  Documentation/devicetree/bindings/display/renesas,du.txt |    4 ++
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c                    |   22 +++++++++++++++
+>  2 files changed, 25 insertions(+), 1 deletion(-)
 
-Based  on the original (and large) patch by Vladimir Barinov 
-<vladimir.barinov@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
-This patch is against the 'renesas-devel-20160829-v4.8-rc4' of Simon Horman's
-'renesas.git' repo.
-
- arch/arm/boot/dts/r8a7792-wheat.dts |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/r8a7792-wheat.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792-wheat.dts
-+++ renesas/arch/arm/boot/dts/r8a7792-wheat.dts
-@@ -76,6 +76,16 @@
- 			function = "lbsc";
- 		};
- 	};
-+
-+	can0_pins: can0 {
-+		groups = "can0_data";
-+		function = "can0";
-+	};
-+
-+	can1_pins: can1 {
-+		groups = "can1_data";
-+		function = "can1";
-+	};
- };
- 
- &scif0 {
-@@ -83,4 +93,18 @@
- 	pinctrl-names = "default";
- 
- 	status = "okay";
-+};
-+
-+&can0 {
-+	pinctrl-0 = <&can0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&can1 {
-+	pinctrl-0 = <&can1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
- };
+Acked-by: Rob Herring <robh@kernel.org>
