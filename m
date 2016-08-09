@@ -1,46 +1,93 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36597 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932203AbcHIM3I (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 9 Aug 2016 08:29:08 -0400
-Received: from avalon.bb.dnainternet.fi (85-23-193-79.bb.dnainternet.fi [85.23.193.79])
-	by galahad.ideasonboard.com (Postfix) with ESMTPSA id 31EDE2003E
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  9 Aug 2016 14:28:56 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 0/4] R-Car Gen3 DU enablement on Salvator-X board
-Date: Tue,  9 Aug 2016 15:29:08 +0300
-Message-Id: <1470745752-23738-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org,
+	alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+	linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
+	Mark Brown <broonie@kernel.org>
+In-Reply-To: <87h9b59gag.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bX6O3-0003a2-Dg@debutante>
+Date: Tue, 09 Aug 2016 13:44:03 +0100
+Subject: Applied "ASoC: remove snd_soc_pcm_set/get_drvdata()" to the asoc tree
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+The patch
 
-This patch series enables DU support on the Salvator-X board. The first three
-patches add the FCPV, VSP and DU devices to the r8a7795 .dtsi, while the last
-patch enables DU support for the board. Only the VGA output is currently
-supported, support for HDMI is work in progress.
+   ASoC: remove snd_soc_pcm_set/get_drvdata()
 
-All the related DT bindings have been merged upstream. There is thus nothing
-blocking the series from being merged as well.
+has been applied to the asoc tree at
 
-Changes compared to v1:
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-- Use GIC_SPI
-- Rebase on top of latest devel branch
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Laurent Pinchart (4):
-  arm64: dts: renesas: r8a7795: Add FCPV nodes
-  arm64: dts: renesas: r8a7795: Add VSP instances
-  arm64: dts: renesas: r8a7795: Add DU device to DT
-  arm64: dts: renesas: salvator-x: Enable DU
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  44 +++++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 199 +++++++++++++++++++++
- 2 files changed, 243 insertions(+)
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 1e814030954015e42621191f3adc52df2241dc08 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Mon, 1 Aug 2016 06:11:36 +0000
+Subject: [PATCH] ASoC: remove snd_soc_pcm_set/get_drvdata()
+
+snd_soc_pcm_set_drvdata() will set driver data to rtd->dev,
+but driver data of rtd->dev is already used as "rtd" on
+soc_post_component_init().
+
+	static int soc_post_component_init(xxx)
+	{
+		...
+		dev_set_drvdata(rtd->dev, rtd);
+		...
+	}
+
+To remove confusion, this patch removes snd_soc_pcm_set/get_drvdata().
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ include/sound/soc.h | 11 -----------
+ 1 file changed, 11 deletions(-)
+
+diff --git a/include/sound/soc.h b/include/sound/soc.h
+index 6144882cc96a..bc953994acb9 100644
+--- a/include/sound/soc.h
++++ b/include/sound/soc.h
+@@ -1547,17 +1547,6 @@ static inline void *snd_soc_platform_get_drvdata(struct snd_soc_platform *platfo
+ 	return snd_soc_component_get_drvdata(&platform->component);
+ }
+ 
+-static inline void snd_soc_pcm_set_drvdata(struct snd_soc_pcm_runtime *rtd,
+-		void *data)
+-{
+-	dev_set_drvdata(rtd->dev, data);
+-}
+-
+-static inline void *snd_soc_pcm_get_drvdata(struct snd_soc_pcm_runtime *rtd)
+-{
+-	return dev_get_drvdata(rtd->dev);
+-}
+-
+ static inline void snd_soc_initialize_card_lists(struct snd_soc_card *card)
+ {
+ 	INIT_LIST_HEAD(&card->codec_dev_list);
 -- 
-Regards,
-
-Laurent Pinchart
+2.8.1
