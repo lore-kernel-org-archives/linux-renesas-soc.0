@@ -1,86 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54058 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752242AbcHHLG0 (ORCPT
+Received: from devils.ext.ti.com ([198.47.26.153]:49414 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933510AbcHJSSD (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:06:26 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87mvkn8xgt.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiNw-0004Bk-CN@debutante>
-Date: Mon, 08 Aug 2016 12:06:20 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8804" to the asoc tree
+	Wed, 10 Aug 2016 14:18:03 -0400
+From: Kishon Vijay Abraham I <kishon@ti.com>
+To: Russell King <linux@armlinux.org.uk>,
+	Benoit Cousson <bcousson@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>
+CC: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Krzysztof Halasa <khalasa@piap.pl>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+	<nsekhar@ti.com>, <kishon@ti.com>
+Subject: [RESEND PATCH v3 0/3] ARM: cleanup PCI specific configs
+Date: Wed, 10 Aug 2016 18:03:17 +0530
+Message-ID: <1470832400-11929-1-git-send-email-kishon@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+This series was initially sent to add support for two PCIe
+ports in dra7. This included selecting PCI_DOMAINS config
+in SOC_DRA7XX.
 
-   ASoC: codec duplicated callback function goes to component on wm8804
+However from the review, PCI_DOMAINS can instead be selected
+from ARCH_MULTIPLATFORM. This is fixed in this series along
+with removing PCI_DOMAINS from other configs.
 
-has been applied to the asoc tree at
+Since this series was initially sent to add support for
+two PCIe ports in dra7, it has been tested to see if there
+are regressions with 1 PCIe port. Though testing of 2 PCIe ports
+is not done while sending this patch series, it has been verified
+before in few of the customer boards.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Changes from v2:
+*) v2 removed MIGHT_HAVE_PCI from platforms that are not
+   ARCH_MULTIPLATFORM. Fixed it in this version
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Changes from v1:
+*) select PCI_DOMAINS config from ARCH_MULTIPLATFORM
+*) Fix *MIGHT_HAVE_PCI* config from being selected redundantly
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Kishon Vijay Abraham I (3):
+  ARM: dts: DRA7: Add "linux,pci-domain" property for pci dt nodes
+  ARM: Fix *MIGHT_HAVE_PCI* config from being selected redundantly
+  ARM: select PCI_DOMAINS config from ARCH_MULTIPLATFORM
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+ arch/arm/Kconfig                 |    1 +
+ arch/arm/boot/dts/dra7.dtsi      |    2 ++
+ arch/arm/mach-at91/Kconfig       |    1 -
+ arch/arm/mach-axxia/Kconfig      |    2 --
+ arch/arm/mach-cns3xxx/Kconfig    |    1 -
+ arch/arm/mach-exynos/Kconfig     |    2 --
+ arch/arm/mach-imx/Kconfig        |    2 --
+ arch/arm/mach-integrator/Kconfig |    1 -
+ arch/arm/mach-keystone/Kconfig   |    2 --
+ arch/arm/mach-shmobile/Kconfig   |    1 -
+ arch/arm/mach-spear/Kconfig      |    1 -
+ arch/arm/mach-versatile/Kconfig  |    1 -
+ 12 files changed, 3 insertions(+), 14 deletions(-)
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From f1d13276e1856814ac02c077ba0829f6d16b9468 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:48:42 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- wm8804
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/wm8804.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/sound/soc/codecs/wm8804.c b/sound/soc/codecs/wm8804.c
-index 8d914702cae4..af95d648265b 100644
---- a/sound/soc/codecs/wm8804.c
-+++ b/sound/soc/codecs/wm8804.c
-@@ -545,10 +545,12 @@ static struct snd_soc_dai_driver wm8804_dai = {
- static const struct snd_soc_codec_driver soc_codec_dev_wm8804 = {
- 	.idle_bias_off = true,
- 
--	.dapm_widgets = wm8804_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(wm8804_dapm_widgets),
--	.dapm_routes = wm8804_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(wm8804_dapm_routes),
-+	.component_driver = {
-+		.dapm_widgets		= wm8804_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(wm8804_dapm_widgets),
-+		.dapm_routes		= wm8804_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(wm8804_dapm_routes),
-+	},
- };
- 
- const struct regmap_config wm8804_regmap_config = {
 -- 
-2.8.1
+1.7.9.5
