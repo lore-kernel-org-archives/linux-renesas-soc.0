@@ -1,82 +1,151 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50296 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935633AbcHJUEG (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 10 Aug 2016 16:04:06 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87ziolgyn2.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bXZjH-0000RA-J3@debutante>
-Date: Wed, 10 Aug 2016 21:03:55 +0100
-Subject: Applied "ASoC: simple-card: use asoc_simple_card_canonicalize_cpu()" to the asoc tree
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+To: Russell King <linux@armlinux.org.uk>,
+	Benoit Cousson <bcousson@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>
+CC: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Nicolas Ferre <nicolas.ferre@atmel.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+	Krzysztof Halasa <khalasa@piap.pl>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+	<nsekhar@ti.com>, <kishon@ti.com>
+Subject: [RFT RESEND PATCH v3 3/3] ARM: select PCI_DOMAINS config from ARCH_MULTIPLATFORM
+Date: Wed, 10 Aug 2016 18:03:20 +0530
+Message-ID: <1470832400-11929-4-git-send-email-kishon@ti.com>
+In-Reply-To: <1470832400-11929-1-git-send-email-kishon@ti.com>
+References: <1470832400-11929-1-git-send-email-kishon@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+PCI_DOMAINS config should be selected for any SoCs
+having more than a single PCIe controller. Without PCI_DOMAINS
+config, only one PCIe controller gets registered.
 
-   ASoC: simple-card: use asoc_simple_card_canonicalize_cpu()
+Select PCI_DOMAINS in ARCH_MULTIPLATFORM if PCI is selected, since
+it doesn't harm even if a platform has a single PCIe port.
+Also remove PCI_DOMAINS being selected from other platform
+specific configs.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 16f1de6f3656519120fd4a88d6b21fc3da8d373a Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 10 Aug 2016 02:20:43 +0000
-Subject: [PATCH] ASoC: simple-card: use asoc_simple_card_canonicalize_cpu()
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- sound/soc/generic/simple-card.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ arch/arm/Kconfig               |    1 +
+ arch/arm/mach-axxia/Kconfig    |    1 -
+ arch/arm/mach-cns3xxx/Kconfig  |    1 -
+ arch/arm/mach-exynos/Kconfig   |    1 -
+ arch/arm/mach-imx/Kconfig      |    2 --
+ arch/arm/mach-keystone/Kconfig |    1 -
+ arch/arm/mach-shmobile/Kconfig |    1 -
+ 7 files changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 8b1efdd2b115..64896e361bde 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -309,17 +309,7 @@ static int asoc_simple_card_dai_link_of(struct device_node *node,
- 		dai_link->codec_dai_name,
- 		dai_props->codec_dai.sysclk);
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index a9c4e48..fb1b867 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -337,6 +337,7 @@ config ARCH_MULTIPLATFORM
+ 	select GENERIC_CLOCKEVENTS
+ 	select MIGHT_HAVE_PCI
+ 	select MULTI_IRQ_HANDLER
++	select PCI_DOMAINS if PCI
+ 	select SPARSE_IRQ
+ 	select USE_OF
  
--	/*
--	 * In soc_bind_dai_link() will check cpu name after
--	 * of_node matching if dai_link has cpu_dai_name.
--	 * but, it will never match if name was created by
--	 * fmt_single_name() remove cpu_dai_name if cpu_args
--	 * was 0. See:
--	 *	fmt_single_name()
--	 *	fmt_multiple_name()
--	 */
--	if (single_cpu)
--		dai_link->cpu_dai_name = NULL;
-+	asoc_simple_card_canonicalize_cpu(dai_link, single_cpu);
+diff --git a/arch/arm/mach-axxia/Kconfig b/arch/arm/mach-axxia/Kconfig
+index ee2e131..fe627cb 100644
+--- a/arch/arm/mach-axxia/Kconfig
++++ b/arch/arm/mach-axxia/Kconfig
+@@ -7,7 +7,6 @@ config ARCH_AXXIA
+ 	select ARM_TIMER_SP804
+ 	select HAVE_ARM_ARCH_TIMER
+ 	select MFD_SYSCON
+-	select PCI_DOMAINS if PCI
+ 	select ZONE_DMA
+ 	help
+ 	  This enables support for the LSI Axxia devices.
+diff --git a/arch/arm/mach-cns3xxx/Kconfig b/arch/arm/mach-cns3xxx/Kconfig
+index eb14a0f..5fd836b 100644
+--- a/arch/arm/mach-cns3xxx/Kconfig
++++ b/arch/arm/mach-cns3xxx/Kconfig
+@@ -2,7 +2,6 @@ menuconfig ARCH_CNS3XXX
+ 	bool "Cavium Networks CNS3XXX family"
+ 	depends on ARCH_MULTI_V6
+ 	select ARM_GIC
+-	select PCI_DOMAINS if PCI
+ 	help
+ 	  Support for Cavium Networks CNS3XXX platform.
  
- dai_link_of_err:
- 	of_node_put(cpu);
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index ee8a99c..18f0c85 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -126,7 +126,6 @@ config SOC_EXYNOS5440
+ 	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
+ 	select HAVE_ARM_ARCH_TIMER
+ 	select AUTO_ZRELADDR
+-	select PCI_DOMAINS if PCI
+ 	select PINCTRL_EXYNOS5440
+ 	select PM_OPP
+ 	help
+diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
+index ee9a318..757cd11 100644
+--- a/arch/arm/mach-imx/Kconfig
++++ b/arch/arm/mach-imx/Kconfig
+@@ -523,7 +523,6 @@ config SOC_IMX6Q
+ 	select ARM_ERRATA_764369 if SMP
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_ARM_TWD
+-	select PCI_DOMAINS if PCI
+ 	select PINCTRL_IMX6Q
+ 	select SOC_IMX6
+ 
+@@ -569,7 +568,6 @@ config SOC_LS1021A
+ 	bool "Freescale LS1021A support"
+ 	select ARM_GIC
+ 	select HAVE_ARM_ARCH_TIMER
+-	select PCI_DOMAINS if PCI
+ 	select ZONE_DMA if ARM_LPAE
+ 	help
+ 	  This enables support for Freescale LS1021A processor.
+diff --git a/arch/arm/mach-keystone/Kconfig b/arch/arm/mach-keystone/Kconfig
+index 1507287..24bd64d 100644
+--- a/arch/arm/mach-keystone/Kconfig
++++ b/arch/arm/mach-keystone/Kconfig
+@@ -8,7 +8,6 @@ config ARCH_KEYSTONE
+ 	select COMMON_CLK_KEYSTONE
+ 	select ARCH_SUPPORTS_BIG_ENDIAN
+ 	select ZONE_DMA if ARM_LPAE
+-	select PCI_DOMAINS if PCI
+ 	select PINCTRL
+ 	help
+ 	  Support for boards based on the Texas Instruments Keystone family of
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index 4a48c9f..09817ba 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -22,7 +22,6 @@ config ARCH_RCAR_GEN2
+ 	select PM_GENERIC_DOMAINS
+ 	select RENESAS_IRQC
+ 	select SYS_SUPPORTS_SH_CMT
+-	select PCI_DOMAINS if PCI
+ 
+ config ARCH_RMOBILE
+ 	bool
 -- 
-2.8.1
+1.7.9.5
