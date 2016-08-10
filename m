@@ -1,82 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:49414 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933510AbcHJSSD (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50254 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934876AbcHJUED (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 10 Aug 2016 14:18:03 -0400
-From: Kishon Vijay Abraham I <kishon@ti.com>
-To: Russell King <linux@armlinux.org.uk>,
-	Benoit Cousson <bcousson@baylibre.com>,
-	Tony Lindgren <tony@atomide.com>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>
-CC: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Krzysztof Halasa <khalasa@piap.pl>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <k.kozlowski@samsung.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-	<nsekhar@ti.com>, <kishon@ti.com>
-Subject: [RESEND PATCH v3 0/3] ARM: cleanup PCI specific configs
-Date: Wed, 10 Aug 2016 18:03:17 +0530
-Message-ID: <1470832400-11929-1-git-send-email-kishon@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	Wed, 10 Aug 2016 16:04:03 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87a8jlqco1.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bXZj8-0000OL-9N@debutante>
+Date: Wed, 10 Aug 2016 21:03:46 +0100
+Subject: Applied "ASoC: simple-card: use asoc_simple_card_clean_reference()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series was initially sent to add support for two PCIe
-ports in dra7. This included selecting PCI_DOMAINS config
-in SOC_DRA7XX.
+The patch
 
-However from the review, PCI_DOMAINS can instead be selected
-from ARCH_MULTIPLATFORM. This is fixed in this series along
-with removing PCI_DOMAINS from other configs.
+   ASoC: simple-card: use asoc_simple_card_clean_reference()
 
-Since this series was initially sent to add support for
-two PCIe ports in dra7, it has been tested to see if there
-are regressions with 1 PCIe port. Though testing of 2 PCIe ports
-is not done while sending this patch series, it has been verified
-before in few of the customer boards.
+has been applied to the asoc tree at
 
-Changes from v2:
-*) v2 removed MIGHT_HAVE_PCI from platforms that are not
-   ARCH_MULTIPLATFORM. Fixed it in this version
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Changes from v1:
-*) select PCI_DOMAINS config from ARCH_MULTIPLATFORM
-*) Fix *MIGHT_HAVE_PCI* config from being selected redundantly
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Kishon Vijay Abraham I (3):
-  ARM: dts: DRA7: Add "linux,pci-domain" property for pci dt nodes
-  ARM: Fix *MIGHT_HAVE_PCI* config from being selected redundantly
-  ARM: select PCI_DOMAINS config from ARCH_MULTIPLATFORM
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
- arch/arm/Kconfig                 |    1 +
- arch/arm/boot/dts/dra7.dtsi      |    2 ++
- arch/arm/mach-at91/Kconfig       |    1 -
- arch/arm/mach-axxia/Kconfig      |    2 --
- arch/arm/mach-cns3xxx/Kconfig    |    1 -
- arch/arm/mach-exynos/Kconfig     |    2 --
- arch/arm/mach-imx/Kconfig        |    2 --
- arch/arm/mach-integrator/Kconfig |    1 -
- arch/arm/mach-keystone/Kconfig   |    2 --
- arch/arm/mach-shmobile/Kconfig   |    1 -
- arch/arm/mach-spear/Kconfig      |    1 -
- arch/arm/mach-versatile/Kconfig  |    1 -
- 12 files changed, 3 insertions(+), 14 deletions(-)
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 885fc0595a3e91ed7b6f78ea419952345be0222b Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 10 Aug 2016 02:21:42 +0000
+Subject: [PATCH] ASoC: simple-card: use asoc_simple_card_clean_reference()
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/generic/simple-card.c | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
+
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index 64896e361bde..55638a800f20 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -378,21 +378,6 @@ static int asoc_simple_card_parse_of(struct device_node *node,
+ 	return 0;
+ }
+ 
+-/* Decrease the reference count of the device nodes */
+-static int asoc_simple_card_unref(struct snd_soc_card *card)
+-{
+-	struct snd_soc_dai_link *dai_link;
+-	int num_links;
+-
+-	for (num_links = 0, dai_link = card->dai_link;
+-	     num_links < card->num_links;
+-	     num_links++, dai_link++) {
+-		of_node_put(dai_link->cpu_of_node);
+-		of_node_put(dai_link->codec_of_node);
+-	}
+-	return 0;
+-}
+-
+ static int asoc_simple_card_probe(struct platform_device *pdev)
+ {
+ 	struct simple_card_data *priv;
+@@ -478,7 +463,7 @@ static int asoc_simple_card_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ err:
+-	asoc_simple_card_unref(&priv->snd_card);
++	asoc_simple_card_clean_reference(&priv->snd_card);
+ 	return ret;
+ }
+ 
+@@ -490,7 +475,7 @@ static int asoc_simple_card_remove(struct platform_device *pdev)
+ 	asoc_simple_card_remove_jack(&priv->hp_jack);
+ 	asoc_simple_card_remove_jack(&priv->mic_jack);
+ 
+-	return asoc_simple_card_unref(card);
++	return asoc_simple_card_clean_reference(card);
+ }
+ 
+ static const struct of_device_id asoc_simple_of_match[] = {
 -- 
-1.7.9.5
+2.8.1
