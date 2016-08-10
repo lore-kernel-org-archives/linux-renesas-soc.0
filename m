@@ -1,90 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53958 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752580AbcHHLGP (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:38777 "EHLO
+	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934886AbcHJSaH (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:06:15 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87h9av8xek.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiNk-00048F-J4@debutante>
-Date: Mon, 08 Aug 2016 12:06:08 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8750" to the asoc tree
+	Wed, 10 Aug 2016 14:30:07 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+	iommu@lists.linux-foundation.org, linux@armlinux.org.uk
+Cc: hch@infradead.org, dan.j.williams@intel.com, vinod.koul@intel.com,
+	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
+	linus.walleij@linaro.org, arnd@arndb.de,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv9 1/6] dma-mapping: add {map,unmap}_resource to dma_map_ops
+Date: Wed, 10 Aug 2016 13:22:14 +0200
+Message-Id: <20160810112219.17964-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160810112219.17964-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160810112219.17964-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Add methods to handle mapping of device resources from a physical
+address. This is needed for example to be able to map MMIO FIFO
+registers to a IOMMU.
 
-   ASoC: codec duplicated callback function goes to component on wm8750
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From c107fbaff34eddebeb34714f0334d710ca937091 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:50:02 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- wm8750
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- sound/soc/codecs/wm8750.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ include/linux/dma-mapping.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/sound/soc/codecs/wm8750.c b/sound/soc/codecs/wm8750.c
-index bd9dcd2161bc..a96a1456897b 100644
---- a/sound/soc/codecs/wm8750.c
-+++ b/sound/soc/codecs/wm8750.c
-@@ -713,12 +713,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8750 = {
- 	.set_bias_level = wm8750_set_bias_level,
- 	.suspend_bias_off = true,
- 
--	.controls = wm8750_snd_controls,
--	.num_controls = ARRAY_SIZE(wm8750_snd_controls),
--	.dapm_widgets = wm8750_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(wm8750_dapm_widgets),
--	.dapm_routes = wm8750_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(wm8750_dapm_routes),
-+	.component_driver = {
-+		.controls		= wm8750_snd_controls,
-+		.num_controls		= ARRAY_SIZE(wm8750_snd_controls),
-+		.dapm_widgets		= wm8750_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(wm8750_dapm_widgets),
-+		.dapm_routes		= wm8750_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(wm8750_dapm_routes),
-+	},
- };
- 
- static const struct of_device_id wm8750_of_match[] = {
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index c44f8ee..e3bd27f 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -95,6 +95,12 @@ struct dma_map_ops {
+ 			 struct scatterlist *sg, int nents,
+ 			 enum dma_data_direction dir,
+ 			 unsigned long attrs);
++	dma_addr_t (*map_resource)(struct device *dev, phys_addr_t phys_addr,
++			       size_t size, enum dma_data_direction dir,
++			       unsigned long attrs);
++	void (*unmap_resource)(struct device *dev, dma_addr_t dma_handle,
++			   size_t size, enum dma_data_direction dir,
++			   unsigned long attrs);
+ 	void (*sync_single_for_cpu)(struct device *dev,
+ 				    dma_addr_t dma_handle, size_t size,
+ 				    enum dma_data_direction dir);
 -- 
-2.8.1
+2.9.2
