@@ -1,90 +1,35 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51030 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752014AbcHHLAe (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:40294 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932314AbcHJSCm (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:00:34 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87twev1uux.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiIF-0002UX-MI@debutante>
-Date: Mon, 08 Aug 2016 12:00:27 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on twl6040" to the asoc tree
+	Wed, 10 Aug 2016 14:02:42 -0400
+Date: Wed, 10 Aug 2016 10:43:21 -0700 (PDT)
+Message-Id: <20160810.104321.1196349376146959513.davem@davemloft.net>
+To: sergei.shtylyov@cogentembedded.com
+Cc: niklas.soderlund+renesas@ragnatech.se, netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de
+Subject: Re: [PATCH 2/2] ravb: add sleep PM suspend/resume support
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <79a23b1c-9f73-e004-87d9-256bc408e633@cogentembedded.com>
+References: <20160803135647.23242-3-niklas.soderlund+renesas@ragnatech.se>
+	<20160809.161636.2181233072433514866.davem@davemloft.net>
+	<79a23b1c-9f73-e004-87d9-256bc408e633@cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Date: Wed, 10 Aug 2016 13:47:26 +0300
 
-   ASoC: codec duplicated callback function goes to component on twl6040
+>    Ugh, I should have reviewed the patch earlier -- I was postponing this
+>    until I have the time to test it... Since the patch did have some
+>    visible issues, it should've been recast before applying. DaveM,
+>    please in the future could you ping me before merging?
 
-has been applied to the asoc tree at
+Review patches in a timely manner.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 2f45b8bd731cbaee5404cfac8bf083e807cffadf Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:26:56 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- twl6040
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/twl6040.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/codecs/twl6040.c b/sound/soc/codecs/twl6040.c
-index 1f7081043566..748036e851ea 100644
---- a/sound/soc/codecs/twl6040.c
-+++ b/sound/soc/codecs/twl6040.c
-@@ -1156,12 +1156,14 @@ static struct snd_soc_codec_driver soc_codec_dev_twl6040 = {
- 	.suspend_bias_off = true,
- 	.ignore_pmdown_time = true,
- 
--	.controls = twl6040_snd_controls,
--	.num_controls = ARRAY_SIZE(twl6040_snd_controls),
--	.dapm_widgets = twl6040_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(twl6040_dapm_widgets),
--	.dapm_routes = intercon,
--	.num_dapm_routes = ARRAY_SIZE(intercon),
-+	.component_driver = {
-+		.controls		= twl6040_snd_controls,
-+		.num_controls		= ARRAY_SIZE(twl6040_snd_controls),
-+		.dapm_widgets		= twl6040_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(twl6040_dapm_widgets),
-+		.dapm_routes		= intercon,
-+		.num_dapm_routes	= ARRAY_SIZE(intercon),
-+	},
- };
- 
- static int twl6040_codec_probe(struct platform_device *pdev)
--- 
-2.8.1
+If I can go through a 5 day email outage and still see this patch
+rotting in patchwork, you could have reviewed it in time.
