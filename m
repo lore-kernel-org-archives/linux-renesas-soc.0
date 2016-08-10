@@ -1,24 +1,23 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:37424 "EHLO
-	mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933012AbcHJTsD (ORCPT
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:35716 "EHLO
+	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752512AbcHJSEf (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 10 Aug 2016 15:48:03 -0400
-Received: by mail-wm0-f54.google.com with SMTP id i5so126620055wmg.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Aug 2016 12:48:03 -0700 (PDT)
+	Wed, 10 Aug 2016 14:04:35 -0400
+Received: by mail-wm0-f42.google.com with SMTP id f65so104960500wmi.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Aug 2016 11:04:35 -0700 (PDT)
 Subject: Re: [PATCH 2/2] ravb: add sleep PM suspend/resume support
-To: David Miller <davem@davemloft.net>,
-	niklas.soderlund+renesas@ragnatech.se
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>, netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
 References: <20160803135647.23242-1-niklas.soderlund+renesas@ragnatech.se>
  <20160803135647.23242-3-niklas.soderlund+renesas@ragnatech.se>
- <20160809.161636.2181233072433514866.davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	wsa@the-dreams.de
+Cc: davem@davemloft.net, wsa@the-dreams.de
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <79a23b1c-9f73-e004-87d9-256bc408e633@cogentembedded.com>
-Date: Wed, 10 Aug 2016 13:47:26 +0300
+Message-ID: <20c30e52-0b7b-0f8f-9001-0d05da628572@cogentembedded.com>
+Date: Wed, 10 Aug 2016 13:40:51 +0300
 MIME-Version: 1.0
-In-Reply-To: <20160809.161636.2181233072433514866.davem@davemloft.net>
+In-Reply-To: <20160803135647.23242-3-niklas.soderlund+renesas@ragnatech.se>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -26,28 +25,43 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hello.
 
-On 8/10/2016 2:16 AM, David Miller wrote:
+On 8/3/2016 4:56 PM, Niklas Söderlund wrote:
 
->> The interface would not function after the system had been woken up
->> after have been suspended (echo mem > /sys/power/state) cycle. The
->> reason for this is that all device registers have been reset to its
->> default values. This patch adds sleep suspend and resume functions that
->> detached the interface at suspend and restore the registers and reattach
->> the interface at resume.
->>
->> Only the registers that are only configured at probe time needs to be
->> explicitly restored by the resume handler. All other registers are
->> reconfigured by either reopening the device in the resume handler (if
->> the device was running when the system was suspended) or when the
->> interface is opened by a user at a later time.
->>
->> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> The interface would not function after the system had been woken up
+> after have been suspended (echo mem > /sys/power/state) cycle. The
+> reason for this is that all device registers have been reset to its
+> default values. This patch adds sleep suspend and resume functions that
+> detached the interface at suspend and restore the registers and reattach
+> the interface at resume.
 >
-> Applied to net-next, thanks.
+> Only the registers that are only configured at probe time needs to be
+> explicitly restored by the resume handler. All other registers are
+> reconfigured by either reopening the device in the resume handler (if
+> the device was running when the system was suspended) or when the
+> interface is opened by a user at a later time.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/net/ethernet/renesas/ravb_main.c | 72 ++++++++++++++++++++++++++++----
+>  1 file changed, 64 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index da8da86..1de55c9 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+[...]
+> @@ -2111,6 +2166,7 @@ static int ravb_runtime_nop(struct device *dev)
+>  }
+>
+>  static const struct dev_pm_ops ravb_dev_pm_ops = {
+> +	SET_SYSTEM_SLEEP_PM_OPS(ravb_runtime_suspend, ravb_runtime_resume)
 
-    Ugh, I should have reviewed the patch earlier -- I was postponing this 
-until I have the time to test it... Since the patch did have some visible 
-issues, it should've been recast before applying. DaveM, please in the future 
-could you ping me before merging?
+    Why in the world you used runtime_ in the usual suspend/resume method 
+names?! Since DaveM have already taken the patch, please send a follow-up 
+patch to remove that infix.
+
+>  	SET_RUNTIME_PM_OPS(ravb_runtime_nop, ravb_runtime_nop, NULL)
+>  };
+>
 
 MBR, Sergei
