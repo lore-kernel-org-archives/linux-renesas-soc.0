@@ -1,44 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:40238 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932297AbcHKI51 (ORCPT
+Received: from newton.telenet-ops.be ([195.130.132.45]:51533 "EHLO
+	newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932295AbcHJTRf (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 11 Aug 2016 04:57:27 -0400
-Date: Thu, 11 Aug 2016 10:57:20 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	Wed, 10 Aug 2016 15:17:35 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+	by newton.telenet-ops.be (Postfix) with ESMTP id 3s8N8j4Qh7zMs1DJ
+	for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Aug 2016 09:30:13 +0200 (CEST)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	stable@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: r8a7795: Fix SD clocks
-Message-ID: <20160811085720.GG30475@verge.net.au>
-References: <1470814183-17834-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1470814183-17834-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a7795: Fix SD clocks
+Date: Wed, 10 Aug 2016 09:29:43 +0200
+Message-Id: <1470814183-17834-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 10, 2016 at 09:29:43AM +0200, Geert Uytterhoeven wrote:
-> From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> 
-> According to the datasheet, SDn clocks are from the SDSRC clock. And
-> the SDSRC has a 1/2 divider. So, we should have ".sdsrc" as an internal
-> core clock. Otherwise, since the sdhi driver will calculate clock for
-> a sd card using the wrong parent clock rate, and then performance will
-> be not good.
-> 
-> Fixes: 90c073e53909da85 ("clk: shmobile: r8a7795: Add SD divider support")
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: stable@vger.kernel.org
-> ---
-> SDHI was enabled on r8a7795/salvator-x in v4.6.
-> Please apply as a fix for v4.8.
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Thanks, done.
+According to the datasheet, SDn clocks are from the SDSRC clock. And
+the SDSRC has a 1/2 divider. So, we should have ".sdsrc" as an internal
+core clock. Otherwise, since the sdhi driver will calculate clock for
+a sd card using the wrong parent clock rate, and then performance will
+be not good.
+
+Fixes: 90c073e53909da85 ("clk: shmobile: r8a7795: Add SD divider support")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: stable@vger.kernel.org
+---
+SDHI was enabled on r8a7795/salvator-x in v4.6.
+Please apply as a fix for v4.8.
+
+Thanks!
+
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index d359c92e13a65c00..e38bf60c0ff4e28c 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -69,6 +69,7 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
+ 	DEF_FIXED(".s1",        CLK_S1,            CLK_PLL1_DIV2,  3, 1),
+ 	DEF_FIXED(".s2",        CLK_S2,            CLK_PLL1_DIV2,  4, 1),
+ 	DEF_FIXED(".s3",        CLK_S3,            CLK_PLL1_DIV2,  6, 1),
++	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
+ 
+ 	/* Core Clock Outputs */
+ 	DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+@@ -87,10 +88,10 @@ static const struct cpg_core_clk r8a7795_core_clks[] __initconst = {
+ 	DEF_FIXED("s3d2",       R8A7795_CLK_S3D2,  CLK_S3,         2, 1),
+ 	DEF_FIXED("s3d4",       R8A7795_CLK_S3D4,  CLK_S3,         4, 1),
+ 
+-	DEF_GEN3_SD("sd0",      R8A7795_CLK_SD0,   CLK_PLL1_DIV2, 0x0074),
+-	DEF_GEN3_SD("sd1",      R8A7795_CLK_SD1,   CLK_PLL1_DIV2, 0x0078),
+-	DEF_GEN3_SD("sd2",      R8A7795_CLK_SD2,   CLK_PLL1_DIV2, 0x0268),
+-	DEF_GEN3_SD("sd3",      R8A7795_CLK_SD3,   CLK_PLL1_DIV2, 0x026c),
++	DEF_GEN3_SD("sd0",      R8A7795_CLK_SD0,   CLK_SDSRC,     0x0074),
++	DEF_GEN3_SD("sd1",      R8A7795_CLK_SD1,   CLK_SDSRC,     0x0078),
++	DEF_GEN3_SD("sd2",      R8A7795_CLK_SD2,   CLK_SDSRC,     0x0268),
++	DEF_GEN3_SD("sd3",      R8A7795_CLK_SD3,   CLK_SDSRC,     0x026c),
+ 
+ 	DEF_FIXED("cl",         R8A7795_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
+ 	DEF_FIXED("cp",         R8A7795_CLK_CP,    CLK_EXTAL,      2, 1),
+-- 
+1.9.1
