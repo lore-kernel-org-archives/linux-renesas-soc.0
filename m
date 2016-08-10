@@ -1,133 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752960AbcHOI4a (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50226 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932775AbcHJUEA (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 15 Aug 2016 04:56:30 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/26] ARM: dts: r8a7792: add I2C support
-Date: Mon, 15 Aug 2016 10:55:34 +0200
-Message-Id: <78082700c8885a2b370c23ed9caec781fdf72139.1471251169.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
-References: <cover.1471251169.git.horms+renesas@verge.net.au>
+	Wed, 10 Aug 2016 16:04:00 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87wpjpgylx.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bXZjB-0000PH-7V@debutante>
+Date: Wed, 10 Aug 2016 21:03:49 +0100
+Subject: Applied "ASoC: simple-card-utils: add asoc_simple_card_clean_reference()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The patch
 
-Define the generic R8A7792 parts of the I2C[0-5] device nodes.
+   ASoC: simple-card-utils: add asoc_simple_card_clean_reference()
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 0f4e0711b735a148cb6da0e6f91253b62fc2c5b2 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 10 Aug 2016 02:21:25 +0000
+Subject: [PATCH] ASoC: simple-card-utils: add
+ asoc_simple_card_clean_reference()
+
+simple-card needs to decrease the reference count of the device nodes.
+This patch makes this method simple style standard.
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7792.dtsi | 82 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
+ include/sound/simple_card_utils.h     |  2 ++
+ sound/soc/generic/simple-card-utils.c | 15 +++++++++++++++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 353bc303b165..89f248c5cd9e 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -18,6 +18,15 @@
- 	#address-cells = <2>;
- 	#size-cells = <2>;
+diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
+index f760f559393e..403ec92164fc 100644
+--- a/include/sound/simple_card_utils.h
++++ b/include/sound/simple_card_utils.h
+@@ -65,4 +65,6 @@ int asoc_simple_card_canonicalize_dailink(struct snd_soc_dai_link *dai_link);
+ void asoc_simple_card_canonicalize_cpu(struct snd_soc_dai_link *dai_link,
+ 				      int is_single_links);
  
-+	aliases {
-+		i2c0 = &i2c0;
-+		i2c1 = &i2c1;
-+		i2c2 = &i2c2;
-+		i2c3 = &i2c3;
-+		i2c4 = &i2c4;
-+		i2c5 = &i2c5;
-+};
++int asoc_simple_card_clean_reference(struct snd_soc_card *card);
 +
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -468,6 +477,79 @@
- 			status = "disabled";
- 		};
+ #endif /* __SIMPLE_CARD_CORE_H */
+diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
+index c5d32dad48b2..1cb39309f5d5 100644
+--- a/sound/soc/generic/simple-card-utils.c
++++ b/sound/soc/generic/simple-card-utils.c
+@@ -223,6 +223,21 @@ void asoc_simple_card_canonicalize_cpu(struct snd_soc_dai_link *dai_link,
+ }
+ EXPORT_SYMBOL_GPL(asoc_simple_card_canonicalize_cpu);
  
-+		/* I2C doesn't need pinmux */
-+		i2c0: i2c@e6508000 {
-+			compatible = "renesas,i2c-r8a7792";
-+			reg = <0 0xe6508000 0 0x40>;
-+			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7792_CLK_I2C0>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++int asoc_simple_card_clean_reference(struct snd_soc_card *card)
++{
++	struct snd_soc_dai_link *dai_link;
++	int num_links;
 +
-+		i2c1: i2c@e6518000 {
-+			compatible = "renesas,i2c-r8a7792";
-+			reg = <0 0xe6518000 0 0x40>;
-+			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7792_CLK_I2C1>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++	for (num_links = 0, dai_link = card->dai_link;
++	     num_links < card->num_links;
++	     num_links++, dai_link++) {
++		of_node_put(dai_link->cpu_of_node);
++		of_node_put(dai_link->codec_of_node);
++	}
++	return 0;
++}
++EXPORT_SYMBOL_GPL(asoc_simple_card_clean_reference);
 +
-+		i2c2: i2c@e6530000 {
-+			compatible = "renesas,i2c-r8a7792";
-+			reg = <0 0xe6530000 0 0x40>;
-+			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7792_CLK_I2C2>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c3: i2c@e6540000 {
-+			compatible = "renesas,i2c-r8a7792";
-+			reg = <0 0xe6540000 0 0x40>;
-+			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7792_CLK_I2C3>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c4: i2c@e6520000 {
-+			compatible = "renesas,i2c-r8a7792";
-+			reg = <0 0xe6520000 0 0x40>;
-+			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7792_CLK_I2C4>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c5: i2c@e6528000 {
-+			compatible = "renesas,i2c-r8a7792";
-+			reg = <0 0xe6528000 0 0x40>;
-+			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7792_CLK_I2C5>;
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <110>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		can0: can@e6e80000 {
- 			compatible = "renesas,can-r8a7792",
- 				     "renesas,rcar-gen2-can";
+ /* Module information */
+ MODULE_AUTHOR("Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>");
+ MODULE_DESCRIPTION("ALSA SoC Simple Card Utils");
 -- 
-2.7.0.rc3.207.g0ac5344
+2.8.1
