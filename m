@@ -1,147 +1,121 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56197 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752607AbcHQLcZ (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:38783 "EHLO
+	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935002AbcHJSaJ (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 17 Aug 2016 07:32:25 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Ai Kyuse <ai.kyuse.uw@renesas.com>
-Subject: [PATCH/RTF 7/7] arm64: dts: r8a7796: salvator-x: enable SDHI0 & 3
-Date: Wed, 17 Aug 2016 13:31:56 +0200
-Message-Id: <1471433516-4478-8-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au>
-References: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au>
+	Wed, 10 Aug 2016 14:30:09 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+	iommu@lists.linux-foundation.org, linux@armlinux.org.uk
+Cc: hch@infradead.org, dan.j.williams@intel.com, vinod.koul@intel.com,
+	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
+	linus.walleij@linaro.org, arnd@arndb.de,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv9 3/6] dma-mapping: add dma_{map,unmap}_resource
+Date: Wed, 10 Aug 2016 13:22:16 +0200
+Message-Id: <20160810112219.17964-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160810112219.17964-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160810112219.17964-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the exposed SD card slots in the DT of the r8a7796/salvator-x.
+Map/Unmap a device MMIO resource from a physical address. If no dma_map_ops
+method is available the operation is a no-op.
 
-Based on work for the r8a7795/salvator-x by Ai Kyuse.
-
-Cc: Ai Kyuse <ai.kyuse.uw@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 84 ++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
+ Documentation/DMA-API.txt   | 22 +++++++++++++++++-----
+ include/linux/dma-mapping.h | 36 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index bb34b8d69c79..f06621f2ee4c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -10,6 +10,7 @@
+diff --git a/Documentation/DMA-API.txt b/Documentation/DMA-API.txt
+index 1d26eeb6..6b20128 100644
+--- a/Documentation/DMA-API.txt
++++ b/Documentation/DMA-API.txt
+@@ -277,14 +277,26 @@ and <size> parameters are provided to do partial page mapping, it is
+ recommended that you never use these unless you really know what the
+ cache width is.
  
- /dts-v1/;
- #include "r8a7796.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
++dma_addr_t
++dma_map_resource(struct device *dev, phys_addr_t phys_addr, size_t size,
++		 enum dma_data_direction dir, unsigned long attrs)
++
++void
++dma_unmap_resource(struct device *dev, dma_addr_t addr, size_t size,
++		   enum dma_data_direction dir, unsigned long attrs)
++
++API for mapping and unmapping for MMIO resources. All the notes and
++warnings for the other mapping APIs apply here. The API should only be
++used to map device MMIO resources, mapping of RAM is not permitted.
++
+ int
+ dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
  
- / {
- 	model = "Renesas Salvator-X board based on r8a7796";
-@@ -29,6 +30,55 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x78000000>;
- 	};
-+
-+	vcc_sdhi0: regulator-vcc-sdhi0 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI0 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio5 2 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	vccq_sdhi0: regulator-vccq-sdhi0 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI0 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
-+
-+	vcc_sdhi3: regulator-vcc-sdhi3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI3 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio3 15 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	vccq_sdhi3: regulator-vccq-sdhi3 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI3 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio3 14 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
-+
- };
+-In some circumstances dma_map_single() and dma_map_page() will fail to create
+-a mapping. A driver can check for these errors by testing the returned
+-DMA address with dma_mapping_error(). A non-zero return value means the mapping
+-could not be created and the driver should take appropriate action (e.g.
+-reduce current DMA mapping usage or delay and try again later).
++In some circumstances dma_map_single(), dma_map_page() and dma_map_resource()
++will fail to create a mapping. A driver can check for these errors by testing
++the returned DMA address with dma_mapping_error(). A non-zero return value
++means the mapping could not be created and the driver should take appropriate
++action (e.g. reduce current DMA mapping usage or delay and try again later).
  
- &pfc {
-@@ -36,12 +86,46 @@
- 		groups = "scif2_data_a";
- 		function = "scif2";
- 	};
-+
-+	sdhi0_pins: sd0 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+	};
-+
-+	sdhi3_pins: sd3 {
-+		groups = "sdhi3_data4", "sdhi3_ctrl";
-+		function = "sdhi3";
-+	};
- };
+ 	int
+ 	dma_map_sg(struct device *dev, struct scatterlist *sg,
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index e3bd27f..9a07882 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -264,6 +264,42 @@ static inline void dma_unmap_page(struct device *dev, dma_addr_t addr,
+ 	debug_dma_unmap_page(dev, addr, size, dir, false);
+ }
  
- &extal_clk {
- 	clock-frequency = <16666666>;
- };
- 
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-names = "default";
++static inline dma_addr_t dma_map_resource(struct device *dev,
++					  phys_addr_t phys_addr,
++					  size_t size,
++					  enum dma_data_direction dir,
++					  unsigned long attrs)
++{
++	struct dma_map_ops *ops = get_dma_ops(dev);
++	unsigned long pfn = __phys_to_pfn(phys_addr);
++	dma_addr_t addr;
 +
-+	vmmc-supply = <&vcc_sdhi0>;
-+	vqmmc-supply = <&vccq_sdhi0>;
-+	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
-+	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
-+	bus-width = <4>;
-+	status = "okay";
-+};
++	BUG_ON(!valid_dma_direction(dir));
 +
-+&sdhi3 {
-+	pinctrl-0 = <&sdhi3_pins>;
-+	pinctrl-names = "default";
++	/* Don't allow RAM to be mapped */
++	BUG_ON(pfn_valid(pfn));
 +
-+	vmmc-supply = <&vcc_sdhi3>;
-+	vqmmc-supply = <&vccq_sdhi3>;
-+	cd-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
-+	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
-+	bus-width = <4>;
-+	status = "okay";
-+};
++	addr = phys_addr;
++	if (ops->map_resource)
++		addr = ops->map_resource(dev, phys_addr, size, dir, attrs);
 +
- &scif2 {
- 	pinctrl-0 = <&scif2_pins>;
- 	pinctrl-names = "default";
++	debug_dma_map_resource(dev, phys_addr, size, dir, addr);
++
++	return addr;
++}
++
++static inline void dma_unmap_resource(struct device *dev, dma_addr_t addr,
++				      size_t size, enum dma_data_direction dir,
++				      unsigned long attrs)
++{
++	struct dma_map_ops *ops = get_dma_ops(dev);
++
++	BUG_ON(!valid_dma_direction(dir));
++	if (ops->unmap_resource)
++		ops->unmap_resource(dev, addr, size, dir, attrs);
++	debug_dma_unmap_resource(dev, addr, size, dir);
++}
++
+ static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
+ 					   size_t size,
+ 					   enum dma_data_direction dir)
 -- 
-2.7.0.rc3.207.g0ac5344
+2.9.2
