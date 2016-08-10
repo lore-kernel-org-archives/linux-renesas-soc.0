@@ -1,86 +1,132 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52646 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLDo (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:38779 "EHLO
+	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934926AbcHJSaI (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:03:44 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87fuqf63hn.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiLJ-0003Pl-PJ@debutante>
-Date: Mon, 08 Aug 2016 12:03:37 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on ak4554" to the asoc tree
+	Wed, 10 Aug 2016 14:30:08 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+	iommu@lists.linux-foundation.org, linux@armlinux.org.uk
+Cc: hch@infradead.org, dan.j.williams@intel.com, vinod.koul@intel.com,
+	robin.murphy@arm.com, laurent.pinchart@ideasonboard.com,
+	linus.walleij@linaro.org, arnd@arndb.de,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv9 5/6] dmaengine: rcar-dmac: group slave configuration
+Date: Wed, 10 Aug 2016 13:22:18 +0200
+Message-Id: <20160810112219.17964-6-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160810112219.17964-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160810112219.17964-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Group slave address and transfer size in own structs for source and
+destination. This is in preparation for hooking up the dma-mapping API
+to the slave addresses.
 
-   ASoC: codec duplicated callback function goes to component on ak4554
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 08c0ca5ebd361420d40a4c6970e3dd1a4c64306a Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:06:52 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- ak4554
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- sound/soc/codecs/ak4554.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/dma/sh/rcar-dmac.c | 38 ++++++++++++++++++++++----------------
+ 1 file changed, 22 insertions(+), 16 deletions(-)
 
-diff --git a/sound/soc/codecs/ak4554.c b/sound/soc/codecs/ak4554.c
-index 298dedc05140..b92c548b9d29 100644
---- a/sound/soc/codecs/ak4554.c
-+++ b/sound/soc/codecs/ak4554.c
-@@ -65,10 +65,12 @@ static struct snd_soc_dai_driver ak4554_dai = {
- };
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index 0dd9538..cf983a9 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -118,14 +118,22 @@ struct rcar_dmac_desc_page {
+ 	sizeof(struct rcar_dmac_xfer_chunk))
  
- static struct snd_soc_codec_driver soc_codec_dev_ak4554 = {
--	.dapm_widgets = ak4554_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(ak4554_dapm_widgets),
--	.dapm_routes = ak4554_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(ak4554_dapm_routes),
-+	.component_driver = {
-+		.dapm_widgets		= ak4554_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(ak4554_dapm_widgets),
-+		.dapm_routes		= ak4554_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(ak4554_dapm_routes),
-+	},
- };
+ /*
++ * struct rcar_dmac_chan_slave - Slave configuration
++ * @slave_addr: slave memory address
++ * @xfer_size: size (in bytes) of hardware transfers
++ */
++struct rcar_dmac_chan_slave {
++	phys_addr_t slave_addr;
++	unsigned int xfer_size;
++};
++
++/*
+  * struct rcar_dmac_chan - R-Car Gen2 DMA Controller Channel
+  * @chan: base DMA channel object
+  * @iomem: channel I/O memory base
+  * @index: index of this channel in the controller
+- * @src_xfer_size: size (in bytes) of hardware transfers on the source side
+- * @dst_xfer_size: size (in bytes) of hardware transfers on the destination side
+- * @src_slave_addr: slave source memory address
+- * @dst_slave_addr: slave destination memory address
++ * @src: slave memory address and size on the source side
++ * @dst: slave memory address and size on the destination side
+  * @mid_rid: hardware MID/RID for the DMA client using this channel
+  * @lock: protects the channel CHCR register and the desc members
+  * @desc.free: list of free descriptors
+@@ -142,10 +150,8 @@ struct rcar_dmac_chan {
+ 	void __iomem *iomem;
+ 	unsigned int index;
  
- static int ak4554_soc_probe(struct platform_device *pdev)
+-	unsigned int src_xfer_size;
+-	unsigned int dst_xfer_size;
+-	dma_addr_t src_slave_addr;
+-	dma_addr_t dst_slave_addr;
++	struct rcar_dmac_chan_slave src;
++	struct rcar_dmac_chan_slave dst;
+ 	int mid_rid;
+ 
+ 	spinlock_t lock;
+@@ -793,13 +799,13 @@ static void rcar_dmac_chan_configure_desc(struct rcar_dmac_chan *chan,
+ 	case DMA_DEV_TO_MEM:
+ 		chcr = RCAR_DMACHCR_DM_INC | RCAR_DMACHCR_SM_FIXED
+ 		     | RCAR_DMACHCR_RS_DMARS;
+-		xfer_size = chan->src_xfer_size;
++		xfer_size = chan->src.xfer_size;
+ 		break;
+ 
+ 	case DMA_MEM_TO_DEV:
+ 		chcr = RCAR_DMACHCR_DM_FIXED | RCAR_DMACHCR_SM_INC
+ 		     | RCAR_DMACHCR_RS_DMARS;
+-		xfer_size = chan->dst_xfer_size;
++		xfer_size = chan->dst.xfer_size;
+ 		break;
+ 
+ 	case DMA_MEM_TO_MEM:
+@@ -1040,7 +1046,7 @@ rcar_dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+ 	}
+ 
+ 	dev_addr = dir == DMA_DEV_TO_MEM
+-		 ? rchan->src_slave_addr : rchan->dst_slave_addr;
++		 ? rchan->src.slave_addr : rchan->dst.slave_addr;
+ 	return rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, dev_addr,
+ 				      dir, flags, false);
+ }
+@@ -1095,7 +1101,7 @@ rcar_dmac_prep_dma_cyclic(struct dma_chan *chan, dma_addr_t buf_addr,
+ 	}
+ 
+ 	dev_addr = dir == DMA_DEV_TO_MEM
+-		 ? rchan->src_slave_addr : rchan->dst_slave_addr;
++		 ? rchan->src.slave_addr : rchan->dst.slave_addr;
+ 	desc = rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, dev_addr,
+ 				      dir, flags, true);
+ 
+@@ -1112,10 +1118,10 @@ static int rcar_dmac_device_config(struct dma_chan *chan,
+ 	 * We could lock this, but you shouldn't be configuring the
+ 	 * channel, while using it...
+ 	 */
+-	rchan->src_slave_addr = cfg->src_addr;
+-	rchan->dst_slave_addr = cfg->dst_addr;
+-	rchan->src_xfer_size = cfg->src_addr_width;
+-	rchan->dst_xfer_size = cfg->dst_addr_width;
++	rchan->src.slave_addr = cfg->src_addr;
++	rchan->dst.slave_addr = cfg->dst_addr;
++	rchan->src.xfer_size = cfg->src_addr_width;
++	rchan->dst.xfer_size = cfg->dst_addr_width;
+ 
+ 	return 0;
+ }
 -- 
-2.8.1
+2.9.2
