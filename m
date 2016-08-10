@@ -1,146 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33480 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756561AbcHWHuI (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 Aug 2016 03:50:08 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFT v2 8/8] arm64: dts: r8a7796: salvator-x: enable SDHI0 & 3
-Date: Tue, 23 Aug 2016 09:49:50 +0200
-Message-Id: <1471938590-10650-9-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
-References: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50312 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934876AbcHJUEI (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 10 Aug 2016 16:04:08 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Linux-ALSA <alsa-devel@alsa-project.org>,
+	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <87y445gymj.wl%kuninori.morimoto.gx@renesas.com>
+Message-Id: <E1bXZjE-0000QA-4l@debutante>
+Date: Wed, 10 Aug 2016 21:03:52 +0100
+Subject: Applied "ASoC: rsrc-card: use asoc_simple_card_canonicalize_cpu()" to the asoc tree
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the exposed SD card slots in the DT of the r8a7796/salvator-x.
+The patch
 
-Based on work for the r8a7795/salvator-x by Ai Kyuse.
+   ASoC: rsrc-card: use asoc_simple_card_canonicalize_cpu()
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 27b010815bcfbb2cc79de7544547e33e4d169594 Mon Sep 17 00:00:00 2001
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date: Wed, 10 Aug 2016 02:21:03 +0000
+Subject: [PATCH] ASoC: rsrc-card: use asoc_simple_card_canonicalize_cpu()
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 84 ++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
+ sound/soc/sh/rcar/rsrc-card.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index bb34b8d69c79..f06621f2ee4c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -10,6 +10,7 @@
+diff --git a/sound/soc/sh/rcar/rsrc-card.c b/sound/soc/sh/rcar/rsrc-card.c
+index 0bf17dae2b64..dd5eda1f9a29 100644
+--- a/sound/soc/sh/rcar/rsrc-card.c
++++ b/sound/soc/sh/rcar/rsrc-card.c
+@@ -134,7 +134,6 @@ static int rsrc_card_parse_links(struct device_node *np,
+ 	struct device *dev = rsrc_priv_to_dev(priv);
+ 	struct snd_soc_dai_link *dai_link = rsrc_priv_to_link(priv, idx);
+ 	struct asoc_simple_dai *dai_props = rsrc_priv_to_props(priv, idx);
+-	int is_single_links = 0;
+ 	int ret;
  
- /dts-v1/;
- #include "r8a7796.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
+ 	/* Parse TDM slot */
+@@ -147,6 +146,8 @@ static int rsrc_card_parse_links(struct device_node *np,
+ 		return ret;
  
- / {
- 	model = "Renesas Salvator-X board based on r8a7796";
-@@ -29,6 +30,55 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x78000000>;
- 	};
+ 	if (is_fe) {
++		int is_single_links = 0;
 +
-+	vcc_sdhi0: regulator-vcc-sdhi0 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI0 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio5 2 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	vccq_sdhi0: regulator-vccq-sdhi0 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI0 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
-+
-+	vcc_sdhi3: regulator-vcc-sdhi3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI3 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio3 15 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	vccq_sdhi3: regulator-vccq-sdhi3 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI3 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio3 14 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
-+
- };
+ 		/* BE is dummy */
+ 		dai_link->codec_of_node		= NULL;
+ 		dai_link->codec_dai_name	= "snd-soc-dummy-dai";
+@@ -171,17 +172,7 @@ static int rsrc_card_parse_links(struct device_node *np,
+ 		if (ret < 0)
+ 			return ret;
  
- &pfc {
-@@ -36,12 +86,46 @@
- 		groups = "scif2_data_a";
- 		function = "scif2";
- 	};
-+
-+	sdhi0_pins: sd0 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+	};
-+
-+	sdhi3_pins: sd3 {
-+		groups = "sdhi3_data4", "sdhi3_ctrl";
-+		function = "sdhi3";
-+	};
- };
+-		/*
+-		 * In soc_bind_dai_link() will check cpu name after
+-		 * of_node matching if dai_link has cpu_dai_name.
+-		 * but, it will never match if name was created by
+-		 * fmt_single_name() remove cpu_dai_name if cpu_args
+-		 * was 0. See:
+-		 *	fmt_single_name()
+-		 *	fmt_multiple_name()
+-		 */
+-		if (is_single_links)
+-			dai_link->cpu_dai_name = NULL;
++		asoc_simple_card_canonicalize_cpu(dai_link, is_single_links);
+ 	} else {
+ 		const struct rsrc_card_of_data *of_data;
  
- &extal_clk {
- 	clock-frequency = <16666666>;
- };
- 
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&vcc_sdhi0>;
-+	vqmmc-supply = <&vccq_sdhi0>;
-+	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
-+	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
-+	bus-width = <4>;
-+	status = "okay";
-+};
-+
-+&sdhi3 {
-+	pinctrl-0 = <&sdhi3_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&vcc_sdhi3>;
-+	vqmmc-supply = <&vccq_sdhi3>;
-+	cd-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
-+	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
-+	bus-width = <4>;
-+	status = "okay";
-+};
-+
- &scif2 {
- 	pinctrl-0 = <&scif2_pins>;
- 	pinctrl-names = "default";
 -- 
-2.7.0.rc3.207.g0ac5344
+2.8.1
