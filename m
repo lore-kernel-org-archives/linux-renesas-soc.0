@@ -1,32 +1,29 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 10 Aug 2016 10:45:39 +0200
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:58266 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752547AbcHJSOQ (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 10 Aug 2016 14:14:16 -0400
+Date: Wed, 10 Aug 2016 10:44:44 +0200
 From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] arm64: dts: r8a7795: Add HSUSB device node and
- enable channel 0 of USB2.0
-Message-ID: <20160810084539.GD6276@verge.net.au>
-References: <1469098021-7692-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Dirk Behme <dirk.behme@gmail.com>, linux-mmc@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: r8a7795: set maximum frequency for SDHI
+ clocks
+Message-ID: <20160810084443.GC6276@verge.net.au>
+References: <1469120504-2037-1-git-send-email-wsa@the-dreams.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1469098021-7692-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <1469120504-2037-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Shimoda-san,
-
-On Thu, Jul 21, 2016 at 07:46:56PM +0900, Yoshihiro Shimoda wrote:
-> This patch is based on the renesas.git / renesas-devel-20160718-v4.7-rc7 tag.
+On Thu, Jul 21, 2016 at 07:01:44PM +0200, Wolfram Sang wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > 
-> Changes from v2:
->  - rebase on renesas.git / renesas-devel-20160718-v4.7-rc7.
->   - maybe the panic issue disappears on the tree. but, if still happens,
->     please try the following patch:
->     https://git.kernel.org/cgit/linux/kernel/git/gregkh/usb.git/commit/?h=usb-next&id=c14f8a4032efa73d9c4e155add47c19252b3bdf4
->  - remove the redundant instruction in patch 4.
->  - add a new patch that enables HSUSB driver as kernel module on the defconfig.
+> Define the upper limit otherwise the driver cannot utilize max speeds.
 
-Sorry for not attending to this earlier.
-In your opinion are these patches ready to merge?
+Thanks, I have queued this up for v4.9.
