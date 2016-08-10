@@ -1,46 +1,106 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34279 "EHLO
-	mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752005AbcHHMm5 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 08:42:57 -0400
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 10 Aug 2016 11:29:23 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Philippe Reynes <tremyfr@gmail.com>
+Cc: sergei.shtylyov@cogentembedded.com, davem@davemloft.net,
+	geert+renesas@glider.be, andrew@lunn.ch, netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sh@vger.kernel.org
+Subject: Re: [PATCH 2/2] net: ethernet: renesas: sh_eth: use new api
+ ethtool_{get|set}_link_ksettings
+Message-ID: <20160810092923.GF6276@verge.net.au>
+References: <1470780289-27496-1-git-send-email-tremyfr@gmail.com>
+ <1470780289-27496-2-git-send-email-tremyfr@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1477310.o5B8uhf3mT@wasted.cogentembedded.com>
-References: <17288006.ERHB6654v5@wasted.cogentembedded.com> <1477310.o5B8uhf3mT@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 8 Aug 2016 14:42:56 +0200
-Message-ID: <CAMuHMdWeq2tH_jpPJ1sPYiutKCcAXynm8tw6vBW7dC9C1seUeg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: r8a7792: add VIN clocks
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1470780289-27496-2-git-send-email-tremyfr@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Jul 23, 2016 at 9:16 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Describe the VIN[0-5] clocks and their parent, ZG clock in the R8A7792
-> device  tree.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+[CC linux-sh as some of those boards use this driver]
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Phillippe,
 
-Gr{oetje,eeting}s,
+On Wed, Aug 10, 2016 at 12:04:49AM +0200, Philippe Reynes wrote:
+> The ethtool api {get|set}_settings is deprecated.
+> We move this driver to new api {get|set}_link_ksettings.
+> 
+> Signed-off-by: Philippe Reynes <tremyfr@gmail.com>
 
-                        Geert
+Thanks this change looks reasonable to me.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+I have also tested it as follows on the r8a7790/Lager board and it
+appears to work.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Tested-by: Simon Horman <horms+renesas@verge.net.au>
+
+# ethtool -h | head -1
+ethtool version 3.1
+
+# ethtool -i eth0
+driver: sh-eth
+version:
+firmware-version:
+bus-info: ee700000.ethernet
+supports-statistics: yes
+supports-test: no
+supports-eeprom-access: no
+supports-register-dump: yes
+
+# ethtool eth0
+Settings for eth0:
+        Supported ports: [ TP MII ]
+        Supported link modes:   10baseT/Half 10baseT/Full
+                                100baseT/Half 100baseT/Full
+        Supported pause frame use: Symmetric Receive-only
+        Supports auto-negotiation: Yes
+        Advertised link modes:  10baseT/Half 10baseT/Full
+                                100baseT/Half 100baseT/Full
+        Advertised pause frame use: Symmetric Receive-only
+        Advertised auto-negotiation: Yes
+        Link partner advertised link modes:  10baseT/Half 10baseT/Full
+                                             100baseT/Half 100baseT/Full
+        Link partner advertised pause frame use: No
+        Link partner advertised auto-negotiation: Yes
+        Speed: 100Mb/s
+        Duplex: Full
+        Port: MII
+        PHYAD: 1
+        Transceiver: internal
+        Auto-negotiation: on
+        Current message level: 0x000000cc (204)
+                               link timer rx_err tx_err
+        Link detected: yes
+
+# ethtool -s eth0 speed 10 duplex half
+
+--- start kernel messages ---
+[  375.640312] sh-eth ee700000.ethernet eth0: Link is Down
+[  377.360727] sh-eth ee700000.ethernet eth0: Link is Up - 10Mbps/Half - flow control off
+--- end kernel messages ---
+
+# ethtool eth0
+Settings for eth0:
+        Supported ports: [ TP MII ]
+        Supported link modes:   10baseT/Half 10baseT/Full 
+                                100baseT/Half 100baseT/Full 
+        Supported pause frame use: Symmetric Receive-only
+        Supports auto-negotiation: Yes
+        Advertised link modes:  10baseT/Half 
+        Advertised pause frame use: No
+        Advertised auto-negotiation: Yes
+        Link partner advertised link modes:  10baseT/Half 10baseT/Full 
+                                             100baseT/Half 100baseT/Full 
+        Link partner advertised pause frame use: No
+        Link partner advertised auto-negotiation: Yes
+        Speed: 10Mb/s
+        Duplex: Half
+        Port: MII
+        PHYAD: 1
+        Transceiver: internal
+        Auto-negotiation: on
+        Current message level: 0x000000cc (204)
+                               link timer rx_err tx_err
+        Link detected: yes
