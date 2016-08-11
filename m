@@ -1,86 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52064 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLCe (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:02:34 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87h9av4okr.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiKB-000350-KL@debutante>
-Date: Mon, 08 Aug 2016 12:02:27 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on cx20442" to the asoc tree
+Received: from relmlor1.renesas.com ([210.160.252.171]:52809 "EHLO
+	relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750857AbcHKCQm convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 10 Aug 2016 22:16:42 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Simon Horman <horms@verge.net.au>
+CC: "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v3 0/5] arm64: dts: r8a7795: Add HSUSB device node and
+ enable channel 0 of USB2.0
+Date: Thu, 11 Aug 2016 02:15:40 +0000
+Message-ID: <HK2PR06MB0548D84529D548FF8DD7C6C2D81E0@HK2PR06MB0548.apcprd06.prod.outlook.com>
+References: <1469098021-7692-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20160810084539.GD6276@verge.net.au>
+In-Reply-To: <20160810084539.GD6276@verge.net.au>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hi Simon-san,
 
-   ASoC: codec duplicated callback function goes to component on cx20442
+> From: Simon Horman [mailto:horms@verge.net.au]
+> Sent: Wednesday, August 10, 2016 5:46 PM
+> 
+> Hi Shimoda-san,
+> 
+> On Thu, Jul 21, 2016 at 07:46:56PM +0900, Yoshihiro Shimoda wrote:
+> > This patch is based on the renesas.git / renesas-devel-20160718-v4.7-rc7 tag.
+> >
+> > Changes from v2:
+> >  - rebase on renesas.git / renesas-devel-20160718-v4.7-rc7.
+> >   - maybe the panic issue disappears on the tree. but, if still happens,
+> >     please try the following patch:
+> >
+> https://git.kernel.org/cgit/linux/kernel/git/gregkh/usb.git/commit/?h=usb-next&id=c14f8a4032efa73d9c4e155add47c19252
+> b3bdf4
+> >  - remove the redundant instruction in patch 4.
+> >  - add a new patch that enables HSUSB driver as kernel module on the defconfig.
+> 
+> Sorry for not attending to this earlier.
+> In your opinion are these patches ready to merge?
 
-has been applied to the asoc tree at
+Yes. Since the following patch had been merged in v4.8-rc1, the panic issue disappears.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+> https://git.kernel.org/cgit/linux/kernel/git/gregkh/usb.git/commit/?h=usb-next&id=c14f8a4032efa73d9c4e155add47c19252
+> b3bdf4
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From a2c9c0f9729be9b0c5d410fd3f9ba2b335d5e868 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:14:19 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- cx20442
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/cx20442.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/sound/soc/codecs/cx20442.c b/sound/soc/codecs/cx20442.c
-index fb3885fe0afb..2c12471e42a6 100644
---- a/sound/soc/codecs/cx20442.c
-+++ b/sound/soc/codecs/cx20442.c
-@@ -407,10 +407,12 @@ static struct snd_soc_codec_driver cx20442_codec_dev = {
- 	.reg_word_size = sizeof(u8),
- 	.read = cx20442_read_reg_cache,
- 	.write = cx20442_write,
--	.dapm_widgets = cx20442_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(cx20442_dapm_widgets),
--	.dapm_routes = cx20442_audio_map,
--	.num_dapm_routes = ARRAY_SIZE(cx20442_audio_map),
-+	.component_driver = {
-+		.dapm_widgets		= cx20442_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(cx20442_dapm_widgets),
-+		.dapm_routes		= cx20442_audio_map,
-+		.num_dapm_routes	= ARRAY_SIZE(cx20442_audio_map),
-+	},
- };
- 
- static int cx20442_platform_probe(struct platform_device *pdev)
--- 
-2.8.1
+Best regards,
+Yoshihiro Shimoda
