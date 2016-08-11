@@ -1,86 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36600 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932203AbcHIM3L (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40103 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752171AbcHKInK (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 9 Aug 2016 08:29:11 -0400
-Received: from avalon.bb.dnainternet.fi (85-23-193-79.bb.dnainternet.fi [85.23.193.79])
-	by galahad.ideasonboard.com (Postfix) with ESMTPSA id 57811208AB
-	for <linux-renesas-soc@vger.kernel.org>; Tue,  9 Aug 2016 14:28:57 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 3/4] arm64: dts: renesas: r8a7795: Add DU device to DT
-Date: Tue,  9 Aug 2016 15:29:11 +0300
-Message-Id: <1470745752-23738-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1470745752-23738-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1470745752-23738-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+	Thu, 11 Aug 2016 04:43:10 -0400
+Date: Thu, 11 Aug 2016 10:43:02 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] UHS-I SDR-104 support for sh_mobile_sdhi
+Message-ID: <20160811084301.GF30475@verge.net.au>
+References: <1469592803-13842-1-git-send-email-horms+renesas@verge.net.au>
+ <20160810131224.GB1741@katana>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160810131224.GB1741@katana>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the DU device to r8a7795.dtsi in a disabled state.
+On Wed, Aug 10, 2016 at 03:12:24PM +0200, Wolfram Sang wrote:
+> Hi Simon,
+> 
+> > In this patchset I have attempted to address all review received
+> > for the v3 patch-set. I also believe that I have resolved a problem
+> > where tuning would timeout under some circumstances: this seems to
+> > have been due to several bugs introduced between v1 and v3.
+> 
+> So, you didn't see timeouts anymore?
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 46 ++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+Yes, that is correct.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index d9c6653471f4..7837d4b807d5 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1474,5 +1474,51 @@
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 			renesas,fcp = <&fcpf2>;
- 		};
-+
-+		du: display@feb00000 {
-+			compatible = "renesas,du-r8a7795";
-+			reg = <0 0xfeb00000 0 0x80000>,
-+			      <0 0xfeb90000 0 0x14>;
-+			reg-names = "du", "lvds.0";
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>,
-+				 <&cpg CPG_MOD 723>,
-+				 <&cpg CPG_MOD 722>,
-+				 <&cpg CPG_MOD 721>,
-+				 <&cpg CPG_MOD 727>;
-+			clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
-+			status = "disabled";
-+
-+			vsps = <&vspd0 &vspd1 &vspd2 &vspd3>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					du_out_hdmi0: endpoint {
-+					};
-+				};
-+				port@2 {
-+					reg = <2>;
-+					du_out_hdmi1: endpoint {
-+					};
-+				};
-+				port@3 {
-+					reg = <3>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
-+			};
-+		};
- 	};
- };
--- 
-Regards,
+I have not seen them at all with this patchset.
+I will extend my testing as I integrate these changes on other SoCs and boards.
 
-Laurent Pinchart
+> > * Currently I am seeing speeds of up to 48MB/s with these patches and
+> >   30MB/s without using a SanDisk Extreme Pro 8Gb microSDHC UHS-1 card.
+> > 
+> > * I am also seeing 45MB/s with these patches and 34MB/s without using
+> >   a SanDisk Ultra 64Gb microSDXC UHS-1 card.
+> 
+> I got similar numbers for my SanDisk and Samsung cards. While the SDR104
+> speed is not that what I hoped for, it is still an improvement over
+> SDR50. We are currently investigating if DMA causes a bottleneck
+> somewhere perhaps. Except for a minor comment, I'd think these patches
+> are good to go in and we could improve incrementally from here:
+> 
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> Maybe Ulf can have another high-level view on those. I guess he is more
+> experienced with the tuning stuff?
+
+Yes, of course such input would be welcome.
+I'd like to work towards getting these changes merged.
