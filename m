@@ -1,90 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54214 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752356AbcHHLGo (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40383 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751093AbcHKJLF (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:06:44 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87twev8xjn.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiOE-0004H8-06@debutante>
-Date: Mon, 08 Aug 2016 12:06:37 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on pistachio-internal-dac" to the asoc tree
+	Thu, 11 Aug 2016 05:11:05 -0400
+Date: Thu, 11 Aug 2016 11:10:58 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] arm64: renesas: add H3ULCB board
+Message-ID: <20160811091058.GI30475@verge.net.au>
+References: <1469382353-14847-1-git-send-email-vladimir.barinov@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1469382353-14847-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Hi Vladimir,
 
-   ASoC: codec duplicated callback function goes to component on pistachio-internal-dac
+On Sun, Jul 24, 2016 at 08:45:53PM +0300, Vladimir Barinov wrote:
+> Hello,
+> 
+> This adds the folowing:
+> - R8A7795 SoC based H3ULCB low cost board initial device tree
+> - Document DT bindings
 
-has been applied to the asoc tree at
+In principle I am happy to with adding the H3ULCB to mainline but I am wondering
+if you could make some adjustments to your patches so they fit the scheme
+we usually use when adding new boards (and SoCs) to mainline.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Please split up the first patch as follows:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+* A first patch which enables a very small subset of features:
+  - One CPU, some memory, a serial port, and anything else required
+    to boot to a rudimentary user-space.
+  - I am happy for you to post this by itself
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+* Then follow-up patches which one-by one enable SoC features such
+  as more CPUs, more memory, and of course more IP blocks (more serial
+  ports, SDHI, etc...)
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 90eb10fc4fc2d5977879489324e5c4abe099e650 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:46:59 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- pistachio-internal-dac
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/img/pistachio-internal-dac.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/img/pistachio-internal-dac.c b/sound/soc/img/pistachio-internal-dac.c
-index 162a0fd68c7b..53e11c6d4e22 100644
---- a/sound/soc/img/pistachio-internal-dac.c
-+++ b/sound/soc/img/pistachio-internal-dac.c
-@@ -134,12 +134,14 @@ static int pistachio_internal_dac_codec_probe(struct snd_soc_codec *codec)
- static const struct snd_soc_codec_driver pistachio_internal_dac_driver = {
- 	.probe = pistachio_internal_dac_codec_probe,
- 	.idle_bias_off = true,
--	.controls = pistachio_internal_dac_snd_controls,
--	.num_controls = ARRAY_SIZE(pistachio_internal_dac_snd_controls),
--	.dapm_widgets = pistachio_internal_dac_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(pistachio_internal_dac_widgets),
--	.dapm_routes = pistachio_internal_dac_routes,
--	.num_dapm_routes = ARRAY_SIZE(pistachio_internal_dac_routes),
-+	.component_driver = {
-+		.controls		= pistachio_internal_dac_snd_controls,
-+		.num_controls		= ARRAY_SIZE(pistachio_internal_dac_snd_controls),
-+		.dapm_widgets		= pistachio_internal_dac_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(pistachio_internal_dac_widgets),
-+		.dapm_routes		= pistachio_internal_dac_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(pistachio_internal_dac_routes),
-+	},
- };
- 
- static int pistachio_internal_dac_probe(struct platform_device *pdev)
--- 
-2.8.1
+Furthermore, if any of the SoC features you wish to enable are not already
+enabled in mainline for the H3/Salvator-x then please arrange so they
+appear at the end of the patchset or provided as a follow-up patchset
+(possibly later).
