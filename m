@@ -1,137 +1,138 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f182.google.com ([209.85.217.182]:35371 "EHLO
-        mail-ua0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757579AbcHYFez (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Aug 2016 01:34:55 -0400
-MIME-Version: 1.0
-In-Reply-To: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
-References: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
-From: Magnus Damm <magnus.damm@gmail.com>
-Date: Thu, 25 Aug 2016 14:34:53 +0900
-Message-ID: <CANqRtoRQ4tUrVyJqOsN_AE8WwXkG71rkQMFKr+6z36wPoQ+PJw@mail.gmail.com>
-Subject: Re: [PATCH/PROTO 0/9] R-Car H3 MSIOF Parent Clock Control Prototype
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:51424 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752796AbcHLQiz (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Fri, 12 Aug 2016 12:38:55 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-spi@vger.kernel.org, linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/PROTO 0/9] R-Car H3 MSIOF Parent Clock Control Prototype
+Date: Fri, 12 Aug 2016 18:38:36 +0200
+Message-Id: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
+	Hi all,
 
-On Sat, Aug 13, 2016 at 1:38 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->         Hi all,
->
-> On R-Car H3, the various MSIOF instances (used for SPI) have a common
-> parent clock. This mso clock is a programmable "DIV6" clock (divider
-> 1 - 64). Its rate lies in the range 12.5 to 800 MHz, or 6.25 to 400 MHz
-> (depending on the main crystal).
-> After boot up, the default configuration is the lowest possible rate,
-> which leads to bad performance with devices desiring a higher transfer
-> rate.
->
-> MSIOF clock tree:
->
->     pll1/4 (800 or 400 MHz)
->       mso clock
->         msiof0 clock (type MSTP = gate + status)
->           msiof0 internal divider (divider range 1 - 1024, with holes)
->         msiof1 clock (type MSTP)
->           msiof1 internal divider
->         msiof2 clock (type MSTP)
->           msiof2 internal divider
->         msiof3 clock (type MSTP)
->           msiof3 internal divider
->
-> To optimize performance, we want to control the mso parent clock.
->
->   - Higher parent clock means:
->       + Better performance for devices wanting high target rates,
->       + More accurate target rates in MSIOF driver,
->       - More power consumption (doesn't matter that much with R-Car),
->       - Cannot support devices needing real low target rates.
->   - Lower parent clock means:
->       + Less power consumption (doesn't matter that much with R-Car),
->       + Can support all devices,
->       - Worse performance for devices wanting high target rates,
->       - Less accurate target rates, decreasing performance.
->
-> Configuring the mso parent clock rate can either be done statically, or
-> dynamically. In both cases, this must be based on individual device
-> requirements. Note that this is not specific to SPI.
->
-> SPI specific notes:
->   - The SPI master knows about SPI slave device maximum frequencies only
->     when spi_master.setup() is called,
->   - SPI slave device maximum frequencies may change at runtime (through
->     calling spi_setup(), esp. for spidev),
->   - Currently the MSIOF driver does not set
->     spi_master.{min,max}_speed_hz. However, setting it means the SPI
->     core will never call spi_master.setup() with a rate outside this
->     range, and thus we will never be informed of such rates.  Hence if
->     we decide to set this, and we want dynamic configuration, we should
->     fill in the real minimum and maximum supported by the hardware,
->     regardless of the current parent clock rate.
->
-> In this prototype, I'm offering 3 solutions to control the mso parent
-> clock rate.
->
->   - Option 1: Static configuration through the "assigned-clocks" and
->     assigned-clock-rates DT properties.
->
->   - Option 2: Dynamic configuration, by changing the mso clock through
->     the msiofX module clocks from the MSIOF driver.
->
->   - Option 2: Dynamic configuration, by changing a dummy clk-divider,
->     which mimics the capabilities of the MSIOF internal divider.
+On R-Car H3, the various MSIOF instances (used for SPI) have a common
+parent clock. This mso clock is a programmable "DIV6" clock (divider
+1 - 64). Its rate lies in the range 12.5 to 800 MHz, or 6.25 to 400 MHz
+(depending on the main crystal).
+After boot up, the default configuration is the lowest possible rate,
+which leads to bad performance with devices desiring a higher transfer
+rate.
 
-Thanks for cooking up these solutions. I dislike putting software
-policy into DT, but at least Option 1 is simple. Option 2 and 3 seem a
-bit overly complex to me.
+MSIOF clock tree:
 
-May I ask if you considered solving the common case and special case
-independently?
+    pll1/4 (800 or 400 MHz)
+      mso clock
+	msiof0 clock (type MSTP = gate + status)
+	  msiof0 internal divider (divider range 1 - 1024, with holes)
+	msiof1 clock (type MSTP)
+	  msiof1 internal divider
+	msiof2 clock (type MSTP)
+	  msiof2 internal divider
+	msiof3 clock (type MSTP)
+	  msiof3 internal divider
 
-Regarding the common case, I think it is sane to assume that everyone
-wants a high performing solution if possible. So using highest clock
-rate possible must be a good default to as long as we can be sure to
-also be able to handle devices wanting low clock rates. In my mind
-this would mean that a standard unmodified DT should result in highest
-performance possible. This probably involves programming the CPG/MSSR
-hardware during boot-up based on some table with maximum supported
-frequency. The high performing setting may or may not be the default
-from reset (or boot loader) today, but perhaps it makes sense to rely
-less on hardware settings performed during boot? At least this seems
-like a good long term aim to me.
+To optimize performance, we want to control the mso parent clock.
 
-As for short term special case handling, the only issue we are having
-is when more than one MSIOF instance want to use frequencies that are
-incompatible. The first MSIOF parent clock user should be able to
-select whichever rate it wants in theory, but with more than one MSIOF
-instance then if one MSIOF instance wants to use the highest frequency
-possible and the other the lowest possible then the 1024 divider is
-not enough to cover both. From my side I would say it makes sense to
-cover this special case with "Option 1" above. To avoid probe order
-issues the CPG/MSSR driver handling the parent clock could for
-instance early during boot look for DT frequency properties in the DTB
-and adjust the shared default rate based on that.
+  - Higher parent clock means:
+      + Better performance for devices wanting high target rates,
+      + More accurate target rates in MSIOF driver,
+      - More power consumption (doesn't matter that much with R-Car),
+      - Cannot support devices needing real low target rates.
+  - Lower parent clock means:
+      + Less power consumption (doesn't matter that much with R-Car),
+      + Can support all devices,
+      - Worse performance for devices wanting high target rates,
+      - Less accurate target rates, decreasing performance.
 
-For more long term special case handling, can't each MSIOF instance
-request the frequency independently and the parent clock CPG/MSSR
-driver can take all the child frequency requests into consideration
-and set something that satisfies everyone? clk_set_rate_range() and/or
-struct clk_rate_request seem to provide some way to pass on this
-information. During probe of the MSIOF driver perhaps the devices need
-to be queued up early on and once all the devices are deemed to be
-loaded then the devices are started in order with the lowest requested
-frequency first. Of course, if we need to load a new slow speed device
-later on then the existing ones may need to be ripped out and the
-whole bunch reinstalled. I believe this is similar to "Option 2"
-above.
+Configuring the mso parent clock rate can either be done statically, or
+dynamically. In both cases, this must be based on individual device
+requirements. Note that this is not specific to SPI.
 
-Thanks,
+SPI specific notes:
+  - The SPI master knows about SPI slave device maximum frequencies only
+    when spi_master.setup() is called,
+  - SPI slave device maximum frequencies may change at runtime (through
+    calling spi_setup(), esp. for spidev),
+  - Currently the MSIOF driver does not set
+    spi_master.{min,max}_speed_hz. However, setting it means the SPI
+    core will never call spi_master.setup() with a rate outside this
+    range, and thus we will never be informed of such rates.  Hence if
+    we decide to set this, and we want dynamic configuration, we should
+    fill in the real minimum and maximum supported by the hardware,
+    regardless of the current parent clock rate.
 
-/ magnus
+In this prototype, I'm offering 3 solutions to control the mso parent
+clock rate.
+
+  - Option 1: Static configuration through the "assigned-clocks" and
+    assigned-clock-rates DT properties.
+
+  - Option 2: Dynamic configuration, by changing the mso clock through
+    the msiofX module clocks from the MSIOF driver.
+
+  - Option 2: Dynamic configuration, by changing a dummy clk-divider,
+    which mimics the capabilities of the MSIOF internal divider.
+
+More information can be found in the individual patches for the various
+options.
+
+For your convenience, these patches are also available in the following
+branches of my renesas-drivers git repository at
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git:
+  - topic/r8a7795-msiof-parent-clock-prototype-core
+  - topic/r8a7795-msiof-parent-clock-prototype-dt
+  - topic/r8a7795-msiof-parent-clock-prototype-option-1
+  - topic/r8a7795-msiof-parent-clock-prototype-option-2
+  - topic/r8a7795-msiof-parent-clock-prototype-option-3
+
+Warning:
+  - None of these patches is intended to be applied as-is!
+  - R-Car H3 ES1.0 has a hardware bug preventing MSIOF from being used
+    with real SPI devices. However, this does not affect the generation
+    of clock signals on the SPI bus.
+
+Conclusion, based on the observations for the various options:
+  The mso clock frequency cannot be changed while the mso clock is
+  enabled. However, Runtime PM may not have disabled it yet due its
+  asynchronous nature, leading to subtle failures. Add to this the added
+  complexity for options 2 and 3, and their still needed improvements, I
+  think static configuration in DT (option 1) is the best solution.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (9):
+  [common] spi: sh-msiof: Add support for R-Car H3
+  [common] spi: sh-msiof: Print max and transfer frequency
+  [common] arm64: dts: r8a7795: Add all MSIOF nodes
+  [common] arm64: dts: salvator-x: Add dummy MSIOF SPI slave devices
+  [option 1] arm64: dts: salvator-x: Configure MSIOF parent clock
+  [option 2/3] spi: sh-msiof: Add clock notifier to enforce valid parent
+    clock
+  [option 2] spi: sh-msiof: Configure MSIOF parent clock
+  [option 3] clk: divider: Add hack to support dummy clocks
+  [option 3] spi: sh-msiof: Configure MSIOF parent clock
+
+ Documentation/devicetree/bindings/spi/sh-msiof.txt |   1 +
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  79 ++++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  52 +++
+ drivers/clk/clk-divider.c                          |  33 ++-
+ drivers/spi/spi-sh-msiof.c                         | 355 +++++++++++++++++++++
+ include/linux/clk-provider.h                       |   1 +
+ 4 files changed, 508 insertions(+), 13 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
