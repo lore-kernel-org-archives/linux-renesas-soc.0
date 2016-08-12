@@ -1,86 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53918 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752565AbcHHLGM (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:52259 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751207AbcHLBQu (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:06:12 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87fuqf8xe4.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiNh-00047O-Kw@debutante>
-Date: Mon, 08 Aug 2016 12:06:05 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8741" to the asoc tree
+	Thu, 11 Aug 2016 21:16:50 -0400
+Date: Thu, 11 Aug 2016 18:16:48 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: r8a7795: Fix SD clocks
+Message-ID: <20160812011648.GN2996@codeaurora.org>
+References: <1470814183-17834-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1470814183-17834-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On 08/10, Geert Uytterhoeven wrote:
+> From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> 
+> According to the datasheet, SDn clocks are from the SDSRC clock. And
+> the SDSRC has a 1/2 divider. So, we should have ".sdsrc" as an internal
+> core clock. Otherwise, since the sdhi driver will calculate clock for
+> a sd card using the wrong parent clock rate, and then performance will
+> be not good.
+> 
+> Fixes: 90c073e53909da85 ("clk: shmobile: r8a7795: Add SD divider support")
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: stable@vger.kernel.org
+> ---
 
-   ASoC: codec duplicated callback function goes to component on wm8741
+Applied to clk-fixes
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 818d2aa162b886e4c1b722ca8661f79384a257e9 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:50:19 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- wm8741
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/wm8741.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/sound/soc/codecs/wm8741.c b/sound/soc/codecs/wm8741.c
-index 36ef91fe0511..3e432721903e 100644
---- a/sound/soc/codecs/wm8741.c
-+++ b/sound/soc/codecs/wm8741.c
-@@ -502,10 +502,12 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8741 = {
- 	.remove =	wm8741_remove,
- 	.resume =	wm8741_resume,
- 
--	.dapm_widgets = wm8741_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(wm8741_dapm_widgets),
--	.dapm_routes = wm8741_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(wm8741_dapm_routes),
-+	.component_driver = {
-+		.dapm_widgets		= wm8741_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(wm8741_dapm_widgets),
-+		.dapm_routes		= wm8741_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(wm8741_dapm_routes),
-+	},
- };
- 
- static const struct of_device_id wm8741_of_match[] = {
 -- 
-2.8.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
