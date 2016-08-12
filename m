@@ -1,65 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34586 "EHLO
-	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753887AbcHRN2U (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:51430 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752790AbcHLQiz (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 18 Aug 2016 09:28:20 -0400
-Received: by mail-wm0-f65.google.com with SMTP id q128so5620521wma.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Aug 2016 06:28:06 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: horms@verge.net.au, magnus.damm@gmail.com,
-	ulrich.hecht+renesas@gmail.com, sergei.shtylyov@cogentembedded.com
-Subject: [PATCH v3 0/4] Initial r8a7796 PFC support
-Date: Thu, 18 Aug 2016 15:12:31 +0200
-Message-Id: <1471525955-11713-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+	Fri, 12 Aug 2016 12:38:55 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-spi@vger.kernel.org, linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/PROTO 3/9 common] arm64: dts: r8a7795: Add all MSIOF nodes
+Date: Fri, 12 Aug 2016 18:38:39 +0200
+Message-Id: <1471019925-29083-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
+References: <1471019925-29083-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+Add the device nodes for all MSIOF SPI controllers, incl. clocks, clock
+domain, and dma properties.
 
-This implements a minimal set of PFC functionality for the M3 and sits on
-top of renesas-drivers-2016-08-09-v4.8-rc1.  It includes the SCIF pin groups
-and enables pin control for the serial console (SCIF2) on the Salvator-X
-board.
+Not-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Not intended for upstream merge.
 
-This revision has scif_clk support, no bogus pin assignments, and enhanced
-ePAPR compliance.  See below for details.
+R-Car H3 ES1.0 has a hardware bug preventing MSIOF from being used with
+real SPI devices. However, this does not affect the generation of clock
+signals on the SPI bus.
 
-CU
-Uli
+v2:
+  - Rebased,
+  - Switch to final CPG/MSSR bindings,
+  - Change one-line summary prefix to match current arm-soc practices.
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 52 ++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-
-Changes since v2:
-- pfc: implement scif_clk
-- dts: remove bogus scif2_clk assignment
-- dtsi: ePAPRly correct pfc node name
-
-Changes since v1:
-- dts: assign scif2_clk pin to scif2
-- bindings: "M3" -> "M3-W"
-- pfc-r8a7796.c: fix whitespace inconsistencies
-- pfc-r8a7796.c: fix 0xe6060248 register name ("IPSR17" -> "IPSR18")
-
-
-Takeshi Kihara (3):
-  pinctrl: sh-pfc: Initial R8A7796 PFC support
-  pinctrl: sh-pfc: r8a7796: Add SCIF pins, groups and functions
-  arm64: dts: r8a7796: Add pinctrl device node
-
-Ulrich Hecht (1):
-  arm64: dts: r8a7796: salvator: add serial console pins
-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |   16 +
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           |    5 +
- drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
- drivers/pinctrl/sh-pfc/Makefile                    |    1 +
- drivers/pinctrl/sh-pfc/core.c                      |    6 +
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c               | 2372 ++++++++++++++++++++
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |    1 +
- 8 files changed, 2407 insertions(+)
- create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 80af0ba68750f346..41549faec07bae3d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -838,6 +838,58 @@
+ 			status = "disabled";
+ 		};
+ 
++		msiof0: spi@e6e90000 {
++			compatible = "renesas,msiof-r8a7795";
++			reg = <0 0xe6e90000 0 0x0064>;
++			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 211>;
++			dmas = <&dmac1 0x41>, <&dmac1 0x40>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof1: spi@e6ea0000 {
++			compatible = "renesas,msiof-r8a7795";
++			reg = <0 0xe6ea0000 0 0x0064>;
++			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 210>;
++			dmas = <&dmac1 0x43>, <&dmac1 0x42>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof2: spi@e6c00000 {
++			compatible = "renesas,msiof-r8a7795";
++			reg = <0 0xe6c00000 0 0x0064>;
++			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 209>;
++			dmas = <&dmac0 0x45>, <&dmac0 0x44>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof3: spi@e6c10000 {
++			compatible = "renesas,msiof-r8a7795";
++			reg = <0 0xe6c10000 0 0x0064>;
++			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 208>;
++			dmas = <&dmac0 0x47>, <&dmac0 0x46>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		scif0: serial@e6e60000 {
+ 			compatible = "renesas,scif-r8a7795",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
 -- 
-2.7.4
+1.9.1
