@@ -1,90 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51096 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLAk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752966AbcHOI4f (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:00:40 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87wpjr1uw0.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiIL-0002WL-JQ@debutante>
-Date: Mon, 08 Aug 2016 12:00:33 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on tlv320dac33" to the asoc tree
+	Mon, 15 Aug 2016 04:56:35 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 16/26] ARM: dts: r8a7792: add VIN clocks
+Date: Mon, 15 Aug 2016 10:55:35 +0200
+Message-Id: <62855bcf15796de1231c93652d385a8b11be75c4.1471251169.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
+References: <cover.1471251169.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-   ASoC: codec duplicated callback function goes to component on tlv320dac33
+Describe the VIN[0-5] clocks and their parent, ZG clock in the R8A7792
+device  tree.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From b04c71e634e6654cf4e52e7a94e98aba27c0e643 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:26:17 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- tlv320dac33
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- sound/soc/codecs/tlv320dac33.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a7792.dtsi | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/tlv320dac33.c b/sound/soc/codecs/tlv320dac33.c
-index f7a6ce7e5fb1..d64eac74d1cc 100644
---- a/sound/soc/codecs/tlv320dac33.c
-+++ b/sound/soc/codecs/tlv320dac33.c
-@@ -1453,12 +1453,14 @@ static struct snd_soc_codec_driver soc_codec_dev_tlv320dac33 = {
- 	.probe = dac33_soc_probe,
- 	.remove = dac33_soc_remove,
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 89f248c5cd9e..dbe2f28fee99 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -643,6 +643,13 @@
+ 			clock-div = <49>;
+ 			clock-mult = <1>;
+ 		};
++		zg_clk: zg {
++			compatible = "fixed-factor-clock";
++			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
++			#clock-cells = <0>;
++			clock-div = <5>;
++			clock-mult = <1>;
++		};
  
--	.controls = dac33_snd_controls,
--	.num_controls = ARRAY_SIZE(dac33_snd_controls),
--	.dapm_widgets = dac33_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(dac33_dapm_widgets),
--	.dapm_routes = audio_map,
--	.num_dapm_routes = ARRAY_SIZE(audio_map),
-+	.component_driver = {
-+		.controls		= dac33_snd_controls,
-+		.num_controls		= ARRAY_SIZE(dac33_snd_controls),
-+		.dapm_widgets		= dac33_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(dac33_dapm_widgets),
-+		.dapm_routes		= audio_map,
-+		.num_dapm_routes	= ARRAY_SIZE(audio_map),
-+	},
- };
- 
- #define DAC33_RATES	(SNDRV_PCM_RATE_44100 | \
+ 		/* Gate clocks */
+ 		mstp1_clks: mstp1_clks@e6150134 {
+@@ -702,10 +709,17 @@
+ 			compatible = "renesas,r8a7792-mstp-clocks",
+ 				     "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe6150990 0 4>, <0 0xe61509a0 0 4>;
+-			clocks = <&hp_clk>;
++			clocks = <&zg_clk>, <&zg_clk>, <&zg_clk>, <&zg_clk>,
++			         <&zg_clk>, <&zg_clk>, <&hp_clk>;
+ 			#clock-cells = <1>;
+-			clock-indices = <R8A7792_CLK_ETHERAVB>;
+-			clock-output-names = "etheravb";
++			clock-indices = <
++				R8A7792_CLK_VIN5 R8A7792_CLK_VIN4
++				R8A7792_CLK_VIN3 R8A7792_CLK_VIN2
++				R8A7792_CLK_VIN1 R8A7792_CLK_VIN0
++				R8A7792_CLK_ETHERAVB
++			>;
++			clock-output-names = "vin5", "vin4", "vin3", "vin2",
++					     "vin1", "vin0", "etheravb";
+ 		};
+ 		mstp9_clks: mstp9_clks@e6150994 {
+ 			compatible = "renesas,r8a7792-mstp-clocks",
 -- 
-2.8.1
+2.7.0.rc3.207.g0ac5344
