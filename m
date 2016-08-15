@@ -1,42 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:39990 "EHLO
-	relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S932277AbcHKPAs convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 11 Aug 2016 11:00:48 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Question about dma-ranges property for PCI host controllers
-Date: Thu, 11 Aug 2016 15:00:42 +0000
-Message-ID: <HK2PR0601MB1393CA771AB65556D4E2F0B9F51E0@HK2PR0601MB1393.apcprd06.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:54276 "EHLO
+	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932338AbcHOPHP (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 15 Aug 2016 11:07:15 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
+	hverkuil@xs4all.nl
+Cc: linux-renesas-soc@vger.kernel.org,
+	laurent.pinchart@ideasonboard.com,
+	sergei.shtylyov@cogentembedded.com,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv3 03/10] [media] rcar-vin: arrange enum chip_id in chronological order
+Date: Mon, 15 Aug 2016 17:06:28 +0200
+Message-Id: <20160815150635.22637-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-vin.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-A few PCI host controllers use the "dma-ranges" property to specify the
-mapping from PCI bus addresses to physical addresses.
-
-In the case of R-Car PCIe Host controllers, the intention was to set this
-property as a 1 to 1 mapping for all DDR that could be addressed by the
-device. However, there are some limitations for the R-Car controller which
-meant that we could only map a subset of the DDR range - this limitation
-has prompted us to work on enabling the IOMMU behind the PCI controller.
-
-When there is an IOMMU behind the PCI controller, the "dma-ranges"
-property specifies the mapping from PCI bus addresses to an IOVA address.
-So should the property map all address space?
-
-Note that this is not actually possible with the R-Car hardware, but I
-found that the IOVA address space is outside of the DDR address space
-that we were using so had change it.
-
-Thanks
-Phil
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 31ad39a..b9274132 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -30,9 +30,9 @@
+ #define HW_BUFFER_MASK 0x7f
+ 
+ enum chip_id {
+-	RCAR_GEN2,
+ 	RCAR_H1,
+ 	RCAR_M1,
++	RCAR_GEN2,
+ };
+ 
+ /**
+-- 
+2.9.2
