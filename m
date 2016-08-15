@@ -1,339 +1,117 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56197 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753311AbcHQLcU (ORCPT
+	with ESMTP id S1752961AbcHOI4d (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 17 Aug 2016 07:32:20 -0400
+	Mon, 15 Aug 2016 04:56:33 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RTF 3/7] pinctrl: sh-pfc: r8a7796: Add SDHI pins, groups and functions
-Date: Wed, 17 Aug 2016 13:31:52 +0200
-Message-Id: <1471433516-4478-4-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au>
-References: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 17/26] ARM: dts: r8a7792: add VIN support
+Date: Mon, 15 Aug 2016 10:55:36 +0200
+Message-Id: <a2d30b9c555f02c6a2aa389fbd41a103503242dd.1471251169.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
+References: <cover.1471251169.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This patch adds SDHI pins, groups and functions to R8A7796 SoC.
+Define the generic R8A7792 parts of the VIN[0-5] device nodes.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 275 +++++++++++++++++++++++++++++++++++
- 1 file changed, 275 insertions(+)
+ arch/arm/boot/dts/r8a7792.dtsi | 66 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 939e3fcad011..e2a2185c2b74 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -1684,6 +1684,213 @@ static const unsigned int scif5_clk_b_mux[] = {
- 	SCK5_B_MARK,
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index dbe2f28fee99..e1f85a9904d0 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -25,6 +25,12 @@
+ 		i2c3 = &i2c3;
+ 		i2c4 = &i2c4;
+ 		i2c5 = &i2c5;
++		vin0 = &vin0;
++		vin1 = &vin1;
++		vin2 = &vin2;
++		vin3 = &vin3;
++		vin4 = &vin4;
++		vin5 = &vin5;
  };
  
-+/* - SDHI0 ------------------------------------------------------------------ */
-+static const unsigned int sdhi0_data1_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(3, 2),
-+};
-+static const unsigned int sdhi0_data1_mux[] = {
-+	SD0_DAT0_MARK,
-+};
-+static const unsigned int sdhi0_data4_pins[] = {
-+	/* D[0:3] */
-+	RCAR_GP_PIN(3, 2), RCAR_GP_PIN(3, 3),
-+	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 5),
-+};
-+static const unsigned int sdhi0_data4_mux[] = {
-+	SD0_DAT0_MARK, SD0_DAT1_MARK,
-+	SD0_DAT2_MARK, SD0_DAT3_MARK,
-+};
-+static const unsigned int sdhi0_ctrl_pins[] = {
-+	/* CLK, CMD */
-+	RCAR_GP_PIN(3, 0), RCAR_GP_PIN(3, 1),
-+};
-+static const unsigned int sdhi0_ctrl_mux[] = {
-+	SD0_CLK_MARK, SD0_CMD_MARK,
-+};
-+static const unsigned int sdhi0_cd_pins[] = {
-+	/* CD */
-+	RCAR_GP_PIN(3, 12),
-+};
-+static const unsigned int sdhi0_cd_mux[] = {
-+	SD0_CD_MARK,
-+};
-+static const unsigned int sdhi0_wp_pins[] = {
-+	/* WP */
-+	RCAR_GP_PIN(3, 13),
-+};
-+static const unsigned int sdhi0_wp_mux[] = {
-+	SD0_WP_MARK,
-+};
-+/* - SDHI1 ------------------------------------------------------------------ */
-+static const unsigned int sdhi1_data1_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(3, 8),
-+};
-+static const unsigned int sdhi1_data1_mux[] = {
-+	SD1_DAT0_MARK,
-+};
-+static const unsigned int sdhi1_data4_pins[] = {
-+	/* D[0:3] */
-+	RCAR_GP_PIN(3, 8),  RCAR_GP_PIN(3, 9),
-+	RCAR_GP_PIN(3, 10), RCAR_GP_PIN(3, 11),
-+};
-+static const unsigned int sdhi1_data4_mux[] = {
-+	SD1_DAT0_MARK, SD1_DAT1_MARK,
-+	SD1_DAT2_MARK, SD1_DAT3_MARK,
-+};
-+static const unsigned int sdhi1_ctrl_pins[] = {
-+	/* CLK, CMD */
-+	RCAR_GP_PIN(3, 6), RCAR_GP_PIN(3, 7),
-+};
-+static const unsigned int sdhi1_ctrl_mux[] = {
-+	SD1_CLK_MARK, SD1_CMD_MARK,
-+};
-+static const unsigned int sdhi1_cd_pins[] = {
-+	/* CD */
-+	RCAR_GP_PIN(3, 14),
-+};
-+static const unsigned int sdhi1_cd_mux[] = {
-+	SD1_CD_MARK,
-+};
-+static const unsigned int sdhi1_wp_pins[] = {
-+	/* WP */
-+	RCAR_GP_PIN(3, 15),
-+};
-+static const unsigned int sdhi1_wp_mux[] = {
-+	SD1_WP_MARK,
-+};
-+/* - SDHI2 ------------------------------------------------------------------ */
-+static const unsigned int sdhi2_data1_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(4, 2),
-+};
-+static const unsigned int sdhi2_data1_mux[] = {
-+	SD2_DAT0_MARK,
-+};
-+static const unsigned int sdhi2_data4_pins[] = {
-+	/* D[0:3] */
-+	RCAR_GP_PIN(4, 2), RCAR_GP_PIN(4, 3),
-+	RCAR_GP_PIN(4, 4), RCAR_GP_PIN(4, 5),
-+};
-+static const unsigned int sdhi2_data4_mux[] = {
-+	SD2_DAT0_MARK, SD2_DAT1_MARK,
-+	SD2_DAT2_MARK, SD2_DAT3_MARK,
-+};
-+static const unsigned int sdhi2_data8_pins[] = {
-+	/* D[0:7] */
-+	RCAR_GP_PIN(4, 2),  RCAR_GP_PIN(4, 3),
-+	RCAR_GP_PIN(4, 4),  RCAR_GP_PIN(4, 5),
-+	RCAR_GP_PIN(3, 8),  RCAR_GP_PIN(3, 9),
-+	RCAR_GP_PIN(3, 10), RCAR_GP_PIN(3, 11),
-+};
-+static const unsigned int sdhi2_data8_mux[] = {
-+	SD2_DAT0_MARK, SD2_DAT1_MARK,
-+	SD2_DAT2_MARK, SD2_DAT3_MARK,
-+	SD2_DAT4_MARK, SD2_DAT5_MARK,
-+	SD2_DAT6_MARK, SD2_DAT7_MARK,
-+};
-+static const unsigned int sdhi2_ctrl_pins[] = {
-+	/* CLK, CMD */
-+	RCAR_GP_PIN(4, 0), RCAR_GP_PIN(4, 1),
-+};
-+static const unsigned int sdhi2_ctrl_mux[] = {
-+	SD2_CLK_MARK, SD2_CMD_MARK,
-+};
-+static const unsigned int sdhi2_cd_a_pins[] = {
-+	/* CD */
-+	RCAR_GP_PIN(4, 13),
-+};
-+static const unsigned int sdhi2_cd_a_mux[] = {
-+	SD2_CD_A_MARK,
-+};
-+static const unsigned int sdhi2_cd_b_pins[] = {
-+	/* CD */
-+	RCAR_GP_PIN(5, 10),
-+};
-+static const unsigned int sdhi2_cd_b_mux[] = {
-+	SD2_CD_B_MARK,
-+};
-+static const unsigned int sdhi2_wp_a_pins[] = {
-+	/* WP */
-+	RCAR_GP_PIN(4, 14),
-+};
-+static const unsigned int sdhi2_wp_a_mux[] = {
-+	SD2_WP_A_MARK,
-+};
-+static const unsigned int sdhi2_wp_b_pins[] = {
-+	/* WP */
-+	RCAR_GP_PIN(5, 11),
-+};
-+static const unsigned int sdhi2_wp_b_mux[] = {
-+	SD2_WP_B_MARK,
-+};
-+static const unsigned int sdhi2_ds_pins[] = {
-+	/* DS */
-+	RCAR_GP_PIN(4, 6),
-+};
-+static const unsigned int sdhi2_ds_mux[] = {
-+	SD2_DS_MARK,
-+};
-+/* - SDHI3 ------------------------------------------------------------------ */
-+static const unsigned int sdhi3_data1_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(4, 9),
-+};
-+static const unsigned int sdhi3_data1_mux[] = {
-+	SD3_DAT0_MARK,
-+};
-+static const unsigned int sdhi3_data4_pins[] = {
-+	/* D[0:3] */
-+	RCAR_GP_PIN(4, 9),  RCAR_GP_PIN(4, 10),
-+	RCAR_GP_PIN(4, 11), RCAR_GP_PIN(4, 12),
-+};
-+static const unsigned int sdhi3_data4_mux[] = {
-+	SD3_DAT0_MARK, SD3_DAT1_MARK,
-+	SD3_DAT2_MARK, SD3_DAT3_MARK,
-+};
-+static const unsigned int sdhi3_data8_pins[] = {
-+	/* D[0:7] */
-+	RCAR_GP_PIN(4, 9),  RCAR_GP_PIN(4, 10),
-+	RCAR_GP_PIN(4, 11), RCAR_GP_PIN(4, 12),
-+	RCAR_GP_PIN(4, 13), RCAR_GP_PIN(4, 14),
-+	RCAR_GP_PIN(4, 15), RCAR_GP_PIN(4, 16),
-+};
-+static const unsigned int sdhi3_data8_mux[] = {
-+	SD3_DAT0_MARK, SD3_DAT1_MARK,
-+	SD3_DAT2_MARK, SD3_DAT3_MARK,
-+	SD3_DAT4_MARK, SD3_DAT5_MARK,
-+	SD3_DAT6_MARK, SD3_DAT7_MARK,
-+};
-+static const unsigned int sdhi3_ctrl_pins[] = {
-+	/* CLK, CMD */
-+	RCAR_GP_PIN(4, 7), RCAR_GP_PIN(4, 8),
-+};
-+static const unsigned int sdhi3_ctrl_mux[] = {
-+	SD3_CLK_MARK, SD3_CMD_MARK,
-+};
-+static const unsigned int sdhi3_cd_pins[] = {
-+	/* CD */
-+	RCAR_GP_PIN(4, 15),
-+};
-+static const unsigned int sdhi3_cd_mux[] = {
-+	SD3_CD_MARK,
-+};
-+static const unsigned int sdhi3_wp_pins[] = {
-+	/* WP */
-+	RCAR_GP_PIN(4, 16),
-+};
-+static const unsigned int sdhi3_wp_mux[] = {
-+	SD3_WP_MARK,
-+};
-+static const unsigned int sdhi3_ds_pins[] = {
-+	/* DS */
-+	RCAR_GP_PIN(4, 17),
-+};
-+static const unsigned int sdhi3_ds_mux[] = {
-+	SD3_DS_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scif0_data),
- 	SH_PFC_PIN_GROUP(scif0_clk),
-@@ -1712,6 +1919,32 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scif5_clk_a),
- 	SH_PFC_PIN_GROUP(scif5_data_b),
- 	SH_PFC_PIN_GROUP(scif5_clk_b),
-+	SH_PFC_PIN_GROUP(sdhi0_data1),
-+	SH_PFC_PIN_GROUP(sdhi0_data4),
-+	SH_PFC_PIN_GROUP(sdhi0_ctrl),
-+	SH_PFC_PIN_GROUP(sdhi0_cd),
-+	SH_PFC_PIN_GROUP(sdhi0_wp),
-+	SH_PFC_PIN_GROUP(sdhi1_data1),
-+	SH_PFC_PIN_GROUP(sdhi1_data4),
-+	SH_PFC_PIN_GROUP(sdhi1_ctrl),
-+	SH_PFC_PIN_GROUP(sdhi1_cd),
-+	SH_PFC_PIN_GROUP(sdhi1_wp),
-+	SH_PFC_PIN_GROUP(sdhi2_data1),
-+	SH_PFC_PIN_GROUP(sdhi2_data4),
-+	SH_PFC_PIN_GROUP(sdhi2_data8),
-+	SH_PFC_PIN_GROUP(sdhi2_ctrl),
-+	SH_PFC_PIN_GROUP(sdhi2_cd_a),
-+	SH_PFC_PIN_GROUP(sdhi2_wp_a),
-+	SH_PFC_PIN_GROUP(sdhi2_cd_b),
-+	SH_PFC_PIN_GROUP(sdhi2_wp_b),
-+	SH_PFC_PIN_GROUP(sdhi2_ds),
-+	SH_PFC_PIN_GROUP(sdhi3_data1),
-+	SH_PFC_PIN_GROUP(sdhi3_data4),
-+	SH_PFC_PIN_GROUP(sdhi3_data8),
-+	SH_PFC_PIN_GROUP(sdhi3_ctrl),
-+	SH_PFC_PIN_GROUP(sdhi3_cd),
-+	SH_PFC_PIN_GROUP(sdhi3_wp),
-+	SH_PFC_PIN_GROUP(sdhi3_ds),
- };
+ 	cpus {
+@@ -574,6 +580,66 @@
+ 			status = "disabled";
+ 		};
  
- static const char * const scif0_groups[] = {
-@@ -1759,6 +1992,44 @@ static const char * const scif5_groups[] = {
- 	"scif5_clk_b",
- };
- 
-+static const char * const sdhi0_groups[] = {
-+	"sdhi0_data1",
-+	"sdhi0_data4",
-+	"sdhi0_ctrl",
-+	"sdhi0_cd",
-+	"sdhi0_wp",
-+};
++		vin0: video@e6ef0000 {
++			compatible = "renesas,vin-r8a7792",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef0000 0 0x1000>;
++			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7792_CLK_VIN0>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
 +
-+static const char * const sdhi1_groups[] = {
-+	"sdhi1_data1",
-+	"sdhi1_data4",
-+	"sdhi1_ctrl",
-+	"sdhi1_cd",
-+	"sdhi1_wp",
-+};
++		vin1: video@e6ef1000 {
++			compatible = "renesas,vin-r8a7792",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef1000 0 0x1000>;
++			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7792_CLK_VIN1>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
 +
-+static const char * const sdhi2_groups[] = {
-+	"sdhi2_data1",
-+	"sdhi2_data4",
-+	"sdhi2_data8",
-+	"sdhi2_ctrl",
-+	"sdhi2_cd_a",
-+	"sdhi2_wp_a",
-+	"sdhi2_cd_b",
-+	"sdhi2_wp_b",
-+	"sdhi2_ds",
-+};
++		vin2: video@e6ef2000 {
++			compatible = "renesas,vin-r8a7792",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef2000 0 0x1000>;
++			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7792_CLK_VIN2>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
 +
-+static const char * const sdhi3_groups[] = {
-+	"sdhi3_data1",
-+	"sdhi3_data4",
-+	"sdhi3_data8",
-+	"sdhi3_ctrl",
-+	"sdhi3_cd",
-+	"sdhi3_wp",
-+	"sdhi3_ds",
-+};
++		vin3: video@e6ef3000 {
++			compatible = "renesas,vin-r8a7792",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef3000 0 0x1000>;
++			interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7792_CLK_VIN3>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
 +
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif1),
-@@ -1766,6 +2037,10 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(scif3),
- 	SH_PFC_FUNCTION(scif4),
- 	SH_PFC_FUNCTION(scif5),
-+	SH_PFC_FUNCTION(sdhi0),
-+	SH_PFC_FUNCTION(sdhi1),
-+	SH_PFC_FUNCTION(sdhi2),
-+	SH_PFC_FUNCTION(sdhi3),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
++		vin4: video@e6ef4000 {
++			compatible = "renesas,vin-r8a7792",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef4000 0 0x1000>;
++			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7792_CLK_VIN4>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		vin5: video@e6ef5000 {
++			compatible = "renesas,vin-r8a7792",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef5000 0 0x1000>;
++			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7792_CLK_VIN5>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
+ 		/* Special CPG clocks */
+ 		cpg_clocks: cpg_clocks@e6150000 {
+ 			compatible = "renesas,r8a7792-cpg-clocks",
 -- 
 2.7.0.rc3.207.g0ac5344
