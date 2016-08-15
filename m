@@ -1,86 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:44596 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753301AbcHPO4g (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752929AbcHOI4V (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 16 Aug 2016 10:56:36 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+	Mon, 15 Aug 2016 04:56:21 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] ARM: dts: r8a7790: Remove obsolete vsp1 properties
-Date: Tue, 16 Aug 2016 16:56:31 +0200
-Message-Id: <1471359392-12584-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1471359392-12584-1-git-send-email-geert+renesas@glider.be>
-References: <1471359392-12584-1-git-send-email-geert+renesas@glider.be>
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 10/26] ARM: dts: blanche: add CAN0 support
+Date: Mon, 15 Aug 2016 10:55:29 +0200
+Message-Id: <38584104eafb6ed40ca06c8421dcc369c9015c1d.1471251169.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
+References: <cover.1471251169.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As of commit 5aa2eb3c86d4fd16 ("[media] v4l: vsp1: Configure device
-based on IP version"), the DT properties to identify the exact VSP
-device instance features are no longer used. Hence remove them.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Define the Blanche board dependent part of the CAN0 device node along with
+the CAN_CLK crystal.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790.dtsi | 23 -----------------------
- 1 file changed, 23 deletions(-)
+ arch/arm/boot/dts/r8a7792-blanche.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index d18558f211022826..351fcc2f87df6b28 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -944,11 +944,6 @@
- 		interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_R>;
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
--
--		renesas,has-sru;
--		renesas,#rpf = <5>;
--		renesas,#uds = <1>;
--		renesas,#wpf = <4>;
- 	};
+diff --git a/arch/arm/boot/dts/r8a7792-blanche.dts b/arch/arm/boot/dts/r8a7792-blanche.dts
+index 4777a609ff81..eeffba870211 100644
+--- a/arch/arm/boot/dts/r8a7792-blanche.dts
++++ b/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -60,6 +60,10 @@
+ 	clock-frequency = <20000000>;
+ };
  
- 	vsp1@fe928000 {
-@@ -957,12 +952,6 @@
- 		interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_S>;
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
--
--		renesas,has-lut;
--		renesas,has-sru;
--		renesas,#rpf = <5>;
--		renesas,#uds = <3>;
--		renesas,#wpf = <4>;
++&can_clk {
++	clock-frequency = <48000000>;
++};
++
+ &pfc {
+ 	scif0_pins: scif0 {
+ 		groups = "scif0_data";
+@@ -81,6 +85,11 @@
+ 			function = "lbsc";
+ 		};
  	};
++
++	can0_pins: can0 {
++		groups = "can0_data", "can_clk";
++		function = "can0";
++	};
+ };
  
- 	vsp1@fe930000 {
-@@ -971,12 +960,6 @@
- 		interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_DU0>;
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
--
--		renesas,has-lif;
--		renesas,has-lut;
--		renesas,#rpf = <4>;
--		renesas,#uds = <1>;
--		renesas,#wpf = <4>;
- 	};
+ &scif0 {
+@@ -96,3 +105,10 @@
  
- 	vsp1@fe938000 {
-@@ -985,12 +968,6 @@
- 		interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_DU1>;
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
--
--		renesas,has-lif;
--		renesas,has-lut;
--		renesas,#rpf = <4>;
--		renesas,#uds = <1>;
--		renesas,#wpf = <4>;
- 	};
- 
- 	du: display@feb00000 {
+ 	status = "okay";
+ };
++
++&can0 {
++	pinctrl-0 = <&can0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
