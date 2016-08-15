@@ -1,91 +1,40 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Philippe Reynes <tremyfr@gmail.com>
-To: sergei.shtylyov@cogentembedded.com, davem@davemloft.net,
-        kazuya.mizuguchi.ks@renesas.com, ykaneko0929@gmail.com,
-        horms+renesas@verge.net.au, masaru.nagai.vx@renesas.com,
-        geert+renesas@glider.be, niklas.soderlund+renesas@ragnatech.se
-Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Philippe Reynes <tremyfr@gmail.com>
-Subject: [PATCH 2/2] net: ethernet: renesas: ravb: use new api ethtool_{get|set}_link_ksettings
-Date: Sat, 20 Aug 2016 00:52:19 +0200
-Message-Id: <1471647139-1867-2-git-send-email-tremyfr@gmail.com>
-In-Reply-To: <1471647139-1867-1-git-send-email-tremyfr@gmail.com>
-References: <1471647139-1867-1-git-send-email-tremyfr@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from merlin.infradead.org ([205.233.59.134]:43374 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932207AbcHOOtm (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 15 Aug 2016 10:49:42 -0400
+Date: Mon, 15 Aug 2016 10:49:40 -0400
+From: Kyle McMartin <kyle@infradead.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-firmware@kernel.org
+Subject: Re: [PATCH] usb: host: xhci-rcar: update firmware for R-Car H3 and
+ M3-W
+Message-ID: <20160815144940.GF2817@merlin.infradead.org>
+References: <1470826599-20446-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1470826599-20446-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The ethtool api {get|set}_settings is deprecated.
-We move this driver to new api {get|set}_link_ksettings.
+On Wed, Aug 10, 2016 at 07:56:39PM +0900, Yoshihiro Shimoda wrote:
+> This patch updates the firmware files for R-Car H3 and M3-W to fix
+> the device detection issue.
+> 
+> The md5sum of the files are:
+> 645db7e9056029efa15f158e51cc8a11  r8a779x_usb3_v2.dlmem
+> 687d5d42f38f9850f8d5a6071dca3109  r8a779x_usb3_v3.dlmem
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  r8a779x_usb3_v2.dlmem | Bin 9472 -> 9416 bytes
+>  r8a779x_usb3_v3.dlmem | Bin 9472 -> 9416 bytes
+>  2 files changed, 0 insertions(+), 0 deletions(-)
+> 
 
-Signed-off-by: Philippe Reynes <tremyfr@gmail.com>
----
- drivers/net/ethernet/renesas/ravb_main.c |   16 +++++++++-------
- 1 files changed, 9 insertions(+), 7 deletions(-)
+applied, thanks!
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index d21c9a4..cad23ba 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1049,7 +1049,8 @@ static int ravb_phy_start(struct net_device *ndev)
- 	return 0;
- }
- 
--static int ravb_get_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
-+static int ravb_get_link_ksettings(struct net_device *ndev,
-+				   struct ethtool_link_ksettings *cmd)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
- 	int error = -ENODEV;
-@@ -1057,14 +1058,15 @@ static int ravb_get_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
- 
- 	if (ndev->phydev) {
- 		spin_lock_irqsave(&priv->lock, flags);
--		error = phy_ethtool_gset(ndev->phydev, ecmd);
-+		error = phy_ethtool_ksettings_get(ndev->phydev, cmd);
- 		spin_unlock_irqrestore(&priv->lock, flags);
- 	}
- 
- 	return error;
- }
- 
--static int ravb_set_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
-+static int ravb_set_link_ksettings(struct net_device *ndev,
-+				   const struct ethtool_link_ksettings *cmd)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
- 	unsigned long flags;
-@@ -1078,11 +1080,11 @@ static int ravb_set_settings(struct net_device *ndev, struct ethtool_cmd *ecmd)
- 	/* Disable TX and RX */
- 	ravb_rcv_snd_disable(ndev);
- 
--	error = phy_ethtool_sset(ndev->phydev, ecmd);
-+	error = phy_ethtool_ksettings_set(ndev->phydev, cmd);
- 	if (error)
- 		goto error_exit;
- 
--	if (ecmd->duplex == DUPLEX_FULL)
-+	if (cmd->base.duplex == DUPLEX_FULL)
- 		priv->duplex = 1;
- 	else
- 		priv->duplex = 0;
-@@ -1306,8 +1308,6 @@ static int ravb_get_ts_info(struct net_device *ndev,
- }
- 
- static const struct ethtool_ops ravb_ethtool_ops = {
--	.get_settings		= ravb_get_settings,
--	.set_settings		= ravb_set_settings,
- 	.nway_reset		= ravb_nway_reset,
- 	.get_msglevel		= ravb_get_msglevel,
- 	.set_msglevel		= ravb_set_msglevel,
-@@ -1318,6 +1318,8 @@ static const struct ethtool_ops ravb_ethtool_ops = {
- 	.get_ringparam		= ravb_get_ringparam,
- 	.set_ringparam		= ravb_set_ringparam,
- 	.get_ts_info		= ravb_get_ts_info,
-+	.get_link_ksettings	= ravb_get_link_ksettings,
-+	.set_link_ksettings	= ravb_set_link_ksettings,
- };
- 
- static inline int ravb_hook_irq(unsigned int irq, irq_handler_t handler,
--- 
-1.7.4.4
+--kyle
