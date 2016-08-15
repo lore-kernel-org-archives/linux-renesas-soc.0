@@ -1,101 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50226 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932775AbcHJUEA (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47646 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752337AbcHOIQh (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 10 Aug 2016 16:04:00 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87wpjpgylx.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bXZjB-0000PH-7V@debutante>
-Date: Wed, 10 Aug 2016 21:03:49 +0100
-Subject: Applied "ASoC: simple-card-utils: add asoc_simple_card_clean_reference()" to the asoc tree
+	Mon, 15 Aug 2016 04:16:37 -0400
+Date: Mon, 15 Aug 2016 10:16:29 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 4/4] arm64: dts: renesas: salvator-x: Enable DU
+Message-ID: <20160815081628.GG26098@verge.net.au>
+References: <1470745752-23738-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdXKVocK4pCF8h6h53263AzFfO9wdmN7wigH5xvLUpTA-g@mail.gmail.com>
+ <2249176.5GrCTAfsB5@avalon>
+ <2577119.hrVhsDZusv@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2577119.hrVhsDZusv@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Fri, Aug 12, 2016 at 12:20:51PM +0300, Laurent Pinchart wrote:
+> Hi Geert,
+> 
+> On Thursday 11 Aug 2016 18:37:03 Laurent Pinchart wrote:
+> > On Thursday 11 Aug 2016 11:17:17 Geert Uytterhoeven wrote:
+> > > On Tue, Aug 9, 2016 at 2:29 PM, Laurent Pinchart wrote:
+> > > > Only the VGA output is supported for now.
+> > > > 
+> > > > Signed-off-by: Laurent Pinchart
+> > > > <laurent.pinchart+renesas@ideasonboard.com>
+> > > 
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > 
+> > > One question below, though...
+> > > 
+> > > > --- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> > > > +++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+> > > > @@ -135,6 +135,50 @@
+> > > > 
+> > > > +&du {
+> > > > +       status = "okay";
+> > > 
+> > > Don't you need pinctrl properties? Or are you relying on initial settings?
+> > > 
+> > > GPSR initial settings for DU depend on MD[4:1] i.e. SW10[5:8].
+> > > The defaults on my board are not 0000, so all DU pins are GPIOs?
+> > > IPSR initial settings don't seem to be documented.
+> > 
+> > pinctrl configuration is needed, but isn't available yet in the sh-pfc
+> > driver. I guess I'll just have to bite the bullet and add it :-)
+> 
+> I've just posted "[PATCH] pinctrl: sh-pfc: r8a7795: Add DU support" and 
+> "[PATCH] arm64: dts: renesas: salvator-x: Configure pins for the DU RGB 
+> output". As the latter depends on the former which will be merged through a 
+> different tree, I propose merging this series already, and delaying "[PATCH] 
+> arm64: dts: renesas: salvator-x: Configure pins for the DU RGB output" to the 
+> next kernel version.
+> 
+> Simon, is that fine with you ? If so, could you please pick this series up ?
 
-   ASoC: simple-card-utils: add asoc_simple_card_clean_reference()
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 0f4e0711b735a148cb6da0e6f91253b62fc2c5b2 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 10 Aug 2016 02:21:25 +0000
-Subject: [PATCH] ASoC: simple-card-utils: add
- asoc_simple_card_clean_reference()
-
-simple-card needs to decrease the reference count of the device nodes.
-This patch makes this method simple style standard.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- include/sound/simple_card_utils.h     |  2 ++
- sound/soc/generic/simple-card-utils.c | 15 +++++++++++++++
- 2 files changed, 17 insertions(+)
-
-diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
-index f760f559393e..403ec92164fc 100644
---- a/include/sound/simple_card_utils.h
-+++ b/include/sound/simple_card_utils.h
-@@ -65,4 +65,6 @@ int asoc_simple_card_canonicalize_dailink(struct snd_soc_dai_link *dai_link);
- void asoc_simple_card_canonicalize_cpu(struct snd_soc_dai_link *dai_link,
- 				      int is_single_links);
- 
-+int asoc_simple_card_clean_reference(struct snd_soc_card *card);
-+
- #endif /* __SIMPLE_CARD_CORE_H */
-diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
-index c5d32dad48b2..1cb39309f5d5 100644
---- a/sound/soc/generic/simple-card-utils.c
-+++ b/sound/soc/generic/simple-card-utils.c
-@@ -223,6 +223,21 @@ void asoc_simple_card_canonicalize_cpu(struct snd_soc_dai_link *dai_link,
- }
- EXPORT_SYMBOL_GPL(asoc_simple_card_canonicalize_cpu);
- 
-+int asoc_simple_card_clean_reference(struct snd_soc_card *card)
-+{
-+	struct snd_soc_dai_link *dai_link;
-+	int num_links;
-+
-+	for (num_links = 0, dai_link = card->dai_link;
-+	     num_links < card->num_links;
-+	     num_links++, dai_link++) {
-+		of_node_put(dai_link->cpu_of_node);
-+		of_node_put(dai_link->codec_of_node);
-+	}
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(asoc_simple_card_clean_reference);
-+
- /* Module information */
- MODULE_AUTHOR("Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>");
- MODULE_DESCRIPTION("ALSA SoC Simple Card Utils");
--- 
-2.8.1
+Yes, I have done so and plan to push it later today.
