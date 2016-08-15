@@ -1,59 +1,68 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH v3 07/12] arm64: dts: h3ulcb: enable I2C2
-Date: Wed, 31 Aug 2016 13:03:29 +0300
-Message-Id: <1472637809-14858-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:54264 "EHLO
+	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932339AbcHOPHU (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 15 Aug 2016 11:07:20 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
+	hverkuil@xs4all.nl
+Cc: linux-renesas-soc@vger.kernel.org,
+	laurent.pinchart@ideasonboard.com,
+	sergei.shtylyov@cogentembedded.com,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv3 02/10] [media] rcar-vin: reduce indentation in rvin_s_dv_timings()
+Date: Mon, 15 Aug 2016 17:06:27 +0200
+Message-Id: <20160815150635.22637-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This supports I2C2 bus on H3ULCB board
+Align style with the rest of the driver.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-Changes in version 3:
-- initially added
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index 5be0cf6..3682bcc 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -88,6 +88,11 @@
- 		function = "scif_clk";
- 	};
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index f26e3cd..72fe6bc 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -504,16 +504,18 @@ static int rvin_s_dv_timings(struct file *file, void *priv_fh,
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
+-	int err;
+-
+-	err = v4l2_subdev_call(sd, video, s_dv_timings, timings);
+-	if (!err) {
+-		vin->source.width = timings->bt.width;
+-		vin->source.height = timings->bt.height;
+-		vin->format.width = timings->bt.width;
+-		vin->format.height = timings->bt.height;
+-	}
+-	return err;
++	int ret;
++
++	ret = v4l2_subdev_call(sd, video, s_dv_timings, timings);
++	if (ret)
++		return ret;
++
++	vin->source.width = timings->bt.width;
++	vin->source.height = timings->bt.height;
++	vin->format.width = timings->bt.width;
++	vin->format.height = timings->bt.height;
++
++	return 0;
+ }
  
-+	i2c2_pins: i2c2 {
-+		groups = "i2c2_a";
-+		function = "i2c2";
-+	};
-+
- 	avb_pins: avb {
- 		groups = "avb_mdc";
- 		function = "avb";
-@@ -118,6 +123,13 @@
- 	status = "okay";
- };
- 
-+&i2c2 {
-+	pinctrl-0 = <&i2c2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins_3v3>;
- 	pinctrl-1 = <&sdhi0_pins_1v8>;
+ static int rvin_g_dv_timings(struct file *file, void *priv_fh,
 -- 
-1.9.1
-
+2.9.2
