@@ -1,84 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:35853 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752911AbcHRTZX (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:54347 "EHLO
+	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932369AbcHOPHS (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 18 Aug 2016 15:25:23 -0400
-Received: by mail-lf0-f49.google.com with SMTP id g62so18402438lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Aug 2016 12:25:22 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: dts: blanche: add SDHI0 support
-Date: Thu, 18 Aug 2016 21:31:54 +0300
-Message-ID: <3029697.f9plKzFKet@wasted.cogentembedded.com>
-In-Reply-To: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
-References: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
+	Mon, 15 Aug 2016 11:07:18 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
+	hverkuil@xs4all.nl
+Cc: linux-renesas-soc@vger.kernel.org,
+	laurent.pinchart@ideasonboard.com,
+	sergei.shtylyov@cogentembedded.com,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv3 06/10] [media] rcar-vin: do not use v4l2_device_call_until_err()
+Date: Mon, 15 Aug 2016 17:06:31 +0200
+Message-Id: <20160815150635.22637-7-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the Blanche board dependent part of the SDHI0 (connected to the
-micro-SD slot) device node along with  the necessary voltage regulator.
+Fix a error from the original driver where v4l2_device_call_until_err()
+where used for the pad specific v4l2 operation set_fmt.  Also fix up the
+error path from this fix so if there is an error it will be propagated
+to the caller.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The error path label have also been renamed as a result from a
+nitpicking review comment since we are fixing other issues here.
 
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
-This patch is against the 'renesas-devel-20160817-v4.8-rc2' of Simon Horman's
-'renesas.git' repo plus the general purpose switches patch  posted yesterday.
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
- arch/arm/boot/dts/r8a7792-blanche.dts |   25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
-+++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-@@ -103,6 +103,17 @@
- 			gpios = <&gpio11 2 GPIO_ACTIVE_LOW>;
- 		};
- 	};
-+
-+	vcc_sdhi0: regulator-vcc-sdhi0 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI0 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio11 12 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
- };
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 72fe6bc..3f80a0b 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -114,10 +114,9 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
  
- &extal_clk {
-@@ -139,6 +150,11 @@
- 		groups = "can0_data", "can_clk";
- 		function = "can0";
- 	};
-+
-+	sdhi0_pins: sdhi0 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+	};
- };
+ 	format.pad = vin->src_pad_idx;
  
- &scif0 {
-@@ -161,3 +177,12 @@
+-	ret = v4l2_device_call_until_err(sd->v4l2_dev, 0, pad, set_fmt,
+-					 pad_cfg, &format);
+-	if (ret < 0)
+-		goto cleanup;
++	ret = v4l2_subdev_call(sd, pad, set_fmt, pad_cfg, &format);
++	if (ret < 0 && ret != -ENOIOCTLCMD)
++		goto done;
  
- 	status = "okay";
- };
-+
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&vcc_sdhi0>;
-+	cd-gpios = <&gpio11 11 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
+ 	v4l2_fill_pix_format(pix, &format.format);
+ 
+@@ -127,9 +126,9 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 	vin_dbg(vin, "Source resolution: %ux%u\n", source->width,
+ 		source->height);
+ 
+-cleanup:
++done:
+ 	v4l2_subdev_free_pad_config(pad_cfg);
+-	return 0;
++	return ret;
+ }
+ 
+ static int __rvin_try_format(struct rvin_dev *vin,
+-- 
+2.9.2
