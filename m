@@ -1,46 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:34263 "EHLO
-	mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751269AbcHPIHH (ORCPT
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:38314 "EHLO
+	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752419AbcHOVxG (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 16 Aug 2016 04:07:07 -0400
+	Mon, 15 Aug 2016 17:53:06 -0400
+Received: by mail-wm0-f47.google.com with SMTP id o80so129128067wme.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 15 Aug 2016 14:53:05 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] ARM: dts: r8a7794: add VSP1 support
+Date: Tue, 16 Aug 2016 00:52:58 +0300
+Message-ID: <2191193.axSzE4vSGB@wasted.cogentembedded.com>
+In-Reply-To: <1618499.8bcj8adpVO@wasted.cogentembedded.com>
+References: <1618499.8bcj8adpVO@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <2191193.axSzE4vSGB@wasted.cogentembedded.com>
-References: <1618499.8bcj8adpVO@wasted.cogentembedded.com> <2191193.axSzE4vSGB@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 16 Aug 2016 10:07:05 +0200
-Message-ID: <CAMuHMdV6D069J5-Z+qbUxTDrV=7kD_+wsEN_SvsZYoy3ONaDEg@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: r8a7794: add VSP1 support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Aug 15, 2016 at 11:52 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Describe two instances (VSPS and VSPD0) of the VSP1 in the R8A7794 device
-> tree.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Describe two instances (VSPS and VSPD0) of the VSP1 in the R8A7794 device
+tree.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
+---
+This patch is against the 'renesas-devel-20160815-v4.8-rc2' of Simon Horman's
+'renesas.git' repo.
 
-                        Geert
+ arch/arm/boot/dts/r8a7794.dtsi |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas/arch/arm/boot/dts/r8a7794.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7794.dtsi
++++ renesas/arch/arm/boot/dts/r8a7794.dtsi
+@@ -894,6 +894,22 @@
+ 		};
+ 	};
+ 
++	vsp1@fe928000 {
++		compatible = "renesas,vsp1";
++		reg = <0 0xfe928000 0 0x8000>;
++		interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp1_clks R8A7794_CLK_VSP1_S>;
++		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
++	};
++
++	vsp1@fe930000 {
++		compatible = "renesas,vsp1";
++		reg = <0 0xfe930000 0 0x8000>;
++		interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp1_clks R8A7794_CLK_VSP1_DU0>;
++		power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
++	};
++
+ 	du: display@feb00000 {
+ 		compatible = "renesas,du-r8a7794";
+ 		reg = <0 0xfeb00000 0 0x40000>;
