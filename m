@@ -1,90 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53660 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLFr (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752925AbcHOI4X (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:05:47 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <871t1z8x7b.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiND-0003yp-OV@debutante>
-Date: Mon, 08 Aug 2016 12:05:35 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on tlv320aic23" to the asoc tree
+	Mon, 15 Aug 2016 04:56:23 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 08/26] ARM: dts: r8a7792: add CAN clocks
+Date: Mon, 15 Aug 2016 10:55:27 +0200
+Message-Id: <47db051c22a03d41eac0d8193f3fe37b4f9768e9.1471251169.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
+References: <cover.1471251169.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-   ASoC: codec duplicated callback function goes to component on tlv320aic23
+The R-Car CAN controllers can derive  the CAN  bus  clock not only from
+their peripheral  clock input (clkp1) but also from the other internal
+clock (clkp2) and the external clock fed on the CAN_CLK pin.  Describe
+those  clocks in  the R8A7792 device tree.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From e88e495064e602772afa7b165643866acc6da6bf Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:54:25 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- tlv320aic23
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- sound/soc/codecs/tlv320aic23.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a7792.dtsi | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/tlv320aic23.c b/sound/soc/codecs/tlv320aic23.c
-index cd8c02b6e4de..410cae0f2060 100644
---- a/sound/soc/codecs/tlv320aic23.c
-+++ b/sound/soc/codecs/tlv320aic23.c
-@@ -583,12 +583,14 @@ static struct snd_soc_codec_driver soc_codec_dev_tlv320aic23 = {
- 	.set_bias_level = tlv320aic23_set_bias_level,
- 	.suspend_bias_off = true,
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 37c9d95688cf..af8020bfc030 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -511,6 +511,13 @@
+ 			clock-div = <8>;
+ 			clock-mult = <1>;
+ 		};
++		rcan_clk: rcan {
++			compatible = "fixed-factor-clock";
++			clocks = <&pll1_div2_clk>;
++			#clock-cells = <0>;
++			clock-div = <49>;
++			clock-mult = <1>;
++		};
  
--	.controls = tlv320aic23_snd_controls,
--	.num_controls = ARRAY_SIZE(tlv320aic23_snd_controls),
--	.dapm_widgets = tlv320aic23_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(tlv320aic23_dapm_widgets),
--	.dapm_routes = tlv320aic23_intercon,
--	.num_dapm_routes = ARRAY_SIZE(tlv320aic23_intercon),
-+	.component_driver = {
-+		.controls		= tlv320aic23_snd_controls,
-+		.num_controls		= ARRAY_SIZE(tlv320aic23_snd_controls),
-+		.dapm_widgets		= tlv320aic23_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(tlv320aic23_dapm_widgets),
-+		.dapm_routes		= tlv320aic23_intercon,
-+		.num_dapm_routes	= ARRAY_SIZE(tlv320aic23_intercon),
-+	},
+ 		/* Gate clocks */
+ 		mstp1_clks: mstp1_clks@e6150134 {
+@@ -572,7 +579,8 @@
+ 			reg = <0 0xe6150994 0 4>, <0 0xe61509a4 0 4>;
+ 			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
+ 				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
+-				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>;
++				 <&cp_clk>, <&cp_clk>, <&p_clk>, <&p_clk>,
++				 <&cp_clk>, <&cp_clk>;
+ 			#clock-cells = <1>;
+ 			clock-indices = <
+ 				R8A7792_CLK_GPIO7 R8A7792_CLK_GPIO6
+@@ -580,12 +588,14 @@
+ 				R8A7792_CLK_GPIO3 R8A7792_CLK_GPIO2
+ 				R8A7792_CLK_GPIO1 R8A7792_CLK_GPIO0
+ 				R8A7792_CLK_GPIO11 R8A7792_CLK_GPIO10
++				R8A7792_CLK_CAN1 R8A7792_CLK_CAN0
+ 				R8A7792_CLK_GPIO9 R8A7792_CLK_GPIO8
+ 			>;
+ 			clock-output-names =
+ 				"gpio7", "gpio6", "gpio5", "gpio4",
+ 				"gpio3", "gpio2", "gpio1", "gpio0",
+-				"gpio11", "gpio10", "gpio9", "gpio8";
++				"gpio11", "gpio10", "can1", "can0",
++				"gpio9", "gpio8";
+ 		};
+ 	};
+ 
+@@ -604,4 +614,12 @@
+ 		/* This value must be overridden by the board. */
+ 		clock-frequency = <0>;
+ 	};
++
++	/* External CAN clock */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
  };
- 
- int tlv320aic23_probe(struct device *dev, struct regmap *regmap)
 -- 
-2.8.1
+2.7.0.rc3.207.g0ac5344
