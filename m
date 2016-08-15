@@ -1,59 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45906 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758650AbcH3VKc (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Aug 2016 17:10:32 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752959AbcHOI43 (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 15 Aug 2016 04:56:29 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 07/11] arm64: dts: r8a7795: remove unnecessary cap-mmc-highspeed property
-Date: Tue, 30 Aug 2016 23:09:55 +0200
-Message-Id: <1472591399-13907-8-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
-References: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 14/26] ARM: dts: r8a7792: add I2C clocks
+Date: Mon, 15 Aug 2016 10:55:33 +0200
+Message-Id: <eedee25c2181ffd5463a994d456349dd39dc1b54.1471251169.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
+References: <cover.1471251169.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove cap-mmc-highspeed property from SDHI2 and SDHI3.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This property is unnecessary as the driver automatically sets
-the highspeed capability. Furthermore its use is inconsistent with SDHI0
-and SDHI1 which are also highspeed capable but do not have this property
-present.
+Describe the I2C[0-5] clocks in the R8A7792 device tree.
 
-Found by inspection.
-
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v5
-* New patch
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+ arch/arm/boot/dts/r8a7792.dtsi | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index b902356873c2..70949f4d50a2 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1117,7 +1117,6 @@
- 			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 312>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
--			cap-mmc-highspeed;
- 			status = "disabled";
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 228860d9464a..353bc303b165 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -632,7 +632,8 @@
+ 			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
+ 				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
+ 				 <&cp_clk>, <&cp_clk>, <&p_clk>, <&p_clk>,
+-				 <&cp_clk>, <&cp_clk>;
++				 <&cp_clk>, <&cp_clk>, <&hp_clk>, <&hp_clk>,
++				 <&hp_clk>, <&hp_clk>, <&hp_clk>, <&hp_clk>;
+ 			#clock-cells = <1>;
+ 			clock-indices = <
+ 				R8A7792_CLK_GPIO7 R8A7792_CLK_GPIO6
+@@ -642,12 +643,16 @@
+ 				R8A7792_CLK_GPIO11 R8A7792_CLK_GPIO10
+ 				R8A7792_CLK_CAN1 R8A7792_CLK_CAN0
+ 				R8A7792_CLK_GPIO9 R8A7792_CLK_GPIO8
++				R8A7792_CLK_I2C5 R8A7792_CLK_I2C4
++				R8A7792_CLK_I2C3 R8A7792_CLK_I2C2
++				R8A7792_CLK_I2C1 R8A7792_CLK_I2C0
+ 			>;
+ 			clock-output-names =
+ 				"gpio7", "gpio6", "gpio5", "gpio4",
+ 				"gpio3", "gpio2", "gpio1", "gpio0",
+ 				"gpio11", "gpio10", "can1", "can0",
+-				"gpio9", "gpio8";
++				"gpio9", "gpio8", "i2c5", "i2c4",
++				"i2c3",	"i2c2", "i2c1", "i2c0";
  		};
- 
-@@ -1127,7 +1126,6 @@
- 			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 311>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
--			cap-mmc-highspeed;
- 			status = "disabled";
- 		};
+ 	};
  
 -- 
 2.7.0.rc3.207.g0ac5344
