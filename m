@@ -1,18 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752925AbcHOI4X (ORCPT
+	with ESMTP id S1752946AbcHOI41 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 15 Aug 2016 04:56:23 -0400
+	Mon, 15 Aug 2016 04:56:27 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/26] ARM: dts: r8a7792: add CAN clocks
-Date: Mon, 15 Aug 2016 10:55:27 +0200
-Message-Id: <47db051c22a03d41eac0d8193f3fe37b4f9768e9.1471251169.git.horms+renesas@verge.net.au>
+Subject: [PATCH 12/26] ARM: dts: r8a7792: add SD clocks
+Date: Mon, 15 Aug 2016 10:55:31 +0200
+Message-Id: <fe683922cb436097ac5b1f65148fa0db3a6735a3.1471251169.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
 References: <cover.1471251169.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -20,74 +20,48 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-The R-Car CAN controllers can derive  the CAN  bus  clock not only from
-their peripheral  clock input (clkp1) but also from the other internal
-clock (clkp2) and the external clock fed on the CAN_CLK pin.  Describe
-those  clocks in  the R8A7792 device tree.
+Describe the SDHI0 clock and its parent, SD clock in the R8A7792 device tree.
 
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7792.dtsi | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7792.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 37c9d95688cf..af8020bfc030 100644
+index 1b96bf6393fb..4148c5867c07 100644
 --- a/arch/arm/boot/dts/r8a7792.dtsi
 +++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -511,6 +511,13 @@
+@@ -535,6 +535,13 @@
  			clock-div = <8>;
  			clock-mult = <1>;
  		};
-+		rcan_clk: rcan {
++		sd_clk: sd {
 +			compatible = "fixed-factor-clock";
 +			clocks = <&pll1_div2_clk>;
 +			#clock-cells = <0>;
-+			clock-div = <49>;
++			clock-div = <8>;
 +			clock-mult = <1>;
 +		};
- 
- 		/* Gate clocks */
- 		mstp1_clks: mstp1_clks@e6150134 {
-@@ -572,7 +579,8 @@
- 			reg = <0 0xe6150994 0 4>, <0 0xe61509a4 0 4>;
- 			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
- 				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
--				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>;
-+				 <&cp_clk>, <&cp_clk>, <&p_clk>, <&p_clk>,
-+				 <&cp_clk>, <&cp_clk>;
- 			#clock-cells = <1>;
- 			clock-indices = <
- 				R8A7792_CLK_GPIO7 R8A7792_CLK_GPIO6
-@@ -580,12 +588,14 @@
- 				R8A7792_CLK_GPIO3 R8A7792_CLK_GPIO2
- 				R8A7792_CLK_GPIO1 R8A7792_CLK_GPIO0
- 				R8A7792_CLK_GPIO11 R8A7792_CLK_GPIO10
-+				R8A7792_CLK_CAN1 R8A7792_CLK_CAN0
- 				R8A7792_CLK_GPIO9 R8A7792_CLK_GPIO8
+ 		rcan_clk: rcan {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&pll1_div2_clk>;
+@@ -564,6 +571,15 @@
  			>;
- 			clock-output-names =
- 				"gpio7", "gpio6", "gpio5", "gpio4",
- 				"gpio3", "gpio2", "gpio1", "gpio0",
--				"gpio11", "gpio10", "gpio9", "gpio8";
-+				"gpio11", "gpio10", "can1", "can0",
-+				"gpio9", "gpio8";
+ 			clock-output-names = "sys-dmac1", "sys-dmac0";
  		};
- 	};
- 
-@@ -604,4 +614,12 @@
- 		/* This value must be overridden by the board. */
- 		clock-frequency = <0>;
- 	};
-+
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
- };
++		mstp3_clks: mstp3_clks@e615013c {
++			compatible = "renesas,r8a7792-mstp-clocks",
++				     "renesas,cpg-mstp-clocks";
++			reg = <0 0xe615013c 0 4>, <0 0xe6150048 0 4>;
++			clocks = <&sd_clk>;
++			#clock-cells = <1>;
++			renesas,clock-indices = <R8A7792_CLK_SDHI0>;
++			clock-output-names = "sdhi0";
++		};
+ 		mstp4_clks: mstp4_clks@e6150140 {
+ 			compatible = "renesas,r8a7792-mstp-clocks",
+ 				     "renesas,cpg-mstp-clocks";
 -- 
 2.7.0.rc3.207.g0ac5344
