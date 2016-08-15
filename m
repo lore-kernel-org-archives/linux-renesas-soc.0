@@ -1,53 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45906 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758655AbcH3VKe (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Aug 2016 17:10:34 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 11/11] arm64: defconfig: Enable SDHI and GPIO_REGULATOR
-Date: Tue, 30 Aug 2016 23:09:59 +0200
-Message-Id: <1472591399-13907-12-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
-References: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:54246 "EHLO
+	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932346AbcHOPHR (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Mon, 15 Aug 2016 11:07:17 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
+	hverkuil@xs4all.nl
+Cc: linux-renesas-soc@vger.kernel.org,
+	laurent.pinchart@ideasonboard.com,
+	sergei.shtylyov@cogentembedded.com,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv3 00/10] rcar-vin: clean up and prepare for Gen3
+Date: Mon, 15 Aug 2016 17:06:25 +0200
+Message-Id: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This allows use of the SDHI SD/SDIO controller present on R-Car Gen3 SoCs
-and already enabled in the DT of the r8a7795/salvator-x (H3).
+Hi,
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v5
-* New patch
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+This series cleans up issues that have been found in the driver and 
+prepares it for Gen3 support. The series is based on v4.8-rc1 and is 
+tested om Koelsch. The most noteworthy fix in in the series is patch 
+9/10 that fixes a of_node_put() warning during loading of the driver.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index eadf4855ad2d..e9243f7772c2 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -264,6 +264,7 @@ CONFIG_REGULATOR=y
- CONFIG_MFD_CROS_EC=y
- CONFIG_MFD_CROS_EC_I2C=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
-+CONFIG_REGULATOR_GPIO=y
- CONFIG_REGULATOR_HI655X=y
- CONFIG_REGULATOR_MAX77620=y
- CONFIG_REGULATOR_PWM=y
-@@ -320,6 +321,7 @@ CONFIG_MMC_SDHCI_OF_ESDHC=y
- CONFIG_MMC_SDHCI_TEGRA=y
- CONFIG_MMC_SDHCI_MSM=y
- CONFIG_MMC_SPI=y
-+CONFIG_MMC_SDHI=y
- CONFIG_MMC_DW=y
- CONFIG_MMC_DW_EXYNOS=y
- CONFIG_MMC_DW_K3=y
+The series is the first cleanup series but all patches are marked as v3 
+since they have been broken out of the Gen3 enablement series which have 
+been stuck for a while. Hopefully these cleanups can be picked up and 
+then I can rebase and repost all other pending rcar-vin patches ontop of 
+this clean up. The changlog from the Gen3 enablement branch is however 
+kept here for reference.
+
+Changes since v2:
+- Drop all Gen3 enablement patches.
+- Split a large cosmetic cleanup patch in smaller ones.
+- Fix comment from Sergei about return code from platform_get_irq().
+- Rebase ontop of v4.8-rc1
+
+Changes since v1:
+- Address review comments from Laurent.
+- Split cleanup of driver to smaller chunks.
+- Remove initial work for v4l2 framework changes to support a pad aware
+s_stream operation.
+- Picked up patch for incorrect media bus format.
+- Removed Ulrich patches which now have been picked up in media_tree.
+
+Niklas Söderlund (10):
+  [media] rcar-vin: fix indentation errors in rcar-v4l2.c
+  [media] rcar-vin: reduce indentation in rvin_s_dv_timings()
+  [media] rcar-vin: arrange enum chip_id in chronological order
+  [media] rcar-vin: rename entity to digital
+  [media] rcar-vin: return correct error from platform_get_irq()
+  [media] rcar-vin: do not use v4l2_device_call_until_err()
+  [media] rcar-vin: add dependency on MEDIA_CONTROLLER
+  [media] rcar-vin: move chip check for pixelformat support
+  [media] rcar-vin: rework how subdeivce is found and bound
+  [media] rcar-vin: move media bus information to struct
+    rvin_graph_entity
+
+ drivers/media/platform/rcar-vin/Kconfig     |   2 +-
+ drivers/media/platform/rcar-vin/rcar-core.c | 258 +++++++++++++---------------
+ drivers/media/platform/rcar-vin/rcar-dma.c  |  18 +-
+ drivers/media/platform/rcar-vin/rcar-v4l2.c |  91 +++++-----
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  25 +--
+ 5 files changed, 186 insertions(+), 208 deletions(-)
+
 -- 
-2.7.0.rc3.207.g0ac5344
+2.9.2
