@@ -1,90 +1,133 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53762 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752320AbcHHLFy (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752960AbcHOI4a (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:05:54 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <877fbr8xas.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiNP-00042K-He@debutante>
-Date: Mon, 08 Aug 2016 12:05:47 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8523" to the asoc tree
+	Mon, 15 Aug 2016 04:56:30 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 15/26] ARM: dts: r8a7792: add I2C support
+Date: Mon, 15 Aug 2016 10:55:34 +0200
+Message-Id: <78082700c8885a2b370c23ed9caec781fdf72139.1471251169.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
+References: <cover.1471251169.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-   ASoC: codec duplicated callback function goes to component on wm8523
+Define the generic R8A7792 parts of the I2C[0-5] device nodes.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From f8a5c975bd5b7fc5e46fd85b5a65c0028d09f979 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:52:19 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- wm8523
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- sound/soc/codecs/wm8523.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a7792.dtsi | 82 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
-diff --git a/sound/soc/codecs/wm8523.c b/sound/soc/codecs/wm8523.c
-index aa287a3965e7..0bb189a3d322 100644
---- a/sound/soc/codecs/wm8523.c
-+++ b/sound/soc/codecs/wm8523.c
-@@ -418,12 +418,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8523 = {
- 	.set_bias_level = wm8523_set_bias_level,
- 	.suspend_bias_off = true,
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 353bc303b165..89f248c5cd9e 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -18,6 +18,15 @@
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
  
--	.controls = wm8523_controls,
--	.num_controls = ARRAY_SIZE(wm8523_controls),
--	.dapm_widgets = wm8523_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(wm8523_dapm_widgets),
--	.dapm_routes = wm8523_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(wm8523_dapm_routes),
-+	.component_driver = {
-+		.controls		= wm8523_controls,
-+		.num_controls		= ARRAY_SIZE(wm8523_controls),
-+		.dapm_widgets		= wm8523_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(wm8523_dapm_widgets),
-+		.dapm_routes		= wm8523_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(wm8523_dapm_routes),
-+	},
- };
++	aliases {
++		i2c0 = &i2c0;
++		i2c1 = &i2c1;
++		i2c2 = &i2c2;
++		i2c3 = &i2c3;
++		i2c4 = &i2c4;
++		i2c5 = &i2c5;
++};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -468,6 +477,79 @@
+ 			status = "disabled";
+ 		};
  
- static const struct of_device_id wm8523_of_match[] = {
++		/* I2C doesn't need pinmux */
++		i2c0: i2c@e6508000 {
++			compatible = "renesas,i2c-r8a7792";
++			reg = <0 0xe6508000 0 0x40>;
++			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp9_clks R8A7792_CLK_I2C0>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			i2c-scl-internal-delay-ns = <6>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c1: i2c@e6518000 {
++			compatible = "renesas,i2c-r8a7792";
++			reg = <0 0xe6518000 0 0x40>;
++			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp9_clks R8A7792_CLK_I2C1>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			i2c-scl-internal-delay-ns = <6>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c2: i2c@e6530000 {
++			compatible = "renesas,i2c-r8a7792";
++			reg = <0 0xe6530000 0 0x40>;
++			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp9_clks R8A7792_CLK_I2C2>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			i2c-scl-internal-delay-ns = <6>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c3: i2c@e6540000 {
++			compatible = "renesas,i2c-r8a7792";
++			reg = <0 0xe6540000 0 0x40>;
++			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp9_clks R8A7792_CLK_I2C3>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			i2c-scl-internal-delay-ns = <6>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c4: i2c@e6520000 {
++			compatible = "renesas,i2c-r8a7792";
++			reg = <0 0xe6520000 0 0x40>;
++			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp9_clks R8A7792_CLK_I2C4>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			i2c-scl-internal-delay-ns = <6>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c5: i2c@e6528000 {
++			compatible = "renesas,i2c-r8a7792";
++			reg = <0 0xe6528000 0 0x40>;
++			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp9_clks R8A7792_CLK_I2C5>;
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			i2c-scl-internal-delay-ns = <110>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		can0: can@e6e80000 {
+ 			compatible = "renesas,can-r8a7792",
+ 				     "renesas,rcar-gen2-can";
 -- 
-2.8.1
+2.7.0.rc3.207.g0ac5344
