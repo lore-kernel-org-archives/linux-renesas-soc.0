@@ -1,59 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56197 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753265AbcHQLcR (ORCPT
+	with ESMTP id S1752901AbcHOI4S (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 17 Aug 2016 07:32:17 -0400
+	Mon, 15 Aug 2016 04:56:18 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Ai Kyuse <ai.kyuse.uw@renesas.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
 	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RTF 2/7] clk: renesas: r8a7796: Add SDIF clocks
-Date: Wed, 17 Aug 2016 13:31:51 +0200
-Message-Id: <1471433516-4478-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au>
-References: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 06/26] ARM: dts: r8a7792: add EtherAVB clocks
+Date: Mon, 15 Aug 2016 10:55:25 +0200
+Message-Id: <08cafff67e8881e1622068924aaab3c3aa052b0b.1471251169.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
+References: <cover.1471251169.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ai Kyuse <ai.kyuse.uw@renesas.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This patch adds SDIF clocks for R8A7796 SoC.
+Add the EtherAVB clock and its parent, HP clock to the R8A7792 device tree.
 
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/boot/dts/r8a7792.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 999955c2b23e..4c390a8bc3e1 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -93,6 +93,11 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- 	DEF_FIXED("s3d2",       R8A7796_CLK_S3D2,  CLK_S3,         2, 1),
- 	DEF_FIXED("s3d4",       R8A7796_CLK_S3D4,  CLK_S3,         4, 1),
- 
-+	DEF_GEN3_SD("sd0",      R8A7796_CLK_SD0,   CLK_PLL1_DIV4, 0x0074),
-+	DEF_GEN3_SD("sd1",      R8A7796_CLK_SD1,   CLK_PLL1_DIV4, 0x0078),
-+	DEF_GEN3_SD("sd2",      R8A7796_CLK_SD2,   CLK_PLL1_DIV4, 0x0268),
-+	DEF_GEN3_SD("sd3",      R8A7796_CLK_SD3,   CLK_PLL1_DIV4, 0x026c),
-+
- 	DEF_FIXED("cl",         R8A7796_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
- 	DEF_FIXED("cp",         R8A7796_CLK_CP,    CLK_EXTAL,      2, 1),
- 
-@@ -104,6 +109,10 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- 
- static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
- 	DEF_MOD("scif2",		 310,	R8A7796_CLK_S3D4),
-+	DEF_MOD("sdif3",		 311,	R8A7796_CLK_SD3),
-+	DEF_MOD("sdif2",		 312,	R8A7796_CLK_SD2),
-+	DEF_MOD("sdif1",		 313,	R8A7796_CLK_SD1),
-+	DEF_MOD("sdif0",		 314,	R8A7796_CLK_SD0),
- 	DEF_MOD("rwdt0",		 402,	R8A7796_CLK_R),
- 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
- 	DEF_MOD("gpio7",		 905,	R8A7796_CLK_S3D4),
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index d5ab9474297e..f97b034da35f 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -471,6 +471,13 @@
+ 			clock-div = <6>;
+ 			clock-mult = <1>;
+ 		};
++		hp_clk: hp {
++			compatible = "fixed-factor-clock";
++			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
++			#clock-cells = <0>;
++			clock-div = <12>;
++			clock-mult = <1>;
++		};
+ 		p_clk: p {
+ 			compatible = "fixed-factor-clock";
+ 			clocks = <&cpg_clocks R8A7792_CLK_PLL1>;
+@@ -538,6 +545,15 @@
+ 			clock-output-names = "hscif1", "hscif0", "scif3",
+ 					     "scif2", "scif1", "scif0";
+ 		};
++		mstp8_clks: mstp8_clks@e6150990 {
++			compatible = "renesas,r8a7792-mstp-clocks",
++				     "renesas,cpg-mstp-clocks";
++			reg = <0 0xe6150990 0 4>, <0 0xe61509a0 0 4>;
++			clocks = <&hp_clk>;
++			#clock-cells = <1>;
++			clock-indices = <R8A7792_CLK_ETHERAVB>;
++			clock-output-names = "etheravb";
++		};
+ 		mstp9_clks: mstp9_clks@e6150994 {
+ 			compatible = "renesas,r8a7792-mstp-clocks",
+ 				     "renesas,cpg-mstp-clocks";
 -- 
 2.7.0.rc3.207.g0ac5344
