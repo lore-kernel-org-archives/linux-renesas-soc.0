@@ -1,97 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53586 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752320AbcHHLFd (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:49289 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752985AbcHPNm6 (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:05:33 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Tue, 16 Aug 2016 09:42:58 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>
+Cc: Simon Horman <horms@verge.net.au>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87wpjr7il9.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiN4-0003wH-Us@debutante>
-Date: Mon, 08 Aug 2016 12:05:26 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on tas571x" to the asoc tree
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ARM: debug-ll: Add support for r8a7992
+Date: Tue, 16 Aug 2016 15:42:20 +0200
+Message-Id: <1471354940-18696-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Enable low-level debugging support for R-Car V2H (r8a7792).
+V2H uses SCIF0 for the debug console, like most other R-Car Gen2 SoCs.
 
-   ASoC: codec duplicated callback function goes to component on tas571x
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From d75a9df6927363e5c4a41477db39e5332aa6bf73 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:55:21 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- tas571x
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- sound/soc/codecs/tas571x.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/arm/Kconfig.debug | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/codecs/tas571x.c b/sound/soc/codecs/tas571x.c
-index d8baca3f8413..df5e5cb33baa 100644
---- a/sound/soc/codecs/tas571x.c
-+++ b/sound/soc/codecs/tas571x.c
-@@ -658,10 +658,12 @@ static const struct snd_soc_codec_driver tas571x_codec = {
- 	.set_bias_level = tas571x_set_bias_level,
- 	.idle_bias_off = true,
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index a9693b6987a6e41c..88440f63c31e434b 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -861,12 +861,12 @@ choice
+ 		  via SCIF2 on Renesas R-Car H1 (R8A7779).
  
--	.dapm_widgets = tas571x_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(tas571x_dapm_widgets),
--	.dapm_routes = tas571x_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(tas571x_dapm_routes),
-+	.component_driver = {
-+		.dapm_widgets		= tas571x_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(tas571x_dapm_widgets),
-+		.dapm_routes		= tas571x_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(tas571x_dapm_routes),
-+	},
- };
+ 	config DEBUG_RCAR_GEN2_SCIF0
+-		bool "Kernel low-level debugging messages via SCIF0 on R8A7790/R8A7791/R8A7793"
+-		depends on ARCH_R8A7790 || ARCH_R8A7791 || ARCH_R8A7793
++		bool "Kernel low-level debugging messages via SCIF0 on R8A7790/R8A7791/R8A7792/R8A7793"
++		depends on ARCH_R8A7790 || ARCH_R8A7791 || ARCH_R8A7792 || ARCH_R8A7793
+ 		help
+ 		  Say Y here if you want kernel low-level debugging support
+-		  via SCIF0 on Renesas R-Car H2 (R8A7790), M2-W (R8A7791), or
+-		  M2-N (R8A7793).
++		  via SCIF0 on Renesas R-Car H2 (R8A7790), M2-W (R8A7791), V2H
++		  (R8A7792), or M2-N (R8A7793).
  
- static struct snd_soc_dai_driver tas571x_dai = {
-@@ -754,8 +756,8 @@ static int tas571x_i2c_probe(struct i2c_client *client,
- 
- 
- 	memcpy(&priv->codec_driver, &tas571x_codec, sizeof(priv->codec_driver));
--	priv->codec_driver.controls = priv->chip->controls;
--	priv->codec_driver.num_controls = priv->chip->num_controls;
-+	priv->codec_driver.component_driver.controls = priv->chip->controls;
-+	priv->codec_driver.component_driver.num_controls = priv->chip->num_controls;
- 
- 	if (priv->chip->vol_reg_size == 2) {
- 		/*
+ 	config DEBUG_RCAR_GEN2_SCIF2
+ 		bool "Kernel low-level debugging messages via SCIF2 on R8A7794"
 -- 
-2.8.1
+1.9.1
