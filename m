@@ -1,79 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45888 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756102AbcH3VKV (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Aug 2016 17:10:21 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 00/11] UHS-I SDR-104 support for sh_mobile_sdhi
-Date: Tue, 30 Aug 2016 23:09:48 +0200
-Message-Id: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
+Received: from kirsty.vergenet.net ([202.4.237.240]:39204 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751769AbcHPIMp (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 16 Aug 2016 04:12:45 -0400
+Date: Tue, 16 Aug 2016 10:12:38 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 19/26] ARM: dts: r8a7794: add MSTP5 clocks
+Message-ID: <20160816081238.GD28010@verge.net.au>
+References: <cover.1471251169.git.horms+renesas@verge.net.au>
+ <2a29f9d6fea82485941449c2328af5b2a4ea636f.1471251169.git.horms+renesas@verge.net.au>
+ <13739ec4-3e12-4b8d-9f69-14fbbe164986@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <13739ec4-3e12-4b8d-9f69-14fbbe164986@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+On Mon, Aug 15, 2016 at 08:56:05PM +0300, Sergei Shtylyov wrote:
+> Hello.
+> 
+> On 08/15/2016 11:55 AM, Simon Horman wrote:
+> 
+> >From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >
+> >Add some MSTP5 clocks to the R8A7794 device tree.
+> >
+> >Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> >Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> >---
+> > arch/arm/boot/dts/r8a7794.dtsi            | 9 +++++++++
+> > include/dt-bindings/clock/r8a7794-clock.h | 1 +
+> > 2 files changed, 10 insertions(+)
+> >
+> >diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+> >index 5d1fded79633..1c2d3846d70e 100644
+> >--- a/arch/arm/boot/dts/r8a7794.dtsi
+> >+++ b/arch/arm/boot/dts/r8a7794.dtsi
+> >@@ -1204,6 +1204,15 @@
+> > 			clock-indices = <R8A7794_CLK_IRQC>;
+> > 			clock-output-names = "irqc";
+> > 		};
+> >+		mstp5_clks: mstp5_clks@e6150144 {
+> >+			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+> >+			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
+> >+			clocks = <&hp_clk>, <&extal_clk>, <&p_clk>;
+> 
+>    Argh! Looks like I forgot to remove <&extal_clk> when removing the
+> thermal clock... will send the patch.
 
-this series is based on work by Ai Kyuse to add UHS-I SDR-104 support for
-sh_mobile_sdhi. It builds on work by Shinobu Uehara, Rob Taylor, William
-Towle and Ian Molton, Ben Hutchings, Wolfram Sang and others to add UHS-I
-SDR-50 support to the same driver.
-
-This series enables:
-* UHS-I SDR-104 on the r8a7790/Lager where UHS-I SDR-50 is already enabled.
-* Both UHS-1 SDR-50 and SDR-104 on the r8a7796/Salvator-X
-
-It is based on the next branch of the mmc tree
-
-The "mmc:" patches are targeted at the next branch of the mmc
-tree. The "ARM:" and "arm64:" patches are targeted at the next branch of
-the renesas tree.
-
-To aid review the following git branches have been provided:
-* topic/sdr104-v4 branch: This patchset
-* topic/sdr104-v5+sdhi-dma-v3: This patchset merged with a rebase of
-                               prototype DMA support for SDHI on R-Car Gen 3
-
-Overview of changes since v4:
-* Addressed review from Ulf Hansen
-* Add Gen 3 support and enable on r8a7796/Salvator-X
-
-TODO:
-* Continue investigation of using saved tap values on resume
-  from suspend
-
-Please see http://elinux.org/Tests:SD-SDHI-SDR104 for indicative tests
-results.
-
-Ai Kyuse (3):
-  mmc: tmio: enhance illegal sequence handling
-  mmc: tmio: Add hw reset support
-  mmc: tmio: Add tuning support
-
-Simon Horman (7):
-  mmc: tmio: document mandatory and optional callbacks
-  mmc: sh_mobile_sdhi: Add tuning support
-  ARM: dts: lager: Enable UHS-I SDR-104
-  arm64: dts: r8a7795: remove unnecessary cap-mmc-highspeed property
-  arm64: r8a7795: Set maximum frequencies for SDHI clocks
-  arm64: dts: r8a7795: salvator-x: Enable UHS-I SDR-104
-  arm64: defconfig: Enable SDHI and GPIO_REGULATOR
-
-Wolfram Sang (1):
-  arm64: dts: r8a7795: salvator: enable UHS for SDHI 0 & 3
-
- arch/arm/boot/dts/r8a7790-lager.dts                |   1 +
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  24 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           |   6 +-
- arch/arm64/configs/defconfig                       |   2 +
- drivers/mmc/host/sh_mobile_sdhi.c                  | 275 ++++++++++++++++++++-
- drivers/mmc/host/tmio_mmc.h                        |  15 +-
- drivers/mmc/host/tmio_mmc_pio.c                    |  85 ++++++-
- 7 files changed, 396 insertions(+), 12 deletions(-)
-
--- 
-2.7.0.rc3.207.g0ac5344
+Please send it as an incremental follow-up.
+Thanks!
