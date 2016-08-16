@@ -1,54 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45906 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756102AbcH3VKX (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Aug 2016 17:10:23 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 02/11] mmc: tmio: document mandatory and optional callbacks
-Date: Tue, 30 Aug 2016 23:09:50 +0200
-Message-Id: <1472591399-13907-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
-References: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35651 "EHLO
+	mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753517AbcHPPVT (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Tue, 16 Aug 2016 11:21:19 -0400
+Received: by mail-it0-f68.google.com with SMTP id f6so5436337ith.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 16 Aug 2016 08:20:58 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1471358833-18248-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1471358833-18248-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1471358833-18248-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 16 Aug 2016 17:20:57 +0200
+Message-ID: <CAMuHMdU6K1Ub-qDNfcxQtjbWN85fV5BSn17NH9W60o+Hnd-4Eg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] arm64: dts: r8a7796: salvator: add serial console pins
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v5
-* New patch
----
- drivers/mmc/host/tmio_mmc.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Hi Ulrich,
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 1f1cb2628f67..4b36cb5c2d9c 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -151,8 +151,10 @@ struct tmio_mmc_host {
- 	bool			native_hotplug;
- 	bool			sdio_irq_enabled;
- 
--	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
-+	/* Mandatory callback */
- 	int (*clk_enable)(struct tmio_mmc_host *host);
-+
-+	/* Optional callbacks */
- 	unsigned int (*clk_update)(struct tmio_mmc_host *host,
- 				   unsigned int new_clock);
- 	void (*clk_disable)(struct tmio_mmc_host *host);
-@@ -161,6 +163,7 @@ struct tmio_mmc_host {
- 	int (*card_busy)(struct mmc_host *mmc);
- 	int (*start_signal_voltage_switch)(struct mmc_host *mmc,
- 					   struct mmc_ios *ios);
-+	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
- };
- 
- struct tmio_mmc_host *tmio_mmc_host_alloc(struct platform_device *pdev);
--- 
-2.7.0.rc3.207.g0ac5344
+On Tue, Aug 16, 2016 at 4:47 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Adds pin control for SCIF2.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+> index e72be38..d4a774c 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+> @@ -31,11 +31,20 @@
+>         };
+>  };
+>
+> +&pfc {
+> +       scif2_pins: scif2 {
+> +               groups = "scif2_data_a", "scif2_clk";
+> +               function = "scif2";
+> +       };
+> +};
+
+I think you misunderstood my comment: I didn't mean to add "scif2_clk" (which
+is not used on Salvator-X), but "scif_clk", which is the external clock for all
+(H)SCIF instances, provided by 14.7456 MHz crystal X1  on Salvator-X.
+This is used to program the BRG in SCIF2 to exactly 115200 bps.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
