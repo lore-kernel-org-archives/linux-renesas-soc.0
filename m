@@ -1,15 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:36737 "EHLO
-	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752187AbcHPJsQ (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:33162 "EHLO
+	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751006AbcHPHop (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 16 Aug 2016 05:48:16 -0400
+	Tue, 16 Aug 2016 03:44:45 -0400
 MIME-Version: 1.0
-In-Reply-To: <HE1PR0601MB2683A0C1895F3622D6E1EDA2D0130@HE1PR0601MB2683.eurprd06.prod.outlook.com>
-References: <HE1PR0601MB2683A0C1895F3622D6E1EDA2D0130@HE1PR0601MB2683.eurprd06.prod.outlook.com>
+In-Reply-To: <HE1PR0601MB268306974695DFE9C0C9D0B0D0120@HE1PR0601MB2683.eurprd06.prod.outlook.com>
+References: <HE1PR0601MB268306974695DFE9C0C9D0B0D0120@HE1PR0601MB2683.eurprd06.prod.outlook.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 16 Aug 2016 11:48:14 +0200
-Message-ID: <CAMuHMdUVMRp_qXt7tdgDv0KP8uSF=Hh7Z5knavuV1YTNt3BUTg@mail.gmail.com>
+Date: Tue, 16 Aug 2016 09:44:44 +0200
+Message-ID: <CAMuHMdXoLtsknFyJe+FJuW7GJuQaU=3UhZh9kfckPUGxNh6siA@mail.gmail.com>
 Subject: Re: [PATCH] sh-sci: fix transition from noflow to HW flow control
 To: "Baumann, Christoph (C.)" <cbaumann@visteon.com>
 Cc: "linux-renesas-soc@vger.kernel.org"
@@ -21,42 +21,49 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Christoph,
 
-On Tue, Aug 16, 2016 at 11:36 AM, Baumann, Christoph (C.)
+On Mon, Aug 15, 2016 at 1:20 PM, Baumann, Christoph (C.)
 <cbaumann@visteon.com> wrote:
->> Which port are you using? SCIF or HSCIF?
+> working on getting RTS/CTS run on r8a7795 I had some annoying issues.
+
+Which port are you using? SCIF or HSCIF?
+
+> Measuring with a scope showed that RTS would become low on opening the tty device (regardless of having CRTSCTS set or not). So far this is expected.
+> But if I used tcsetattr() to set/unset the CRTSCTS flag the RTS pin would become hi and stayed so.
+> I then looked into the sh-sci driver and added some debug output.
+> My analysis was that upon opening the tty device the functions set_termios and set_mctrl are called.
+> In the sh-sci driver the set_mctrl function is the only place where the internal 'autorts' flag is actually written to a register.
+> As obviously the RTSCTS flow control flag can only be set after the device is opened, the flag isn't propagated to the corresponding register.
+
+You mean sci_set_mctrl() isn't called by the serial core after
+sci_set_termios()?
+
+However, uart_set_termios() calls both uart_change_speed() and
+uart_{clear,set}_mctrl(), in that order?
+
+> To make it more confusing the flag is kept in .c_cflag even after closing the device and is then taken care of the next time the device is opened again.
+> To fix this I set the bit in set_termios after the line where it was previously only stored in the bool variable 'autorts' (see attachment).
+
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+
+[ removed unrelated changes]
+
+> @@ -2336,6 +2337,8 @@ done:
+>                         port->status |= UPSTAT_AUTOCTS;
+>                         /* MCE is enabled when RTS is raised */
+>                         s->autorts = true;
+> +                       ctrl |= SCFCR_MCE;
+> +                       sci_set_rts(port, 1);
+>                 }
 >
-> just SCIF
->
->> You mean sci_set_mctrl() isn't called by the serial core after
->> sci_set_termios()?
->>
->> However, uart_set_termios() calls both uart_change_speed() and
->> uart_{clear,set}_mctrl(), in that order?
->
-> Upon calling open() on the tty device sci_set_termios() and sci_set_mctrl() are called in this order.
-> When issuing changes (baud rate, CRTSCTS...) only sci_set_termios() gets called.
-> On calling close() sci_set_mctrl() and sci_shutdown() are called in this order.
+>                 /*
 
-OK, so it works on subsequent uses as the flag is kept in .c_cflag?
+Have you tried using GPIO RTS/CTS instead of hardware-assisted RTS/CTS?
+Does it show the same behavior?
+When adding support for hardware-assisted RTS/CTS, I used the behavior of
+GPIO RTS/CTS as the expected behavior.
 
->> Have you tried using GPIO RTS/CTS instead of hardware-assisted
->> RTS/CTS?
->> Does it show the same behavior?
->> When adding support for hardware-assisted RTS/CTS, I used the
->> behavior of GPIO RTS/CTS as the expected behavior.
->
-> No, I haven't tried GPIO RTS/CTS so far. How would this be configured?
-
-In DT, instead of specifying "uart-has-rtscts" and pinctrl for the "ctrl" group,
-you specify "rts-gpios" and "cts-gpios".
-
-Compare e.g. the following two commits in
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/renesas-overlays:
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/commit/?h=topic/renesas-overlays&id=58a6b5f63108db2fd88b869c5de13ff43789f0ca
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/commit/?h=topic/renesas-overlays&id=a071804359e8aa631954461f9af65ac72621ca81
-
-The first commit uses HSCIF1 with GPIO RTS/CTS, the second with
-hardware-assisted RTS/CTS.
+Thanks!
 
 Gr{oetje,eeting}s,
 
