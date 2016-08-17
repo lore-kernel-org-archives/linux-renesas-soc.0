@@ -1,85 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47936 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752455AbcHOIzw (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:44800 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752408AbcHQMUV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 15 Aug 2016 04:55:52 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-	Kevin Hilman <khilman@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM Based SoC DT Updates for v4.9
-Date: Mon, 15 Aug 2016 10:55:35 +0200
-Message-Id: <cover.1471251169.git.horms+renesas@verge.net.au>
+	Wed, 17 Aug 2016 08:20:21 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Sakari Ailus <sakari.ailus@iki.fi>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Subject: [PATCH v2 0/4] R-Car VSP1 1-D Histogram support
+Date: Wed, 17 Aug 2016 15:20:26 +0300
+Message-Id: <1471436430-26245-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Hello,
 
-Please consider these Renesas ARM based SoC DT updates for v4.9.
+This patch series implements support for the Renesas R-Car VSP1 1-D histogram
+generator (HGO). It is based on top of the latest media tree's master branch,
+and available for convenience at
 
-In brief it adds support for a number of IP blocks on the r8a7792 and
-r8a7794 SoCs, and corrects SDHI register size on the r8a7794.
+        git://linuxtv.org/pinchartl/media.git vsp1/hgo
 
+The series starts with the implementation and documentation of the new V4L2
+metadata API (1/4), followed by a new pixel format for the R-Car VSP1 1-D
+histogram (2/4). The last two patches (3/4 and 4/4) implement support for the
+API in the vsp1 driver.
 
-The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
+Laurent Pinchart (4):
+  v4l: Add metadata buffer type and format
+  v4l: Define a pixel format for the R-Car VSP1 1-D histogram engine
+  v4l: vsp1: Add HGO support
+  v4l: vsp1: Don't create HGO entity when the userspace API is disabled
 
-  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
+ Documentation/media/uapi/v4l/buffer.rst            |   8 +
+ Documentation/media/uapi/v4l/dev-meta.rst          |  69 +++
+ Documentation/media/uapi/v4l/devices.rst           |   1 +
+ Documentation/media/uapi/v4l/meta-formats.rst      |  15 +
+ .../media/uapi/v4l/pixfmt-meta-vsp1-hgo.rst        | 170 +++++++
+ Documentation/media/uapi/v4l/pixfmt.rst            |   1 +
+ Documentation/media/uapi/v4l/vidioc-querycap.rst   |  14 +-
+ Documentation/media/videodev2.h.rst.exceptions     |   2 +
+ drivers/media/platform/Kconfig                     |   1 +
+ drivers/media/platform/vsp1/Makefile               |   1 +
+ drivers/media/platform/vsp1/vsp1.h                 |   3 +
+ drivers/media/platform/vsp1/vsp1_drm.c             |   2 +-
+ drivers/media/platform/vsp1/vsp1_drv.c             |  44 +-
+ drivers/media/platform/vsp1/vsp1_entity.c          | 136 +++++-
+ drivers/media/platform/vsp1/vsp1_entity.h          |   7 +-
+ drivers/media/platform/vsp1/vsp1_hgo.c             | 501 +++++++++++++++++++++
+ drivers/media/platform/vsp1/vsp1_hgo.h             |  50 ++
+ drivers/media/platform/vsp1/vsp1_histo.c           | 324 +++++++++++++
+ drivers/media/platform/vsp1/vsp1_histo.h           |  69 +++
+ drivers/media/platform/vsp1/vsp1_pipe.c            |  22 +-
+ drivers/media/platform/vsp1/vsp1_pipe.h            |   2 +
+ drivers/media/platform/vsp1/vsp1_regs.h            |  24 +-
+ drivers/media/platform/vsp1/vsp1_video.c           |  22 +-
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c      |  19 +
+ drivers/media/v4l2-core/v4l2-dev.c                 |  16 +-
+ drivers/media/v4l2-core/v4l2-ioctl.c               |  42 ++
+ drivers/media/v4l2-core/videobuf2-v4l2.c           |   3 +
+ include/media/v4l2-ioctl.h                         |  17 +
+ include/uapi/linux/videodev2.h                     |  17 +
+ 29 files changed, 1552 insertions(+), 50 deletions(-)
+ create mode 100644 Documentation/media/uapi/v4l/dev-meta.rst
+ create mode 100644 Documentation/media/uapi/v4l/meta-formats.rst
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-vsp1-hgo.rst
+ create mode 100644 drivers/media/platform/vsp1/vsp1_hgo.c
+ create mode 100644 drivers/media/platform/vsp1/vsp1_hgo.h
+ create mode 100644 drivers/media/platform/vsp1/vsp1_histo.c
+ create mode 100644 drivers/media/platform/vsp1/vsp1_histo.h
 
-are available in the git repository at:
+-- 
+Regards,
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-for-v4.9
-
-for you to fetch changes up to 8bec0842ba2bb1b3bd954a1ef50f426b8f09c84f:
-
-  ARM: dts: r8a7792: add DU support (2016-08-09 14:37:47 +0200)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC DT Updates for v4.9
-
-* Add DU, VIN, I2C, SDHI, EtherAVB, GPIO support to r8a7792
-* Enable CAN0 on r8a7792/blanche
-* Enable sound on r8a7794/silk
-* Correct SDHI register size on r8a7794
-
-----------------------------------------------------------------
-Sergei Shtylyov (25):
-      ARM: dts: r8a7792: add PFC support
-      ARM: dts: blanche: add SCIF0/3 pins
-      ARM: dts: blanche: add Ethernet pins
-      ARM: dts: r8a7792: add GPIO clocks
-      ARM: dts: r8a7792: add GPIO support
-      ARM: dts: r8a7792: add EtherAVB clocks
-      ARM: dts: r8a7792: add EtherAVB support
-      ARM: dts: r8a7792: add CAN clocks
-      ARM: dts: r8a7792: add CAN support
-      ARM: dts: blanche: add CAN0 support
-      ARM: dts: r8a7792: add SD clocks
-      ARM: dts: r8a7792: add SDHI support
-      ARM: dts: r8a7792: add I2C clocks
-      ARM: dts: r8a7792: add I2C support
-      ARM: dts: r8a7792: add VIN clocks
-      ARM: dts: r8a7792: add VIN support
-      ARM: dts: r8a7794: add audio clocks
-      ARM: dts: r8a7794: add MSTP5 clocks
-      ARM: dts: r8a7794: add MSTP10 clocks
-      ARM: dts: r8a7794: add Audio-DMAC support
-      ARM: dts: r8a7794: add sound support
-      ARM: dts: silk: add sound support
-      ARM: dts: r8a7792: fix misindented line
-      ARM: dts: r8a7792: add DU clocks
-      ARM: dts: r8a7792: add DU support
-
-Simon Horman (1):
-      ARM: dts: r8a7794: Correct SDHI register size
-
- arch/arm/boot/dts/r8a7792-blanche.dts     |  48 +++
- arch/arm/boot/dts/r8a7792.dtsi            | 500 +++++++++++++++++++++++++++++-
- arch/arm/boot/dts/r8a7794-silk.dts        |  70 +++++
- arch/arm/boot/dts/r8a7794.dtsi            | 293 ++++++++++++++++-
- include/dt-bindings/clock/r8a7794-clock.h |  25 ++
- 5 files changed, 933 insertions(+), 3 deletions(-)
+Laurent Pinchart
