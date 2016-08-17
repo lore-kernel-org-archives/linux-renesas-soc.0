@@ -1,44 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:34535 "EHLO
-        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755768AbcHVN7w (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Aug 2016 09:59:52 -0400
-Received: by mail-lf0-f46.google.com with SMTP id l89so78435977lfi.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Aug 2016 06:59:51 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1471446328-15537-1-git-send-email-geert+renesas@glider.be>
-References: <1471446328-15537-1-git-send-email-geert+renesas@glider.be>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 22 Aug 2016 15:59:49 +0200
-Message-ID: <CACRpkdYDL8dhyoRodKWfaOj2ya2_4qQq=+sRj+wUaHyW7Lkjdg@mail.gmail.com>
-Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.9
-To: Geert Uytterhoeven <geert+renesas@glider.be>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:45304 "EHLO
+	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751993AbcHQPFd (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 17 Aug 2016 11:05:33 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Updates for v4.9
+Date: Wed, 17 Aug 2016 17:05:28 +0200
+Message-Id: <1471446328-15537-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 17, 2016 at 5:05 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+	Hi Linus,
 
->         Hi Linus,
->
-> The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
->
->   Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.9-tag1
+The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
 
-Pulled into pinctrl's devel branch.
+  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
 
-Thanks for your continued efforts!
+are available in the git repository at:
 
-Yours,
-Linus Walleij
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.9-tag1
+
+for you to fetch changes up to 7955dac1b7efab7ae1e7522ea9af3fdc18a257d0:
+
+  pinctrl: sh-pfc: r8a7795: Add DU support (2016-08-16 10:30:43 +0200)
+
+----------------------------------------------------------------
+pinctrl: sh-pfc: Updates for v4.9
+
+  - Bias and DU support for R-Car H3,
+  - Basic R-Car V2H support,
+  - Cleanups and fixes.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      pinctrl: sh-pfc: r8a7795: Correct header from R-Car Gen3 to R8A7795
+
+Laurent Pinchart (1):
+      pinctrl: sh-pfc: r8a7795: Add DU support
+
+Sergei Shtylyov (7):
+      pinctrl: sh-pfc: Fix overly long lines
+      pinctrl: sh-pfc: Add R8A7792 PFC support
+      pinctrl: sh-pfc: r8a7792: Add EtherAVB pin groups
+      pinctrl: sh-pfc: r8a7792: Add SDHI pin groups
+      pinctrl: sh-pfc: r8a7792: Add CAN pin groups
+      pinctrl: sh-pfc: r8a7792: Add VIN pin groups
+      pinctrl: sh-pfc: r8a7792: Add DU pin groups
+
+Ulrich Hecht (1):
+      pinctrl: sh-pfc: r8a7795: Add bias pinconf support
+
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
+ drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
+ drivers/pinctrl/sh-pfc/Makefile                    |    1 +
+ drivers/pinctrl/sh-pfc/core.c                      |    6 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7792.c               | 2624 ++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c               |  356 ++-
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |  108 +-
+ 7 files changed, 3048 insertions(+), 53 deletions(-)
+ create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a7792.c
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
