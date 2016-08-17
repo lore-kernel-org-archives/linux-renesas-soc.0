@@ -1,46 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34421 "EHLO
-	mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752027AbcHQPgm (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56197 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752607AbcHQLcV (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 17 Aug 2016 11:36:42 -0400
-Received: by mail-it0-f68.google.com with SMTP id e63so6899363ith.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 17 Aug 2016 08:36:30 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1471433516-4478-5-git-send-email-horms+renesas@verge.net.au>
-References: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au> <1471433516-4478-5-git-send-email-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 17 Aug 2016 17:36:29 +0200
-Message-ID: <CAMuHMdWf54djnWmnkG82xiUUWM9vMjEiBwMJmUEjSRCf08xvBA@mail.gmail.com>
-Subject: Re: [PATCH/RTF 4/7] mmc: sh_mobile_sdhi: Add r8a7796 support
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
+	Wed, 17 Aug 2016 07:32:21 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Ai Kyuse <ai.kyuse.uw@renesas.com>
-Content-Type: text/plain; charset=UTF-8
+	Ai Kyuse <ai.kyuse.uw@renesas.com>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH/RTF 4/7] mmc: sh_mobile_sdhi: Add r8a7796 support
+Date: Wed, 17 Aug 2016 13:31:53 +0200
+Message-Id: <1471433516-4478-5-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au>
+References: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 17, 2016 at 1:31 PM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> From: Ai Kyuse <ai.kyuse.uw@renesas.com>
->
-> Add support for r8a7796 SoC.
->
-> Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+From: Ai Kyuse <ai.kyuse.uw@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add support for r8a7796 SoC.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 1 +
+ drivers/mmc/host/sh_mobile_sdhi.c                  | 1 +
+ 2 files changed, 2 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+index 0f610d4b5b00..13df9c2399c3 100644
+--- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+@@ -23,6 +23,7 @@ Required properties:
+ 		"renesas,sdhi-r8a7793" - SDHI IP on R8A7793 SoC
+ 		"renesas,sdhi-r8a7794" - SDHI IP on R8A7794 SoC
+ 		"renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
++		"renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
+ 
+ Optional properties:
+ - toshiba,mmc-wrprotect-disable: write-protect detection is unavailable
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index dd176c0ce6ec..25e8e2fdaa2c 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -129,6 +129,7 @@ static const struct of_device_id sh_mobile_sdhi_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-r8a7793", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
++	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, sh_mobile_sdhi_of_match);
+-- 
+2.7.0.rc3.207.g0ac5344
