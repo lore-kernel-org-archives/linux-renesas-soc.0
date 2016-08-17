@@ -1,54 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:36441 "EHLO
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36200 "EHLO
 	mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751028AbcHHNKJ (ORCPT
+	with ESMTP id S1752255AbcHQPbR (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 09:10:09 -0400
+	Wed, 17 Aug 2016 11:31:17 -0400
+Received: by mail-it0-f66.google.com with SMTP id j124so9675835ith.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 17 Aug 2016 08:31:16 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <5158815.xFJQ7LtYb1@wasted.cogentembedded.com>
-References: <3910788.ckTpUWEs6B@wasted.cogentembedded.com> <5158815.xFJQ7LtYb1@wasted.cogentembedded.com>
+In-Reply-To: <1471433516-4478-4-git-send-email-horms+renesas@verge.net.au>
+References: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au> <1471433516-4478-4-git-send-email-horms+renesas@verge.net.au>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 8 Aug 2016 15:10:08 +0200
-Message-ID: <CAMuHMdU1=3L0uRkVVcJCtG-aZ2+AdpFjQ6PmND0ZrjVuQ6L=XQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/6] ARM: dts: r8a7794: add MSTP10 clocks
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@arm.linux.org.uk>,
+Date: Wed, 17 Aug 2016 17:31:15 +0200
+Message-ID: <CAMuHMdUNxV9Jyp3roPJnDA=1pQ6yrzwWz_jA5uo3=Zrw_9L7Vw@mail.gmail.com>
+Subject: Re: [PATCH/RTF 3/7] pinctrl: sh-pfc: r8a7796: Add SDHI pins, groups
+ and functions
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
 	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
+	<linux-arm-kernel@lists.infradead.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
-
-On Wed, Jul 27, 2016 at 11:01 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add MSTP10 clocks to the R8A7794 device tree.
+On Wed, Aug 17, 2016 at 1:31 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 >
-> This patch is based on the commit ee9141522dcf ("ARM: shmobile: r8a7791:
-> add MSTP10 support on DTSI").
+> This patch adds SDHI pins, groups and functions to R8A7796 SoC.
 >
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> ---
-> Changes in version 4:
-> - removed non-existing SRC0/7/8/9 clocks;
-> - reparented SSI[0-9] clocks;
-
-Do we want to do that on r8a7790, r8a7791, and r8a7793, too?
-
-Morimoto-san: Is there a specific reason why the various SCU sub clocks
-are children of the SCU_ALL clock, while the various SSI sub clocks are
-children of the HP clock on those SoCs?
 
 Gr{oetje,eeting}s,
 
