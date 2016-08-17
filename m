@@ -1,64 +1,46 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Subject: Re: [RFT RESEND PATCH v3 3/3] ARM: select PCI_DOMAINS config from
- ARCH_MULTIPLATFORM
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Benoit Cousson <bcousson@baylibre.com>,
-	Tony Lindgren <tony@atomide.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-References: <1470832400-11929-1-git-send-email-kishon@ti.com>
- <1470832400-11929-4-git-send-email-kishon@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Nicolas Ferre <nicolas.ferre@atmel.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-	Krzysztof Halasa <khalasa@piap.pl>,
-	Kukjin Kim <kgene@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f193.google.com ([209.85.223.193]:34576 "EHLO
+	mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750764AbcHQN7X (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 17 Aug 2016 09:59:23 -0400
+Received: by mail-io0-f193.google.com with SMTP id i199so10286108ioi.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 17 Aug 2016 06:58:25 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1471433516-4478-2-git-send-email-horms+renesas@verge.net.au>
+References: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au> <1471433516-4478-2-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 17 Aug 2016 15:40:42 +0200
+Message-ID: <CAMuHMdW-Q=zXuRDgtYLLXk0C+gxe5ybiY9qv+xYNDZLXF6Zv3Q@mail.gmail.com>
+Subject: Re: [PATCH/RTF 1/7] clk: renesas: r8a7796: Add GPIO clocks
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
 	Magnus Damm <magnus.damm@gmail.com>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Shiraz Hashim <shiraz.linux.kernel@gmail.com>, nsekhar@ti.com
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Message-id: <cf4a7376-1cd4-aeb4-cbf0-7dbbc3575137@samsung.com>
-Date: Wed, 10 Aug 2016 15:23:43 +0200
-MIME-version: 1.0
-In-reply-to: <1470832400-11929-4-git-send-email-kishon@ti.com>
-Content-type: text/plain; charset=windows-1252
-Content-transfer-encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 08/10/2016 02:33 PM, Kishon Vijay Abraham I wrote:
-> PCI_DOMAINS config should be selected for any SoCs
-> having more than a single PCIe controller. Without PCI_DOMAINS
-> config, only one PCIe controller gets registered.
-> 
-> Select PCI_DOMAINS in ARCH_MULTIPLATFORM if PCI is selected, since
-> it doesn't harm even if a platform has a single PCIe port.
-> Also remove PCI_DOMAINS being selected from other platform
-> specific configs.
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  arch/arm/Kconfig               |    1 +
->  arch/arm/mach-axxia/Kconfig    |    1 -
->  arch/arm/mach-cns3xxx/Kconfig  |    1 -
->  arch/arm/mach-exynos/Kconfig   |    1 -
->  arch/arm/mach-imx/Kconfig      |    2 --
->  arch/arm/mach-keystone/Kconfig |    1 -
->  arch/arm/mach-shmobile/Kconfig |    1 -
->  7 files changed, 1 insertion(+), 7 deletions(-)
+On Wed, Aug 17, 2016 at 1:31 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> Add GPIO clocks for the R8A7796 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-For Exynos5440 output is equal and we do not use PCI on other SoCs, so:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Gr{oetje,eeting}s,
 
-Best regards,
-Krzysztof
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
