@@ -1,33 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52720 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753411AbcHVHSX (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Aug 2016 03:18:23 -0400
-Date: Mon, 22 Aug 2016 09:18:16 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: blanche: add support for general purpose
- switches
-Message-ID: <20160822071816.GC28034@verge.net.au>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:37509 "EHLO
+	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752523AbcHQTDK (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 17 Aug 2016 15:03:10 -0400
+Received: by mail-wm0-f43.google.com with SMTP id i5so491288wmg.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 17 Aug 2016 12:03:10 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] ARM: dts: blanche: add support for general purpose switches
+Date: Wed, 17 Aug 2016 22:03:06 +0300
+Message-ID: <10166368.YKl2X2iyOO@wasted.cogentembedded.com>
+In-Reply-To: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
 References: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
- <10166368.YKl2X2iyOO@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <10166368.YKl2X2iyOO@wasted.cogentembedded.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 17, 2016 at 10:03:06PM +0300, Sergei Shtylyov wrote:
-> Add support  for the  general purpose  software switches  SW2 and tactile
-> switches SW24/25 as a virtual keyboard (like it was done with the Lager/
-> Koelsch boards).
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add support  for the  general purpose  software switches  SW2 and tactile
+switches SW24/25 as a virtual keyboard (like it was done with the Lager/
+Koelsch boards).
 
-Thanks, I have queued this up.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+---
+This patch is against the 'renesas-devel-20160817-v4.8-rc2' of Simon Horman's
+'renesas.git' repo.
+
+ arch/arm/boot/dts/r8a7792-blanche.dts |   49 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
++++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -11,6 +11,8 @@
+ 
+ /dts-v1/;
+ #include "r8a7792.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ 
+ / {
+ 	model = "Blanche";
+@@ -54,6 +56,53 @@
+ 		pinctrl-0 = <&lan89218_pins>;
+ 		pinctrl-names = "default";
+ 	};
++
++	keyboard {
++		compatible = "gpio-keys";
++
++		key-1 {
++			linux,code = <KEY_1>;
++			label = "SW2-1";
++			wakeup-source;
++			debounce-interval = <20>;
++			gpios = <&gpio3 10 GPIO_ACTIVE_LOW>;
++		};
++		key-2 {
++			linux,code = <KEY_2>;
++			label = "SW2-2";
++			wakeup-source;
++			debounce-interval = <20>;
++			gpios = <&gpio3 11 GPIO_ACTIVE_LOW>;
++		};
++		key-3 {
++			linux,code = <KEY_3>;
++			label = "SW2-3";
++			wakeup-source;
++			debounce-interval = <20>;
++			gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
++		};
++		key-4 {
++			linux,code = <KEY_4>;
++			label = "SW2-4";
++			wakeup-source;
++			debounce-interval = <20>;
++			gpios = <&gpio3 15 GPIO_ACTIVE_LOW>;
++		};
++		key-a {
++			linux,code = <KEY_A>;
++			label = "SW24";
++			wakeup-source;
++			debounce-interval = <20>;
++			gpios = <&gpio3 20 GPIO_ACTIVE_LOW>;
++		};
++		key-b {
++			linux,code = <KEY_B>;
++			label = "SW25";
++			wakeup-source;
++			debounce-interval = <20>;
++			gpios = <&gpio11 2 GPIO_ACTIVE_LOW>;
++		};
++	};
+ };
+ 
+ &extal_clk {
