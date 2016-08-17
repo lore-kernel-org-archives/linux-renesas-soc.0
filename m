@@ -1,127 +1,171 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:41477 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757632AbcH3Tuc (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Aug 2016 15:50:32 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] ARM: shmobile: fix regulator quirk for Gen2
-Date: Tue, 30 Aug 2016 21:50:22 +0200
-Message-Id: <20160830195022.3669-1-wsa+renesas@sang-engineering.com>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:45019 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751495AbcHQNmZ (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 17 Aug 2016 09:42:25 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Takanari Hayama <taki@igel.co.jp>,
+	Damian Hobson-Garcia <dhobsong@igel.co.jp>
+Subject: [PATCH v2] v4l: vsp1: Report device model and rev through media device information
+Date: Wed, 17 Aug 2016 16:42:36 +0300
+Message-Id: <1471441356-12209-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The current implementation only works if the da9xxx devices are added
-before their drivers are registered. Only then it can apply the fixes to
-both devices. Otherwise, the driver for the first device gets probed
-before the fix for the second device can be applied. This is what
-fails when using the IP core switcher or when having the i2c master
-driver as a module.
+Instead of hardcoding the media device model and hardware revision to
+"VSP1" and 0 respectively, report the actual hardware device model and
+IP version number.
 
-So, we need to disable both da9xxx once we detected one of them. We now
-use i2c_transfer with hardcoded i2c_messages and device addresses, so we
-don't need the da9xxx client devices to be instantiated. Because the
-fixup is used on specific boards only, the addresses are not going to
-change.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be> (r8a7791/koelsch)
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
+ drivers/media/platform/vsp1/vsp1.h     |  2 ++
+ drivers/media/platform/vsp1/vsp1_drv.c | 21 +++++++++++++++------
+ 2 files changed, 17 insertions(+), 6 deletions(-)
 
-Added a comment describing the message buffers and added Geert's tags.
-Thanks Geert!
+Changes since v1:
 
- arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 62 +++++++++-------------
- 1 file changed, 26 insertions(+), 36 deletions(-)
+- Report the hardware revision
 
-diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-index 62437b57813eab..73e3adbc133096 100644
---- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-@@ -41,39 +41,26 @@
+diff --git a/drivers/media/platform/vsp1/vsp1.h b/drivers/media/platform/vsp1/vsp1.h
+index 9dce3ea85252..0ba7521c01b4 100644
+--- a/drivers/media/platform/vsp1/vsp1.h
++++ b/drivers/media/platform/vsp1/vsp1.h
+@@ -55,6 +55,7 @@ struct vsp1_uds;
  
- #define REGULATOR_IRQ_MASK	BIT(2)	/* IRQ2, active low */
+ struct vsp1_device_info {
+ 	u32 version;
++	const char *model;
+ 	unsigned int gen;
+ 	unsigned int features;
+ 	unsigned int rpf_count;
+@@ -67,6 +68,7 @@ struct vsp1_device_info {
+ struct vsp1_device {
+ 	struct device *dev;
+ 	const struct vsp1_device_info *info;
++	u32 version;
  
--static void __iomem *irqc;
--
--static const u8 da9063_mask_regs[] = {
--	DA9063_REG_IRQ_MASK_A,
--	DA9063_REG_IRQ_MASK_B,
--	DA9063_REG_IRQ_MASK_C,
--	DA9063_REG_IRQ_MASK_D,
--};
--
--/* DA9210 System Control and Event Registers */
-+/* start of DA9210 System Control and Event Registers */
- #define DA9210_REG_MASK_A		0x54
--#define DA9210_REG_MASK_B		0x55
--
--static const u8 da9210_mask_regs[] = {
--	DA9210_REG_MASK_A,
--	DA9210_REG_MASK_B,
--};
--
--static void da9xxx_mask_irqs(struct i2c_client *client, const u8 regs[],
--			     unsigned int nregs)
--{
--	unsigned int i;
+ 	void __iomem *mmio;
+ 	struct rcar_fcp_device *fcp;
+diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
+index 9684abf3ce3a..64d832ef9ef3 100644
+--- a/drivers/media/platform/vsp1/vsp1_drv.c
++++ b/drivers/media/platform/vsp1/vsp1_drv.c
+@@ -232,7 +232,8 @@ static int vsp1_create_entities(struct vsp1_device *vsp1)
+ 	int ret;
  
--	dev_info(&client->dev, "Masking %s interrupt sources\n", client->name);
-+static void __iomem *irqc;
+ 	mdev->dev = vsp1->dev;
+-	strlcpy(mdev->model, "VSP1", sizeof(mdev->model));
++	mdev->hw_revision = vsp1->version;
++	strlcpy(mdev->model, vsp1->info->model, sizeof(mdev->model));
+ 	snprintf(mdev->bus_info, sizeof(mdev->bus_info), "platform:%s",
+ 		 dev_name(mdev->dev));
+ 	media_device_init(mdev);
+@@ -581,6 +582,7 @@ static const struct dev_pm_ops vsp1_pm_ops = {
+ static const struct vsp1_device_info vsp1_device_infos[] = {
+ 	{
+ 		.version = VI6_IP_VERSION_MODEL_VSPS_H2,
++		.model = "VSP1-S",
+ 		.gen = 2,
+ 		.features = VSP1_HAS_BRU | VSP1_HAS_CLU | VSP1_HAS_HGO
+ 			  | VSP1_HAS_LUT | VSP1_HAS_SRU | VSP1_HAS_WPF_VFLIP,
+@@ -591,6 +593,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
+ 		.uapi = true,
+ 	}, {
+ 		.version = VI6_IP_VERSION_MODEL_VSPR_H2,
++		.model = "VSP1-R",
+ 		.gen = 2,
+ 		.features = VSP1_HAS_BRU | VSP1_HAS_SRU | VSP1_HAS_WPF_VFLIP,
+ 		.rpf_count = 5,
+@@ -600,6 +603,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
+ 		.uapi = true,
+ 	}, {
+ 		.version = VI6_IP_VERSION_MODEL_VSPD_GEN2,
++		.model = "VSP1-D",
+ 		.gen = 2,
+ 		.features = VSP1_HAS_BRU | VSP1_HAS_HGO | VSP1_HAS_LIF
+ 			  | VSP1_HAS_LUT,
+@@ -610,6 +614,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
+ 		.uapi = true,
+ 	}, {
+ 		.version = VI6_IP_VERSION_MODEL_VSPS_M2,
++		.model = "VSP1-S",
+ 		.gen = 2,
+ 		.features = VSP1_HAS_BRU | VSP1_HAS_CLU | VSP1_HAS_HGO
+ 			  | VSP1_HAS_LUT | VSP1_HAS_SRU | VSP1_HAS_WPF_VFLIP,
+@@ -620,6 +625,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
+ 		.uapi = true,
+ 	}, {
+ 		.version = VI6_IP_VERSION_MODEL_VSPI_GEN3,
++		.model = "VSP2-I",
+ 		.gen = 3,
+ 		.features = VSP1_HAS_CLU | VSP1_HAS_HGO | VSP1_HAS_LUT
+ 			  | VSP1_HAS_SRU | VSP1_HAS_WPF_HFLIP
+@@ -630,6 +636,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
+ 		.uapi = true,
+ 	}, {
+ 		.version = VI6_IP_VERSION_MODEL_VSPBD_GEN3,
++		.model = "VSP2-BD",
+ 		.gen = 3,
+ 		.features = VSP1_HAS_BRU | VSP1_HAS_WPF_VFLIP,
+ 		.rpf_count = 5,
+@@ -638,6 +645,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
+ 		.uapi = true,
+ 	}, {
+ 		.version = VI6_IP_VERSION_MODEL_VSPBC_GEN3,
++		.model = "VSP2-BC",
+ 		.gen = 3,
+ 		.features = VSP1_HAS_BRU | VSP1_HAS_CLU | VSP1_HAS_HGO
+ 			  | VSP1_HAS_LUT | VSP1_HAS_WPF_VFLIP,
+@@ -647,6 +655,7 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
+ 		.uapi = true,
+ 	}, {
+ 		.version = VI6_IP_VERSION_MODEL_VSPD_GEN3,
++		.model = "VSP2-D",
+ 		.gen = 3,
+ 		.features = VSP1_HAS_BRU | VSP1_HAS_LIF | VSP1_HAS_WPF_VFLIP,
+ 		.rpf_count = 5,
+@@ -662,7 +671,6 @@ static int vsp1_probe(struct platform_device *pdev)
+ 	struct resource *irq;
+ 	struct resource *io;
+ 	unsigned int i;
+-	u32 version;
+ 	int ret;
  
--	for (i = 0; i < nregs; i++) {
--		int error = i2c_smbus_write_byte_data(client, regs[i], ~0);
--		if (error) {
--			dev_err(&client->dev, "i2c error %d\n", error);
--			return;
--		}
--	}
--}
-+/* first byte sets the memory pointer, following are consecutive reg values */
-+static u8 da9063_irq_clr[] = { DA9063_REG_IRQ_MASK_A, 0xff, 0xff, 0xff, 0xff };
-+static u8 da9210_irq_clr[] = { DA9210_REG_MASK_A, 0xff, 0xff };
-+
-+static struct i2c_msg da9xxx_msgs[2] = {
-+	{
-+		.addr = 0x58,
-+		.len = ARRAY_SIZE(da9063_irq_clr),
-+		.buf = da9063_irq_clr,
-+	}, {
-+		.addr = 0x68,
-+		.len = ARRAY_SIZE(da9210_irq_clr),
-+		.buf = da9210_irq_clr,
-+	},
-+};
+ 	vsp1 = devm_kzalloc(&pdev->dev, sizeof(*vsp1), GFP_KERNEL);
+@@ -713,11 +721,11 @@ static int vsp1_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto done;
  
- static int regulator_quirk_notify(struct notifier_block *nb,
- 				  unsigned long action, void *data)
-@@ -93,12 +80,15 @@ static int regulator_quirk_notify(struct notifier_block *nb,
- 	client = to_i2c_client(dev);
- 	dev_dbg(dev, "Detected %s\n", client->name);
+-	version = vsp1_read(vsp1, VI6_IP_VERSION);
++	vsp1->version = vsp1_read(vsp1, VI6_IP_VERSION);
+ 	pm_runtime_put_sync(&pdev->dev);
  
--	if ((client->addr == 0x58 && !strcmp(client->name, "da9063")))
--		da9xxx_mask_irqs(client, da9063_mask_regs,
--				 ARRAY_SIZE(da9063_mask_regs));
--	else if (client->addr == 0x68 && !strcmp(client->name, "da9210"))
--		da9xxx_mask_irqs(client, da9210_mask_regs,
--				 ARRAY_SIZE(da9210_mask_regs));
-+	if ((client->addr == 0x58 && !strcmp(client->name, "da9063")) ||
-+	    (client->addr == 0x68 && !strcmp(client->name, "da9210"))) {
-+		int ret;
-+
-+		dev_info(&client->dev, "clearing da9063/da9210 interrupts\n");
-+		ret = i2c_transfer(client->adapter, da9xxx_msgs, ARRAY_SIZE(da9xxx_msgs));
-+		if (ret != ARRAY_SIZE(da9xxx_msgs))
-+			dev_err(&client->dev, "i2c error %d\n", ret);
-+	}
+ 	for (i = 0; i < ARRAY_SIZE(vsp1_device_infos); ++i) {
+-		if ((version & VI6_IP_VERSION_MODEL_MASK) ==
++		if ((vsp1->version & VI6_IP_VERSION_MODEL_MASK) ==
+ 		    vsp1_device_infos[i].version) {
+ 			vsp1->info = &vsp1_device_infos[i];
+ 			break;
+@@ -725,12 +733,13 @@ static int vsp1_probe(struct platform_device *pdev)
+ 	}
  
- 	mon = ioread32(irqc + IRQC_MONITOR);
- 	if (mon & REGULATOR_IRQ_MASK)
+ 	if (!vsp1->info) {
+-		dev_err(&pdev->dev, "unsupported IP version 0x%08x\n", version);
++		dev_err(&pdev->dev, "unsupported IP version 0x%08x\n",
++			vsp1->version);
+ 		ret = -ENXIO;
+ 		goto done;
+ 	}
+ 
+-	dev_dbg(&pdev->dev, "IP version 0x%08x\n", version);
++	dev_dbg(&pdev->dev, "IP version 0x%08x\n", vsp1->version);
+ 
+ 	/* Instanciate entities */
+ 	ret = vsp1_create_entities(vsp1);
 -- 
-2.9.3
+Regards,
+
+Laurent Pinchart
