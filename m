@@ -1,46 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:25309 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753411AbcHVIta (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Aug 2016 04:49:30 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <balbi@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 3/4] usb: gadget: f_ncm: add support for no_skb_reserve
-Date: Mon, 22 Aug 2016 17:48:27 +0900
-Message-ID: <1471855708-10897-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1471855708-10897-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1471855708-10897-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Received: from kirsty.vergenet.net ([202.4.237.240]:53740 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932170AbcHQHFK (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Wed, 17 Aug 2016 03:05:10 -0400
+Date: Wed, 17 Aug 2016 09:05:02 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Russell King <linux@arm.linux.org.uk>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] ARM: dts: r8a7794: add VSP1 support
+Message-ID: <20160817070501.GE8673@verge.net.au>
+References: <1618499.8bcj8adpVO@wasted.cogentembedded.com>
+ <2191193.axSzE4vSGB@wasted.cogentembedded.com>
+ <CAMuHMdV6D069J5-Z+qbUxTDrV=7kD_+wsEN_SvsZYoy3ONaDEg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV6D069J5-Z+qbUxTDrV=7kD_+wsEN_SvsZYoy3ONaDEg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds to support no_skb_reserve function to improve
-performance for some platforms. About the detail, please refer to
-the commit log of "quirk_avoids_skb_reserve" in
-include/linux/usb/gadget.h.
+On Tue, Aug 16, 2016 at 10:07:05AM +0200, Geert Uytterhoeven wrote:
+> On Mon, Aug 15, 2016 at 11:52 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > Describe two instances (VSPS and VSPD0) of the VSP1 in the R8A7794 device
+> > tree.
+> >
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/gadget/function/f_ncm.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/usb/gadget/function/f_ncm.c b/drivers/usb/gadget/function/f_ncm.c
-index 08cff49..6396037 100644
---- a/drivers/usb/gadget/function/f_ncm.c
-+++ b/drivers/usb/gadget/function/f_ncm.c
-@@ -924,6 +924,8 @@ static int ncm_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
- 			 */
- 			ncm->port.is_zlp_ok =
- 				gadget_is_zlp_supported(cdev->gadget);
-+			ncm->port.no_skb_reserve =
-+				gadget_avoids_skb_reserve(cdev->gadget);
- 			ncm->port.cdc_filter = DEFAULT_FILTER;
- 			DBG(cdev, "activate ncm\n");
- 			net = gether_connect(&ncm->port);
--- 
-1.9.1
+Thanks, I have queued this up.
