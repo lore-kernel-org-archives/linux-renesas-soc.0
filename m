@@ -1,90 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53172 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLEs (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:04:48 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87bn137idk.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiMM-0003ir-Cx@debutante>
-Date: Mon, 08 Aug 2016 12:04:42 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on pcm179x" to the asoc tree
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49549 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754226AbcHSA7e (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 18 Aug 2016 20:59:34 -0400
+Received: from localhost.localdomain (227.178-201-80.adsl-dyn.isp.belgacom.be [80.201.178.227])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id B972E208C6
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Aug 2016 18:03:33 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH/HACK 4/7] ARM: shmobile: r8a7791: Enable IOMMU usage for the VSP1
+Date: Thu, 18 Aug 2016 19:03:57 +0300
+Message-Id: <1471536240-25082-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1471536240-25082-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1471536240-25082-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Each VSP instance has two memory bus master ports, one of data transfer
+and one for command transfer. Specify the related IOMMUs.
 
-   ASoC: codec duplicated callback function goes to component on pcm179x
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 98773a87e83dfd81c77418f2d0f19a63e7476bac Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:59:59 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- pcm179x
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- sound/soc/codecs/pcm179x.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/sound/soc/codecs/pcm179x.c b/sound/soc/codecs/pcm179x.c
-index 88fbdd184aa0..b813a154ddd9 100644
---- a/sound/soc/codecs/pcm179x.c
-+++ b/sound/soc/codecs/pcm179x.c
-@@ -206,12 +206,14 @@ const struct regmap_config pcm179x_regmap_config = {
- EXPORT_SYMBOL_GPL(pcm179x_regmap_config);
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 411c36dbbe7b..4cb4076bcd13 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -984,6 +984,8 @@
+ 		clocks = <&mstp1_clks R8A7791_CLK_VSP1_S>;
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  
- static struct snd_soc_codec_driver soc_codec_dev_pcm179x = {
--	.controls		= pcm179x_controls,
--	.num_controls		= ARRAY_SIZE(pcm179x_controls),
--	.dapm_widgets		= pcm179x_dapm_widgets,
--	.num_dapm_widgets	= ARRAY_SIZE(pcm179x_dapm_widgets),
--	.dapm_routes		= pcm179x_dapm_routes,
--	.num_dapm_routes	= ARRAY_SIZE(pcm179x_dapm_routes),
-+	.component_driver = {
-+		.controls		= pcm179x_controls,
-+		.num_controls		= ARRAY_SIZE(pcm179x_controls),
-+		.dapm_widgets		= pcm179x_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(pcm179x_dapm_widgets),
-+		.dapm_routes		= pcm179x_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(pcm179x_dapm_routes),
-+	},
- };
++		iommus = <&ipmmu_mx 4 &ipmmu_mx 10>;
++
+ 		renesas,has-lut;
+ 		renesas,has-sru;
+ 		renesas,#rpf = <5>;
+@@ -998,6 +1000,8 @@
+ 		clocks = <&mstp1_clks R8A7791_CLK_VSP1_DU0>;
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
  
- int pcm179x_common_init(struct device *dev, struct regmap *regmap)
++		iommus = <&ipmmu_mx 5 &ipmmu_mx 13>;
++
+ 		renesas,has-lif;
+ 		renesas,has-lut;
+ 		renesas,#rpf = <4>;
+@@ -1012,6 +1016,8 @@
+ 		clocks = <&mstp1_clks R8A7791_CLK_VSP1_DU1>;
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+ 
++		iommus = <&ipmmu_mx 5 &ipmmu_mx 14>;
++
+ 		renesas,has-lif;
+ 		renesas,has-lut;
+ 		renesas,#rpf = <4>;
 -- 
-2.8.1
+Regards,
+
+Laurent Pinchart
