@@ -1,93 +1,49 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Simon <horms@verge.net.au>, linux-renesas-soc@vger.kernel.org,
-	alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
-	linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-	Mark Brown <broonie@kernel.org>
-In-Reply-To: <87h9b59gag.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bX6O3-0003a2-Dg@debutante>
-Date: Tue, 09 Aug 2016 13:44:03 +0100
-Subject: Applied "ASoC: remove snd_soc_pcm_set/get_drvdata()" to the asoc tree
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49687 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753911AbcHSCjr (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 18 Aug 2016 22:39:47 -0400
+Received: from localhost.localdomain (227.178-201-80.adsl-dyn.isp.belgacom.be [80.201.178.227])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id EDAEA208A1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Aug 2016 18:03:32 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH/HACK 1/7] ARM: shmobile: r8a7790: Enable IOMMU usage for the DU
+Date: Thu, 18 Aug 2016 19:03:54 +0300
+Message-Id: <1471536240-25082-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1471536240-25082-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1471536240-25082-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
-
-   ASoC: remove snd_soc_pcm_set/get_drvdata()
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 1e814030954015e42621191f3adc52df2241dc08 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 1 Aug 2016 06:11:36 +0000
-Subject: [PATCH] ASoC: remove snd_soc_pcm_set/get_drvdata()
-
-snd_soc_pcm_set_drvdata() will set driver data to rtd->dev,
-but driver data of rtd->dev is already used as "rtd" on
-soc_post_component_init().
-
-	static int soc_post_component_init(xxx)
-	{
-		...
-		dev_set_drvdata(rtd->dev, rtd);
-		...
-	}
-
-To remove confusion, this patch removes snd_soc_pcm_set/get_drvdata().
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- include/sound/soc.h | 11 -----------
- 1 file changed, 11 deletions(-)
+ arch/arm/boot/dts/r8a7790.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/sound/soc.h b/include/sound/soc.h
-index 6144882cc96a..bc953994acb9 100644
---- a/include/sound/soc.h
-+++ b/include/sound/soc.h
-@@ -1547,17 +1547,6 @@ static inline void *snd_soc_platform_get_drvdata(struct snd_soc_platform *platfo
- 	return snd_soc_component_get_drvdata(&platform->component);
- }
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index d18558f21102..87c4344424a0 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1010,6 +1010,8 @@
+ 		clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1";
+ 		status = "disabled";
  
--static inline void snd_soc_pcm_set_drvdata(struct snd_soc_pcm_runtime *rtd,
--		void *data)
--{
--	dev_set_drvdata(rtd->dev, data);
--}
--
--static inline void *snd_soc_pcm_get_drvdata(struct snd_soc_pcm_runtime *rtd)
--{
--	return dev_get_drvdata(rtd->dev);
--}
--
- static inline void snd_soc_initialize_card_lists(struct snd_soc_card *card)
- {
- 	INIT_LIST_HEAD(&card->codec_dev_list);
++		iommus = <&ipmmu_mx 15 &ipmmu_mx 16>;
++
+ 		ports {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -1916,7 +1918,6 @@
+ 		interrupts = <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
+ 		#iommu-cells = <1>;
+-		status = "disabled";
+ 	};
+ 
+ 	ipmmu_rt: mmu@ffc80000 {
 -- 
-2.8.1
+Regards,
+
+Laurent Pinchart
