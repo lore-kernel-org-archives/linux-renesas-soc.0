@@ -1,35 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:35570 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754127AbcHSWRN (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49550 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754161AbcHSA7g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Aug 2016 18:17:13 -0400
-Received: by mail-lf0-f44.google.com with SMTP id f93so42007670lfi.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Aug 2016 15:17:12 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/2] Add R8A7792 VSP1V support
-Date: Sat, 20 Aug 2016 01:17:09 +0300
-Message-ID: <1635089.v8k0jcJkvb@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 18 Aug 2016 20:59:36 -0400
+Received: from localhost.localdomain (227.178-201-80.adsl-dyn.isp.belgacom.be [80.201.178.227])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 37BB7208A6
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Aug 2016 18:03:33 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH/HACK 2/7] ARM: shmobile: r8a7791: Enable IOMMU usage for the DU
+Date: Thu, 18 Aug 2016 19:03:55 +0300
+Message-Id: <1471536240-25082-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1471536240-25082-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1471536240-25082-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-   Here's the set of 2 patches against Simon Horman's 'renesas.git' repo,
-'renesas-devel-20160817-v4.8-rc2' tag. We're adding the R8A7792 VSP1V clocks
-and device nodes. The 2nd patch depends on the VSP1 driver patch in order for
-the VSP1V core to be recognized by the driver. The patches have been tested on
-the Blanche board...
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 8f0086bbd96b..411c36dbbe7b 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -1032,6 +1032,8 @@
+ 		clock-names = "du.0", "du.1", "lvds.0";
+ 		status = "disabled";
+ 
++		iommus = <&ipmmu_mx 15>;
++
+ 		ports {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -1710,7 +1712,6 @@
+ 		interrupts = <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
+ 		#iommu-cells = <1>;
+-		status = "disabled";
+ 	};
+ 
+ 	ipmmu_rt: mmu@ffc80000 {
+-- 
+Regards,
 
-[1/2] ARM: dts: r8a7792: add VSP1V clocks
-[2/2] ARM: dts: r8a7792: add VSP1V support
-
-WBR, Sergei
+Laurent Pinchart
