@@ -1,325 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35056 "EHLO
-	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753389AbcHPOsA (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39199 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753534AbcHRHMS (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 16 Aug 2016 10:48:00 -0400
-Received: by mail-wm0-f68.google.com with SMTP id i5so16885961wmg.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 16 Aug 2016 07:47:59 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: horms@verge.net.au, magnus.damm@gmail.com,
-	ulrich.hecht+renesas@gmail.com,
-	Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: [PATCH v2 2/4] pinctrl: sh-pfc: r8a7796: Add SCIF pins, groups and functions
-Date: Tue, 16 Aug 2016 16:47:11 +0200
-Message-Id: <1471358833-18248-3-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1471358833-18248-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1471358833-18248-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+	Thu, 18 Aug 2016 03:12:18 -0400
+Date: Thu, 18 Aug 2016 09:12:07 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: renesas: salvator-x: Configure pins for the
+ DU RGB output
+Message-ID: <20160818071204.GA3961@verge.net.au>
+References: <1470993535-11795-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <20160817071335.GG8673@verge.net.au>
+ <CAMuHMdV_xp1ApMy6XrQtv5oaJMewiCttaQHZLvH5E_i9F6A9kQ@mail.gmail.com>
+ <3167228.fHu3sBnt6u@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3167228.fHu3sBnt6u@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Wed, Aug 17, 2016 at 12:17:26PM +0300, Laurent Pinchart wrote:
+> On Wednesday 17 Aug 2016 11:00:38 Geert Uytterhoeven wrote:
+> > On Wed, Aug 17, 2016 at 9:13 AM, Simon Horman <horms@verge.net.au> wrote:
+> > > On Fri, Aug 12, 2016 at 12:18:55PM +0300, Laurent Pinchart wrote:
+> > >> Signed-off-by: Laurent Pinchart
+> > >> <laurent.pinchart+renesas@ideasonboard.com>
+> > >> ---
+> > >> 
+> > >>  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 7 +++++++
+> > >>  1 file changed, 7 insertions(+)
+> > >> 
+> > >> This patch depends on "[PATCH] pinctrl: sh-pfc: r8a7795: Add DU support"
+> > >> posted a few minutes ago to the linux-renesas-soc mailing list, as well
+> > >> as on the "[PATCH v2 0/4] R-Car Gen3 DU enablement on Salvator-X board"
+> > >> series posted yesterday to the same list.
+> > >> 
+> > >> As the boot loader configures the DU pins on Salvator-X we can safely
+> > >> delay this patch by one kernel version to let the pinctrl dependency hit
+> > >> mainling first.
+> > > 
+> > > I'm not entirely sure it is necessary to defer this patch by a kernel
+> > > release but if that is your wish then I'm happy to do so. If so
+> > > please repost at the appropriate time.
+> > 
+> > I believe applying this patch now means that the DU won't work in your
+> > renesas-devel tree (unless you merge sh-pfc-for-v4.9).
+> > Of course it should work in renesas-drivers.
+> 
+> I haven't tested that, but I believe it would result in a probe failure
+> as the device core won't be able to apply the request pinctrl settings.
 
-This patch adds SCIF{0,1,2,3,4,5} pins, groups and functions to R8A7796
-SoC.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 276 +++++++++++++++++++++++++++++++++++
- 1 file changed, 276 insertions(+)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 0d14ca9..2babc2c 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -1486,10 +1486,286 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	PINMUX_GPIO_GP_ALL(),
- };
- 
-+/* - SCIF0 ------------------------------------------------------------------ */
-+static const unsigned int scif0_data_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
-+};
-+static const unsigned int scif0_data_mux[] = {
-+	RX0_MARK, TX0_MARK,
-+};
-+static const unsigned int scif0_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 0),
-+};
-+static const unsigned int scif0_clk_mux[] = {
-+	SCK0_MARK,
-+};
-+static const unsigned int scif0_ctrl_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 3),
-+};
-+static const unsigned int scif0_ctrl_mux[] = {
-+	RTS0_N_TANS_MARK, CTS0_N_MARK,
-+};
-+/* - SCIF1 ------------------------------------------------------------------ */
-+static const unsigned int scif1_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 5), RCAR_GP_PIN(5, 6),
-+};
-+static const unsigned int scif1_data_a_mux[] = {
-+	RX1_A_MARK, TX1_A_MARK,
-+};
-+static const unsigned int scif1_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(6, 21),
-+};
-+static const unsigned int scif1_clk_mux[] = {
-+	SCK1_MARK,
-+};
-+static const unsigned int scif1_ctrl_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 7),
-+};
-+static const unsigned int scif1_ctrl_mux[] = {
-+	RTS1_N_TANS_MARK, CTS1_N_MARK,
-+};
-+
-+static const unsigned int scif1_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 24), RCAR_GP_PIN(5, 25),
-+};
-+static const unsigned int scif1_data_b_mux[] = {
-+	RX1_B_MARK, TX1_B_MARK,
-+};
-+/* - SCIF2 ------------------------------------------------------------------ */
-+static const unsigned int scif2_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 11), RCAR_GP_PIN(5, 10),
-+};
-+static const unsigned int scif2_data_a_mux[] = {
-+	RX2_A_MARK, TX2_A_MARK,
-+};
-+static const unsigned int scif2_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 9),
-+};
-+static const unsigned int scif2_clk_mux[] = {
-+	SCK2_MARK,
-+};
-+static const unsigned int scif2_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 16),
-+};
-+static const unsigned int scif2_data_b_mux[] = {
-+	RX2_B_MARK, TX2_B_MARK,
-+};
-+/* - SCIF3 ------------------------------------------------------------------ */
-+static const unsigned int scif3_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 23), RCAR_GP_PIN(1, 24),
-+};
-+static const unsigned int scif3_data_a_mux[] = {
-+	RX3_A_MARK, TX3_A_MARK,
-+};
-+static const unsigned int scif3_clk_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(1, 22),
-+};
-+static const unsigned int scif3_clk_mux[] = {
-+	SCK3_MARK,
-+};
-+static const unsigned int scif3_ctrl_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(1, 26), RCAR_GP_PIN(1, 25),
-+};
-+static const unsigned int scif3_ctrl_mux[] = {
-+	RTS3_N_TANS_MARK, CTS3_N_MARK,
-+};
-+static const unsigned int scif3_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 11),
-+};
-+static const unsigned int scif3_data_b_mux[] = {
-+	RX3_B_MARK, TX3_B_MARK,
-+};
-+/* - SCIF4 ------------------------------------------------------------------ */
-+static const unsigned int scif4_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(2, 11), RCAR_GP_PIN(2, 12),
-+};
-+static const unsigned int scif4_data_a_mux[] = {
-+	RX4_A_MARK, TX4_A_MARK,
-+};
-+static const unsigned int scif4_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(2, 10),
-+};
-+static const unsigned int scif4_clk_a_mux[] = {
-+	SCK4_A_MARK,
-+};
-+static const unsigned int scif4_ctrl_a_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(2, 14), RCAR_GP_PIN(2, 13),
-+};
-+static const unsigned int scif4_ctrl_a_mux[] = {
-+	RTS4_N_TANS_A_MARK, CTS4_N_A_MARK,
-+};
-+static const unsigned int scif4_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
-+};
-+static const unsigned int scif4_data_b_mux[] = {
-+	RX4_B_MARK, TX4_B_MARK,
-+};
-+static const unsigned int scif4_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(1, 5),
-+};
-+static const unsigned int scif4_clk_b_mux[] = {
-+	SCK4_B_MARK,
-+};
-+static const unsigned int scif4_ctrl_b_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(1, 10), RCAR_GP_PIN(1, 9),
-+};
-+static const unsigned int scif4_ctrl_b_mux[] = {
-+	RTS4_N_TANS_B_MARK, CTS4_N_B_MARK,
-+};
-+static const unsigned int scif4_data_c_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
-+};
-+static const unsigned int scif4_data_c_mux[] = {
-+	RX4_C_MARK, TX4_C_MARK,
-+};
-+static const unsigned int scif4_clk_c_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(0, 8),
-+};
-+static const unsigned int scif4_clk_c_mux[] = {
-+	SCK4_C_MARK,
-+};
-+static const unsigned int scif4_ctrl_c_pins[] = {
-+	/* RTS, CTS */
-+	RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
-+};
-+static const unsigned int scif4_ctrl_c_mux[] = {
-+	RTS4_N_TANS_C_MARK, CTS4_N_C_MARK,
-+};
-+/* - SCIF5 ------------------------------------------------------------------ */
-+static const unsigned int scif5_data_a_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 21),
-+};
-+static const unsigned int scif5_data_a_mux[] = {
-+	RX5_A_MARK, TX5_A_MARK,
-+};
-+static const unsigned int scif5_clk_a_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(6, 21),
-+};
-+static const unsigned int scif5_clk_a_mux[] = {
-+	SCK5_A_MARK,
-+};
-+
-+static const unsigned int scif5_data_b_pins[] = {
-+	/* RX, TX */
-+	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 18),
-+};
-+static const unsigned int scif5_data_b_mux[] = {
-+	RX5_B_MARK, TX5_B_MARK,
-+};
-+static const unsigned int scif5_clk_b_pins[] = {
-+	/* SCK */
-+	RCAR_GP_PIN(5, 0),
-+};
-+static const unsigned int scif5_clk_b_mux[] = {
-+	SCK5_B_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(scif0_data),
-+	SH_PFC_PIN_GROUP(scif0_clk),
-+	SH_PFC_PIN_GROUP(scif0_ctrl),
-+	SH_PFC_PIN_GROUP(scif1_data_a),
-+	SH_PFC_PIN_GROUP(scif1_clk),
-+	SH_PFC_PIN_GROUP(scif1_ctrl),
-+	SH_PFC_PIN_GROUP(scif1_data_b),
-+	SH_PFC_PIN_GROUP(scif2_data_a),
-+	SH_PFC_PIN_GROUP(scif2_clk),
-+	SH_PFC_PIN_GROUP(scif2_data_b),
-+	SH_PFC_PIN_GROUP(scif3_data_a),
-+	SH_PFC_PIN_GROUP(scif3_clk),
-+	SH_PFC_PIN_GROUP(scif3_ctrl),
-+	SH_PFC_PIN_GROUP(scif3_data_b),
-+	SH_PFC_PIN_GROUP(scif4_data_a),
-+	SH_PFC_PIN_GROUP(scif4_clk_a),
-+	SH_PFC_PIN_GROUP(scif4_ctrl_a),
-+	SH_PFC_PIN_GROUP(scif4_data_b),
-+	SH_PFC_PIN_GROUP(scif4_clk_b),
-+	SH_PFC_PIN_GROUP(scif4_ctrl_b),
-+	SH_PFC_PIN_GROUP(scif4_data_c),
-+	SH_PFC_PIN_GROUP(scif4_clk_c),
-+	SH_PFC_PIN_GROUP(scif4_ctrl_c),
-+	SH_PFC_PIN_GROUP(scif5_data_a),
-+	SH_PFC_PIN_GROUP(scif5_clk_a),
-+	SH_PFC_PIN_GROUP(scif5_data_b),
-+	SH_PFC_PIN_GROUP(scif5_clk_b),
-+};
-+
-+static const char * const scif0_groups[] = {
-+	"scif0_data",
-+	"scif0_clk",
-+	"scif0_ctrl",
-+};
-+
-+static const char * const scif1_groups[] = {
-+	"scif1_data_a",
-+	"scif1_clk",
-+	"scif1_ctrl",
-+	"scif1_data_b",
-+};
-+
-+static const char * const scif2_groups[] = {
-+	"scif2_data_a",
-+	"scif2_clk",
-+	"scif2_data_b",
-+};
-+
-+static const char * const scif3_groups[] = {
-+	"scif3_data_a",
-+	"scif3_clk",
-+	"scif3_ctrl",
-+	"scif3_data_b",
-+};
-+
-+static const char * const scif4_groups[] = {
-+	"scif4_data_a",
-+	"scif4_clk_a",
-+	"scif4_ctrl_a",
-+	"scif4_data_b",
-+	"scif4_clk_b",
-+	"scif4_ctrl_b",
-+	"scif4_data_c",
-+	"scif4_clk_c",
-+	"scif4_ctrl_c",
-+};
-+
-+static const char * const scif5_groups[] = {
-+	"scif5_data_a",
-+	"scif5_clk_a",
-+	"scif5_data_b",
-+	"scif5_clk_b",
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(scif0),
-+	SH_PFC_FUNCTION(scif1),
-+	SH_PFC_FUNCTION(scif2),
-+	SH_PFC_FUNCTION(scif3),
-+	SH_PFC_FUNCTION(scif4),
-+	SH_PFC_FUNCTION(scif5),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
--- 
-2.7.4
+Ok, in that case lets defer this patch as you suggested.
