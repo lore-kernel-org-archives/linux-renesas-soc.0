@@ -1,39 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:54624 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752669AbcHLQpZ (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Fri, 12 Aug 2016 12:45:25 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49550 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754217AbcHSA7h (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 18 Aug 2016 20:59:37 -0400
+Received: from localhost.localdomain (227.178-201-80.adsl-dyn.isp.belgacom.be [80.201.178.227])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 7C06F208B7
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Aug 2016 18:03:33 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/2] ARM: shmobile: r8a7790: only use smp_init when SMP is selected
-Date: Fri, 12 Aug 2016 18:45:09 +0200
-Message-Id: <1471020310-3028-1-git-send-email-wsa+renesas@sang-engineering.com>
+Subject: [PATCH/HACK 3/7] ARM: shmobile: r8a7790: Enable IOMMU usage for the VSP1
+Date: Thu, 18 Aug 2016 19:03:56 +0300
+Message-Id: <1471536240-25082-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1471536240-25082-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1471536240-25082-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We use the helper function which populates the smp_init pointer only in
-case of SMP.
+Each VSP instance has two memory bus master ports, one of data transfer
+and one for command transfer. Specify the related IOMMUs.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm/mach-shmobile/setup-r8a7790.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7790.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/setup-r8a7790.c b/arch/arm/mach-shmobile/setup-r8a7790.c
-index 3506327e0bed24..78d3e859bd64ad 100644
---- a/arch/arm/mach-shmobile/setup-r8a7790.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7790.c
-@@ -28,7 +28,7 @@ static const char * const r8a7790_boards_compat_dt[] __initconst = {
- };
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 87c4344424a0..637cb8be363f 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -945,6 +945,8 @@
+ 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_R>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
  
- DT_MACHINE_START(R8A7790_DT, "Generic R8A7790 (Flattened Device Tree)")
--	.smp_init	= shmobile_smp_init_fallback_ops,
-+	.smp_init	= smp_init_ops(shmobile_smp_init_fallback_ops),
- 	.smp		= smp_ops(r8a7790_smp_ops),
- 	.init_early	= shmobile_init_delay,
- 	.init_time	= rcar_gen2_timer_init,
++		iommus = <&ipmmu_mx 4 &ipmmu_mx 6>;
++
+ 		renesas,has-sru;
+ 		renesas,#rpf = <5>;
+ 		renesas,#uds = <1>;
+@@ -958,6 +960,8 @@
+ 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_S>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 
++		iommus = <&ipmmu_mx 4 &ipmmu_mx 10>;
++
+ 		renesas,has-lut;
+ 		renesas,has-sru;
+ 		renesas,#rpf = <5>;
+@@ -972,6 +976,8 @@
+ 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_DU0>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 
++		iommus = <&ipmmu_mx 5 &ipmmu_mx 13>;
++
+ 		renesas,has-lif;
+ 		renesas,has-lut;
+ 		renesas,#rpf = <4>;
+@@ -986,6 +992,8 @@
+ 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_DU1>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 
++		iommus = <&ipmmu_mx 5 &ipmmu_mx 14>;
++
+ 		renesas,has-lif;
+ 		renesas,has-lut;
+ 		renesas,#rpf = <4>;
 -- 
-2.8.1
+Regards,
+
+Laurent Pinchart
