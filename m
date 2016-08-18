@@ -1,90 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53538 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLF1 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:47830 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1946030AbcHRN0N (ORCPT
 	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:05:27 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87twev7ik8.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiMy-0003uY-Tr@debutante>
-Date: Mon, 08 Aug 2016 12:05:20 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on tas2552" to the asoc tree
+	Thu, 18 Aug 2016 09:26:13 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] v4l: vsp1: Fix tri-planar format support through DRM API
+Date: Thu, 18 Aug 2016 16:26:13 +0300
+Message-Id: <1471526773-12046-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+The vsp1 driver supports tri-planar formats, but the DRM API only passes
+two memory addresses. Add a third one.
 
-   ASoC: codec duplicated callback function goes to component on tas2552
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From e5538659c81991b9074ccb842e8af901c908b79b Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:55:58 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- tas2552
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- sound/soc/codecs/tas2552.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/media/platform/vsp1/vsp1_drm.c | 6 +++---
+ include/media/vsp1.h                   | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/codecs/tas2552.c b/sound/soc/codecs/tas2552.c
-index cc1d3981fa4b..baf455e8c2f7 100644
---- a/sound/soc/codecs/tas2552.c
-+++ b/sound/soc/codecs/tas2552.c
-@@ -667,12 +667,14 @@ static struct snd_soc_codec_driver soc_codec_dev_tas2552 = {
- 	.resume = tas2552_resume,
- 	.ignore_pmdown_time = true,
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index 0a98a3c49b73..f76131b192a4 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -276,12 +276,12 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int rpf_index,
+ 	}
  
--	.controls = tas2552_snd_controls,
--	.num_controls = ARRAY_SIZE(tas2552_snd_controls),
--	.dapm_widgets = tas2552_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(tas2552_dapm_widgets),
--	.dapm_routes = tas2552_audio_map,
--	.num_dapm_routes = ARRAY_SIZE(tas2552_audio_map),
-+	.component_driver = {
-+		.controls		= tas2552_snd_controls,
-+		.num_controls		= ARRAY_SIZE(tas2552_snd_controls),
-+		.dapm_widgets		= tas2552_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(tas2552_dapm_widgets),
-+		.dapm_routes		= tas2552_audio_map,
-+		.num_dapm_routes	= ARRAY_SIZE(tas2552_audio_map),
-+	},
- };
+ 	dev_dbg(vsp1->dev,
+-		"%s: RPF%u: (%u,%u)/%ux%u -> (%u,%u)/%ux%u (%08x), pitch %u dma { %pad, %pad } zpos %u\n",
++		"%s: RPF%u: (%u,%u)/%ux%u -> (%u,%u)/%ux%u (%08x), pitch %u dma { %pad, %pad, %pad } zpos %u\n",
+ 		__func__, rpf_index,
+ 		cfg->src.left, cfg->src.top, cfg->src.width, cfg->src.height,
+ 		cfg->dst.left, cfg->dst.top, cfg->dst.width, cfg->dst.height,
+ 		cfg->pixelformat, cfg->pitch, &cfg->mem[0], &cfg->mem[1],
+-		cfg->zpos);
++		&cfg->mem[2], cfg->zpos);
  
- static const struct regmap_config tas2552_regmap_config = {
+ 	/* Store the format, stride, memory buffer address, crop and compose
+ 	 * rectangles and Z-order position and for the input.
+@@ -301,7 +301,7 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int rpf_index,
+ 
+ 	rpf->mem.addr[0] = cfg->mem[0];
+ 	rpf->mem.addr[1] = cfg->mem[1];
+-	rpf->mem.addr[2] = 0;
++	rpf->mem.addr[2] = cfg->mem[2];
+ 
+ 	vsp1->drm->inputs[rpf_index].crop = cfg->src;
+ 	vsp1->drm->inputs[rpf_index].compose = cfg->dst;
+diff --git a/include/media/vsp1.h b/include/media/vsp1.h
+index 9322d9775fb7..458b400373d4 100644
+--- a/include/media/vsp1.h
++++ b/include/media/vsp1.h
+@@ -26,7 +26,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int width,
+ struct vsp1_du_atomic_config {
+ 	u32 pixelformat;
+ 	unsigned int pitch;
+-	dma_addr_t mem[2];
++	dma_addr_t mem[3];
+ 	struct v4l2_rect src;
+ 	struct v4l2_rect dst;
+ 	unsigned int alpha;
 -- 
-2.8.1
+Regards,
+
+Laurent Pinchart
