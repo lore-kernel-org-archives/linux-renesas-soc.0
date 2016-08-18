@@ -1,206 +1,349 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:51092 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754472AbcHSIj2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Aug 2016 04:39:28 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/6] drm: Unconstify state argument to prepare_fb()/cleanup_fb()
-Date: Fri, 19 Aug 2016 11:39:30 +0300
-Message-Id: <1471595974-28960-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1471595974-28960-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1471595974-28960-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36732 "EHLO
+	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1947641AbcHRNNo (ORCPT
+	<rfc822;linux-renesas-soc@vger.kernel.org>);
+	Thu, 18 Aug 2016 09:13:44 -0400
+Received: by mail-wm0-f68.google.com with SMTP id i138so5525592wmf.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Aug 2016 06:12:44 -0700 (PDT)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
+Cc: horms@verge.net.au, magnus.damm@gmail.com,
+	ulrich.hecht+renesas@gmail.com, sergei.shtylyov@cogentembedded.com,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: [PATCH v3 2/4] pinctrl: sh-pfc: r8a7796: Add SCIF pins, groups and functions
+Date: Thu, 18 Aug 2016 15:12:33 +0200
+Message-Id: <1471525955-11713-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <1471525955-11713-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1471525955-11713-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The functions might need to modify the state to store memory-related
-data.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This patch adds SCIF{0,1,2,3,4,5} pins, groups and functions to R8A7796
+SoC.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c | 4 ++--
- drivers/gpu/drm/i915/intel_display.c            | 4 ++--
- drivers/gpu/drm/i915/intel_drv.h                | 4 ++--
- drivers/gpu/drm/msm/mdp/mdp4/mdp4_plane.c       | 4 ++--
- drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c       | 4 ++--
- drivers/gpu/drm/omapdrm/omap_plane.c            | 4 ++--
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c     | 4 ++--
- include/drm/drm_modeset_helper_vtables.h        | 4 ++--
- 8 files changed, 16 insertions(+), 16 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 300 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 300 insertions(+)
 
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-index 016c191221f3..ae2b31dd9487 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-@@ -755,7 +755,7 @@ static int atmel_hlcdc_plane_atomic_check(struct drm_plane *p,
- }
- 
- static int atmel_hlcdc_plane_prepare_fb(struct drm_plane *p,
--					const struct drm_plane_state *new_state)
-+					struct drm_plane_state *new_state)
- {
- 	/*
- 	 * FIXME: we should avoid this const -> non-const cast but it's
-@@ -780,7 +780,7 @@ static int atmel_hlcdc_plane_prepare_fb(struct drm_plane *p,
- }
- 
- static void atmel_hlcdc_plane_cleanup_fb(struct drm_plane *p,
--				const struct drm_plane_state *old_state)
-+				struct drm_plane_state *old_state)
- {
- 	/*
- 	 * FIXME: we should avoid this const -> non-const cast but it's
-diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-index dcf93b3d4fb6..cf70de704b2a 100644
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -13974,7 +13974,7 @@ static const struct drm_crtc_funcs intel_crtc_funcs = {
-  */
- int
- intel_prepare_plane_fb(struct drm_plane *plane,
--		       const struct drm_plane_state *new_state)
-+		       struct drm_plane_state *new_state)
- {
- 	struct drm_device *dev = plane->dev;
- 	struct drm_framebuffer *fb = new_state->fb;
-@@ -14058,7 +14058,7 @@ intel_prepare_plane_fb(struct drm_plane *plane,
-  */
- void
- intel_cleanup_plane_fb(struct drm_plane *plane,
--		       const struct drm_plane_state *old_state)
-+		       struct drm_plane_state *old_state)
- {
- 	struct drm_device *dev = plane->dev;
- 	struct intel_plane_state *old_intel_state;
-diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-index cc937a19b1ba..aa0d6679eff3 100644
---- a/drivers/gpu/drm/i915/intel_drv.h
-+++ b/drivers/gpu/drm/i915/intel_drv.h
-@@ -1238,9 +1238,9 @@ void intel_finish_page_flip_cs(struct drm_i915_private *dev_priv, int pipe);
- void intel_finish_page_flip_mmio(struct drm_i915_private *dev_priv, int pipe);
- void intel_check_page_flip(struct drm_i915_private *dev_priv, int pipe);
- int intel_prepare_plane_fb(struct drm_plane *plane,
--			   const struct drm_plane_state *new_state);
-+			   struct drm_plane_state *new_state);
- void intel_cleanup_plane_fb(struct drm_plane *plane,
--			    const struct drm_plane_state *old_state);
-+			    struct drm_plane_state *old_state);
- int intel_plane_atomic_get_property(struct drm_plane *plane,
- 				    const struct drm_plane_state *state,
- 				    struct drm_property *property,
-diff --git a/drivers/gpu/drm/msm/mdp/mdp4/mdp4_plane.c b/drivers/gpu/drm/msm/mdp/mdp4/mdp4_plane.c
-index 9f96dfe67769..0689a06bec8e 100644
---- a/drivers/gpu/drm/msm/mdp/mdp4/mdp4_plane.c
-+++ b/drivers/gpu/drm/msm/mdp/mdp4/mdp4_plane.c
-@@ -99,7 +99,7 @@ static const struct drm_plane_funcs mdp4_plane_funcs = {
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index 0d14ca9..090baff 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -1486,10 +1486,310 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	PINMUX_GPIO_GP_ALL(),
  };
  
- static int mdp4_plane_prepare_fb(struct drm_plane *plane,
--		const struct drm_plane_state *new_state)
-+		struct drm_plane_state *new_state)
- {
- 	struct mdp4_plane *mdp4_plane = to_mdp4_plane(plane);
- 	struct mdp4_kms *mdp4_kms = get_kms(plane);
-@@ -113,7 +113,7 @@ static int mdp4_plane_prepare_fb(struct drm_plane *plane,
- }
- 
- static void mdp4_plane_cleanup_fb(struct drm_plane *plane,
--		const struct drm_plane_state *old_state)
-+		struct drm_plane_state *old_state)
- {
- 	struct mdp4_plane *mdp4_plane = to_mdp4_plane(plane);
- 	struct mdp4_kms *mdp4_kms = get_kms(plane);
-diff --git a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c
-index 432c09836b0e..1ef024df51a8 100644
---- a/drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c
-+++ b/drivers/gpu/drm/msm/mdp/mdp5/mdp5_plane.c
-@@ -250,7 +250,7 @@ static const struct drm_plane_funcs mdp5_plane_funcs = {
++/* - SCIF0 ------------------------------------------------------------------ */
++static const unsigned int scif0_data_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
++};
++static const unsigned int scif0_data_mux[] = {
++	RX0_MARK, TX0_MARK,
++};
++static const unsigned int scif0_clk_pins[] = {
++	/* SCK */
++	RCAR_GP_PIN(5, 0),
++};
++static const unsigned int scif0_clk_mux[] = {
++	SCK0_MARK,
++};
++static const unsigned int scif0_ctrl_pins[] = {
++	/* RTS, CTS */
++	RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 3),
++};
++static const unsigned int scif0_ctrl_mux[] = {
++	RTS0_N_TANS_MARK, CTS0_N_MARK,
++};
++/* - SCIF1 ------------------------------------------------------------------ */
++static const unsigned int scif1_data_a_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(5, 5), RCAR_GP_PIN(5, 6),
++};
++static const unsigned int scif1_data_a_mux[] = {
++	RX1_A_MARK, TX1_A_MARK,
++};
++static const unsigned int scif1_clk_pins[] = {
++	/* SCK */
++	RCAR_GP_PIN(6, 21),
++};
++static const unsigned int scif1_clk_mux[] = {
++	SCK1_MARK,
++};
++static const unsigned int scif1_ctrl_pins[] = {
++	/* RTS, CTS */
++	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 7),
++};
++static const unsigned int scif1_ctrl_mux[] = {
++	RTS1_N_TANS_MARK, CTS1_N_MARK,
++};
++
++static const unsigned int scif1_data_b_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(5, 24), RCAR_GP_PIN(5, 25),
++};
++static const unsigned int scif1_data_b_mux[] = {
++	RX1_B_MARK, TX1_B_MARK,
++};
++/* - SCIF2 ------------------------------------------------------------------ */
++static const unsigned int scif2_data_a_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(5, 11), RCAR_GP_PIN(5, 10),
++};
++static const unsigned int scif2_data_a_mux[] = {
++	RX2_A_MARK, TX2_A_MARK,
++};
++static const unsigned int scif2_clk_pins[] = {
++	/* SCK */
++	RCAR_GP_PIN(5, 9),
++};
++static const unsigned int scif2_clk_mux[] = {
++	SCK2_MARK,
++};
++static const unsigned int scif2_data_b_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 16),
++};
++static const unsigned int scif2_data_b_mux[] = {
++	RX2_B_MARK, TX2_B_MARK,
++};
++/* - SCIF3 ------------------------------------------------------------------ */
++static const unsigned int scif3_data_a_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(1, 23), RCAR_GP_PIN(1, 24),
++};
++static const unsigned int scif3_data_a_mux[] = {
++	RX3_A_MARK, TX3_A_MARK,
++};
++static const unsigned int scif3_clk_pins[] = {
++	/* SCK */
++	RCAR_GP_PIN(1, 22),
++};
++static const unsigned int scif3_clk_mux[] = {
++	SCK3_MARK,
++};
++static const unsigned int scif3_ctrl_pins[] = {
++	/* RTS, CTS */
++	RCAR_GP_PIN(1, 26), RCAR_GP_PIN(1, 25),
++};
++static const unsigned int scif3_ctrl_mux[] = {
++	RTS3_N_TANS_MARK, CTS3_N_MARK,
++};
++static const unsigned int scif3_data_b_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 11),
++};
++static const unsigned int scif3_data_b_mux[] = {
++	RX3_B_MARK, TX3_B_MARK,
++};
++/* - SCIF4 ------------------------------------------------------------------ */
++static const unsigned int scif4_data_a_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(2, 11), RCAR_GP_PIN(2, 12),
++};
++static const unsigned int scif4_data_a_mux[] = {
++	RX4_A_MARK, TX4_A_MARK,
++};
++static const unsigned int scif4_clk_a_pins[] = {
++	/* SCK */
++	RCAR_GP_PIN(2, 10),
++};
++static const unsigned int scif4_clk_a_mux[] = {
++	SCK4_A_MARK,
++};
++static const unsigned int scif4_ctrl_a_pins[] = {
++	/* RTS, CTS */
++	RCAR_GP_PIN(2, 14), RCAR_GP_PIN(2, 13),
++};
++static const unsigned int scif4_ctrl_a_mux[] = {
++	RTS4_N_TANS_A_MARK, CTS4_N_A_MARK,
++};
++static const unsigned int scif4_data_b_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
++};
++static const unsigned int scif4_data_b_mux[] = {
++	RX4_B_MARK, TX4_B_MARK,
++};
++static const unsigned int scif4_clk_b_pins[] = {
++	/* SCK */
++	RCAR_GP_PIN(1, 5),
++};
++static const unsigned int scif4_clk_b_mux[] = {
++	SCK4_B_MARK,
++};
++static const unsigned int scif4_ctrl_b_pins[] = {
++	/* RTS, CTS */
++	RCAR_GP_PIN(1, 10), RCAR_GP_PIN(1, 9),
++};
++static const unsigned int scif4_ctrl_b_mux[] = {
++	RTS4_N_TANS_B_MARK, CTS4_N_B_MARK,
++};
++static const unsigned int scif4_data_c_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
++};
++static const unsigned int scif4_data_c_mux[] = {
++	RX4_C_MARK, TX4_C_MARK,
++};
++static const unsigned int scif4_clk_c_pins[] = {
++	/* SCK */
++	RCAR_GP_PIN(0, 8),
++};
++static const unsigned int scif4_clk_c_mux[] = {
++	SCK4_C_MARK,
++};
++static const unsigned int scif4_ctrl_c_pins[] = {
++	/* RTS, CTS */
++	RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
++};
++static const unsigned int scif4_ctrl_c_mux[] = {
++	RTS4_N_TANS_C_MARK, CTS4_N_C_MARK,
++};
++/* - SCIF5 ------------------------------------------------------------------ */
++static const unsigned int scif5_data_a_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 21),
++};
++static const unsigned int scif5_data_a_mux[] = {
++	RX5_A_MARK, TX5_A_MARK,
++};
++static const unsigned int scif5_clk_a_pins[] = {
++	/* SCK */
++	RCAR_GP_PIN(6, 21),
++};
++static const unsigned int scif5_clk_a_mux[] = {
++	SCK5_A_MARK,
++};
++
++static const unsigned int scif5_data_b_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 18),
++};
++static const unsigned int scif5_data_b_mux[] = {
++	RX5_B_MARK, TX5_B_MARK,
++};
++static const unsigned int scif5_clk_b_pins[] = {
++	/* SCK */
++	RCAR_GP_PIN(5, 0),
++};
++static const unsigned int scif5_clk_b_mux[] = {
++	SCK5_B_MARK,
++};
++
++/* - SCIF Clock ------------------------------------------------------------- */
++static const unsigned int scif_clk_a_pins[] = {
++	/* SCIF_CLK */
++	RCAR_GP_PIN(6, 23),
++};
++static const unsigned int scif_clk_a_mux[] = {
++	SCIF_CLK_A_MARK,
++};
++static const unsigned int scif_clk_b_pins[] = {
++	/* SCIF_CLK */
++	RCAR_GP_PIN(5, 9),
++};
++static const unsigned int scif_clk_b_mux[] = {
++	SCIF_CLK_B_MARK,
++};
++
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
++	SH_PFC_PIN_GROUP(scif0_data),
++	SH_PFC_PIN_GROUP(scif0_clk),
++	SH_PFC_PIN_GROUP(scif0_ctrl),
++	SH_PFC_PIN_GROUP(scif1_data_a),
++	SH_PFC_PIN_GROUP(scif1_clk),
++	SH_PFC_PIN_GROUP(scif1_ctrl),
++	SH_PFC_PIN_GROUP(scif1_data_b),
++	SH_PFC_PIN_GROUP(scif2_data_a),
++	SH_PFC_PIN_GROUP(scif2_clk),
++	SH_PFC_PIN_GROUP(scif2_data_b),
++	SH_PFC_PIN_GROUP(scif3_data_a),
++	SH_PFC_PIN_GROUP(scif3_clk),
++	SH_PFC_PIN_GROUP(scif3_ctrl),
++	SH_PFC_PIN_GROUP(scif3_data_b),
++	SH_PFC_PIN_GROUP(scif4_data_a),
++	SH_PFC_PIN_GROUP(scif4_clk_a),
++	SH_PFC_PIN_GROUP(scif4_ctrl_a),
++	SH_PFC_PIN_GROUP(scif4_data_b),
++	SH_PFC_PIN_GROUP(scif4_clk_b),
++	SH_PFC_PIN_GROUP(scif4_ctrl_b),
++	SH_PFC_PIN_GROUP(scif4_data_c),
++	SH_PFC_PIN_GROUP(scif4_clk_c),
++	SH_PFC_PIN_GROUP(scif4_ctrl_c),
++	SH_PFC_PIN_GROUP(scif5_data_a),
++	SH_PFC_PIN_GROUP(scif5_clk_a),
++	SH_PFC_PIN_GROUP(scif5_data_b),
++	SH_PFC_PIN_GROUP(scif5_clk_b),
++	SH_PFC_PIN_GROUP(scif_clk_a),
++	SH_PFC_PIN_GROUP(scif_clk_b),
++};
++
++static const char * const scif0_groups[] = {
++	"scif0_data",
++	"scif0_clk",
++	"scif0_ctrl",
++};
++
++static const char * const scif1_groups[] = {
++	"scif1_data_a",
++	"scif1_clk",
++	"scif1_ctrl",
++	"scif1_data_b",
++};
++
++static const char * const scif2_groups[] = {
++	"scif2_data_a",
++	"scif2_clk",
++	"scif2_data_b",
++};
++
++static const char * const scif3_groups[] = {
++	"scif3_data_a",
++	"scif3_clk",
++	"scif3_ctrl",
++	"scif3_data_b",
++};
++
++static const char * const scif4_groups[] = {
++	"scif4_data_a",
++	"scif4_clk_a",
++	"scif4_ctrl_a",
++	"scif4_data_b",
++	"scif4_clk_b",
++	"scif4_ctrl_b",
++	"scif4_data_c",
++	"scif4_clk_c",
++	"scif4_ctrl_c",
++};
++
++static const char * const scif5_groups[] = {
++	"scif5_data_a",
++	"scif5_clk_a",
++	"scif5_data_b",
++	"scif5_clk_b",
++};
++
++static const char * const scif_clk_groups[] = {
++	"scif_clk_a",
++	"scif_clk_b",
  };
  
- static int mdp5_plane_prepare_fb(struct drm_plane *plane,
--		const struct drm_plane_state *new_state)
-+		struct drm_plane_state *new_state)
- {
- 	struct mdp5_plane *mdp5_plane = to_mdp5_plane(plane);
- 	struct mdp5_kms *mdp5_kms = get_kms(plane);
-@@ -264,7 +264,7 @@ static int mdp5_plane_prepare_fb(struct drm_plane *plane,
- }
+ static const struct sh_pfc_function pinmux_functions[] = {
++	SH_PFC_FUNCTION(scif0),
++	SH_PFC_FUNCTION(scif1),
++	SH_PFC_FUNCTION(scif2),
++	SH_PFC_FUNCTION(scif3),
++	SH_PFC_FUNCTION(scif4),
++	SH_PFC_FUNCTION(scif5),
++	SH_PFC_FUNCTION(scif_clk),
+ };
  
- static void mdp5_plane_cleanup_fb(struct drm_plane *plane,
--		const struct drm_plane_state *old_state)
-+		struct drm_plane_state *old_state)
- {
- 	struct mdp5_plane *mdp5_plane = to_mdp5_plane(plane);
- 	struct mdp5_kms *mdp5_kms = get_kms(plane);
-diff --git a/drivers/gpu/drm/omapdrm/omap_plane.c b/drivers/gpu/drm/omapdrm/omap_plane.c
-index 5252ab720e70..bdfbb6181398 100644
---- a/drivers/gpu/drm/omapdrm/omap_plane.c
-+++ b/drivers/gpu/drm/omapdrm/omap_plane.c
-@@ -60,7 +60,7 @@ to_omap_plane_state(struct drm_plane_state *state)
- }
- 
- static int omap_plane_prepare_fb(struct drm_plane *plane,
--				 const struct drm_plane_state *new_state)
-+				 struct drm_plane_state *new_state)
- {
- 	if (!new_state->fb)
- 		return 0;
-@@ -69,7 +69,7 @@ static int omap_plane_prepare_fb(struct drm_plane *plane,
- }
- 
- static void omap_plane_cleanup_fb(struct drm_plane *plane,
--				  const struct drm_plane_state *old_state)
-+				  struct drm_plane_state *old_state)
- {
- 	if (old_state->fb)
- 		omap_framebuffer_unpin(old_state->fb);
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 91305eb7d312..a2466e37b0a1 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -569,7 +569,7 @@ static void vop_plane_destroy(struct drm_plane *plane)
- }
- 
- static int vop_plane_prepare_fb(struct drm_plane *plane,
--				const struct drm_plane_state *new_state)
-+				struct drm_plane_state *new_state)
- {
- 	if (plane->state->fb)
- 		drm_framebuffer_reference(plane->state->fb);
-@@ -578,7 +578,7 @@ static int vop_plane_prepare_fb(struct drm_plane *plane,
- }
- 
- static void vop_plane_cleanup_fb(struct drm_plane *plane,
--				 const struct drm_plane_state *old_state)
-+				 struct drm_plane_state *old_state)
- {
- 	if (old_state->fb)
- 		drm_framebuffer_unreference(old_state->fb);
-diff --git a/include/drm/drm_modeset_helper_vtables.h b/include/drm/drm_modeset_helper_vtables.h
-index b55f21857a98..bfe145e602d2 100644
---- a/include/drm/drm_modeset_helper_vtables.h
-+++ b/include/drm/drm_modeset_helper_vtables.h
-@@ -826,7 +826,7 @@ struct drm_plane_helper_funcs {
- 	 * everything else must complete successfully.
- 	 */
- 	int (*prepare_fb)(struct drm_plane *plane,
--			  const struct drm_plane_state *new_state);
-+			  struct drm_plane_state *new_state);
- 	/**
- 	 * @cleanup_fb:
- 	 *
-@@ -837,7 +837,7 @@ struct drm_plane_helper_funcs {
- 	 * transitional plane helpers, but it is optional.
- 	 */
- 	void (*cleanup_fb)(struct drm_plane *plane,
--			   const struct drm_plane_state *old_state);
-+			   struct drm_plane_state *old_state);
- 
- 	/**
- 	 * @atomic_check:
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
