@@ -1,67 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47991 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752974AbcHOI4g (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 15 Aug 2016 04:56:36 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49686 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753982AbcHSCjr (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 18 Aug 2016 22:39:47 -0400
+Received: from localhost.localdomain (227.178-201-80.adsl-dyn.isp.belgacom.be [80.201.178.227])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id A811520006
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Aug 2016 18:03:32 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 19/26] ARM: dts: r8a7794: add MSTP5 clocks
-Date: Mon, 15 Aug 2016 10:55:38 +0200
-Message-Id: <2a29f9d6fea82485941449c2328af5b2a4ea636f.1471251169.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1471251169.git.horms+renesas@verge.net.au>
-References: <cover.1471251169.git.horms+renesas@verge.net.au>
+Subject: [PATCH/HACK 0/7] r8a779[01]: Enable IOMMU usage for the VSP1 and DU
+Date: Thu, 18 Aug 2016 19:03:53 +0300
+Message-Id: <1471536240-25082-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hello,
 
-Add some MSTP5 clocks to the R8A7794 device tree.
+This patch series enables IOMMU usage for the VSP1 and DU on the R8A7790 (H2)
+and R8A7791 (M2) platforms. It is available for convenience at
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7794.dtsi            | 9 +++++++++
- include/dt-bindings/clock/r8a7794-clock.h | 1 +
- 2 files changed, 10 insertions(+)
+	git://linuxtv.org/pinchartl/media.git iommu/devel/dt
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 5d1fded79633..1c2d3846d70e 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1204,6 +1204,15 @@
- 			clock-indices = <R8A7794_CLK_IRQC>;
- 			clock-output-names = "irqc";
- 		};
-+		mstp5_clks: mstp5_clks@e6150144 {
-+			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
-+			clocks = <&hp_clk>, <&extal_clk>, <&p_clk>;
-+			#clock-cells = <1>;
-+			clock-indices = <R8A7794_CLK_AUDIO_DMAC0
-+					 R8A7794_CLK_PWM>;
-+			clock-output-names = "audmac0", "pwm";
-+		};
- 		mstp7_clks: mstp7_clks@e615014c {
- 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
-diff --git a/include/dt-bindings/clock/r8a7794-clock.h b/include/dt-bindings/clock/r8a7794-clock.h
-index a3491ba2f6ec..f8279eca033e 100644
---- a/include/dt-bindings/clock/r8a7794-clock.h
-+++ b/include/dt-bindings/clock/r8a7794-clock.h
-@@ -67,6 +67,7 @@
- #define R8A7794_CLK_IRQC		7
- 
- /* MSTP5 */
-+#define R8A7794_CLK_AUDIO_DMAC0		2
- #define R8A7794_CLK_PWM			23
- 
- /* MSTP7 */
+The patches are not meant to be merged upstream at this time, but serve as a
+base to implement and test IPMMU support in the VSP1 and DU on Gen2 (quite
+obviously).
+
+Less obviously, the patches are also useful for Gen3 development. The H3 IPMMU
+hardware is known to be buggy, but development can be performed on Gen2 to
+some extent by mimicking the Gen3 VSP1 + DU combination. This is performed by
+patches 4/7 to 7/7 for H2. Corresponding patches for M2 are straightforward to
+implement.
+
+Please note that applying the last three patches break DU operation as the
+framebuffers are mapped through the wrong IPMMU instance. This will be fixed
+by a subsequent patch series, these patches only serve as a development base.
+
+Laurent Pinchart (7):
+  ARM: shmobile: r8a7790: Enable IOMMU usage for the DU
+  ARM: shmobile: r8a7791: Enable IOMMU usage for the DU
+  ARM: shmobile: r8a7790: Enable IOMMU usage for the VSP1
+  ARM: shmobile: r8a7791: Enable IOMMU usage for the VSP1
+  [HACK] ARM: shmobile: r8a7790: Link the VSP1 and DU
+  [HACK] v4l: vsp1: Disable UAPI for VSP1D
+  [HACK] drm: rcar-du: Enable VSP source support for R8A7790
+
+ arch/arm/boot/dts/r8a7790.dtsi         | 23 ++++++++++++++---------
+ arch/arm/boot/dts/r8a7791.dtsi         |  9 ++++++++-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c  |  9 +++++----
+ drivers/media/platform/vsp1/vsp1_drv.c |  1 -
+ 4 files changed, 27 insertions(+), 15 deletions(-)
+
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
