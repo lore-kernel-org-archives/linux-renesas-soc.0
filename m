@@ -1,90 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52858 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752044AbcHHLEK (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:04:10 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87shuf63ma.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiLk-0003XQ-2G@debutante>
-Date: Mon, 08 Aug 2016 12:04:04 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on cs4271" to the asoc tree
+Received: from mail-io0-f195.google.com ([209.85.223.195]:34317 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752067AbcHSHbv (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 19 Aug 2016 03:31:51 -0400
+Received: by mail-io0-f195.google.com with SMTP id i199so4286630ioi.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Aug 2016 00:30:05 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1471525955-11713-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1471525955-11713-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1471525955-11713-5-git-send-email-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 19 Aug 2016 09:30:04 +0200
+Message-ID: <CAMuHMdV9iyuHYx169os01nWMYiFMpR4VLPBVRYGs80xh_bUpFg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] arm64: dts: r8a7796: salvator: add serial console pins
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Thu, Aug 18, 2016 at 3:12 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Adds pin control for SCIF2.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-   ASoC: codec duplicated callback function goes to component on cs4271
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-has been applied to the asoc tree at
+Gr{oetje,eeting}s,
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+                        Geert
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 228a57aea80b5dfc4624ad29952a8168317a1884 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:04:04 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- cs4271
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/cs4271.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/codecs/cs4271.c b/sound/soc/codecs/cs4271.c
-index 0c0010b25421..8c0f3b89b5bc 100644
---- a/sound/soc/codecs/cs4271.c
-+++ b/sound/soc/codecs/cs4271.c
-@@ -645,12 +645,14 @@ static struct snd_soc_codec_driver soc_codec_dev_cs4271 = {
- 	.suspend		= cs4271_soc_suspend,
- 	.resume			= cs4271_soc_resume,
- 
--	.controls		= cs4271_snd_controls,
--	.num_controls		= ARRAY_SIZE(cs4271_snd_controls),
--	.dapm_widgets		= cs4271_dapm_widgets,
--	.num_dapm_widgets	= ARRAY_SIZE(cs4271_dapm_widgets),
--	.dapm_routes		= cs4271_dapm_routes,
--	.num_dapm_routes	= ARRAY_SIZE(cs4271_dapm_routes),
-+	.component_driver = {
-+		.controls		= cs4271_snd_controls,
-+		.num_controls		= ARRAY_SIZE(cs4271_snd_controls),
-+		.dapm_widgets		= cs4271_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(cs4271_dapm_widgets),
-+		.dapm_routes		= cs4271_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(cs4271_dapm_routes),
-+	},
- };
- 
- static int cs4271_common_probe(struct device *dev,
--- 
-2.8.1
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
