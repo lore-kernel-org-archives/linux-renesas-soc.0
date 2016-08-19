@@ -1,68 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:59233 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751951AbcHIPgt (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Tue, 9 Aug 2016 11:36:49 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] [media] rcar-fcp: Make sure rcar_fcp_enable() returns 0 on success
-Date: Tue,  9 Aug 2016 17:36:41 +0200
-Message-Id: <1470757001-4333-1-git-send-email-geert+renesas@glider.be>
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:36100 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755411AbcHSV6n (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 19 Aug 2016 17:58:43 -0400
+Received: by mail-lf0-f51.google.com with SMTP id g62so41704814lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Aug 2016 14:58:03 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: [PATCH] vsp1: add R8A7792 VSP1V support
+Date: Sat, 20 Aug 2016 00:57:59 +0300
+Message-ID: <10305550.upKOiT5SIy@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When resuming from suspend-to-RAM on r8a7795/salvator-x:
+Add  support for the R8A7792 VSP1V cores which are different from the other
+gen2 VSP1 cores...
 
-    dpm_run_callback(): pm_genpd_resume_noirq+0x0/0x90 returns 1
-    PM: Device fe940000.fdp1 failed to resume noirq: error 1
-    dpm_run_callback(): pm_genpd_resume_noirq+0x0/0x90 returns 1
-    PM: Device fe944000.fdp1 failed to resume noirq: error 1
-    dpm_run_callback(): pm_genpd_resume_noirq+0x0/0x90 returns 1
-    PM: Device fe948000.fdp1 failed to resume noirq: error 1
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-According to its documentation, rcar_fcp_enable() returns 0 on success
-or a negative error code if an error occurs.  Hence
-fdp1_pm_runtime_resume() and vsp1_pm_runtime_resume() forward its return
-value to their callers.
-
-However, rcar_fcp_enable() forwards the return value of
-pm_runtime_get_sync(), which can actually be 1 on success, leading to
-the resume failure above.
-
-To fix this, consider only negative values returned by
-pm_runtime_get_sync() to be failures.
-
-Fixes: 7b49235e83b2347c ("[media] v4l: Add Renesas R-Car FCP driver")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/platform/rcar-fcp.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+This patch is against the 'media_tree.git' repo's 'master' branch.
 
-diff --git a/drivers/media/platform/rcar-fcp.c b/drivers/media/platform/rcar-fcp.c
-index 0ff6b1edf1dbf677..7e944479205d4059 100644
---- a/drivers/media/platform/rcar-fcp.c
-+++ b/drivers/media/platform/rcar-fcp.c
-@@ -99,10 +99,16 @@ EXPORT_SYMBOL_GPL(rcar_fcp_put);
-  */
- int rcar_fcp_enable(struct rcar_fcp_device *fcp)
- {
-+	int error;
-+
- 	if (!fcp)
- 		return 0;
- 
--	return pm_runtime_get_sync(fcp->dev);
-+	error = pm_runtime_get_sync(fcp->dev);
-+	if (error < 0)
-+		return error;
-+
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(rcar_fcp_enable);
- 
--- 
-1.9.1
+ drivers/media/platform/vsp1/vsp1_drv.c  |   20 ++++++++++++++++++++
+ drivers/media/platform/vsp1/vsp1_regs.h |    2 ++
+ 2 files changed, 22 insertions(+)
+
+Index: media_tree/drivers/media/platform/vsp1/vsp1_drv.c
+===================================================================
+--- media_tree.orig/drivers/media/platform/vsp1/vsp1_drv.c
++++ media_tree/drivers/media/platform/vsp1/vsp1_drv.c
+@@ -596,6 +596,26 @@ static const struct vsp1_device_info vsp
+ 		.num_bru_inputs = 4,
+ 		.uapi = true,
+ 	}, {
++		.version = VI6_IP_VERSION_MODEL_VSPS_V2H,
++		.gen = 2,
++		.features = VSP1_HAS_BRU | VSP1_HAS_CLU | VSP1_HAS_LUT |
++			    VSP1_HAS_SRU | VSP1_HAS_WPF_VFLIP,
++		.rpf_count = 4,
++		.uds_count = 1,
++		.wpf_count = 4,
++		.num_bru_inputs = 4,
++		.uapi = true,
++	}, {
++		.version = VI6_IP_VERSION_MODEL_VSPD_V2H,
++		.gen = 2,
++		.features = VSP1_HAS_BRU | VSP1_HAS_CLU | VSP1_HAS_LUT |
++			    VSP1_HAS_LIF,
++		.rpf_count = 4,
++		.uds_count = 1,
++		.wpf_count = 1,
++		.num_bru_inputs = 4,
++		.uapi = true,
++	}, {
+ 		.version = VI6_IP_VERSION_MODEL_VSPI_GEN3,
+ 		.gen = 3,
+ 		.features = VSP1_HAS_CLU | VSP1_HAS_LUT | VSP1_HAS_SRU
+Index: media_tree/drivers/media/platform/vsp1/vsp1_regs.h
+===================================================================
+--- media_tree.orig/drivers/media/platform/vsp1/vsp1_regs.h
++++ media_tree/drivers/media/platform/vsp1/vsp1_regs.h
+@@ -660,6 +660,8 @@
+ #define VI6_IP_VERSION_MODEL_VSPR_H2	(0x0a << 8)
+ #define VI6_IP_VERSION_MODEL_VSPD_GEN2	(0x0b << 8)
+ #define VI6_IP_VERSION_MODEL_VSPS_M2	(0x0c << 8)
++#define VI6_IP_VERSION_MODEL_VSPS_V2H	(0x12 << 8)
++#define VI6_IP_VERSION_MODEL_VSPD_V2H	(0x13 << 8)
+ #define VI6_IP_VERSION_MODEL_VSPI_GEN3	(0x14 << 8)
+ #define VI6_IP_VERSION_MODEL_VSPBD_GEN3	(0x15 << 8)
+ #define VI6_IP_VERSION_MODEL_VSPBC_GEN3	(0x16 << 8)
