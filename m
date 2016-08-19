@@ -1,45 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:35091 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750892AbcHVINv (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Aug 2016 04:13:51 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/2] ARM: dts: r8a7792: add VSP1V clocks
+Date: Sat, 20 Aug 2016 01:18:54 +0300
+Message-ID: <2191324.RHrKmLEeFa@wasted.cogentembedded.com>
+In-Reply-To: <1635089.v8k0jcJkvb@wasted.cogentembedded.com>
+References: <1635089.v8k0jcJkvb@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <2191324.RHrKmLEeFa@wasted.cogentembedded.com>
-References: <1635089.v8k0jcJkvb@wasted.cogentembedded.com> <2191324.RHrKmLEeFa@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 22 Aug 2016 10:13:50 +0200
-Message-ID: <CAMuHMdWSmFWvkt-H35p1ZBb27GUxHiq6r-MnNvFm7JctR=6gzw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: r8a7792: add VSP1V clocks
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Aug 20, 2016 at 12:18 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Describe the VSP1V clocks in the R8A7792 device tree.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Describe the VSP1V clocks in the R8A7792 device tree.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
+---
+ arch/arm/boot/dts/r8a7792.dtsi |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-                        Geert
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -757,10 +757,15 @@
+ 			compatible = "renesas,r8a7792-mstp-clocks",
+ 				     "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe6150134 0 4>, <0 0xe6150038 0 4>;
+-			clocks = <&m2_clk>;
++			clocks = <&m2_clk>, <&zs_clk>, <&zs_clk>, <&zs_clk>;
+ 			#clock-cells = <1>;
+-			clock-indices = <R8A7792_CLK_JPU>;
+-			clock-output-names = "jpu";
++			clock-indices = <
++				R8A7792_CLK_JPU
++				R8A7792_CLK_VSP1DU1 R8A7792_CLK_VSP1DU0
++				R8A7792_CLK_VSP1_SY
++			>;
++			clock-output-names = "jpu", "vsp1du1", "vsp1du0",
++					     "vsp1-sy";
+ 		};
+ 		mstp2_clks: mstp2_clks@e6150138 {
+ 			compatible = "renesas,r8a7792-mstp-clocks",
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
