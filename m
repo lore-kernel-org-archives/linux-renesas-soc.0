@@ -1,42 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:34748 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753890AbcHSIoR (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:51092 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755042AbcHSIj3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Aug 2016 04:44:17 -0400
-MIME-Version: 1.0
-In-Reply-To: <1471595974-28960-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 19 Aug 2016 04:39:29 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 3/6] v4l: rcar-fcp: Don't get/put module reference
+Date: Fri, 19 Aug 2016 11:39:31 +0300
+Message-Id: <1471595974-28960-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1471595974-28960-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 References: <1471595974-28960-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
- <1471595974-28960-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 19 Aug 2016 10:44:16 +0200
-Message-ID: <CAMuHMdUAi+Zm1fDiTKzZ+HLM1ZqZ=LKmBehC8YNkQoVe53et8Q@mail.gmail.com>
-Subject: Re: [PATCH 3/6] v4l: rcar-fcp: Don't get/put module reference
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Aug 19, 2016 at 10:39 AM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> Direct callers of the FCP API hold a reference to the FCP module due to
-> module linkage, there's no need to take another one manually. Take a
-> reference to the device instead to ensure that it won't disappear being
+Direct callers of the FCP API hold a reference to the FCP module due to
+module linkage, there's no need to take another one manually. Take a
+reference to the device instead to ensure that it won't disappear being
+the caller's back.
 
-... behind
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/media/platform/rcar-fcp.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-> the caller's back.
+diff --git a/drivers/media/platform/rcar-fcp.c b/drivers/media/platform/rcar-fcp.c
+index f7bcbf7677a0..7427be1c3741 100644
+--- a/drivers/media/platform/rcar-fcp.c
++++ b/drivers/media/platform/rcar-fcp.c
+@@ -53,14 +53,7 @@ struct rcar_fcp_device *rcar_fcp_get(const struct device_node *np)
+ 		if (fcp->dev->of_node != np)
+ 			continue;
+ 
+-		/*
+-		 * Make sure the module won't be unloaded behind our back. This
+-		 * is a poor man's safety net, the module should really not be
+-		 * unloaded while FCP users can be active.
+-		 */
+-		if (!try_module_get(fcp->dev->driver->owner))
+-			fcp = NULL;
+-
++		get_device(fcp->dev);
+ 		goto done;
+ 	}
+ 
+@@ -81,7 +74,7 @@ EXPORT_SYMBOL_GPL(rcar_fcp_get);
+ void rcar_fcp_put(struct rcar_fcp_device *fcp)
+ {
+ 	if (fcp)
+-		module_put(fcp->dev->driver->owner);
++		put_device(fcp->dev);
+ }
+ EXPORT_SYMBOL_GPL(rcar_fcp_put);
+ 
+-- 
+Regards,
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
