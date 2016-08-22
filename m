@@ -1,83 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33480 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756561AbcHWHuM (ORCPT
+Received: from newton.telenet-ops.be ([195.130.132.45]:36688 "EHLO
+        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755243AbcHVOp4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 Aug 2016 03:50:12 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFT v2 7/8] arm64: dts: r8a7796: add SDHI nodes
-Date: Tue, 23 Aug 2016 09:49:49 +0200
-Message-Id: <1471938590-10650-8-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
-References: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
+        Mon, 22 Aug 2016 10:45:56 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by newton.telenet-ops.be (Postfix) with ESMTP id 3sHxFY4V5qzMrWLn
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Aug 2016 16:45:37 +0200 (CEST)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFT 3/4] ARM: shmobile: apmu: Allow booting secondary CPU cores in debug mode
+Date: Mon, 22 Aug 2016 16:44:28 +0200
+Message-Id: <1471877069-4157-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1471877069-4157-1-git-send-email-geert+renesas@glider.be>
+References: <1471877069-4157-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add SDHI nodes to the DT of the r8a7796 SoC.
+Now debug resource reset is handled properly, allow booting secondary
+CPU cores when hardware debug mode is enabled (MD21=1) on SoCs using the
+"renesas,apmu" enable method.
 
-Based on the DT of the r8a7795 SoC.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 42 ++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ arch/arm/mach-shmobile/platsmp-apmu.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 2741535f8b15..d2db0c5ba854 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -251,5 +251,47 @@
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
-+
-+		sdhi0: sd@ee100000 {
-+			compatible = "renesas,sdhi-r8a7796";
-+			reg = <0 0xee100000 0 0x2000>;
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 314>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		sdhi1: sd@ee120000 {
-+			compatible = "renesas,sdhi-r8a7796";
-+			reg = <0 0xee120000 0 0x2000>;
-+			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 313>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		sdhi2: sd@ee140000 {
-+			compatible = "renesas,sdhi-r8a7796";
-+			reg = <0 0xee140000 0 0x2000>;
-+			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 312>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			cap-mmc-highspeed;
-+			status = "disabled";
-+		};
-+
-+		sdhi3: sd@ee160000 {
-+			compatible = "renesas,sdhi-r8a7796";
-+			reg = <0 0xee160000 0 0x2000>;
-+			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 311>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			cap-mmc-highspeed;
-+			status = "disabled";
-+		};
- 	};
- };
+diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
+index 7e4ca6788be521dc..e19266844e16126b 100644
+--- a/arch/arm/mach-shmobile/platsmp-apmu.c
++++ b/arch/arm/mach-shmobile/platsmp-apmu.c
+@@ -216,21 +216,9 @@ static void __init shmobile_smp_apmu_prepare_cpus_dt(unsigned int max_cpus)
+ 	rcar_gen2_pm_init();
+ }
+ 
+-static int shmobile_smp_apmu_boot_secondary_md21(unsigned int cpu,
+-						 struct task_struct *idle)
+-{
+-	/* Error out when hardware debug mode is enabled */
+-	if (rcar_gen2_read_mode_pins() & BIT(21)) {
+-		pr_warn("Unable to boot CPU%u when MD21 is set\n", cpu);
+-		return -ENOTSUPP;
+-	}
+-
+-	return shmobile_smp_apmu_boot_secondary(cpu, idle);
+-}
+-
+ static struct smp_operations apmu_smp_ops __initdata = {
+ 	.smp_prepare_cpus	= shmobile_smp_apmu_prepare_cpus_dt,
+-	.smp_boot_secondary	= shmobile_smp_apmu_boot_secondary_md21,
++	.smp_boot_secondary	= shmobile_smp_apmu_boot_secondary,
+ #ifdef CONFIG_HOTPLUG_CPU
+ 	.cpu_can_disable	= shmobile_smp_cpu_can_disable,
+ 	.cpu_die		= shmobile_smp_apmu_cpu_die,
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
