@@ -1,90 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52404 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLDO (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:03:14 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <871t1z63cd.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiKq-0003H1-FL@debutante>
-Date: Mon, 08 Aug 2016 12:03:08 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on 88pm860x-codec" to the asoc tree
+Received: from kirsty.vergenet.net ([202.4.237.240]:54055 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751754AbcHVJPo (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 22 Aug 2016 05:15:44 -0400
+Date: Mon, 22 Aug 2016 11:15:38 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Ai Kyuse <ai.kyuse.uw@renesas.com>
+Subject: Re: [PATCH/RTF 2/7] clk: renesas: r8a7796: Add SDIF clocks
+Message-ID: <20160822091535.GA7896@verge.net.au>
+References: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au>
+ <1471433516-4478-3-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdWzCK9Btmbmd0ZHzC5TE-rc=c6QhcPB9Za9BzBaNvdoUA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWzCK9Btmbmd0ZHzC5TE-rc=c6QhcPB9Za9BzBaNvdoUA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Wed, Aug 17, 2016 at 03:47:03PM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Wed, Aug 17, 2016 at 1:31 PM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > From: Ai Kyuse <ai.kyuse.uw@renesas.com>
+> >
+> > This patch adds SDIF clocks for R8A7796 SoC.
+> >
+> > Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > ---
+> >  drivers/clk/renesas/r8a7796-cpg-mssr.c | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> > index 999955c2b23e..4c390a8bc3e1 100644
+> > --- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> > +++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+> > @@ -93,6 +93,11 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+> >         DEF_FIXED("s3d2",       R8A7796_CLK_S3D2,  CLK_S3,         2, 1),
+> >         DEF_FIXED("s3d4",       R8A7796_CLK_S3D4,  CLK_S3,         4, 1),
+> >
+> > +       DEF_GEN3_SD("sd0",      R8A7796_CLK_SD0,   CLK_PLL1_DIV4, 0x0074),
+> > +       DEF_GEN3_SD("sd1",      R8A7796_CLK_SD1,   CLK_PLL1_DIV4, 0x0078),
+> > +       DEF_GEN3_SD("sd2",      R8A7796_CLK_SD2,   CLK_PLL1_DIV4, 0x0268),
+> > +       DEF_GEN3_SD("sd3",      R8A7796_CLK_SD3,   CLK_PLL1_DIV4, 0x026c),
+> 
+> While the definitions above give the right frequencies, they don't describe
+> the correct topology. Please introduce an intermediate "SDSRC" clock, cfr.
+> "clk: renesas: r8a7795: Fix SD clocks" for R-Car H3.
 
-   ASoC: codec duplicated callback function goes to component on 88pm860x-codec
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 33398b509aafe936ec57cb1023f7ff1ba9e48586 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:10:02 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- 88pm860x-codec
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/88pm860x-codec.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/codecs/88pm860x-codec.c b/sound/soc/codecs/88pm860x-codec.c
-index e8bed6b0c9db..b013a4c62b63 100644
---- a/sound/soc/codecs/88pm860x-codec.c
-+++ b/sound/soc/codecs/88pm860x-codec.c
-@@ -1361,12 +1361,14 @@ static struct snd_soc_codec_driver soc_codec_dev_pm860x = {
- 	.set_bias_level	= pm860x_set_bias_level,
- 	.get_regmap	= pm860x_get_regmap,
- 
--	.controls = pm860x_snd_controls,
--	.num_controls = ARRAY_SIZE(pm860x_snd_controls),
--	.dapm_widgets = pm860x_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(pm860x_dapm_widgets),
--	.dapm_routes = pm860x_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(pm860x_dapm_routes),
-+	.component_driver = {
-+		.controls		= pm860x_snd_controls,
-+		.num_controls		= ARRAY_SIZE(pm860x_snd_controls),
-+		.dapm_widgets		= pm860x_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(pm860x_dapm_widgets),
-+		.dapm_routes		= pm860x_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(pm860x_dapm_routes),
-+	},
- };
- 
- static int pm860x_codec_probe(struct platform_device *pdev)
--- 
-2.8.1
+Thanks, will do.
