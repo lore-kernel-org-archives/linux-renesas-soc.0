@@ -1,112 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45906 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756549AbcH3VKY (ORCPT
+Received: from leibniz.telenet-ops.be ([195.130.137.77]:47834 "EHLO
+        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754894AbcHVOp4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Aug 2016 17:10:24 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        Mon, 22 Aug 2016 10:45:56 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by leibniz.telenet-ops.be (Postfix) with ESMTP id 3sHxFV6hZzzMqmX6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Aug 2016 16:45:34 +0200 (CEST)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         linux-renesas-soc@vger.kernel.org,
-        Ai Kyuse <ai.kyuse.uw@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 01/11] mmc: tmio: enhance illegal sequence handling
-Date: Tue, 30 Aug 2016 23:09:49 +0200
-Message-Id: <1472591399-13907-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
-References: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFT 4/4] ARM: shmobile: r8a7791: Allow booting secondary CPU cores in debug mode
+Date: Mon, 22 Aug 2016 16:44:29 +0200
+Message-Id: <1471877069-4157-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1471877069-4157-1-git-send-email-geert+renesas@glider.be>
+References: <1471877069-4157-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ai Kyuse <ai.kyuse.uw@renesas.com>
+Now debug resource reset is handled properly, allow booting secondary
+CPU cores when hardware debug mode is enabled (MD21=1, SW8-4=OFF on
+koelsch) on legacy r8a7791.
 
-An illegal sequence command error may occur if there is a stopbit or
-cmd_index error as well as a CRC error. The correct course of action
-is to re-enable IRQs
-
-An illegal sequence data error may occur if there is a CRC or stopbit
-error,  or underrun. In this case set data->error correctly.
-
-This is in preparation for enabling tuning support which relies on
-differentiating between illegal sequence and other errors.
-
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-[simon: broken out of a larger patch]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v4
-* Added Ack from Wolfram Sang
+ arch/arm/mach-shmobile/smp-r8a7791.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-v3
-* No change
-
-v2
-* Broken out of a larger patch (but forgot to post)
----
- drivers/mmc/host/tmio_mmc_pio.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 192817850dff..806308ac93e7 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -520,7 +520,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 	schedule_work(&host->done);
+diff --git a/arch/arm/mach-shmobile/smp-r8a7791.c b/arch/arm/mach-shmobile/smp-r8a7791.c
+index 2d6417af73b5b722..2948c22cfc53026c 100644
+--- a/arch/arm/mach-shmobile/smp-r8a7791.c
++++ b/arch/arm/mach-shmobile/smp-r8a7791.c
+@@ -42,21 +42,9 @@ static void __init r8a7791_smp_prepare_cpus(unsigned int max_cpus)
+ 	rcar_gen2_pm_init();
  }
  
--static void tmio_mmc_data_irq(struct tmio_mmc_host *host)
-+static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
- {
- 	struct mmc_data *data;
- 	spin_lock(&host->lock);
-@@ -529,6 +529,9 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host)
- 	if (!data)
- 		goto out;
- 
-+	if (stat & TMIO_STAT_CRCFAIL || stat & TMIO_STAT_STOPBIT_ERR ||
-+	    stat & TMIO_STAT_TXUNDERRUN)
-+		data->error = -EILSEQ;
- 	if (host->chan_tx && (data->flags & MMC_DATA_WRITE) && !host->force_pio) {
- 		u32 status = sd_ctrl_read16_and_16_as_32(host, CTL_STATUS);
- 		bool done = false;
-@@ -577,8 +580,6 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host,
- 		goto out;
- 	}
- 
--	host->cmd = NULL;
+-static int r8a7791_smp_boot_secondary(unsigned int cpu,
+-				      struct task_struct *idle)
+-{
+-	/* Error out when hardware debug mode is enabled */
+-	if (rcar_gen2_read_mode_pins() & BIT(21)) {
+-		pr_warn("Unable to boot CPU%u when MD21 is set\n", cpu);
+-		return -ENOTSUPP;
+-	}
 -
- 	/* This controller is sicker than the PXA one. Not only do we need to
- 	 * drop the top 8 bits of the first response word, we also need to
- 	 * modify the order of the response for short response command types.
-@@ -598,14 +599,16 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host,
- 
- 	if (stat & TMIO_STAT_CMDTIMEOUT)
- 		cmd->error = -ETIMEDOUT;
--	else if (stat & TMIO_STAT_CRCFAIL && cmd->flags & MMC_RSP_CRC)
-+	else if ((stat & TMIO_STAT_CRCFAIL && cmd->flags & MMC_RSP_CRC) ||
-+		 stat & TMIO_STAT_STOPBIT_ERR ||
-+		 stat & TMIO_STAT_CMD_IDX_ERR)
- 		cmd->error = -EILSEQ;
- 
- 	/* If there is data to handle we enable data IRQs here, and
- 	 * we will ultimatley finish the request in the data_end handler.
- 	 * If theres no data or we encountered an error, finish now.
- 	 */
--	if (host->data && !cmd->error) {
-+	if (host->data && (!cmd->error || cmd->error == -EILSEQ)) {
- 		if (host->data->flags & MMC_DATA_READ) {
- 			if (host->force_pio || !host->chan_rx)
- 				tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_READOP);
-@@ -666,7 +669,7 @@ static bool __tmio_mmc_sdcard_irq(struct tmio_mmc_host *host,
- 	/* Data transfer completion */
- 	if (ireg & TMIO_STAT_DATAEND) {
- 		tmio_mmc_ack_mmc_irqs(host, TMIO_STAT_DATAEND);
--		tmio_mmc_data_irq(host);
-+		tmio_mmc_data_irq(host, status);
- 		return true;
- 	}
- 
+-	return shmobile_smp_apmu_boot_secondary(cpu, idle);
+-}
+-
+ const struct smp_operations r8a7791_smp_ops __initconst = {
+ 	.smp_prepare_cpus	= r8a7791_smp_prepare_cpus,
+-	.smp_boot_secondary	= r8a7791_smp_boot_secondary,
++	.smp_boot_secondary	= shmobile_smp_apmu_boot_secondary,
+ #ifdef CONFIG_HOTPLUG_CPU
+ 	.cpu_can_disable	= shmobile_smp_cpu_can_disable,
+ 	.cpu_die		= shmobile_smp_apmu_cpu_die,
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
