@@ -1,87 +1,112 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua0-f175.google.com ([209.85.217.175]:36544 "EHLO
-        mail-ua0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757031AbcHYFWU (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54164 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751187AbcHVJ1C (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Aug 2016 01:22:20 -0400
-Received: by mail-ua0-f175.google.com with SMTP id m60so25939455uam.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Aug 2016 22:22:19 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVjmVobeTNSf9kWtWaGk6zcWRjGKkjKqfFmqx0ZJYJurg@mail.gmail.com>
-References: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au>
- <1471433516-4478-8-git-send-email-horms+renesas@verge.net.au> <CAMuHMdVjmVobeTNSf9kWtWaGk6zcWRjGKkjKqfFmqx0ZJYJurg@mail.gmail.com>
-From: Magnus Damm <magnus.damm@gmail.com>
-Date: Thu, 25 Aug 2016 12:31:08 +0900
-Message-ID: <CANqRtoQ4jsxyKsh8qHxXmwPOH==uE-AzY4_9886XQmPE7nk3KQ@mail.gmail.com>
-Subject: Re: [PATCH/RTF 7/7] arm64: dts: r8a7796: salvator-x: enable SDHI0 & 3
+        Mon, 22 Aug 2016 05:27:02 -0400
+Date: Mon, 22 Aug 2016 11:25:56 +0200
+From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Ai Kyuse <ai.kyuse.uw@renesas.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH/RTF 7/7] arm64: dts: r8a7796: salvator-x: enable SDHI0 & 3
+Message-ID: <20160822092555.GC7896@verge.net.au>
+References: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au>
+ <1471433516-4478-8-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdVjmVobeTNSf9kWtWaGk6zcWRjGKkjKqfFmqx0ZJYJurg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVjmVobeTNSf9kWtWaGk6zcWRjGKkjKqfFmqx0ZJYJurg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert,
-
-On Thu, Aug 18, 2016 at 12:52 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
+On Wed, Aug 17, 2016 at 05:52:17PM +0200, Geert Uytterhoeven wrote:
 > On Wed, Aug 17, 2016 at 1:31 PM, Simon Horman
 > <horms+renesas@verge.net.au> wrote:
->> Enable the exposed SD card slots in the DT of the r8a7796/salvator-x.
->>
->> Based on work for the r8a7795/salvator-x by Ai Kyuse.
->>
->> Cc: Ai Kyuse <ai.kyuse.uw@renesas.com>
->> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
->
+> > Enable the exposed SD card slots in the DT of the r8a7796/salvator-x.
+> >
+> > Based on work for the r8a7795/salvator-x by Ai Kyuse.
+> >
+> > Cc: Ai Kyuse <ai.kyuse.uw@renesas.com>
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
 > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
->> +&sdhi0 {
->> +       pinctrl-0 = <&sdhi0_pins>;
->> +       pinctrl-names = "default";
->> +
->> +       vmmc-supply = <&vcc_sdhi0>;
->> +       vqmmc-supply = <&vccq_sdhi0>;
->> +       cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
->> +       wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
->
+> 
+> > ---
+> >  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 84 ++++++++++++++++++++++
+> >  1 file changed, 84 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+> > index bb34b8d69c79..f06621f2ee4c 100644
+> > --- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+> > +++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+> 
+> > @@ -36,12 +86,46 @@
+> >                 groups = "scif2_data_a";
+> >                 function = "scif2";
+> >         };
+> > +
+> > +       sdhi0_pins: sd0 {
+> > +               groups = "sdhi0_data4", "sdhi0_ctrl";
+> > +               function = "sdhi0";
+> > +       };
+> > +
+> > +       sdhi3_pins: sd3 {
+> > +               groups = "sdhi3_data4", "sdhi3_ctrl";
+> > +               function = "sdhi3";
+> > +       };
+> >  };
+> >
+> >  &extal_clk {
+> >         clock-frequency = <16666666>;
+> >  };
+> >
+> > +&sdhi0 {
+> > +       pinctrl-0 = <&sdhi0_pins>;
+> > +       pinctrl-names = "default";
+> > +
+> > +       vmmc-supply = <&vcc_sdhi0>;
+> > +       vqmmc-supply = <&vccq_sdhi0>;
+> > +       cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
+> > +       wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
+> 
 > BTW, is there a specific reason CD and WP use GPIOs, and not the
 > dedicated sdhi0_cd and sdhi0_wp pin config?
 > It's done the same on r8a7795/salvator-x.
 
-On R-Car SoCs I believe all the SDHI instances have CD and WP support
-in the SDHI hardware block. For some boards some SDHI instances may
-not make use of all signals for instance in case of uSD WP signal.
+Good point. I'll try and follow up on that.
 
-Historically with SDHI the CD and WP pin availability depends on SDHI
-instance for the particular SoC. On older mobile SoCs some SDHI
-instances were intended to be used with an on-board SDIO module so the
-hotplug / write protect signals were then omitted so no such PFC pins
-existed. I've seen designs that used other GPIO signals for CD and WP
-in such case.
-
-I like the idea that the SoC specific DT device provides some shared
-generic information about the SDHI channel and each board may opt-in
-on certain board-specific properties such as CD and WP signals. Opt-in
-for the WP signal is especially useful if we want to be able to
-support both uSD and SD with the same DT device node. Before switching
-to GPIO we had issues with uSD cards turning out to be read-only. If
-CD/WP handling can be done consistently with the PFC signals then
-that's of course fine, but I'm not sure the merit over that compared
-to GPIO. Both CD and WP are not exactly in the hot path. =)
-
-For R-Car I'm yet to see SDHI instances in power domains and PM is not
-such a hot topic. On mobile SoCs we wanted to do our very best to turn
-off the power domain the SDHI instance belongs to. It helps using GPIO
-for CD in such case since the SDHI device can be runtime suspended and
-the power domain powered down while the GPIO block still provides card
-insert events. If we use the SDHI device CD signal for hot plug
-notification then powering off the power domain may not be possible if
-we still want notifications.
-
-Thanks,
-
-/ magnus
+> > +       bus-width = <4>;
+> > +       status = "okay";
+> > +};
+> > +
+> > +&sdhi3 {
+> > +       pinctrl-0 = <&sdhi3_pins>;
+> > +       pinctrl-names = "default";
+> > +
+> > +       vmmc-supply = <&vcc_sdhi3>;
+> > +       vqmmc-supply = <&vccq_sdhi3>;
+> > +       cd-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
+> > +       wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
+> 
+> Likewise.
+> 
+> > +       bus-width = <4>;
+> > +       status = "okay";
+> > +};
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
