@@ -1,90 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50944 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752014AbcHHLA0 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:00:26 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87popj1utd.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiI6-0002Rs-VK@debutante>
-Date: Mon, 08 Aug 2016 12:00:18 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on wl1273" to the asoc tree
+Received: from relmlor2.renesas.com ([210.160.252.172]:61751 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753243AbcHVIta (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 22 Aug 2016 04:49:30 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 4/4] usb: renesas_usbhs: set quirk_avoids_skb_reserve if USB-DMAC is used
+Date: Mon, 22 Aug 2016 17:48:28 +0900
+Message-ID: <1471855708-10897-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1471855708-10897-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1471855708-10897-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+This patch sets the quirk_avoids_skb_reserve flag to improve performance
+of a network gadget driver (e.g. f_ncm.c) if USB-DMAC is used.
 
-   ASoC: codec duplicated callback function goes to component on wl1273
+For example (on r8a7795 board + f_ncm.c + iperf udp mode / receiving):
+  - without this patch:  90.3 Mbits/sec
+  - with    this patch: 273   Mbits/sec
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 23ce0ad98946b6d27d43bec2cc1fb34013761690 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:27:49 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- wl1273
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- sound/soc/codecs/wl1273.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/usb/renesas_usbhs/mod_gadget.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/sound/soc/codecs/wl1273.c b/sound/soc/codecs/wl1273.c
-index 1b79778098d2..fcffb6e707d9 100644
---- a/sound/soc/codecs/wl1273.c
-+++ b/sound/soc/codecs/wl1273.c
-@@ -484,12 +484,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wl1273 = {
- 	.probe = wl1273_probe,
- 	.remove = wl1273_remove,
+diff --git a/drivers/usb/renesas_usbhs/mod_gadget.c b/drivers/usb/renesas_usbhs/mod_gadget.c
+index 92bc83b..b4e9e6f 100644
+--- a/drivers/usb/renesas_usbhs/mod_gadget.c
++++ b/drivers/usb/renesas_usbhs/mod_gadget.c
+@@ -1106,6 +1106,8 @@ int usbhs_mod_gadget_probe(struct usbhs_priv *priv)
+ 	gpriv->gadget.name		= "renesas_usbhs_udc";
+ 	gpriv->gadget.ops		= &usbhsg_gadget_ops;
+ 	gpriv->gadget.max_speed		= USB_SPEED_HIGH;
++	gpriv->gadget.quirk_avoids_skb_reserve = usbhs_get_dparam(priv,
++								has_usb_dmac);
  
--	.controls = wl1273_controls,
--	.num_controls = ARRAY_SIZE(wl1273_controls),
--	.dapm_widgets = wl1273_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(wl1273_dapm_widgets),
--	.dapm_routes = wl1273_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(wl1273_dapm_routes),
-+	.component_driver = {
-+		.controls		= wl1273_controls,
-+		.num_controls		= ARRAY_SIZE(wl1273_controls),
-+		.dapm_widgets		= wl1273_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(wl1273_dapm_widgets),
-+		.dapm_routes		= wl1273_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(wl1273_dapm_routes),
-+	},
- };
+ 	INIT_LIST_HEAD(&gpriv->gadget.ep_list);
  
- static int wl1273_platform_probe(struct platform_device *pdev)
 -- 
-2.8.1
+1.9.1
