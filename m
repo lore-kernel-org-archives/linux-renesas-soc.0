@@ -1,46 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34922 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752999AbcHWMcy (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33480 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756561AbcHWHuG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 Aug 2016 08:32:54 -0400
-Received: by mail-it0-f68.google.com with SMTP id f6so7832266ith.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Aug 2016 05:32:54 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1471938590-10650-5-git-send-email-horms+renesas@verge.net.au>
-References: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au> <1471938590-10650-5-git-send-email-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 23 Aug 2016 10:28:59 +0200
-Message-ID: <CAMuHMdWWPwpUuCcT_PXRk69t6myCViauzp_LHcn+bi9pn8uuVw@mail.gmail.com>
-Subject: Re: [PATCH/RFT v2 4/8] gpio: rcar: Add r8a7796 (R-Car M3-W) support
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
+        Tue, 23 Aug 2016 03:50:06 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH/RFT v2 4/8] gpio: rcar: Add r8a7796 (R-Car M3-W) support
+Date: Tue, 23 Aug 2016 09:49:46 +0200
+Message-Id: <1471938590-10650-5-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
+References: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Aug 23, 2016 at 9:49 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> R-Car Gen3's GPIO blocks are identical to Gen2's in every respect.
->
-> Based on work for the r8a7795 (R-Car H3) by Ulrich Hecht.
->
-> Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+R-Car Gen3's GPIO blocks are identical to Gen2's in every respect.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Based on work for the r8a7795 (R-Car H3) by Ulrich Hecht.
 
-Gr{oetje,eeting}s,
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v2
+* New patch
+---
+ Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
+ drivers/gpio/gpio-rcar.c                                     | 4 ++++
+ 2 files changed, 5 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+index 8da26b35b5c3..7c1ab3b3254f 100644
+--- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
++++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+@@ -11,6 +11,7 @@ Required Properties:
+     - "renesas,gpio-r8a7793": for R8A7793 (R-Car M2-N) compatible GPIO controller.
+     - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO controller.
+     - "renesas,gpio-r8a7795": for R8A7795 (R-Car H3) compatible GPIO controller.
++    - "renesas,gpio-r8a7796": for R8A7796 (R-Car M3-W) compatible GPIO controller.
+     - "renesas,gpio-rcar": for generic R-Car GPIO controller.
+ 
+   - reg: Base address and length of each memory resource used by the GPIO
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index b96e0b466f74..2be48f5eba36 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -348,6 +348,10 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+ 		/* Gen3 GPIO is identical to Gen2. */
+ 		.data = &gpio_rcar_info_gen2,
+ 	}, {
++		.compatible = "renesas,gpio-r8a7796",
++		/* Gen3 GPIO is identical to Gen2. */
++		.data = &gpio_rcar_info_gen2,
++	}, {
+ 		.compatible = "renesas,gpio-rcar",
+ 		.data = &gpio_rcar_info_gen1,
+ 	}, {
+-- 
+2.7.0.rc3.207.g0ac5344
