@@ -1,91 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52016 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752014AbcHHLC2 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:02:28 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87eg5z4oju.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiK5-00033G-PA@debutante>
-Date: Mon, 08 Aug 2016 12:02:21 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on da7213" to the asoc tree
+Received: from kirsty.vergenet.net ([202.4.237.240]:32934 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932753AbcHWHfG (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 23 Aug 2016 03:35:06 -0400
+Date: Tue, 23 Aug 2016 09:24:49 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: dts: blanche: add DU support
+Message-ID: <20160823072449.GG14998@verge.net.au>
+References: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
+ <1783132.r9t2y3QUUq@wasted.cogentembedded.com>
+ <20160822074111.GE28034@verge.net.au>
+ <de79981f-9aff-5491-c97b-48542b860af2@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <de79981f-9aff-5491-c97b-48542b860af2@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Mon, Aug 22, 2016 at 01:34:12PM +0300, Sergei Shtylyov wrote:
+> Hello.
+> 
+> On 8/22/2016 10:41 AM, Simon Horman wrote:
+> 
+> >>Define  the  Blanche board dependent part of the DU device node.
+> >>Add the device nodes for the  Analog Devices ADV7511W  HDMI transmitter
+> >>(connected to DU0) and ADV7123 video DAC (connected to DU1).  Add the
+> >>necessary subnodes to interconnect DU, HDMI/VDAC devices, and HDMI/VGA
+> >>connectors.
+> >>
+> >>Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> >>
+> >>---
+> >>This patch is against the 'renesas-devel-20160817-v4.8-rc2' of Simon Horman's
+> >>'renesas.git' repo plus the general purpose switches patch and the SDHI0 patch
+> >>posted earlier.
+> >>
+> >> arch/arm/boot/dts/r8a7792-blanche.dts |  125 ++++++++++++++++++++++++++++++++++
+> >> 1 file changed, 125 insertions(+)
+> >>
+> >>Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+> >>===================================================================
+> >>--- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
+> >>+++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+> >
+> >...
+> >
+> >>@@ -186,3 +251,63 @@
+> >> 	cd-gpios = <&gpio11 11 GPIO_ACTIVE_LOW>;
+> >> 	status = "okay";
+> >> };
+> >>+
+> >>+&i2c1 {
+> >>+	status = "okay";
+> >>+	clock-frequency = <400000>;
+> >
+> >Is it intentional that there are no pinctrl properties here?
+> 
+>    Yes, as I commented in r8a7792.dtsi, all I2C pins are not multiplexed.
 
-   ASoC: codec duplicated callback function goes to component on da7213
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 92d2a233d878c4ddebad805ae4201e8ec335b3af Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:14:53 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- da7213
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/da7213.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/sound/soc/codecs/da7213.c b/sound/soc/codecs/da7213.c
-index e5527bc570ae..7cfb5da5378d 100644
---- a/sound/soc/codecs/da7213.c
-+++ b/sound/soc/codecs/da7213.c
-@@ -1740,13 +1740,14 @@ static struct snd_soc_codec_driver soc_codec_dev_da7213 = {
- 	.probe			= da7213_probe,
- 	.set_bias_level		= da7213_set_bias_level,
- 
--	.controls		= da7213_snd_controls,
--	.num_controls		= ARRAY_SIZE(da7213_snd_controls),
--
--	.dapm_widgets		= da7213_dapm_widgets,
--	.num_dapm_widgets	= ARRAY_SIZE(da7213_dapm_widgets),
--	.dapm_routes		= da7213_audio_map,
--	.num_dapm_routes	= ARRAY_SIZE(da7213_audio_map),
-+	.component_driver = {
-+		.controls		= da7213_snd_controls,
-+		.num_controls		= ARRAY_SIZE(da7213_snd_controls),
-+		.dapm_widgets		= da7213_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(da7213_dapm_widgets),
-+		.dapm_routes		= da7213_audio_map,
-+		.num_dapm_routes	= ARRAY_SIZE(da7213_audio_map),
-+	},
- };
- 
- static const struct regmap_config da7213_regmap_config = {
--- 
-2.8.1
+Thanks for satisfying my curiosity.
+I have queued this up.
