@@ -1,53 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:44995 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751539AbcHQNb7 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 17 Aug 2016 09:31:59 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Geert Uytterhoeven <geert@glider.be>
-Subject: [PATCH] v4l: rcar-fcp: Don't force users to check for disabled FCP support
-Date: Wed, 17 Aug 2016 16:32:08 +0300
-Message-Id: <1471440728-16931-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Received: from kirsty.vergenet.net ([202.4.237.240]:33480 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756561AbcHWHuH (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 23 Aug 2016 03:50:07 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH/RFT v2 1/8] clk: renesas: r8a7796: Add GPIO clocks
+Date: Tue, 23 Aug 2016 09:49:43 +0200
+Message-Id: <1471938590-10650-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
+References: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar_fcp_enable() function immediately returns successfully when the
-FCP device pointer is NULL to avoid forcing the users to check the FCP
-device manually before every call. However, the stub version of the
-function used when the FCP driver is disabled returns -ENOSYS
-unconditionally, resulting in a different API contract for the two
-versions of the function.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-As a user that requires FCP support will fail at probe time when calling
-rcar_fcp_get() if the FCP driver is disabled, the stub version of the
-rcar_fcp_enable() function will only be called with a NULL FCP device.
-We can thus return 0 unconditionally to align the behaviour with the
-normal version of the function.
+Add GPIO clocks for the R8A7796 SoC.
 
-Reported-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/media/rcar-fcp.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/include/media/rcar-fcp.h b/include/media/rcar-fcp.h
-index 4c7fc77eaf29..8723f05c6321 100644
---- a/include/media/rcar-fcp.h
-+++ b/include/media/rcar-fcp.h
-@@ -29,7 +29,7 @@ static inline struct rcar_fcp_device *rcar_fcp_get(const struct device_node *np)
- static inline void rcar_fcp_put(struct rcar_fcp_device *fcp) { }
- static inline int rcar_fcp_enable(struct rcar_fcp_device *fcp)
- {
--	return -ENOSYS;
-+	return 0;
- }
- static inline void rcar_fcp_disable(struct rcar_fcp_device *fcp) { }
- #endif
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index c0dee762ed23..999955c2b23e 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -106,6 +106,14 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+ 	DEF_MOD("scif2",		 310,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("rwdt0",		 402,	R8A7796_CLK_R),
+ 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
++	DEF_MOD("gpio7",		 905,	R8A7796_CLK_S3D4),
++	DEF_MOD("gpio6",		 906,	R8A7796_CLK_S3D4),
++	DEF_MOD("gpio5",		 907,	R8A7796_CLK_S3D4),
++	DEF_MOD("gpio4",		 908,	R8A7796_CLK_S3D4),
++	DEF_MOD("gpio3",		 909,	R8A7796_CLK_S3D4),
++	DEF_MOD("gpio2",		 910,	R8A7796_CLK_S3D4),
++	DEF_MOD("gpio1",		 911,	R8A7796_CLK_S3D4),
++	DEF_MOD("gpio0",		 912,	R8A7796_CLK_S3D4),
+ };
+ 
+ static const unsigned int r8a7796_crit_mod_clks[] __initconst = {
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
