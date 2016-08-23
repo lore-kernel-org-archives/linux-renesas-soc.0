@@ -1,57 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:49686 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753982AbcHSCjr (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:33465 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753487AbcHWHuB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Aug 2016 22:39:47 -0400
-Received: from localhost.localdomain (227.178-201-80.adsl-dyn.isp.belgacom.be [80.201.178.227])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id A811520006
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Aug 2016 18:03:32 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 23 Aug 2016 03:50:01 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/HACK 0/7] r8a779[01]: Enable IOMMU usage for the VSP1 and DU
-Date: Thu, 18 Aug 2016 19:03:53 +0300
-Message-Id: <1471536240-25082-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH/RFT v2 2/8] clk: renesas: r8a7796: Add SDIF clocks
+Date: Tue, 23 Aug 2016 09:49:44 +0200
+Message-Id: <1471938590-10650-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
+References: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+This patch adds SDIF clocks for R8A7796 SoC.
 
-This patch series enables IOMMU usage for the VSP1 and DU on the R8A7790 (H2)
-and R8A7791 (M2) platforms. It is available for convenience at
+Based on work by Ai Kyuse and Yoshihiro Shimoda for the r8a7795 SoC.
 
-	git://linuxtv.org/pinchartl/media.git iommu/devel/dt
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2
+* Add and use SDSRC
+---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-The patches are not meant to be merged upstream at this time, but serve as a
-base to implement and test IPMMU support in the VSP1 and DU on Gen2 (quite
-obviously).
-
-Less obviously, the patches are also useful for Gen3 development. The H3 IPMMU
-hardware is known to be buggy, but development can be performed on Gen2 to
-some extent by mimicking the Gen3 VSP1 + DU combination. This is performed by
-patches 4/7 to 7/7 for H2. Corresponding patches for M2 are straightforward to
-implement.
-
-Please note that applying the last three patches break DU operation as the
-framebuffers are mapped through the wrong IPMMU instance. This will be fixed
-by a subsequent patch series, these patches only serve as a development base.
-
-Laurent Pinchart (7):
-  ARM: shmobile: r8a7790: Enable IOMMU usage for the DU
-  ARM: shmobile: r8a7791: Enable IOMMU usage for the DU
-  ARM: shmobile: r8a7790: Enable IOMMU usage for the VSP1
-  ARM: shmobile: r8a7791: Enable IOMMU usage for the VSP1
-  [HACK] ARM: shmobile: r8a7790: Link the VSP1 and DU
-  [HACK] v4l: vsp1: Disable UAPI for VSP1D
-  [HACK] drm: rcar-du: Enable VSP source support for R8A7790
-
- arch/arm/boot/dts/r8a7790.dtsi         | 23 ++++++++++++++---------
- arch/arm/boot/dts/r8a7791.dtsi         |  9 ++++++++-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c  |  9 +++++----
- drivers/media/platform/vsp1/vsp1_drv.c |  1 -
- 4 files changed, 27 insertions(+), 15 deletions(-)
-
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index 999955c2b23e..891b353e8105 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -70,6 +70,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+ 	DEF_FIXED(".s1",        CLK_S1,            CLK_PLL1_DIV2,  3, 1),
+ 	DEF_FIXED(".s2",        CLK_S2,            CLK_PLL1_DIV2,  4, 1),
+ 	DEF_FIXED(".s3",        CLK_S3,            CLK_PLL1_DIV2,  6, 1),
++	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
+ 
+ 	/* Core Clock Outputs */
+ 	DEF_FIXED("ztr",        R8A7796_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+@@ -93,6 +94,11 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+ 	DEF_FIXED("s3d2",       R8A7796_CLK_S3D2,  CLK_S3,         2, 1),
+ 	DEF_FIXED("s3d4",       R8A7796_CLK_S3D4,  CLK_S3,         4, 1),
+ 
++	DEF_GEN3_SD("sd0",      R8A7796_CLK_SD0,   CLK_SDSRC,    0x0074),
++	DEF_GEN3_SD("sd1",      R8A7796_CLK_SD1,   CLK_SDSRC,    0x0078),
++	DEF_GEN3_SD("sd2",      R8A7796_CLK_SD2,   CLK_SDSRC,    0x0268),
++	DEF_GEN3_SD("sd3",      R8A7796_CLK_SD3,   CLK_SDSRC,    0x026c),
++
+ 	DEF_FIXED("cl",         R8A7796_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
+ 	DEF_FIXED("cp",         R8A7796_CLK_CP,    CLK_EXTAL,      2, 1),
+ 
+@@ -104,6 +110,10 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+ 
+ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+ 	DEF_MOD("scif2",		 310,	R8A7796_CLK_S3D4),
++	DEF_MOD("sdif3",		 311,	R8A7796_CLK_SD3),
++	DEF_MOD("sdif2",		 312,	R8A7796_CLK_SD2),
++	DEF_MOD("sdif1",		 313,	R8A7796_CLK_SD1),
++	DEF_MOD("sdif0",		 314,	R8A7796_CLK_SD0),
+ 	DEF_MOD("rwdt0",		 402,	R8A7796_CLK_R),
+ 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("gpio7",		 905,	R8A7796_CLK_S3D4),
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
