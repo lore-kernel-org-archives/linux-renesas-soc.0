@@ -1,86 +1,156 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51896 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLCN (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:02:13 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <877fbr4ohd.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiJr-0002yY-1U@debutante>
-Date: Mon, 08 Aug 2016 12:02:07 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on dmic" to the asoc tree
+Received: from kirsty.vergenet.net ([202.4.237.240]:33480 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756561AbcHWHuL (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 23 Aug 2016 03:50:11 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH/RFT v2 6/8] arm64: dts: r8a7796: Add GPIO device nodes
+Date: Tue, 23 Aug 2016 09:49:48 +0200
+Message-Id: <1471938590-10650-7-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
+References: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-   ASoC: codec duplicated callback function goes to component on dmic
+Add GPIO device nodes to the DT of the r8a7796 SoC.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From a73b8e8955fe7660455aaa20e8452f5322793fab Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:16:22 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- dmic
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- sound/soc/codecs/dmic.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 112 +++++++++++++++++++++++++++++++
+ 1 file changed, 112 insertions(+)
 
-diff --git a/sound/soc/codecs/dmic.c b/sound/soc/codecs/dmic.c
-index fde53251c047..c82b9dc41e9a 100644
---- a/sound/soc/codecs/dmic.c
-+++ b/sound/soc/codecs/dmic.c
-@@ -51,10 +51,12 @@ static const struct snd_soc_dapm_route intercon[] = {
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index faea5a960abc..2741535f8b15 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -107,6 +107,118 @@
+ 			status = "disabled";
+ 		};
  
- static struct snd_soc_codec_driver soc_dmic = {
--	.dapm_widgets = dmic_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(dmic_dapm_widgets),
--	.dapm_routes = intercon,
--	.num_dapm_routes = ARRAY_SIZE(intercon),
-+	.component_driver = {
-+		.dapm_widgets		= dmic_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(dmic_dapm_widgets),
-+		.dapm_routes		= intercon,
-+		.num_dapm_routes	= ARRAY_SIZE(intercon),
-+	},
- };
- 
- static int dmic_dev_probe(struct platform_device *pdev)
++		gpio0: gpio@e6050000 {
++			compatible = "renesas,gpio-r8a7796",
++				     "renesas,gpio-rcar";
++			reg = <0 0xe6050000 0 0x50>;
++			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 0 16>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 912>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++		};
++
++		gpio1: gpio@e6051000 {
++			compatible = "renesas,gpio-r8a7796",
++				     "renesas,gpio-rcar";
++			reg = <0 0xe6051000 0 0x50>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 32 29>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 911>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++		};
++
++		gpio2: gpio@e6052000 {
++			compatible = "renesas,gpio-r8a7796",
++				     "renesas,gpio-rcar";
++			reg = <0 0xe6052000 0 0x50>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 64 15>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 910>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++		};
++
++		gpio3: gpio@e6053000 {
++			compatible = "renesas,gpio-r8a7796",
++				     "renesas,gpio-rcar";
++			reg = <0 0xe6053000 0 0x50>;
++			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 96 16>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 909>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++		};
++
++		gpio4: gpio@e6054000 {
++			compatible = "renesas,gpio-r8a7796",
++				     "renesas,gpio-rcar";
++			reg = <0 0xe6054000 0 0x50>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 128 18>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 908>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++		};
++
++		gpio5: gpio@e6055000 {
++			compatible = "renesas,gpio-r8a7796",
++				     "renesas,gpio-rcar";
++			reg = <0 0xe6055000 0 0x50>;
++			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 160 26>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 907>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++		};
++
++		gpio6: gpio@e6055400 {
++			compatible = "renesas,gpio-r8a7796",
++				     "renesas,gpio-rcar";
++			reg = <0 0xe6055400 0 0x50>;
++			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 192 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 906>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++		};
++
++		gpio7: gpio@e6055800 {
++			compatible = "renesas,gpio-r8a7796",
++				     "renesas,gpio-rcar";
++			reg = <0 0xe6055800 0 0x50>;
++			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 224 4>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 905>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++		};
++
+ 		pfc: pfc@e6060000 {
+ 			compatible = "renesas,pfc-r8a7796";
+ 			reg = <0 0xe6060000 0 0x50c>;
 -- 
-2.8.1
+2.7.0.rc3.207.g0ac5344
