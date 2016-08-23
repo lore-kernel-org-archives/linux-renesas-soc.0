@@ -1,94 +1,130 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:34419 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751202AbcH3WYp (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:33420 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753810AbcHWNMB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Aug 2016 18:24:45 -0400
-Received: by mail-lf0-f44.google.com with SMTP id p41so5331720lfi.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 30 Aug 2016 15:24:44 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: dts: wheat: add SDHI0 support
-Date: Wed, 31 Aug 2016 01:24:41 +0300
-Message-ID: <1659137.gEKJxNrmrk@wasted.cogentembedded.com>
-In-Reply-To: <34968644.DhifNderY8@wasted.cogentembedded.com>
-References: <34968644.DhifNderY8@wasted.cogentembedded.com>
+        Tue, 23 Aug 2016 09:12:01 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <36812690.Ma8PvjacQ5@avalon>
+References: <1470757001-4333-1-git-send-email-geert+renesas@glider.be> <36812690.Ma8PvjacQ5@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 23 Aug 2016 15:11:59 +0200
+Message-ID: <CAMuHMdWoq+F6YWTEGtLc5G4PTQO=F19VaEire9JAr+0z7PxJ-g@mail.gmail.com>
+Subject: Re: [PATCH] [media] rcar-fcp: Make sure rcar_fcp_enable() returns 0
+ on success
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the Wheat board dependent  part of  the SDHI0 (connected to the
-micro-SD slot)  device node along with the necessary voltage regulator.
+Hi Laurent,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Wed, Aug 17, 2016 at 2:55 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Tuesday 09 Aug 2016 17:36:41 Geert Uytterhoeven wrote:
+>> When resuming from suspend-to-RAM on r8a7795/salvator-x:
+>>
+>>     dpm_run_callback(): pm_genpd_resume_noirq+0x0/0x90 returns 1
+>>     PM: Device fe940000.fdp1 failed to resume noirq: error 1
+>>     dpm_run_callback(): pm_genpd_resume_noirq+0x0/0x90 returns 1
+>>     PM: Device fe944000.fdp1 failed to resume noirq: error 1
+>>     dpm_run_callback(): pm_genpd_resume_noirq+0x0/0x90 returns 1
+>>     PM: Device fe948000.fdp1 failed to resume noirq: error 1
+>>
+>> According to its documentation, rcar_fcp_enable() returns 0 on success
+>> or a negative error code if an error occurs.  Hence
+>> fdp1_pm_runtime_resume() and vsp1_pm_runtime_resume() forward its return
+>> value to their callers.
+>>
+>> However, rcar_fcp_enable() forwards the return value of
+>> pm_runtime_get_sync(), which can actually be 1 on success, leading to
+>> the resume failure above.
+>>
+>> To fix this, consider only negative values returned by
+>> pm_runtime_get_sync() to be failures.
+>>
+>> Fixes: 7b49235e83b2347c ("[media] v4l: Add Renesas R-Car FCP driver")
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>>  drivers/media/platform/rcar-fcp.c | 8 +++++++-
+>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/platform/rcar-fcp.c
+>> b/drivers/media/platform/rcar-fcp.c index
+>> 0ff6b1edf1dbf677..7e944479205d4059 100644
+>> --- a/drivers/media/platform/rcar-fcp.c
+>> +++ b/drivers/media/platform/rcar-fcp.c
+>> @@ -99,10 +99,16 @@ EXPORT_SYMBOL_GPL(rcar_fcp_put);
+>>   */
+>>  int rcar_fcp_enable(struct rcar_fcp_device *fcp)
+>>  {
+>> +     int error;
+>
+> I was going to write that the driver uses "ret" instead of "error" for integer
+> status return values, but it doesn't as there no such value stored in a
+> variable at all. I will thus argue that it will use that style later, so let's
+> keep the style consistent with the to-be-written code if you don't mind :-)
+>
+> Apart from that,
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+> and applied to my tree.
 
----
-This patch is against the 'renesas-devel-20160830-v4.8-rc4' of Simon Horman's
-'renesas.git' repo plus the CAN patch posted yesterday.
-Starting with this patch, SMSC LAN89218 Ethernet chip starts to misbehave on my
-board...
+Thanks!
 
- arch/arm/boot/dts/r8a7792-wheat.dts |   26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Where exactly has this been applied?
 
-Index: renesas/arch/arm/boot/dts/r8a7792-wheat.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792-wheat.dts
-+++ renesas/arch/arm/boot/dts/r8a7792-wheat.dts
-@@ -11,6 +11,7 @@
- 
- /dts-v1/;
- #include "r8a7792.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	model = "Wheat";
-@@ -54,6 +55,17 @@
- 		pinctrl-0 = <&lan89218_pins>;
- 		pinctrl-names = "default";
- 	};
-+
-+	vcc_sdhi0: regulator-vcc-sdhi0 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI0 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio11 12 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
- };
- 
- &extal_clk {
-@@ -86,6 +98,11 @@
- 		groups = "can1_data";
- 		function = "can1";
- 	};
-+
-+	sdhi0_pins: sdhi0 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+	};
- };
- 
- &scif0 {
-@@ -108,3 +125,12 @@
- 
- 	status = "okay";
- };
-+
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&vcc_sdhi0>;
-+	cd-gpios = <&gpio11 11 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
+>>       if (!fcp)
+>>               return 0;
+>>
+>> -     return pm_runtime_get_sync(fcp->dev);
+>> +     error = pm_runtime_get_sync(fcp->dev);
+>> +     if (error < 0)
+>> +             return error;
+>> +
+>> +     return 0;
+>>  }
+>>  EXPORT_SYMBOL_GPL(rcar_fcp_enable);
+
+BTW, it seems I missed a few more s2ram resume errors:
+
+    dpm_run_callback(): pm_genpd_resume_noirq+0x0/0x90 returns -13
+    PM: Device fe920000.vsp failed to resume noirq: error -13
+    dpm_run_callback(): pm_genpd_resume_noirq+0x0/0x90 returns -13
+    PM: Device fe960000.vsp failed to resume noirq: error -13
+    dpm_run_callback(): pm_genpd_resume_noirq+0x0/0x90 returns -13
+    PM: Device fe9a0000.vsp failed to resume noirq: error -13
+    dpm_run_callback(): pm_genpd_resume_noirq+0x0/0x90 returns -13
+    PM: Device fe9b0000.vsp failed to resume noirq: error -13
+    dpm_run_callback(): pm_genpd_resume_noirq+0x0/0x90 returns -13
+    PM: Device fe9c0000.vsp failed to resume noirq: error -13
+    dpm_run_callback(): pm_genpd_resume_noirq+0x0/0x90 returns -13
+    PM: Device fea20000.vsp failed to resume noirq: error -13
+    dpm_run_callback(): pm_genpd_resume_noirq+0x0/0x90 returns -13
+    PM: Device fea28000.vsp failed to resume noirq: error -13
+    dpm_run_callback(): pm_genpd_resume_noirq+0x0/0x90 returns -13
+    PM: Device fea30000.vsp failed to resume noirq: error -13
+    vsp1 fea38000.vsp: failed to reset wpf.0
+    dpm_run_callback(): pm_genpd_resume_noirq+0x0/0x90 returns -110
+    PM: Device fea38000.vsp failed to resume noirq: error -110
+
+-13 == -EACCES, returned by rcar_fcp_enable() as pm_runtime_get_sync()
+is called too early during system resume,
+-110 = ETIMEDOUT, returned by vsp1_device_init() due to the failure
+to reset wpf.0.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
