@@ -1,63 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www1246.sakura.ne.jp ([219.94.162.56]:25086 "EHLO
-        www1246.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752354AbcHZA7F (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:11633 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753884AbcHXI41 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Aug 2016 20:59:05 -0400
-Message-ID: <57BF944F.8000501@jinso.co.jp>
-Date: Fri, 26 Aug 2016 09:58:55 +0900
-From: Hiep Cao Minh <cm-hiep@jinso.co.jp>
+        Wed, 24 Aug 2016 04:56:27 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC: <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 3/4] usb: host: xhci: plat: use XHCI_PLAT_RENESAS_RCAR_PRIV macro for R-Car
+Date: Wed, 24 Aug 2016 17:52:41 +0900
+Message-ID: <1472028762-6640-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1472028762-6640-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1472028762-6640-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Sakato Ryusuke <ryusuke.sakato.bx@renesas.com>,
-        kuninori morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Nguyen Viet Dung <nv-dung@jinso.co.jp>
-Subject: R-Car Gen2 QSPI driver performance
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Geert.
+This patch uses XHCI_PLAT_RENESAS_RCAR_PRIV macro to make
+the xhci_plat_priv data.
 
-I'd like to ask you about R-Car Gen2 QSPI driver performance test of 
-single, dual and quad.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/usb/host/xhci-plat.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-------
-commit 4f12b5e529e4ff274eb478ec1c2ef41358ed9577
-Author: Geert Uytterhoeven <geert+renesas@glider.be>
-Date:   Mon Jun 2 15:38:17 2014 +0200
-
-      spi: rspi: Add DMA support for QSPI on R-Car Gen2
-
-      Enable DMA support for QSPI on R-Car Gen2, for Single, Dual, and 
-Quad SPI
-      Transfers.
-
-      Performance figures for reading from a QSPI FLASH driven at 24.375 
-MHz
-      on r8a7791/koelsch:
-        - Single:  1.1 Mbps PIO, 23 Mbps DMA
-        - Dual  : 12.7 Mbps PIO, 48 Mbps DMA
-        - Quad  : 13   Mbps PIO, 70 Mbps DMA
-------
-Could you show me how to test these performances?
-
-I have tried to reproduce them but I only got the results like this:
-
-Enabled DMA:
-Linux stable v4.7
-      Quad-spi： Read 3.2 MB/s Write 601 kB/s
-      Dual-spi： Read 3.1 MB/s Write 847 kB/s
-      Single-spi： Read 2.5 MB/s Write 850 kB/s
-
-PIO:
-RcarGen2_BSP linux_v3.10.101-ltsi
-      Quad-spi： Read 2.2 MB/s Write 1.1 MB/s
-      Dual-spi： Read 2.1 MB/s Write 158 kB/s
-      Single-spi： Read 173 kB/s Write 159 kB/s
-
-Regards,
-Jinso/Hiep.
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index ed56bf9..c1a6b5a 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -88,17 +88,8 @@ static const struct xhci_plat_priv xhci_plat_marvell_armada = {
+ 	.init_quirk = xhci_mvebu_mbus_init_quirk,
+ };
+ 
+-static const struct xhci_plat_priv xhci_plat_renesas_rcar_gen2 = {
+-	.firmware_name = XHCI_RCAR_FIRMWARE_NAME_V1,
+-	.init_quirk = xhci_rcar_init_quirk,
+-	.plat_start = xhci_rcar_start,
+-};
+-
+-static const struct xhci_plat_priv xhci_plat_renesas_rcar_gen3 = {
+-	.firmware_name = XHCI_RCAR_FIRMWARE_NAME_V2,
+-	.init_quirk = xhci_rcar_init_quirk,
+-	.plat_start = xhci_rcar_start,
+-};
++XHCI_PLAT_RENESAS_RCAR_PRIV(gen2, XHCI_RCAR_FIRMWARE_NAME_V1);
++XHCI_PLAT_RENESAS_RCAR_PRIV(gen3, XHCI_RCAR_FIRMWARE_NAME_V2);
+ 
+ static const struct of_device_id usb_xhci_of_match[] = {
+ 	{
+-- 
+1.9.1
