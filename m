@@ -1,105 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50276 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934876AbcHJUEE (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 10 Aug 2016 16:04:04 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <871t1xid8e.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bXZjK-0000S6-Gd@debutante>
-Date: Wed, 10 Aug 2016 21:03:58 +0100
-Subject: Applied "ASoC: simple-card-utils: add asoc_simple_card_canonicalize_cpu()" to the asoc tree
+Received: from relmlor1.renesas.com ([210.160.252.171]:31244 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753382AbcHXI41 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 24 Aug 2016 04:56:27 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC: <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 1/4] usb: host: xhci: rcar: add a new firmware version for r8a7796
+Date: Wed, 24 Aug 2016 17:52:39 +0900
+Message-ID: <1472028762-6640-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1472028762-6640-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1472028762-6640-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+This patch adds a new firmware version "V3" for r8a7796. This patch also
+revises the explanation of each version's capability using a table.
 
-   ASoC: simple-card-utils: add asoc_simple_card_canonicalize_cpu()
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 983cebd602af8c2bf9d5830f15fb4e18fb38f994 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Wed, 10 Aug 2016 02:20:19 +0000
-Subject: [PATCH] ASoC: simple-card-utils: add
- asoc_simple_card_canonicalize_cpu()
-
-simple-card needs remove dai_link->cpu_dai_name if it CPU was
-single DAI.
-This patch makes this method simple style standard.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- include/sound/simple_card_utils.h     |  2 ++
- sound/soc/generic/simple-card-utils.c | 17 +++++++++++++++++
- 2 files changed, 19 insertions(+)
+ drivers/usb/host/xhci-rcar.c | 17 ++++++++++++-----
+ drivers/usb/host/xhci-rcar.h |  1 +
+ 2 files changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
-index a71d46a95ca8..f760f559393e 100644
---- a/include/sound/simple_card_utils.h
-+++ b/include/sound/simple_card_utils.h
-@@ -62,5 +62,7 @@ int asoc_simple_card_init_dai(struct snd_soc_dai *dai,
- 			      struct asoc_simple_dai *simple_dai);
+diff --git a/drivers/usb/host/xhci-rcar.c b/drivers/usb/host/xhci-rcar.c
+index 0e4535e..723f575 100644
+--- a/drivers/usb/host/xhci-rcar.c
++++ b/drivers/usb/host/xhci-rcar.c
+@@ -19,13 +19,20 @@
+ #include "xhci-rcar.h"
  
- int asoc_simple_card_canonicalize_dailink(struct snd_soc_dai_link *dai_link);
-+void asoc_simple_card_canonicalize_cpu(struct snd_soc_dai_link *dai_link,
-+				      int is_single_links);
+ /*
+-* - The V2 firmware is possible to use on R-Car Gen2. However, the V2 causes
+-*   performance degradation. So, this driver continues to use the V1 if R-Car
+-*   Gen2.
+-* - The V1 firmware is impossible to use on R-Car Gen3.
+-*/
++ *	   |	Gen2	r8a7795	r8a7796
++ *	---+----------------------------
++ *	V3 |	note1	NG	OK
++ *	V2 |	note1	OK	note1
++ *	V1 |	OK	NG	NG
++ *
++ * Gen2: r8a7790, r8a7791 and r8a7793
++ * OK: This firmware version works correctly on such SoC(s)
++ * NG: This firmware version is impossible to use on such SoC(s)
++ * note1: This firmware version causes performance degradation.
++ */
+ MODULE_FIRMWARE(XHCI_RCAR_FIRMWARE_NAME_V1);
+ MODULE_FIRMWARE(XHCI_RCAR_FIRMWARE_NAME_V2);
++MODULE_FIRMWARE(XHCI_RCAR_FIRMWARE_NAME_V3);
  
- #endif /* __SIMPLE_CARD_CORE_H */
-diff --git a/sound/soc/generic/simple-card-utils.c b/sound/soc/generic/simple-card-utils.c
-index 189eadddfad3..c5d32dad48b2 100644
---- a/sound/soc/generic/simple-card-utils.c
-+++ b/sound/soc/generic/simple-card-utils.c
-@@ -206,6 +206,23 @@ int asoc_simple_card_canonicalize_dailink(struct snd_soc_dai_link *dai_link)
- }
- EXPORT_SYMBOL_GPL(asoc_simple_card_canonicalize_dailink);
+ /*** Register Offset ***/
+ #define RCAR_USB3_INT_ENA	0x224	/* Interrupt Enable */
+diff --git a/drivers/usb/host/xhci-rcar.h b/drivers/usb/host/xhci-rcar.h
+index 2941a25..d2ffe20 100644
+--- a/drivers/usb/host/xhci-rcar.h
++++ b/drivers/usb/host/xhci-rcar.h
+@@ -13,6 +13,7 @@
  
-+void asoc_simple_card_canonicalize_cpu(struct snd_soc_dai_link *dai_link,
-+				       int is_single_links)
-+{
-+	/*
-+	 * In soc_bind_dai_link() will check cpu name after
-+	 * of_node matching if dai_link has cpu_dai_name.
-+	 * but, it will never match if name was created by
-+	 * fmt_single_name() remove cpu_dai_name if cpu_args
-+	 * was 0. See:
-+	 *	fmt_single_name()
-+	 *	fmt_multiple_name()
-+	 */
-+	if (is_single_links)
-+		dai_link->cpu_dai_name = NULL;
-+}
-+EXPORT_SYMBOL_GPL(asoc_simple_card_canonicalize_cpu);
-+
- /* Module information */
- MODULE_AUTHOR("Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>");
- MODULE_DESCRIPTION("ALSA SoC Simple Card Utils");
+ #define XHCI_RCAR_FIRMWARE_NAME_V1	"r8a779x_usb3_v1.dlmem"
+ #define XHCI_RCAR_FIRMWARE_NAME_V2	"r8a779x_usb3_v2.dlmem"
++#define XHCI_RCAR_FIRMWARE_NAME_V3	"r8a779x_usb3_v3.dlmem"
+ 
+ #if IS_ENABLED(CONFIG_USB_XHCI_RCAR)
+ void xhci_rcar_start(struct usb_hcd *hcd);
 -- 
-2.8.1
+1.9.1
