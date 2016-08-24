@@ -1,57 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56197 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752607AbcHQLcV (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 17 Aug 2016 07:32:21 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Ai Kyuse <ai.kyuse.uw@renesas.com>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RTF 4/7] mmc: sh_mobile_sdhi: Add r8a7796 support
-Date: Wed, 17 Aug 2016 13:31:53 +0200
-Message-Id: <1471433516-4478-5-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au>
-References: <1471433516-4478-1-git-send-email-horms+renesas@verge.net.au>
+Received: from relmlor3.renesas.com ([210.160.252.173]:14188 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753724AbcHXI41 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 24 Aug 2016 04:56:27 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC: <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/4] usb: host: xhci: rcar: add a macro XHCI_PLAT_RENESAS_RCAR_PRIV
+Date: Wed, 24 Aug 2016 17:52:40 +0900
+Message-ID: <1472028762-6640-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1472028762-6640-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1472028762-6640-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ai Kyuse <ai.kyuse.uw@renesas.com>
+This patch adds a new macro "XHCI_PLAT_RENESAS_RCAR_PRIV" to make
+struct xhci_plat_priv data for R-Car SoCs easily.
 
-Add support for r8a7796 SoC.
-
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 1 +
- drivers/mmc/host/sh_mobile_sdhi.c                  | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/usb/host/xhci-rcar.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-index 0f610d4b5b00..13df9c2399c3 100644
---- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-@@ -23,6 +23,7 @@ Required properties:
- 		"renesas,sdhi-r8a7793" - SDHI IP on R8A7793 SoC
- 		"renesas,sdhi-r8a7794" - SDHI IP on R8A7794 SoC
- 		"renesas,sdhi-r8a7795" - SDHI IP on R8A7795 SoC
-+		"renesas,sdhi-r8a7796" - SDHI IP on R8A7796 SoC
- 
- Optional properties:
- - toshiba,mmc-wrprotect-disable: write-protect detection is unavailable
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index dd176c0ce6ec..25e8e2fdaa2c 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -129,6 +129,7 @@ static const struct of_device_id sh_mobile_sdhi_of_match[] = {
- 	{ .compatible = "renesas,sdhi-r8a7793", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
-+	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, sh_mobile_sdhi_of_match);
+diff --git a/drivers/usb/host/xhci-rcar.h b/drivers/usb/host/xhci-rcar.h
+index d2ffe20..78379e3 100644
+--- a/drivers/usb/host/xhci-rcar.h
++++ b/drivers/usb/host/xhci-rcar.h
+@@ -28,4 +28,12 @@ static inline int xhci_rcar_init_quirk(struct usb_hcd *hcd)
+ 	return 0;
+ }
+ #endif
++
++#define XHCI_PLAT_RENESAS_RCAR_PRIV(soc, firmware)	\
++static const struct xhci_plat_priv xhci_plat_renesas_rcar_##soc = {	\
++	.firmware_name = firmware,			\
++	.init_quirk = xhci_rcar_init_quirk,		\
++	.plat_start = xhci_rcar_start,			\
++}
++
+ #endif /* _XHCI_RCAR_H */
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
