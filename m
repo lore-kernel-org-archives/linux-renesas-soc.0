@@ -1,31 +1,67 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46070 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752161AbcHZNk7 (ORCPT
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:35550 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753762AbcHXTW1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Aug 2016 09:40:59 -0400
-Date: Fri, 26 Aug 2016 15:40:52 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        Wed, 24 Aug 2016 15:22:27 -0400
+Received: by mail-lf0-f44.google.com with SMTP id f93so19148481lfi.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Aug 2016 12:22:26 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] ARM: dts: blanche: add support for general purpose
- LEDs
-Message-ID: <20160826134052.GA18513@verge.net.au>
+Subject: [PATCH v2] ARM: dts: blanche: add support for general purpose LEDs
+Date: Wed, 24 Aug 2016 22:22:22 +0300
+Message-ID: <2604564.o6QQK9elnf@wasted.cogentembedded.com>
+In-Reply-To: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
 References: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
- <2604564.o6QQK9elnf@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2604564.o6QQK9elnf@wasted.cogentembedded.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 24, 2016 at 10:22:22PM +0300, Sergei Shtylyov wrote:
-> Add support for the general purpose LEDs on the Blanche board.
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add support for the general purpose LEDs on the Blanche board.
 
-Thanks, I have queued this up.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+---
+This patch is against the 'renesas-devel-20160824-v4.8-rc3' of Simon Horman's
+'renesas.git'.
+
+Changes in version 2:
+- removed the "label" props.
+
+ arch/arm/boot/dts/r8a7792-blanche.dts |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
++++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -159,6 +159,23 @@
+ 		};
+ 	};
+ 
++	leds {
++		compatible = "gpio-leds";
++
++		led17 {
++			gpios = <&gpio10 10 GPIO_ACTIVE_HIGH>;
++		};
++		led18 {
++			gpios = <&gpio10 11 GPIO_ACTIVE_HIGH>;
++		};
++		led19 {
++			gpios = <&gpio10 12 GPIO_ACTIVE_HIGH>;
++		};
++		led20 {
++			gpios = <&gpio10 23 GPIO_ACTIVE_HIGH>;
++		};
++	};
++
+ 	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
+ 
