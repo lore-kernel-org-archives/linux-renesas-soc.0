@@ -1,39 +1,52 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1472021362-8085-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <kishon@ti.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/2] phy: rcar-gen3-usb2: Add a compatible string for r8a7796
+Date: Wed, 24 Aug 2016 15:49:22 +0900
+Message-ID: <1472021362-8085-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1472021362-8085-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1472021362-8085-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1472021362-8085-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 25 Aug 2016 10:23:29 +0200
-Message-ID: <CAMuHMdW6a_eivVCK7xBfjPvh1vt66pEqXOgBzxUjVmaYSd3cRQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] phy: rcar-gen3-usb2: Add a compatible string for r8a7796
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 24, 2016 at 8:49 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> This driver can support for r8a7796 SoC. So, this patch adds it.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This driver can support for r8a7796 SoC. So, this patch adds it.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 2 ++
+ drivers/phy/phy-rcar-gen3-usb2.c                             | 1 +
+ 2 files changed, 3 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+index b54fb36..ace9cce 100644
+--- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
++++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+@@ -6,6 +6,8 @@ This file provides information on what the device node for the R-Car generation
+ Required properties:
+ - compatible: "renesas,usb2-phy-r8a7795" if the device is a part of an R8A7795
+ 	      SoC.
++	      "renesas,usb2-phy-r8a7796" if the device is a part of an R8A7796
++	      SoC.
+ 	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3 compatible device.
+ 
+ 	      When compatible with the generic version, nodes must list the
+diff --git a/drivers/phy/phy-rcar-gen3-usb2.c b/drivers/phy/phy-rcar-gen3-usb2.c
+index 31156c9..3d97ead 100644
+--- a/drivers/phy/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/phy-rcar-gen3-usb2.c
+@@ -280,6 +280,7 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
+ 
+ static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
+ 	{ .compatible = "renesas,usb2-phy-r8a7795" },
++	{ .compatible = "renesas,usb2-phy-r8a7796" },
+ 	{ .compatible = "renesas,rcar-gen3-usb2-phy" },
+ 	{ }
+ };
+-- 
+1.9.1
