@@ -1,78 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:5401 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751691AbcHZUCJ (ORCPT
+Received: from sauhun.de ([89.238.76.85]:39573 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753030AbcHXJf3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Aug 2016 16:02:09 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: sergei.shtylyov@cogentembedded.com,
-        "David S . Miller" <davem@davemloft.net>
-Cc: Chris Brandt <chris.brandt@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Daniel Palmer <daniel@0x0f.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] net: ethernet: renesas: sh_eth: do not access POST registers if not exist
-Date: Fri, 26 Aug 2016 16:01:07 -0400
-Message-Id: <20160826200107.20681-1-chris.brandt@renesas.com>
+        Wed, 24 Aug 2016 05:35:29 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 2/2] mmc: host: sh_mobile_sdhi: don't populate unneeded functions
+Date: Wed, 24 Aug 2016 11:34:38 +0200
+Message-Id: <20160824093438.2478-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20160824093438.2478-1-wsa+renesas@sang-engineering.com>
+References: <20160824093438.2478-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The RZ/A1 has a TSU, but since it only has one Ethernet port, it does not
-have POST registers. Therefore, if you try to write to register index
-TSU_POST1 (which will be FFFF because it does not exist), it will either
-panic or corrupt memory elsewhere.
+Populating card_busy caused a side-effect on a chip variant we don't
+have documentation for (r8a73a4). So, enable it and voltage switching
+only on devices known to support those features.
 
-Reported-by: Daniel Palmer <daniel@0x0f.com>
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/net/ethernet/renesas/sh_eth.c | 7 +++++++
- drivers/net/ethernet/renesas/sh_eth.h | 1 +
- 2 files changed, 8 insertions(+)
+ drivers/mmc/host/sh_mobile_sdhi.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 1f8240a..850a13c 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -532,6 +532,7 @@ static struct sh_eth_cpu_data r7s72100_data = {
- 	.no_ade		= 1,
- 	.hw_crc		= 1,
- 	.tsu		= 1,
-+	.tsu_no_post	= 1,
- 	.shift_rd0	= 1,
- };
- 
-@@ -2460,6 +2461,9 @@ static void sh_eth_tsu_enable_cam_entry_post(struct net_device *ndev,
- 	u32 tmp;
- 	void *reg_offset;
- 
-+	if (mdp->cd->tsu_no_post)
-+		return;
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index c4e63b7790d719..d679c8a533b6e5 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -376,8 +376,14 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+ 	host->clk_update	= sh_mobile_sdhi_clk_update;
+ 	host->clk_disable	= sh_mobile_sdhi_clk_disable;
+ 	host->multi_io_quirk	= sh_mobile_sdhi_multi_io_quirk;
+-	host->card_busy	= sh_mobile_sdhi_card_busy;
+-	host->start_signal_voltage_switch = sh_mobile_sdhi_start_signal_voltage_switch;
 +
- 	reg_offset = sh_eth_tsu_get_post_reg_offset(mdp, entry);
- 	tmp = ioread32(reg_offset);
- 	iowrite32(tmp | sh_eth_tsu_get_post_bit(mdp, entry), reg_offset);
-@@ -2472,6 +2476,9 @@ static bool sh_eth_tsu_disable_cam_entry_post(struct net_device *ndev,
- 	u32 post_mask, ref_mask, tmp;
- 	void *reg_offset;
++	/* SDR speeds are only available on Gen2+ */
++	if (mmc_data->flags & TMIO_MMC_MIN_RCAR2) {
++		/* card_busy caused issues on r8a73a4 (pre-Gen2) CD-less SDHI */
++		host->card_busy	= sh_mobile_sdhi_card_busy;
++		host->start_signal_voltage_switch =
++			sh_mobile_sdhi_start_signal_voltage_switch;
++	}
  
-+	if (mdp->cd->tsu_no_post)
-+		return false;
-+
- 	reg_offset = sh_eth_tsu_get_post_reg_offset(mdp, entry);
- 	post_mask = sh_eth_tsu_get_post_mask(entry);
- 	ref_mask = sh_eth_tsu_get_post_bit(mdp, entry) & ~post_mask;
-diff --git a/drivers/net/ethernet/renesas/sh_eth.h b/drivers/net/ethernet/renesas/sh_eth.h
-index d050f37..ae34f2e 100644
---- a/drivers/net/ethernet/renesas/sh_eth.h
-+++ b/drivers/net/ethernet/renesas/sh_eth.h
-@@ -484,6 +484,7 @@ struct sh_eth_cpu_data {
- 	unsigned tpauser:1;	/* EtherC have TPAUSER */
- 	unsigned bculr:1;	/* EtherC have BCULR */
- 	unsigned tsu:1;		/* EtherC have TSU */
-+	unsigned tsu_no_post:1;	/* EtherC have TSU, but no POST */
- 	unsigned hw_swap:1;	/* E-DMAC have DE bit in EDMR */
- 	unsigned rpadir:1;	/* E-DMAC have RPADIR */
- 	unsigned no_trimd:1;	/* E-DMAC DO NOT have TRIMD */
+ 	/* Orginally registers were 16 bit apart, could be 32 or 64 nowadays */
+ 	if (!host->bus_shift && resource_size(res) > 0x100) /* old way to determine the shift */
 -- 
-2.9.2
+2.9.3
