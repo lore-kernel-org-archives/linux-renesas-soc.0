@@ -1,42 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:36202 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753631AbcHYIq4 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:52718 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753073AbcHXHqp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Aug 2016 04:46:56 -0400
+        Wed, 24 Aug 2016 03:46:45 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] usb: renesas_usbhs: add a compatible string for r8a7796
+Date: Wed, 24 Aug 2016 16:39:53 +0900
+Message-ID: <1472024393-20956-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <1472024393-20956-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1472024393-20956-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 25 Aug 2016 10:32:32 +0200
-Message-ID: <CAMuHMdXRX+atXoYaOAC_hiZUtD4uvW2oh86YYuMSam7_BTYMaw@mail.gmail.com>
-Subject: Re: [PATCH] usb: renesas_usbhs: add a compatible string for r8a7796
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Felipe Balbi <balbi@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 24, 2016 at 9:39 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> This patch adds support for r8a7796 (R-Car M3-W).
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This patch adds support for r8a7796 (R-Car M3-W).
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ Documentation/devicetree/bindings/usb/renesas_usbhs.txt | 1 +
+ drivers/usb/renesas_usbhs/common.c                      | 4 ++++
+ 2 files changed, 5 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+index b604056..9e18e00 100644
+--- a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
++++ b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+@@ -9,6 +9,7 @@ Required properties:
+ 	- "renesas,usbhs-r8a7793" for r8a7793 (R-Car M2-N) compatible device
+ 	- "renesas,usbhs-r8a7794" for r8a7794 (R-Car E2) compatible device
+ 	- "renesas,usbhs-r8a7795" for r8a7795 (R-Car H3) compatible device
++	- "renesas,usbhs-r8a7796" for r8a7796 (R-Car M3-W) compatible device
+ 	- "renesas,rcar-gen2-usbhs" for R-Car Gen2 compatible device
+ 	- "renesas,rcar-gen3-usbhs" for R-Car Gen3 compatible device
+ 
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+index ac67bab..012a37a 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -482,6 +482,10 @@ static const struct of_device_id usbhs_of_match[] = {
+ 		.data = (void *)USBHS_TYPE_RCAR_GEN3,
+ 	},
+ 	{
++		.compatible = "renesas,usbhs-r8a7796",
++		.data = (void *)USBHS_TYPE_RCAR_GEN3,
++	},
++	{
+ 		.compatible = "renesas,rcar-gen2-usbhs",
+ 		.data = (void *)USBHS_TYPE_RCAR_GEN2,
+ 	},
+-- 
+1.9.1
