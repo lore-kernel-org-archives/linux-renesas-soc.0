@@ -1,48 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:35582 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752294AbcHaJtu (ORCPT
+Received: from sauhun.de ([89.238.76.85]:39569 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752974AbcHXJf3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 31 Aug 2016 05:49:50 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Wed, 24 Aug 2016 05:35:29 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] MAINTAINERS: Add section for Renesas clock drivers
-Date: Wed, 31 Aug 2016 11:49:30 +0200
-Message-Id: <1472636970-29817-1-git-send-email-geert+renesas@glider.be>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 1/2] mmc: host: sh_mobile_sdhi: move card_busy from tmio to sdhi
+Date: Wed, 24 Aug 2016 11:34:37 +0200
+Message-Id: <20160824093438.2478-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20160824093438.2478-1-wsa+renesas@sang-engineering.com>
+References: <20160824093438.2478-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a section for Renesas clock drivers, as found on Renesas ARM SoCs,
-and list myself as the maintainer.
+card_busy is only used/tested on SDHI for R-Car Gen2 and later.
+Move it to the SDHI driver, so we can then activate it conditionally
+depending on the SDHI type.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/mmc/host/sh_mobile_sdhi.c | 8 ++++++++
+ drivers/mmc/host/tmio_mmc.h       | 1 +
+ drivers/mmc/host/tmio_mmc_pio.c   | 9 +--------
+ 3 files changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e220af2344e6233b..cabe74e526d4d305 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9963,6 +9963,12 @@ F:	drivers/rpmsg/
- F:	Documentation/rpmsg.txt
- F:	include/linux/rpmsg.h
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index c3b651bf89cb4a..c4e63b7790d719 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -213,6 +213,13 @@ static void sh_mobile_sdhi_clk_disable(struct tmio_mmc_host *host)
+ 	clk_disable_unprepare(priv->clk);
+ }
  
-+RENESAS CLOCK DRIVERS
-+M:	Geert Uytterhoeven <geert+renesas@glider.be>
-+L:	linux-renesas-soc@vger.kernel.org
-+S:	Supported
-+F:	drivers/clk/renesas/
++static int sh_mobile_sdhi_card_busy(struct mmc_host *mmc)
++{
++	struct tmio_mmc_host *host = mmc_priv(mmc);
 +
- RENESAS ETHERNET DRIVERS
- R:	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
- L:	netdev@vger.kernel.org
++	return !(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) & TMIO_STAT_DAT0);
++}
++
+ static int sh_mobile_sdhi_start_signal_voltage_switch(struct mmc_host *mmc,
+ 						      struct mmc_ios *ios)
+ {
+@@ -369,6 +376,7 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+ 	host->clk_update	= sh_mobile_sdhi_clk_update;
+ 	host->clk_disable	= sh_mobile_sdhi_clk_disable;
+ 	host->multi_io_quirk	= sh_mobile_sdhi_multi_io_quirk;
++	host->card_busy	= sh_mobile_sdhi_card_busy;
+ 	host->start_signal_voltage_switch = sh_mobile_sdhi_start_signal_voltage_switch;
+ 
+ 	/* Orginally registers were 16 bit apart, could be 32 or 64 nowadays */
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 7f63ec05bdf41d..1f1cb2628f673b 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -158,6 +158,7 @@ struct tmio_mmc_host {
+ 	void (*clk_disable)(struct tmio_mmc_host *host);
+ 	int (*multi_io_quirk)(struct mmc_card *card,
+ 			      unsigned int direction, int blk_size);
++	int (*card_busy)(struct mmc_host *mmc);
+ 	int (*start_signal_voltage_switch)(struct mmc_host *mmc,
+ 					   struct mmc_ios *ios);
+ };
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index 92467efc4e2c9e..192817850dffac 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -960,20 +960,12 @@ static int tmio_multi_io_quirk(struct mmc_card *card,
+ 	return blk_size;
+ }
+ 
+-static int tmio_mmc_card_busy(struct mmc_host *mmc)
+-{
+-	struct tmio_mmc_host *host = mmc_priv(mmc);
+-
+-	return !(sd_ctrl_read16_and_16_as_32(host, CTL_STATUS) & TMIO_STAT_DAT0);
+-}
+-
+ static struct mmc_host_ops tmio_mmc_ops = {
+ 	.request	= tmio_mmc_request,
+ 	.set_ios	= tmio_mmc_set_ios,
+ 	.get_ro         = tmio_mmc_get_ro,
+ 	.get_cd		= mmc_gpio_get_cd,
+ 	.enable_sdio_irq = tmio_mmc_enable_sdio_irq,
+-	.card_busy	= tmio_mmc_card_busy,
+ 	.multi_io_quirk	= tmio_multi_io_quirk,
+ };
+ 
+@@ -1072,6 +1064,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
+ 		goto host_free;
+ 	}
+ 
++	tmio_mmc_ops.card_busy = _host->card_busy;
+ 	tmio_mmc_ops.start_signal_voltage_switch = _host->start_signal_voltage_switch;
+ 	mmc->ops = &tmio_mmc_ops;
+ 
 -- 
-1.9.1
+2.9.3
