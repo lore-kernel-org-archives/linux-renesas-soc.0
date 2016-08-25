@@ -1,78 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:40587 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932231AbcHJSCT (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 10 Aug 2016 14:02:19 -0400
-Date: Wed, 10 Aug 2016 15:10:32 +0200
+Received: from sauhun.de ([89.238.76.85]:46195 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1759948AbcHYQuN (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 25 Aug 2016 12:50:13 -0400
+Date: Thu, 25 Aug 2016 18:50:10 +0200
 From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] mmc: tmio: Add tuning support
-Message-ID: <20160810131032.GA1741@katana>
-References: <1469592803-13842-1-git-send-email-horms+renesas@verge.net.au>
- <1469592803-13842-3-git-send-email-horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Subject: Re: [PATCH 1/2] i2c: sh_mobile: use proper device with
+ dma_mapping_error
+Message-ID: <20160825165010.GK2856@katana>
+References: <20160824091929.2082-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="opg8F0UgoHELSI+9"
 Content-Disposition: inline
-In-Reply-To: <1469592803-13842-3-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <20160824091929.2082-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-> +static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
-> +{
-> +	struct tmio_mmc_host *host = mmc_priv(mmc);
-> +	unsigned int num;
-> +	int i, ret = 0;
-> +	bool *tap;
-> +
-> +	if (!host->init_tuning || !host->select_tuning)
 
-Check host->prepare_tuning, too?
+--opg8F0UgoHELSI+9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +		/* Tuning is not supported */
-> +		goto out;
-> +
-> +	num = host->init_tuning(host);
-> +	if (!num)
-> +		/* Tuning is not supported */
-> +		goto out;
-> +
-> +	tap = kmalloc(num * 2 * sizeof(*tap), GFP_KERNEL);
-> +	if (!tap) {
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	/* Issue CMD19 twice for each tap */
-> +	for (i = 0; i < 2 * num; i++) {
-> +		if (host->prepare_tuning)
-> +			host->prepare_tuning(host, i % num);
-> +
-> +		ret = mmc_send_tuning(mmc, opcode, NULL);
-> +		if (ret && ret != -EILSEQ)
-> +			goto err_free;
-> +		tap[i] = (ret != 0);
-> +
-> +		mdelay(1);
-> +	}
-> +
-> +	ret = host->select_tuning(host, tap, num * 2);
-> +
-> +err_free:
-> +	kfree(tap);
-> +out:
-> +	if (ret < 0) {
-> +		dev_warn(&host->pdev->dev, "Tuning procedure failed\n");
-> +		tmio_mmc_hw_reset(mmc);
-> +	} else {
-> +		host->mmc->retune_period = 0;
-> +	}
-> +
-> +	return ret;
-> +
+On Wed, Aug 24, 2016 at 11:19:28AM +0200, Wolfram Sang wrote:
+> We must use the same device we used for mapping.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Unnecessary blank line
+Applied to for-current, thanks!
+
+
+--opg8F0UgoHELSI+9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXvyHCAAoJEBQN5MwUoCm252MP/3q0CT5M/vHonZ0qpqb/qCq5
+eo9Al6J1KmybnyC0Xau3Vr3HztY/0MhpJN+pAtxvTjglQ8pKxTQT9AjEhJayBwLl
+Gk/065Ix+JHpmdEusfzBntceF4xx2wad9u5YpgnWh87YrUrz/h1w4/FhjMqa5ZPY
+zjkcsQIIM7zB/1FuAmGFMwe8aAGSHGj9MCwkm7tPGBEsFvGlEdJzxzDbiCwXm3LT
+pfm6I984loxBj3FiHR+8vG1N+6K6gRchqRxlTkK3llD1T+vNdQLH5PKLSxA/PPJy
+cXZbtS03CqQS3GtyR7caJ3txWpsW2uOyFQrVuOCMpL+yy5cvvpwlQg0UJIQvxWfm
+CKWjY7gvHUjSr+qW8XYD2k0/FeoJy3bWkymhw92mTKcIExRaz3b1gdyGhgal+KPO
+qcjp4bpXWQHJWMOog8yTTAM+XanLfQxP7KKGdM328YcLzGA22UKnCpW25167j3oW
+7znyZ5vJDLTjb6HhnNG44xtB4U9Nc10bZoisQS++e8MlwKwb2yKF8unhR+8m25a3
+iSMmqGI5Wea9CnLFaAhJINCpb/+/xINe4Mdmtak8fqyxWz0uMbBV7TZxCXsAvizh
+1gOgiatt/fI0Il/jiZyQvWeaqqJNCB423zadluN2DO0PUk/cuYMEbaRFKYRUoo8s
+N+zhEInIHdyLYmIJooLc
+=Ce4l
+-----END PGP SIGNATURE-----
+
+--opg8F0UgoHELSI+9--
