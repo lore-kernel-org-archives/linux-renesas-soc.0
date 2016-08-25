@@ -1,69 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33465 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753487AbcHWHuB (ORCPT
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:38700 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933693AbcHYKIk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 Aug 2016 03:50:01 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFT v2 2/8] clk: renesas: r8a7796: Add SDIF clocks
-Date: Tue, 23 Aug 2016 09:49:44 +0200
-Message-Id: <1471938590-10650-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
-References: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
+        Thu, 25 Aug 2016 06:08:40 -0400
+Received: by mail-wm0-f47.google.com with SMTP id o80so63770253wme.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 25 Aug 2016 03:08:39 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20160824093438.2478-1-wsa+renesas@sang-engineering.com>
+References: <20160824093438.2478-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 25 Aug 2016 12:02:22 +0200
+Message-ID: <CAPDyKFpOEE_LX=9rNffvXeS8yx8FGiLvuRGtk4nYtPNDEaG_dQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] mmc: sh_mobile_sdhi: use SDR & card_busy only on Gen2+
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds SDIF clocks for R8A7796 SoC.
+On 24 August 2016 at 11:34, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> This series hopefully fixes a performance regression for r8a73a4 (pre Gen2)
+> caused by a not working card_busy. Because we don't have documentation for its
+> SDHI (and I don't have the hardware), just enable card_busy and SDR only for
+> machines known to have hardware support for it.
+>
+> Geert, can you test, please?
+>
+> Wolfram Sang (2):
+>   mmc: host: sh_mobile_sdhi: move card_busy from tmio to sdhi
+>   mmc: host: sh_mobile_sdhi: don't populate unneeded functions
+>
+>  drivers/mmc/host/sh_mobile_sdhi.c | 16 +++++++++++++++-
+>  drivers/mmc/host/tmio_mmc.h       |  1 +
+>  drivers/mmc/host/tmio_mmc_pio.c   |  9 +--------
+>  3 files changed, 17 insertions(+), 9 deletions(-)
+>
 
-Based on work by Ai Kyuse and Yoshihiro Shimoda for the r8a7795 SoC.
+Thanks, applied for next!
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2
-* Add and use SDSRC
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 999955c2b23e..891b353e8105 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -70,6 +70,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- 	DEF_FIXED(".s1",        CLK_S1,            CLK_PLL1_DIV2,  3, 1),
- 	DEF_FIXED(".s2",        CLK_S2,            CLK_PLL1_DIV2,  4, 1),
- 	DEF_FIXED(".s3",        CLK_S3,            CLK_PLL1_DIV2,  6, 1),
-+	DEF_FIXED(".sdsrc",     CLK_SDSRC,         CLK_PLL1_DIV2,  2, 1),
- 
- 	/* Core Clock Outputs */
- 	DEF_FIXED("ztr",        R8A7796_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
-@@ -93,6 +94,11 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- 	DEF_FIXED("s3d2",       R8A7796_CLK_S3D2,  CLK_S3,         2, 1),
- 	DEF_FIXED("s3d4",       R8A7796_CLK_S3D4,  CLK_S3,         4, 1),
- 
-+	DEF_GEN3_SD("sd0",      R8A7796_CLK_SD0,   CLK_SDSRC,    0x0074),
-+	DEF_GEN3_SD("sd1",      R8A7796_CLK_SD1,   CLK_SDSRC,    0x0078),
-+	DEF_GEN3_SD("sd2",      R8A7796_CLK_SD2,   CLK_SDSRC,    0x0268),
-+	DEF_GEN3_SD("sd3",      R8A7796_CLK_SD3,   CLK_SDSRC,    0x026c),
-+
- 	DEF_FIXED("cl",         R8A7796_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
- 	DEF_FIXED("cp",         R8A7796_CLK_CP,    CLK_EXTAL,      2, 1),
- 
-@@ -104,6 +110,10 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- 
- static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
- 	DEF_MOD("scif2",		 310,	R8A7796_CLK_S3D4),
-+	DEF_MOD("sdif3",		 311,	R8A7796_CLK_SD3),
-+	DEF_MOD("sdif2",		 312,	R8A7796_CLK_SD2),
-+	DEF_MOD("sdif1",		 313,	R8A7796_CLK_SD1),
-+	DEF_MOD("sdif0",		 314,	R8A7796_CLK_SD0),
- 	DEF_MOD("rwdt0",		 402,	R8A7796_CLK_R),
- 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
- 	DEF_MOD("gpio7",		 905,	R8A7796_CLK_S3D4),
--- 
-2.7.0.rc3.207.g0ac5344
+Kind regards
+Uffe
