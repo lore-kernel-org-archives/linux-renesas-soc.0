@@ -1,29 +1,39 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 29 Aug 2016 10:52:54 -0500
-From: Rob Herring <robh@kernel.org>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: kishon@ti.com, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/2] phy: rcar-gen3-usb2: Add a compatible string for
- r8a7796
-Message-ID: <20160829155254.GA30187@rob-hp-laptop>
+MIME-Version: 1.0
+In-Reply-To: <1472021362-8085-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1472021362-8085-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
  <1472021362-8085-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1472021362-8085-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 25 Aug 2016 10:23:29 +0200
+Message-ID: <CAMuHMdW6a_eivVCK7xBfjPvh1vt66pEqXOgBzxUjVmaYSd3cRQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] phy: rcar-gen3-usb2: Add a compatible string for r8a7796
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 24, 2016 at 03:49:22PM +0900, Yoshihiro Shimoda wrote:
+On Wed, Aug 24, 2016 at 8:49 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
 > This driver can support for r8a7796 SoC. So, this patch adds it.
-> 
+>
 > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 2 ++
->  drivers/phy/phy-rcar-gen3-usb2.c                             | 1 +
->  2 files changed, 3 insertions(+)
 
-Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
