@@ -1,86 +1,83 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:61293 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752585AbcHRHfE (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 18 Aug 2016 03:35:04 -0400
-From: Felipe Balbi <balbi@kernel.org>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH/RFC 0/4] usb: gadget: add a new quirk to avoid skb_reserve in u_ether.c
-In-Reply-To: <1467880362-4844-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1467880362-4844-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Date: Thu, 18 Aug 2016 10:34:31 +0300
-Message-ID: <87a8ga5y48.fsf@linux.intel.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: Question about dma-ranges property for PCI host controllers
+Date: Thu, 25 Aug 2016 18:03:07 +0200
+Message-ID: <3869406.UKMxvRzqOg@wuerfel>
+In-Reply-To: <HK2PR0601MB1393EA9F8117F8EC5A1E6520F51F0@HK2PR0601MB1393.apcprd06.prod.outlook.com>
+References: <HK2PR0601MB1393CA771AB65556D4E2F0B9F51E0@HK2PR0601MB1393.apcprd06.prod.outlook.com> <2867793.PfGZpZFyEJ@wuerfel> <HK2PR0601MB1393EA9F8117F8EC5A1E6520F51F0@HK2PR0601MB1393.apcprd06.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Friday, August 12, 2016 9:43:44 AM CEST Phil Edworthy wrote:
+> On 11 August 2016 16:09 Arnd Bergmann wrote:
 
+> > In the past, we have said that the dma-ranges property should reflect
+> > the address space that is used when programming the bridge registers
+> > in the PCI host bridge itself.
+> > 
+> > I think we have also made the assumption that a PCI host bridge
+> > with an IOMMU uses a flat 32-bit DMA address space that goes through
+> > the IOMMU (possibly a separate address space per PCI function,
+> > depending on the type of IOMMU).
+> I saw Robin Murphy's patches for PCI IOMMU map bindings, though at the
+> moment to get things going I'm ignoring it because it will require quite a lot
+> of changes to the iommu/ipmmu-vmsa driver. Other IOMMU drivers will
+> also have to change a fair bit to support this new binding.
 
-Yoshihiro-san,
+Ok
 
-Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com> writes:
-> This patch set is based on the latest Felipe's usb.git / testing/next bra=
-nch.
-> (commit id =3D 15e4292a2d21e9997fdb2b8c014cc461b3f268f0)
->
-> This patch set also needs an additional patch (like the end of this email)
-> to fix the renesas_usbhs driver for R-Car Gen3.
-> (I will submit this patch after v4.8-rc1 was released.)
->
-> I'm not sure this is a correct way or not. So, I added "RFC" in this patc=
-h set.
-> About the detail of this patch set, please refer to the commit log of
-> first patch ("usb: gadget: add a new quirk to avoid skb_reserve in u_ethe=
-r.c").
->
-> Yoshihiro Shimoda (4):
->   usb: gadget: add a new quirk to avoid skb_reserve in u_ether.c
->   usb: gadget: u_ether: add a flag to avoid skb_reserve() calling
->   usb: gadget: f_ncm: add support for no_skb_reserve
->   usb: renesas_usbhs: set quirk_avoids_skb_reserve if USB-DMAC is used
->
->  drivers/usb/gadget/function/f_ncm.c    |  2 ++
->  drivers/usb/gadget/function/u_ether.c  |  5 ++++-
->  drivers/usb/gadget/function/u_ether.h  |  1 +
->  drivers/usb/renesas_usbhs/mod_gadget.c |  2 ++
->  include/linux/usb/gadget.h             | 13 +++++++++++++
->  5 files changed, 22 insertions(+), 1 deletion(-)
+> > One corner case that doesn't really fit in that model is a PCI host
+> > bridge that requires the bridge register to be programmed in a special
+> > way for the IOMMU to work (e.g. away from the RAM to the address that
+> > is routed to the IOMMU).
+> In our case, there is nothing special in programming the bridge registers
+> for use with an IOMMU other than the range of addresses that is exposed.
+> The PCI host has a HW limitation that the AXI bus addresses must be
+> 32-bit. The HW will allow you to set up the bridge registers so that PCI
+> bus addresses above 32-bits are mapped into the 32-bit AXI space. This
+> isn't used though at the moment, the PCI:AXI mapping is simply 1:1.
+> 
+> Simply changing the dma-ranges prop to specify all of the 32-bit range is
+> enough to get it to work with the IOMMU.
 
-It has been over a month since you sent this series and nobody said
-anything. Can you resend without RFC so I can apply?
+That is the problem I was referring to above: the dma-ranges property
+contents depend on whether the IOMMU is used or not, and that
+is not something you know in the DT, because it depends on the OS.
 
-Thank you
+> Without IOMMU, the dma-ranges prop was:
+> dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x40000000>;
 
-=2D-=20
-balbi
+Ok, so you map the second 1GB of PCI space into the second 1GB of AXI
+space, which presumably is also the first 1GB of the physical RAM
+at CPU address 0x00000000, correct?
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+> Note that this does not cover all of DDR, as there is 3GiB above the 32-bit
+> address space. Other restrictions in the way the bridge registers are
+> programmed mean we cannot even map all DDR in the 32-bit space.
+> 
+> With the IOMMU, the dma-ranges prop is simply:
+> dma-ranges = <0x42000000 0 0x00000000 0 0x00000000 1 0x00000000>;
 
------BEGIN PGP SIGNATURE-----
+Does this mean the IOMMU virtual address space covers the entire 4GB
+of low addresses, or is it a subset of that space, e.g. the first
+1GB, below where the PCI bus sees the RAM?
 
-iQIcBAEBCAAGBQJXtWUHAAoJEIaOsuA1yqREhaoP/iQPuyFNev2BIQc/li9Mt1y4
-za6dhpCqqZbl38isERyXQsPrVYYhadJCbFoGIL2Qzh/xouMGfhqt4dOp5Gqv17LI
-uR3qTByn0Y0TofH+UdCd1Kb4yXOkgdQImNobk4OSkY7snL6vTnhofyXBB0vBljVq
-WEhBke0nbVck4eucFp8DtaFa+qB0IKAPrd8jke39arR1bU2gXDQHdCFT1H9w36QQ
-nPOOcSGZu4c+IiaqdXmPY45FphlXKS0gx3SePe8m8M3I9eB65XPSedXKDYVZg/tf
-bCNQgCWouSwQFOWU2gnYYdlvJwOzANvxLXFWQDGcIKldZiNfAndo+oWfVgJ3WnH8
-c5FF8ojC4o8jfuNhOwkMjUzEUtnCaLtv3wHCLmq6m6F35TENt0UyQtXMX20Q9EDg
-k9IIPMiyg9XXj7xDpIbudcl88u/bIqmeZH7gZKC7RZiNzF+WTXZHt3jSATbuNk4F
-EAvigQePAOnuyoOr1Xv5g2+59mD7rIMQjNeNF1RXQr9SCY4iOHxyWpQtL9Qn9zKF
-KEGRp7hNgP0VVJzZNveJk+/APTWKZHH/ceqkYrX0JJ94Zzkz3xSDOwr0cP0mhirn
-vQKSIFvXLkjy64HxvBbrK1m48Yak4q6X9wktXMptnN69BVzjDQUG0IaCQOZLbSDk
-IxswNt1mTsqXXD3Px9Z4
-=A6yJ
------END PGP SIGNATURE-----
---=-=-=--
+> > Another tricky case is a PCI host that uses the IOMMU only for 32-bit
+> > DMA masters but that does have a dma-ranges property that can be
+> > used for direct mapping of all RAM through a nonzero offset that
+> > gets set up according to dma-ranges.
+> I don't think that applies, though I'm struggling a bit to understand your
+> comment.
+
+It doesn't apply since the 32-bit limitation you see is part of the
+PCI host bridge, not a limitation of some PCI devices.
+
+	Arnd
