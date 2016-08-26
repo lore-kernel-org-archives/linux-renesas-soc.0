@@ -1,16 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:36654 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754759AbcH0VsP (ORCPT
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:34459 "EHLO
+        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752354AbcHZWsT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 27 Aug 2016 17:48:15 -0400
-Received: by mail-lf0-f52.google.com with SMTP id g62so78058730lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 27 Aug 2016 14:48:14 -0700 (PDT)
+        Fri, 26 Aug 2016 18:48:19 -0400
+Received: by mail-lf0-f48.google.com with SMTP id l89so66127330lfi.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Aug 2016 15:48:19 -0700 (PDT)
 Subject: Re: [PATCH] ravb: avoid unused function warnings
 To: Arnd Bergmann <arnd@arndb.de>,
         "David S. Miller" <davem@davemloft.net>
 References: <20160826153108.680850-1-arnd@arndb.de>
- <d26d8354-3ea3-29b0-d40c-253dd023e1e9@cogentembedded.com>
 Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>,
         Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
@@ -19,10 +18,10 @@ Cc: Yoshihiro Kaneko <ykaneko0929@gmail.com>,
         <niklas.soderlund+renesas@ragnatech.se>, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <31a6f978-0bb7-df20-ea81-2fc32c94b855@cogentembedded.com>
-Date: Sun, 28 Aug 2016 00:48:10 +0300
+Message-ID: <d26d8354-3ea3-29b0-d40c-253dd023e1e9@cogentembedded.com>
+Date: Sat, 27 Aug 2016 01:48:15 +0300
 MIME-Version: 1.0
-In-Reply-To: <d26d8354-3ea3-29b0-d40c-253dd023e1e9@cogentembedded.com>
+In-Reply-To: <20160826153108.680850-1-arnd@arndb.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -30,56 +29,50 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hello.
 
-On 08/27/2016 01:48 AM, Sergei Shtylyov wrote:
+On 08/26/2016 06:30 PM, Arnd Bergmann wrote:
 
->> When CONFIG_PM_SLEEP is disabled, we get a couple of harmless warnings:
->>
->> drivers/net/ethernet/renesas/ravb_main.c:2117:12: error: 'ravb_resume'
->> defined but not used [-Werror=unused-function]
->> drivers/net/ethernet/renesas/ravb_main.c:2104:12: error: 'ravb_suspend'
->> defined but not used [-Werror=unused-function]
->>
->> The simplest solution here is to replace the #ifdef with __maybe_unused
->> annotations, which lets the compiler do the right thing by itself.
->>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> Fixes: 0184165b2f42 ("ravb: add sleep PM suspend/resume support")
+> When CONFIG_PM_SLEEP is disabled, we get a couple of harmless warnings:
 >
->    That was the patch I didn't review, sorry about that...
+> drivers/net/ethernet/renesas/ravb_main.c:2117:12: error: 'ravb_resume' defined but not used [-Werror=unused-function]
+> drivers/net/ethernet/renesas/ravb_main.c:2104:12: error: 'ravb_suspend' defined but not used [-Werror=unused-function]
 >
->> ---
->>  drivers/net/ethernet/renesas/ravb_main.c | 14 ++++----------
->>  1 file changed, 4 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/renesas/ravb_main.c
->> b/drivers/net/ethernet/renesas/ravb_main.c
->> index cad23ba06904..630536bc72f9 100644
->> --- a/drivers/net/ethernet/renesas/ravb_main.c
->> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> [...]
->> @@ -2166,17 +2165,12 @@ static const struct dev_pm_ops ravb_dev_pm_ops = {
->>      SET_RUNTIME_PM_OPS(ravb_runtime_nop, ravb_runtime_nop, NULL)
->>  };
->>
->> -#define RAVB_PM_OPS (&ravb_dev_pm_ops)
->> -#else
->> -#define RAVB_PM_OPS NULL
->> -#endif
->> -
->>  static struct platform_driver ravb_driver = {
->>      .probe        = ravb_probe,
->>      .remove        = ravb_remove,
->>      .driver = {
->>          .name    = "ravb",
->> -        .pm    = RAVB_PM_OPS,
->> +        .pm    = &ravb_dev_pm_ops,
+> The simplest solution here is to replace the #ifdef with __maybe_unused
+> annotations, which lets the compiler do the right thing by itself.
 >
->    I guess it's safe to have this pointing to the 'struct dev_pm_ops' filled
-> with NULLs? Looking at the PM code left me somewhat unsure...
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 0184165b2f42 ("ravb: add sleep PM suspend/resume support")
 
-    Well, this means CONFIG_PM[_SLEEP] not defined anyway and the PM code 
-calling the methods absent, so it should be safe indeed...
+    That was the patch I didn't review, sorry about that...
 
-Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> ---
+>  drivers/net/ethernet/renesas/ravb_main.c | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index cad23ba06904..630536bc72f9 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+[...]
+> @@ -2166,17 +2165,12 @@ static const struct dev_pm_ops ravb_dev_pm_ops = {
+>  	SET_RUNTIME_PM_OPS(ravb_runtime_nop, ravb_runtime_nop, NULL)
+>  };
+>
+> -#define RAVB_PM_OPS (&ravb_dev_pm_ops)
+> -#else
+> -#define RAVB_PM_OPS NULL
+> -#endif
+> -
+>  static struct platform_driver ravb_driver = {
+>  	.probe		= ravb_probe,
+>  	.remove		= ravb_remove,
+>  	.driver = {
+>  		.name	= "ravb",
+> -		.pm	= RAVB_PM_OPS,
+> +		.pm	= &ravb_dev_pm_ops,
+
+    I guess it's safe to have this pointing to the 'struct dev_pm_ops' filled 
+with NULLs? Looking at the PM code left me somewhat unsure...
+
+[...]
 
 MBR, Sergei
