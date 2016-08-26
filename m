@@ -1,45 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:35985 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750828AbcH2H5M (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:34607 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751645AbcHZU1p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Aug 2016 03:57:12 -0400
+        Fri, 26 Aug 2016 16:27:45 -0400
+Received: by mail-lf0-f45.google.com with SMTP id l89so64354224lfi.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Aug 2016 13:27:44 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com
+Subject: [PATCH 1/3] DT: arm: shmobile: document Wheat board
+Date: Fri, 26 Aug 2016 23:20:05 +0300
+Message-ID: <81794087.EqU2I9TLcp@wasted.cogentembedded.com>
+In-Reply-To: <3665116.9BjHTnhfR3@wasted.cogentembedded.com>
+References: <3665116.9BjHTnhfR3@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <81794087.EqU2I9TLcp@wasted.cogentembedded.com>
-References: <3665116.9BjHTnhfR3@wasted.cogentembedded.com> <81794087.EqU2I9TLcp@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 29 Aug 2016 09:57:11 +0200
-Message-ID: <CAMuHMdUiF9R7eiuQ=aFRPXA01JRG1aY3YUZsMMiKwt0ghypS+Q@mail.gmail.com>
-Subject: Re: [PATCH 1/3] DT: arm: shmobile: document Wheat board
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Aug 26, 2016 at 10:20 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Document the Wheat device tree bindings, listing it as a supported board.
->
-> This allows to use checkpatch.pl to validate .dts files referring to the
-> Wheat board.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Document the Wheat device tree bindings, listing it as a supported board.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This allows to use checkpatch.pl to validate .dts files referring to the
+Wheat board.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-                        Geert
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
+ 1 file changed, 2 insertions(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas/Documentation/devicetree/bindings/arm/shmobile.txt
+===================================================================
+--- renesas.orig/Documentation/devicetree/bindings/arm/shmobile.txt
++++ renesas/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -69,3 +69,5 @@ Boards:
+     compatible = "renesas,salvator-x", "renesas,r8a7796";
+   - SILK (RTP0RC7794LCB00011S)
+     compatible = "renesas,silk", "renesas,r8a7794"
++  - Wheat
++    compatible = "renesas,wheat", "renesas,r8a7792"
