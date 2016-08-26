@@ -1,88 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:40557 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755412AbcH3PDV (ORCPT
+Received: from www1246.sakura.ne.jp ([219.94.162.56]:64960 "EHLO
+        www1246.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750712AbcHZIbN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Aug 2016 11:03:21 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2] watchdog: softdog: implement pretimeout support
-Date: Tue, 30 Aug 2016 17:03:06 +0200
-Message-Id: <20160830150306.2254-1-wsa@the-dreams.de>
+        Fri, 26 Aug 2016 04:31:13 -0400
+Message-ID: <57BFF3A3.8070809@jinso.co.jp>
+Date: Fri, 26 Aug 2016 16:45:39 +0900
+From: Hiep Cao Minh <cm-hiep@jinso.co.jp>
+MIME-Version: 1.0
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Sakato Ryusuke <ryusuke.sakato.bx@renesas.com>,
+        kuninori morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Nguyen Viet Dung <nv-dung@jinso.co.jp>
+Subject: Re: R-Car Gen2 QSPI driver performance
+References: <57BF944F.8000501@jinso.co.jp> <CAMuHMdVUcEF31sWOxLU-=JDjjTM4S+0jkw_aSZWq6Yfco4TWbA@mail.gmail.com>
+In-Reply-To: <CAMuHMdVUcEF31sWOxLU-=JDjjTM4S+0jkw_aSZWq6Yfco4TWbA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Geert,
 
-Give devices which do not have hardware support for pretimeout at least a
-software version of it.
+Thanks for your quick reply!
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
 
-Change since v1: added 'else' block in softdog_ping(), to actually
-disable the timer when pretimeout value got cleared.
+> On Fri, Aug 26, 2016 at 2:58 AM, Hiep Cao Minh <cm-hiep@jinso.co.jp> wrote:
+>> I'd like to ask you about R-Car Gen2 QSPI driver performance test of single,
+>> dual and quad.
+>>
+>> ------
+>> commit 4f12b5e529e4ff274eb478ec1c2ef41358ed9577
+>> Author: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Date:   Mon Jun 2 15:38:17 2014 +0200
+>>
+>>       spi: rspi: Add DMA support for QSPI on R-Car Gen2
+>>
+>>       Enable DMA support for QSPI on R-Car Gen2, for Single, Dual, and Quad
+>> SPI
+>>       Transfers.
+>>
+>>       Performance figures for reading from a QSPI FLASH driven at 24.375 MHz
+>>       on r8a7791/koelsch:
+>>         - Single:  1.1 Mbps PIO, 23 Mbps DMA
+>>         - Dual  : 12.7 Mbps PIO, 48 Mbps DMA
+>>         - Quad  : 13   Mbps PIO, 70 Mbps DMA
+>> ------
+>> Could you show me how to test these performances?
+> As I wanted to measure raw SPI performance, and not overhead (block
+> device, file system, ...) or other impact (buffer cache!), I used a patch like
+> the (whitespace-damaged) one at the end of this email, and:
+>
+>      dd if=/dev/mtd2 bs=4M count=1 of=/dev/null
+>
+> Using a sufficiently large buffer size is recommended for good performance.
+> All of this was done in r8a7791/koelsch.
+>
+Thanks, I'll try to reproduce them as you showed me.
 
-Depends on the V4 pretimeout series from Vladimir.
+>> I have tried to reproduce them but I only got the results like this:
+>>
+>> Enabled DMA:
+>> Linux stable v4.7
+>>       Quad-spi： Read 3.2 MB/s Write 601 kB/s
+>>       Dual-spi： Read 3.1 MB/s Write 847 kB/s
+>>       Single-spi： Read 2.5 MB/s Write 850 kB/s
+>>
+>> PIO:
+>> RcarGen2_BSP linux_v3.10.101-ltsi
+>>       Quad-spi： Read 2.2 MB/s Write 1.1 MB/s
+>>       Dual-spi： Read 2.1 MB/s Write 158 kB/s
+>>       Single-spi： Read 173 kB/s Write 159 kB/s
+> Note that some of these are even faster than mine, probably due to
+> caching...
+Oh!, thank you pointed it out.
+And we also wonder why the reading speed in quad and dual mode are most 
+the same?.
+(I mean they are not different very much.)
+v4.7: Read 3.2 MB/s(Quad) and 3.1 MB/s(Dual),
+And in your test results: 12.7 Mbps, 13 Mbps in PIO mode.
 
-Vladimir: Maybe you could add this patch to the next revision of your
-pretimeout series? Then people have something to play around with
-right away.
-
- drivers/watchdog/softdog.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/watchdog/softdog.c b/drivers/watchdog/softdog.c
-index b067edf246dff2..bab31b8df847a5 100644
---- a/drivers/watchdog/softdog.c
-+++ b/drivers/watchdog/softdog.c
-@@ -72,10 +72,27 @@ static void softdog_fire(unsigned long data)
- static struct timer_list softdog_ticktock =
- 		TIMER_INITIALIZER(softdog_fire, 0, 0);
- 
-+static struct watchdog_device softdog_dev;
-+
-+static void softdog_pretimeout(unsigned long data)
-+{
-+	watchdog_notify_pretimeout(&softdog_dev);
-+}
-+
-+static struct timer_list softdog_preticktock =
-+		TIMER_INITIALIZER(softdog_pretimeout, 0, 0);
-+
- static int softdog_ping(struct watchdog_device *w)
- {
- 	if (!mod_timer(&softdog_ticktock, jiffies + (w->timeout * HZ)))
- 		__module_get(THIS_MODULE);
-+
-+	if (w->pretimeout)
-+		mod_timer(&softdog_preticktock, jiffies +
-+		          (w->timeout - w->pretimeout) * HZ);
-+	else
-+		del_timer(&softdog_preticktock);
-+
- 	return 0;
- }
- 
-@@ -84,12 +101,15 @@ static int softdog_stop(struct watchdog_device *w)
- 	if (del_timer(&softdog_ticktock))
- 		module_put(THIS_MODULE);
- 
-+	del_timer(&softdog_preticktock);
-+
- 	return 0;
- }
- 
- static struct watchdog_info softdog_info = {
- 	.identity = "Software Watchdog",
--	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
-+	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE |
-+		   WDIOF_PRETIMEOUT,
- };
- 
- static struct watchdog_ops softdog_ops = {
--- 
-2.9.3
+Regards,
+Jinso/Hiep.
