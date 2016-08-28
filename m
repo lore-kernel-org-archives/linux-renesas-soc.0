@@ -1,79 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:24755 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1757200AbcH2OmH (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:34596 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755718AbcH1SbF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Aug 2016 10:42:07 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S . Miller" <davem@davemloft.net>
-CC: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Daniel Palmer <daniel@0x0f.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] net: ethernet: renesas: sh_eth: do not access POST
+        Sun, 28 Aug 2016 14:31:05 -0400
+Received: by mail-lf0-f52.google.com with SMTP id l89so87296304lfi.1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 28 Aug 2016 11:31:04 -0700 (PDT)
+Subject: Re: [PATCH] net: ethernet: renesas: sh_eth: do not access POST
  registers if not exist
-Date: Mon, 29 Aug 2016 14:41:18 +0000
-Message-ID: <SG2PR06MB11653F9E20F38972CA11EF328AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
+To: Chris Brandt <chris.brandt@renesas.com>,
+        "David S . Miller" <davem@davemloft.net>
 References: <20160826200107.20681-1-chris.brandt@renesas.com>
- <87690577-4526-ce66-6ce3-68ac8b20e737@cogentembedded.com>
-In-Reply-To: <87690577-4526-ce66-6ce3-68ac8b20e737@cogentembedded.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Daniel Palmer <daniel@0x0f.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <9f2fd410-f521-4ae1-92ed-572aa84cee46@cogentembedded.com>
+Date: Sun, 28 Aug 2016 21:31:01 +0300
 MIME-Version: 1.0
+In-Reply-To: <20160826200107.20681-1-chris.brandt@renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gMDgvMjgvMjAxNiwgU2VyZ2VpIFNodHlseW92IHdyb3RlOg0KDQo+PiBUaGUgUlovQTEgaGFz
-IGEgVFNVLCBidXQgc2luY2UgaXQgb25seSBoYXMgb25lIEV0aGVybmV0IHBvcnQsIGl0IGRvZXMg
-DQo+PiBub3QgaGF2ZSBQT1NUIHJlZ2lzdGVycy4NCj4NCj4gICAgSSdtIG5vdCBzdXJlIHRoZSBy
-ZWFzb24gaXMgaGF2aW5nIG9uZSBwb3J0Li4uIGRvIHlvdSBoYXZlIHRoZSBvbGQgU0ggbWFudWFs
-cyBzb21ld2hlcmU/IDotKQ0KDQpZZXMsIEkgdXNlZCB0byBzdXBwb3J0IHRoZSBTSDc3NTcuIEl0
-IGhhZCBkdWFsIEVUSEVSIGFuZCBkdWFsIEdFVEhFUiAoYnV0IG9ubHkgdGhlIEdFVEhFUiBoYWQg
-YSBUU1UpLg0KDQpTaW5jZSB0aGUgR0VUSEVSIGhhZCAyIHBvcnRzLCBhbmQgdGhlIHNhbWUgVFNV
-IGlzIHVzZWQgZm9yIGJvdGgsIHRoZXJlIGlzIGFuIG9wdGlvbiB3aGVyZSBhcyB5b3UgcHV0IGlu
-IENBTSBlbnRyaWVzIGZvciBtdWx0aWNhc3QgZnJhbWUgYW5kIHN1Y2gsIHlvdSBjYW4gc2VsZWN0
-IGlmIHlvdSB3b3VsZCBsaWtlIENBTSBlbnRyeSBwYWNrZXRzIHJlY2VpdmVkIG9uIG9uZSBwb3J0
-IHRvIGJlIGF1dG9tYXRpY2FsbHkgcmVsYXllZCBvdmVyIHRvIHRoZSBvdGhlciBwb3J0IGZvciBw
-cm9jZXNzaW5nIChpZSwgYnJpZGdlIG5ldHdvcmspLg0KVGhlIFBPU1QxLVBPU1Q0IHJlZ2lzdGVy
-cyBhcmUgd2hhdCB5b3UgdXNlIHRvIHNlbGVjdCB3aGF0IENBTSBlbnRyaWVzIHlvdSB3YW50IHJl
-bGF5ZWQuDQoNCkZvciBleGFtcGxlOiANCg0KICAgUmVnaXN0ZXI6IENBTSBFbnRyeSBUYWJsZSBQ
-T1NUMSBSZWdpc3RlciAoVFNVX1BPU1QxKQ0KICAgICAgIEJpdHM6IDMxIHRvIDI4DQogICBCaXQg
-bmFtZTogUE9TVDBbMzowXQ0KRGVzY3JpcHRpb246IFRoZXNlIGJpdHMgc2V0IHRoZSBjb25kaXRp
-b25zIGZvciByZWZlcnJpbmcgdG8gQ0FNIGVudHJ5IHRhYmxlIDAuIEJ5DQogICAgICAgICAgICAg
-c2V0dGluZyBtdWx0aXBsZSBiaXRzIHRvIDEsIG11bHRpcGxlIGNvbmRpdGlvbnMgY2FuIGJlIHNl
-bGVjdGVkLg0KDQogICAgICAgICAgICAgUE9TVDBbM106IENBTSBlbnRyeSB0YWJsZSAwIGlzIHJl
-ZmVycmVkIHRvIGluIHBvcnQgMCByZWNlcHRpb24NCiAgICAgICAgICAgICBQT1NUMFsyXTogQ0FN
-IGVudHJ5IHRhYmxlIDAgaXMgcmVmZXJyZWQgdG8gaW4gcG9ydCAwIHRvIDEgcmVsYXkuDQogICAg
-ICAgICAgICAgUE9TVDBbMV06IENBTSBlbnRyeSB0YWJsZSAwIGlzIHJlZmVycmVkIHRvIGluIHBv
-cnQgMSByZWNlcHRpb24uDQogICAgICAgICAgICAgUE9TVDBbMF06IENBTSBlbnRyeSB0YWJsZSAw
-IGlzIHJlZmVycmVkIHRvIGluIHBvcnQgMSB0byAwIHJlbGF5DQoNCg0KU28sIGFzIHlvdSBjYW4g
-c2VlLCBoYXZpbmcgdGhlIFBPU1QgcmVnaXN0ZXJzIG1lYW5zIG5vdGhpbmcgaWYgeW91IG9ubHkg
-aGF2ZSAxIEV0aGVybmV0IHBvcnQgYXR0YWNoZWQgdG8gdGhlIFRTVS4NCg0KTm90ZSwgaWYgeW91
-IGxvb2sgYXQgZnVuY3Rpb24gc2hfZXRoX3RzdV9nZXRfcG9zdF9iaXQsIHRoZSByZWxheSBmdW5j
-dGlvbmFsaXR5IGlzIG5ldmVyIHVzZWQgYW55d2F5IGJlY2F1c2UgZWFjaCBlbnRyeSB3aWxsIG9u
-bHkgZXZlciBiZSBzZXQgdG8gInBvcnQgMCByZWNlcHRpb24iIG9yICJwb3J0IDEgcmVjZXB0aW9u
-Ii4NCg0KDQoNCj4+ICAJLnNoaWZ0X3JkMAk9IDEsDQo+PiAgfTsNCj4+DQo+PiBAQCAtMjQ2MCw2
-ICsyNDYxLDkgQEAgc3RhdGljIHZvaWQgc2hfZXRoX3RzdV9lbmFibGVfY2FtX2VudHJ5X3Bvc3Qo
-c3RydWN0IG5ldF9kZXZpY2UgKm5kZXYsDQo+PiAgCXUzMiB0bXA7DQo+PiAgCXZvaWQgKnJlZ19v
-ZmZzZXQ7DQo+Pg0KPj4gKwlpZiAobWRwLT5jZC0+dHN1X25vX3Bvc3QpDQo+PiArCQlyZXR1cm47
-DQo+PiArDQo+PiAgCXJlZ19vZmZzZXQgPSBzaF9ldGhfdHN1X2dldF9wb3N0X3JlZ19vZmZzZXQo
-bWRwLCBlbnRyeSk7DQo+DQo+ICAgIEknZCBjaGVjayBjaGVjayBmb3IgU0hfRVRIX09GRlNFVF9J
-TlZBTElEIGluIHRoZSBhYm92ZSBmdW5jdGlvbiBhbmQgcmV0dXJuIE5VTEwgaWYgc287IHRoZW4N
-Cj4gd2UgY2FuIGNoZWNrIGZvciBOVUxMIGhlcmUuLi4NCg0KVGhhdCB3YXMgc2ltaWxhciB0byBt
-eSBmaXJzdCBmaXguIEJ1dCwgdGhlbiBJIGdvdCB0byB0aGlua2luZyB0aGF0IGlmIGEgbmV3IFJa
-IGNvbWVzIG91dCB3aXRoIGR1YWwgRXRoZXJuZXQsIHRoZSBkZXNpZ25lcnMgbWlnaHQgYWRkIGlu
-IHRoZSBQT1NUIHJlZ2lzdGVycyBiYWNrIGluIHRoZSBUU1UuIEFuZCBpbiB0aGF0IGNhc2UsIGl0
-IHdvdWxkIGJlIG5pY2UgdG8gcmV1c2UgdGhlIHNoX2V0aF9pc19yel9mYXN0X2V0aGVyIGFycmF5
-IChqdXN0IGFkZCBpbiB0aGUgZXh0cmEgcmVnaXN0ZXJzKS4NCg0KQnV0Li4ubWF5YmUgY2hlY2tp
-bmcgZm9yIFNIX0VUSF9PRkZTRVRfSU5WQUxJRCBpcyBnb29kIGZvciBub3cgaW5zdGVhZCBvZiB3
-b3JyeWluZyBhYm91dCB0aGF0Lg0KDQoNCj4gT2gsIGFuZCBJJ2xsIGhhdmUgdG8gY29ycmVjdCB5
-b3VyIGxhbmd1YWdlIGFuZCB0ZXJtaW5vbG9neS4gOi0vIFNob3VsZCBiZQ0KPiAiaWYgdGhleSBk
-b24ndCBleGlzdCIgaW4gdGhlIHN1YmplY3QuDQoNCllhLCBteSBmaXJzdCBzdWJqZWN0IGxpbmUg
-d2FzIHRvbyBsb25nLCBzbyBJIGtlcHQgdHJ5aW5nIHRvIHNob3J0ZW4gaXQuLi4uYW5kIHRoZW4g
-aXQgdHVybiBpbnRvIGJhZCBncmFtbWVyLg0KDQpJIHRoaW5rIGEgbW9yZSBjbGVhciBzdWJqZWN0
-IGlzICJGaXggVFNVIHdpdGhvdXQgcmVsYXkgZmVhdHVyZSBhY2Nlc3NlcyINCg0KDQoNCg0KDQpD
-aHJpcw0K
+Hello.
+
+    Oh, and I'll have to correct your language and terminology. :-/
+Should be "if they don't exist" in the subject.
+
+On 08/26/2016 11:01 PM, Chris Brandt wrote:
+
+> The RZ/A1 has a TSU, but since it only has one Ethernet port, it does not
+> have POST registers. Therefore, if you try to write to register index
+> TSU_POST1 (which will be FFFF because it does not exist),
+
+    It's not a register index which is 0xFFFF but the register offset (fetched 
+from a layout table using the index).
+
+> it will either panic or corrupt memory elsewhere.
+>
+> Reported-by: Daniel Palmer <daniel@0x0f.com>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+[...]
+
+MBR, Sergei
