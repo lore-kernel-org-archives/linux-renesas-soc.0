@@ -1,31 +1,108 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Tue, 30 Aug 2016 09:07:13 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:57129 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754013AbcH2SNw (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 29 Aug 2016 14:13:52 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] ARM: dts: rskrza1: initial device tree
-Message-ID: <20160830070712.GE12845@verge.net.au>
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2] ARM: dts: rskrza1: initial device tree
+Date: Mon, 29 Aug 2016 14:13:22 -0400
+Message-Id: <20160829181322.25064-1-chris.brandt@renesas.com>
+In-Reply-To: <20160825153115.15291-1-chris.brandt@renesas.com>
 References: <20160825153115.15291-1-chris.brandt@renesas.com>
- <20160829181322.25064-1-chris.brandt@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20160829181322.25064-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Aug 29, 2016 at 02:13:22PM -0400, Chris Brandt wrote:
-> Add the initial device tree for the RZ/A1 based development board (RSK).
-> 
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
-> * Removed empty line at end
+Add the initial device tree for the RZ/A1 based development board (RSK).
 
-Thanks, I have queued this up.
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+* Removed empty line at end
+---
+ arch/arm/boot/dts/Makefile             |  1 +
+ arch/arm/boot/dts/r7s72100-rskrza1.dts | 52 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r7s72100-rskrza1.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index faacd52..c1c4d912 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -651,6 +651,7 @@ dtb-$(CONFIG_ARCH_S5PV210) += \
+ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
+ 	emev2-kzm9d.dtb \
+ 	r7s72100-genmai.dtb \
++	r7s72100-rskrza1.dtb \
+ 	r8a73a4-ape6evm.dtb \
+ 	r8a7740-armadillo800eva.dtb \
+ 	r8a7778-bockw.dtb \
+diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+new file mode 100644
+index 0000000..aabfa04
+--- /dev/null
++++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+@@ -0,0 +1,52 @@
++/*
++ * Device Tree Source for the RZ/A1H RSK board
++ *
++ * Copyright (C) 2016 Renesas Electronics
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r7s72100.dtsi"
++
++/ {
++	model = "RSKRZA1";
++	compatible = "renesas,rskrza1", "renesas,r7s72100";
++
++	aliases {
++		serial0 = &scif2;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@8000000 {
++		device_type = "memory";
++		reg = <0x08000000 0x02000000>;
++	};
++
++	lbsc {
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <13330000>;
++};
++
++&usb_x1_clk {
++	clock-frequency = <48000000>;
++};
++
++&mtu2 {
++	status = "okay";
++};
++
++&scif2 {
++	status = "okay";
++};
+-- 
+2.9.2
