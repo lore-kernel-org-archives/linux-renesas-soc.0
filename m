@@ -1,99 +1,45 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: horms@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:35985 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750828AbcH2H5M (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 29 Aug 2016 03:57:12 -0400
+MIME-Version: 1.0
+In-Reply-To: <81794087.EqU2I9TLcp@wasted.cogentembedded.com>
+References: <3665116.9BjHTnhfR3@wasted.cogentembedded.com> <81794087.EqU2I9TLcp@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 Aug 2016 09:57:11 +0200
+Message-ID: <CAMuHMdUiF9R7eiuQ=aFRPXA01JRG1aY3YUZsMMiKwt0ghypS+Q@mail.gmail.com>
+Subject: Re: [PATCH 1/3] DT: arm: shmobile: document Wheat board
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Chris Brandt <chris.brandt@renesas.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ARM: dts: rskrza1: initial device tree
-Date: Thu, 25 Aug 2016 11:31:15 -0400
-Message-Id: <20160825153115.15291-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the initial device tree for the RZ/A1 based development board (RSK).
+On Fri, Aug 26, 2016 at 10:20 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Document the Wheat device tree bindings, listing it as a supported board.
+>
+> This allows to use checkpatch.pl to validate .dts files referring to the
+> Wheat board.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- arch/arm/boot/dts/Makefile             |  1 +
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 53 ++++++++++++++++++++++++++++++++++
- 2 files changed, 54 insertions(+)
- create mode 100644 arch/arm/boot/dts/r7s72100-rskrza1.dts
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index faacd52..c1c4d912 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -651,6 +651,7 @@ dtb-$(CONFIG_ARCH_S5PV210) += \
- dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
- 	emev2-kzm9d.dtb \
- 	r7s72100-genmai.dtb \
-+	r7s72100-rskrza1.dtb \
- 	r8a73a4-ape6evm.dtb \
- 	r8a7740-armadillo800eva.dtb \
- 	r8a7778-bockw.dtb \
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-new file mode 100644
-index 0000000..df9b979e
---- /dev/null
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -0,0 +1,53 @@
-+/*
-+ * Device Tree Source for the RZ/A1H RSK board
-+ *
-+ * Copyright (C) 2016 Renesas Electronics
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r7s72100.dtsi"
-+
-+/ {
-+	model = "RSKRZA1";
-+	compatible = "renesas,rskrza1", "renesas,r7s72100";
-+
-+	aliases {
-+		serial0 = &scif2;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@8000000 {
-+		device_type = "memory";
-+		reg = <0x08000000 0x02000000>;
-+	};
-+
-+	lbsc {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <13330000>;
-+};
-+
-+&usb_x1_clk {
-+	clock-frequency = <48000000>;
-+};
-+
-+&mtu2 {
-+	status = "okay";
-+};
-+
-+&scif2 {
-+	status = "okay";
-+};
-+
--- 
-2.9.2
+Gr{oetje,eeting}s,
 
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
