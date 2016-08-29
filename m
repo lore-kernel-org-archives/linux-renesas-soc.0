@@ -1,108 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:57129 "EHLO
+Received: from relmlor3.renesas.com ([210.160.252.173]:64432 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754013AbcH2SNw (ORCPT
+        by vger.kernel.org with ESMTP id S1757526AbcH2O4n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Aug 2016 14:13:52 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        Mon, 29 Aug 2016 10:56:43 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2] ARM: dts: rskrza1: initial device tree
-Date: Mon, 29 Aug 2016 14:13:22 -0400
-Message-Id: <20160829181322.25064-1-chris.brandt@renesas.com>
-In-Reply-To: <20160825153115.15291-1-chris.brandt@renesas.com>
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] ARM: dts: rskrza1: initial device tree
+Date: Mon, 29 Aug 2016 14:56:37 +0000
+Message-ID: <SG2PR06MB116594771BED3BAF944ECE298AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20160825153115.15291-1-chris.brandt@renesas.com>
+ <CAMuHMdXmJPcgDcLkeVuF5YVfpwxRkJpACHGwtbNab18gK-nBbQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdXmJPcgDcLkeVuF5YVfpwxRkJpACHGwtbNab18gK-nBbQ@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the initial device tree for the RZ/A1 based development board (RSK).
-
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-* Removed empty line at end
----
- arch/arm/boot/dts/Makefile             |  1 +
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 52 ++++++++++++++++++++++++++++++++++
- 2 files changed, 53 insertions(+)
- create mode 100644 arch/arm/boot/dts/r7s72100-rskrza1.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index faacd52..c1c4d912 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -651,6 +651,7 @@ dtb-$(CONFIG_ARCH_S5PV210) += \
- dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
- 	emev2-kzm9d.dtb \
- 	r7s72100-genmai.dtb \
-+	r7s72100-rskrza1.dtb \
- 	r8a73a4-ape6evm.dtb \
- 	r8a7740-armadillo800eva.dtb \
- 	r8a7778-bockw.dtb \
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-new file mode 100644
-index 0000000..aabfa04
---- /dev/null
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -0,0 +1,52 @@
-+/*
-+ * Device Tree Source for the RZ/A1H RSK board
-+ *
-+ * Copyright (C) 2016 Renesas Electronics
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r7s72100.dtsi"
-+
-+/ {
-+	model = "RSKRZA1";
-+	compatible = "renesas,rskrza1", "renesas,r7s72100";
-+
-+	aliases {
-+		serial0 = &scif2;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@8000000 {
-+		device_type = "memory";
-+		reg = <0x08000000 0x02000000>;
-+	};
-+
-+	lbsc {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <13330000>;
-+};
-+
-+&usb_x1_clk {
-+	clock-frequency = <48000000>;
-+};
-+
-+&mtu2 {
-+	status = "okay";
-+};
-+
-+&scif2 {
-+	status = "okay";
-+};
--- 
-2.9.2
+SGkgR2VlcnQsDQoNCk9uIEF1ZyAyOSwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KDQo+ID4g
+LS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3I3czcyMTAwLXJza3J6
+YTEuZHRzDQo+DQo+ID4gKyAgICAgICBjb21wYXRpYmxlID0gInJlbmVzYXMscnNrcnphMSIsICJy
+ZW5lc2FzLHI3czcyMTAwIjsNCj4NCj4gc2NyaXB0cy9jaGVja3BhdGNoLnBsIHNheXM6DQo+DQo+
+ICAgIERUIGNvbXBhdGlibGUgc3RyaW5nICJyZW5lc2FzLHJza3J6YTEiIGFwcGVhcnMgdW4tZG9j
+dW1lbnRlZCAtLSBjaGVjayAuL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy8NCj4N
+Cj4gUGxlYXNlIHNlbmQgYSBmb2xsb3ctdXAgcGF0Y2ggdG8gYWRkIHRoaXMgY29tcGF0aWJsZSB2
+YWx1ZSB0byBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL3NobW9iaWxlLnR4
+dC4NCj4NCj4gPiArJnNjaWYyIHsNCj4gPiArICAgICAgIHN0YXR1cyA9ICJva2F5IjsNCj4gPiAr
+fTsNCj4gPiArDQo+DQo+IFBsZWFzZSBkcm9wIHRoZSB0cmFpbGluZyBlbXB0eSBsaW5lLg0KDQpU
+aGFuayB5b3UgZm9yIHRoZSByZXZpZXcuDQpJIHdpbGwgbW9kaWZ5IGFuZCByZXNlbmQuDQoNCkNo
+cmlzDQoNCg==
