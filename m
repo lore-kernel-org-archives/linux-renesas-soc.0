@@ -1,39 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:42907 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755800AbcH2O4M (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35328 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932726AbcH2NSM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Aug 2016 10:56:12 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
+        Mon, 29 Aug 2016 09:18:12 -0400
+MIME-Version: 1.0
+In-Reply-To: <20160825190518.20764-1-chris.brandt@renesas.com>
+References: <20160825190518.20764-1-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 Aug 2016 15:18:10 +0200
+Message-ID: <CAMuHMdWiPfZq=VgWhFRaQBoazLGSDo3+AB_cUG5hMhPxzypLAA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rz: Select EXTAL vs USB clock
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        "Simon Horman" <horms+renesas@verge.net.au>,
+        Simon Horman <horms+renesas@verge.net.au>,
         linux-clk <linux-clk@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] clk: renesas: rz: Select EXTAL vs USB clock
-Date: Mon, 29 Aug 2016 14:53:34 +0000
-Message-ID: <SG2PR06MB1165182DE474D907F38694E98AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20160825190518.20764-1-chris.brandt@renesas.com>
- <CAMuHMdWiPfZq=VgWhFRaQBoazLGSDo3+AB_cUG5hMhPxzypLAA@mail.gmail.com>
-In-Reply-To: <CAMuHMdWiPfZq=VgWhFRaQBoazLGSDo3+AB_cUG5hMhPxzypLAA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIEF1ZyAyOSwgMjAxNiwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0K
-Pj4gSW5zdGVhZCBvZiBoYXJkIGNvZGluZyBFWFRBTCBvbmx5LCBjaGVjayBpZiBFWFRBTCB3YXMg
-c3BlY2lmaWVkLiBJZiANCj4+IG5vdCwgdGhlbiBhc3N1bWUgdGhlIFVTQiBjbG9jayBpcyB1c2Vk
-IGFzIHRoZSBtYWluIHN5c3RlbSBjbG9jay4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBDaHJpcyBC
-cmFuZHQgPGNocmlzLmJyYW5kdEByZW5lc2FzLmNvbT4NCj4NCj4gV2hhdCdzIHRoZSByYXRpb25h
-bGUgYmVoaW5kIHRoaXMgY2hhbmdlPw0KDQoNCkknbSB0aGlua2luZyBhYm91dCBiZXlvbmQgUmVu
-ZXNhcyBib2FyZHMuIFBlb3BsZSBhcmUgbWFraW5nIFJaL0ExIGJvYXJkcyB3aXRoIGp1c3QgdGhl
-IFVTQiBjbG9jayB0byBzYXZlIG9uIEJPTSBjb3N0cyBzaW5jZSAzODRNSHogdnMgNDAwTUh6IGlz
-IG5vdCBlbm91Z2ggb2YgYSBkcm9wIHRvIGNhcmUgYWJvdXQuDQpBbmQgb2YgY291cnNlLCBoYXZp
-bmcgc29tZW9uZSBtYWtlIHRoaXMga2luZCBvZiBzZWxlY3Rpb24gaW4gdGhlIERUIGlzIGJldHRl
-ciB0aGFuIGZvcmNpbmcgdGhlbSB0byBoYWNrIHRoZSBjbG9jayBmaWxlLg0KDQoNCg0KQ2hyaXMN
-Cg==
+Hi Chris,
+
+On Thu, Aug 25, 2016 at 9:05 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Instead of hard coding EXTAL only, check if EXTAL was specified. If not,
+> then assume the USB clock is used as the main system clock.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+
+What's the rationale behind this change?
+
+According to the schematics, all of Genmai, RSK, and GR-Peach have both EXTAL
+and USB_X1 populated. So they can only use EXTAL, both with and without your
+patch.
+
+But both Genmai and RSK have a DIP switch to control MD_CLK, and select the
+clock to use, while GR-Peach has MD_CLK hardwired to GND.
+
+> ---
+>  drivers/clk/renesas/clk-rz.c | 30 +++++++++++++++++++++++-------
+>  1 file changed, 23 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/clk/renesas/clk-rz.c b/drivers/clk/renesas/clk-rz.c
+> index f6312c6..466b9fc 100644
+> --- a/drivers/clk/renesas/clk-rz.c
+> +++ b/drivers/clk/renesas/clk-rz.c
+> @@ -37,13 +37,29 @@ rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *na
+>         static const unsigned frqcr_tab[4] = { 3, 2, 0, 1 };
+>
+>         if (strcmp(name, "pll") == 0) {
+> -               /* FIXME: cpg_mode should be read from GPIO. But no GPIO support yet */
+> -               unsigned cpg_mode = 0; /* hardcoded to EXTAL for now */
+> -               const char *parent_name = of_clk_get_parent_name(np, cpg_mode);
+> -
+> -               mult = cpg_mode ? (32 / 4) : 30;
+> -
+> -               return clk_register_fixed_factor(NULL, name, parent_name, 0, mult, 1);
+> +               u32 freq = 0;
+> +               struct device_node *np;
+> +
+> +               /* If a clock-frequency for extal was specified, assume EXTAL boot */
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
