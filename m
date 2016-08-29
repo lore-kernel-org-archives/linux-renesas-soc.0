@@ -1,90 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53710 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752360AbcHHLFs (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:05:48 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <874m6v8x9e.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiNJ-00040a-ML@debutante>
-Date: Mon, 08 Aug 2016 12:05:41 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on tlv320aic3x" to the asoc tree
+Received: from relmlor3.renesas.com ([210.160.252.173]:23102 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1756940AbcH2JB2 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 29 Aug 2016 05:01:28 -0400
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: <balbi@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <stable@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] usb: renesas_usbhs: fix clearing the {BRDY,BEMP}STS condition
+Date: Mon, 29 Aug 2016 18:00:38 +0900
+Message-ID: <1472461238-27304-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+The previous driver is possible to stop the transfer wrongly.
+For example:
+ 1) An interrupt happens, but not BRDY interruption.
+ 2) Read INTSTS0. And than state->intsts0 is not set to BRDY.
+ 3) BRDY is set to 1 here.
+ 4) Read BRDYSTS.
+ 5) Clear the BRDYSTS. And then. the BRDY is cleared wrongly.
 
-   ASoC: codec duplicated callback function goes to component on tlv320aic3x
+Remarks:
+ - The INTSTS0.BRDY is read only.
+  - If any bits of BRDYSTS are set to 1, the BRDY is set to 1.
+  - If BRDYSTS is 0, the BRDY is set to 0.
 
-has been applied to the asoc tree at
+So, this patch adds condition to avoid such situation. (And about
+NRDYSTS, this is not used for now. But, avoiding any side effects,
+this patch doesn't touch it.)
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 786e3a480fa9e04b36191a2529cabfec3e30ad9c Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:53:08 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- tlv320aic3x
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: d5c6a1e024dd ("usb: renesas_usbhs: fixup interrupt status clear method")
+Cc: <stable@vger.kernel.org> # v3.8+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- sound/soc/codecs/tlv320aic3x.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/usb/renesas_usbhs/mod.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/tlv320aic3x.c b/sound/soc/codecs/tlv320aic3x.c
-index a564759845f9..5a8d96ec058c 100644
---- a/sound/soc/codecs/tlv320aic3x.c
-+++ b/sound/soc/codecs/tlv320aic3x.c
-@@ -1670,12 +1670,14 @@ static struct snd_soc_codec_driver soc_codec_dev_aic3x = {
- 	.idle_bias_off = true,
- 	.probe = aic3x_probe,
- 	.remove = aic3x_remove,
--	.controls = aic3x_snd_controls,
--	.num_controls = ARRAY_SIZE(aic3x_snd_controls),
--	.dapm_widgets = aic3x_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(aic3x_dapm_widgets),
--	.dapm_routes = intercon,
--	.num_dapm_routes = ARRAY_SIZE(intercon),
-+	.component_driver = {
-+		.controls		= aic3x_snd_controls,
-+		.num_controls		= ARRAY_SIZE(aic3x_snd_controls),
-+		.dapm_widgets		= aic3x_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(aic3x_dapm_widgets),
-+		.dapm_routes		= intercon,
-+		.num_dapm_routes	= ARRAY_SIZE(intercon),
-+	},
- };
+diff --git a/drivers/usb/renesas_usbhs/mod.c b/drivers/usb/renesas_usbhs/mod.c
+index d4be5d5..28965ef 100644
+--- a/drivers/usb/renesas_usbhs/mod.c
++++ b/drivers/usb/renesas_usbhs/mod.c
+@@ -282,9 +282,16 @@ static irqreturn_t usbhs_interrupt(int irq, void *data)
+ 	if (usbhs_mod_is_host(priv))
+ 		usbhs_write(priv, INTSTS1, ~irq_state.intsts1 & INTSTS1_MAGIC);
  
- /*
+-	usbhs_write(priv, BRDYSTS, ~irq_state.brdysts);
++	/*
++	 * The driver should not clear the xxxSTS after the line of
++	 * "call irq callback functions" because each "if" statement is
++	 * possible to call the callback function for avoiding any side effects.
++	 */
++	if (irq_state.intsts0 & BRDY)
++		usbhs_write(priv, BRDYSTS, ~irq_state.brdysts);
+ 	usbhs_write(priv, NRDYSTS, ~irq_state.nrdysts);
+-	usbhs_write(priv, BEMPSTS, ~irq_state.bempsts);
++	if (irq_state.intsts0 & BEMP)
++		usbhs_write(priv, BEMPSTS, ~irq_state.bempsts);
+ 
+ 	/*
+ 	 * call irq callback functions
 -- 
-2.8.1
+1.9.1
