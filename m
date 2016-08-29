@@ -1,102 +1,66 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/3] ARM: dts: wheat: initial device tree
-Date: Fri, 26 Aug 2016 23:21:42 +0300
-Message-ID: <4464163.ssfn2FILGm@wasted.cogentembedded.com>
-In-Reply-To: <3665116.9BjHTnhfR3@wasted.cogentembedded.com>
-References: <3665116.9BjHTnhfR3@wasted.cogentembedded.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34892 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750786AbcH2QO6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 29 Aug 2016 12:14:58 -0400
+Received: by mail-it0-f66.google.com with SMTP id f128so7104876ith.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Aug 2016 09:14:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <1470745752-23738-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1470745752-23738-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1470745752-23738-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 Aug 2016 18:14:57 +0200
+Message-ID: <CAMuHMdVB3G1O2-LbarZrSumdbU5T_n-+Gpbtz3_FkU3QnS14Nw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] arm64: dts: renesas: r8a7795: Add FCPV nodes
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the initial device tree for the R8A7792  SoC based Wheat board.
-The Wheat board itself has  no serial ports  wired up, the USB serial chips
-are situated on a separate  debug board and  one of them is connected to
-SCFI0  -- include unconditional support for  it, so that the serial console
-can work.
+Hi Laurent,
 
-Based  on the original (and large) patch by Vladimir Barinov 
-<vladimir.barinov@cogentembedded.com>.
+On Tue, Aug 9, 2016 at 2:29 PM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> The FCPs handle the interface between various IP cores and memory. Add
+> the instances related to the VSP2s.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7795.dtsi | 63 ++++++++++++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> index 99953ca9a45e..f8b1c421e845 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> +               fcpvi2: fcp@fe9cf000 {
+> +                       compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
+> +                       reg = <0 0xfe9cf000 0 0x200>;
+> +                       clocks = <&cpg CPG_MOD 609>;
+> +                       power-domains = <&sysc R8A7795_PD_A3VP>;
+> +               };
 
----
- arch/arm/boot/dts/Makefile          |    1 
- arch/arm/boot/dts/r8a7792-wheat.dts |   50 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 51 insertions(+)
+> +               fcpvd3: fcp@fea3f000 {
+> +                       compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
+> +                       reg = <0 0xfea3f000 0 0x200>;
+> +                       clocks = <&cpg CPG_MOD 600>;
+> +                       power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+> +               };
+> +
 
-Index: renesas/arch/arm/boot/dts/Makefile
-===================================================================
---- renesas.orig/arch/arm/boot/dts/Makefile
-+++ renesas/arch/arm/boot/dts/Makefile
-@@ -659,6 +659,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
- 	r8a7791-koelsch.dtb \
- 	r8a7791-porter.dtb \
- 	r8a7792-blanche.dtb \
-+	r8a7792-wheat.dtb \
- 	r8a7793-gose.dtb \
- 	r8a7794-alt.dtb \
- 	r8a7794-silk.dtb \
-Index: renesas/arch/arm/boot/dts/r8a7792-wheat.dts
-===================================================================
---- /dev/null
-+++ renesas/arch/arm/boot/dts/r8a7792-wheat.dts
-@@ -0,0 +1,50 @@
-+/*
-+ * Device Tree Source for the Wheat board
-+ *
-+ * Copyright (C) 2016 Renesas Electronics Corporation
-+ * Copyright (C) 2016 Cogent  Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r8a7792.dtsi"
-+
-+/ {
-+	model = "Wheat";
-+	compatible = "renesas,wheat", "renesas,r8a7792";
-+
-+	aliases {
-+		serial0 = &scif0;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x40000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
-+
-+&pfc {
-+	scif0_pins: scif0 {
-+		groups = "scif0_data";
-+		function = "scif0";
-+	};
-+};
-+
-+&scif0 {
-+	pinctrl-0 = <&scif0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
+Looks like fcpvi2 and fcpvd3 are no more?
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
