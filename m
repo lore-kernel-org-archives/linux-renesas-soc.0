@@ -1,76 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:52132 "EHLO
-	relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753676AbcHDLDm (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 4 Aug 2016 07:03:42 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: <vinod.koul@intel.com>, <dan.j.williams@intel.com>
-CC: <dmaengine@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH] dmaengine: usb-dmac: check CHCR.DE bit in usb_dmac_isr_channel()
-Date: Thu, 4 Aug 2016 19:59:41 +0900
-Message-ID: <1470308381-11206-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Received: from relmlor1.renesas.com ([210.160.252.171]:45227 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753613AbcH2QVp (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 29 Aug 2016 12:21:45 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Mark Brown <broonie@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Daniel Palmer <danieruru@gmail.com>
+Subject: RE: [PATCH] spi: rspi: Increase accuracy of bit rate for RZ
+Date: Mon, 29 Aug 2016 16:21:38 +0000
+Message-ID: <SG2PR06MB1165A5B9BD0ACFE5E34D4F708AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1470404163-27427-1-git-send-email-chris.brandt@renesas.com>
+ <CAMuHMdWVvZLWvVVzHMr+5--PAJkGx0r-Z1=eCiGJddcY6aDNLA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWVvZLWvVVzHMr+5--PAJkGx0r-Z1=eCiGJddcY6aDNLA@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The USB-DMAC's interruption happens even if the CHCR.DE is not set to 1
-because CHCR.NULLE is set to 1. So, this driver should call
-usb_dmac_isr_transfer_end() if the DE bit is set to 1 only. Otherwise,
-the desc is possible to be NULL in the usb_dmac_isr_transfer_end().
-
-Fixes: 0c1c8ff32fa2 ("dmaengine: usb-dmac: Add Renesas USB DMA Controller (USB-DMAC) driver)
-Cc: <stable@vger.kernel.org> # v4.1+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/dma/sh/usb-dmac.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/dma/sh/usb-dmac.c b/drivers/dma/sh/usb-dmac.c
-index 749f1bd..06ecdc3 100644
---- a/drivers/dma/sh/usb-dmac.c
-+++ b/drivers/dma/sh/usb-dmac.c
-@@ -600,27 +600,30 @@ static irqreturn_t usb_dmac_isr_channel(int irq, void *dev)
- {
- 	struct usb_dmac_chan *chan = dev;
- 	irqreturn_t ret = IRQ_NONE;
--	u32 mask = USB_DMACHCR_TE;
--	u32 check_bits = USB_DMACHCR_TE | USB_DMACHCR_SP;
-+	u32 mask = 0;
- 	u32 chcr;
-+	bool xfer_end = false;
- 
- 	spin_lock(&chan->vc.lock);
- 
- 	chcr = usb_dmac_chan_read(chan, USB_DMACHCR);
--	if (chcr & check_bits)
--		mask |= USB_DMACHCR_DE | check_bits;
-+	if (chcr & (USB_DMACHCR_TE | USB_DMACHCR_SP)) {
-+		mask |= USB_DMACHCR_DE | USB_DMACHCR_TE | USB_DMACHCR_SP;
-+		if (chcr & USB_DMACHCR_DE)
-+			xfer_end = true;
-+		ret |= IRQ_HANDLED;
-+	}
- 	if (chcr & USB_DMACHCR_NULL) {
- 		/* An interruption of TE will happen after we set FTE */
- 		mask |= USB_DMACHCR_NULL;
- 		chcr |= USB_DMACHCR_FTE;
- 		ret |= IRQ_HANDLED;
- 	}
--	usb_dmac_chan_write(chan, USB_DMACHCR, chcr & ~mask);
-+	if (mask)
-+		usb_dmac_chan_write(chan, USB_DMACHCR, chcr & ~mask);
- 
--	if (chcr & check_bits) {
-+	if (xfer_end)
- 		usb_dmac_isr_transfer_end(chan);
--		ret |= IRQ_HANDLED;
--	}
- 
- 	spin_unlock(&chan->vc.lock);
- 
--- 
-1.9.1
+SGkgR2VlcnQsDQoNCk9uIE1vbiwgQXVnIDI5LCAyMDE2LCBHZWVydCBVeXR0ZXJob2V2ZW4gd3Jv
+dGU6DQo+IEkgYmVsaWV2ZSB0aGlzIGFwcGxpZXMgbm90IG9ubHkgdG8gUlosIGJ1dCB0byBhbGwg
+b3RoZXIgc3VwcG9ydGVkIFJTUEkgdmFyaWFudHM/DQo+IEhlbmNlIEkgdGhpbmsgaXQgc2hvdWxk
+IGJlIG1hZGUgY29tbW9uLg0KDQpJIHdvdWxkIHRoaW5rIGl0IHdvdWxkIGJlIHRoZSBzYW1lIGZv
+ciBhbGwgdGhlIG90aGVyIHBhcnRzIHdpdGggUlNQSS4NCg0KQ3VycmVudGx5IHRoZXJlIGFyZSAz
+IHNlcGFyYXRlIGNvbmZpZyBmdW5jdGlvbnM6DQogLSByc3BpX3NldF9jb25maWdfcmVnaXN0ZXIN
+CiAtIHJzcGlfcnpfc2V0X2NvbmZpZ19yZWdpc3Rlcg0KIC0gcXNwaV9zZXRfY29uZmlnX3JlZ2lz
+dGVyDQoNCkJ5ICJjb21tb24iLCBkbyB5b3UgbWVhbjoNCkEpIGFkZCB0aGUgc2FtZSBjb2RlIHRv
+IGVhY2ggb2YgdGhlIG90aGVyIDIgZnVuY3Rpb25zPw0KICAgICAoaWUsIGNvbW1vbiBmdW5jdGlv
+bmFsaXR5IGZvciBhbGwgZGV2aWNlKQ0KDQpCKSBtYWtlIHNvbWUgbmV3IGZ1bmN0aW9uL21hY3Jv
+IHRoYXQgYWxsIGNvbmZpZyBmdW5jdGlvbnMgY2FsbD8NCiAgICAgKGllLCBzYW1lIGNvZGUgZm9y
+IHNldHRpbmcgdGhlIHJlZ2lzdGVyIGJpdHMpDQoNCg0KTm90ZTogSSBvbmx5IHJlYWxseSBoYXZl
+IGEgUlovQSBwbGF0Zm9ybSwgc28gSSBjYW4ndCByZWFsbHkgdGVzdCBpdCBvbiBhbnkgb3RoZXIg
+ZGV2aWNlcyAob3RoZXIgdGhhbiBqdXN0IGxvb2tpbmcgaW4gdGhlIGhhcmR3YXJlIG1hbnVhbHMp
+DQoNCkNocmlzDQoNCg0K
