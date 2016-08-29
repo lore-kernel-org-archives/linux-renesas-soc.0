@@ -1,54 +1,28 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:36776 "EHLO
-	mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754179AbcHAQxL (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 1 Aug 2016 12:53:11 -0400
-Received: by mail-lf0-f52.google.com with SMTP id g62so119827514lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 01 Aug 2016 09:53:10 -0700 (PDT)
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Mon, 1 Aug 2016 18:53:08 +0200
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	slongerbeam@gmail.com, lars@metafoo.de, mchehab@kernel.org,
-	hans.verkuil@cisco.com
-Subject: Re: [PATCH 4/6] media: rcar-vin: add support for V4L2_FIELD_ALTERNATE
-Message-ID: <20160801165308.GE3672@bigcity.dyn.berto.se>
-References: <20160729174012.14331-1-niklas.soderlund+renesas@ragnatech.se>
- <20160729174012.14331-5-niklas.soderlund+renesas@ragnatech.se>
- <028d6a5c-d86f-fce6-4278-12c561ebbe0d@cogentembedded.com>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 29 Aug 2016 10:51:48 -0500
+From: Rob Herring <robh@kernel.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: kishon@ti.com, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] phy: rcar-gen3-usb2: revise the example of device
+ tree doc
+Message-ID: <20160829155148.GA29325@rob-hp-laptop>
+References: <1472021362-8085-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1472021362-8085-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <028d6a5c-d86f-fce6-4278-12c561ebbe0d@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1472021362-8085-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+On Wed, Aug 24, 2016 at 03:49:21PM +0900, Yoshihiro Shimoda wrote:
+> The clocks property should be set to &cpg, not &mstpX_clks.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 2016-07-31 00:55:04 +0300, Sergei Shtylyov wrote:
-> Hello.
-> 
-> On 07/29/2016 08:40 PM, Niklas S�derlund wrote:
-> 
-> > The HW can capture both ODD and EVEN fields in separate buffers so it's
-> > possible to support this field mode.
-> > 
-> > Signed-off-by: Niklas S�derlund <niklas.soder
-> 
->    It's probably worth adding that if the subdevice presents the video data
-> in this mode, we prefer to use the hardware de-interlacing.
-
-Will include this in v2, thanks for pointing it out.
-
-> 
-> MBR, Sergei
-> 
-> PS: I think I have a patch adding support for this mode to the old driver,
-> so that it doesn't get borked with the patch #6 in this series.
-> 
-
--- 
-Regards,
-Niklas S�derlund
+Acked-by: Rob Herring <robh@kernel.org>
