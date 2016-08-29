@@ -1,121 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:33794 "EHLO
-        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753322AbcH2VRy (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:24755 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1757200AbcH2OmH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Aug 2016 17:17:54 -0400
-Received: by mail-lf0-f54.google.com with SMTP id l89so73899lfi.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Aug 2016 14:17:31 -0700 (PDT)
-Subject: Re: [PATCH] net: ethernet: renesas: sh_eth: do not access POST
- registers if not exist
-To: Chris Brandt <Chris.Brandt@renesas.com>,
+        Mon, 29 Aug 2016 10:42:07 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         "David S . Miller" <davem@davemloft.net>
-References: <20160826200107.20681-1-chris.brandt@renesas.com>
- <87690577-4526-ce66-6ce3-68ac8b20e737@cogentembedded.com>
- <SG2PR06MB11653F9E20F38972CA11EF328AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
+CC: Simon Horman <horms+renesas@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Daniel Palmer <daniel@0x0f.com>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <f456cca3-289c-67dc-f15c-5b475553cdde@cogentembedded.com>
-Date: Tue, 30 Aug 2016 00:17:28 +0300
+Subject: RE: [PATCH] net: ethernet: renesas: sh_eth: do not access POST
+ registers if not exist
+Date: Mon, 29 Aug 2016 14:41:18 +0000
+Message-ID: <SG2PR06MB11653F9E20F38972CA11EF328AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160826200107.20681-1-chris.brandt@renesas.com>
+ <87690577-4526-ce66-6ce3-68ac8b20e737@cogentembedded.com>
+In-Reply-To: <87690577-4526-ce66-6ce3-68ac8b20e737@cogentembedded.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB11653F9E20F38972CA11EF328AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
-
-On 08/29/2016 05:41 PM, Chris Brandt wrote:
-
->>> The RZ/A1 has a TSU, but since it only has one Ethernet port, it does
->>> not have POST registers.
->>
->>    I'm not sure the reason is having one port... do you have the old SH manuals somewhere? :-)
->
-> Yes, I used to support the SH7757.
-
-    Good to have someone with the old SH manuals. :-)
-
-> It had dual ETHER and dual GETHER (but only the GETHER had a TSU).
-> Since the GETHER had 2 ports, and the same TSU is used for both, there is an option where as you put in CAM entries for multicast frame and such, you can select if you would like CAM entry packets received on one port to be automatically relayed over to the other port for processing (ie, bridge network).
-> The POST1-POST4 registers are what you use to select what CAM entries you want relayed.
-
-    SH7757 is not the only platform with TSU, there's e.g. R8A7740 ARM SoC 
-which only has 1 GETHER channel...
-
-> For example:
->
->    Register: CAM Entry Table POST1 Register (TSU_POST1)
->        Bits: 31 to 28
->    Bit name: POST0[3:0]
-> Description: These bits set the conditions for referring to CAM entry table 0. By
->              setting multiple bits to 1, multiple conditions can be selected.
->
->              POST0[3]: CAM entry table 0 is referred to in port 0 reception
->              POST0[2]: CAM entry table 0 is referred to in port 0 to 1 relay.
->              POST0[1]: CAM entry table 0 is referred to in port 1 reception.
->              POST0[0]: CAM entry table 0 is referred to in port 1 to 0 relay
->
->
-> So, as you can see, having the POST registers means nothing if you only have 1 Ethernet port
-> attached to the TSU.
-
-    That probably means we have more issues on other SoCs having TSU...
-
-> Note, if you look at function sh_eth_tsu_get_post_bit, the relay functionality is never used
-> anyway because each entry will only ever be set to "port 0 reception" or "port 1 reception".
-
-    Yes, seeing this...
-
->>>  	.shift_rd0	= 1,
->>>  };
->>>
->>> @@ -2460,6 +2461,9 @@ static void sh_eth_tsu_enable_cam_entry_post(struct net_device *ndev,
->>>  	u32 tmp;
->>>  	void *reg_offset;
->>>
->>> +	if (mdp->cd->tsu_no_post)
->>> +		return;
->>> +
->>>  	reg_offset = sh_eth_tsu_get_post_reg_offset(mdp, entry);
->>
->>    I'd check check for SH_ETH_OFFSET_INVALID in the above function and return NULL if so; then
->> we can check for NULL here...
-
-    I hadn't thought it thru it seems... I meant that the check includes 
-WARN_ON() but we generally should avoid hitting this code, so another check is 
-needed beforehand, like that one you added...
-
-> That was similar to my first fix. But, then I got to thinking that if a new RZ comes out
-> with dual Ethernet, the designers might add in the POST registers back in the TSU. And in
-> that case, it would be nice to reuse the sh_eth_is_rz_fast_ether array (just add in the
-> extra registers).
-
-    It seems having something like 'dual_ch' flag would fit...
-
-> But...maybe checking for SH_ETH_OFFSET_INVALID is good for now instead of worrying about that.
-
-    We just need 2 patches, I think...
-
->> Oh, and I'll have to correct your language and terminology. :-/ Should be
->> "if they don't exist" in the subject.
->
-> Ya, my first subject line was too long,
-
-    For what?
-
-> so I kept trying to shorten it....and then it turn into bad grammer.
->
-> I think a more clear subject is "Fix TSU without relay feature accesses"
-
-    Or a "single channel TSU".
-
-> Chris
-
-MBR, Sergei
+T24gMDgvMjgvMjAxNiwgU2VyZ2VpIFNodHlseW92IHdyb3RlOg0KDQo+PiBUaGUgUlovQTEgaGFz
+IGEgVFNVLCBidXQgc2luY2UgaXQgb25seSBoYXMgb25lIEV0aGVybmV0IHBvcnQsIGl0IGRvZXMg
+DQo+PiBub3QgaGF2ZSBQT1NUIHJlZ2lzdGVycy4NCj4NCj4gICAgSSdtIG5vdCBzdXJlIHRoZSBy
+ZWFzb24gaXMgaGF2aW5nIG9uZSBwb3J0Li4uIGRvIHlvdSBoYXZlIHRoZSBvbGQgU0ggbWFudWFs
+cyBzb21ld2hlcmU/IDotKQ0KDQpZZXMsIEkgdXNlZCB0byBzdXBwb3J0IHRoZSBTSDc3NTcuIEl0
+IGhhZCBkdWFsIEVUSEVSIGFuZCBkdWFsIEdFVEhFUiAoYnV0IG9ubHkgdGhlIEdFVEhFUiBoYWQg
+YSBUU1UpLg0KDQpTaW5jZSB0aGUgR0VUSEVSIGhhZCAyIHBvcnRzLCBhbmQgdGhlIHNhbWUgVFNV
+IGlzIHVzZWQgZm9yIGJvdGgsIHRoZXJlIGlzIGFuIG9wdGlvbiB3aGVyZSBhcyB5b3UgcHV0IGlu
+IENBTSBlbnRyaWVzIGZvciBtdWx0aWNhc3QgZnJhbWUgYW5kIHN1Y2gsIHlvdSBjYW4gc2VsZWN0
+IGlmIHlvdSB3b3VsZCBsaWtlIENBTSBlbnRyeSBwYWNrZXRzIHJlY2VpdmVkIG9uIG9uZSBwb3J0
+IHRvIGJlIGF1dG9tYXRpY2FsbHkgcmVsYXllZCBvdmVyIHRvIHRoZSBvdGhlciBwb3J0IGZvciBw
+cm9jZXNzaW5nIChpZSwgYnJpZGdlIG5ldHdvcmspLg0KVGhlIFBPU1QxLVBPU1Q0IHJlZ2lzdGVy
+cyBhcmUgd2hhdCB5b3UgdXNlIHRvIHNlbGVjdCB3aGF0IENBTSBlbnRyaWVzIHlvdSB3YW50IHJl
+bGF5ZWQuDQoNCkZvciBleGFtcGxlOiANCg0KICAgUmVnaXN0ZXI6IENBTSBFbnRyeSBUYWJsZSBQ
+T1NUMSBSZWdpc3RlciAoVFNVX1BPU1QxKQ0KICAgICAgIEJpdHM6IDMxIHRvIDI4DQogICBCaXQg
+bmFtZTogUE9TVDBbMzowXQ0KRGVzY3JpcHRpb246IFRoZXNlIGJpdHMgc2V0IHRoZSBjb25kaXRp
+b25zIGZvciByZWZlcnJpbmcgdG8gQ0FNIGVudHJ5IHRhYmxlIDAuIEJ5DQogICAgICAgICAgICAg
+c2V0dGluZyBtdWx0aXBsZSBiaXRzIHRvIDEsIG11bHRpcGxlIGNvbmRpdGlvbnMgY2FuIGJlIHNl
+bGVjdGVkLg0KDQogICAgICAgICAgICAgUE9TVDBbM106IENBTSBlbnRyeSB0YWJsZSAwIGlzIHJl
+ZmVycmVkIHRvIGluIHBvcnQgMCByZWNlcHRpb24NCiAgICAgICAgICAgICBQT1NUMFsyXTogQ0FN
+IGVudHJ5IHRhYmxlIDAgaXMgcmVmZXJyZWQgdG8gaW4gcG9ydCAwIHRvIDEgcmVsYXkuDQogICAg
+ICAgICAgICAgUE9TVDBbMV06IENBTSBlbnRyeSB0YWJsZSAwIGlzIHJlZmVycmVkIHRvIGluIHBv
+cnQgMSByZWNlcHRpb24uDQogICAgICAgICAgICAgUE9TVDBbMF06IENBTSBlbnRyeSB0YWJsZSAw
+IGlzIHJlZmVycmVkIHRvIGluIHBvcnQgMSB0byAwIHJlbGF5DQoNCg0KU28sIGFzIHlvdSBjYW4g
+c2VlLCBoYXZpbmcgdGhlIFBPU1QgcmVnaXN0ZXJzIG1lYW5zIG5vdGhpbmcgaWYgeW91IG9ubHkg
+aGF2ZSAxIEV0aGVybmV0IHBvcnQgYXR0YWNoZWQgdG8gdGhlIFRTVS4NCg0KTm90ZSwgaWYgeW91
+IGxvb2sgYXQgZnVuY3Rpb24gc2hfZXRoX3RzdV9nZXRfcG9zdF9iaXQsIHRoZSByZWxheSBmdW5j
+dGlvbmFsaXR5IGlzIG5ldmVyIHVzZWQgYW55d2F5IGJlY2F1c2UgZWFjaCBlbnRyeSB3aWxsIG9u
+bHkgZXZlciBiZSBzZXQgdG8gInBvcnQgMCByZWNlcHRpb24iIG9yICJwb3J0IDEgcmVjZXB0aW9u
+Ii4NCg0KDQoNCj4+ICAJLnNoaWZ0X3JkMAk9IDEsDQo+PiAgfTsNCj4+DQo+PiBAQCAtMjQ2MCw2
+ICsyNDYxLDkgQEAgc3RhdGljIHZvaWQgc2hfZXRoX3RzdV9lbmFibGVfY2FtX2VudHJ5X3Bvc3Qo
+c3RydWN0IG5ldF9kZXZpY2UgKm5kZXYsDQo+PiAgCXUzMiB0bXA7DQo+PiAgCXZvaWQgKnJlZ19v
+ZmZzZXQ7DQo+Pg0KPj4gKwlpZiAobWRwLT5jZC0+dHN1X25vX3Bvc3QpDQo+PiArCQlyZXR1cm47
+DQo+PiArDQo+PiAgCXJlZ19vZmZzZXQgPSBzaF9ldGhfdHN1X2dldF9wb3N0X3JlZ19vZmZzZXQo
+bWRwLCBlbnRyeSk7DQo+DQo+ICAgIEknZCBjaGVjayBjaGVjayBmb3IgU0hfRVRIX09GRlNFVF9J
+TlZBTElEIGluIHRoZSBhYm92ZSBmdW5jdGlvbiBhbmQgcmV0dXJuIE5VTEwgaWYgc287IHRoZW4N
+Cj4gd2UgY2FuIGNoZWNrIGZvciBOVUxMIGhlcmUuLi4NCg0KVGhhdCB3YXMgc2ltaWxhciB0byBt
+eSBmaXJzdCBmaXguIEJ1dCwgdGhlbiBJIGdvdCB0byB0aGlua2luZyB0aGF0IGlmIGEgbmV3IFJa
+IGNvbWVzIG91dCB3aXRoIGR1YWwgRXRoZXJuZXQsIHRoZSBkZXNpZ25lcnMgbWlnaHQgYWRkIGlu
+IHRoZSBQT1NUIHJlZ2lzdGVycyBiYWNrIGluIHRoZSBUU1UuIEFuZCBpbiB0aGF0IGNhc2UsIGl0
+IHdvdWxkIGJlIG5pY2UgdG8gcmV1c2UgdGhlIHNoX2V0aF9pc19yel9mYXN0X2V0aGVyIGFycmF5
+IChqdXN0IGFkZCBpbiB0aGUgZXh0cmEgcmVnaXN0ZXJzKS4NCg0KQnV0Li4ubWF5YmUgY2hlY2tp
+bmcgZm9yIFNIX0VUSF9PRkZTRVRfSU5WQUxJRCBpcyBnb29kIGZvciBub3cgaW5zdGVhZCBvZiB3
+b3JyeWluZyBhYm91dCB0aGF0Lg0KDQoNCj4gT2gsIGFuZCBJJ2xsIGhhdmUgdG8gY29ycmVjdCB5
+b3VyIGxhbmd1YWdlIGFuZCB0ZXJtaW5vbG9neS4gOi0vIFNob3VsZCBiZQ0KPiAiaWYgdGhleSBk
+b24ndCBleGlzdCIgaW4gdGhlIHN1YmplY3QuDQoNCllhLCBteSBmaXJzdCBzdWJqZWN0IGxpbmUg
+d2FzIHRvbyBsb25nLCBzbyBJIGtlcHQgdHJ5aW5nIHRvIHNob3J0ZW4gaXQuLi4uYW5kIHRoZW4g
+aXQgdHVybiBpbnRvIGJhZCBncmFtbWVyLg0KDQpJIHRoaW5rIGEgbW9yZSBjbGVhciBzdWJqZWN0
+IGlzICJGaXggVFNVIHdpdGhvdXQgcmVsYXkgZmVhdHVyZSBhY2Nlc3NlcyINCg0KDQoNCg0KDQpD
+aHJpcw0K
