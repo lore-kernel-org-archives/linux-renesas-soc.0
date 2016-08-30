@@ -1,90 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51248 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcHHLAy (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:00:54 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <874m6v39iz.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiIa-0002ag-5K@debutante>
-Date: Mon, 08 Aug 2016 12:00:48 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on ssm2518" to the asoc tree
+Received: from kirsty.vergenet.net ([202.4.237.240]:34511 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751804AbcH3HE3 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 30 Aug 2016 03:04:29 -0400
+Date: Tue, 30 Aug 2016 09:04:21 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Chris Brandt <chris.brandt@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] ARM: shmobile: Add RSKRZA1 DT bindings documentation
+Message-ID: <20160830070420.GB12845@verge.net.au>
+References: <20160829181429.25115-1-chris.brandt@renesas.com>
+ <CAMuHMdXdsUci=K8C1iN5_oYGj9p3eR7hmQoMbE+DH1Ke28+HqQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXdsUci=K8C1iN5_oYGj9p3eR7hmQoMbE+DH1Ke28+HqQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Mon, Aug 29, 2016 at 08:40:23PM +0200, Geert Uytterhoeven wrote:
+> On Mon, Aug 29, 2016 at 8:14 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> > Add RSKRZA1 Device tree bindings Documentation, listing it as a supported
+> > board.
+> >
+> > This allows to use checkpatch to validate DTSes referring to the RSKRZA1
+> > board.
+> >
+> > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-   ASoC: codec duplicated callback function goes to component on ssm2518
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 96107bbaf32ab93bd359c7741f3611aff08e144b Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:24:44 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- ssm2518
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/ssm2518.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/codecs/ssm2518.c b/sound/soc/codecs/ssm2518.c
-index e2e0bfa7ec20..38a85f3adc80 100644
---- a/sound/soc/codecs/ssm2518.c
-+++ b/sound/soc/codecs/ssm2518.c
-@@ -715,12 +715,14 @@ static struct snd_soc_codec_driver ssm2518_codec_driver = {
- 	.set_sysclk = ssm2518_set_sysclk,
- 	.idle_bias_off = true,
- 
--	.controls = ssm2518_snd_controls,
--	.num_controls = ARRAY_SIZE(ssm2518_snd_controls),
--	.dapm_widgets = ssm2518_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(ssm2518_dapm_widgets),
--	.dapm_routes = ssm2518_routes,
--	.num_dapm_routes = ARRAY_SIZE(ssm2518_routes),
-+	.component_driver = {
-+		.controls		= ssm2518_snd_controls,
-+		.num_controls		= ARRAY_SIZE(ssm2518_snd_controls),
-+		.dapm_widgets		= ssm2518_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(ssm2518_dapm_widgets),
-+		.dapm_routes		= ssm2518_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(ssm2518_routes),
-+	},
- };
- 
- static const struct regmap_config ssm2518_regmap_config = {
--- 
-2.8.1
+Thanks, I have queued this up.
