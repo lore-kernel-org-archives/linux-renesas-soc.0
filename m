@@ -1,109 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:39682 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750700AbcH3NPP (ORCPT
+Received: from relay1.mentorg.com ([192.94.38.131]:47924 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755670AbcH3QL5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Aug 2016 09:15:15 -0400
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-        by ayla.of.borg with esmtp (Exim 4.82)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1beisj-0005Pf-D7
-        for linux-renesas-soc@vger.kernel.org; Tue, 30 Aug 2016 15:15:13 +0200
-Received: from geert by ramsan with local (Exim 4.82)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1beism-0006dx-Da
-        for linux-renesas-soc@vger.kernel.org; Tue, 30 Aug 2016 15:15:16 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2016-08-30-v4.8-rc4
-Date: Tue, 30 Aug 2016 15:15:16 +0200
-Message-Id: <1472562916-25492-1-git-send-email-geert+renesas@glider.be>
+        Tue, 30 Aug 2016 12:11:57 -0400
+Subject: Re: [PATCH v2] watchdog: softdog: implement pretimeout support
+To: Wolfram Sang <wsa@the-dreams.de>, <linux-watchdog@vger.kernel.org>
+References: <20160830150306.2254-1-wsa@the-dreams.de>
+CC: <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Message-ID: <ad860021-64bd-b816-c091-abe649aa5518@mentor.com>
+Date: Tue, 30 Aug 2016 19:11:52 +0300
+MIME-Version: 1.0
+In-Reply-To: <20160830150306.2254-1-wsa@the-dreams.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2016-08-30-v4.8-rc4 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+Hi Wolfram,
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+On 08/30/2016 06:03 PM, Wolfram Sang wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> Give devices which do not have hardware support for pretimeout at least a
+> software version of it.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> Change since v1: added 'else' block in softdog_ping(), to actually
+> disable the timer when pretimeout value got cleared.
+>
+> Depends on the V4 pretimeout series from Vladimir.
+>
+> Vladimir: Maybe you could add this patch to the next revision of your
+> pretimeout series? Then people have something to play around with
+> right away.
 
-Today's version is based on renesas-devel-20160829-v4.8-rc4.
+I'll add it to the series, and most probably I'll add a pretimeout
+support to the iMX watchdog driver.
 
-Included branches with driver code:
-  - clk-renesas-for-v4.9
-  - sh-pfc-for-v4.9
-  - topic/r8a7796-pfc-v3
-  - topic/ipmmu-multi-arch-v4
-  - topic/r8a7795-ipmmu-v2-rebased1
-  - topic/r8a7796-ipmmu-v1-rebased1
-  - topic/salvator-x-ipmmu-rfc-v3-rebased4
-  - topic/spi-slave-v1-rebased1
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-v4
-  - topic/i2c-demux-v3-rebased3
-  - topic/sdhi-gen3-dma-v3-rebased2
-  - topic/r8a7796-sdhi-v2-rebased2
-  - topic/pretimeout-v1-rebased1
-  - topic/h3-pfc-set-voltage-v1-rebased2~1
-  - https://git.ragnatech.se/linux#for-renesas-drivers
-  - git://linuxtv.org/pinchartl/media.git#iommu/devel/du
-  - git://linuxtv.org/pinchartl/media.git#vsp1/hgo
-  - topic/fcpf-v1-rebased7
-  - topic/fdp1-v2-rebased2
-
-Included fixes:
-  - [media] fdp1: vb2_queue dev conversion
-  - [media] rcar-fcp: Make sure rcar_fcp_enable() returns 0 on success
-
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://people.freedesktop.org/~airlied/linux#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/mchehab/media-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git#mmc-next
-  - git://git.linaro.org/people/ulf.hansson/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/djbw/dmaengine.git#next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.infradead.org/battery-2.6.git#master
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm-intel#topic/drm-misc
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-
-Gr{oetje,eeting}s,
-
-						Geert
+The v5 series will be published today tonight or tomorrow.
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Best wishes,
+Vladimir
