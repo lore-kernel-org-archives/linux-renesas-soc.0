@@ -1,86 +1,44 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: "David S. Miller" <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:63365 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751110AbcH3Nb3 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 30 Aug 2016 09:31:29 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>,
-        Masaru Nagai <masaru.nagai.vx@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ravb: avoid unused function warnings
-Date: Fri, 26 Aug 2016 17:30:29 +0200
-Message-Id: <20160826153108.680850-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2] clk: renesas: rz: Select EXTAL vs USB clock
+Date: Tue, 30 Aug 2016 13:31:23 +0000
+Message-ID: <SG2PR06MB1165D004A2047B081B5456938AE00@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160825190518.20764-1-chris.brandt@renesas.com>
+ <20160830031358.19468-1-chris.brandt@renesas.com>
+ <CAMuHMdUEK47vKF2qO-_p4i0xEqnWG9Vu2AH_1f=eQ_mz4mwDjA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUEK47vKF2qO-_p4i0xEqnWG9Vu2AH_1f=eQ_mz4mwDjA@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When CONFIG_PM_SLEEP is disabled, we get a couple of harmless warnings:
-
-drivers/net/ethernet/renesas/ravb_main.c:2117:12: error: 'ravb_resume' defined but not used [-Werror=unused-function]
-drivers/net/ethernet/renesas/ravb_main.c:2104:12: error: 'ravb_suspend' defined but not used [-Werror=unused-function]
-
-The simplest solution here is to replace the #ifdef with __maybe_unused
-annotations, which lets the compiler do the right thing by itself.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: 0184165b2f42 ("ravb: add sleep PM suspend/resume support")
----
- drivers/net/ethernet/renesas/ravb_main.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index cad23ba06904..630536bc72f9 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2100,8 +2100,7 @@ static int ravb_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM
--static int ravb_suspend(struct device *dev)
-+static int __maybe_unused ravb_suspend(struct device *dev)
- {
- 	struct net_device *ndev = dev_get_drvdata(dev);
- 	int ret = 0;
-@@ -2114,7 +2113,7 @@ static int ravb_suspend(struct device *dev)
- 	return ret;
- }
- 
--static int ravb_resume(struct device *dev)
-+static int __maybe_unused ravb_resume(struct device *dev)
- {
- 	struct net_device *ndev = dev_get_drvdata(dev);
- 	struct ravb_private *priv = netdev_priv(ndev);
-@@ -2149,7 +2148,7 @@ static int ravb_resume(struct device *dev)
- 	return ret;
- }
- 
--static int ravb_runtime_nop(struct device *dev)
-+static int __maybe_unused ravb_runtime_nop(struct device *dev)
- {
- 	/* Runtime PM callback shared between ->runtime_suspend()
- 	 * and ->runtime_resume(). Simply returns success.
-@@ -2166,17 +2165,12 @@ static const struct dev_pm_ops ravb_dev_pm_ops = {
- 	SET_RUNTIME_PM_OPS(ravb_runtime_nop, ravb_runtime_nop, NULL)
- };
- 
--#define RAVB_PM_OPS (&ravb_dev_pm_ops)
--#else
--#define RAVB_PM_OPS NULL
--#endif
--
- static struct platform_driver ravb_driver = {
- 	.probe		= ravb_probe,
- 	.remove		= ravb_remove,
- 	.driver = {
- 		.name	= "ravb",
--		.pm	= RAVB_PM_OPS,
-+		.pm	= &ravb_dev_pm_ops,
- 		.of_match_table = ravb_match_table,
- 	},
- };
--- 
-2.9.0
+SGkgR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgdGhlIGdvb2QgcmV2aWV3IQ0KDQoNCk9uIEF1ZyAz
+MCwgMjAxNiwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KPiBJZiB5b3Ugd291bGQgdXNlICJj
+cGdfbW9kZSA9IChpb3JlYWQxNihwcHIwKSA+PiAyKSAmIDE7IiwgdGhlIHZhbHVlIG9mIGNwZ19t
+b2RlIHdvdWxkDQo+IGJlIGluIHN5bmMgd2l0aCBUYWJsZSA2LjIuIFRoZW4geW91IGNhbiBhdm9p
+ZCByZWx5aW5nIG9uIGFjdHVhbCBjbG9jayBuYW1lcyBpbiBEVCwgYW5kDQo+IGtlZXANCj4NCj4g
+ICAgcGFyZW50X25hbWUgPSBvZl9jbGtfZ2V0X3BhcmVudF9uYW1lKG5wLCBjcGdfbW9kZSk7DQo+
+DQo+IFRoZSBiaW5kaW5ncyBhbHJlYWR5IGRpY3RhdGUgdGhlIHBhcmVudCBjbG9ja3MgbXVzdCBt
+YXRjaCBjbG9jayBtb2RlcyBpbiB0aGUgZGF0YXNoZWV0LA0KPiBpLmUuIFRhYmxlIDYuMi4NCg0K
+Q29vbCB0cmljay4gSSBndWVzcyBJIGRvbid0IGdldCB1bmRlcnN0YW5kIGFsbCB0aGUgIkRUIE1h
+Z2ljIiB5ZXQuDQpJJ2xsIHVwZGF0ZSB0aGUgcGF0Y2ggYW5kIHJlc2VuZC4NCg0KDQo+IEZvciBl
+YXNpZXIgbWFpbnRlbmFuY2UsIEkgd291bGQgZmFjdG9yIG91dCByZWFkaW5nIHRoZSBtb2RlIHBp
+bnMgaW4gYSBzZXBhcmF0ZSBmdW5jdGlvbi4NCj4gV2hlbiBhIHByb3BlciBHUElPIGRyaXZlciBp
+cyBhZGRlZCwgdGhlIGZ1bmN0aW9uIGNhbiBiZSByZW1vdmVkLCBhbmQgaXRzIGNhbGxzaXRlIHVw
+ZGF0ZWQuDQoNCk9LLiBJIHNlZSBzZXR1cC1yY2FyLWdlbjIuYyBoYWQgYSBzZXBhcmF0ZSByY2Fy
+X2dlbjJfcmVhZF9tb2RlX3BpbnMoKSBmdW5jdGlvbi4NCkluc2lkZSBvZiBjbGstcnouYyBJJ2xs
+IG1ha2UgYSByel9jcGdfcmVhZF9tb2RlX3BpbigpIGZ1bmN0aW9uLg0KDQpDaHJpcw0K
