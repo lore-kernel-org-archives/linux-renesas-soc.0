@@ -1,64 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from leibniz.telenet-ops.be ([195.130.137.77]:47842 "EHLO
-        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755211AbcHVOp4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46348 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751515AbcH3VTN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Aug 2016 10:45:56 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by leibniz.telenet-ops.be (Postfix) with ESMTP id 3sHxFY2NQqzMr06S
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Aug 2016 16:45:37 +0200 (CEST)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] ARM: shmobile: apmu: Add more register documentation
-Date: Mon, 22 Aug 2016 16:44:26 +0200
-Message-Id: <1471877069-4157-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1471877069-4157-1-git-send-email-geert+renesas@glider.be>
-References: <1471877069-4157-1-git-send-email-geert+renesas@glider.be>
+        Tue, 30 Aug 2016 17:19:13 -0400
+Date: Tue, 30 Aug 2016 23:19:07 +0200
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Geert Uytterhoeven <geert@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL FOR renesas-drivers] UHS-I SDR-104 support for
+ sh_mobile_sdhi
+Message-ID: <20160830211906.GA13755@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/mach-shmobile/platsmp-apmu.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+Hi Geert,
 
-diff --git a/arch/arm/mach-shmobile/platsmp-apmu.c b/arch/arm/mach-shmobile/platsmp-apmu.c
-index 0c6bb458b7a45128..933f9b9024050223 100644
---- a/arch/arm/mach-shmobile/platsmp-apmu.c
-+++ b/arch/arm/mach-shmobile/platsmp-apmu.c
-@@ -31,9 +31,15 @@ static struct {
- 	int bit;
- } apmu_cpus[NR_CPUS];
- 
--#define WUPCR_OFFS 0x10
--#define PSTR_OFFS 0x40
--#define CPUNCR_OFFS(n) (0x100 + (0x10 * (n)))
-+#define WUPCR_OFFS	 0x10		/* Wake Up Control Register */
-+#define PSTR_OFFS	 0x40		/* Power Status Register */
-+#define CPUNCR_OFFS(n)	(0x100 + (0x10 * (n)))
-+					/* CPUn Power Status Control Register */
-+
-+/* Power Status Register */
-+#define CPUNST(r, n)	(((r) >> (n * 4)) & 3)	/* CPUn Status Bit */
-+#define CPUST_RUN	0		/* Run Mode */
-+#define CPUST_STANDBY	3		/* CoreStandby Mode */
- 
- static int __maybe_unused apmu_power_on(void __iomem *p, int bit)
- {
-@@ -59,7 +65,7 @@ static int __maybe_unused apmu_power_off_poll(void __iomem *p, int bit)
- 	int k;
- 
- 	for (k = 0; k < 1000; k++) {
--		if (((readl_relaxed(p + PSTR_OFFS) >> (bit * 4)) & 0x03) == 3)
-+		if (CPUNST(readl_relaxed(p + PSTR_OFFS), bit) == CPUST_STANDBY)
- 			return 1;
- 
- 		mdelay(1);
--- 
-1.9.1
+please consider pulling updated UHS-I SDR-104 support for sh_mobile_sdhi.
+
+This updates a branch you already have in renesas-drivers,
+topic/sdr104-v4, which should be dropped.
+
+The Gen 3 portion of this patchset is not much use from a performance point
+of view without DMA support provided by "[GIT PULL FOR renesas-drivers]
+mmc: renesas_sdhi: add R-Car Gen-3 DMA support", which I previously
+submitted to you as topic/sdhi-gen 3-dma. As there are some conflicts
+between that patchset and this one I have provided
+the following branches in the renesas tree at the URL below.
+
+* topic/sdhi-gen3-dma-v3.rebase: A rebase of that patchset
+* topic/sdr104-v5+sdhi-dma-v3: A merge of the two patchsets with
+                               conflicts resolved
+
+
+The following changes since commit 6e929eefcc2e53bc61e888d493c90af0c8a163a3:
+
+  mmc: sdhci: Remove ->platform_init() callback as it's no longer used (2016-08-30 12:40:34 +0200)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdr104-v5
+
+for you to fetch changes up to f90c8801403b687e59bbbf61ea157aa79b6805a7:
+
+  arm64: defconfig: Enable SDHI and GPIO_REGULATOR (2016-08-30 23:05:59 +0200)
+
+----------------------------------------------------------------
+Ai Kyuse (3):
+      mmc: tmio: enhance illegal sequence handling
+      mmc: tmio: Add hw reset support
+      mmc: tmio: Add tuning support
+
+Simon Horman (7):
+      mmc: tmio: document mandatory and optional callbacks
+      mmc: sh_mobile_sdhi: Add tuning support
+      ARM: dts: lager: Enable UHS-I SDR-104
+      arm64: dts: r8a7795: remove unnecessary cap-mmc-highspeed property
+      arm64: r8a7795: Set maximum frequencies for SDHI clocks
+      arm64: dts: r8a7795: salvator-x: Enable UHS-I SDR-104
+      arm64: defconfig: Enable SDHI and GPIO_REGULATOR
+
+Wolfram Sang (1):
+      arm64: dts: r8a7795: salvator: enable UHS for SDHI 0 & 3
+
+ arch/arm/boot/dts/r8a7790-lager.dts                |   1 +
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  24 +-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           |   6 +-
+ arch/arm64/configs/defconfig                       |   2 +
+ drivers/mmc/host/sh_mobile_sdhi.c                  | 275 ++++++++++++++++++++-
+ drivers/mmc/host/tmio_mmc.h                        |  15 +-
+ drivers/mmc/host/tmio_mmc_pio.c                    |  85 ++++++-
+ 7 files changed, 396 insertions(+), 12 deletions(-)
