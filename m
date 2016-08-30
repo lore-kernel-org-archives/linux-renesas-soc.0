@@ -1,48 +1,34 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:54276 "EHLO
-	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932338AbcHOPHP (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 15 Aug 2016 11:07:15 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
-	hverkuil@xs4all.nl
-Cc: linux-renesas-soc@vger.kernel.org,
-	laurent.pinchart@ideasonboard.com,
-	sergei.shtylyov@cogentembedded.com,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv3 03/10] [media] rcar-vin: arrange enum chip_id in chronological order
-Date: Mon, 15 Aug 2016 17:06:28 +0200
-Message-Id: <20160815150635.22637-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 30 Aug 2016 16:02:16 -0500
+From: Rob Herring <robh@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Grant Likely <grant.likely@secretlab.ca>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] Documentation: devicetree: changesets do locking on
+ their own meanwhile
+Message-ID: <20160830210216.GA19645@rob-hp-laptop>
+References: <20160824133900.7282-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160824133900.7282-1-wsa+renesas@sang-engineering.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-vin.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Aug 24, 2016 at 03:38:56PM +0200, Wolfram Sang wrote:
+> Since commit 183223770ae862 ("drivers/of: Export OF changeset functions"),
+> the mentioned functions do all necessary locking.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Fixes: 183223770ae862 ("drivers/of: Export OF changeset functions")
+> ---
+> 
+> V2: corrected the "Fixes" tag
+> 
+>  Documentation/devicetree/changesets.txt | 19 +++++--------------
+>  1 file changed, 5 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 31ad39a..b9274132 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -30,9 +30,9 @@
- #define HW_BUFFER_MASK 0x7f
- 
- enum chip_id {
--	RCAR_GEN2,
- 	RCAR_H1,
- 	RCAR_M1,
-+	RCAR_GEN2,
- };
- 
- /**
--- 
-2.9.2
+Applied, thanks.
