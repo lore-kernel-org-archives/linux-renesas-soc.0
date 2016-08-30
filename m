@@ -1,78 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud3.xs4all.net ([194.109.24.26]:37147 "EHLO
-        lb2-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752690AbcHVJNG (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Aug 2016 05:13:06 -0400
-Subject: Re: [PATCH] [media] rcar-vin: add legacy mode for wrong media bus
- formats
-To: Hans Verkuil <hansverk@cisco.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
-References: <20160708104327.6329-1-niklas.soderlund+renesas@ragnatech.se>
- <4776c0f7-22da-6e72-f0c8-c02fc07b38dc@xs4all.nl>
- <20160720122907.GC20569@bigcity.dyn.berto.se> <578F7054.2000302@cisco.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        slongerbeam@gmail.com, lars@metafoo.de, hans.verkuil@cisco.com,
-        mchehab@kernel.org
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <ab5a8bf5-39c4-585e-e1f6-5151e888a8cf@xs4all.nl>
-Date: Mon, 22 Aug 2016 11:12:59 +0200
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 30 Aug 2016 11:47:03 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+        Benoit Cousson <bcousson@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@atmel.com>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, nsekhar@ti.com
+Subject: Re: [RESEND PATCH v3 1/3] ARM: dts: DRA7: Add "linux,pci-domain"
+ property for pci dt nodes
+Message-ID: <20160830184702.hgn2vgxlts4pgkyy@atomide.com>
+References: <1470832400-11929-1-git-send-email-kishon@ti.com>
+ <1470832400-11929-2-git-send-email-kishon@ti.com>
+ <20160826153035.h6uyplc4mjlbc3v3@atomide.com>
+ <57C5687C.8030805@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <578F7054.2000302@cisco.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <57C5687C.8030805@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 07/20/2016 02:36 PM, Hans Verkuil wrote:
-> On 07/20/2016 02:29 PM, Niklas S�derlund wrote:
->> Hi Hans,
->>
->> Thanks for your feedback.
->>
->> On 2016-07-20 11:48:40 +0200, Hans Verkuil wrote:
->>> On 07/08/2016 12:43 PM, Niklas S�derlund wrote:
->>>> A recent bugfix to adv7180 brought to light that the rcar-vin driver are
->>>> looking for the wrong media bus format. It was looking for a YUVU format
->>>> but then expecting UYVY data. The bugfix for adv7180 will break the
->>>> usage of rcar-vin together with a adv7180 as found on Renesas R-Car2
->>>> Koelsch boards for example.
->>>>
->>>> This patch fix the rcar-vin driver to look for the correct UYVU formats
->>>> and adds a legacy mode. The legacy mode is needed since I don't know if
->>>> other devices provide a incorrect media bus format and I don't want to
->>>> break any working configurations. Hopefully the legacy mode can be
->>>> removed sometime in the future.
->>>
->>> I'd rather have a version without the legacy code. You have to assume that
->>> subdevs return correct values otherwise what's the point of the mediabus
->>> formats?
->>>
->>> So this is simply an adv7180 bug fix + this r-car fix to stay consistent
->>> with the adv7180.
->>
->> On principal I agree with you. My goal with this patch is just to make
->> sure there is no case where the rcar-vin driver won't work with the
->> adv7180. The plan was to drop the legacy mode in a separate patch after
->> both the adv7182 and rcar-vin patches where picked up.
->>
->> I'm happy to drop the 'legacy support' for the wrong formats from this
->> patch as long as I can be sure that there is no breaking. Should I
->> rewrite this patch to drop the wrong formats and submit it as a series
->> together with the adv7180 patch so they can be picked up together? Or do
->> you know of a better way?
+* Kishon Vijay Abraham I <kishon@ti.com> [160830 04:06]:
+> Hi Tony,
 > 
-> Why not combine this patch and the adv7180 patch in a single patch? Just keep
-> Steve's Signed-off-by line together with yours. That way everything stays
-> in sync. The only other user of the adv7180 doesn't look at the mediabus
-> formats at all, so it isn't affected.
+> On Friday 26 August 2016 09:00 PM, Tony Lindgren wrote:
+> > * Kishon Vijay Abraham I <kishon@ti.com> [160810 05:34]:
+> >> Since DRA7 has multiple PCIe Rootcomplex, add "linux,pci-domain"
+> >> property to assign a PCI domain number to each of the host
+> >> bridges.
+> > 
+> > Is this patch safe to apply without the other changes?
+> 
+> Yes. I verified pcie on dra7x by applying only this patch and it doesn't break
+> anything.
 
-Niklas,
+OK thanks for testing, I'm picking the dts change into omap-for-v4.9/dt
+branch.
 
-Were you planning to make a combined adv7180/rcar-vin patch for this?
-
-I would prefer this solution rather than keeping legacy code around.
+The other patches you probably should upload to RMKs patch system
+if no more comments.
 
 Regards,
 
-	Hans
+Tony
