@@ -1,79 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:44800 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752408AbcHQMUV (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 17 Aug 2016 08:20:21 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Sakari Ailus <sakari.ailus@iki.fi>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Subject: [PATCH v2 0/4] R-Car VSP1 1-D Histogram support
-Date: Wed, 17 Aug 2016 15:20:26 +0300
-Message-Id: <1471436430-26245-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Received: from mail-it0-f46.google.com ([209.85.214.46]:36528 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752902AbcH3O0c (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 30 Aug 2016 10:26:32 -0400
+MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB1165DAEF1E16FFA7E2DC49308AE00@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160826200107.20681-1-chris.brandt@renesas.com>
+ <87690577-4526-ce66-6ce3-68ac8b20e737@cogentembedded.com> <SG2PR06MB11653F9E20F38972CA11EF328AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <f456cca3-289c-67dc-f15c-5b475553cdde@cogentembedded.com> <SG2PR06MB1165DAEF1E16FFA7E2DC49308AE00@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 30 Aug 2016 16:26:30 +0200
+Message-ID: <CAMuHMdXhSUbP+81K_1vRxvkqecQM2Pn0z5dPOmBQAfqBykdxGg@mail.gmail.com>
+Subject: Re: [PATCH] net: ethernet: renesas: sh_eth: do not access POST
+ registers if not exist
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Daniel Palmer <daniel@0x0f.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Hi Chris,
 
-This patch series implements support for the Renesas R-Car VSP1 1-D histogram
-generator (HGO). It is based on top of the latest media tree's master branch,
-and available for convenience at
+On Tue, Aug 30, 2016 at 4:16 PM, Chris Brandt <Chris.Brandt@renesas.com> wr=
+ote:
+> On Aug 29, 2016, Sergei Shtylyov wrote:
+>>    SH7757 is not the only platform with TSU, there's e.g. R8A7740 ARM
+>> SoC which only has 1 GETHER channel...
+>
+> I don't have the R8A7740 manual (R-Mobile A1) so I can't see. But even if=
+ it does not have the POST registers, it might not hurt anything.
 
-        git://linuxtv.org/pinchartl/media.git vsp1/hgo
+R8a7740 does have the POST registers.
 
-The series starts with the implementation and documentation of the new V4L2
-metadata API (1/4), followed by a new pixel format for the R-Car VSP1 1-D
-histogram (2/4). The last two patches (3/4 and 4/4) implement support for the
-API in the vsp1 driver.
+> I just looked at the RZ/A1 register space and there seems to be dummy reg=
+isters in the POST1-4 area. I can write to them and read back what I wrote.=
+..which is all that the sh_eth driver cares about. I bet when the designers=
+ bring in the EtherC IP block, the entire register address is always popula=
+ted with a simple latch registers. And then, if a feature is not included (=
+like relay/POST), then nothing is hooked up on the back side of it.
 
-Laurent Pinchart (4):
-  v4l: Add metadata buffer type and format
-  v4l: Define a pixel format for the R-Car VSP1 1-D histogram engine
-  v4l: vsp1: Add HGO support
-  v4l: vsp1: Don't create HGO entity when the userspace API is disabled
+What a waste of transistors...
+There are plenty of hidden registers in many IP blocks.
 
- Documentation/media/uapi/v4l/buffer.rst            |   8 +
- Documentation/media/uapi/v4l/dev-meta.rst          |  69 +++
- Documentation/media/uapi/v4l/devices.rst           |   1 +
- Documentation/media/uapi/v4l/meta-formats.rst      |  15 +
- .../media/uapi/v4l/pixfmt-meta-vsp1-hgo.rst        | 170 +++++++
- Documentation/media/uapi/v4l/pixfmt.rst            |   1 +
- Documentation/media/uapi/v4l/vidioc-querycap.rst   |  14 +-
- Documentation/media/videodev2.h.rst.exceptions     |   2 +
- drivers/media/platform/Kconfig                     |   1 +
- drivers/media/platform/vsp1/Makefile               |   1 +
- drivers/media/platform/vsp1/vsp1.h                 |   3 +
- drivers/media/platform/vsp1/vsp1_drm.c             |   2 +-
- drivers/media/platform/vsp1/vsp1_drv.c             |  44 +-
- drivers/media/platform/vsp1/vsp1_entity.c          | 136 +++++-
- drivers/media/platform/vsp1/vsp1_entity.h          |   7 +-
- drivers/media/platform/vsp1/vsp1_hgo.c             | 501 +++++++++++++++++++++
- drivers/media/platform/vsp1/vsp1_hgo.h             |  50 ++
- drivers/media/platform/vsp1/vsp1_histo.c           | 324 +++++++++++++
- drivers/media/platform/vsp1/vsp1_histo.h           |  69 +++
- drivers/media/platform/vsp1/vsp1_pipe.c            |  22 +-
- drivers/media/platform/vsp1/vsp1_pipe.h            |   2 +
- drivers/media/platform/vsp1/vsp1_regs.h            |  24 +-
- drivers/media/platform/vsp1/vsp1_video.c           |  22 +-
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c      |  19 +
- drivers/media/v4l2-core/v4l2-dev.c                 |  16 +-
- drivers/media/v4l2-core/v4l2-ioctl.c               |  42 ++
- drivers/media/v4l2-core/videobuf2-v4l2.c           |   3 +
- include/media/v4l2-ioctl.h                         |  17 +
- include/uapi/linux/videodev2.h                     |  17 +
- 29 files changed, 1552 insertions(+), 50 deletions(-)
- create mode 100644 Documentation/media/uapi/v4l/dev-meta.rst
- create mode 100644 Documentation/media/uapi/v4l/meta-formats.rst
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-vsp1-hgo.rst
- create mode 100644 drivers/media/platform/vsp1/vsp1_hgo.c
- create mode 100644 drivers/media/platform/vsp1/vsp1_hgo.h
- create mode 100644 drivers/media/platform/vsp1/vsp1_histo.c
- create mode 100644 drivers/media/platform/vsp1/vsp1_histo.h
+Gr{oetje,eeting}s,
 
--- 
-Regards,
+                        Geert
 
-Laurent Pinchart
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
