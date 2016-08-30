@@ -1,62 +1,96 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: dts: blanche: add support for general purpose LEDs
-Date: Mon, 22 Aug 2016 23:39:30 +0300
-Message-ID: <1529754.UBcqZ7GKj7@wasted.cogentembedded.com>
-In-Reply-To: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
-References: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:45906 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758641AbcH3VKb (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 30 Aug 2016 17:10:31 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v5 09/11] arm64: dts: r8a7795: salvator: enable UHS for SDHI 0 & 3
+Date: Tue, 30 Aug 2016 23:09:57 +0200
+Message-Id: <1472591399-13907-10-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
+References: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the general purpose LEDs on the Blanche board.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-This patch is against the 'renesas-devel-20160822-v4.8-rc3' of Simon Horman's
-'renesas.git' repo plus the SDHI0/DU patches posted earlier.
+v5
+* Added to series, previously posted by Wolfram independently
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
- arch/arm/boot/dts/r8a7792-blanche.dts |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792-blanche.dts
-+++ renesas/arch/arm/boot/dts/r8a7792-blanche.dts
-@@ -159,6 +159,27 @@
- 		};
- 	};
- 
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led17 {
-+			gpios = <&gpio10 10 GPIO_ACTIVE_HIGH>;
-+			label = "LED17";
-+		};
-+		led18 {
-+			gpios = <&gpio10 11 GPIO_ACTIVE_HIGH>;
-+			label = "LED18";
-+		};
-+		led19 {
-+			gpios = <&gpio10 12 GPIO_ACTIVE_HIGH>;
-+			label = "LED19";
-+		};
-+		led20 {
-+			gpios = <&gpio10 23 GPIO_ACTIVE_HIGH>;
-+			label = "LED20";
-+		};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 98f02631a0f0..54540a223942 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -175,11 +175,25 @@
+ 	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
++		power-source = <3300>;
 +	};
 +
- 	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
++	sdhi0_pins_uhs: sd0_uhs {
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
++		power-source = <1800>;
+ 	};
  
-
+ 	sdhi3_pins: sd3 {
+ 		groups = "sdhi3_data4", "sdhi3_ctrl";
+ 		function = "sdhi3";
++		power-source = <3300>;
++	};
++
++	sdhi3_pins_uhs: sd3_uhs {
++		groups = "sdhi3_data4", "sdhi3_ctrl";
++		function = "sdhi3";
++		power-source = <1800>;
+ 	};
+ 
+ 	sound_pins: sound {
+@@ -304,25 +318,29 @@
+ 
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+-	pinctrl-names = "default";
++	pinctrl-1 = <&sdhi0_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
+ 
+ 	vmmc-supply = <&vcc_sdhi0>;
+ 	vqmmc-supply = <&vccq_sdhi0>;
+ 	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
+ 	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
+ 	bus-width = <4>;
++	sd-uhs-sdr50;
+ 	status = "okay";
+ };
+ 
+ &sdhi3 {
+ 	pinctrl-0 = <&sdhi3_pins>;
+-	pinctrl-names = "default";
++	pinctrl-1 = <&sdhi3_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
+ 
+ 	vmmc-supply = <&vcc_sdhi3>;
+ 	vqmmc-supply = <&vccq_sdhi3>;
+ 	cd-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
+ 	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
+ 	bus-width = <4>;
++	sd-uhs-sdr50;
+ 	status = "okay";
+ };
+ 
+-- 
+2.7.0.rc3.207.g0ac5344
