@@ -1,40 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:39507 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753113AbcHXJUF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45906 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758655AbcH3VKe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Aug 2016 05:20:05 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/2] i2c: sh_mobile: use proper device with dma_mapping_error
-Date: Wed, 24 Aug 2016 11:19:28 +0200
-Message-Id: <20160824091929.2082-1-wsa+renesas@sang-engineering.com>
+        Tue, 30 Aug 2016 17:10:34 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v5 11/11] arm64: defconfig: Enable SDHI and GPIO_REGULATOR
+Date: Tue, 30 Aug 2016 23:09:59 +0200
+Message-Id: <1472591399-13907-12-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
+References: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We must use the same device we used for mapping.
+This allows use of the SDHI SD/SDIO controller present on R-Car Gen3 SoCs
+and already enabled in the DT of the r8a7795/salvator-x (H3).
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/i2c/busses/i2c-sh_mobile.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v5
+* New patch
+---
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 6fb3e264599229..05b1eeab9cf5f6 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -610,7 +610,7 @@ static void sh_mobile_i2c_xfer_dma(struct sh_mobile_i2c_data *pd)
- 		return;
- 
- 	dma_addr = dma_map_single(chan->device->dev, pd->msg->buf, pd->msg->len, dir);
--	if (dma_mapping_error(pd->dev, dma_addr)) {
-+	if (dma_mapping_error(chan->device->dev, dma_addr)) {
- 		dev_dbg(pd->dev, "dma map failed, using PIO\n");
- 		return;
- 	}
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index eadf4855ad2d..e9243f7772c2 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -264,6 +264,7 @@ CONFIG_REGULATOR=y
+ CONFIG_MFD_CROS_EC=y
+ CONFIG_MFD_CROS_EC_I2C=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
++CONFIG_REGULATOR_GPIO=y
+ CONFIG_REGULATOR_HI655X=y
+ CONFIG_REGULATOR_MAX77620=y
+ CONFIG_REGULATOR_PWM=y
+@@ -320,6 +321,7 @@ CONFIG_MMC_SDHCI_OF_ESDHC=y
+ CONFIG_MMC_SDHCI_TEGRA=y
+ CONFIG_MMC_SDHCI_MSM=y
+ CONFIG_MMC_SPI=y
++CONFIG_MMC_SDHI=y
+ CONFIG_MMC_DW=y
+ CONFIG_MMC_DW_EXYNOS=y
+ CONFIG_MMC_DW_K3=y
 -- 
-2.9.3
+2.7.0.rc3.207.g0ac5344
