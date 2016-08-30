@@ -1,52 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:54338 "EHLO
-	smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932367AbcHOPHS (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 15 Aug 2016 11:07:18 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
-	hverkuil@xs4all.nl
-Cc: linux-renesas-soc@vger.kernel.org,
-	laurent.pinchart@ideasonboard.com,
-	sergei.shtylyov@cogentembedded.com,
-	=?UTF-8?q?Niklas=20S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv3 05/10] [media] rcar-vin: return correct error from platform_get_irq()
-Date: Mon, 15 Aug 2016 17:06:30 +0200
-Message-Id: <20160815150635.22637-6-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: from kirsty.vergenet.net ([202.4.237.240]:45906 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758658AbcH3VKf (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 30 Aug 2016 17:10:35 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v5 10/11] arm64: dts: r8a7795: salvator-x: Enable UHS-I SDR-104
+Date: Tue, 30 Aug 2016 23:09:58 +0200
+Message-Id: <1472591399-13907-11-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
+References: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fix a error from the original driver where the wrong error code is
-returned if the driver fails to get a IRQ number from
-platform_get_irq().
+Add the sd-uhs-sdr104 property to SDHI0 and SDHI1.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v5
+* New patch
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index a1eb26b..3941134 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -282,8 +282,8 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 		return PTR_ERR(vin->base);
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 54540a223942..d3ad5ddcc95c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -327,6 +327,7 @@
+ 	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
+ 	bus-width = <4>;
+ 	sd-uhs-sdr50;
++	sd-uhs-sdr104;
+ 	status = "okay";
+ };
  
- 	irq = platform_get_irq(pdev, 0);
--	if (irq <= 0)
--		return ret;
-+	if (irq < 0)
-+		return irq;
+@@ -341,6 +342,7 @@
+ 	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
+ 	bus-width = <4>;
+ 	sd-uhs-sdr50;
++	sd-uhs-sdr104;
+ 	status = "okay";
+ };
  
- 	ret = rvin_dma_probe(vin, irq);
- 	if (ret)
 -- 
-2.9.2
+2.7.0.rc3.207.g0ac5344
