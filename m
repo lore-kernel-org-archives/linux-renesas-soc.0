@@ -1,50 +1,51 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/2] ARM: dts: r8a7792: add VSP1V clocks
-Date: Sat, 20 Aug 2016 01:18:54 +0300
-Message-ID: <2191324.RHrKmLEeFa@wasted.cogentembedded.com>
-In-Reply-To: <1635089.v8k0jcJkvb@wasted.cogentembedded.com>
-References: <1635089.v8k0jcJkvb@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from michel.telenet-ops.be ([195.130.137.88]:38529 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759598AbcHaJcB (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 31 Aug 2016 05:32:01 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] arm64: dts: r8a7795: Add SoC-specific compatible property to audio-dmac nodes
+Date: Wed, 31 Aug 2016 11:31:55 +0200
+Message-Id: <1472635915-26856-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the VSP1V clocks in the R8A7792 device tree.
+The audio-dmac nodes used the generic compatible property only.
+Add the SoC-specific one, to make it future proof.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7792.dtsi |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -757,10 +757,15 @@
- 			compatible = "renesas,r8a7792-mstp-clocks",
- 				     "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe6150134 0 4>, <0 0xe6150038 0 4>;
--			clocks = <&m2_clk>;
-+			clocks = <&m2_clk>, <&zs_clk>, <&zs_clk>, <&zs_clk>;
- 			#clock-cells = <1>;
--			clock-indices = <R8A7792_CLK_JPU>;
--			clock-output-names = "jpu";
-+			clock-indices = <
-+				R8A7792_CLK_JPU
-+				R8A7792_CLK_VSP1DU1 R8A7792_CLK_VSP1DU0
-+				R8A7792_CLK_VSP1_SY
-+			>;
-+			clock-output-names = "jpu", "vsp1du1", "vsp1du0",
-+					     "vsp1-sy";
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 5d4978cf6cdbe215..1fe5533cf5093306 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -333,7 +333,8 @@
  		};
- 		mstp2_clks: mstp2_clks@e6150138 {
- 			compatible = "renesas,r8a7792-mstp-clocks",
-
+ 
+ 		audma0: dma-controller@ec700000 {
+-			compatible = "renesas,rcar-dmac";
++			compatible = "renesas,dmac-r8a7795",
++				     "renesas,rcar-dmac";
+ 			reg = <0 0xec700000 0 0x10000>;
+ 			interrupts = <GIC_SPI 350 IRQ_TYPE_LEVEL_HIGH
+ 				      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
+@@ -373,7 +374,8 @@
+ 		};
+ 
+ 		audma1: dma-controller@ec720000 {
+-			compatible = "renesas,rcar-dmac";
++			compatible = "renesas,dmac-r8a7795",
++				     "renesas,rcar-dmac";
+ 			reg = <0 0xec720000 0 0x10000>;
+ 			interrupts = <GIC_SPI 351 IRQ_TYPE_LEVEL_HIGH
+ 				      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
+-- 
+1.9.1
