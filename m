@@ -1,49 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:49550 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754161AbcHSA7g (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:35523 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759218AbcHaKDk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Aug 2016 20:59:36 -0400
-Received: from localhost.localdomain (227.178-201-80.adsl-dyn.isp.belgacom.be [80.201.178.227])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 37BB7208A6
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Aug 2016 18:03:33 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/HACK 2/7] ARM: shmobile: r8a7791: Enable IOMMU usage for the DU
-Date: Thu, 18 Aug 2016 19:03:55 +0300
-Message-Id: <1471536240-25082-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1471536240-25082-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1471536240-25082-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 31 Aug 2016 06:03:40 -0400
+Received: by mail-lf0-f45.google.com with SMTP id f93so32962950lfi.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 31 Aug 2016 03:03:39 -0700 (PDT)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH v3 08/12] arm64: dts: h3ulcb: enable EXTALR clk
+Date: Wed, 31 Aug 2016 13:03:36 +0300
+Message-Id: <1472637816-14897-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This enables EXTALR clock that can be used for the watchdog.
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Changes in version 3:
+- initially added
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 8f0086bbd96b..411c36dbbe7b 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1032,6 +1032,8 @@
- 		clock-names = "du.0", "du.1", "lvds.0";
- 		status = "disabled";
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 3682bcc..6936288 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -74,6 +74,10 @@
+ 	clock-frequency = <16666666>;
+ };
  
-+		iommus = <&ipmmu_mx 15>;
++&extalr_clk {
++	clock-frequency = <32768>;
++};
 +
- 		ports {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -1710,7 +1712,6 @@
- 		interrupts = <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
- 		#iommu-cells = <1>;
--		status = "disabled";
- 	};
- 
- 	ipmmu_rt: mmu@ffc80000 {
+ &pfc {
+ 	pinctrl-0 = <&scif_clk_pins>;
+ 	pinctrl-names = "default";
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
