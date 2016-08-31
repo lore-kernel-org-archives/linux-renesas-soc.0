@@ -1,90 +1,102 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54084 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752242AbcHHLG3 (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:06:29 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87oa538xhc.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiNz-0004Cb-9s@debutante>
-Date: Mon, 08 Aug 2016 12:06:23 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on wm8903" to the asoc tree
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH v3 06/12] arm64: dts: h3ulcb: enable SDHI0
+Date: Wed, 31 Aug 2016 13:03:19 +0300
+Message-Id: <1472637799-14819-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+This supports SDHI0 on H3ULCB board SD card slot
 
-   ASoC: codec duplicated callback function goes to component on wm8903
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 2fdff3a06e2fdc7ddfb5636e500fcd491c897c7c Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 08:48:24 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- wm8903
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 ---
- sound/soc/codecs/wm8903.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+Changes in version 3:
+- initially added
 
-diff --git a/sound/soc/codecs/wm8903.c b/sound/soc/codecs/wm8903.c
-index a26ca490cf31..c19ba7ca3a35 100644
---- a/sound/soc/codecs/wm8903.c
-+++ b/sound/soc/codecs/wm8903.c
-@@ -1880,12 +1880,14 @@ static struct snd_soc_codec_driver soc_codec_dev_wm8903 = {
- 	.seq_notifier = wm8903_seq_notifier,
- 	.suspend_bias_off = true,
- 
--	.controls = wm8903_snd_controls,
--	.num_controls = ARRAY_SIZE(wm8903_snd_controls),
--	.dapm_widgets = wm8903_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(wm8903_dapm_widgets),
--	.dapm_routes = wm8903_intercon,
--	.num_dapm_routes = ARRAY_SIZE(wm8903_intercon),
-+	.component_driver = {
-+		.controls		= wm8903_snd_controls,
-+		.num_controls		= ARRAY_SIZE(wm8903_snd_controls),
-+		.dapm_widgets		= wm8903_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(wm8903_dapm_widgets),
-+		.dapm_routes		= wm8903_intercon,
-+		.num_dapm_routes	= ARRAY_SIZE(wm8903_intercon),
-+	},
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 48 ++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 3329f78..5be0cf6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -44,6 +44,30 @@
+ 			gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
+ 		};
+ 	};
++
++	vcc_sdhi0: regulator-vcc-sdhi0 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "SDHI0 Vcc";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpio = <&gpio5 2 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	vccq_sdhi0: regulator-vccq-sdhi0 {
++		compatible = "regulator-gpio";
++
++		regulator-name = "SDHI0 VccQ";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
++		gpios-states = <1>;
++		states = <3300000 1
++			  1800000 0>;
++	};
  };
  
- static const struct regmap_config wm8903_regmap = {
+ &extal_clk {
+@@ -68,6 +92,18 @@
+ 		groups = "avb_mdc";
+ 		function = "avb";
+ 	};
++
++	sdhi0_pins_3v3: sd0_3v3 {
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
++		power-source = <3300>;
++	};
++
++	sdhi0_pins_1v8: sd0_1v8 {
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
++		power-source = <1800>;
++	};
+ };
+ 
+ &scif2 {
+@@ -82,6 +118,18 @@
+ 	status = "okay";
+ };
+ 
++&sdhi0 {
++	pinctrl-0 = <&sdhi0_pins_3v3>;
++	pinctrl-1 = <&sdhi0_pins_1v8>;
++	pinctrl-names = "default", "state_uhs";
++
++	vmmc-supply = <&vcc_sdhi0>;
++	vqmmc-supply = <&vccq_sdhi0>;
++	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
++	bus-width = <4>;
++	status = "okay";
++};
++
+ &avb {
+ 	pinctrl-0 = <&avb_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.8.1
+1.9.1
+
