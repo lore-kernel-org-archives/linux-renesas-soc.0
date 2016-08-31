@@ -1,38 +1,59 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:34640 "EHLO
-	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751528AbcHDHou (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Thu, 4 Aug 2016 03:44:50 -0400
-Received: by mail-oi0-f45.google.com with SMTP id k131so4931775oib.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Aug 2016 00:44:50 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <3437294.RhgABMHgKt@wasted.cogentembedded.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com> <3437294.RhgABMHgKt@wasted.cogentembedded.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 4 Aug 2016 09:44:49 +0200
-Message-ID: <CACRpkdb8Lj=jP9-EWcFtoSt+ostyRRM=L1zxQ-gn944k6bkxOQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7792: add SDHI pin groups
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH v3 07/12] arm64: dts: h3ulcb: enable I2C2
+Date: Wed, 31 Aug 2016 13:03:29 +0300
+Message-Id: <1472637809-14858-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Jul 12, 2016 at 11:40 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
+This supports I2C2 bus on H3ULCB board
 
-> Add SDHI0 pin groups to the R8A7792 PFC driver.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+---
+Changes in version 3:
+- initially added
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-I expect Geert to queue this and send it with the first pull request
-for the v4.9 development cycle.
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 5be0cf6..3682bcc 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -88,6 +88,11 @@
+ 		function = "scif_clk";
+ 	};
+ 
++	i2c2_pins: i2c2 {
++		groups = "i2c2_a";
++		function = "i2c2";
++	};
++
+ 	avb_pins: avb {
+ 		groups = "avb_mdc";
+ 		function = "avb";
+@@ -118,6 +123,13 @@
+ 	status = "okay";
+ };
+ 
++&i2c2 {
++	pinctrl-0 = <&i2c2_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins_3v3>;
+ 	pinctrl-1 = <&sdhi0_pins_1v8>;
+-- 
+1.9.1
 
-Yours,
-Linus Walleij
