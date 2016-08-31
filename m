@@ -1,567 +1,189 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:44801 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752607AbcHQMUW (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Wed, 17 Aug 2016 08:20:22 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Sakari Ailus <sakari.ailus@iki.fi>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Subject: [PATCH v2 1/4] v4l: Add metadata buffer type and format
-Date: Wed, 17 Aug 2016 15:20:27 +0300
-Message-Id: <1471436430-26245-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1471436430-26245-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1471436430-26245-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH v3 12/12] arm64: dts: h3ulcb: Sound SSI support
+Date: Wed, 31 Aug 2016 13:04:10 +0300
+Message-Id: <1472637850-15053-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The metadata buffer type is used to transfer metadata between userspace
-and kernelspace through a V4L2 buffers queue. It comes with a new
-metadata capture capability and format description.
+This supports SSI sound for H3ULCB board.
+SSI DMA mode used. CS2000 used as AUDIO_CLK_B.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 ---
-Changes since v1:
+Changes in version 3:
+- initially added
 
-- Rebased on top of the DocBook to reST conversion
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 115 +++++++++++++++++++++++++
+ 1 file changed, 115 insertions(+)
 
- Documentation/media/uapi/v4l/buffer.rst          |  8 +++
- Documentation/media/uapi/v4l/dev-meta.rst        | 69 ++++++++++++++++++++++++
- Documentation/media/uapi/v4l/devices.rst         |  1 +
- Documentation/media/uapi/v4l/vidioc-querycap.rst | 14 +++--
- Documentation/media/videodev2.h.rst.exceptions   |  2 +
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c    | 19 +++++++
- drivers/media/v4l2-core/v4l2-dev.c               | 16 +++---
- drivers/media/v4l2-core/v4l2-ioctl.c             | 41 ++++++++++++++
- drivers/media/v4l2-core/videobuf2-v4l2.c         |  3 ++
- include/media/v4l2-ioctl.h                       | 17 ++++++
- include/uapi/linux/videodev2.h                   | 14 +++++
- 11 files changed, 195 insertions(+), 9 deletions(-)
- create mode 100644 Documentation/media/uapi/v4l/dev-meta.rst
-
-diff --git a/Documentation/media/uapi/v4l/buffer.rst b/Documentation/media/uapi/v4l/buffer.rst
-index 5deb4a46f992..b5177cc63b86 100644
---- a/Documentation/media/uapi/v4l/buffer.rst
-+++ b/Documentation/media/uapi/v4l/buffer.rst
-@@ -499,6 +499,14 @@ enum v4l2_buf_type
-        -  Buffer for Software Defined Radio (SDR) output stream, see
- 	  :ref:`sdr`.
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index bbd7928..a254231 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -45,6 +45,12 @@
+ 		};
+ 	};
  
-+    -  .. row 13
++	x12_clk: x12_clk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <24576000>;
++	};
 +
-+       -  ``V4L2_BUF_TYPE_META_CAPTURE``
-+
-+       -  13
-+
-+       -  Buffer for metadata capture, see :ref:`metadata`.
-+
+ 	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
  
- 
- .. _buffer-flags:
-diff --git a/Documentation/media/uapi/v4l/dev-meta.rst b/Documentation/media/uapi/v4l/dev-meta.rst
-new file mode 100644
-index 000000000000..252ed05b4841
---- /dev/null
-+++ b/Documentation/media/uapi/v4l/dev-meta.rst
-@@ -0,0 +1,69 @@
-+.. -*- coding: utf-8; mode: rst -*-
+@@ -68,6 +74,28 @@
+ 		states = <3300000 1
+ 			  1800000 0>;
+ 	};
 +
-+.. _metadata:
++	audio_clkout: audio_clkout {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <11289600>;
++	};
 +
-+******************
-+Metadata Interface
-+******************
++	rsnd_ak4613: sound {
++		compatible = "simple-audio-card";
 +
-+Metadata refers to any non-image data that supplements video frames with
-+additional information. This may include statistics computed over the image
-+or frame capture parameters supplied by the image source. This interface is
-+intended for transfer of metadata to userspace and control of that operation.
++		simple-audio-card,format = "left_j";
++		simple-audio-card,bitclock-master = <&sndcpu>;
++		simple-audio-card,frame-master = <&sndcpu>;
 +
-+The metadata interface is implemented on video capture device nodes. The device
-+can be dedicated to metadata or can implement both video and metadata capture
-+as specified in its reported capabilities.
++		sndcpu: simple-audio-card,cpu {
++			sound-dai = <&rcar_sound>;
++		};
 +
-+.. note::
-+
-+    This is an :ref:`experimental` interface and may
-+    change in the future.
-+
-+Querying Capabilities
-+=====================
-+
-+Device nodes supporting the metadata interface set the ``V4L2_CAP_META_CAPTURE``
-+flag in the ``device_caps`` field of the
-+:ref:`v4l2_capability <v4l2-capability>` structure returned by the
-+:ref:`VIDIOC_QUERYCAP` ioctl. That flag means the device can capture
-+metadata to memory.
-+
-+At least one of the read/write or streaming I/O methods must be supported.
-+
-+
-+Data Format Negotiation
-+=======================
-+
-+The metadata device uses the :ref:`format` ioctls to select the capture format.
-+The metadata buffer content format is bound to that selected format. In addition
-+to the basic :ref:`format` ioctls, the :ref:`VIDIOC_ENUM_FMT` ioctl must be
-+supported as well.
-+
-+To use the :ref:`format` ioctls applications set the ``type`` of the
-+:ref:`v4l2_format <v4l2-format>` structure to ``V4L2_BUF_TYPE_META_CAPTURE``
-+and use the :ref:`v4l2_meta_format <v4l2-meta-format>` ``meta`` member of the
-+``fmt`` union as needed per the desired operation. The :ref:`v4l2-meta-format`
-+structure contains two fields, ``dataformat`` is set by applications to the V4L2
-+FourCC code of the desired format, and ``buffersize`` set by drivers to the
-+maximum buffer size (in bytes) required for data transfer.
-+
-+.. _v4l2-meta-format:
-+.. flat-table:: struct v4l2_meta_format
-+    :header-rows:  0
-+    :stub-columns: 0
-+    :widths:       1 1 2
-+
-+    * - __u32
-+      - ``dataformat``
-+      - The data format, set by the application. This is a little endian
-+        :ref:`four character code <v4l2-fourcc>`. V4L2 defines metadata formats
-+        in :ref:`meta-formats`.
-+    * - __u32
-+      - ``buffersize``
-+      - Maximum buffer size in bytes required for data. The value is set by the
-+        driver.
-+    * - __u8
-+      - ``reserved[24]``
-+      - This array is reserved for future extensions. Drivers and applications
-+        must set it to zero.
-diff --git a/Documentation/media/uapi/v4l/devices.rst b/Documentation/media/uapi/v4l/devices.rst
-index aed0ce11d1f8..961e7fb62063 100644
---- a/Documentation/media/uapi/v4l/devices.rst
-+++ b/Documentation/media/uapi/v4l/devices.rst
-@@ -24,3 +24,4 @@ Interfaces
-     dev-sdr
-     dev-event
-     dev-subdev
-+    dev-meta
-diff --git a/Documentation/media/uapi/v4l/vidioc-querycap.rst b/Documentation/media/uapi/v4l/vidioc-querycap.rst
-index b10fed313f99..734fae6fc5e4 100644
---- a/Documentation/media/uapi/v4l/vidioc-querycap.rst
-+++ b/Documentation/media/uapi/v4l/vidioc-querycap.rst
-@@ -387,6 +387,14 @@ specification the ioctl returns an ``EINVAL`` error code.
- 
-     -  .. row 23
- 
-+       -  ``V4L2_CAP_META_CAPTURE``
-+
-+       -  0x00800000
-+
-+       -  The device supports the :ref:`metadata` capture interface.
-+
-+    -  .. row 24
-+
-        -  ``V4L2_CAP_READWRITE``
- 
-        -  0x01000000
-@@ -394,7 +402,7 @@ specification the ioctl returns an ``EINVAL`` error code.
-        -  The device supports the :ref:`read() <rw>` and/or
- 	  :ref:`write() <rw>` I/O methods.
- 
--    -  .. row 24
-+    -  .. row 25
- 
-        -  ``V4L2_CAP_ASYNCIO``
- 
-@@ -402,7 +410,7 @@ specification the ioctl returns an ``EINVAL`` error code.
- 
-        -  The device supports the :ref:`asynchronous <async>` I/O methods.
- 
--    -  .. row 25
-+    -  .. row 26
- 
-        -  ``V4L2_CAP_STREAMING``
- 
-@@ -410,7 +418,7 @@ specification the ioctl returns an ``EINVAL`` error code.
- 
-        -  The device supports the :ref:`streaming <mmap>` I/O method.
- 
--    -  .. row 26
-+    -  .. row 27
- 
-        -  ``V4L2_CAP_DEVICE_CAPS``
- 
-diff --git a/Documentation/media/videodev2.h.rst.exceptions b/Documentation/media/videodev2.h.rst.exceptions
-index 9bb9a6cc39d8..d1275725d367 100644
---- a/Documentation/media/videodev2.h.rst.exceptions
-+++ b/Documentation/media/videodev2.h.rst.exceptions
-@@ -27,6 +27,7 @@ replace symbol V4L2_FIELD_SEQ_TB v4l2-field
- replace symbol V4L2_FIELD_TOP v4l2-field
- 
- # Documented enum v4l2_buf_type
-+replace symbol V4L2_BUF_TYPE_META_CAPTURE v4l2-buf-type
- replace symbol V4L2_BUF_TYPE_SDR_CAPTURE v4l2-buf-type
- replace symbol V4L2_BUF_TYPE_SDR_OUTPUT v4l2-buf-type
- replace symbol V4L2_BUF_TYPE_SLICED_VBI_CAPTURE v4l2-buf-type
-@@ -148,6 +149,7 @@ replace define V4L2_CAP_MODULATOR device-capabilities
- replace define V4L2_CAP_SDR_CAPTURE device-capabilities
- replace define V4L2_CAP_EXT_PIX_FORMAT device-capabilities
- replace define V4L2_CAP_SDR_OUTPUT device-capabilities
-+replace define V4L2_CAP_META_CAPTURE device-capabilities
- replace define V4L2_CAP_READWRITE device-capabilities
- replace define V4L2_CAP_ASYNCIO device-capabilities
- replace define V4L2_CAP_STREAMING device-capabilities
-diff --git a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-index bacecbd68a6d..da2d836e8887 100644
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -161,6 +161,20 @@ static inline int put_v4l2_sdr_format(struct v4l2_sdr_format *kp, struct v4l2_sd
- 	return 0;
- }
- 
-+static inline int get_v4l2_meta_format(struct v4l2_meta_format *kp, struct v4l2_meta_format __user *up)
-+{
-+	if (copy_from_user(kp, up, sizeof(struct v4l2_meta_format)))
-+		return -EFAULT;
-+	return 0;
-+}
-+
-+static inline int put_v4l2_meta_format(struct v4l2_meta_format *kp, struct v4l2_meta_format __user *up)
-+{
-+	if (copy_to_user(up, kp, sizeof(struct v4l2_meta_format)))
-+		return -EFAULT;
-+	return 0;
-+}
-+
- struct v4l2_format32 {
- 	__u32	type;	/* enum v4l2_buf_type */
- 	union {
-@@ -170,6 +184,7 @@ struct v4l2_format32 {
- 		struct v4l2_vbi_format	vbi;
- 		struct v4l2_sliced_vbi_format	sliced;
- 		struct v4l2_sdr_format	sdr;
-+		struct v4l2_meta_format	meta;
- 		__u8	raw_data[200];        /* user-defined */
- 	} fmt;
++		sndcodec: simple-audio-card,codec {
++			sound-dai = <&ak4613>;
++		};
++	};
  };
-@@ -216,6 +231,8 @@ static int __get_v4l2_format32(struct v4l2_format *kp, struct v4l2_format32 __us
- 	case V4L2_BUF_TYPE_SDR_CAPTURE:
- 	case V4L2_BUF_TYPE_SDR_OUTPUT:
- 		return get_v4l2_sdr_format(&kp->fmt.sdr, &up->fmt.sdr);
-+	case V4L2_BUF_TYPE_META_CAPTURE:
-+		return get_v4l2_meta_format(&kp->fmt.meta, &up->fmt.meta);
- 	default:
- 		pr_info("compat_ioctl32: unexpected VIDIOC_FMT type %d\n",
- 								kp->type);
-@@ -263,6 +280,8 @@ static int __put_v4l2_format32(struct v4l2_format *kp, struct v4l2_format32 __us
- 	case V4L2_BUF_TYPE_SDR_CAPTURE:
- 	case V4L2_BUF_TYPE_SDR_OUTPUT:
- 		return put_v4l2_sdr_format(&kp->fmt.sdr, &up->fmt.sdr);
-+	case V4L2_BUF_TYPE_META_CAPTURE:
-+		return put_v4l2_meta_format(&kp->fmt.meta, &up->fmt.meta);
- 	default:
- 		pr_info("compat_ioctl32: unexpected VIDIOC_FMT type %d\n",
- 								kp->type);
-diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
-index e6da353b39bc..70af31210cd3 100644
---- a/drivers/media/v4l2-core/v4l2-dev.c
-+++ b/drivers/media/v4l2-core/v4l2-dev.c
-@@ -574,30 +574,34 @@ static void determine_valid_ioctls(struct video_device *vdev)
- 		set_bit(_IOC_NR(VIDIOC_ENUM_FREQ_BANDS), valid_ioctls);
  
- 	if (is_vid) {
--		/* video specific ioctls */
-+		/* video and metadata specific ioctls */
- 		if ((is_rx && (ops->vidioc_enum_fmt_vid_cap ||
- 			       ops->vidioc_enum_fmt_vid_cap_mplane ||
--			       ops->vidioc_enum_fmt_vid_overlay)) ||
-+			       ops->vidioc_enum_fmt_vid_overlay ||
-+			       ops->vidioc_enum_fmt_meta_cap)) ||
- 		    (is_tx && (ops->vidioc_enum_fmt_vid_out ||
- 			       ops->vidioc_enum_fmt_vid_out_mplane)))
- 			set_bit(_IOC_NR(VIDIOC_ENUM_FMT), valid_ioctls);
- 		if ((is_rx && (ops->vidioc_g_fmt_vid_cap ||
- 			       ops->vidioc_g_fmt_vid_cap_mplane ||
--			       ops->vidioc_g_fmt_vid_overlay)) ||
-+			       ops->vidioc_g_fmt_vid_overlay ||
-+			       ops->vidioc_g_fmt_meta_cap)) ||
- 		    (is_tx && (ops->vidioc_g_fmt_vid_out ||
- 			       ops->vidioc_g_fmt_vid_out_mplane ||
- 			       ops->vidioc_g_fmt_vid_out_overlay)))
- 			 set_bit(_IOC_NR(VIDIOC_G_FMT), valid_ioctls);
- 		if ((is_rx && (ops->vidioc_s_fmt_vid_cap ||
- 			       ops->vidioc_s_fmt_vid_cap_mplane ||
--			       ops->vidioc_s_fmt_vid_overlay)) ||
-+			       ops->vidioc_s_fmt_vid_overlay ||
-+			       ops->vidioc_s_fmt_meta_cap)) ||
- 		    (is_tx && (ops->vidioc_s_fmt_vid_out ||
- 			       ops->vidioc_s_fmt_vid_out_mplane ||
- 			       ops->vidioc_s_fmt_vid_out_overlay)))
- 			 set_bit(_IOC_NR(VIDIOC_S_FMT), valid_ioctls);
- 		if ((is_rx && (ops->vidioc_try_fmt_vid_cap ||
- 			       ops->vidioc_try_fmt_vid_cap_mplane ||
--			       ops->vidioc_try_fmt_vid_overlay)) ||
-+			       ops->vidioc_try_fmt_vid_overlay ||
-+			       ops->vidioc_try_fmt_meta_cap)) ||
- 		    (is_tx && (ops->vidioc_try_fmt_vid_out ||
- 			       ops->vidioc_try_fmt_vid_out_mplane ||
- 			       ops->vidioc_try_fmt_vid_out_overlay)))
-@@ -663,7 +667,7 @@ static void determine_valid_ioctls(struct video_device *vdev)
- 	}
- 
- 	if (is_vid || is_vbi || is_sdr) {
--		/* ioctls valid for video, vbi or sdr */
-+		/* ioctls valid for video, metadata, vbi or sdr */
- 		SET_VALID_IOCTL(ops, VIDIOC_REQBUFS, vidioc_reqbufs);
- 		SET_VALID_IOCTL(ops, VIDIOC_QUERYBUF, vidioc_querybuf);
- 		SET_VALID_IOCTL(ops, VIDIOC_QBUF, vidioc_qbuf);
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 51a0fa144392..0afa07bfea35 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -37,6 +37,13 @@
- 	memset((u8 *)(p) + offsetof(typeof(*(p)), field) + sizeof((p)->field), \
- 	0, sizeof(*(p)) - offsetof(typeof(*(p)), field) - sizeof((p)->field))
- 
-+/* Zero out the end of the struct pointed to by p.  Everything including and
-+ * after thee specified field is cleared.
-+ */
-+#define CLEAR_FROM_FIELD(p, field) \
-+	memset((u8 *)(p) + offsetof(typeof(*(p)), field), \
-+	0, sizeof(*(p)) - offsetof(typeof(*(p)), field))
+ &extal_clk {
+@@ -113,6 +141,18 @@
+ 		function = "sdhi0";
+ 		power-source = <1800>;
+ 	};
 +
- #define is_valid_ioctl(vfd, cmd) test_bit(_IOC_NR(cmd), (vfd)->valid_ioctls)
- 
- struct std_descr {
-@@ -155,6 +162,7 @@ const char *v4l2_type_names[] = {
- 	[V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE] = "vid-out-mplane",
- 	[V4L2_BUF_TYPE_SDR_CAPTURE]        = "sdr-cap",
- 	[V4L2_BUF_TYPE_SDR_OUTPUT]         = "sdr-out",
-+	[V4L2_BUF_TYPE_META_CAPTURE]       = "meta-cap",
- };
- EXPORT_SYMBOL(v4l2_type_names);
- 
-@@ -249,6 +257,7 @@ static void v4l_print_format(const void *arg, bool write_only)
- 	const struct v4l2_sliced_vbi_format *sliced;
- 	const struct v4l2_window *win;
- 	const struct v4l2_sdr_format *sdr;
-+	const struct v4l2_meta_format *meta;
- 	unsigned i;
- 
- 	pr_cont("type=%s", prt_names(p->type, v4l2_type_names));
-@@ -336,6 +345,15 @@ static void v4l_print_format(const void *arg, bool write_only)
- 			(sdr->pixelformat >> 16) & 0xff,
- 			(sdr->pixelformat >> 24) & 0xff);
- 		break;
-+	case V4L2_BUF_TYPE_META_CAPTURE:
-+		meta = &p->fmt.meta;
-+		pr_cont(", dataformat=%c%c%c%c, buffersize=%u\n",
-+			(meta->dataformat >>  0) & 0xff,
-+			(meta->dataformat >>  8) & 0xff,
-+			(meta->dataformat >> 16) & 0xff,
-+			(meta->dataformat >> 24) & 0xff,
-+			meta->buffersize);
-+		break;
- 	}
- }
- 
-@@ -981,6 +999,10 @@ static int check_fmt(struct file *file, enum v4l2_buf_type type)
- 		if (is_sdr && is_tx && ops->vidioc_g_fmt_sdr_out)
- 			return 0;
- 		break;
-+	case V4L2_BUF_TYPE_META_CAPTURE:
-+		if (is_vid && is_rx && ops->vidioc_g_fmt_meta_cap)
-+			return 0;
-+		break;
- 	default:
- 		break;
- 	}
-@@ -1349,6 +1371,11 @@ static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
- 			break;
- 		ret = ops->vidioc_enum_fmt_sdr_out(file, fh, arg);
- 		break;
-+	case V4L2_BUF_TYPE_META_CAPTURE:
-+		if (unlikely(!is_rx || !is_vid || !ops->vidioc_enum_fmt_meta_cap))
-+			break;
-+		ret = ops->vidioc_enum_fmt_meta_cap(file, fh, arg);
-+		break;
- 	}
- 	if (ret == 0)
- 		v4l_fill_fmtdesc(p);
-@@ -1447,6 +1474,10 @@ static int v4l_g_fmt(const struct v4l2_ioctl_ops *ops,
- 		if (unlikely(!is_tx || !is_sdr || !ops->vidioc_g_fmt_sdr_out))
- 			break;
- 		return ops->vidioc_g_fmt_sdr_out(file, fh, arg);
-+	case V4L2_BUF_TYPE_META_CAPTURE:
-+		if (unlikely(!is_rx || !is_vid || !ops->vidioc_g_fmt_meta_cap))
-+			break;
-+		return ops->vidioc_g_fmt_meta_cap(file, fh, arg);
- 	}
- 	return -EINVAL;
- }
-@@ -1534,6 +1565,11 @@ static int v4l_s_fmt(const struct v4l2_ioctl_ops *ops,
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.sdr);
- 		return ops->vidioc_s_fmt_sdr_out(file, fh, arg);
-+	case V4L2_BUF_TYPE_META_CAPTURE:
-+		if (unlikely(!is_rx || !is_vid || !ops->vidioc_s_fmt_meta_cap))
-+			break;
-+		CLEAR_FROM_FIELD(p, fmt.meta.reserved);
-+		return ops->vidioc_s_fmt_meta_cap(file, fh, arg);
- 	}
- 	return -EINVAL;
- }
-@@ -1618,6 +1654,11 @@ static int v4l_try_fmt(const struct v4l2_ioctl_ops *ops,
- 			break;
- 		CLEAR_AFTER_FIELD(p, fmt.sdr);
- 		return ops->vidioc_try_fmt_sdr_out(file, fh, arg);
-+	case V4L2_BUF_TYPE_META_CAPTURE:
-+		if (unlikely(!is_rx || !is_vid || !ops->vidioc_try_fmt_meta_cap))
-+			break;
-+		CLEAR_FROM_FIELD(p, fmt.meta.reserved);
-+		return ops->vidioc_try_fmt_meta_cap(file, fh, arg);
- 	}
- 	return -EINVAL;
- }
-diff --git a/drivers/media/v4l2-core/videobuf2-v4l2.c b/drivers/media/v4l2-core/videobuf2-v4l2.c
-index 9cfbb6e4bc28..7216668d1056 100644
---- a/drivers/media/v4l2-core/videobuf2-v4l2.c
-+++ b/drivers/media/v4l2-core/videobuf2-v4l2.c
-@@ -575,6 +575,9 @@ int vb2_create_bufs(struct vb2_queue *q, struct v4l2_create_buffers *create)
- 	case V4L2_BUF_TYPE_SDR_OUTPUT:
- 		requested_sizes[0] = f->fmt.sdr.buffersize;
- 		break;
-+	case V4L2_BUF_TYPE_META_CAPTURE:
-+		requested_sizes[0] = f->fmt.meta.buffersize;
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-diff --git a/include/media/v4l2-ioctl.h b/include/media/v4l2-ioctl.h
-index 8b1d19bc9b0e..a32dcf78d4a3 100644
---- a/include/media/v4l2-ioctl.h
-+++ b/include/media/v4l2-ioctl.h
-@@ -43,6 +43,9 @@ struct v4l2_fh;
-  * @vidioc_enum_fmt_sdr_out: pointer to the function that implements
-  *	:ref:`VIDIOC_ENUM_FMT <vidioc_enum_fmt>` ioctl logic
-  *	for Software Defined Radio output
-+ * @vidioc_enum_fmt_meta_cap: pointer to the function that implements
-+ *	:ref:`VIDIOC_ENUM_FMT <vidioc_enum_fmt>` ioctl logic
-+ *	for metadata capture
-  * @vidioc_g_fmt_vid_cap: pointer to the function that implements
-  *	:ref:`VIDIOC_G_FMT <vidioc_g_fmt>` ioctl logic for video capture
-  *	in single plane mode
-@@ -73,6 +76,8 @@ struct v4l2_fh;
-  * @vidioc_g_fmt_sdr_out: pointer to the function that implements
-  *	:ref:`VIDIOC_G_FMT <vidioc_g_fmt>` ioctl logic for Software Defined
-  *	Radio output
-+ * @vidioc_g_fmt_meta_cap: pointer to the function that implements
-+ *	:ref:`VIDIOC_G_FMT <vidioc_g_fmt>` ioctl logic for metadata capture
-  * @vidioc_s_fmt_vid_cap: pointer to the function that implements
-  *	:ref:`VIDIOC_S_FMT <vidioc_g_fmt>` ioctl logic for video capture
-  *	in single plane mode
-@@ -103,6 +108,8 @@ struct v4l2_fh;
-  * @vidioc_s_fmt_sdr_out: pointer to the function that implements
-  *	:ref:`VIDIOC_S_FMT <vidioc_g_fmt>` ioctl logic for Software Defined
-  *	Radio output
-+ * @vidioc_s_fmt_meta_cap: pointer to the function that implements
-+ *	:ref:`VIDIOC_S_FMT <vidioc_g_fmt>` ioctl logic for metadata capture
-  * @vidioc_try_fmt_vid_cap: pointer to the function that implements
-  *	:ref:`VIDIOC_TRY_FMT <vidioc_g_fmt>` ioctl logic for video capture
-  *	in single plane mode
-@@ -135,6 +142,8 @@ struct v4l2_fh;
-  * @vidioc_try_fmt_sdr_out: pointer to the function that implements
-  *	:ref:`VIDIOC_TRY_FMT <vidioc_g_fmt>` ioctl logic for Software Defined
-  *	Radio output
-+ * @vidioc_try_fmt_meta_cap: pointer to the function that implements
-+ *	:ref:`VIDIOC_TRY_FMT <vidioc_g_fmt>` ioctl logic for metadata capture
-  * @vidioc_reqbufs: pointer to the function that implements
-  *	:ref:`VIDIOC_REQBUFS <vidioc_reqbufs>` ioctl
-  * @vidioc_querybuf: pointer to the function that implements
-@@ -304,6 +313,8 @@ struct v4l2_ioctl_ops {
- 					    struct v4l2_fmtdesc *f);
- 	int (*vidioc_enum_fmt_sdr_out)     (struct file *file, void *fh,
- 					    struct v4l2_fmtdesc *f);
-+	int (*vidioc_enum_fmt_meta_cap)    (struct file *file, void *fh,
-+					    struct v4l2_fmtdesc *f);
- 
- 	/* VIDIOC_G_FMT handlers */
- 	int (*vidioc_g_fmt_vid_cap)    (struct file *file, void *fh,
-@@ -330,6 +341,8 @@ struct v4l2_ioctl_ops {
- 					struct v4l2_format *f);
- 	int (*vidioc_g_fmt_sdr_out)    (struct file *file, void *fh,
- 					struct v4l2_format *f);
-+	int (*vidioc_g_fmt_meta_cap)   (struct file *file, void *fh,
-+					struct v4l2_format *f);
- 
- 	/* VIDIOC_S_FMT handlers */
- 	int (*vidioc_s_fmt_vid_cap)    (struct file *file, void *fh,
-@@ -356,6 +369,8 @@ struct v4l2_ioctl_ops {
- 					struct v4l2_format *f);
- 	int (*vidioc_s_fmt_sdr_out)    (struct file *file, void *fh,
- 					struct v4l2_format *f);
-+	int (*vidioc_s_fmt_meta_cap)   (struct file *file, void *fh,
-+					struct v4l2_format *f);
- 
- 	/* VIDIOC_TRY_FMT handlers */
- 	int (*vidioc_try_fmt_vid_cap)    (struct file *file, void *fh,
-@@ -382,6 +397,8 @@ struct v4l2_ioctl_ops {
- 					  struct v4l2_format *f);
- 	int (*vidioc_try_fmt_sdr_out)    (struct file *file, void *fh,
- 					  struct v4l2_format *f);
-+	int (*vidioc_try_fmt_meta_cap)   (struct file *file, void *fh,
-+					  struct v4l2_format *f);
- 
- 	/* Buffer handlers */
- 	int (*vidioc_reqbufs) (struct file *file, void *fh, struct v4l2_requestbuffers *b);
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index 724f43e69d03..d1ac0250a966 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -143,6 +143,7 @@ enum v4l2_buf_type {
- 	V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE  = 10,
- 	V4L2_BUF_TYPE_SDR_CAPTURE          = 11,
- 	V4L2_BUF_TYPE_SDR_OUTPUT           = 12,
-+	V4L2_BUF_TYPE_META_CAPTURE         = 13,
- 	/* Deprecated, do not use */
- 	V4L2_BUF_TYPE_PRIVATE              = 0x80,
- };
-@@ -435,6 +436,7 @@ struct v4l2_capability {
- #define V4L2_CAP_SDR_CAPTURE		0x00100000  /* Is a SDR capture device */
- #define V4L2_CAP_EXT_PIX_FORMAT		0x00200000  /* Supports the extended pixel format */
- #define V4L2_CAP_SDR_OUTPUT		0x00400000  /* Is a SDR output device */
-+#define V4L2_CAP_META_CAPTURE		0x00800000  /* Is a metadata capture device */
- 
- #define V4L2_CAP_READWRITE              0x01000000  /* read/write systemcalls */
- #define V4L2_CAP_ASYNCIO                0x02000000  /* async I/O */
-@@ -2002,6 +2004,17 @@ struct v4l2_sdr_format {
- } __attribute__ ((packed));
- 
- /**
-+ * struct v4l2_meta_format - metadata format definition
-+ * @dataformat:		little endian four character code (fourcc)
-+ * @buffersize:		maximum size in bytes required for data
-+ */
-+struct v4l2_meta_format {
-+	__u32				dataformat;
-+	__u32				buffersize;
-+	__u8				reserved[24];
-+} __attribute__ ((packed));
++	sound_pins: sound {
++		groups = "ssi01239_ctrl", "ssi0_data", "ssi1_data_a";
++		function = "ssi";
++	};
 +
-+/**
-  * struct v4l2_format - stream data format
-  * @type:	enum v4l2_buf_type; type of the data stream
-  * @pix:	definition of an image format
-@@ -2020,6 +2033,7 @@ struct v4l2_format {
- 		struct v4l2_vbi_format		vbi;     /* V4L2_BUF_TYPE_VBI_CAPTURE */
- 		struct v4l2_sliced_vbi_format	sliced;  /* V4L2_BUF_TYPE_SLICED_VBI_CAPTURE */
- 		struct v4l2_sdr_format		sdr;     /* V4L2_BUF_TYPE_SDR_CAPTURE */
-+		struct v4l2_meta_format		meta;    /* V4L2_BUF_TYPE_META_CAPTURE */
- 		__u8	raw_data[200];                   /* user-defined */
- 	} fmt;
++	sound_clk_pins: sound_clk {
++		groups = "audio_clk_a_a", "audio_clk_b_a", "audio_clk_c_a",
++			 "audio_clkout_a", "audio_clkout3_a";
++		function = "audio_clk";
++	};
++
+ 	usb1_pins: usb1 {
+ 		groups = "usb1";
+ 		function = "usb1";
+@@ -136,6 +176,73 @@
+ 	pinctrl-names = "default";
+ 
+ 	status = "okay";
++
++	clock-frequency = <100000>;
++
++	ak4613: codec@10 {
++		compatible = "asahi-kasei,ak4613";
++		#sound-dai-cells = <0>;
++		reg = <0x10>;
++		clocks = <&rcar_sound 3>;
++
++		asahi-kasei,in1-single-end;
++		asahi-kasei,in2-single-end;
++		asahi-kasei,out1-single-end;
++		asahi-kasei,out2-single-end;
++		asahi-kasei,out3-single-end;
++		asahi-kasei,out4-single-end;
++		asahi-kasei,out5-single-end;
++		asahi-kasei,out6-single-end;
++	};
++
++	cs2000: clk_multiplier@4f {
++		#clock-cells = <0>;
++		compatible = "cirrus,cs2000-cp";
++		reg = <0x4f>;
++		clocks = <&audio_clkout>, <&x12_clk>;
++		clock-names = "clk_in", "ref_clk";
++
++		assigned-clocks = <&cs2000>;
++		assigned-clock-rates = <24576000>; /* 1/1 divide */
++	};
++};
++
++&rcar_sound {
++	pinctrl-0 = <&sound_pins &sound_clk_pins>;
++	pinctrl-names = "default";
++
++	/* Single DAI */
++	#sound-dai-cells = <0>;
++
++	/* audio_clkout0/1/2/3 */
++	#clock-cells = <1>;
++	clock-frequency = <11289600>;
++
++	status = "okay";
++
++	/* update <audio_clk_b> to <cs2000> */
++	clocks = <&cpg CPG_MOD 1005>,
++		 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
++		 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
++		 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
++		 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
++		 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
++		 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
++		 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
++		 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
++		 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
++		 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
++		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
++		 <&audio_clk_a>, <&cs2000>,
++		 <&audio_clk_c>,
++		 <&cpg CPG_CORE R8A7795_CLK_S0D4>;
++
++	rcar_sound,dai {
++		dai0 {
++			playback = <&ssi0 &src0 &dvc0>;
++			capture  = <&ssi1 &src1 &dvc1>;
++		};
++	};
  };
+ 
+ &sdhi0 {
+@@ -150,11 +257,19 @@
+ 	status = "okay";
+ };
+ 
++&ssi1 {
++	shared-pin;
++};
++
+ &wdt0 {
+ 	timeout-sec = <60>;
+ 	status = "okay";
+ };
+ 
++&audio_clk_a {
++	clock-frequency = <22579200>;
++};
++
+ &avb {
+ 	pinctrl-0 = <&avb_pins>;
+ 	pinctrl-names = "default";
 -- 
-Regards,
+1.9.1
 
-Laurent Pinchart
