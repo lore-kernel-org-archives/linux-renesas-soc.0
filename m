@@ -1,90 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51158 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLAq (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:00:46 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87zion1uwy.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiIR-0002Y9-EQ@debutante>
-Date: Mon, 08 Aug 2016 12:00:39 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on tlv320aic26" to the asoc tree
+Received: from xavier.telenet-ops.be ([195.130.132.52]:57847 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756381AbcHaJUK (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 31 Aug 2016 05:20:10 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ARM: shmobile: gose: Add da9063 PMIC device node for system restart
+Date: Wed, 31 Aug 2016 11:19:46 +0200
+Message-Id: <1472635186-24644-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Enable i2c6, and add a device node for the da9063 PMIC, with subnodes
+for rtc and wdt.  Regulator support is not yet included.
 
-   ASoC: codec duplicated callback function goes to component on tlv320aic26
+This allows the system to be restarted when the watchdog timer times
+out, or when a system restart is requested.
 
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 40be1e609e743733e1e8a18b90e7be22c27d2062 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:25:40 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- tlv320aic26
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- sound/soc/codecs/tlv320aic26.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+No board schematics, but assumed similar to Koelsch, and 'reboot -f' now
+works ;-)
 
-diff --git a/sound/soc/codecs/tlv320aic26.c b/sound/soc/codecs/tlv320aic26.c
-index 2c904d7150ad..14aa96d41719 100644
---- a/sound/soc/codecs/tlv320aic26.c
-+++ b/sound/soc/codecs/tlv320aic26.c
-@@ -321,12 +321,14 @@ static int aic26_probe(struct snd_soc_codec *codec)
- 
- static struct snd_soc_codec_driver aic26_soc_codec_dev = {
- 	.probe = aic26_probe,
--	.controls = aic26_snd_controls,
--	.num_controls = ARRAY_SIZE(aic26_snd_controls),
--	.dapm_widgets = tlv320aic26_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(tlv320aic26_dapm_widgets),
--	.dapm_routes = tlv320aic26_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(tlv320aic26_dapm_routes),
-+	.component_driver = {
-+		.controls		= aic26_snd_controls,
-+		.num_controls		= ARRAY_SIZE(aic26_snd_controls),
-+		.dapm_widgets		= tlv320aic26_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(tlv320aic26_dapm_widgets),
-+		.dapm_routes		= tlv320aic26_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(tlv320aic26_dapm_routes),
-+	},
+ arch/arm/boot/dts/r8a7793-gose.dts | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 0e418e7a6d5c7cfc..b8addf6471518810 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -597,6 +597,27 @@
+ 	pinctrl-names = "i2c-exio4";
  };
  
- static const struct regmap_config aic26_regmap = {
++&i2c6 {
++	status = "okay";
++	clock-frequency = <100000>;
++
++	pmic@58 {
++		compatible = "dlg,da9063";
++		reg = <0x58>;
++		interrupt-parent = <&irqc0>;
++		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-controller;
++
++		rtc {
++			compatible = "dlg,da9063-rtc";
++		};
++
++		wdt {
++			compatible = "dlg,da9063-watchdog";
++		};
++	};
++};
++
+ &rcar_sound {
+ 	pinctrl-0 = <&sound_pins &sound_clk_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.8.1
+1.9.1
