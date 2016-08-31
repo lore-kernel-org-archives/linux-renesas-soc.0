@@ -1,64 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:43150 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752600AbcHaIH2 (ORCPT
+Received: from mail-it0-f51.google.com ([209.85.214.51]:36015 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756381AbcHaHo4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 31 Aug 2016 04:07:28 -0400
-Date: Wed, 31 Aug 2016 10:07:16 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon <horms@verge.net.au>,
+        Wed, 31 Aug 2016 03:44:56 -0400
+Received: by mail-it0-f51.google.com with SMTP id n75so30888641ith.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 31 Aug 2016 00:44:56 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <87pooppivx.wl%kuninori.morimoto.gx@renesas.com>
+References: <1471959320-16947-1-git-send-email-geert+renesas@glider.be>
+ <874m6buh17.wl%kuninori.morimoto.gx@renesas.com> <20160830112457.GB1638@katana>
+ <87pooppivx.wl%kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 31 Aug 2016 09:44:43 +0200
+Message-ID: <CAMuHMdVqOobeJJQHARjP8=ujZmO+pgb+QfYBOT9Cqa5xagAYUA@mail.gmail.com>
+Subject: Re: renesas-drivers-2016-08-23-v4.8-rc3
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Simon <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: renesas-drivers-2016-08-23-v4.8-rc3
-Message-ID: <20160831080716.GA1609@katana>
-References: <1471959320-16947-1-git-send-email-geert+renesas@glider.be>
- <874m6buh17.wl%kuninori.morimoto.gx@renesas.com>
- <20160830112457.GB1638@katana>
- <87pooppivx.wl%kuninori.morimoto.gx@renesas.com>
- <CAMuHMdVqOobeJJQHARjP8=ujZmO+pgb+QfYBOT9Cqa5xagAYUA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVqOobeJJQHARjP8=ujZmO+pgb+QfYBOT9Cqa5xagAYUA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Morimoto-san,
 
---SUOF0GtieIMvvwua
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, Aug 31, 2016 at 8:20 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+>> > I noticed that Lager "ES3.0" board can't boot on this and previous -rc2 branch.
+>> > In my and Shimoda-san's check, "ES2.0" seems have no problem.
+>>
+>> I understand the issue now. It is not about ES3.0 vs. ES2.0, it is about
+>> cold-boot vs. warm-boot. I remembered the DA9xxx interrupt storm
+>> problems we had, and voila, I could reproduce the lockup on ES2.0 here,
+>> but you need to cold-boot and have the da9xxx drivers enabled.
+>
+> It seems lager board has 2 type of DA9xxx chip, type A, and type B.
+> We don't know which chip your / my board has.
+>
+> My *current* Lager board has no issue on cold / warm boot.
+> Magnus has my previous Lager board, so I can't try it today.
+> I think my current board and previous board have different type of chip.
+> Magnus will bring me my previous board tomorrow, so I will check it,
+> and try your solution.
 
+The revision doesn't seem to be printed on the chip package, but it is
+identified by the da9063 driver (CONFIG_REGULATOR_DA9063=y).
 
-> The revision doesn't seem to be printed on the chip package, but it is
-> identified by the da9063 driver (CONFIG_REGULATOR_DA9063=y).
+My Koelsch has:
 
-Am I recalling correctly that noone of us has access to DA9063
-documentation? Is this still true? Or do we know the differences of the
-revisions?
+     da9063 6-0058: Device detected (chip-ID: 0x61, var-ID: 0x30)
 
+which corresponds to PMIC_DA9063_AD.
+Magnus' Lager (remote access) has the same version.
 
---SUOF0GtieIMvvwua
-Content-Type: application/pgp-signature; name="signature.asc"
+(after adding the missing pieces to DT) Magnus's Gose has:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+    da9063 6-0058: Device detected (chip-ID: 0x61, var-ID: 0x50)
 
-iQIcBAEBAgAGBQJXxpA0AAoJEBQN5MwUoCm2ziMQAKXWLSddJSeRoOXzmVSurQWx
-qkdNBR4Ox7AXPuadBW54Stz4KIPZrWPmMFQhezYV5bSfjXNeXcltrq1b8MQ88+cJ
-T8pg15ypVgTYGoZEVvUqhT/z2X2fV0+uxoGU/dpFR3mxH25xQOU/0ZozOXETUY8J
-uiNifbOpfdPrZTRXR8xExgDdmRIsdWczns6cJYN5dXkbqGGKJ2T+GfsGTado0+9z
-9UlY44ZG3Ot5QK56HZNY5qqla/s8P3FGxLVVFGSlkQLm9poXC+eoRUTEIJrzrigO
-TG1Y2lgQVZLhyztfJJKPzVqL+Gdg7G1+5gESsje4hSolWd2ZgZvwBrSD8/ar+wd2
-x3Cxb7486afr9rYc0+oevRnTrMycN3mn1bobf2KkZa1sN7Eb4RmLE+7kP0EQJnQI
-Z6+jUaLSgGy1P6JegyOF5gCKPF9jscv+puQ1GyFpy1PKMPnJBVo9U0AYPOWiajtE
-PjNr77f4cqRF8KPOQd74LW3k3Ffxb2t5yt4K7gieJ4WceG6ULXqnLxUoeny1AYAE
-gLljMlQEVYULgX4NJ025+AnpvwxaSRU0Gaj6AM6Fw/kCCiXLqAsWlqhC8dhqSEKM
-/r5HkHSAb5umNLZ2xvqMQ8TGV8cqg3Wnh/FeiM8pYiuegGDOZQ6GK/aqw80C5YPA
-DwlnCfGTQOcLYdpKAbl0
-=V+IC
------END PGP SIGNATURE-----
+which corresponds to PMIC_DA9063_BB.
 
---SUOF0GtieIMvvwua--
+Which revision do you have?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
