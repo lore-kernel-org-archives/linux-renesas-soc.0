@@ -1,90 +1,45 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51464 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752002AbcHHLBU (ORCPT
-	<rfc822;linux-renesas-soc@vger.kernel.org>);
-	Mon, 8 Aug 2016 07:01:20 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Linux-ALSA <alsa-devel@alsa-project.org>,
-	Simon <horms@verge.net.au>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <87h9av39no.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1bWiJ0-0002iU-Eg@debutante>
-Date: Mon, 08 Aug 2016 12:01:14 +0100
-Subject: Applied "ASoC: codec duplicated callback function goes to component on rt5514" to the asoc tree
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH v3 11/12] arm64: dts: h3ulcb: enable USB2.0 Host channel 1
+Date: Wed, 31 Aug 2016 13:04:03 +0300
+Message-Id: <1472637843-15014-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+This supports USB2.0 Host channel 1 on H3ULCB board
 
-   ASoC: codec duplicated callback function goes to component on rt5514
-
-has been applied to the asoc tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From a3470399bcfcd2ca57b6135f89f48e7e37a499fd Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 8 Aug 2016 09:21:55 +0000
-Subject: [PATCH] ASoC: codec duplicated callback function goes to component on
- rt5514
-
-codec driver and component driver has duplicated callback functions,
-and codec side functions are just copied to component side when
-register timing. This was quick-hack, but no longer needed.
-This patch moves these functions from codec driver to component driver.
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 ---
- sound/soc/codecs/rt5514.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+Changes in version 3:
+- initially added
 
-diff --git a/sound/soc/codecs/rt5514.c b/sound/soc/codecs/rt5514.c
-index 7162f05101d9..e0606a58da98 100644
---- a/sound/soc/codecs/rt5514.c
-+++ b/sound/soc/codecs/rt5514.c
-@@ -1023,12 +1023,14 @@ static struct snd_soc_codec_driver soc_codec_dev_rt5514 = {
- 	.probe = rt5514_probe,
- 	.idle_bias_off = true,
- 	.set_bias_level = rt5514_set_bias_level,
--	.controls = rt5514_snd_controls,
--	.num_controls = ARRAY_SIZE(rt5514_snd_controls),
--	.dapm_widgets = rt5514_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(rt5514_dapm_widgets),
--	.dapm_routes = rt5514_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(rt5514_dapm_routes),
-+	.component_driver = {
-+		.controls		= rt5514_snd_controls,
-+		.num_controls		= ARRAY_SIZE(rt5514_snd_controls),
-+		.dapm_widgets		= rt5514_dapm_widgets,
-+		.num_dapm_widgets	= ARRAY_SIZE(rt5514_dapm_widgets),
-+		.dapm_routes		= rt5514_dapm_routes,
-+		.num_dapm_routes	= ARRAY_SIZE(rt5514_dapm_routes),
-+	},
- };
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 1750bb1..bbd7928 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -187,3 +187,11 @@
  
- static const struct regmap_config rt5514_i2c_regmap = {
+ 	status = "okay";
+ };
++
++&ehci1 {
++	status = "okay";
++};
++
++&ohci1 {
++	status = "okay";
++};
 -- 
-2.8.1
+1.9.1
+
