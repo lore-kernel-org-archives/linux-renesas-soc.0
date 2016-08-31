@@ -1,76 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:36100 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755411AbcHSV6n (ORCPT
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:36829 "EHLO
+        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759216AbcHaKB4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Aug 2016 17:58:43 -0400
-Received: by mail-lf0-f51.google.com with SMTP id g62so41704814lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Aug 2016 14:58:03 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH] vsp1: add R8A7792 VSP1V support
-Date: Sat, 20 Aug 2016 00:57:59 +0300
-Message-ID: <10305550.upKOiT5SIy@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Wed, 31 Aug 2016 06:01:56 -0400
+Received: by mail-lf0-f47.google.com with SMTP id g62so32860287lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 31 Aug 2016 03:01:56 -0700 (PDT)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH v3 0/12] arm64: renesas: add H3ULCB board
+Date: Wed, 31 Aug 2016 13:01:52 +0300
+Message-Id: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add  support for the R8A7792 VSP1V cores which are different from the other
-gen2 VSP1 cores...
+Hello,
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This adds the folowing:
+- R8A7795 SoC based H3ULCB low cost board device tree
+- Document DT bindings
+
+Vladimir Barinov (12):
+[01/12] dt: arm: shmobile: add H3ULCB board DT bindings
+[02/12] arm64: dts: h3ulcb: initial device tree
+[03/12] arm64: dts: h3ulcb: enable SCIF clk and pins
+[04/12] arm64: dts: h3ulcb: enable EthernetAVB
+[05/12] arm64: dts: h3ulcb: enable GPIO leds
+[06/12] arm64: dts: h3ulcb: enable SDHI0
+[07/12] arm64: dts: h3ulcb: enable I2C2
+[08/12] arm64: dts: h3ulcb: enable EXTALR clk
+[09/12] arm64: dts: h3ulcb: enable WDT
+[10/12] arm64: dts: h3ulcb: enable USB2 PHY of channel 1
+[11/12] arm64: dts: h3ulcb: enable USB2.0 Host channel 1
+[12/12] arm64: dts: h3ulcb: Sound SSI support
 
 ---
-This patch is against the 'media_tree.git' repo's 'master' branch.
+This patchset is against the 'kernel/git/horms/renesas.git' repo.
 
- drivers/media/platform/vsp1/vsp1_drv.c  |   20 ++++++++++++++++++++
- drivers/media/platform/vsp1/vsp1_regs.h |    2 ++
- 2 files changed, 22 insertions(+)
-
-Index: media_tree/drivers/media/platform/vsp1/vsp1_drv.c
-===================================================================
---- media_tree.orig/drivers/media/platform/vsp1/vsp1_drv.c
-+++ media_tree/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -596,6 +596,26 @@ static const struct vsp1_device_info vsp
- 		.num_bru_inputs = 4,
- 		.uapi = true,
- 	}, {
-+		.version = VI6_IP_VERSION_MODEL_VSPS_V2H,
-+		.gen = 2,
-+		.features = VSP1_HAS_BRU | VSP1_HAS_CLU | VSP1_HAS_LUT |
-+			    VSP1_HAS_SRU | VSP1_HAS_WPF_VFLIP,
-+		.rpf_count = 4,
-+		.uds_count = 1,
-+		.wpf_count = 4,
-+		.num_bru_inputs = 4,
-+		.uapi = true,
-+	}, {
-+		.version = VI6_IP_VERSION_MODEL_VSPD_V2H,
-+		.gen = 2,
-+		.features = VSP1_HAS_BRU | VSP1_HAS_CLU | VSP1_HAS_LUT |
-+			    VSP1_HAS_LIF,
-+		.rpf_count = 4,
-+		.uds_count = 1,
-+		.wpf_count = 1,
-+		.num_bru_inputs = 4,
-+		.uapi = true,
-+	}, {
- 		.version = VI6_IP_VERSION_MODEL_VSPI_GEN3,
- 		.gen = 3,
- 		.features = VSP1_HAS_CLU | VSP1_HAS_LUT | VSP1_HAS_SRU
-Index: media_tree/drivers/media/platform/vsp1/vsp1_regs.h
-===================================================================
---- media_tree.orig/drivers/media/platform/vsp1/vsp1_regs.h
-+++ media_tree/drivers/media/platform/vsp1/vsp1_regs.h
-@@ -660,6 +660,8 @@
- #define VI6_IP_VERSION_MODEL_VSPR_H2	(0x0a << 8)
- #define VI6_IP_VERSION_MODEL_VSPD_GEN2	(0x0b << 8)
- #define VI6_IP_VERSION_MODEL_VSPS_M2	(0x0c << 8)
-+#define VI6_IP_VERSION_MODEL_VSPS_V2H	(0x12 << 8)
-+#define VI6_IP_VERSION_MODEL_VSPD_V2H	(0x13 << 8)
- #define VI6_IP_VERSION_MODEL_VSPI_GEN3	(0x14 << 8)
- #define VI6_IP_VERSION_MODEL_VSPBD_GEN3	(0x15 << 8)
- #define VI6_IP_VERSION_MODEL_VSPBC_GEN3	(0x16 << 8)
+ arch/arm64/boot/dts/renesas/Makefile               |   2 +-
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts     | 316 +++++++++++++++++++++++++
+ Documentation/devicetree/bindings/arm/shmobile.txt |   2 ++
+ 3 files changed, 319 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
