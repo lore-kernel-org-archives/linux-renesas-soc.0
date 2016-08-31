@@ -1,49 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46374 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751569AbcHZNvC (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:35582 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752294AbcHaJtu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Aug 2016 09:51:02 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Wed, 31 Aug 2016 05:49:50 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/4] ARM: dts: koelsch: remove label property from led nodes
-Date: Fri, 26 Aug 2016 15:49:40 +0200
-Message-Id: <1472219382-22789-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1472219382-22789-1-git-send-email-horms+renesas@verge.net.au>
-References: <1472219382-22789-1-git-send-email-horms+renesas@verge.net.au>
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] MAINTAINERS: Add section for Renesas clock drivers
+Date: Wed, 31 Aug 2016 11:49:30 +0200
+Message-Id: <1472636970-29817-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove label property from led nodes. This seems to have little
-value and is used inconsistently amongst Renesas SoCs.
+Add a section for Renesas clock drivers, as found on Renesas ARM SoCs,
+and list myself as the maintainer.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7791-koelsch.dts | 3 ---
- 1 file changed, 3 deletions(-)
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index f8a7d090fd01..92a0658854ca 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -158,15 +158,12 @@
- 		compatible = "gpio-leds";
- 		led6 {
- 			gpios = <&gpio2 19 GPIO_ACTIVE_HIGH>;
--			label = "LED6";
- 		};
- 		led7 {
- 			gpios = <&gpio2 20 GPIO_ACTIVE_HIGH>;
--			label = "LED7";
- 		};
- 		led8 {
- 			gpios = <&gpio2 21 GPIO_ACTIVE_HIGH>;
--			label = "LED8";
- 		};
- 	};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e220af2344e6233b..cabe74e526d4d305 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9963,6 +9963,12 @@ F:	drivers/rpmsg/
+ F:	Documentation/rpmsg.txt
+ F:	include/linux/rpmsg.h
  
++RENESAS CLOCK DRIVERS
++M:	Geert Uytterhoeven <geert+renesas@glider.be>
++L:	linux-renesas-soc@vger.kernel.org
++S:	Supported
++F:	drivers/clk/renesas/
++
+ RENESAS ETHERNET DRIVERS
+ R:	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+ L:	netdev@vger.kernel.org
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
