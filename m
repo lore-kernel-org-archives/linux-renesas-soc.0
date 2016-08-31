@@ -1,96 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45906 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758641AbcH3VKb (ORCPT
+Received: from sauhun.de ([89.238.76.85]:43014 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755713AbcHaG64 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Aug 2016 17:10:31 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 09/11] arm64: dts: r8a7795: salvator: enable UHS for SDHI 0 & 3
-Date: Tue, 30 Aug 2016 23:09:57 +0200
-Message-Id: <1472591399-13907-10-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
-References: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
+        Wed, 31 Aug 2016 02:58:56 -0400
+Date: Wed, 31 Aug 2016 08:58:38 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PULL REQUEST] renesas/topic/i2c_sdhi_maintenance for renesas drivers
+Message-ID: <20160831065835.GA7452@katana>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="zhXaljGHf11kAtnf"
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v5
-* Added to series, previously posted by Wolfram independently
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+--zhXaljGHf11kAtnf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 98f02631a0f0..54540a223942 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -175,11 +175,25 @@
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi0_pins_uhs: sd0_uhs {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <1800>;
- 	};
- 
- 	sdhi3_pins: sd3 {
- 		groups = "sdhi3_data4", "sdhi3_ctrl";
- 		function = "sdhi3";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi3_pins_uhs: sd3_uhs {
-+		groups = "sdhi3_data4", "sdhi3_ctrl";
-+		function = "sdhi3";
-+		power-source = <1800>;
- 	};
- 
- 	sound_pins: sound {
-@@ -304,25 +318,29 @@
- 
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
--	pinctrl-names = "default";
-+	pinctrl-1 = <&sdhi0_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi0>;
- 	vqmmc-supply = <&vccq_sdhi0>;
- 	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
- 
- &sdhi3 {
- 	pinctrl-0 = <&sdhi3_pins>;
--	pinctrl-names = "default";
-+	pinctrl-1 = <&sdhi3_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi3>;
- 	vqmmc-supply = <&vccq_sdhi3>;
- 	cd-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
- 
--- 
-2.7.0.rc3.207.g0ac5344
+Hi Geert,
+
+here is a topic branch for renesas-drivers. Most of the patches I did
+for this i2c/sdhi maintenance task are already in renesas-drivers,
+because they came back via linux-next. Only the last three are missing
+currently, but they are on the way, too. So, this branch will soonish
+become obsolete again. Yay!
+
+Kind regards,
+
+   Wolfram
+
+
+The following changes since commit 3eab887a55424fc2c27553b7bfe32330df83f7b8:
+
+  Linux 4.8-rc4 (2016-08-28 15:04:33 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/i2c_sdhi_maintenance
+
+for you to fetch changes up to 91d6e42f0ba217c5d26d88648a18022f573d75de:
+
+  ARM: shmobile: fix regulator quirk for Gen2 (2016-08-31 08:51:08 +0200)
+
+----------------------------------------------------------------
+Wolfram Sang (9):
+      arm64: dts: r8a7795: set maximum frequency for SDHI clocks
+      i2c: mux: demux-pinctrl: invalidate properly when switching fails
+      i2c: sh_mobile: use proper device with dma_mapping_error
+      i2c: rcar: use proper device with dma_mapping_error
+      mmc: host: sh_mobile_sdhi: move card_busy from tmio to sdhi
+      mmc: host: sh_mobile_sdhi: don't populate unneeded functions
+      i2c: mux: demux-pinctrl: run properly with multiple instances
+      Documentation: devicetree: changesets do locking on their own meanwhile
+      ARM: shmobile: fix regulator quirk for Gen2
+
+ Documentation/devicetree/changesets.txt            | 19 ++-----
+ arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 62 +++++++++-------------
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           |  4 ++
+ drivers/i2c/busses/i2c-rcar.c                      |  2 +-
+ drivers/i2c/busses/i2c-sh_mobile.c                 |  2 +-
+ drivers/i2c/muxes/i2c-demux-pinctrl.c              | 15 ++++--
+ drivers/mmc/host/sh_mobile_sdhi.c                  | 16 +++++-
+ drivers/mmc/host/tmio_mmc.h                        |  1 +
+ drivers/mmc/host/tmio_mmc_pio.c                    |  9 +---
+ 9 files changed, 65 insertions(+), 65 deletions(-)
+
+--zhXaljGHf11kAtnf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXxoAbAAoJEBQN5MwUoCm2FYAQAKCcQNde5vf+GjSjh4FbC6Fv
+D1cXxlKdlWhxPRTJEHg7+oaLQWF9osdwogqNJj+yXgfsgfplgWpfj+WGzSUt8FHg
+HO+6ex8A2MGLIMbH0103dS0ssSoP3M+xJ9CSMxAvTk6xRHUXMRf2kGiRLhoT2SI6
+if/b0svjCve3g+M3zbg2nYjnYtf3JJX9M5sjFS/JH4kpkhreiiOieFu9gMBt2Y40
+Vy0LOso/0JsEuz1n+imQmVjiTQYqDfrMNZUiiBiDhhPmMX/ENgH8mpctS8b6jkZk
+1gDLQBf1tnv7n4YQfWwf7kbSlOZezScf6iRzQAM7GOdQzRF4R/2h5a4b44R9UJbV
+aX/H/Mt8oZswKcoOfFyz+8IJJ1Cltgs+yiKNMdn1OUij8/ZUF8gVcmoL437sSOVN
+aoRGZNhFrup2IwzVEeo6Eze/R3zHKS56wA+RI5bJP6Yv+X5mSqG302oaYoTKCwj7
+HGwAnqE/PjtnLXMQDIbflyN2/JaeCvNdxvknKY8A3hZN7i2eNrTvz8eblC3uYUnm
+sZzGSIvu9RMH0vMwumLDd/2NDAzgeBvjY7bF+/aKTfS/AGZoX+Iv6M+dm+vlxoRk
+wf1z/wq8uLt002dpVJIPxVMBVslTAtayU6EgltzoTud+kLfJQxyheBFemA9plOk0
+78ioe/5ImZFuQp3NPx2k
+=NEUw
+-----END PGP SIGNATURE-----
+
+--zhXaljGHf11kAtnf--
