@@ -1,52 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:39573 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753030AbcHXJf3 (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:40124 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933245AbcHaJfV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Aug 2016 05:35:29 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/2] mmc: host: sh_mobile_sdhi: don't populate unneeded functions
-Date: Wed, 24 Aug 2016 11:34:38 +0200
-Message-Id: <20160824093438.2478-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20160824093438.2478-1-wsa+renesas@sang-engineering.com>
-References: <20160824093438.2478-1-wsa+renesas@sang-engineering.com>
+        Wed, 31 Aug 2016 05:35:21 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] i2c: shmobile: Use ARCH_SHMOBILE instead of SUPERH
+Date: Wed, 31 Aug 2016 11:35:13 +0200
+Message-Id: <1472636113-26988-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Populating card_busy caused a side-effect on a chip variant we don't
-have documentation for (r8a73a4). So, enable it and voltage switching
-only on devices known to support those features.
+"i2c-sh_mobile" is used on sh7343, sh7366, sh7722, sh7723, and sh7724
+only. As all of the above select ARCH_SHMOBILE, restrict its driver
+dependencies from SUPERH to ARCH_SHMOBILE.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/mmc/host/sh_mobile_sdhi.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index c4e63b7790d719..d679c8a533b6e5 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -376,8 +376,14 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
- 	host->clk_update	= sh_mobile_sdhi_clk_update;
- 	host->clk_disable	= sh_mobile_sdhi_clk_disable;
- 	host->multi_io_quirk	= sh_mobile_sdhi_multi_io_quirk;
--	host->card_busy	= sh_mobile_sdhi_card_busy;
--	host->start_signal_voltage_switch = sh_mobile_sdhi_start_signal_voltage_switch;
-+
-+	/* SDR speeds are only available on Gen2+ */
-+	if (mmc_data->flags & TMIO_MMC_MIN_RCAR2) {
-+		/* card_busy caused issues on r8a73a4 (pre-Gen2) CD-less SDHI */
-+		host->card_busy	= sh_mobile_sdhi_card_busy;
-+		host->start_signal_voltage_switch =
-+			sh_mobile_sdhi_start_signal_voltage_switch;
-+	}
- 
- 	/* Orginally registers were 16 bit apart, could be 32 or 64 nowadays */
- 	if (!host->bus_shift && resource_size(res) > 0x100) /* old way to determine the shift */
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 1f3239ead0377426..6d94e2ec5b4f7183 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -836,7 +836,7 @@ config I2C_SH7760
+ config I2C_SH_MOBILE
+ 	tristate "SuperH Mobile I2C Controller"
+ 	depends on HAS_DMA
+-	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
++	depends on ARCH_SHMOBILE || ARCH_RENESAS || COMPILE_TEST
+ 	help
+ 	  If you say yes to this option, support will be included for the
+ 	  built-in I2C interface on the Renesas SH-Mobile processor.
 -- 
-2.9.3
+1.9.1
