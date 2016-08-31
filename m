@@ -1,41 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:55040 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759542AbcHaJii (ORCPT
+Received: from shards.monkeyblade.net ([184.105.139.130]:38396 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751264AbcHaGct (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 31 Aug 2016 05:38:38 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] spi: sh-msiof: Use ARCH_SHMOBILE instead of SUPERH
-Date: Wed, 31 Aug 2016 11:37:05 +0200
-Message-Id: <1472636225-27091-1-git-send-email-geert+renesas@glider.be>
+        Wed, 31 Aug 2016 02:32:49 -0400
+Date: Tue, 30 Aug 2016 23:32:38 -0700 (PDT)
+Message-Id: <20160830.233238.1711742937489908366.davem@davemloft.net>
+To: arnd@arndb.de
+Cc: sergei.shtylyov@cogentembedded.com, ykaneko0929@gmail.com,
+        kazuya.mizuguchi.ks@renesas.com, horms+renesas@verge.net.au,
+        masaru.nagai.vx@renesas.com, niklas.soderlund+renesas@ragnatech.se,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ravb: avoid unused function warnings
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20160826153108.680850-1-arnd@arndb.de>
+References: <20160826153108.680850-1-arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-"spi_sh_msiof" is used on sh7723 and sh7724 only. As all of the above
-select ARCH_SHMOBILE, restrict its driver dependencies from SUPERH to
-ARCH_SHMOBILE.
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 26 Aug 2016 17:30:29 +0200
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/spi/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> When CONFIG_PM_SLEEP is disabled, we get a couple of harmless warnings:
+> 
+> drivers/net/ethernet/renesas/ravb_main.c:2117:12: error: 'ravb_resume' defined but not used [-Werror=unused-function]
+> drivers/net/ethernet/renesas/ravb_main.c:2104:12: error: 'ravb_suspend' defined but not used [-Werror=unused-function]
+> 
+> The simplest solution here is to replace the #ifdef with __maybe_unused
+> annotations, which lets the compiler do the right thing by itself.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 0184165b2f42 ("ravb: add sleep PM suspend/resume support")
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 5c8e51e96888cc53..96087e9fc998461c 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -556,7 +556,7 @@ config SPI_SC18IS602
- config SPI_SH_MSIOF
- 	tristate "SuperH MSIOF SPI controller"
- 	depends on HAVE_CLK && HAS_DMA
--	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
-+	depends on ARCH_SHMOBILE || ARCH_RENESAS || COMPILE_TEST
- 	help
- 	  SPI driver for SuperH and SH Mobile MSIOF blocks.
- 
--- 
-1.9.1
+Applied, thanks.
