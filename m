@@ -1,55 +1,29 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33277 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755788AbcIPJjv (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52122 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932754AbcIANyP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Sep 2016 05:39:51 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com, ulrich.hecht+renesas@gmail.com,
-        laurent.pinchart@ideasonboard.com, william.towle@codethink.co.uk,
-        devicetree@vger.kernel.org
-Subject: [PATCH 2/2] media: adv7604: automatic "default-input" selection
-Date: Fri, 16 Sep 2016 11:39:42 +0200
-Message-Id: <20160916093942.17213-3-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <20160916093942.17213-1-ulrich.hecht+renesas@gmail.com>
-References: <20160916093942.17213-1-ulrich.hecht+renesas@gmail.com>
+        Thu, 1 Sep 2016 09:54:15 -0400
+Date: Thu, 1 Sep 2016 15:54:08 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: r8a7795: Add SoC-specific compatible
+ property to audio-dmac nodes
+Message-ID: <20160901135407.GC14300@verge.net.au>
+References: <1472635915-26856-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1472635915-26856-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Fall back to input 0 if "default-input" property is not present.
+On Wed, Aug 31, 2016 at 11:31:55AM +0200, Geert Uytterhoeven wrote:
+> The audio-dmac nodes used the generic compatible property only.
+> Add the SoC-specific one, to make it future proof.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Documentation states that the "default-input" property should reside
-directly in the node for adv7612.  Hence, also adjust the parsing to make
-the implementation consistent with this.
-
-Based on patch by William Towle <william.towle@codethink.co.uk>.
-
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- drivers/media/i2c/adv7604.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
-index 4003831..055c9df 100644
---- a/drivers/media/i2c/adv7604.c
-+++ b/drivers/media/i2c/adv7604.c
-@@ -3077,10 +3077,13 @@ static int adv76xx_parse_dt(struct adv76xx_state *state)
- 	if (!of_property_read_u32(endpoint, "default-input", &v))
- 		state->pdata.default_input = v;
- 	else
--		state->pdata.default_input = -1;
-+		state->pdata.default_input = 0;
- 
- 	of_node_put(endpoint);
- 
-+	if (!of_property_read_u32(np, "default-input", &v))
-+		state->pdata.default_input = v;
-+
- 	flags = bus_cfg.bus.parallel.flags;
- 
- 	if (flags & V4L2_MBUS_HSYNC_ACTIVE_HIGH)
--- 
-2.9.3
+Thanks, I have queued this up.
