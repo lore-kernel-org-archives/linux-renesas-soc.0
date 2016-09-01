@@ -1,62 +1,76 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/3] ARM: dts: r8a7792: add QSPI clock
-Date: Sat, 03 Sep 2016 01:07:28 +0300
-Message-ID: <4143164.BtXsTN0b8O@wasted.cogentembedded.com>
-In-Reply-To: <1648590.FPpmBRoQyh@wasted.cogentembedded.com>
-References: <1648590.FPpmBRoQyh@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47648 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757231AbcIAVJ2 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 1 Sep 2016 17:09:28 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        linux-spi@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+In-Reply-To: <1472636225-27091-1-git-send-email-geert+renesas@glider.be>
+Message-Id: <E1bfYiD-00033v-36@debutante>
+Date: Thu, 01 Sep 2016 21:35:49 +0100
+Subject: Applied "spi: sh-msiof: Use ARCH_SHMOBILE instead of SUPERH" to the spi tree
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the QSPI clock in the R8A7792 device tree.
+The patch
 
-Based  on the original (and large) patch by Vladimir Barinov
-<vladimir.barinov@cogentembedded.com>.
+   spi: sh-msiof: Use ARCH_SHMOBILE instead of SUPERH
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+has been applied to the spi tree at
 
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 6ffc84dd1590a7af837a23c8d2c405eaa0a7faef Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Wed, 31 Aug 2016 11:37:05 +0200
+Subject: [PATCH] spi: sh-msiof: Use ARCH_SHMOBILE instead of SUPERH
+
+"spi_sh_msiof" is used on sh7723 and sh7724 only. As all of the above
+select ARCH_SHMOBILE, restrict its driver dependencies from SUPERH to
+ARCH_SHMOBILE.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/boot/dts/r8a7792.dtsi |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/spi/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -860,6 +860,7 @@
- 			clocks = <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
- 				 <&cp_clk>, <&cp_clk>, <&cp_clk>, <&cp_clk>,
- 				 <&cp_clk>, <&cp_clk>, <&p_clk>, <&p_clk>,
-+				 <&cpg_clocks R8A7792_CLK_QSPI>,
- 				 <&cp_clk>, <&cp_clk>, <&hp_clk>, <&hp_clk>,
- 				 <&hp_clk>, <&hp_clk>, <&hp_clk>, <&hp_clk>;
- 			#clock-cells = <1>;
-@@ -870,6 +871,7 @@
- 				R8A7792_CLK_GPIO1 R8A7792_CLK_GPIO0
- 				R8A7792_CLK_GPIO11 R8A7792_CLK_GPIO10
- 				R8A7792_CLK_CAN1 R8A7792_CLK_CAN0
-+				R8A7792_CLK_QSPI_MOD
- 				R8A7792_CLK_GPIO9 R8A7792_CLK_GPIO8
- 				R8A7792_CLK_I2C5 R8A7792_CLK_I2C4
- 				R8A7792_CLK_I2C3 R8A7792_CLK_I2C2
-@@ -879,8 +881,9 @@
- 				"gpio7", "gpio6", "gpio5", "gpio4",
- 				"gpio3", "gpio2", "gpio1", "gpio0",
- 				"gpio11", "gpio10", "can1", "can0",
--				"gpio9", "gpio8", "i2c5", "i2c4",
--				"i2c3",	"i2c2", "i2c1", "i2c0";
-+				"qspi_mod", "gpio9", "gpio8",
-+				"i2c5", "i2c4", "i2c3", "i2c2",
-+				"i2c1", "i2c0";
- 		};
- 	};
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index d6fb8d4b7786..056e3bada65f 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -549,7 +549,7 @@ config SPI_SC18IS602
+ config SPI_SH_MSIOF
+ 	tristate "SuperH MSIOF SPI controller"
+ 	depends on HAVE_CLK && HAS_DMA
+-	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
++	depends on ARCH_SHMOBILE || ARCH_RENESAS || COMPILE_TEST
+ 	help
+ 	  SPI driver for SuperH and SH Mobile MSIOF blocks.
  
-
+-- 
+2.8.1
