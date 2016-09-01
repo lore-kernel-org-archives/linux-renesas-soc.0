@@ -1,40 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-hk2apc01on0136.outbound.protection.outlook.com ([104.47.124.136]:40992
-        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753187AbcIALfR (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52739 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932141AbcIAOYl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Sep 2016 07:35:17 -0400
-Message-ID: <57C80EC9.9060607@tataelxsi.co.in>
-Date: Thu, 1 Sep 2016 16:49:37 +0530
-From: Roopesh K P <roopeshkp@tataelxsi.co.in>
+        Thu, 1 Sep 2016 10:24:41 -0400
+Date: Thu, 1 Sep 2016 16:24:34 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v5 08/11] arm64: r8a7795: Set maximum frequencies for
+ SDHI clocks
+Message-ID: <20160901142434.GH14300@verge.net.au>
+References: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
+ <1472591399-13907-9-git-send-email-horms+renesas@verge.net.au>
+ <20160831084449.GB1609@katana>
 MIME-Version: 1.0
-To: <linux-renesas-soc@vger.kernel.org>
-Subject: Loading kernel from SPL without U-boot
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160831084449.GB1609@katana>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Renesas SoC,
+On Wed, Aug 31, 2016 at 10:44:49AM +0200, Wolfram Sang wrote:
+> On Tue, Aug 30, 2016 at 11:09:56PM +0200, Simon Horman wrote:
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > ---
+> > v5
+> > * New patch
+> 
+> Huh? There is already 721e9a08aa514c ("arm64: dts: r8a7795: set maximum
+> frequency for SDHI clocks") in renesas/drivers? Why didn't you pick this
+> one?
 
-I am following steps for flashing u-boot in Lager board (R-CAR H2) by 
-changing the SW17 to 3pin and reset the board to start mini monitor. 
-After setting dip switch SW17 to 1pin, give the Input User Program Start 
-Address as e8080000 and write the u-boot.srec.
-
-Now I am trying to use minimal secondary program loader (SPL) to 
-directly load the kernel from flash and skipping u-boot (Falcon mode). I 
-need to flash the SPL in location 0x00000000 instead of MERAM address 
-0xe8080000 (Flash addr 0x80000). From my understanding, mini monitor and 
-and SPI Loader are flashed in 4MB flash and u-boot is stored in 64MB 
-flash memory.
-
-Is my understanding correct ?
-
-I am trying to flash SPL from existing U-boot prompt using tftp 
-protocol. Flashing minimal SPL in 0x00000000 will corrupt any data or it 
-should be write in MERAM address e8080000 (Flash addr 0x80000)?
-
-regards,
-RKP
+Sorry, I was working aganst mmc/next and forgot to check
+against the renesas tree for the patches that should go/be there.
