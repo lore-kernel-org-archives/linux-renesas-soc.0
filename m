@@ -1,251 +1,116 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran+renesas@bingham.xyz>
-Subject: [PATCH 10/13] v4l: vsp1: Support chained display lists
-Date: Wed, 14 Sep 2016 02:17:03 +0300
-Message-Id: <1473808626-19488-11-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:51769 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751418AbcIAW2M (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 1 Sep 2016 18:28:12 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org
+Subject: Re: [PATCH] rcar-du: add R8A7792 support
+Date: Fri, 02 Sep 2016 01:28:34 +0300
+Message-ID: <2732207.dbAaUn7yem@avalon>
+In-Reply-To: <1934824.sESTIjSbbp@wasted.cogentembedded.com>
+References: <1934824.sESTIjSbbp@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran+renesas@bingham.xyz>
+Hi Sergei,
 
-When display lists are linked in a chain, they will be processed
-automatically by the hardware, with each list linking to the next. Only
-on the last display list will the frame end interrupt be fired to mark
-the completion event.
+Thank you for the patch.
 
-Upon frame-end, the chain will be iterated to release each display list
-back to the free list.
+On Thursday 04 Aug 2016 15:01:02 Sergei Shtylyov wrote:
+> Add support for the R8A7792 DU; it has 2 DPAD (RGB) outputs.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-The chained lists use case (image partitioning) can require up to 64
-lists per frame in the worst case scenario, bump up the number of
-preallocated lists.
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Kieran Bingham <kieran+renesas@bingham.xyz>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_dl.c  | 119 +++++++++++++++++++++++++++------
- drivers/media/platform/vsp1/vsp1_dl.h  |   1 +
- drivers/media/platform/vsp1/vsp1_wpf.c |   2 +-
- 3 files changed, 102 insertions(+), 20 deletions(-)
+And applied to my tree.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 37c3518aa2a8..0af3e8fdc714 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -21,7 +21,6 @@
- #include "vsp1_dl.h"
- 
- #define VSP1_DL_NUM_ENTRIES		256
--#define VSP1_DL_NUM_LISTS		3
- 
- #define VSP1_DLH_INT_ENABLE		(1 << 1)
- #define VSP1_DLH_AUTO_START		(1 << 0)
-@@ -71,6 +70,7 @@ struct vsp1_dl_body {
-  * @dma: DMA address for the header
-  * @body0: first display list body
-  * @fragments: list of extra display list bodies
-+ * @chain: entry in the display list partition chain
-  */
- struct vsp1_dl_list {
- 	struct list_head list;
-@@ -81,6 +81,9 @@ struct vsp1_dl_list {
- 
- 	struct vsp1_dl_body body0;
- 	struct list_head fragments;
-+
-+	bool has_chain;
-+	struct list_head chain;
- };
- 
- enum vsp1_dl_mode {
-@@ -262,7 +265,6 @@ static struct vsp1_dl_list *vsp1_dl_list_alloc(struct vsp1_dl_manager *dlm)
- 
- 		memset(dl->header, 0, sizeof(*dl->header));
- 		dl->header->lists[0].addr = dl->body0.dma;
--		dl->header->flags = VSP1_DLH_INT_ENABLE;
- 	}
- 
- 	return dl;
-@@ -293,6 +295,11 @@ struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm)
- 	if (!list_empty(&dlm->free)) {
- 		dl = list_first_entry(&dlm->free, struct vsp1_dl_list, list);
- 		list_del(&dl->list);
-+
-+		/* The display list chain must be initialised to ensure every
-+		 * display list can assert list_empty() if it is not in a chain.
-+		 */
-+		INIT_LIST_HEAD(&dl->chain);
- 	}
- 
- 	spin_unlock_irqrestore(&dlm->lock, flags);
-@@ -303,9 +310,21 @@ struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm)
- /* This function must be called with the display list manager lock held.*/
- static void __vsp1_dl_list_put(struct vsp1_dl_list *dl)
- {
-+	struct vsp1_dl_list *dl_child;
-+
- 	if (!dl)
- 		return;
- 
-+	/* Release any linked display-lists which were chained for a single
-+	 * hardware operation.
-+	 */
-+	if (dl->has_chain) {
-+		list_for_each_entry(dl_child, &dl->chain, chain)
-+			__vsp1_dl_list_put(dl_child);
-+	}
-+
-+	dl->has_chain = false;
-+
- 	/* We can't free fragments here as DMA memory can only be freed in
- 	 * interruptible context. Move all fragments to the display list
- 	 * manager's list of fragments to be freed, they will be
-@@ -383,6 +402,74 @@ int vsp1_dl_list_add_fragment(struct vsp1_dl_list *dl,
- 	return 0;
- }
- 
-+/**
-+ * vsp1_dl_list_add_chain - Add a display list to a chain
-+ * @head: The head display list
-+ * @dl: The new display list
-+ *
-+ * Add a display list to an existing display list chain. The chained lists
-+ * will be automatically processed by the hardware without intervention from
-+ * the CPU. A display list end interrupt will only complete after the last
-+ * display list in the chain has completed processing.
-+ *
-+ * Adding a display list to a chain passes ownership of the display list to
-+ * the head display list item. The chain is released when the head dl item is
-+ * put back with __vsp1_dl_list_put().
-+ *
-+ * Chained display lists are only usable in header mode. Attempts to add a
-+ * display list to a chain in header-less mode will return an error.
-+ */
-+int vsp1_dl_list_add_chain(struct vsp1_dl_list *head,
-+			   struct vsp1_dl_list *dl)
-+{
-+	/* Chained lists are only available in header mode. */
-+	if (head->dlm->mode != VSP1_DL_MODE_HEADER)
-+		return -EINVAL;
-+
-+	head->has_chain = true;
-+	list_add_tail(&dl->chain, &head->chain);
-+	return 0;
-+}
-+
-+static void vsp1_dl_list_fill_header(struct vsp1_dl_list *dl, bool is_last)
-+{
-+	struct vsp1_dl_header_list *hdr = dl->header->lists;
-+	struct vsp1_dl_body *dlb;
-+	unsigned int num_lists = 0;
-+
-+	/* Fill the header with the display list bodies addresses and sizes. The
-+	 * address of the first body has already been filled when the display
-+	 * list was allocated.
-+	 */
-+
-+	hdr->num_bytes = dl->body0.num_entries
-+		       * sizeof(*dl->header->lists);
-+
-+	list_for_each_entry(dlb, &dl->fragments, list) {
-+		num_lists++;
-+		hdr++;
-+
-+		hdr->addr = dlb->dma;
-+		hdr->num_bytes = dlb->num_entries
-+			       * sizeof(*dl->header->lists);
-+	}
-+
-+	dl->header->num_lists = num_lists;
-+
-+	/* If this display list's chain is not empty, we are on a list, where
-+	 * the next item in the list is the display list entity which should be
-+	 * automatically queued by the hardware.
-+	 */
-+	if (!list_empty(&dl->chain) && !is_last) {
-+		struct vsp1_dl_list *next = list_next_entry(dl, chain);
-+
-+		dl->header->next_header = next->dma;
-+		dl->header->flags = VSP1_DLH_AUTO_START;
-+	} else {
-+		dl->header->flags = VSP1_DLH_INT_ENABLE;
-+	}
-+}
-+
- void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
- {
- 	struct vsp1_dl_manager *dlm = dl->dlm;
-@@ -393,30 +480,24 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl)
- 	spin_lock_irqsave(&dlm->lock, flags);
- 
- 	if (dl->dlm->mode == VSP1_DL_MODE_HEADER) {
--		struct vsp1_dl_header_list *hdr = dl->header->lists;
--		struct vsp1_dl_body *dlb;
--		unsigned int num_lists = 0;
-+		struct vsp1_dl_list *dl_child;
- 
--		/* Fill the header with the display list bodies addresses and
--		 * sizes. The address of the first body has already been filled
--		 * when the display list was allocated.
--		 *
--		 * In header mode the caller guarantees that the hardware is
-+		/* In header mode the caller guarantees that the hardware is
- 		 * idle at this point.
- 		 */
--		hdr->num_bytes = dl->body0.num_entries
--			       * sizeof(*dl->header->lists);
- 
--		list_for_each_entry(dlb, &dl->fragments, list) {
--			num_lists++;
--			hdr++;
-+		/* Fill the header for the head and chained display lists. */
-+		vsp1_dl_list_fill_header(dl, list_empty(&dl->chain));
- 
--			hdr->addr = dlb->dma;
--			hdr->num_bytes = dlb->num_entries
--				       * sizeof(*dl->header->lists);
-+		list_for_each_entry(dl_child, &dl->chain, chain) {
-+			bool last = list_is_last(&dl_child->chain, &dl->chain);
-+
-+			vsp1_dl_list_fill_header(dl_child, last);
- 		}
- 
--		dl->header->num_lists = num_lists;
-+		/* Commit the head display list to hardware. Chained headers
-+		 * will auto-start.
-+		 */
- 		vsp1_write(vsp1, VI6_DL_HDR_ADDR(dlm->index), dl->dma);
- 
- 		dlm->active = dl;
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
-index de387cd4d745..7131aa3c5978 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.h
-+++ b/drivers/media/platform/vsp1/vsp1_dl.h
-@@ -41,5 +41,6 @@ void vsp1_dl_fragment_free(struct vsp1_dl_body *dlb);
- void vsp1_dl_fragment_write(struct vsp1_dl_body *dlb, u32 reg, u32 data);
- int vsp1_dl_list_add_fragment(struct vsp1_dl_list *dl,
- 			      struct vsp1_dl_body *dlb);
-+int vsp1_dl_list_add_chain(struct vsp1_dl_list *head, struct vsp1_dl_list *dl);
- 
- #endif /* __VSP1_DL_H__ */
-diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
-index 717c0be58bfb..b757d2579d6c 100644
---- a/drivers/media/platform/vsp1/vsp1_wpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-@@ -364,7 +364,7 @@ struct vsp1_rwpf *vsp1_wpf_create(struct vsp1_device *vsp1, unsigned int index)
- 		return ERR_PTR(ret);
- 
- 	/* Initialize the display list manager. */
--	wpf->dlm = vsp1_dlm_create(vsp1, index, 4);
-+	wpf->dlm = vsp1_dlm_create(vsp1, index, 64);
- 	if (!wpf->dlm) {
- 		ret = -ENOMEM;
- 		goto error;
+> ---
+> This patch is against the 'drm/next/du' branch of Laurent Pinchart's
+> 'media.git' repo...
+> 
+>  Documentation/devicetree/bindings/display/renesas,du.txt |    4 ++
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c                    |   22 +++++++++++
+>  2 files changed, 25 insertions(+), 1 deletion(-)
+> 
+> Index: media/Documentation/devicetree/bindings/display/renesas,du.txt
+> ===================================================================
+> --- media.orig/Documentation/devicetree/bindings/display/renesas,du.txt
+> +++ media/Documentation/devicetree/bindings/display/renesas,du.txt
+> @@ -6,6 +6,7 @@ Required Properties:
+>      - "renesas,du-r8a7779" for R8A7779 (R-Car H1) compatible DU
+>      - "renesas,du-r8a7790" for R8A7790 (R-Car H2) compatible DU
+>      - "renesas,du-r8a7791" for R8A7791 (R-Car M2-W) compatible DU
+> +    - "renesas,du-r8a7792" for R8A7792 (R-Car V2H) compatible DU
+>      - "renesas,du-r8a7793" for R8A7793 (R-Car M2-N) compatible DU
+>      - "renesas,du-r8a7794" for R8A7794 (R-Car E2) compatible DU
+>      - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
+> @@ -25,7 +26,7 @@ Required Properties:
+>    - clock-names: Name of the clocks. This property is model-dependent.
+>      - R8A7779 uses a single functional clock. The clock doesn't need to be
+>        named.
+> -    - R8A779[01345] use one functional clock per channel and one clock per
+> LVDS +    - R8A779[012345] use one functional clock per channel and one
+> clock per LVDS encoder (if available). The functional clocks must be named
+> "du.x" with "x" being the channel numerical index. The LVDS clocks must be
+> named "lvds.x" with "x" being the LVDS encoder numerical index.
+> @@ -47,6 +48,7 @@ corresponding to each DU output.
+>   R8A7779 (H1)	DPAD 0		DPAD 1		-		-
+>   R8A7790 (H2)	DPAD		LVDS 0		LVDS 1		-
+>   R8A7791 (M2-W)	DPAD		LVDS 0		-		-
+> + R8A7792 (V2H)	DPAD 0		DPAD 1		-		-
+>   R8A7793 (M2-N)	DPAD		LVDS 0		-		-
+>   R8A7794 (E2)	DPAD 0		DPAD 1		-		-
+>   R8A7795 (H3)	DPAD		HDMI 0		HDMI 1		LVDS
+> Index: media/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> ===================================================================
+> --- media.orig/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ media/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -110,6 +110,27 @@ static const struct rcar_du_device_info
+>  	.num_lvds = 1,
+>  };
+> 
+> +static const struct rcar_du_device_info rcar_du_r8a7792_info = {
+> +	.gen = 2,
+> +	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> +		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
+> +	.num_crtcs = 2,
+> +	.routes = {
+> +		/* R8A7792 has two RGB outputs. */
+> +		[RCAR_DU_OUTPUT_DPAD0] = {
+> +			.possible_crtcs = BIT(0),
+> +			.encoder_type = DRM_MODE_ENCODER_NONE,
+> +			.port = 0,
+> +		},
+> +		[RCAR_DU_OUTPUT_DPAD1] = {
+> +			.possible_crtcs = BIT(1),
+> +			.encoder_type = DRM_MODE_ENCODER_NONE,
+> +			.port = 1,
+> +		},
+> +	},
+> +	.num_lvds = 0,
+> +};
+> +
+>  static const struct rcar_du_device_info rcar_du_r8a7794_info = {
+>  	.gen = 2,
+>  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
+> @@ -161,6 +182,7 @@ static const struct of_device_id rcar_du
+>  	{ .compatible = "renesas,du-r8a7779", .data = &rcar_du_r8a7779_info },
+>  	{ .compatible = "renesas,du-r8a7790", .data = &rcar_du_r8a7790_info },
+>  	{ .compatible = "renesas,du-r8a7791", .data = &rcar_du_r8a7791_info },
+> +	{ .compatible = "renesas,du-r8a7792", .data = &rcar_du_r8a7792_info },
+>  	{ .compatible = "renesas,du-r8a7793", .data = &rcar_du_r8a7791_info },
+>  	{ .compatible = "renesas,du-r8a7794", .data = &rcar_du_r8a7794_info },
+>  	{ .compatible = "renesas,du-r8a7795", .data = &rcar_du_r8a7795_info },
+
 -- 
 Regards,
 
