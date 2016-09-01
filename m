@@ -1,91 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:52029 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935070AbcIWIcd (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:32931 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750841AbcIAIV5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Sep 2016 04:32:33 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] clk: renesas: rcar-gen3-cpg: Always use readl()/writel()
-Date: Fri, 23 Sep 2016 10:32:32 +0200
-Message-Id: <1474619552-29703-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1474619552-29703-1-git-send-email-geert+renesas@glider.be>
-References: <1474619552-29703-1-git-send-email-geert+renesas@glider.be>
+        Thu, 1 Sep 2016 04:21:57 -0400
+MIME-Version: 1.0
+In-Reply-To: <1472637816-14897-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1472637816-14897-1-git-send-email-vladimir.barinov@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 1 Sep 2016 10:21:56 +0200
+Message-ID: <CAMuHMdXe_hMFjzxhZAJ6-=KGoydrNxJAKLgKOKWV=eghFknUuA@mail.gmail.com>
+Subject: Re: [PATCH v3 08/12] arm64: dts: h3ulcb: enable EXTALR clk
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car Gen3 CPG/MSSR driver uses a mix of clk_readl()/clk_writel()
-and readl()/writel() to access the clock registers. Settle on the
-generic readl()/writel().
+On Wed, Aug 31, 2016 at 12:03 PM, Vladimir Barinov
+<vladimir.barinov@cogentembedded.com> wrote:
+> This enables EXTALR clock that can be used for the watchdog.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 9d76076da4948fc4..742f6dc7c15653ef 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -98,7 +98,7 @@ static int cpg_sd_clock_enable(struct clk_hw *hw)
- 	u32 val, sd_fc;
- 	unsigned int i;
- 
--	val = clk_readl(clock->reg);
-+	val = readl(clock->reg);
- 
- 	sd_fc = val & CPG_SD_FC_MASK;
- 	for (i = 0; i < clock->div_num; i++)
-@@ -111,7 +111,7 @@ static int cpg_sd_clock_enable(struct clk_hw *hw)
- 	val &= ~(CPG_SD_STP_MASK);
- 	val |= clock->div_table[i].val & CPG_SD_STP_MASK;
- 
--	clk_writel(val, clock->reg);
-+	writel(val, clock->reg);
- 
- 	return 0;
- }
-@@ -120,14 +120,14 @@ static void cpg_sd_clock_disable(struct clk_hw *hw)
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
- 
--	clk_writel(clk_readl(clock->reg) | CPG_SD_STP_MASK, clock->reg);
-+	writel(readl(clock->reg) | CPG_SD_STP_MASK, clock->reg);
- }
- 
- static int cpg_sd_clock_is_enabled(struct clk_hw *hw)
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
- 
--	return !(clk_readl(clock->reg) & CPG_SD_STP_MASK);
-+	return !(readl(clock->reg) & CPG_SD_STP_MASK);
- }
- 
- static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
-@@ -138,7 +138,7 @@ static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
- 	u32 val, sd_fc;
- 	unsigned int i;
- 
--	val = clk_readl(clock->reg);
-+	val = readl(clock->reg);
- 
- 	sd_fc = val & CPG_SD_FC_MASK;
- 	for (i = 0; i < clock->div_num; i++)
-@@ -189,10 +189,10 @@ static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (i >= clock->div_num)
- 		return -EINVAL;
- 
--	val = clk_readl(clock->reg);
-+	val = readl(clock->reg);
- 	val &= ~(CPG_SD_STP_MASK | CPG_SD_FC_MASK);
- 	val |= clock->div_table[i].val & (CPG_SD_STP_MASK | CPG_SD_FC_MASK);
--	clk_writel(val, clock->reg);
-+	writel(val, clock->reg);
- 
- 	return 0;
- }
--- 
-1.9.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
