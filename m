@@ -1,69 +1,66 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:44693 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750717AbcISOWt (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 10:22:49 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC] ARM: shmobile: rcar-gen2: Add support for RZ/G CPG/MSSR bindings
-Date: Mon, 19 Sep 2016 16:22:50 +0200
-Message-Id: <1474294970-24744-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <00baa7ae-3e8b-46c4-515f-81d7f12e2d77@cogentembedded.com>
+References: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1472637799-14819-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <CAMuHMdWakZuEu-gTo5=3VWxRdSc8V9gpL28yhjrVhHh1oZVu+Q@mail.gmail.com> <00baa7ae-3e8b-46c4-515f-81d7f12e2d77@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 1 Sep 2016 13:15:03 +0200
+Message-ID: <CAMuHMdXkm1t4Hdc8oG59_8MA+jftNu0ypnBN395ff9JjJC7Qig@mail.gmail.com>
+Subject: Re: [PATCH v3 06/12] arm64: dts: h3ulcb: enable SDHI0
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When using the new CPG/MSSR bindings, there's no longer a
-"renesas,rcar-gen2-cpg-clocks" node.  Add support for finding the
-external clock crystal oscillator on RZ/G1M and RZ/G1E through a
-"renesas,r8a774x-cpg-mssr" node.
+Hi Vladimir,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-	Hi Sergei,
+On Thu, Sep 1, 2016 at 12:41 PM, Vladimir Barinov
+<vladimir.barinov@cogentembedded.com> wrote:
+> On 01.09.2016 11:11, Geert Uytterhoeven wrote:
+>>> --- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+>>> +++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+>>> @@ -82,6 +118,18 @@
+>>>          status = "okay";
+>>>   };
+>>>
+>>> +&sdhi0 {
+>>> +       pinctrl-0 = <&sdhi0_pins_3v3>;
+>>> +       pinctrl-1 = <&sdhi0_pins_1v8>;
+>>> +       pinctrl-names = "default", "state_uhs";
+>>> +
+>>> +       vmmc-supply = <&vcc_sdhi0>;
+>>> +       vqmmc-supply = <&vccq_sdhi0>;
+>>> +       cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
+>>> +       bus-width = <4>;
+>>> +       status = "okay";
+>>> +};
+>>
+>> According to the schematics, SD0_WP is wired, so I think you want to add
+>
+> No, it is not wired (I look on rev0.40 and rev0.46).
+> The microSD card connector CN6 does not have WP on H3ULCB board.
+>>
+>>      wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
+>
+> The GPIO GP_3_13 just pulled up to 3.3V power rail.
 
-As I had this patch more or less ready (using r8a779[0-5] instead of
-r8a774[35] though), and you're gonna need it as a prerequisite for the
-r8a7743 CPG/MSSR driver, I'm sending it now.
+You're right, I missed that the signal goes to D3.3V instead of to the
+connector.
 
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index b527258e0a62e806..e216f3f83d26ecbb 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -46,17 +46,27 @@ u32 rcar_gen2_read_mode_pins(void)
- 	return mode;
- }
- 
-+static const struct of_device_id cpg_matches[] __initconst = {
-+	{ .compatible = "renesas,rcar-gen2-cpg-clocks", },
-+	{ .compatible = "renesas,r8a7743-cpg-mssr", .data = "extal" },
-+	{ .compatible = "renesas,r8a7745-cpg-mssr", .data = "extal" },
-+	{ /* sentinel */ }
-+};
-+
- static unsigned int __init get_extal_freq(void)
- {
-+	const struct of_device_id *match;
- 	struct device_node *cpg, *extal;
- 	u32 freq = 20000000;
-+	int idx = 0;
- 
--	cpg = of_find_compatible_node(NULL, NULL,
--				      "renesas,rcar-gen2-cpg-clocks");
-+	cpg = of_find_matching_node_and_match(NULL, cpg_matches, &match);
- 	if (!cpg)
- 		return freq;
- 
--	extal = of_parse_phandle(cpg, "clocks", 0);
-+	if (match->data)
-+		idx = of_property_match_string(cpg, "clock-names", match->data);
-+	extal = of_parse_phandle(cpg, "clocks", idx);
- 	of_node_put(cpg);
- 	if (!extal)
- 		return freq;
--- 
-1.9.1
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
