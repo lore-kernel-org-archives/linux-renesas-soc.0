@@ -1,64 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:36330 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754275AbcHXT00 (ORCPT
+Received: from sauhun.de ([89.238.76.85]:46335 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750813AbcIAFvB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Aug 2016 15:26:26 -0400
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v4.9 (take two)
-Date: Wed, 24 Aug 2016 21:24:51 +0200
-Message-Id: <1472066691-7967-1-git-send-email-geert@linux-m68k.org>
+        Thu, 1 Sep 2016 01:51:01 -0400
+Date: Thu, 1 Sep 2016 07:50:45 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: renesas-drivers-2016-08-23-v4.8-rc3
+Message-ID: <20160901055044.GA1603@katana>
+References: <1471959320-16947-1-git-send-email-geert+renesas@glider.be>
+ <874m6buh17.wl%kuninori.morimoto.gx@renesas.com>
+ <20160830112457.GB1638@katana>
+ <87pooppivx.wl%kuninori.morimoto.gx@renesas.com>
+ <CAMuHMdVqOobeJJQHARjP8=ujZmO+pgb+QfYBOT9Cqa5xagAYUA@mail.gmail.com>
+ <878tvca1op.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="LQksG6bCIzRHxTLp"
+Content-Disposition: inline
+In-Reply-To: <878tvca1op.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-	Hi Linus,
+--LQksG6bCIzRHxTLp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The following changes since commit 7955dac1b7efab7ae1e7522ea9af3fdc18a257d0:
 
-  pinctrl: sh-pfc: r8a7795: Add DU support (2016-08-16 10:30:43 +0200)
+> I can reproduce this on Lager board now.
+> If I OFF:ed on SW8 : 4bit (= MD21), kernel boot will be failed.
+> It happened on both board
 
-are available in the git repository at:
+Even with my recent patch?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.9-tag2
 
-for you to fetch changes up to 374cf6992de89fc38d4d923c89b40816d341d678:
+--LQksG6bCIzRHxTLp
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  pinctrl: sh-pfc: r8a7796: Add SDHI pins, groups and functions (2016-08-19 09:37:20 +0200)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-----------------------------------------------------------------
-pinctrl: sh-pfc: Add support for R-Car M3-W
+iQIcBAEBAgAGBQJXx8G0AAoJEBQN5MwUoCm2SU0P/AoYzEq5O3JBp5RclVUDSfDJ
+HZC90CtvEKAY7wVRjHp/2lgk3gyE7WRPtW9AFMj3UDa2bPU0WJ+IHGNSZnmiNEiE
+DqFVvgGqXfx2Atec9R/nEEx8XkzB1YIWQV0wVITKJbVWsZn21hwBwdCCIO7JzroG
+eiHEV4NL5brQycno5mZDjH+0AlvymUqjOtyfFN8tY6MviJXGNMQE37pA4yVSV/mH
+nO/6g0b5XhABM6xx4/FZ14vhohHMESIE/pA0701D4i3bqJQbsY4cDEvUlVf86QKo
+TIy6xXMV/jGHiVB97zhMXba8TzscEcEpis6ObO/oz69X+nFUgMtvhMIZd3A8J9LS
+FdtS2WTLrgMaSZA+aS267Yz8PJuukiZGJWs5H2+LWqSuGAuRroKXSh1q5fbNa6Yf
+OdnAwShy+YsDi4r6+zWwd97at8W7kNdEogBurYm7U71Bps2lTnQRsTTOxLXSYokt
+G/wwSTTwjR3NWIAm5q9ioUqoxagkLP/sLpi6YEisTkZR806HTyv9d1ggiG8vxAbs
+aYihVTe51M7xnsqbeAoaVSLT2aLXVUmos2I+tgX5jXRx8MN6bvougdZRIes0/FD7
+Z/PLCtFcbt/HXKvm7EUbNfNbgtBiD2s6hRyrOYgNyrwZTMDWq1tCMIXSjIztO/km
+OOwJo6NWUo5tSQNWy0a3
+=CGRQ
+-----END PGP SIGNATURE-----
 
-Add initial support for the Pin Function Controller on the Renesas R-Car
-M3-W SoC:
-  - Basic definitions,
-  - SCIF (serial) pins, groups and functions,
-  - SDHI pins, groups and functions.
-
-As this is a dependency for adding pinctrl properties to the existing
-r8a7796-salvator-x.dts without breaking runtime, I would appreciate if
-you could do that sooner rather than later, so Simon can pull it as
-well, and start queueing up pinctrl property DT patches.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Takeshi Kihara (3):
-      pinctrl: sh-pfc: Initial R8A7796 PFC support
-      pinctrl: sh-pfc: r8a7796: Add SCIF pins, groups and functions
-      pinctrl: sh-pfc: r8a7796: Add SDHI pins, groups and functions
-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
- drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
- drivers/pinctrl/sh-pfc/Makefile                    |    1 +
- drivers/pinctrl/sh-pfc/core.c                      |    6 +
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c               | 2647 ++++++++++++++++++++
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |    1 +
- 6 files changed, 2661 insertions(+)
- create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+--LQksG6bCIzRHxTLp--
