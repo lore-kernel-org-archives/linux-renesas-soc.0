@@ -1,124 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33566 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932119AbcIAVwD (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:14757 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933287AbcIAV2M (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Sep 2016 17:52:03 -0400
-MIME-Version: 1.0
-In-Reply-To: <20160901131036.17241-1-chris.brandt@renesas.com>
-References: <20160830031358.19468-1-chris.brandt@renesas.com> <20160901131036.17241-1-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 1 Sep 2016 21:21:38 +0200
-Message-ID: <CAMuHMdXd8WxTtpiQ5rujKKVP04oEriF62K9d3iTh1zVakVtTog@mail.gmail.com>
-Subject: Re: [PATCH v3] clk: renesas: rz: Select EXTAL vs USB clock
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Thu, 1 Sep 2016 17:28:12 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: RE: [PATCH v3] clk: renesas: rz: Select EXTAL vs USB clock
+Date: Thu, 1 Sep 2016 19:41:22 +0000
+Message-ID: <SG2PR06MB1165E96781DE628E27DCF7AE8AE20@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160830031358.19468-1-chris.brandt@renesas.com>
+ <20160901131036.17241-1-chris.brandt@renesas.com>
+ <CAMuHMdXd8WxTtpiQ5rujKKVP04oEriF62K9d3iTh1zVakVtTog@mail.gmail.com>
+In-Reply-To: <CAMuHMdXd8WxTtpiQ5rujKKVP04oEriF62K9d3iTh1zVakVtTog@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Thu, Sep 1, 2016 at 3:10 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
-> Check the MD_CLK pin to determine the current clock mode in order to set
-> the pll clock parent correctly.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-
-Thanks for the update!
-
-> ---
-> v3:
-> * move reading GPIO port into separate function
-> v2:
-> * Switched to reading MD_CLK pin to determine mode
-> ---
->  drivers/clk/renesas/clk-rz.c | 31 ++++++++++++++++++++++++++++---
->  1 file changed, 28 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/renesas/clk-rz.c b/drivers/clk/renesas/clk-rz.c
-> index f6312c6..29a8638 100644
-> --- a/drivers/clk/renesas/clk-rz.c
-> +++ b/drivers/clk/renesas/clk-rz.c
-> @@ -25,10 +25,34 @@ struct rz_cpg {
->  #define CPG_FRQCR      0x10
->  #define CPG_FRQCR2     0x14
->
-> +#define PPR0 0xFCFE3200
-> +#define PIBC0 0xFCFE7000
-> +
-> +#define MD_BOOT0(x) ((x >> 0) & 1)     /* P0_0 */
-> +#define MD_BOOT1(x) ((x >> 1) & 1)     /* P0_1 */
-> +#define MD_CLK(x)   ((x >> 2) & 1)     /* P0_2 */
-
-Good idea to use a macro for that!
-However, adding more (unused) macros may trigger more questions from reviewers,
-cfr. below ;-)
-
-> +#define MD_CLKS(x)  ((x >> 3) & 1)     /* P0_3 */
-> +
->  /* -----------------------------------------------------------------------------
->   * Initialization
->   */
->
-> +u16 rz_cpg_read_mode_pins(void)
-
-static u16 __init rz_cpg_read_mode_pins(void)
-
-Or do you intend to make this a global function?
-There's also MD_BOOT2 at P7_0. To read that, you have to map and read a
-different set of registers, though...
-
-> +{
-> +       void __iomem *ppr0, *pibc0;
-> +       u16 modes;
-> +
-> +       ppr0 = ioremap_nocache(PPR0, 2);
-> +       pibc0 = ioremap_nocache(PIBC0, 2);
-> +       BUG_ON(!ppr0 || !pibc0);
-> +       iowrite16(4, pibc0);    /* enable input buffer */
-> +       modes = ioread16(ppr0);
-> +       iounmap(ppr0);
-> +       iounmap(pibc0);
-> +
-> +       return modes;
-> +}
-> +
->  static struct clk * __init
->  rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *name)
->  {
-> @@ -37,10 +61,11 @@ rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *na
->         static const unsigned frqcr_tab[4] = { 3, 2, 0, 1 };
->
->         if (strcmp(name, "pll") == 0) {
-> -               /* FIXME: cpg_mode should be read from GPIO. But no GPIO support yet */
-> -               unsigned cpg_mode = 0; /* hardcoded to EXTAL for now */
-
-I'd just assign "MD_CLK(rz_cpg_read_mode_pins())" to cpg_mode here...
-
-> -               const char *parent_name = of_clk_get_parent_name(np, cpg_mode);
-> +               unsigned int cpg_mode;
-> +               const char *parent_name;
->
-> +               cpg_mode = MD_CLK(rz_cpg_read_mode_pins());
-> +               parent_name = of_clk_get_parent_name(np, cpg_mode);
-
-... and not bother splitting the lines, as they don't break the
-80-chars-per-line
-limit.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNCk9uIDkvMS8yMDE2LCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+ID4g
+KyNkZWZpbmUgTURfQk9PVDAoeCkgKCh4ID4+IDApICYgMSkgICAgIC8qIFAwXzAgKi8NCj4gPiAr
+I2RlZmluZSBNRF9CT09UMSh4KSAoKHggPj4gMSkgJiAxKSAgICAgLyogUDBfMSAqLw0KPiA+ICsj
+ZGVmaW5lIE1EX0NMSyh4KSAgICgoeCA+PiAyKSAmIDEpICAgICAvKiBQMF8yICovDQo+DQo+IEdv
+b2QgaWRlYSB0byB1c2UgYSBtYWNybyBmb3IgdGhhdCENCj4gSG93ZXZlciwgYWRkaW5nIG1vcmUg
+KHVudXNlZCkgbWFjcm9zIG1heSB0cmlnZ2VyIG1vcmUgcXVlc3Rpb25zDQo+IGZyb20gcmV2aWV3
+ZXJzLCBjZnIuIGJlbG93IDstKQ0KDQpPSywgSSBjYW4gcHVsbCB0aGUgb3RoZXIgb25lcyBvdXQu
+IEknbSBPSyB3aXRoIHRoYXQuDQoNCg0KPiA+ICsjZGVmaW5lIE1EX0NMS1MoeCkgICgoeCA+PiAz
+KSAmIDEpICAgICAvKiBQMF8zICovDQo+ID4gKw0KPiA+ICAvKiAtLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LQ0KPiA+ICAgKiBJbml0aWFsaXphdGlvbg0KPiA+ICAgKi8NCj4gPg0KPiA+ICt1MTYgcnpfY3Bn
+X3JlYWRfbW9kZV9waW5zKHZvaWQpDQo+DQo+IHN0YXRpYyB1MTYgX19pbml0IHJ6X2NwZ19yZWFk
+X21vZGVfcGlucyh2b2lkKQ0KPg0KPiBPciBkbyB5b3UgaW50ZW5kIHRvIG1ha2UgdGhpcyBhIGds
+b2JhbCBmdW5jdGlvbj8NCg0KT29vcHMuIEknbGwgbWFrZSBpdCBzdGF0aWMuDQoNCg0KDQo+IFRo
+ZXJlJ3MgYWxzbyBNRF9CT09UMiBhdCBQN18wLiBUbyByZWFkIHRoYXQsIHlvdSBoYXZlIHRvIG1h
+cCBhbmQgcmVhZA0KPiBhIGRpZmZlcmVudCBzZXQgb2YgcmVnaXN0ZXJzLCB0aG91Z2guLi4NCg0K
+R29vZCBwb2ludC4gU28uLi5nb2luZyBiYWNrIHRvIHlvdXIgZmlyc3QgY29tbWVudCwgdGhlcmUg
+aXMgbm8gcmVhc29uIGZvciBtYWtpbmcgbWFjcm9zIG9yIGRpc2N1c3NpbmcgbW9kZSBwaW5zIHRo
+YXQgeW91IGhhdmUgbm8gcGxhbiBvbiBkZWFsaW5nIHdpdGguDQoNCg0KPiA+ICAgICAgICAgaWYg
+KHN0cmNtcChuYW1lLCAicGxsIikgPT0gMCkgew0KPiA+IC0gICAgICAgICAgICAgICAvKiBGSVhN
+RTogY3BnX21vZGUgc2hvdWxkIGJlIHJlYWQgZnJvbSBHUElPLiBCdXQgbm8gR1BJTyBzdXBwb3J0
+IHlldCAqLw0KPiA+IC0gICAgICAgICAgICAgICB1bnNpZ25lZCBjcGdfbW9kZSA9IDA7IC8qIGhh
+cmRjb2RlZCB0byBFWFRBTCBmb3Igbm93ICovDQo+DQo+IEknZCBqdXN0IGFzc2lnbiAiTURfQ0xL
+KHJ6X2NwZ19yZWFkX21vZGVfcGlucygpKSIgdG8gY3BnX21vZGUgaGVyZS4uLg0KPg0KPiA+IC0g
+ICAgICAgICAgICAgICBjb25zdCBjaGFyICpwYXJlbnRfbmFtZSA9IG9mX2Nsa19nZXRfcGFyZW50
+X25hbWUobnAsIGNwZ19tb2RlKTsNCj4gPiArICAgICAgICAgICAgICAgdW5zaWduZWQgaW50IGNw
+Z19tb2RlOw0KPiA+ICsgICAgICAgICAgICAgICBjb25zdCBjaGFyICpwYXJlbnRfbmFtZTsNCj4g
+Pg0KPiA+ICsgICAgICAgICAgICAgICBjcGdfbW9kZSA9IE1EX0NMSyhyel9jcGdfcmVhZF9tb2Rl
+X3BpbnMoKSk7DQo+ID4gKyAgICAgICAgICAgICAgIHBhcmVudF9uYW1lID0gb2ZfY2xrX2dldF9w
+YXJlbnRfbmFtZShucCwgY3BnX21vZGUpOw0KPg0KPi4uLiBhbmQgbm90IGJvdGhlciBzcGxpdHRp
+bmcgdGhlIGxpbmVzLCBhcyB0aGV5IGRvbid0IGJyZWFrIHRoZSA4MC1jaGFycy1wZXItbGluZSBs
+aW1pdC4NCg0KQnV0IEkgZ2V0IHBhaWQgcGVyIGxpbmUgb2YgY29kZSEhISAgIChqdXN0IGtpZGRp
+bmcpDQpJJ2xsIG1ha2UgdGhlIGNoYW5nZXMgYW5kIHJlc2VuZC4NCg0KDQpUaGFua3MgZm9yIHlv
+dXIgcmV2aWV3IQ0KDQoNCkNocmlzDQo=
