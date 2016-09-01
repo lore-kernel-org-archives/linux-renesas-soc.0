@@ -1,39 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52739 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:51897 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932141AbcIAOYl (ORCPT
+        with ESMTP id S932577AbcIANmJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Sep 2016 10:24:41 -0400
-Date: Thu, 1 Sep 2016 16:24:34 +0200
+        Thu, 1 Sep 2016 09:42:09 -0400
+Date: Thu, 1 Sep 2016 15:42:02 +0200
 From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 08/11] arm64: r8a7795: Set maximum frequencies for
- SDHI clocks
-Message-ID: <20160901142434.GH14300@verge.net.au>
-References: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
- <1472591399-13907-9-git-send-email-horms+renesas@verge.net.au>
- <20160831084449.GB1609@katana>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] spi: sh-msiof: Use ARCH_SHMOBILE instead of SUPERH
+Message-ID: <20160901134159.GA14300@verge.net.au>
+References: <1472636225-27091-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20160831084449.GB1609@katana>
+In-Reply-To: <1472636225-27091-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 31, 2016 at 10:44:49AM +0200, Wolfram Sang wrote:
-> On Tue, Aug 30, 2016 at 11:09:56PM +0200, Simon Horman wrote:
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> > ---
-> > v5
-> > * New patch
+On Wed, Aug 31, 2016 at 11:37:05AM +0200, Geert Uytterhoeven wrote:
+> "spi_sh_msiof" is used on sh7723 and sh7724 only. As all of the above
+> select ARCH_SHMOBILE, restrict its driver dependencies from SUPERH to
+> ARCH_SHMOBILE.
 > 
-> Huh? There is already 721e9a08aa514c ("arm64: dts: r8a7795: set maximum
-> frequency for SDHI clocks") in renesas/drivers? Why didn't you pick this
-> one?
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Sorry, I was working aganst mmc/next and forgot to check
-against the renesas tree for the patches that should go/be there.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
+> ---
+>  drivers/spi/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+> index 5c8e51e96888cc53..96087e9fc998461c 100644
+> --- a/drivers/spi/Kconfig
+> +++ b/drivers/spi/Kconfig
+> @@ -556,7 +556,7 @@ config SPI_SC18IS602
+>  config SPI_SH_MSIOF
+>  	tristate "SuperH MSIOF SPI controller"
+>  	depends on HAVE_CLK && HAS_DMA
+> -	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
+> +	depends on ARCH_SHMOBILE || ARCH_RENESAS || COMPILE_TEST
+>  	help
+>  	  SPI driver for SuperH and SH Mobile MSIOF blocks.
+>  
+> -- 
+> 1.9.1
+> 
