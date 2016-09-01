@@ -1,57 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:46003 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1761877AbcINRGF (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:32783 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750862AbcIAIZx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Sep 2016 13:06:05 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Dirk Behme <dirk.behme@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 0/4] tmio: add support for eMMC with 8 bit bus width
-Date: Wed, 14 Sep 2016 19:05:54 +0200
-Message-Id: <20160914170558.1561-1-wsa+renesas@sang-engineering.com>
+        Thu, 1 Sep 2016 04:25:53 -0400
+MIME-Version: 1.0
+In-Reply-To: <1472637836-14975-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1472637836-14975-1-git-send-email-vladimir.barinov@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 1 Sep 2016 10:25:52 +0200
+Message-ID: <CAMuHMdXze0xziop+Jbys3Ghxik+Jy2jtgrJcN-ApXuO+FWBLxg@mail.gmail.com>
+Subject: Re: [PATCH v3 10/12] arm64: dts: h3ulcb: enable USB2 PHY of channel 1
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa@the-dreams.de>
+On Wed, Aug 31, 2016 at 12:03 PM, Vladimir Barinov
+<vladimir.barinov@cogentembedded.com> wrote:
+> This supports USB2 PHY channel #1 on H3ULCB board
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-This series enables SDHI instances on R-Car Gen3 to access eMMC with 8 bit bus
-width. I think the patch descriptions speak for themselves.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I decided to not protect this new feature with a flag because it needs
-specifically to be enabled by setting the bus width to 8. No legacy platform
-does that.
+Gr{oetje,eeting}s,
 
-The DTS changes for R-Car Gen3 will come via a seperate series. Note that
-'non-removable' is not supported yet because of Runtime PM issues. It seems we
-need to overhaul Runtime PM handling for other reasons as well, so I suggest
-the basic support goes in like this and DTS do not use 'non-removable' for now.
+                        Geert
 
-These patches are based on top of Simon's sdr104-v7 patches but they apply to
-current mmc/next as well. A branch can be found here:
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-8bit-emmc-driver
-
-Please review, comment, apply...
-
-   Wolfram
-
-
-Wolfram Sang (4):
-  mmc: add define for R1 response without CRC
-  mmc: rtsx_pci: use new macro for R1 without CRC
-  mmc: rtsx_usb: use new macro for R1 without CRC
-  mmc: tmio: add eMMC support
-
- drivers/mmc/host/rtsx_pci_sdmmc.c |  2 +-
- drivers/mmc/host/rtsx_usb_sdmmc.c |  2 +-
- drivers/mmc/host/tmio_mmc.h       |  3 +++
- drivers/mmc/host/tmio_mmc_pio.c   | 29 +++++++++++++++++------------
- include/linux/mmc/core.h          |  3 +++
- 5 files changed, 25 insertions(+), 14 deletions(-)
-
--- 
-2.9.3
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
