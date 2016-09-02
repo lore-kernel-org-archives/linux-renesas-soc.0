@@ -1,48 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:49170 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932461AbcIFIZ1 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39239 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752548AbcIBLRz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Sep 2016 04:25:27 -0400
-Received: from avalon.bb.dnainternet.fi (85-23-193-79.bb.dnainternet.fi [85.23.193.79])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id F0C0C2003E
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Sep 2016 10:24:59 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/4] R-Car M3-W Salvator-X: Add ethernet support
-Date: Tue,  6 Sep 2016 11:25:48 +0300
-Message-Id: <1473150352-31081-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 2 Sep 2016 07:17:55 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v6 0/9] UHS-I SDR-104 support for sh_mobile_sdhi
+Date: Fri,  2 Sep 2016 13:17:29 +0200
+Message-Id: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+Hi,
 
-This patch series adds support for the RAVB ethernet controller on the M3-W
-(R8A7796) Salvator-X board.
+this series is based on work by Ai Kyuse to add UHS-I SDR-104 support for
+sh_mobile_sdhi. It builds on work by Shinobu Uehara, Rob Taylor, William
+Towle and Ian Molton, Ben Hutchings, Wolfram Sang and others to add UHS-I
+SDR-50 support to the same driver.
 
-The patches are based on top of Simon's latest devel branch, with the
-following patches cherry-picked:
+This series enables:
+* UHS-I SDR-104 on the r8a7790/Lager where UHS-I SDR-50 is already enabled.
+* Both UHS-1 SDR-50 and SDR-104 on the r8a7796/Salvator-X
 
-[PATCH/RFT 1/8] clk: renesas: r8a7796: Add GPIO clocks
-[PATCH/RFT 4/8] gpio: rcar: Add r8a7796 (R-Car M3-W) support
-[PATCH/RFT 6/8] arm64: dts: r8a7796: Add GPIO device nodes
+It is based on a merge of the next branches of the mmc and renesas trees.
 
-I'd like to suggest merging the GPIO support without PFC if it helps getting
-ethernet support in v4.9, as this is a very handy feature for development.
+The "mmc:" patches are targeted at the next branch of the mmc
+tree. The "ARM:" and "arm64:" patches are targeted at the next branch of
+the renesas tree.
 
-Laurent Pinchart (4):
-  clk: shmobile: r8a7796: Add RAVB clock
-  dt-bindings: net: renesas-ravb: Add support for R8A7796 RAVB
-  arm64: dts: renesas: r8a7796: Add EthernetAVB instance
-  arm64: dts: r8a7796: Enable EthernetAVB on Salvator-X
+To aid review the following git branches are provided:
+* https:://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdr104-v6
+  This patch set
+* https:://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdr104-v6+sdhi-dma-v3
+  This patch set merged with a rebase of prototype DMA support for SDHI on
+  R-Car Gen 3
 
- .../devicetree/bindings/net/renesas,ravb.txt       |  3 +-
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 25 +++++++++++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 43 ++++++++++++++++++++++
- drivers/clk/renesas/r8a7796-cpg-mssr.c             |  1 +
- 4 files changed, 71 insertions(+), 1 deletion(-)
+Overview of changes since v5:
+* Drop retune handling from tmio suspend handler: it hs handled by MMC core
+* Allow restoration of saved tuning parameters on resume
+
+Please see http://elinux.org/Tests:SD-SDHI-SDR104 for indicative tests
+results.
+
+Ai Kyuse (3):
+  mmc: tmio: enhance illegal sequence handling
+  mmc: tmio: Add hw reset support
+  mmc: tmio: Add tuning support
+
+Simon Horman (5):
+  mmc: core: Add helper to see if a host can be retuned
+  mmc: tmio: document mandatory and optional callbacks
+  mmc: sh_mobile_sdhi: Add tuning support
+  ARM: dts: lager: Enable UHS-I SDR-104
+  arm64: dts: r8a7795: salvator-x: Enable UHS-I SDR-104
+
+Wolfram Sang (1):
+  arm64: dts: r8a7795: salvator-x: enable UHS for SDHI 0 & 3
+
+ arch/arm/boot/dts/r8a7790-lager.dts                |   1 +
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  24 +-
+ drivers/mmc/host/sh_mobile_sdhi.c                  | 265 ++++++++++++++++++++-
+ drivers/mmc/host/tmio_mmc.h                        |  18 +-
+ drivers/mmc/host/tmio_mmc_pio.c                    |  93 +++++++-
+ include/linux/mmc/host.h                           |   5 +
+ 6 files changed, 396 insertions(+), 10 deletions(-)
 
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
