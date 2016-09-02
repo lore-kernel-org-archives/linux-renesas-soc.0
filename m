@@ -1,51 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f172.google.com ([209.85.161.172]:33162 "EHLO
-        mail-yw0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933510AbcIFNTA (ORCPT
+Received: from mail-it0-f50.google.com ([209.85.214.50]:37731 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750992AbcIBIKV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Sep 2016 09:19:00 -0400
-Received: by mail-yw0-f172.google.com with SMTP id l8so54673687ywb.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Sep 2016 06:19:00 -0700 (PDT)
+        Fri, 2 Sep 2016 04:10:21 -0400
+Received: by mail-it0-f50.google.com with SMTP id e124so24936944ith.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Sep 2016 01:10:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20160825164623.GI2856@katana>
+In-Reply-To: <87a8frulzm.wl%kuninori.morimoto.gx@renesas.com>
 References: <1471959320-16947-1-git-send-email-geert+renesas@glider.be>
- <874m6buh17.wl%kuninori.morimoto.gx@renesas.com> <CANqRtoRCoe6-f3ekkvvTsX5co5kj8ZTzUpgfXL8LAHqp6c7=og@mail.gmail.com>
- <CAMuHMdUneaDwC2yMOkcfNQy2f47dTdOoxr=YyZX6VPmZW0kBQg@mail.gmail.com> <20160825164623.GI2856@katana>
+ <874m6buh17.wl%kuninori.morimoto.gx@renesas.com> <20160830112457.GB1638@katana>
+ <87pooppivx.wl%kuninori.morimoto.gx@renesas.com> <CAMuHMdVqOobeJJQHARjP8=ujZmO+pgb+QfYBOT9Cqa5xagAYUA@mail.gmail.com>
+ <878tvca1op.wl%kuninori.morimoto.gx@renesas.com> <20160901055044.GA1603@katana>
+ <871t149kdu.wl%kuninori.morimoto.gx@renesas.com> <CAMuHMdWm9-vX3CM2HVgTVR=ANeBUAi82DPU_fnqY5WGWbN7RvQ@mail.gmail.com>
+ <87a8frulzm.wl%kuninori.morimoto.gx@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 6 Sep 2016 15:18:59 +0200
-Message-ID: <CAMuHMdW+PF0h4B060C-xogip5TRaR11gZCPXFh+CsM7eZuCuOQ@mail.gmail.com>
+Date: Fri, 2 Sep 2016 10:10:19 +0200
+Message-ID: <CAMuHMdWkpxcYjpE5_fftiM=HP49s9EjT8ZNWzsxvVLuz2vuhTg@mail.gmail.com>
 Subject: Re: renesas-drivers-2016-08-23-v4.8-rc3
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon <horms@verge.net.au>,
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Simon <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Aug 25, 2016 at 6:46 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
->> > How can we check which ES version we are running? I recall seeing some
->> > patch from Geert that printed out useful information during boot, any
->> > chance that could make it upstream (if it is not already)?
+Hi Morimoto-san,
+
+On Fri, Sep 2, 2016 at 3:38 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+>> >> Even with my recent patch?
+>> >
+>> > I tried your patch, and it solved this issue.
 >>
->> It's part of my topic/renesas-debug branch. Just merge that into latest
->> renesas-drivers and see...
+>> Interesting...
+>>
+>> Does "[PATCH/RFT 0/4] ARM: shmobile: R-Car Gen2: Allow booting secondary CPU
+>> cores in debug mode", without Wolfram's patch, also fix it?
 >
-> I second Magnus in wanting this upstream. The FIXMEs are about the
-> cache. Maybe submit an initial version without cache report first? Or
-> are there other issues? It would be really helpful to have this in the
-> bootlogs by default, I'd say.
+> Interesting...
+>
+> Your patch (without Wolfram's patch) also solved this issue
 
-I've accidentally stumbled upon a patch from Arnd to match against
-SoC revisions:
-[PATCH 1/4] base: soc: introduce soc_device_match() interface
-http://lists.infradead.org/pipermail/linux-arm-kernel/2016-May/431902.html
+I can offer some explanation, though...
 
-Now, soc_device_register() seems to be the API to publish the SoC
-revision. Unfortunately the SoC bus itself is registered from a core_initcall(),
-which may be too late for our purposes.
+The regulator quirk code masks all interrupts and events. Some of these events
+are error states, but not all of them are. Hence they may be set (and cause
+problems due to unhandled interrupts without the quirk) depending on power
+consumption on the various power rails. The latter are influenced by secondary
+CPU booting, and possibly by configuration of reset debug hardware.
 
 Gr{oetje,eeting}s,
 
