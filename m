@@ -1,80 +1,59 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran@bingham.xyz>
-Subject: [PATCH v3 09/10] v4l: fdp1: Fix field validation when preparing buffer
-Date: Thu,  8 Sep 2016 01:25:09 +0300
-Message-Id: <1473287110-780-10-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1473287110-780-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1473287110-780-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:37018 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751872AbcIBIaa (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 2 Sep 2016 04:30:30 -0400
+Date: Fri, 2 Sep 2016 10:19:25 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 12/12] arm64: dts: h3ulcb: Sound SSI support
+Message-ID: <20160902081925.GC16669@verge.net.au>
+References: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1472637850-15053-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <87d1knumv9.wl%kuninori.morimoto.gx@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87d1knumv9.wl%kuninori.morimoto.gx@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Ensure that the buffer field matches the field configured for the
-format.
+On Fri, Sep 02, 2016 at 01:19:49AM +0000, Kuninori Morimoto wrote:
+> 
+> Hi Vladimir
+> 
+> > This supports SSI sound for H3ULCB board.
+> > SSI DMA mode used. CS2000 used as AUDIO_CLK_B.
+> > 
+> > Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> > ---
+> 
+> Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> > +	audio_clkout: audio_clkout {
+> > +		compatible = "fixed-clock";
+> > +		#clock-cells = <0>;
+> > +		clock-frequency = <11289600>;
+> > +	};
+> 
+> I think having commont for AUDIO_CLKOUT is better for user, like Salvator-X.
+> This "audio_clkout" is dummy. Actually, we don't need this dummy clock,
+> and we should use "<&rcar_sound 0>" as AUDIO_CLKOUT,
+> like AUDIO_CLKOUT3 as "<&rcar_sound 3>" which is used on ak4613. 
+> But Salvator-X and this ULCB board has very complex connection,
+> especially around CS2000.
+> This means cs2000 requests rcar_sound, and rcar_sound requests cs2000.
+> This audio_clkout exist to avoid probe dead-lock.
+> This is the reason why audio_clkout and rcar_sound::clock-frequency
+> has same value.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/rcar_fdp1.c | 40 +++++++++++++++++++++++++++++++-------
- 1 file changed, 33 insertions(+), 7 deletions(-)
+Vladimir,
 
-diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
-index 480f89381f15..c25531a919db 100644
---- a/drivers/media/platform/rcar_fdp1.c
-+++ b/drivers/media/platform/rcar_fdp1.c
-@@ -1884,17 +1884,43 @@ static int fdp1_buf_prepare(struct vb2_buffer *vb)
- 
- 	q_data = get_q_data(ctx, vb->vb2_queue->type);
- 
--	/* Default to Progressive if ANY selected */
--	if (vbuf->field == V4L2_FIELD_ANY)
--		vbuf->field = V4L2_FIELD_NONE;
-+	if (V4L2_TYPE_IS_OUTPUT(vb->vb2_queue->type)) {
-+		bool field_valid = true;
-+
-+		/* Validate the buffer field. */
-+		switch (q_data->format.field) {
-+		case V4L2_FIELD_NONE:
-+			if (vbuf->field != V4L2_FIELD_NONE)
-+				field_valid = false;
-+			break;
-+
-+		case V4L2_FIELD_ALTERNATE:
-+			if (vbuf->field != V4L2_FIELD_TOP &&
-+			    vbuf->field != V4L2_FIELD_BOTTOM)
-+				field_valid = false;
-+			break;
- 
--	/* We only support progressive CAPTURE */
--	if (!V4L2_TYPE_IS_OUTPUT(vb->vb2_queue->type) &&
--	     vbuf->field != V4L2_FIELD_NONE) {
--		dprintk(ctx->fdp1, "field isn't supported on capture\n");
-+		case V4L2_FIELD_INTERLACED:
-+		case V4L2_FIELD_SEQ_TB:
-+		case V4L2_FIELD_SEQ_BT:
-+		case V4L2_FIELD_INTERLACED_TB:
-+		case V4L2_FIELD_INTERLACED_BT:
-+			if (vbuf->field != q_data->format.field)
-+				field_valid = false;
-+			break;
-+		}
-+
-+		if (!field_valid) {
-+			dprintk(ctx->fdp1,
-+				"buffer field %u invalid for format field %u\n",
-+				vbuf->field, q_data->format.field);
- 			return -EINVAL;
-+		}
-+	} else {
-+		vbuf->field = V4L2_FIELD_NONE;
- 	}
- 
-+	/* Validate the planes sizes. */
- 	for (i = 0; i < q_data->format.num_planes; i++) {
- 		unsigned long size = q_data->format.plane_fmt[i].sizeimage;
- 
--- 
-Regards,
-
-Laurent Pinchart
+please address the above and include it when you repost the patches
+that I haven't queued up.
