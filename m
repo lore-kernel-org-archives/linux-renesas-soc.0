@@ -1,38 +1,62 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1472833498-26225-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1472833419-26139-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1472833498-26225-1-git-send-email-vladimir.barinov@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 5 Sep 2016 09:57:21 +0200
-Message-ID: <CAMuHMdWXq8enfSUcwFK=6NXoZgJkqo=iScjO8A3ZO-sGrcxb4w@mail.gmail.com>
-Subject: Re: [PATCH v5 2/4] arm64: dts: h3ulcb: enable GPIO keys
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Subject: [PATCH v5 2/4] arm64: dts: h3ulcb: enable GPIO keys
+Date: Fri,  2 Sep 2016 19:24:58 +0300
+Message-Id: <1472833498-26225-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1472833419-26139-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1472833419-26139-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 2, 2016 at 6:24 PM, Vladimir Barinov
-<vladimir.barinov@cogentembedded.com> wrote:
-> This supports GPIO keys on H3ULCB board
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+This supports GPIO keys on H3ULCB board
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+---
+Changes in version 4:
+- initially added
+Changes in version 5:
+- nothing
 
-Gr{oetje,eeting}s,
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 14 +++++++++++++
+ 1 file changed, 14 insertions(+)
 
-                        Geert
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index fb694b8..3329f78 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -12,6 +12,7 @@
+ /dts-v1/;
+ #include "r8a7795.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ 
+ / {
+ 	model = "Renesas H3ULCB board based on r8a7795";
+@@ -31,6 +31,18 @@
+ 		/* first 128MB is reserved for secure area. */
+ 		reg = <0x0 0x48000000 0x0 0x38000000>;
+ 	};
++
++	keyboard {
++		compatible = "gpio-keys";
++
++		key-1 {
++			linux,code = <KEY_1>;
++			label = "SW3";
++			wakeup-source;
++			debounce-interval = <20>;
++			gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
++		};
++	};
+ 
+ 	leds {
+ 		compatible = "gpio-leds";
+-- 
+1.9.1
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
