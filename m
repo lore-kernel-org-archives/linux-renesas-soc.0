@@ -1,196 +1,27 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:37008 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757899AbcIHHoQ (ORCPT
+        with ESMTP id S1751711AbcIBIaI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 03:44:16 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
+        Fri, 2 Sep 2016 04:30:08 -0400
+Received: from penelope.kanocho.kobe.vergenet.net (unknown [217.111.208.18])
+        by kirsty.vergenet.net (Postfix) with ESMTPSA id 7D68E25B812
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Sep 2016 18:30:05 +1000 (AEST)
+Date: Fri, 2 Sep 2016 10:30:01 +0200
+From: Simon Horman <horms@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 25/30] arm64: dts: h3ulcb: Sound SSI support
-Date: Thu,  8 Sep 2016 09:43:21 +0200
-Message-Id: <2627d5179f2c9e0a15a7ccc257d290719efdf694.1473320411.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
-References: <cover.1473320411.git.horms+renesas@verge.net.au>
+Subject: [ANNOUNCE] Renesas tree closing for v4.9
+Message-ID: <20160902083001.GA25205@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Hi,
 
-This supports SSI sound for H3ULCB board.
-SSI DMA mode used. CS2000 used as AUDIO_CLK_B.
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 118 +++++++++++++++++++++++++
- 1 file changed, 118 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index 44f1184e1a14..c6d4ee336740 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -45,6 +45,12 @@
- 		};
- 	};
- 
-+	x12_clk: x12 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <24576000>;
-+	};
-+
- 	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
- 
-@@ -68,6 +74,32 @@
- 		states = <3300000 1
- 			  1800000 0>;
- 	};
-+
-+	audio_clkout: audio-clkout {
-+		/*
-+		 * This is same as <&rcar_sound 0>
-+		 * but needed to avoid cs2000/rcar_sound probe dead-lock
-+		 */
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <11289600>;
-+	};
-+
-+	rsnd_ak4613: sound {
-+		compatible = "simple-audio-card";
-+
-+		simple-audio-card,format = "left_j";
-+		simple-audio-card,bitclock-master = <&sndcpu>;
-+		simple-audio-card,frame-master = <&sndcpu>;
-+
-+		sndcpu: simple-audio-card,cpu {
-+			sound-dai = <&rcar_sound>;
-+		};
-+
-+		sndcodec: simple-audio-card,codec {
-+			sound-dai = <&ak4613>;
-+		};
-+	};
- };
- 
- &extal_clk {
-@@ -114,6 +146,17 @@
- 		power-source = <1800>;
- 	};
- 
-+	sound_pins: sound {
-+		groups = "ssi01239_ctrl", "ssi0_data", "ssi1_data_a";
-+		function = "ssi";
-+	};
-+
-+	sound_clk_pins: sound-clk {
-+		groups = "audio_clk_a_a", "audio_clk_b_a", "audio_clk_c_a",
-+			 "audio_clkout_a", "audio_clkout3_a";
-+		function = "audio_clk";
-+	};
-+
- 	usb1_pins: usb1 {
- 		groups = "usb1";
- 		function = "usb1";
-@@ -137,6 +180,73 @@
- 	pinctrl-names = "default";
- 
- 	status = "okay";
-+
-+	clock-frequency = <100000>;
-+
-+	ak4613: codec@10 {
-+		compatible = "asahi-kasei,ak4613";
-+		#sound-dai-cells = <0>;
-+		reg = <0x10>;
-+		clocks = <&rcar_sound 3>;
-+
-+		asahi-kasei,in1-single-end;
-+		asahi-kasei,in2-single-end;
-+		asahi-kasei,out1-single-end;
-+		asahi-kasei,out2-single-end;
-+		asahi-kasei,out3-single-end;
-+		asahi-kasei,out4-single-end;
-+		asahi-kasei,out5-single-end;
-+		asahi-kasei,out6-single-end;
-+	};
-+
-+	cs2000: clk-multiplier@4f {
-+		#clock-cells = <0>;
-+		compatible = "cirrus,cs2000-cp";
-+		reg = <0x4f>;
-+		clocks = <&audio_clkout>, <&x12_clk>;
-+		clock-names = "clk_in", "ref_clk";
-+
-+		assigned-clocks = <&cs2000>;
-+		assigned-clock-rates = <24576000>; /* 1/1 divide */
-+	};
-+};
-+
-+&rcar_sound {
-+	pinctrl-0 = <&sound_pins &sound_clk_pins>;
-+	pinctrl-names = "default";
-+
-+	/* Single DAI */
-+	#sound-dai-cells = <0>;
-+
-+	/* audio_clkout0/1/2/3 */
-+	#clock-cells = <1>;
-+	clock-frequency = <11289600>;
-+
-+	status = "okay";
-+
-+	/* update <audio_clk_b> to <cs2000> */
-+	clocks = <&cpg CPG_MOD 1005>,
-+		 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
-+		 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
-+		 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
-+		 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
-+		 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
-+		 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
-+		 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
-+		 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
-+		 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
-+		 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
-+		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
-+		 <&audio_clk_a>, <&cs2000>,
-+		 <&audio_clk_c>,
-+		 <&cpg CPG_CORE R8A7795_CLK_S0D4>;
-+
-+	rcar_sound,dai {
-+		dai0 {
-+			playback = <&ssi0 &src0 &dvc0>;
-+			capture  = <&ssi1 &src1 &dvc1>;
-+		};
-+	};
- };
- 
- &sdhi0 {
-@@ -152,11 +262,19 @@
- 	status = "okay";
- };
- 
-+&ssi1 {
-+	shared-pin;
-+};
-+
- &wdt0 {
- 	timeout-sec = <60>;
- 	status = "okay";
- };
- 
-+&audio_clk_a {
-+	clock-frequency = <22579200>;
-+};
-+
- &avb {
- 	pinctrl-0 = <&avb_pins>;
- 	pinctrl-names = "default";
--- 
-2.7.0.rc3.207.g0ac5344
+I would like to stop accepting non-fix patches for v4.9 next week. This is
+in order for them to be sent before the release of v4.8-rc6, the deadline
+set by the ARM SoC maintainers. As patches should ideally progress from
+the renesas tree into linux-next before sending pull requests there is a
+few days lead time involved.
