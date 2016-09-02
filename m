@@ -1,11 +1,4 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:33227 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932804AbcIBQZL (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 12:25:11 -0400
-Received: by mail-lf0-f44.google.com with SMTP id b199so87602542lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Sep 2016 09:25:10 -0700 (PDT)
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -13,12 +6,12 @@ To: Simon Horman <horms@verge.net.au>,
         Mark Rutland <mark.rutland@arm.com>
 Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH v5 3/4] arm64: dts: h3ulcb: enable SDHI0
-Date: Fri,  2 Sep 2016 19:25:08 +0300
-Message-Id: <1472833508-26267-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1472833419-26139-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1472833419-26139-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH v4 3/4] arm64: dts: h3ulcb: enable SDHI0
+Date: Fri,  2 Sep 2016 15:05:25 +0300
+Message-Id: <1472817925-11979-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1472817881-11860-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1472817881-11860-1-git-send-email-vladimir.barinov@cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 This supports SDHI0 on H3ULCB board SD card slot
@@ -30,8 +23,6 @@ Changes in version 3:
 - initially added
 Changes in version 4:
 - added sd-uhs-sdr50
-Changes in version 5:
-- nothing
 
 ---
  arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 49 ++++++++++++++++++++++++++
@@ -113,3 +104,4 @@ index 6842597..babe41c 100644
  	status = "okay";
 -- 
 1.9.1
+
