@@ -1,56 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:54282 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753804AbcIMODc (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:36845 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752669AbcIBVtY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Sep 2016 10:03:32 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/4] pinctrl: sh-pfc: r8a7795: Support none GPIO pins with configurable drive-strength
-Date: Tue, 13 Sep 2016 16:03:10 +0200
-Message-Id: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se>
+        Fri, 2 Sep 2016 17:49:24 -0400
+Received: by mail-lf0-f54.google.com with SMTP id g62so92359071lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Sep 2016 14:49:23 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org,
+        laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org,
+        geert+renesas@glider.be
+Subject: [PATCH] pinctrl: sh-pfc: r8a7792: add DU pin groups
+Date: Sat, 03 Sep 2016 00:49:14 +0300
+Message-ID: <1497777.FvT8ieIrQm@wasted.cogentembedded.com>
+In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Add QSPI pin groups to the R8A7792 PFC driver.
 
-This series adds support to control the drive strength for none GPIO 
-pins. All pins expect one (FSCLKST) which can have its drive strength 
-controlled is now supported. I have also added the new pins to the 
-correct groups, or added groups to mimic other sh-pfc drivers. One 
-notable exception is the group avb_mdc which on other SoC are called 
-avb_mdio, see commit for explanation.
+Based  on the original (and large) patch by Vladimir Barinov
+<vladimir.barinov@cogentembedded.com>.
 
-I did not add FSCLKST since I can't figure out which physical pin it's 
-mapped to. Looking at the code that is already there and documentation 
-it should be a GPIO pin controlled by IPSR7[15:12] but the documentation 
-and code is lacking that part and I can't with a 100% certainty figure 
-out which physical pin it is.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-The series is based on top of v4.8-rc5 and tested on Salvator-X. My test 
-is a bit crude and is setting a few of the AVB pins to a higher 
-drive-strength value then the others and observing that the AVB fails to 
-work after the pfc settings are applied (NFS root failing to mount after 
-kernel is fetched over TFTP).
+---
+The patch is against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
+repo...
 
-Niklas Söderlund (4):
-  pinctrl: sh-pfc: Support named pins with custom configuration
-  pinctrl: sh-pfc: r8a7795: Support none GPIO pins with configurable
-    drive-strength
-  pinctrl: sh-pfc: r8a7795: Add group for AVB MDIO and MII pins
-  pinctrl: sh-pfc: r8a7795: Add group for QSPI0 and QSPI1 pins
+ drivers/pinctrl/sh-pfc/pfc-r8a7792.c |   33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 254 ++++++++++++++++++++++++++++++++---
- drivers/pinctrl/sh-pfc/sh_pfc.h      |   8 ++
- 2 files changed, 243 insertions(+), 19 deletions(-)
-
--- 
-2.9.3
+Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
+===================================================================
+--- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
++++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
+@@ -1034,6 +1034,29 @@ static const unsigned int lbsc_ex_cs5_pi
+ static const unsigned int lbsc_ex_cs5_mux[] = {
+ 	EX_CS5_N_MARK,
+ };
++/* - QSPI ------------------------------------------------------------------- */
++static const unsigned int qspi_ctrl_pins[] = {
++	/* SPCLK, SSL */
++	RCAR_GP_PIN(3, 25), RCAR_GP_PIN(3, 26),
++};
++static const unsigned int qspi_ctrl_mux[] = {
++	SPCLK_MARK, SSL_MARK,
++};
++static const unsigned int qspi_data2_pins[] = {
++	/* MOSI_IO0, MISO_IO1 */
++	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 5),
++};
++static const unsigned int qspi_data2_mux[] = {
++	MOSI_IO0_MARK, MISO_IO1_MARK,
++};
++static const unsigned int qspi_data4_pins[] = {
++	/* MOSI_IO0, MISO_IO1, IO2, IO3 */
++	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 5), RCAR_GP_PIN(3, 23),
++	RCAR_GP_PIN(3, 24),
++};
++static const unsigned int qspi_data4_mux[] = {
++	MOSI_IO0_MARK, MISO_IO1_MARK, IO2_MARK,	IO3_MARK,
++};
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_pins[] = {
+ 	/* RX, TX */
+@@ -1585,6 +1608,9 @@ static const struct sh_pfc_pin_group pin
+ 	SH_PFC_PIN_GROUP(lbsc_ex_cs3),
+ 	SH_PFC_PIN_GROUP(lbsc_ex_cs4),
+ 	SH_PFC_PIN_GROUP(lbsc_ex_cs5),
++	SH_PFC_PIN_GROUP(qspi_ctrl),
++	SH_PFC_PIN_GROUP(qspi_data2),
++	SH_PFC_PIN_GROUP(qspi_data4),
+ 	SH_PFC_PIN_GROUP(scif0_data),
+ 	SH_PFC_PIN_GROUP(scif0_clk),
+ 	SH_PFC_PIN_GROUP(scif0_ctrl),
+@@ -1708,6 +1734,12 @@ static const char * const lbsc_groups[]
+ 	"lbsc_ex_cs5",
+ };
+ 
++static const char * const qspi_groups[] = {
++	"qspi_ctrl",
++	"qspi_data2",
++	"qspi_data4",
++};
++
+ static const char * const scif0_groups[] = {
+ 	"scif0_data",
+ 	"scif0_clk",
+@@ -1808,6 +1840,7 @@ static const struct sh_pfc_function pinm
+ 	SH_PFC_FUNCTION(du1),
+ 	SH_PFC_FUNCTION(intc),
+ 	SH_PFC_FUNCTION(lbsc),
++	SH_PFC_FUNCTION(qspi),
+ 	SH_PFC_FUNCTION(scif0),
+ 	SH_PFC_FUNCTION(scif3),
+ 	SH_PFC_FUNCTION(sdhi0),
