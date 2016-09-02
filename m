@@ -1,64 +1,54 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/3] ARM: dts: r8a7792: add QSPI support
-Date: Sat, 03 Sep 2016 01:08:45 +0300
-Message-ID: <16566445.LA832Ff91Q@wasted.cogentembedded.com>
-In-Reply-To: <1648590.FPpmBRoQyh@wasted.cogentembedded.com>
-References: <1648590.FPpmBRoQyh@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 2/3] ARM: dts: r7s72100: add ethernet to device tree
+Date: Thu,  1 Sep 2016 21:40:11 -0400
+Message-Id: <20160902014012.9383-2-chris.brandt@renesas.com>
+In-Reply-To: <20160902014012.9383-1-chris.brandt@renesas.com>
+References: <20160901155430.23400-1-chris.brandt@renesas.com>
+ <20160902014012.9383-1-chris.brandt@renesas.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A7792 part of the QSPI device node.
-
-Based  on the original (and large) patch by Vladimir Barinov
-<vladimir.barinov@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7792.dtsi |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+v2:
+* Removed MSTP7 clock node
+---
+ arch/arm/boot/dts/r7s72100.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -25,6 +25,7 @@
- 		i2c3 = &i2c3;
- 		i2c4 = &i2c4;
- 		i2c5 = &i2c5;
-+		spi0 = &qspi;
- 		vin0 = &vin0;
- 		vin1 = &vin1;
- 		vin2 = &vin2;
-@@ -554,6 +555,21 @@
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-+		};
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 6d29e8f..fb9ef9c 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -428,4 +428,17 @@
+ 		power-domains = <&cpg_clocks>;
+ 		status = "disabled";
+ 	};
 +
-+		qspi: spi@e6b10000 {
-+			compatible = "renesas,qspi-r8a7792", "renesas,qspi";
-+			reg = <0 0xe6b10000 0 0x2c>;
-+			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7792_CLK_QSPI_MOD>;
-+			dmas = <&dmac0 0x17>, <&dmac0 0x18>,
-+			       <&dmac1 0x17>, <&dmac1 0x18>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
- 		};
- 
- 		du: display@feb00000 {
++	ether: ethernet@e8203000 {
++		compatible = "renesas,ether-r7s72100";
++		reg = <0xe8203000 0x800>,
++		      <0xe8204800 0x200>;
++		interrupts = <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp7_clks R7S72100_CLK_ETHER>;
++		power-domains = <&cpg_clocks>;
++		phy-mode = "mii";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
++	};
+ };
+-- 
+2.9.2
+
 
