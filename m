@@ -1,52 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39239 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:36858 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753554AbcIBLSD (ORCPT
+        with ESMTP id S1750939AbcIBISE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 07:18:03 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v6 9/9] arm64: dts: r8a7795: salvator-x: Enable UHS-I SDR-104
-Date: Fri,  2 Sep 2016 13:17:38 +0200
-Message-Id: <1472815058-11562-10-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
-References: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
+        Fri, 2 Sep 2016 04:18:04 -0400
+Date: Fri, 2 Sep 2016 10:17:58 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v3 01/13] ARM: dts: lager: rename and reindex i2cexio
+Message-ID: <20160902081757.GB16669@verge.net.au>
+References: <1466567031-20381-1-git-send-email-horms+renesas@verge.net.au>
+ <1466567031-20381-2-git-send-email-horms+renesas@verge.net.au>
+ <20160830151819.GA1695@katana>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160830151819.GA1695@katana>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the sd-uhs-sdr104 property to SDHI0 and SDHI1.
+On Tue, Aug 30, 2016 at 05:29:08PM +0200, Wolfram Sang wrote:
+> Hi Simon,
+> 
+> >  		serial0 = &scif0;
+> >  		serial1 = &scifa1;
+> > -		i2c8 = "i2cexio";
+> > +		i2c10 = "i2cexio0";
+> 
+> Those should be pointers, i.e. "&i2cexio0;", here and in the rest of
+> your series. Sorry for the broken template!
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v5
-* New patch
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 2 ++
- 1 file changed, 2 insertions(+)
+Thanks, got it.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index b67b31bd568d..088787883a3c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -387,6 +387,7 @@
- 	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
- 	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
- 	status = "okay";
- };
- 
-@@ -401,6 +402,7 @@
- 	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
- 	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
- 	status = "okay";
- };
- 
--- 
-2.7.0.rc3.207.g0ac5344
+> Did you have a chance to
+> test my fix for the demuxer?
+
+Sorry, not yet.
