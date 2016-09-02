@@ -1,54 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56795 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752031AbcIMK4b (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:32869 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932887AbcIBQqz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Sep 2016 06:56:31 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v7 3/6] mmc: tmio: document mandatory and optional callbacks
-Date: Tue, 13 Sep 2016 12:56:12 +0200
-Message-Id: <1473764175-24580-4-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1473764175-24580-1-git-send-email-horms+renesas@verge.net.au>
-References: <1473764175-24580-1-git-send-email-horms+renesas@verge.net.au>
+        Fri, 2 Sep 2016 12:46:55 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        sergei.shtylyov@cogentembedded.com, hans.verkuil@cisco.com
+Cc: slongerbeam@gmail.com, lars@metafoo.de, mchehab@kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv3 1/6] media: adv7180: fill in mbus format in set_fmt
+Date: Fri,  2 Sep 2016 18:44:56 +0200
+Message-Id: <20160902164501.19535-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160902164501.19535-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160902164501.19535-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v5
-* New patch
----
- drivers/mmc/host/tmio_mmc.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+If the V4L2_SUBDEV_FORMAT_TRY is used in set_fmt the width, height etc
+would not be filled.
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 1f1cb2628f67..4b36cb5c2d9c 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -151,8 +151,10 @@ struct tmio_mmc_host {
- 	bool			native_hotplug;
- 	bool			sdio_irq_enabled;
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/i2c/adv7180.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
+index 515ea6a..50efecc 100644
+--- a/drivers/media/i2c/adv7180.c
++++ b/drivers/media/i2c/adv7180.c
+@@ -711,6 +711,7 @@ static int adv7180_set_pad_format(struct v4l2_subdev *sd,
+ {
+ 	struct adv7180_state *state = to_state(sd);
+ 	struct v4l2_mbus_framefmt *framefmt;
++	int ret;
  
--	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
-+	/* Mandatory callback */
- 	int (*clk_enable)(struct tmio_mmc_host *host);
+ 	switch (format->format.field) {
+ 	case V4L2_FIELD_NONE:
+@@ -722,8 +723,9 @@ static int adv7180_set_pad_format(struct v4l2_subdev *sd,
+ 		break;
+ 	}
+ 
++	ret = adv7180_mbus_fmt(sd,  &format->format);
 +
-+	/* Optional callbacks */
- 	unsigned int (*clk_update)(struct tmio_mmc_host *host,
- 				   unsigned int new_clock);
- 	void (*clk_disable)(struct tmio_mmc_host *host);
-@@ -161,6 +163,7 @@ struct tmio_mmc_host {
- 	int (*card_busy)(struct mmc_host *mmc);
- 	int (*start_signal_voltage_switch)(struct mmc_host *mmc,
- 					   struct mmc_ios *ios);
-+	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
- };
+ 	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
+-		framefmt = &format->format;
+ 		if (state->field != format->format.field) {
+ 			state->field = format->format.field;
+ 			adv7180_set_power(state, false);
+@@ -735,7 +737,7 @@ static int adv7180_set_pad_format(struct v4l2_subdev *sd,
+ 		*framefmt = format->format;
+ 	}
  
- struct tmio_mmc_host *tmio_mmc_host_alloc(struct platform_device *pdev);
+-	return adv7180_mbus_fmt(sd, framefmt);
++	return ret;
+ }
+ 
+ static int adv7180_g_mbus_config(struct v4l2_subdev *sd,
 -- 
-2.7.0.rc3.207.g0ac5344
+2.9.3
