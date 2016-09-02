@@ -1,80 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:39239 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933974AbcIGHuj (ORCPT
+        with ESMTP id S1753517AbcIBLR7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Sep 2016 03:50:39 -0400
+        Fri, 2 Sep 2016 07:17:59 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 07/26] ARM: dts: blanche: add SDHI0 support
-Date: Wed,  7 Sep 2016 09:49:54 +0200
-Message-Id: <eed3da2cf3897de7ed3e5e4ea3cd323946ca87e0.1473234371.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
-References: <cover.1473234371.git.horms+renesas@verge.net.au>
+Subject: [PATCH v6 1/9] mmc: core: Add helper to see if a host can be retuned
+Date: Fri,  2 Sep 2016 13:17:30 +0200
+Message-Id: <1472815058-11562-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
+References: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This is in preparation for restoring saved tuning parameters
+when resuming the TMIO driver.
 
-Define the Blanche board dependent part of the SDHI0 (connected to the
-micro-SD slot) device node along with  the necessary voltage regulator.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7792-blanche.dts | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+v6
+* New patch
+---
+ include/linux/mmc/host.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7792-blanche.dts b/arch/arm/boot/dts/r8a7792-blanche.dts
-index 808a6aab7e5e..436d44ea3c12 100644
---- a/arch/arm/boot/dts/r8a7792-blanche.dts
-+++ b/arch/arm/boot/dts/r8a7792-blanche.dts
-@@ -103,6 +103,17 @@
- 			gpios = <&gpio11 2 GPIO_ACTIVE_LOW>;
- 		};
- 	};
-+
-+	vcc_sdhi0: regulator-vcc-sdhi0 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI0 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio11 12 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
- };
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index aa4bfbf129e4..4a9b4db8f22b 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -541,6 +541,11 @@ static inline void mmc_retune_recheck(struct mmc_host *host)
+ 		host->retune_now = 1;
+ }
  
- &extal_clk {
-@@ -139,6 +150,11 @@
- 		groups = "can0_data", "can_clk";
- 		function = "can0";
- 	};
++static inline bool mmc_can_retune(struct mmc_host *host)
++{
++	return host->can_retune == 1;
++}
 +
-+	sdhi0_pins: sdhi0 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+	};
- };
+ void mmc_retune_pause(struct mmc_host *host);
+ void mmc_retune_unpause(struct mmc_host *host);
  
- &scif0 {
-@@ -161,3 +177,12 @@
- 
- 	status = "okay";
- };
-+
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&vcc_sdhi0>;
-+	cd-gpios = <&gpio11 11 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
 -- 
 2.7.0.rc3.207.g0ac5344
