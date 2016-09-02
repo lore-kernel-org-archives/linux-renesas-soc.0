@@ -1,64 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:58801 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751449AbcISOTA (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39239 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752548AbcIBLR4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 10:19:00 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] ARM: dts: r8a7791: Correct SCIFB reg properties to cover all registers
-Date: Mon, 19 Sep 2016 16:18:54 +0200
-Message-Id: <1474294736-24339-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1474294736-24339-1-git-send-email-geert+renesas@glider.be>
-References: <1474294736-24339-1-git-send-email-geert+renesas@glider.be>
+        Fri, 2 Sep 2016 07:17:56 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v6 3/9] mmc: tmio: document mandatory and optional callbacks
+Date: Fri,  2 Sep 2016 13:17:32 +0200
+Message-Id: <1472815058-11562-4-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
+References: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Several SCIFB registers reside outside the reported register ranges.
-Fortunately this works (on Linux), due to the PAGE_SIZE granularity of
-ioremap().
-
-Extend the sizes from 64 to 0x100 bytes to fix this, like is done on
-SH/R-Mobile SoCs.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7791.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+v5
+* New patch
+---
+ drivers/mmc/host/tmio_mmc.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 4e64be751bf2dafa..5d81a2d1c88434f2 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -702,7 +702,7 @@
- 	scifb0: serial@e6c20000 {
- 		compatible = "renesas,scifb-r8a7791",
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
--		reg = <0 0xe6c20000 0 64>;
-+		reg = <0 0xe6c20000 0 0x100>;
- 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB0>;
- 		clock-names = "fck";
-@@ -716,7 +716,7 @@
- 	scifb1: serial@e6c30000 {
- 		compatible = "renesas,scifb-r8a7791",
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
--		reg = <0 0xe6c30000 0 64>;
-+		reg = <0 0xe6c30000 0 0x100>;
- 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB1>;
- 		clock-names = "fck";
-@@ -730,7 +730,7 @@
- 	scifb2: serial@e6ce0000 {
- 		compatible = "renesas,scifb-r8a7791",
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
--		reg = <0 0xe6ce0000 0 64>;
-+		reg = <0 0xe6ce0000 0 0x100>;
- 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB2>;
- 		clock-names = "fck";
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 1f1cb2628f67..4b36cb5c2d9c 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -151,8 +151,10 @@ struct tmio_mmc_host {
+ 	bool			native_hotplug;
+ 	bool			sdio_irq_enabled;
+ 
+-	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
++	/* Mandatory callback */
+ 	int (*clk_enable)(struct tmio_mmc_host *host);
++
++	/* Optional callbacks */
+ 	unsigned int (*clk_update)(struct tmio_mmc_host *host,
+ 				   unsigned int new_clock);
+ 	void (*clk_disable)(struct tmio_mmc_host *host);
+@@ -161,6 +163,7 @@ struct tmio_mmc_host {
+ 	int (*card_busy)(struct mmc_host *mmc);
+ 	int (*start_signal_voltage_switch)(struct mmc_host *mmc,
+ 					   struct mmc_ios *ios);
++	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
+ };
+ 
+ struct tmio_mmc_host *tmio_mmc_host_alloc(struct platform_device *pdev);
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
