@@ -1,102 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:36845 "EHLO
-        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752669AbcIBVtY (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36844 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750939AbcIBIRH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 17:49:24 -0400
-Received: by mail-lf0-f54.google.com with SMTP id g62so92359071lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Sep 2016 14:49:23 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org,
-        geert+renesas@glider.be
-Subject: [PATCH] pinctrl: sh-pfc: r8a7792: add DU pin groups
-Date: Sat, 03 Sep 2016 00:49:14 +0300
-Message-ID: <1497777.FvT8ieIrQm@wasted.cogentembedded.com>
-In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+        Fri, 2 Sep 2016 04:17:07 -0400
+Date: Fri, 2 Sep 2016 10:17:00 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>
+Subject: Re: [PATCH] ARM: shmobile: fix regulator quirk for Gen2
+Message-ID: <20160902081659.GA16669@verge.net.au>
+References: <20160830145430.2182-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdWdtVAY=4WiJWQfWtb5P71seANESm8tjLKpBboRwwJBMw@mail.gmail.com>
+ <20160901142236.GG14300@verge.net.au>
+ <20160901142723.GB4824@katana>
+ <CAMuHMdWN2hH-Tw0YxkQxVA=F8woF2M9RpVAGWix83d5CK3TASA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWN2hH-Tw0YxkQxVA=F8woF2M9RpVAGWix83d5CK3TASA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add QSPI pin groups to the R8A7792 PFC driver.
+On Thu, Sep 01, 2016 at 09:00:07PM +0200, Geert Uytterhoeven wrote:
+> On Thu, Sep 1, 2016 at 4:27 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> > On Thu, Sep 01, 2016 at 04:22:37PM +0200, Simon Horman wrote:
+> >> On Tue, Aug 30, 2016 at 05:15:58PM +0200, Geert Uytterhoeven wrote:
+> >> > On Tue, Aug 30, 2016 at 4:54 PM, Wolfram Sang
+> >> > <wsa+renesas@sang-engineering.com> wrote:
+> >> > > The current implementation only works if the da9xxx devices are added
+> >> > > before their drivers are registered. Only then it can apply the fixes to
+> >> > > both devices. Otherwise, the driver for the first device gets probed
+> >> > > before the fix for the second device can be applied. This is what
+> >> > > fails when using the IP core switcher or when having the i2c master
+> >> > > driver as a module.
+> >> >
+> >> > > So, we need to disable both da9xxx once we detected one of them. We now
+> >> > > use i2c_transfer with hardcoded i2c_messages and device addresses, so we
+> >> > > don't need the da9xxx client devices to be instantiated. Because the
+> >> > > fixup is used on specific boards only, the addresses are not going to
+> >> > > change.
+> >> > >
+> >> > > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >> >
+> >> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be> (r8a7791/koelsch)
+> >>
+> >> Can I get a Fixes tag or some indication of if it should apply
+> >> to v4.9 or as a fix for v4.8.
+> >
+> > I'd say:
+> >
+> > Fixes: 663fbb52159cca ("ARM: shmobile: R-Car Gen2: Add da9063/da9210 regulator quirk")
+> >
+> > and should go to 4.8. Geert?
+> 
+> That's right. CC stable, for v4.1+ and any LTS(I) it's been backported to.
 
-Based  on the original (and large) patch by Vladimir Barinov
-<vladimir.barinov@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
-The patch is against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
-repo...
-
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c |   33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-@@ -1034,6 +1034,29 @@ static const unsigned int lbsc_ex_cs5_pi
- static const unsigned int lbsc_ex_cs5_mux[] = {
- 	EX_CS5_N_MARK,
- };
-+/* - QSPI ------------------------------------------------------------------- */
-+static const unsigned int qspi_ctrl_pins[] = {
-+	/* SPCLK, SSL */
-+	RCAR_GP_PIN(3, 25), RCAR_GP_PIN(3, 26),
-+};
-+static const unsigned int qspi_ctrl_mux[] = {
-+	SPCLK_MARK, SSL_MARK,
-+};
-+static const unsigned int qspi_data2_pins[] = {
-+	/* MOSI_IO0, MISO_IO1 */
-+	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 5),
-+};
-+static const unsigned int qspi_data2_mux[] = {
-+	MOSI_IO0_MARK, MISO_IO1_MARK,
-+};
-+static const unsigned int qspi_data4_pins[] = {
-+	/* MOSI_IO0, MISO_IO1, IO2, IO3 */
-+	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 5), RCAR_GP_PIN(3, 23),
-+	RCAR_GP_PIN(3, 24),
-+};
-+static const unsigned int qspi_data4_mux[] = {
-+	MOSI_IO0_MARK, MISO_IO1_MARK, IO2_MARK,	IO3_MARK,
-+};
- /* - SCIF0 ------------------------------------------------------------------ */
- static const unsigned int scif0_data_pins[] = {
- 	/* RX, TX */
-@@ -1585,6 +1608,9 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(lbsc_ex_cs3),
- 	SH_PFC_PIN_GROUP(lbsc_ex_cs4),
- 	SH_PFC_PIN_GROUP(lbsc_ex_cs5),
-+	SH_PFC_PIN_GROUP(qspi_ctrl),
-+	SH_PFC_PIN_GROUP(qspi_data2),
-+	SH_PFC_PIN_GROUP(qspi_data4),
- 	SH_PFC_PIN_GROUP(scif0_data),
- 	SH_PFC_PIN_GROUP(scif0_clk),
- 	SH_PFC_PIN_GROUP(scif0_ctrl),
-@@ -1708,6 +1734,12 @@ static const char * const lbsc_groups[]
- 	"lbsc_ex_cs5",
- };
- 
-+static const char * const qspi_groups[] = {
-+	"qspi_ctrl",
-+	"qspi_data2",
-+	"qspi_data4",
-+};
-+
- static const char * const scif0_groups[] = {
- 	"scif0_data",
- 	"scif0_clk",
-@@ -1808,6 +1840,7 @@ static const struct sh_pfc_function pinm
- 	SH_PFC_FUNCTION(du1),
- 	SH_PFC_FUNCTION(intc),
- 	SH_PFC_FUNCTION(lbsc),
-+	SH_PFC_FUNCTION(qspi),
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif3),
- 	SH_PFC_FUNCTION(sdhi0),
+Thanks, got it.
