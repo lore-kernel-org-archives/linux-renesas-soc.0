@@ -1,153 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:44134 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932286AbcIEJqQ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39239 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752548AbcIBLR6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Sep 2016 05:46:16 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux@armlinux.org.uk,
-        hch@infradead.org, dan.j.williams@intel.com, vinod.koul@intel.com,
-        robin.murphy@arm.com, linus.walleij@linaro.org, arnd@arndb.de
-Subject: Re: [PATCHv9 3/6] dma-mapping: add dma_{map,unmap}_resource
-Date: Mon, 05 Sep 2016 12:46:43 +0300
-Message-ID: <2244107.fHLLTnqJPB@avalon>
-In-Reply-To: <20160810112219.17964-4-niklas.soderlund+renesas@ragnatech.se>
-References: <20160810112219.17964-1-niklas.soderlund+renesas@ragnatech.se> <20160810112219.17964-4-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+        Fri, 2 Sep 2016 07:17:58 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Ai Kyuse <ai.kyuse.uw@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v6 4/9] mmc: tmio: Add hw reset support
+Date: Fri,  2 Sep 2016 13:17:33 +0200
+Message-Id: <1472815058-11562-5-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
+References: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+From: Ai Kyuse <ai.kyuse.uw@renesas.com>
 
-Thank you for the patch.
+Add hw reset support.
 
-On Wednesday 10 Aug 2016 13:22:16 Niklas S=F6derlund wrote:
-> Map/Unmap a device MMIO resource from a physical address. If no dma_m=
-ap_ops
-> method is available the operation is a no-op.
->=20
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
-.se>
+Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+This is required by tuning support which will
+be introduced by follow-up patches.
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+v6
+* Rely on core to retune on reset
 
-> ---
->  Documentation/DMA-API.txt   | 22 +++++++++++++++++-----
->  include/linux/dma-mapping.h | 36 +++++++++++++++++++++++++++++++++++=
+v5
+* As suggested by Ulf Hansson
+  - Broke out of a larger patch
+---
+ drivers/mmc/host/tmio_mmc.h     | 1 +
+ drivers/mmc/host/tmio_mmc_pio.c | 9 +++++++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 4b36cb5c2d9c..4b71f31fba63 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -164,6 +164,7 @@ struct tmio_mmc_host {
+ 	int (*start_signal_voltage_switch)(struct mmc_host *mmc,
+ 					   struct mmc_ios *ios);
+ 	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
++	void (*hw_reset)(struct tmio_mmc_host *host);
+ };
+ 
+ struct tmio_mmc_host *tmio_mmc_host_alloc(struct platform_device *pdev);
+diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+index 806308ac93e7..f1d36f4533d2 100644
+--- a/drivers/mmc/host/tmio_mmc_pio.c
++++ b/drivers/mmc/host/tmio_mmc_pio.c
+@@ -756,6 +756,14 @@ static int tmio_mmc_start_data(struct tmio_mmc_host *host,
+ 	return 0;
+ }
+ 
++static void tmio_mmc_hw_reset(struct mmc_host *mmc)
++{
++	struct tmio_mmc_host *host = mmc_priv(mmc);
 +
->  2 files changed, 53 insertions(+), 5 deletions(-)
->=20
-> diff --git a/Documentation/DMA-API.txt b/Documentation/DMA-API.txt
-> index 1d26eeb6..6b20128 100644
-> --- a/Documentation/DMA-API.txt
-> +++ b/Documentation/DMA-API.txt
-> @@ -277,14 +277,26 @@ and <size> parameters are provided to do partia=
-l page
-> mapping, it is recommended that you never use these unless you really=
- know
-> what the cache width is.
->=20
-> +dma_addr_t
-> +dma_map_resource(struct device *dev, phys_addr_t phys_addr, size_t s=
-ize,
-> +=09=09 enum dma_data_direction dir, unsigned long attrs)
-> +
-> +void
-> +dma_unmap_resource(struct device *dev, dma_addr_t addr, size_t size,=
-
-> +=09=09   enum dma_data_direction dir, unsigned long attrs)
-> +
-> +API for mapping and unmapping for MMIO resources. All the notes and
-> +warnings for the other mapping APIs apply here. The API should only =
-be
-> +used to map device MMIO resources, mapping of RAM is not permitted.
-> +
->  int
->  dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
->=20
-> -In some circumstances dma_map_single() and dma_map_page() will fail =
-to
-> create -a mapping. A driver can check for these errors by testing the=
-
-> returned -DMA address with dma_mapping_error(). A non-zero return val=
-ue
-> means the mapping -could not be created and the driver should take
-> appropriate action (e.g. -reduce current DMA mapping usage or delay a=
-nd try
-> again later).
-> +In some circumstances dma_map_single(), dma_map_page() and
-> dma_map_resource() +will fail to create a mapping. A driver can check=
- for
-> these errors by testing +the returned DMA address with dma_mapping_er=
-ror().
-> A non-zero return value +means the mapping could not be created and t=
-he
-> driver should take appropriate +action (e.g. reduce current DMA mappi=
-ng
-> usage or delay and try again later).
->=20
->  =09int
->  =09dma_map_sg(struct device *dev, struct scatterlist *sg,
-> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.=
-h
-> index e3bd27f..9a07882 100644
-> --- a/include/linux/dma-mapping.h
-> +++ b/include/linux/dma-mapping.h
-> @@ -264,6 +264,42 @@ static inline void dma_unmap_page(struct device =
-*dev,
-> dma_addr_t addr, debug_dma_unmap_page(dev, addr, size, dir, false);
->  }
->=20
-> +static inline dma_addr_t dma_map_resource(struct device *dev,
-> +=09=09=09=09=09  phys_addr_t phys_addr,
-> +=09=09=09=09=09  size_t size,
-> +=09=09=09=09=09  enum dma_data_direction dir,
-> +=09=09=09=09=09  unsigned long attrs)
-> +{
-> +=09struct dma_map_ops *ops =3D get_dma_ops(dev);
-> +=09unsigned long pfn =3D __phys_to_pfn(phys_addr);
-> +=09dma_addr_t addr;
-> +
-> +=09BUG_ON(!valid_dma_direction(dir));
-> +
-> +=09/* Don't allow RAM to be mapped */
-> +=09BUG_ON(pfn_valid(pfn));
-> +
-> +=09addr =3D phys_addr;
-> +=09if (ops->map_resource)
-> +=09=09addr =3D ops->map_resource(dev, phys_addr, size, dir, attrs);
-> +
-> +=09debug_dma_map_resource(dev, phys_addr, size, dir, addr);
-> +
-> +=09return addr;
-> +}
-> +
-> +static inline void dma_unmap_resource(struct device *dev, dma_addr_t=
- addr,
-> +=09=09=09=09      size_t size, enum dma_data_direction=20
-dir,
-> +=09=09=09=09      unsigned long attrs)
-> +{
-> +=09struct dma_map_ops *ops =3D get_dma_ops(dev);
-> +
-> +=09BUG_ON(!valid_dma_direction(dir));
-> +=09if (ops->unmap_resource)
-> +=09=09ops->unmap_resource(dev, addr, size, dir, attrs);
-> +=09debug_dma_unmap_resource(dev, addr, size, dir);
-> +}
-> +
->  static inline void dma_sync_single_for_cpu(struct device *dev, dma_a=
-ddr_t
-> addr, size_t size,
->  =09=09=09=09=09   enum dma_data_direction dir)
-
---=20
-Regards,
-
-Laurent Pinchart
++	if (host->hw_reset)
++		host->hw_reset(host);
++}
++
+ /* Process requests from the MMC layer */
+ static void tmio_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ {
+@@ -970,6 +978,7 @@ static struct mmc_host_ops tmio_mmc_ops = {
+ 	.get_cd		= mmc_gpio_get_cd,
+ 	.enable_sdio_irq = tmio_mmc_enable_sdio_irq,
+ 	.multi_io_quirk	= tmio_multi_io_quirk,
++	.hw_reset	= tmio_mmc_hw_reset,
+ };
+ 
+ static int tmio_mmc_init_ocr(struct tmio_mmc_host *host)
+-- 
+2.7.0.rc3.207.g0ac5344
