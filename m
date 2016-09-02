@@ -6,11 +6,11 @@ To: Simon Horman <horms@verge.net.au>,
         Mark Rutland <mark.rutland@arm.com>
 Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH v5 2/4] arm64: dts: h3ulcb: enable GPIO keys
-Date: Fri,  2 Sep 2016 19:24:58 +0300
-Message-Id: <1472833498-26225-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1472833419-26139-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1472833419-26139-1-git-send-email-vladimir.barinov@cogentembedded.com>
+Subject: [PATCH v4 2/4] arm64: dts: h3ulcb: enable GPIO keys
+Date: Fri,  2 Sep 2016 15:05:17 +0300
+Message-Id: <1472817917-11940-1-git-send-email-vladimir.barinov@cogentembedded.com>
+In-Reply-To: <1472817881-11860-1-git-send-email-vladimir.barinov@cogentembedded.com>
+References: <1472817881-11860-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -20,8 +20,6 @@ Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 ---
 Changes in version 4:
 - initially added
-Changes in version 5:
-- nothing
 
  arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 14 +++++++++++++
  1 file changed, 14 insertions(+)
