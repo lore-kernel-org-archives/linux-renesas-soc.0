@@ -1,57 +1,74 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45999 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757883AbcIHHns (ORCPT
+Received: from smtp-3.sys.kth.se ([130.237.48.192]:32898 "EHLO
+        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932900AbcIBQqz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 03:43:48 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/30] arm64: dts: r8a7795: Add SoC-specific compatible property to audio-dmac nodes
-Date: Thu,  8 Sep 2016 09:43:08 +0200
-Message-Id: <f826473520e7aba2e416f79a3acbd6da3921e0a2.1473320411.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
-References: <cover.1473320411.git.horms+renesas@verge.net.au>
+        Fri, 2 Sep 2016 12:46:55 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        sergei.shtylyov@cogentembedded.com, hans.verkuil@cisco.com
+Cc: slongerbeam@gmail.com, lars@metafoo.de, mchehab@kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv3 3/6] media: rcar-vin: allow field to be changed
+Date: Fri,  2 Sep 2016 18:44:58 +0200
+Message-Id: <20160902164501.19535-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160902164501.19535-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160902164501.19535-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+The driver forced whatever field was set by the source subdevice to be
+used. This patch allows the user to change from the default field.
 
-The audio-dmac nodes used the generic compatible property only.
-Add the SoC-specific one, to make it future proof.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 5d59e7fe7bbc..64899b556a0e 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -328,7 +328,8 @@
- 		};
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 62ca7e3..88bfee3 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -102,6 +102,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+ 	struct v4l2_subdev_format format = {
+ 		.which = which,
+ 	};
++	enum v4l2_field field;
+ 	int ret;
  
- 		audma0: dma-controller@ec700000 {
--			compatible = "renesas,rcar-dmac";
-+			compatible = "renesas,dmac-r8a7795",
-+				     "renesas,rcar-dmac";
- 			reg = <0 0xec700000 0 0x10000>;
- 			interrupts = <GIC_SPI 350 IRQ_TYPE_LEVEL_HIGH
- 				      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
-@@ -360,7 +361,8 @@
- 		};
+ 	sd = vin_to_source(vin);
+@@ -114,12 +115,16 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
  
- 		audma1: dma-controller@ec720000 {
--			compatible = "renesas,rcar-dmac";
-+			compatible = "renesas,dmac-r8a7795",
-+				     "renesas,rcar-dmac";
- 			reg = <0 0xec720000 0 0x10000>;
- 			interrupts = <GIC_SPI 351 IRQ_TYPE_LEVEL_HIGH
- 				      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
+ 	format.pad = vin->src_pad_idx;
+ 
++	field = pix->field;
++
+ 	ret = v4l2_subdev_call(sd, pad, set_fmt, pad_cfg, &format);
+ 	if (ret < 0 && ret != -ENOIOCTLCMD)
+ 		goto done;
+ 
+ 	v4l2_fill_pix_format(pix, &format.format);
+ 
++	pix->field = field;
++
+ 	source->width = pix->width;
+ 	source->height = pix->height;
+ 
+@@ -143,6 +148,10 @@ static int __rvin_try_format(struct rvin_dev *vin,
+ 	rwidth = pix->width;
+ 	rheight = pix->height;
+ 
++	/* Keep current field if no specific one is asked for */
++	if (pix->field == V4L2_FIELD_ANY)
++		pix->field = vin->format.field;
++
+ 	/*
+ 	 * Retrieve format information and select the current format if the
+ 	 * requested format isn't supported.
 -- 
-2.7.0.rc3.207.g0ac5344
+2.9.3
