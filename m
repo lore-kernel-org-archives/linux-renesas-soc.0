@@ -1,54 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49450 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757927AbcIHLhB (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:43666 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751797AbcIBBlm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 07:37:01 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Thu, 1 Sep 2016 21:41:42 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/3] pinctrl: sh-pfc: Add PORT_GP_24 helper macro
-Date: Thu,  8 Sep 2016 13:36:46 +0200
-Message-Id: <1473334608-24638-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1473334608-24638-1-git-send-email-horms+renesas@verge.net.au>
-References: <1473334608-24638-1-git-send-email-horms+renesas@verge.net.au>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 3/3] ARM: dts: rskrza1: add ethernet DT support
+Date: Thu,  1 Sep 2016 21:40:12 -0400
+Message-Id: <20160902014012.9383-3-chris.brandt@renesas.com>
+In-Reply-To: <20160902014012.9383-1-chris.brandt@renesas.com>
+References: <20160901155430.23400-1-chris.brandt@renesas.com>
+ <20160902014012.9383-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This follows the style of existing PORT_GP_X macros and
-will be used by a follow-up patch for the r8a7791 SoC.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/sh_pfc.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r7s72100-rskrza1.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 5e966c09434d..de91b5f247c0 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -399,11 +399,15 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
- 	PORT_GP_CFG_1(bank, 16, fn, sfx, cfg), PORT_GP_CFG_1(bank, 17, fn, sfx, cfg)
- #define PORT_GP_18(bank, fn, sfx)	PORT_GP_CFG_18(bank, fn, sfx, 0)
+diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+index aabfa04..e5dea5b 100644
+--- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
++++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+@@ -47,6 +47,15 @@
+ 	status = "okay";
+ };
  
--#define PORT_GP_CFG_26(bank, fn, sfx, cfg)						\
-+#define PORT_GP_CFG_24(bank, fn, sfx, cfg)						\
- 	PORT_GP_CFG_18(bank, fn, sfx, cfg),						\
- 	PORT_GP_CFG_1(bank, 18, fn, sfx, cfg), PORT_GP_CFG_1(bank, 19, fn, sfx, cfg),	\
- 	PORT_GP_CFG_1(bank, 20, fn, sfx, cfg), PORT_GP_CFG_1(bank, 21, fn, sfx, cfg),	\
--	PORT_GP_CFG_1(bank, 22, fn, sfx, cfg), PORT_GP_CFG_1(bank, 23, fn, sfx, cfg),	\
-+	PORT_GP_CFG_1(bank, 22, fn, sfx, cfg), PORT_GP_CFG_1(bank, 23, fn, sfx, cfg)
-+#define PORT_GP_24(bank, fn, sfx)	PORT_GP_CFG_24(bank, fn, sfx, 0)
++&ether {
++	status = "okay";
++	renesas,no-ether-link;
++	phy-handle = <&phy0>;
++	phy0: ethernet-phy@0 {
++		reg = <0>;
++	};
++};
 +
-+#define PORT_GP_CFG_26(bank, fn, sfx, cfg)						\
-+	PORT_GP_CFG_24(bank, fn, sfx, cfg),						\
- 	PORT_GP_CFG_1(bank, 24, fn, sfx, cfg), PORT_GP_CFG_1(bank, 25, fn, sfx, cfg)
- #define PORT_GP_26(bank, fn, sfx)	PORT_GP_CFG_26(bank, fn, sfx, 0)
- 
+ &scif2 {
+ 	status = "okay";
+ };
 -- 
-2.7.0.rc3.207.g0ac5344
+2.9.2
