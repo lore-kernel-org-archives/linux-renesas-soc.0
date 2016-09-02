@@ -1,48 +1,64 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:33209 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753498AbcIEJGz (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Sep 2016 05:06:55 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/3] ARM: dts: r8a7792: add QSPI support
+Date: Sat, 03 Sep 2016 01:08:45 +0300
+Message-ID: <16566445.LA832Ff91Q@wasted.cogentembedded.com>
+In-Reply-To: <1648590.FPpmBRoQyh@wasted.cogentembedded.com>
+References: <1648590.FPpmBRoQyh@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <16566445.LA832Ff91Q@wasted.cogentembedded.com>
-References: <1648590.FPpmBRoQyh@wasted.cogentembedded.com> <16566445.LA832Ff91Q@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 5 Sep 2016 11:06:53 +0200
-Message-ID: <CAMuHMdWJLmh0DMUgDA6EMcJokSqE79o6sDE3RcZjm1=nBBgKQg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] ARM: dts: r8a7792: add QSPI support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sat, Sep 3, 2016 at 12:08 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Define the generic R8A7792 part of the QSPI device node.
->
-> Based  on the original (and large) patch by Vladimir Barinov
-> <vladimir.barinov@cogentembedded.com>.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Define the generic R8A7792 part of the QSPI device node.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Based  on the original (and large) patch by Vladimir Barinov
+<vladimir.barinov@cogentembedded.com>.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-                        Geert
+---
+ arch/arm/boot/dts/r8a7792.dtsi |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -25,6 +25,7 @@
+ 		i2c3 = &i2c3;
+ 		i2c4 = &i2c4;
+ 		i2c5 = &i2c5;
++		spi0 = &qspi;
+ 		vin0 = &vin0;
+ 		vin1 = &vin1;
+ 		vin2 = &vin2;
+@@ -554,6 +555,21 @@
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
++		};
++
++		qspi: spi@e6b10000 {
++			compatible = "renesas,qspi-r8a7792", "renesas,qspi";
++			reg = <0 0xe6b10000 0 0x2c>;
++			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp9_clks R8A7792_CLK_QSPI_MOD>;
++			dmas = <&dmac0 0x17>, <&dmac0 0x18>,
++			       <&dmac1 0x17>, <&dmac1 0x18>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
+ 		};
+ 
+ 		du: display@feb00000 {
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
