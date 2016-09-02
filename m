@@ -1,44 +1,104 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:35678 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753498AbcIEJAw (ORCPT
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:36101 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751190AbcIBVug (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Sep 2016 05:00:52 -0400
+        Fri, 2 Sep 2016 17:50:36 -0400
+Received: by mail-lf0-f49.google.com with SMTP id g62so92373181lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Sep 2016 14:50:35 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org,
+        laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org,
+        geert+renesas@glider.be
+Subject: [PATCH resend] pinctrl: sh-pfc: r8a7792: add QSPI pin groups
+Date: Sat, 03 Sep 2016 00:50:30 +0300
+Message-ID: <4521660.ueRdz9Zt8E@wasted.cogentembedded.com>
+In-Reply-To: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
+References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <4521660.ueRdz9Zt8E@wasted.cogentembedded.com>
-References: <1501145.5ro9yfox2Z@wasted.cogentembedded.com> <4521660.ueRdz9Zt8E@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 5 Sep 2016 11:00:31 +0200
-Message-ID: <CAMuHMdUxAOm-xyELTzpoMuaxcn+ZWEJ=Eu=0wttTQ=Xq=Orb+Q@mail.gmail.com>
-Subject: Re: [PATCH resend] pinctrl: sh-pfc: r8a7792: add QSPI pin groups
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 2, 2016 at 11:50 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add QSPI pin groups to the R8A7792 PFC driver.
->
-> Based  on the original (and large) patch by Vladimir Barinov
-> <vladimir.barinov@cogentembedded.com>.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add QSPI pin groups to the R8A7792 PFC driver.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Based  on the original (and large) patch by Vladimir Barinov
+<vladimir.barinov@cogentembedded.com>.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-                        Geert
+---
+The patch is against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
+repo...
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Disregard the patch just posted with the stale subject please.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ drivers/pinctrl/sh-pfc/pfc-r8a7792.c |   33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
+===================================================================
+--- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
++++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
+@@ -1034,6 +1034,29 @@ static const unsigned int lbsc_ex_cs5_pi
+ static const unsigned int lbsc_ex_cs5_mux[] = {
+ 	EX_CS5_N_MARK,
+ };
++/* - QSPI ------------------------------------------------------------------- */
++static const unsigned int qspi_ctrl_pins[] = {
++	/* SPCLK, SSL */
++	RCAR_GP_PIN(3, 25), RCAR_GP_PIN(3, 26),
++};
++static const unsigned int qspi_ctrl_mux[] = {
++	SPCLK_MARK, SSL_MARK,
++};
++static const unsigned int qspi_data2_pins[] = {
++	/* MOSI_IO0, MISO_IO1 */
++	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 5),
++};
++static const unsigned int qspi_data2_mux[] = {
++	MOSI_IO0_MARK, MISO_IO1_MARK,
++};
++static const unsigned int qspi_data4_pins[] = {
++	/* MOSI_IO0, MISO_IO1, IO2, IO3 */
++	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 5), RCAR_GP_PIN(3, 23),
++	RCAR_GP_PIN(3, 24),
++};
++static const unsigned int qspi_data4_mux[] = {
++	MOSI_IO0_MARK, MISO_IO1_MARK, IO2_MARK,	IO3_MARK,
++};
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_pins[] = {
+ 	/* RX, TX */
+@@ -1585,6 +1608,9 @@ static const struct sh_pfc_pin_group pin
+ 	SH_PFC_PIN_GROUP(lbsc_ex_cs3),
+ 	SH_PFC_PIN_GROUP(lbsc_ex_cs4),
+ 	SH_PFC_PIN_GROUP(lbsc_ex_cs5),
++	SH_PFC_PIN_GROUP(qspi_ctrl),
++	SH_PFC_PIN_GROUP(qspi_data2),
++	SH_PFC_PIN_GROUP(qspi_data4),
+ 	SH_PFC_PIN_GROUP(scif0_data),
+ 	SH_PFC_PIN_GROUP(scif0_clk),
+ 	SH_PFC_PIN_GROUP(scif0_ctrl),
+@@ -1708,6 +1734,12 @@ static const char * const lbsc_groups[]
+ 	"lbsc_ex_cs5",
+ };
+ 
++static const char * const qspi_groups[] = {
++	"qspi_ctrl",
++	"qspi_data2",
++	"qspi_data4",
++};
++
+ static const char * const scif0_groups[] = {
+ 	"scif0_data",
+ 	"scif0_clk",
+@@ -1808,6 +1840,7 @@ static const struct sh_pfc_function pinm
+ 	SH_PFC_FUNCTION(du1),
+ 	SH_PFC_FUNCTION(intc),
+ 	SH_PFC_FUNCTION(lbsc),
++	SH_PFC_FUNCTION(qspi),
+ 	SH_PFC_FUNCTION(scif0),
+ 	SH_PFC_FUNCTION(scif3),
+ 	SH_PFC_FUNCTION(sdhi0),
