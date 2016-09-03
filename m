@@ -1,69 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:34709 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756472AbcIAVFo (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:35735 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753684AbcICULm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Sep 2016 17:05:44 -0400
-Received: by mail-lf0-f49.google.com with SMTP id p41so51406142lfi.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Sep 2016 14:05:25 -0700 (PDT)
+        Sat, 3 Sep 2016 16:11:42 -0400
+Received: by mail-lf0-f52.google.com with SMTP id l131so10502286lfl.2
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 03 Sep 2016 13:11:41 -0700 (PDT)
+Subject: Re: [PATCH] vsp1: add R8A7792 VSP1V support
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <10305550.upKOiT5SIy@wasted.cogentembedded.com>
+ <2246517.O4DQlKpR2A@avalon>
+Cc: mchehab@kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] drm/bridge: adv7511: add support for the 2nd chip
-Date: Thu, 01 Sep 2016 23:43:30 +0300
-Message-ID: <4933961.PFafUbE9pV@wasted.cogentembedded.com>
+Message-ID: <15818c6d-2753-0e3c-d87d-8dfc101055b3@cogentembedded.com>
+Date: Sat, 3 Sep 2016 23:11:38 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <2246517.O4DQlKpR2A@avalon>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas Wheat board has 2 ADV7513 chips on the same I2C bus, however
-the ADV751x driver only supports 1 chip as  it tries to assign the packet/
-EDID/CEC  memory I2C devices  to the fixed I2C addresses. Assign these I2C
-addresses at the fixed offsets (derived from the programming guide) from
-the  main register map address  instead...
+Hello.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On 09/02/2016 01:47 AM, Laurent Pinchart wrote:
 
----
-The patch is against David Airlie's 'linux.git' repo's 'drm-next' branch.
+>> Add  support for the R8A7792 VSP1V cores which are different from the other
+>> gen2 VSP1 cores...
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>
+>> ---
+>> This patch is against the 'media_tree.git' repo's 'master' branch.
+>
+> The vsp1/next branch of my media.git tree contains a few patches that conflict
+> with this patch. I've resolved the conflicts manually and pushed the result to
+>
+> 	git://linuxtv.org/pinchartl/media.git vsp1/next
+>
+> Could you please check the conflict resolution ?
 
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+    It seems alright. But I hate, hate, hate the forced branch updates! One 
+wrong move and you're trapped with the changes you don't know how to resolve 
+anyway... :-(
 
-Index: linux/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-===================================================================
---- linux.orig/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-+++ linux/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-@@ -922,15 +922,13 @@ static int adv7511_parse_dt(struct devic
- 	return 0;
- }
- 
--static const int edid_i2c_addr = 0x7e;
--static const int packet_i2c_addr = 0x70;
--static const int cec_i2c_addr = 0x78;
--
- static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
- {
- 	struct adv7511_link_config link_config;
- 	struct adv7511 *adv7511;
- 	struct device *dev = &i2c->dev;
-+	unsigned int main_i2c_addr = i2c->addr << 1;
-+	unsigned int edid_i2c_addr = main_i2c_addr + 4;
- 	unsigned int val;
- 	int ret;
- 
-@@ -991,8 +989,10 @@ static int adv7511_probe(struct i2c_clie
- 
- 	regmap_write(adv7511->regmap, ADV7511_REG_EDID_I2C_ADDR, edid_i2c_addr);
- 	regmap_write(adv7511->regmap, ADV7511_REG_PACKET_I2C_ADDR,
--		     packet_i2c_addr);
--	regmap_write(adv7511->regmap, ADV7511_REG_CEC_I2C_ADDR, cec_i2c_addr);
-+		     main_i2c_addr - 0xa);
-+	regmap_write(adv7511->regmap, ADV7511_REG_CEC_I2C_ADDR,
-+		     main_i2c_addr - 2);
-+
- 	adv7511_packet_disable(adv7511, 0xffff);
- 
- 	adv7511->i2c_main = i2c;
+> Could you please also give me the full 32-bit IP version number for the VSP1V-
+> D and VSP1V-S on R8A7792 ?
+
+    As I told you on IRC:
+
+[    2.563823] vsp1 fe928000.vsp1: IP version 0x01011201
+[    2.574416] vsp1 fe930000.vsp1: IP version 0x01011301
+[    2.583543] vsp1 fe938000.vsp1: IP version 0x01011301
+
+MBR, Sergei
