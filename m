@@ -1,107 +1,106 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH v4 3/4] arm64: dts: h3ulcb: enable SDHI0
-Date: Fri,  2 Sep 2016 15:05:25 +0300
-Message-Id: <1472817925-11979-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1472817881-11860-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1472817881-11860-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:34665 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753827AbcICSiX (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 3 Sep 2016 14:38:23 -0400
+Received: by mail-lf0-f52.google.com with SMTP id p41so85076104lfi.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 03 Sep 2016 11:38:22 -0700 (PDT)
+Subject: Re: [PATCHv3 09/10] [media] rcar-vin: rework how subdeivce is found
+ and bound
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
+        hverkuil@xs4all.nl
+References: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
+ <20160815150635.22637-10-niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org,
+        laurent.pinchart@ideasonboard.com
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <a6fe8385-c91a-11bd-8692-699c6b999754@cogentembedded.com>
+Date: Sat, 3 Sep 2016 21:38:19 +0300
+MIME-Version: 1.0
+In-Reply-To: <20160815150635.22637-10-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This supports SDHI0 on H3ULCB board SD card slot
+Hello.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Changes in version 3:
-- initially added
-Changes in version 4:
-- added sd-uhs-sdr50
+On 08/15/2016 06:06 PM, Niklas Söderlund wrote:
 
----
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 49 ++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+> The original drivers code to find a subdevice by looking in the DT grpah
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index 6842597..babe41c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -44,6 +44,30 @@
- 			gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
- 		};
- 	};
-+
-+	vcc_sdhi0: regulator-vcc-sdhi0 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI0 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio5 2 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	vccq_sdhi0: regulator-vccq-sdhi0 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI0 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
- };
- 
- &extal_clk {
-@@ -78,6 +102,18 @@
- 		function = "avb";
- 	};
- 
-+	sdhi0_pins_3v3: sd0_3v3 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi0_pins_1v8: sd0_1v8 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <1800>;
-+	};
-+
- 	usb1_pins: usb1 {
- 		groups = "usb1";
- 		function = "usb1";
-@@ -108,6 +144,19 @@
- 	status = "okay";
- };
- 
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins_3v3>;
-+	pinctrl-1 = <&sdhi0_pins_1v8>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&vcc_sdhi0>;
-+	vqmmc-supply = <&vccq_sdhi0>;
-+	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
-+	bus-width = <4>;
-+	sd-uhs-sdr50;
-+	status = "okay";
-+};
-+
- &wdt0 {
- 	timeout-sec = <60>;
- 	status = "okay";
--- 
-1.9.1
+    s/grpah/graph/.
 
+> and how the callbacks to the v4l2 async bind framework where poorly
+> written. The most obvious example of badness was the duplication of data
+> in the struct rvin_graph_entity.
+>
+> This patch removes the data duplication, simplifies the parsing of the
+> DT graph and add checks to the v4l2 callbacks.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 232 +++++++++++++---------------
+>  drivers/media/platform/rcar-vin/rcar-vin.h  |   8 +-
+>  2 files changed, 111 insertions(+), 129 deletions(-)
+>
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index 3941134..39bf6fc 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+[...]
+> @@ -94,89 +102,111 @@ static int rvin_digital_notify_bound(struct v4l2_async_notifier *notifier,
+>  {
+>  	struct rvin_dev *vin = notifier_to_vin(notifier);
+>
+> -	vin_dbg(vin, "subdev %s bound\n", subdev->name);
+> +	v4l2_set_subdev_hostdata(subdev, vin);
+>
+> -	vin->digital.entity = &subdev->entity;
+> -	vin->digital.subdev = subdev;
+> +	if (vin->digital.asd.match.of.node == subdev->dev->of_node) {
+> +		vin_dbg(vin, "bound digital subdev %s\n", subdev->name);
+> +		vin->digital.subdev = subdev;
+> +		return 0;
+> +	}
+>
+> -	return 0;
+> +	vin_err(vin, "no entity for subdev %s to bind\n", subdev->name);
+> +	return -EINVAL;
+>  }
+>
+> -static int rvin_digital_parse(struct rvin_dev *vin,
+> -			      struct device_node *node)
+> +static int rvin_digitial_parse_v4l2(struct rvin_dev *vin,
+
+    s/digitial/digital/.
+
+[...]
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+> index 93daa05..edfe658 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -70,10 +70,12 @@ struct rvin_video_format {
+>  	u8 bpp;
+>  };
+>
+> +/**
+> + * struct rvin_graph_entity - Video endpoint from async framework
+> + * @asd:	sub-device descriptor for async framework
+> + * @subdev:	subdevice matched using async framework
+> + */
+
+     Looks like a materia for a separate patch...
+
+>  struct rvin_graph_entity {
+> -	struct device_node *node;
+> -	struct media_entity *entity;
+> -
+>  	struct v4l2_async_subdev asd;
+>  	struct v4l2_subdev *subdev;
+>  };
+
+MBR, Sergei
