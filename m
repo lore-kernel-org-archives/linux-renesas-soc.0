@@ -1,127 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:37738 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756336AbcILUuv (ORCPT
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:36259 "EHLO
+        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753716AbcICSHg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Sep 2016 16:50:51 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v2 2/7] spi: core: Extract of_spi_parse_dt()
-Date: Mon, 12 Sep 2016 22:50:41 +0200
-Message-Id: <1473713446-30366-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1473713446-30366-1-git-send-email-geert+renesas@glider.be>
-References: <1473713446-30366-1-git-send-email-geert+renesas@glider.be>
+        Sat, 3 Sep 2016 14:07:36 -0400
+Received: by mail-lf0-f48.google.com with SMTP id g62so103189618lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 03 Sep 2016 11:07:35 -0700 (PDT)
+Subject: Re: [PATCHv3 06/10] [media] rcar-vin: do not use
+ v4l2_device_call_until_err()
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
+        hverkuil@xs4all.nl
+References: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
+ <20160815150635.22637-7-niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org,
+        laurent.pinchart@ideasonboard.com
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <b9fb37cc-fe75-f6e4-8d37-3eecea5d8fc8@cogentembedded.com>
+Date: Sat, 3 Sep 2016 21:07:32 +0300
+MIME-Version: 1.0
+In-Reply-To: <20160815150635.22637-7-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Extract the parsing of SPI slave-specific properties into its own
-function, so it can be reused later for SPI slave controllers.
+On 08/15/2016 06:06 PM, Niklas Söderlund wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- drivers/spi/spi.c | 60 +++++++++++++++++++++++++++++++++----------------------
- 1 file changed, 36 insertions(+), 24 deletions(-)
+> Fix a error from the original driver where v4l2_device_call_until_err()
+> where used for the pad specific v4l2 operation set_fmt.  Also fix up the
+> error path from this fix so if there is an error it will be propagated
+> to the caller.
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 51ad42fad5679133..79e5c1ba23c81dc1 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -1471,37 +1471,18 @@ err_init_queue:
- /*-------------------------------------------------------------------------*/
- 
- #if defined(CONFIG_OF)
--static struct spi_device *
--of_register_spi_device(struct spi_master *master, struct device_node *nc)
-+static int of_spi_parse_dt(struct spi_master *master, struct spi_device *spi,
-+			   struct device_node *nc)
- {
--	struct spi_device *spi;
--	int rc;
- 	u32 value;
--
--	/* Alloc an spi_device */
--	spi = spi_alloc_device(master);
--	if (!spi) {
--		dev_err(&master->dev, "spi_device alloc error for %s\n",
--			nc->full_name);
--		rc = -ENOMEM;
--		goto err_out;
--	}
--
--	/* Select device driver */
--	rc = of_modalias_node(nc, spi->modalias,
--				sizeof(spi->modalias));
--	if (rc < 0) {
--		dev_err(&master->dev, "cannot find modalias for %s\n",
--			nc->full_name);
--		goto err_out;
--	}
-+	int rc;
- 
- 	/* Device address */
- 	rc = of_property_read_u32(nc, "reg", &value);
- 	if (rc) {
- 		dev_err(&master->dev, "%s has no valid 'reg' property (%d)\n",
- 			nc->full_name, rc);
--		goto err_out;
-+		return rc;
- 	}
- 	spi->chip_select = value;
- 
-@@ -1559,10 +1540,41 @@ of_register_spi_device(struct spi_master *master, struct device_node *nc)
- 	if (rc) {
- 		dev_err(&master->dev, "%s has no valid 'spi-max-frequency' property (%d)\n",
- 			nc->full_name, rc);
--		goto err_out;
-+		return rc;
- 	}
- 	spi->max_speed_hz = value;
- 
-+	return 0;
-+}
-+
-+static struct spi_device *
-+of_register_spi_device(struct spi_master *master, struct device_node *nc)
-+{
-+	struct spi_device *spi;
-+	int rc;
-+
-+	/* Alloc an spi_device */
-+	spi = spi_alloc_device(master);
-+	if (!spi) {
-+		dev_err(&master->dev, "spi_device alloc error for %s\n",
-+			nc->full_name);
-+		rc = -ENOMEM;
-+		goto err_out;
-+	}
-+
-+	/* Select device driver */
-+	rc = of_modalias_node(nc, spi->modalias,
-+				sizeof(spi->modalias));
-+	if (rc < 0) {
-+		dev_err(&master->dev, "cannot find modalias for %s\n",
-+			nc->full_name);
-+		goto err_out;
-+	}
-+
-+	rc = of_spi_parse_dt(master, spi, nc);
-+	if (rc)
-+		goto err_out;
-+
- 	/* Store a pointer to the node in the device structure */
- 	of_node_get(nc);
- 	spi->dev.of_node = nc;
--- 
-1.9.1
+> The error path label have also been renamed as a result from a
+> nitpicking review comment since we are fixing other issues here.
+
+    This looks like a material for the 2 or even 3 separate patches...
+
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index 72fe6bc..3f80a0b 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -114,10 +114,9 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+>
+>  	format.pad = vin->src_pad_idx;
+>
+> -	ret = v4l2_device_call_until_err(sd->v4l2_dev, 0, pad, set_fmt,
+> -					 pad_cfg, &format);
+> -	if (ret < 0)
+> -		goto cleanup;
+> +	ret = v4l2_subdev_call(sd, pad, set_fmt, pad_cfg, &format);
+> +	if (ret < 0 && ret != -ENOIOCTLCMD)
+> +		goto done;
+>
+>  	v4l2_fill_pix_format(pix, &format.format);
+>
+> @@ -127,9 +126,9 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
+>  	vin_dbg(vin, "Source resolution: %ux%u\n", source->width,
+>  		source->height);
+>
+> -cleanup:
+> +done:
+>  	v4l2_subdev_free_pad_config(pad_cfg);
+> -	return 0;
+> +	return ret;
+>  }
+>
+>  static int __rvin_try_format(struct rvin_dev *vin,
+
+MBR, Sergei
