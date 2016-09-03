@@ -1,64 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:46550 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751589AbcIAHYR (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:34778 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753422AbcICSDo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Sep 2016 03:24:17 -0400
-Date: Thu, 1 Sep 2016 09:23:54 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 10/11] arm64: dts: r8a7795: salvator-x: Enable UHS-I
- SDR-104
-Message-ID: <20160901072354.GA2893@katana>
-References: <1472591399-13907-1-git-send-email-horms+renesas@verge.net.au>
- <1472591399-13907-11-git-send-email-horms+renesas@verge.net.au>
+        Sat, 3 Sep 2016 14:03:44 -0400
+Received: by mail-lf0-f45.google.com with SMTP id p41so84765950lfi.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 03 Sep 2016 11:02:20 -0700 (PDT)
+Subject: Re: [PATCHv3 04/10] [media] rcar-vin: rename entity to digital
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
+        hverkuil@xs4all.nl
+References: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
+ <20160815150635.22637-5-niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org,
+        laurent.pinchart@ideasonboard.com
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <dbce9ab7-fc11-1a66-cb68-63196562f1d1@cogentembedded.com>
+Date: Sat, 3 Sep 2016 21:02:16 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
-Content-Disposition: inline
-In-Reply-To: <1472591399-13907-11-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <20160815150635.22637-5-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hello.
 
---OXfL5xGRrasGEqWY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 08/15/2016 06:06 PM, Niklas Söderlund wrote:
 
-On Tue, Aug 30, 2016 at 11:09:58PM +0200, Simon Horman wrote:
-> Add the sd-uhs-sdr104 property to SDHI0 and SDHI1.
->=20
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> When Gen3 support is added to the driver more then one possible video
 
-After removing a SDR104 card from the slot, the interface is stalled
-here. No new cards (even non-SDR104) can be detected anymore, sadly.
-Happens for both slots on my H3 Salvator-X.
+    s/then/than/.
 
+> source entity will be possible. Knowing that the name entity is a bad
+> one, rename it to digital since it will deal with the digital input
+> source.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+[...]
 
---OXfL5xGRrasGEqWY
-Content-Type: application/pgp-signature; name="signature.asc"
+    Other than that, the patch looked OK to me.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXx9eKAAoJEBQN5MwUoCm2Sx4P/iL+SfohRGPn28uCyw2o0vbk
-SdhSTWS6Ij7ZPDuPCh5boDFuFHN1v+L8FbRxKVcuWbreIzyIWaX0RTGMpCcICxHi
-L+Rxl8j1R3Yfg/aiF5OjkGfApDeIkubIzzyWjxZTLM075Lk2Ek8kW6vtP0QM3wC8
-f5ypeyDPee7EqGW+jUN4018Vh+xRImspmsJVeNVB+MaqyVw+IuWBxWf1yl94/fof
-to/rVgvq5dj4rBKiHYsKe6GdPr/nnK11kffoO4xWufaxzAkIaf7l75t31zvzrcgP
-1IgajB1aXv1hKo/EqOdcxH/ZHkJAsnd7cPWTNCPXXwO8EbodnaFZVC6Au5lq0EY3
-YjjXugJ9cXFO8pVDGw83ljqtkY0V137Hk+LSwRceHmR+0Kw2vJm6D2nUWSjXYfGl
-ff0QHLXYZGZFKG5iL348zqnfbNEOQJlOrT/xyKBjpdMJrB3nH2YsYKzl4uVMm9U/
-mQl5gK2uuRVUEJVJ3EM/1UCHJMrZ6Wt/l32k0BHQp5sLpHA5E/DWYzBBX4+e5uZe
-p/vnOaiXa+oIWX0MHgKuhMxk/oU1DbcLLb37P37jeLqH5cZyC9c4oMYpmT3IRb0y
-1JFczDXGyoXuOKgrIG86Gzby215+/je2s54g0DuWl5Ho7m2phPQa2hu88fYhTAd5
-4YUW3mgVabNinDA7uBV5
-=3V16
------END PGP SIGNATURE-----
-
---OXfL5xGRrasGEqWY--
+MBR, Sergei
