@@ -1,50 +1,60 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: bd-phuc@jinso.co.jp
-To: daniel.lezcano@linaro.org, tglx@linutronix.de
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sh@vger.kernel.org, geert+renesas@glider.be,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@vger.kernel.org,
-        laurent.pinchart+renesas@ideasonboard.com, magnus.damm@gmail.com,
-        horms@verge.net.au, kuninori.morimoto.gx@renesas.com,
-        yoshihiro.shimoda.uh@renesas.com, ryusuke.sakato.bx@renesas.com,
-        h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp, nv-dung@jinso.co.jp
-Subject: [PATCH 0/8] clocksource: sh_cmt: Add R-car Gen3 CMT0/1 support
-Date: Fri,  9 Sep 2016 20:43:06 +0900
-Message-Id: <1473421394-9745-1-git-send-email-bd-phuc@jinso.co.jp>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:35934 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753827AbcICSgW (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 3 Sep 2016 14:36:22 -0400
+Received: by mail-lf0-f41.google.com with SMTP id g62so103436177lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 03 Sep 2016 11:36:22 -0700 (PDT)
+Subject: Re: [PATCHv3 05/10] [media] rcar-vin: return correct error from
+ platform_get_irq()
+To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
+        hverkuil@xs4all.nl
+References: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
+ <20160815150635.22637-6-niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org,
+        laurent.pinchart@ideasonboard.com
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <50ff0f14-f11a-043d-11e4-7d2a06ae698f@cogentembedded.com>
+Date: Sat, 3 Sep 2016 21:36:18 +0300
+MIME-Version: 1.0
+In-Reply-To: <20160815150635.22637-6-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Bui Duc Phuc <bd-phuc@jinso.co.jp>
+On 08/15/2016 06:06 PM, Niklas Söderlund wrote:
 
-Hi,
+> Fix a error from the original driver where the wrong error code is
+> returned if the driver fails to get a IRQ number from
+> platform_get_irq().
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index a1eb26b..3941134 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -282,8 +282,8 @@ static int rcar_vin_probe(struct platform_device *pdev)
+>  		return PTR_ERR(vin->base);
+>
+>  	irq = platform_get_irq(pdev, 0);
+> -	if (irq <= 0)
+> -		return ret;
+> +	if (irq < 0)
 
-These are my first patches which will be added CMT driver for support 
-R-car Gen3 series (r8a7795 and r8a7796).
-Please consider these patches.
+    You don't explain this change. It's OK however (my patch fixing this 
+function not to return 0 on error is in GregKH's driver-core-next tree).
 
-Best regards.
+> +		return irq;
+>
+>  	ret = rvin_dma_probe(vin, irq);
+>  	if (ret)
 
-Bui Duc Phuc (8):
-  devicetree: binding: R-car Gen3 CMT0 and CMT1 bindings
-  ARM64: dts: r8a7795: Add CMT device to DT
-  ARM64: dts: r8a7796: Add CMT device to DT
-  clk: renesas: r8a7795: Add CMT clocks
-  clk: renesas: r8a7796: Add CMT clocks
-  clocksource: sh_cmt: Support separate R-car Gen3 CMT0/1
-  clocksource: Kconfig: Modify CMT config support 64bit
-  ARM64: defconfig: Enable SH_TIMER_CMT config option
-
- .../devicetree/bindings/timer/renesas,cmt.txt      |  2 ++
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 30 ++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 30 ++++++++++++++++++++++
- arch/arm64/configs/defconfig                       |  1 +
- drivers/clk/renesas/r8a7795-cpg-mssr.c             |  4 +++
- drivers/clk/renesas/r8a7796-cpg-mssr.c             |  4 +++
- drivers/clocksource/Kconfig                        |  2 +-
- drivers/clocksource/sh_cmt.c                       | 21 +++++++++++++--
- 8 files changed, 91 insertions(+), 3 deletions(-)
-
--- 
-2.7.4
-
+MBR, Sergei
