@@ -1,63 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36572 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933906AbcIOMO6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:53078 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754443AbcIEMci (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Sep 2016 08:14:58 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com, ulrich.hecht+renesas@gmail.com,
-        laurent.pinchart@ideasonboard.com, william.towle@codethink.co.uk
-Subject: [PATCH v7 0/2] rcar-vin EDID control ioctls
-Date: Thu, 15 Sep 2016 14:14:44 +0200
-Message-Id: <20160915121446.25830-1-ulrich.hecht+renesas@gmail.com>
+        Mon, 5 Sep 2016 08:32:38 -0400
+Date: Mon, 5 Sep 2016 14:25:20 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v5 3/4] arm64: dts: h3ulcb: enable SDHI0
+Message-ID: <20160905122519.GF24256@verge.net.au>
+References: <1472833419-26139-1-git-send-email-vladimir.barinov@cogentembedded.com>
+ <1472833508-26267-1-git-send-email-vladimir.barinov@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1472833508-26267-1-git-send-email-vladimir.barinov@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+On Fri, Sep 02, 2016 at 07:25:08PM +0300, Vladimir Barinov wrote:
+> This supports SDHI0 on H3ULCB board SD card slot
+> 
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This is a spinoff of "Lager/Koelsch board HDMI input support" that excludes
-the DT portions, and that works without the unmerged subdevice abstraction
-layer.
-
-CU
-Uli
-
-
-Changes since v6:
-- work without subdev abstraction layer
-- split off DT parts, to be handled separately
-
-Changes since v5:
-- implement vin/subdev pad translation
-- move i2c devices
-
-Changes since v4:
-- drop merged patches
-- adv7604: always fall back to input 0 if nothing else is specified
-- rcar-vin: implement G_EDID, S_EDID in place of hard-coded EDID blob
-
-Changes since v3:
-- rvin_enum_dv_timings(): use vin->src_pad_idx
-- rvin_dv_timings_cap(): likewise
-- rvin_s_dv_timings(): update vin->format
-- add Koelsch support
-
-Changes since v2:
-- rebased on top of rcar-vin driver v4
-- removed "adv7604: fix SPA register location for ADV7612" (picked up)
-- changed prefix of dts patch to "ARM: dts: lager: "
-
-
-Ulrich Hecht (2):
-  media: adv7604: automatic "default-input" selection
-  rcar-vin: implement EDID control ioctls
-
- drivers/media/i2c/adv7604.c                 |  5 +++-
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 44 +++++++++++++++++++++++++++++
- drivers/media/platform/rcar-vin/rcar-vin.h  |  1 +
- 3 files changed, 49 insertions(+), 1 deletion(-)
-
--- 
-2.9.3
+Thanks, I have queued this up.
