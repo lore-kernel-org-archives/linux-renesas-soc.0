@@ -1,45 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:34778 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753422AbcICSDo (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52416 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755836AbcIEL7W (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 3 Sep 2016 14:03:44 -0400
-Received: by mail-lf0-f45.google.com with SMTP id p41so84765950lfi.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 03 Sep 2016 11:02:20 -0700 (PDT)
-Subject: Re: [PATCHv3 04/10] [media] rcar-vin: rename entity to digital
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-media@vger.kernel.org, ulrich.hecht@gmail.com,
-        hverkuil@xs4all.nl
-References: <20160815150635.22637-1-niklas.soderlund+renesas@ragnatech.se>
- <20160815150635.22637-5-niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-renesas-soc@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <dbce9ab7-fc11-1a66-cb68-63196562f1d1@cogentembedded.com>
-Date: Sat, 3 Sep 2016 21:02:16 +0300
+        Mon, 5 Sep 2016 07:59:22 -0400
+Date: Mon, 5 Sep 2016 13:59:09 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] ARM: dts: r8a7794: fix PWM clock parent
+Message-ID: <20160905115906.GA24256@verge.net.au>
+References: <1618499.8bcj8adpVO@wasted.cogentembedded.com>
+ <1994467.CVFvpbaMyF@wasted.cogentembedded.com>
+ <CAMuHMdVezsJ1q0A4TCdhfEEPtnyMeXGGZxRREQucy6kr2BO=EA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20160815150635.22637-5-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVezsJ1q0A4TCdhfEEPtnyMeXGGZxRREQucy6kr2BO=EA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+On Mon, Sep 05, 2016 at 11:50:41AM +0200, Geert Uytterhoeven wrote:
+> On Sun, Sep 4, 2016 at 9:55 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > When removing the non-existing thermal clock I forgot to remove its
+> > parent from the node's "clocks" property  -- this led to a wrong PWM
+> > clock's parent clock.
+> >
+> > Fixes: 2a29f9d6fea8 ("ARM: dts: r8a7794: add MSTP5 clocks")
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On 08/15/2016 06:06 PM, Niklas Söderlund wrote:
-
-> When Gen3 support is added to the driver more then one possible video
-
-    s/then/than/.
-
-> source entity will be possible. Knowing that the name entity is a bad
-> one, rename it to digital since it will deal with the digital input
-> source.
->
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-[...]
-
-    Other than that, the patch looked OK to me.
-
-MBR, Sergei
+Thanks, I have queued this up.
