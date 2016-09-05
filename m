@@ -1,57 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:32977 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1762049AbcINQq2 (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36173 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753498AbcIEJKg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Sep 2016 12:46:28 -0400
-Received: by mail-wm0-f68.google.com with SMTP id b187so3353069wme.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2016 09:46:27 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: horms@verge.net.au, magnus.damm@gmail.com, wsa@the-dreams.de,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 6/6] arm64: renesas: r8a7796: salvator-x: enable I2C
-Date: Wed, 14 Sep 2016 18:46:11 +0200
-Message-Id: <20160914164611.31237-7-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <20160914164611.31237-1-ulrich.hecht+renesas@gmail.com>
-References: <20160914164611.31237-1-ulrich.hecht+renesas@gmail.com>
+        Mon, 5 Sep 2016 05:10:36 -0400
+MIME-Version: 1.0
+In-Reply-To: <3191777.fJ30rYXr4J@wasted.cogentembedded.com>
+References: <1648590.FPpmBRoQyh@wasted.cogentembedded.com> <3191777.fJ30rYXr4J@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 5 Sep 2016 11:10:35 +0200
+Message-ID: <CAMuHMdW+82ePveuVbOrPU0uRj4Uu5f8+NvzHpjWQr8Wa_BoU+A@mail.gmail.com>
+Subject: Re: [PATCH 3/3] ARM: dts: wheat: add QSPI support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Sat, Sep 3, 2016 at 12:09 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Define the Wheat board dependent part of the QSPI device node.
+> Add device nodes for Spansion S25FL512S SPI flash and MTD partitions on it.
+>
+> Based  on the original (and large) patch by Vladimir Barinov
+> <vladimir.barinov@cogentembedded.com>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index a8373c2..bdf6e05 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -94,6 +94,11 @@
- 		function = "scif_clk";
- 	};
- 
-+	i2c2_pins: i2c2 {
-+		groups = "i2c2_a";
-+		function = "i2c2";
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-@@ -144,6 +149,13 @@
- 	status = "okay";
- };
- 
-+&i2c2 {
-+	pinctrl-0 = <&i2c2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &wdt0 {
- 	timeout-sec = <60>;
- 	status = "okay";
--- 
-2.9.3
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Disclaimer: I have no board schematics nor manuals describing FLASH layout.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
