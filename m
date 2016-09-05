@@ -1,69 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36758 "EHLO
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36598 "EHLO
         mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754928AbcIALqD (ORCPT
+        with ESMTP id S932301AbcIEJpa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Sep 2016 07:46:03 -0400
+        Mon, 5 Sep 2016 05:45:30 -0400
+Received: by mail-it0-f67.google.com with SMTP id i184so8378394itf.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Sep 2016 02:44:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20160630201407.GA27880@codeaurora.org>
-References: <1464808880-343-1-git-send-email-geert+renesas@glider.be> <20160630201407.GA27880@codeaurora.org>
+In-Reply-To: <SIXPR06MB0906B1BEEF43FD0D22E14485A8E40@SIXPR06MB0906.apcprd06.prod.outlook.com>
+References: <SIXPR06MB0906B1BEEF43FD0D22E14485A8E40@SIXPR06MB0906.apcprd06.prod.outlook.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 1 Sep 2016 13:46:02 +0200
-Message-ID: <CAMuHMdWu34OQSS6J3bf=0-1TYULc=coiVomBjtBatwGta5F3HQ@mail.gmail.com>
-Subject: Re: [PATCH/RFC v3 00/22] soc: renesas: Add R-Car RST driver for
- obtaining mode pin state
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Mon, 5 Sep 2016 11:44:23 +0200
+Message-ID: <CAMuHMdXj7txmH_8D5i2cwwumQveNQNpP_yCdyzs04TxzKEgKKg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a7796: Add THS/TSC clock
+To: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Cc: "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Toru Oishi <toru.oishi.zj@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Stephen,
+On Sat, Sep 3, 2016 at 8:06 AM, Khiem Nguyen
+<khiem.nguyen.xt@renesas.com> wrote:
+> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
 
-On Thu, Jun 30, 2016 at 10:14 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> On 06/01, Geert Uytterhoeven wrote:
->> Currently the R-Car Clock Pulse Generator (CPG) drivers obtains the
->> state of the mode pins either by a call from the board code, or directly
->> by using a hardcoded register access. This is a bit messy, and creates a
->> dependency between driver and platform code.
->>
->> This RFC patch series converts the various Renesas R-Car clock drivers
->> and support code from reading the mode pin states using a hardcoded
->> register access to using a new R-Car RST driver.
->
-> Dumb question, can we use the nvmem reading APIs instead of an
-> SoC specific function to read the modes?
-
-Thanks for your suggestion, the nvmem API indeed looks like a suitable API,
-as it does support read-only nvmems.
-
-Unfortunately I also see a few disadvantages:
-  1. nvmem_init() is a subsys_initcall(), while most of our users (except for
-     the recent renesas-cpg-mssr driver) are clock drivers using
-     CLK_OF_DECLARE(), and are thus initialized from of_clk_init() at much
-     earlier time_init() time.
-     Of course the mvmem subsystem and/or the clock drivers can be changed, if
-     deemed useful.
-  2. Using the nvmem DT bindings means we have to add more DT glue from the
-     nvmem consumer(s) to the nvmem provider. As we need to provide backwards
-     compatibility with old DTSes, this means we need more C code or DT fixup
-     code to handle that.
-  3. The nvmem subsystem may be overkill to provide access to a simple 32-bit
-     read-only register that never changes value after boot.
-
-Thoughts?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
