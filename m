@@ -1,65 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:52601 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757899AbcIHHoI (ORCPT
+        with ESMTP id S1755912AbcIEMIA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 03:44:08 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 29/30] arm64: dts: r8a7796: salvator-x: add serial console pins
-Date: Thu,  8 Sep 2016 09:43:25 +0200
-Message-Id: <6b5f8e7e7fc5e5ff293d95406d1adb2e24e037ce.1473320411.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
-References: <cover.1473320411.git.horms+renesas@verge.net.au>
+        Mon, 5 Sep 2016 08:08:00 -0400
+Date: Mon, 5 Sep 2016 14:07:54 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: dts: wheat: add SDHI0 support
+Message-ID: <20160905120754.GD24256@verge.net.au>
+References: <34968644.DhifNderY8@wasted.cogentembedded.com>
+ <1659137.gEKJxNrmrk@wasted.cogentembedded.com>
+ <0defa744-2a9e-ee50-6212-589cee7e537f@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0defa744-2a9e-ee50-6212-589cee7e537f@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+On Sun, Sep 04, 2016 at 12:49:12AM +0300, Sergei Shtylyov wrote:
+> Hello.
+> 
+> On 08/31/2016 01:24 AM, Sergei Shtylyov wrote:
+> 
+> >Define the Wheat board dependent  part of  the SDHI0 (connected to the
+> >micro-SD slot)  device node along with the necessary voltage regulator.
+> >
+> >Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Adds pin control for SCIF2.
+Thanks, I have queued this up.
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index e72be3856d79..13db7d61c26c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -31,11 +31,27 @@
- 	};
- };
- 
-+&pfc {
-+	pinctrl-0 = <&scif_clk_pins>;
-+	pinctrl-names = "default";
-+
-+	scif2_pins: scif2 {
-+		groups = "scif2_data_a";
-+		function = "scif2";
-+	};
-+	scif_clk_pins: scif_clk {
-+		groups = "scif_clk_a";
-+		function = "scif_clk";
-+	};
-+};
-+
- &extal_clk {
- 	clock-frequency = <16666666>;
- };
- 
- &scif2 {
-+	pinctrl-0 = <&scif2_pins>;
-+	pinctrl-names = "default";
- 	status = "okay";
- };
- 
--- 
-2.7.0.rc3.207.g0ac5344
+> >---
+> >This patch is against the 'renesas-devel-20160830-v4.8-rc4' of Simon Horman's
+> >'renesas.git' repo plus the CAN patch posted yesterday.
+> >Starting with this patch, SMSC LAN89218 Ethernet chip starts to misbehave on my
+> >board...
+> 
+>    Fortunately, this ill effect has been fixed by Jeremy Lintion's smsc911x
+> driver patches that should hit Linus' tree soon (they're alredy in DaveM's
+> net.git)...
