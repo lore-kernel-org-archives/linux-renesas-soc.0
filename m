@@ -1,46 +1,84 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:34500 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752436AbcIFHKW (ORCPT
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:33040 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752958AbcIEU4A (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Sep 2016 03:10:22 -0400
+        Mon, 5 Sep 2016 16:56:00 -0400
+Received: by mail-lf0-f43.google.com with SMTP id h127so29984389lfh.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Sep 2016 13:55:59 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/2] ARM: dts: r8a7792: add MSIOF support
+Date: Mon, 05 Sep 2016 23:55:57 +0300
+Message-ID: <2787067.j1BQ6sZInq@wasted.cogentembedded.com>
+In-Reply-To: <2481458.x1iQg26kO7@wasted.cogentembedded.com>
+References: <2481458.x1iQg26kO7@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <2787067.j1BQ6sZInq@wasted.cogentembedded.com>
-References: <2481458.x1iQg26kO7@wasted.cogentembedded.com> <2787067.j1BQ6sZInq@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 6 Sep 2016 09:10:21 +0200
-Message-ID: <CAMuHMdWb0+tMUoQW70kUSGp=OFyzgM7A2Nitbp4GQVZTor8qXA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: r8a7792: add MSIOF support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Sep 5, 2016 at 10:55 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Based  on the original (and large) patch by Vladimir Barinov
-> <vladimir.barinov@cogentembedded.com>.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Define the generic R8A7792 parts of the MSIOF0/1 device nodes.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Based  on the original (and large) patch by Vladimir Barinov
+<vladimir.barinov@cogentembedded.com>.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-                        Geert
+---
+ arch/arm/boot/dts/r8a7792.dtsi |   30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
++++ renesas/arch/arm/boot/dts/r8a7792.dtsi
+@@ -26,6 +26,8 @@
+ 		i2c4 = &i2c4;
+ 		i2c5 = &i2c5;
+ 		spi0 = &qspi;
++		spi1 = &msiof0;
++		spi2 = &msiof1;
+ 		vin0 = &vin0;
+ 		vin1 = &vin1;
+ 		vin2 = &vin2;
+@@ -570,6 +572,34 @@
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
++		};
++
++		msiof0: spi@e6e20000 {
++			compatible = "renesas,msiof-r8a7792";
++			reg = <0 0xe6e20000 0 0x0064>;
++			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp0_clks R8A7792_CLK_MSIOF0>;
++			dmas = <&dmac0 0x51>, <&dmac0 0x52>,
++			       <&dmac1 0x51>, <&dmac1 0x52>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		msiof1: spi@e6e10000 {
++			compatible = "renesas,msiof-r8a7792";
++			reg = <0 0xe6e10000 0 0x0064>;
++			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp2_clks R8A7792_CLK_MSIOF1>;
++			dmas = <&dmac0 0x55>, <&dmac0 0x56>,
++			       <&dmac1 0x55>, <&dmac1 0x56>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
+ 		};
+ 
+ 		du: display@feb00000 {
