@@ -1,48 +1,75 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35108 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753466AbcIFHLm (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:36584 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754447AbcIEVdK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Sep 2016 03:11:42 -0400
+        Mon, 5 Sep 2016 17:33:10 -0400
+Received: by mail-lf0-f54.google.com with SMTP id g62so133684154lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Sep 2016 14:33:09 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] ARM: dts: wheat: add support for tactile switches
+Date: Tue, 06 Sep 2016 00:33:05 +0300
+Message-ID: <10465663.8teCsXZU7y@wasted.cogentembedded.com>
+In-Reply-To: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
+References: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <10465663.8teCsXZU7y@wasted.cogentembedded.com>
-References: <5383928.8UnDsUpmkz@wasted.cogentembedded.com> <10465663.8teCsXZU7y@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 6 Sep 2016 09:11:41 +0200
-Message-ID: <CAMuHMdUyF6+T3EumGy5eyfqcio+n506fCTn1N40LEsbD2o_UYg@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: wheat: add support for tactile switches
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Sep 5, 2016 at 11:33 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add  support for the  tactile switches  SW2/3 (on the debug board) as a
-> virtual keyboard like it  was done with the Blanche board).
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add  support for the  tactile switches  SW2/3 (on the debug board) as a
+virtual keyboard like it  was done with the Blanche board).
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-DT syntax looks OK to me, I have no board schematics or documentation.
+---
+This patch is against the 'renesas-devel-20160905-v4.8-rc5' of Simon Horman's
+'renesas.git' repo plus the Wheat DU patch...
 
-Gr{oetje,eeting}s,
+ arch/arm/boot/dts/r8a7792-wheat.dts |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas/arch/arm/boot/dts/r8a7792-wheat.dts
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7792-wheat.dts
++++ renesas/arch/arm/boot/dts/r8a7792-wheat.dts
+@@ -12,6 +12,7 @@
+ /dts-v1/;
+ #include "r8a7792.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ 
+ / {
+ 	model = "Wheat";
+@@ -56,6 +57,25 @@
+ 		pinctrl-names = "default";
+ 	};
+ 
++	keyboard {
++		compatible = "gpio-keys";
++
++		key-a {
++			linux,code = <KEY_A>;
++			label = "SW2";
++			wakeup-source;
++			debounce-interval = <20>;
++			gpios = <&gpio3 20 GPIO_ACTIVE_LOW>;
++		};
++		key-b {
++			linux,code = <KEY_B>;
++			label = "SW3";
++			wakeup-source;
++			debounce-interval = <20>;
++			gpios = <&gpio11 2 GPIO_ACTIVE_LOW>;
++		};
++	};
++
+ 	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
+ 
