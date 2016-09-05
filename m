@@ -1,208 +1,208 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:52240 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932249AbcIEKiC (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:44172 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932669AbcIEJwR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Sep 2016 06:38:02 -0400
-Subject: Re: [PATCHv9 6/6] dmaengine: rcar-dmac: add iommu support for slave
- transfers
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+        Mon, 5 Sep 2016 05:52:17 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-References: <20160810112219.17964-1-niklas.soderlund+renesas@ragnatech.se>
- <20160810112219.17964-7-niklas.soderlund+renesas@ragnatech.se>
- <6358234.jyTvyVnNF0@avalon>
 Cc: linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
         iommu@lists.linux-foundation.org, linux@armlinux.org.uk,
         hch@infradead.org, dan.j.williams@intel.com, vinod.koul@intel.com,
-        linus.walleij@linaro.org, arnd@arndb.de
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <b32caf39-e51b-af09-aa39-974cb8467893@arm.com>
-Date: Mon, 5 Sep 2016 11:37:58 +0100
+        robin.murphy@arm.com, linus.walleij@linaro.org, arnd@arndb.de
+Subject: Re: [PATCHv9 6/6] dmaengine: rcar-dmac: add iommu support for slave transfers
+Date: Mon, 05 Sep 2016 12:52:44 +0300
+Message-ID: <6358234.jyTvyVnNF0@avalon>
+In-Reply-To: <20160810112219.17964-7-niklas.soderlund+renesas@ragnatech.se>
+References: <20160810112219.17964-1-niklas.soderlund+renesas@ragnatech.se> <20160810112219.17964-7-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <6358234.jyTvyVnNF0@avalon>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hi Niklas,
 
-On 05/09/16 10:52, Laurent Pinchart wrote:
-> Hi Niklas,
-> 
-> Thank you for the patch.
-> 
-> On Wednesday 10 Aug 2016 13:22:19 Niklas S�derlund wrote:
->> Enable slave transfers to a device behind a IPMMU by mapping the slave
->> addresses using the dma-mapping API.
->>
->> Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
->> ---
->> drivers/dma/sh/rcar-dmac.c | 82 ++++++++++++++++++++++++++++++++++++++-----
->> 1 file changed, 74 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
->> index cf983a9..22a5e40 100644
->> --- a/drivers/dma/sh/rcar-dmac.c
->> +++ b/drivers/dma/sh/rcar-dmac.c
->> @@ -128,6 +128,18 @@ struct rcar_dmac_chan_slave {
->>  };
->>
->>  /*
->> + * struct rcar_dmac_chan_map - Map of slave device phys to dma address
->> + * @addr: slave dma address
->> + * @dir: direction of mapping
->> + * @slave: slave configuration that is mapped
->> + */
->> +struct rcar_dmac_chan_map {
->> +	dma_addr_t addr;
->> +	enum dma_data_direction dir;
->> +	struct rcar_dmac_chan_slave slave;
->> +};
->> +
->> +/*
->>   * struct rcar_dmac_chan - R-Car Gen2 DMA Controller Channel
->>   * @chan: base DMA channel object
->>   * @iomem: channel I/O memory base
->> @@ -152,6 +164,7 @@ struct rcar_dmac_chan {
->>
->>  	struct rcar_dmac_chan_slave src;
->>  	struct rcar_dmac_chan_slave dst;
->> +	struct rcar_dmac_chan_map map;
->>  	int mid_rid;
->>
->>  	spinlock_t lock;
->> @@ -1029,13 +1042,65 @@ rcar_dmac_prep_dma_memcpy(struct dma_chan *chan,
->> dma_addr_t dma_dest, DMA_MEM_TO_MEM, flags, false);
->>  }
->>
->> +static int rcar_dmac_map_slave_addr(struct dma_chan *chan,
->> +				    enum dma_transfer_direction dir)
->> +{
->> +	struct rcar_dmac_chan *rchan = to_rcar_dmac_chan(chan);
->> +	struct rcar_dmac_chan_map *map = &rchan->map;
->> +	phys_addr_t dev_addr;
->> +	size_t dev_size;
->> +	enum dma_data_direction dev_dir;
->> +
->> +	if (dir == DMA_DEV_TO_MEM) {
->> +		dev_addr = rchan->src.slave_addr;
->> +		dev_size = rchan->src.xfer_size;
->> +		dev_dir = DMA_TO_DEVICE;
-> 
-> Shouldn't this be DMA_FROM_DEVICE, and DMA_TO_DEVICE below ?
+Thank you for the patch.
 
-No, this is in fact correct (double-checking against the equivalent I
-wrote for the ARM PL330 based on this - I should resurrect those patches...)
+On Wednesday 10 Aug 2016 13:22:19 Niklas S=F6derlund wrote:
+> Enable slave transfers to a device behind a IPMMU by mapping the slav=
+e
+> addresses using the dma-mapping API.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
+.se>
+> ---
+> drivers/dma/sh/rcar-dmac.c | 82 +++++++++++++++++++++++++++++++++++++=
++-----
+> 1 file changed, 74 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+> index cf983a9..22a5e40 100644
+> --- a/drivers/dma/sh/rcar-dmac.c
+> +++ b/drivers/dma/sh/rcar-dmac.c
+> @@ -128,6 +128,18 @@ struct rcar_dmac_chan_slave {
+>  };
+>=20
+>  /*
+> + * struct rcar_dmac_chan_map - Map of slave device phys to dma addre=
+ss
+> + * @addr: slave dma address
+> + * @dir: direction of mapping
+> + * @slave: slave configuration that is mapped
+> + */
+> +struct rcar_dmac_chan_map {
+> +=09dma_addr_t addr;
+> +=09enum dma_data_direction dir;
+> +=09struct rcar_dmac_chan_slave slave;
+> +};
+> +
+> +/*
+>   * struct rcar_dmac_chan - R-Car Gen2 DMA Controller Channel
+>   * @chan: base DMA channel object
+>   * @iomem: channel I/O memory base
+> @@ -152,6 +164,7 @@ struct rcar_dmac_chan {
+>=20
+>  =09struct rcar_dmac_chan_slave src;
+>  =09struct rcar_dmac_chan_slave dst;
+> +=09struct rcar_dmac_chan_map map;
+>  =09int mid_rid;
+>=20
+>  =09spinlock_t lock;
+> @@ -1029,13 +1042,65 @@ rcar_dmac_prep_dma_memcpy(struct dma_chan *ch=
+an,
+> dma_addr_t dma_dest, DMA_MEM_TO_MEM, flags, false);
+>  }
+>=20
+> +static int rcar_dmac_map_slave_addr(struct dma_chan *chan,
+> +=09=09=09=09    enum dma_transfer_direction dir)
+> +{
+> +=09struct rcar_dmac_chan *rchan =3D to_rcar_dmac_chan(chan);
+> +=09struct rcar_dmac_chan_map *map =3D &rchan->map;
+> +=09phys_addr_t dev_addr;
+> +=09size_t dev_size;
+> +=09enum dma_data_direction dev_dir;
+> +
+> +=09if (dir =3D=3D DMA_DEV_TO_MEM) {
+> +=09=09dev_addr =3D rchan->src.slave_addr;
+> +=09=09dev_size =3D rchan->src.xfer_size;
+> +=09=09dev_dir =3D DMA_TO_DEVICE;
 
-The "DEV" in the dmaengine direction is the peripheral FIFO, whereas the
-"DEVICE" in the DMA API direction is the DMA engine itself, thus for the
-DEV_TO_MEM transaction, the mapping of the "DEV" end needs to allow data
-transfer "from" the address being mapped "to" the DMA engine.
+Shouldn't this be DMA_FROM_DEVICE, and DMA_TO_DEVICE below ?
 
-Yes, it's hideously confusing.
+> +=09} else {
+> +=09=09dev_addr =3D rchan->dst.slave_addr;
+> +=09=09dev_size =3D rchan->dst.xfer_size;
+> +=09=09dev_dir =3D DMA_FROM_DEVICE;
+> +=09}
+> +
+> +=09/* Reuse current map if possible. */
+> +=09if (dev_addr =3D=3D map->slave.slave_addr &&
+> +=09    dev_size =3D=3D map->slave.xfer_size &&
+> +=09    dev_dir =3D=3D map->dir)
+> +=09=09return 0;
+> +
+> +=09/* Remove old mapping if present. */
+> +=09if (map->slave.xfer_size)
+> +=09=09dma_unmap_resource(chan->device->dev, map->addr,
+> +=09=09=09=09   map->slave.xfer_size, map->dir, 0);
 
-Robin.
+Unless I'm mistaken the resource will not be unmapped when freeing chan=
+nel=20
+resources, will it ?
 
->> +	} else {
->> +		dev_addr = rchan->dst.slave_addr;
->> +		dev_size = rchan->dst.xfer_size;
->> +		dev_dir = DMA_FROM_DEVICE;
->> +	}
->> +
->> +	/* Reuse current map if possible. */
->> +	if (dev_addr == map->slave.slave_addr &&
->> +	    dev_size == map->slave.xfer_size &&
->> +	    dev_dir == map->dir)
->> +		return 0;
->> +
->> +	/* Remove old mapping if present. */
->> +	if (map->slave.xfer_size)
->> +		dma_unmap_resource(chan->device->dev, map->addr,
->> +				   map->slave.xfer_size, map->dir, 0);
-> 
-> Unless I'm mistaken the resource will not be unmapped when freeing channel 
-> resources, will it ?
-> 
->> +	map->slave.xfer_size = 0;
->> +
->> +	/* Create new slave address map. */
->> +	map->addr = dma_map_resource(chan->device->dev, dev_addr, dev_size,
->> +				     dev_dir, 0);
->> +
->> +	if (dma_mapping_error(chan->device->dev, map->addr)) {
->> +		dev_err(chan->device->dev,
->> +			"chan%u: failed to map %zx@%pap", rchan->index,
->> +			dev_size, &dev_addr);
->> +		return -EIO;
->> +	}
->> +
->> +	dev_dbg(chan->device->dev, "chan%u: map %zx@%pap to %pad dir: %s\n",
->> +		rchan->index, dev_size, &dev_addr, &map->addr,
->> +		dev_dir == DMA_TO_DEVICE ? "DMA_TO_DEVICE" : 
-> "DMA_FROM_DEVICE");
->> +
->> +	map->slave.slave_addr = dev_addr;
->> +	map->slave.xfer_size = dev_size;
->> +	map->dir = dev_dir;
->> +
->> +	return 0;
->> +}
->> +
->>  static struct dma_async_tx_descriptor *
->>  rcar_dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
->>  			unsigned int sg_len, enum dma_transfer_direction dir,
->>  			unsigned long flags, void *context)
->>  {
->>  	struct rcar_dmac_chan *rchan = to_rcar_dmac_chan(chan);
->> -	dma_addr_t dev_addr;
->>
->>  	/* Someone calling slave DMA on a generic channel? */
->>  	if (rchan->mid_rid < 0 || !sg_len) {
->> @@ -1045,9 +1110,10 @@ rcar_dmac_prep_slave_sg(struct dma_chan *chan, struct
->> scatterlist *sgl, return NULL;
->>  	}
->>
->> -	dev_addr = dir == DMA_DEV_TO_MEM
->> -		 ? rchan->src.slave_addr : rchan->dst.slave_addr;
->> -	return rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, dev_addr,
->> +	if (rcar_dmac_map_slave_addr(chan, dir))
->> +		return NULL;
->> +
->> +	return rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, rchan->map.addr,
->>  				      dir, flags, false);
->>  }
->>
->> @@ -1061,7 +1127,6 @@ rcar_dmac_prep_dma_cyclic(struct dma_chan *chan,
->> dma_addr_t buf_addr, struct rcar_dmac_chan *rchan =
->> to_rcar_dmac_chan(chan);
->>  	struct dma_async_tx_descriptor *desc;
->>  	struct scatterlist *sgl;
->> -	dma_addr_t dev_addr;
->>  	unsigned int sg_len;
->>  	unsigned int i;
->>
->> @@ -1073,6 +1138,9 @@ rcar_dmac_prep_dma_cyclic(struct dma_chan *chan,
->> dma_addr_t buf_addr, return NULL;
->>  	}
->>
->> +	if (rcar_dmac_map_slave_addr(chan, dir))
->> +		return NULL;
->> +
->>  	sg_len = buf_len / period_len;
->>  	if (sg_len > RCAR_DMAC_MAX_SG_LEN) {
->>  		dev_err(chan->device->dev,
->> @@ -1100,9 +1168,7 @@ rcar_dmac_prep_dma_cyclic(struct dma_chan *chan,
->> dma_addr_t buf_addr, sg_dma_len(&sgl[i]) = period_len;
->>  	}
->>
->> -	dev_addr = dir == DMA_DEV_TO_MEM
->> -		 ? rchan->src.slave_addr : rchan->dst.slave_addr;
->> -	desc = rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, dev_addr,
->> +	desc = rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, rchan->map.addr,
->>  				      dir, flags, true);
->>
->>  	kfree(sgl);
-> 
+> +=09map->slave.xfer_size =3D 0;
+> +
+> +=09/* Create new slave address map. */
+> +=09map->addr =3D dma_map_resource(chan->device->dev, dev_addr, dev_s=
+ize,
+> +=09=09=09=09     dev_dir, 0);
+> +
+> +=09if (dma_mapping_error(chan->device->dev, map->addr)) {
+> +=09=09dev_err(chan->device->dev,
+> +=09=09=09"chan%u: failed to map %zx@%pap", rchan->index,
+> +=09=09=09dev_size, &dev_addr);
+> +=09=09return -EIO;
+> +=09}
+> +
+> +=09dev_dbg(chan->device->dev, "chan%u: map %zx@%pap to %pad dir: %s\=
+n",
+> +=09=09rchan->index, dev_size, &dev_addr, &map->addr,
+> +=09=09dev_dir =3D=3D DMA_TO_DEVICE ? "DMA_TO_DEVICE" :=20
+"DMA_FROM_DEVICE");
+> +
+> +=09map->slave.slave_addr =3D dev_addr;
+> +=09map->slave.xfer_size =3D dev_size;
+> +=09map->dir =3D dev_dir;
+> +
+> +=09return 0;
+> +}
+> +
+>  static struct dma_async_tx_descriptor *
+>  rcar_dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *s=
+gl,
+>  =09=09=09unsigned int sg_len, enum dma_transfer_direction dir,
+>  =09=09=09unsigned long flags, void *context)
+>  {
+>  =09struct rcar_dmac_chan *rchan =3D to_rcar_dmac_chan(chan);
+> -=09dma_addr_t dev_addr;
+>=20
+>  =09/* Someone calling slave DMA on a generic channel? */
+>  =09if (rchan->mid_rid < 0 || !sg_len) {
+> @@ -1045,9 +1110,10 @@ rcar_dmac_prep_slave_sg(struct dma_chan *chan,=
+ struct
+> scatterlist *sgl, return NULL;
+>  =09}
+>=20
+> -=09dev_addr =3D dir =3D=3D DMA_DEV_TO_MEM
+> -=09=09 ? rchan->src.slave_addr : rchan->dst.slave_addr;
+> -=09return rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, dev_addr,
+> +=09if (rcar_dmac_map_slave_addr(chan, dir))
+> +=09=09return NULL;
+> +
+> +=09return rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, rchan->map.addr=
+,
+>  =09=09=09=09      dir, flags, false);
+>  }
+>=20
+> @@ -1061,7 +1127,6 @@ rcar_dmac_prep_dma_cyclic(struct dma_chan *chan=
+,
+> dma_addr_t buf_addr, struct rcar_dmac_chan *rchan =3D
+> to_rcar_dmac_chan(chan);
+>  =09struct dma_async_tx_descriptor *desc;
+>  =09struct scatterlist *sgl;
+> -=09dma_addr_t dev_addr;
+>  =09unsigned int sg_len;
+>  =09unsigned int i;
+>=20
+> @@ -1073,6 +1138,9 @@ rcar_dmac_prep_dma_cyclic(struct dma_chan *chan=
+,
+> dma_addr_t buf_addr, return NULL;
+>  =09}
+>=20
+> +=09if (rcar_dmac_map_slave_addr(chan, dir))
+> +=09=09return NULL;
+> +
+>  =09sg_len =3D buf_len / period_len;
+>  =09if (sg_len > RCAR_DMAC_MAX_SG_LEN) {
+>  =09=09dev_err(chan->device->dev,
+> @@ -1100,9 +1168,7 @@ rcar_dmac_prep_dma_cyclic(struct dma_chan *chan=
+,
+> dma_addr_t buf_addr, sg_dma_len(&sgl[i]) =3D period_len;
+>  =09}
+>=20
+> -=09dev_addr =3D dir =3D=3D DMA_DEV_TO_MEM
+> -=09=09 ? rchan->src.slave_addr : rchan->dst.slave_addr;
+> -=09desc =3D rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, dev_addr,
+> +=09desc =3D rcar_dmac_chan_prep_sg(rchan, sgl, sg_len, rchan->map.ad=
+dr,
+>  =09=09=09=09      dir, flags, true);
+>=20
+>  =09kfree(sgl);
+
+--=20
+Regards,
+
+Laurent Pinchart
