@@ -1,41 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36854 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751168AbcINQqx (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:43908 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753518AbcIEIWt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Sep 2016 12:46:53 -0400
-Received: by mail-wm0-f65.google.com with SMTP id b184so3388170wma.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2016 09:46:52 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: magnus.damm@gmail.com, horms@verge.net.au,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 0/3] r8a7796 SCIF integration
-Date: Wed, 14 Sep 2016 18:46:45 +0200
-Message-Id: <20160914164648.31403-1-ulrich.hecht+renesas@gmail.com>
+        Mon, 5 Sep 2016 04:22:49 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Subject: Re: [PATCH] v4l: Add metadata buffer type and format
+Date: Mon, 05 Sep 2016 11:23:15 +0300
+Message-ID: <3474830.2BF5QWV559@avalon>
+In-Reply-To: <b7fd41ca-5173-c5cb-20ff-c6dc5542a6c8@xs4all.nl>
+References: <1472818023-11536-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <b7fd41ca-5173-c5cb-20ff-c6dc5542a6c8@xs4all.nl>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+Hi Hans,
 
-This enables SCIFs 0, 1, 3, 4, and 5.
+On Monday 05 Sep 2016 09:40:19 Hans Verkuil wrote:
+> On 09/02/2016 02:07 PM, Laurent Pinchart wrote:
+> > The metadata buffer type is used to transfer metadata between userspace
+> > and kernelspace through a V4L2 buffers queue. It comes with a new
+> > metadata capture capability and format description.
+> > 
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > Tested-by: Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+> 
+> Looks good. But include/trace/events/v4l2.h needs to be updated with the new
+> buf_type as well.
+> 
+> I would also like to see patches for v4l2-ctl and v4l2-compliance.
 
-Based on renesas-drivers-2016-09-13-v4.8-rc6. The last patch enables DMA for
-all SCIFs and depends on the "r8a7796 SYS-DMAC integration" series posted
-earlier.
+I'll work on that.
 
-CU
-Uli
+> Having some support for it in vivid would be nice as well, but is a lower
+> prio.
 
-
-Ulrich Hecht (3):
-  clk: shmobile: r8a7796: Add SCIF clocks
-  arm64: renesas: r8a7796: Add all SCIF nodes
-  arm64: renesas: r8a7796: Enable SCIF DMA
-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 77 ++++++++++++++++++++++++++++++++
- drivers/clk/renesas/r8a7796-cpg-mssr.c   |  5 +++
- 2 files changed, 82 insertions(+)
+Feel free to submit patches ;-)
 
 -- 
-2.9.3
+Regards,
+
+Laurent Pinchart
