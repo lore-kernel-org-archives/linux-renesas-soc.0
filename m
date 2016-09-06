@@ -1,176 +1,102 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-To: linux-renesas-soc@vger.kernel.org
-Cc: joe@perches.com, kernel-janitors@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-pm@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-can@vger.kernel.org,
-        Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
-        Shiraz Saleem <shiraz.saleem@intel.com>,
-        Mustafa Ismail <mustafa.ismail@intel.com>,
-        Chien Tin Tung <chien.tin.tung@intel.com>,
-        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        tpmdd-devel@lists.sourceforge.net, linux-scsi@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-acpi@vger.kernel.org
-Subject: [PATCH 00/26] constify local structures
-Date: Sun, 11 Sep 2016 15:05:42 +0200
-Message-Id: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:50377 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936449AbcIFSGr (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 6 Sep 2016 14:06:47 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] v4l: vsp1: Move subdev operations from HGO to common histogram code
+Date: Tue, 06 Sep 2016 21:07:08 +0300
+Message-ID: <2299755.6RU5rO9Jvq@avalon>
+In-Reply-To: <20160906102759.GG27014@bigcity.dyn.berto.se>
+References: <1473088419-2800-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <20160906102759.GG27014@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Constify local structures.
+Hi Niklas,
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+On Tuesday 06 Sep 2016 12:28:00 Niklas S=F6derlund wrote:
+> On 2016-09-05 18:13:39 +0300, Laurent Pinchart wrote:
+> > The code will be shared with the HGT entity, move it to the generic=
 
-// <smpl>
-// The first rule ignores some cases that posed problems
-@r disable optional_qualifier@
-identifier s != {peri_clk_data,threshold_attr,tracer_flags,tracer};
-identifier i != {s5k5baf_cis_rect,smtcfb_fix};
-position p;
-@@
-static struct s i@p = { ... };
+> > histogram implementation.
+> >=20
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> >=20
+> >  drivers/media/platform/vsp1/vsp1_drv.c   |   7 +-
+> >  drivers/media/platform/vsp1/vsp1_hgo.c   | 308 ++-----------------=
+------
+> >  drivers/media/platform/vsp1/vsp1_hgo.h   |   7 +-
+> >  drivers/media/platform/vsp1/vsp1_histo.c | 334 +++++++++++++++++++=
+++++--
+> >  drivers/media/platform/vsp1/vsp1_histo.h |  25 ++-
+> >  5 files changed, 355 insertions(+), 326 deletions(-)
 
-@lstruct@
-identifier r.s;
-@@
-struct s { ... };
+[snip]
 
-@used depends on lstruct@
-identifier r.i;
-@@
-i
+> > @@ -268,7 +559,16 @@ int vsp1_histogram_init(struct vsp1_device *vs=
+p1,
+> > struct vsp1_histogram *histo,>=20
+> >  =09INIT_LIST_HEAD(&histo->irqqueue);
+> >  =09init_waitqueue_head(&histo->wait_queue);
+> >=20
+> > -=09/* Initialize the media entity... */
+> > +=09/* Initialize the VSP entity... */
+> > +=09histo->entity.ops =3D ops;
+> > +=09histo->entity.type =3D type;
+> > +
+> > +=09ret =3D vsp1_entity_init(vsp1, &histo->entity, name, 2, &histo_=
+ops,
+> > +=09=09=09       MEDIA_ENT_F_PROC_VIDEO_STATISTICS);
+> > +=09if (ret < 0)
+> > +=09=09return ret;
+> > +
+> > +=09/* ... and the media entity... */
+> >  =09ret =3D media_entity_pads_init(&histo->video.entity, 1, &histo-=
+>pad);
+> >  =09if (ret < 0)
+> >  =09=09return ret;
+>=20
+> You forgot to update the histo video device name to match the subdevi=
+ce
+> name here. Something like this makes vsp-tests work for me again.
+>=20
+> @@ -577,7 +577,7 @@ int vsp1_histogram_init(struct vsp1_device *vsp1,=
+ struct
+> vsp1_histogram *histo, histo->video.v4l2_dev =3D &vsp1->v4l2_dev;
+>         histo->video.fops =3D &histo_v4l2_fops;
+>         snprintf(histo->video.name, sizeof(histo->video.name),
+> -                "%s histo", name);
+> +                "%s histo", histo->entity.subdev.name);
+>         histo->video.vfl_type =3D VFL_TYPE_GRABBER;
+>         histo->video.release =3D video_device_release_empty;
+>         histo->video.ioctl_ops =3D &histo_v4l2_ioctl_ops;
+>=20
+> Without this fix the names listed using media-ctl -p show:
+>=20
+> - entity 1: hgo histo (1 pad, 1 link)
+>=20
+> Instead as it did before:
+>=20
+> - entity 1: fe928000.vsp1 hgo histo (1 pad, 1 link)
+>=20
+> Other then that
+>=20
+> Tested-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>=
 
-@bad1@
-expression e;
-identifier r.i;
-assignment operator a;
-@@
- (<+...i...+>) a e
 
-@bad2@
-identifier r.i;
-@@
- &(<+...i...+>)
+Thank you. I'll fix that in the next version.
 
-@bad3@
-identifier r.i;
-declarer d;
-@@
- d(...,<+...i...+>,...);
+--=20
+Regards,
 
-@bad4@
-identifier r.i;
-type T;
-T[] e;
-identifier f;
-position p;
-@@
-
-f@p(...,
-(
-  (<+...i...+>)
-&
-  e
-)
-,...)
-
-@bad4a@
-identifier r.i;
-type T;
-T *e;
-identifier f;
-position p;
-@@
-
-f@p(...,
-(
-  (<+...i...+>)
-&
-  e
-)
-,...)
-
-@ok5@
-expression *e;
-identifier r.i;
-position p;
-@@
-e =@p i
-
-@bad5@
-expression *e;
-identifier r.i;
-position p != ok5.p;
-@@
-e =@p (<+...i...+>)
-
-@rr depends on used && !bad1 && !bad2 && !bad3 && !bad4 && !bad4a && !bad5@
-identifier s,r.i;
-position r.p;
-@@
-
-static
-+const
- struct s i@p = { ... };
-
-@depends on used && !bad1 && !bad2 && !bad3 && !bad4 && !bad4a && !bad5
- disable optional_qualifier@
-identifier rr.s,r.i;
-@@
-
-static
-+const
- struct s i;
-// </smpl>
-
----
-
- drivers/acpi/acpi_apd.c                              |    8 +++---
- drivers/char/tpm/tpm-interface.c                     |   10 ++++----
- drivers/char/tpm/tpm-sysfs.c                         |    2 -
- drivers/cpufreq/intel_pstate.c                       |    8 +++---
- drivers/infiniband/hw/i40iw/i40iw_uk.c               |    6 ++---
- drivers/media/i2c/tvp514x.c                          |    2 -
- drivers/media/pci/ddbridge/ddbridge-core.c           |   18 +++++++--------
- drivers/media/pci/ngene/ngene-cards.c                |   14 ++++++------
- drivers/media/pci/smipcie/smipcie-main.c             |    8 +++---
- drivers/misc/sgi-xp/xpc_uv.c                         |    2 -
- drivers/net/arcnet/com20020-pci.c                    |   10 ++++----
- drivers/net/can/c_can/c_can_pci.c                    |    4 +--
- drivers/net/can/sja1000/plx_pci.c                    |   20 ++++++++---------
- drivers/net/ethernet/mellanox/mlx4/main.c            |    4 +--
- drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c |    2 -
- drivers/net/ethernet/renesas/sh_eth.c                |   14 ++++++------
- drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c     |    2 -
- drivers/net/wireless/ath/dfs_pattern_detector.c      |    2 -
- drivers/net/wireless/intel/iwlegacy/3945.c           |    4 +--
- drivers/net/wireless/realtek/rtlwifi/rtl8188ee/sw.c  |    2 -
- drivers/net/wireless/realtek/rtlwifi/rtl8192ce/sw.c  |    2 -
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c  |    2 -
- drivers/net/wireless/realtek/rtlwifi/rtl8192ee/sw.c  |    2 -
- drivers/net/wireless/realtek/rtlwifi/rtl8192se/sw.c  |    2 -
- drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c  |    2 -
- drivers/net/wireless/realtek/rtlwifi/rtl8723be/sw.c  |    2 -
- drivers/net/wireless/realtek/rtlwifi/rtl8821ae/sw.c  |    2 -
- drivers/platform/chrome/chromeos_laptop.c            |   22 +++++++++----------
- drivers/platform/x86/intel_scu_ipc.c                 |    6 ++---
- drivers/platform/x86/intel_telemetry_debugfs.c       |    2 -
- drivers/scsi/esas2r/esas2r_flash.c                   |    2 -
- drivers/scsi/hptiop.c                                |    6 ++---
- drivers/spi/spi-dw-pci.c                             |    4 +--
- drivers/staging/rtl8192e/rtl8192e/rtl_core.c         |    2 -
- drivers/usb/misc/ezusb.c                             |    2 -
- drivers/video/fbdev/matrox/matroxfb_g450.c           |    2 -
- lib/crc64_ecma.c                                     |    2 -
- sound/pci/ctxfi/ctatc.c                              |    2 -
- sound/pci/hda/patch_ca0132.c                         |   10 ++++----
- sound/pci/riptide/riptide.c                          |    2 -
- 40 files changed, 110 insertions(+), 110 deletions(-)
+Laurent Pinchart
