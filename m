@@ -1,59 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41964 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:41489 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933538AbcIFLWF (ORCPT
+        with ESMTP id S933053AbcIFKrW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Sep 2016 07:22:05 -0400
-Date: Tue, 6 Sep 2016 13:21:59 +0200
+        Tue, 6 Sep 2016 06:47:22 -0400
+Date: Tue, 6 Sep 2016 12:47:16 +0200
 From: Simon Horman <horms@verge.net.au>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>
 Subject: Re: [PATCH/RFT v2 0/8] Add SDHI to r8a7796/salvator-x
-Message-ID: <20160906112137.GA14960@verge.net.au>
+Message-ID: <20160906104715.GE16304@verge.net.au>
 References: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
  <2032317.SOiUovHhFZ@avalon>
  <20160906074901.GE17888@verge.net.au>
- <20160906104715.GE16304@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20160906104715.GE16304@verge.net.au>
+In-Reply-To: <20160906074901.GE17888@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Sep 06, 2016 at 12:47:16PM +0200, Simon Horman wrote:
-> On Tue, Sep 06, 2016 at 09:49:02AM +0200, Simon Horman wrote:
-> > On Tue, Sep 06, 2016 at 03:34:41AM +0300, Laurent Pinchart wrote:
-> > > Hi Simon,
-> > > 
-> > > Thank you for the patches.
-> > > 
-> > > On Tuesday 23 Aug 2016 09:49:42 Simon Horman wrote:
-> > > > Hi,
-> > > > 
-> > > > this patch set updates drivers, documentation and DT to
-> > > > enable SDHI0 & 3 on the r8a7796/salvator-x. This includes
-> > > > defining nodes for all available SDHI and GPIO devices.
-> > > > 
-> > > > I have boot-tested this which seems successful.
-> > > > However, I do not have physical access to an r8a7796/salvator-x board
-> > > > and the one that I have remote access to does not appear to have
-> > > > any SD cards present. I would be grateful of any testing anyone
-> > > > can provide.
-> > > > 
-> > > > Based on renesas-drivers-2016-08-09-v4.8-rc1
-> > > 
-> > > For patches 1/8, 4/8 and 6/8, applied on top of your devel branch (with the 
-> > > gpio-ranges property removed from 6/8 due to the lack of PFC support),
-> > > 
-> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+On Tue, Sep 06, 2016 at 09:49:02AM +0200, Simon Horman wrote:
+> On Tue, Sep 06, 2016 at 03:34:41AM +0300, Laurent Pinchart wrote:
+> > Hi Simon,
 > > 
-> > Thanks.
+> > Thank you for the patches.
+> > 
+> > On Tuesday 23 Aug 2016 09:49:42 Simon Horman wrote:
+> > > Hi,
+> > > 
+> > > this patch set updates drivers, documentation and DT to
+> > > enable SDHI0 & 3 on the r8a7796/salvator-x. This includes
+> > > defining nodes for all available SDHI and GPIO devices.
+> > > 
+> > > I have boot-tested this which seems successful.
+> > > However, I do not have physical access to an r8a7796/salvator-x board
+> > > and the one that I have remote access to does not appear to have
+> > > any SD cards present. I would be grateful of any testing anyone
+> > > can provide.
+> > > 
+> > > Based on renesas-drivers-2016-08-09-v4.8-rc1
+> > 
+> > For patches 1/8, 4/8 and 6/8, applied on top of your devel branch (with the 
+> > gpio-ranges property removed from 6/8 due to the lack of PFC support),
+> > 
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 > 
-> I have queued up 6/8 and 7/8 in a branch based on
-> sh-pfc-for-v4.9-tag2.
+> Thanks.
 
-I was a little hasty there. I have queued up 6/8 (GPIO) only.
+I have queued up 6/8 and 7/8 in a branch based on
+sh-pfc-for-v4.9-tag2.
