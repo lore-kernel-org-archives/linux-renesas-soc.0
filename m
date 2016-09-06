@@ -1,41 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:33147 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934302AbcIFJOi (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49172 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933268AbcIFIZa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Sep 2016 05:14:38 -0400
-Received: by mail-oi0-f68.google.com with SMTP id w78so7655430oie.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Sep 2016 02:14:38 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1473150352-31081-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 6 Sep 2016 04:25:30 -0400
+Received: from avalon.bb.dnainternet.fi (85-23-193-79.bb.dnainternet.fi [85.23.193.79])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 89E50201F2
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Sep 2016 10:25:00 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 2/4] dt-bindings: net: renesas-ravb: Add support for R8A7796 RAVB
+Date: Tue,  6 Sep 2016 11:25:50 +0300
+Message-Id: <1473150352-31081-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1473150352-31081-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 References: <1473150352-31081-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
- <1473150352-31081-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 6 Sep 2016 11:14:37 +0200
-Message-ID: <CAMuHMdUgp24FTzSGos0Jb7ZwjDO8e_Lp0PC0k7susX4dNTPVvw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] dt-bindings: net: renesas-ravb: Add support for
- R8A7796 RAVB
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Sep 6, 2016 at 10:25 AM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> Add a new compatible string for the R8A7796 (M3-W) RAVB.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Add a new compatible string for the R8A7796 (M3-W) RAVB.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ Documentation/devicetree/bindings/net/renesas,ravb.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
+diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+index c8ac222eac67..b519503be51a 100644
+--- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
++++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+@@ -10,6 +10,7 @@ Required properties:
+ 	      "renesas,etheravb-r8a7793" if the device is a part of R8A7793 SoC.
+ 	      "renesas,etheravb-r8a7794" if the device is a part of R8A7794 SoC.
+ 	      "renesas,etheravb-r8a7795" if the device is a part of R8A7795 SoC.
++	      "renesas,etheravb-r8a7796" if the device is a part of R8A7796 SoC.
+ 	      "renesas,etheravb-rcar-gen2" for generic R-Car Gen 2 compatible interface.
+ 	      "renesas,etheravb-rcar-gen3" for generic R-Car Gen 3 compatible interface.
+ 
+@@ -33,7 +34,7 @@ Optional properties:
+ - interrupt-parent: the phandle for the interrupt controller that services
+ 		    interrupts for this device.
+ - interrupt-names: A list of interrupt names.
+-		   For the R8A7795 SoC this property is mandatory;
++		   For the R8A779[56] SoCs this property is mandatory;
+ 		   it should include one entry per channel, named "ch%u",
+ 		   where %u is the channel number ranging from 0 to 24.
+ 		   For other SoCs this property is optional; if present
+-- 
+Regards,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
