@@ -1,46 +1,58 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] clocksource: sh_cmt: Document r8a779[34] SoC specific bindings
-Date: Fri, 23 Sep 2016 10:20:05 +0200
-Message-Id: <1474618805-22731-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49966 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755711AbcIFNzv (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 6 Sep 2016 09:55:51 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 0/4] R-Car M3-W Salvator-X: Add ethernet support
+Date: Tue, 06 Sep 2016 16:56:20 +0300
+Message-ID: <3479871.vlgeVrtBue@avalon>
+In-Reply-To: <CAMuHMdXQ3B1xjMdH+yeHX7y3wCXeS_Gct6eVXK_RnuJw4Fh+6A@mail.gmail.com>
+References: <1473150352-31081-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdXQ3B1xjMdH+yeHX7y3wCXeS_Gct6eVXK_RnuJw4Fh+6A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This documents the SoC specific binding for the r8a779[34] SoCs.
-This is in keeping with the documentation of other R-Car Gen2 SoCs.
+Hi Geeert,
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/timer/renesas,cmt.txt | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+On Tuesday 06 Sep 2016 10:53:20 Geert Uytterhoeven wrote:
+> On Tue, Sep 6, 2016 at 10:25 AM, Laurent Pinchart wrote:
+> > This patch series adds support for the RAVB ethernet controller on the
+> > M3-W (R8A7796) Salvator-X board.
+> > 
+> > The patches are based on top of Simon's latest devel branch, with the
+> > following patches cherry-picked:
+> > 
+> > [PATCH/RFT 1/8] clk: renesas: r8a7796: Add GPIO clocks
+> > [PATCH/RFT 4/8] gpio: rcar: Add r8a7796 (R-Car M3-W) support
+> > [PATCH/RFT 6/8] arm64: dts: r8a7796: Add GPIO device nodes
+> 
+> Thanks, very useful to have!
+> 
+> Howeveer, I thought the plan was to not add more hardware support to
+> r8a7796-salvator-x.dts that might not work with 64-bit memory, to avoid
+> this becoming a blocker when enabling 64-bit memory?
 
-diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.txt b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-index 1a05c1b243c1..566fb599ea39 100644
---- a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-+++ b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-@@ -48,10 +48,15 @@ Required Properties:
- 		(CMT[01])
-     - "renesas,cmt-48-r8a7791" for the r8a7791 48-bit CMT
- 		(CMT[01])
-+    - "renesas,cmt-48-r8a7793" for the r8a7793 48-bit CMT
-+		(CMT[01])
-+    - "renesas,cmt-48-r8a7794" for the r8a7793 48-bit CMT
-+		(CMT[01])
-     - "renesas,cmt-48-gen2" for all second generation 48-bit CMT
--		(CMT[01] on r8a73a4, r8a7790 and r8a7791)
-+		(CMT[01] on r8a73a4, r8a7790, r8a7791, r8a7793, r8a7794)
- 		This is a fallback for the renesas,cmt-48-r8a73a4,
--		renesas,cmt-48-r8a7790 and renesas,cmt-48-r8a7791 entries.
-+		renesas,cmt-48-r8a7790, renesas,cmt-48-r8a7791,
-+		renesas,cmt-48-r8a7793 and renesas,cmt-48-r8a7794 entries.
- 
-   - reg: base address and length of the registers block for the timer module.
-   - interrupts: interrupt-specifier for the timer, one per channel.
+We need to fix that ASAP for ethernet, as that's really a blocker for 
+development.
+
+> > I'd like to suggest merging the GPIO support without PFC if it helps
+> > getting ethernet support in v4.9, as this is a very handy feature for
+> > development.
+>
+> In the mean time, Linus W. has pulled basic r8a7796 support from
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+> tags/sh-pfc-for-v4.9-tag2, so Simon can pull it as well, and queue pinctrl
+> patches for the devices that are already declared in r8a7796-salvator-x.dts.
+
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
