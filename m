@@ -1,74 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:32898 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932900AbcIBQqz (ORCPT
+Received: from mail-yw0-f172.google.com ([209.85.161.172]:33162 "EHLO
+        mail-yw0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933510AbcIFNTA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 12:46:55 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        sergei.shtylyov@cogentembedded.com, hans.verkuil@cisco.com
-Cc: slongerbeam@gmail.com, lars@metafoo.de, mchehab@kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv3 3/6] media: rcar-vin: allow field to be changed
-Date: Fri,  2 Sep 2016 18:44:58 +0200
-Message-Id: <20160902164501.19535-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160902164501.19535-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160902164501.19535-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 6 Sep 2016 09:19:00 -0400
+Received: by mail-yw0-f172.google.com with SMTP id l8so54673687ywb.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Sep 2016 06:19:00 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <20160825164623.GI2856@katana>
+References: <1471959320-16947-1-git-send-email-geert+renesas@glider.be>
+ <874m6buh17.wl%kuninori.morimoto.gx@renesas.com> <CANqRtoRCoe6-f3ekkvvTsX5co5kj8ZTzUpgfXL8LAHqp6c7=og@mail.gmail.com>
+ <CAMuHMdUneaDwC2yMOkcfNQy2f47dTdOoxr=YyZX6VPmZW0kBQg@mail.gmail.com> <20160825164623.GI2856@katana>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 6 Sep 2016 15:18:59 +0200
+Message-ID: <CAMuHMdW+PF0h4B060C-xogip5TRaR11gZCPXFh+CsM7eZuCuOQ@mail.gmail.com>
+Subject: Re: renesas-drivers-2016-08-23-v4.8-rc3
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The driver forced whatever field was set by the source subdevice to be
-used. This patch allows the user to change from the default field.
+On Thu, Aug 25, 2016 at 6:46 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+>> > How can we check which ES version we are running? I recall seeing some
+>> > patch from Geert that printed out useful information during boot, any
+>> > chance that could make it upstream (if it is not already)?
+>>
+>> It's part of my topic/renesas-debug branch. Just merge that into latest
+>> renesas-drivers and see...
+>
+> I second Magnus in wanting this upstream. The FIXMEs are about the
+> cache. Maybe submit an initial version without cache report first? Or
+> are there other issues? It would be really helpful to have this in the
+> bootlogs by default, I'd say.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+I've accidentally stumbled upon a patch from Arnd to match against
+SoC revisions:
+[PATCH 1/4] base: soc: introduce soc_device_match() interface
+http://lists.infradead.org/pipermail/linux-arm-kernel/2016-May/431902.html
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 62ca7e3..88bfee3 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -102,6 +102,7 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 	struct v4l2_subdev_format format = {
- 		.which = which,
- 	};
-+	enum v4l2_field field;
- 	int ret;
- 
- 	sd = vin_to_source(vin);
-@@ -114,12 +115,16 @@ static int __rvin_try_format_source(struct rvin_dev *vin,
- 
- 	format.pad = vin->src_pad_idx;
- 
-+	field = pix->field;
-+
- 	ret = v4l2_subdev_call(sd, pad, set_fmt, pad_cfg, &format);
- 	if (ret < 0 && ret != -ENOIOCTLCMD)
- 		goto done;
- 
- 	v4l2_fill_pix_format(pix, &format.format);
- 
-+	pix->field = field;
-+
- 	source->width = pix->width;
- 	source->height = pix->height;
- 
-@@ -143,6 +148,10 @@ static int __rvin_try_format(struct rvin_dev *vin,
- 	rwidth = pix->width;
- 	rheight = pix->height;
- 
-+	/* Keep current field if no specific one is asked for */
-+	if (pix->field == V4L2_FIELD_ANY)
-+		pix->field = vin->format.field;
-+
- 	/*
- 	 * Retrieve format information and select the current format if the
- 	 * requested format isn't supported.
--- 
-2.9.3
+Now, soc_device_register() seems to be the API to publish the SoC
+revision. Unfortunately the SoC bus itself is registered from a core_initcall(),
+which may be too late for our purposes.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
