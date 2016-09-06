@@ -1,64 +1,94 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35111 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751004AbcIAIjF (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:38960 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755975AbcIFPPa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Sep 2016 04:39:05 -0400
+        Tue, 6 Sep 2016 11:15:30 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
+        linus.walleij@linaro.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCHv2] sh-pfc: return pinconf with arguments in packed format
+Date: Tue,  6 Sep 2016 17:14:14 +0200
+Message-Id: <20160906151414.1104-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 1 Sep 2016 10:39:04 +0200
-Message-ID: <CAMuHMdX4sxY4_FKemcQfYtvCr5ZZ52nTqnRtp5G42X93UTT8aw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/12] arm64: renesas: add H3ULCB board
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Vladimir,
+The pinconf-generic code expects configurations with arguments to be
+returned in a packed format in order to be displayed properly by
+pinconf_generic_dump_one().
 
-On Wed, Aug 31, 2016 at 12:01 PM, Vladimir Barinov
-<vladimir.barinov@cogentembedded.com> wrote:
-> This adds the folowing:
-> - R8A7795 SoC based H3ULCB low cost board device tree
-> - Document DT bindings
+Reading /sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins on
+r8a7795/salvator-x now shows:
 
-Thanks for your split series!
+    pin 101 (GP_3_5): output drive strength (9 mA), pin power source (3300 selector)
 
-> Vladimir Barinov (12):
-> [01/12] dt: arm: shmobile: add H3ULCB board DT bindings
-> [02/12] arm64: dts: h3ulcb: initial device tree
-> [03/12] arm64: dts: h3ulcb: enable SCIF clk and pins
-> [04/12] arm64: dts: h3ulcb: enable EthernetAVB
-> [05/12] arm64: dts: h3ulcb: enable GPIO leds
-> [06/12] arm64: dts: h3ulcb: enable SDHI0
-> [07/12] arm64: dts: h3ulcb: enable I2C2
-> [08/12] arm64: dts: h3ulcb: enable EXTALR clk
-> [09/12] arm64: dts: h3ulcb: enable WDT
-> [10/12] arm64: dts: h3ulcb: enable USB2 PHY of channel 1
-> [11/12] arm64: dts: h3ulcb: enable USB2.0 Host channel 1
+Instead of:
 
-I went through all of the above...
+    pin 101 (GP_3_5): output drive strength (0 mA), pin power source (0 selector)
 
-> [12/12] arm64: dts: h3ulcb: Sound SSI support
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+* Changes since v1:
+- Add more user oriented information in commit message.
+- Add Tested-by tag from Geert.
+---
+ drivers/pinctrl/sh-pfc/pinctrl.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-... but I'm leaving this one for Morimoto-san.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
+index e208ee0..c577258 100644
+--- a/drivers/pinctrl/sh-pfc/pinctrl.c
++++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+@@ -596,6 +596,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 	struct sh_pfc *pfc = pmx->pfc;
+ 	enum pin_config_param param = pinconf_to_config_param(*config);
+ 	unsigned long flags;
++	unsigned int arg;
+ 
+ 	if (!sh_pfc_pinconf_validate(pfc, _pin, param))
+ 		return -ENOTSUPP;
+@@ -616,7 +617,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 		if (bias != param)
+ 			return -EINVAL;
+ 
+-		*config = 0;
++		arg = 0;
+ 		break;
+ 	}
+ 
+@@ -627,7 +628,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 		if (ret < 0)
+ 			return ret;
+ 
+-		*config = ret;
++		arg = ret;
+ 		break;
+ 	}
+ 
+@@ -646,7 +647,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 		val = sh_pfc_read_reg(pfc, pocctrl, 32);
+ 		spin_unlock_irqrestore(&pfc->lock, flags);
+ 
+-		*config = (val & BIT(bit)) ? 3300 : 1800;
++		arg = (val & BIT(bit)) ? 3300 : 1800;
+ 		break;
+ 	}
+ 
+@@ -654,6 +655,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 		return -ENOTSUPP;
+ 	}
+ 
++	*config = pinconf_to_config_packed(param, arg);
+ 	return 0;
+ }
+ 
+-- 
+2.9.3
