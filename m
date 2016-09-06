@@ -1,84 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:46440 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751221AbcIFAeO (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41196 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755536AbcIFK2Y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Sep 2016 20:34:14 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH/RFT v2 0/8] Add SDHI to r8a7796/salvator-x
-Date: Tue, 06 Sep 2016 03:34:41 +0300
-Message-ID: <2032317.SOiUovHhFZ@avalon>
-In-Reply-To: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
-References: <1471938590-10650-1-git-send-email-horms+renesas@verge.net.au>
+        Tue, 6 Sep 2016 06:28:24 -0400
+Date: Tue, 6 Sep 2016 12:28:14 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: renesas: salvator-x: Configure pins for the
+ DU RGB output
+Message-ID: <20160906102813.GC16304@verge.net.au>
+References: <1470993535-11795-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <20160817071335.GG8673@verge.net.au>
+ <CAMuHMdV_xp1ApMy6XrQtv5oaJMewiCttaQHZLvH5E_i9F6A9kQ@mail.gmail.com>
+ <3167228.fHu3sBnt6u@avalon>
+ <20160818071204.GA3961@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160818071204.GA3961@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
-
-Thank you for the patches.
-
-On Tuesday 23 Aug 2016 09:49:42 Simon Horman wrote:
-> Hi,
+On Thu, Aug 18, 2016 at 09:12:07AM +0200, Simon Horman wrote:
+> On Wed, Aug 17, 2016 at 12:17:26PM +0300, Laurent Pinchart wrote:
+> > On Wednesday 17 Aug 2016 11:00:38 Geert Uytterhoeven wrote:
+> > > On Wed, Aug 17, 2016 at 9:13 AM, Simon Horman <horms@verge.net.au> wrote:
+> > > > On Fri, Aug 12, 2016 at 12:18:55PM +0300, Laurent Pinchart wrote:
+> > > >> Signed-off-by: Laurent Pinchart
+> > > >> <laurent.pinchart+renesas@ideasonboard.com>
+> > > >> ---
+> > > >> 
+> > > >>  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 7 +++++++
+> > > >>  1 file changed, 7 insertions(+)
+> > > >> 
+> > > >> This patch depends on "[PATCH] pinctrl: sh-pfc: r8a7795: Add DU support"
+> > > >> posted a few minutes ago to the linux-renesas-soc mailing list, as well
+> > > >> as on the "[PATCH v2 0/4] R-Car Gen3 DU enablement on Salvator-X board"
+> > > >> series posted yesterday to the same list.
+> > > >> 
+> > > >> As the boot loader configures the DU pins on Salvator-X we can safely
+> > > >> delay this patch by one kernel version to let the pinctrl dependency hit
+> > > >> mainling first.
+> > > > 
+> > > > I'm not entirely sure it is necessary to defer this patch by a kernel
+> > > > release but if that is your wish then I'm happy to do so. If so
+> > > > please repost at the appropriate time.
+> > > 
+> > > I believe applying this patch now means that the DU won't work in your
+> > > renesas-devel tree (unless you merge sh-pfc-for-v4.9).
+> > > Of course it should work in renesas-drivers.
+> > 
+> > I haven't tested that, but I believe it would result in a probe failure
+> > as the device core won't be able to apply the request pinctrl settings.
 > 
-> this patch set updates drivers, documentation and DT to
-> enable SDHI0 & 3 on the r8a7796/salvator-x. This includes
-> defining nodes for all available SDHI and GPIO devices.
-> 
-> I have boot-tested this which seems successful.
-> However, I do not have physical access to an r8a7796/salvator-x board
-> and the one that I have remote access to does not appear to have
-> any SD cards present. I would be grateful of any testing anyone
-> can provide.
-> 
-> Based on renesas-drivers-2016-08-09-v4.8-rc1
+> Ok, in that case lets defer this patch as you suggested.
 
-For patches 1/8, 4/8 and 6/8, applied on top of your devel branch (with the 
-gpio-ranges property removed from 6/8 due to the lack of PFC support),
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-I've tested the patches with ethernet support that uses GPIO-2-11 as an 
-interrupt pin (I'll post the ethernet patches for r8a7796 soon).
-
-> Provided for testing as the topic/r8a7796-sdhi-v2 branch in
-> my renesas tree on kernel.org.
-> 
-> Changes since v1 noted in individual changelogs.
-> Acks from v1 also added.
-> 
-> Ai Kyuse (1):
->   mmc: sh_mobile_sdhi: Add r8a7796 support
-> 
-> Simon Horman (4):
->   clk: renesas: r8a7796: Add SDIF clocks
->   gpio: rcar: Add r8a7796 (R-Car M3-W) support
->   arm64: dts: r8a7796: add SDHI nodes
->   arm64: dts: r8a7796: salvator-x: enable SDHI0 & 3
-> 
-> Takeshi Kihara (3):
->   clk: renesas: r8a7796: Add GPIO clocks
->   pinctrl: sh-pfc: r8a7796: Add SDHI pins, groups and functions
->   arm64: dts: r8a7796: Add GPIO device nodes
-> 
->  .../devicetree/bindings/gpio/renesas,gpio-rcar.txt |   1 +
->  Documentation/devicetree/bindings/mmc/tmio_mmc.txt |   1 +
->  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  84 +++++++
->  arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 154 ++++++++++++
->  drivers/clk/renesas/r8a7796-cpg-mssr.c             |  18 ++
->  drivers/gpio/gpio-rcar.c                           |   4 +
->  drivers/mmc/host/sh_mobile_sdhi.c                  |   1 +
->  drivers/pinctrl/sh-pfc/pfc-r8a7796.c               | 275 ++++++++++++++++++
->  8 files changed, 538 insertions(+)
-
--- 
-Regards,
-
-Laurent Pinchart
+I have tentatively queued this up for v4.9 on a branch based on
+the sh-pfc-for-v4.9-tag2 tag of Geert's tree.
