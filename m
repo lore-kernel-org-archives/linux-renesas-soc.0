@@ -1,83 +1,97 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39239 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752548AbcIBLR6 (ORCPT
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:33836 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754925AbcIFM7r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 07:17:58 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Ai Kyuse <ai.kyuse.uw@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v6 4/9] mmc: tmio: Add hw reset support
-Date: Fri,  2 Sep 2016 13:17:33 +0200
-Message-Id: <1472815058-11562-5-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
-References: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
+        Tue, 6 Sep 2016 08:59:47 -0400
+MIME-Version: 1.0
+In-Reply-To: <20160906124118.13979-1-ulrich.hecht+renesas@gmail.com>
+References: <20160906124118.13979-1-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 6 Sep 2016 14:59:45 +0200
+Message-ID: <CAMuHMdVzdVkMNYr45pHS1gMtExHsFEiM_WQ7AaKKn7HuFWVyZg@mail.gmail.com>
+Subject: Re: [PATCH v2] spi: sh-msiof: request and set cs-gpio direction to output
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ai Kyuse <ai.kyuse.uw@renesas.com>
+Hi Uli,
 
-Add hw reset support.
+On Tue, Sep 6, 2016 at 2:41 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Required for the CS signal to actually be visible to the device.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>
+> This revision uses devm_gpio_request_one() instead of gpio_request()/
+> gpio_direction_output(), as suggested by Geert.
 
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-This is required by tuning support which will
-be introduced by follow-up patches.
+I suggested to use a devm_*() function as it relieves a device's .remove()
+function of the burden to do manual resource management.
 
-v6
-* Rely on core to retune on reset
+However, I had missed that freeing is not done in the device's .remove()
+function, but in spi_master.cleanup(). Life cycle is completely different here,
+and .setup() and .cleanup() may be called multiple times if SPI slaves are
+added/removed dynamically (e.g. DT overlays). Fortunately you kept the
+invocation of devm_gpio_free(), so calling .setup() and .cleanup() multiple
+times (pairwise) still works.
 
-v5
-* As suggested by Ulf Hansson
-  - Broke out of a larger patch
----
- drivers/mmc/host/tmio_mmc.h     | 1 +
- drivers/mmc/host/tmio_mmc_pio.c | 9 +++++++++
- 2 files changed, 10 insertions(+)
+>  drivers/spi/spi-sh-msiof.c | 22 ++++++++++++++++++++--
+>  1 file changed, 20 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+> index 6852552a..ed01289 100644
+> --- a/drivers/spi/spi-sh-msiof.c
+> +++ b/drivers/spi/spi-sh-msiof.c
+> @@ -541,15 +541,32 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
+>                                   !!(spi->mode & SPI_LSB_FIRST),
+>                                   !!(spi->mode & SPI_CS_HIGH));
+>
+> -       if (spi->cs_gpio >= 0)
+> -               gpio_set_value(spi->cs_gpio, !(spi->mode & SPI_CS_HIGH));
+> +       if (spi->cs_gpio >= 0 && !spi_get_ctldata(spi)) {
+> +               int ret = devm_gpio_request_one(&p->pdev->dev, spi->cs_gpio,
+> +                               spi->mode & SPI_CS_HIGH ? GPIOF_OUT_INIT_LOW :
+> +                               GPIOF_OUT_INIT_HIGH, dev_name(&spi->dev));
+> +
+> +               if (ret < 0)
+> +                       return ret;
+>
+> +               spi_set_ctldata(spi, (void *)spi->cs_gpio);
+> +       }
+>
+>         pm_runtime_put(&p->pdev->dev);
+>
+>         return 0;
+>  }
+>
+> +static void sh_msiof_spi_cleanup(struct spi_device *spi)
+> +{
+> +       struct sh_msiof_spi_priv *p = spi_master_get_devdata(spi->master);
+> +
+> +       if (spi->cs_gpio >= 0)
+> +               devm_gpio_free(&p->pdev->dev, spi->cs_gpio);
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 4b36cb5c2d9c..4b71f31fba63 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -164,6 +164,7 @@ struct tmio_mmc_host {
- 	int (*start_signal_voltage_switch)(struct mmc_host *mmc,
- 					   struct mmc_ios *ios);
- 	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
-+	void (*hw_reset)(struct tmio_mmc_host *host);
- };
- 
- struct tmio_mmc_host *tmio_mmc_host_alloc(struct platform_device *pdev);
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 806308ac93e7..f1d36f4533d2 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -756,6 +756,14 @@ static int tmio_mmc_start_data(struct tmio_mmc_host *host,
- 	return 0;
- }
- 
-+static void tmio_mmc_hw_reset(struct mmc_host *mmc)
-+{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
-+
-+	if (host->hw_reset)
-+		host->hw_reset(host);
-+}
-+
- /* Process requests from the MMC layer */
- static void tmio_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
- {
-@@ -970,6 +978,7 @@ static struct mmc_host_ops tmio_mmc_ops = {
- 	.get_cd		= mmc_gpio_get_cd,
- 	.enable_sdio_irq = tmio_mmc_enable_sdio_irq,
- 	.multi_io_quirk	= tmio_multi_io_quirk,
-+	.hw_reset	= tmio_mmc_hw_reset,
- };
- 
- static int tmio_mmc_init_ocr(struct tmio_mmc_host *host)
--- 
-2.7.0.rc3.207.g0ac5344
+I'm wondering if this can lead to a double free? E.g. if .setup() fails?
+
+> +
+> +       spi_set_ctldata(spi, NULL);
+> +}
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
