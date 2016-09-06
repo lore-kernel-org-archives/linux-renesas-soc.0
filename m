@@ -1,40 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:33360 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755868AbcILI6m (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49976 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756380AbcIFN5D (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Sep 2016 04:58:42 -0400
-Received: by mail-oi0-f68.google.com with SMTP id y2so16839400oie.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Sep 2016 01:58:42 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1473170250-5314-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 6 Sep 2016 09:57:03 -0400
+Received: from avalon.bb.dnainternet.fi (85-23-193-79.bb.dnainternet.fi [85.23.193.79])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id E007120115
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Sep 2016 15:56:36 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v1.1 1/4] clk: shmobile: r8a7796: Add RAVB clock
+Date: Tue,  6 Sep 2016 16:57:30 +0300
+Message-Id: <1473170250-5314-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1473150352-31081-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 References: <1473150352-31081-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
- <1473170250-5314-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 12 Sep 2016 10:58:41 +0200
-Message-ID: <CAMuHMdV=BDXkzF==dZFjBY-fUXJiB446=DukLodYXve=D0jWDg@mail.gmail.com>
-Subject: Re: [PATCH v1.1 1/4] clk: shmobile: r8a7796: Add RAVB clock
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Sep 6, 2016 at 3:57 PM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+Changes since v1:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+- Fixed parent clock
 
-(will queue in clk-renesas-for-v4.9)
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index cfd5ffb77dfe..e89c6d67fc10 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -99,6 +99,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+ 	DEF_MOD("scif2",		 310,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
++	DEF_MOD("etheravb",		 812,	R8A7796_CLK_S0D6),
+ 	DEF_MOD("gpio7",		 905,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("gpio6",		 906,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("gpio5",		 907,	R8A7796_CLK_S3D4),
+-- 
+Regards,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
