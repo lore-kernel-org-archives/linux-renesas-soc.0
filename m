@@ -1,83 +1,111 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49725 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932308AbcIHL5n (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:50004 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755379AbcIFMMy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 07:57:43 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7796: Add voltage switch operations for SDHI
-Date: Thu,  8 Sep 2016 13:57:33 +0200
-Message-Id: <1473335853-32102-1-git-send-email-horms+renesas@verge.net.au>
+        Tue, 6 Sep 2016 08:12:54 -0400
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.82)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1bhFF7-00031e-GZ
+        for linux-renesas-soc@vger.kernel.org; Tue, 06 Sep 2016 14:12:45 +0200
+Received: from geert by ramsan with local (Exim 4.82)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1bhFFB-0005TH-5Y
+        for linux-renesas-soc@vger.kernel.org; Tue, 06 Sep 2016 14:12:49 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2016-09-06-v4.8-rc5
+Date: Tue,  6 Sep 2016 14:12:49 +0200
+Message-Id: <1473163969-20997-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch supports the {get,set}_io_voltage operations of SDHI.
+I have pushed renesas-drivers-2016-09-06-v4.8-rc5 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-This operates the POCCTRL0 register on R8A7796 SoC and makes 1.8v/3.3v
-voltage switch.
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-Based on work by Takeshi Kihara and Wolfram Sang.
+Today's version is based on renesas-devel-20160905-v4.8-rc5.
 
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+Included branches with driver code:
+  - clk-renesas-for-v4.9
+  - sh-pfc-for-v4.9
+  - topic/r8a7796-pfc-v3
+  - topic/ipmmu-multi-arch-v4
+  - topic/r8a7795-ipmmu-v2-rebased1
+  - topic/r8a7796-ipmmu-v1-rebased1
+  - topic/salvator-x-ipmmu-rfc-v3-rebased4
+  - topic/rcar-secondary-booting-in-debug-mode-v1
+  - topic/spi-slave-v1-rebased1
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdhi-gen3-dma-v3.rebase
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-v6
+  - topic/i2c-demux-v3-rebased3
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/r8a7796-sdhi-v2.rebase
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/pretimeout
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/i2c_sdhi_maintenance
+  - https://git.ragnatech.se/linux#for-renesas-drivers
+  - git://linuxtv.org/pinchartl/media.git#iommu/devel/du
+  - git://linuxtv.org/pinchartl/media.git#vsp1/hgo
+  - topic/fcpf-v1-rebased7
+  - topic/fdp1-v2-rebased2
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index f8ab74dd0506..dc9b671ccf2e 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -23,8 +23,12 @@
- 	PORT_GP_16(0, fn, sfx),						\
- 	PORT_GP_29(1, fn, sfx),						\
- 	PORT_GP_15(2, fn, sfx),						\
--	PORT_GP_16(3, fn, sfx),						\
--	PORT_GP_18(4, fn, sfx),						\
-+	PORT_GP_CFG_12(3, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),		\
-+	PORT_GP_1(3, 12, fn, sfx),					\
-+	PORT_GP_1(3, 13, fn, sfx),					\
-+	PORT_GP_1(3, 14, fn, sfx),					\
-+	PORT_GP_1(3, 15, fn, sfx),					\
-+	PORT_GP_CFG_18(4, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),		\
- 	PORT_GP_26(5, fn, sfx),						\
- 	PORT_GP_32(6, fn, sfx),						\
- 	PORT_GP_4(7, fn, sfx)
-@@ -2627,8 +2631,28 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 	{ },
- };
- 
-+static int r8a7796_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *pocctrl)
-+{
-+	int bit = -EINVAL;
-+
-+	*pocctrl = 0xe6060380;
-+
-+	if (pin >= RCAR_GP_PIN(3, 0) && pin <= RCAR_GP_PIN(3, 11))
-+		bit = pin & 0x1f;
-+
-+	if (pin >= RCAR_GP_PIN(4, 0) && pin <= RCAR_GP_PIN(4, 17))
-+		bit = (pin & 0x1f) + 12;
-+
-+	return bit;
-+}
-+
-+static const struct sh_pfc_soc_operations r8a7796_pinmux_ops = {
-+	.pin_to_pocctrl = r8a7796_pin_to_pocctrl,
-+};
-+
- const struct sh_pfc_soc_info r8a7796_pinmux_info = {
- 	.name = "r8a77960_pfc",
-+	.ops = &r8a7796_pinmux_ops,
- 	.unlock_reg = 0xe6060000, /* PMMR */
- 
- 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
--- 
-2.7.0.rc3.207.g0ac5344
+Included fixes:
+  - [media] fdp1: vb2_queue dev conversion
+  - [media] rcar-fcp: Make sure rcar_fcp_enable() returns 0 on success
+  - thermal: rcar_thermal: Fix priv->zone error handling
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/mchehab/media-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git#mmc-next
+  - git://git.linaro.org/people/ulf.hansson/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/djbw/dmaengine.git#next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.infradead.org/battery-2.6.git#master
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm-intel#topic/drm-misc
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
