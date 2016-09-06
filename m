@@ -1,171 +1,171 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:35185 "EHLO
-        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751372AbcIGKF3 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:50674 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753413AbcIFT7d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Sep 2016 06:05:29 -0400
-Received: by mail-lf0-f42.google.com with SMTP id l131so7110751lfl.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 07 Sep 2016 03:05:28 -0700 (PDT)
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Wed, 7 Sep 2016 12:05:26 +0200
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Tue, 6 Sep 2016 15:59:33 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
 Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
         corbet@lwn.net, mchehab@kernel.org, sakari.ailus@linux.intel.com,
         hans.verkuil@cisco.com
 Subject: Re: [PATCHv2 2/2] v4l: vsp1: Add HGT support
-Message-ID: <20160907100525.GL27014@bigcity.dyn.berto.se>
-References: <20160906143856.27564-1-niklas.soderlund+renesas@ragnatech.se>
- <20160906143856.27564-3-niklas.soderlund+renesas@ragnatech.se>
- <11815359.8Rr4pPQQOL@avalon>
+Date: Tue, 06 Sep 2016 22:59:22 +0300
+Message-ID: <11815359.8Rr4pPQQOL@avalon>
+In-Reply-To: <20160906143856.27564-3-niklas.soderlund+renesas@ragnatech.se>
+References: <20160906143856.27564-1-niklas.soderlund+renesas@ragnatech.se> <20160906143856.27564-3-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <11815359.8Rr4pPQQOL@avalon>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hi Niklas,
 
-Thanks for your review.
+Thank you for the patch.
 
-On 2016-09-06 22:59:22 +0300, Laurent Pinchart wrote:
-> Hi Niklas,
-> 
-> Thank you for the patch.
-> 
-> On Tuesday 06 Sep 2016 16:38:56 Niklas S�derlund wrote:
-> > The HGT is a Histogram Generator Two-Dimensions. It computes a weighted
-> > frequency histograms for hue and saturation areas over a configurable
-> > region of the image with optional subsampling.
-> > 
-> > Signed-off-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> > ---
-> >  drivers/media/platform/vsp1/Makefile      |   2 +-
-> >  drivers/media/platform/vsp1/vsp1.h        |   3 +
-> >  drivers/media/platform/vsp1/vsp1_drv.c    |  33 ++++-
-> >  drivers/media/platform/vsp1/vsp1_entity.c |  33 +++--
-> >  drivers/media/platform/vsp1/vsp1_entity.h |   1 +
-> >  drivers/media/platform/vsp1/vsp1_hgt.c    | 217 +++++++++++++++++++++++++++
-> >  drivers/media/platform/vsp1/vsp1_hgt.h    |  42 ++++++
-> >  drivers/media/platform/vsp1/vsp1_pipe.c   |  16 +++
-> >  drivers/media/platform/vsp1/vsp1_pipe.h   |   2 +
-> >  drivers/media/platform/vsp1/vsp1_regs.h   |   9 ++
-> >  drivers/media/platform/vsp1/vsp1_video.c  |  10 +-
-> >  11 files changed, 352 insertions(+), 16 deletions(-)
-> >  create mode 100644 drivers/media/platform/vsp1/vsp1_hgt.c
-> >  create mode 100644 drivers/media/platform/vsp1/vsp1_hgt.h
-> 
-> [snip]
-> 
-> > diff --git a/drivers/media/platform/vsp1/vsp1_hgt.c
-> > b/drivers/media/platform/vsp1/vsp1_hgt.c new file mode 100644
-> > index 0000000..4e3f762
-> > --- /dev/null
-> > +++ b/drivers/media/platform/vsp1/vsp1_hgt.c
-> 
-> [snip]
-> 
-> > +/* ------------------------------------------------------------------------
-> > + * Controls
-> > + */
-> > +
-> > +#define V4L2_CID_VSP1_HGT_HUE_AREAS	(V4L2_CID_USER_BASE | 0x1001)
-> > +
-> > +static int hgt_hue_areas_s_ctrl(struct v4l2_ctrl *ctrl)
-> > +{
-> > +	struct vsp1_hgt *hgt = container_of(ctrl->handler, struct vsp1_hgt,
-> > +					    ctrls);
-> > +	u8 *value = ctrl->p_new.p_u8;
-> 
-> Nitpicking, I'd call the variable values.
-> 
-> > +	unsigned int i;
-> > +	bool ok = true;
-> > +
-> > +	/*
-> > +	 * Make sure values meet one of two possible hardware constrains
-> 
-> s/constrains/constraints./
-> 
-> > +	 * 0L <= 0U <= 1L <= 1U <= 2L <= 2U <= 3L <= 3U <= 4L <= 4U <= 5L <= 
-> 5U
-> > +	 * 0U <= 1L <= 1U <= 2L <= 2U <= 3L <= 3U <= 4L <= 4U <= 5L <= 5U <= 
-> 0L
-> > +	 */
-> > +
-> > +	if ((value[0] > value[1]) && (value[11] > value[0]))
-> > +		ok = false;
-> > +	for (i = 1; i < (HGT_NUM_HUE_AREAS * 2) - 1; ++i)
-> > +		if (value[i] > value[i+1])
-> > +			ok = false;
-> > +
-> > +	/* Values do not match hardware, adjust to valid settings. */
-> > +	if (!ok) {
-> > +		for (i = 0; i < (HGT_NUM_HUE_AREAS * 2) - 1; ++i) {
-> > +			if (value[i] > value[i+1])
-> > +				value[i] = value[i+1];
-> > +		}
-> > +	}
-> 
-> I'm afraid this won't work. Let's assume value[0] = 100, value[1] = 50, 
-> value[2] = 25. The loop will unroll to
-> 
-> 	if (value[0] /* 100 */ > value[1] /* 50 */)
-> 		value[0] = value[1] /* 50 */;
-> 	if (value[1] /* 50 */ > value[2] /* 25 */)
-> 		value[1] = value[2] /* 25 */;
-> 
-> You will end up with value[0] = 50, value[1] = 25, value[2] = 25, which 
-> doesn't match the hardware constraints.
-> 
-> How about the following, which tests and fixes the values in a single 
-> operation ?
-> 
-> static int hgt_hue_areas_s_ctrl(struct v4l2_ctrl *ctrl)
-> {
-> 	struct vsp1_hgt *hgt = container_of(ctrl->handler, struct vsp1_hgt,
-> 					    ctrls);
-> 	u8 *values = ctrl->p_new.p_u8;
-> 	unsigned int i;
->         
-> 	/*
-> 	 * Adjust the values if they don't meet the hardware constraints:
-> 	 *
-> 	 * 0U <= 1L <= 1U <= 2L <= 2U <= 3L <= 3U <= 4L <= 4U <= 5L <= 5U
-> 	 */ 
-> 	for (i = 1; i < (HGT_NUM_HUE_AREAS * 2) - 1; ++i) {
-> 		if (values[i] > values[i+1])
-> 			values[i+1] = values[i];
-> 	}
->         
-> 	/* 0L <= 0U or 5U <= 0L */
-> 	if (values[0] > values[1] && values[11] > values[0])
-> 		values[0] = values[1];
->         
-> 	memcpy(hgt->hue_areas, ctrl->p_new.p_u8, sizeof(hgt->hue_areas));
-> 
-> 	return 0;
-> }
-> 
-> I'm also beginning to wonder whether it wouldn't make sense to return -EINVAL 
-> when the values don't match the constraints instead of trying to fix them.
+On Tuesday 06 Sep 2016 16:38:56 Niklas S=F6derlund wrote:
+> The HGT is a Histogram Generator Two-Dimensions. It computes a weight=
+ed
+> frequency histograms for hue and saturation areas over a configurable=
 
-I'm fine with either solution. I looked at a few other drivers and it 
-seems the most common way is to correct the control value. But maybe in 
-this case it's better to just return -EINVAL.
+> region of the image with optional subsampling.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
+.se>
+> ---
+>  drivers/media/platform/vsp1/Makefile      |   2 +-
+>  drivers/media/platform/vsp1/vsp1.h        |   3 +
+>  drivers/media/platform/vsp1/vsp1_drv.c    |  33 ++++-
+>  drivers/media/platform/vsp1/vsp1_entity.c |  33 +++--
+>  drivers/media/platform/vsp1/vsp1_entity.h |   1 +
+>  drivers/media/platform/vsp1/vsp1_hgt.c    | 217 ++++++++++++++++++++=
++++++++
+>  drivers/media/platform/vsp1/vsp1_hgt.h    |  42 ++++++
+>  drivers/media/platform/vsp1/vsp1_pipe.c   |  16 +++
+>  drivers/media/platform/vsp1/vsp1_pipe.h   |   2 +
+>  drivers/media/platform/vsp1/vsp1_regs.h   |   9 ++
+>  drivers/media/platform/vsp1/vsp1_video.c  |  10 +-
+>  11 files changed, 352 insertions(+), 16 deletions(-)
+>  create mode 100644 drivers/media/platform/vsp1/vsp1_hgt.c
+>  create mode 100644 drivers/media/platform/vsp1/vsp1_hgt.h
 
-Let me know what you think and I will make it so and send a v3.
+[snip]
 
-> 
-> > +	memcpy(hgt->hue_areas, ctrl->p_new.p_u8, sizeof(hgt->hue_areas));
-> > +
-> > +	return 0;
-> > +}
-> 
-> [snip]
-> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_hgt.c
+> b/drivers/media/platform/vsp1/vsp1_hgt.c new file mode 100644
+> index 0000000..4e3f762
+> --- /dev/null
+> +++ b/drivers/media/platform/vsp1/vsp1_hgt.c
 
--- 
+[snip]
+
+> +/* -----------------------------------------------------------------=
+-------
+> + * Controls
+> + */
+> +
+> +#define V4L2_CID_VSP1_HGT_HUE_AREAS=09(V4L2_CID_USER_BASE | 0x1001)
+> +
+> +static int hgt_hue_areas_s_ctrl(struct v4l2_ctrl *ctrl)
+> +{
+> +=09struct vsp1_hgt *hgt =3D container_of(ctrl->handler, struct vsp1_=
+hgt,
+> +=09=09=09=09=09    ctrls);
+> +=09u8 *value =3D ctrl->p_new.p_u8;
+
+Nitpicking, I'd call the variable values.
+
+> +=09unsigned int i;
+> +=09bool ok =3D true;
+> +
+> +=09/*
+> +=09 * Make sure values meet one of two possible hardware constrains
+
+s/constrains/constraints./
+
+> +=09 * 0L <=3D 0U <=3D 1L <=3D 1U <=3D 2L <=3D 2U <=3D 3L <=3D 3U <=3D=
+ 4L <=3D 4U <=3D 5L <=3D=20
+5U
+> +=09 * 0U <=3D 1L <=3D 1U <=3D 2L <=3D 2U <=3D 3L <=3D 3U <=3D 4L <=3D=
+ 4U <=3D 5L <=3D 5U <=3D=20
+0L
+> +=09 */
+> +
+> +=09if ((value[0] > value[1]) && (value[11] > value[0]))
+> +=09=09ok =3D false;
+> +=09for (i =3D 1; i < (HGT_NUM_HUE_AREAS * 2) - 1; ++i)
+> +=09=09if (value[i] > value[i+1])
+> +=09=09=09ok =3D false;
+> +
+> +=09/* Values do not match hardware, adjust to valid settings. */
+> +=09if (!ok) {
+> +=09=09for (i =3D 0; i < (HGT_NUM_HUE_AREAS * 2) - 1; ++i) {
+> +=09=09=09if (value[i] > value[i+1])
+> +=09=09=09=09value[i] =3D value[i+1];
+> +=09=09}
+> +=09}
+
+I'm afraid this won't work. Let's assume value[0] =3D 100, value[1] =3D=
+ 50,=20
+value[2] =3D 25. The loop will unroll to
+
+=09if (value[0] /* 100 */ > value[1] /* 50 */)
+=09=09value[0] =3D value[1] /* 50 */;
+=09if (value[1] /* 50 */ > value[2] /* 25 */)
+=09=09value[1] =3D value[2] /* 25 */;
+
+You will end up with value[0] =3D 50, value[1] =3D 25, value[2] =3D 25,=
+ which=20
+doesn't match the hardware constraints.
+
+How about the following, which tests and fixes the values in a single=20=
+
+operation ?
+
+static int hgt_hue_areas_s_ctrl(struct v4l2_ctrl *ctrl)
+{
+=09struct vsp1_hgt *hgt =3D container_of(ctrl->handler, struct vsp1_hgt=
+,
+=09=09=09=09=09    ctrls);
+=09u8 *values =3D ctrl->p_new.p_u8;
+=09unsigned int i;
+       =20
+=09/*
+=09 * Adjust the values if they don't meet the hardware constraints:
+=09 *
+=09 * 0U <=3D 1L <=3D 1U <=3D 2L <=3D 2U <=3D 3L <=3D 3U <=3D 4L <=3D 4=
+U <=3D 5L <=3D 5U
+=09 */=20
+=09for (i =3D 1; i < (HGT_NUM_HUE_AREAS * 2) - 1; ++i) {
+=09=09if (values[i] > values[i+1])
+=09=09=09values[i+1] =3D values[i];
+=09}
+       =20
+=09/* 0L <=3D 0U or 5U <=3D 0L */
+=09if (values[0] > values[1] && values[11] > values[0])
+=09=09values[0] =3D values[1];
+       =20
+=09memcpy(hgt->hue_areas, ctrl->p_new.p_u8, sizeof(hgt->hue_areas));
+
+=09return 0;
+}
+
+I'm also beginning to wonder whether it wouldn't make sense to return -=
+EINVAL=20
+when the values don't match the constraints instead of trying to fix th=
+em.
+
+> +=09memcpy(hgt->hue_areas, ctrl->p_new.p_u8, sizeof(hgt->hue_areas));=
+
+> +
+> +=09return 0;
+> +}
+
+[snip]
+
+--=20
 Regards,
-Niklas S�derlund
+
+Laurent Pinchart
