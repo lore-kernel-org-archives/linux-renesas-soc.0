@@ -1,67 +1,54 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran@bingham.xyz>
-Subject: [PATCH v3 01/10] v4l: ioctl: Clear the v4l2_pix_format_mplane reserved field
-Date: Thu,  8 Sep 2016 01:25:01 +0300
-Message-Id: <1473287110-780-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1473287110-780-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1473287110-780-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57033 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756483AbcIGHlr (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 7 Sep 2016 03:41:47 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/3] ARM: debug-ll: Add support for r8a7992
+Date: Wed,  7 Sep 2016 09:41:37 +0200
+Message-Id: <aedc53a9590b82860cde67e5460a171dadf362bb.1473233986.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473233986.git.horms+renesas@verge.net.au>
+References: <cover.1473233986.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The S_FMT and TRY_FMT handlers in multiplane mode attempt at clearing
-the reserved fields of the v4l2_format structure after the pix_mp
-member. However, the reserved fields are inside pix_mp, not after it.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Kieran Bingham <kieran@bingham.xyz>
+Enable low-level debugging support for R-Car V2H (r8a7792).
+V2H uses SCIF0 for the debug console, like most other R-Car Gen2 SoCs.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/v4l2-core/v4l2-ioctl.c | 8 ++++----
+ arch/arm/Kconfig.debug | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index eb6ccc70e9a8..c52d94c018bb 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1504,7 +1504,7 @@ static int v4l_s_fmt(const struct v4l2_ioctl_ops *ops,
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
- 		if (unlikely(!is_rx || !is_vid || !ops->vidioc_s_fmt_vid_cap_mplane))
- 			break;
--		CLEAR_AFTER_FIELD(p, fmt.pix_mp);
-+		CLEAR_AFTER_FIELD(p, fmt.pix_mp.xfer_func);
- 		return ops->vidioc_s_fmt_vid_cap_mplane(file, fh, arg);
- 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
- 		if (unlikely(!is_rx || !is_vid || !ops->vidioc_s_fmt_vid_overlay))
-@@ -1532,7 +1532,7 @@ static int v4l_s_fmt(const struct v4l2_ioctl_ops *ops,
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
- 		if (unlikely(!is_tx || !is_vid || !ops->vidioc_s_fmt_vid_out_mplane))
- 			break;
--		CLEAR_AFTER_FIELD(p, fmt.pix_mp);
-+		CLEAR_AFTER_FIELD(p, fmt.pix_mp.xfer_func);
- 		return ops->vidioc_s_fmt_vid_out_mplane(file, fh, arg);
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
- 		if (unlikely(!is_tx || !is_vid || !ops->vidioc_s_fmt_vid_out_overlay))
-@@ -1589,7 +1589,7 @@ static int v4l_try_fmt(const struct v4l2_ioctl_ops *ops,
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
- 		if (unlikely(!is_rx || !is_vid || !ops->vidioc_try_fmt_vid_cap_mplane))
- 			break;
--		CLEAR_AFTER_FIELD(p, fmt.pix_mp);
-+		CLEAR_AFTER_FIELD(p, fmt.pix_mp.xfer_func);
- 		return ops->vidioc_try_fmt_vid_cap_mplane(file, fh, arg);
- 	case V4L2_BUF_TYPE_VIDEO_OVERLAY:
- 		if (unlikely(!is_rx || !is_vid || !ops->vidioc_try_fmt_vid_overlay))
-@@ -1617,7 +1617,7 @@ static int v4l_try_fmt(const struct v4l2_ioctl_ops *ops,
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
- 		if (unlikely(!is_tx || !is_vid || !ops->vidioc_try_fmt_vid_out_mplane))
- 			break;
--		CLEAR_AFTER_FIELD(p, fmt.pix_mp);
-+		CLEAR_AFTER_FIELD(p, fmt.pix_mp.xfer_func);
- 		return ops->vidioc_try_fmt_vid_out_mplane(file, fh, arg);
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_OVERLAY:
- 		if (unlikely(!is_tx || !is_vid || !ops->vidioc_try_fmt_vid_out_overlay))
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index a9693b6987a6..88440f63c31e 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -861,12 +861,12 @@ choice
+ 		  via SCIF2 on Renesas R-Car H1 (R8A7779).
+ 
+ 	config DEBUG_RCAR_GEN2_SCIF0
+-		bool "Kernel low-level debugging messages via SCIF0 on R8A7790/R8A7791/R8A7793"
+-		depends on ARCH_R8A7790 || ARCH_R8A7791 || ARCH_R8A7793
++		bool "Kernel low-level debugging messages via SCIF0 on R8A7790/R8A7791/R8A7792/R8A7793"
++		depends on ARCH_R8A7790 || ARCH_R8A7791 || ARCH_R8A7792 || ARCH_R8A7793
+ 		help
+ 		  Say Y here if you want kernel low-level debugging support
+-		  via SCIF0 on Renesas R-Car H2 (R8A7790), M2-W (R8A7791), or
+-		  M2-N (R8A7793).
++		  via SCIF0 on Renesas R-Car H2 (R8A7790), M2-W (R8A7791), V2H
++		  (R8A7792), or M2-N (R8A7793).
+ 
+ 	config DEBUG_RCAR_GEN2_SCIF2
+ 		bool "Kernel low-level debugging messages via SCIF2 on R8A7794"
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
