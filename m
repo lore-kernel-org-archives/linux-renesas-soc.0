@@ -1,57 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:8339 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754784AbcIHO1g (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57230 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933905AbcIGHuY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 10:27:36 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-CC: "David S . Miller" <davem@davemloft.net>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        Wed, 7 Sep 2016 03:50:24 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Daniel Palmer <daniel@0x0f.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] net: ethernet: renesas: sh_eth: do not access POST
- registers if not exist
-Date: Thu, 8 Sep 2016 14:27:31 +0000
-Message-ID: <SG2PR06MB116564DD88FD22D59E7174008AFB0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20160826200107.20681-1-chris.brandt@renesas.com>
- <87690577-4526-ce66-6ce3-68ac8b20e737@cogentembedded.com>
- <SG2PR06MB11653F9E20F38972CA11EF328AE10@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <f456cca3-289c-67dc-f15c-5b475553cdde@cogentembedded.com>
- <SG2PR06MB1165DAEF1E16FFA7E2DC49308AE00@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdXhSUbP+81K_1vRxvkqecQM2Pn0z5dPOmBQAfqBykdxGg@mail.gmail.com>
-In-Reply-To: <CAMuHMdXhSUbP+81K_1vRxvkqecQM2Pn0z5dPOmBQAfqBykdxGg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 04/26] ARM: dts: r8a7790: Remove obsolete vsp1 properties
+Date: Wed,  7 Sep 2016 09:49:51 +0200
+Message-Id: <7b2d7a214708e06d89fd8019aa6f3acf744a3446.1473234371.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
+References: <cover.1473234371.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-QXMgYSBmb2xsb3cgdXAgb24gdGhpcyB0aHJlYWQ6DQoNCg0KT24gOC8zMC8yMDE2LCBHZWVydCBV
-eXR0ZXJob2V2ZW4gd3JvdGU6DQo+ID4gSSBqdXN0IGxvb2tlZCBhdCB0aGUgUlovQTEgcmVnaXN0
-ZXIgc3BhY2UgYW5kIHRoZXJlIHNlZW1zIHRvIGJlIGR1bW15DQo+ID4gcmVnaXN0ZXJzIGluIHRo
-ZSBQT1NUMS00IGFyZWEuIEkgY2FuIHdyaXRlIHRvIHRoZW0gYW5kIHJlYWQgYmFjayB3aGF0IEkN
-Cj4gPiB3cm90ZS4uLndoaWNoIGlzIGFsbCB0aGF0IHRoZSBzaF9ldGggZHJpdmVyIGNhcmVzIGFi
-b3V0LiBJIGJldCB3aGVuIHRoZQ0KPiA+IGRlc2lnbmVycyBicmluZyBpbiB0aGUgRXRoZXJDIElQ
-IGJsb2NrLCB0aGUgZW50aXJlIHJlZ2lzdGVyIGFkZHJlc3MgaXMNCj4gPiBhbHdheXMgcG9wdWxh
-dGVkIHdpdGggYSBzaW1wbGUgbGF0Y2ggcmVnaXN0ZXJzLiBBbmQgdGhlbiwgaWYgYSBmZWF0dXJl
-IGlzDQo+ID4gbm90IGluY2x1ZGVkIChsaWtlIHJlbGF5L1BPU1QpLCB0aGVuIG5vdGhpbmcgaXMg
-aG9va2VkIHVwIG9uIHRoZSBiYWNrIHNpZGUNCj4gPiBvZiBpdC4NCj4gDQo+IFdoYXQgYSB3YXN0
-ZSBvZiB0cmFuc2lzdG9ycy4uLg0KPiBUaGVyZSBhcmUgcGxlbnR5IG9mIGhpZGRlbiByZWdpc3Rl
-cnMgaW4gbWFueSBJUCBibG9ja3MuDQoNCldlbGwgR2VlcnQsIHR1cm5zIG91dCB0aG9zZSB0cmFu
-c2lzdG9ycyB3ZXJlbid0IHdhc3RlZC4gVGhleSBhcmUgdGhlcmUuLi5hbmQgaW4gZmFjdCBhcmUg
-bmVlZCB0byBhY3R1YWxseSBtYWtlIHRoZSBzeXN0ZW0gd29yayBjb3JyZWN0bHkuDQoNCkFmdGVy
-IHNvbWUgaW52ZXN0aWdhdGlvbiwgbG9va3MgbGlrZSB3aGVuIHNvbWVvbmUgd2FzIGN1dHRpbmcg
-b3V0IHVuLW5lZWRlZCBwYWdlcyB0byBtYWtlIHRoZSBSWi9BMSBoYXJkd2FyZSBtYW51YWwgdGhl
-eSBtaXN1bmRlcnN0b29kIHdoYXQgdGhvc2UgcmVnaXN0ZXJzIHdlcmUgZm9yLg0KDQpJbiByZWFs
-aXR5LCB0aGV5IGp1c3QgbmVlZGVkIHRvIGNvcHkgdGhlIHBhZ2VzIGZyb20gdGhlIFNINzczNCBI
-YXJkd2FyZSBtYW51YWwgZm9yIHRoZSBQT1NUMS00LiBBbHNvLCBpZiB5b3UgcmVhZCBhYm91dCB0
-aGUgVFNVIGNsb3NlbHkgeW91J2xsIHNlZSB0aGF0IHlvdSBhbHNvIG5lZWQgcmVnaXN0ZXIgRldT
-TEMgdG8gYWN0dWFsbHkgZW5hYmxlIHRoZSBQT1NUMS00IHJlZ2lzdGVycyAobW9yZSBvciBsZXNz
-KS4NCg0KDQpJJ3ZlIGFscmVhZHkgc3VibWl0dGVkIGEgdjIgcGF0Y2ggd2hpY2ggc2hvdWxkIGJl
-IHByZXR0eSBzdHJhaWdodCBmb3J3YXJkIG5vdy4NCg0KDQpDaHJpcw0KDQo=
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+
+As of commit 5aa2eb3c86d4fd16 ("[media] v4l: vsp1: Configure device
+based on IP version"), the DT properties to identify the exact VSP
+device instance features are no longer used. Hence remove them.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 23 -----------------------
+ 1 file changed, 23 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index d18558f21102..351fcc2f87df 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -944,11 +944,6 @@
+ 		interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_R>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+-
+-		renesas,has-sru;
+-		renesas,#rpf = <5>;
+-		renesas,#uds = <1>;
+-		renesas,#wpf = <4>;
+ 	};
+ 
+ 	vsp1@fe928000 {
+@@ -957,12 +952,6 @@
+ 		interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_S>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+-
+-		renesas,has-lut;
+-		renesas,has-sru;
+-		renesas,#rpf = <5>;
+-		renesas,#uds = <3>;
+-		renesas,#wpf = <4>;
+ 	};
+ 
+ 	vsp1@fe930000 {
+@@ -971,12 +960,6 @@
+ 		interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_DU0>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+-
+-		renesas,has-lif;
+-		renesas,has-lut;
+-		renesas,#rpf = <4>;
+-		renesas,#uds = <1>;
+-		renesas,#wpf = <4>;
+ 	};
+ 
+ 	vsp1@fe938000 {
+@@ -985,12 +968,6 @@
+ 		interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_DU1>;
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+-
+-		renesas,has-lif;
+-		renesas,has-lut;
+-		renesas,#rpf = <4>;
+-		renesas,#uds = <1>;
+-		renesas,#wpf = <4>;
+ 	};
+ 
+ 	du: display@feb00000 {
+-- 
+2.7.0.rc3.207.g0ac5344
