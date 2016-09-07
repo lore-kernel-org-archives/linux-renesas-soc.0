@@ -1,89 +1,130 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:52653 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756255AbcILUuv (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56946 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756475AbcIGHlR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Sep 2016 16:50:51 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Wed, 7 Sep 2016 03:41:17 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v2 4/7] spi: Document SPI slave controller support
-Date: Mon, 12 Sep 2016 22:50:43 +0200
-Message-Id: <1473713446-30366-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1473713446-30366-1-git-send-email-geert+renesas@glider.be>
-References: <1473713446-30366-1-git-send-email-geert+renesas@glider.be>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] ARM: shmobile: fix regulator quirk for Gen2
+Date: Wed,  7 Sep 2016 09:41:09 +0200
+Message-Id: <c2f321126e31cd69365e65ecd4a7c774e4fc71d2.1473232298.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473232298.git.horms+renesas@verge.net.au>
+References: <cover.1473232298.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- Documentation/spi/spi-summary | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/Documentation/spi/spi-summary b/Documentation/spi/spi-summary
-index d1824b399b2d1d79..1721c1b570c32466 100644
---- a/Documentation/spi/spi-summary
-+++ b/Documentation/spi/spi-summary
-@@ -62,8 +62,8 @@ chips described as using "three wire" signaling: SCK, data, nCSx.
- (That data line is sometimes called MOMI or SISO.)
+The current implementation only works if the da9xxx devices are added
+before their drivers are registered. Only then it can apply the fixes to
+both devices. Otherwise, the driver for the first device gets probed
+before the fix for the second device can be applied. This is what
+fails when using the IP core switcher or when having the i2c master
+driver as a module.
+
+So, we need to disable both da9xxx once we detected one of them. We now
+use i2c_transfer with hardcoded i2c_messages and device addresses, so we
+don't need the da9xxx client devices to be instantiated. Because the
+fixup is used on specific boards only, the addresses are not going to
+change.
+
+Fixes: 663fbb52159cca ("ARM: shmobile: R-Car Gen2: Add da9063/da9210 regulator quirk")
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be> (r8a7791/koelsch)
+Tested-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 62 +++++++++-------------
+ 1 file changed, 26 insertions(+), 36 deletions(-)
+
+diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+index 62437b57813e..73e3adbc1330 100644
+--- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+@@ -41,39 +41,26 @@
  
- Microcontrollers often support both master and slave sides of the SPI
--protocol.  This document (and Linux) currently only supports the master
--side of SPI interactions.
-+protocol.  This document (and Linux) supports both the master and slave
-+sides of SPI interactions.
+ #define REGULATOR_IRQ_MASK	BIT(2)	/* IRQ2, active low */
  
+-static void __iomem *irqc;
+-
+-static const u8 da9063_mask_regs[] = {
+-	DA9063_REG_IRQ_MASK_A,
+-	DA9063_REG_IRQ_MASK_B,
+-	DA9063_REG_IRQ_MASK_C,
+-	DA9063_REG_IRQ_MASK_D,
+-};
+-
+-/* DA9210 System Control and Event Registers */
++/* start of DA9210 System Control and Event Registers */
+ #define DA9210_REG_MASK_A		0x54
+-#define DA9210_REG_MASK_B		0x55
+-
+-static const u8 da9210_mask_regs[] = {
+-	DA9210_REG_MASK_A,
+-	DA9210_REG_MASK_B,
+-};
+-
+-static void da9xxx_mask_irqs(struct i2c_client *client, const u8 regs[],
+-			     unsigned int nregs)
+-{
+-	unsigned int i;
  
- Who uses it?  On what kinds of systems?
-@@ -154,9 +154,8 @@ control audio interfaces, present touchscreen sensors as input interfaces,
- or monitor temperature and voltage levels during industrial processing.
- And those might all be sharing the same controller driver.
+-	dev_info(&client->dev, "Masking %s interrupt sources\n", client->name);
++static void __iomem *irqc;
  
--A "struct spi_device" encapsulates the master-side interface between
--those two types of driver.  At this writing, Linux has no slave side
--programming interface.
-+A "struct spi_device" encapsulates the controller-side interface between
-+those two types of drivers.
- 
- There is a minimal core of SPI programming interfaces, focussing on
- using the driver model to connect controller and protocol drivers using
-@@ -177,10 +176,24 @@ shows up in sysfs in several locations:
-    /sys/bus/spi/drivers/D ... driver for one or more spi*.* devices
- 
-    /sys/class/spi_master/spiB ... symlink (or actual device node) to
--	a logical node which could hold class related state for the
--	controller managing bus "B".  All spiB.* devices share one
-+	a logical node which could hold class related state for the SPI
-+	master controller managing bus "B".  All spiB.* devices share one
- 	physical SPI bus segment, with SCLK, MOSI, and MISO.
- 
-+   /sys/devices/.../CTLR/slave ... virtual file for (un)registering the
-+	slave device for an SPI slave controller.
-+	Writing the driver name of an SPI slave handler to this file
-+	registers the slave device; writing "(null)" unregisters the slave
-+	device.
-+	Reading from this file shows the name of the slave device ("(null)"
-+	if not registered).
+-	for (i = 0; i < nregs; i++) {
+-		int error = i2c_smbus_write_byte_data(client, regs[i], ~0);
+-		if (error) {
+-			dev_err(&client->dev, "i2c error %d\n", error);
+-			return;
+-		}
+-	}
+-}
++/* first byte sets the memory pointer, following are consecutive reg values */
++static u8 da9063_irq_clr[] = { DA9063_REG_IRQ_MASK_A, 0xff, 0xff, 0xff, 0xff };
++static u8 da9210_irq_clr[] = { DA9210_REG_MASK_A, 0xff, 0xff };
 +
-+   /sys/class/spi_slave/spiB ... symlink (or actual device node) to
-+	a logical node which could hold class related state for the SPI
-+	slave controller on bus "B".  When registered, a single spiB.*
-+	device is present here, possible sharing the physical SPI bus
-+	segment with other SPI slave devices.
++static struct i2c_msg da9xxx_msgs[2] = {
++	{
++		.addr = 0x58,
++		.len = ARRAY_SIZE(da9063_irq_clr),
++		.buf = da9063_irq_clr,
++	}, {
++		.addr = 0x68,
++		.len = ARRAY_SIZE(da9210_irq_clr),
++		.buf = da9210_irq_clr,
++	},
++};
+ 
+ static int regulator_quirk_notify(struct notifier_block *nb,
+ 				  unsigned long action, void *data)
+@@ -93,12 +80,15 @@ static int regulator_quirk_notify(struct notifier_block *nb,
+ 	client = to_i2c_client(dev);
+ 	dev_dbg(dev, "Detected %s\n", client->name);
+ 
+-	if ((client->addr == 0x58 && !strcmp(client->name, "da9063")))
+-		da9xxx_mask_irqs(client, da9063_mask_regs,
+-				 ARRAY_SIZE(da9063_mask_regs));
+-	else if (client->addr == 0x68 && !strcmp(client->name, "da9210"))
+-		da9xxx_mask_irqs(client, da9210_mask_regs,
+-				 ARRAY_SIZE(da9210_mask_regs));
++	if ((client->addr == 0x58 && !strcmp(client->name, "da9063")) ||
++	    (client->addr == 0x68 && !strcmp(client->name, "da9210"))) {
++		int ret;
 +
- Note that the actual location of the controller's class state depends
- on whether you enabled CONFIG_SYSFS_DEPRECATED or not.  At this time,
- the only class-specific state is the bus number ("B" in "spiB"), so
++		dev_info(&client->dev, "clearing da9063/da9210 interrupts\n");
++		ret = i2c_transfer(client->adapter, da9xxx_msgs, ARRAY_SIZE(da9xxx_msgs));
++		if (ret != ARRAY_SIZE(da9xxx_msgs))
++			dev_err(&client->dev, "i2c error %d\n", ret);
++	}
+ 
+ 	mon = ioread32(irqc + IRQC_MONITOR);
+ 	if (mon & REGULATOR_IRQ_MASK)
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
