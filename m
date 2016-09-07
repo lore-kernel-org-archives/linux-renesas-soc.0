@@ -1,107 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757899AbcIHHoM (ORCPT
+        with ESMTP id S1756483AbcIGHut (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 03:44:12 -0400
+        Wed, 7 Sep 2016 03:50:49 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 24/30] arm64: dts: h3ulcb: enable SDHI0
-Date: Thu,  8 Sep 2016 09:43:20 +0200
-Message-Id: <57094363192098bd798aab07851b702f563fb0a2.1473320411.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
-References: <cover.1473320411.git.horms+renesas@verge.net.au>
+Subject: [PATCH 15/26] ARM: dts: Add RSKRZA1 DT bindings documentation
+Date: Wed,  7 Sep 2016 09:50:02 +0200
+Message-Id: <16a304d8297245e4bc0e863395b8fea593d81e09.1473234372.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
+References: <cover.1473234371.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+From: Chris Brandt <chris.brandt@renesas.com>
 
-This supports SDHI0 on H3ULCB board SD card slot
+Add RSKRZA1 Device tree bindings Documentation, listing it as a supported
+board.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+This allows to use checkpatch to validate DTSes referring to the RSKRZA1
+board.
+
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 49 ++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index adf2b0e44dac..44f1184e1a14 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -44,6 +44,30 @@
- 			gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
- 		};
- 	};
-+
-+	vcc_sdhi0: regulator-vcc-sdhi0 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "SDHI0 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&gpio5 2 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	vccq_sdhi0: regulator-vccq-sdhi0 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI0 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
- };
- 
- &extal_clk {
-@@ -78,6 +102,18 @@
- 		function = "avb";
- 	};
- 
-+	sdhi0_pins_3v3: sd0_3v3 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi0_pins_1v8: sd0_1v8 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <1800>;
-+	};
-+
- 	usb1_pins: usb1 {
- 		groups = "usb1";
- 		function = "usb1";
-@@ -103,6 +139,19 @@
- 	status = "okay";
- };
- 
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins_3v3>;
-+	pinctrl-1 = <&sdhi0_pins_1v8>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&vcc_sdhi0>;
-+	vqmmc-supply = <&vccq_sdhi0>;
-+	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
-+	bus-width = <4>;
-+	sd-uhs-sdr50;
-+	status = "okay";
-+};
-+
- &wdt0 {
- 	timeout-sec = <60>;
- 	status = "okay";
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 90cf237ee558..5484c31d555f 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -63,6 +63,8 @@ Boards:
+     compatible = "renesas,marzen", "renesas,r8a7779"
+   - Porter (M2-LCDP)
+     compatible = "renesas,porter", "renesas,r8a7791"
++  - RSKRZA1 (YR0K77210C000BE)
++    compatible = "renesas,rskrza1", "renesas,r7s72100"
+   - Salvator-X (RTP0RC7795SIPB0010S)
+     compatible = "renesas,salvator-x", "renesas,r8a7795";
+   - Salvator-X
 -- 
 2.7.0.rc3.207.g0ac5344
