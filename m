@@ -1,38 +1,88 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1472637809-14858-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1472637712-14583-1-git-send-email-vladimir.barinov@cogentembedded.com>
- <1472637809-14858-1-git-send-email-vladimir.barinov@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 1 Sep 2016 10:21:12 +0200
-Message-ID: <CAMuHMdURf4Y043rb6R8_YGhjqUKPVHCwonBq3v68GPj+P2=5Uw@mail.gmail.com>
-Subject: Re: [PATCH v3 07/12] arm64: dts: h3ulcb: enable I2C2
-To: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756483AbcIGHu6 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 7 Sep 2016 03:50:58 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: devicetree-owner@vger.kernel.org
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 22/26] ARM: dts: wheat: add SDHI0 support
+Date: Wed,  7 Sep 2016 09:50:09 +0200
+Message-Id: <0c157ad23bb02fbda8b9cee82941d7c5ecac26f1.1473234372.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
+References: <cover.1473234371.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 31, 2016 at 12:03 PM, Vladimir Barinov
-<vladimir.barinov@cogentembedded.com> wrote:
-> This supports I2C2 bus on H3ULCB board
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Define the Wheat board dependent  part of  the SDHI0 (connected to the
+micro-SD slot)  device node along with the necessary voltage regulator.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7792-wheat.dts | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
+index 65d13c83d424..ff37de35c57c 100644
+--- a/arch/arm/boot/dts/r8a7792-wheat.dts
++++ b/arch/arm/boot/dts/r8a7792-wheat.dts
+@@ -11,6 +11,7 @@
+ 
+ /dts-v1/;
+ #include "r8a7792.dtsi"
++#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	model = "Wheat";
+@@ -54,6 +55,17 @@
+ 		pinctrl-0 = <&lan89218_pins>;
+ 		pinctrl-names = "default";
+ 	};
++
++	vcc_sdhi0: regulator-vcc-sdhi0 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "SDHI0 Vcc";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpio = <&gpio11 12 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
+ };
+ 
+ &extal_clk {
+@@ -86,6 +98,11 @@
+ 		groups = "can1_data";
+ 		function = "can1";
+ 	};
++
++	sdhi0_pins: sdhi0 {
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
++	};
+ };
+ 
+ &scif0 {
+@@ -108,3 +125,12 @@
+ 
+ 	status = "okay";
+ };
++
++&sdhi0 {
++	pinctrl-0 = <&sdhi0_pins>;
++	pinctrl-names = "default";
++
++	vmmc-supply = <&vcc_sdhi0>;
++	cd-gpios = <&gpio11 11 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
+-- 
+2.7.0.rc3.207.g0ac5344
