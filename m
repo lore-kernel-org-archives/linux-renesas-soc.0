@@ -1,44 +1,47 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran+renesas@bingham.xyz>
-Subject: [PATCH 14/13] v4l: vsp1: Fix spinlock in mixed IRQ context function
-Date: Wed, 14 Sep 2016 02:29:08 +0300
-Message-Id: <1473809348-5222-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754004AbcIGHuq (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 7 Sep 2016 03:50:46 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 12/26] ARM: dts: document Wheat board
+Date: Wed,  7 Sep 2016 09:49:59 +0200
+Message-Id: <e6835b3e7bc6552faab1667d44e8a6786f60c590.1473234371.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
+References: <cover.1473234371.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The wpf_configure() function can be called both from IRQ and non-IRQ
-contexts, use spin_lock_irqsave().
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Document the Wheat device tree bindings, listing it as a supported board.
+
+This allows to use checkpatch.pl to validate .dts files referring to the
+Wheat board.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/vsp1/vsp1_wpf.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
-index b4ecffbaa3e3..c483fead3e98 100644
---- a/drivers/media/platform/vsp1/vsp1_wpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-@@ -251,11 +251,12 @@ static void wpf_configure(struct vsp1_entity *entity,
- 	if (params == VSP1_ENTITY_PARAMS_RUNTIME) {
- 		const unsigned int mask = BIT(WPF_CTRL_VFLIP)
- 					| BIT(WPF_CTRL_HFLIP);
-+		unsigned long flags;
- 
--		spin_lock(&wpf->flip.lock);
-+		spin_lock_irqsave(&wpf->flip.lock, flags);
- 		wpf->flip.active = (wpf->flip.active & ~mask)
- 				 | (wpf->flip.pending & mask);
--		spin_unlock(&wpf->flip.lock);
-+		spin_unlock_irqrestore(&wpf->flip.lock, flags);
- 
- 		outfmt = (wpf->alpha << VI6_WPF_OUTFMT_PDV_SHIFT) | wpf->outfmt;
- 
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 1df32d339da5..90cf237ee558 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -69,3 +69,5 @@ Boards:
+     compatible = "renesas,salvator-x", "renesas,r8a7796";
+   - SILK (RTP0RC7794LCB00011S)
+     compatible = "renesas,silk", "renesas,r8a7794"
++  - Wheat
++    compatible = "renesas,wheat", "renesas,r8a7792"
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
