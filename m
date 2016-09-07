@@ -1,63 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757899AbcIHHoD (ORCPT
+        with ESMTP id S1756483AbcIGHu7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 03:44:03 -0400
+        Wed, 7 Sep 2016 03:50:59 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 17/30] arm64: dts: h3ulcb: enable I2C2
-Date: Thu,  8 Sep 2016 09:43:13 +0200
-Message-Id: <eb3f0f199fc48a813ee8f22212c91d5f8859ff79.1473320411.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
-References: <cover.1473320411.git.horms+renesas@verge.net.au>
+Subject: [PATCH 24/26] ARM: dts: r8a7792: add QSPI support
+Date: Wed,  7 Sep 2016 09:50:11 +0200
+Message-Id: <c9acea6efdd7b08bf80a3721a44970252935621b.1473234372.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
+References: <cover.1473234371.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This supports I2C2 bus on H3ULCB board
+Define the generic R8A7792 part of the QSPI device node.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Based  on the original (and large) patch by Vladimir Barinov
+<vladimir.barinov@cogentembedded.com>.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm/boot/dts/r8a7792.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index fb694b8c6f59..3ba1f72526ba 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -51,6 +51,11 @@
- 		function = "scif_clk";
- 	};
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 6ff3e365d56a..713141d38b3e 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -25,6 +25,7 @@
+ 		i2c3 = &i2c3;
+ 		i2c4 = &i2c4;
+ 		i2c5 = &i2c5;
++		spi0 = &qspi;
+ 		vin0 = &vin0;
+ 		vin1 = &vin1;
+ 		vin2 = &vin2;
+@@ -556,6 +557,21 @@
+ 			status = "disabled";
+ 		};
  
-+	i2c2_pins: i2c2 {
-+		groups = "i2c2_a";
-+		function = "i2c2";
-+	};
++		qspi: spi@e6b10000 {
++			compatible = "renesas,qspi-r8a7792", "renesas,qspi";
++			reg = <0 0xe6b10000 0 0x2c>;
++			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp9_clks R8A7792_CLK_QSPI_MOD>;
++			dmas = <&dmac0 0x17>, <&dmac0 0x18>,
++			       <&dmac1 0x17>, <&dmac1 0x18>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			num-cs = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
 +
- 	avb_pins: avb {
- 		groups = "avb_mdc";
- 		function = "avb";
-@@ -69,6 +74,13 @@
- 	status = "okay";
- };
- 
-+&i2c2 {
-+	pinctrl-0 = <&i2c2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &avb {
- 	pinctrl-0 = <&avb_pins>;
- 	pinctrl-names = "default";
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a7792";
+ 			reg = <0 0xfeb00000 0 0x40000>;
 -- 
 2.7.0.rc3.207.g0ac5344
