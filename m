@@ -1,56 +1,101 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:57015 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755129AbcIKVEN (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933438AbcIGHuk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 11 Sep 2016 17:04:13 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Wed, 7 Sep 2016 03:50:40 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 1/3] mmc: sh_mobile_sdhi: add ocr_mask option
-Date: Sun, 11 Sep 2016 17:03:26 -0400
-Message-Id: <20160911210328.30641-2-chris.brandt@renesas.com>
-In-Reply-To: <20160911210328.30641-1-chris.brandt@renesas.com>
-References: <20160911210328.30641-1-chris.brandt@renesas.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 06/26] ARM: dts: blanche: add support for general purpose switches
+Date: Wed,  7 Sep 2016 09:49:53 +0200
+Message-Id: <1c7f349a896330b05754fd63938c9b1218e35c73.1473234371.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
+References: <cover.1473234371.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In moving platforms from board files to DT, there still needs to be a way
-to set the ocr_mask setting for the tmio driver during probe. Without this
-setting, the probe will fail because the supported voltages are not known.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-This patch will also traditional platform registration platforms to
-migrate to DT.
+Add support  for the  general purpose  software switches  SW2 and tactile
+switches SW24/25 as a virtual keyboard (like it was done with the Lager/
+Koelsch boards).
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/mmc/host/sh_mobile_sdhi.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/r8a7792-blanche.dts | 49 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
 
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index 5334f24..b033500 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -59,6 +59,7 @@ enum tmio_mmc_dmac_type {
+diff --git a/arch/arm/boot/dts/r8a7792-blanche.dts b/arch/arm/boot/dts/r8a7792-blanche.dts
+index eeffba870211..808a6aab7e5e 100644
+--- a/arch/arm/boot/dts/r8a7792-blanche.dts
++++ b/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -11,6 +11,8 @@
  
- struct sh_mobile_sdhi_of_data {
- 	unsigned long tmio_flags;
-+	u32	      tmio_ocr_mask;
- 	unsigned long capabilities;
- 	unsigned long capabilities2;
- 	enum dma_slave_buswidth dma_buswidth;
-@@ -630,6 +631,7 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
- 		const struct sh_mobile_sdhi_of_data *of_data = of_id->data;
+ /dts-v1/;
+ #include "r8a7792.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
  
- 		mmc_data->flags |= of_data->tmio_flags;
-+		mmc_data->ocr_mask = of_data->tmio_ocr_mask;
- 		mmc_data->capabilities |= of_data->capabilities;
- 		mmc_data->capabilities2 |= of_data->capabilities2;
- 		mmc_data->dma_rx_offset = of_data->dma_rx_offset;
+ / {
+ 	model = "Blanche";
+@@ -54,6 +56,53 @@
+ 		pinctrl-0 = <&lan89218_pins>;
+ 		pinctrl-names = "default";
+ 	};
++
++	keyboard {
++		compatible = "gpio-keys";
++
++		key-1 {
++			linux,code = <KEY_1>;
++			label = "SW2-1";
++			wakeup-source;
++			debounce-interval = <20>;
++			gpios = <&gpio3 10 GPIO_ACTIVE_LOW>;
++		};
++		key-2 {
++			linux,code = <KEY_2>;
++			label = "SW2-2";
++			wakeup-source;
++			debounce-interval = <20>;
++			gpios = <&gpio3 11 GPIO_ACTIVE_LOW>;
++		};
++		key-3 {
++			linux,code = <KEY_3>;
++			label = "SW2-3";
++			wakeup-source;
++			debounce-interval = <20>;
++			gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
++		};
++		key-4 {
++			linux,code = <KEY_4>;
++			label = "SW2-4";
++			wakeup-source;
++			debounce-interval = <20>;
++			gpios = <&gpio3 15 GPIO_ACTIVE_LOW>;
++		};
++		key-a {
++			linux,code = <KEY_A>;
++			label = "SW24";
++			wakeup-source;
++			debounce-interval = <20>;
++			gpios = <&gpio3 20 GPIO_ACTIVE_LOW>;
++		};
++		key-b {
++			linux,code = <KEY_B>;
++			label = "SW25";
++			wakeup-source;
++			debounce-interval = <20>;
++			gpios = <&gpio11 2 GPIO_ACTIVE_LOW>;
++		};
++	};
+ };
+ 
+ &extal_clk {
 -- 
-2.9.2
+2.7.0.rc3.207.g0ac5344
