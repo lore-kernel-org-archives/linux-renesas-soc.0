@@ -1,70 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:33289 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753673AbcIUIxC (ORCPT
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:32783 "EHLO
+        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750727AbcIGWIq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Sep 2016 04:53:02 -0400
+        Wed, 7 Sep 2016 18:08:46 -0400
+Received: by mail-oi0-f45.google.com with SMTP id y2so46277868oie.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 07 Sep 2016 15:08:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1474367287-10402-3-git-send-email-jonathanh@nvidia.com>
-References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com> <1474367287-10402-3-git-send-email-jonathanh@nvidia.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 21 Sep 2016 10:53:01 +0200
-Message-ID: <CAMuHMdVc+EjkbcpPKyzbCfDjp65gF3xP3bhkjh6SKLt6KDTtXg@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] PM / Domains: Add support for devices with
- multiple domains
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+In-Reply-To: <1473158139-8291-1-git-send-email-horms+renesas@verge.net.au>
+References: <1473158139-8291-1-git-send-email-horms+renesas@verge.net.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 8 Sep 2016 00:08:45 +0200
+Message-ID: <CACRpkdaq+Wfh2hXT9xuAuoSisr8bbiMpHCLCQdM-xvcefUEFuw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: rcar: Add r8a7796 (R-Car M3-W) support
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Alexandre Courbot <gnurou@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jon,
+On Tue, Sep 6, 2016 at 12:35 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
 
-On Tue, Sep 20, 2016 at 12:28 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
-> Some devices may require more than one PM domain to operate and this is
-> not currently by the PM domain framework. Furthermore, the current Linux
-> 'device' structure only allows devices to be associated with a single PM
-> domain and so cannot easily be associated with more than one. To allow
-> devices to be associated with more than one PM domain, if multiple
-> domains are defined for a given device (eg. via device-tree), then:
-> 1. Create a new PM domain for this device. The name of the new PM domain
->    created matches the device name for which it was created for.
-> 2. Register the new PM domain as a sub-domain for all PM domains
->    required by the device.
-> 3. Attach the device to the new PM domain.
+> R-Car Gen3's GPIO blocks are identical to Gen2's in every respect.
+>
+> Based on work for the r8a7795 (R-Car H3) by Ulrich Hecht.
+>
+> Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-This looks a suboptimal to me: if you have n devices sharing the same PM
-domains, you would add n new subdomains?
+Patch applied.
 
-Having a clean way to specify multiple PM domains is very useful, though.
-
-E.g. on Renesas ARM SoCs, devices are usually part of two PM domains:
-  1. A power area (can be "always-on",
-  2. The clock domain.
-
-As power areas and clock domains are fairly orthogonal (the former use the
-.power_{off,on}() callbacks, the latter set GENPD_FLAG_PM_CLK and use the
-{at,de}tach_dev() callbacks), we currently setup both in the same driver
-(SYSC, for controlling power areas), which forwards the clock domain operations
-to the clock driver (CPG/MSTP or CPG/MSSR).
-Hence we have only single references in the power-domains properties, but
-having two would allow to drop the hardcoded links between the two drivers.
-
-(Oh no, more DT backwards compatibility issues if this is accepted ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
