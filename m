@@ -1,55 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757899AbcIHHoE (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:53098 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751952AbcIGMrt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 03:44:04 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 22/30] arm64: dts: r8a7795: remove unnecessary cap-mmc-highspeed property
-Date: Thu,  8 Sep 2016 09:43:18 +0200
-Message-Id: <56de959f533f5138f1cd5aaa4706e1831c479e28.1473320411.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
-References: <cover.1473320411.git.horms+renesas@verge.net.au>
+        Wed, 7 Sep 2016 08:47:49 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        corbet@lwn.net, mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        hans.verkuil@cisco.com
+Subject: Re: [PATCHv3 2/2] v4l: vsp1: Add HGT support
+Date: Wed, 07 Sep 2016 15:48:19 +0300
+Message-ID: <3579545.u5RR9atB6T@avalon>
+In-Reply-To: <20160907120938.818-3-niklas.soderlund+renesas@ragnatech.se>
+References: <20160907120938.818-1-niklas.soderlund+renesas@ragnatech.se> <20160907120938.818-3-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Remove cap-mmc-highspeed property from SDHI2 and SDHI3.
+Hi Niklas,
 
-This property is unnecessary as the driver automatically sets
-the highspeed capability. Furthermore its use is inconsistent with SDHI0
-and SDHI1 which are also highspeed capable but do not have this property
-present.
+Thank you for the patch.
 
-Found by inspection.
+On Wednesday 07 Sep 2016 14:09:38 Niklas S=F6derlund wrote:
+> The HGT is a Histogram Generator Two-Dimensions. It computes a weight=
+ed
+> frequency histograms for hue and saturation areas over a configurable=
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+> region of the image with optional subsampling.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
+.se>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 64899b556a0e..8c15040f2540 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1122,7 +1122,6 @@
- 			clocks = <&cpg CPG_MOD 312>;
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
--			cap-mmc-highspeed;
- 			status = "disabled";
- 		};
- 
-@@ -1133,7 +1132,6 @@
- 			clocks = <&cpg CPG_MOD 311>;
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
--			cap-mmc-highspeed;
- 			status = "disabled";
- 		};
- 
--- 
-2.7.0.rc3.207.g0ac5344
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+However, please note that we might need to upstream HGT support before =
+HGO. To=20
+ease that, I've split the HGO patches in common code and HGO-specific c=
+ode,=20
+and rebased your patch on top of that. The result is available at
+
+=09git://linuxtv.org/pinchartl/media.git vsp1/next
+
+There will still be conflicts if we need to reorder the patches, but th=
+ey=20
+should be easier to handle now.
+
+> ---
+>  drivers/media/platform/vsp1/Makefile      |   2 +-
+>  drivers/media/platform/vsp1/vsp1.h        |   3 +
+>  drivers/media/platform/vsp1/vsp1_drv.c    |  33 ++++-
+>  drivers/media/platform/vsp1/vsp1_entity.c |  33 +++--
+>  drivers/media/platform/vsp1/vsp1_entity.h |   1 +
+>  drivers/media/platform/vsp1/vsp1_hgt.c    | 221 ++++++++++++++++++++=
++++++++
+>  drivers/media/platform/vsp1/vsp1_hgt.h    |  42 ++++++
+>  drivers/media/platform/vsp1/vsp1_pipe.c   |  16 +++
+>  drivers/media/platform/vsp1/vsp1_pipe.h   |   2 +
+>  drivers/media/platform/vsp1/vsp1_regs.h   |   9 ++
+>  drivers/media/platform/vsp1/vsp1_video.c  |  10 +-
+>  11 files changed, 356 insertions(+), 16 deletions(-)
+>  create mode 100644 drivers/media/platform/vsp1/vsp1_hgt.c
+>  create mode 100644 drivers/media/platform/vsp1/vsp1_hgt.h
+
+--=20
+Regards,
+
+Laurent Pinchart
