@@ -1,104 +1,84 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: joe@perches.com, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 23/26] sh_eth: constify local structures
-Date: Sun, 11 Sep 2016 15:06:05 +0200
-Message-Id: <1473599168-30561-24-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933951AbcIGHua (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 7 Sep 2016 03:50:30 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/26] ARM: dts: alt: add MMCIF support
+Date: Wed,  7 Sep 2016 09:49:50 +0200
+Message-Id: <e6ed3f533d54a92f8d67d301f9209ca64d593e03.1473234371.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
+References: <cover.1473234371.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-For structure types defined in the same file or local header files, find
-top-level static structure declarations that have the following
-properties:
-1. Never reassigned.
-2. Address never taken
-3. Not passed to a top-level macro call
-4. No pointer or array-typed field passed to a function or stored in a
-variable.
-Declare structures having all of these properties as const.
+Define the Alt board dependent part of the MMCIF device node.
 
-Done using Coccinelle.
-Based on a suggestion by Joe Perches <joe@perches.com>.
+Like the Silk the board has eMMC chip along with the  necessary voltage
+regulator (note that the Vcc/Vccq regulator is dummy -- it's required by
+the MMCIF driver but doesn't actually exist on the board).
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Based on work for the Silk board by Vladimir Barinov and Sergei Shtylyov.
 
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-The semantic patch seems too long for a commit log, but is in the cover
-letter.
+ arch/arm/boot/dts/r8a7794-alt.dts | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
- drivers/net/ethernet/renesas/sh_eth.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 1f8240a..d2ed57f 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -654,7 +654,7 @@ static void sh_eth_set_rate_sh7724(struct net_device *ndev)
- }
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index fe7c128cc965..8d1b35afaf82 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -30,6 +30,15 @@
+ 		reg = <0 0x40000000 0 0x40000000>;
+ 	};
  
- /* SH7724 */
--static struct sh_eth_cpu_data sh7724_data = {
-+static const struct sh_eth_cpu_data sh7724_data = {
- 	.set_duplex	= sh_eth_set_duplex,
- 	.set_rate	= sh_eth_set_rate_sh7724,
++	d3_3v: regulator-d3-3v {
++		compatible = "regulator-fixed";
++		regulator-name = "D3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
+ 	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
  
-@@ -692,7 +692,7 @@ static void sh_eth_set_rate_sh7757(struct net_device *ndev)
- }
+@@ -190,6 +199,11 @@
+ 		function = "vin0";
+ 	};
  
- /* SH7757 */
--static struct sh_eth_cpu_data sh7757_data = {
-+static const struct sh_eth_cpu_data sh7757_data = {
- 	.set_duplex	= sh_eth_set_duplex,
- 	.set_rate	= sh_eth_set_rate_sh7757,
- 
-@@ -757,7 +757,7 @@ static void sh_eth_set_rate_giga(struct net_device *ndev)
- }
- 
- /* SH7757(GETHERC) */
--static struct sh_eth_cpu_data sh7757_data_giga = {
-+static const struct sh_eth_cpu_data sh7757_data_giga = {
- 	.chip_reset	= sh_eth_chip_reset_giga,
- 	.set_duplex	= sh_eth_set_duplex,
- 	.set_rate	= sh_eth_set_rate_giga,
-@@ -788,7 +788,7 @@ static struct sh_eth_cpu_data sh7757_data_giga = {
++	mmcif0_pins: mmcif0 {
++		groups = "mmc_data8", "mmc_ctrl";
++		function = "mmc";
++	};
++
+ 	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
+@@ -228,6 +242,17 @@
+ 	};
  };
  
- /* SH7734 */
--static struct sh_eth_cpu_data sh7734_data = {
-+static const struct sh_eth_cpu_data sh7734_data = {
- 	.chip_reset	= sh_eth_chip_reset,
- 	.set_duplex	= sh_eth_set_duplex,
- 	.set_rate	= sh_eth_set_rate_gether,
-@@ -817,7 +817,7 @@ static struct sh_eth_cpu_data sh7734_data = {
- };
- 
- /* SH7763 */
--static struct sh_eth_cpu_data sh7763_data = {
-+static const struct sh_eth_cpu_data sh7763_data = {
- 	.chip_reset	= sh_eth_chip_reset,
- 	.set_duplex	= sh_eth_set_duplex,
- 	.set_rate	= sh_eth_set_rate_gether,
-@@ -844,7 +844,7 @@ static struct sh_eth_cpu_data sh7763_data = {
- 	.irq_flags	= IRQF_SHARED,
- };
- 
--static struct sh_eth_cpu_data sh7619_data = {
-+static const struct sh_eth_cpu_data sh7619_data = {
- 	.register_type	= SH_ETH_REG_FAST_SH3_SH2,
- 
- 	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003fffff,
-@@ -855,7 +855,7 @@ static struct sh_eth_cpu_data sh7619_data = {
- 	.hw_swap	= 1,
- };
- 
--static struct sh_eth_cpu_data sh771x_data = {
-+static const struct sh_eth_cpu_data sh771x_data = {
- 	.register_type	= SH_ETH_REG_FAST_SH3_SH2,
- 
- 	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003fffff,
++&mmcif0 {
++	pinctrl-0 = <&mmcif0_pins>;
++	pinctrl-names = "default";
++
++	vmmc-supply = <&d3_3v>;
++	vqmmc-supply = <&d3_3v>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
++};
++
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+ 	pinctrl-names = "default";
+-- 
+2.7.0.rc3.207.g0ac5344
