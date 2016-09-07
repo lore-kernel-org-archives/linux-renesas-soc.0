@@ -1,137 +1,89 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35297 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761737AbcINQqD (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Sep 2016 12:46:03 -0400
-Received: by mail-wm0-f68.google.com with SMTP id 133so1329374wmq.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2016 09:46:02 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: horms@verge.net.au, magnus.damm@gmail.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 2/3] arm64: renesas: r8a7796: add SYS-DMAC controller nodes
-Date: Wed, 14 Sep 2016 18:45:48 +0200
-Message-Id: <20160914164549.31121-3-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <20160914164549.31121-1-ulrich.hecht+renesas@gmail.com>
-References: <20160914164549.31121-1-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <1473207949.2307.1.camel@intel.com>
+Subject: Re: [Thermal] Need confirmation for the pending thermal soc patches
+From: Zhang Rui <rui.zhang@intel.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Eduardo Valentin <edubezval@gmail.com>
+Cc: Linux PM list <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Dirk Behme <dirk.behme@de.bosch.com>
+Date: Wed, 07 Sep 2016 08:25:49 +0800
+In-Reply-To: <CAMuHMdVxCyy+ULdnzWTBFuCrP4E77H7JxS25QL_RSeOgtV5bVQ@mail.gmail.com>
+References: <1471788540.2188.19.camel@intel.com>
+         <20160905131600.GA24253@localhost.localdomain>
+         <CAMuHMdVxCyy+ULdnzWTBFuCrP4E77H7JxS25QL_RSeOgtV5bVQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 99 ++++++++++++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
+On 二, 2016-09-06 at 12:13 +0200, Geert Uytterhoeven wrote:
+> Hi Eduardo,
+> 
+> On Mon, Sep 5, 2016 at 3:16 PM, Eduardo Valentin <edubezval@gmail.com
+> > wrote:
+> > 
+> > On Sun, Aug 21, 2016 at 10:09:00PM +0800, Zhang Rui wrote:
+> > > 
+> > > As Eduardo is quite busy recently, I will take all the thermal
+> > > soc
+> > > driver changes this time.
+> > Thanks for helping me out. I am slowing coming back to upstream
+> > activities. I have refreshed my branches, removing the rework and
+> > locking patches works out of the integration branches so we do not
+> > have
+> > merge conflicts or further delays on outstanding patches.
+> > 
+> > > 
+> > > Currently, I have cherry picked all the patches that Eduardo has
+> > > already applied in thermal-soc tree and reviewed all the pending
+> > Great! This makes things easier for me.
+> > 
+> > > 
+> > > patches in patchwork. Now, there are four patches queued for next
+> > > -rc (
+> > > https://git.kernel.org/cgit/linux/kernel/git/rzhang/linux.git/log
+> > > /?h=fo
+> > > r-rc),
+> > I checked this branch. Can you please cherry-pick the following
+> > patch
+> > for rc:
+> > https://git.kernel.org/cgit/linux/kernel/git/evalenti/linux-soc-
+> > thermal.git/commit/?h=linus&id=4ba16f1256bd13efa2f3179ff1f4ab16a4ad
+> > 3c7f
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 3aae29f..d7590c3 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -252,6 +252,105 @@
- 			status = "disabled";
- 		};
- 
-+		dmac0: dma-controller@e6700000 {
-+			compatible = "renesas,dmac-r8a7796",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6700000 0 0x10000>;
-+			interrupts = <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 219>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+		};
-+
-+		dmac1: dma-controller@e7300000 {
-+			compatible = "renesas,dmac-r8a7796",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7300000 0 0x10000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 218>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+		};
-+
-+		dmac2: dma-controller@e7310000 {
-+			compatible = "renesas,dmac-r8a7796",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe7310000 0 0x10000>;
-+			interrupts = <GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 426 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 427 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 428 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 430 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 431 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD 217>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a7796";
- 			reg = <0 0xee100000 0 0x2000>;
--- 
-2.9.3
+> That patch is indeed missing.
+> 
+> While preparing today's renesas-drivers release, I noticed it had
+> disappeared
+> from thermal-soc/next. Then I found your email...
+> 
+> Thanks for re-applying it!
+> 
+
+Applied and queued for next -rc.
+
+thanks,
+rui
+
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linu
+> x-m68k.org
+> 
+> In personal conversations with technical people, I call myself a
+> hacker. But
+> when I'm talking to journalists I just say "programmer" or something
+> like that.
+>                                 -- Linus Torvalds
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
