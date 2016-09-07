@@ -1,62 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:47277 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S941265AbcIVVdK (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933974AbcIGHub (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Sep 2016 17:33:10 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        Wed, 7 Sep 2016 03:50:31 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 1/3] ARM: dts: r7s72100: add sdhi clock to device tree
-Date: Thu, 22 Sep 2016 17:32:09 -0400
-Message-Id: <20160922213211.7988-2-chris.brandt@renesas.com>
-In-Reply-To: <20160922213211.7988-1-chris.brandt@renesas.com>
-References: <20160922213211.7988-1-chris.brandt@renesas.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 05/26] ARM: dts: r8a7791: Remove obsolete vsp1 properties
+Date: Wed,  7 Sep 2016 09:49:52 +0200
+Message-Id: <17d9af9e069f2982f578c65e987df309d1736eb5.1473234371.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
+References: <cover.1473234371.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- arch/arm/boot/dts/r7s72100.dtsi            | 8 ++++++++
- include/dt-bindings/clock/r7s72100-clock.h | 4 ++++
- 2 files changed, 12 insertions(+)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index e18d4e6..e97d6d1 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -149,6 +149,14 @@
- 			>;
- 			clock-output-names = "spi0", "spi1", "spi2", "spi3", "spi4";
- 		};
-+		mstp12_clks: mstp12_clks@fcfe0444 {
-+			#clock-cells = <1>;
-+			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
-+			reg = <0xfcfe0444 4>;
-+			clocks = <&p1_clk>, <&p1_clk>;
-+			clock-indices = <R7S72100_CLK_SDHI1 R7S72100_CLK_SDHI0>;
-+			clock-output-names = "sdhi1", "sdhi0";
-+		};
+As of commit 5aa2eb3c86d4fd16 ("[media] v4l: vsp1: Configure device
+based on IP version"), the DT properties to identify the exact VSP
+device instance features are no longer used. Hence remove them.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7791.dtsi | 18 ------------------
+ 1 file changed, 18 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 8f0086bbd96b..162b55c665a3 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -983,12 +983,6 @@
+ 		interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7791_CLK_VSP1_S>;
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+-
+-		renesas,has-lut;
+-		renesas,has-sru;
+-		renesas,#rpf = <5>;
+-		renesas,#uds = <3>;
+-		renesas,#wpf = <4>;
  	};
  
- 	cpus {
-diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
-index 5eaf0fb..29e01ed 100644
---- a/include/dt-bindings/clock/r7s72100-clock.h
-+++ b/include/dt-bindings/clock/r7s72100-clock.h
-@@ -44,4 +44,8 @@
- #define R7S72100_CLK_SPI3	4
- #define R7S72100_CLK_SPI4	3
+ 	vsp1@fe930000 {
+@@ -997,12 +991,6 @@
+ 		interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7791_CLK_VSP1_DU0>;
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+-
+-		renesas,has-lif;
+-		renesas,has-lut;
+-		renesas,#rpf = <4>;
+-		renesas,#uds = <1>;
+-		renesas,#wpf = <4>;
+ 	};
  
-+/* MSTP12 */
-+#define R7S72100_CLK_SDHI0	3
-+#define R7S72100_CLK_SDHI1	2
-+
- #endif /* __DT_BINDINGS_CLOCK_R7S72100_H__ */
+ 	vsp1@fe938000 {
+@@ -1011,12 +999,6 @@
+ 		interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7791_CLK_VSP1_DU1>;
+ 		power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+-
+-		renesas,has-lif;
+-		renesas,has-lut;
+-		renesas,#rpf = <4>;
+-		renesas,#uds = <1>;
+-		renesas,#wpf = <4>;
+ 	};
+ 
+ 	du: display@feb00000 {
 -- 
-2.9.2
+2.7.0.rc3.207.g0ac5344
