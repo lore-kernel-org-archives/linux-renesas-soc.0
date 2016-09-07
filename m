@@ -1,50 +1,51 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran+renesas@bingham.xyz>
-Subject: [PATCH 03/13] v4l: vsp1: Ensure pipeline locking in resume path
-Date: Wed, 14 Sep 2016 02:16:56 +0300
-Message-Id: <1473808626-19488-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756483AbcIGHu4 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 7 Sep 2016 03:50:56 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 19/26] ARM: dts: rskrza1: add ethernet DT support
+Date: Wed,  7 Sep 2016 09:50:06 +0200
+Message-Id: <0aa8d831e75ec8b6c003943ece980535ab6cc94f.1473234372.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
+References: <cover.1473234371.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran+renesas@bingham.xyz>
+From: Chris Brandt <chris.brandt@renesas.com>
 
-The vsp1_pipeline_ready() and vsp1_pipeline_run() functions must be
-called with the pipeline lock held, fix the resume code path.
-
-Signed-off-by: Kieran Bingham <kieran+renesas@bingham.xyz>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/vsp1/vsp1_pipe.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/r7s72100-rskrza1.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
-index 3e75fb3fcace..474de82165d8 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.c
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.c
-@@ -365,6 +365,7 @@ void vsp1_pipelines_suspend(struct vsp1_device *vsp1)
+diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+index aabfa0459dc1..e5dea5bb4032 100644
+--- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
++++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+@@ -47,6 +47,15 @@
+ 	status = "okay";
+ };
  
- void vsp1_pipelines_resume(struct vsp1_device *vsp1)
- {
-+	unsigned long flags;
- 	unsigned int i;
- 
- 	/* Resume all running pipelines. */
-@@ -379,7 +380,9 @@ void vsp1_pipelines_resume(struct vsp1_device *vsp1)
- 		if (pipe == NULL)
- 			continue;
- 
-+		spin_lock_irqsave(&pipe->irqlock, flags);
- 		if (vsp1_pipeline_ready(pipe))
- 			vsp1_pipeline_run(pipe);
-+		spin_unlock_irqrestore(&pipe->irqlock, flags);
- 	}
- }
++&ether {
++	status = "okay";
++	renesas,no-ether-link;
++	phy-handle = <&phy0>;
++	phy0: ethernet-phy@0 {
++		reg = <0>;
++	};
++};
++
+ &scif2 {
+ 	status = "okay";
+ };
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
