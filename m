@@ -1,61 +1,49 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20160905131600.GA24253@localhost.localdomain>
-References: <1471788540.2188.19.camel@intel.com> <20160905131600.GA24253@localhost.localdomain>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 6 Sep 2016 12:13:11 +0200
-Message-ID: <CAMuHMdVxCyy+ULdnzWTBFuCrP4E77H7JxS25QL_RSeOgtV5bVQ@mail.gmail.com>
-Subject: Re: [Thermal] Need confirmation for the pending thermal soc patches
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Dirk Behme <dirk.behme@de.bosch.com>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756483AbcIGHuy (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 7 Sep 2016 03:50:54 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 20/26] ARM: dts: r8a7794: fix PWM clock parent
+Date: Wed,  7 Sep 2016 09:50:07 +0200
+Message-Id: <059baea1d33a64e752af201140ef122e29f2a19a.1473234372.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
+References: <cover.1473234371.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Eduardo,
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-On Mon, Sep 5, 2016 at 3:16 PM, Eduardo Valentin <edubezval@gmail.com> wrote:
-> On Sun, Aug 21, 2016 at 10:09:00PM +0800, Zhang Rui wrote:
->> As Eduardo is quite busy recently, I will take all the thermal soc
->> driver changes this time.
->
-> Thanks for helping me out. I am slowing coming back to upstream
-> activities. I have refreshed my branches, removing the rework and
-> locking patches works out of the integration branches so we do not have
-> merge conflicts or further delays on outstanding patches.
->
->> Currently, I have cherry picked all the patches that Eduardo has
->> already applied in thermal-soc tree and reviewed all the pending
->
-> Great! This makes things easier for me.
->
->> patches in patchwork. Now, there are four patches queued for next -rc (
->> https://git.kernel.org/cgit/linux/kernel/git/rzhang/linux.git/log/?h=fo
->> r-rc),
->
-> I checked this branch. Can you please cherry-pick the following patch
-> for rc:
-> https://git.kernel.org/cgit/linux/kernel/git/evalenti/linux-soc-thermal.git/commit/?h=linus&id=4ba16f1256bd13efa2f3179ff1f4ab16a4ad3c7f
+When removing the non-existing thermal clock I forgot to remove its
+parent from the node's "clocks" property  -- this led to a wrong PWM
+clock's parent clock.
 
-That patch is indeed missing.
+Fixes: 2a29f9d6fea8 ("ARM: dts: r8a7794: add MSTP5 clocks")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-While preparing today's renesas-drivers release, I noticed it had disappeared
-from thermal-soc/next. Then I found your email...
-
-Thanks for re-applying it!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 611ec6df5cf6..9365580a194f 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1251,7 +1251,7 @@
+ 		mstp5_clks: mstp5_clks@e6150144 {
+ 			compatible = "renesas,r8a7794-mstp-clocks", "renesas,cpg-mstp-clocks";
+ 			reg = <0 0xe6150144 0 4>, <0 0xe615003c 0 4>;
+-			clocks = <&hp_clk>, <&extal_clk>, <&p_clk>;
++			clocks = <&hp_clk>, <&p_clk>;
+ 			#clock-cells = <1>;
+ 			clock-indices = <R8A7794_CLK_AUDIO_DMAC0
+ 					 R8A7794_CLK_PWM>;
+-- 
+2.7.0.rc3.207.g0ac5344
