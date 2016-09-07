@@ -1,49 +1,145 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56795 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752031AbcIMK4d (ORCPT
+        with ESMTP id S1756483AbcIGHvF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Sep 2016 06:56:33 -0400
+        Wed, 7 Sep 2016 03:51:05 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v7 1/6] mmc: core: Add helper to see if a host can be retuned
-Date: Tue, 13 Sep 2016 12:56:10 +0200
-Message-Id: <1473764175-24580-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1473764175-24580-1-git-send-email-horms+renesas@verge.net.au>
-References: <1473764175-24580-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 02/26] ARM: dts: alt: add SDHI0 and 1 support
+Date: Wed,  7 Sep 2016 09:49:49 +0200
+Message-Id: <2b41091b896bb99ec1da1ed30113603fc91b84d6.1473234371.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
+References: <cover.1473234371.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This is in preparation for restoring saved tuning parameters
-when resuming the TMIO driver.
+Define the Alt board dependent part of the SDHI0 and 1
+device nodes along with the necessary voltage regulators.
+
+Based on work by the original patch by Vladimir Barinov and
+Sergei Shtylyov for the Silk board.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v6
-* New patch
----
- include/linux/mmc/host.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/r8a7794-alt.dts | 81 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 81 insertions(+)
 
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index aa4bfbf129e4..4a9b4db8f22b 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -541,6 +541,11 @@ static inline void mmc_retune_recheck(struct mmc_host *host)
- 		host->retune_now = 1;
- }
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index 1ad37d431a2a..fe7c128cc965 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -10,6 +10,7 @@
  
-+static inline bool mmc_can_retune(struct mmc_host *host)
-+{
-+	return host->can_retune == 1;
-+}
+ /dts-v1/;
+ #include "r8a7794.dtsi"
++#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	model = "Alt";
+@@ -29,6 +30,54 @@
+ 		reg = <0 0x40000000 0 0x40000000>;
+ 	};
+ 
++	vcc_sdhi0: regulator-vcc-sdhi0 {
++		compatible = "regulator-fixed";
 +
- void mmc_retune_pause(struct mmc_host *host);
- void mmc_retune_unpause(struct mmc_host *host);
++		regulator-name = "SDHI0 Vcc";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpio = <&gpio2 26 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	vccq_sdhi0: regulator-vccq-sdhi0 {
++		compatible = "regulator-gpio";
++
++		regulator-name = "SDHI0 VccQ";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpios = <&gpio2 29 GPIO_ACTIVE_HIGH>;
++		gpios-states = <1>;
++		states = <3300000 1
++			  1800000 0>;
++	};
++
++	vcc_sdhi1: regulator-vcc-sdhi1 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "SDHI1 Vcc";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpio = <&gpio4 26 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	vccq_sdhi1: regulator-vccq-sdhi1 {
++		compatible = "regulator-gpio";
++
++		regulator-name = "SDHI1 VccQ";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpios = <&gpio4 29 GPIO_ACTIVE_HIGH>;
++		gpios-states = <1>;
++		states = <3300000 1
++			  1800000 0>;
++	};
++
+ 	lbsc {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+@@ -140,6 +189,16 @@
+ 		groups = "vin0_data8", "vin0_clk";
+ 		function = "vin0";
+ 	};
++
++	sdhi0_pins: sd0 {
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
++	};
++
++	sdhi1_pins: sd1 {
++		groups = "sdhi1_data4", "sdhi1_ctrl";
++		function = "sdhi1";
++	};
+ };
  
+ &cmt0 {
+@@ -169,6 +228,28 @@
+ 	};
+ };
+ 
++&sdhi0 {
++	pinctrl-0 = <&sdhi0_pins>;
++	pinctrl-names = "default";
++
++	vmmc-supply = <&vcc_sdhi0>;
++	vqmmc-supply = <&vccq_sdhi0>;
++	cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
++	wp-gpios = <&gpio6 7 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
++
++&sdhi1 {
++	pinctrl-0 = <&sdhi1_pins>;
++	pinctrl-names = "default";
++
++	vmmc-supply = <&vcc_sdhi1>;
++	vqmmc-supply = <&vccq_sdhi1>;
++	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
++	wp-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
++
+ &i2c1 {
+ 	pinctrl-0 = <&i2c1_pins>;
+ 	pinctrl-names = "default";
 -- 
 2.7.0.rc3.207.g0ac5344
