@@ -1,52 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34133 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750820AbcIGHM4 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52338 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751574AbcIGHJP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Sep 2016 03:12:56 -0400
-MIME-Version: 1.0
-In-Reply-To: <3631828.PadezLxMAk@avalon>
-References: <1473207273-16446-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
- <CAPybu_2sKsLNuVbL1Av5DNHjNizw_4wUM_RaVjpvBov5aG-+JQ@mail.gmail.com> <3631828.PadezLxMAk@avalon>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date: Wed, 7 Sep 2016 09:12:34 +0200
-Message-ID: <CAPybu_20uf6BPMcCfGMTopQ0iBCUve+OkaZiLrPtVdKMKtnDmQ@mail.gmail.com>
-Subject: Re: [PATCH] v4l: vsp1: Add support for capture and output in HSV formats
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Wed, 7 Sep 2016 03:09:15 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
         linux-media <linux-media@vger.kernel.org>,
         linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Content-Type: text/plain; charset=UTF-8
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Subject: Re: [PATCH] v4l: vsp1: Add support for capture and output in HSV formats
+Date: Wed, 07 Sep 2016 10:09:44 +0300
+Message-ID: <3631828.PadezLxMAk@avalon>
+In-Reply-To: <CAPybu_2sKsLNuVbL1Av5DNHjNizw_4wUM_RaVjpvBov5aG-+JQ@mail.gmail.com>
+References: <1473207273-16446-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CAPybu_2sKsLNuVbL1Av5DNHjNizw_4wUM_RaVjpvBov5aG-+JQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+Hi Ricardo,
 
-On Wed, Sep 7, 2016 at 9:09 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->>
->> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
->
-> Do you mean Acked-by ?
+On Wednesday 07 Sep 2016 09:07:35 Ricardo Ribalda Delgado wrote:
+> Hi Laurent
+> 
+> Thank you very much!
 
-Acked-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+You're welcome.
 
-Ups, my bad
+> On Wed, Sep 7, 2016 at 2:14 AM, Laurent Pinchart wrote:
+> > Support both the HSV24 and HSV32 formats. From a hardware point of view
+> > pretend the formats are RGB, the RPF and WPF will just pass the data
+> > through without performing any processing.
+> 
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
+Do you mean Acked-by ?
 
->
-> Feel free to take the patch in your tree to get it merged along with the HSV
-> series.
-
-
-I do not really have a tree, I have a github account that is it.
-
-Let me ask Hans on the irc how to procede from here.
-
-I really appreciate your help!
+Feel free to take the patch in your tree to get it merged along with the HSV 
+series.
 
 -- 
-Ricardo Ribalda
+Regards,
+
+Laurent Pinchart
