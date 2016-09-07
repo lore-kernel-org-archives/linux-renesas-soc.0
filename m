@@ -1,60 +1,46 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-To: Simon Horman <horms@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57033 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756483AbcIGHls (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 7 Sep 2016 03:41:48 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Subject: [PATCH v4 2/4] arm64: dts: h3ulcb: enable GPIO keys
-Date: Fri,  2 Sep 2016 15:05:17 +0300
-Message-Id: <1472817917-11940-1-git-send-email-vladimir.barinov@cogentembedded.com>
-In-Reply-To: <1472817881-11860-1-git-send-email-vladimir.barinov@cogentembedded.com>
-References: <1472817881-11860-1-git-send-email-vladimir.barinov@cogentembedded.com>
-Sender: devicetree-owner@vger.kernel.org
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/3] ARM: shmobile: r8a7791: only use smp_init when SMP is selected
+Date: Wed,  7 Sep 2016 09:41:39 +0200
+Message-Id: <82acc69402d91bde8657c0db26e5211943de65fd.1473233986.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473233986.git.horms+renesas@verge.net.au>
+References: <cover.1473233986.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This supports GPIO keys on H3ULCB board
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+We use the helper function which populates the smp_init pointer only in
+case of SMP.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes in version 4:
-- initially added
+ arch/arm/mach-shmobile/setup-r8a7791.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 14 +++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-index fb694b8..3329f78 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -12,6 +12,7 @@
- /dts-v1/;
- #include "r8a7795.dtsi"
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
+diff --git a/arch/arm/mach-shmobile/setup-r8a7791.c b/arch/arm/mach-shmobile/setup-r8a7791.c
+index 110e8b588e56..26e2d181a190 100644
+--- a/arch/arm/mach-shmobile/setup-r8a7791.c
++++ b/arch/arm/mach-shmobile/setup-r8a7791.c
+@@ -29,7 +29,7 @@ static const char *const r8a7791_boards_compat_dt[] __initconst = {
+ };
  
- / {
- 	model = "Renesas H3ULCB board based on r8a7795";
-@@ -31,6 +31,18 @@
- 		/* first 128MB is reserved for secure area. */
- 		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
-+
-+	keyboard {
-+		compatible = "gpio-keys";
-+
-+		key-1 {
-+			linux,code = <KEY_1>;
-+			label = "SW3";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
-+		};
-+	};
- 
- 	leds {
- 		compatible = "gpio-leds";
+ DT_MACHINE_START(R8A7791_DT, "Generic R8A7791 (Flattened Device Tree)")
+-	.smp_init	= shmobile_smp_init_fallback_ops,
++	.smp_init	= smp_init_ops(shmobile_smp_init_fallback_ops),
+ 	.smp		= smp_ops(r8a7791_smp_ops),
+ 	.init_early	= shmobile_init_delay,
+ 	.init_time	= rcar_gen2_timer_init,
 -- 
-1.9.1
-
+2.7.0.rc3.207.g0ac5344
