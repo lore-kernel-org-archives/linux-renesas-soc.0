@@ -1,77 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:47119 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753791AbcI2PbF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933974AbcIGHuj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Sep 2016 11:31:05 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Rob Herring <robh@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC] tty: serial_core: Move uart_console() check after console registration
-Date: Thu, 29 Sep 2016 17:31:04 +0200
-Message-Id: <1475163064-20399-1-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 7 Sep 2016 03:50:39 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/26] ARM: dts: blanche: add SDHI0 support
+Date: Wed,  7 Sep 2016 09:49:54 +0200
+Message-Id: <eed3da2cf3897de7ed3e5e4ea3cd323946ca87e0.1473234371.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
+References: <cover.1473234371.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The port->console flag is always false, as uart_console() is called
-before the serial console has been registered.
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Hence for a serial port used as the console, uart_tty_port_shutdown()
-will still be called when userspace closes the port, powering it down.
-This will lead to a system lock up when the serial console driver writes
-to the serial port's registers.
+Define the Blanche board dependent part of the SDHI0 (connected to the
+micro-SD slot) device node along with  the necessary voltage regulator.
 
-To fix this, move the setting of port->console after the call to
-uart_configure_port(), which registers the serial console.
-
-Fixes: 761ed4a94582ab29 ("tty: serial_core: convert uart_close to use tty_port_close")
-Reported-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reported-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-RFC because of the comment "If this port is a console, then the spinlock
-is already initialised", and the pre-existing code calling
-uart_console() before uart_configure_port().
+ arch/arm/boot/dts/r8a7792-blanche.dts | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-Can be reproduced on Renesas boards:
-  1. With systemd: hangs during boot,
-  2. Without systemd: "telinit n" to switch to a runlevel that doesn't
-     run a getty on ttySC0, and trigger kernel output.
----
- drivers/tty/serial/serial_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index 6e4f63627479db8d..ce8899c13af3d97f 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -2746,8 +2746,6 @@ int uart_add_one_port(struct uart_driver *drv, struct uart_port *uport)
- 	uport->cons = drv->cons;
- 	uport->minor = drv->tty_driver->minor_start + uport->line;
- 
--	port->console = uart_console(uport);
--
- 	/*
- 	 * If this port is a console, then the spinlock is already
- 	 * initialised.
-@@ -2761,6 +2759,8 @@ int uart_add_one_port(struct uart_driver *drv, struct uart_port *uport)
- 
- 	uart_configure_port(drv, state, uport);
- 
-+	port->console = uart_console(uport);
+diff --git a/arch/arm/boot/dts/r8a7792-blanche.dts b/arch/arm/boot/dts/r8a7792-blanche.dts
+index 808a6aab7e5e..436d44ea3c12 100644
+--- a/arch/arm/boot/dts/r8a7792-blanche.dts
++++ b/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -103,6 +103,17 @@
+ 			gpios = <&gpio11 2 GPIO_ACTIVE_LOW>;
+ 		};
+ 	};
 +
- 	num_groups = 2;
- 	if (uport->attr_group)
- 		num_groups++;
++	vcc_sdhi0: regulator-vcc-sdhi0 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "SDHI0 Vcc";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpio = <&gpio11 12 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
+ };
+ 
+ &extal_clk {
+@@ -139,6 +150,11 @@
+ 		groups = "can0_data", "can_clk";
+ 		function = "can0";
+ 	};
++
++	sdhi0_pins: sdhi0 {
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
++	};
+ };
+ 
+ &scif0 {
+@@ -161,3 +177,12 @@
+ 
+ 	status = "okay";
+ };
++
++&sdhi0 {
++	pinctrl-0 = <&sdhi0_pins>;
++	pinctrl-names = "default";
++
++	vmmc-supply = <&vcc_sdhi0>;
++	cd-gpios = <&gpio11 11 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
 -- 
-1.9.1
+2.7.0.rc3.207.g0ac5344
