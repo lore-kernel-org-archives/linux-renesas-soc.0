@@ -1,84 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:33040 "EHLO
-        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752958AbcIEU4A (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756483AbcIGHuu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Sep 2016 16:56:00 -0400
-Received: by mail-lf0-f43.google.com with SMTP id h127so29984389lfh.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Sep 2016 13:55:59 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] ARM: dts: r8a7792: add MSIOF support
-Date: Mon, 05 Sep 2016 23:55:57 +0300
-Message-ID: <2787067.j1BQ6sZInq@wasted.cogentembedded.com>
-In-Reply-To: <2481458.x1iQg26kO7@wasted.cogentembedded.com>
-References: <2481458.x1iQg26kO7@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Wed, 7 Sep 2016 03:50:50 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 16/26] ARM: dts: rskrza1: initial device tree
+Date: Wed,  7 Sep 2016 09:50:03 +0200
+Message-Id: <e83c05a7160681f554476e9d44b7b77053efc21a.1473234372.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
+References: <cover.1473234371.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A7792 parts of the MSIOF0/1 device nodes.
+From: Chris Brandt <chris.brandt@renesas.com>
 
-Based  on the original (and large) patch by Vladimir Barinov
-<vladimir.barinov@cogentembedded.com>.
+Add the initial device tree for the RZ/A1 based development board (RSK).
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7792.dtsi |   30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ arch/arm/boot/dts/Makefile             |  1 +
+ arch/arm/boot/dts/r7s72100-rskrza1.dts | 52 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r7s72100-rskrza1.dts
 
-Index: renesas/arch/arm/boot/dts/r8a7792.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7792.dtsi
-@@ -26,6 +26,8 @@
- 		i2c4 = &i2c4;
- 		i2c5 = &i2c5;
- 		spi0 = &qspi;
-+		spi1 = &msiof0;
-+		spi2 = &msiof1;
- 		vin0 = &vin0;
- 		vin1 = &vin1;
- 		vin2 = &vin2;
-@@ -570,6 +572,34 @@
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-+		};
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index d289ec733d2e..80193b3a450b 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -651,6 +651,7 @@ dtb-$(CONFIG_ARCH_S5PV210) += \
+ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
+ 	emev2-kzm9d.dtb \
+ 	r7s72100-genmai.dtb \
++	r7s72100-rskrza1.dtb \
+ 	r8a73a4-ape6evm.dtb \
+ 	r8a7740-armadillo800eva.dtb \
+ 	r8a7778-bockw.dtb \
+diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+new file mode 100644
+index 000000000000..aabfa0459dc1
+--- /dev/null
++++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+@@ -0,0 +1,52 @@
++/*
++ * Device Tree Source for the RZ/A1H RSK board
++ *
++ * Copyright (C) 2016 Renesas Electronics
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
 +
-+		msiof0: spi@e6e20000 {
-+			compatible = "renesas,msiof-r8a7792";
-+			reg = <0 0xe6e20000 0 0x0064>;
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp0_clks R8A7792_CLK_MSIOF0>;
-+			dmas = <&dmac0 0x51>, <&dmac0 0x52>,
-+			       <&dmac1 0x51>, <&dmac1 0x52>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++/dts-v1/;
++#include "r7s72100.dtsi"
 +
-+		msiof1: spi@e6e10000 {
-+			compatible = "renesas,msiof-r8a7792";
-+			reg = <0 0xe6e10000 0 0x0064>;
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp2_clks R8A7792_CLK_MSIOF1>;
-+			dmas = <&dmac0 0x55>, <&dmac0 0x56>,
-+			       <&dmac1 0x55>, <&dmac1 0x56>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
- 		};
- 
- 		du: display@feb00000 {
++/ {
++	model = "RSKRZA1";
++	compatible = "renesas,rskrza1", "renesas,r7s72100";
++
++	aliases {
++		serial0 = &scif2;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@8000000 {
++		device_type = "memory";
++		reg = <0x08000000 0x02000000>;
++	};
++
++	lbsc {
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <13330000>;
++};
++
++&usb_x1_clk {
++	clock-frequency = <48000000>;
++};
++
++&mtu2 {
++	status = "okay";
++};
++
++&scif2 {
++	status = "okay";
++};
+-- 
+2.7.0.rc3.207.g0ac5344
