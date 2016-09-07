@@ -1,117 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:51769 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751418AbcIAW2M (ORCPT
+Received: from lb1-smtp-cloud6.xs4all.net ([194.109.24.24]:50759 "EHLO
+        lb1-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1756345AbcIGHsh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Sep 2016 18:28:12 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org
-Subject: Re: [PATCH] rcar-du: add R8A7792 support
-Date: Fri, 02 Sep 2016 01:28:34 +0300
-Message-ID: <2732207.dbAaUn7yem@avalon>
-In-Reply-To: <1934824.sESTIjSbbp@wasted.cogentembedded.com>
-References: <1934824.sESTIjSbbp@wasted.cogentembedded.com>
+        Wed, 7 Sep 2016 03:48:37 -0400
+Subject: Re: [PATCH] v4l: vsp1: Add support for capture and output in HSV
+ formats
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org
+References: <1473207273-16446-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <a8de4c31-697a-ae29-a768-e69b0f941116@xs4all.nl>
+Date: Wed, 7 Sep 2016 09:48:28 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1473207273-16446-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+On 09/07/16 02:14, Laurent Pinchart wrote:
+> Support both the HSV24 and HSV32 formats. From a hardware point of view
+> pretend the formats are RGB, the RPF and WPF will just pass the data
+> through without performing any processing.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Thank you for the patch.
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-On Thursday 04 Aug 2016 15:01:02 Sergei Shtylyov wrote:
-> Add support for the R8A7792 DU; it has 2 DPAD (RGB) outputs.
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-And applied to my tree.
-
-> ---
-> This patch is against the 'drm/next/du' branch of Laurent Pinchart's
-> 'media.git' repo...
-> 
->  Documentation/devicetree/bindings/display/renesas,du.txt |    4 ++
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c                    |   22 +++++++++++
->  2 files changed, 25 insertions(+), 1 deletion(-)
-> 
-> Index: media/Documentation/devicetree/bindings/display/renesas,du.txt
-> ===================================================================
-> --- media.orig/Documentation/devicetree/bindings/display/renesas,du.txt
-> +++ media/Documentation/devicetree/bindings/display/renesas,du.txt
-> @@ -6,6 +6,7 @@ Required Properties:
->      - "renesas,du-r8a7779" for R8A7779 (R-Car H1) compatible DU
->      - "renesas,du-r8a7790" for R8A7790 (R-Car H2) compatible DU
->      - "renesas,du-r8a7791" for R8A7791 (R-Car M2-W) compatible DU
-> +    - "renesas,du-r8a7792" for R8A7792 (R-Car V2H) compatible DU
->      - "renesas,du-r8a7793" for R8A7793 (R-Car M2-N) compatible DU
->      - "renesas,du-r8a7794" for R8A7794 (R-Car E2) compatible DU
->      - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
-> @@ -25,7 +26,7 @@ Required Properties:
->    - clock-names: Name of the clocks. This property is model-dependent.
->      - R8A7779 uses a single functional clock. The clock doesn't need to be
->        named.
-> -    - R8A779[01345] use one functional clock per channel and one clock per
-> LVDS +    - R8A779[012345] use one functional clock per channel and one
-> clock per LVDS encoder (if available). The functional clocks must be named
-> "du.x" with "x" being the channel numerical index. The LVDS clocks must be
-> named "lvds.x" with "x" being the LVDS encoder numerical index.
-> @@ -47,6 +48,7 @@ corresponding to each DU output.
->   R8A7779 (H1)	DPAD 0		DPAD 1		-		-
->   R8A7790 (H2)	DPAD		LVDS 0		LVDS 1		-
->   R8A7791 (M2-W)	DPAD		LVDS 0		-		-
-> + R8A7792 (V2H)	DPAD 0		DPAD 1		-		-
->   R8A7793 (M2-N)	DPAD		LVDS 0		-		-
->   R8A7794 (E2)	DPAD 0		DPAD 1		-		-
->   R8A7795 (H3)	DPAD		HDMI 0		HDMI 1		LVDS
-> Index: media/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> ===================================================================
-> --- media.orig/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> +++ media/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> @@ -110,6 +110,27 @@ static const struct rcar_du_device_info
->  	.num_lvds = 1,
->  };
-> 
-> +static const struct rcar_du_device_info rcar_du_r8a7792_info = {
-> +	.gen = 2,
-> +	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
-> +		  | RCAR_DU_FEATURE_EXT_CTRL_REGS,
-> +	.num_crtcs = 2,
-> +	.routes = {
-> +		/* R8A7792 has two RGB outputs. */
-> +		[RCAR_DU_OUTPUT_DPAD0] = {
-> +			.possible_crtcs = BIT(0),
-> +			.encoder_type = DRM_MODE_ENCODER_NONE,
-> +			.port = 0,
-> +		},
-> +		[RCAR_DU_OUTPUT_DPAD1] = {
-> +			.possible_crtcs = BIT(1),
-> +			.encoder_type = DRM_MODE_ENCODER_NONE,
-> +			.port = 1,
-> +		},
-> +	},
-> +	.num_lvds = 0,
-> +};
-> +
->  static const struct rcar_du_device_info rcar_du_r8a7794_info = {
->  	.gen = 2,
->  	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
-> @@ -161,6 +182,7 @@ static const struct of_device_id rcar_du
->  	{ .compatible = "renesas,du-r8a7779", .data = &rcar_du_r8a7779_info },
->  	{ .compatible = "renesas,du-r8a7790", .data = &rcar_du_r8a7790_info },
->  	{ .compatible = "renesas,du-r8a7791", .data = &rcar_du_r8a7791_info },
-> +	{ .compatible = "renesas,du-r8a7792", .data = &rcar_du_r8a7792_info },
->  	{ .compatible = "renesas,du-r8a7793", .data = &rcar_du_r8a7791_info },
->  	{ .compatible = "renesas,du-r8a7794", .data = &rcar_du_r8a7794_info },
->  	{ .compatible = "renesas,du-r8a7795", .data = &rcar_du_r8a7795_info },
-
--- 
 Regards,
 
-Laurent Pinchart
+	Hans
+
+> ---
+>
+> This patch is based on top of Ricardo's "[PATCH v5 00/12] Add HSV format"
+> series. I have tested it with the VSP test suite available at
+>
+> 	git://git.ideasonboard.com/renesas/vsp-tests.git hsv
+>
+>  drivers/media/platform/vsp1/vsp1_pipe.c  | 8 ++++++++
+>  drivers/media/platform/vsp1/vsp1_rwpf.c  | 2 ++
+>  drivers/media/platform/vsp1/vsp1_video.c | 5 +++++
+>  3 files changed, 15 insertions(+)
+>
+> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
+> index 052a6037b9cb..c0b8641d2158 100644
+> --- a/drivers/media/platform/vsp1/vsp1_pipe.c
+> +++ b/drivers/media/platform/vsp1/vsp1_pipe.c
+> @@ -80,6 +80,14 @@ static const struct vsp1_format_info vsp1_video_formats[] = {
+>  	  VI6_FMT_ARGB_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+>  	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+>  	  1, { 32, 0, 0 }, false, false, 1, 1, false },
+> +	{ V4L2_PIX_FMT_HSV24, MEDIA_BUS_FMT_AHSV8888_1X32,
+> +	  VI6_FMT_RGB_888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+> +	  1, { 24, 0, 0 }, false, false, 1, 1, false },
+> +	{ V4L2_PIX_FMT_HSV32, MEDIA_BUS_FMT_AHSV8888_1X32,
+> +	  VI6_FMT_ARGB_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+> +	  1, { 32, 0, 0 }, false, false, 1, 1, false },
+>  	{ V4L2_PIX_FMT_UYVY, MEDIA_BUS_FMT_AYUV8_1X32,
+>  	  VI6_FMT_YUYV_422, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+>  	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+> diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.c b/drivers/media/platform/vsp1/vsp1_rwpf.c
+> index 8d461b375e91..13e969ac1538 100644
+> --- a/drivers/media/platform/vsp1/vsp1_rwpf.c
+> +++ b/drivers/media/platform/vsp1/vsp1_rwpf.c
+> @@ -37,6 +37,7 @@ static int vsp1_rwpf_enum_mbus_code(struct v4l2_subdev *subdev,
+>  {
+>  	static const unsigned int codes[] = {
+>  		MEDIA_BUS_FMT_ARGB8888_1X32,
+> +		MEDIA_BUS_FMT_AHSV8888_1X32,
+>  		MEDIA_BUS_FMT_AYUV8_1X32,
+>  	};
+>
+> @@ -74,6 +75,7 @@ static int vsp1_rwpf_set_format(struct v4l2_subdev *subdev,
+>
+>  	/* Default to YUV if the requested format is not supported. */
+>  	if (fmt->format.code != MEDIA_BUS_FMT_ARGB8888_1X32 &&
+> +	    fmt->format.code != MEDIA_BUS_FMT_AHSV8888_1X32 &&
+>  	    fmt->format.code != MEDIA_BUS_FMT_AYUV8_1X32)
+>  		fmt->format.code = MEDIA_BUS_FMT_AYUV8_1X32;
+>
+> diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+> index 7215e08eff6e..325377d7c444 100644
+> --- a/drivers/media/platform/vsp1/vsp1_video.c
+> +++ b/drivers/media/platform/vsp1/vsp1_video.c
+> @@ -126,6 +126,11 @@ static int __vsp1_video_try_format(struct vsp1_video *video,
+>  	pix->pixelformat = info->fourcc;
+>  	pix->colorspace = V4L2_COLORSPACE_SRGB;
+>  	pix->field = V4L2_FIELD_NONE;
+> +
+> +	if (info->fourcc == V4L2_PIX_FMT_HSV24 ||
+> +	    info->fourcc == V4L2_PIX_FMT_HSV32)
+> +		pix->hsv_enc = V4L2_HSV_ENC_256;
+> +
+>  	memset(pix->reserved, 0, sizeof(pix->reserved));
+>
+>  	/* Align the width and height for YUV 4:2:2 and 4:2:0 formats. */
+>
