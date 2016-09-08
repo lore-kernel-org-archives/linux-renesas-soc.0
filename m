@@ -1,47 +1,49 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com, ulrich.hecht+renesas@gmail.com,
-        laurent.pinchart@ideasonboard.com, william.towle@codethink.co.uk,
-        devicetree@vger.kernel.org
-Subject: [PATCH 1/2] media: adv7604: fix bindings inconsistency for default-input
-Date: Fri, 16 Sep 2016 11:39:41 +0200
-Message-Id: <20160916093942.17213-2-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <20160916093942.17213-1-ulrich.hecht+renesas@gmail.com>
-References: <20160916093942.17213-1-ulrich.hecht+renesas@gmail.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757899AbcIHHoG (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 8 Sep 2016 03:44:06 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 21/30] arm64: dts: h3ulcb: enable USB2.0 Host channel 1
+Date: Thu,  8 Sep 2016 09:43:17 +0200
+Message-Id: <15907f1f875f267ea0111654f52966c0adadb3ea.1473320411.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
+References: <cover.1473320411.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The text states that default-input is an endpoint property, but in the
-example it is a device property.  The example makes more sense.
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+This supports USB2.0 Host channel 1 on H3ULCB board
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/media/i2c/adv7604.txt | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv7604.txt b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-index 8337f75..9cbd92e 100644
---- a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-+++ b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
-@@ -34,6 +34,7 @@ The digital output port node must contain at least one endpoint.
- Optional Properties:
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index c7ce96f90722..234b66a9e163 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -127,3 +127,11 @@
  
-   - reset-gpios: Reference to the GPIO connected to the device's reset pin.
-+  - default-input: Select which input is selected after reset.
- 
- Optional Endpoint Properties:
- 
-@@ -47,8 +48,6 @@ Optional Endpoint Properties:
-   If none of hsync-active, vsync-active and pclk-sample is specified the
-   endpoint will use embedded BT.656 synchronization.
- 
--  - default-input: Select which input is selected after reset.
--
- Example:
- 
- 	hdmi_receiver@4c {
+ 	status = "okay";
+ };
++
++&ehci1 {
++	status = "okay";
++};
++
++&ohci1 {
++	status = "okay";
++};
 -- 
-2.9.3
-
+2.7.0.rc3.207.g0ac5344
