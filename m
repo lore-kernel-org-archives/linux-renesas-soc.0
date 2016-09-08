@@ -1,66 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:32890 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932911AbcIBQqz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757899AbcIHHoD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 12:46:55 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        sergei.shtylyov@cogentembedded.com, hans.verkuil@cisco.com
-Cc: slongerbeam@gmail.com, lars@metafoo.de, mchehab@kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv3 2/6] media: rcar-vin: make V4L2_FIELD_INTERLACED standard dependent
-Date: Fri,  2 Sep 2016 18:44:57 +0200
-Message-Id: <20160902164501.19535-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160902164501.19535-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160902164501.19535-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 8 Sep 2016 03:44:03 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 17/30] arm64: dts: h3ulcb: enable I2C2
+Date: Thu,  8 Sep 2016 09:43:13 +0200
+Message-Id: <eb3f0f199fc48a813ee8f22212c91d5f8859ff79.1473320411.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
+References: <cover.1473320411.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The field V4L2_FIELD_INTERLACED is standard dependent and should not
-unconditionally be equivalent to V4L2_FIELD_INTERLACED_TB.
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-This patch adds a check to see if the video standard can be obtained and
-if it's a 60 Hz format. If the condition is met V4L2_FIELD_INTERLACED
-is treated as V4L2_FIELD_INTERLACED_BT if not as
-V4L2_FIELD_INTERLACED_TB.
+This supports I2C2 bus on H3ULCB board
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-dma.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 46abdb0..d57801b 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -131,6 +131,7 @@ static u32 rvin_read(struct rvin_dev *vin, u32 offset)
- static int rvin_setup(struct rvin_dev *vin)
- {
- 	u32 vnmc, dmr, dmr2, interrupts;
-+	v4l2_std_id std;
- 	bool progressive = false, output_is_yuv = false, input_is_yuv = false;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index fb694b8c6f59..3ba1f72526ba 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -51,6 +51,11 @@
+ 		function = "scif_clk";
+ 	};
  
- 	switch (vin->format.field) {
-@@ -141,6 +142,14 @@ static int rvin_setup(struct rvin_dev *vin)
- 		vnmc = VNMC_IM_EVEN;
- 		break;
- 	case V4L2_FIELD_INTERLACED:
-+		/* Default to TB */
-+		vnmc = VNMC_IM_FULL;
-+		/* Use BT if video standard can be read and is 60 Hz format */
-+		if (!v4l2_subdev_call(vin_to_source(vin), video, g_std, &std)) {
-+			if (std & V4L2_STD_525_60)
-+				vnmc = VNMC_IM_FULL | VNMC_FOC;
-+		}
-+		break;
- 	case V4L2_FIELD_INTERLACED_TB:
- 		vnmc = VNMC_IM_FULL;
- 		break;
++	i2c2_pins: i2c2 {
++		groups = "i2c2_a";
++		function = "i2c2";
++	};
++
+ 	avb_pins: avb {
+ 		groups = "avb_mdc";
+ 		function = "avb";
+@@ -69,6 +74,13 @@
+ 	status = "okay";
+ };
+ 
++&i2c2 {
++	pinctrl-0 = <&i2c2_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
+ &avb {
+ 	pinctrl-0 = <&avb_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.9.3
+2.7.0.rc3.207.g0ac5344
