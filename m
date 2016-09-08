@@ -1,38 +1,189 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:42307 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752034AbcICGHZ (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757883AbcIHHnw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 3 Sep 2016 02:07:25 -0400
-From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-To: "geert+renesas@glider.be" <geert+renesas@glider.be>
-CC: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Toru Oishi <toru.oishi.zj@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        "Khiem Nguyen" <khiem.nguyen.xt@renesas.com>
-Subject: [PATCH] clk: renesas: r8a7796: Add THS/TSC clock
-Date: Sat, 3 Sep 2016 06:06:49 +0000
-Message-ID: <SIXPR06MB0906B1BEEF43FD0D22E14485A8E40@SIXPR06MB0906.apcprd06.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Thu, 8 Sep 2016 03:43:52 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 09/30] arm64: dts: renesas: r8a7795: Add VSP instances
+Date: Thu,  8 Sep 2016 09:43:05 +0200
+Message-Id: <9f8573e38a0b377aa092db96be140be4d59a7fae.1473320411.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
+References: <cover.1473320411.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-DQpTaWduZWQtb2ZmLWJ5OiBLaGllbSBOZ3V5ZW4gPGtoaWVtLm5ndXllbi54dEByZW5lc2FzLmNv
-bT4NCi0tLQ0KIGRyaXZlcnMvY2xrL3JlbmVzYXMvcjhhNzc5Ni1jcGctbXNzci5jIHwgMSArDQog
-MSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2Ns
-ay9yZW5lc2FzL3I4YTc3OTYtY3BnLW1zc3IuYyBiL2RyaXZlcnMvY2xrL3JlbmVzYXMvcjhhNzc5
-Ni1jcGctbXNzci5jDQppbmRleCA4OTFiMzUzLi4yNzFmYzNiIDEwMDY0NA0KLS0tIGEvZHJpdmVy
-cy9jbGsvcmVuZXNhcy9yOGE3Nzk2LWNwZy1tc3NyLmMNCisrKyBiL2RyaXZlcnMvY2xrL3JlbmVz
-YXMvcjhhNzc5Ni1jcGctbXNzci5jDQpAQCAtMTE2LDYgKzExNiw3IEBAIHN0YXRpYyBjb25zdCBz
-dHJ1Y3QgbXNzcl9tb2RfY2xrIHI4YTc3OTZfbW9kX2Nsa3NbXSBfX2luaXRjb25zdCA9IHsNCiAJ
-REVGX01PRCgic2RpZjAiLAkJIDMxNCwJUjhBNzc5Nl9DTEtfU0QwKSwNCiAJREVGX01PRCgicndk
-dDAiLAkJIDQwMiwJUjhBNzc5Nl9DTEtfUiksDQogCURFRl9NT0QoImludGMtYXAiLAkJIDQwOCwJ
-UjhBNzc5Nl9DTEtfUzNEMSksDQorCURFRl9NT0QoInRoZXJtYWwiLAkJIDUyMiwJUjhBNzc5Nl9D
-TEtfQ1ApLA0KIAlERUZfTU9EKCJncGlvNyIsCQkgOTA1LAlSOEE3Nzk2X0NMS19TM0Q0KSwNCiAJ
-REVGX01PRCgiZ3BpbzYiLAkJIDkwNiwJUjhBNzc5Nl9DTEtfUzNENCksDQogCURFRl9NT0QoImdw
-aW81IiwJCSA5MDcsCVI4QTc3OTZfQ0xLX1MzRDQpLA0KLS0gDQoxLjkuMQ0KDQo=
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+The r8a7795 has 9 VSP instances.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 90 ++++++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index fe7725d1d131..19daa6a88312 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1295,6 +1295,16 @@
+ 			status = "disabled";
+ 		};
+ 
++		vspbc: vsp@fe920000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfe920000 0 0x8000>;
++			interrupts = <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 624>;
++			power-domains = <&sysc R8A7795_PD_A3VP>;
++
++			renesas,fcp = <&fcpvb1>;
++		};
++
+ 		fcpvb1: fcp@fe92f000 {
+ 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
+ 			reg = <0 0xfe92f000 0 0x200>;
+@@ -1323,6 +1333,16 @@
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 		};
+ 
++		vspbd: vsp@fe960000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfe960000 0 0x8000>;
++			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 626>;
++			power-domains = <&sysc R8A7795_PD_A3VP>;
++
++			renesas,fcp = <&fcpvb0>;
++		};
++
+ 		fcpvb0: fcp@fe96f000 {
+ 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
+ 			reg = <0 0xfe96f000 0 0x200>;
+@@ -1330,6 +1350,16 @@
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 		};
+ 
++		vspi0: vsp@fe9a0000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfe9a0000 0 0x8000>;
++			interrupts = <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 631>;
++			power-domains = <&sysc R8A7795_PD_A3VP>;
++
++			renesas,fcp = <&fcpvi0>;
++		};
++
+ 		fcpvi0: fcp@fe9af000 {
+ 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
+ 			reg = <0 0xfe9af000 0 0x200>;
+@@ -1337,6 +1367,16 @@
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 		};
+ 
++		vspi1: vsp@fe9b0000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfe9b0000 0 0x8000>;
++			interrupts = <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 630>;
++			power-domains = <&sysc R8A7795_PD_A3VP>;
++
++			renesas,fcp = <&fcpvi1>;
++		};
++
+ 		fcpvi1: fcp@fe9bf000 {
+ 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
+ 			reg = <0 0xfe9bf000 0 0x200>;
+@@ -1344,6 +1384,16 @@
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 		};
+ 
++		vspi2: vsp@fe9c0000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfe9c0000 0 0x8000>;
++			interrupts = <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 629>;
++			power-domains = <&sysc R8A7795_PD_A3VP>;
++
++			renesas,fcp = <&fcpvi2>;
++		};
++
+ 		fcpvi2: fcp@fe9cf000 {
+ 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
+ 			reg = <0 0xfe9cf000 0 0x200>;
+@@ -1351,6 +1401,16 @@
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 		};
+ 
++		vspd0: vsp@fea20000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea20000 0 0x4000>;
++			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 623>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++
++			renesas,fcp = <&fcpvd0>;
++		};
++
+ 		fcpvd0: fcp@fea27000 {
+ 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
+ 			reg = <0 0xfea27000 0 0x200>;
+@@ -1358,6 +1418,16 @@
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		};
+ 
++		vspd1: vsp@fea28000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea28000 0 0x4000>;
++			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 622>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++
++			renesas,fcp = <&fcpvd1>;
++		};
++
+ 		fcpvd1: fcp@fea2f000 {
+ 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
+ 			reg = <0 0xfea2f000 0 0x200>;
+@@ -1365,6 +1435,16 @@
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		};
+ 
++		vspd2: vsp@fea30000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea30000 0 0x4000>;
++			interrupts = <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 621>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++
++			renesas,fcp = <&fcpvd2>;
++		};
++
+ 		fcpvd2: fcp@fea37000 {
+ 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
+ 			reg = <0 0xfea37000 0 0x200>;
+@@ -1372,6 +1452,16 @@
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		};
+ 
++		vspd3: vsp@fea38000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea38000 0 0x4000>;
++			interrupts = <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 620>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++
++			renesas,fcp = <&fcpvd3>;
++		};
++
+ 		fcpvd3: fcp@fea3f000 {
+ 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
+ 			reg = <0 0xfea3f000 0 0x200>;
+-- 
+2.7.0.rc3.207.g0ac5344
