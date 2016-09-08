@@ -1,75 +1,89 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:36584 "EHLO
-        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754447AbcIEVdK (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Sep 2016 17:33:10 -0400
-Received: by mail-lf0-f54.google.com with SMTP id g62so133684154lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Sep 2016 14:33:09 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: dts: wheat: add support for tactile switches
-Date: Tue, 06 Sep 2016 00:33:05 +0300
-Message-ID: <10465663.8teCsXZU7y@wasted.cogentembedded.com>
-In-Reply-To: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
-References: <5383928.8UnDsUpmkz@wasted.cogentembedded.com>
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <kieran@ksquared.org.uk>
+Return-Path: <kieran@ksquared.org.uk>
+Sender: Kieran Bingham <kieran@ksquared.org.uk>
+Subject: Re: [PATCH v3 02/10] v4l: ctrls: Add deinterlacing mode control
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ linux-media@vger.kernel.org
+References: <1473287110-780-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1473287110-780-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+From: Kieran Bingham <kieran@bingham.xyz>
+Message-ID: <f20f65c5-a62b-2561-b3fc-d1537230da75@bingham.xyz>
+Date: Thu, 8 Sep 2016 10:04:48 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <1473287110-780-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add  support for the  tactile switches  SW2/3 (on the debug board) as a
-virtual keyboard like it  was done with the Blanche board).
+On 07/09/16 23:25, Laurent Pinchart wrote:
+> The menu control selects the operation mode of a video deinterlacer. The
+> menu entries are driver specific.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Excellent. This makes a lot more sense than adding a custom control in
+the driver :D
 
----
-This patch is against the 'renesas-devel-20160905-v4.8-rc5' of Simon Horman's
-'renesas.git' repo plus the Wheat DU patch...
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
- arch/arm/boot/dts/r8a7792-wheat.dts |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Reviewed-by: Kieran Bingham <kieran@bingham.xyz>
 
-Index: renesas/arch/arm/boot/dts/r8a7792-wheat.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7792-wheat.dts
-+++ renesas/arch/arm/boot/dts/r8a7792-wheat.dts
-@@ -12,6 +12,7 @@
- /dts-v1/;
- #include "r8a7792.dtsi"
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
- 
- / {
- 	model = "Wheat";
-@@ -56,6 +57,25 @@
- 		pinctrl-names = "default";
- 	};
- 
-+	keyboard {
-+		compatible = "gpio-keys";
-+
-+		key-a {
-+			linux,code = <KEY_A>;
-+			label = "SW2";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio3 20 GPIO_ACTIVE_LOW>;
-+		};
-+		key-b {
-+			linux,code = <KEY_B>;
-+			label = "SW3";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio11 2 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
- 	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
- 
+> ---
+>  Documentation/media/uapi/v4l/extended-controls.rst | 4 ++++
+>  drivers/media/v4l2-core/v4l2-ctrls.c               | 2 ++
+>  include/uapi/linux/v4l2-controls.h                 | 1 +
+>  3 files changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documentation/media/uapi/v4l/extended-controls.rst
+> index 1f1518e4859d..8e6314e23cd3 100644
+> --- a/Documentation/media/uapi/v4l/extended-controls.rst
+> +++ b/Documentation/media/uapi/v4l/extended-controls.rst
+> @@ -4250,6 +4250,10 @@ Image Process Control IDs
+>      test pattern images. These hardware specific test patterns can be
+>      used to test if a device is working properly.
+>  
+> +``V4L2_CID_DEINTERLACING_MODE (menu)``
+> +    The video deinterlacing mode (such as Bob, Weave, ...). The menu items are
+> +    driver specific.
+> +
+>  
+>  .. _dv-controls:
+>  
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+> index adc2147fcff7..47001e25fd9e 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+> @@ -885,6 +885,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+>  	case V4L2_CID_LINK_FREQ:		return "Link Frequency";
+>  	case V4L2_CID_PIXEL_RATE:		return "Pixel Rate";
+>  	case V4L2_CID_TEST_PATTERN:		return "Test Pattern";
+> +	case V4L2_CID_DEINTERLACING_MODE:	return "Deinterlacing Mode";
+>  
+>  	/* DV controls */
+>  	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
+> @@ -1058,6 +1059,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
+>  	case V4L2_CID_DV_RX_RGB_RANGE:
+>  	case V4L2_CID_DV_RX_IT_CONTENT_TYPE:
+>  	case V4L2_CID_TEST_PATTERN:
+> +	case V4L2_CID_DEINTERLACING_MODE:
+>  	case V4L2_CID_TUNE_DEEMPHASIS:
+>  	case V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_SEL:
+>  	case V4L2_CID_DETECT_MD_MODE:
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> index b6a357a5f053..0d2e1e01fbd5 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -892,6 +892,7 @@ enum v4l2_jpeg_chroma_subsampling {
+>  #define V4L2_CID_LINK_FREQ			(V4L2_CID_IMAGE_PROC_CLASS_BASE + 1)
+>  #define V4L2_CID_PIXEL_RATE			(V4L2_CID_IMAGE_PROC_CLASS_BASE + 2)
+>  #define V4L2_CID_TEST_PATTERN			(V4L2_CID_IMAGE_PROC_CLASS_BASE + 3)
+> +#define V4L2_CID_DEINTERLACING_MODE		(V4L2_CID_IMAGE_PROC_CLASS_BASE + 4)
+>  
+>  
+>  /*  DV-class control IDs defined by V4L2 */
+> 
+
+-- 
+Regards
+
+Kieran Bingham
