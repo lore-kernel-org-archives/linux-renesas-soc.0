@@ -1,43 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:26827 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933163AbcILOQB (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757899AbcIHHoE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Sep 2016 10:16:01 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 0/3] mmc: sh_mobile_sdhi: Add r7s72100 support
-Date: Mon, 12 Sep 2016 10:15:04 -0400
-Message-Id: <20160912141507.6837-1-chris.brandt@renesas.com>
+        Thu, 8 Sep 2016 03:44:04 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 22/30] arm64: dts: r8a7795: remove unnecessary cap-mmc-highspeed property
+Date: Thu,  8 Sep 2016 09:43:18 +0200
+Message-Id: <56de959f533f5138f1cd5aaa4706e1831c479e28.1473320411.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
+References: <cover.1473320411.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-For the most part, the SDHI controller in the RZ/A1 (r7s72100)
-is the same as other Renesas SoC...except for the fact that the 
-data port register was widened to 32-bits and the 16-bit accesses
-in the current tmio driver aren't going to cut it.
+Remove cap-mmc-highspeed property from SDHI2 and SDHI3.
 
-Also, the tmio driver allows you to pass in what voltages you
-support via the ocr_mask. For the RZ/A1, it's just simple 3.3v.
-So, I added the ability to pass that when using DT.
+This property is unnecessary as the driver automatically sets
+the highspeed capability. Furthermore its use is inconsistent with SDHI0
+and SDHI1 which are also highspeed capable but do not have this property
+present.
 
-Chris Brandt (3):
-  mmc: sh_mobile_sdhi: add ocr_mask option
-  mmc: tmio-mmc: add support for 32bit data port
-  mmc: sh_mobile_sdhi: Add r7s72100 support
+Found by inspection.
 
- Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  1 +
- drivers/mmc/host/sh_mobile_sdhi.c                  |  9 +++++++
- drivers/mmc/host/tmio_mmc.h                        | 12 +++++++++
- drivers/mmc/host/tmio_mmc_pio.c                    | 30 ++++++++++++++++++++++
- include/linux/mfd/tmio.h                           |  5 ++++
- 5 files changed, 57 insertions(+)
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 --
+ 1 file changed, 2 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 64899b556a0e..8c15040f2540 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1122,7 +1122,6 @@
+ 			clocks = <&cpg CPG_MOD 312>;
+ 			max-frequency = <200000000>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+-			cap-mmc-highspeed;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1133,7 +1132,6 @@
+ 			clocks = <&cpg CPG_MOD 311>;
+ 			max-frequency = <200000000>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+-			cap-mmc-highspeed;
+ 			status = "disabled";
+ 		};
+ 
 -- 
-2.9.2
+2.7.0.rc3.207.g0ac5344
