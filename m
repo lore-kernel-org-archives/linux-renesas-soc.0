@@ -1,95 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:36558 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935654AbcISMtq (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757899AbcIHHoO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 08:49:46 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Dirk Behme <dirk.behme@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 5/6] arm64: dts: r8a7795: salvator: enable on-board eMMC
-Date: Mon, 19 Sep 2016 14:49:20 +0200
-Message-Id: <20160919124921.8172-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
-References: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
+        Thu, 8 Sep 2016 03:44:14 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 26/30] arm64: dts: h3ulcb: enable GPIO leds
+Date: Thu,  8 Sep 2016 09:43:22 +0200
+Message-Id: <e8c841f5ac166e602646c955aa1b0b7499900101.1473320411.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
+References: <cover.1473320411.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 43 ++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 8964b1ea3cea69..7780d02f716a34 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -62,6 +62,24 @@
- 		clock-frequency = <24576000>;
+This supports GPIO leds on H3ULCB board
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index c6d4ee336740..bcb11a868343 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -33,6 +33,17 @@
+ 		reg = <0x0 0x48000000 0x0 0x38000000>;
  	};
  
-+	reg_1p8v: regulator0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
++	leds {
++		compatible = "gpio-leds";
++
++		led5 {
++			gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
++		};
++		led6 {
++			gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
++		};
 +	};
 +
-+	reg_3p3v: regulator1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
+ 	keyboard {
+ 		compatible = "gpio-keys";
  
-@@ -246,6 +264,18 @@
- 		power-source = <1800>;
- 	};
- 
-+	sdhi2_pins: sd2 {
-+		groups = "sdhi2_data8", "sdhi2_ctrl";
-+		function = "sdhi2";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi2_pins_uhs: sd2 {
-+		groups = "sdhi2_data8", "sdhi2_ctrl";
-+		function = "sdhi2";
-+		power-source = <1800>;
-+	};
-+
- 	sdhi3_pins: sd3 {
- 		groups = "sdhi3_data4", "sdhi3_ctrl";
- 		function = "sdhi3";
-@@ -398,6 +428,19 @@
- 	status = "okay";
- };
- 
-+&sdhi2 {
-+	/* used for on-board 8bit eMMC */
-+	pinctrl-0 = <&sdhi2_pins>;
-+	pinctrl-1 = <&sdhi2_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_1p8v>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
-+};
-+
- &sdhi3 {
- 	pinctrl-0 = <&sdhi3_pins>;
- 	pinctrl-1 = <&sdhi3_pins_uhs>;
 -- 
-2.9.3
+2.7.0.rc3.207.g0ac5344
