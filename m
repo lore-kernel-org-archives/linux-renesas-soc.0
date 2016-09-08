@@ -1,41 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49450 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:45943 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757927AbcIHLhA (ORCPT
+        with ESMTP id S1757891AbcIHHnp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 07:37:00 -0400
+        Thu, 8 Sep 2016 03:43:45 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 0/3] pinctrl: sh-pfc: r8a779[14]: Implement voltage switching for SDHI
-Date: Thu,  8 Sep 2016 13:36:45 +0200
-Message-Id: <1473334608-24638-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 11/30] arm64: dts: r8a7795: renesas: salvator-x: Enable DU
+Date: Thu,  8 Sep 2016 09:43:07 +0200
+Message-Id: <aadc4ee00a0ec4de5e4aea9f879ab738fd34d0e1.1473320411.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
+References: <cover.1473320411.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-this series adds voltage switching for SDHI to sh-pfc for the r8a7791 and
-r8a794 SoCs. It is based on work for the r8a7790 SoC by Wolfram Sang.
+Only the VGA output is supported for now.
 
-The r8a7793 should be able to be trivially supported using the
-same mechanism as r8a7791. I intend to provide a follow-up patch
-once testing is completed.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 44 ++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-Simon Horman (3):
-  pinctrl: sh-pfc: Add PORT_GP_24 helper macro
-  pinctrl: sh-pfc: r8a7791: Implement voltage switching for SDHI
-  pinctrl: sh-pfc: r8a7794: Implement voltage switching for SDHI
-
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 29 ++++++++++++++++++++++++++++-
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 34 +++++++++++++++++++++++++++++++++-
- drivers/pinctrl/sh-pfc/sh_pfc.h      |  8 ++++++--
- 3 files changed, 67 insertions(+), 4 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 4332ec7bb38c..64a29a87a724 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -146,6 +146,50 @@
+ 			sound-dai = <&ak4613>;
+ 		};
+ 	};
++
++	vga-encoder {
++		compatible = "adi,adv7123";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7123_in: endpoint {
++					remote-endpoint = <&du_out_rgb>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				adv7123_out: endpoint {
++					remote-endpoint = <&vga_in>;
++				};
++			};
++		};
++	};
++
++	vga {
++		compatible = "vga-connector";
++
++		port {
++			vga_in: endpoint {
++				remote-endpoint = <&adv7123_out>;
++			};
++		};
++	};
++};
++
++&du {
++	status = "okay";
++
++	ports {
++		port@0 {
++			endpoint {
++				remote-endpoint = <&adv7123_in>;
++			};
++		};
++	};
+ };
+ 
+ &extal_clk {
 -- 
 2.7.0.rc3.207.g0ac5344
