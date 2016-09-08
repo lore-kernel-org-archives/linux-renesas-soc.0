@@ -1,140 +1,106 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:34945 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753190AbcITMDF (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757899AbcIHHn6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Sep 2016 08:03:05 -0400
-Received: by mail-pf0-f196.google.com with SMTP id 6so895104pfl.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Sep 2016 05:03:04 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
+        Thu, 8 Sep 2016 03:43:58 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Tue, 20 Sep 2016 20:54:33 +0900
-Message-Id: <20160920115433.14772.84308.sendpatchset@little-apple>
-Subject: [PATCH/RFC] iommu/ipmmu-vmsa: IPMMU SYS-DMAC iova mapping workaround
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 14/30] arm64: dts: h3ulcb: initial device tree
+Date: Thu,  8 Sep 2016 09:43:10 +0200
+Message-Id: <b10690d11fead70652c2544098e41436258ec443.1473320411.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
+References: <cover.1473320411.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Here's some prototype code that works around the lack of software
-support for mapping I/O devices to the SYS-DMAC hardware via the
-DMA Engine framework when using IOMMU.
+Add the initial device tree for the R8A7795 SoC based H3ULCB low cost
+board.
 
-The code itself is one big layering violation that goes through
-the DT and unconditionally maps I/O devices using DMACs via the
-IPMMU device instance into iova space with a 1:1 mapping.
+This commit supports the following peripherals:
+- SCIF (console)
 
-This very short term prototype will for instance automatically make
-the SCIF serial port function with the IPMMU hardware in case the
-SYS-DMAC is hooked up to the IPMMU device.
-
-Not to be confused with the more long term solution to allow the
-DMA Engine framework to map I/O device memory dynamically.
-
-Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm64/boot/dts/renesas/Makefile           |  2 +-
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 51 ++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
 
- Applies on top of: renesas-drivers-2016-09-13-v4.8-rc6
-
- drivers/iommu/ipmmu-vmsa.c |   75 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
-
---- 0001/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-09-20 20:03:37.620607110 +0900
-@@ -19,6 +19,7 @@
- #include <linux/iommu.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/of_iommu.h>
- #include <linux/platform_device.h>
- #include <linux/sizes.h>
-@@ -625,6 +626,78 @@ static void ipmmu_domain_free(struct iom
- 	kfree(domain);
- }
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 17139f7003a6..eb72830ec9eb 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -1,4 +1,4 @@
+-dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb
++dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb
  
-+static void ipmmu_workaround_map(struct iommu_domain *io_domain,
-+				 struct device *dma_dev, struct resource *res)
-+{
-+	phys_addr_t phys_addr;
+ always		:= $(dtb-y)
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+new file mode 100644
+index 000000000000..ecb9e1102266
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -0,0 +1,51 @@
++/*
++ * Device Tree Source for the H3ULCB board
++ *
++ * Copyright (C) 2016 Renesas Electronics Corp.
++ * Copyright (C) 2016 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
 +
-+	dev_info(dma_dev, "map %pr\n", res);
++/dts-v1/;
++#include "r8a7795.dtsi"
++#include <dt-bindings/gpio/gpio.h>
 +
-+	phys_addr = iommu_iova_to_phys(io_domain, res->start);
-+	if (phys_addr)
-+		return;
++/ {
++	model = "Renesas H3ULCB board based on r8a7795";
++	compatible = "renesas,h3ulcb", "renesas,r8a7795";
 +
-+	iommu_map(io_domain, res->start, res->start,
-+		  ALIGN(resource_size(res), SZ_4K),
-+		  IOMMU_READ | IOMMU_WRITE);
-+}
++	aliases {
++		serial0 = &scif2;
++	};
 +
-+static void ipmmu_workaround_dt(struct iommu_domain *io_domain,
-+				struct device *dev,
-+				void (*match)(struct iommu_domain *io_domain,
-+					      struct device *dma_dev,
-+					      struct resource *res))
-+{
-+	struct device_node *np = NULL;
-+	struct of_phandle_args dma_spec;
-+	struct resource r;
-+	int i, cnt;
-+	bool found;
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
 +
-+	/* Locate I/O devices using the DMAC and map their registers */
-+	while ((np = of_find_all_nodes(np))) {
-+		if (!of_find_property(np, "dmas", NULL))
-+			continue;
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x38000000>;
++	};
++};
 +
-+		cnt = of_property_count_strings(np, "dma-names");
-+		if (cnt < 0)
-+			continue;
++&extal_clk {
++	clock-frequency = <16666666>;
++};
 +
-+		found = false;
-+		for (i = 0; i < cnt; i++) {
-+			if (of_parse_phandle_with_args(np, "dmas",
-+						       "#dma-cells", i,
-+						       &dma_spec))
-+				continue;
++&pfc {
++	scif2_pins: scif2 {
++		groups = "scif2_data_a";
++		function = "scif2";
++	};
++};
 +
-+			if (dma_spec.np == dev->of_node)
-+				found = true;
++&scif2 {
++	pinctrl-0 = <&scif2_pins>;
++	pinctrl-names = "default";
 +
-+			of_node_put(dma_spec.np);
-+		}
-+
-+		if (!found)
-+			continue;
-+
-+		i = 0;
-+		while (!of_address_to_resource(np, i, &r)) {
-+			match(io_domain, dev, &r);
-+			i++;
-+		}
-+	}
-+}
-+
-+static void ipmmu_workaround(struct iommu_domain *io_domain,
-+			     struct device *dev)
-+{
-+	/* only apply workaround for DMA controllers */
-+	if (!strstr(dev_name(dev), "dma-controller"))
-+		return;
-+
-+	dev_info(dev, "Adding iommu workaround to map I/O devices for DMACs\n");
-+	ipmmu_workaround_dt(io_domain, dev, ipmmu_workaround_map);
-+}
-+
- static int ipmmu_attach_device(struct iommu_domain *io_domain,
- 			       struct device *dev)
- {
-@@ -678,6 +751,8 @@ static int ipmmu_attach_device(struct io
- 	if (ret < 0)
- 		return ret;
- 
-+	ipmmu_workaround(io_domain, dev);
-+
- 	for (i = 0; i < archdata->num_utlbs; ++i)
- 		ipmmu_utlb_enable(domain, archdata->utlbs[i]);
- 
++	status = "okay";
++};
+-- 
+2.7.0.rc3.207.g0ac5344
