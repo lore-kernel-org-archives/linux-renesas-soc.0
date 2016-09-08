@@ -1,93 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56892 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756479AbcIMK5l (ORCPT
+        with ESMTP id S1757899AbcIHHoA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Sep 2016 06:57:41 -0400
+        Thu, 8 Sep 2016 03:44:00 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v7 10/11] arm64: dts: r8a7796: salvator-x: enable UHS for SDHI 0 & 3
-Date: Tue, 13 Sep 2016 12:57:07 +0200
-Message-Id: <1473764228-24768-11-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
-References: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 20/30] arm64: dts: h3ulcb: enable USB2 PHY of channel 1
+Date: Thu,  8 Sep 2016 09:43:16 +0200
+Message-Id: <0baa64d8d2f0dc7ef006b6f7669cb2c7862899da.1473320411.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
+References: <cover.1473320411.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Based on work for the r8a7796 by Wolfram Sang.
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This supports USB2 PHY channel #1 on H3ULCB board
+
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index a8373c248ad1..a9947d45cccc 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -97,11 +97,25 @@
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi0_pins_uhs: sd0_uhs {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <1800>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index ce95a3346102..c7ce96f90722 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -64,6 +64,11 @@
+ 		groups = "avb_mdc";
+ 		function = "avb";
  	};
- 
- 	sdhi3_pins: sd3 {
- 		groups = "sdhi3_data4", "sdhi3_ctrl";
- 		function = "sdhi3";
-+		power-source = <3300>;
-+	};
 +
-+	sdhi3_pins_uhs: sd3_uhs {
-+		groups = "sdhi3_data4", "sdhi3_ctrl";
-+		function = "sdhi3";
-+		power-source = <1800>;
++	usb1_pins: usb1 {
++		groups = "usb1";
++		function = "usb1";
++	};
+ };
+ 
+ &scif2 {
+@@ -115,3 +120,10 @@
+ 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
  	};
  };
- 
-@@ -111,25 +125,29 @@
- 
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
--	pinctrl-names = "default";
-+	pinctrl-1 = <&sdhi0_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi0>;
- 	vqmmc-supply = <&vccq_sdhi0>;
- 	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
- 
- &sdhi3 {
- 	pinctrl-0 = <&sdhi3_pins>;
--	pinctrl-names = "default";
-+	pinctrl-1 = <&sdhi3_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi3>;
- 	vqmmc-supply = <&vccq_sdhi3>;
- 	cd-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
- 
++
++&usb2_phy1 {
++	pinctrl-0 = <&usb1_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
 -- 
 2.7.0.rc3.207.g0ac5344
