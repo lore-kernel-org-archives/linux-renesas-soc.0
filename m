@@ -1,32 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:33521 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753010AbcIBM4M (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757899AbcIHHoJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 08:56:12 -0400
-Date: Fri, 2 Sep 2016 07:56:09 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        magnus.damm@gmail.com
-Subject: Re: [PATCH 1/3] DT: arm: shmobile: document Wheat board
-Message-ID: <20160902125609.GA13229@rob-hp-laptop>
-References: <3665116.9BjHTnhfR3@wasted.cogentembedded.com>
- <81794087.EqU2I9TLcp@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <81794087.EqU2I9TLcp@wasted.cogentembedded.com>
+        Thu, 8 Sep 2016 03:44:09 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 28/30] arm64: dts: r8a7796: Add pinctrl device node
+Date: Thu,  8 Sep 2016 09:43:24 +0200
+Message-Id: <50809470486ae28a814c17f813d9201c3299692f.1473320411.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
+References: <cover.1473320411.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Aug 26, 2016 at 11:20:05PM +0300, Sergei Shtylyov wrote:
-> Document the Wheat device tree bindings, listing it as a supported board.
-> 
-> This allows to use checkpatch.pl to validate .dts files referring to the
-> Wheat board.
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+This patch adds pinctrl device node for R8A7796 SoC.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 1edf82440d78..91abc0732bdf 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -107,6 +107,11 @@
+ 			status = "disabled";
+ 		};
+ 
++		pfc: pin-controller@e6060000 {
++			compatible = "renesas,pfc-r8a7796";
++			reg = <0 0xe6060000 0 0x50c>;
++		};
++
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a7796-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
+-- 
+2.7.0.rc3.207.g0ac5344
