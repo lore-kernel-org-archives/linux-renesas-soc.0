@@ -1,42 +1,68 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran@bingham.xyz>
-Subject: [PATCH v3 03/10] v4l: Extend FCP compatible list to support the FDP
-Date: Thu,  8 Sep 2016 01:25:03 +0300
-Message-Id: <1473287110-780-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1473287110-780-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1473287110-780-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:45943 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756560AbcIHHnk (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 8 Sep 2016 03:43:40 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/30] arm64: dts: r8a7795: set maximum frequency for SDHI clocks
+Date: Thu,  8 Sep 2016 09:42:59 +0200
+Message-Id: <dcdca4d53845d1fdf3f7f25e7db709886facea00.1473320411.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
+References: <cover.1473320411.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran@ksquared.org.uk>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-The FCP must be powered up for the FDP1 to function, even when the FDP1
-does not make use of the FCNL features. Extend the compatible list
-to allow us to use the power domain and runtime-pm support.
+Define the upper limit otherwise the driver cannot utilize max speeds.
 
-Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
-Acked-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-fcp.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-fcp.c b/drivers/media/platform/rcar-fcp.c
-index bc50c69ee0c5..7e944479205d 100644
---- a/drivers/media/platform/rcar-fcp.c
-+++ b/drivers/media/platform/rcar-fcp.c
-@@ -166,6 +166,7 @@ static int rcar_fcp_remove(struct platform_device *pdev)
- 
- static const struct of_device_id rcar_fcp_of_match[] = {
- 	{ .compatible = "renesas,fcpv" },
-+	{ .compatible = "renesas,fcpf" },
- 	{ },
- };
- 
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 99953ca9a45e..834a12a13735 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1098,6 +1098,7 @@
+ 			reg = <0 0xee100000 0 0x2000>;
+ 			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 314>;
++			max-frequency = <200000000>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+@@ -1107,6 +1108,7 @@
+ 			reg = <0 0xee120000 0 0x2000>;
+ 			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 313>;
++			max-frequency = <200000000>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
+@@ -1116,6 +1118,7 @@
+ 			reg = <0 0xee140000 0 0x2000>;
+ 			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 312>;
++			max-frequency = <200000000>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			cap-mmc-highspeed;
+ 			status = "disabled";
+@@ -1126,6 +1129,7 @@
+ 			reg = <0 0xee160000 0 0x2000>;
+ 			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 311>;
++			max-frequency = <200000000>;
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			cap-mmc-highspeed;
+ 			status = "disabled";
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.0.rc3.207.g0ac5344
