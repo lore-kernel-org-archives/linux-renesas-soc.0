@@ -1,91 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:20316 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754439AbcIANM6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757883AbcIHHnt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Sep 2016 09:12:58 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3] clk: renesas: rz: Select EXTAL vs USB clock
-Date: Thu,  1 Sep 2016 09:10:36 -0400
-Message-Id: <20160901131036.17241-1-chris.brandt@renesas.com>
-In-Reply-To: <20160830031358.19468-1-chris.brandt@renesas.com>
-References: <20160830031358.19468-1-chris.brandt@renesas.com>
+        Thu, 8 Sep 2016 03:43:49 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 16/30] arm64: dts: h3ulcb: enable EthernetAVB
+Date: Thu,  8 Sep 2016 09:43:12 +0200
+Message-Id: <144bf6ccb13fc661a2d18ae8b13f25e61015331b.1473320411.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
+References: <cover.1473320411.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Check the MD_CLK pin to determine the current clock mode in order to set
-the pll clock parent correctly.
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v3:
-* move reading GPIO port into separate function
-v2:
-* Switched to reading MD_CLK pin to determine mode
----
- drivers/clk/renesas/clk-rz.c | 31 ++++++++++++++++++++++++++++---
- 1 file changed, 28 insertions(+), 3 deletions(-)
+This supports Ethernet AVB on H3ULCB board
 
-diff --git a/drivers/clk/renesas/clk-rz.c b/drivers/clk/renesas/clk-rz.c
-index f6312c6..29a8638 100644
---- a/drivers/clk/renesas/clk-rz.c
-+++ b/drivers/clk/renesas/clk-rz.c
-@@ -25,10 +25,34 @@ struct rz_cpg {
- #define CPG_FRQCR	0x10
- #define CPG_FRQCR2	0x14
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 32 ++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 67ce368ff9ee..fb694b8c6f59 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -19,6 +19,7 @@
  
-+#define PPR0 0xFCFE3200
-+#define PIBC0 0xFCFE7000
-+
-+#define MD_BOOT0(x) ((x >> 0) & 1)	/* P0_0 */
-+#define MD_BOOT1(x) ((x >> 1) & 1)	/* P0_1 */
-+#define MD_CLK(x)   ((x >> 2) & 1)	/* P0_2 */
-+#define MD_CLKS(x)  ((x >> 3) & 1)	/* P0_3 */
-+
- /* -----------------------------------------------------------------------------
-  * Initialization
-  */
+ 	aliases {
+ 		serial0 = &scif2;
++		ethernet0 = &avb;
+ 	};
  
-+u16 rz_cpg_read_mode_pins(void)
-+{
-+	void __iomem *ppr0, *pibc0;
-+	u16 modes;
+ 	chosen {
+@@ -49,6 +50,11 @@
+ 		groups = "scif_clk_a";
+ 		function = "scif_clk";
+ 	};
 +
-+	ppr0 = ioremap_nocache(PPR0, 2);
-+	pibc0 = ioremap_nocache(PIBC0, 2);
-+	BUG_ON(!ppr0 || !pibc0);
-+	iowrite16(4, pibc0);	/* enable input buffer */
-+	modes = ioread16(ppr0);
-+	iounmap(ppr0);
-+	iounmap(pibc0);
++	avb_pins: avb {
++		groups = "avb_mdc";
++		function = "avb";
++	};
+ };
+ 
+ &scif2 {
+@@ -62,3 +68,29 @@
+ 	clock-frequency = <14745600>;
+ 	status = "okay";
+ };
 +
-+	return modes;
-+}
++&avb {
++	pinctrl-0 = <&avb_pins>;
++	pinctrl-names = "default";
++	renesas,no-ether-link;
++	phy-handle = <&phy0>;
++	status = "okay";
 +
- static struct clk * __init
- rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *name)
- {
-@@ -37,10 +61,11 @@ rz_cpg_register_clock(struct device_node *np, struct rz_cpg *cpg, const char *na
- 	static const unsigned frqcr_tab[4] = { 3, 2, 0, 1 };
- 
- 	if (strcmp(name, "pll") == 0) {
--		/* FIXME: cpg_mode should be read from GPIO. But no GPIO support yet */
--		unsigned cpg_mode = 0; /* hardcoded to EXTAL for now */
--		const char *parent_name = of_clk_get_parent_name(np, cpg_mode);
-+		unsigned int cpg_mode;
-+		const char *parent_name;
- 
-+		cpg_mode = MD_CLK(rz_cpg_read_mode_pins());
-+		parent_name = of_clk_get_parent_name(np, cpg_mode);
- 		mult = cpg_mode ? (32 / 4) : 30;
- 
- 		return clk_register_fixed_factor(NULL, name, parent_name, 0, mult, 1);
++	phy0: ethernet-phy@0 {
++		rxc-skew-ps = <900>;
++		rxdv-skew-ps = <0>;
++		rxd0-skew-ps = <0>;
++		rxd1-skew-ps = <0>;
++		rxd2-skew-ps = <0>;
++		rxd3-skew-ps = <0>;
++		txc-skew-ps = <900>;
++		txen-skew-ps = <0>;
++		txd0-skew-ps = <0>;
++		txd1-skew-ps = <0>;
++		txd2-skew-ps = <0>;
++		txd3-skew-ps = <0>;
++		reg = <0>;
++		interrupt-parent = <&gpio2>;
++		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
++	};
++};
 -- 
-2.9.2
+2.7.0.rc3.207.g0ac5344
