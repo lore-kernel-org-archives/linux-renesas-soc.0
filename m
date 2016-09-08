@@ -1,198 +1,196 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Tue, 20 Sep 2016 22:44:16 +0900
-Message-Id: <20160920134416.25470.49173.sendpatchset@little-apple>
-In-Reply-To: <20160920134355.25470.93701.sendpatchset@little-apple>
-References: <20160920134355.25470.93701.sendpatchset@little-apple>
-Subject: [PATCH v5 02/07] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757899AbcIHHoQ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 8 Sep 2016 03:44:16 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 25/30] arm64: dts: h3ulcb: Sound SSI support
+Date: Thu,  8 Sep 2016 09:43:21 +0200
+Message-Id: <2627d5179f2c9e0a15a7ccc257d290719efdf694.1473320411.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
+References: <cover.1473320411.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
 
-Introduce a bitmap for context handing and convert the
-interrupt routine to handle all registered contexts.
+This supports SSI sound for H3ULCB board.
+SSI DMA mode used. CS2000 used as AUDIO_CLK_B.
 
-At this point the number of contexts are still limited.
-
-Also remove the use of the ARM specific mapping variable
-from ipmmu_irq() to allow compile on ARM64.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 118 +++++++++++++++++++++++++
+ 1 file changed, 118 insertions(+)
 
- Changes since V4:
- - None
-
- Changes since V3:
- - None
-
- Changes since V2: (Thanks again to Laurent!)
- - Introduce a spinlock together with the bitmap and domain array.
- - Break out code into separate functions for alloc and free.
- - Perform free after (instead of before) configuring hardware registers.
- - Use the spinlock to protect the domain array in the interrupt handler.
-
- Changes since V1: (Thanks to Laurent for feedback!)
- - Use simple find_first_zero()/set_bit()/clear_bit() for context management.
- - For allocation rely on spinlock held when calling ipmmu_domain_init_context()
- - For test/free use atomic bitops
- - Return IRQ_HANDLED if any of the contexts generated interrupts
-
- drivers/iommu/ipmmu-vmsa.c |   76 ++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 66 insertions(+), 10 deletions(-)
-
---- 0004/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-09-20 21:48:23.770607110 +0900
-@@ -8,6 +8,7 @@
-  * the Free Software Foundation; version 2 of the License.
-  */
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+index 44f1184e1a14..c6d4ee336740 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+@@ -45,6 +45,12 @@
+ 		};
+ 	};
  
-+#include <linux/bitmap.h>
- #include <linux/delay.h>
- #include <linux/dma-mapping.h>
- #include <linux/err.h>
-@@ -26,12 +27,17 @@
- 
- #include "io-pgtable.h"
- 
-+#define IPMMU_CTX_MAX 1
++	x12_clk: x12 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <24576000>;
++	};
 +
- struct ipmmu_vmsa_device {
- 	struct device *dev;
- 	void __iomem *base;
- 	struct list_head list;
+ 	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
  
- 	unsigned int num_utlbs;
-+	spinlock_t lock;			/* Protects ctx and domains[] */
-+	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
-+	struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
- 
- 	struct dma_iommu_mapping *mapping;
+@@ -68,6 +74,32 @@
+ 		states = <3300000 1
+ 			  1800000 0>;
+ 	};
++
++	audio_clkout: audio-clkout {
++		/*
++		 * This is same as <&rcar_sound 0>
++		 * but needed to avoid cs2000/rcar_sound probe dead-lock
++		 */
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <11289600>;
++	};
++
++	rsnd_ak4613: sound {
++		compatible = "simple-audio-card";
++
++		simple-audio-card,format = "left_j";
++		simple-audio-card,bitclock-master = <&sndcpu>;
++		simple-audio-card,frame-master = <&sndcpu>;
++
++		sndcpu: simple-audio-card,cpu {
++			sound-dai = <&rcar_sound>;
++		};
++
++		sndcodec: simple-audio-card,codec {
++			sound-dai = <&ak4613>;
++		};
++	};
  };
-@@ -293,9 +299,29 @@ static struct iommu_gather_ops ipmmu_gat
-  * Domain/Context Management
-  */
  
-+static int ipmmu_domain_allocate_context(struct ipmmu_vmsa_device *mmu,
-+					 struct ipmmu_vmsa_domain *domain)
-+{
-+	unsigned long flags;
-+	int ret;
+ &extal_clk {
+@@ -114,6 +146,17 @@
+ 		power-source = <1800>;
+ 	};
+ 
++	sound_pins: sound {
++		groups = "ssi01239_ctrl", "ssi0_data", "ssi1_data_a";
++		function = "ssi";
++	};
 +
-+	spin_lock_irqsave(&mmu->lock, flags);
++	sound_clk_pins: sound-clk {
++		groups = "audio_clk_a_a", "audio_clk_b_a", "audio_clk_c_a",
++			 "audio_clkout_a", "audio_clkout3_a";
++		function = "audio_clk";
++	};
 +
-+	ret = find_first_zero_bit(mmu->ctx, IPMMU_CTX_MAX);
-+	if (ret != IPMMU_CTX_MAX) {
-+		mmu->domains[ret] = domain;
-+		set_bit(ret, mmu->ctx);
-+	}
+ 	usb1_pins: usb1 {
+ 		groups = "usb1";
+ 		function = "usb1";
+@@ -137,6 +180,73 @@
+ 	pinctrl-names = "default";
+ 
+ 	status = "okay";
 +
-+	spin_unlock_irqrestore(&mmu->lock, flags);
++	clock-frequency = <100000>;
 +
-+	return ret;
-+}
++	ak4613: codec@10 {
++		compatible = "asahi-kasei,ak4613";
++		#sound-dai-cells = <0>;
++		reg = <0x10>;
++		clocks = <&rcar_sound 3>;
 +
- static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
- {
- 	u64 ttbr;
-+	int ret;
- 
- 	/*
- 	 * Allocate the page table operations.
-@@ -325,10 +351,15 @@ static int ipmmu_domain_init_context(str
- 		return -EINVAL;
- 
- 	/*
--	 * TODO: When adding support for multiple contexts, find an unused
--	 * context.
-+	 * Find an unused context.
- 	 */
--	domain->context_id = 0;
-+	ret = ipmmu_domain_allocate_context(domain->mmu, domain);
-+	if (ret == IPMMU_CTX_MAX) {
-+		free_io_pgtable_ops(domain->iop);
-+		return -EBUSY;
-+	}
++		asahi-kasei,in1-single-end;
++		asahi-kasei,in2-single-end;
++		asahi-kasei,out1-single-end;
++		asahi-kasei,out2-single-end;
++		asahi-kasei,out3-single-end;
++		asahi-kasei,out4-single-end;
++		asahi-kasei,out5-single-end;
++		asahi-kasei,out6-single-end;
++	};
 +
-+	domain->context_id = ret;
- 
- 	/* TTBR0 */
- 	ttbr = domain->cfg.arm_lpae_s1_cfg.ttbr[0];
-@@ -370,6 +401,19 @@ static int ipmmu_domain_init_context(str
- 	return 0;
- }
- 
-+static void ipmmu_domain_free_context(struct ipmmu_vmsa_device *mmu,
-+				      unsigned int context_id)
-+{
-+	unsigned long flags;
++	cs2000: clk-multiplier@4f {
++		#clock-cells = <0>;
++		compatible = "cirrus,cs2000-cp";
++		reg = <0x4f>;
++		clocks = <&audio_clkout>, <&x12_clk>;
++		clock-names = "clk_in", "ref_clk";
 +
-+	spin_lock_irqsave(&mmu->lock, flags);
++		assigned-clocks = <&cs2000>;
++		assigned-clock-rates = <24576000>; /* 1/1 divide */
++	};
++};
 +
-+	clear_bit(context_id, mmu->ctx);
-+	mmu->domains[context_id] = NULL;
++&rcar_sound {
++	pinctrl-0 = <&sound_pins &sound_clk_pins>;
++	pinctrl-names = "default";
 +
-+	spin_unlock_irqrestore(&mmu->lock, flags);
-+}
++	/* Single DAI */
++	#sound-dai-cells = <0>;
 +
- static void ipmmu_domain_destroy_context(struct ipmmu_vmsa_domain *domain)
- {
- 	/*
-@@ -380,6 +424,7 @@ static void ipmmu_domain_destroy_context
- 	 */
- 	ipmmu_ctx_write(domain, IMCTR, IMCTR_FLUSH);
- 	ipmmu_tlb_sync(domain);
-+	ipmmu_domain_free_context(domain->mmu, domain->context_id);
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -437,16 +482,25 @@ static irqreturn_t ipmmu_domain_irq(stru
- static irqreturn_t ipmmu_irq(int irq, void *dev)
- {
- 	struct ipmmu_vmsa_device *mmu = dev;
--	struct iommu_domain *io_domain;
--	struct ipmmu_vmsa_domain *domain;
-+	irqreturn_t status = IRQ_NONE;
-+	unsigned int i;
-+	unsigned long flags;
- 
--	if (!mmu->mapping)
--		return IRQ_NONE;
-+	spin_lock_irqsave(&mmu->lock, flags);
++	/* audio_clkout0/1/2/3 */
++	#clock-cells = <1>;
++	clock-frequency = <11289600>;
 +
-+	/*
-+	 * Check interrupts for all active contexts.
-+	 */
-+	for (i = 0; i < IPMMU_CTX_MAX; i++) {
-+		if (!mmu->domains[i])
-+			continue;
-+		if (ipmmu_domain_irq(mmu->domains[i]) == IRQ_HANDLED)
-+			status = IRQ_HANDLED;
-+	}
++	status = "okay";
++
++	/* update <audio_clk_b> to <cs2000> */
++	clocks = <&cpg CPG_MOD 1005>,
++		 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
++		 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
++		 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
++		 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
++		 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
++		 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
++		 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
++		 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
++		 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
++		 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
++		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
++		 <&audio_clk_a>, <&cs2000>,
++		 <&audio_clk_c>,
++		 <&cpg CPG_CORE R8A7795_CLK_S0D4>;
++
++	rcar_sound,dai {
++		dai0 {
++			playback = <&ssi0 &src0 &dvc0>;
++			capture  = <&ssi1 &src1 &dvc1>;
++		};
++	};
+ };
  
--	io_domain = mmu->mapping->domain;
--	domain = to_vmsa_domain(io_domain);
-+	spin_unlock_irqrestore(&mmu->lock, flags);
+ &sdhi0 {
+@@ -152,11 +262,19 @@
+ 	status = "okay";
+ };
  
--	return ipmmu_domain_irq(domain);
-+	return status;
- }
++&ssi1 {
++	shared-pin;
++};
++
+ &wdt0 {
+ 	timeout-sec = <60>;
+ 	status = "okay";
+ };
  
- /* -----------------------------------------------------------------------------
-@@ -774,6 +828,8 @@ static int ipmmu_probe(struct platform_d
- 
- 	mmu->dev = &pdev->dev;
- 	mmu->num_utlbs = 32;
-+	spin_lock_init(&mmu->lock);
-+	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
- 
- 	/* Map I/O memory and request IRQ. */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++&audio_clk_a {
++	clock-frequency = <22579200>;
++};
++
+ &avb {
+ 	pinctrl-0 = <&avb_pins>;
+ 	pinctrl-names = "default";
+-- 
+2.7.0.rc3.207.g0ac5344
