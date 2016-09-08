@@ -1,42 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f47.google.com ([209.85.214.47]:36429 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756551AbcILMwn (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49450 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757927AbcIHLhA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Sep 2016 08:52:43 -0400
-Received: by mail-it0-f47.google.com with SMTP id o3so8080177ita.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Sep 2016 05:52:43 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1473334608-24638-1-git-send-email-horms+renesas@verge.net.au>
-References: <1473334608-24638-1-git-send-email-horms+renesas@verge.net.au>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 12 Sep 2016 14:52:42 +0200
-Message-ID: <CACRpkdZHxN8yehyD6YX4V3ukWkxWwKu4T89BKV0FYKiqG+=BiQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] pinctrl: sh-pfc: r8a779[14]: Implement voltage
- switching for SDHI
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Thu, 8 Sep 2016 07:37:00 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=UTF-8
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 0/3] pinctrl: sh-pfc: r8a779[14]: Implement voltage switching for SDHI
+Date: Thu,  8 Sep 2016 13:36:45 +0200
+Message-Id: <1473334608-24638-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 8, 2016 at 1:36 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+Hi,
 
-> this series adds voltage switching for SDHI to sh-pfc for the r8a7791 and
-> r8a794 SoCs. It is based on work for the r8a7790 SoC by Wolfram Sang.
->
-> The r8a7793 should be able to be trivially supported using the
-> same mechanism as r8a7791. I intend to provide a follow-up patch
-> once testing is completed.
+this series adds voltage switching for SDHI to sh-pfc for the r8a7791 and
+r8a794 SoCs. It is based on work for the r8a7790 SoC by Wolfram Sang.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+The r8a7793 should be able to be trivially supported using the
+same mechanism as r8a7791. I intend to provide a follow-up patch
+once testing is completed.
 
-I expect these to be merged by Geert who send the patches to me.
+Simon Horman (3):
+  pinctrl: sh-pfc: Add PORT_GP_24 helper macro
+  pinctrl: sh-pfc: r8a7791: Implement voltage switching for SDHI
+  pinctrl: sh-pfc: r8a7794: Implement voltage switching for SDHI
 
-Yours,
-Linus Walleij
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 29 ++++++++++++++++++++++++++++-
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 34 +++++++++++++++++++++++++++++++++-
+ drivers/pinctrl/sh-pfc/sh_pfc.h      |  8 ++++++--
+ 3 files changed, 67 insertions(+), 4 deletions(-)
+
+-- 
+2.7.0.rc3.207.g0ac5344
