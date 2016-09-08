@@ -1,204 +1,196 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v2 6/7] spi: slave: Add SPI slave handler reporting uptime at previous message
-Date: Mon, 12 Sep 2016 22:50:45 +0200
-Message-Id: <1473713446-30366-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1473713446-30366-1-git-send-email-geert+renesas@glider.be>
-References: <1473713446-30366-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <kieran@ksquared.org.uk>
+Return-Path: <kieran@ksquared.org.uk>
+Sender: Kieran Bingham <kieran@ksquared.org.uk>
+Subject: Re: [PATCH v3 00/10] v4l: platform: Add Renesas R-Car FDP1 Driver
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ linux-media@vger.kernel.org
+References: <1473287110-780-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+From: Kieran Bingham <kieran@bingham.xyz>
+Message-ID: <a26f4ec8-91be-9de3-a943-06b509c2ec38@bingham.xyz>
+Date: Thu, 8 Sep 2016 10:10:22 +0100
+MIME-Version: 1.0
+In-Reply-To: <1473287110-780-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add an example SPI slave handler responding with the uptime at the time
-of reception of the last SPI message.
+On 07/09/16 23:25, Laurent Pinchart wrote:
+> Hello,
 
-This can be used by an external microcontroller as a dead man's switch.
+Thanks for all of your efforts here!
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Resolve semantic differences in patch description, file header, and
-    module description,
-  - Use spi_async() instead of spi_read(),
-  - Submit the next transfer from the previous transfer's completion
-    callback, removing the need for a thread,
-  - Let .remove() call spi_slave_abort() to cancel the current ongoing
-    transfer, and wait for the completion to terminate,
-  - Remove FIXME about hanging kthread_stop().
----
- drivers/spi/Kconfig          |   6 +++
- drivers/spi/Makefile         |   1 +
- drivers/spi/spi-slave-time.c | 126 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 133 insertions(+)
- create mode 100644 drivers/spi/spi-slave-time.c
+> Here's the third version of the Renesas R-Car FDP1 driver.
+> 
+> The FDP1 (Fine Display Processor) is a hardware memory-to-memory de-interlacer
+> device, with capability to convert from various YCbCr/YUV formats to both
+> YCbCr/YUV and RGB formats at the same time as converting interlaced content to
+> progressive.
+> 
+> Patch 01/10 fixes an issue in the V4L2 ioctl handling core code. It has been
+> posted before and hasn't been changed.
+> 
+> Patch 02/10 adds a new standard V4L2 menu control for the deinterlacing mode.
+> The menu items are driver specific.
+> 
+> Patch 03/10 extends the FCP driver to support the FDP1. It has been posted
+> before and hasn't been changed.
+> 
+> Patch 04/10 adds the FDP1 driver unchanged compared to the v2 posted by
+> Kieran. Patches 05/10 to 09/10 then fix issues in the driver and incorporate
+> review comments. They will eventually be squashed into patch 04/10, but are
+> currently separate to allow easier review of the changes.
+> 
+> Patch 10/10 reworks buffer handling in the FDP1 driver. This is experimental
+> and doesn't fix any known bug. I've included the patch in the series to get
+> feedback on whether this is a good idea.
+> 
+> Kieran, I noticed that your patches are authored by
+> 
+> 	Kieran Bingham <kieran@ksquared.org.uk>
+> 
+> Is that correct or should it be changed to
+> 
+> 	Kieran Bingham <kieran+renesas@bingham.xyz>
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index fa13a3663de5bde0..515bddee4018c246 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -749,6 +749,12 @@ config SPI_SLAVE
- 
- if SPI_SLAVE
- 
-+config SPI_SLAVE_TIME
-+	tristate "SPI slave handler reporting boot up time"
-+	help
-+	  SPI slave handler responding with the time of reception of the last
-+	  SPI message.
-+
- endif # SPI_SLAVE
- 
- endif # SPI
-diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-index 96e5c0d6e5bc6151..ba4a7e79fe113d3e 100644
---- a/drivers/spi/Makefile
-+++ b/drivers/spi/Makefile
-@@ -100,3 +100,4 @@ obj-$(CONFIG_SPI_XTENSA_XTFPGA)		+= spi-xtensa-xtfpga.o
- obj-$(CONFIG_SPI_ZYNQMP_GQSPI)		+= spi-zynqmp-gqspi.o
- 
- # SPI slave protocol handlers
-+obj-$(CONFIG_SPI_SLAVE_TIME)		+= spi-slave-time.o
-diff --git a/drivers/spi/spi-slave-time.c b/drivers/spi/spi-slave-time.c
-new file mode 100644
-index 0000000000000000..69e970ecb579adc7
---- /dev/null
-+++ b/drivers/spi/spi-slave-time.c
-@@ -0,0 +1,126 @@
-+/*
-+ * SPI slave handler reporting uptime at reception of previous SPI message
-+ *
-+ * This SPI slave handler sends the time of reception of the last SPI message
-+ * as two 32-bit unsigned integers in binary format and in network byte order,
-+ * representing the number of seconds and fractional seconds (in microseconds)
-+ * since boot up.
-+ *
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This file is subject to the terms and conditions of the GNU General Public
-+ * License.  See the file "COPYING" in the main directory of this archive
-+ * for more details.
-+ */
-+
-+#include <linux/completion.h>
-+#include <linux/module.h>
-+#include <linux/spi/spi.h>
-+
-+
-+struct spi_slave_time_priv {
-+	struct spi_device *spi;
-+	struct completion finished;
-+	struct spi_transfer xfer;
-+	struct spi_message msg;
-+	__be32 buf[2];
-+};
-+
-+static int spi_slave_time_submit(struct spi_slave_time_priv *priv);
-+
-+static void spi_slave_time_complete(void *arg)
-+{
-+	struct spi_slave_time_priv *priv = arg;
-+	int ret;
-+
-+	ret = priv->msg.status;
-+	if (ret)
-+		goto terminate;
-+
-+	ret = spi_slave_time_submit(priv);
-+	if (ret)
-+		goto terminate;
-+
-+	return;
-+
-+terminate:
-+	pr_info("%s: Terminating\n", __func__);
-+	complete(&priv->finished);
-+}
-+
-+static int spi_slave_time_submit(struct spi_slave_time_priv *priv)
-+{
-+	u32 rem_ns;
-+	int ret;
-+	u64 ts;
-+
-+	ts = local_clock();
-+	rem_ns = do_div(ts, 1000000000) / 1000;
-+
-+	priv->buf[0] = cpu_to_be32(ts);
-+	priv->buf[1] = cpu_to_be32(rem_ns);
-+
-+	spi_message_init_with_transfers(&priv->msg, &priv->xfer, 1);
-+
-+	priv->msg.complete = spi_slave_time_complete;
-+	priv->msg.context = priv;
-+
-+	ret = spi_async(priv->spi, &priv->msg);
-+	if (ret)
-+		pr_err("%s: spi_async() failed %d\n", __func__, ret);
-+
-+	return ret;
-+}
-+
-+static int spi_slave_time_probe(struct spi_device *spi)
-+{
-+	struct spi_slave_time_priv *priv;
-+	int ret;
-+
-+	/*
-+	 * bits_per_word cannot be configured in platform data
-+	 */
-+	spi->bits_per_word = 8;
-+
-+	ret = spi_setup(spi);
-+	if (ret < 0)
-+		return ret;
-+
-+	priv = devm_kzalloc(&spi->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->spi = spi;
-+	init_completion(&priv->finished);
-+	priv->xfer.tx_buf = priv->buf;
-+	priv->xfer.len = sizeof(priv->buf);
-+
-+	ret = spi_slave_time_submit(priv);
-+	if (ret)
-+		return ret;
-+
-+	spi_set_drvdata(spi, priv);
-+	return 0;
-+}
-+
-+static int spi_slave_time_remove(struct spi_device *spi)
-+{
-+	struct spi_slave_time_priv *priv = spi_get_drvdata(spi);
-+
-+	spi_slave_abort(spi);
-+	wait_for_completion(&priv->finished);
-+	return 0;
-+}
-+
-+static struct spi_driver spi_slave_time_driver = {
-+	.driver = {
-+		.name	= "spi-slave-time",
-+	},
-+	.probe		= spi_slave_time_probe,
-+	.remove		= spi_slave_time_remove,
-+};
-+module_spi_driver(spi_slave_time_driver);
-+
-+MODULE_AUTHOR("Geert Uytterhoeven <geert+renesas@glider.be>");
-+MODULE_DESCRIPTION("SPI slave reporting uptime at previous SPI message");
-+MODULE_LICENSE("GPL v2");
+Yes, @bingham.xyz is preferred.
+
+Google is rewriting my outgoing mail address.
+I fear I may have to set up my own mail server :(
+
+I've had a quick look through the extra patches. I will try to reply to
+each of them when I get chance. (I've just done the first two easy ones
+so far)
+--
+Regards
+
+Kieran
+
+> 
+> ?
+> 
+> Here is the V4L2 compliance report.
+> 
+> v4l2-compliance SHA   : abc1453dfe89f244dccd3460d8e1a2e3091cbadb
+> 
+> Driver Info:
+>         Driver name   : rcar_fdp1
+>         Card type     : rcar_fdp1
+>         Bus info      : platform:rcar_fdp1
+>         Driver version: 4.8.0
+>         Capabilities  : 0x84204000
+>                 Video Memory-to-Memory Multiplanar
+>                 Streaming
+>                 Extended Pix Format
+>                 Device Capabilities
+>         Device Caps   : 0x04204000
+>                 Video Memory-to-Memory Multiplanar
+>                 Streaming
+>                 Extended Pix Format
+> 
+> Compliance test for device /dev/video0 (not using libv4l2):
+> 
+> Required ioctls:
+>         test VIDIOC_QUERYCAP: OK
+> 
+> Allow for multiple opens:
+>         test second video open: OK
+>         test VIDIOC_QUERYCAP: OK
+>         test VIDIOC_G/S_PRIORITY: OK
+>         test for unlimited opens: OK
+> 
+> Debug ioctls:
+>         test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+>         test VIDIOC_LOG_STATUS: OK (Not Supported)
+> 
+> Input ioctls:
+>         test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+>         test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>         test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+>         test VIDIOC_ENUMAUDIO: OK (Not Supported)
+>         test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+>         test VIDIOC_G/S_AUDIO: OK (Not Supported)
+>         Inputs: 0 Audio Inputs: 0 Tuners: 0
+> 
+> Output ioctls:
+>         test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+>         test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>         test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+>         test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+>         test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+>         Outputs: 0 Audio Outputs: 0 Modulators: 0
+> 
+> Input/Output configuration ioctls:
+>         test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+>         test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+>         test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+>         test VIDIOC_G/S_EDID: OK (Not Supported)
+> 
+>         Control ioctls:
+>                 test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+>                 test VIDIOC_QUERYCTRL: OK
+>                 test VIDIOC_G/S_CTRL: OK
+>                 test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+>                 test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+>                 test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+>                 Standard Controls: 5 Private Controls: 0
+> 
+>         Format ioctls:
+>                 test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+>                 test VIDIOC_G/S_PARM: OK (Not Supported)
+>                 test VIDIOC_G_FBUF: OK (Not Supported)
+>                 test VIDIOC_G_FMT: OK
+>                 test VIDIOC_TRY_FMT: OK
+>                 test VIDIOC_S_FMT: OK
+>                 test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+>                 test Cropping: OK (Not Supported)
+>                 test Composing: OK (Not Supported)
+>                 test Scaling: OK
+> 
+>         Codec ioctls:
+>                 test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+>                 test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+>                 test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+> 
+>         Buffer ioctls:
+>                 test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+>                 test VIDIOC_EXPBUF: OK
+> 
+> Test input 0:
+> 
+> Total: 43, Succeeded: 43, Failed: 0, Warnings: 0
+> 
+> Geert Uytterhoeven (1):
+>   v4l: fdp1: vb2_queue dev conversion
+> 
+> Kieran Bingham (2):
+>   v4l: Extend FCP compatible list to support the FDP
+>   v4l: Add Renesas R-Car FDP1 Driver
+> 
+> Laurent Pinchart (7):
+>   v4l: ioctl: Clear the v4l2_pix_format_mplane reserved field
+>   v4l: ctrls: Add deinterlacing mode control
+>   v4l: fdp1: Incorporate miscellaneous review comments
+>   v4l: fdp1: Remove unused struct fdp1_v4l2_buffer
+>   v4l: fdp1: Rewrite format setting code
+>   v4l: fdp1: Fix field validation when preparing buffer
+>   v4l: fdp1: Store buffer information in vb2 buffer
+> 
+>  Documentation/media/uapi/v4l/extended-controls.rst |    4 +
+>  MAINTAINERS                                        |    9 +
+>  drivers/media/platform/Kconfig                     |   13 +
+>  drivers/media/platform/Makefile                    |    1 +
+>  drivers/media/platform/rcar-fcp.c                  |    1 +
+>  drivers/media/platform/rcar_fdp1.c                 | 2456 ++++++++++++++++++++
+>  drivers/media/v4l2-core/v4l2-ctrls.c               |    2 +
+>  drivers/media/v4l2-core/v4l2-ioctl.c               |    8 +-
+>  include/uapi/linux/v4l2-controls.h                 |    1 +
+>  9 files changed, 2491 insertions(+), 4 deletions(-)
+>  create mode 100644 drivers/media/platform/rcar_fdp1.c
+> 
+
 -- 
-1.9.1
+Regards
+
+Kieran Bingham
