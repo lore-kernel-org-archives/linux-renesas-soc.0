@@ -1,99 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39239 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753537AbcIBLSC (ORCPT
+        with ESMTP id S1757883AbcIHHnz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 07:18:02 -0400
+        Thu, 8 Sep 2016 03:43:55 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v6 8/9] arm64: dts: r8a7795: salvator-x: enable UHS for SDHI 0 & 3
-Date: Fri,  2 Sep 2016 13:17:37 +0200
-Message-Id: <1472815058-11562-9-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
-References: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH 08/30] arm64: dts: renesas: r8a7795: Add FCPV nodes
+Date: Thu,  8 Sep 2016 09:43:04 +0200
+Message-Id: <52cd078325e5476896dd7027c8398145955489e9.1473320411.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
+References: <cover.1473320411.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+The FCPs handle the interface between various IP cores and memory. Add
+the instances related to the VSP2s.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v6
-* Updated patch prefix: s/salvator/&-x/
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 63 ++++++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-v5
-* Added to series, previously posted by Wolfram independently
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 64a29a87a724..b67b31bd568d 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -230,11 +230,25 @@
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-+		power-source = <3300>;
-+	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 58376e72404b..fe7725d1d131 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1295,6 +1295,13 @@
+ 			status = "disabled";
+ 		};
+ 
++		fcpvb1: fcp@fe92f000 {
++			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			reg = <0 0xfe92f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 606>;
++			power-domains = <&sysc R8A7795_PD_A3VP>;
++		};
 +
-+	sdhi0_pins_uhs: sd0_uhs {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <1800>;
- 	};
+ 		fcpf0: fcp@fe950000 {
+ 			compatible = "renesas,r8a7795-fcpf", "renesas,fcpf";
+ 			reg = <0 0xfe950000 0 0x200>;
+@@ -1316,6 +1323,62 @@
+ 			power-domains = <&sysc R8A7795_PD_A3VP>;
+ 		};
  
- 	sdhi3_pins: sd3 {
- 		groups = "sdhi3_data4", "sdhi3_ctrl";
- 		function = "sdhi3";
-+		power-source = <3300>;
-+	};
++		fcpvb0: fcp@fe96f000 {
++			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			reg = <0 0xfe96f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 607>;
++			power-domains = <&sysc R8A7795_PD_A3VP>;
++		};
 +
-+	sdhi3_pins_uhs: sd3_uhs {
-+		groups = "sdhi3_data4", "sdhi3_ctrl";
-+		function = "sdhi3";
-+		power-source = <1800>;
- 	};
- 
- 	sound_pins: sound {
-@@ -364,25 +378,29 @@
- 
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
--	pinctrl-names = "default";
-+	pinctrl-1 = <&sdhi0_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi0>;
- 	vqmmc-supply = <&vccq_sdhi0>;
- 	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
- 
- &sdhi3 {
- 	pinctrl-0 = <&sdhi3_pins>;
--	pinctrl-names = "default";
-+	pinctrl-1 = <&sdhi3_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
- 
- 	vmmc-supply = <&vcc_sdhi3>;
- 	vqmmc-supply = <&vccq_sdhi3>;
- 	cd-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
- 	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
-+	sd-uhs-sdr50;
- 	status = "okay";
- };
- 
++		fcpvi0: fcp@fe9af000 {
++			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			reg = <0 0xfe9af000 0 0x200>;
++			clocks = <&cpg CPG_MOD 611>;
++			power-domains = <&sysc R8A7795_PD_A3VP>;
++		};
++
++		fcpvi1: fcp@fe9bf000 {
++			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			reg = <0 0xfe9bf000 0 0x200>;
++			clocks = <&cpg CPG_MOD 610>;
++			power-domains = <&sysc R8A7795_PD_A3VP>;
++		};
++
++		fcpvi2: fcp@fe9cf000 {
++			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			reg = <0 0xfe9cf000 0 0x200>;
++			clocks = <&cpg CPG_MOD 609>;
++			power-domains = <&sysc R8A7795_PD_A3VP>;
++		};
++
++		fcpvd0: fcp@fea27000 {
++			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			reg = <0 0xfea27000 0 0x200>;
++			clocks = <&cpg CPG_MOD 603>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		};
++
++		fcpvd1: fcp@fea2f000 {
++			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			reg = <0 0xfea2f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 602>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		};
++
++		fcpvd2: fcp@fea37000 {
++			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			reg = <0 0xfea37000 0 0x200>;
++			clocks = <&cpg CPG_MOD 601>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		};
++
++		fcpvd3: fcp@fea3f000 {
++			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++			reg = <0 0xfea3f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 600>;
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
++		};
++
+ 		fdp1@fe940000 {
+ 			compatible = "renesas,fdp1";
+ 			reg = <0 0xfe940000 0 0x2400>;
 -- 
 2.7.0.rc3.207.g0ac5344
