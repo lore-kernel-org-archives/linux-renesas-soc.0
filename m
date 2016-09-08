@@ -1,58 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:36857 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752596AbcIIHke (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:49450 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757927AbcIHLhB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Sep 2016 03:40:34 -0400
-MIME-Version: 1.0
-In-Reply-To: <1473334608-24638-2-git-send-email-horms+renesas@verge.net.au>
-References: <1473334608-24638-1-git-send-email-horms+renesas@verge.net.au> <1473334608-24638-2-git-send-email-horms+renesas@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 9 Sep 2016 09:40:33 +0200
-Message-ID: <CAMuHMdWP3O_huybgERFLh83+q-8+h822039iET=cJN0mgbdq=g@mail.gmail.com>
-Subject: Re: [PATCH 1/3] pinctrl: sh-pfc: Add PORT_GP_24 helper macro
-To: Simon Horman <horms+renesas@verge.net.au>
+        Thu, 8 Sep 2016 07:37:01 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=UTF-8
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/3] pinctrl: sh-pfc: Add PORT_GP_24 helper macro
+Date: Thu,  8 Sep 2016 13:36:46 +0200
+Message-Id: <1473334608-24638-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1473334608-24638-1-git-send-email-horms+renesas@verge.net.au>
+References: <1473334608-24638-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+This follows the style of existing PORT_GP_X macros and
+will be used by a follow-up patch for the r8a7791 SoC.
 
-On Thu, Sep 8, 2016 at 1:36 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
-> This follows the style of existing PORT_GP_X macros and
-> will be used by a follow-up patch for the r8a7791 SoC.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
->  drivers/pinctrl/sh-pfc/sh_pfc.h | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> index 5e966c09434d..de91b5f247c0 100644
-> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> @@ -399,11 +399,15 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
->         PORT_GP_CFG_1(bank, 16, fn, sfx, cfg), PORT_GP_CFG_1(bank, 17, fn, sfx, cfg)
->  #define PORT_GP_18(bank, fn, sfx)      PORT_GP_CFG_18(bank, fn, sfx, 0)
->
-> -#define PORT_GP_CFG_26(bank, fn, sfx, cfg)                                             \
-> +#define PORT_GP_CFG_24(bank, fn, sfx, cfg)                                             \
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-This patch no longer applies since "pinctrl: sh-pfc: Add R8A7792 PFC support".
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index 5e966c09434d..de91b5f247c0 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -399,11 +399,15 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
+ 	PORT_GP_CFG_1(bank, 16, fn, sfx, cfg), PORT_GP_CFG_1(bank, 17, fn, sfx, cfg)
+ #define PORT_GP_18(bank, fn, sfx)	PORT_GP_CFG_18(bank, fn, sfx, 0)
+ 
+-#define PORT_GP_CFG_26(bank, fn, sfx, cfg)						\
++#define PORT_GP_CFG_24(bank, fn, sfx, cfg)						\
+ 	PORT_GP_CFG_18(bank, fn, sfx, cfg),						\
+ 	PORT_GP_CFG_1(bank, 18, fn, sfx, cfg), PORT_GP_CFG_1(bank, 19, fn, sfx, cfg),	\
+ 	PORT_GP_CFG_1(bank, 20, fn, sfx, cfg), PORT_GP_CFG_1(bank, 21, fn, sfx, cfg),	\
+-	PORT_GP_CFG_1(bank, 22, fn, sfx, cfg), PORT_GP_CFG_1(bank, 23, fn, sfx, cfg),	\
++	PORT_GP_CFG_1(bank, 22, fn, sfx, cfg), PORT_GP_CFG_1(bank, 23, fn, sfx, cfg)
++#define PORT_GP_24(bank, fn, sfx)	PORT_GP_CFG_24(bank, fn, sfx, 0)
++
++#define PORT_GP_CFG_26(bank, fn, sfx, cfg)						\
++	PORT_GP_CFG_24(bank, fn, sfx, cfg),						\
+ 	PORT_GP_CFG_1(bank, 24, fn, sfx, cfg), PORT_GP_CFG_1(bank, 25, fn, sfx, cfg)
+ #define PORT_GP_26(bank, fn, sfx)	PORT_GP_CFG_26(bank, fn, sfx, 0)
+ 
+-- 
+2.7.0.rc3.207.g0ac5344
