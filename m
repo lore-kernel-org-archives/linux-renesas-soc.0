@@ -1,57 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:60248 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755993AbcINMfi (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45999 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757883AbcIHHns (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Sep 2016 08:35:38 -0400
-Received: from relmlac3.idc.renesas.com (relmlac3.idc.renesas.com [10.200.69.23])
-        by relmlir1.idc.renesas.com (Postfix) with ESMTP id DE07455262
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2016 21:35:35 +0900 (JST)
-Received: from relmlac3.idc.renesas.com (localhost [127.0.0.1])
-        by relmlac3.idc.renesas.com (Postfix) with ESMTP id C9A411800A
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2016 21:35:35 +0900 (JST)
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: How to put an 'if' statement in a dts?
-Date: Wed, 14 Sep 2016 12:35:33 +0000
-Message-ID: <SG2PR06MB1165DA353BCD0325E83D207D8AF10@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Thu, 8 Sep 2016 03:43:48 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 12/30] arm64: dts: r8a7795: Add SoC-specific compatible property to audio-dmac nodes
+Date: Thu,  8 Sep 2016 09:43:08 +0200
+Message-Id: <f826473520e7aba2e416f79a3acbd6da3921e0a2.1473320411.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
+References: <cover.1473320411.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On the RZ/A1 RSK board, the one card slot can be used for SDHI or MMC (SDHI=
-1 and MMC share the same pins).
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-For the r7s72100-rskrza1.dts, I would like to add in support for both SDHI1=
- and MMC for someone to use as reference. Of course they should only pick o=
-ne.
+The audio-dmac nodes used the generic compatible property only.
+Add the SoC-specific one, to make it future proof.
 
-So my options are:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-A) Make some type of an 'if' statement in the dts that can be selected at b=
-oot time
-
-B) Leave one as 'status =3D "disabled"', and then the user just has to swit=
-ch around the 'status' properties before boot (either modify the dts file o=
-r change it in u-boot with the fdt command)
-
-C) Pick one and forget about the other (because you're not allowed to have =
-inactive nodes in your board dts files)
-
-
-The MMC also needs a 3.3v "regulator-fixed" node, so it would be nice to pu=
-t that in the 'if' statement too, but since the dts for the rskrza1 board i=
-s mostly for reference, it's not a big deal if that one is just always acti=
-ve.
-
-In the current RZ/A1 BSP, I basically put everything in the board-rskrza1.c=
- file so all users had to do was delete what was not relevant to their desi=
-gn (deleting code is easier than trying to figure out what to add). So, now=
- I'm trying to figure out how to do something similar with DT.
-
-Thank you,
-Chris
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 5d59e7fe7bbc..64899b556a0e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -328,7 +328,8 @@
+ 		};
+ 
+ 		audma0: dma-controller@ec700000 {
+-			compatible = "renesas,rcar-dmac";
++			compatible = "renesas,dmac-r8a7795",
++				     "renesas,rcar-dmac";
+ 			reg = <0 0xec700000 0 0x10000>;
+ 			interrupts = <GIC_SPI 350 IRQ_TYPE_LEVEL_HIGH
+ 				      GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH
+@@ -360,7 +361,8 @@
+ 		};
+ 
+ 		audma1: dma-controller@ec720000 {
+-			compatible = "renesas,rcar-dmac";
++			compatible = "renesas,dmac-r8a7795",
++				     "renesas,rcar-dmac";
+ 			reg = <0 0xec720000 0 0x10000>;
+ 			interrupts = <GIC_SPI 351 IRQ_TYPE_LEVEL_HIGH
+ 				      GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH
+-- 
+2.7.0.rc3.207.g0ac5344
