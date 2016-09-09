@@ -1,189 +1,40 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757883AbcIHHnw (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 03:43:52 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/30] arm64: dts: renesas: r8a7795: Add VSP instances
-Date: Thu,  8 Sep 2016 09:43:05 +0200
-Message-Id: <9f8573e38a0b377aa092db96be140be4d59a7fae.1473320411.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
-References: <cover.1473320411.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Kieran Bingham <kieran+renesas@bingham.xyz>
+Subject: [PATCH] v4l: rcar-fcp: Extend compatible list to support the FDP
+Date: Fri,  9 Sep 2016 14:59:08 +0300
+Message-Id: <1473422348-24268-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran+renesas@bingham.xyz>
 
-The r8a7795 has 9 VSP instances.
+The FCP must be powered up for the FDP1 to function, even when the FDP1
+does not make use of the FCNL features. Extend the compatible list
+to allow us to use the power domain and runtime-pm support.
 
+Signed-off-by: Kieran Bingham <kieran+renesas@bingham.xyz>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 90 ++++++++++++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+ drivers/media/platform/rcar-fcp.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index fe7725d1d131..19daa6a88312 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1295,6 +1295,16 @@
- 			status = "disabled";
- 		};
+diff --git a/drivers/media/platform/rcar-fcp.c b/drivers/media/platform/rcar-fcp.c
+index f7bcbf7677a0..f3a3f31cdfa9 100644
+--- a/drivers/media/platform/rcar-fcp.c
++++ b/drivers/media/platform/rcar-fcp.c
+@@ -165,6 +165,7 @@ static int rcar_fcp_remove(struct platform_device *pdev)
+ }
  
-+		vspbc: vsp@fe920000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfe920000 0 0x8000>;
-+			interrupts = <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 624>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+
-+			renesas,fcp = <&fcpvb1>;
-+		};
-+
- 		fcpvb1: fcp@fe92f000 {
- 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
- 			reg = <0 0xfe92f000 0 0x200>;
-@@ -1323,6 +1333,16 @@
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 		};
- 
-+		vspbd: vsp@fe960000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfe960000 0 0x8000>;
-+			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 626>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+
-+			renesas,fcp = <&fcpvb0>;
-+		};
-+
- 		fcpvb0: fcp@fe96f000 {
- 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
- 			reg = <0 0xfe96f000 0 0x200>;
-@@ -1330,6 +1350,16 @@
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 		};
- 
-+		vspi0: vsp@fe9a0000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfe9a0000 0 0x8000>;
-+			interrupts = <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 631>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+
-+			renesas,fcp = <&fcpvi0>;
-+		};
-+
- 		fcpvi0: fcp@fe9af000 {
- 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
- 			reg = <0 0xfe9af000 0 0x200>;
-@@ -1337,6 +1367,16 @@
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 		};
- 
-+		vspi1: vsp@fe9b0000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfe9b0000 0 0x8000>;
-+			interrupts = <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 630>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+
-+			renesas,fcp = <&fcpvi1>;
-+		};
-+
- 		fcpvi1: fcp@fe9bf000 {
- 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
- 			reg = <0 0xfe9bf000 0 0x200>;
-@@ -1344,6 +1384,16 @@
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 		};
- 
-+		vspi2: vsp@fe9c0000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfe9c0000 0 0x8000>;
-+			interrupts = <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 629>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+
-+			renesas,fcp = <&fcpvi2>;
-+		};
-+
- 		fcpvi2: fcp@fe9cf000 {
- 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
- 			reg = <0 0xfe9cf000 0 0x200>;
-@@ -1351,6 +1401,16 @@
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 		};
- 
-+		vspd0: vsp@fea20000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfea20000 0 0x4000>;
-+			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 623>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+
-+			renesas,fcp = <&fcpvd0>;
-+		};
-+
- 		fcpvd0: fcp@fea27000 {
- 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
- 			reg = <0 0xfea27000 0 0x200>;
-@@ -1358,6 +1418,16 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 		};
- 
-+		vspd1: vsp@fea28000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfea28000 0 0x4000>;
-+			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 622>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+
-+			renesas,fcp = <&fcpvd1>;
-+		};
-+
- 		fcpvd1: fcp@fea2f000 {
- 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
- 			reg = <0 0xfea2f000 0 0x200>;
-@@ -1365,6 +1435,16 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 		};
- 
-+		vspd2: vsp@fea30000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfea30000 0 0x4000>;
-+			interrupts = <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 621>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+
-+			renesas,fcp = <&fcpvd2>;
-+		};
-+
- 		fcpvd2: fcp@fea37000 {
- 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
- 			reg = <0 0xfea37000 0 0x200>;
-@@ -1372,6 +1452,16 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 		};
- 
-+		vspd3: vsp@fea38000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfea38000 0 0x4000>;
-+			interrupts = <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 620>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+
-+			renesas,fcp = <&fcpvd3>;
-+		};
-+
- 		fcpvd3: fcp@fea3f000 {
- 			compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
- 			reg = <0 0xfea3f000 0 0x200>;
+ static const struct of_device_id rcar_fcp_of_match[] = {
++	{ .compatible = "renesas,fcpf" },
+ 	{ .compatible = "renesas,fcpv" },
+ 	{ },
+ };
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
