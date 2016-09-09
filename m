@@ -1,51 +1,124 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:46027 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752028AbcINRJq (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58065 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754143AbcIIMLw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Sep 2016 13:09:46 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-mmc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Dirk Behme <dirk.behme@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 0/2] gen3: dts: enable on-board eMMC
-Date: Wed, 14 Sep 2016 19:09:41 +0200
-Message-Id: <20160914170943.1663-1-wsa+renesas@sang-engineering.com>
+        Fri, 9 Sep 2016 08:11:52 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: bd-phuc@jinso.co.jp
+Cc: daniel.lezcano@linaro.org, tglx@linutronix.de,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sh@vger.kernel.org, geert+renesas@glider.be,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@vger.kernel.org,
+        laurent.pinchart+renesas@ideasonboard.com, magnus.damm@gmail.com,
+        horms@verge.net.au, kuninori.morimoto.gx@renesas.com,
+        yoshihiro.shimoda.uh@renesas.com, ryusuke.sakato.bx@renesas.com,
+        h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp, nv-dung@jinso.co.jp
+Subject: Re: [PATCH 6/8] clocksource: sh_cmt: Support separate R-car Gen3 CMT0/1
+Date: Fri, 09 Sep 2016 15:12:26 +0300
+Message-ID: <1868022.yBeGKSLdet@avalon>
+In-Reply-To: <1473421394-9745-7-git-send-email-bd-phuc@jinso.co.jp>
+References: <1473421394-9745-1-git-send-email-bd-phuc@jinso.co.jp> <1473421394-9745-7-git-send-email-bd-phuc@jinso.co.jp>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa@the-dreams.de>
+Hi Bui Duc,
 
-Here are the DTS changes to enable the on-board eMMC memory at 8 bit bus
-widths on R-Car Gen3 Salvator-X boards.
+Thank you for the patch.
 
-Note that 'non-removable' is not supported yet because of Runtime PM issues. It
-seems we need to overhaul Runtime PM handling for other reasons as well, so I
-suggest the basic support goes in like this and DTS do not use 'non-removable'
-for now.
+On Friday 09 Sep 2016 20:43:12 bd-phuc@jinso.co.jp wrote:
+> From: Bui Duc Phuc <bd-phuc@jinso.co.jp>
+> 
+> Add support for the new R-Car Gen3 CMT0 and CMT1 bindings.
+> 
+> Signed-off-by: Bui Duc Phuc <bd-phuc@jinso.co.jp>
+> ---
+>  drivers/clocksource/sh_cmt.c | 21 +++++++++++++++++++--
+>  1 file changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
+> index 103c493..1542aef 100644
+> --- a/drivers/clocksource/sh_cmt.c
+> +++ b/drivers/clocksource/sh_cmt.c
+> @@ -69,6 +69,7 @@ enum sh_cmt_model {
+>  	SH_CMT_32BIT_FAST,
+>  	SH_CMT_48BIT,
+>  	SH_CMT_48BIT_GEN2,
+> +	SH_CMT_48BIT_GEN3,
+>  };
+> 
+>  struct sh_cmt_info {
+> @@ -230,6 +231,16 @@ static const struct sh_cmt_info sh_cmt_info[] = {
+>  		.read_count = sh_cmt_read32,
+>  		.write_count = sh_cmt_write32,
+>  	},
+> +	[SH_CMT_48BIT_GEN3] = {
+> +		.model = SH_CMT_48BIT_GEN3,
+> +		.width = 32,
+> +		.overflow_bit = SH_CMT32_CMCSR_CMF,
+> +		.clear_bits = ~(SH_CMT32_CMCSR_CMF | SH_CMT32_CMCSR_OVF),
+> +		.read_control = sh_cmt_read32,
+> +		.write_control = sh_cmt_write32,
+> +		.read_count = sh_cmt_read32,
+> +		.write_count = sh_cmt_write32,
+> +	},
+>  };
+> 
+>  #define CMCSR 0 /* channel register */
+> @@ -864,6 +875,7 @@ static int sh_cmt_setup_channel(struct sh_cmt_channel
+> *ch, unsigned int index, ch->cmt = cmt;
+>  	ch->index = index;
+>  	ch->hwidx = hwidx;
+> +	ch->timer_bit = hwidx;
+> 
+>  	/*
+>  	 * Compute the address of the channel control register block. For the
+> @@ -888,6 +900,12 @@ static int sh_cmt_setup_channel(struct sh_cmt_channel
+> *ch, unsigned int index, case SH_CMT_48BIT_GEN2:
+>  		ch->iostart = cmt->mapbase + ch->hwidx * 0x100;
+>  		ch->ioctrl = ch->iostart + 0x10;
+> +		ch->timer_bit = 0;
+> +		break;
+> +	case SH_CMT_48BIT_GEN3:
+> +		ch->iostart = cmt->mapbase + ch->hwidx * 0x100;
+> +		ch->ioctrl = ch->iostart + 0x10;
+> +		ch->timer_bit = 0;
+>  		break;
+>  	}
+> 
+> @@ -899,8 +917,6 @@ static int sh_cmt_setup_channel(struct sh_cmt_channel
+> *ch, unsigned int index, ch->match_value = ch->max_match_value;
+>  	raw_spin_lock_init(&ch->lock);
+> 
+> -	ch->timer_bit = cmt->info->model == SH_CMT_48BIT_GEN2 ? 0 : ch->hwidx;
+> -
+>  	ret = sh_cmt_register(ch, dev_name(&cmt->pdev->dev),
+>  			      clockevent, clocksource);
+>  	if (ret) {
+> @@ -944,6 +960,7 @@ static const struct of_device_id sh_cmt_of_table[]
+> __maybe_unused = {
+>  	{ .compatible = "renesas,cmt-32-fast", .data =
+> &sh_cmt_info[SH_CMT_32BIT_FAST] },
+>  	{ .compatible = "renesas,cmt-48", .data = &sh_cmt_info[SH_CMT_48BIT]
+> },
+>  	{ .compatible = "renesas,cmt-48-gen2", .data =
+> &sh_cmt_info[SH_CMT_48BIT_GEN2] },
+> +	{ .compatible = "renesas,cmt-48-gen3", .data =
+> &sh_cmt_info[SH_CMT_48BIT_GEN3] },
 
-Note also that I decided to use the pattern that pinctrl-0 is 3.3v and
-pinctrl-1 is 1.8v, although the eMMC is fixed at 1.8v. I tried a few ways to
-only use pinctrl-0 being 1.8v here, but they all ended up to be confusing for
-users IMO, so I sticked to the most consistent solution after all.
+Given that the Gen2 and Gen3 CMT seem identical based on the above code, how 
+about just using SH_CMT_48BIT_GEN2 here ? You wouldn't need any of the above 
+changes.
 
-These patches are based on top of Simon's sdr104-v7 patches and the accompanied
-driver patches sent a minute ago. A branch can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-8bit-emmc
-
-Please review, comment, apply...
-
-   Wolfram
-
-Wolfram Sang (2):
-  arm64: dts: r8a7795: salvator: enable on-board eMMC
-  arm64: dts: r8a7796: salvator: enable on board eMMC
-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 43 +++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 44 +++++++++++++++++++++-
- 2 files changed, 86 insertions(+), 1 deletion(-)
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(of, sh_cmt_of_table);
 
 -- 
-2.9.3
+Regards,
+
+Laurent Pinchart
