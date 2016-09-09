@@ -1,50 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:41531 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754318AbcIIS0Y (ORCPT
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:35110 "EHLO
+        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752196AbcIIRt2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Sep 2016 14:26:24 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        David Miller <davem@davemloft.net>
-CC: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Daniel Palmer <daniel@0x0f.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2] net: ethernet: renesas: sh_eth: add POST registers for
+        Fri, 9 Sep 2016 13:49:28 -0400
+Received: by mail-lf0-f47.google.com with SMTP id l131so49264085lfl.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 09 Sep 2016 10:49:27 -0700 (PDT)
+Subject: Re: [PATCH v2] net: ethernet: renesas: sh_eth: add POST registers for
  rz
-Date: Fri, 9 Sep 2016 18:26:19 +0000
-Message-ID: <SG2PR06MB1165D227695F4A4B4DEBF43E8AFA0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+To: Chris Brandt <chris.brandt@renesas.com>,
+        David Miller <davem@davemloft.net>
 References: <20160907185709.24150-1-chris.brandt@renesas.com>
- <26fc49c2-fe99-2c30-93aa-01284377ae07@cogentembedded.com>
-In-Reply-To: <26fc49c2-fe99-2c30-93aa-01284377ae07@cogentembedded.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Daniel Palmer <daniel@0x0f.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <26fc49c2-fe99-2c30-93aa-01284377ae07@cogentembedded.com>
+Date: Fri, 9 Sep 2016 20:49:23 +0300
 MIME-Version: 1.0
+In-Reply-To: <20160907185709.24150-1-chris.brandt@renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gOS85LzIwMTYsIFNlcmdlaSBTaHR5bHlvdiB3cm90ZToNCj4gPiBzaF9ldGhfcHJpdmF0ZSAq
-bWRwKSAgew0KPiA+ICAJaWYgKHNoX2V0aF9pc19yel9mYXN0X2V0aGVyKG1kcCkpIHsNCj4gPiAg
-CQlzaF9ldGhfdHN1X3dyaXRlKG1kcCwgMCwgVFNVX1RFTik7IC8qIERpc2FibGUgYWxsIENBTSBl
-bnRyeSAqLw0KPiA+ICsJCXNoX2V0aF90c3Vfd3JpdGUobWRwLCBUU1VfRldTTENfUE9TVEVOVSB8
-IFRTVV9GV1NMQ19QT1NURU5MLA0KPiA+ICsJCQkJIFRTVV9GV1NMQyk7CS8qIEVuYWJsZSBQT1NU
-IHJlZ2lzdGVycyAqLw0KPiA+ICAJCXJldHVybjsNCj4gPiAgCX0NCj4gDQo+ICAgICBXYWl0LCBk
-b24ndCB5b3UgYWxzbyBuZWVkIHRvIHdyaXRlIDBzIHRvIHRoZSBQT1NUIHJlZ2lzdGVycyBsaWtl
-IGRvbmUNCj4gYXQgdGhlIGVuZCBvZiB0aGlzIGZ1bmN0aW9uPw0KDQpOb3BlLg0KDQpUaGUgc2hf
-ZXRoX2NoaXBfcmVzZXQoKSBmdW5jdGlvbiB3aWxsIHdyaXRlIHRvIHJlZ2lzdGVyIEFSU1RSIHdo
-aWNoIHdpbGwgZG8gYSBIVyByZXNldCBvbiB0aGUgYmxvY2sgYW5kIGNsZWFyIGFsbCB0aGUgcmVn
-aXN0ZXJzLCBpbmNsdWRpbmcgYWxsIHRoZSBQT1NUIHJlZ2lzdGVycy4NCg0Kc3RhdGljIHN0cnVj
-dCBzaF9ldGhfY3B1X2RhdGEgcjdzNzIxMDBfZGF0YSA9IHsNCgkuY2hpcF9yZXNldAk9IHNoX2V0
-aF9jaGlwX3Jlc2V0LA0KDQoNClNvLCBiZWZvcmUgc2hfZXRoX3RzdV9pbml0KCkgaXMgZXZlciBj
-YWxsZWQsIHRoZSBoYXJkd2FyZSB3aWxsIGFsd2F5cyBiZSByZXNldC4NCg0KDQoJLyogaW5pdGlh
-bGl6ZSBmaXJzdCBvciBuZWVkZWQgZGV2aWNlICovDQoJaWYgKCFkZXZubyB8fCBwZC0+bmVlZHNf
-aW5pdCkgew0KCQlpZiAobWRwLT5jZC0+Y2hpcF9yZXNldCkNCgkJCW1kcC0+Y2QtPmNoaXBfcmVz
-ZXQobmRldik7DQoNCgkJaWYgKG1kcC0+Y2QtPnRzdSkgew0KCQkJLyogVFNVIGluaXQgKEluaXQg
-b25seSkqLw0KCQkJc2hfZXRoX3RzdV9pbml0KG1kcCk7DQoJCX0NCgl9DQoNCg0KVGhlcmVmb3Jl
-IHRoZXJlIGlzIG5vIHJlYXNvbiB0byBzZXQgdGhlIFBPU1QgcmVnaXN0ZXJzIGJhY2sgdG8gMCBi
-ZWNhdXNlIHRoZXkgYXJlIGFscmVhZHkgYXQgMCBmcm9tIHRoZSByZXNldC4NCg0KDQpDaHJpcw0K
-DQoNCg==
+On 09/07/2016 09:57 PM, Chris Brandt wrote:
+
+> Due to a mistake in the hardware manual, the FWSLC and POST1-4 registers
+> were not documented and left out of the driver for RZ/A making the CAM
+> feature non-operational.
+> Additionally, when the offset values for POST1-4 are left blank, the driver
+> attempts to set them using an offset of 0xFFFF which can cause a memory
+> corruption or panic.
+>
+> This patch fixes the panic and properly enables CAM.
+>
+> Reported-by: Daniel Palmer <daniel@0x0f.com>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+> v2:
+> * POST registers really do exist, so just add them
+> ---
+>  drivers/net/ethernet/renesas/sh_eth.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+> index 1f8240a..440ae27 100644
+> --- a/drivers/net/ethernet/renesas/sh_eth.c
+> +++ b/drivers/net/ethernet/renesas/sh_eth.c
+[...]
+> @@ -2781,6 +2786,8 @@ static void sh_eth_tsu_init(struct sh_eth_private *mdp)
+>  {
+>  	if (sh_eth_is_rz_fast_ether(mdp)) {
+>  		sh_eth_tsu_write(mdp, 0, TSU_TEN); /* Disable all CAM entry */
+> +		sh_eth_tsu_write(mdp, TSU_FWSLC_POSTENU | TSU_FWSLC_POSTENL,
+> +				 TSU_FWSLC);	/* Enable POST registers */
+>  		return;
+>  	}
+
+    Wait, don't you also need to write 0s to the POST registers like done at 
+the end of this function?
+
+MBR, Sergei
