@@ -1,106 +1,72 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757899AbcIHHn6 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 03:43:58 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 14/30] arm64: dts: h3ulcb: initial device tree
-Date: Thu,  8 Sep 2016 09:43:10 +0200
-Message-Id: <b10690d11fead70652c2544098e41436258ec443.1473320411.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
-References: <cover.1473320411.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: bd-phuc@jinso.co.jp
+To: daniel.lezcano@linaro.org, tglx@linutronix.de
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sh@vger.kernel.org, geert+renesas@glider.be,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@vger.kernel.org,
+        laurent.pinchart+renesas@ideasonboard.com, magnus.damm@gmail.com,
+        horms@verge.net.au, kuninori.morimoto.gx@renesas.com,
+        yoshihiro.shimoda.uh@renesas.com, ryusuke.sakato.bx@renesas.com,
+        h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp, nv-dung@jinso.co.jp
+Subject: [PATCH 2/8] ARM64: dts: r8a7795: Add CMT device to DT
+Date: Fri,  9 Sep 2016 20:43:08 +0900
+Message-Id: <1473421394-9745-3-git-send-email-bd-phuc@jinso.co.jp>
+In-Reply-To: <1473421394-9745-1-git-send-email-bd-phuc@jinso.co.jp>
+References: <1473421394-9745-1-git-send-email-bd-phuc@jinso.co.jp>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+From: Bui Duc Phuc <bd-phuc@jinso.co.jp>
 
-Add the initial device tree for the R8A7795 SoC based H3ULCB low cost
-board.
+Add the CMT0 and CMT1 counters to the r8a7795 device tree
 
-This commit supports the following peripherals:
-- SCIF (console)
-
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Bui Duc Phuc <bd-phuc@jinso.co.jp>
 ---
- arch/arm64/boot/dts/renesas/Makefile           |  2 +-
- arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts | 51 ++++++++++++++++++++++++++
- 2 files changed, 52 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 17139f7003a6..eb72830ec9eb 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -1,4 +1,4 @@
--dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb
-+dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index b902356..2333830 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -312,6 +312,36 @@
+ 					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+ 		};
  
- always		:= $(dtb-y)
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-new file mode 100644
-index 000000000000..ecb9e1102266
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-h3ulcb.dts
-@@ -0,0 +1,51 @@
-+/*
-+ * Device Tree Source for the H3ULCB board
-+ *
-+ * Copyright (C) 2016 Renesas Electronics Corp.
-+ * Copyright (C) 2016 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
++		cmt0: timer@e60f0000 {
++			compatible = "renesas,cmt-48-gen3";
++			reg = <0 0xe60f0000 0 0x1004>;
++			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 303>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
 +
-+/dts-v1/;
-+#include "r8a7795.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
++			renesas,channels-mask = <0x60>;
++	         };
 +
-+/ {
-+	model = "Renesas H3ULCB board based on r8a7795";
-+	compatible = "renesas,h3ulcb", "renesas,r8a7795";
++		cmt1: timer@e6130000 {
++			compatible = "renesas,cmt-48-gen3";
++			reg = <0 0xe6130000 0 0x1004>;
++			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 302>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
 +
-+	aliases {
-+		serial0 = &scif2;
-+	};
++			renesas,channels-mask = <0xff>;
++	         };
 +
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <16666666>;
-+};
-+
-+&pfc {
-+	scif2_pins: scif2 {
-+		groups = "scif2_data_a";
-+		function = "scif2";
-+	};
-+};
-+
-+&scif2 {
-+	pinctrl-0 = <&scif2_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a7795-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
+
