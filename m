@@ -1,72 +1,54 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: bd-phuc@jinso.co.jp
-To: daniel.lezcano@linaro.org, tglx@linutronix.de
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sh@vger.kernel.org, geert+renesas@glider.be,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@vger.kernel.org,
-        laurent.pinchart+renesas@ideasonboard.com, magnus.damm@gmail.com,
-        horms@verge.net.au, kuninori.morimoto.gx@renesas.com,
-        yoshihiro.shimoda.uh@renesas.com, ryusuke.sakato.bx@renesas.com,
-        h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp, nv-dung@jinso.co.jp
-Subject: [PATCH 2/8] ARM64: dts: r8a7795: Add CMT device to DT
-Date: Fri,  9 Sep 2016 20:43:08 +0900
-Message-Id: <1473421394-9745-3-git-send-email-bd-phuc@jinso.co.jp>
-In-Reply-To: <1473421394-9745-1-git-send-email-bd-phuc@jinso.co.jp>
-References: <1473421394-9745-1-git-send-email-bd-phuc@jinso.co.jp>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:36556 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753240AbcIIPxw (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 9 Sep 2016 11:53:52 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 1/3] mmc: sh_mobile_sdhi: add ocr_mask option
+Date: Fri,  9 Sep 2016 11:52:36 -0400
+Message-Id: <20160909155238.17852-2-chris.brandt@renesas.com>
+In-Reply-To: <20160909155238.17852-1-chris.brandt@renesas.com>
+References: <20160909155238.17852-1-chris.brandt@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Bui Duc Phuc <bd-phuc@jinso.co.jp>
+In moving platforms from board files to DT, there still needs to be a way
+to set the ocr_mask setting for the tmio driver during probe. Without this
+setting, the probe will fail because the supported voltages are not known.
 
-Add the CMT0 and CMT1 counters to the r8a7795 device tree
+This patch will also traditional platform registration platforms to
+migrate to DT.
 
-Signed-off-by: Bui Duc Phuc <bd-phuc@jinso.co.jp>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ drivers/mmc/host/sh_mobile_sdhi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index b902356..2333830 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -312,6 +312,36 @@
- 					(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
- 		};
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index 5334f24..b033500 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -59,6 +59,7 @@ enum tmio_mmc_dmac_type {
  
-+		cmt0: timer@e60f0000 {
-+			compatible = "renesas,cmt-48-gen3";
-+			reg = <0 0xe60f0000 0 0x1004>;
-+			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 303>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+
-+			renesas,channels-mask = <0x60>;
-+	         };
-+
-+		cmt1: timer@e6130000 {
-+			compatible = "renesas,cmt-48-gen3";
-+			reg = <0 0xe6130000 0 0x1004>;
-+			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 302>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+
-+			renesas,channels-mask = <0xff>;
-+	         };
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a7795-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
+ struct sh_mobile_sdhi_of_data {
+ 	unsigned long tmio_flags;
++	u32	      tmio_ocr_mask;
+ 	unsigned long capabilities;
+ 	unsigned long capabilities2;
+ 	enum dma_slave_buswidth dma_buswidth;
+@@ -630,6 +631,7 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+ 		const struct sh_mobile_sdhi_of_data *of_data = of_id->data;
+ 
+ 		mmc_data->flags |= of_data->tmio_flags;
++		mmc_data->ocr_mask = of_data->tmio_ocr_mask;
+ 		mmc_data->capabilities |= of_data->capabilities;
+ 		mmc_data->capabilities2 |= of_data->capabilities2;
+ 		mmc_data->dma_rx_offset = of_data->dma_rx_offset;
 -- 
-2.7.4
-
+2.9.2
