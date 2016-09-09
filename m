@@ -1,105 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756483AbcIGHuu (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Sep 2016 03:50:50 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 16/26] ARM: dts: rskrza1: initial device tree
-Date: Wed,  7 Sep 2016 09:50:03 +0200
-Message-Id: <e83c05a7160681f554476e9d44b7b77053efc21a.1473234372.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
-References: <cover.1473234371.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: bd-phuc@jinso.co.jp
+To: daniel.lezcano@linaro.org, tglx@linutronix.de
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sh@vger.kernel.org, geert+renesas@glider.be,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@vger.kernel.org,
+        laurent.pinchart+renesas@ideasonboard.com, magnus.damm@gmail.com,
+        horms@verge.net.au, kuninori.morimoto.gx@renesas.com,
+        yoshihiro.shimoda.uh@renesas.com, ryusuke.sakato.bx@renesas.com,
+        h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp, nv-dung@jinso.co.jp
+Subject: [PATCH 0/8] clocksource: sh_cmt: Add R-car Gen3 CMT0/1 support
+Date: Fri,  9 Sep 2016 20:43:06 +0900
+Message-Id: <1473421394-9745-1-git-send-email-bd-phuc@jinso.co.jp>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Chris Brandt <chris.brandt@renesas.com>
+From: Bui Duc Phuc <bd-phuc@jinso.co.jp>
 
-Add the initial device tree for the RZ/A1 based development board (RSK).
+Hi,
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/Makefile             |  1 +
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 52 ++++++++++++++++++++++++++++++++++
- 2 files changed, 53 insertions(+)
- create mode 100644 arch/arm/boot/dts/r7s72100-rskrza1.dts
+These are my first patches which will be added CMT driver for support 
+R-car Gen3 series (r8a7795 and r8a7796).
+Please consider these patches.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index d289ec733d2e..80193b3a450b 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -651,6 +651,7 @@ dtb-$(CONFIG_ARCH_S5PV210) += \
- dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
- 	emev2-kzm9d.dtb \
- 	r7s72100-genmai.dtb \
-+	r7s72100-rskrza1.dtb \
- 	r8a73a4-ape6evm.dtb \
- 	r8a7740-armadillo800eva.dtb \
- 	r8a7778-bockw.dtb \
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-new file mode 100644
-index 000000000000..aabfa0459dc1
---- /dev/null
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -0,0 +1,52 @@
-+/*
-+ * Device Tree Source for the RZ/A1H RSK board
-+ *
-+ * Copyright (C) 2016 Renesas Electronics
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2.  This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r7s72100.dtsi"
-+
-+/ {
-+	model = "RSKRZA1";
-+	compatible = "renesas,rskrza1", "renesas,r7s72100";
-+
-+	aliases {
-+		serial0 = &scif2;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@8000000 {
-+		device_type = "memory";
-+		reg = <0x08000000 0x02000000>;
-+	};
-+
-+	lbsc {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <13330000>;
-+};
-+
-+&usb_x1_clk {
-+	clock-frequency = <48000000>;
-+};
-+
-+&mtu2 {
-+	status = "okay";
-+};
-+
-+&scif2 {
-+	status = "okay";
-+};
+Best regards.
+
+Bui Duc Phuc (8):
+  devicetree: binding: R-car Gen3 CMT0 and CMT1 bindings
+  ARM64: dts: r8a7795: Add CMT device to DT
+  ARM64: dts: r8a7796: Add CMT device to DT
+  clk: renesas: r8a7795: Add CMT clocks
+  clk: renesas: r8a7796: Add CMT clocks
+  clocksource: sh_cmt: Support separate R-car Gen3 CMT0/1
+  clocksource: Kconfig: Modify CMT config support 64bit
+  ARM64: defconfig: Enable SH_TIMER_CMT config option
+
+ .../devicetree/bindings/timer/renesas,cmt.txt      |  2 ++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 30 ++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 30 ++++++++++++++++++++++
+ arch/arm64/configs/defconfig                       |  1 +
+ drivers/clk/renesas/r8a7795-cpg-mssr.c             |  4 +++
+ drivers/clk/renesas/r8a7796-cpg-mssr.c             |  4 +++
+ drivers/clocksource/Kconfig                        |  2 +-
+ drivers/clocksource/sh_cmt.c                       | 21 +++++++++++++--
+ 8 files changed, 91 insertions(+), 3 deletions(-)
+
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
+
