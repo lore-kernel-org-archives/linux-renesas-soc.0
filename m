@@ -1,90 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57230 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933905AbcIGHuY (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:8407 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753226AbcIIPxv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Sep 2016 03:50:24 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/26] ARM: dts: r8a7790: Remove obsolete vsp1 properties
-Date: Wed,  7 Sep 2016 09:49:51 +0200
-Message-Id: <7b2d7a214708e06d89fd8019aa6f3acf744a3446.1473234371.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
-References: <cover.1473234371.git.horms+renesas@verge.net.au>
+        Fri, 9 Sep 2016 11:53:51 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 0/3] mmc: sh_mobile_sdhi: Add r7s72100 support
+Date: Fri,  9 Sep 2016 11:52:35 -0400
+Message-Id: <20160909155238.17852-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+For the most part, the SDHI controller in the RZ/A1 (r7s72100)
+is the same as other Renesas SoC...except for the fact that the 
+data port register was widened to 32-bits and the 16-bit accesses
+in the current tmio driver aren't going to cut it.
 
-As of commit 5aa2eb3c86d4fd16 ("[media] v4l: vsp1: Configure device
-based on IP version"), the DT properties to identify the exact VSP
-device instance features are no longer used. Hence remove them.
+Also, the tmio driver allows you to pass in what voltages you
+support via the ocr_mask. For the RZ/A1, it's just simple 3.3v.
+So, I added the ability to pass that when using DT.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7790.dtsi | 23 -----------------------
- 1 file changed, 23 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index d18558f21102..351fcc2f87df 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -944,11 +944,6 @@
- 		interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_R>;
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
--
--		renesas,has-sru;
--		renesas,#rpf = <5>;
--		renesas,#uds = <1>;
--		renesas,#wpf = <4>;
- 	};
- 
- 	vsp1@fe928000 {
-@@ -957,12 +952,6 @@
- 		interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_S>;
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
--
--		renesas,has-lut;
--		renesas,has-sru;
--		renesas,#rpf = <5>;
--		renesas,#uds = <3>;
--		renesas,#wpf = <4>;
- 	};
- 
- 	vsp1@fe930000 {
-@@ -971,12 +960,6 @@
- 		interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_DU0>;
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
--
--		renesas,has-lif;
--		renesas,has-lut;
--		renesas,#rpf = <4>;
--		renesas,#uds = <1>;
--		renesas,#wpf = <4>;
- 	};
- 
- 	vsp1@fe938000 {
-@@ -985,12 +968,6 @@
- 		interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp1_clks R8A7790_CLK_VSP1_DU1>;
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
--
--		renesas,has-lif;
--		renesas,has-lut;
--		renesas,#rpf = <4>;
--		renesas,#uds = <1>;
--		renesas,#wpf = <4>;
- 	};
- 
- 	du: display@feb00000 {
+Chris Brandt (3):
+  mmc: sh_mobile_sdhi: add ocr_mask option
+  mmc: tmio-mmc: add support for 32bit data port
+  mmc: sh_mobile_sdhi: Add r7s72100 support
+
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  1 +
+ drivers/mmc/host/sh_mobile_sdhi.c                  |  9 ++++++
+ drivers/mmc/host/tmio_mmc.h                        | 12 ++++++++
+ drivers/mmc/host/tmio_mmc_pio.c                    | 35 ++++++++++++++++++++++
+ include/linux/mfd/tmio.h                           |  5 ++++
+ 5 files changed, 62 insertions(+)
+
 -- 
-2.7.0.rc3.207.g0ac5344
+2.9.2
