@@ -1,72 +1,43 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756483AbcIGHvA (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Sep 2016 03:51:00 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 26/26] ARM: dts: wheat: add support for tactile switches
-Date: Wed,  7 Sep 2016 09:50:13 +0200
-Message-Id: <fa8f4aba72e6d619c003dab60f58ab6c7410e465.1473234372.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
-References: <cover.1473234371.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: bd-phuc@jinso.co.jp
+To: daniel.lezcano@linaro.org, tglx@linutronix.de
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sh@vger.kernel.org, geert+renesas@glider.be,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@vger.kernel.org,
+        laurent.pinchart+renesas@ideasonboard.com, magnus.damm@gmail.com,
+        horms@verge.net.au, kuninori.morimoto.gx@renesas.com,
+        yoshihiro.shimoda.uh@renesas.com, ryusuke.sakato.bx@renesas.com,
+        h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp, nv-dung@jinso.co.jp
+Subject: [PATCH 8/8] ARM64: defconfig: Enable SH_TIMER_CMT config option
+Date: Fri,  9 Sep 2016 20:43:14 +0900
+Message-Id: <1473421394-9745-9-git-send-email-bd-phuc@jinso.co.jp>
+In-Reply-To: <1473421394-9745-1-git-send-email-bd-phuc@jinso.co.jp>
+References: <1473421394-9745-1-git-send-email-bd-phuc@jinso.co.jp>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Bui Duc Phuc <bd-phuc@jinso.co.jp>
 
-Add  support for the  tactile switches  SW2/3 (on the debug board) as a
-virtual keyboard like it  was done with the Blanche board).
+Enable SH CMT driver for R-car Gen3 : SH_TIMER_CMT
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Bui Duc Phuc <bd-phuc@jinso.co.jp>
 ---
- arch/arm/boot/dts/r8a7792-wheat.dts | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
-index 0ec4bc606c61..6dbb94114a93 100644
---- a/arch/arm/boot/dts/r8a7792-wheat.dts
-+++ b/arch/arm/boot/dts/r8a7792-wheat.dts
-@@ -12,6 +12,7 @@
- /dts-v1/;
- #include "r8a7792.dtsi"
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
- 
- / {
- 	model = "Wheat";
-@@ -56,6 +57,25 @@
- 		pinctrl-names = "default";
- 	};
- 
-+	keyboard {
-+		compatible = "gpio-keys";
-+
-+		key-a {
-+			linux,code = <KEY_A>;
-+			label = "SW2";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio3 20 GPIO_ACTIVE_LOW>;
-+		};
-+		key-b {
-+			linux,code = <KEY_B>;
-+			label = "SW3";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio11 2 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
- 	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
- 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index eadf485..72f892d 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -3,6 +3,7 @@ CONFIG_POSIX_MQUEUE=y
+ CONFIG_AUDIT=y
+ CONFIG_NO_HZ_IDLE=y
+ CONFIG_HIGH_RES_TIMERS=y
++CONFIG_SH_TIMER_CMT=y
+ CONFIG_BSD_PROCESS_ACCT=y
+ CONFIG_BSD_PROCESS_ACCT_V3=y
+ CONFIG_TASKSTATS=y
 -- 
-2.7.0.rc3.207.g0ac5344
+2.7.4
+
