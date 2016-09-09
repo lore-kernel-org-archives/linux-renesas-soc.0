@@ -1,111 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34095 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761896AbcINQr3 (ORCPT
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:36857 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752596AbcIIHke (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Sep 2016 12:47:29 -0400
-Received: by mail-wm0-f67.google.com with SMTP id g141so3383266wmd.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2016 09:47:29 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: magnus.damm@gmail.com, horms@verge.net.au,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 3/4] arm64: renesas: r8a7796 dtsi: Add all HSCIF nodes
-Date: Wed, 14 Sep 2016 18:47:15 +0200
-Message-Id: <20160914164716.31512-4-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <20160914164716.31512-1-ulrich.hecht+renesas@gmail.com>
-References: <20160914164716.31512-1-ulrich.hecht+renesas@gmail.com>
+        Fri, 9 Sep 2016 03:40:34 -0400
+MIME-Version: 1.0
+In-Reply-To: <1473334608-24638-2-git-send-email-horms+renesas@verge.net.au>
+References: <1473334608-24638-1-git-send-email-horms+renesas@verge.net.au> <1473334608-24638-2-git-send-email-horms+renesas@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 9 Sep 2016 09:40:33 +0200
+Message-ID: <CAMuHMdWP3O_huybgERFLh83+q-8+h822039iET=cJN0mgbdq=g@mail.gmail.com>
+Subject: Re: [PATCH 1/3] pinctrl: sh-pfc: Add PORT_GP_24 helper macro
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the device nodes for all HSCIF serial ports, incl. clocks, and
-clock domain.
+Hi Simon,
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 70 ++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+On Thu, Sep 8, 2016 at 1:36 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
+> This follows the style of existing PORT_GP_X macros and
+> will be used by a follow-up patch for the r8a7791 SoC.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  drivers/pinctrl/sh-pfc/sh_pfc.h | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> index 5e966c09434d..de91b5f247c0 100644
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -399,11 +399,15 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
+>         PORT_GP_CFG_1(bank, 16, fn, sfx, cfg), PORT_GP_CFG_1(bank, 17, fn, sfx, cfg)
+>  #define PORT_GP_18(bank, fn, sfx)      PORT_GP_CFG_18(bank, fn, sfx, 0)
+>
+> -#define PORT_GP_CFG_26(bank, fn, sfx, cfg)                                             \
+> +#define PORT_GP_CFG_24(bank, fn, sfx, cfg)                                             \
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index d2bbf92..df3b7df 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -347,6 +347,76 @@
- 			status = "disabled";
- 		};
- 
-+		hscif0: serial@e6540000 {
-+			compatible = "renesas,hscif-r8a7796",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6540000 0 96>;
-+			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 520>,
-+				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		hscif1: serial@e6550000 {
-+			compatible = "renesas,hscif-r8a7796",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6550000 0 96>;
-+			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 519>,
-+				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		hscif2: serial@e6560000 {
-+			compatible = "renesas,hscif-r8a7796",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe6560000 0 96>;
-+			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 518>,
-+				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		hscif3: serial@e66a0000 {
-+			compatible = "renesas,hscif-r8a7796",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe66a0000 0 96>;
-+			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 517>,
-+				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		hscif4: serial@e66b0000 {
-+			compatible = "renesas,hscif-r8a7796",
-+				     "renesas,rcar-gen3-hscif",
-+				     "renesas,hscif";
-+			reg = <0 0xe66b0000 0 96>;
-+			interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 516>,
-+				 <&cpg CPG_CORE R8A7796_CLK_S3D1>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
- 		scif0: serial@e6e60000 {
- 			compatible = "renesas,scif-r8a7796",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
--- 
-2.9.3
+This patch no longer applies since "pinctrl: sh-pfc: Add R8A7792 PFC support".
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
