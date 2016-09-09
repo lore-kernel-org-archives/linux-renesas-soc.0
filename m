@@ -1,43 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:37951 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750760AbcIIPGs (ORCPT
+Received: from sauhun.de ([89.238.76.85]:52586 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751332AbcIIM3S (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Sep 2016 11:06:48 -0400
-Date: Fri, 9 Sep 2016 17:06:42 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Fri, 9 Sep 2016 08:29:18 -0400
+Date: Fri, 9 Sep 2016 14:29:12 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
 Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7796: Add voltage switch operations
  for SDHI
-Message-ID: <20160909150641.GA13747@verge.net.au>
+Message-ID: <20160909122912.GB1318@katana>
 References: <1473335853-32102-1-git-send-email-horms+renesas@verge.net.au>
- <CAMuHMdUM4B0KQMS127VGTSV8DkDGaUAy_vfK1XK6EnVd5p9DPQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="z6Eq5LdranGa6ru8"
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdUM4B0KQMS127VGTSV8DkDGaUAy_vfK1XK6EnVd5p9DPQ@mail.gmail.com>
+In-Reply-To: <1473335853-32102-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 09, 2016 at 10:24:55AM +0200, Geert Uytterhoeven wrote:
-> On Thu, Sep 8, 2016 at 1:57 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
-> > This patch supports the {get,set}_io_voltage operations of SDHI.
-> >
-> > This operates the POCCTRL0 register on R8A7796 SoC and makes 1.8v/3.3v
-> > voltage switch.
-> >
-> > Based on work by Takeshi Kihara and Wolfram Sang.
-> >
-> > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks, will you queue this up?
+--z6Eq5LdranGa6ru8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Sep 08, 2016 at 01:57:33PM +0200, Simon Horman wrote:
+> This patch supports the {get,set}_io_voltage operations of SDHI.
+>=20
+> This operates the POCCTRL0 register on R8A7796 SoC and makes 1.8v/3.3v
+> voltage switch.
+>=20
+> Based on work by Takeshi Kihara and Wolfram Sang.
+>=20
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--z6Eq5LdranGa6ru8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX0qsXAAoJEBQN5MwUoCm2b4YQAJ2wwDF19nxYkNvRXOBlVDDc
+LvJPSXSBTrU0KcxHo2GqxZVve9v1E0KYM4X26/kuM4mBuQu9Z9m9kBoboDRyhJKM
+CqwhIcWjAv0JEkKqWtAhPZ8bQ1uCUPmWYFILoQWWYyZhvh41L87Dn6bIq/6Kt6PB
+5/9RMXvMVtY9FbuBtYh4gt9NNiqcqCuhBgCHrjEr+1DTUAEonEgnEvrbdz9Y+e0C
+2GP7B8abTIRWdU/MumWlYmh6Roe3zze6xYmRYr9aJgNnhGSfTBAVA17DjTksiP4d
+aQiS4fM/ferau8PME3Yn+DZ1UwbxlDzcgfWsL1AdnEQy7Xp77AyAHFlV5SPMvrW1
+KXiNAJlGP8n1LTMAoSGXEX8HOghoWgQvxo2jUnwwyxGrsDFiBZ89XaAxBgzmNv1D
+wHD+EP4Q+dhNu7hZeZ/wSjUJ1bnKYvYHZuHb1sBvy3eHpVq4+7stJo/sb90TfWzH
+3biF+qph8pxG9BVQzE0vBuuwf5jrH9iUuu59wpnffSxkdvESf6vclGGGHkVairuL
+JJHWJ5e5gVMmacpYjq5HAkZenpUciAo3r1anBJldtQ8+Cr5UuiiFJPMVO8rfiTuW
+qPpqRXjqSXYs8mbhcwebm1rGPCDcvTjqiwAegmMRRydfWrTH652+9M4MoCN0bT1a
+a67Wh/yV/0zFkkZqeZgU
+=Oyu7
+-----END PGP SIGNATURE-----
+
+--z6Eq5LdranGa6ru8--
