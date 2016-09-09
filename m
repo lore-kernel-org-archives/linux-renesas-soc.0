@@ -1,74 +1,83 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran@bingham.xyz>
-Subject: [PATCH v3 02/10] v4l: ctrls: Add deinterlacing mode control
-Date: Thu,  8 Sep 2016 01:25:02 +0300
-Message-Id: <1473287110-780-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1473287110-780-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1473287110-780-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:52607 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754683AbcIIMa7 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 9 Sep 2016 08:30:59 -0400
+Date: Fri, 9 Sep 2016 14:30:43 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH 2/3] pinctrl: sh-pfc: r8a7791: Implement voltage
+ switching for SDHI
+Message-ID: <20160909123043.GD1318@katana>
+References: <1473334608-24638-1-git-send-email-horms+renesas@verge.net.au>
+ <1473334608-24638-3-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdVNW=hVrmHrbPZW1GpeaaDZOz-4x0cv9qjU9D5p9CLBTQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="KdquIMZPjGJQvRdI"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVNW=hVrmHrbPZW1GpeaaDZOz-4x0cv9qjU9D5p9CLBTQ@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The menu control selects the operation mode of a video deinterlacer. The
-menu entries are driver specific.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- Documentation/media/uapi/v4l/extended-controls.rst | 4 ++++
- drivers/media/v4l2-core/v4l2-ctrls.c               | 2 ++
- include/uapi/linux/v4l2-controls.h                 | 1 +
- 3 files changed, 7 insertions(+)
+--KdquIMZPjGJQvRdI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documentation/media/uapi/v4l/extended-controls.rst
-index 1f1518e4859d..8e6314e23cd3 100644
---- a/Documentation/media/uapi/v4l/extended-controls.rst
-+++ b/Documentation/media/uapi/v4l/extended-controls.rst
-@@ -4250,6 +4250,10 @@ Image Process Control IDs
-     test pattern images. These hardware specific test patterns can be
-     used to test if a device is working properly.
- 
-+``V4L2_CID_DEINTERLACING_MODE (menu)``
-+    The video deinterlacing mode (such as Bob, Weave, ...). The menu items are
-+    driver specific.
-+
- 
- .. _dv-controls:
- 
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index adc2147fcff7..47001e25fd9e 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -885,6 +885,7 @@ const char *v4l2_ctrl_get_name(u32 id)
- 	case V4L2_CID_LINK_FREQ:		return "Link Frequency";
- 	case V4L2_CID_PIXEL_RATE:		return "Pixel Rate";
- 	case V4L2_CID_TEST_PATTERN:		return "Test Pattern";
-+	case V4L2_CID_DEINTERLACING_MODE:	return "Deinterlacing Mode";
- 
- 	/* DV controls */
- 	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
-@@ -1058,6 +1059,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
- 	case V4L2_CID_DV_RX_RGB_RANGE:
- 	case V4L2_CID_DV_RX_IT_CONTENT_TYPE:
- 	case V4L2_CID_TEST_PATTERN:
-+	case V4L2_CID_DEINTERLACING_MODE:
- 	case V4L2_CID_TUNE_DEEMPHASIS:
- 	case V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_SEL:
- 	case V4L2_CID_DETECT_MD_MODE:
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index b6a357a5f053..0d2e1e01fbd5 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -892,6 +892,7 @@ enum v4l2_jpeg_chroma_subsampling {
- #define V4L2_CID_LINK_FREQ			(V4L2_CID_IMAGE_PROC_CLASS_BASE + 1)
- #define V4L2_CID_PIXEL_RATE			(V4L2_CID_IMAGE_PROC_CLASS_BASE + 2)
- #define V4L2_CID_TEST_PATTERN			(V4L2_CID_IMAGE_PROC_CLASS_BASE + 3)
-+#define V4L2_CID_DEINTERLACING_MODE		(V4L2_CID_IMAGE_PROC_CLASS_BASE + 4)
- 
- 
- /*  DV-class control IDs defined by V4L2 */
--- 
-Regards,
+On Fri, Sep 09, 2016 at 09:52:20AM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+>=20
+> On Thu, Sep 8, 2016 at 1:36 PM, Simon Horman <horms+renesas@verge.net.au>=
+ wrote:
+> > All the SHDIs can operate with either 3.3V or 1.8V signals, depending
+> > on negotiation with the card.
+> >
+> > Based on work by Wolfram Sang for the r8a7790.
+> >
+> > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+>=20
+> If you correct the copy-and-pasted comment below, you can add my
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Laurent Pinchart
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+> > + * All pins assigned to GPIO bank 3 can be used for SD interfaces in
+>=20
+> Pins 0-23 assigned to GPIO bank 6...
+
+I agree.
+
+
+--KdquIMZPjGJQvRdI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX0qtyAAoJEBQN5MwUoCm2fuoP+wWV0rAhR2siZVRFsE64fL2p
+DmXa0laddHYL97JeRBptJxqi+jWNalxWCLC8PVOtKgDsfWFG1OVgEfwZrWTYewFx
+PsXGQdifNaI5/lTXDfII56HaVylkVINoqGYaoa/1V6RlT9tSHxTQxbanUMcmS+os
+Xl2CKK4D2Gr3oUkx1kQOsWDVl6t7mAAb+oTiLd9AMLOLUkHswZtmUOmLgzD2dDLZ
+Dp4b58wrcMSmS6iQqgWhRXSicvx4mKrLAYsHg3joNMUWmReJqDmv1MXHiMZpRSvG
+vd+PGwFktAYvaTQftXtbTdFmzdageABCiaiU2Ey3f+7Xo8ny/oCv+44e+i5p5fv7
+eR4shkv43THldYzuVmHvhTTJ4dQnUL5kRRZlqL59vJRqzNx9AkOMxOOkfZjf5x9Q
+BQOieozi1ubu4BclS7AaRvbKs0tNc7DjB1y3nlzHoNhs/EmOt3cNulUyijIW1Own
+ERh1/I+MxwJ6Rnogqwd3KzWq+Shby35cecP7hfkLIhkICoC1DE+gvc+nhhWrJ40H
+AghZssPclNbt/AsoLBbRQHHuTnZBRJ96SltNHoLAv0cVtsF1IF9sV0TYiH3Pa7Nz
+Wm58b+RGRqqL+PTfFkMYtgZ4yVj6TTinQSxfwxvDPoKtCeeOpPZUE8O4zKEWwm57
+8Cg8sLv9HsPu1QKCuS2V
+=EaeM
+-----END PGP SIGNATURE-----
+
+--KdquIMZPjGJQvRdI--
