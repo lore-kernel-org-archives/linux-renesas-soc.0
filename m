@@ -1,89 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46012 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757899AbcIHHn4 (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:57015 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755129AbcIKVEN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 03:43:56 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/30] arm64: dts: renesas: r8a7795: Add DU device to DT
-Date: Thu,  8 Sep 2016 09:43:06 +0200
-Message-Id: <a001a07fe851ce69fcbe85ee25e292b04624b154.1473320411.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
-References: <cover.1473320411.git.horms+renesas@verge.net.au>
+        Sun, 11 Sep 2016 17:04:13 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 1/3] mmc: sh_mobile_sdhi: add ocr_mask option
+Date: Sun, 11 Sep 2016 17:03:26 -0400
+Message-Id: <20160911210328.30641-2-chris.brandt@renesas.com>
+In-Reply-To: <20160911210328.30641-1-chris.brandt@renesas.com>
+References: <20160911210328.30641-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+In moving platforms from board files to DT, there still needs to be a way
+to set the ocr_mask setting for the tmio driver during probe. Without this
+setting, the probe will fail because the supported voltages are not known.
 
-Add the DU device to r8a7795.dtsi in a disabled state.
+This patch will also traditional platform registration platforms to
+migrate to DT.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 46 ++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ drivers/mmc/host/sh_mobile_sdhi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 19daa6a88312..5d59e7fe7bbc 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1495,5 +1495,51 @@
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 			renesas,fcp = <&fcpf2>;
- 		};
-+
-+		du: display@feb00000 {
-+			compatible = "renesas,du-r8a7795";
-+			reg = <0 0xfeb00000 0 0x80000>,
-+			      <0 0xfeb90000 0 0x14>;
-+			reg-names = "du", "lvds.0";
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>,
-+				 <&cpg CPG_MOD 723>,
-+				 <&cpg CPG_MOD 722>,
-+				 <&cpg CPG_MOD 721>,
-+				 <&cpg CPG_MOD 727>;
-+			clock-names = "du.0", "du.1", "du.2", "du.3", "lvds.0";
-+			status = "disabled";
-+
-+			vsps = <&vspd0 &vspd1 &vspd2 &vspd3>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					du_out_hdmi0: endpoint {
-+					};
-+				};
-+				port@2 {
-+					reg = <2>;
-+					du_out_hdmi1: endpoint {
-+					};
-+				};
-+				port@3 {
-+					reg = <3>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
-+			};
-+		};
- 	};
- };
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index 5334f24..b033500 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -59,6 +59,7 @@ enum tmio_mmc_dmac_type {
+ 
+ struct sh_mobile_sdhi_of_data {
+ 	unsigned long tmio_flags;
++	u32	      tmio_ocr_mask;
+ 	unsigned long capabilities;
+ 	unsigned long capabilities2;
+ 	enum dma_slave_buswidth dma_buswidth;
+@@ -630,6 +631,7 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+ 		const struct sh_mobile_sdhi_of_data *of_data = of_id->data;
+ 
+ 		mmc_data->flags |= of_data->tmio_flags;
++		mmc_data->ocr_mask = of_data->tmio_ocr_mask;
+ 		mmc_data->capabilities |= of_data->capabilities;
+ 		mmc_data->capabilities2 |= of_data->capabilities2;
+ 		mmc_data->dma_rx_offset = of_data->dma_rx_offset;
 -- 
-2.7.0.rc3.207.g0ac5344
+2.9.2
