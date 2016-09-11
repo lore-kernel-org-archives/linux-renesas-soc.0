@@ -1,14 +1,11 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:62866 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932160AbcIKTLl (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 11 Sep 2016 15:11:41 -0400
-Date: Sun, 11 Sep 2016 21:11:35 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Joe Perches <joe@perches.com>
-cc: Julia Lawall <Julia.Lawall@lip6.fr>,
-        linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <1473616576.19464.10.camel@perches.com>
+Subject: Re: [PATCH 00/26] constify local structures
+From: Joe Perches <joe@perches.com>
+To: Julia Lawall <Julia.Lawall@lip6.fr>,
+        linux-renesas-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         linux-pm@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         linux-media@vger.kernel.org, linux-can@vger.kernel.org,
@@ -24,80 +21,63 @@ cc: Julia Lawall <Julia.Lawall@lip6.fr>,
         tpmdd-devel@lists.sourceforge.net, linux-scsi@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-acpi@vger.kernel.org
-Subject: Re: [PATCH 00/26] constify local structures
-In-Reply-To: <1473616576.19464.10.camel@perches.com>
-Message-ID: <alpine.DEB.2.10.1609112105250.3818@hadrien>
-References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr> <1473616576.19464.10.camel@perches.com>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Date: Sun, 11 Sep 2016 10:56:16 -0700
+In-Reply-To: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
+Content-Type: text/plain; charset="ISO-8859-1"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Sun, 2016-09-11 at 15:05 +0200, Julia Lawall wrote:
+> Constify local structures.
 
-On Sun, 11 Sep 2016, Joe Perches wrote:
+Thanks Julia.
 
-> On Sun, 2016-09-11 at 15:05 +0200, Julia Lawall wrote:
-> > Constify local structures.
->
-> Thanks Julia.
->
-> A few suggestions & questions:
->
-> Perhaps the script should go into scripts/coccinelle/
-> so that future cases could be caught by the robot
-> and commit message referenced by the patch instances.
+A few suggestions & questions:
 
-OK.
+Perhaps the script should go into scripts/coccinelle/
+so that future cases could be caught by the robot
+and commit message referenced by the patch instances.
 
-> Can you please compile the files modified using the
-> appropriate defconfig/allyesconfig and show the
+Can you please compile the files modified using the
+appropriate defconfig/allyesconfig and show the
+movement from data to const by using
+	$ size <object>.new/old
+and include that in the changelogs (maybe next time)?
 
-I currently send patches for this issue only for files that compile using
-the x86 allyesconfig.
+Is it possible for a rule to trace the instances where
+an address of a struct or struct member is taken by
+locally defined and declared function call where the
+callee does not modify any dereferenced object?
 
-> movement from data to const by using
-> 	$ size <object>.new/old
-> and include that in the changelogs (maybe next time)?
+ie:
 
-OK, thanks for the suggestion.
+struct foo {
+	int bar;
+	char *baz;
+};
 
-> Is it possible for a rule to trace the instances where
-> an address of a struct or struct member is taken by
-> locally defined and declared function call where the
-> callee does not modify any dereferenced object?
->
-> ie:
->
-> struct foo {
-> 	int bar;
-> 	char *baz;
-> };
->
-> struct foo qux[] = {
-> 	{ 1, "description 1" },
-> 	{ 2, "dewcription 2" },
-> 	[ n, "etc" ]...,
-> };
->
-> void message(struct foo *msg)
-> {
-> 	printk("%d %s\n", msg->bar, msg->baz);
-> }
->
-> where some code uses
->
-> 	message(qux[index]);
->
-> So could a coccinelle script change:
->
-> struct foo qux[] = { to const struct foo quz[] = {
->
-> and
->
-> void message(struct foo *msg) to void message(const struct foo *msg)
+struct foo qux[] = {
+	{ 1, "description 1" },
+	{ 2, "dewcription 2" },
+	[ n, "etc" ]...,
+};
 
-Yes, this could be possible too.
+void message(struct foo *msg)
+{
+	printk("%d %s\n", msg->bar, msg->baz);
+}
 
-Thanks for the feedback.
+where some code uses
 
-julia
+	message(qux[index]);
+
+So could a coccinelle script change:
+
+struct foo qux[] = { to const struct foo quz[] = {
+
+and
+
+void message(struct foo *msg) to void message(const struct foo *msg)
