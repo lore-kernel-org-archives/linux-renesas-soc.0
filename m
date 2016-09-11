@@ -1,65 +1,39 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Kieran Bingham <kieran@ksquared.org.uk>,
-	Kieran Bingham <kieran@bingham.xyz>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 02/30] arm64: dts: r8a7795: add FDP1 device nodes
-Date: Thu,  8 Sep 2016 09:42:58 +0200
-Message-Id: <bfb31459342701e0017f790ce675fcaf4df0d1c9.1473320411.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
-References: <cover.1473320411.git.horms+renesas@verge.net.au>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([184.105.139.130]:51334 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751425AbcIKEW0 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sun, 11 Sep 2016 00:22:26 -0400
+Date: Sat, 10 Sep 2016 21:12:05 -0700 (PDT)
+Message-Id: <20160910.211205.2263493847383395899.davem@davemloft.net>
+To: chris.brandt@renesas.com
+Cc: sergei.shtylyov@cogentembedded.com, horms+renesas@verge.net.au,
+        geert+renesas@glider.be, daniel@0x0f.com, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] net: ethernet: renesas: sh_eth: add POST registers
+ for rz
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20160907185709.24150-1-chris.brandt@renesas.com>
+References: <20160907185709.24150-1-chris.brandt@renesas.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran@ksquared.org.uk>
+From: Chris Brandt <chris.brandt@renesas.com>
+Date: Wed,  7 Sep 2016 14:57:09 -0400
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+> Due to a mistake in the hardware manual, the FWSLC and POST1-4 registers
+> were not documented and left out of the driver for RZ/A making the CAM
+> feature non-operational.
+> Additionally, when the offset values for POST1-4 are left blank, the driver
+> attempts to set them using an offset of 0xFFFF which can cause a memory
+> corruption or panic.
+> 
+> This patch fixes the panic and properly enables CAM.
+> 
+> Reported-by: Daniel Palmer <daniel@0x0f.com>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 8c85b50d306b..99953ca9a45e 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1294,5 +1294,32 @@
- 			clocks = <&cpg CPG_MOD 613>;
- 			power-domains = <&sysc R8A7795_PD_A3VP>;
- 		};
-+
-+		fdp1@fe940000 {
-+			compatible = "renesas,fdp1";
-+			reg = <0 0xfe940000 0 0x2400>;
-+			interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 119>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+			renesas,fcp = <&fcpf0>;
-+		};
-+
-+		fdp1@fe944000 {
-+			compatible = "renesas,fdp1";
-+			reg = <0 0xfe944000 0 0x2400>;
-+			interrupts = <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 118>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+			renesas,fcp = <&fcpf1>;
-+		};
-+
-+		fdp1@fe948000 {
-+			compatible = "renesas,fdp1";
-+			reg = <0 0xfe948000 0 0x2400>;
-+			interrupts = <GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 117>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+			renesas,fcp = <&fcpf2>;
-+		};
- 	};
- };
--- 
-2.7.0.rc3.207.g0ac5344
+Applied, thanks.
