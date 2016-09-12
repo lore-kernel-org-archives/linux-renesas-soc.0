@@ -1,74 +1,233 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:15809 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932696AbcITPqn (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:40679 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756225AbcILUuv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Sep 2016 11:46:43 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        Mon, 12 Sep 2016 16:50:51 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 3/3] ARM: dts: rskrza1: add mmc DT support
-Date: Tue, 20 Sep 2016 11:46:20 -0400
-Message-Id: <20160920154620.18653-4-chris.brandt@renesas.com>
-In-Reply-To: <20160920154620.18653-1-chris.brandt@renesas.com>
-References: <20160920154620.18653-1-chris.brandt@renesas.com>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v2 7/7] spi: slave: Add SPI slave handler controlling system state
+Date: Mon, 12 Sep 2016 22:50:46 +0200
+Message-Id: <1473713446-30366-8-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1473713446-30366-1-git-send-email-geert+renesas@glider.be>
+References: <1473713446-30366-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since the MMC and SDHI1 on the RSK share the same socket connector (CN1),
-you cannot enable MMC and SDHI1 at the same time. Therefore the status
-has been set to disabled because SDHI is more popular with this board.
-However, keeping this code in here serves as a good way to document how
-the MMC on the RZ/A1 has been known to work for someone that does want
-to use MMC instead of SDHI1.
+Add an example SPI slave handler to allow remote control of system
+reboot, power off, halt, and suspend.
 
-A fixed 3.3 regulator is included because it is required by the mmc
-driver.
-
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+v2:
+  - Use spi_async() instead of spi_read(),
+  - Submit the next transfer from the previous transfer's completion
+    callback, removing the need for a thread,
+  - Let .remove() call spi_slave_abort() to cancel the current ongoing
+    transfer, and wait for the completion to terminate,
+  - Remove FIXME about hanging kthread_stop(),
+  - Fix copy-and-pasted module description.
+---
+ drivers/spi/Kconfig                    |   6 ++
+ drivers/spi/Makefile                   |   1 +
+ drivers/spi/spi-slave-system-control.c | 154 +++++++++++++++++++++++++++++++++
+ 3 files changed, 161 insertions(+)
+ create mode 100644 drivers/spi/spi-slave-system-control.c
 
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-index e5dea5b..9228b04 100644
---- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -33,6 +33,15 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 	};
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 515bddee4018c246..3d8ae9505ef95992 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -755,6 +755,12 @@ config SPI_SLAVE_TIME
+ 	  SPI slave handler responding with the time of reception of the last
+ 	  SPI message.
+ 
++config SPI_SLAVE_SYSTEM_CONTROL
++	tristate "SPI slave handler controlling system state"
++	help
++	  SPI slave handler to allow remote control of system reboot, power
++	  off, halt, and suspend.
 +
-+	d3_3v: regulator-d3-3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "D3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
- };
+ endif # SPI_SLAVE
  
- &extal_clk {
-@@ -56,6 +65,14 @@
- 	};
- };
+ endif # SPI
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index ba4a7e79fe113d3e..e402c1a12f47c38f 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -101,3 +101,4 @@ obj-$(CONFIG_SPI_ZYNQMP_GQSPI)		+= spi-zynqmp-gqspi.o
  
-+&mmcif {
-+	vmmc-supply = <&d3_3v>;
-+	vqmmc-supply = <&d3_3v>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "disabled"; /* shares CN1 with sdhi1 */
+ # SPI slave protocol handlers
+ obj-$(CONFIG_SPI_SLAVE_TIME)		+= spi-slave-time.o
++obj-$(CONFIG_SPI_SLAVE_SYSTEM_CONTROL)	+= spi-slave-system-control.o
+diff --git a/drivers/spi/spi-slave-system-control.c b/drivers/spi/spi-slave-system-control.c
+new file mode 100644
+index 0000000000000000..736dd59928cb3bc3
+--- /dev/null
++++ b/drivers/spi/spi-slave-system-control.c
+@@ -0,0 +1,154 @@
++/*
++ * SPI slave handler controlling system state
++ *
++ * This SPI slave handler allows remote control of system reboot, power off,
++ * halt, and suspend.
++ *
++ * Copyright (C) 2016 Glider bvba
++ *
++ * This file is subject to the terms and conditions of the GNU General Public
++ * License.  See the file "COPYING" in the main directory of this archive
++ * for more details.
++ */
++
++#include <linux/completion.h>
++#include <linux/module.h>
++#include <linux/reboot.h>
++#include <linux/suspend.h>
++#include <linux/spi/spi.h>
++
++/*
++ * The numbers are chosen to display something human-readable on two 7-segment
++ * displays connected to two 74HC595 shift registers
++ */
++#define CMD_REBOOT	0x507c	/* rb */
++#define CMD_POWEROFF	0x3f71	/* OF */
++#define CMD_HALT	0x7638	/* HL */
++#define CMD_SUSPEND	0x1b1b	/* ZZ */
++
++struct spi_slave_system_control_priv {
++	struct spi_device *spi;
++	struct completion finished;
++	struct spi_transfer xfer;
++	struct spi_message msg;
++	__le16 cmd;
 +};
 +
- &scif2 {
- 	status = "okay";
- };
++static
++int spi_slave_system_control_submit(struct spi_slave_system_control_priv *priv);
++
++static void spi_slave_system_control_complete(void *arg)
++{
++	struct spi_slave_system_control_priv *priv = arg;
++	u16 cmd;
++	int ret;
++
++	if (priv->msg.status)
++		goto terminate;
++
++	cmd = le16_to_cpu(priv->cmd);
++	switch (cmd) {
++	case CMD_REBOOT:
++		pr_info("Rebooting system...\n");
++		kernel_restart(NULL);
++
++	case CMD_POWEROFF:
++		pr_info("Powering off system...\n");
++		kernel_power_off();
++		break;
++
++	case CMD_HALT:
++		pr_info("Halting system...\n");
++		kernel_halt();
++		break;
++
++	case CMD_SUSPEND:
++		pr_info("Suspending system...\n");
++		pm_suspend(PM_SUSPEND_MEM);
++		break;
++
++	default:
++		pr_warn("%s: Unknown command 0x%x\n", __func__, cmd);
++		break;
++	}
++
++	ret = spi_slave_system_control_submit(priv);
++	if (ret)
++		goto terminate;
++
++	return;
++
++terminate:
++	pr_info("%s: Terminating\n", __func__);
++	complete(&priv->finished);
++}
++
++static
++int spi_slave_system_control_submit(struct spi_slave_system_control_priv *priv)
++{
++	int ret;
++
++	spi_message_init_with_transfers(&priv->msg, &priv->xfer, 1);
++
++	priv->msg.complete = spi_slave_system_control_complete;
++	priv->msg.context = priv;
++
++	ret = spi_async(priv->spi, &priv->msg);
++	if (ret)
++		pr_err("%s: spi_async() failed %d\n", __func__, ret);
++
++	return ret;
++}
++
++static int spi_slave_system_control_probe(struct spi_device *spi)
++{
++	struct spi_slave_system_control_priv *priv;
++	int ret;
++
++	/*
++	 * bits_per_word cannot be configured in platform data
++	 */
++	spi->bits_per_word = 8;
++
++	ret = spi_setup(spi);
++	if (ret < 0)
++		return ret;
++
++	priv = devm_kzalloc(&spi->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->spi = spi;
++	init_completion(&priv->finished);
++	priv->xfer.rx_buf = &priv->cmd;
++	priv->xfer.len = sizeof(priv->cmd);
++
++	ret = spi_slave_system_control_submit(priv);
++	if (ret)
++		return ret;
++
++	spi_set_drvdata(spi, priv);
++	return 0;
++}
++
++static int spi_slave_system_control_remove(struct spi_device *spi)
++{
++	struct spi_slave_system_control_priv *priv = spi_get_drvdata(spi);
++
++	spi_slave_abort(spi);
++	wait_for_completion(&priv->finished);
++	return 0;
++}
++
++static struct spi_driver spi_slave_system_control_driver = {
++	.driver = {
++		.name	= "spi-slave-system-control",
++	},
++	.probe		= spi_slave_system_control_probe,
++	.remove		= spi_slave_system_control_remove,
++};
++module_spi_driver(spi_slave_system_control_driver);
++
++MODULE_AUTHOR("Geert Uytterhoeven <geert+renesas@glider.be>");
++MODULE_DESCRIPTION("SPI slave handler controlling system state");
++MODULE_LICENSE("GPL v2");
 -- 
-2.9.2
+1.9.1
