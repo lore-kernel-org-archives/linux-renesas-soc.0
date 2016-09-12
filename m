@@ -1,50 +1,127 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56984 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756483AbcIGHlf (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:37738 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756336AbcILUuv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Sep 2016 03:41:35 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 12 Sep 2016 16:50:51 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/2] arm64: defconfig: Add Renesas R-Car HSUSB driver support as module
-Date: Wed,  7 Sep 2016 09:41:27 +0200
-Message-Id: <94106a8dbaf56b50ba35faa32baae4ad8dcf17ed.1473233745.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473233745.git.horms+renesas@verge.net.au>
-References: <cover.1473233745.git.horms+renesas@verge.net.au>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v2 2/7] spi: core: Extract of_spi_parse_dt()
+Date: Mon, 12 Sep 2016 22:50:41 +0200
+Message-Id: <1473713446-30366-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1473713446-30366-1-git-send-email-geert+renesas@glider.be>
+References: <1473713446-30366-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Extract the parsing of SPI slave-specific properties into its own
+function, so it can be reused later for SPI slave controllers.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+v2:
+  - New.
+---
+ drivers/spi/spi.c | 60 +++++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 36 insertions(+), 24 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 0555b7caaf2c..458d891aaa8e 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -265,6 +265,7 @@ CONFIG_USB_EHCI_HCD_PLATFORM=y
- CONFIG_USB_OHCI_EXYNOS=y
- CONFIG_USB_OHCI_HCD=y
- CONFIG_USB_OHCI_HCD_PLATFORM=y
-+CONFIG_USB_RENESAS_USBHS=m
- CONFIG_USB_STORAGE=y
- CONFIG_USB_DWC2=y
- CONFIG_USB_DWC3=y
-@@ -276,6 +277,7 @@ CONFIG_USB_HSIC_USB3503=y
- CONFIG_USB_MSM_OTG=y
- CONFIG_USB_ULPI=y
- CONFIG_USB_GADGET=y
-+CONFIG_USB_RENESAS_USBHS_UDC=m
- CONFIG_MMC=y
- CONFIG_MMC_BLOCK_MINORS=32
- CONFIG_MMC_ARMMMCI=y
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 51ad42fad5679133..79e5c1ba23c81dc1 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1471,37 +1471,18 @@ err_init_queue:
+ /*-------------------------------------------------------------------------*/
+ 
+ #if defined(CONFIG_OF)
+-static struct spi_device *
+-of_register_spi_device(struct spi_master *master, struct device_node *nc)
++static int of_spi_parse_dt(struct spi_master *master, struct spi_device *spi,
++			   struct device_node *nc)
+ {
+-	struct spi_device *spi;
+-	int rc;
+ 	u32 value;
+-
+-	/* Alloc an spi_device */
+-	spi = spi_alloc_device(master);
+-	if (!spi) {
+-		dev_err(&master->dev, "spi_device alloc error for %s\n",
+-			nc->full_name);
+-		rc = -ENOMEM;
+-		goto err_out;
+-	}
+-
+-	/* Select device driver */
+-	rc = of_modalias_node(nc, spi->modalias,
+-				sizeof(spi->modalias));
+-	if (rc < 0) {
+-		dev_err(&master->dev, "cannot find modalias for %s\n",
+-			nc->full_name);
+-		goto err_out;
+-	}
++	int rc;
+ 
+ 	/* Device address */
+ 	rc = of_property_read_u32(nc, "reg", &value);
+ 	if (rc) {
+ 		dev_err(&master->dev, "%s has no valid 'reg' property (%d)\n",
+ 			nc->full_name, rc);
+-		goto err_out;
++		return rc;
+ 	}
+ 	spi->chip_select = value;
+ 
+@@ -1559,10 +1540,41 @@ of_register_spi_device(struct spi_master *master, struct device_node *nc)
+ 	if (rc) {
+ 		dev_err(&master->dev, "%s has no valid 'spi-max-frequency' property (%d)\n",
+ 			nc->full_name, rc);
+-		goto err_out;
++		return rc;
+ 	}
+ 	spi->max_speed_hz = value;
+ 
++	return 0;
++}
++
++static struct spi_device *
++of_register_spi_device(struct spi_master *master, struct device_node *nc)
++{
++	struct spi_device *spi;
++	int rc;
++
++	/* Alloc an spi_device */
++	spi = spi_alloc_device(master);
++	if (!spi) {
++		dev_err(&master->dev, "spi_device alloc error for %s\n",
++			nc->full_name);
++		rc = -ENOMEM;
++		goto err_out;
++	}
++
++	/* Select device driver */
++	rc = of_modalias_node(nc, spi->modalias,
++				sizeof(spi->modalias));
++	if (rc < 0) {
++		dev_err(&master->dev, "cannot find modalias for %s\n",
++			nc->full_name);
++		goto err_out;
++	}
++
++	rc = of_spi_parse_dt(master, spi, nc);
++	if (rc)
++		goto err_out;
++
+ 	/* Store a pointer to the node in the device structure */
+ 	of_node_get(nc);
+ 	spi->dev.of_node = nc;
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
