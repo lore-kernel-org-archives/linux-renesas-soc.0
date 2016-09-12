@@ -1,51 +1,59 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56970 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754004AbcIGHld (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Sep 2016 03:41:33 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM64 Based SoC Defconfig Updates for v4.9
-Date: Wed,  7 Sep 2016 09:41:26 +0200
-Message-Id: <cover.1473233745.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH 1/8] devicetree: binding: R-car Gen3 CMT0 and CMT1
+ bindings
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+References: <1473421394-9745-1-git-send-email-bd-phuc@jinso.co.jp>
+ <1473421394-9745-2-git-send-email-bd-phuc@jinso.co.jp>
+ <CAMuHMdVAuyWUid6GEJXNoyw4bH3h=QWmo7eMLyiCayc5UQaoFA@mail.gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-arm-kernel@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ryusuke Sakato <ryusuke.sakato.bx@renesas.com>,
+        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
+        Cao Minh Hiep <cm-hiep@jinso.co.jp>,
+        =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>
+From: Bui Duc Phuc <bd-phuc@jinso.co.jp>
+Message-ID: <7916c4bd-94a1-0d87-e2dc-2fd852976cfc@jinso.co.jp>
+Date: Tue, 13 Sep 2016 00:12:08 +0900
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVAuyWUid6GEJXNoyw4bH3h=QWmo7eMLyiCayc5UQaoFA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Dear Geert,
 
-Please consider these Renesas ARM64 based SoC defconfig updates for v4.9.
+> I think the plan was to get rid of the renesas,cmt-48-* bindings, as they do
+> not allow to differentiate between CMT0 and CMT1, which have different feature
+> sets.
+>
+> Cfr. Magnus' series "clocksource: sh_cmt: DT binding rework V4"
+> (https://lkml.org/lkml/2016/3/14/433).
+>
+> Magnus: What's the status of your series?
+Thank for your comments. I will update in V2.
+I am still waiting for Magnus's comments, but from my point of 
+view,Magnus's patches seem
+support 32 bit counter only, they are not suitable for 48bit counter.
+According to hardware manual, there has to be registers ( CMCSRH, 
+CMCNTH,CMCORH) set for 48 bit counter,
+but I do not see the registers ( CMCSRH, CMCNTH,CMCORH) in Magnus's patches.
 
 
-The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
+-- 
+Regards,
 
-  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
+Bui Duc Phuc
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-defconfig-for-v4.9
-
-for you to fetch changes up to 6c04d2f7f1038bf6e5561827f862c6aa2beb4b37:
-
-  arm64: defconfig: Enable SDHI and GPIO_REGULATOR (2016-09-01 16:32:46 +0200)
-
-----------------------------------------------------------------
-Renesas ARM64 Based SoC Defconfig Updates for v4.9
-
-* Enable HSUSB and SDHI
-
-----------------------------------------------------------------
-Simon Horman (1):
-      arm64: defconfig: Enable SDHI and GPIO_REGULATOR
-
-Yoshihiro Shimoda (1):
-      arm64: defconfig: Add Renesas R-Car HSUSB driver support as module
-
- arch/arm64/configs/defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
