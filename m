@@ -1,77 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:38148 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755189AbcIMM5p (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:27055 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754160AbcILOVD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Sep 2016 08:57:45 -0400
-Received: by mail-wm0-f52.google.com with SMTP id 1so199695924wmz.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 13 Sep 2016 05:57:45 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20160912141507.6837-2-chris.brandt@renesas.com>
-References: <20160912141507.6837-1-chris.brandt@renesas.com> <20160912141507.6837-2-chris.brandt@renesas.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 13 Sep 2016 14:57:42 +0200
-Message-ID: <CAPDyKFqdznJ4xr5=L862uOfvqjsRpR3d+yRWtN1-8H5ZvP9GeQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] mmc: sh_mobile_sdhi: add ocr_mask option
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Mon, 12 Sep 2016 10:21:03 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v3 1/3] mmc: sh_mobile_sdhi: add ocr_mask option
+Date: Mon, 12 Sep 2016 10:15:05 -0400
+Message-Id: <20160912141507.6837-2-chris.brandt@renesas.com>
+In-Reply-To: <20160912141507.6837-1-chris.brandt@renesas.com>
+References: <20160912141507.6837-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 12 September 2016 at 16:15, Chris Brandt <chris.brandt@renesas.com> wrote:
-> In moving platforms from board files to DT, there still needs to be a way
-> to set the ocr_mask setting for the tmio driver during probe. Without this
-> setting, the probe will fail because the supported voltages are not known.
+In moving platforms from board files to DT, there still needs to be a way
+to set the ocr_mask setting for the tmio driver during probe. Without this
+setting, the probe will fail because the supported voltages are not known.
 
-Regarding the ocr_mask; How do these SoCs provides the power to the mmc/sd card?
+This patch will also traditional platform registration platforms to
+migrate to DT.
 
-Do note, I am *not* talking about the I/O voltage but the core power
-to the card.
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ drivers/mmc/host/sh_mobile_sdhi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-The reason for raising the question is that we have infrastructures in
-the mmc core which can create the ocr_mask, by parsing a regulator's
-voltage range. This is the recommended method to use, instead of using
-hard coded ocr mask values.
-
-Kind regards
-Uffe
-
->
-> This patch will also traditional platform registration platforms to
-> migrate to DT.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> ---
->  drivers/mmc/host/sh_mobile_sdhi.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-> index 5334f24..b033500 100644
-> --- a/drivers/mmc/host/sh_mobile_sdhi.c
-> +++ b/drivers/mmc/host/sh_mobile_sdhi.c
-> @@ -59,6 +59,7 @@ enum tmio_mmc_dmac_type {
->
->  struct sh_mobile_sdhi_of_data {
->         unsigned long tmio_flags;
-> +       u32           tmio_ocr_mask;
->         unsigned long capabilities;
->         unsigned long capabilities2;
->         enum dma_slave_buswidth dma_buswidth;
-> @@ -630,6 +631,7 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
->                 const struct sh_mobile_sdhi_of_data *of_data = of_id->data;
->
->                 mmc_data->flags |= of_data->tmio_flags;
-> +               mmc_data->ocr_mask = of_data->tmio_ocr_mask;
->                 mmc_data->capabilities |= of_data->capabilities;
->                 mmc_data->capabilities2 |= of_data->capabilities2;
->                 mmc_data->dma_rx_offset = of_data->dma_rx_offset;
-> --
-> 2.9.2
->
->
+diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
+index 5334f24..b033500 100644
+--- a/drivers/mmc/host/sh_mobile_sdhi.c
++++ b/drivers/mmc/host/sh_mobile_sdhi.c
+@@ -59,6 +59,7 @@ enum tmio_mmc_dmac_type {
+ 
+ struct sh_mobile_sdhi_of_data {
+ 	unsigned long tmio_flags;
++	u32	      tmio_ocr_mask;
+ 	unsigned long capabilities;
+ 	unsigned long capabilities2;
+ 	enum dma_slave_buswidth dma_buswidth;
+@@ -630,6 +631,7 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+ 		const struct sh_mobile_sdhi_of_data *of_data = of_id->data;
+ 
+ 		mmc_data->flags |= of_data->tmio_flags;
++		mmc_data->ocr_mask = of_data->tmio_ocr_mask;
+ 		mmc_data->capabilities |= of_data->capabilities;
+ 		mmc_data->capabilities2 |= of_data->capabilities2;
+ 		mmc_data->dma_rx_offset = of_data->dma_rx_offset;
+-- 
+2.9.2
