@@ -1,56 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933974AbcIGHum (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:41851 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757715AbcILKa3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Sep 2016 03:50:42 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 12 Sep 2016 06:30:29 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Hiep Cao Minh <cm-hiep@jinso.co.jp>,
+        Xuan Truong Nguyen <nx-truong@jinso.co.jp>,
+        duclm <lm-duc@jinso.co.jp>,
+        Ryusuke Sakato <ryusuke.sakato.bx@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/26] ARM: dts: r8a7792: add VSP1V clocks
-Date: Wed,  7 Sep 2016 09:49:56 +0200
-Message-Id: <5c2312ba0596224653580cbd0a89d07fe63cd057.1473234371.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
-References: <cover.1473234371.git.horms+renesas@verge.net.au>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        =?utf-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        =?utf-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@sang-engineering.com>
+Subject: Re: GEN2: Initialization of VSP1 failed at upstream v4.8-rc2
+Date: Mon, 12 Sep 2016 13:31:07 +0300
+Message-ID: <14183308.lEBcY4YWhy@avalon>
+In-Reply-To: <CAMuHMdWouXw1Cen8wyoHFHEYQpOvwOg3gLGpA2VtDUerk1iqbg@mail.gmail.com>
+References: <57A46D20.7040106@jinso.co.jp> <57D66DEC.4090607@jinso.co.jp> <CAMuHMdWouXw1Cen8wyoHFHEYQpOvwOg3gLGpA2VtDUerk1iqbg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hello,
 
-Describe the VSP1V clocks in the R8A7792 device tree.
+On Monday 12 Sep 2016 11:06:02 Geert Uytterhoeven wrote:
+> On Mon, Sep 12, 2016 at 10:57 AM, Hiep Cao Minh <cm-hiep@jinso.co.jp> wrote:
+> > As you know the information about Initialization of VSP1 failed at
+> > upstream v4.8-rc2 from the report of "The failure summary report of GEN2
+> > for Linux v4.8-rc2".
+> > 
+> > "[    5.237049] vsp1: probe of fe920000.vsp1 failed with error -38
+> > [    5.254664] vsp1: probe of fe928000.vsp1 failed with error -38
+> > [    5.272277] vsp1: probe of fe930000.vsp1 failed with error -38
+> > [    5.289891] vsp1: probe of fe938000.vsp1 failed with error -38"
+> > 
+> > I have found the patch that causing of this issue:
+> > "94fcdf8 [media] v4l: vsp1: Add FCP support"
+> > 
+> > In this patch,
+> > 
+> > "@@ -528,7 +533,7 @@ static int vsp1_pm_runtime_resume(struct device *dev)
+> >                         return ret;
+> >         }
+> > 
+> > -       return 0;
+> > +       return rcar_fcp_enable(vsp1->fcp);
+> >  }"
+> > 
+> > vsp1_pm_runtime_resume() function should be returned "0" if it success.
+> > I tried to debug this place, and I realize that the rcar_fcp_enable()
+> > function returned "-38" during Initialization.
+> > That's why the error message occurs.
+> > We know that the rcar_fcp_enable() function also returns 0 on success or a
+> > negative error code if an error occurs.
+> > So, I am thinking of something just before it happens.
+> 
+> Please see commits d0cd1e773fee06ed "[media] rcar-fcp: Make sure
+> rcar_fcp_enable() returns 0 on success" in renesas-drivers and
+> ba75faf43dc60744 in media-next.
+> 
+> But we indeed need this fix in v4.8, not v4.9.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7792.dtsi | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+Mauro, you've queued
 
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 9763289db5ce..856e6c5b94bc 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -757,10 +757,15 @@
- 			compatible = "renesas,r8a7792-mstp-clocks",
- 				     "renesas,cpg-mstp-clocks";
- 			reg = <0 0xe6150134 0 4>, <0 0xe6150038 0 4>;
--			clocks = <&m2_clk>;
-+			clocks = <&m2_clk>, <&zs_clk>, <&zs_clk>, <&zs_clk>;
- 			#clock-cells = <1>;
--			clock-indices = <R8A7792_CLK_JPU>;
--			clock-output-names = "jpu";
-+			clock-indices = <
-+				R8A7792_CLK_JPU
-+				R8A7792_CLK_VSP1DU1 R8A7792_CLK_VSP1DU0
-+				R8A7792_CLK_VSP1_SY
-+			>;
-+			clock-output-names = "jpu", "vsp1du1", "vsp1du0",
-+					     "vsp1-sy";
- 		};
- 		mstp2_clks: mstp2_clks@e6150138 {
- 			compatible = "renesas,r8a7792-mstp-clocks",
+commit ba75faf43dc60744608ffa1412fdeceff2126cbc
+Author: Geert Uytterhoeven <geert+renesas@glider.be>
+Date:   Tue Aug 9 12:36:41 2016 -0300
+
+    [media] rcar-fcp: Make sure rcar_fcp_enable() returns 0 on success
+
+to the media tree master branch, but it fixes a v4.8 regression. Could you 
+please apply it to the fixes branch and push it upstream for v4.8 ?
+
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+
+Laurent Pinchart
