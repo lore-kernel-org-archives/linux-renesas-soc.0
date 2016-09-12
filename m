@@ -1,86 +1,71 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33288 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755743AbcILHgv (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Sep 2016 03:36:51 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 3/3] pinctrl: sh-pfc: r8a7794: Implement voltage switching for SDHI
-Date: Mon, 12 Sep 2016 09:36:35 +0200
-Message-Id: <1473665795-7418-4-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1473665795-7418-1-git-send-email-horms+renesas@verge.net.au>
-References: <1473665795-7418-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 12 Sep 2016 11:43:05 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+cc: joe@perches.com, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 23/26] sh_eth: constify local structures
+In-Reply-To: <cb443416-4fb9-5593-2529-66211299c9a8@cogentembedded.com>
+Message-ID: <alpine.DEB.2.10.1609121137430.3049@hadrien>
+References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr> <1473599168-30561-24-git-send-email-Julia.Lawall@lip6.fr> <cb443416-4fb9-5593-2529-66211299c9a8@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All the SHDIs can operate with either 3.3V or 1.8V signals, depending
-on negotiation with the card.
 
-Based on work by Wolfram Sang for the r8a7790.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v2
-* Use switch statement
----
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+On Sun, 11 Sep 2016, Sergei Shtylyov wrote:
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-index 8bc2cf0c594e..ed734f560c84 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -22,7 +22,9 @@
- 	PORT_GP_32(3, fn, sfx),						\
- 	PORT_GP_32(4, fn, sfx),						\
- 	PORT_GP_28(5, fn, sfx),						\
--	PORT_GP_26(6, fn, sfx)
-+	PORT_GP_CFG_24(6, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),		\
-+	PORT_GP_1(6, 24, fn, sfx),					\
-+	PORT_GP_1(6, 25, fn, sfx)
- 
- enum {
- 	PINMUX_RESERVED = 0,
-@@ -5160,8 +5162,32 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 	{ },
- };
- 
-+static int r8a7794_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *pocctrl)
-+{
-+	*pocctrl = 0xe606006c;
-+
-+	switch (pin & 0x1f) {
-+	case 6: return 23;
-+	case 7: return 16;
-+	case 14: return 15;
-+	case 15: return 8;
-+	case 0 ... 5:
-+	case 8 ... 13:
-+		return 22 - (pin & 0x1f);
-+	case 16 ... 23:
-+		return 47 - (pin & 0x1f);
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static const struct sh_pfc_soc_operations r8a7794_pinmux_ops = {
-+	.pin_to_pocctrl = r8a7794_pin_to_pocctrl,
-+};
-+
- const struct sh_pfc_soc_info r8a7794_pinmux_info = {
- 	.name = "r8a77940_pfc",
-+	.ops = &r8a7794_pinmux_ops,
- 	.unlock_reg = 0xe6060000, /* PMMR */
- 
- 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
--- 
-2.7.0.rc3.207.g0ac5344
+> On 09/11/2016 04:06 PM, Julia Lawall wrote:
+> > For structure types defined in the same file or local header files, find
+> > top-level static structure declarations that have the following
+> > properties:
+> > 1. Never reassigned.
+>
+>   Really?
+>
+> > 2. Address never taken
+>
+>   Really?
+
+OK, I see the problem.  The code has, eg:
+
+{ "sh7724-ether", (kernel_ulong_t)&sh7724_data }
+
+Coccinelle doesn't know anything about kernel_ulong_t, so it assumes that
+it is an identifier, and that the whole expression is a bit and, rather
+than an address computation.  And at the same time, the cast causes the
+compiler to discard the const annotation, so it doesn't complain either.
+
+I can update the rule to avoid this case, since taking a bit and on the
+address of a top-level structure is not likely to be useful, and I will
+check whether any of the other patches are affected by this issue.
+
+Thanks for the report.
+
+julia
+
+
+>
+> > 3. Not passed to a top-level macro call
+> > 4. No pointer or array-typed field passed to a function or stored in a
+> > variable.
+> > Declare structures having all of these properties as const.
+> >
+> > Done using Coccinelle.
+> > Based on a suggestion by Joe Perches <joe@perches.com>.
+> >
+> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+>    NAK, see sh_eth_set_default_cpu_data().
+>
+> MBR, Sergei
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
