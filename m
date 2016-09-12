@@ -1,44 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:46004 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1762108AbcINRGF (ORCPT
+Received: from mail-it0-f47.google.com ([209.85.214.47]:36429 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756551AbcILMwn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Sep 2016 13:06:05 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Dirk Behme <dirk.behme@gmail.com>,
+        Mon, 12 Sep 2016 08:52:43 -0400
+Received: by mail-it0-f47.google.com with SMTP id o3so8080177ita.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Sep 2016 05:52:43 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <1473334608-24638-1-git-send-email-horms+renesas@verge.net.au>
+References: <1473334608-24638-1-git-send-email-horms+renesas@verge.net.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 12 Sep 2016 14:52:42 +0200
+Message-ID: <CACRpkdZHxN8yehyD6YX4V3ukWkxWwKu4T89BKV0FYKiqG+=BiQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] pinctrl: sh-pfc: r8a779[14]: Implement voltage
+ switching for SDHI
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/4] mmc: add define for R1 response without CRC
-Date: Wed, 14 Sep 2016 19:05:55 +0200
-Message-Id: <20160914170558.1561-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20160914170558.1561-1-wsa+renesas@sang-engineering.com>
-References: <20160914170558.1561-1-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The core uses it for polling. Give drivers a proper define to handle
-this case like all other response types.
+On Thu, Sep 8, 2016 at 1:36 PM, Simon Horman <horms+renesas@verge.net.au> wrote:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- include/linux/mmc/core.h | 3 +++
- 1 file changed, 3 insertions(+)
+> this series adds voltage switching for SDHI to sh-pfc for the r8a7791 and
+> r8a794 SoCs. It is based on work for the r8a7790 SoC by Wolfram Sang.
+>
+> The r8a7793 should be able to be trivially supported using the
+> same mechanism as r8a7791. I intend to provide a follow-up patch
+> once testing is completed.
 
-diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
-index b01e77de1a74de..4caee099b63a28 100644
---- a/include/linux/mmc/core.h
-+++ b/include/linux/mmc/core.h
-@@ -55,6 +55,9 @@ struct mmc_command {
- #define MMC_RSP_R6	(MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE)
- #define MMC_RSP_R7	(MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE)
- 
-+/* Can be used by core to poll after switch to MMC HS mode */
-+#define MMC_RSP_R1_NO_CRC	(MMC_RSP_PRESENT|MMC_RSP_OPCODE)
-+
- #define mmc_resp_type(cmd)	((cmd)->flags & (MMC_RSP_PRESENT|MMC_RSP_136|MMC_RSP_CRC|MMC_RSP_BUSY|MMC_RSP_OPCODE))
- 
- /*
--- 
-2.9.3
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+I expect these to be merged by Geert who send the patches to me.
+
+Yours,
+Linus Walleij
