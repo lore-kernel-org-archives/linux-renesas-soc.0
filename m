@@ -1,60 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:34693 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932223AbcITMu0 (ORCPT
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:34917 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751579AbcILJC2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Sep 2016 08:50:26 -0400
-Received: by mail-pf0-f196.google.com with SMTP id 21so951910pfy.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Sep 2016 05:50:26 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        laurent.pinchart+renesas@ideasonboard.com, joro@8bytes.org,
-        geert+renesas@glider.be
-Date: Tue, 20 Sep 2016 21:41:44 +0900
-Message-Id: <20160920124144.8629.22575.sendpatchset@little-apple>
-Subject: [PATCH/RFC] iommu/ipmmu-vmsa: Update ->add_device() return value
+        Mon, 12 Sep 2016 05:02:28 -0400
+Received: by mail-oi0-f67.google.com with SMTP id 2so21012846oif.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Sep 2016 02:02:28 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdV=BDXkzF==dZFjBY-fUXJiB446=DukLodYXve=D0jWDg@mail.gmail.com>
+References: <1473150352-31081-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1473170250-5314-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdV=BDXkzF==dZFjBY-fUXJiB446=DukLodYXve=D0jWDg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Sep 2016 11:02:27 +0200
+Message-ID: <CAMuHMdX9XE0qHPa5xvr-4_mgbYQrWsptE2dgi6uMyh-wNazL0A@mail.gmail.com>
+Subject: Re: [PATCH v1.1 1/4] clk: shmobile: r8a7796: Add RAVB clock
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Mon, Sep 12, 2016 at 10:58 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Tue, Sep 6, 2016 at 3:57 PM, Laurent Pinchart
+> <laurent.pinchart+renesas@ideasonboard.com> wrote:
+>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> (will queue in clk-renesas-for-v4.9)
 
-Update the IPMMU driver to return -ENODEV when adding devices
-not hooked up a particular IPMMU instance.
+... with s/shmobile/renesas/, of course.
 
-Currently the ->add_device() callback implementation in the IPMMU
-driver returns -ENODEV for devices with no "iommus" property,
-however the function ipmmu_find_utlbs() may return -EINVAL.
 
-This patch updates the ipmmu_find_utlbs() return value to -ENODEV
-for the case when multiple IPMMU instances exist. That way the
-code matches the expected behaviour described in the comment of
-the add_iommu_group() function in iommu.c:
+-- 
+Gr{oetje,eeting}s,
 
- /*
-  * We ignore -ENODEV errors for now, as they just mean that the
-  * device is not translated by an IOMMU. We still care about
-  * other errors and fail to initialize when they happen.
-  */
+                        Geert
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
- Applies to next-20160920 on top of:
- b1e2afc iommu/ipmmu-vmsa: Fix wrong error handle of ipmmu_add_device
-
- drivers/iommu/ipmmu-vmsa.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- 0002/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-09-08 18:20:06.270607110 +0900
-@@ -781,7 +781,7 @@ static int ipmmu_find_utlbs(struct ipmmu
- 		of_node_put(args.np);
- 
- 		if (args.np != mmu->dev->of_node || args.args_count != 1)
--			return -EINVAL;
-+			return -ENODEV;
- 
- 		utlbs[i] = args.args[0];
- 	}
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
