@@ -1,6 +1,6 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 12 Sep 2016 11:43:05 +0200 (CEST)
+Date: Mon, 12 Sep 2016 10:55:35 +0200 (CEST)
 From: Julia Lawall <julia.lawall@lip6.fr>
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 cc: joe@perches.com, kernel-janitors@vger.kernel.org,
@@ -8,7 +8,7 @@ cc: joe@perches.com, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 23/26] sh_eth: constify local structures
 In-Reply-To: <cb443416-4fb9-5593-2529-66211299c9a8@cogentembedded.com>
-Message-ID: <alpine.DEB.2.10.1609121137430.3049@hadrien>
+Message-ID: <alpine.DEB.2.10.1609121054420.3049@hadrien>
 References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr> <1473599168-30561-24-git-send-email-Julia.Lawall@lip6.fr> <cb443416-4fb9-5593-2529-66211299c9a8@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
@@ -30,25 +30,6 @@ On Sun, 11 Sep 2016, Sergei Shtylyov wrote:
 > > 2. Address never taken
 >
 >   Really?
-
-OK, I see the problem.  The code has, eg:
-
-{ "sh7724-ether", (kernel_ulong_t)&sh7724_data }
-
-Coccinelle doesn't know anything about kernel_ulong_t, so it assumes that
-it is an identifier, and that the whole expression is a bit and, rather
-than an address computation.  And at the same time, the cast causes the
-compiler to discard the const annotation, so it doesn't complain either.
-
-I can update the rule to avoid this case, since taking a bit and on the
-address of a top-level structure is not likely to be useful, and I will
-check whether any of the other patches are affected by this issue.
-
-Thanks for the report.
-
-julia
-
-
 >
 > > 3. Not passed to a top-level macro call
 > > 4. No pointer or array-typed field passed to a function or stored in a
@@ -61,11 +42,13 @@ julia
 > > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 >
 >    NAK, see sh_eth_set_default_cpu_data().
+
+Thanks for the feedback.  I will check on why this slipped through.
+Perhaps it is a variability (ifdef) problem.
+
+julia
+
 >
 > MBR, Sergei
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
