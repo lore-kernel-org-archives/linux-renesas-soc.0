@@ -1,14 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www1246.sakura.ne.jp ([219.94.162.56]:55367 "EHLO
-        www1246.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750976AbcILX7M (ORCPT
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:34643 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750896AbcILIbV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Sep 2016 19:59:12 -0400
+        Mon, 12 Sep 2016 04:31:21 -0400
+MIME-Version: 1.0
+In-Reply-To: <1473421394-9745-5-git-send-email-bd-phuc@jinso.co.jp>
+References: <1473421394-9745-1-git-send-email-bd-phuc@jinso.co.jp> <1473421394-9745-5-git-send-email-bd-phuc@jinso.co.jp>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Sep 2016 10:31:05 +0200
+Message-ID: <CAMuHMdWkxL9ZSZx0NFk9W-MD7p1v73h0qKJG9Dmz4Av0JuWHjw@mail.gmail.com>
 Subject: Re: [PATCH 4/8] clk: renesas: r8a7795: Add CMT clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1473421394-9745-1-git-send-email-bd-phuc@jinso.co.jp>
- <1473421394-9745-5-git-send-email-bd-phuc@jinso.co.jp>
- <CAMuHMdWkxL9ZSZx0NFk9W-MD7p1v73h0qKJG9Dmz4Av0JuWHjw@mail.gmail.com>
+To: PhucBui <bd-phuc@jinso.co.jp>
 Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
@@ -27,26 +30,28 @@ Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
         =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
         Cao Minh Hiep <cm-hiep@jinso.co.jp>,
         =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>
-From: Bui Duc Phuc <bd-phuc@jinso.co.jp>
-Message-ID: <67434527-e3b8-35b4-87ad-2d2da060132d@jinso.co.jp>
-Date: Mon, 12 Sep 2016 23:57:52 +0900
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWkxL9ZSZx0NFk9W-MD7p1v73h0qKJG9Dmz4Av0JuWHjw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear Geert
-
-Thank you for your review.
-
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Fri, Sep 9, 2016 at 1:43 PM,  <bd-phuc@jinso.co.jp> wrote:
+> From: Bui Duc Phuc <bd-phuc@jinso.co.jp>
 >
-> (will queue in clk-renesas-for-v4.9)
+> This patch adds CMT module clocks for r8a7795 SoC.
 >
+> Signed-off-by: Bui Duc Phuc <bd-phuc@jinso.co.jp>
 
--- 
-Regards,
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Bui Duc Phuc
+(will queue in clk-renesas-for-v4.9)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
