@@ -1,9 +1,9 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 12 Sep 2016 15:23:56 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-cc: linux-renesas-soc@vger.kernel.org, joe@perches.com,
+Date: Mon, 12 Sep 2016 16:16:25 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: linux-renesas-soc@vger.kernel.org, joe@perches.com,
         kernel-janitors@vger.kernel.org,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         linux-pm@vger.kernel.org, platform-driver-x86@vger.kernel.org,
@@ -21,59 +21,58 @@ cc: linux-renesas-soc@vger.kernel.org, joe@perches.com,
         linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-acpi@vger.kernel.org
 Subject: Re: [PATCH 00/26] constify local structures
-In-Reply-To: <20160912131625.GD957@intel.com>
-Message-ID: <alpine.DEB.2.10.1609121523330.29099@hadrien>
-References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr> <20160911172105.GB5493@intel.com> <alpine.DEB.2.10.1609121051050.3049@hadrien> <20160912131625.GD957@intel.com>
+Message-ID: <20160912131625.GD957@intel.com>
+References: <1473599168-30561-1-git-send-email-Julia.Lawall@lip6.fr>
+ <20160911172105.GB5493@intel.com>
+ <alpine.DEB.2.10.1609121051050.3049@hadrien>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.10.1609121051050.3049@hadrien>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
-
-On Mon, 12 Sep 2016, Jarkko Sakkinen wrote:
-
-> On Mon, Sep 12, 2016 at 10:54:07AM +0200, Julia Lawall wrote:
-> >
-> >
-> > On Sun, 11 Sep 2016, Jarkko Sakkinen wrote:
-> >
-> > > On Sun, Sep 11, 2016 at 03:05:42PM +0200, Julia Lawall wrote:
-> > > > Constify local structures.
-> > > >
-> > > > The semantic patch that makes this change is as follows:
-> > > > (http://coccinelle.lip6.fr/)
+On Mon, Sep 12, 2016 at 10:54:07AM +0200, Julia Lawall wrote:
+> 
+> 
+> On Sun, 11 Sep 2016, Jarkko Sakkinen wrote:
+> 
+> > On Sun, Sep 11, 2016 at 03:05:42PM +0200, Julia Lawall wrote:
+> > > Constify local structures.
 > > >
-> > > Just my two cents but:
-> > >
-> > > 1. You *can* use a static analysis too to find bugs or other issues.
-> > > 2. However, you should manually do the commits and proper commit
-> > >    messages to subsystems based on your findings. And I generally think
-> > >    that if one contributes code one should also at least smoke test changes
-> > >    somehow.
-> > >
-> > > I don't know if I'm alone with my opinion. I just think that one should
-> > > also do the analysis part and not blindly create and submit patches.
+> > > The semantic patch that makes this change is as follows:
+> > > (http://coccinelle.lip6.fr/)
 > >
-> > All of the patches are compile tested.  And the individual patches are
->
-> Compile-testing is not testing. If you are not able to test a commit,
-> you should explain why.
->
-> > submitted to the relevant maintainers.  The individual commit messages
-> > give a more detailed explanation of the strategy used to decide that the
-> > structure was constifiable.  It seemed redundant to put that in the cover
-> > letter, which will not be committed anyway.
->
-> I don't mean to be harsh but I do not care about your thought process
-> *that much* when I review a commit (sometimes it might make sense to
-> explain that but it depends on the context).
->
-> I mostly only care why a particular change makes sense for this
-> particular subsystem. The report given by a static analysis tool can
-> be a starting point for making a commit but it's not sufficient.
-> Based on the report you should look subsystems as individuals.
+> > Just my two cents but:
+> >
+> > 1. You *can* use a static analysis too to find bugs or other issues.
+> > 2. However, you should manually do the commits and proper commit
+> >    messages to subsystems based on your findings. And I generally think
+> >    that if one contributes code one should also at least smoke test changes
+> >    somehow.
+> >
+> > I don't know if I'm alone with my opinion. I just think that one should
+> > also do the analysis part and not blindly create and submit patches.
+> 
+> All of the patches are compile tested.  And the individual patches are
 
-OK, thanks for the feedback.
+Compile-testing is not testing. If you are not able to test a commit,
+you should explain why.
 
-julia
+> submitted to the relevant maintainers.  The individual commit messages
+> give a more detailed explanation of the strategy used to decide that the
+> structure was constifiable.  It seemed redundant to put that in the cover
+> letter, which will not be committed anyway.
+
+I don't mean to be harsh but I do not care about your thought process
+*that much* when I review a commit (sometimes it might make sense to
+explain that but it depends on the context).
+
+I mostly only care why a particular change makes sense for this
+particular subsystem. The report given by a static analysis tool can
+be a starting point for making a commit but it's not sufficient.
+Based on the report you should look subsystems as individuals.
+
+> julia
+
+/Jarkko
