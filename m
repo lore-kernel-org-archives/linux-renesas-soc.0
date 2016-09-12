@@ -1,35 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:19370 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932994AbcILNHM (ORCPT
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:34940 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754615AbcILMAx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Sep 2016 09:07:12 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms+renesas@verge.net.au>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2 2/3] mmc: tmio-mmc: add support for 32bit data port
-Date: Mon, 12 Sep 2016 13:06:53 +0000
-Message-ID: <SG2PR06MB11652D22B3CDEC008F11D3508AFF0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20160911210328.30641-1-chris.brandt@renesas.com>
- <20160911210328.30641-3-chris.brandt@renesas.com>
- <b49b3a72-5937-fab0-8493-cc27f2655592@cogentembedded.com>
-In-Reply-To: <b49b3a72-5937-fab0-8493-cc27f2655592@cogentembedded.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 12 Sep 2016 08:00:53 -0400
 MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB1165675269953DC9789587948AFF0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160909155238.17852-1-chris.brandt@renesas.com>
+ <20160909155238.17852-3-chris.brandt@renesas.com> <CAMuHMdXihVRcmn2Ep0cRdg2U0=boJohxzzL1=32Ek+17ivTwWg@mail.gmail.com>
+ <SG2PR06MB1165272B3CB9B0A00F1E06CE8AFC0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdUAZpNoPGJZO3CHHt6_BAe+7Fdh2Bqn0qGfjO2UnuFiMA@mail.gmail.com> <SG2PR06MB1165675269953DC9789587948AFF0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 Sep 2016 14:00:51 +0200
+Message-ID: <CAMuHMdV1KnmWJZEKgJHNuCYmSE5igCDYT3UsOqFuhsrar48-Dg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] mmc: tmio-mmc: add support for 32bit data port
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gU2VyZ2VpDQoNCj4gICAgIEJUVywgeW91IGNvdWxkIHVzZSBtZW1jcHkoKSBhbmQgdGh1
-cyBhdm9pZCBhbGwgdGhlIGxvb3BzIGFuZCBzaGlmdHMsDQo+IHNlZQ0KPiBhdGFfc2ZmX2RhdGFf
-eGZlcjMyKCkgaW4gZHJpdmVycy9hdGEvbGliYXRhLXNmZi5jLg0KPiANCj4gWy4uLl0NCj4gDQo+
-IE1CUiwgU2VyZ2VpDQoNClRoYXQncyBhIGdvb2QgaWRlYS4gVGhhbmsgeW91Lg0KSSBqdXN0IHRy
-aWVkIGl0IGFuZCBpdCB3b3JrcyBnb29kLCBzbyBJJ2xsIGdldCByaWQgb2YgdGhlIGxvb3BzLg0K
-DQoNCg0KQ2hyaXMNCg0K
+Hi Chris,
+
+On Mon, Sep 12, 2016 at 1:56 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On 9/11/12016, Geert Uytterhoeven wrote:
+>> > So would you say sd_ctrl_write16_rep should also be changed to be 'const
+>> u16 *buf'?
+>> >
+>> > Currently it is:
+>> > static inline void sd_ctrl_write16_rep(struct tmio_mmc_host *host, int
+>> addr,
+>> >                 u16 *buf, int count)
+>> > {
+>> >         writesw(host->ctl + (addr << host->bus_shift), buf, count);
+>>
+>> Ideally it should become const, too.
+>
+> I can add another patch at the end of this series that changes it to match sd_ctrl_write32_rep.
+>
+> (unless for some reason you think it should be a separate patch that is not associated with this series)
+
+Well, it's not really related to this series, so it can be a separate patch.
+But including it in this series won't hurt much, I guess.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
