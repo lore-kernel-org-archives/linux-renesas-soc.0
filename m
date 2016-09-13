@@ -1,46 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:49159 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934612AbcIWIcc (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:46222 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755231AbcIMO1a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Sep 2016 04:32:32 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] clk: renesas: cpg-mssr: Always use readl()/writel()
-Date: Fri, 23 Sep 2016 10:32:30 +0200
-Message-Id: <1474619552-29703-1-git-send-email-geert+renesas@glider.be>
+        Tue, 13 Sep 2016 10:27:30 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org
+Subject: Re: [PATCH 1/4] pinctrl: sh-pfc: Support named pins with custom configuration
+Date: Tue, 13 Sep 2016 17:28:10 +0300
+Message-ID: <6167007.snST7ECEYM@avalon>
+In-Reply-To: <20160913140314.22035-2-niklas.soderlund+renesas@ragnatech.se>
+References: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se> <20160913140314.22035-2-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mike, Stephen,
+Hi Niklas,
 
-The Renesas CPG/MSSR clock drivers use a mix of clk_readl()/clk_writel()
-and readl()/writel() to access the clock registers. Settle on the
-generic readl()/writel().
+Thank you for the patch
 
-I plan to queue this up in clk-renesas-for-v4.10.
+On Tuesday 13 Sep 2016 16:03:11 Niklas S=F6derlund wrote:
+> Pins not associated with a GPIO port can still have other configurati=
+on
+> parameters. Add a new macro SH_PFC_PIN_NAMED_CFG which allows for nam=
+ed
+> pins to be declared with a set of configurations. The new macro is an=
 
-Geert Uytterhoeven (2):
-  clk: renesas: cpg-mssr: Always use readl()/writel()
-  clk: renesas: rcar-gen3-cpg: Always use readl()/writel()
+> modification of SH_PFC_PIN_NAMED to allow for optional configuration =
+to
+> be assigned.
+>=20
+> The flag SH_PFC_PIN_CFG_NO_GPIO is still enforced as this should only=
+ be
+> used to define pins not associated with a GPIO port.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
+.se>
 
- drivers/clk/renesas/rcar-gen3-cpg.c    | 14 +++++++-------
- drivers/clk/renesas/renesas-cpg-mssr.c |  9 ++++-----
- 2 files changed, 11 insertions(+), 12 deletions(-)
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
--- 
-1.9.1
+> ---
+>  drivers/pinctrl/sh-pfc/sh_pfc.h | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>=20
+> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> b/drivers/pinctrl/sh-pfc/sh_pfc.h index 5e966c0..a6a2346 100644
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -507,6 +507,14 @@ extern const struct sh_pfc_soc_info shx3_pinmux_=
+info;
+>  =09=09.configs =3D SH_PFC_PIN_CFG_NO_GPIO,=09=09=09\
+>  =09}
+>=20
+> +/* SH_PFC_PIN_NAMED_CFG - Expand to a sh_pfc_pin entry with the give=
+n name
+> */ +#define SH_PFC_PIN_NAMED_CFG(row, col, _name, cfgs)=09=09=09
+\
+> +=09{=09=09=09=09=09=09=09=09\
+> +=09=09.pin =3D PIN_NUMBER(row, col),=09=09=09=09\
+> +=09=09.name =3D __stringify(PIN_##_name),=09=09=09\
+> +=09=09.configs =3D SH_PFC_PIN_CFG_NO_GPIO | cfgs,=09=09\
+> +=09}
+> +
+>  /* PINMUX_DATA_ALL - Expand to a list of PORT_name_DATA, PORT_name_F=
+N0,
+>   *=09=09     PORT_name_OUT, PORT_name_IN marks
+>   */
 
-Gr{oetje,eeting}s,
+--=20
+Regards,
 
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Laurent Pinchart
