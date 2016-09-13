@@ -1,41 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:63740 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753925AbcIOTfH (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:46150 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756561AbcIMODs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Sep 2016 15:35:07 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 3/4] mmc: sh_mmcif: Document r7s72100 DT bindings
-Date: Thu, 15 Sep 2016 15:34:04 -0400
-Message-Id: <20160915193405.26943-4-chris.brandt@renesas.com>
-In-Reply-To: <20160915193405.26943-1-chris.brandt@renesas.com>
-References: <20160915193405.26943-1-chris.brandt@renesas.com>
+        Tue, 13 Sep 2016 10:03:48 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Subject: Re: [PATCH v2 0/4] R-Car VSP1 1-D Histogram support
+Date: Tue, 13 Sep 2016 17:04:26 +0300
+Message-ID: <2528493.JuFE8048UF@avalon>
+In-Reply-To: <CAMuHMdXDH1R8Po1Hv2r6VubCcUNt6PgW50vB1e2KjXFhf3LWkQ@mail.gmail.com>
+References: <1471436430-26245-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <CAMuHMdXDH1R8Po1Hv2r6VubCcUNt6PgW50vB1e2KjXFhf3LWkQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- Documentation/devicetree/bindings/mmc/renesas,mmcif.txt | 1 +
- 1 file changed, 1 insertion(+)
+Hi Geert,
 
-diff --git a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-index ff611fa..bf50a00 100644
---- a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-+++ b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-@@ -8,6 +8,7 @@ Required properties:
- 
- - compatible: should be "renesas,mmcif-<soctype>", "renesas,sh-mmcif" as a
-   fallback. Examples with <soctype> are:
-+	- "renesas,mmcif-r7s72100" for the MMCIF found in r7s72100 SoCs
- 	- "renesas,mmcif-r8a7740" for the MMCIF found in r8a7740 SoCs
- 	- "renesas,mmcif-r8a7790" for the MMCIF found in r8a7790 SoCs
- 	- "renesas,mmcif-r8a7791" for the MMCIF found in r8a7791 SoCs
+On Tuesday 13 Sep 2016 14:19:56 Geert Uytterhoeven wrote:
+> On Wed, Aug 17, 2016 at 2:20 PM, Laurent Pinchart wrote:
+> > This patch series implements support for the Renesas R-Car VSP1 1-D
+> > histogram generator (HGO). It is based on top of the latest media tree's
+> > master branch, and available for convenience at
+> > 
+> >         git://linuxtv.org/pinchartl/media.git vsp1/hgo
+> 
+> I've dropped the above branch from today's renesas-drivers release due to
+> too many merge conflicts.
+
+No worries. I'll submit a rebased version soon.
+
 -- 
-2.9.2
+Regards,
+
+Laurent Pinchart
