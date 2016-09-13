@@ -1,127 +1,53 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-To: <linux@armlinux.org.uk>, <bcousson@baylibre.com>,
-        <tony@atomide.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>
-CC: <nicolas.ferre@atmel.com>, <alexandre.belloni@free-electrons.com>,
-        <plagnioj@jcrosoft.com>, <khalasa@piap.pl>, <kgene@kernel.org>,
-        <k.kozlowski@samsung.com>, <shawnguo@kernel.org>,
-        <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
-        <ssantosh@kernel.org>, <horms@verge.net.au>,
-        <magnus.damm@gmail.com>, <vireshk@kernel.org>,
-        <shiraz.linux.kernel@gmail.com>, <kishon@ti.com>, <nsekhar@ti.com>
-Subject: [PATCH v4 1/2] ARM: stop *MIGHT_HAVE_PCI* config from being selected redundantly
-Date: Wed, 14 Sep 2016 15:49:05 +0530
-Message-ID: <1473848346-17905-2-git-send-email-kishon@ti.com>
-In-Reply-To: <1473848346-17905-1-git-send-email-kishon@ti.com>
-References: <1473848346-17905-1-git-send-email-kishon@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Kieran Bingham <kieran+renesas@bingham.xyz>
+Subject: [PATCH 01/13] v4l: vsp1: Prevent pipelines from running when not streaming
+Date: Wed, 14 Sep 2016 02:16:54 +0300
+Message-Id: <1473808626-19488-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-*MIGHT_HAVE_PCI* config is already selected in ARCH_MULTIPLATFORM.
-Don't select it redundantly in all ARCH_MULTIPLATFORM based machines.
+Pipelines can only be run if all their video nodes are streaming. Commit
+b4dfb9b35a19 ("[media] v4l: vsp1: Stop the pipeline upon the first
+STREAMOFF") fixed the pipeline stop sequence, but introduced a race
+condition that makes it possible to run a pipeline after stopping the
+stream on a video node by queuing a buffer on the other side of the
+pipeline.
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Fix this by clearing the buffers ready flag when stopping the stream,
+which will prevent the QBUF handler from running the pipeline.
+
+Fixes: b4dfb9b35a19 ("[media] v4l: vsp1: Stop the pipeline upon the first STREAMOFF")
+Reported-by: Kieran Bingham <kieran@bingham.xyz>
+Tested-by: Kieran Bingham <kieran@bingham.xyz>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm/mach-at91/Kconfig       |    1 -
- arch/arm/mach-axxia/Kconfig      |    1 -
- arch/arm/mach-exynos/Kconfig     |    1 -
- arch/arm/mach-integrator/Kconfig |    1 -
- arch/arm/mach-keystone/Kconfig   |    1 -
- arch/arm/mach-spear/Kconfig      |    1 -
- arch/arm/mach-versatile/Kconfig  |    1 -
- 7 files changed, 7 deletions(-)
+ drivers/media/platform/vsp1/vsp1_video.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
-index 5204395..841e924 100644
---- a/arch/arm/mach-at91/Kconfig
-+++ b/arch/arm/mach-at91/Kconfig
-@@ -55,7 +55,6 @@ config SOC_AT91RM9200
- 	select ATMEL_ST
- 	select CPU_ARM920T
- 	select HAVE_AT91_USB_CLK
--	select MIGHT_HAVE_PCI
- 	select PINCTRL_AT91
- 	select SOC_SAM_V4_V5
- 	select SRAM if PM
-diff --git a/arch/arm/mach-axxia/Kconfig b/arch/arm/mach-axxia/Kconfig
-index 6c6d5e7..ee2e131 100644
---- a/arch/arm/mach-axxia/Kconfig
-+++ b/arch/arm/mach-axxia/Kconfig
-@@ -7,7 +7,6 @@ config ARCH_AXXIA
- 	select ARM_TIMER_SP804
- 	select HAVE_ARM_ARCH_TIMER
- 	select MFD_SYSCON
--	select MIGHT_HAVE_PCI
- 	select PCI_DOMAINS if PCI
- 	select ZONE_DMA
- 	help
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 8f820de..ee8a99c 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -126,7 +126,6 @@ config SOC_EXYNOS5440
- 	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
- 	select HAVE_ARM_ARCH_TIMER
- 	select AUTO_ZRELADDR
--	select MIGHT_HAVE_PCI
- 	select PCI_DOMAINS if PCI
- 	select PINCTRL_EXYNOS5440
- 	select PM_OPP
-diff --git a/arch/arm/mach-integrator/Kconfig b/arch/arm/mach-integrator/Kconfig
-index 599f973..cefe44f 100644
---- a/arch/arm/mach-integrator/Kconfig
-+++ b/arch/arm/mach-integrator/Kconfig
-@@ -21,7 +21,6 @@ if ARCH_INTEGRATOR
- config ARCH_INTEGRATOR_AP
- 	bool "Support Integrator/AP and Integrator/PP2 platforms"
- 	select INTEGRATOR_AP_TIMER
--	select MIGHT_HAVE_PCI
- 	select SERIAL_AMBA_PL010 if TTY
- 	select SERIAL_AMBA_PL010_CONSOLE if TTY
- 	select SOC_BUS
-diff --git a/arch/arm/mach-keystone/Kconfig b/arch/arm/mach-keystone/Kconfig
-index 8ff61be..1507287 100644
---- a/arch/arm/mach-keystone/Kconfig
-+++ b/arch/arm/mach-keystone/Kconfig
-@@ -8,7 +8,6 @@ config ARCH_KEYSTONE
- 	select COMMON_CLK_KEYSTONE
- 	select ARCH_SUPPORTS_BIG_ENDIAN
- 	select ZONE_DMA if ARM_LPAE
--	select MIGHT_HAVE_PCI
- 	select PCI_DOMAINS if PCI
- 	select PINCTRL
- 	help
-diff --git a/arch/arm/mach-spear/Kconfig b/arch/arm/mach-spear/Kconfig
-index b7260c2..1b6cae5 100644
---- a/arch/arm/mach-spear/Kconfig
-+++ b/arch/arm/mach-spear/Kconfig
-@@ -20,7 +20,6 @@ config ARCH_SPEAR13XX
- 	select HAVE_ARM_TWD if SMP
- 	select PINCTRL
- 	select MFD_SYSCON
--	select MIGHT_HAVE_PCI
- 	help
- 	  Supports for ARM's SPEAR13XX family
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index 9fb4fc26a359..ed9759e8a6fc 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -675,6 +675,13 @@ static void vsp1_video_stop_streaming(struct vb2_queue *vq)
+ 	unsigned long flags;
+ 	int ret;
  
-diff --git a/arch/arm/mach-versatile/Kconfig b/arch/arm/mach-versatile/Kconfig
-index b0cc262..c257d40 100644
---- a/arch/arm/mach-versatile/Kconfig
-+++ b/arch/arm/mach-versatile/Kconfig
-@@ -9,7 +9,6 @@ config ARCH_VERSATILE
- 	select CPU_ARM926T
- 	select ICST
- 	select MFD_SYSCON
--	select MIGHT_HAVE_PCI
- 	select PLAT_VERSATILE
- 	select POWER_RESET
- 	select POWER_RESET_VERSATILE
++	/* Clear the buffers ready flag to make sure the device won't be started
++	 * by a QBUF on the video node on the other side of the pipeline.
++	 */
++	spin_lock_irqsave(&video->irqlock, flags);
++	pipe->buffers_ready &= ~(1 << video->pipe_index);
++	spin_unlock_irqrestore(&video->irqlock, flags);
++
+ 	mutex_lock(&pipe->lock);
+ 	if (--pipe->stream_count == pipe->num_inputs) {
+ 		/* Stop the pipeline. */
 -- 
-1.7.9.5
+Regards,
+
+Laurent Pinchart
