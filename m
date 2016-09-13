@@ -1,54 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:37302 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932731AbcIQJMQ (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:39750 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754816AbcIMP7a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 17 Sep 2016 05:12:16 -0400
-Received: by mail-wm0-f46.google.com with SMTP id k186so78820916wmd.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 17 Sep 2016 02:12:15 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB11655A641475D2E08A5A3DDC8AFE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20160912141507.6837-1-chris.brandt@renesas.com>
- <20160912141507.6837-2-chris.brandt@renesas.com> <CAPDyKFqdznJ4xr5=L862uOfvqjsRpR3d+yRWtN1-8H5ZvP9GeQ@mail.gmail.com>
- <CAMuHMdVGgWaVcC4Pfuf0NSTpU4ahdEg6Q7iKZ1n+mb7KexE6yg@mail.gmail.com>
- <SG2PR06MB1165D0EE862CCCFD713181938AFE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAPDyKFp1eSyVAnn4JohR=Cx0VeE-5U8eY5GVQA+ae0P-vDJJ8w@mail.gmail.com> <SG2PR06MB11655A641475D2E08A5A3DDC8AFE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Sat, 17 Sep 2016 11:12:13 +0200
-Message-ID: <CAPDyKFqBToUrSbErWrc+zV-WX29Dj5dm+XzWMCfBgOiEtoG8Jg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] mmc: sh_mobile_sdhi: add ocr_mask option
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Tue, 13 Sep 2016 11:59:30 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+CC: Geert Uytterhoeven <geert@linux-m68k.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         linux-mmc <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: RE: [PATCH v3 1/3] mmc: sh_mobile_sdhi: add ocr_mask option
+Date: Tue, 13 Sep 2016 15:59:25 +0000
+Message-ID: <SG2PR06MB11655A641475D2E08A5A3DDC8AFE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160912141507.6837-1-chris.brandt@renesas.com>
+ <20160912141507.6837-2-chris.brandt@renesas.com>
+ <CAPDyKFqdznJ4xr5=L862uOfvqjsRpR3d+yRWtN1-8H5ZvP9GeQ@mail.gmail.com>
+ <CAMuHMdVGgWaVcC4Pfuf0NSTpU4ahdEg6Q7iKZ1n+mb7KexE6yg@mail.gmail.com>
+ <SG2PR06MB1165D0EE862CCCFD713181938AFE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAPDyKFp1eSyVAnn4JohR=Cx0VeE-5U8eY5GVQA+ae0P-vDJJ8w@mail.gmail.com>
+In-Reply-To: <CAPDyKFp1eSyVAnn4JohR=Cx0VeE-5U8eY5GVQA+ae0P-vDJJ8w@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 13 September 2016 at 17:59, Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> Hello Uffe
->
-> Thank you for your reply.
->
-> On 9/13/2016, Ulf Hansson wrote:
->> Because, if you have an external regulator feeding the mmc with power you
->> should set it up and use it.
->
-> But in many board designs, there is no control over the regulator supply (or you would rather have your bootloader do that, not the kernel).
->
-> So what this patch is doing is setting it to a default of 3.3v (for just this SoC) and if someone wants to add a regulator in the board's DT file, that will override the ocr_mask set by the driver.
-
-That's perfectly okay to me! I just wanted to get clear picture of
-*why* this change was needed.
-
->
->
-> I'm assuming I'll have to do the same for MMC (sh_mmcif.c) once I get to that driver (I need to find my MMC PLUS card first for testing).
-
-Okay!
-
-Kind regards
-Uffe
+SGVsbG8gVWZmZQ0KDQpUaGFuayB5b3UgZm9yIHlvdXIgcmVwbHkuDQoNCk9uIDkvMTMvMjAxNiwg
+VWxmIEhhbnNzb24gd3JvdGU6DQo+IEJlY2F1c2UsIGlmIHlvdSBoYXZlIGFuIGV4dGVybmFsIHJl
+Z3VsYXRvciBmZWVkaW5nIHRoZSBtbWMgd2l0aCBwb3dlciB5b3UNCj4gc2hvdWxkIHNldCBpdCB1
+cCBhbmQgdXNlIGl0Lg0KDQpCdXQgaW4gbWFueSBib2FyZCBkZXNpZ25zLCB0aGVyZSBpcyBubyBj
+b250cm9sIG92ZXIgdGhlIHJlZ3VsYXRvciBzdXBwbHkgKG9yIHlvdSB3b3VsZCByYXRoZXIgaGF2
+ZSB5b3VyIGJvb3Rsb2FkZXIgZG8gdGhhdCwgbm90IHRoZSBrZXJuZWwpLg0KDQpTbyB3aGF0IHRo
+aXMgcGF0Y2ggaXMgZG9pbmcgaXMgc2V0dGluZyBpdCB0byBhIGRlZmF1bHQgb2YgMy4zdiAoZm9y
+IGp1c3QgdGhpcyBTb0MpIGFuZCBpZiBzb21lb25lIHdhbnRzIHRvIGFkZCBhIHJlZ3VsYXRvciBp
+biB0aGUgYm9hcmQncyBEVCBmaWxlLCB0aGF0IHdpbGwgb3ZlcnJpZGUgdGhlIG9jcl9tYXNrIHNl
+dCBieSB0aGUgZHJpdmVyLg0KDQoNCkknbSBhc3N1bWluZyBJJ2xsIGhhdmUgdG8gZG8gdGhlIHNh
+bWUgZm9yIE1NQyAoc2hfbW1jaWYuYykgb25jZSBJIGdldCB0byB0aGF0IGRyaXZlciAoSSBuZWVk
+IHRvIGZpbmQgbXkgTU1DIFBMVVMgY2FyZCBmaXJzdCBmb3IgdGVzdGluZykuDQoNCg0KQ2hyaXMN
+Cg0K
