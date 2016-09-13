@@ -1,20 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39239 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:56795 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753517AbcIBLR7 (ORCPT
+        with ESMTP id S1752031AbcIMK4d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 07:17:59 -0400
+        Tue, 13 Sep 2016 06:56:33 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>
 Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v6 1/9] mmc: core: Add helper to see if a host can be retuned
-Date: Fri,  2 Sep 2016 13:17:30 +0200
-Message-Id: <1472815058-11562-2-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
-References: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH v7 1/6] mmc: core: Add helper to see if a host can be retuned
+Date: Tue, 13 Sep 2016 12:56:10 +0200
+Message-Id: <1473764175-24580-2-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1473764175-24580-1-git-send-email-horms+renesas@verge.net.au>
+References: <1473764175-24580-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
