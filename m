@@ -1,53 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:20144 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933008AbcITPqt (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54307 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756798AbcIMODd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Sep 2016 11:46:49 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 2/3] mmc: sh_mmcif: Document r7s72100 DT bindings
-Date: Tue, 20 Sep 2016 11:46:19 -0400
-Message-Id: <20160920154620.18653-3-chris.brandt@renesas.com>
-In-Reply-To: <20160920154620.18653-1-chris.brandt@renesas.com>
-References: <20160920154620.18653-1-chris.brandt@renesas.com>
+        Tue, 13 Sep 2016 10:03:33 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 4/4] pinctrl: sh-pfc: r8a7795: Add group for QSPI0 and QSPI1 pins
+Date: Tue, 13 Sep 2016 16:03:14 +0200
+Message-Id: <20160913140314.22035-5-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
-* added interrupt description
----
- Documentation/devicetree/bindings/mmc/renesas,mmcif.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+Group the QSPI0 and QSPI1 pins into similar groups found in other sh-pfc
+drivers.  The pins can not be muxed between functions other then QSPI
+but there drive strength can be controlled.
 
-diff --git a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-index ff611fa..1443edb 100644
---- a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-+++ b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
-@@ -8,12 +8,16 @@ Required properties:
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 69 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 7b9a355..192e272 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -3627,6 +3627,55 @@ static const unsigned int usb2_mux[] = {
+ 	USB2_PWEN_MARK, USB2_OVC_MARK,
+ };
  
- - compatible: should be "renesas,mmcif-<soctype>", "renesas,sh-mmcif" as a
-   fallback. Examples with <soctype> are:
-+	- "renesas,mmcif-r7s72100" for the MMCIF found in r7s72100 SoCs
- 	- "renesas,mmcif-r8a7740" for the MMCIF found in r8a7740 SoCs
- 	- "renesas,mmcif-r8a7790" for the MMCIF found in r8a7790 SoCs
- 	- "renesas,mmcif-r8a7791" for the MMCIF found in r8a7791 SoCs
- 	- "renesas,mmcif-r8a7793" for the MMCIF found in r8a7793 SoCs
- 	- "renesas,mmcif-r8a7794" for the MMCIF found in r8a7794 SoCs
- 
-+- interrupts: either 1 shared interrupt, 2 separate interrupts (error and int),
-+  or 3 separate interrupts (error, int, card detect)
++/* - QSPI0 ------------------------------------------------------------------ */
++static const unsigned int qspi0_ctrl_pins[] = {
++	/* QSPI0_SPCLK, QSPI0_SSL */
++	PIN_NUMBER('W', 3), PIN_NUMBER('Y', 3),
++};
++static const unsigned int qspi0_ctrl_mux[] = {
++	QSPI0_SPCLK_MARK, QSPI0_SSL_MARK,
++};
++static const unsigned int qspi0_data2_pins[] = {
++	/* QSPI0_MOSI_IO0, QSPI0_MISO_IO1 */
++	PIN_A_NUMBER('C', 5), PIN_A_NUMBER('B', 4),
++};
++static const unsigned int qspi0_data2_mux[] = {
++	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
++};
++static const unsigned int qspi0_data4_pins[] = {
++	/* QSPI0_MOSI_IO0, QSPI0_MISO_IO1, QSPI0_IO2, QSPI0_IO3 */
++	PIN_A_NUMBER('C', 5), PIN_A_NUMBER('B', 4),
++	PIN_NUMBER('Y', 6), PIN_A_NUMBER('B', 6),
++};
++static const unsigned int qspi0_data4_mux[] = {
++	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
++	QSPI0_IO2_MARK, QSPI0_IO3_MARK,
++};
++/* - QSPI1 ------------------------------------------------------------------ */
++static const unsigned int qspi1_ctrl_pins[] = {
++	/* QSPI1_SPCLK, QSPI1_SSL */
++	PIN_NUMBER('V', 3), PIN_NUMBER('V', 5),
++};
++static const unsigned int qspi1_ctrl_mux[] = {
++	QSPI1_SPCLK_MARK, QSPI1_SSL_MARK,
++};
++static const unsigned int qspi1_data2_pins[] = {
++	/* QSPI1_MOSI_IO0, QSPI1_MISO_IO1 */
++	PIN_A_NUMBER('C', 7), PIN_A_NUMBER('E', 5),
++};
++static const unsigned int qspi1_data2_mux[] = {
++	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
++};
++static const unsigned int qspi1_data4_pins[] = {
++	/* QSPI1_MOSI_IO0, QSPI1_MISO_IO1, QSPI1_IO2, QSPI1_IO3 */
++	PIN_A_NUMBER('C', 7), PIN_A_NUMBER('E', 5),
++	PIN_A_NUMBER('E', 4), PIN_A_NUMBER('C', 3),
++};
++static const unsigned int qspi1_data4_mux[] = {
++	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
++	QSPI1_IO2_MARK, QSPI1_IO3_MARK,
++};
 +
- - clocks: reference to the functional clock
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(audio_clk_a_a),
+ 	SH_PFC_PIN_GROUP(audio_clk_a_b),
+@@ -3919,6 +3968,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(usb0),
+ 	SH_PFC_PIN_GROUP(usb1),
+ 	SH_PFC_PIN_GROUP(usb2),
++	SH_PFC_PIN_GROUP(qspi0_ctrl),
++	SH_PFC_PIN_GROUP(qspi0_data2),
++	SH_PFC_PIN_GROUP(qspi0_data4),
++	SH_PFC_PIN_GROUP(qspi1_ctrl),
++	SH_PFC_PIN_GROUP(qspi1_data2),
++	SH_PFC_PIN_GROUP(qspi1_data4),
+ };
  
- - dmas: reference to the DMA channels, one per channel name listed in the
+ static const char * const audio_clk_groups[] = {
+@@ -4353,6 +4408,18 @@ static const char * const usb2_groups[] = {
+ 	"usb2",
+ };
+ 
++static const char * const qspi0_groups[] = {
++	"qspi0_ctrl",
++	"qspi0_data2",
++	"qspi0_data4",
++};
++
++static const char * const qspi1_groups[] = {
++	"qspi1_ctrl",
++	"qspi1_data2",
++	"qspi1_data4",
++};
++
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(audio_clk),
+ 	SH_PFC_FUNCTION(avb),
+@@ -4401,6 +4468,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(usb0),
+ 	SH_PFC_FUNCTION(usb1),
+ 	SH_PFC_FUNCTION(usb2),
++	SH_PFC_FUNCTION(qspi0),
++	SH_PFC_FUNCTION(qspi1),
+ };
+ 
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
 -- 
-2.9.2
+2.9.3
