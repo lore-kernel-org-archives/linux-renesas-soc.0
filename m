@@ -1,74 +1,45 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:63740 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751627AbcIOTfI (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Sep 2016 15:35:08 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 4/4] ARM: dts: rskrza1: add mmc DT support
-Date: Thu, 15 Sep 2016 15:34:05 -0400
-Message-Id: <20160915193405.26943-5-chris.brandt@renesas.com>
-In-Reply-To: <20160915193405.26943-1-chris.brandt@renesas.com>
-References: <20160915193405.26943-1-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1467278944-17042-1-git-send-email-kieran@bingham.xyz>
+References: <1467278944-17042-1-git-send-email-kieran@bingham.xyz>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 13 Sep 2016 14:21:15 +0200
+Message-ID: <CAMuHMdUuG9S7+JggruNrPWEqfTs1eKkPf0cGWZZOYC+vwvK72Q@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] FDP1 Fine Display Processor support
+To: Kieran Bingham <kieran@bingham.xyz>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since the MMC and SDHI1 on the RSK share the same socket connector (CN1),
-you cannot enabled MMC and SDHI1 at the same time. Therefore the status
-has been set to disabled because SDHI is more popular with this board.
-However, keeping this code in here serves as a good way to document how
-the MMC on the RZ/A1 has been known to work for someone that does want
-to use MMC instead of SDHI1.
+Hi Kieran,
 
-A fixed 3.3 regulator is included because it is required by the mmc
-driver.
+On Thu, Jun 30, 2016 at 11:29 AM, Kieran Bingham <kieran@bingham.xyz> wrote:
+> The following changes since commit f50e3d0720c0f27476153c2c7129b18639228d1b:
+>
+>   Merge branch 'drm/next/dt' into for/renesas-drivers (2016-06-21 18:01:05 +0300)
+>
+> are available in the git repository at:
+>
+>   https://github.com/kbingham/linux.git renesas/fdp1
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+I've dropped (a rebased version of) the above branch from today's
+renesas-drivers release due to a build failure (V4L2_YCBCR_ENC_SYCC
+undeclared).
 
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-index e5dea5b..9228b04 100644
---- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -33,6 +33,15 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 	};
-+
-+	d3_3v: regulator-d3-3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "D3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
- };
- 
- &extal_clk {
-@@ -56,6 +65,14 @@
- 	};
- };
- 
-+&mmcif {
-+	vmmc-supply = <&d3_3v>;
-+	vqmmc-supply = <&d3_3v>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "disabled"; /* shares CN1 with sdhi1 */
-+};
-+
- &scif2 {
- 	status = "okay";
- };
+Thanks for your understanding.
+
+
+
 -- 
-2.9.2
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
