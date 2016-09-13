@@ -1,78 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:46222 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755231AbcIMO1a (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:54288 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756588AbcIMODc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Sep 2016 10:27:30 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        Tue, 13 Sep 2016 10:03:32 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org
-Subject: Re: [PATCH 1/4] pinctrl: sh-pfc: Support named pins with custom configuration
-Date: Tue, 13 Sep 2016 17:28:10 +0300
-Message-ID: <6167007.snST7ECEYM@avalon>
-In-Reply-To: <20160913140314.22035-2-niklas.soderlund+renesas@ragnatech.se>
-References: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se> <20160913140314.22035-2-niklas.soderlund+renesas@ragnatech.se>
+To: geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/4] pinctrl: sh-pfc: Support named pins with custom configuration
+Date: Tue, 13 Sep 2016 16:03:11 +0200
+Message-Id: <20160913140314.22035-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+Pins not associated with a GPIO port can still have other configuration
+parameters. Add a new macro SH_PFC_PIN_NAMED_CFG which allows for named
+pins to be declared with a set of configurations. The new macro is an
+modification of SH_PFC_PIN_NAMED to allow for optional configuration to
+be assigned.
 
-Thank you for the patch
+The flag SH_PFC_PIN_CFG_NO_GPIO is still enforced as this should only be
+used to define pins not associated with a GPIO port.
 
-On Tuesday 13 Sep 2016 16:03:11 Niklas S=F6derlund wrote:
-> Pins not associated with a GPIO port can still have other configurati=
-on
-> parameters. Add a new macro SH_PFC_PIN_NAMED_CFG which allows for nam=
-ed
-> pins to be declared with a set of configurations. The new macro is an=
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-> modification of SH_PFC_PIN_NAMED to allow for optional configuration =
-to
-> be assigned.
->=20
-> The flag SH_PFC_PIN_CFG_NO_GPIO is still enforced as this should only=
- be
-> used to define pins not associated with a GPIO port.
->=20
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
-.se>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/pinctrl/sh-pfc/sh_pfc.h | 8 ++++++++
->  1 file changed, 8 insertions(+)
->=20
-> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> b/drivers/pinctrl/sh-pfc/sh_pfc.h index 5e966c0..a6a2346 100644
-> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> @@ -507,6 +507,14 @@ extern const struct sh_pfc_soc_info shx3_pinmux_=
-info;
->  =09=09.configs =3D SH_PFC_PIN_CFG_NO_GPIO,=09=09=09\
->  =09}
->=20
-> +/* SH_PFC_PIN_NAMED_CFG - Expand to a sh_pfc_pin entry with the give=
-n name
-> */ +#define SH_PFC_PIN_NAMED_CFG(row, col, _name, cfgs)=09=09=09
-\
-> +=09{=09=09=09=09=09=09=09=09\
-> +=09=09.pin =3D PIN_NUMBER(row, col),=09=09=09=09\
-> +=09=09.name =3D __stringify(PIN_##_name),=09=09=09\
-> +=09=09.configs =3D SH_PFC_PIN_CFG_NO_GPIO | cfgs,=09=09\
-> +=09}
-> +
->  /* PINMUX_DATA_ALL - Expand to a list of PORT_name_DATA, PORT_name_F=
-N0,
->   *=09=09     PORT_name_OUT, PORT_name_IN marks
->   */
-
---=20
-Regards,
-
-Laurent Pinchart
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index 5e966c0..a6a2346 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -507,6 +507,14 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
+ 		.configs = SH_PFC_PIN_CFG_NO_GPIO,			\
+ 	}
+ 
++/* SH_PFC_PIN_NAMED_CFG - Expand to a sh_pfc_pin entry with the given name */
++#define SH_PFC_PIN_NAMED_CFG(row, col, _name, cfgs)			\
++	{								\
++		.pin = PIN_NUMBER(row, col),				\
++		.name = __stringify(PIN_##_name),			\
++		.configs = SH_PFC_PIN_CFG_NO_GPIO | cfgs,		\
++	}
++
+ /* PINMUX_DATA_ALL - Expand to a list of PORT_name_DATA, PORT_name_FN0,
+  *		     PORT_name_OUT, PORT_name_IN marks
+  */
+-- 
+2.9.3
