@@ -1,191 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-3.sys.kth.se ([130.237.48.192]:32908 "EHLO
-        smtp-3.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932933AbcIBQq5 (ORCPT
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:36713 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751969AbcIMGse (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 12:46:57 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        sergei.shtylyov@cogentembedded.com, hans.verkuil@cisco.com
-Cc: slongerbeam@gmail.com, lars@metafoo.de, mchehab@kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv3 4/6] media: rcar-vin: fix bug in scaling
-Date: Fri,  2 Sep 2016 18:44:59 +0200
-Message-Id: <20160902164501.19535-5-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20160902164501.19535-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20160902164501.19535-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 13 Sep 2016 02:48:34 -0400
 MIME-Version: 1.0
+In-Reply-To: <20160912221640.GG7243@codeaurora.org>
+References: <1464808880-343-1-git-send-email-geert+renesas@glider.be>
+ <20160630201407.GA27880@codeaurora.org> <CAMuHMdWu34OQSS6J3bf=0-1TYULc=coiVomBjtBatwGta5F3HQ@mail.gmail.com>
+ <20160912221640.GG7243@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 13 Sep 2016 08:48:32 +0200
+Message-ID: <CAMuHMdVkmDkMmZ+v9eC_Htxz2J+KpxfAYUHcpSPkMFwjc1bu0Q@mail.gmail.com>
+Subject: Re: [PATCH/RFC v3 00/22] soc: renesas: Add R-Car RST driver for
+ obtaining mode pin state
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-It was not possible to scale beyond the image size of the video source
-limitation. The output frame would be bigger but the captured image was
-limited to the size of the video source.
+Hi Stephen,
 
-The error was that the crop boundary was set after the requested frame
-size and not the video source size. This patch breaks out the resetting
-of the crop, compose and format to separate functions so the error wont
-creep back.
+On Tue, Sep 13, 2016 at 12:16 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On 09/01, Geert Uytterhoeven wrote:
+>> On Thu, Jun 30, 2016 at 10:14 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> > On 06/01, Geert Uytterhoeven wrote:
+>> >> Currently the R-Car Clock Pulse Generator (CPG) drivers obtains the
+>> >> state of the mode pins either by a call from the board code, or directly
+>> >> by using a hardcoded register access. This is a bit messy, and creates a
+>> >> dependency between driver and platform code.
+>> >>
+>> >> This RFC patch series converts the various Renesas R-Car clock drivers
+>> >> and support code from reading the mode pin states using a hardcoded
+>> >> register access to using a new R-Car RST driver.
+>> >
+>> > Dumb question, can we use the nvmem reading APIs instead of an
+>> > SoC specific function to read the modes?
+>>
+>> Thanks for your suggestion, the nvmem API indeed looks like a suitable API,
+>> as it does support read-only nvmems.
+>>
+>> Unfortunately I also see a few disadvantages:
+>>   1. nvmem_init() is a subsys_initcall(), while most of our users (except for
+>>      the recent renesas-cpg-mssr driver) are clock drivers using
+>>      CLK_OF_DECLARE(), and are thus initialized from of_clk_init() at much
+>>      earlier time_init() time.
+>>      Of course the mvmem subsystem and/or the clock drivers can be changed, if
+>>      deemed useful.
+>
+> Sounds like this is solvable.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 105 ++++++++++++++--------------
- 1 file changed, 54 insertions(+), 51 deletions(-)
+Sure.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 88bfee3..47d8d97 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -92,6 +92,54 @@ static u32 rvin_format_sizeimage(struct v4l2_pix_format *pix)
-  * V4L2
-  */
- 
-+static void rvin_reset_crop_compose(struct rvin_dev *vin)
-+{
-+	vin->crop.top = vin->crop.left = 0;
-+	vin->crop.width = vin->source.width;
-+	vin->crop.height = vin->source.height;
-+
-+	vin->compose.top = vin->compose.left = 0;
-+	vin->compose.width = vin->format.width;
-+	vin->compose.height = vin->format.height;
-+}
-+
-+static int rvin_reset_format(struct rvin_dev *vin)
-+{
-+	struct v4l2_subdev_format fmt = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+	};
-+	struct v4l2_mbus_framefmt *mf = &fmt.format;
-+	int ret;
-+
-+	fmt.pad = vin->src_pad_idx;
-+
-+	ret = v4l2_subdev_call(vin_to_source(vin), pad, get_fmt, NULL, &fmt);
-+	if (ret)
-+		return ret;
-+
-+	vin->format.width	= mf->width;
-+	vin->format.height	= mf->height;
-+	vin->format.colorspace	= mf->colorspace;
-+	vin->format.field	= mf->field;
-+
-+	switch (vin->format.field) {
-+	case V4L2_FIELD_TOP:
-+	case V4L2_FIELD_BOTTOM:
-+	case V4L2_FIELD_NONE:
-+	case V4L2_FIELD_INTERLACED_TB:
-+	case V4L2_FIELD_INTERLACED_BT:
-+	case V4L2_FIELD_INTERLACED:
-+		break;
-+	default:
-+		vin->format.field = V4L2_FIELD_NONE;
-+		break;
-+	}
-+
-+	rvin_reset_crop_compose(vin);
-+
-+	return 0;
-+}
-+
- static int __rvin_try_format_source(struct rvin_dev *vin,
- 				    u32 which,
- 				    struct v4l2_pix_format *pix,
-@@ -255,6 +303,8 @@ static int rvin_s_fmt_vid_cap(struct file *file, void *priv,
- 
- 	vin->format = f->fmt.pix;
- 
-+	rvin_reset_crop_compose(vin);
-+
- 	return 0;
- }
- 
-@@ -446,35 +496,14 @@ static int rvin_querystd(struct file *file, void *priv, v4l2_std_id *a)
- static int rvin_s_std(struct file *file, void *priv, v4l2_std_id a)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
--	struct v4l2_subdev *sd = vin_to_source(vin);
--	struct v4l2_subdev_format fmt = {
--		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
--	};
--	struct v4l2_mbus_framefmt *mf = &fmt.format;
--	int ret = v4l2_subdev_call(sd, video, s_std, a);
-+	int ret;
- 
-+	ret = v4l2_subdev_call(vin_to_source(vin), video, s_std, a);
- 	if (ret < 0)
- 		return ret;
- 
- 	/* Changing the standard will change the width/height */
--	ret = v4l2_subdev_call(sd, pad, get_fmt, NULL, &fmt);
--	if (ret) {
--		vin_err(vin, "Failed to get initial format\n");
--		return ret;
--	}
--
--	vin->format.width = mf->width;
--	vin->format.height = mf->height;
--
--	vin->crop.top = vin->crop.left = 0;
--	vin->crop.width = mf->width;
--	vin->crop.height = mf->height;
--
--	vin->compose.top = vin->compose.left = 0;
--	vin->compose.width = mf->width;
--	vin->compose.height = mf->height;
--
--	return 0;
-+	return rvin_reset_format(vin);
- }
- 
- static int rvin_g_std(struct file *file, void *priv, v4l2_std_id *a)
-@@ -779,10 +808,6 @@ static void rvin_notify(struct v4l2_subdev *sd,
- 
- int rvin_v4l2_probe(struct rvin_dev *vin)
- {
--	struct v4l2_subdev_format fmt = {
--		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
--	};
--	struct v4l2_mbus_framefmt *mf = &fmt.format;
- 	struct video_device *vdev = &vin->vdev;
- 	struct v4l2_subdev *sd = vin_to_source(vin);
- 	int pad_idx, ret;
-@@ -839,31 +864,9 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
- 		return -EINVAL;
- 
- 	vin->src_pad_idx = pad_idx;
--	fmt.pad = vin->src_pad_idx;
--
--	/* Try to improve our guess of a reasonable window format */
--	ret = v4l2_subdev_call(sd, pad, get_fmt, NULL, &fmt);
--	if (ret) {
--		vin_err(vin, "Failed to get initial format\n");
--		return ret;
--	}
- 
--	/* Set default format */
--	vin->format.width	= mf->width;
--	vin->format.height	= mf->height;
--	vin->format.colorspace	= mf->colorspace;
--	vin->format.field	= mf->field;
- 	vin->format.pixelformat	= RVIN_DEFAULT_FORMAT;
--
--
--	/* Set initial crop and compose */
--	vin->crop.top = vin->crop.left = 0;
--	vin->crop.width = mf->width;
--	vin->crop.height = mf->height;
--
--	vin->compose.top = vin->compose.left = 0;
--	vin->compose.width = mf->width;
--	vin->compose.height = mf->height;
-+	rvin_reset_format(vin);
- 
- 	ret = video_register_device(&vin->vdev, VFL_TYPE_GRABBER, -1);
- 	if (ret) {
--- 
-2.9.3
+>>   2. Using the nvmem DT bindings means we have to add more DT glue from the
+>>      nvmem consumer(s) to the nvmem provider. As we need to provide backwards
+>>      compatibility with old DTSes, this means we need more C code or DT fixup
+>>      code to handle that.
+>
+> Ah I wasn't aware we were keeping backwards compatibility around.
+>
+>>   3. The nvmem subsystem may be overkill to provide access to a simple 32-bit
+>>      read-only register that never changes value after boot.
+>
+> The nvmem subsystem is designed to read values from things that
+> mostly never change. Overkill may be true, but the nice thing
+> about using nvmem APIs is that the driver doesn't have to use
+> some platform specific function that duplicates similar
+> functionality. It's unfortunate that backwards incompatibility
+> limits our ability to move to common linux frameworks when they
+> are created after the binding is used.
+
+This is continuing work to support old, current, and new SoCs properly.
+When the first support for R-Car Gen2 SoCs was added, many frameworks
+didn't have DT support, or didn't even exist.
+
+Unlike in the mobile market, development and life span is much larger than
+6 months here...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
