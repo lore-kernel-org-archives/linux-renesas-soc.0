@@ -1,64 +1,93 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:52795 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757375AbcIPKdY (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:56892 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756479AbcIMK5l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Sep 2016 06:33:24 -0400
-Date: Fri, 16 Sep 2016 12:33:17 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        Tue, 13 Sep 2016 06:57:41 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v7 10/11] arm64: dts: r8a7796: salvator-x: enable UHS for
- SDHI 0 & 3
-Message-ID: <20160916103317.GN1411@katana>
+        linux-arm-kernel@lists.infradead.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v7 10/11] arm64: dts: r8a7796: salvator-x: enable UHS for SDHI 0 & 3
+Date: Tue, 13 Sep 2016 12:57:07 +0200
+Message-Id: <1473764228-24768-11-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
 References: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
- <1473764228-24768-11-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Pjk796cY0SfIo9Z2"
-Content-Disposition: inline
-In-Reply-To: <1473764228-24768-11-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Based on work for the r8a7796 by Wolfram Sang.
 
---Pjk796cY0SfIo9Z2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-On Tue, Sep 13, 2016 at 12:57:07PM +0200, Simon Horman wrote:
-> Based on work for the r8a7796 by Wolfram Sang.
->=20
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---Pjk796cY0SfIo9Z2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX28ptAAoJEBQN5MwUoCm2ErcQAKhkDg6xysla025QLMj7w2Ig
-tjDMehy9JULxsFOlKdCn55CyDZkAmjpJ9r8LgeZBSPgJSfe943w+zGw3zrl1P/GB
-HMXPpJ0AmBZ9q9OliKy5mHY52gaU3BeqZmZDAm3HGLYLUAUgbS4oDkfr/GaB/Q/a
-gOW3jvJ8fTP3w9mriul1PYeOaRnCFyedsuLpTV1uCSePrYp2dn5/cbjZNUNcQjGd
-dRFyjWJY/K8s6jRP+V1dRg8sDPWR1rdyX+kP71mEY9d+WDVp6JHFsEwGb4HHYLTv
-ZBnpqK32uWy9urWVay+gXstNbzQSjpiWFGnZbELR1DU5EKtgasyg6KNrdf5jYCm6
-+RUK7LTrChrka7GimtG/G0x6527vsqfuVFqnXT3a4tzfWnliKcIHepLzpZVdtaJn
-zi6OKYsuenQkkP3Aj5FuQ6ccnq0PTmxGyAPSF9hjC/IRAsODZRq5tXqttyonj2QP
-HU3v2D3qx8lGxER8Rub7iwvhsWk+cua/0H29px9VyPJnh2Ro+3HrY/f6RxUbM5m4
-F7Ij5Q0TjYaUyjmy9mwaAMU42IW9ZjDBVfVtLQdcVuFZLCElax8wudijgj79BPWe
-MsofXLGS+ekC8M0qGT9zu8z8hf3Fiqq4e0wkwNFeFa1DMT0OR/XaGVuK74i+LcRX
-FaVeLw8Kg+uOuqyjvAr3
-=q5V2
------END PGP SIGNATURE-----
-
---Pjk796cY0SfIo9Z2--
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index a8373c248ad1..a9947d45cccc 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -97,11 +97,25 @@
+ 	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
++		power-source = <3300>;
++	};
++
++	sdhi0_pins_uhs: sd0_uhs {
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
++		power-source = <1800>;
+ 	};
+ 
+ 	sdhi3_pins: sd3 {
+ 		groups = "sdhi3_data4", "sdhi3_ctrl";
+ 		function = "sdhi3";
++		power-source = <3300>;
++	};
++
++	sdhi3_pins_uhs: sd3_uhs {
++		groups = "sdhi3_data4", "sdhi3_ctrl";
++		function = "sdhi3";
++		power-source = <1800>;
+ 	};
+ };
+ 
+@@ -111,25 +125,29 @@
+ 
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+-	pinctrl-names = "default";
++	pinctrl-1 = <&sdhi0_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
+ 
+ 	vmmc-supply = <&vcc_sdhi0>;
+ 	vqmmc-supply = <&vccq_sdhi0>;
+ 	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
+ 	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
+ 	bus-width = <4>;
++	sd-uhs-sdr50;
+ 	status = "okay";
+ };
+ 
+ &sdhi3 {
+ 	pinctrl-0 = <&sdhi3_pins>;
+-	pinctrl-names = "default";
++	pinctrl-1 = <&sdhi3_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
+ 
+ 	vmmc-supply = <&vcc_sdhi3>;
+ 	vqmmc-supply = <&vccq_sdhi3>;
+ 	cd-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
+ 	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
+ 	bus-width = <4>;
++	sd-uhs-sdr50;
+ 	status = "okay";
+ };
+ 
+-- 
+2.7.0.rc3.207.g0ac5344
