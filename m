@@ -1,46 +1,103 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: bd-phuc@jinso.co.jp
-To: daniel.lezcano@linaro.org, tglx@linutronix.de
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sh@vger.kernel.org, geert+renesas@glider.be,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@vger.kernel.org,
-        laurent.pinchart+renesas@ideasonboard.com, magnus.damm@gmail.com,
-        horms@verge.net.au, kuninori.morimoto.gx@renesas.com,
-        yoshihiro.shimoda.uh@renesas.com, ryusuke.sakato.bx@renesas.com,
-        h-inayoshi@jinso.co.jp, cm-hiep@jinso.co.jp, nv-dung@jinso.co.jp
-Subject: [PATCH 5/8] clk: renesas: r8a7796: Add CMT clocks
-Date: Fri,  9 Sep 2016 20:43:11 +0900
-Message-Id: <1473421394-9745-6-git-send-email-bd-phuc@jinso.co.jp>
-In-Reply-To: <1473421394-9745-1-git-send-email-bd-phuc@jinso.co.jp>
-References: <1473421394-9745-1-git-send-email-bd-phuc@jinso.co.jp>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:40049 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755516AbcIMMQx (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 13 Sep 2016 08:16:53 -0400
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.82)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1bjmdu-0004QU-TM
+        for linux-renesas-soc@vger.kernel.org; Tue, 13 Sep 2016 14:16:50 +0200
+Received: from geert by ramsan with local (Exim 4.82)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1bjmdz-0002cT-4w
+        for linux-renesas-soc@vger.kernel.org; Tue, 13 Sep 2016 14:16:55 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2016-09-13-v4.8-rc6
+Date: Tue, 13 Sep 2016 14:16:55 +0200
+Message-Id: <1473769015-10035-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Bui Duc Phuc <bd-phuc@jinso.co.jp>
+I have pushed renesas-drivers-2016-09-13-v4.8-rc6 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-This patch adds CMT module clocks for r8a7796 SoC.
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-Signed-off-by: Bui Duc Phuc <bd-phuc@jinso.co.jp>
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Today's version is based on renesas-devel-20160908-v4.8-rc5.
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index c84b549..63607bb 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -97,6 +97,10 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- };
- 
- static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
-+	DEF_MOD("cmt3",		 	 300,	R8A7796_CLK_R),
-+	DEF_MOD("cmt2",		 	 301,	R8A7796_CLK_R),
-+	DEF_MOD("cmt1",		 	 302,	R8A7796_CLK_R),
-+	DEF_MOD("cmt0",		 	 303,	R8A7796_CLK_R),
- 	DEF_MOD("scif2",		 310,	R8A7796_CLK_S3D4),
- 	DEF_MOD("intc-ap",		 408,	R8A7796_CLK_S3D1),
- };
--- 
-2.7.4
+Included branches with driver code:
+  - clk-renesas-for-v4.9
+  - sh-pfc-for-v4.9
+  - topic/ipmmu-multi-arch-v4
+  - topic/r8a7795-ipmmu-v2-rebased1
+  - topic/r8a7796-ipmmu-v1-rebased1
+  - topic/salvator-x-ipmmu-rfc-v3-rebased4
+  - topic/rcar-secondary-booting-in-debug-mode-v1
+  - topic/spi-slave-v2
+  - topic/sdhi-gen3-dma-v3-rebased3
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-v6
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-v6+r8a7791,4
+  - topic/i2c-demux-v3-rebased3
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/r8a7796-sdhi-v2.rebase
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/pretimeout
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/i2c_sdhi_maintenance
+  - git://linuxtv.org/pinchartl/media.git#iommu/devel/du
+  - topic/fcpf-v1-rebased7
 
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://people.freedesktop.org/~airlied/linux#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/mchehab/media-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git#mmc-next
+  - git://git.linaro.org/people/ulf.hansson/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/djbw/dmaengine.git#next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+  - git://git.infradead.org/battery-2.6.git#master
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm-intel#topic/drm-misc
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
