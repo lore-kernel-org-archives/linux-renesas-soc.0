@@ -1,83 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56781 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:56892 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752031AbcIMK43 (ORCPT
+        with ESMTP id S1754084AbcIMK52 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Sep 2016 06:56:29 -0400
+        Tue, 13 Sep 2016 06:57:28 -0400
 From: Simon Horman <horms+renesas@verge.net.au>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Ulf Hansson <ulf.hansson@linaro.org>
 Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        Ai Kyuse <ai.kyuse.uw@renesas.com>,
+        linux-arm-kernel@lists.infradead.org,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v7 4/6] mmc: tmio: Add hw reset support
-Date: Tue, 13 Sep 2016 12:56:13 +0200
-Message-Id: <1473764175-24580-5-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1473764175-24580-1-git-send-email-horms+renesas@verge.net.au>
-References: <1473764175-24580-1-git-send-email-horms+renesas@verge.net.au>
+Subject: [PATCH v7 00/11] ARM, arm64: renesas: Enable UHS-I SDR-104
+Date: Tue, 13 Sep 2016 12:56:57 +0200
+Message-Id: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ai Kyuse <ai.kyuse.uw@renesas.com>
+Hi,
 
-Add hw reset support.
+this series enables SDHI UHS-I SDR-104 on:
+* r8a7790/lager
+* r8a7791/koelsch
+* r8a7794/alt
+* r8a7795/salvator-x
+* r8a7796/salvator-x
 
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-This is required by tuning support which will
-be introduced by follow-up patches.
+It is based on renesas-next-20160908-v4.8-rc1.
 
-v6
-* Rely on core to retune on reset
 
-v5
-* As suggested by Ulf Hansson
-  - Broke out of a larger patch
----
- drivers/mmc/host/tmio_mmc.h     | 1 +
- drivers/mmc/host/tmio_mmc_pio.c | 9 +++++++++
- 2 files changed, 10 insertions(+)
+For functional SDR-104 support the following dependencies are needed:
+* [PATCH v7 0/6] UHS-I SDR-104 support for sh_mobile_sdhi
+* [PATCH/RFT,v2,2/8] clk: renesas: r8a7796: Add SDIF clocks
+* [PATCH] pinctrl: sh-pfc: r8a7796: Add voltage switch operations for SDHI
+* [PATCH v2 0/3] pinctrl: sh-pfc: r8a779[14]: Implement voltage switching for SDHI
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 4b36cb5c2d9c..4b71f31fba63 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -164,6 +164,7 @@ struct tmio_mmc_host {
- 	int (*start_signal_voltage_switch)(struct mmc_host *mmc,
- 					   struct mmc_ios *ios);
- 	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
-+	void (*hw_reset)(struct tmio_mmc_host *host);
- };
- 
- struct tmio_mmc_host *tmio_mmc_host_alloc(struct platform_device *pdev);
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 806308ac93e7..f1d36f4533d2 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -756,6 +756,14 @@ static int tmio_mmc_start_data(struct tmio_mmc_host *host,
- 	return 0;
- }
- 
-+static void tmio_mmc_hw_reset(struct mmc_host *mmc)
-+{
-+	struct tmio_mmc_host *host = mmc_priv(mmc);
-+
-+	if (host->hw_reset)
-+		host->hw_reset(host);
-+}
-+
- /* Process requests from the MMC layer */
- static void tmio_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
- {
-@@ -970,6 +978,7 @@ static struct mmc_host_ops tmio_mmc_ops = {
- 	.get_cd		= mmc_gpio_get_cd,
- 	.enable_sdio_irq = tmio_mmc_enable_sdio_irq,
- 	.multi_io_quirk	= tmio_multi_io_quirk,
-+	.hw_reset	= tmio_mmc_hw_reset,
- };
- 
- static int tmio_mmc_init_ocr(struct tmio_mmc_host *host)
+To aid review the following git branches are provided:
+* This patchset:
+  https:://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdr104-integration-v7
+* This patch-set and above dependencies
+  https:://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdr104-v7
+
+Furthermore DMA support for R-Car Gen3 is need to achive higher
+transfer rates on the r8a7795 and r8a7796. For convenience a
+branch containing a merge of topic/sdr104-v7 (see above) and
+"[PATCH/RFC v3 0/6] mmc: renesas_sdhi: add R-Car Gen-3 DMA support"
+(rebased) is provided as:
+
+* https:://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdr104-v7+sdhi-dma-v3
+
+Simon Horman (10):
+  ARM: dts: lager: Enable UHS-I SDR-104
+  arm64: dts: r8a7795: salvator-x: Enable UHS-I SDR-104
+  ARM: dts: r8a7791: set maximum frequency for SDHI clocks
+  ARM: dts: koelsch: Enable UHS-I SDR-50 and SDR-104
+  ARM: dts: r8a7794: set maximum frequency for SDHI clocks
+  ARM: dts: alt: Enable UHS-I SDR-50 and SDR-104
+  arm64: dts: r8a7796: add SDHI nodes
+  arm64: dts: r8a7796: salvator-x: enable SDHI0 & 3
+  arm64: dts: r8a7796: salvator-x: enable UHS for SDHI 0 & 3
+  arm64: dts: r8a7796: salvator-x: Enable UHS-I SDR-104
+
+Wolfram Sang (1):
+  arm64: dts: r8a7795: salvator-x: enable UHS for SDHI 0 & 3
+
+ arch/arm/boot/dts/r8a7790-lager.dts                |   1 +
+ arch/arm/boot/dts/r8a7791-koelsch.dts              |  34 ++++++-
+ arch/arm/boot/dts/r8a7791.dtsi                     |   3 +
+ arch/arm/boot/dts/r8a7794-alt.dts                  |  23 ++++-
+ arch/arm/boot/dts/r8a7794.dtsi                     |   3 +
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  24 ++++-
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 104 +++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           |  42 +++++++++
+ 8 files changed, 227 insertions(+), 7 deletions(-)
+
 -- 
 2.7.0.rc3.207.g0ac5344
