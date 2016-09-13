@@ -1,51 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:62511 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754866AbcIMN2V (ORCPT
+Received: from mail-it0-f53.google.com ([209.85.214.53]:36551 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751625AbcIMN0Q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Sep 2016 09:28:21 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
+        Tue, 13 Sep 2016 09:26:16 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFqdznJ4xr5=L862uOfvqjsRpR3d+yRWtN1-8H5ZvP9GeQ@mail.gmail.com>
+References: <20160912141507.6837-1-chris.brandt@renesas.com>
+ <20160912141507.6837-2-chris.brandt@renesas.com> <CAPDyKFqdznJ4xr5=L862uOfvqjsRpR3d+yRWtN1-8H5ZvP9GeQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 13 Sep 2016 15:26:14 +0200
+Message-ID: <CAMuHMdVGgWaVcC4Pfuf0NSTpU4ahdEg6Q7iKZ1n+mb7KexE6yg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] mmc: sh_mobile_sdhi: add ocr_mask option
 To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+Cc: Chris Brandt <chris.brandt@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
         Simon Horman <horms+renesas@verge.net.au>,
         linux-mmc <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v3 1/3] mmc: sh_mobile_sdhi: add ocr_mask option
-Date: Tue, 13 Sep 2016 13:28:16 +0000
-Message-ID: <SG2PR06MB1165E2C194CFFBB44B159DFF8AFE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20160912141507.6837-1-chris.brandt@renesas.com>
- <20160912141507.6837-2-chris.brandt@renesas.com>
- <CAPDyKFqdznJ4xr5=L862uOfvqjsRpR3d+yRWtN1-8H5ZvP9GeQ@mail.gmail.com>
-In-Reply-To: <CAPDyKFqdznJ4xr5=L862uOfvqjsRpR3d+yRWtN1-8H5ZvP9GeQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gOS8xMy8yMDE2LCBVbGYgSGFuc3NvbiB3cm90ZToNCj4gUmVnYXJkaW5nIHRoZSBvY3JfbWFz
-azsgSG93IGRvIHRoZXNlIFNvQ3MgcHJvdmlkZXMgdGhlIHBvd2VyIHRvIHRoZSBtbWMvc2QNCj4g
-Y2FyZD8NCj4gDQo+IERvIG5vdGUsIEkgYW0gKm5vdCogdGFsa2luZyBhYm91dCB0aGUgSS9PIHZv
-bHRhZ2UgYnV0IHRoZSBjb3JlIHBvd2VyIHRvDQo+IHRoZSBjYXJkLg0KDQpUaGUgU29DIGRvZXMg
-bm90ICpwcm92aWRlKiBwb3dlciB0byB0aGUgY2FyZC4gSXQncyBub3QgdGhhdCBmYW5jeS4gSG93
-IHRoZSAzLjN2IGlzIHN1cHBsaWVkIHRvIHRoZSBjYXJkIHNsb3QgaXMgdXAgdG8gdGhlIGJvYXJk
-IGRlc2lnbmVyLiBCdXQsIHRoZSBTb0Mgc3BlYyBzYXlzIHRoZSBJL08gc2hvdWxkIGJlIDMuM3Ys
-IHNvIHdlIG1pZ2h0IGFzIHdlbGwgZml4IHRoZSBPQ1IgYXMgMy4zdiBiZWNhdXNlIHRoZXkgZG9u
-J3QgaGF2ZSBhIGNob2ljZS4NCg0KSSBkaWQgc2VlIGFsbCB0aGUgRFQgcmVndWxhdG9yIHN0dWZm
-IGZvciB0aGUgb3RoZXIgUmVuZXNhcyBTb0MsIGJ1dCBhbGwgdGhhdCBpcyBiZXlvbmQgaG93IHRo
-aXMgY2hpcCBpcyBiZWluZyB1c2VkLg0KDQpBbHNvIG5vdGUgdGhhdCB0aGlzIFNvQyAoUmVuZXNh
-cyBSWi9BMSksIHVubGlrZSB0aGUgb3RoZXJzLCBpcyBiZWluZyB1c2VkIHdpdGggWElQX0tFUk5F
-TCBiZWNhdXNlIGl0J3MgcG9zc2libGUgdG8gcnVuIGEgZnVsbCBrZXJuZWwgd2l0aG91dCBhbnkg
-ZXh0ZXJuYWwgbWVtb3J5IChpdCBjb21lcyBpbiBhIDNNQiwgNU1CLCBvciAxMFJNIGludGVybmFs
-IFJBTSB2ZXJzaW9ucykuIFNvLCBJJ20gdHJ5aW5nIHRvIGF2b2lkIGFkZGluZyBleHRyYSBEVCAi
-c3R1ZmYiIHRoYXQganVzdCB0YWtlcyB1cCBtb3JlIFJBTSByZXNvdXJjZXMgYW5kIGhhcyBubyB2
-YWx1ZSBmb3IgdGhlc2Ugc2ltcGxlIGVtYmVkZGVkIHN5c3RlbXMuIEkga25vdyBpbiBvdGhlciBE
-RFIgYmFzZWQgc3lzdGVtIHdpdGggTWVncyBhbmQgTWVncyBvZiBSQU0gdG8gc3BhcmUgdGhpcyBp
-c24ndCBhIHByb2JsZW0sIGJ1dCBpbiBhbiBYSVBfS0VSTkVMIGVudmlyb25tZW50LCBpdCBhbGwg
-YWRkcyB1cC4NCg0KT25lIG9mIHRoZSByZWFzb25zIHdoeSBJIGhhdmVuJ3QgYmVlbiB0cnlpbmcg
-dG8gcHVzaCBvdXIgQlNQIHVwc3RyZWFtIGFuZCBtb3ZlIGV2ZXJ5b25lIGlzIGJlY2F1c2UgSSdt
-IGFmcmFpZCBvZiB3aGF0IGFsbCB0aGUgbmV3IERUIGJsb2F0IGlzIGdvaW5nIHRvIGRvIHRvIHRo
-ZSBrZXJuZWwgUkFNIHVzYWdlLg0KDQpDaHJpcw0KDQo=
+Hi Ulf,
+
+On Tue, Sep 13, 2016 at 2:57 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 12 September 2016 at 16:15, Chris Brandt <chris.brandt@renesas.com> wrote:
+>> In moving platforms from board files to DT, there still needs to be a way
+>> to set the ocr_mask setting for the tmio driver during probe. Without this
+>> setting, the probe will fail because the supported voltages are not known.
+>
+> Regarding the ocr_mask; How do these SoCs provides the power to the mmc/sd card?
+>
+> Do note, I am *not* talking about the I/O voltage but the core power
+> to the card.
+>
+> The reason for raising the question is that we have infrastructures in
+> the mmc core which can create the ocr_mask, by parsing a regulator's
+> voltage range. This is the recommended method to use, instead of using
+> hard coded ocr mask values.
+
+On RSKRZA1, 3.3V is provided to the SD/MMC socket through an MIC2026
+MOSFET switch.
+On Genmai, 3.3V or 5V is provided through an LTC1471 switch.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
