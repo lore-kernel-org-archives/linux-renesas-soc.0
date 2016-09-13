@@ -1,42 +1,86 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34026 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761896AbcINQr1 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Sep 2016 12:47:27 -0400
-Received: by mail-wm0-f66.google.com with SMTP id g141so3382756wmd.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2016 09:47:21 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: magnus.damm@gmail.com, horms@verge.net.au,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 0/4] r8a7796 HSCIF integration
-Date: Wed, 14 Sep 2016 18:47:12 +0200
-Message-Id: <20160914164716.31512-1-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Kieran Bingham <kieran+renesas@bingham.xyz>
+Subject: [PATCH 00/13] Renesas R-Car VSP: Scaling and rotation support on Gen3
+Date: Wed, 14 Sep 2016 02:16:53 +0300
+Message-Id: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+Hello,
 
-This enables all HSCIFs on r8a7796.
+This patch series adds support for scaling and rotation to the VSP1 driver on
+the R-Car Gen3 SoCs.
 
-Based on renesas-drivers-2016-09-13-v4.8-rc6. The last patch enables DMA and
-depends on the "r8a7796 SYS-DMAC integration" series posted earlier.
+Unlike Gen2 that can scale full resolution images, the Gen3 VSP scaler has a
+width limitation that prevent full images from being processed in one go. They
+must be partitioned in slices that are then processed individually. The
+rotation engine present in the Gen3 VSP has a similar limitation, and so does
+the SRU.
 
-CU
-Uli
+The hardware supports queuing processing of multiple slices without generating
+any interrupt between slices, so partitioning the image will not raise the
+number of interrupts. It however has an impact on CPU usage as the register
+settings for each partitions need to be computed, but there's no way around
+that.
 
+The series starts with bug fixes (patches 01/13 to 04/13), followed by a few
+preparatory changes (patches 05/13 to 07/13). Patches 08/13 to 12/13 then
+implement image partitioning support, and patch 13/13 finally adds rotation
+support.
 
-Ulrich Hecht (4):
-  clk: shmobile: r8a7796: Add HSCIF clocks
-  pinctrl: sh-pfc: r8a7796: Add HSCIF pins, groups, and functions
-  arm64: renesas: r8a7796 dtsi: Add all HSCIF nodes
-  arm64: renesas: r8a7796: Enable HSCIF DMA
+All the changes have been tests with the VSP test suite available at
 
- arch/arm64/boot/dts/renesas/r8a7796.dtsi |  80 ++++++++++
- drivers/clk/renesas/r8a7796-cpg-mssr.c   |   5 +
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 255 +++++++++++++++++++++++++++++++
- 3 files changed, 340 insertions(+)
+	git://git.ideasonboard.com/renesas/vsp-tests.git master
+
+on both Gen2 (H2 Lager) and Gen3 (H3 Salvator-X) boards. No regression has
+been noticed.
+
+Kieran Bingham (6):
+  v4l: vsp1: Ensure pipeline locking in resume path
+  v4l: vsp1: Repair race between frame end and qbuf handler
+  v4l: vsp1: Use DFE instead of FRE for frame end
+  v4l: vsp1: Support chained display lists
+  v4l: vsp1: Determine partition requirements for scaled images
+  v4l: vsp1: Support multiple partitions per frame
+
+Laurent Pinchart (7):
+  v4l: vsp1: Prevent pipelines from running when not streaming
+  v4l: vsp1: Protect against race conditions between get and set format
+  v4l: vsp1: Disable cropping on WPF sink pad
+  v4l: vsp1: Fix RPF cropping
+  v4l: vsp1: Pass parameter type to entity configuration operation
+  v4l: vsp1: Replace .set_memory() with VSP1_ENTITY_PARAMS_PARTITION
+  v4l: vsp1: wpf: Implement rotation support
+
+ drivers/media/platform/vsp1/vsp1_bru.c    |  33 +++-
+ drivers/media/platform/vsp1/vsp1_clu.c    |  61 ++++---
+ drivers/media/platform/vsp1/vsp1_dl.c     | 119 ++++++++++---
+ drivers/media/platform/vsp1/vsp1_dl.h     |   1 +
+ drivers/media/platform/vsp1/vsp1_drm.c    |  15 +-
+ drivers/media/platform/vsp1/vsp1_drv.c    |   2 +-
+ drivers/media/platform/vsp1/vsp1_entity.c |  22 ++-
+ drivers/media/platform/vsp1/vsp1_entity.h |  25 ++-
+ drivers/media/platform/vsp1/vsp1_hsit.c   |  20 ++-
+ drivers/media/platform/vsp1/vsp1_lif.c    |  20 ++-
+ drivers/media/platform/vsp1/vsp1_lut.c    |  42 +++--
+ drivers/media/platform/vsp1/vsp1_pipe.c   |   3 +
+ drivers/media/platform/vsp1/vsp1_pipe.h   |   8 +
+ drivers/media/platform/vsp1/vsp1_rpf.c    | 106 +++++++-----
+ drivers/media/platform/vsp1/vsp1_rwpf.c   |  86 ++++++----
+ drivers/media/platform/vsp1/vsp1_rwpf.h   |  16 +-
+ drivers/media/platform/vsp1/vsp1_sru.c    |  50 +++++-
+ drivers/media/platform/vsp1/vsp1_uds.c    |  71 ++++++--
+ drivers/media/platform/vsp1/vsp1_video.c  | 188 ++++++++++++++++++--
+ drivers/media/platform/vsp1/vsp1_wpf.c    | 274 ++++++++++++++++++++++--------
+ 20 files changed, 880 insertions(+), 282 deletions(-)
 
 -- 
-2.9.3
+Regards,
+
+Laurent Pinchart
