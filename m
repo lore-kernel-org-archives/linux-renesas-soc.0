@@ -1,70 +1,65 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756483AbcIGHu7 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Sep 2016 03:50:59 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 24/26] ARM: dts: r8a7792: add QSPI support
-Date: Wed,  7 Sep 2016 09:50:11 +0200
-Message-Id: <c9acea6efdd7b08bf80a3721a44970252935621b.1473234372.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
-References: <cover.1473234371.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <niklas.soderlund@ragnatech.se>
+Return-Path: <niklas.soderlund@ragnatech.se>
+Date: Wed, 14 Sep 2016 20:28:46 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Kieran Bingham <kieran+renesas@ksquared.org.uk>
+Subject: Re: [PATCH 03/13] v4l: vsp1: Ensure pipeline locking in resume path
+Message-ID: <20160914182846.GH739@bigcity.dyn.berto.se>
+References: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1473808626-19488-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1473808626-19488-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On 2016-09-14 02:16:56 +0300, Laurent Pinchart wrote:
+> From: Kieran Bingham <kieran+renesas@bingham.xyz>
+> 
+> The vsp1_pipeline_ready() and vsp1_pipeline_run() functions must be
+> called with the pipeline lock held, fix the resume code path.
+> 
+> Signed-off-by: Kieran Bingham <kieran+renesas@bingham.xyz>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Define the generic R8A7792 part of the QSPI device node.
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-Based  on the original (and large) patch by Vladimir Barinov
-<vladimir.barinov@cogentembedded.com>.
+> ---
+>  drivers/media/platform/vsp1/vsp1_pipe.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
+> index 3e75fb3fcace..474de82165d8 100644
+> --- a/drivers/media/platform/vsp1/vsp1_pipe.c
+> +++ b/drivers/media/platform/vsp1/vsp1_pipe.c
+> @@ -365,6 +365,7 @@ void vsp1_pipelines_suspend(struct vsp1_device *vsp1)
+>  
+>  void vsp1_pipelines_resume(struct vsp1_device *vsp1)
+>  {
+> +	unsigned long flags;
+>  	unsigned int i;
+>  
+>  	/* Resume all running pipelines. */
+> @@ -379,7 +380,9 @@ void vsp1_pipelines_resume(struct vsp1_device *vsp1)
+>  		if (pipe == NULL)
+>  			continue;
+>  
+> +		spin_lock_irqsave(&pipe->irqlock, flags);
+>  		if (vsp1_pipeline_ready(pipe))
+>  			vsp1_pipeline_run(pipe);
+> +		spin_unlock_irqrestore(&pipe->irqlock, flags);
+>  	}
+>  }
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7792.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 6ff3e365d56a..713141d38b3e 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -25,6 +25,7 @@
- 		i2c3 = &i2c3;
- 		i2c4 = &i2c4;
- 		i2c5 = &i2c5;
-+		spi0 = &qspi;
- 		vin0 = &vin0;
- 		vin1 = &vin1;
- 		vin2 = &vin2;
-@@ -556,6 +557,21 @@
- 			status = "disabled";
- 		};
- 
-+		qspi: spi@e6b10000 {
-+			compatible = "renesas,qspi-r8a7792", "renesas,qspi";
-+			reg = <0 0xe6b10000 0 0x2c>;
-+			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&mstp9_clks R8A7792_CLK_QSPI_MOD>;
-+			dmas = <&dmac0 0x17>, <&dmac0 0x18>,
-+			       <&dmac1 0x17>, <&dmac1 0x18>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a7792";
- 			reg = <0 0xfeb00000 0 0x40000>;
 -- 
-2.7.0.rc3.207.g0ac5344
+Regards,
+Niklas S�derlund
