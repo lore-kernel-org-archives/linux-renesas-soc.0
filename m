@@ -1,58 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56795 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755481AbcIMK4j (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34026 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1761896AbcINQr1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Sep 2016 06:56:39 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v7 0/6] UHS-I SDR-104 support for sh_mobile_sdhi
-Date: Tue, 13 Sep 2016 12:56:09 +0200
-Message-Id: <1473764175-24580-1-git-send-email-horms+renesas@verge.net.au>
+        Wed, 14 Sep 2016 12:47:27 -0400
+Received: by mail-wm0-f66.google.com with SMTP id g141so3382756wmd.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2016 09:47:21 -0700 (PDT)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
+Cc: magnus.damm@gmail.com, horms@verge.net.au,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 0/4] r8a7796 HSCIF integration
+Date: Wed, 14 Sep 2016 18:47:12 +0200
+Message-Id: <20160914164716.31512-1-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi!
 
-Hi,
+This enables all HSCIFs on r8a7796.
 
-this series is based on work by Ai Kyuse to add UHS-I SDR-104 support for
-sh_mobile_sdhi. It builds on work by Shinobu Uehara, Rob Taylor, William
-Towle and Ian Molton, Ben Hutchings, Wolfram Sang and others to add UHS-I
-SDR-50 support to the same driver.
+Based on renesas-drivers-2016-09-13-v4.8-rc6. The last patch enables DMA and
+depends on the "r8a7796 SYS-DMAC integration" series posted earlier.
 
-It is based on a merge of the next branches of the mmc tree.
-
-To aid review the following git branch is provided:
-* https:://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdr104-driver-v7
-
-Overview of changes since v6:
-* Address review by Ulf
-  - Detailed in per-patch changelogs
-* Move integration (arm/arm64 dt) patches to separate patchset
-
-Please see http://elinux.org/Tests:SD-SDHI-SDR104 for indicative tests
-results.
+CU
+Uli
 
 
-Ai Kyuse (3):
-  mmc: tmio: enhance illegal sequence handling
-  mmc: tmio: Add hw reset support
-  mmc: tmio: Add tuning support
+Ulrich Hecht (4):
+  clk: shmobile: r8a7796: Add HSCIF clocks
+  pinctrl: sh-pfc: r8a7796: Add HSCIF pins, groups, and functions
+  arm64: renesas: r8a7796 dtsi: Add all HSCIF nodes
+  arm64: renesas: r8a7796: Enable HSCIF DMA
 
-Simon Horman (3):
-  mmc: core: Add helper to see if a host can be retuned
-  mmc: tmio: document mandatory and optional callbacks
-  mmc: sh_mobile_sdhi: Add tuning support
-
- drivers/mmc/host/sh_mobile_sdhi.c | 265 +++++++++++++++++++++++++++++++++++++-
- drivers/mmc/host/tmio_mmc.h       |  18 ++-
- drivers/mmc/host/tmio_mmc_pio.c   |  87 ++++++++++++-
- include/linux/mmc/host.h          |   5 +
- 4 files changed, 367 insertions(+), 8 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi |  80 ++++++++++
+ drivers/clk/renesas/r8a7796-cpg-mssr.c   |   5 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 255 +++++++++++++++++++++++++++++++
+ 3 files changed, 340 insertions(+)
 
 -- 
-2.7.0.rc3.207.g0ac5344
+2.9.3
