@@ -1,95 +1,90 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:37819 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751029AbcISU6L (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 16:58:11 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Dirk Behme <dirk.behme@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 5/6] arm64: dts: r8a7795: salvator: enable on-board eMMC
-Date: Mon, 19 Sep 2016 22:57:49 +0200
-Message-Id: <20160919205750.4766-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20160919205750.4766-1-wsa+renesas@sang-engineering.com>
-References: <20160919205750.4766-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Kieran Bingham <kieran+renesas@ksquared.org.uk>
+Subject: Re: [PATCH 02/13] v4l: vsp1: Protect against race conditions between get and set format
+Date: Wed, 14 Sep 2016 22:50:37 +0300
+Message-ID: <2486540.vxE6uRc2v9@avalon>
+In-Reply-To: <20160914182317.GG739@bigcity.dyn.berto.se>
+References: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <1473808626-19488-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <20160914182317.GG739@bigcity.dyn.berto.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 43 ++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+Hi Niklas,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 8964b1ea3cea69..8e98aeae54c066 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -62,6 +62,24 @@
- 		clock-frequency = <24576000>;
- 	};
- 
-+	reg_1p8v: regulator0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	reg_3p3v: regulator1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
- 
-@@ -246,6 +264,18 @@
- 		power-source = <1800>;
- 	};
- 
-+	sdhi2_pins: sd2 {
-+		groups = "sdhi2_data8", "sdhi2_ctrl";
-+		function = "sdhi2";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi2_pins_uhs: sd2_uhs {
-+		groups = "sdhi2_data8", "sdhi2_ctrl";
-+		function = "sdhi2";
-+		power-source = <1800>;
-+	};
-+
- 	sdhi3_pins: sd3 {
- 		groups = "sdhi3_data4", "sdhi3_ctrl";
- 		function = "sdhi3";
-@@ -398,6 +428,19 @@
- 	status = "okay";
- };
- 
-+&sdhi2 {
-+	/* used for on-board 8bit eMMC */
-+	pinctrl-0 = <&sdhi2_pins>;
-+	pinctrl-1 = <&sdhi2_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_1p8v>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
-+};
-+
- &sdhi3 {
- 	pinctrl-0 = <&sdhi3_pins>;
- 	pinctrl-1 = <&sdhi3_pins_uhs>;
--- 
-2.9.3
+Thank you for the review.
+
+On Wednesday 14 Sep 2016 20:23:18 Niklas S=F6derlund wrote:
+> On 2016-09-14 02:16:55 +0300, Laurent Pinchart wrote:
+> > The subdev userspace API isn't serialized in the core, serialize ac=
+cess
+> > to formats and selection rectangles in the driver.
+> >=20
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> >=20
+> >  drivers/media/platform/vsp1/vsp1_bru.c    | 28 +++++++++++++++----=
+-
+> >  drivers/media/platform/vsp1/vsp1_clu.c    | 15 ++++++++---
+> >  drivers/media/platform/vsp1/vsp1_entity.c | 22 +++++++++++++---
+> >  drivers/media/platform/vsp1/vsp1_entity.h |  4 ++-
+> >  drivers/media/platform/vsp1/vsp1_hsit.c   | 15 ++++++++---
+> >  drivers/media/platform/vsp1/vsp1_lif.c    | 15 ++++++++---
+> >  drivers/media/platform/vsp1/vsp1_lut.c    | 15 ++++++++---
+> >  drivers/media/platform/vsp1/vsp1_rwpf.c   | 44 +++++++++++++++++++=
+-------
+> >  drivers/media/platform/vsp1/vsp1_sru.c    | 26 +++++++++++++-----
+> >  drivers/media/platform/vsp1/vsp1_uds.c    | 26 +++++++++++++-----
+> >  10 files changed, 161 insertions(+), 49 deletions(-)
+> >=20
+> > diff --git a/drivers/media/platform/vsp1/vsp1_bru.c
+> > b/drivers/media/platform/vsp1/vsp1_bru.c index 8268b87727a7..26b9e2=
+282a41
+> > 100644
+> > --- a/drivers/media/platform/vsp1/vsp1_bru.c
+> > +++ b/drivers/media/platform/vsp1/vsp1_bru.c
+> > @@ -142,10 +142,15 @@ static int bru_set_format(struct v4l2_subdev
+> > *subdev,
+> >=20
+> >  =09struct vsp1_bru *bru =3D to_bru(subdev);
+> >  =09struct v4l2_subdev_pad_config *config;
+> >  =09struct v4l2_mbus_framefmt *format;
+> >=20
+> > +=09int ret =3D 0;
+> > +
+> > +=09mutex_lock(&bru->entity.lock);
+> >=20
+> >  =09config =3D vsp1_entity_get_pad_config(&bru->entity, cfg, fmt->w=
+hich);
+> >=20
+> > -=09if (!config)
+> > -=09=09return -EINVAL;
+> > +=09if (!config) {
+> > +=09=09goto done;
+> > +=09=09ret =3D -EINVAL;
+>=20
+> This looks funny to me, you probably intended to do that in the other=
+
+> order right?
+
+Oops, good catch !
+
+> If you fix this feel free to add my:
+>=20
+> Acked-by: Niklas S=F6derlund <niklas.soderlund@ragnatech.se>
+
+Fixed and applied your ack (with +renesas as mentioned in your other em=
+ail).
+
+> > +=09}
+> >=20
+> >  =09bru_try_format(bru, config, fmt->pad, &fmt->format);
+
+--=20
+Regards,
+
+Laurent Pinchart
