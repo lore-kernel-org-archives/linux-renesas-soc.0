@@ -1,55 +1,60 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52151 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933012AbcIANz2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Sep 2016 09:55:28 -0400
-Date: Thu, 1 Sep 2016 15:44:04 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] i2c: shmobile: Use ARCH_SHMOBILE instead of SUPERH
-Message-ID: <20160901134403.GB14300@verge.net.au>
-References: <1472636113-26988-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <niklas.soderlund@ragnatech.se>
+Return-Path: <niklas.soderlund@ragnatech.se>
+Date: Wed, 14 Sep 2016 21:30:01 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Kieran Bingham <kieran+renesas@ksquared.org.uk>
+Subject: Re: [PATCH 14/13] v4l: vsp1: Fix spinlock in mixed IRQ context
+ function
+Message-ID: <20160914193000.GM739@bigcity.dyn.berto.se>
+References: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1473809348-5222-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1472636113-26988-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1473809348-5222-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Aug 31, 2016 at 11:35:13AM +0200, Geert Uytterhoeven wrote:
-> "i2c-sh_mobile" is used on sh7343, sh7366, sh7722, sh7723, and sh7724
-> only. As all of the above select ARCH_SHMOBILE, restrict its driver
-> dependencies from SUPERH to ARCH_SHMOBILE.
+On 2016-09-14 02:29:08 +0300, Laurent Pinchart wrote:
+> The wpf_configure() function can be called both from IRQ and non-IRQ
+> contexts, use spin_lock_irqsave().
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
 > ---
->  drivers/i2c/busses/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/media/platform/vsp1/vsp1_wpf.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> index 1f3239ead0377426..6d94e2ec5b4f7183 100644
-> --- a/drivers/i2c/busses/Kconfig
-> +++ b/drivers/i2c/busses/Kconfig
-> @@ -836,7 +836,7 @@ config I2C_SH7760
->  config I2C_SH_MOBILE
->  	tristate "SuperH Mobile I2C Controller"
->  	depends on HAS_DMA
-> -	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
-> +	depends on ARCH_SHMOBILE || ARCH_RENESAS || COMPILE_TEST
->  	help
->  	  If you say yes to this option, support will be included for the
->  	  built-in I2C interface on the Renesas SH-Mobile processor.
+> diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
+> index b4ecffbaa3e3..c483fead3e98 100644
+> --- a/drivers/media/platform/vsp1/vsp1_wpf.c
+> +++ b/drivers/media/platform/vsp1/vsp1_wpf.c
+> @@ -251,11 +251,12 @@ static void wpf_configure(struct vsp1_entity *entity,
+>  	if (params == VSP1_ENTITY_PARAMS_RUNTIME) {
+>  		const unsigned int mask = BIT(WPF_CTRL_VFLIP)
+>  					| BIT(WPF_CTRL_HFLIP);
+> +		unsigned long flags;
+>  
+> -		spin_lock(&wpf->flip.lock);
+> +		spin_lock_irqsave(&wpf->flip.lock, flags);
+>  		wpf->flip.active = (wpf->flip.active & ~mask)
+>  				 | (wpf->flip.pending & mask);
+> -		spin_unlock(&wpf->flip.lock);
+> +		spin_unlock_irqrestore(&wpf->flip.lock, flags);
+>  
+>  		outfmt = (wpf->alpha << VI6_WPF_OUTFMT_PDV_SHIFT) | wpf->outfmt;
+>  
 > -- 
-> 1.9.1
+> Regards,
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-sh" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Laurent Pinchart
 > 
+
+-- 
+Regards,
+Niklas S�derlund
