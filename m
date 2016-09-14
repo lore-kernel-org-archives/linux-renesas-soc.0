@@ -1,47 +1,54 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, linux@armlinux.org.uk,
-        bcousson@baylibre.com, tony@atomide.com,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, k.kozlowski@samsung.com,
-        magnus.damm@gmail.com, horms@verge.net.au, shawnguo@kernel.org,
-        nicolas.ferre@atmel.com, nsekhar@ti.com, kgene@kernel.org,
-        khalasa@piap.pl, kernel@pengutronix.de, ssantosh@kernel.org,
-        fabio.estevam@nxp.com, alexandre.belloni@free-electrons.com,
-        plagnioj@jcrosoft.com, shiraz.linux.kernel@gmail.com,
-        vireshk@kernel.org, arm@kernel.org
-Subject: Re: [PATCH v4 0/2] ARM: cleanup PCI specific configs
-Date: Wed, 21 Sep 2016 22:47:47 +0200
-Message-ID: <3547319.cIOFfkHalq@wuerfel>
-In-Reply-To: <1473848346-17905-1-git-send-email-kishon@ti.com>
-References: <1473848346-17905-1-git-send-email-kishon@ti.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+To: <linux@armlinux.org.uk>, <bcousson@baylibre.com>,
+        <tony@atomide.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>
+CC: <nicolas.ferre@atmel.com>, <alexandre.belloni@free-electrons.com>,
+        <plagnioj@jcrosoft.com>, <khalasa@piap.pl>, <kgene@kernel.org>,
+        <k.kozlowski@samsung.com>, <shawnguo@kernel.org>,
+        <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
+        <ssantosh@kernel.org>, <horms@verge.net.au>,
+        <magnus.damm@gmail.com>, <vireshk@kernel.org>,
+        <shiraz.linux.kernel@gmail.com>, <kishon@ti.com>, <nsekhar@ti.com>
+Subject: [PATCH v4 0/2] ARM: cleanup PCI specific configs
+Date: Wed, 14 Sep 2016 15:49:04 +0530
+Message-ID: <1473848346-17905-1-git-send-email-kishon@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wednesday, September 14, 2016 3:49:04 PM CEST Kishon Vijay Abraham I wrote:
-> This series was initially sent to add support for two PCIe
-> ports in dra7. This included selecting PCI_DOMAINS config
-> in SOC_DRA7XX.
-> 
-> However from the review, PCI_DOMAINS can instead be selected
-> from ARCH_MULTIPLATFORM. This is fixed in this series along
-> with removing PCI_DOMAINS from other configs.
-> 
-> Changes from v3:
-> *) Added *Acked-by:*
-> *) Fixed $subject to not have *Fix*
-> 
-> Kishon Vijay Abraham I (2):
->   ARM: stop *MIGHT_HAVE_PCI* config from being selected redundantly
->   ARM: select PCI_DOMAINS config from ARCH_MULTIPLATFORM
-> 
+This series was initially sent to add support for two PCIe
+ports in dra7. This included selecting PCI_DOMAINS config
+in SOC_DRA7XX.
 
-Applied both to next/cleanup now.
+However from the review, PCI_DOMAINS can instead be selected
+from ARCH_MULTIPLATFORM. This is fixed in this series along
+with removing PCI_DOMAINS from other configs.
 
-	Arnd
+Changes from v3:
+*) Added *Acked-by:*
+*) Fixed $subject to not have *Fix*
+
+Kishon Vijay Abraham I (2):
+  ARM: stop *MIGHT_HAVE_PCI* config from being selected redundantly
+  ARM: select PCI_DOMAINS config from ARCH_MULTIPLATFORM
+
+ arch/arm/Kconfig                 |    1 +
+ arch/arm/mach-at91/Kconfig       |    1 -
+ arch/arm/mach-axxia/Kconfig      |    2 --
+ arch/arm/mach-cns3xxx/Kconfig    |    1 -
+ arch/arm/mach-exynos/Kconfig     |    2 --
+ arch/arm/mach-imx/Kconfig        |    2 --
+ arch/arm/mach-integrator/Kconfig |    1 -
+ arch/arm/mach-keystone/Kconfig   |    2 --
+ arch/arm/mach-shmobile/Kconfig   |    1 -
+ arch/arm/mach-spear/Kconfig      |    1 -
+ arch/arm/mach-versatile/Kconfig  |    1 -
+ 11 files changed, 1 insertion(+), 14 deletions(-)
+
+-- 
+1.7.9.5
