@@ -1,42 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:40215 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757308AbcIPJid (ORCPT
+Received: from sauhun.de ([89.238.76.85]:46027 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752028AbcINRJq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Sep 2016 05:38:33 -0400
-Date: Fri, 16 Sep 2016 11:38:27 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-mmc@vger.kernel.org,
+        Wed, 14 Sep 2016 13:09:46 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-mmc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Dirk Behme <dirk.behme@gmail.com>,
         Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 0/2] gen3: dts: enable on-board eMMC
-Message-ID: <20160916093827.GB14562@verge.net.au>
-References: <20160914170943.1663-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20160914170943.1663-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/2] gen3: dts: enable on-board eMMC
+Date: Wed, 14 Sep 2016 19:09:41 +0200
+Message-Id: <20160914170943.1663-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 14, 2016 at 07:09:41PM +0200, Wolfram Sang wrote:
-> From: Wolfram Sang <wsa@the-dreams.de>
-> 
-> Here are the DTS changes to enable the on-board eMMC memory at 8 bit bus
-> widths on R-Car Gen3 Salvator-X boards.
-> 
-> Note that 'non-removable' is not supported yet because of Runtime PM issues. It
-> seems we need to overhaul Runtime PM handling for other reasons as well, so I
-> suggest the basic support goes in like this and DTS do not use 'non-removable'
-> for now.
-> 
-> Note also that I decided to use the pattern that pinctrl-0 is 3.3v and
-> pinctrl-1 is 1.8v, although the eMMC is fixed at 1.8v. I tried a few ways to
-> only use pinctrl-0 being 1.8v here, but they all ended up to be confusing for
-> users IMO, so I sticked to the most consistent solution after all.
-> 
-> These patches are based on top of Simon's sdr104-v7 patches and the accompanied
-> driver patches sent a minute ago. A branch can be found here:
+From: Wolfram Sang <wsa@the-dreams.de>
 
-Please ping me / repost once these patches are ready to be merged.
+Here are the DTS changes to enable the on-board eMMC memory at 8 bit bus
+widths on R-Car Gen3 Salvator-X boards.
+
+Note that 'non-removable' is not supported yet because of Runtime PM issues. It
+seems we need to overhaul Runtime PM handling for other reasons as well, so I
+suggest the basic support goes in like this and DTS do not use 'non-removable'
+for now.
+
+Note also that I decided to use the pattern that pinctrl-0 is 3.3v and
+pinctrl-1 is 1.8v, although the eMMC is fixed at 1.8v. I tried a few ways to
+only use pinctrl-0 being 1.8v here, but they all ended up to be confusing for
+users IMO, so I sticked to the most consistent solution after all.
+
+These patches are based on top of Simon's sdr104-v7 patches and the accompanied
+driver patches sent a minute ago. A branch can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-8bit-emmc
+
+Please review, comment, apply...
+
+   Wolfram
+
+Wolfram Sang (2):
+  arm64: dts: r8a7795: salvator: enable on-board eMMC
+  arm64: dts: r8a7796: salvator: enable on board eMMC
+
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 43 +++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 44 +++++++++++++++++++++-
+ 2 files changed, 86 insertions(+), 1 deletion(-)
+
+-- 
+2.9.3
