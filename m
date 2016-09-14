@@ -1,74 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39239 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752548AbcIBLRz (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:62453 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1756348AbcINPHj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 07:17:55 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v6 0/9] UHS-I SDR-104 support for sh_mobile_sdhi
-Date: Fri,  2 Sep 2016 13:17:29 +0200
-Message-Id: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
+        Wed, 14 Sep 2016 11:07:39 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: How to put an 'if' statement in a dts?
+Date: Wed, 14 Sep 2016 15:07:27 +0000
+Message-ID: <SG2PR06MB1165E021845BEADE9DD3ED7B8AF10@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <SG2PR06MB1165DA353BCD0325E83D207D8AF10@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdUFbaFxLFhFwCYGX=6NMBK-rYt6Y7o9CgAK=dAbBp9cVg@mail.gmail.com>
+In-Reply-To: <CAMuHMdUFbaFxLFhFwCYGX=6NMBK-rYt6Y7o9CgAK=dAbBp9cVg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
-
-this series is based on work by Ai Kyuse to add UHS-I SDR-104 support for
-sh_mobile_sdhi. It builds on work by Shinobu Uehara, Rob Taylor, William
-Towle and Ian Molton, Ben Hutchings, Wolfram Sang and others to add UHS-I
-SDR-50 support to the same driver.
-
-This series enables:
-* UHS-I SDR-104 on the r8a7790/Lager where UHS-I SDR-50 is already enabled.
-* Both UHS-1 SDR-50 and SDR-104 on the r8a7796/Salvator-X
-
-It is based on a merge of the next branches of the mmc and renesas trees.
-
-The "mmc:" patches are targeted at the next branch of the mmc
-tree. The "ARM:" and "arm64:" patches are targeted at the next branch of
-the renesas tree.
-
-To aid review the following git branches are provided:
-* https:://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdr104-v6
-  This patch set
-* https:://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git topic/sdr104-v6+sdhi-dma-v3
-  This patch set merged with a rebase of prototype DMA support for SDHI on
-  R-Car Gen 3
-
-Overview of changes since v5:
-* Drop retune handling from tmio suspend handler: it hs handled by MMC core
-* Allow restoration of saved tuning parameters on resume
-
-Please see http://elinux.org/Tests:SD-SDHI-SDR104 for indicative tests
-results.
-
-Ai Kyuse (3):
-  mmc: tmio: enhance illegal sequence handling
-  mmc: tmio: Add hw reset support
-  mmc: tmio: Add tuning support
-
-Simon Horman (5):
-  mmc: core: Add helper to see if a host can be retuned
-  mmc: tmio: document mandatory and optional callbacks
-  mmc: sh_mobile_sdhi: Add tuning support
-  ARM: dts: lager: Enable UHS-I SDR-104
-  arm64: dts: r8a7795: salvator-x: Enable UHS-I SDR-104
-
-Wolfram Sang (1):
-  arm64: dts: r8a7795: salvator-x: enable UHS for SDHI 0 & 3
-
- arch/arm/boot/dts/r8a7790-lager.dts                |   1 +
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  24 +-
- drivers/mmc/host/sh_mobile_sdhi.c                  | 265 ++++++++++++++++++++-
- drivers/mmc/host/tmio_mmc.h                        |  18 +-
- drivers/mmc/host/tmio_mmc_pio.c                    |  93 +++++++-
- include/linux/mmc/host.h                           |   5 +
- 6 files changed, 396 insertions(+), 10 deletions(-)
-
--- 
-2.7.0.rc3.207.g0ac5344
+SGkgR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgeW91ciByZXBseS4NCg0KT24gOS8xNC8yMDE2LCBH
+ZWVydCBVeXR0ZXJob2V2ZW4gd3JpdGU6DQo+ID4gQikgTGVhdmUgb25lIGFzICdzdGF0dXMgPSAi
+ZGlzYWJsZWQiJywgYW5kIHRoZW4gdGhlIHVzZXIganVzdCBoYXMgdG8NCj4gPiBzd2l0Y2ggYXJv
+dW5kIHRoZSAnc3RhdHVzJyBwcm9wZXJ0aWVzIGJlZm9yZSBib290IChlaXRoZXIgbW9kaWZ5IHRo
+ZQ0KPiA+IGR0cyBmaWxlIG9yIGNoYW5nZSBpdCBpbiB1LWJvb3Qgd2l0aCB0aGUgZmR0IGNvbW1h
+bmQpDQo+IA0KPiBJIHRha2UgaXQgeW91IGNhbiBhY3R1YWxseSB1c2UgYm90aCBTREhJIG9yIE1N
+QyBvbiBSU0ssIHdpdGhvdXQgY2hhbmdpbmcgYQ0KPiBqdW1wZXI/DQoNCkNvcnJlY3QuIEp1c3Qg
+Y2hhbmdlIHRoZSBwaW4gbXV4LiBTbyB0aGF0IHdpbGwgYmUgcGFydCBvZiB0aGUgbW1jL3NkaGkg
+bm9kZSBkZWZpbml0aW9uIGluIHRoZSBkdHMgZmlsZSAob25jZSBJIGFkZCBhIHBmYyBkcml2ZXIp
+Lg0KDQoNCj4gUHJvYmFibHkgU0RISSBpcyB0aGUgYmVzdCBwZXJmb3JtaW5nIG9wdGlvbj8NCg0K
+SXQncyB0aGUgbW9zdCBwb3B1bGFyIChTRElPIGZvciBXaUZpKS4NCkJ1dCwgdGhlcmUgYXJlIHNv
+bWUgdXNpbmcgZU1NQywgc28gSSdkIGxpa2UgdG8gc2hvdyB0aG9zZSBwZW9wbGUgYSBjb3JyZWN0
+IHNldHVwIGFzIHdlbGwuDQoNCg0KPiBZb3UgY291bGQgYWxzbyBwcm92aWRlIGEgRFQgb3Zlcmxh
+eSBmb3Igc3dpdGNoaW5nIHRvIE1NQy4NCj4gQnV0IHVwc3RyZWFtIERUIG92ZXJsYXkgc3VwcG9y
+dCBpcyBpbmNvbXBsZXRlLg0KPiBDZnIuIGh0dHA6Ly9lbGludXgub3JnL1ItQ2FyL0RULU92ZXJs
+YXlzDQoNClRoYXQgaXMgaW50ZXJlc3RpbmcuIEknbGwgaGF2ZSB0byByZWFkIHNvbWUgbW9yZSBh
+Ym91dCB0aGF0Lg0KDQoNCj4gT24gR2VubWFpLCB0aGUgcmVndWxhdG9yIHNldHVwIGlzIG1vcmUg
+Y29tcGxleCAoc2VlbSB0byBzdXBwb3J0IGJvdGggMy4zVg0KPiBhbmQgNVYpLCBzbyBpZiB3ZSBh
+ZGQgc3VwcG9ydCBmb3IgdGhhdCwgdGhlcmUncyBhIHNlY29uZCBleGFtcGxlLg0KDQpGcm9tIHdo
+YXQgSSd2ZSBzZWVuIG9uIHByb2R1Y3QgYm9hcmRzLCB3aXRoIHRoaXMgbGV2ZWwgb2YgZGV2aWNl
+IChSWi9BMSksIHRoaW5ncyBhcmUgbm90IG5lYXJseSBhcyBjb21wbGljYXRlZCBhcyBHRU5NQUkg
+b3IgUlNLLiBCdXQsIHlvdSdyZSBpZGVhIGlzIGdvb2QgKHVzZSBHRU5NQUkgYXMgYW5vdGhlciBl
+eGFtcGxlIHBsYXRmb3JtKS4NCg0KDQoNCkZvciB0aGUgdXBzdHJlYW0gcnNrcnphMS5kdHMsIGFt
+IEkgYWxsb3dlZCB0byBzdWJtaXQgc29tZXRoaW5nIGxpa2UgdGhpcz8NCihDTjEgaXMgbGFiZWwg
+b2YgdGhlIGNhcmQgc29ja2V0KQ0KDQombW1jaWYgew0KCXZtbWMtc3VwcGx5ID0gPCZkM18zdj47
+DQoJdnFtbWMtc3VwcGx5ID0gPCZkM18zdj47DQoJYnVzLXdpZHRoID0gPDg+Ow0KCW5vbi1yZW1v
+dmFibGU7DQoJc3RhdHVzID0gImRpc2FibGVkIjsgLyogc2hhcmVzIENOMSB3aXRoIHNkaGkxICov
+DQp9Ow0KDQomc2RoaTEgew0KCXN0YXR1cyA9ICJva2F5IjsgLyogc2hhcmVzIENOMSB3aXRoIG1t
+Y2lmICovDQp9Ow0KDQoNCg0KQ2hyaXMNCg0KDQo=
