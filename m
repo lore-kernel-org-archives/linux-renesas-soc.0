@@ -1,40 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:34615 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1763811AbcIOLjz (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34507 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1761904AbcINQqX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Sep 2016 07:39:55 -0400
-Received: by mail-it0-f67.google.com with SMTP id 186so4236975itf.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Sep 2016 04:39:55 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20160914164611.31237-4-ulrich.hecht+renesas@gmail.com>
-References: <20160914164611.31237-1-ulrich.hecht+renesas@gmail.com> <20160914164611.31237-4-ulrich.hecht+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 15 Sep 2016 13:39:54 +0200
-Message-ID: <CAMuHMdWu=pAs5-bKuG_G6_-6HkcBV18oTQX8X1fd6VvsoRwKjQ@mail.gmail.com>
-Subject: Re: [PATCH 3/6] pinctrl: sh-pfc: r8a7796: add I2C pin support
-To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Content-Type: text/plain; charset=UTF-8
+        Wed, 14 Sep 2016 12:46:23 -0400
+Received: by mail-wm0-f65.google.com with SMTP id g141so3379264wmd.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2016 09:46:22 -0700 (PDT)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
+Cc: horms@verge.net.au, magnus.damm@gmail.com, wsa@the-dreams.de,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 3/6] pinctrl: sh-pfc: r8a7796: add I2C pin support
+Date: Wed, 14 Sep 2016 18:46:08 +0200
+Message-Id: <20160914164611.31237-4-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <20160914164611.31237-1-ulrich.hecht+renesas@gmail.com>
+References: <20160914164611.31237-1-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Sep 14, 2016 at 6:46 PM, Ulrich Hecht
-<ulrich.hecht+renesas@gmail.com> wrote:
-> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 77 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index dc9b671..42db745 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -1490,6 +1490,57 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	PINMUX_GPIO_GP_ALL(),
+ };
+ 
++/* - I2C -------------------------------------------------------------------- */
++static const unsigned int i2c1_a_pins[] = {
++	/* SDA, SCL */
++	RCAR_GP_PIN(5, 11), RCAR_GP_PIN(5, 10),
++};
++static const unsigned int i2c1_a_mux[] = {
++	SDA1_A_MARK, SCL1_A_MARK,
++};
++static const unsigned int i2c1_b_pins[] = {
++	/* SDA, SCL */
++	RCAR_GP_PIN(5, 24), RCAR_GP_PIN(5, 23),
++};
++static const unsigned int i2c1_b_mux[] = {
++	SDA1_B_MARK, SCL1_B_MARK,
++};
++static const unsigned int i2c2_a_pins[] = {
++	/* SDA, SCL */
++	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 4),
++};
++static const unsigned int i2c2_a_mux[] = {
++	SDA2_A_MARK, SCL2_A_MARK,
++};
++static const unsigned int i2c2_b_pins[] = {
++	/* SDA, SCL */
++	RCAR_GP_PIN(3, 13), RCAR_GP_PIN(3, 12),
++};
++static const unsigned int i2c2_b_mux[] = {
++	SDA2_B_MARK, SCL2_B_MARK,
++};
++static const unsigned int i2c6_a_pins[] = {
++	/* SDA, SCL */
++	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 11),
++};
++static const unsigned int i2c6_a_mux[] = {
++	SDA6_A_MARK, SCL6_A_MARK,
++};
++static const unsigned int i2c6_b_pins[] = {
++	/* SDA, SCL */
++	RCAR_GP_PIN(1, 26), RCAR_GP_PIN(1, 25),
++};
++static const unsigned int i2c6_b_mux[] = {
++	SDA6_B_MARK, SCL6_B_MARK,
++};
++static const unsigned int i2c6_c_pins[] = {
++	/* SDA, SCL */
++	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14),
++};
++static const unsigned int i2c6_c_mux[] = {
++	SDA6_C_MARK, SCL6_C_MARK,
++};
++
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_pins[] = {
+ 	/* RX, TX */
+@@ -1912,6 +1963,13 @@ static const unsigned int sdhi3_ds_mux[] = {
+ };
+ 
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
++	SH_PFC_PIN_GROUP(i2c1_a),
++	SH_PFC_PIN_GROUP(i2c1_b),
++	SH_PFC_PIN_GROUP(i2c2_a),
++	SH_PFC_PIN_GROUP(i2c2_b),
++	SH_PFC_PIN_GROUP(i2c6_a),
++	SH_PFC_PIN_GROUP(i2c6_b),
++	SH_PFC_PIN_GROUP(i2c6_c),
+ 	SH_PFC_PIN_GROUP(scif0_data),
+ 	SH_PFC_PIN_GROUP(scif0_clk),
+ 	SH_PFC_PIN_GROUP(scif0_ctrl),
+@@ -1969,6 +2027,22 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(sdhi3_ds),
+ };
+ 
++static const char * const i2c1_groups[] = {
++	"i2c1_a",
++	"i2c1_b",
++};
++
++static const char * const i2c2_groups[] = {
++	"i2c2_a",
++	"i2c2_b",
++};
++
++static const char * const i2c6_groups[] = {
++	"i2c6_a",
++	"i2c6_b",
++	"i2c6_c",
++};
++
+ static const char * const scif0_groups[] = {
+ 	"scif0_data",
+ 	"scif0_clk",
+@@ -2058,6 +2132,9 @@ static const char * const sdhi3_groups[] = {
+ };
+ 
+ static const struct sh_pfc_function pinmux_functions[] = {
++	SH_PFC_FUNCTION(i2c1),
++	SH_PFC_FUNCTION(i2c2),
++	SH_PFC_FUNCTION(i2c6),
+ 	SH_PFC_FUNCTION(scif0),
+ 	SH_PFC_FUNCTION(scif1),
+ 	SH_PFC_FUNCTION(scif2),
+-- 
+2.9.3
