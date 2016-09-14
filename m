@@ -1,65 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:41266 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752779AbcIFKfy (ORCPT
+Received: from sauhun.de ([89.238.76.85]:46004 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1762108AbcINRGF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Sep 2016 06:35:54 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH] gpio: rcar: Add r8a7796 (R-Car M3-W) support
-Date: Tue,  6 Sep 2016 12:35:39 +0200
-Message-Id: <1473158139-8291-1-git-send-email-horms+renesas@verge.net.au>
+        Wed, 14 Sep 2016 13:06:05 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Dirk Behme <dirk.behme@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 1/4] mmc: add define for R1 response without CRC
+Date: Wed, 14 Sep 2016 19:05:55 +0200
+Message-Id: <20160914170558.1561-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20160914170558.1561-1-wsa+renesas@sang-engineering.com>
+References: <20160914170558.1561-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-R-Car Gen3's GPIO blocks are identical to Gen2's in every respect.
+The core uses it for polling. Give drivers a proper define to handle
+this case like all other response types.
 
-Based on work for the r8a7795 (R-Car H3) by Ulrich Hecht.
-
-Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
- drivers/gpio/gpio-rcar.c                                     | 4 ++++
- 2 files changed, 5 insertions(+)
----
- Based on linux-gpio/for-next
+ include/linux/mmc/core.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-index 8da26b35b5c3..7c1ab3b3254f 100644
---- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-+++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-@@ -11,6 +11,7 @@ Required Properties:
-     - "renesas,gpio-r8a7793": for R8A7793 (R-Car M2-N) compatible GPIO controller.
-     - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO controller.
-     - "renesas,gpio-r8a7795": for R8A7795 (R-Car H3) compatible GPIO controller.
-+    - "renesas,gpio-r8a7796": for R8A7796 (R-Car M3-W) compatible GPIO controller.
-     - "renesas,gpio-rcar": for generic R-Car GPIO controller.
+diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
+index b01e77de1a74de..4caee099b63a28 100644
+--- a/include/linux/mmc/core.h
++++ b/include/linux/mmc/core.h
+@@ -55,6 +55,9 @@ struct mmc_command {
+ #define MMC_RSP_R6	(MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE)
+ #define MMC_RSP_R7	(MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE)
  
-   - reg: Base address and length of each memory resource used by the GPIO
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index b96e0b466f74..2be48f5eba36 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -348,6 +348,10 @@ static const struct of_device_id gpio_rcar_of_table[] = {
- 		/* Gen3 GPIO is identical to Gen2. */
- 		.data = &gpio_rcar_info_gen2,
- 	}, {
-+		.compatible = "renesas,gpio-r8a7796",
-+		/* Gen3 GPIO is identical to Gen2. */
-+		.data = &gpio_rcar_info_gen2,
-+	}, {
- 		.compatible = "renesas,gpio-rcar",
- 		.data = &gpio_rcar_info_gen1,
- 	}, {
++/* Can be used by core to poll after switch to MMC HS mode */
++#define MMC_RSP_R1_NO_CRC	(MMC_RSP_PRESENT|MMC_RSP_OPCODE)
++
+ #define mmc_resp_type(cmd)	((cmd)->flags & (MMC_RSP_PRESENT|MMC_RSP_136|MMC_RSP_CRC|MMC_RSP_BUSY|MMC_RSP_OPCODE))
+ 
+ /*
 -- 
-2.7.0.rc3.207.g0ac5344
+2.9.3
