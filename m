@@ -1,27 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:37008 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751711AbcIBIaI (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36854 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751168AbcINQqx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 04:30:08 -0400
-Received: from penelope.kanocho.kobe.vergenet.net (unknown [217.111.208.18])
-        by kirsty.vergenet.net (Postfix) with ESMTPSA id 7D68E25B812
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  2 Sep 2016 18:30:05 +1000 (AEST)
-Date: Fri, 2 Sep 2016 10:30:01 +0200
-From: Simon Horman <horms@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [ANNOUNCE] Renesas tree closing for v4.9
-Message-ID: <20160902083001.GA25205@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Wed, 14 Sep 2016 12:46:53 -0400
+Received: by mail-wm0-f65.google.com with SMTP id b184so3388170wma.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2016 09:46:52 -0700 (PDT)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
+Cc: magnus.damm@gmail.com, horms@verge.net.au,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 0/3] r8a7796 SCIF integration
+Date: Wed, 14 Sep 2016 18:46:45 +0200
+Message-Id: <20160914164648.31403-1-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Hi!
 
-I would like to stop accepting non-fix patches for v4.9 next week. This is
-in order for them to be sent before the release of v4.8-rc6, the deadline
-set by the ARM SoC maintainers. As patches should ideally progress from
-the renesas tree into linux-next before sending pull requests there is a
-few days lead time involved.
+This enables SCIFs 0, 1, 3, 4, and 5.
+
+Based on renesas-drivers-2016-09-13-v4.8-rc6. The last patch enables DMA for
+all SCIFs and depends on the "r8a7796 SYS-DMAC integration" series posted
+earlier.
+
+CU
+Uli
+
+
+Ulrich Hecht (3):
+  clk: shmobile: r8a7796: Add SCIF clocks
+  arm64: renesas: r8a7796: Add all SCIF nodes
+  arm64: renesas: r8a7796: Enable SCIF DMA
+
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 77 ++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/r8a7796-cpg-mssr.c   |  5 +++
+ 2 files changed, 82 insertions(+)
+
+-- 
+2.9.3
