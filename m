@@ -1,53 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56892 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755235AbcIMK5b (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35265 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760356AbcINQp7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Sep 2016 06:57:31 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v7 03/11] arm64: dts: r8a7795: salvator-x: Enable UHS-I SDR-104
-Date: Tue, 13 Sep 2016 12:57:00 +0200
-Message-Id: <1473764228-24768-4-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
-References: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
+        Wed, 14 Sep 2016 12:45:59 -0400
+Received: by mail-wm0-f65.google.com with SMTP id 133so1329165wmq.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2016 09:45:58 -0700 (PDT)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
+Cc: horms@verge.net.au, magnus.damm@gmail.com,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 0/3] r8a7796 SYS-DMAC integration
+Date: Wed, 14 Sep 2016 18:45:46 +0200
+Message-Id: <20160914164549.31121-1-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the sd-uhs-sdr104 property to SDHI0 and SDHI1.
+Hi!
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v5
-* New patch
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 2 ++
- 1 file changed, 2 insertions(+)
+This enables the three DMA controllers. Identical to the setup on r8a7795.
+Based on renesas-drivers-2016-09-13-v4.8-rc6.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index ff4e4fe843ed..8964b1ea3cea 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -394,6 +394,7 @@
- 	wp-gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
- 	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
- 	status = "okay";
- };
- 
-@@ -408,6 +409,7 @@
- 	wp-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
- 	bus-width = <4>;
- 	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
- 	status = "okay";
- };
- 
+CU
+Uli
+
+
+Ulrich Hecht (3):
+  clk: renesas: r8a7796: Add SYS-DMAC clocks
+  arm64: renesas: r8a7796: add SYS-DMAC controller nodes
+  dmaengine: rcar-dmac: Document R-Car M3-W bindings
+
+ .../devicetree/bindings/dma/renesas,rcar-dmac.txt  |  1 +
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 99 ++++++++++++++++++++++
+ drivers/clk/renesas/r8a7796-cpg-mssr.c             |  3 +
+ 3 files changed, 103 insertions(+)
+
 -- 
-2.7.0.rc3.207.g0ac5344
+2.9.3
