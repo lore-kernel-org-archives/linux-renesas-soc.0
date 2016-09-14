@@ -1,43 +1,71 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35860 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759045AbcINQqz (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Sep 2016 12:46:55 -0400
-Received: by mail-wm0-f65.google.com with SMTP id b184so3388302wma.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2016 09:46:55 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: magnus.damm@gmail.com, horms@verge.net.au,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 1/3] clk: shmobile: r8a7796: Add SCIF clocks
-Date: Wed, 14 Sep 2016 18:46:46 +0200
-Message-Id: <20160914164648.31403-2-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <20160914164648.31403-1-ulrich.hecht+renesas@gmail.com>
-References: <20160914164648.31403-1-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <niklas.soderlund@ragnatech.se>
+Return-Path: <niklas.soderlund@ragnatech.se>
+Date: Wed, 14 Sep 2016 20:39:53 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Kieran Bingham <kieran+renesas@ksquared.org.uk>
+Subject: Re: [PATCH 05/13] v4l: vsp1: Use DFE instead of FRE for frame end
+Message-ID: <20160914183953.GI739@bigcity.dyn.berto.se>
+References: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1473808626-19488-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1473808626-19488-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 5 +++++
- 1 file changed, 5 insertions(+)
+On 2016-09-14 02:16:58 +0300, Laurent Pinchart wrote:
+> From: Kieran Bingham <kieran+renesas@bingham.xyz>
+> 
+> The DFE and FRE interrupts are both fired at frame completion, as each
+> display list processes a single frame. This won't be true anymore when
+> using image partitioning, switch to DFE in preparation.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Kieran Bingham <kieran+renesas@bingham.xyz>
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 5cabcaa..2c1f597 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -109,6 +109,11 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- };
- 
- static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
-+	DEF_MOD("scif5",		 202,	R8A7796_CLK_S3D4),
-+	DEF_MOD("scif4",		 203,	R8A7796_CLK_S3D4),
-+	DEF_MOD("scif3",		 204,	R8A7796_CLK_S3D4),
-+	DEF_MOD("scif1",		 206,	R8A7796_CLK_S3D4),
-+	DEF_MOD("scif0",		 207,	R8A7796_CLK_S3D4),
- 	DEF_MOD("sys-dmac2",		 217,	R8A7796_CLK_S3D1),
- 	DEF_MOD("sys-dmac1",		 218,	R8A7796_CLK_S3D1),
- 	DEF_MOD("sys-dmac0",		 219,	R8A7796_CLK_S3D1),
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+>  drivers/media/platform/vsp1/vsp1_drv.c | 2 +-
+>  drivers/media/platform/vsp1/vsp1_wpf.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
+> index 92418fc09511..57c713a4e1df 100644
+> --- a/drivers/media/platform/vsp1/vsp1_drv.c
+> +++ b/drivers/media/platform/vsp1/vsp1_drv.c
+> @@ -60,7 +60,7 @@ static irqreturn_t vsp1_irq_handler(int irq, void *data)
+>  		status = vsp1_read(vsp1, VI6_WPF_IRQ_STA(i));
+>  		vsp1_write(vsp1, VI6_WPF_IRQ_STA(i), ~status & mask);
+>  
+> -		if (status & VI6_WFP_IRQ_STA_FRE) {
+> +		if (status & VI6_WFP_IRQ_STA_DFE) {
+>  			vsp1_pipeline_frame_end(wpf->pipe);
+>  			ret = IRQ_HANDLED;
+>  		}
+> diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
+> index 31983169c24a..748f5af90b7e 100644
+> --- a/drivers/media/platform/vsp1/vsp1_wpf.c
+> +++ b/drivers/media/platform/vsp1/vsp1_wpf.c
+> @@ -318,7 +318,7 @@ static void wpf_configure(struct vsp1_entity *entity,
+>  	/* Enable interrupts */
+>  	vsp1_dl_list_write(dl, VI6_WPF_IRQ_STA(wpf->entity.index), 0);
+>  	vsp1_dl_list_write(dl, VI6_WPF_IRQ_ENB(wpf->entity.index),
+> -			   VI6_WFP_IRQ_ENB_FREE);
+> +			   VI6_WFP_IRQ_ENB_DFEE);
+>  }
+>  
+>  static const struct vsp1_entity_operations wpf_entity_ops = {
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
+
 -- 
-2.9.3
+Regards,
+Niklas S�derlund
