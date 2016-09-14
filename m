@@ -1,84 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933951AbcIGHua (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:32831 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1761904AbcINQqQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Sep 2016 03:50:30 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/26] ARM: dts: alt: add MMCIF support
-Date: Wed,  7 Sep 2016 09:49:50 +0200
-Message-Id: <e6ed3f533d54a92f8d67d301f9209ca64d593e03.1473234371.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
-References: <cover.1473234371.git.horms+renesas@verge.net.au>
+        Wed, 14 Sep 2016 12:46:16 -0400
+Received: by mail-wm0-f65.google.com with SMTP id b187so3352438wme.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2016 09:46:16 -0700 (PDT)
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
+Cc: horms@verge.net.au, magnus.damm@gmail.com, wsa@the-dreams.de,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH 0/6] r8a7796 I2C integration
+Date: Wed, 14 Sep 2016 18:46:05 +0200
+Message-Id: <20160914164611.31237-1-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the Alt board dependent part of the MMCIF device node.
+Hi!
 
-Like the Silk the board has eMMC chip along with the  necessary voltage
-regulator (note that the Vcc/Vccq regulator is dummy -- it's required by
-the MMCIF driver but doesn't actually exist on the board).
+This enables the I2C controllers on r8a7796. The only difference to r8a7795
+is the clock for channels three to six (S0D6 instead of S3D2).
 
-Based on work for the Silk board by Vladimir Barinov and Sergei Shtylyov.
+Based on renesas-drivers-2016-09-13-v4.8-rc6. The DMA enablement depends on
+the "r8a7796 SYS-DMAC integration" series posted earlier.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7794-alt.dts | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+CU
+Uli
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index fe7c128cc965..8d1b35afaf82 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -30,6 +30,15 @@
- 		reg = <0 0x40000000 0 0x40000000>;
- 	};
- 
-+	d3_3v: regulator-d3-3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "D3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
- 
-@@ -190,6 +199,11 @@
- 		function = "vin0";
- 	};
- 
-+	mmcif0_pins: mmcif0 {
-+		groups = "mmc_data8", "mmc_ctrl";
-+		function = "mmc";
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-@@ -228,6 +242,17 @@
- 	};
- };
- 
-+&mmcif0 {
-+	pinctrl-0 = <&mmcif0_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&d3_3v>;
-+	vqmmc-supply = <&d3_3v>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
-+};
-+
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
- 	pinctrl-names = "default";
+
+Ulrich Hecht (6):
+  i2c: rcar: add support for r8a7796 (R-Car M3-W)
+  clk: renesas: r8a7796: Add I2C clocks
+  pinctrl: sh-pfc: r8a7796: add I2C pin support
+  arm64: renesas: r8a7796: add I2C support
+  arm64: renesas: r8a7796: Enable I2C DMA
+  arm64: renesas: r8a7796: salvator-x: enable I2C
+
+ Documentation/devicetree/bindings/i2c/i2c-rcar.txt |   1 +
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  12 +++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 108 +++++++++++++++++++++
+ drivers/clk/renesas/r8a7796-cpg-mssr.c             |   7 ++
+ drivers/i2c/busses/i2c-rcar.c                      |   1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c               |  77 +++++++++++++++
+ 6 files changed, 206 insertions(+)
+
 -- 
-2.7.0.rc3.207.g0ac5344
+2.9.3
