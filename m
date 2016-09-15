@@ -1,41 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:40393 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752575AbcIPJph (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35054 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750794AbcIOSdk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Sep 2016 05:45:37 -0400
-Date: Fri, 16 Sep 2016 11:45:32 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH 2/3] arm64: renesas: r8a7796: Add all SCIF nodes
-Message-ID: <20160916094531.GC14562@verge.net.au>
-References: <20160914164648.31403-1-ulrich.hecht+renesas@gmail.com>
- <20160914164648.31403-3-ulrich.hecht+renesas@gmail.com>
- <CAMuHMdU4+Q8QZeHs8DqXDZABHwVOvW=rdjFkLBO=0DyEr39vpw@mail.gmail.com>
+        Thu, 15 Sep 2016 14:33:40 -0400
+Received: by mail-it0-f68.google.com with SMTP id e20so5243604itc.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Sep 2016 11:33:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdU4+Q8QZeHs8DqXDZABHwVOvW=rdjFkLBO=0DyEr39vpw@mail.gmail.com>
+In-Reply-To: <20160914164648.31403-3-ulrich.hecht+renesas@gmail.com>
+References: <20160914164648.31403-1-ulrich.hecht+renesas@gmail.com> <20160914164648.31403-3-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Sep 2016 20:33:38 +0200
+Message-ID: <CAMuHMdU4+Q8QZeHs8DqXDZABHwVOvW=rdjFkLBO=0DyEr39vpw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] arm64: renesas: r8a7796: Add all SCIF nodes
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 15, 2016 at 08:33:38PM +0200, Geert Uytterhoeven wrote:
-> On Wed, Sep 14, 2016 at 6:46 PM, Ulrich Hecht
-> <ulrich.hecht+renesas@gmail.com> wrote:
-> > Add the device nodes for all R-Car H3 SCIF serial ports, incl. clocks
-> > and clock domain.
-> >
-> > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Sep 14, 2016 at 6:46 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Add the device nodes for all R-Car H3 SCIF serial ports, incl. clocks
+> and clock domain.
+>
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Unfortunately this does not apply to my tree.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Ulrich, please consider rebasing the latest renesas/next branch
-(currently renesas-next-20160908-v4.8-rc1 tag) and reposting.
+Gr{oetje,eeting}s,
 
-I'd be happy to see this patch reposted without the rest of the series
-if that would be most expedient for you.
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
