@@ -1,40 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:50867 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756202AbcIOMiT (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:51138 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1765721AbcIOMV5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Sep 2016 08:38:19 -0400
-Date: Thu, 15 Sep 2016 14:38:05 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-media@vger.kernel.org, hans.verkuil@cisco.com,
+        Thu, 15 Sep 2016 08:21:57 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-media@vger.kernel.org, hans.verkuil@cisco.com,
         linux-renesas-soc@vger.kernel.org, mchehab@kernel.org
 Subject: Re: [PATCH] [media] MAINTAINERS: Add entry for the Renesas VIN driver
-Message-ID: <20160915123804.GA6813@verge.net.au>
+Date: Thu, 15 Sep 2016 15:22:38 +0300
+Message-ID: <64105078.kTzLmvx2p0@avalon>
+In-Reply-To: <20160915121836.23637-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20160915121836.23637-1-niklas.soderlund+renesas@ragnatech.se>
- <64105078.kTzLmvx2p0@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <64105078.kTzLmvx2p0@avalon>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 15, 2016 at 03:22:38PM +0300, Laurent Pinchart wrote:
-> Hi Niklas,
-> 
-> Thank you for the patch.
-> 
-> On Thursday 15 Sep 2016 14:18:36 Niklas Söderlund wrote:
-> > The driver is maintained and supported, document it as such.
-> > 
-> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> 
-> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Hi Niklas,
 
-I like this a lot:
+Thank you for the patch.
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+On Thursday 15 Sep 2016 14:18:36 Niklas S=F6derlund wrote:
+> The driver is maintained and supported, document it as such.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech=
+.se>
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  MAINTAINERS | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a12cd60..a4b5283 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7523,6 +7523,15 @@
+> F:=09Documentation/devicetree/bindings/media/renesas,fcp.txt
+> F:=09drivers/media/platform/rcar-fcp.c
+>  F:=09include/media/rcar-fcp.h
+>=20
+> +MEDIA DRIVERS FOR RENESAS - VIN
+> +M:=09Niklas S=F6derlund <niklas.soderlund@ragnatech.se>
+> +L:=09linux-media@vger.kernel.org
+> +L:=09linux-renesas-soc@vger.kernel.org
+> +T:=09git git://linuxtv.org/media_tree.git
+> +S:=09Supported
+> +F:=09Documentation/devicetree/bindings/media/rcar_vin.txt
+> +F:=09drivers/media/platform/rcar-vin/
+> +
+>  MEDIA DRIVERS FOR RENESAS - VSP1
+>  M:=09Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>  L:=09linux-media@vger.kernel.org
+
+--=20
+Regards,
+
+Laurent Pinchart
