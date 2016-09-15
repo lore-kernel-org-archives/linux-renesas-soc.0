@@ -1,38 +1,33 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36122 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756196AbcIOLfB (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 15 Sep 2016 07:35:01 -0400
+Received: by mail-it0-f67.google.com with SMTP id n143so4209478ita.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Sep 2016 04:35:01 -0700 (PDT)
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1467278944-17042-1-git-send-email-kieran@bingham.xyz>
-References: <1467278944-17042-1-git-send-email-kieran@bingham.xyz>
+In-Reply-To: <20160914164611.31237-3-ulrich.hecht+renesas@gmail.com>
+References: <20160914164611.31237-1-ulrich.hecht+renesas@gmail.com> <20160914164611.31237-3-ulrich.hecht+renesas@gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 13 Sep 2016 14:21:15 +0200
-Message-ID: <CAMuHMdUuG9S7+JggruNrPWEqfTs1eKkPf0cGWZZOYC+vwvK72Q@mail.gmail.com>
-Subject: Re: [GIT PULL FOR renesas-drivers] FDP1 Fine Display Processor support
-To: Kieran Bingham <kieran@bingham.xyz>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Date: Thu, 15 Sep 2016 13:35:00 +0200
+Message-ID: <CAMuHMdXj37YoDX4yCfqjapXnKedvHSsrZkS7LOftthJw2YEMbQ@mail.gmail.com>
+Subject: Re: [PATCH 2/6] clk: renesas: r8a7796: Add I2C clocks
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>
 Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kieran,
+On Wed, Sep 14, 2016 at 6:46 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-On Thu, Jun 30, 2016 at 11:29 AM, Kieran Bingham <kieran@bingham.xyz> wrote:
-> The following changes since commit f50e3d0720c0f27476153c2c7129b18639228d1b:
->
->   Merge branch 'drm/next/dt' into for/renesas-drivers (2016-06-21 18:01:05 +0300)
->
-> are available in the git repository at:
->
->   https://github.com/kbingham/linux.git renesas/fdp1
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I've dropped (a rebased version of) the above branch from today's
-renesas-drivers release due to a build failure (V4L2_YCBCR_ENC_SYCC
-undeclared).
-
-Thanks for your understanding.
-
-
-
--- 
 Gr{oetje,eeting}s,
 
                         Geert
