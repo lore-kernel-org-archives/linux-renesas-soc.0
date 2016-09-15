@@ -1,70 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:55170 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932949AbcI2KDj (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:33517 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756393AbcIOLaa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Sep 2016 06:03:39 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
-        dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: robin.murphy@arm.com, arnd@arndb.de,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/2] dma-mapping: fix m32r build warning
-Date: Thu, 29 Sep 2016 12:02:40 +0200
-Message-Id: <20160929100240.7955-3-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20160929100240.7955-1-niklas.soderlund@ragnatech.se>
-References: <20160929100240.7955-1-niklas.soderlund@ragnatech.se>
+        Thu, 15 Sep 2016 07:30:30 -0400
+Received: by mail-it0-f65.google.com with SMTP id x192so4238046itb.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Sep 2016 04:30:30 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <20160914164549.31121-4-ulrich.hecht+renesas@gmail.com>
+References: <20160914164549.31121-1-ulrich.hecht+renesas@gmail.com> <20160914164549.31121-4-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Sep 2016 13:30:29 +0200
+Message-ID: <CAMuHMdX8uSAxGfQWNqNevV-or+gnXnm-opCjANvpJEhmsaFQ=w@mail.gmail.com>
+Subject: Re: [PATCH 3/3] dmaengine: rcar-dmac: Document R-Car M3-W bindings
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+On Wed, Sep 14, 2016 at 6:45 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-kbuild test robot reports:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-   In file included from include/linux/skbuff.h:34:0,
-                    from include/linux/icmpv6.h:4,
-                    from include/linux/ipv6.h:75,
-                    from include/net/ipv6.h:16,
-                    from include/linux/sunrpc/clnt.h:27,
-                    from include/linux/nfs_fs.h:30,
-                    from fs/lockd/clntlock.c:13:
-   include/linux/dma-mapping.h: In function 'dma_map_resource':
->> include/linux/dma-mapping.h:274:16: warning: unused variable 'pfn' [-Wunused-variable]
-     unsigned long pfn = __phys_to_pfn(phys_addr);
-                   ^~~
+Gr{oetje,eeting}s,
 
-The pfn value is only used once in the call to pfn_valid(), remove the
-variable and calculate the pfn when it's needed. Note that the kbuild
-report is old and PHYS_PFN() is now used instead of __phys_to_pfn() to
-calculate the pfn.
+                        Geert
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- include/linux/dma-mapping.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index ff7c87f..642cb4c 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -271,13 +271,12 @@ static inline dma_addr_t dma_map_resource(struct device *dev,
- 					  unsigned long attrs)
- {
- 	struct dma_map_ops *ops = get_dma_ops(dev);
--	unsigned long pfn = PHYS_PFN(phys_addr);
- 	dma_addr_t addr;
- 
- 	BUG_ON(!valid_dma_direction(dir));
- 
- 	/* Don't allow RAM to be mapped */
--	BUG_ON(pfn_valid(pfn));
-+	BUG_ON(pfn_valid(PHYS_PFN(phys_addr)));
- 
- 	addr = phys_addr;
- 	if (ops->map_resource)
--- 
-2.9.3
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
