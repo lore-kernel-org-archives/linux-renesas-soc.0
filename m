@@ -1,34 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:50995 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755773AbcIOMn3 (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:35905 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756577AbcIOLan (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Sep 2016 08:43:29 -0400
-Date: Thu, 15 Sep 2016 14:43:24 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH 2/3] arm64: renesas: r8a7796: add SYS-DMAC controller
- nodes
-Message-ID: <20160915124323.GB6813@verge.net.au>
-References: <20160914164549.31121-1-ulrich.hecht+renesas@gmail.com>
- <20160914164549.31121-3-ulrich.hecht+renesas@gmail.com>
- <CAMuHMdUngaN_YmHhJ3JAgpj+_XsJHLN36vTG0_s0Gm=X-Gtc=Q@mail.gmail.com>
+        Thu, 15 Sep 2016 07:30:43 -0400
+Received: by mail-it0-f65.google.com with SMTP id n143so4199700ita.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Sep 2016 04:30:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUngaN_YmHhJ3JAgpj+_XsJHLN36vTG0_s0Gm=X-Gtc=Q@mail.gmail.com>
+In-Reply-To: <20160914164549.31121-3-ulrich.hecht+renesas@gmail.com>
+References: <20160914164549.31121-1-ulrich.hecht+renesas@gmail.com> <20160914164549.31121-3-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Sep 2016 13:30:41 +0200
+Message-ID: <CAMuHMdUngaN_YmHhJ3JAgpj+_XsJHLN36vTG0_s0Gm=X-Gtc=Q@mail.gmail.com>
+Subject: Re: [PATCH 2/3] arm64: renesas: r8a7796: add SYS-DMAC controller nodes
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 15, 2016 at 01:30:41PM +0200, Geert Uytterhoeven wrote:
-> On Wed, Sep 14, 2016 at 6:45 PM, Ulrich Hecht
-> <ulrich.hecht+renesas@gmail.com> wrote:
-> > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Sep 14, 2016 at 6:45 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-I'd like to see a conclusion to the discussion of the clock patch (1/3)
-before queueing this up. Please repost or ping me once that has happened.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
