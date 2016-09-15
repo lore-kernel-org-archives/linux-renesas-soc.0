@@ -1,186 +1,97 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:33758 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756552AbcIGUWT (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Sep 2016 16:22:19 -0400
-Received: by mail-lf0-f52.google.com with SMTP id h127so6763537lfh.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 07 Sep 2016 13:22:18 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] pcie-rcar: try setting PCIe speed to 5 GT/s at boot
-Date: Wed, 07 Sep 2016 23:22:14 +0300
-Message-ID: <6896977.DKiraAXap6@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Kieran Bingham <kieran@bingham.xyz>
+Subject: [PATCH] v4l: vsp1: Disable VYUY on Gen3
+Date: Fri, 16 Sep 2016 00:11:00 +0300
+Message-Id: <1473973860-19516-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Grigory Kletsko <grigory.kletsko@cogentembedded.com>
+The VYUY format isn't supported on Gen3 hardware, disable it.
 
-Initially, the PCIe link speed is set up only at 2.5 GT/s.
-For better performance,  we're trying to increase link speed to 5 GT/s.
+Gen2 hardware supports VYUY in practice even though the documentation
+doesn't advertise it, so keep it for Gen2 devices.
 
-[Sergei Shtylyov: indented the macro definitions with tabs, renamed the
-SPCHG register bits for consistency, renamed the link speed field/values,
-fixed too long lines, fixed redundancy in clearing the MACSR register bits,
-fixed grammar/typos in  the comments/messages, removed unrelated/useless
-changes, fixed bugs in rcar_rwm32() calls done to set the bits, removed
-unneeded braces, removed non-informative comment, reworded the patch
-summary/description.]
-
-Signed-off-by: Grigory Kletsko <grigory.kletsko@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-The patch is against the 'next' branch of Bjorn Helgaas' 'pci.git' repo.
+ drivers/media/platform/vsp1/vsp1_drm.c   | 2 +-
+ drivers/media/platform/vsp1/vsp1_pipe.c  | 8 +++++++-
+ drivers/media/platform/vsp1/vsp1_pipe.h  | 3 ++-
+ drivers/media/platform/vsp1/vsp1_video.c | 4 ++--
+ 4 files changed, 12 insertions(+), 5 deletions(-)
 
- drivers/pci/host/pcie-rcar.c |  103 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 103 insertions(+)
-
-Index: pci/drivers/pci/host/pcie-rcar.c
-===================================================================
---- pci.orig/drivers/pci/host/pcie-rcar.c
-+++ pci/drivers/pci/host/pcie-rcar.c
-@@ -48,6 +48,10 @@
- #define  CFINIT			1
- #define PCIETSTR		0x02004
- #define  DATA_LINK_ACTIVE	1
-+#define PCIEINTR		0x02008
-+#define  PCIEINTMAC		(1 << 13)
-+#define PCIEINTER		0x0200C
-+#define  PCIEINTMACE		(1 << 13)
- #define PCIEERRFR		0x02020
- #define  UNSUPPORTED_REQUEST	(1 << 4)
- #define PCIEMSIFR		0x02044
-@@ -84,8 +88,21 @@
- #define IDSETR1			0x011004
- #define TLCTLR			0x011048
- #define MACSR			0x011054
-+#define  SPCHG			(1 << 5)
-+#define  SPCHGFIN		(1 << 4)
-+#define  SPCHGSUC		(1 << 7)
-+#define  SPCHGFAIL		(1 << 6)
-+#define  LINK_SPEED		(0xf << 16)
-+#define  LINK_SPEED_2_5GTS	(1 << 16)
-+#define  LINK_SPEED_5_0GTS	(2 << 16)
- #define MACCTLR			0x011058
-+#define  SPEED_CHANGE		(1 << 24)
- #define  SCRAMBLE_DISABLE	(1 << 27)
-+#define MACINTENR		0x01106C
-+#define  SPCHGFINE		(1 << 4)
-+#define MACS2R			0x011078
-+#define MACCGSPSETR		0x011084
-+#define  SPCNGRSN		(1 << 31)
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index 832286975e71..54795b5e5a8a 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -286,7 +286,7 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int rpf_index,
+ 	/* Store the format, stride, memory buffer address, crop and compose
+ 	 * rectangles and Z-order position and for the input.
+ 	 */
+-	fmtinfo = vsp1_get_format_info(cfg->pixelformat);
++	fmtinfo = vsp1_get_format_info(vsp1, cfg->pixelformat);
+ 	if (!fmtinfo) {
+ 		dev_dbg(vsp1->dev, "Unsupport pixel format %08x for RPF\n",
+ 			cfg->pixelformat);
+diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
+index 474de82165d8..78b6184f91ce 100644
+--- a/drivers/media/platform/vsp1/vsp1_pipe.c
++++ b/drivers/media/platform/vsp1/vsp1_pipe.c
+@@ -138,15 +138,21 @@ static const struct vsp1_format_info vsp1_video_formats[] = {
  
- /* R-Car H1 PHY */
- #define H1_PCIEPHYADRR		0x04000c
-@@ -385,6 +402,51 @@ static int rcar_pcie_setup(struct list_h
- 	return 1;
- }
- 
-+void rcar_pcie_force_speedup(struct rcar_pcie *pcie)
-+{
-+	u32 macsr;
-+
-+	dev_info(pcie->dev, "Trying speed up to 5 GT/s\n");
-+
-+	if ((rcar_pci_read_reg(pcie, MACSR) & SPCHGFIN) ||
-+	    (rcar_pci_read_reg(pcie, MACCTLR) & SPEED_CHANGE)) {
-+		dev_err(pcie->dev, "Speed changing is in progress\n");
-+		return;
-+	}
-+
-+	if ((rcar_pci_read_reg(pcie, MACSR) & LINK_SPEED) ==
-+	    LINK_SPEED_5_0GTS) {
-+		dev_err(pcie->dev, "Current link speed is already 5 GT/s\n");
-+		return;
-+	}
-+
-+	if ((rcar_pci_read_reg(pcie, MACS2R) & LINK_SPEED) !=
-+	    LINK_SPEED_5_0GTS) {
-+		dev_err(pcie->dev,
-+			"Current max support link speed not 5 GT/s\n");
-+		return;
-+	}
-+
-+	/* Set target link speed to 5.0 GT/s */
-+	rcar_rmw32(pcie, EXPCAP(12), PCI_EXP_LNKSTA_CLS,
-+		   PCI_EXP_LNKSTA_CLS_5_0GB);
-+
-+	/* Set speed change reason as intentional factor */
-+	rcar_rmw32(pcie, MACCGSPSETR, SPCNGRSN, 0);
-+
-+	/* Clear SPCHGFIN, SPCHGSUC, and SPCHGFAIL */
-+	macsr = rcar_pci_read_reg(pcie, MACSR);
-+	if (macsr & (SPCHGFIN | SPCHGSUC | SPCHGFAIL))
-+		rcar_pci_write_reg(pcie, macsr, MACSR);
-+
-+	/* Enable interrupt */
-+	rcar_rmw32(pcie, MACINTENR, SPCHGFINE, SPCHGFINE);
-+	rcar_rmw32(pcie, PCIEINTER, PCIEINTMACE, PCIEINTMACE);
-+
-+	/* Start link speed change */
-+	rcar_rmw32(pcie, MACCTLR, SPEED_CHANGE, SPEED_CHANGE);
-+}
-+
- static int rcar_pcie_enable(struct rcar_pcie *pcie)
+ /*
+  * vsp1_get_format_info - Retrieve format information for a 4CC
++ * @vsp1: the VSP1 device
+  * @fourcc: the format 4CC
+  *
+  * Return a pointer to the format information structure corresponding to the
+  * given V4L2 format 4CC, or NULL if no corresponding format can be found.
+  */
+-const struct vsp1_format_info *vsp1_get_format_info(u32 fourcc)
++const struct vsp1_format_info *vsp1_get_format_info(struct vsp1_device *vsp1,
++						    u32 fourcc)
  {
- 	struct pci_bus *bus, *child;
-@@ -416,6 +478,9 @@ static int rcar_pcie_enable(struct rcar_
+ 	unsigned int i;
  
- 	pci_bus_add_devices(bus);
++	/* Special case, the VYUY format is supported on Gen2 only. */
++	if (vsp1->info->gen != 2 && fourcc == V4L2_PIX_FMT_VYUY)
++		return NULL;
++
+ 	for (i = 0; i < ARRAY_SIZE(vsp1_video_formats); ++i) {
+ 		const struct vsp1_format_info *info = &vsp1_video_formats[i];
  
-+	/* Try setting 5 GT/s link speed */
-+	rcar_pcie_force_speedup(pcie);
-+
- 	return 0;
- }
+diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
+index f15b697ad999..ac4ad2655551 100644
+--- a/drivers/media/platform/vsp1/vsp1_pipe.h
++++ b/drivers/media/platform/vsp1/vsp1_pipe.h
+@@ -130,6 +130,7 @@ void vsp1_pipeline_propagate_alpha(struct vsp1_pipeline *pipe,
+ void vsp1_pipelines_suspend(struct vsp1_device *vsp1);
+ void vsp1_pipelines_resume(struct vsp1_device *vsp1);
  
-@@ -621,6 +686,44 @@ static irqreturn_t rcar_pcie_msi_irq(int
- 	struct rcar_msi *msi = &pcie->msi;
- 	unsigned long reg;
+-const struct vsp1_format_info *vsp1_get_format_info(u32 fourcc);
++const struct vsp1_format_info *vsp1_get_format_info(struct vsp1_device *vsp1,
++						    u32 fourcc);
  
-+	if (rcar_pci_read_reg(pcie, PCIEINTR) & PCIEINTMAC) {
-+		dev_dbg(pcie->dev, "MAC interrupt received\n");
-+
-+		rcar_rmw32(pcie, MACSR, SPCHGFIN, SPCHGFIN);
-+
-+		/* Disable this interrupt */
-+		rcar_rmw32(pcie, MACINTENR, SPCHGFINE, 0);
-+		rcar_rmw32(pcie, PCIEINTER, PCIEINTMACE, 0);
-+
-+		if (rcar_pci_read_reg(pcie, MACSR) & SPCHGFAIL) {
-+			dev_err(pcie->dev, "Speed change failed\n");
-+
-+			rcar_rmw32(pcie, MACSR, SPCHGFAIL, SPCHGFAIL);
-+			/*
-+			 * TODO: if speed change failed we need to enable
-+			 * "L0 enter" interrupt and set "speed change disabled"
-+			 * state. After L0 interrupt rising, we must clear it,
-+			 * wait for 200 ms and set "speed change enabled" state
-+			 * according to the R-Car Series, 2nd Generation User's
-+			 * Manual, section 50.3.9.
-+			 */
-+			return IRQ_HANDLED;
-+		}
-+
-+		if (rcar_pci_read_reg(pcie, MACSR) & SPCHGSUC)
-+			rcar_rmw32(pcie, MACSR, SPCHGSUC, SPCHGSUC);
-+
-+		/* Check speed */
-+		if ((rcar_pci_read_reg(pcie, MACSR) & LINK_SPEED) ==
-+		    LINK_SPEED_5_0GTS)
-+			dev_info(pcie->dev, "Current link speed now 5 GT/s\n");
-+		else
-+			dev_info(pcie->dev,
-+				 "Current link speed now 2.5 GT/s\n");
-+
-+		return IRQ_HANDLED;
-+	}
-+
- 	reg = rcar_pci_read_reg(pcie, PCIEMSIFR);
+ #endif /* __VSP1_PIPE_H__ */
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index 15d08cb50bd1..e773d3d30df2 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -117,9 +117,9 @@ static int __vsp1_video_try_format(struct vsp1_video *video,
+ 	/* Retrieve format information and select the default format if the
+ 	 * requested format isn't supported.
+ 	 */
+-	info = vsp1_get_format_info(pix->pixelformat);
++	info = vsp1_get_format_info(video->vsp1, pix->pixelformat);
+ 	if (info == NULL)
+-		info = vsp1_get_format_info(VSP1_VIDEO_DEF_FORMAT);
++		info = vsp1_get_format_info(video->vsp1, VSP1_VIDEO_DEF_FORMAT);
  
- 	/* MSI & INTx share an interrupt - we only handle MSI here */
+ 	pix->pixelformat = info->fourcc;
+ 	pix->colorspace = V4L2_COLORSPACE_SRGB;
+-- 
+Regards,
+
+Laurent Pinchart
