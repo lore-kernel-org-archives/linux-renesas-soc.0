@@ -1,138 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-sg2apc01on0132.outbound.protection.outlook.com ([104.47.125.132]:1514
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932284AbcI3LiO (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:35262 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755840AbcIOLru (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Sep 2016 07:38:14 -0400
-From: Jithin T Raj <jithin.t@tataelxsi.co.in>
-To: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
-        "laurent.pinchart@ideasonboard.com"
-        <laurent.pinchart@ideasonboard.com>
-Subject: RGB-LVDS BRIDGE  SUPPORT RCAR E2
-Date: Fri, 30 Sep 2016 11:38:09 +0000
-Message-ID: <SG2PR0401MB1296AB21B1EB9B072EAF7B93D8C10@SG2PR0401MB1296.apcprd04.prod.outlook.com>
-Content-Language: en-US
-Content-Type: multipart/mixed;
-        boundary="_002_SG2PR0401MB1296AB21B1EB9B072EAF7B93D8C10SG2PR0401MB1296_"
+        Thu, 15 Sep 2016 07:47:50 -0400
+Received: by mail-it0-f66.google.com with SMTP id e20so4210690itc.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Sep 2016 04:47:50 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <20160914164611.31237-6-ulrich.hecht+renesas@gmail.com>
+References: <20160914164611.31237-1-ulrich.hecht+renesas@gmail.com> <20160914164611.31237-6-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Sep 2016 13:47:49 +0200
+Message-ID: <CAMuHMdVv9iv8+pY8gHEDavR_Sep+=F-2PyR8eZ++hSQZsAQP4A@mail.gmail.com>
+Subject: Re: [PATCH 5/6] arm64: renesas: r8a7796: Enable I2C DMA
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
---_002_SG2PR0401MB1296AB21B1EB9B072EAF7B93D8C10SG2PR0401MB1296_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Hi Ulrich,
 
+On Wed, Sep 14, 2016 at 6:46 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-     Thank you so much for the information.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Now i compared "arch/arm/boot/dts/r8a7779-marzen.dts" against=A0 "arch/arm/=
-boot/dts/r8a7794-alt.dts" and modified=A0r8a7794-alt.dts a little..
-also added  "thc63lvdm87"in "drivers/gpu/drm/rcar-du/rcar_du_kms.c"..here i=
- am attaching the modified=20
-r8a7794-alt.dts file..I am a newby in this field so that I am asking very b=
-asics..hope you don't feel bore..
-I also build image file and .dtb file successfully but don't deployed it..
-if you don't mind can you please give me a feedback of my work..My source t=
-ree is v4.7.5
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> index a4d8b76..7c4d11c 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> @@ -257,6 +257,8 @@
+>                         interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+>                         clocks = <&cpg CPG_MOD 931>;
+>                         power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+> +                       dmas = <&dmac1 0x91>, <&dmac1 0x90>;
+> +                       dma-names = "tx", "rx";
 
-PFA
+Does the firmware on your r8a7796/salvator-x support using SYS-DMAC2?
+(the one we have on r8a7795/salvator-x doesn't)
+If yes, you may want to add those dmas, too.
 
-Best Regards
-Jithin T Raj
+>                         i2c-scl-internal-delay-ns = <110>;
+>                         status = "disabled";
+>                 };
+> @@ -269,6 +271,8 @@
+>                         interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
+>                         clocks = <&cpg CPG_MOD 930>;
+>                         power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+> +                       dmas = <&dmac1 0x93>, <&dmac1 0x92>;
+> +                       dma-names = "tx", "rx";
 
-      =
+Likewise.
 
---_002_SG2PR0401MB1296AB21B1EB9B072EAF7B93D8C10SG2PR0401MB1296_
-Content-Type: application/octet-stream; name="r8a7794-alt.dts"
-Content-Description: r8a7794-alt.dts
-Content-Disposition: attachment; filename="r8a7794-alt.dts"; size=4609;
-	creation-date="Fri, 30 Sep 2016 11:37:36 GMT";
-	modification-date="Fri, 30 Sep 2016 11:37:36 GMT"
-Content-Transfer-Encoding: base64
+>                         i2c-scl-internal-delay-ns = <6>;
+>                         status = "disabled";
+>                 };
+> @@ -281,6 +285,8 @@
+>                         interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+>                         clocks = <&cpg CPG_MOD 929>;
+>                         power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+> +                       dmas = <&dmac1 0x95>, <&dmac1 0x94>;
+> +                       dma-names = "tx", "rx";
 
-LyoKICogRGV2aWNlIFRyZWUgU291cmNlIGZvciB0aGUgQWx0IGJvYXJkCiAqCiAqIENvcHlyaWdo
-dCAoQykgMjAxNCBSZW5lc2FzIEVsZWN0cm9uaWNzIENvcnBvcmF0aW9uCiAqCiAqIFRoaXMgZmls
-ZSBpcyBsaWNlbnNlZCB1bmRlciB0aGUgdGVybXMgb2YgdGhlIEdOVSBHZW5lcmFsIFB1YmxpYyBM
-aWNlbnNlCiAqIHZlcnNpb24gMi4gIFRoaXMgcHJvZ3JhbSBpcyBsaWNlbnNlZCAiYXMgaXMiIHdp
-dGhvdXQgYW55IHdhcnJhbnR5IG9mIGFueQogKiBraW5kLCB3aGV0aGVyIGV4cHJlc3Mgb3IgaW1w
-bGllZC4KICovCgovZHRzLXYxLzsKI2luY2x1ZGUgInI4YTc3OTQuZHRzaSIKCi8gewoJbW9kZWwg
-PSAiQWx0IjsKCWNvbXBhdGlibGUgPSAicmVuZXNhcyxhbHQiLCAicmVuZXNhcyxyOGE3Nzk0IjsK
-CglhbGlhc2VzIHsKCQlzZXJpYWwwID0gJnNjaWYyOwoJfTsKCgljaG9zZW4gewoJCWJvb3Rhcmdz
-ID0gImlnbm9yZV9sb2dsZXZlbCBydyByb290PS9kZXYvbmZzIGlwPWRoY3AiOwoJCXN0ZG91dC1w
-YXRoID0gInNlcmlhbDA6MTE1MjAwbjgiOwoJfTsKCgltZW1vcnlANDAwMDAwMDAgewoJCWRldmlj
-ZV90eXBlID0gIm1lbW9yeSI7CgkJcmVnID0gPDAgMHg0MDAwMDAwMCAwIDB4NDAwMDAwMDA+OwoJ
-fTsKCglsYnNjIHsKCQkjYWRkcmVzcy1jZWxscyA9IDwxPjsKCQkjc2l6ZS1jZWxscyA9IDwxPjsK
-CX07CgoJdmdhLWVuY29kZXIgewoJCWNvbXBhdGlibGUgPSAiYWRpLGFkdjcxMjMiOwoKCQlwb3J0
-cyB7CgkJCSNhZGRyZXNzLWNlbGxzID0gPDE+OwoJCQkjc2l6ZS1jZWxscyA9IDwwPjsKCgkJCXBv
-cnRAMCB7CgkJCQlyZWcgPSA8MD47CgkJCQlhZHY3MTIzX2luOiBlbmRwb2ludCB7CgkJCQkJcmVt
-b3RlLWVuZHBvaW50ID0gPCZkdV9vdXRfcmdiMT47CgkJCQl9OwoJCQl9OwoJCQlwb3J0QDEgewoJ
-CQkJcmVnID0gPDE+OwoJCQkJYWR2NzEyM19vdXQ6IGVuZHBvaW50IHsKCQkJCQlyZW1vdGUtZW5k
-cG9pbnQgPSA8JnZnYV9pbj47CgkJCQl9OwoJCQl9OwoJCX07Cgl9OwoKCXZnYSB7CgkJY29tcGF0
-aWJsZSA9ICJ2Z2EtY29ubmVjdG9yIjsKCgkJcG9ydCB7CgkJCXZnYV9pbjogZW5kcG9pbnQgewoJ
-CQkJcmVtb3RlLWVuZHBvaW50ID0gPCZhZHY3MTIzX291dD47CgkJCX07CgkJfTsKCX07CglsdmRz
-LWVuY29kZXIgewoJCWNvbXBhdGlibGUgPSAidGhpbmUsdGhjNjNsdmRtODciOwoKCQlwb3J0cyB7
-CgkJCSNhZGRyZXNzLWNlbGxzID0gPDE+OwoJCQkjc2l6ZS1jZWxscyA9IDwwPjsKCgkJCXBvcnRA
-MCB7CgkJCQlyZWcgPSA8MD47CgkJCQlsdmRzX2VuY19pbjogZW5kcG9pbnQgewoJCQkJCXJlbW90
-ZS1lbmRwb2ludCA9IDwmZHVfb3V0X3JnYjE+OwoJCQkJfTsKCQkJfTsKCQkJcG9ydEAxIHsKCQkJ
-CXJlZyA9IDwxPjsKCQkJCWx2ZHNfY29ubmVjdG9yOiBlbmRwb2ludCB7CgkJCQl9OwoJCQl9OwoJ
-CX07Cgl9OwoKCgl4Ml9jbGs6IHgyLWNsb2NrIHsKCQljb21wYXRpYmxlID0gImZpeGVkLWNsb2Nr
-IjsKCQkjY2xvY2stY2VsbHMgPSA8MD47CgkJY2xvY2stZnJlcXVlbmN5ID0gPDc0MjUwMDAwPjsK
-CX07CgoJeDEzX2NsazogeDEzLWNsb2NrIHsKCQljb21wYXRpYmxlID0gImZpeGVkLWNsb2NrIjsK
-CQkjY2xvY2stY2VsbHMgPSA8MD47CgkJY2xvY2stZnJlcXVlbmN5ID0gPDE0ODUwMDAwMD47Cgl9
-Owp9OwoKJmR1IHsKCXBpbmN0cmwtMCA9IDwmZHVfcGlucz47CglwaW5jdHJsLW5hbWVzID0gImRl
-ZmF1bHQiOwoJc3RhdHVzID0gIm9rYXkiOwoKCWNsb2NrcyA9IDwmbXN0cDdfY2xrcyBSOEE3Nzk0
-X0NMS19EVTA+LAoJCSA8Jm1zdHA3X2Nsa3MgUjhBNzc5NF9DTEtfRFUwPiwKCQkgPCZ4MTNfY2xr
-PiwgPCZ4Ml9jbGs+OwoJY2xvY2stbmFtZXMgPSAiZHUuMCIsICJkdS4xIiwgImRjbGtpbi4wIiwg
-ImRjbGtpbi4xIjsKCglwb3J0cyB7CgkJcG9ydEAwIHsKCQkJZW5kcG9pbnQgewoJCQkJcmVtb3Rl
-LWVuZHBvaW50ID0gPCZhZHY3MTIzX2luPjsKCQkJfTsKCQl9OwoJCXBvcnRAMSB7CgkJCWVuZHBv
-aW50IHsKCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmbHZkc19lbmNfaW4+OwoJCQl9OwoJCX07Cgl9
-Owp9OwoKJmV4dGFsX2NsayB7CgljbG9jay1mcmVxdWVuY3kgPSA8MjAwMDAwMDA+Owp9OwoKJnBm
-YyB7CglwaW5jdHJsLTAgPSA8JnNjaWZfY2xrX3BpbnM+OwoJcGluY3RybC1uYW1lcyA9ICJkZWZh
-dWx0IjsKCglkdV9waW5zOiBkdSB7CgkJZHUwIHsKCQkJZ3JvdXBzID0gImR1MF9yZ2I4ODgiLCAi
-ZHUwX3N5bmNfMSIsICJkdTBfY2xrX291dF8wIjsKCQkJZnVuY3Rpb24gPSAiZHUwIjsKCQl9OwoJ
-CWR1MSB7CgkJCWdyb3VwcyA9ICJkdTFfcmdiNjY2IiwgImR1MV9zeW5jXzEiLCAiZHUxX2Nsa19v
-dXQiOwoJCQlmdW5jdGlvbiA9ICJkdTEiOwoJCX07Cgl9OwoKCXNjaWYyX3BpbnM6IHNlcmlhbDIg
-ewoJCWdyb3VwcyA9ICJzY2lmMl9kYXRhIjsKCQlmdW5jdGlvbiA9ICJzY2lmMiI7Cgl9OwoKCXNj
-aWZfY2xrX3BpbnM6IHNjaWZfY2xrIHsKCQlncm91cHMgPSAic2NpZl9jbGsiOwoJCWZ1bmN0aW9u
-ID0gInNjaWZfY2xrIjsKCX07CgoJZXRoZXJfcGluczogZXRoZXIgewoJCWdyb3VwcyA9ICJldGhf
-bGluayIsICJldGhfbWRpbyIsICJldGhfcm1paSI7CgkJZnVuY3Rpb24gPSAiZXRoIjsKCX07CgoJ
-cGh5MV9waW5zOiBwaHkxIHsKCQlncm91cHMgPSAiaW50Y19pcnE4IjsKCQlmdW5jdGlvbiA9ICJp
-bnRjIjsKCX07CgoJaTJjMV9waW5zOiBpMmMxIHsKCQlncm91cHMgPSAiaTJjMSI7CgkJZnVuY3Rp
-b24gPSAiaTJjMSI7Cgl9OwoKCXZpbjBfcGluczogdmluMCB7CgkJZ3JvdXBzID0gInZpbjBfZGF0
-YTgiLCAidmluMF9jbGsiOwoJCWZ1bmN0aW9uID0gInZpbjAiOwoJfTsKfTsKCiZjbXQwIHsKCXN0
-YXR1cyA9ICJva2F5IjsKfTsKCiZwZmMgewoJcXNwaV9waW5zOiBzcGkwIHsKCQlncm91cHMgPSAi
-cXNwaV9jdHJsIiwgInFzcGlfZGF0YTQiOwoJCWZ1bmN0aW9uID0gInFzcGkiOwoJfTsKfTsKCiZl
-dGhlciB7CglwaW5jdHJsLTAgPSA8JmV0aGVyX3BpbnMgJnBoeTFfcGlucz47CglwaW5jdHJsLW5h
-bWVzID0gImRlZmF1bHQiOwoKCXBoeS1oYW5kbGUgPSA8JnBoeTE+OwoJcmVuZXNhcyxldGhlci1s
-aW5rLWFjdGl2ZS1sb3c7CglzdGF0dXMgPSAib2theSI7CgoJcGh5MTogZXRoZXJuZXQtcGh5QDEg
-ewoJCXJlZyA9IDwxPjsKCQlpbnRlcnJ1cHQtcGFyZW50ID0gPCZpcnFjMD47CgkJaW50ZXJydXB0
-cyA9IDw4IElSUV9UWVBFX0xFVkVMX0xPVz47CgkJbWljcmVsLGxlZC1tb2RlID0gPDE+OwoJfTsK
-fTsKCiZpMmMxIHsKCXBpbmN0cmwtMCA9IDwmaTJjMV9waW5zPjsKCXBpbmN0cmwtbmFtZXMgPSAi
-ZGVmYXVsdCI7CgoJc3RhdHVzID0gIm9rYXkiOwoJY2xvY2stZnJlcXVlbmN5ID0gPDQwMDAwMD47
-CgoJY29tcG9zaXRlLWluQDIwIHsKCQljb21wYXRpYmxlID0gImFkaSxhZHY3MTgwIjsKCQlyZWcg
-PSA8MHgyMD47CgkJcmVtb3RlID0gPCZ2aW4wPjsKCgkJcG9ydCB7CgkJCWFkdjcxODA6IGVuZHBv
-aW50IHsKCQkJCWJ1cy13aWR0aCA9IDw4PjsKCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmdmluMGVw
-PjsKCQkJfTsKCQl9OwoJfTsKfTsKCiZ2aW4wIHsKCXN0YXR1cyA9ICJva2F5IjsKCXBpbmN0cmwt
-MCA9IDwmdmluMF9waW5zPjsKCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CgoJcG9ydCB7CgkJ
-I2FkZHJlc3MtY2VsbHMgPSA8MT47CgkJI3NpemUtY2VsbHMgPSA8MD47CgoJCXZpbjBlcDogZW5k
-cG9pbnQgewoJCQlyZW1vdGUtZW5kcG9pbnQgPSA8JmFkdjcxODA+OwoJCQlidXMtd2lkdGggPSA8
-OD47CgkJfTsKCX07Cn07Cgomc2NpZjIgewoJcGluY3RybC0wID0gPCZzY2lmMl9waW5zPjsKCXBp
-bmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CgoJc3RhdHVzID0gIm9rYXkiOwp9OwoKJnNjaWZfY2xr
-IHsKCWNsb2NrLWZyZXF1ZW5jeSA9IDwxNDc0NTYwMD47CglzdGF0dXMgPSAib2theSI7Cn07Cgom
-cXNwaSB7CglwaW5jdHJsLTAgPSA8JnFzcGlfcGlucz47CglwaW5jdHJsLW5hbWVzID0gImRlZmF1
-bHQiOwoKCXN0YXR1cyA9ICJva2F5IjsKCglmbGFzaEAwIHsKCQljb21wYXRpYmxlID0gInNwYW5z
-aW9uLHMyNWZsNTEycyIsICJqZWRlYyxzcGktbm9yIjsKCQlyZWcgPSA8MD47CgkJc3BpLW1heC1m
-cmVxdWVuY3kgPSA8MzAwMDAwMDA+OwoJCXNwaS10eC1idXMtd2lkdGggPSA8ND47CgkJc3BpLXJ4
-LWJ1cy13aWR0aCA9IDw0PjsKCQlzcGktY3BvbDsKCQlzcGktY3BoYTsKCQltMjVwLGZhc3QtcmVh
-ZDsKCgkJcGFydGl0aW9ucyB7CgkJCWNvbXBhdGlibGUgPSAiZml4ZWQtcGFydGl0aW9ucyI7CgkJ
-CSNhZGRyZXNzLWNlbGxzID0gPDE+OwoJCQkjc2l6ZS1jZWxscyA9IDwxPjsKCgkJCXBhcnRpdGlv
-bkAwIHsKCQkJCWxhYmVsID0gImxvYWRlciI7CgkJCQlyZWcgPSA8MHgwMDAwMDAwMCAweDAwMDQw
-MDAwPjsKCQkJCXJlYWQtb25seTsKCQkJfTsKCQkJcGFydGl0aW9uQDQwMDAwIHsKCQkJCWxhYmVs
-ID0gInN5c3RlbSI7CgkJCQlyZWcgPSA8MHgwMDA0MDAwMCAweDAwMDQwMDAwPjsKCQkJCXJlYWQt
-b25seTsKCQkJfTsKCQkJcGFydGl0aW9uQDgwMDAwIHsKCQkJCWxhYmVsID0gInVzZXIiOwoJCQkJ
-cmVnID0gPDB4MDAwODAwMDAgMHgwM2Y4MDAwMD47CgkJCX07CgkJfTsKCX07Cn07Cg==
+Likewise.
 
---_002_SG2PR0401MB1296AB21B1EB9B072EAF7B93D8C10SG2PR0401MB1296_--
+>                         i2c-scl-internal-delay-ns = <6>;
+>                         status = "disabled";
+>                 };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
