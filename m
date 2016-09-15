@@ -1,72 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:32977 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751021AbcIORdc (ORCPT
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35523 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752297AbcIONiF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Sep 2016 13:33:32 -0400
+        Thu, 15 Sep 2016 09:38:05 -0400
+MIME-Version: 1.0
+In-Reply-To: <29832cd4-9380-9cde-a868-90764daeea04@cisco.com>
+References: <20160915132408.20776-1-ulrich.hecht+renesas@gmail.com> <29832cd4-9380-9cde-a868-90764daeea04@cisco.com>
 From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com, ulrich.hecht+renesas@gmail.com,
-        laurent.pinchart@ideasonboard.com, william.towle@codethink.co.uk
-Subject: [PATCH v9 0/2] rcar-vin EDID control ioctls
-Date: Thu, 15 Sep 2016 19:33:22 +0200
-Message-Id: <20160915173324.24539-1-ulrich.hecht+renesas@gmail.com>
+Date: Thu, 15 Sep 2016 15:38:04 +0200
+Message-ID: <CAO3366yw9ZN2eBDzcVULwg64Ljpx61upnywwH1B2ux_Pm7P2+Q@mail.gmail.com>
+Subject: Re: [PATCH v8 0/2] rcar-vin EDID control ioctls
+To: Hans Verkuil <hansverk@cisco.com>
+Cc: hans.verkuil@cisco.com,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent <laurent.pinchart@ideasonboard.com>,
+        William Towle <william.towle@codethink.co.uk>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+On Thu, Sep 15, 2016 at 3:25 PM, Hans Verkuil <hansverk@cisco.com> wrote:
+> On 09/15/2016 03:24 PM, Ulrich Hecht wrote:
+>>
+>> Hi!
+>>
+>> This is a spinoff of "Lager/Koelsch board HDMI input support" that
+>> excludes
+>> the DT portions, and that works without the unmerged subdevice abstraction
+>> layer.
+>
+>
+> Are you going to post another patch series for the DT portions?
 
-This revision sits on top of Hans's rcar branch and adds pad sanity checks
-for g_edid and s_edid, the sink pad fix for the DV timings suggested by
-Niklas, and documents sink_pad_idx. Good night!
+Yes, but not today.
 
 CU
 Uli
-
-
-Changes since v8:
-- dumped merged default-input patch
-- added pad sanity check
-- added DV timings sink pad fix
-- documented sink_pad_idx
-- added Acked-By
-
-Changes since v7:
-- do not fail if there is no sink pad
-
-Changes since v6:
-- work without subdev abstraction layer
-- split off DT parts, to be handled separately
-
-Changes since v5:
-- implement vin/subdev pad translation
-- move i2c devices
-
-Changes since v4:
-- drop merged patches
-- adv7604: always fall back to input 0 if nothing else is specified
-- rcar-vin: implement G_EDID, S_EDID in place of hard-coded EDID blob
-
-Changes since v3:
-- rvin_enum_dv_timings(): use vin->src_pad_idx
-- rvin_dv_timings_cap(): likewise
-- rvin_s_dv_timings(): update vin->format
-- add Koelsch support
-
-Changes since v2:
-- rebased on top of rcar-vin driver v4
-- removed "adv7604: fix SPA register location for ADV7612" (picked up)
-- changed prefix of dts patch to "ARM: dts: lager: "
-
-
-Ulrich Hecht (2):
-  rcar-vin: implement EDID control ioctls
-  media: rcar-vin: use sink pad index for DV timings
-
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 52 +++++++++++++++++++++++++++--
- drivers/media/platform/rcar-vin/rcar-vin.h  |  2 ++
- 2 files changed, 52 insertions(+), 2 deletions(-)
-
--- 
-2.9.3
