@@ -1,66 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:47277 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933339AbcIVVdM (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:52040 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752057AbcIOR5G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Sep 2016 17:33:12 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 2/3] ARM: dts: r7s72100: add sdhi to device tree
-Date: Thu, 22 Sep 2016 17:32:10 -0400
-Message-Id: <20160922213211.7988-3-chris.brandt@renesas.com>
-In-Reply-To: <20160922213211.7988-1-chris.brandt@renesas.com>
-References: <20160922213211.7988-1-chris.brandt@renesas.com>
+        Thu, 15 Sep 2016 13:57:06 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        magnus.damm@gmail.com, william.towle@codethink.co.uk
+Subject: Re: [PATCH v9 2/2] media: rcar-vin: use sink pad index for DV timings
+Date: Thu, 15 Sep 2016 20:57:49 +0300
+Message-ID: <2806955.uYoIn4sQcH@avalon>
+In-Reply-To: <20160915173324.24539-3-ulrich.hecht+renesas@gmail.com>
+References: <20160915173324.24539-1-ulrich.hecht+renesas@gmail.com> <20160915173324.24539-3-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- arch/arm/boot/dts/r7s72100.dtsi | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Hi Ulrich,
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index e97d6d1..8e69399 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -458,4 +458,32 @@
- 		#size-cells = <0>;
- 		status = "disabled";
- 	};
-+
-+	sdhi0: sd@e804e000 {
-+		compatible = "renesas,sdhi-r7s72100";
-+		reg = <0xe804e000 0x100>;
-+		interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		clocks = <&mstp12_clks R7S72100_CLK_SDHI0>;
-+		cap-sd-highspeed;
-+		cap-sdio-irq;
-+		bus-width = <4>;
-+		status = "disabled";
-+	};
-+
-+	sdhi1: sd@e804e800 {
-+		compatible = "renesas,sdhi-r7s72100";
-+		reg = <0xe804e800 0x100>;
-+		interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		clocks = <&mstp12_clks R7S72100_CLK_SDHI1>;
-+		cap-sd-highspeed;
-+		cap-sdio-irq;
-+		bus-width = <4>;
-+		status = "disabled";
-+	};
- };
+Thank you for the patch.
+
+On Thursday 15 Sep 2016 19:33:24 Ulrich Hecht wrote:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+
+With a commit message explaining why this is needed,
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> b/drivers/media/platform/rcar-vin/rcar-v4l2.c index f35005c..2bbe6d4 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -550,7 +550,7 @@ static int rvin_enum_dv_timings(struct file *file, void
+> *priv_fh, int pad, ret;
+> 
+>  	pad = timings->pad;
+> -	timings->pad = vin->src_pad_idx;
+> +	timings->pad = vin->sink_pad_idx;
+> 
+>  	ret = v4l2_subdev_call(sd, pad, enum_dv_timings, timings);
+> 
+> @@ -604,7 +604,7 @@ static int rvin_dv_timings_cap(struct file *file, void
+> *priv_fh, int pad, ret;
+> 
+>  	pad = cap->pad;
+> -	cap->pad = vin->src_pad_idx;
+> +	cap->pad = vin->sink_pad_idx;
+> 
+>  	ret = v4l2_subdev_call(sd, pad, dv_timings_cap, cap);
+
 -- 
-2.9.2
+Regards,
+
+Laurent Pinchart
