@@ -1,58 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45943 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757883AbcIHHnl (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35801 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752117AbcIOSk7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 03:43:41 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Thu, 15 Sep 2016 14:40:59 -0400
+Received: by mail-io0-f196.google.com with SMTP id q92so38082ioi.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Sep 2016 11:40:59 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20160914164716.31512-2-ulrich.hecht+renesas@gmail.com>
+References: <20160914164716.31512-1-ulrich.hecht+renesas@gmail.com> <20160914164716.31512-2-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Sep 2016 20:40:57 +0200
+Message-ID: <CAMuHMdVi1Vq5jLbssU8i-HS9082NuQNW+tdAsLCJ32TeVHrdMA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk: shmobile: r8a7796: Add HSCIF clocks
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/30] arm64: dts: r8a7795: Add HSUSB device node
-Date: Thu,  8 Sep 2016 09:43:00 +0200
-Message-Id: <d2422e1088128f7c7c93681dde7bafe4e52e9255.1473320411.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
-References: <cover.1473320411.git.horms+renesas@verge.net.au>
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+On Wed, Sep 14, 2016 at 6:47 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 834a12a13735..58376e72404b 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1228,6 +1228,23 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
-+
-+		hsusb: usb@e6590000 {
-+			compatible = "renesas,usbhs-r8a7795",
-+				     "renesas,rcar-gen3-usbhs";
-+			reg = <0 0xe6590000 0 0x100>;
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 704>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
-+			renesas,buswait = <11>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
- 		pciec0: pcie@fe000000 {
- 			compatible = "renesas,pcie-r8a7795";
- 			reg = <0 0xfe000000 0 0x80000>;
--- 
-2.7.0.rc3.207.g0ac5344
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
