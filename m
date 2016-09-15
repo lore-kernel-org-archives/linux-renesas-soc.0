@@ -1,65 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:36542 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1760353AbcISMtm (ORCPT
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34760 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753058AbcIOS7b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 08:49:42 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Dirk Behme <dirk.behme@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 0/6] tmio: add support for eMMC with 8 bit bus width
-Date: Mon, 19 Sep 2016 14:49:15 +0200
-Message-Id: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
+        Thu, 15 Sep 2016 14:59:31 -0400
+Received: by mail-it0-f68.google.com with SMTP id 186so12002itf.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Sep 2016 11:59:30 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20160914164716.31512-5-ulrich.hecht+renesas@gmail.com>
+References: <20160914164716.31512-1-ulrich.hecht+renesas@gmail.com> <20160914164716.31512-5-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Sep 2016 20:59:29 +0200
+Message-ID: <CAMuHMdUb0NSjhJW=2HBhyJmsBv_LnhC4okYU6x5ob_iavy48Yw@mail.gmail.com>
+Subject: Re: [PATCH 4/4] arm64: renesas: r8a7796: Enable HSCIF DMA
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series enables SDHI instances on R-Car Gen3 to access eMMC with 8 bit bus
-width. I think the patch descriptions speak for themselves.
+On Wed, Sep 14, 2016 at 6:47 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-I decided to not protect this new feature with a flag because it needs
-specifically to be enabled by setting the bus width to 8. No legacy platform
-does that.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Note that I decided to use the pattern that pinctrl-0 is 3.3v and
-pinctrl-1 is 1.8v, although the eMMC is fixed at 1.8v. I tried a few ways to
-only use pinctrl-0 being 1.8v here, but they all ended up to be confusing for
-users IMO, so I sticked to the most consistent solution after all.
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> index df3b7df..085a6fa9b 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> @@ -357,6 +357,8 @@
+>                                  <&cpg CPG_CORE R8A7796_CLK_S3D1>,
+>                                  <&scif_clk>;
+>                         clock-names = "fck", "brg_int", "scif_clk";
+> +                       dmas = <&dmac1 0x31>, <&dmac1 0x30>;
 
-Changes since V1:
+Same comment as for I2C and HSCIF: dmac2, if it works.
 
-* merged the two distinct series (drivers + DTS) into one: patches 1-4 are for
-  Ulf, I will ping Simon for patches 5+6 when the time is ready.
+Gr{oetje,eeting}s,
 
-* DTS now contains 'non-removable' and we have a software workaround for now.
+                        Geert
 
-These patches are based on top of Simon's sdr104-v7 patches but they apply to
-current mmc/next as well. A branch can be found here:
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-8bit-emmc
-
-Please review, comment, apply...
-
-   Wolfram
-
-Wolfram Sang (6):
-  mmc: add define for R1 response without CRC
-  mmc: rtsx_pci: use new macro for R1 without CRC
-  mmc: rtsx_usb: use new macro for R1 without CRC
-  mmc: tmio: add eMMC support
-  arm64: dts: r8a7795: salvator: enable on-board eMMC
-  arm64: dts: r8a7796: salvator: enable on board eMMC
-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 43 +++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 44 +++++++++++++++++++++-
- drivers/mmc/host/rtsx_pci_sdmmc.c                  |  2 +-
- drivers/mmc/host/rtsx_usb_sdmmc.c                  |  2 +-
- drivers/mmc/host/tmio_mmc.h                        |  3 ++
- drivers/mmc/host/tmio_mmc_pio.c                    | 38 +++++++++++++------
- include/linux/mmc/core.h                           |  3 ++
- 7 files changed, 120 insertions(+), 15 deletions(-)
-
--- 
-2.9.3
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
