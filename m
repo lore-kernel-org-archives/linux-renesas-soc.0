@@ -1,79 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35289 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752446AbcINQsT (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:35107 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752633AbcIOSij (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Sep 2016 12:48:19 -0400
-Received: by mail-wm0-f66.google.com with SMTP id 133so1335379wmq.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2016 09:47:44 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: magnus.damm@gmail.com, horms@verge.net.au,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH] arm64: dts: r8a7796 salvator-x: External SCIF3/HSCIF3 loop
-Date: Wed, 14 Sep 2016 18:47:41 +0200
-Message-Id: <20160914164741.31621-1-ulrich.hecht+renesas@gmail.com>
+        Thu, 15 Sep 2016 14:38:39 -0400
+Received: by mail-io0-f194.google.com with SMTP id q92so33690ioi.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 15 Sep 2016 11:38:38 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20160914164648.31403-4-ulrich.hecht+renesas@gmail.com>
+References: <20160914164648.31403-1-ulrich.hecht+renesas@gmail.com> <20160914164648.31403-4-ulrich.hecht+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Sep 2016 20:38:35 +0200
+Message-ID: <CAMuHMdUgsDWDhn242x3c6aTfW5gLCRvHf+5y+VnxX0CtG78QRg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: renesas: r8a7796: Enable SCIF DMA
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add SCIF3 and HSCIF3 as two new serial ports to the r8a7796
-Salvator-X DT file.
+On Wed, Sep 14, 2016 at 6:46 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 26 ++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index bdf6e05..2636742 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -18,6 +18,8 @@
- 
- 	aliases {
- 		serial0 = &scif2;
-+		serial2 = &scif3;
-+		serial3 = &hscif3;
- 	};
- 
- 	chosen {
-@@ -89,6 +91,14 @@
- 		groups = "scif2_data_a";
- 		function = "scif2";
- 	};
-+	scif3_pins: scif3 { /* TX: 1_11, RX: 1_8 */
-+		groups = "scif3_data_b";
-+		function = "scif3";
-+	};
-+	hscif3_pins: hscif3 { /* TX: 2_8, RX: 2_7 */
-+		groups = "hscif3_data_d";
-+		function = "hscif3";
-+	};
- 	scif_clk_pins: scif_clk {
- 		groups = "scif_clk_a";
- 		function = "scif_clk";
-@@ -138,6 +148,22 @@
- 	status = "okay";
- };
- 
-+&scif3 {
-+	pinctrl-0 = <&scif3_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+/* SCIF3 TX -> HSCIF3 RX, HSCIF3 TX -> SCIF3 RX */
-+
-+&hscif3 {
-+	pinctrl-0 = <&hscif3_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
- &scif2 {
- 	pinctrl-0 = <&scif2_pins>;
- 	pinctrl-names = "default";
--- 
-2.9.3
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> index e59ded4..d2bbf92 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> @@ -356,6 +356,8 @@
+>                                  <&cpg CPG_CORE R8A7796_CLK_S3D1>,
+>                                  <&scif_clk>;
+>                         clock-names = "fck", "brg_int", "scif_clk";
+> +                       dmas = <&dmac1 0x51>, <&dmac1 0x50>;
+
+Same question as for i2c: please add the dmas pointing to dmac2 where
+appropriate, if that works.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
