@@ -1,19 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:34293 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752246AbcIONY0 (ORCPT
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:36617 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933906AbcIOMPB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Sep 2016 09:24:26 -0400
+        Thu, 15 Sep 2016 08:15:01 -0400
 From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         magnus.damm@gmail.com, ulrich.hecht+renesas@gmail.com,
         laurent.pinchart@ideasonboard.com, william.towle@codethink.co.uk
-Subject: [PATCH v8 2/2] rcar-vin: implement EDID control ioctls
-Date: Thu, 15 Sep 2016 15:24:08 +0200
-Message-Id: <20160915132408.20776-3-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <20160915132408.20776-1-ulrich.hecht+renesas@gmail.com>
-References: <20160915132408.20776-1-ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v7 2/2] rcar-vin: implement EDID control ioctls
+Date: Thu, 15 Sep 2016 14:14:46 +0200
+Message-Id: <20160915121446.25830-3-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <20160915121446.25830-1-ulrich.hecht+renesas@gmail.com>
+References: <20160915121446.25830-1-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -21,12 +21,12 @@ Adds G_EDID and S_EDID.
 
 Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 42 +++++++++++++++++++++++++++++
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 44 +++++++++++++++++++++++++++++
  drivers/media/platform/rcar-vin/rcar-vin.h  |  1 +
- 2 files changed, 43 insertions(+)
+ 2 files changed, 45 insertions(+)
 
 diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 62ca7e3..f679182 100644
+index 62ca7e3..ac26738 100644
 --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
 +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
 @@ -557,6 +557,38 @@ static int rvin_dv_timings_cap(struct file *file, void *priv_fh,
@@ -78,16 +78,18 @@ index 62ca7e3..f679182 100644
  	.vidioc_querystd		= rvin_querystd,
  	.vidioc_g_std			= rvin_g_std,
  	.vidioc_s_std			= rvin_s_std,
-@@ -832,6 +867,13 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
+@@ -832,6 +867,15 @@ int rvin_v4l2_probe(struct rvin_dev *vin)
  	vin->src_pad_idx = pad_idx;
  	fmt.pad = vin->src_pad_idx;
  
 +	vin->sink_pad_idx = 0;
 +	for (pad_idx = 0; pad_idx < sd->entity.num_pads; pad_idx++)
-+		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK) {
-+			vin->sink_pad_idx = pad_idx;
++		if (sd->entity.pads[pad_idx].flags == MEDIA_PAD_FL_SINK)
 +			break;
-+		}
++	if (pad_idx >= sd->entity.num_pads)
++		return -EINVAL;
++
++	vin->sink_pad_idx = pad_idx;
 +
  	/* Try to improve our guess of a reasonable window format */
  	ret = v4l2_subdev_call(sd, pad, get_fmt, NULL, &fmt);
