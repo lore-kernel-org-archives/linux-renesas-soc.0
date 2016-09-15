@@ -1,19 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35664 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752165AbcIONYY (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34259 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934038AbcIOMO7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Sep 2016 09:24:24 -0400
+        Thu, 15 Sep 2016 08:14:59 -0400
 From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         magnus.damm@gmail.com, ulrich.hecht+renesas@gmail.com,
         laurent.pinchart@ideasonboard.com, william.towle@codethink.co.uk
-Subject: [PATCH v8 1/2] media: adv7604: automatic "default-input" selection
-Date: Thu, 15 Sep 2016 15:24:07 +0200
-Message-Id: <20160915132408.20776-2-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <20160915132408.20776-1-ulrich.hecht+renesas@gmail.com>
-References: <20160915132408.20776-1-ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v7 1/2] media: adv7604: automatic "default-input" selection
+Date: Thu, 15 Sep 2016 14:14:45 +0200
+Message-Id: <20160915121446.25830-2-ulrich.hecht+renesas@gmail.com>
+In-Reply-To: <20160915121446.25830-1-ulrich.hecht+renesas@gmail.com>
+References: <20160915121446.25830-1-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
