@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35609 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751111AbcIONYU (ORCPT
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:36572 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933906AbcIOMO6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Sep 2016 09:24:20 -0400
+        Thu, 15 Sep 2016 08:14:58 -0400
 From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 To: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se
 Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         magnus.damm@gmail.com, ulrich.hecht+renesas@gmail.com,
         laurent.pinchart@ideasonboard.com, william.towle@codethink.co.uk
-Subject: [PATCH v8 0/2] rcar-vin EDID control ioctls
-Date: Thu, 15 Sep 2016 15:24:06 +0200
-Message-Id: <20160915132408.20776-1-ulrich.hecht+renesas@gmail.com>
+Subject: [PATCH v7 0/2] rcar-vin EDID control ioctls
+Date: Thu, 15 Sep 2016 14:14:44 +0200
+Message-Id: <20160915121446.25830-1-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -21,15 +21,9 @@ This is a spinoff of "Lager/Koelsch board HDMI input support" that excludes
 the DT portions, and that works without the unmerged subdevice abstraction
 layer.
 
-This revision improves over v7 from earlier today in that it does not break
-analog input devices...
-
 CU
 Uli
 
-
-Changes since v7:
-- do not fail if there is no sink pad
 
 Changes since v6:
 - work without subdev abstraction layer
@@ -61,9 +55,9 @@ Ulrich Hecht (2):
   rcar-vin: implement EDID control ioctls
 
  drivers/media/i2c/adv7604.c                 |  5 +++-
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 42 +++++++++++++++++++++++++++++
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 44 +++++++++++++++++++++++++++++
  drivers/media/platform/rcar-vin/rcar-vin.h  |  1 +
- 3 files changed, 47 insertions(+), 1 deletion(-)
+ 3 files changed, 49 insertions(+), 1 deletion(-)
 
 -- 
 2.9.3
