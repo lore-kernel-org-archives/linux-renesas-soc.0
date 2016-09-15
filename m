@@ -1,40 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:36548 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935277AbcISMto (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:50867 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756202AbcIOMiT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 08:49:44 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Dirk Behme <dirk.behme@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 3/6] mmc: rtsx_usb: use new macro for R1 without CRC
-Date: Mon, 19 Sep 2016 14:49:18 +0200
-Message-Id: <20160919124921.8172-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
-References: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
+        Thu, 15 Sep 2016 08:38:19 -0400
+Date: Thu, 15 Sep 2016 14:38:05 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-media@vger.kernel.org, hans.verkuil@cisco.com,
+        linux-renesas-soc@vger.kernel.org, mchehab@kernel.org
+Subject: Re: [PATCH] [media] MAINTAINERS: Add entry for the Renesas VIN driver
+Message-ID: <20160915123804.GA6813@verge.net.au>
+References: <20160915121836.23637-1-niklas.soderlund+renesas@ragnatech.se>
+ <64105078.kTzLmvx2p0@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <64105078.kTzLmvx2p0@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/rtsx_usb_sdmmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Sep 15, 2016 at 03:22:38PM +0300, Laurent Pinchart wrote:
+> Hi Niklas,
+> 
+> Thank you for the patch.
+> 
+> On Thursday 15 Sep 2016 14:18:36 Niklas Söderlund wrote:
+> > The driver is maintained and supported, document it as such.
+> > 
+> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c b/drivers/mmc/host/rtsx_usb_sdmmc.c
-index 6c71fc9f76c7ec..4106295527b9d0 100644
---- a/drivers/mmc/host/rtsx_usb_sdmmc.c
-+++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
-@@ -324,7 +324,7 @@ static void sd_send_cmd_get_rsp(struct rtsx_usb_sdmmc *host,
- 	case MMC_RSP_R1:
- 		rsp_type = SD_RSP_TYPE_R1;
- 		break;
--	case MMC_RSP_R1 & ~MMC_RSP_CRC:
-+	case MMC_RSP_R1_NO_CRC:
- 		rsp_type = SD_RSP_TYPE_R1 | SD_NO_CHECK_CRC7;
- 		break;
- 	case MMC_RSP_R1B:
--- 
-2.9.3
+I like this a lot:
+
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
