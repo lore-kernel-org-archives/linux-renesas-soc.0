@@ -1,48 +1,70 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:33370 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751518AbcIMMT6 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Sep 2016 08:19:58 -0400
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <niklas.soderlund@ragnatech.se>
+Return-Path: <niklas.soderlund@ragnatech.se>
+Date: Thu, 15 Sep 2016 15:19:05 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Kieran Bingham <kieran+renesas@ksquared.org.uk>
+Subject: Re: [PATCH 11/13] v4l: vsp1: Determine partition requirements for
+ scaled images
+Message-ID: <20160915131905.GB19172@bigcity.dyn.berto.se>
+References: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1473808626-19488-12-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <20160914192733.GL739@bigcity.dyn.berto.se>
+ <1554377.UPrL1uhbCT@avalon>
 MIME-Version: 1.0
-In-Reply-To: <1471436430-26245-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1471436430-26245-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 13 Sep 2016 14:19:56 +0200
-Message-ID: <CAMuHMdXDH1R8Po1Hv2r6VubCcUNt6PgW50vB1e2KjXFhf3LWkQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] R-Car VSP1 1-D Histogram support
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1554377.UPrL1uhbCT@avalon>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+On 2016-09-14 23:00:33 +0300, Laurent Pinchart wrote:
+> Hi Niklas,
+> 
+> On Wednesday 14 Sep 2016 21:27:33 Niklas S�derlund wrote:
+> > On 2016-09-14 02:17:04 +0300, Laurent Pinchart wrote:
+> > > From: Kieran Bingham <kieran+renesas@bingham.xyz>
+> > > 
+> > > The partition algorithm needs to determine the capabilities of each
+> > > entity in the pipeline to identify the correct maximum partition width.
+> > > 
+> > > Extend the vsp1 entity operations to provide a max_width operation and
+> > > use this call to calculate the number of partitions that will be
+> > > processed by the algorithm.
+> > > 
+> > > Gen 2 hardware does not require multiple partitioning, and as such
+> > > will always return a single partition.
+> > > 
+> > > Signed-off-by: Kieran Bingham <kieran+renesas@bingham.xyz>
+> > > Signed-off-by: Laurent Pinchart
+> > > <laurent.pinchart+renesas@ideasonboard.com>
+> > 
+> > I can't find the information about the partition limitations for SRU or
+> > UDS in any of the documents I have.
+> 
+> That's because it's not documented in the datasheet :-(
 
-On Wed, Aug 17, 2016 at 2:20 PM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> This patch series implements support for the Renesas R-Car VSP1 1-D histogram
-> generator (HGO). It is based on top of the latest media tree's master branch,
-> and available for convenience at
->
->         git://linuxtv.org/pinchartl/media.git vsp1/hgo
+Sometimes a kind soul provides you with the proper documentation :-)
 
-I've dropped the above branch from today's renesas-drivers release due to too
-many merge conflicts.
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
 
-Thanks for your understanding.
+> 
+> > But for the parts not relating to the logic of figuring out the hscale from
+> > the input/output formats width:
+> > 
+> > Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> Thanks.
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Regards,
+Niklas S�derlund
