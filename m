@@ -1,94 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:38960 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755975AbcIFPPa (ORCPT
+Received: from sauhun.de ([89.238.76.85]:52795 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757375AbcIPKdY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Sep 2016 11:15:30 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCHv2] sh-pfc: return pinconf with arguments in packed format
-Date: Tue,  6 Sep 2016 17:14:14 +0200
-Message-Id: <20160906151414.1104-1-niklas.soderlund+renesas@ragnatech.se>
+        Fri, 16 Sep 2016 06:33:24 -0400
+Date: Fri, 16 Sep 2016 12:33:17 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 10/11] arm64: dts: r8a7796: salvator-x: enable UHS for
+ SDHI 0 & 3
+Message-ID: <20160916103317.GN1411@katana>
+References: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
+ <1473764228-24768-11-git-send-email-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Pjk796cY0SfIo9Z2"
+Content-Disposition: inline
+In-Reply-To: <1473764228-24768-11-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The pinconf-generic code expects configurations with arguments to be
-returned in a packed format in order to be displayed properly by
-pinconf_generic_dump_one().
 
-Reading /sys/kernel/debug/pinctrl/e6060000.pfc/pinconf-pins on
-r8a7795/salvator-x now shows:
+--Pjk796cY0SfIo9Z2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    pin 101 (GP_3_5): output drive strength (9 mA), pin power source (3300 selector)
+On Tue, Sep 13, 2016 at 12:57:07PM +0200, Simon Horman wrote:
+> Based on work for the r8a7796 by Wolfram Sang.
+>=20
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Instead of:
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-    pin 101 (GP_3_5): output drive strength (0 mA), pin power source (0 selector)
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-* Changes since v1:
-- Add more user oriented information in commit message.
-- Add Tested-by tag from Geert.
----
- drivers/pinctrl/sh-pfc/pinctrl.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+--Pjk796cY0SfIo9Z2
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
-index e208ee0..c577258 100644
---- a/drivers/pinctrl/sh-pfc/pinctrl.c
-+++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-@@ -596,6 +596,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
- 	struct sh_pfc *pfc = pmx->pfc;
- 	enum pin_config_param param = pinconf_to_config_param(*config);
- 	unsigned long flags;
-+	unsigned int arg;
- 
- 	if (!sh_pfc_pinconf_validate(pfc, _pin, param))
- 		return -ENOTSUPP;
-@@ -616,7 +617,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
- 		if (bias != param)
- 			return -EINVAL;
- 
--		*config = 0;
-+		arg = 0;
- 		break;
- 	}
- 
-@@ -627,7 +628,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
- 		if (ret < 0)
- 			return ret;
- 
--		*config = ret;
-+		arg = ret;
- 		break;
- 	}
- 
-@@ -646,7 +647,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
- 		val = sh_pfc_read_reg(pfc, pocctrl, 32);
- 		spin_unlock_irqrestore(&pfc->lock, flags);
- 
--		*config = (val & BIT(bit)) ? 3300 : 1800;
-+		arg = (val & BIT(bit)) ? 3300 : 1800;
- 		break;
- 	}
- 
-@@ -654,6 +655,7 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
- 		return -ENOTSUPP;
- 	}
- 
-+	*config = pinconf_to_config_packed(param, arg);
- 	return 0;
- }
- 
--- 
-2.9.3
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX28ptAAoJEBQN5MwUoCm2ErcQAKhkDg6xysla025QLMj7w2Ig
+tjDMehy9JULxsFOlKdCn55CyDZkAmjpJ9r8LgeZBSPgJSfe943w+zGw3zrl1P/GB
+HMXPpJ0AmBZ9q9OliKy5mHY52gaU3BeqZmZDAm3HGLYLUAUgbS4oDkfr/GaB/Q/a
+gOW3jvJ8fTP3w9mriul1PYeOaRnCFyedsuLpTV1uCSePrYp2dn5/cbjZNUNcQjGd
+dRFyjWJY/K8s6jRP+V1dRg8sDPWR1rdyX+kP71mEY9d+WDVp6JHFsEwGb4HHYLTv
+ZBnpqK32uWy9urWVay+gXstNbzQSjpiWFGnZbELR1DU5EKtgasyg6KNrdf5jYCm6
++RUK7LTrChrka7GimtG/G0x6527vsqfuVFqnXT3a4tzfWnliKcIHepLzpZVdtaJn
+zi6OKYsuenQkkP3Aj5FuQ6ccnq0PTmxGyAPSF9hjC/IRAsODZRq5tXqttyonj2QP
+HU3v2D3qx8lGxER8Rub7iwvhsWk+cua/0H29px9VyPJnh2Ro+3HrY/f6RxUbM5m4
+F7Ij5Q0TjYaUyjmy9mwaAMU42IW9ZjDBVfVtLQdcVuFZLCElax8wudijgj79BPWe
+MsofXLGS+ekC8M0qGT9zu8z8hf3Fiqq4e0wkwNFeFa1DMT0OR/XaGVuK74i+LcRX
+FaVeLw8Kg+uOuqyjvAr3
+=q5V2
+-----END PGP SIGNATURE-----
+
+--Pjk796cY0SfIo9Z2--
