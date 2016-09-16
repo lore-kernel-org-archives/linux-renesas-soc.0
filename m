@@ -1,198 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:35116 "EHLO
-        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751520AbcIPN2w (ORCPT
+Received: from sauhun.de ([89.238.76.85]:52752 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752629AbcIPK0T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Sep 2016 09:28:52 -0400
-Received: by mail-lf0-f43.google.com with SMTP id l131so61436212lfl.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Sep 2016 06:28:51 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com
-Subject: [PATCH RFC 1/8] ARM: shmobile: r8a7743: add clock index macros
-Date: Fri, 16 Sep 2016 16:28:48 +0300
-Message-ID: <17982632.cAVaBDUq2Q@wasted.cogentembedded.com>
-In-Reply-To: <3533019.Wim1Kuh1ic@wasted.cogentembedded.com>
-References: <3533019.Wim1Kuh1ic@wasted.cogentembedded.com>
+        Fri, 16 Sep 2016 06:26:19 -0400
+Date: Fri, 16 Sep 2016 12:26:12 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 06/11] ARM: dts: r8a7794: set maximum frequency for
+ SDHI clocks
+Message-ID: <20160916102612.GI1411@katana>
+References: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
+ <1473764228-24768-7-git-send-email-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="xGGVyNQdqA79rdfn"
+Content-Disposition: inline
+In-Reply-To: <1473764228-24768-7-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by the device tree sources to reference the R8A7743
-clocks  by index.
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
+--xGGVyNQdqA79rdfn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Tue, Sep 13, 2016 at 12:57:03PM +0200, Simon Horman wrote:
+> Define the upper limit otherwise the driver cannot utilize max speeds.
+>=20
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
----
- include/dt-bindings/clock/r8a7743-clock.h |  157 ++++++++++++++++++++++++++++++
- 1 file changed, 157 insertions(+)
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Index: renesas/include/dt-bindings/clock/r8a7743-clock.h
-===================================================================
---- /dev/null
-+++ renesas/include/dt-bindings/clock/r8a7743-clock.h
-@@ -0,0 +1,157 @@
-+/*
-+ * Copyright 2013 Ideas On Board SPRL
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_R8A7743_H__
-+#define __DT_BINDINGS_CLOCK_R8A7743_H__
-+
-+/* CPG */
-+#define R8A7743_CLK_MAIN		0
-+#define R8A7743_CLK_PLL0		1
-+#define R8A7743_CLK_PLL1		2
-+#define R8A7743_CLK_PLL3		3
-+#define R8A7743_CLK_LB			4
-+#define R8A7743_CLK_QSPI		5
-+#define R8A7743_CLK_SDH			6
-+#define R8A7743_CLK_SD0			7
-+#define R8A7743_CLK_Z			8
-+#define R8A7743_CLK_RCAN		9
-+
-+/* MSTP0 */
-+#define R8A7743_CLK_MSIOF0		0
-+
-+/* MSTP1 */
-+#define R8A7743_CLK_VCP0		1
-+#define R8A7743_CLK_VPC0		3
-+#define R8A7743_CLK_TMU1		11
-+#define R8A7743_CLK_3DG			12
-+#define R8A7743_CLK_2DDMAC		15
-+#define R8A7743_CLK_FDP1_1		18
-+#define R8A7743_CLK_FDP1_0		19
-+#define R8A7743_CLK_TMU3		21
-+#define R8A7743_CLK_TMU2		22
-+#define R8A7743_CLK_CMT0		24
-+#define R8A7743_CLK_TMU0		25
-+#define R8A7743_CLK_VSP1_DU1		27
-+#define R8A7743_CLK_VSP1_DU0		28
-+#define R8A7743_CLK_VSP1_S		31
-+
-+/* MSTP2 */
-+#define R8A7743_CLK_SCIFA2		2
-+#define R8A7743_CLK_SCIFA1		3
-+#define R8A7743_CLK_SCIFA0		4
-+#define R8A7743_CLK_MSIOF2		5
-+#define R8A7743_CLK_SCIFB0		6
-+#define R8A7743_CLK_SCIFB1		7
-+#define R8A7743_CLK_MSIOF1		8
-+#define R8A7743_CLK_SCIFB2		16
-+#define R8A7743_CLK_SYS_DMAC1		18
-+#define R8A7743_CLK_SYS_DMAC0		19
-+
-+/* MSTP3 */
-+#define R8A7743_CLK_TPU0		4
-+#define R8A7743_CLK_SDHI2		11
-+#define R8A7743_CLK_SDHI1		12
-+#define R8A7743_CLK_SDHI0		14
-+#define R8A7743_CLK_MMCIF0		15
-+#define R8A7743_CLK_IIC0		18
-+#define R8A7743_CLK_PCIEC		19
-+#define R8A7743_CLK_IIC1		23
-+#define R8A7743_CLK_SSUSB		28
-+#define R8A7743_CLK_CMT1		29
-+#define R8A7743_CLK_USBDMAC0		30
-+#define R8A7743_CLK_USBDMAC1		31
-+
-+/* MSTP4 */
-+#define R8A7743_CLK_IRQC		7
-+
-+/* MSTP5 */
-+#define R8A7743_CLK_AUDIO_DMAC1		1
-+#define R8A7743_CLK_AUDIO_DMAC0		2
-+#define R8A7743_CLK_THERMAL		22
-+#define R8A7743_CLK_PWM			23
-+
-+/* MSTP7 */
-+#define R8A7743_CLK_EHCI		3
-+#define R8A7743_CLK_HSUSB		4
-+#define R8A7743_CLK_HSCIF2		13
-+#define R8A7743_CLK_SCIF5		14
-+#define R8A7743_CLK_SCIF4		15
-+#define R8A7743_CLK_HSCIF1		16
-+#define R8A7743_CLK_HSCIF0		17
-+#define R8A7743_CLK_SCIF3		18
-+#define R8A7743_CLK_SCIF2		19
-+#define R8A7743_CLK_SCIF1		20
-+#define R8A7743_CLK_SCIF0		21
-+#define R8A7743_CLK_DU1			23
-+#define R8A7743_CLK_DU0			24
-+#define R8A7743_CLK_LVDS0		26
-+
-+/* MSTP8 */
-+#define R8A7743_CLK_IPMMU_SGX		0
-+#define R8A7743_CLK_VIN2		9
-+#define R8A7743_CLK_VIN1		10
-+#define R8A7743_CLK_VIN0		11
-+#define R8A7743_CLK_ETHER		13
-+#define R8A7743_CLK_SATA1		14
-+#define R8A7743_CLK_SATA0		15
-+
-+/* MSTP9 */
-+#define R8A7743_CLK_GPIO7		4
-+#define R8A7743_CLK_GPIO6		5
-+#define R8A7743_CLK_GPIO5		7
-+#define R8A7743_CLK_GPIO4		8
-+#define R8A7743_CLK_GPIO3		9
-+#define R8A7743_CLK_GPIO2		10
-+#define R8A7743_CLK_GPIO1		11
-+#define R8A7743_CLK_GPIO0		12
-+#define R8A7743_CLK_RCAN1		15
-+#define R8A7743_CLK_RCAN0		16
-+#define R8A7743_CLK_QSPI_MOD		17
-+#define R8A7743_CLK_I2C5		25
-+#define R8A7743_CLK_IICDVFS		26
-+#define R8A7743_CLK_I2C4		27
-+#define R8A7743_CLK_I2C3		28
-+#define R8A7743_CLK_I2C2		29
-+#define R8A7743_CLK_I2C1		30
-+#define R8A7743_CLK_I2C0		31
-+
-+/* MSTP10 */
-+#define R8A7743_CLK_SSI_ALL		5
-+#define R8A7743_CLK_SSI9		6
-+#define R8A7743_CLK_SSI8		7
-+#define R8A7743_CLK_SSI7		8
-+#define R8A7743_CLK_SSI6		9
-+#define R8A7743_CLK_SSI5		10
-+#define R8A7743_CLK_SSI4		11
-+#define R8A7743_CLK_SSI3		12
-+#define R8A7743_CLK_SSI2		13
-+#define R8A7743_CLK_SSI1		14
-+#define R8A7743_CLK_SSI0		15
-+#define R8A7743_CLK_SCU_ALL		17
-+#define R8A7743_CLK_SCU_DVC1		18
-+#define R8A7743_CLK_SCU_DVC0		19
-+#define R8A7743_CLK_SCU_CTU1_MIX1	20
-+#define R8A7743_CLK_SCU_CTU0_MIX0	21
-+#define R8A7743_CLK_SCU_SRC9		22
-+#define R8A7743_CLK_SCU_SRC8		23
-+#define R8A7743_CLK_SCU_SRC7		24
-+#define R8A7743_CLK_SCU_SRC6		25
-+#define R8A7743_CLK_SCU_SRC5		26
-+#define R8A7743_CLK_SCU_SRC4		27
-+#define R8A7743_CLK_SCU_SRC3		28
-+#define R8A7743_CLK_SCU_SRC2		29
-+#define R8A7743_CLK_SCU_SRC1		30
-+#define R8A7743_CLK_SCU_SRC0		31
-+
-+/* MSTP11 */
-+#define R8A7743_CLK_SCIFA3		6
-+#define R8A7743_CLK_SCIFA4		7
-+#define R8A7743_CLK_SCIFA5		8
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7743_H__ */
+
+--xGGVyNQdqA79rdfn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX28jEAAoJEBQN5MwUoCm2DH8QAJLS36ZnIJO4N0SYE25kwTBN
+J6snKbFSkm8ihKGjCEp24McDA9zBk8++8TU3CmLjuA55tNnoaiJKPomxPMK4laqW
+8GiWTPxG0PQrcxNZvwx4bBRLC9KzqSosIwJz0ZUwxis2zpgQ4BUroaWL30OrA8vM
+HFbdpEEBe3RAq/qmrRzhGcWBNlPltP4LHU4MUfoR8fWxyzfM2ewJBi563N1CvrnQ
+HEOG9BKWDt7l2glApZPAM5PPH9SbF7vbM54PMgXnZOaMn1dv9RQ7Tj+K51eCc8wk
+aBIK/9R4/FDSoufT4lbjBaflQb+GwnXnPEKbjO++ktaD2op8f4G8wjpCPnz0fN3d
+ghRxBjQiFPDfFlkpxJhMNdQTLnA7h4/LPsZgUkvMqjQPVCRvTLQdzNxhabKMYpOQ
+OEJR/dnMYzo2PoyBWW6chosOnuVzY5qXc8J53X8EqKdh3K8RQHLKm9ZZaIk2iUiA
+Z/FJQT8vjTB4oPNd0I8W3BSNz1mm4IzPl/Zx/5O5sTAI537O+jMQkRYEnZVCZqF7
+8kD9utOd0uPWYHS65OqaMFP9+TIpo4BWA+n7Xcx/pQBJVZp3pIHcKl7R/PGw2Hda
+qhIUkP0JdX8ucLQvkxixChjjLA8dyc/V3e72ePopvtavGD1+hZ8UjGv1pQsB80Aj
+mZViP7TRn1S7kNOIoPo2
+=v/b8
+-----END PGP SIGNATURE-----
+
+--xGGVyNQdqA79rdfn--
