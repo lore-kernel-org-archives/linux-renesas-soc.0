@@ -1,85 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56892 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756243AbcIMK5f (ORCPT
+Received: from sauhun.de ([89.238.76.85]:52788 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757276AbcIPKcZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Sep 2016 06:57:35 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        Fri, 16 Sep 2016 06:32:25 -0400
+Date: Fri, 16 Sep 2016 12:32:18 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v7 08/11] arm64: dts: r8a7796: add SDHI nodes
-Date: Tue, 13 Sep 2016 12:57:05 +0200
-Message-Id: <1473764228-24768-9-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 09/11] arm64: dts: r8a7796: salvator-x: enable SDHI0 &
+ 3
+Message-ID: <20160916103218.GM1411@katana>
 References: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
+ <1473764228-24768-10-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="XlS4q8O07AKt4+K1"
+Content-Disposition: inline
+In-Reply-To: <1473764228-24768-10-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add SDHI nodes to the DT of the r8a7796 SoC.
 
-Based on the DT of the r8a7795 SoC.
+--XlS4q8O07AKt4+K1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 42 ++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+On Tue, Sep 13, 2016 at 12:57:06PM +0200, Simon Horman wrote:
+> Enable the exposed SD card slots in the DT of the r8a7796/salvator-x.
+>=20
+> Based on work for the r8a7795/salvator-x by Ai Kyuse.
+>=20
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 9217da983525..3aae29fdd9d7 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -251,5 +251,47 @@
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
-+
-+		sdhi0: sd@ee100000 {
-+			compatible = "renesas,sdhi-r8a7796";
-+			reg = <0 0xee100000 0 0x2000>;
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 314>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		sdhi1: sd@ee120000 {
-+			compatible = "renesas,sdhi-r8a7796";
-+			reg = <0 0xee120000 0 0x2000>;
-+			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 313>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
-+		sdhi2: sd@ee140000 {
-+			compatible = "renesas,sdhi-r8a7796";
-+			reg = <0 0xee140000 0 0x2000>;
-+			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 312>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			cap-mmc-highspeed;
-+			status = "disabled";
-+		};
-+
-+		sdhi3: sd@ee160000 {
-+			compatible = "renesas,sdhi-r8a7796";
-+			reg = <0 0xee160000 0 0x2000>;
-+			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 311>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			cap-mmc-highspeed;
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-2.7.0.rc3.207.g0ac5344
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--XlS4q8O07AKt4+K1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX28oyAAoJEBQN5MwUoCm2g9oP/0V/1doX2PeW7Tka0HxbZVMK
++Cj8yyXw5dn6VdbUT6gME/PJmySO0HI5kC4DF9SsiC4hf7TpZfxAGz0xQkbpn8pA
+nPVSUxkTEuEsOadD/dD5LofLBmZpHTjr/FNk89P7EAlJ+La7rg9eLGkAW/wAJ4MZ
+XBF3XSqtnLb0IGaxzTVOFCBgV7yktXxANs2X2w7WBasPoVstFvQ3bKyxtWUdkK/w
+GUjm/Jxg/Et8nUiuVAu4IlrQ8qrOB15D8U7wDDFodIy75sJa0Y6J/sbwDa8gF0mi
+DV62pFA+HmSn0auWitQOfFhKr+nQo5OSI7I7olU2hbA/S0pdGY3VPsuw3M4M7gr7
+7+wK6nB5PRYyCiGRoDGvt7z8fcdFJPmlqWti4sU6DwGlT7gtkiPpjp9mltxXBGNK
+SvF01hk21xjO+oDwIllcS/5OKHR9M2s3iIujvTDpTZ1vwF0DkkaU6+DSsXAoY9od
+AVpR6ZQKD/xFrRq4QRFmQuWi+10oPDMKF6A5GyfahGbrmS9OCYkEiEKIdnPhw5HW
+C2AR1rJ+XBvJUwdOk+4rxf1f5p9MV8C5RccZlDr3YtJ0JqD+1L4JwFxRQDOgwwAZ
+pgWUMsJ8nkFeYR0pgDp2paNIlZzgU2pCBxEwlEQExaO5sMPDgBAOx7qSrPFwml8s
+qrU8qVNyoA2wdH9F6ILs
+=KLXK
+-----END PGP SIGNATURE-----
+
+--XlS4q8O07AKt4+K1--
