@@ -1,104 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:55944 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754814AbcIPMt0 (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.134]:52224 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756183AbcIPMYA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Sep 2016 08:49:26 -0400
-Subject: Re: [PATCHv9 0/6] dmaengine: rcar-dmac: add iommu support for slave
- transfers
+        Fri, 16 Sep 2016 08:24:00 -0400
+From: Arnd Bergmann <arnd@arndb.de>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20160810112219.17964-1-niklas.soderlund+renesas@ragnatech.se>
- <2210422.ogrYIr1eQU@avalon> <55e0ee95-fcbb-918a-da94-85f3aeb6ed37@arm.com>
- <1757972.L4qX7sAfEW@avalon>
-Cc: Arnd Bergmann <arnd@arndb.de>, Vinod Koul <vinod.koul@intel.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
+Cc: Vinod Koul <vinod.koul@intel.com>,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>,
         linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
         iommu@lists.linux-foundation.org, linux@armlinux.org.uk,
-        hch@infradead.org, dan.j.williams@intel.com,
+        hch@infradead.org, dan.j.williams@intel.com, robin.murphy@arm.com,
         linus.walleij@linaro.org,
         Krzysztof Kozlowski <k.kozlowski@samsung.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <cea119f1-18d5-675d-ee33-c22b0c8e7693@arm.com>
-Date: Fri, 16 Sep 2016 13:49:21 +0100
+Subject: Re: [PATCHv9 0/6] dmaengine: rcar-dmac: add iommu support for slave transfers
+Date: Fri, 16 Sep 2016 14:22:31 +0200
+Message-ID: <4397626.d3mSLX4nFk@wuerfel>
+In-Reply-To: <5489283.7nVYvaYEH8@avalon>
+References: <20160810112219.17964-1-niklas.soderlund+renesas@ragnatech.se> <2277430.yNKNTgNkoj@wuerfel> <5489283.7nVYvaYEH8@avalon>
 MIME-Version: 1.0
-In-Reply-To: <1757972.L4qX7sAfEW@avalon>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 16/09/16 13:05, Laurent Pinchart wrote:
-[...]
->>>> One concern I have is that we might get an awkward situation if we ever
->>>> encounter one DMA engine hardware that is used in different systems that
->>>> all have an IOMMU, but on some of them the connection between the DMA
->>>> master and the slave FIFO bypasses the IOMMU while on others the IOMMU
->>>> is required.
->>>
->>> Do you mean systems where some of the channels of a specific DMA engine go
->>> through the IOMMU while others do not ? We indeed have no solution today
->>> for such a situation.
->>>
->>> The problem is a bit broader than that, we'll also have an issue with DMA
->>> engines that have different channels served by different IOMMUs. I recall
->>> discussing this in the past with you, and the solution you proposed was to
->>> add a channel index to struct dma_attrs seems good to me. To support the
->>> case where some channels don't go through an IOMMU we would only need
->>> support for null entries in the IOMMUs list associated with a device (for
->>> instance in the DT case null entries in the iommus property).
->>
->> I think at that point we just create the channels as child devices of
->> the main dmaengine device so they each get their own DMA ops, and can do
->> whatever. The Qualcomm HIDMA driver already does that for a very similar
->> reason (so that the IOMMU can map individual channels into different
->> guest VMs).
+On Friday, September 16, 2016 3:09:29 PM CEST Laurent Pinchart wrote:
+> > I wasn't thinking quite that far, though that is also a theoretical
+> > problem. However, the simple solution would be to have a bit in the DMA
+> > specifier let the driver know whether translation is needed or not.
+> > 
+> > The simpler case I was thinking of is where the entire DMA engine
+> > either goes through an IOMMU or doesn't (depending on the integration
+> > into the SoC), so we'd have to find out through some DT property
+> > or compatible string in the DMA enginen driver.
 > 
-> That's another option, but it seems more like a workaround to me, instead of a 
-> proper solution to fix the more global problem of multiple memory paths within 
-> a single device. I have other hardware devices that can act as bus masters 
-> through different paths (for instance a display-related device that fetches 
-> data and commands through different paths). Luckily so far all those paths are 
-> served by the same IOMMU, but there's no guarantee this will remain true in 
-> the future. Furthermore, even today, the IOMMU connected to that device has 
-> the ability to selectively enable and disable its ports. I have to keep them 
-> all enabled due to the lack of channel information in the DMA mapping and 
-> IOMMU APIs, leading to increased power consumption.
+> Don't we already get that information from the iommus DT property ? If the DMA 
+> engine goes through an IOMMU the property will be set, otherwise it will not.
 
-Indeed, I think both the Exynos and Rockchip IOMMU drivers already do
-cater for a device mastering though multiple discrete IOMMUs, not being
-the fancy multi-port multi-context ones like yours and mine.
+It depends. A dmaengine typically at least has two DMA masters,
+possibly more. It's likely that some dmaengine implementations are
+connected to RAM through an IOMMU, but have direct access to an
+I/O bus for the slave FIFOs.
 
-I guess what we could really do with is a decent abstraction of
-multi-master peripherals at the device level; a "threads within the same
-process" sort of granularity, as it were. I'd envisage it more along the
-lines of how we handle NUMA, i.e. dma_map_page_attrs(...) becomes a
-wrapper for dma_map_page_attrs_multi(..., CHANNEL_ALL), and trickier
-users can call the latter with the a more specific channel(s) argument
-(maybe it's a bitmask rather than an index). Meanwhile,
-dev->archdata.dma_ops may point to a device-specific array of
-dma_map_ops, which the DMA API backend iterates over if necessary.
-
-Strangely, that doesn't actually sound too horrible.
-
-Robin.
-
+> > > The problem is a bit broader than that, we'll also have an issue with DMA
+> > > engines that have different channels served by different IOMMUs.
+> > 
+> > Do you mean a theoretical problem, or a chip that you already know exists?
 > 
->>> Now I see that struct dma_attrs has been replaced by unsigned long in
->>>
->>> commit 00085f1efa387a8ce100e3734920f7639c80caa3
->>> Author: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>> Date:   Wed Aug 3 13:46:00 2016 -0700
->>>
->>>     dma-mapping: use unsigned long for dma_attrs
->>>
->>> We still have enough bits to reserve some of them for a channel number,
->>> but I'm not very happy with that patch as I can see how a future proposal
->>> to handle the channel number through the DMA attributes will get rejected
->>> on the grounds of bits starvation then :-(
->>>
->>>> I don't have any idea for how this could be handled in a generic way, so
->>>> my best answer here is to hope we never get there, and if we do, handle
->>>> it using some local hack in the driver.
-> 
+> That's theoretical. The problem I'm facing today is a DMA engine whose 
+> channels are served by different ports of the same IOMMU. This works in a 
+> suboptimal way because I have to keep all the IOMMU ports enabled regardless 
+> of whether they're used or not, as the DMA engine and IOMMU APIs don't carry 
+> channel information.
+
+Ok
+
+	Arnd
