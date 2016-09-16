@@ -1,76 +1,31 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47648 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757231AbcIAVJ2 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:40590 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757329AbcIPJxV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Sep 2016 17:09:28 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        linux-spi@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-In-Reply-To: <1472636225-27091-1-git-send-email-geert+renesas@glider.be>
-Message-Id: <E1bfYiD-00033v-36@debutante>
-Date: Thu, 01 Sep 2016 21:35:49 +0100
-Subject: Applied "spi: sh-msiof: Use ARCH_SHMOBILE instead of SUPERH" to the spi tree
+        Fri, 16 Sep 2016 05:53:21 -0400
+Date: Fri, 16 Sep 2016 11:53:15 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 04/11] ARM: dts: r8a7791: set maximum frequency for
+ SDHI clocks
+Message-ID: <20160916095315.GF14562@verge.net.au>
+References: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
+ <1473764228-24768-5-git-send-email-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1473764228-24768-5-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+On Tue, Sep 13, 2016 at 12:57:01PM +0200, Simon Horman wrote:
+> Define the upper limit otherwise the driver cannot utilize max speeds.
+> 
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-   spi: sh-msiof: Use ARCH_SHMOBILE instead of SUPERH
-
-has been applied to the spi tree at
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 6ffc84dd1590a7af837a23c8d2c405eaa0a7faef Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Wed, 31 Aug 2016 11:37:05 +0200
-Subject: [PATCH] spi: sh-msiof: Use ARCH_SHMOBILE instead of SUPERH
-
-"spi_sh_msiof" is used on sh7723 and sh7724 only. As all of the above
-select ARCH_SHMOBILE, restrict its driver dependencies from SUPERH to
-ARCH_SHMOBILE.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index d6fb8d4b7786..056e3bada65f 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -549,7 +549,7 @@ config SPI_SC18IS602
- config SPI_SH_MSIOF
- 	tristate "SuperH MSIOF SPI controller"
- 	depends on HAVE_CLK && HAS_DMA
--	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
-+	depends on ARCH_SHMOBILE || ARCH_RENESAS || COMPILE_TEST
- 	help
- 	  SPI driver for SuperH and SH Mobile MSIOF blocks.
- 
--- 
-2.8.1
+I have queued this up.
