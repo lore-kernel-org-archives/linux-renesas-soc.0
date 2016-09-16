@@ -1,109 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:33085 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751096AbcI0MXB (ORCPT
+Received: from sauhun.de ([89.238.76.85]:52729 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751870AbcIPKWo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Sep 2016 08:23:01 -0400
-Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
-        by ayla.of.borg with esmtp (Exim 4.82)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1borPW-0007sj-OU
-        for linux-renesas-soc@vger.kernel.org; Tue, 27 Sep 2016 14:22:58 +0200
-Received: from geert by ramsan with local (Exim 4.82)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1borPc-0001lA-Cu
-        for linux-renesas-soc@vger.kernel.org; Tue, 27 Sep 2016 14:23:04 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2016-09-27-v4.8-rc8
-Date: Tue, 27 Sep 2016 14:23:04 +0200
-Message-Id: <1474978984-6726-1-git-send-email-geert+renesas@glider.be>
+        Fri, 16 Sep 2016 06:22:44 -0400
+Date: Fri, 16 Sep 2016 12:22:34 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 02/11] arm64: dts: r8a7795: salvator-x: enable UHS for
+ SDHI 0 & 3
+Message-ID: <20160916102234.GG1411@katana>
+References: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
+ <1473764228-24768-3-git-send-email-horms+renesas@verge.net.au>
+ <20160916095500.GG14562@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="FwyhczKCDPOVeYh6"
+Content-Disposition: inline
+In-Reply-To: <20160916095500.GG14562@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-I have pushed renesas-drivers-2016-09-27-v4.8-rc8 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+--FwyhczKCDPOVeYh6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's version is based on renesas-devel-20160926-v4.8-rc8.
+On Fri, Sep 16, 2016 at 11:55:00AM +0200, Simon Horman wrote:
+> On Tue, Sep 13, 2016 at 12:56:59PM +0200, Simon Horman wrote:
+> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >=20
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+>=20
+> As SDR50 support is present in the driver in mainline (correct me if I am
+> wrong!) I am queuing this up.
 
-Included branches with driver code:
-  - clk-renesas-for-v4.10
-  - sh-pfc-for-v4.10
-  - topic/ipmmu-multi-arch-v5
-  - topic/r8a7795-ipmmu-v2-rebased2
-  - topic/r8a7796-ipmmu-v1-rebased2
-  - topic/salvator-x-ipmmu-rfc-v3-rebased4
-  - topic/rcar-secondary-booting-in-debug-mode-v1
-  - topic/r8a7796-ravb-v1
-  - topic/spi-slave-v2
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-driver-v7
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-integration-v7
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-v7
-  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-v7+sdhi-dma-v3
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/pretimeout
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/sdhi-8bit-emmc
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/i2c_sdhi_maintenance
-  - git://linuxtv.org/pinchartl/media.git#iommu/devel/du
-  - topic/fcpf-v1-rebased7
-  - https://git.ragnatech.se/linux#histogram
-  - topic/r8a7796-dmac-driver-v1-rebased1
-  - topic/r8a7796-dmac-dts-v1-rebased1
-  - topic/vin-gen2-driver-v1-rebased1
-  - topic/vin-gen2-dts-v1-rebased1
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://people.freedesktop.org/~airlied/linux#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/mchehab/media-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git#mmc-next
-  - git://git.linaro.org/people/ulf.hansson/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/djbw/dmaengine.git#next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
-  - git://git.infradead.org/battery-2.6.git#master
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm-intel#topic/drm-misc
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
 
-Gr{oetje,eeting}s,
+--FwyhczKCDPOVeYh6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-						Geert
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+iQIcBAEBAgAGBQJX28fqAAoJEBQN5MwUoCm27iQQAKTEXsxKQQopRyJ9FGcHNLUU
+D5qrLYyFR3PE/mF2xr2qhaISz11QXcHeKdb7svsyYbnP2wkdfoY8/EfJ9+Tc5aN7
+HyhRngzAUpSwbFYujjG43GvS10386vYdUg/dB+by5HWgadSx8KZM0eIICH8xqDYW
+LffRFyBtt6uj5Fsnzr9YIGZ2+3IGsWSMFS5lLPZKrUuNA5Nze8Ayh8RiMeFG8wgn
+Zyt6LBOkBGwoVIn4jsyHPOD4q8VXcI1BGNDef1uZTB0tiAerUT9ruTrn4ihFETUE
+CzOjO/mcbN4bAXZWTOIzsbC2GZ88qT9ubllA8AfUCSgzVCTKkqf41R0Um5XqeDgq
+zz15SY+VLzNSD41EVr7EZ5QcGruKcv4cABl4QZEZzaaxX7SIRj81vvTuzHre5C0O
+2DYa2oAd/kTQIGNZ25gCHfALOq3CxfmzmL8tMvRKyiGUG/jok4186l1AHAG9LD3b
+29lfKl9lljusK58FOfoGuGJPMFUjjaAzClFI+efddi9GaI6qmXLhlUlzbP/Kel8B
+jFH8P8eOt/feVa4jkZwLLDpSoTgA73JraXlzAHulAgtHcN5VyNhPDuu/vEJud72B
+ICm6272bqeAMtfPBdMTb7jawRIGmyf+3mufx/1HHWvAkUIyACb8MO+uisZjTiO/V
+iT/0F/5B6y1s9ERZJVZg
+=iF9H
+-----END PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--FwyhczKCDPOVeYh6--
