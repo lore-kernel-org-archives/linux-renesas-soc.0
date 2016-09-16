@@ -1,40 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:36546 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1761561AbcISMtn (ORCPT
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34502 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756670AbcIPNJj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 08:49:43 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Dirk Behme <dirk.behme@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 2/6] mmc: rtsx_pci: use new macro for R1 without CRC
-Date: Mon, 19 Sep 2016 14:49:17 +0200
-Message-Id: <20160919124921.8172-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
-References: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
+        Fri, 16 Sep 2016 09:09:39 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: horms@verge.net.au
+Cc: geert@linux-m68k.org, hans.verkuil@cisco.com,
+        niklas.soderlund@ragnatech.se, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
+        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com
+Subject: [PATCH 0/3] r8a7793 Gose video input support
+Date: Fri, 16 Sep 2016 15:09:32 +0200
+Message-Id: <20160916130935.21292-1-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/rtsx_pci_sdmmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi!
 
-diff --git a/drivers/mmc/host/rtsx_pci_sdmmc.c b/drivers/mmc/host/rtsx_pci_sdmmc.c
-index 396c9b7e4121b0..3ccaa1415f33b2 100644
---- a/drivers/mmc/host/rtsx_pci_sdmmc.c
-+++ b/drivers/mmc/host/rtsx_pci_sdmmc.c
-@@ -126,7 +126,7 @@ static int sd_response_type(struct mmc_command *cmd)
- 		return SD_RSP_TYPE_R0;
- 	case MMC_RSP_R1:
- 		return SD_RSP_TYPE_R1;
--	case MMC_RSP_R1 & ~MMC_RSP_CRC:
-+	case MMC_RSP_R1_NO_CRC:
- 		return SD_RSP_TYPE_R1 | SD_NO_CHECK_CRC7;
- 	case MMC_RSP_R1B:
- 		return SD_RSP_TYPE_R1b;
+This is a by-the-datasheet implementation of analog and digital video input
+on the Gose board.
+
+I don't have that hardware, so if somebody could test this, I would
+appreciate it.  To get the digital part to work, use Hans's R-Car branch
+(https://git.linuxtv.org/hverkuil/media_tree.git/log/?h=rcar) plus the
+"media: adv7604: automatic "default-input" selection" patch.
+
+CU
+Uli
+
+
+Ulrich Hecht (3):
+  ARM: dts: r8a7793: Enable VIN0, VIN1
+  ARM: dts: gose: add HDMI input
+  ARM: dts: gose: add composite video input
+
+ arch/arm/boot/dts/r8a7793-gose.dts | 77 ++++++++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/r8a7793.dtsi     | 20 ++++++++++
+ 2 files changed, 97 insertions(+)
+
 -- 
 2.9.3
