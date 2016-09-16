@@ -1,57 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:55163 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932557AbcI2KDj (ORCPT
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36324 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756314AbcIPNJQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Sep 2016 06:03:39 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
-        dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: robin.murphy@arm.com, arnd@arndb.de,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/2] dma-mapping: fix ia64 build, use PHYS_PFN
-Date: Thu, 29 Sep 2016 12:02:39 +0200
-Message-Id: <20160929100240.7955-2-niklas.soderlund@ragnatech.se>
-In-Reply-To: <20160929100240.7955-1-niklas.soderlund@ragnatech.se>
-References: <20160929100240.7955-1-niklas.soderlund@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 16 Sep 2016 09:09:16 -0400
+From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+To: horms@verge.net.au
+Cc: geert@linux-m68k.org, hans.verkuil@cisco.com,
+        niklas.soderlund@ragnatech.se, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
+        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
+        william.towle@codethink.co.uk
+Subject: [PATCH 0/2] Renesas Lager/Koelsch HDMI input
+Date: Fri, 16 Sep 2016 15:09:07 +0200
+Message-Id: <20160916130909.21225-1-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Hi!
 
-kbuild test robot reports:
+This series enables HDMI input on the Lager and Koelsch boards.
+It sits on renesas-devel-20160913-v4.8-rc6 and also applies to the media
+tree.
 
-   In file included from include/linux/skbuff.h:34:0,
-                    from include/linux/tcp.h:21,
-                    from drivers/net/ethernet/amd/xgbe/xgbe-drv.c:119:
-   include/linux/dma-mapping.h: In function 'dma_map_resource':
->> include/linux/dma-mapping.h:274:22: error: implicit declaration of function '__phys_to_pfn' [-Werror=implicit-function-declaration]
-     unsigned long pfn = __phys_to_pfn(phys_addr);
-                         ^~~~~~~~~~~~~
+Testing this on a Lager board with v4l2-compliance on top of Hans's R-Car
+branch (https://git.linuxtv.org/hverkuil/media_tree.git/log/?h=rcar) with
+"media: adv7604: automatic "default-input" selection" applied, it gets a
+perfect score (172/172 pass).
 
-ia64 does not provide __phys_to_pfn(), use the PHYS_PFN() alias.
+CU
+Uli
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- include/linux/dma-mapping.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 6e00c7f..ff7c87f 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -271,7 +271,7 @@ static inline dma_addr_t dma_map_resource(struct device *dev,
- 					  unsigned long attrs)
- {
- 	struct dma_map_ops *ops = get_dma_ops(dev);
--	unsigned long pfn = __phys_to_pfn(phys_addr);
-+	unsigned long pfn = PHYS_PFN(phys_addr);
- 	dma_addr_t addr;
- 
- 	BUG_ON(!valid_dma_direction(dir));
+Hans Verkuil (1):
+  ARM: dts: koelsch: add HDMI input
+
+William Towle (1):
+  ARM: dts: lager: Add entries for VIN HDMI input support
+
+ arch/arm/boot/dts/r8a7790-lager.dts   | 39 +++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 41 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 80 insertions(+)
+
 -- 
 2.9.3
