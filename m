@@ -1,76 +1,80 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:34872 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965197AbcIWHZL (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:54262 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759048AbcIPM6F (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Sep 2016 03:25:11 -0400
-Received: by mail-lf0-f41.google.com with SMTP id l131so86097565lfl.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 23 Sep 2016 00:25:02 -0700 (PDT)
-From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-Date: Fri, 23 Sep 2016 09:25:00 +0200
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-renesas-soc@vger.kernel.org,
+        Fri, 16 Sep 2016 08:58:05 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Vinod Koul <vinod.koul@intel.com>,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
         iommu@lists.linux-foundation.org, linux@armlinux.org.uk,
         hch@infradead.org, dan.j.williams@intel.com, robin.murphy@arm.com,
-        laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org
-Subject: Re: [PATCHv9 0/6] dmaengine: rcar-dmac: add iommu support for slave
- transfers
-Message-ID: <20160923072459.GJ19172@bigcity.dyn.berto.se>
-References: <20160810112219.17964-1-niklas.soderlund+renesas@ragnatech.se>
- <20160810173710.GK9681@localhost>
- <20160915162650.GZ13920@localhost>
+        linus.walleij@linaro.org,
+        Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCHv9 0/6] dmaengine: rcar-dmac: add iommu support for slave transfers
+Date: Fri, 16 Sep 2016 15:58:50 +0300
+Message-ID: <2426718.0qODmfDriD@avalon>
+In-Reply-To: <4397626.d3mSLX4nFk@wuerfel>
+References: <20160810112219.17964-1-niklas.soderlund+renesas@ragnatech.se> <5489283.7nVYvaYEH8@avalon> <4397626.d3mSLX4nFk@wuerfel>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20160915162650.GZ13920@localhost>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Vinod,
+Hi Arnd,
 
-On 2016-09-15 21:56:51 +0530, Vinod Koul wrote:
-> On Wed, Aug 10, 2016 at 11:07:10PM +0530, Vinod Koul wrote:
-> > On Wed, Aug 10, 2016 at 01:22:13PM +0200, Niklas S�derlund wrote:
-> > > Hi,
-> > > 
-> > > This series tries to solve the problem with DMA with device registers
-> > > (MMIO registers) that are behind an IOMMU for the rcar-dmac driver. A
-> > > recent patch '9575632 (dmaengine: make slave address physical)'
-> > > clarifies that DMA slave address provided by clients is the physical
-> > > address. This puts the task of mapping the DMA slave address from a
-> > > phys_addr_t to a dma_addr_t on the DMA engine.
-> > > 
-> > > Without an IOMMU this is easy since the phys_addr_t and dma_addr_t are
-> > > the same and no special care is needed. However if you have a IOMMU you
-> > > need to map the DMA slave phys_addr_t to a dma_addr_t using something
-> > > like this.
-> > > 
-> > > This series is based on top of v4.8-rc1. And I'm hoping to be able to collect a
-> > > Ack from Russell King on patch 4/6 that adds the ARM specific part and then be
-> > > able to take the whole series through the dmaengine tree. If this is not the
-> > > best route I'm more then happy to do it another way.
-> > > 
-> > > It's tested on a Koelsch with CONFIG_IPMMU_VMSA and by enabling the
-> > > ipmmu_ds node in r8a7791.dtsi. I verified operation by interacting with
-> > > /dev/mmcblk1, i2c and the serial console which are devices behind the
-> > > iommu.
+On Friday 16 Sep 2016 14:22:31 Arnd Bergmann wrote:
+> On Friday, September 16, 2016 3:09:29 PM CEST Laurent Pinchart wrote:
+> >> I wasn't thinking quite that far, though that is also a theoretical
+> >> problem. However, the simple solution would be to have a bit in the DMA
+> >> specifier let the driver know whether translation is needed or not.
+> >> 
+> >> The simpler case I was thinking of is where the entire DMA engine
+> >> either goes through an IOMMU or doesn't (depending on the integration
+> >> into the SoC), so we'd have to find out through some DT property
+> >> or compatible string in the DMA enginen driver.
 > > 
-> > As I said in last one, the dmaengine parts look fine to me. But to go thru
-> > dmaengine tree I would need ACK on non dmaengine patches.
-> 
-> I havent heard back from this one and I am inclined to merge this one now.
-> If anyone has any objects, please speak up now...
+> > Don't we already get that information from the iommus DT property ? If the
+> > DMA engine goes through an IOMMU the property will be set, otherwise it
+> > will not.
+>
+> It depends. A dmaengine typically at least has two DMA masters,
+> possibly more. It's likely that some dmaengine implementations are
+> connected to RAM through an IOMMU, but have direct access to an
+> I/O bus for the slave FIFOs.
 
-I'm just curios, do you plan to merge this series with Arnds Ack? If not 
-is there anything I can do to help move the series in the right 
-direction?
+Sure, but I expect the DMA engine DT node to list all the relevant IOMMU(s) 
+(if any) in the iommus property in a way that allows the DMA engine driver to 
+know what IOMMU port is used for what purpose. It will then be up to the DMA 
+engine driver to select the right port identifier to pass to the DMA mapping 
+API.
 
+I'm not sure how this would work with Robin's proposal of creating one device 
+per channel though, as there would still be a single node in DT for the DMA 
+engine device. Furthermore, a single channel might indeed have multiple DMA 
+masters, not all of them being served by an IOMMU. We would thus still need 
+memory port identifiers in the DMA mapping API.
+
+> >>> The problem is a bit broader than that, we'll also have an issue with
+> >>> DMA engines that have different channels served by different IOMMUs.
+> >> 
+> >> Do you mean a theoretical problem, or a chip that you already know
+> >> exists?
+> > 
+> > That's theoretical. The problem I'm facing today is a DMA engine whose
+> > channels are served by different ports of the same IOMMU. This works in a
+> > suboptimal way because I have to keep all the IOMMU ports enabled
+> > regardless of whether they're used or not, as the DMA engine and IOMMU
+> > APIs don't carry channel information.
 > 
-> Also ACKs welcome...
-> 
+> Ok
 
 -- 
 Regards,
-Niklas S�derlund
+
+Laurent Pinchart
