@@ -1,145 +1,73 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Tue, 20 Sep 2016 22:44:26 +0900
-Message-Id: <20160920134426.25470.39272.sendpatchset@little-apple>
-In-Reply-To: <20160920134355.25470.93701.sendpatchset@little-apple>
-References: <20160920134355.25470.93701.sendpatchset@little-apple>
-Subject: [PATCH v5 03/07] iommu/ipmmu-vmsa: Break out utlb parsing code
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:52736 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751870AbcIPKX3 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 16 Sep 2016 06:23:29 -0400
+Date: Fri, 16 Sep 2016 12:23:22 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 05/11] ARM: dts: koelsch: Enable UHS-I SDR-50 and
+ SDR-104
+Message-ID: <20160916102322.GH1411@katana>
+References: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
+ <1473764228-24768-6-git-send-email-horms+renesas@verge.net.au>
+ <20160916100031.GH14562@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="nOM8ykUjac0mNN89"
+Content-Disposition: inline
+In-Reply-To: <20160916100031.GH14562@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
 
-Break out the utlb parsing code and dev_data allocation into a
-separate function. This is preparation for future code sharing.
+--nOM8ykUjac0mNN89
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+On Fri, Sep 16, 2016 at 12:00:32PM +0200, Simon Horman wrote:
+> On Tue, Sep 13, 2016 at 12:57:02PM +0200, Simon Horman wrote:
+> > Add the "1v8" pinctrl state and sd-uhs-sdr50 property to SDHI{0,1,2}.
+> > And the sd-uhs-sdr104 property to SDHI0.
+> >=20
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+>=20
+> As SDR50 support is present in the driver in mainline (correct me if I am
+> wrong!) I have queued this up after dropping the sdr104 portion and
+> updating the changelog accordingly.
 
- Changes since V4:
- - Dropped hunk with fix to apply on top of:
-   b1e2afc iommu/ipmmu-vmsa: Fix wrong error handle of ipmmu_add_device
- 
- Changes since V3:
- - Initialize "mmu" to NULL, check before accessing
- - Removed group parameter from ipmmu_init_platform_device()
+Looks good!
 
- Changes since V2:
- - Included this new patch from the following series:
-   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
- - Reworked code to fit on top on previous two patches in current series.
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
- drivers/iommu/ipmmu-vmsa.c |   58 ++++++++++++++++++++++++++++----------------
- 1 file changed, 37 insertions(+), 21 deletions(-)
 
---- 0006/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-09-20 21:49:34.580607110 +0900
-@@ -647,22 +647,15 @@ static int ipmmu_find_utlbs(struct ipmmu
- 	return 0;
- }
- 
--static int ipmmu_add_device(struct device *dev)
-+static int ipmmu_init_platform_device(struct device *dev)
- {
- 	struct ipmmu_vmsa_archdata *archdata;
- 	struct ipmmu_vmsa_device *mmu;
--	struct iommu_group *group = NULL;
- 	unsigned int *utlbs;
- 	unsigned int i;
- 	int num_utlbs;
- 	int ret = -ENODEV;
- 
--	if (dev->archdata.iommu) {
--		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
--			 dev_name(dev));
--		return -EINVAL;
--	}
--
- 	/* Find the master corresponding to the device. */
- 
- 	num_utlbs = of_count_phandle_with_args(dev->of_node, "iommus",
-@@ -699,6 +692,36 @@ static int ipmmu_add_device(struct devic
- 		}
- 	}
- 
-+	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
-+	if (!archdata) {
-+		ret = -ENOMEM;
-+		goto error;
-+	}
-+
-+	archdata->mmu = mmu;
-+	archdata->utlbs = utlbs;
-+	archdata->num_utlbs = num_utlbs;
-+	dev->archdata.iommu = archdata;
-+	return 0;
-+
-+error:
-+	kfree(utlbs);
-+	return ret;
-+}
-+
-+static int ipmmu_add_device(struct device *dev)
-+{
-+	struct ipmmu_vmsa_archdata *archdata;
-+	struct ipmmu_vmsa_device *mmu = NULL;
-+	struct iommu_group *group;
-+	int ret;
-+
-+	if (dev->archdata.iommu) {
-+		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
-+			 dev_name(dev));
-+		return -EINVAL;
-+	}
-+
- 	/* Create a device group and add the device to it. */
- 	group = iommu_group_alloc();
- 	if (IS_ERR(group)) {
-@@ -716,16 +739,9 @@ static int ipmmu_add_device(struct devic
- 		goto error;
- 	}
- 
--	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
--	if (!archdata) {
--		ret = -ENOMEM;
-+	ret = ipmmu_init_platform_device(dev);
-+	if (ret < 0)
- 		goto error;
--	}
--
--	archdata->mmu = mmu;
--	archdata->utlbs = utlbs;
--	archdata->num_utlbs = num_utlbs;
--	dev->archdata.iommu = archdata;
- 
- 	/*
- 	 * Create the ARM mapping, used by the ARM DMA mapping core to allocate
-@@ -736,6 +752,8 @@ static int ipmmu_add_device(struct devic
- 	 * - Make the mapping size configurable ? We currently use a 2GB mapping
- 	 *   at a 1GB offset to ensure that NULL VAs will fault.
- 	 */
-+	archdata = dev->archdata.iommu;
-+	mmu = archdata->mmu;
- 	if (!mmu->mapping) {
- 		struct dma_iommu_mapping *mapping;
- 
-@@ -760,10 +778,8 @@ static int ipmmu_add_device(struct devic
- 	return 0;
- 
- error:
--	arm_iommu_release_mapping(mmu->mapping);
--
--	kfree(dev->archdata.iommu);
--	kfree(utlbs);
-+	if (mmu)
-+		arm_iommu_release_mapping(mmu->mapping);
- 
- 	dev->archdata.iommu = NULL;
- 
+
+--nOM8ykUjac0mNN89
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX28gaAAoJEBQN5MwUoCm2+UYQAKOihNPaIo+dCbRlRHTPJnX6
+86B5Q5li9K0DMA1JrUHehxRMQInmrZfjzl48BjNOjCxJqQS7zLPZH/BCXo82dh1v
+xbptTOC3rRC9pK2PMoYNEKVtWwCqLYJzFvLDsLn59NLZBG5jgozfs/s2ZPvlp4li
+uaU/cRwp+ttXmrMOnouhPxngva4Lj6kDfNf7IFoPvMuop9YQeVNvzaHnl/HeMSHu
+fMI7Hm5e5tOO5LO5RYhbZyM6qwbvpZcozGMe34y3S5rNefa5EhL7Cn3AZiNppVp3
+kRbSO/yVnx3wAh1E0mih/9zmp9gHPyhyHyF07C/9wOYLepAJBqqQzEgQjQXgsC2O
+puAY/KMqwvHxC1P7N4SK8WZZuDrd8SH3c+79BjW2BDV8cLGmfRNMkTviXeAmnwFM
+Dgmzi2il/dfoU3VieRbYYw36Z5hCHt/oYQG3PpxBBDSRlV1HLIIFSuKYq3hmBm+b
+6ZCa5mvhD2Y3DyOWr0rC/fHrg4rPEOG/mV8nG6utnlIDQK0T1ZoqJNz8qWOrfhyn
+gvWgpcGsEEXzDDztlhbDpcRKGl6OD9F9lro9ZZD8gQ6dSfBbSEEzzT8fAo9pRz7+
+EtBHcvIvtz/WqtlVnpfN2bHI3wCHMAGTcKau+Tl0cQ43DRJYP4WxBl9muSWXM4Zt
+Ox0Jz/3Yk3iJrCw5bUTJ
+=G77G
+-----END PGP SIGNATURE-----
+
+--nOM8ykUjac0mNN89--
