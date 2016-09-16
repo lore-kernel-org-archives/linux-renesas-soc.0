@@ -1,74 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57254 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756483AbcIGHvE (ORCPT
+Received: from sauhun.de ([89.238.76.85]:54063 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753245AbcIPRwp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Sep 2016 03:51:04 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 21/26] ARM: dts: wheat: add CAN support
-Date: Wed,  7 Sep 2016 09:50:08 +0200
-Message-Id: <4ea71e6df8c22f90665394476c433cad3b4394b6.1473234372.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473234371.git.horms+renesas@verge.net.au>
-References: <cover.1473234371.git.horms+renesas@verge.net.au>
+        Fri, 16 Sep 2016 13:52:45 -0400
+Date: Fri, 16 Sep 2016 19:52:23 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
+        horms@verge.net.au, magnus.damm@gmail.com
+Subject: Re: [PATCH 4/6] arm64: renesas: r8a7796: add I2C support
+Message-ID: <20160916175223.GC1426@katana>
+References: <20160914164611.31237-1-ulrich.hecht+renesas@gmail.com>
+ <20160914164611.31237-5-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="DSayHWYpDlRfCAAQ"
+Content-Disposition: inline
+In-Reply-To: <20160914164611.31237-5-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Define the Wheat board dependent part of the CAN0/1 device nodes...
+--DSayHWYpDlRfCAAQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Based  on the original (and large) patch by Vladimir Barinov
-<vladimir.barinov@cogentembedded.com>.
+On Wed, Sep 14, 2016 at 06:46:09PM +0200, Ulrich Hecht wrote:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7792-wheat.dts | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
-index e214d707f81d..65d13c83d424 100644
---- a/arch/arm/boot/dts/r8a7792-wheat.dts
-+++ b/arch/arm/boot/dts/r8a7792-wheat.dts
-@@ -76,6 +76,16 @@
- 			function = "lbsc";
- 		};
- 	};
-+
-+	can0_pins: can0 {
-+		groups = "can0_data";
-+		function = "can0";
-+	};
-+
-+	can1_pins: can1 {
-+		groups = "can1_data";
-+		function = "can1";
-+	};
- };
- 
- &scif0 {
-@@ -84,3 +94,17 @@
- 
- 	status = "okay";
- };
-+
-+&can0 {
-+	pinctrl-0 = <&can0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&can1 {
-+	pinctrl-0 = <&can1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
--- 
-2.7.0.rc3.207.g0ac5344
+
+--DSayHWYpDlRfCAAQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX3DFXAAoJEBQN5MwUoCm2nIcP/1PdblQyK/mEzPjx1UrXD8El
+RA179xCilK+zIbW6deQBOUW0EIozeO4US67YZnG5NkcztRPli9tvwGea1rvlDVhO
+a0KD0A+3HHAYUZ+Qt2TEfjVBakrRPoR4owt8hxH7RhJted39d3Ztc7qRAlTR66vF
+K9Iv3XFA29oYplXDLhsqJ/36QujRRZD2A4RRezPOMrjMnqVXemLEmgKu5+97HBFX
+VM+5iIjPVd4e9fr2nwecD7wOMN8lxXbbyonbo+E+wHIlSbuaIhNJWHHeG/Hf5KIn
+8tFdwy3otgP0QOmkvkbP2Hou0jolQYoChOioWbkYpYpBOyH47QTNOH2tt7C8G09+
+1IExt61hcFwIVG4LHR6ZwRfYHchWgCDhxtJBigrgBH3swCHYKX1QsKLwrJZKT/hc
+OZtOaEkyUz/njrWRu56ekIgMhm9TVBKkYebWZMiNVXPkyhYY5cyuha2zCK0f3ruF
+AbqxNkjsqli/Ks2lpxh6n8+N07qZkNuFYDSlyXoI31NQU8IT8gYZ2JLJZMKRA7XK
+Csag7cShy1g14LCGwxaudoqXLpfcbjizqTPj2re0AFXkgEMSKet22cQTNn51nP7/
+iVJa3bXKH/UjXuwH9RMbYv+xnf+YDXFVk6L6jG+/UBe6DYs77zBmiA7j32HoQYAy
+iboV5a+O+BJJXvGnW1Jc
+=wgYi
+-----END PGP SIGNATURE-----
+
+--DSayHWYpDlRfCAAQ--
