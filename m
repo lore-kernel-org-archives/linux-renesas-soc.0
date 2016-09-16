@@ -1,120 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:35091 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751902AbcISP0t (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:5666 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1756479AbcIPNIT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 11:26:49 -0400
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB11655B678F23E16AB93C9B008AF30@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20160915193405.26943-1-chris.brandt@renesas.com>
- <20160915193405.26943-3-chris.brandt@renesas.com> <CAMuHMdU6DKuxYUKNV_-FyczV-pPFpTLso=5HruWgNiXNOenVRQ@mail.gmail.com>
- <SG2PR06MB11655B678F23E16AB93C9B008AF30@SG2PR06MB1165.apcprd06.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 19 Sep 2016 17:26:47 +0200
-Message-ID: <CAMuHMdUqd4DCQsTLkZTQrxyabUH-Yj4Uroh=nKjPkccpd=B5BA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] ARM: dts: r7s72100: add mmcif to device tree
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Fri, 16 Sep 2016 09:08:19 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: RE: [PATCH 2/4] ARM: dts: r7s72100: add mmcif to device tree
+Date: Fri, 16 Sep 2016 13:08:13 +0000
+Message-ID: <SG2PR06MB11655B678F23E16AB93C9B008AF30@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160915193405.26943-1-chris.brandt@renesas.com>
+ <20160915193405.26943-3-chris.brandt@renesas.com>
+ <CAMuHMdU6DKuxYUKNV_-FyczV-pPFpTLso=5HruWgNiXNOenVRQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdU6DKuxYUKNV_-FyczV-pPFpTLso=5HruWgNiXNOenVRQ@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
-
-On Fri, Sep 16, 2016 at 3:08 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> On 9/15/2016, Geert Uytterhoeven wrote:
->> > +               interrupts = <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH
->> > +                             GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
->>
->> The bindings do not say anything about interrupts (hence that should be
->> added).
->
-> I'm sorry, I'm confused...
-> Are you saying:
->  A) I forgot to add something?
->  B) As a general statement, the renesas,mmcif.txt file doesn't say anything about interrupts?
-
-Both ;-)
-
->> The driver handles either 1 combined or 2 separate interrupts.
->> The datasheet says MMC has 3 interrupt requests, though?
->
-> The IP itself has 3 interrupts:
->  #1. MMC0,299: Card detect
->  #2. MMC1,300: Status Change
->  #3. MMC2,301: Error
->
-> Many of the 'Linux' SoC devices that use this MMC (SH4, R-Car) are only ever going to use eMMC, so the card detection portion of the IP was irrelevant. I agree this is the same case for the RZ/A (who would ever use an MMC card now a days?????)
-> The 'smaller' SoCs kept it in (SH2A, RZ/A1) but the 'bigger' SoCs left it out (SH4A, R-Car).
->
-> The only way to enable that interrupt is to write to the CE_DETECT register (offset 0x70) which the driver doesn't do.
->
-> However....if you look in sh_mmcif.h, you'll see that same offset (0x70) is called CE_CLK_CTRL2
->
-> #define MMCIF_CE_CLK_CTRL2      0x00000070
->
-> Which it only writes to if 'clk_ctrl2_enable' is designated.
->
->         if (host->clk_ctrl2_enable)
->                 sh_mmcif_writel(host->addr, MMCIF_CE_CLK_CTRL2, 0x0F0F0000);
->
-> And, I see no Renesas SoC that ever sets that or would ever use it so I can't even tell you what SoC that was for (SH4, SH-Mobile, ARM)
-
-Google and Patchwork told me this was enabled in the old board code for Lager:
-
-  commit b77c6bcef2082a7cd96124daf15df8da5b670ebe
-  Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-  Date:   Wed Jul 10 21:21:17 2013 +0200
-
-    ARM: shmobile: lager: disable MMCIF Command Completion Signal, add CLK_CTRL2
-
-    MMCIF on r8a7790 doesn't support Command Completion Signal, but it does
-    implement a CE_CLK_CTRL2 register. Platform parameters have to be added to
-    account for these features on lager.
-
-    Signed-off-by: Guennadi Liakhovetski <g.liakhovetski+renesas@gmail.com>
-    Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-
-But it was lost during the transition to DT. No idea if someone tried MMC
-(not SDHI) on Lager, or any other R-Car Gen2 board, recently...
-
-> So after all that ranting...I see no need to support card detect for MMC for the RZ/A (or any future RZ) so I'd like to just leave it as is.
->
-> Do you agree?
-
-Let's summarize...
-
-  1) Documentation/devicetree/bindings/mmc/renesas,mmcif.txt should document
-     the "interrupts" property, for both single and multiple values.
-  2) If you specify 2 interrupts in DT, the driver names the first one
-     "sh_mmc:error", and the second one "sh_mmc:int", while you specified them
-     in reverse order (status first, error second).
-     I couldn't find which of the three interrupts on R-Mobile A1 is used for
-     what purpose in the datasheet, but the datasheet for SH-Mobile AG5 states
-     the first (140) is MMC_ERR, and the second (141) is MMC_NOR.
-     However, it still worked for you, as the driver uses the same interrupt
-     handler for all interrupts.
-  3) You may want to add the card detect interrupt to DT anyway, as DT
-     describes the hardware, not limitations of the driver. If you do so,
-     renesas,mmcif.txt should document the third interrupt value.
-
-Wolfram, do you have any comments?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNCk9uIDkvMTUvMjAxNiwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KPiA+
+ICsgICAgICAgICAgICAgICBpbnRlcnJ1cHRzID0gPEdJQ19TUEkgMjY4IElSUV9UWVBFX0xFVkVM
+X0hJR0gNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICBHSUNfU1BJIDI2OSBJUlFf
+VFlQRV9MRVZFTF9ISUdIPjsNCj4gDQo+IFRoZSBiaW5kaW5ncyBkbyBub3Qgc2F5IGFueXRoaW5n
+IGFib3V0IGludGVycnVwdHMgKGhlbmNlIHRoYXQgc2hvdWxkIGJlDQo+IGFkZGVkKS4NCg0KSSdt
+IHNvcnJ5LCBJJ20gY29uZnVzZWQuLi4NCkFyZSB5b3Ugc2F5aW5nOg0KIEEpIEkgZm9yZ290IHRv
+IGFkZCBzb21ldGhpbmc/DQogQikgQXMgYSBnZW5lcmFsIHN0YXRlbWVudCwgdGhlIHJlbmVzYXMs
+bW1jaWYudHh0IGZpbGUgZG9lc24ndCBzYXkgYW55dGhpbmcgYWJvdXQgaW50ZXJydXB0cz8NCg0K
+DQo+IFRoZSBkcml2ZXIgaGFuZGxlcyBlaXRoZXIgMSBjb21iaW5lZCBvciAyIHNlcGFyYXRlIGlu
+dGVycnVwdHMuDQo+IFRoZSBkYXRhc2hlZXQgc2F5cyBNTUMgaGFzIDMgaW50ZXJydXB0IHJlcXVl
+c3RzLCB0aG91Z2g/DQoNClRoZSBJUCBpdHNlbGYgaGFzIDMgaW50ZXJydXB0czoNCiAjMS4gTU1D
+MCwyOTk6IENhcmQgZGV0ZWN0DQogIzIuIE1NQzEsMzAwOiBTdGF0dXMgQ2hhbmdlDQogIzMuIE1N
+QzIsMzAxOiBFcnJvcg0KDQpNYW55IG9mIHRoZSAnTGludXgnIFNvQyBkZXZpY2VzIHRoYXQgdXNl
+IHRoaXMgTU1DIChTSDQsIFItQ2FyKSBhcmUgb25seSBldmVyIGdvaW5nIHRvIHVzZSBlTU1DLCBz
+byB0aGUgY2FyZCBkZXRlY3Rpb24gcG9ydGlvbiBvZiB0aGUgSVAgd2FzIGlycmVsZXZhbnQuIEkg
+YWdyZWUgdGhpcyBpcyB0aGUgc2FtZSBjYXNlIGZvciB0aGUgUlovQSAod2hvIHdvdWxkIGV2ZXIg
+dXNlIGFuIE1NQyBjYXJkIG5vdyBhIGRheXM/Pz8/PykNClRoZSAnc21hbGxlcicgU29DcyBrZXB0
+IGl0IGluIChTSDJBLCBSWi9BMSkgYnV0IHRoZSAnYmlnZ2VyJyBTb0NzIGxlZnQgaXQgb3V0IChT
+SDRBLCBSLUNhcikuDQoNClRoZSBvbmx5IHdheSB0byBlbmFibGUgdGhhdCBpbnRlcnJ1cHQgaXMg
+dG8gd3JpdGUgdG8gdGhlIENFX0RFVEVDVCByZWdpc3RlciAob2Zmc2V0IDB4NzApIHdoaWNoIHRo
+ZSBkcml2ZXIgZG9lc24ndCBkby4NCg0KSG93ZXZlci4uLi5pZiB5b3UgbG9vayBpbiBzaF9tbWNp
+Zi5oLCB5b3UnbGwgc2VlIHRoYXQgc2FtZSBvZmZzZXQgKDB4NzApIGlzIGNhbGxlZCBDRV9DTEtf
+Q1RSTDINCg0KI2RlZmluZSBNTUNJRl9DRV9DTEtfQ1RSTDIgICAgICAweDAwMDAwMDcwDQoNCldo
+aWNoIGl0IG9ubHkgd3JpdGVzIHRvIGlmICdjbGtfY3RybDJfZW5hYmxlJyBpcyBkZXNpZ25hdGVk
+Lg0KDQoJaWYgKGhvc3QtPmNsa19jdHJsMl9lbmFibGUpDQoJCXNoX21tY2lmX3dyaXRlbChob3N0
+LT5hZGRyLCBNTUNJRl9DRV9DTEtfQ1RSTDIsIDB4MEYwRjAwMDApOw0KDQpBbmQsIEkgc2VlIG5v
+IFJlbmVzYXMgU29DIHRoYXQgZXZlciBzZXRzIHRoYXQgb3Igd291bGQgZXZlciB1c2UgaXQgc28g
+SSBjYW4ndCBldmVuIHRlbGwgeW91IHdoYXQgU29DIHRoYXQgd2FzIGZvciAoU0g0LCBTSC1Nb2Jp
+bGUsIEFSTSkNCg0KDQpTbyBhZnRlciBhbGwgdGhhdCByYW50aW5nLi4uSSBzZWUgbm8gbmVlZCB0
+byBzdXBwb3J0IGNhcmQgZGV0ZWN0IGZvciBNTUMgZm9yIHRoZSBSWi9BIChvciBhbnkgZnV0dXJl
+IFJaKSBzbyBJJ2QgbGlrZSB0byBqdXN0IGxlYXZlIGl0IGFzIGlzLg0KDQpEbyB5b3UgYWdyZWU/
+DQoNCkNocmlzDQoNCg0K
