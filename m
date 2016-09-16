@@ -1,30 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:54927 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:40813 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965716AbcIZOzd (ORCPT
+        with ESMTP id S1752077AbcIPKFE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Sep 2016 10:55:33 -0400
-Date: Mon, 26 Sep 2016 16:55:09 +0200
-From: Simon Horman <horms@verge.net.au>
+        Fri, 16 Sep 2016 06:05:04 -0400
+From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH] ARM: dts: gose: use generic pinctrl properties in SDHI
- nodes
-Message-ID: <20160926145509.GF5792@verge.net.au>
-References: <1474020294-1544-1-git-send-email-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1474020294-1544-1-git-send-email-horms+renesas@verge.net.au>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] ARM: dts: gose: use generic pinctrl properties in SDHI nodes
+Date: Fri, 16 Sep 2016 12:04:54 +0200
+Message-Id: <1474020294-1544-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 16, 2016 at 12:04:54PM +0200, Simon Horman wrote:
-> Since 16ccaf5bb5a5 ("pinctrl: sh-pfc: Accept standard function, pins and
-> groups properties") renesas pfc drivers accept generic "function", "pins"
-> and "groups" properties.
-> 
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Since 16ccaf5bb5a5 ("pinctrl: sh-pfc: Accept standard function, pins and
+groups properties") renesas pfc drivers accept generic "function", "pins"
+and "groups" properties.
 
-I have queued this up.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7793-gose.dts | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index 90af18600124..dc311eba4444 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -346,18 +346,18 @@
+ 	};
+ 
+ 	sdhi0_pins: sd0 {
+-		renesas,groups = "sdhi0_data4", "sdhi0_ctrl";
+-		renesas,function = "sdhi0";
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
+ 	};
+ 
+ 	sdhi1_pins: sd1 {
+-		renesas,groups = "sdhi1_data4", "sdhi1_ctrl";
+-		renesas,function = "sdhi1";
++		groups = "sdhi1_data4", "sdhi1_ctrl";
++		function = "sdhi1";
+ 	};
+ 
+ 	sdhi2_pins: sd2 {
+-		renesas,groups = "sdhi2_data4", "sdhi2_ctrl";
+-		renesas,function = "sdhi2";
++		groups = "sdhi2_data4", "sdhi2_ctrl";
++		function = "sdhi2";
+ 	};
+ 
+ 	qspi_pins: qspi {
+-- 
+2.7.0.rc3.207.g0ac5344
