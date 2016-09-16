@@ -1,44 +1,116 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:36544 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1761448AbcISMtm (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41446 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1765177AbcIPKov (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 08:49:42 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Dirk Behme <dirk.behme@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 1/6] mmc: add define for R1 response without CRC
-Date: Mon, 19 Sep 2016 14:49:16 +0200
-Message-Id: <20160919124921.8172-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
-References: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
+        Fri, 16 Sep 2016 06:44:51 -0400
+Date: Fri, 16 Sep 2016 12:44:43 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 07/11] ARM: dts: alt: Enable UHS-I SDR-50 and SDR-104
+Message-ID: <20160916104443.GA7566@verge.net.au>
+References: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
+ <1473764228-24768-8-git-send-email-horms+renesas@verge.net.au>
+ <20160916102710.GJ1411@katana>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160916102710.GJ1411@katana>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The core uses it for polling. Give drivers a proper define handle this
-case like for other response types.
+On Fri, Sep 16, 2016 at 12:27:10PM +0200, Wolfram Sang wrote:
+> On Tue, Sep 13, 2016 at 12:57:04PM +0200, Simon Horman wrote:
+> > Add the "1v8" pinctrl state and sd-uhs-sdr50 property to SDHI{0,1}.
+> > And the sd-uhs-sdr104 property to SDHI0.
+> > 
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> If you drop sdr104 here for now as well:
+> 
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Thanks, done.
+
+The result is as follows:
+
+From: Simon Horman <horms+renesas@verge.net.au>
+Date: Tue, 13 Sep 2016 12:57:04 +0200
+Subject: [PATCH] ARM: dts: alt: enable UHS for SDHI 0 & 1
+
+Add the "1v8" pinctrl state and sd-uhs-sdr50 property to SDHI{0,1}.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- include/linux/mmc/core.h | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/r8a7794-alt.dts | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
-index b01e77de1a74de..4caee099b63a28 100644
---- a/include/linux/mmc/core.h
-+++ b/include/linux/mmc/core.h
-@@ -55,6 +55,9 @@ struct mmc_command {
- #define MMC_RSP_R6	(MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE)
- #define MMC_RSP_R7	(MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE)
- 
-+/* Can be used by core to poll after switch to MMC HS mode */
-+#define MMC_RSP_R1_NO_CRC	(MMC_RSP_PRESENT|MMC_RSP_OPCODE)
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index 8d1b35afaf82..325d3f972c57 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -207,11 +207,25 @@
+ 	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
++		power-source = <3300>;
++	};
 +
- #define mmc_resp_type(cmd)	((cmd)->flags & (MMC_RSP_PRESENT|MMC_RSP_136|MMC_RSP_CRC|MMC_RSP_BUSY|MMC_RSP_OPCODE))
++	sdhi0_pins_uhs: sd0_uhs {
++		groups = "sdhi0_data4", "sdhi0_ctrl";
++		function = "sdhi0";
++		power-source = <1800>;
+ 	};
  
- /*
+ 	sdhi1_pins: sd1 {
+ 		groups = "sdhi1_data4", "sdhi1_ctrl";
+ 		function = "sdhi1";
++		power-source = <3300>;
++	};
++
++	sdhi1_pins_uhs: sd1_uhs {
++		groups = "sdhi1_data4", "sdhi1_ctrl";
++		function = "sdhi1";
++		power-source = <1800>;
+ 	};
+ };
+ 
+@@ -255,23 +269,27 @@
+ 
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+-	pinctrl-names = "default";
++	pinctrl-1 = <&sdhi0_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
+ 
+ 	vmmc-supply = <&vcc_sdhi0>;
+ 	vqmmc-supply = <&vccq_sdhi0>;
+ 	cd-gpios = <&gpio6 6 GPIO_ACTIVE_LOW>;
+ 	wp-gpios = <&gpio6 7 GPIO_ACTIVE_LOW>;
++	sd-uhs-sdr50;
+ 	status = "okay";
+ };
+ 
+ &sdhi1 {
+ 	pinctrl-0 = <&sdhi1_pins>;
+-	pinctrl-names = "default";
++	pinctrl-1 = <&sdhi1_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
+ 
+ 	vmmc-supply = <&vcc_sdhi1>;
+ 	vqmmc-supply = <&vccq_sdhi1>;
+ 	cd-gpios = <&gpio6 14 GPIO_ACTIVE_LOW>;
+ 	wp-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
++	sd-uhs-sdr50;
+ 	status = "okay";
+ };
+ 
 -- 
-2.9.3
+2.7.0.rc3.207.g0ac5344
