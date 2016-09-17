@@ -1,49 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:17505 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751543AbcIQNir (ORCPT
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:37302 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932731AbcIQJMQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 17 Sep 2016 09:38:47 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sat, 17 Sep 2016 05:12:16 -0400
+Received: by mail-wm0-f46.google.com with SMTP id k186so78820916wmd.0
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 17 Sep 2016 02:12:15 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB11655A641475D2E08A5A3DDC8AFE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160912141507.6837-1-chris.brandt@renesas.com>
+ <20160912141507.6837-2-chris.brandt@renesas.com> <CAPDyKFqdznJ4xr5=L862uOfvqjsRpR3d+yRWtN1-8H5ZvP9GeQ@mail.gmail.com>
+ <CAMuHMdVGgWaVcC4Pfuf0NSTpU4ahdEg6Q7iKZ1n+mb7KexE6yg@mail.gmail.com>
+ <SG2PR06MB1165D0EE862CCCFD713181938AFE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAPDyKFp1eSyVAnn4JohR=Cx0VeE-5U8eY5GVQA+ae0P-vDJJ8w@mail.gmail.com> <SG2PR06MB11655A641475D2E08A5A3DDC8AFE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Sat, 17 Sep 2016 11:12:13 +0200
+Message-ID: <CAPDyKFqBToUrSbErWrc+zV-WX29Dj5dm+XzWMCfBgOiEtoG8Jg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] mmc: sh_mobile_sdhi: add ocr_mask option
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         linux-mmc <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v3 1/3] mmc: sh_mobile_sdhi: add ocr_mask option
-Date: Sat, 17 Sep 2016 13:38:40 +0000
-Message-ID: <SG2PR06MB116502BC0F207B27A9759C668AF20@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20160912141507.6837-1-chris.brandt@renesas.com>
- <20160912141507.6837-2-chris.brandt@renesas.com>
- <CAPDyKFqdznJ4xr5=L862uOfvqjsRpR3d+yRWtN1-8H5ZvP9GeQ@mail.gmail.com>
- <CAMuHMdVGgWaVcC4Pfuf0NSTpU4ahdEg6Q7iKZ1n+mb7KexE6yg@mail.gmail.com>
- <SG2PR06MB1165D0EE862CCCFD713181938AFE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAPDyKFp1eSyVAnn4JohR=Cx0VeE-5U8eY5GVQA+ae0P-vDJJ8w@mail.gmail.com>
- <SG2PR06MB11655A641475D2E08A5A3DDC8AFE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAPDyKFqBToUrSbErWrc+zV-WX29Dj5dm+XzWMCfBgOiEtoG8Jg@mail.gmail.com>
-In-Reply-To: <CAPDyKFqBToUrSbErWrc+zV-WX29Dj5dm+XzWMCfBgOiEtoG8Jg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gOS8xNy8yMDE2LCBVbGYgSGFuc3NvbiB3cm90ZToNCj4gPiBJJ20gYXNzdW1pbmcgSSdsbCBo
-YXZlIHRvIGRvIHRoZSBzYW1lIGZvciBNTUMgKHNoX21tY2lmLmMpIG9uY2UgSSBnZXQgdG8NCj4g
-dGhhdCBkcml2ZXIgKEkgbmVlZCB0byBmaW5kIG15IE1NQyBQTFVTIGNhcmQgZmlyc3QgZm9yIHRl
-c3RpbmcpLg0KPiANCj4gT2theSENCj4gDQo+IEtpbmQgcmVnYXJkcw0KPiBVZmZlDQoNCkp1c3Qg
-RllJLA0KRm9yIHRoZSBlTU1DIGNhc2UsICBJIGRlY2lkZWQgbm90IHRvIG1vZGlmeSBzaF9tbWNp
-Zi5jIHRvIGFkZCB0aGUgT0NSIGFuZCBpbnN0ZWFkIGp1c3QgY3JlYXRlIGEgMy4zIGZpeGVkIHJl
-Z3VsYXRvciBpbiB0aGUgRFQuDQoNClRoZSByZWFzb24gaXMgdGhhdCBpZiBzb21lb25lIGlzIHVz
-aW5nIGVNTUMgZm9yIHRoZWlyIGZpbGUgc3lzdGVtLCB0aGV5IGFyZSBwcm9iYWJseSB1c2luZyBl
-eHRlcm5hbCBSQU0gKHNpbmNlIGJsb2NrIGRhdGEgbmVlZHMgdG8gYmUgY29waWVkIG91dCBvZiBl
-TU1DIGludG8gUkFNIGJlZm9yZSB0aGV5IGNhbiBiZSBleGVjdXRlZCkuIFNvIHRoZSBleHRyYSBS
-QU0gbmVlZGVkIGZvciB0aGUgcmVndWxhciBEVCBpcyBub3QgcmVhbGx5IGFuIGlzc3VlLg0KDQoN
-Ckhvd2V2ZXIsIHRoZSBwZW9wbGUgdXNpbmcgU0RISSBhcmUgdXNpbmcgaXQgZm9yIFNESU8gZm9y
-IFdpZmkgbW9kdWxlcyBhbmQgdGhleSBhcmUgdGhlIG9uZXMgd2l0aCB0aGUgc2xpbW1lZCBkb3du
-IFJBTSBzeXN0ZW1zLiBTbyBmb3IgdGhlbSwgcmVtb3ZpbmcgdGhlIHJlZ3VsYXRvciBEVCB3aWxs
-IGhlbHAgc3F1ZWV6ZSB0aGVpciBzeXN0ZW0gaW50byAzTUIgb3IgNU1CIG9mIGluLWNoaXAgc3lz
-dGVtIFJBTS4NCg0KDQpDaHJpcw0KDQo=
+On 13 September 2016 at 17:59, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> Hello Uffe
+>
+> Thank you for your reply.
+>
+> On 9/13/2016, Ulf Hansson wrote:
+>> Because, if you have an external regulator feeding the mmc with power you
+>> should set it up and use it.
+>
+> But in many board designs, there is no control over the regulator supply (or you would rather have your bootloader do that, not the kernel).
+>
+> So what this patch is doing is setting it to a default of 3.3v (for just this SoC) and if someone wants to add a regulator in the board's DT file, that will override the ocr_mask set by the driver.
+
+That's perfectly okay to me! I just wanted to get clear picture of
+*why* this change was needed.
+
+>
+>
+> I'm assuming I'll have to do the same for MMC (sh_mmcif.c) once I get to that driver (I need to find my MMC PLUS card first for testing).
+
+Okay!
+
+Kind regards
+Uffe
