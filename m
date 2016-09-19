@@ -1,103 +1,149 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33037 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1762152AbcIPNJS (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36532 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754464AbcISIcz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Sep 2016 09:09:18 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: horms@verge.net.au
-Cc: geert@linux-m68k.org, hans.verkuil@cisco.com,
-        niklas.soderlund@ragnatech.se, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
-        william.towle@codethink.co.uk,
-        Rob Taylor <rob.taylor@codethink.co.uk>
-Subject: [PATCH 1/2] ARM: dts: lager: Add entries for VIN HDMI input support
-Date: Fri, 16 Sep 2016 15:09:08 +0200
-Message-Id: <20160916130909.21225-2-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <20160916130909.21225-1-ulrich.hecht+renesas@gmail.com>
-References: <20160916130909.21225-1-ulrich.hecht+renesas@gmail.com>
+        Mon, 19 Sep 2016 04:32:55 -0400
+MIME-Version: 1.0
+In-Reply-To: <2338956.oSVFAsJyhK@wasted.cogentembedded.com>
+References: <3533019.Wim1Kuh1ic@wasted.cogentembedded.com> <2338956.oSVFAsJyhK@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Sep 2016 10:32:52 +0200
+Message-ID: <CAMuHMdXa0WiEPfR9mtjTWoox_n5GucPsHB5Gk6xcoW-_TWVUuA@mail.gmail.com>
+Subject: Re: [PATCH RFC 7/8] ARM: dts: r8a7743: add [H]SCIF support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: William Towle <william.towle@codethink.co.uk>
+Hi Sergei,
 
-Add DT entries for vin0, vin0_pins, and adv7612.
+On Fri, Sep 16, 2016 at 3:37 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Describe [H]SCIFs in the R8A7743 device tree.
+>
+> Based on the original (and large) patch by Dmitry Shifrin
+> <dmitry.shifrin@cogentembedded.com>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Sets the 'default-input' property for ADV7612, enabling image and video
-capture without the need to have userspace specifying routing.
+> --- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
+> +++ renesas/arch/arm/boot/dts/r8a7743.dtsi
+> @@ -154,6 +154,268 @@
+>                         dma-channels = <15>;
+>                 };
+>
+> +               scifa0: serial@e6c40000 {
+> +                       compatible = "renesas,scifa-r8a7743",
 
-Signed-off-by: William Towle <william.towle@codethink.co.uk>
-Signed-off-by: Rob Taylor <rob.taylor@codethink.co.uk>
-[uli: added interrupt, renamed endpoint, merged default-input]
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm/boot/dts/r8a7790-lager.dts | 39 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+To be documented...
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 52b56fc..fc9d129 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -427,6 +427,11 @@
- 		function = "usb2";
- 	};
- 
-+	vin0_pins: vin0 {
-+		groups = "vin0_data24", "vin0_sync", "vin0_clkenb", "vin0_clk";
-+		function = "vin0";
-+	};
-+
- 	vin1_pins: vin1 {
- 		groups = "vin1_data8", "vin1_clk";
- 		function = "vin1";
-@@ -651,6 +656,21 @@
- 			};
- 		};
- 	};
-+
-+	hdmi-in@4c {
-+		compatible = "adi,adv7612";
-+		reg = <0x4c>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-+		remote = <&vin0>;
-+		default-input = <0>;
-+
-+		port {
-+			adv7612: endpoint {
-+				remote-endpoint = <&vin0ep0>;
-+			};
-+		};
-+	};
- };
- 
- &iic3 {
-@@ -722,6 +742,25 @@
- 	status = "okay";
- };
- 
-+/* HDMI video input */
-+&vin0 {
-+	pinctrl-0 = <&vin0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "ok";
-+
-+	port {
-+		vin0ep0: endpoint {
-+			remote-endpoint = <&adv7612>;
-+			bus-width = <24>;
-+			hsync-active = <0>;
-+			vsync-active = <0>;
-+			pclk-sample = <1>;
-+			data-active = <1>;
-+		};
-+	};
-+};
-+
- /* composite video input */
- &vin1 {
- 	pinctrl-0 = <&vin1_pins>;
--- 
-2.9.3
+> +                                    "renesas,rcar-gen2-scifa", "renesas,scifa";
+> +                       reg = <0 0xe6c40000 0 64>;
+> +                       interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&mstp2_clks R8A7743_CLK_SCIFA0>;
+> +                       clock-names = "fck";
+> +                       dmas = <&dmac0 0x21>, <&dmac0 0x22>,
+> +                              <&dmac1 0x21>, <&dmac1 0x22>;
+> +                       dma-names = "tx", "rx", "tx", "rx";
+> +                       power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
+> +                       status = "disabled";
+> +               };
+
+[...]
+
+> +               scifb0: serial@e6c20000 {
+> +                       compatible = "renesas,scifb-r8a7743",
+
+To be documented...
+
+> +                                    "renesas,rcar-gen2-scifb", "renesas,scifb";
+> +                       reg = <0 0xe6c20000 0 64>;
+
+This does not cover the whole register block (aha, also on existing Gen2).
+"reg = <0 0xe6c20000 0 256>;"?
+
+> +                       interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&mstp2_clks R8A7743_CLK_SCIFB0>;
+> +                       clock-names = "fck";
+> +                       dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
+> +                      <&dmac1 0x3d>, <&dmac1 0x3e>;
+> +                       dma-names = "tx", "rx", "tx", "rx";
+> +                       power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
+> +                       status = "disabled";
+> +               };
+
+[...]
+
+> +               scif0: serial@e6e60000 {
+> +                       compatible = "renesas,scif-r8a7743",
+
+To be documented...
+
+> +                                    "renesas,rcar-gen2-scif", "renesas,scif";
+> +                       reg = <0 0xe6e60000 0 64>;
+> +                       interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&mstp7_clks R8A7743_CLK_SCIF0>, <&zs_clk>,
+> +                                <&scif_clk>;
+> +                       clock-names = "fck", "brg_int", "scif_clk";
+> +                       dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
+> +                              <&dmac1 0x29>, <&dmac1 0x2a>;
+> +                       dma-names = "tx", "rx", "tx", "rx";
+> +                       power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               scif1: serial@e6e68000 {
+> +                       compatible = "renesas,scif-r8a7743",
+> +                                    "renesas,rcar-gen2-scif", "renesas,scif";
+> +                       reg = <0 0xe6e68000 0 64>;
+> +                       interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&mstp7_clks R8A7743_CLK_SCIF1>, <&zs_clk>,
+> +                                <&scif_clk>;
+> +                       clock-names = "fck", "brg_int", "scif_clk";
+> +                       dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
+> +                              <&dmac1 0x2d>, <&dmac1 0x2e>;
+> +                       dma-names = "tx", "rx", "tx", "rx";
+> +                       power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
+> +                       status = "disabled";
+> +               };
+
+[...]
+
+> +               hscif0: serial@e62c0000 {
+> +                       compatible = "renesas,hscif-r8a7743",
+
+To be documented...
+
+> +                                    "renesas,rcar-gen2-hscif", "renesas,hscif";
+> +                       reg = <0 0xe62c0000 0 96>;
+> +                       interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&mstp7_clks R8A7743_CLK_HSCIF0>, <&zs_clk>,
+> +                                <&scif_clk>;
+> +                       clock-names = "fck", "brg_int", "scif_clk";
+> +                       dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
+> +                              <&dmac1 0x39>, <&dmac1 0x3a>;
+> +                       dma-names = "tx", "rx", "tx", "rx";
+> +                       power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
+> +                       status = "disabled";
+> +               };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
