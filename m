@@ -1,18 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:37809 "EHLO pokefinder.org"
+Received: from sauhun.de ([89.238.76.85]:36542 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750997AbcISU6J (ORCPT
+        id S1760353AbcISMtm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 16:58:09 -0400
+        Mon, 19 Sep 2016 08:49:42 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-mmc@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
         Dirk Behme <dirk.behme@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 0/6] tmio: add support for eMMC with 8 bit bus width
-Date: Mon, 19 Sep 2016 22:57:44 +0200
-Message-Id: <20160919205750.4766-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 0/6] tmio: add support for eMMC with 8 bit bus width
+Date: Mon, 19 Sep 2016 14:49:15 +0200
+Message-Id: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -27,10 +27,6 @@ Note that I decided to use the pattern that pinctrl-0 is 3.3v and
 pinctrl-1 is 1.8v, although the eMMC is fixed at 1.8v. I tried a few ways to
 only use pinctrl-0 being 1.8v here, but they all ended up to be confusing for
 users IMO, so I sticked to the most consistent solution after all.
-
-Changes since V2:
-
-* correct node name for sd2_uhs in both devicetrees
 
 Changes since V1:
 
