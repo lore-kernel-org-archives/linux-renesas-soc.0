@@ -1,89 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f66.google.com ([209.85.220.66]:35458 "EHLO
-        mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750979AbcITMUn (ORCPT
+Received: from sauhun.de ([89.238.76.85]:37708 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751501AbcISU0m (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Sep 2016 08:20:43 -0400
-Received: by mail-pa0-f66.google.com with SMTP id hi10so872995pac.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Sep 2016 05:20:43 -0700 (PDT)
-From: Magnus Damm <magnus.damm@gmail.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Date: Tue, 20 Sep 2016 21:12:11 +0900
-Message-Id: <20160920121211.14870.27506.sendpatchset@little-apple>
-Subject: [PATCH/RFC] ARM: dts: r8a7790: IPMMU-DS SYS-DMAC prototype
+        Mon, 19 Sep 2016 16:26:42 -0400
+Date: Mon, 19 Sep 2016 22:26:32 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Dirk Behme <dirk.behme@gmail.com>
+Subject: Re: [PATCH v2 4/6] mmc: tmio: add eMMC support
+Message-ID: <20160919202632.GA1425@katana>
+References: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
+ <20160919124921.8172-5-wsa+renesas@sang-engineering.com>
+ <ddb477a7-4b3c-e67a-22fc-93432c4c75cb@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
+Content-Disposition: inline
+In-Reply-To: <ddb477a7-4b3c-e67a-22fc-93432c4c75cb@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
 
-Hook up the SYS-DMAC devices to IPMMU-DS on r8a7790 and enable that
-particular IPMMU instance. Depending on kernel version LPAE may need
-to be enabled before the IPMMU driver becomes available.
+--5vNYLRcllDrimb99
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Useful to test the IPMMU with the devices hooked up to the SYS-DMAC
-via the DMA Engine framework together with the following workaround:
-[PATCH/RFC] iommu/ipmmu-vmsa: IPMMU SYS-DMAC iova mapping workaround
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+> >+	u16 reg =3D sd_ctrl_read16(host, CTL_SD_MEM_CARD_OPT)
+> >+				& ~(CARD_OPT_WIDTH | CARD_OPT_WIDTH8);
+> >+
+> >+	/* reg now applies to MMC_BUS_WIDTH_4 */
+> >+	if (bus_width =3D=3D MMC_BUS_WIDTH_1)
+> >+		reg |=3D CARD_OPT_WIDTH;
+> >+	else if (bus_width =3D=3D MMC_BUS_WIDTH_8)
+> >+		reg |=3D CARD_OPT_WIDTH8;
+>=20
+>    Why not *switch*?
 
- Tested with renesas-drivers-2016-09-13-v4.8-rc6
+Didn't look better to me.
 
- arch/arm/boot/dts/r8a7790.dtsi |   31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
 
---- 0003/arch/arm/boot/dts/r8a7790.dtsi
-+++ work/arch/arm/boot/dts/r8a7790.dtsi	2016-09-20 20:23:34.420607110 +0900
-@@ -362,6 +362,21 @@
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
-+		iommus = <&ipmmu_ds 0>,
-+		       <&ipmmu_ds 1>,
-+		       <&ipmmu_ds 2>,
-+		       <&ipmmu_ds 3>,
-+		       <&ipmmu_ds 4>,
-+		       <&ipmmu_ds 5>,
-+		       <&ipmmu_ds 6>,
-+		       <&ipmmu_ds 7>,
-+		       <&ipmmu_ds 8>,
-+		       <&ipmmu_ds 9>,
-+		       <&ipmmu_ds 10>,
-+		       <&ipmmu_ds 11>,
-+		       <&ipmmu_ds 12>,
-+		       <&ipmmu_ds 13>,
-+		       <&ipmmu_ds 14>;
- 	};
- 
- 	dmac1: dma-controller@e6720000 {
-@@ -393,6 +408,21 @@
- 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 		#dma-cells = <1>;
- 		dma-channels = <15>;
-+		iommus = <&ipmmu_ds 15>,
-+		       <&ipmmu_ds 16>,
-+		       <&ipmmu_ds 17>,
-+		       <&ipmmu_ds 18>,
-+		       <&ipmmu_ds 19>,
-+		       <&ipmmu_ds 20>,
-+		       <&ipmmu_ds 21>,
-+		       <&ipmmu_ds 22>,
-+		       <&ipmmu_ds 23>,
-+		       <&ipmmu_ds 24>,
-+		       <&ipmmu_ds 25>,
-+		       <&ipmmu_ds 26>,
-+		       <&ipmmu_ds 27>,
-+		       <&ipmmu_ds 28>,
-+		       <&ipmmu_ds 29>;
- 	};
- 
- 	audma0: dma-controller@ec700000 {
-@@ -1877,7 +1907,6 @@
- 		interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>;
- 		#iommu-cells = <1>;
--		status = "disabled";
- 	};
- 
- 	ipmmu_mp: mmu@ec680000 {
+--5vNYLRcllDrimb99
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX4En4AAoJEBQN5MwUoCm2J6AP/i8n9B8pL6dkkf6DI8pEmn0m
+Rm+yQOYh135jp7QNG+eR5wK9U6KBqS0Esx2T8rGt5z2nFgHsRFktSRBv0Wjz6U+W
+43ixOBmdlqQW94nxCxmIWm4iyOwX3VD/KaIAFnppewHhcXtjzqK+CJEu0Iv92xmt
+pMck4pJOHhiffozuVKyIz5MmnTsmb7lLEjXfQ4fzAb0pbQqBc4yrTB4VRn6uQlAA
+2sREmqRMNqFKtVSKmFVGtaqN4i/mmAedBnHpAJV66DJ+wN16URvFE5V26zkVRRYG
+Rp0qqgr2lUApiUo7m/vgKnhXye4Qr/K5mIn6wSrYdzBaksoXbe4bggLECVtSqdpz
+8QIa3h/2DWN8zR9USOgqozb6Ro/mUsT/Mz/MUYR/+aoLapgL2m4MDcAocFxd5ROA
+ojzdOadlAP9f1In6FOx7MSiibHw4X4VdD6ViT7bLJcxPuJkoY122gLjuC+eAUDXW
+4Z+njiAdUjaJaQVBErBCI6aWoIK1OwLR/3xbTyqFZlbQnpKqohQUd/u1UNoyWERL
+TWRWoJSxMFofHPt5kHaRMIt8J7m2NYNv11ARPRxJ8RxtLn8a25MOteKyEZ+CxRqg
+XKXkI47EWfG5XM7S/gu9F75p8ezVqevPlwMisHSv202Qujoi7T/10cuAUCzYTpPb
+Q94lIukp8iVQoN0RxM+j
+=WOcL
+-----END PGP SIGNATURE-----
+
+--5vNYLRcllDrimb99--
