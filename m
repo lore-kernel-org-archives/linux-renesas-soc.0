@@ -1,20 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:37815 "EHLO pokefinder.org"
+Received: from sauhun.de ([89.238.76.85]:36548 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752021AbcISU6K (ORCPT
+        id S935277AbcISMto (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 16:58:10 -0400
+        Mon, 19 Sep 2016 08:49:44 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-mmc@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
         Dirk Behme <dirk.behme@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 3/6] mmc: rtsx_usb: use new macro for R1 without CRC
-Date: Mon, 19 Sep 2016 22:57:47 +0200
-Message-Id: <20160919205750.4766-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20160919205750.4766-1-wsa+renesas@sang-engineering.com>
-References: <20160919205750.4766-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 3/6] mmc: rtsx_usb: use new macro for R1 without CRC
+Date: Mon, 19 Sep 2016 14:49:18 +0200
+Message-Id: <20160919124921.8172-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
+References: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
