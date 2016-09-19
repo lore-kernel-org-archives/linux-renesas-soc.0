@@ -1,20 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:37828 "EHLO pokefinder.org"
+Received: from sauhun.de ([89.238.76.85]:36562 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932124AbcISU6N (ORCPT
+        id S935277AbcISMtr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 16:58:13 -0400
+        Mon, 19 Sep 2016 08:49:47 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-mmc@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
         Dirk Behme <dirk.behme@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 6/6] arm64: dts: r8a7796: salvator: enable on board eMMC
-Date: Mon, 19 Sep 2016 22:57:50 +0200
-Message-Id: <20160919205750.4766-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20160919205750.4766-1-wsa+renesas@sang-engineering.com>
-References: <20160919205750.4766-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 6/6] arm64: dts: r8a7796: salvator: enable on board eMMC
+Date: Mon, 19 Sep 2016 14:49:21 +0200
+Message-Id: <20160919124921.8172-7-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
+References: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -24,7 +24,7 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
  1 file changed, 43 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index 91440eb2237e72..8cda70db2745ae 100644
+index 91440eb2237e72..7b14cb7538b22f 100644
 --- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
 +++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
 @@ -31,6 +31,24 @@
@@ -70,7 +70,7 @@ index 91440eb2237e72..8cda70db2745ae 100644
 +		power-source = <3300>;
 +	};
 +
-+	sdhi2_pins_uhs: sd2_uhs {
++	sdhi2_pins_uhs: sd2 {
 +		groups = "sdhi2_data8", "sdhi2_ctrl";
 +		function = "sdhi2";
 +		power-source = <1800>;
