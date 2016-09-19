@@ -1,44 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:21345 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753174AbcIOTfB (ORCPT
+Received: from mail-io0-f196.google.com ([209.85.223.196]:33083 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754851AbcISIyl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Sep 2016 15:35:01 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        Mon, 19 Sep 2016 04:54:41 -0400
+Received: by mail-io0-f196.google.com with SMTP id r145so4821570ior.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Sep 2016 01:54:41 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <7093322.WFIWVqz40g@wasted.cogentembedded.com>
+References: <3533019.Wim1Kuh1ic@wasted.cogentembedded.com> <7093322.WFIWVqz40g@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Sep 2016 10:54:38 +0200
+Message-ID: <CAMuHMdXpoSYQFXu17hc-jt-GrbgMsXuzjkzubujZTY3UJ95BRg@mail.gmail.com>
+Subject: Re: [PATCH RFC 4/8] ARM: shmobile: r8a7743: basic SoC support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 0/4] r7s72100: dts: enable mmcif
-Date: Thu, 15 Sep 2016 15:34:01 -0400
-Message-Id: <20160915193405.26943-1-chris.brandt@renesas.com>
+        Russell King <linux@arm.linux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series enables the mmc driver for the RZ/A1.
-Nothing needed to be changed with the actual sh_mmcif driver.
-It worked fine as-is.
+Hi Sergei,
 
-As you can see, the status in the rskrza1 dst was left
-as disabled because I wanted to leave that code in there
-for refernce for someone later that actually has a board with
-an actaul eMMC chip. I tested with an MMC Plus card.
+On Fri, Sep 16, 2016 at 3:33 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add minimal support for the RZ/G1M (R8A7743) SoC.
+>
+> Based on the original (and large) patch by Dmitry Shifrin
+> <dmitry.shifrin@cogentembedded.com>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> ---
+>  arch/arm/mach-shmobile/Kconfig         |    5 ++++
+>  arch/arm/mach-shmobile/Makefile        |    1
+>  arch/arm/mach-shmobile/setup-r8a7743.c |   34 +++++++++++++++++++++++++++++++++
+>  3 files changed, 40 insertions(+)
+>
+> Index: renesas/arch/arm/mach-shmobile/Kconfig
+> ===================================================================
+> --- renesas.orig/arch/arm/mach-shmobile/Kconfig
+> +++ renesas/arch/arm/mach-shmobile/Kconfig
+> @@ -68,6 +68,11 @@ config ARCH_R8A7740
+>         select ARCH_RMOBILE
+>         select RENESAS_INTC_IRQPIN
+>
+> +config ARCH_R8A7743
+> +       bool "RZ/G1M (R8A77430)"
+> +       select ARCH_RCAR_GEN2
+> +       select I2C
 
+The only reason R8A779[013] selects I2C is because they need
+regulator-quirk-rcar-gen2.c. Without schematics, it's hard to say if this is
+needed for SK-RZG1M, too.
 
-Chris Brandt (4):
-  ARM: dts: r7s72100: add mmcif clock to device tree
-  ARM: dts: r7s72100: add mmcif to device tree
-  mmc: sh_mmcif: Document r7s72100 DT bindings
-  ARM: dts: rskrza1: add mmc DT support
+The Board Hardware Manual states SK-RZG1M has both DA9063 and DA9210.
+It does state DA9063 is connected to IRQ2, but doesn't mention an interrupt
+line for DA9210, so we don't know if they share IRQ2. Note that the Koelsch
+fails to mention that DA9210 uses IRQ2, so this doesn't mean much.
+For Porter we do not have the quirk enabled, while it has both regulators, too.
 
- .../devicetree/bindings/mmc/renesas,mmcif.txt        |  1 +
- arch/arm/boot/dts/r7s72100-rskrza1.dts               | 17 +++++++++++++++++
- arch/arm/boot/dts/r7s72100.dtsi                      | 20 ++++++++++++++++++++
- include/dt-bindings/clock/r7s72100-clock.h           |  3 +++
- 4 files changed, 41 insertions(+)
+You can try to enable regulator-quirk-rcar-gen2.c for "renesas,sk-rzg1m" too,
+and see what's printed by the kernel after a cold boot...
 
--- 
-2.9.2
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
