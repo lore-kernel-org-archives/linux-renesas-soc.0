@@ -1,86 +1,74 @@
 Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran+renesas@bingham.xyz>
-Subject: [PATCH 00/13] Renesas R-Car VSP: Scaling and rotation support on Gen3
-Date: Wed, 14 Sep 2016 02:16:53 +0300
-Message-Id: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <kieran@ksquared.org.uk>
+Return-Path: <kieran@ksquared.org.uk>
+Sender: Kieran Bingham <kieran@ksquared.org.uk>
+Subject: Re: [PULL REQUEST] VSP1 Image Partitioning algorithm
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Kieran Bingham <kieran@ksquared.org.uk>
+References: <1473871510-13807-1-git-send-email-kieran@bingham.xyz>
+ <CAMuHMdXFbbzH1Zzzxu68CwLtrccSbtyDrLJGpof2nq7-6CwGtQ@mail.gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+From: Kieran Bingham <kieran@bingham.xyz>
+Message-ID: <0737e6ab-0a55-0fdd-2fdc-6514d4872aa6@bingham.xyz>
+Date: Mon, 19 Sep 2016 18:17:57 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdXFbbzH1Zzzxu68CwLtrccSbtyDrLJGpof2nq7-6CwGtQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
+On 19/09/16 16:57, Geert Uytterhoeven wrote:
+> Hi Kieran,
+> 
+> On Wed, Sep 14, 2016 at 6:45 PM, Kieran Bingham <kieran@ksquared.org.uk> wrote:
+>> Please consider integrating the latest VSP1 next branch to provide the
+>> image partitioning algorithm into renesas-drivers
+>>
+>> Regards
+>>
+>> Kieran
+>>
+>>
+>> The following changes since commit c3b809834db8b1a8891c7ff873a216eac119628d:
+>>
+>>   [media] pulse8-cec: fix compiler warning (2016-09-12 06:42:44 -0300)
+>>
+>> are available in the git repository at:
+>>
+>>   git://linuxtv.org/pinchartl/media.git vsp1/next
+>>
+>> for you to fetch changes up to 9f39e31fbb3fb6ebd75d7012d3574def2f5da596:
+>>
+>>   v4l: vsp1: Fix spinlock in mixed IRQ context function (2016-09-14 13:06:51 +0300)
+> 
+> In the mean time, this has been rebased, and more commits have been added?
+> I will only pull tomorrow anyway...
 
-This patch series adds support for scaling and rotation to the VSP1 driver on
-the R-Car Gen3 SoCs.
+Ahh yes,
 
-Unlike Gen2 that can scale full resolution images, the Gen3 VSP scaler has a
-width limitation that prevent full images from being processed in one go. They
-must be partitioned in slices that are then processed individually. The
-rotation engine present in the Gen3 VSP has a similar limitation, and so does
-the SRU.
+Looks like a couple of bug-fixes got merged in afterwards.
 
-The hardware supports queuing processing of multiple slices without generating
-any interrupt between slices, so partitioning the image will not raise the
-number of interrupts. It however has an impact on CPU usage as the register
-settings for each partitions need to be computed, but there's no way around
-that.
+The vsp1/next branch should also be merged into linux-media/master soon
+(potentially today, dependant upon Mauro) ... so it could get in that
+way also ...
 
-The series starts with bug fixes (patches 01/13 to 04/13), followed by a few
-preparatory changes (patches 05/13 to 07/13). Patches 08/13 to 12/13 then
-implement image partitioning support, and patch 13/13 finally adds rotation
-support.
+Cheers
 
-All the changes have been tests with the VSP test suite available at
+Kieran
 
-	git://git.ideasonboard.com/renesas/vsp-tests.git master
-
-on both Gen2 (H2 Lager) and Gen3 (H3 Salvator-X) boards. No regression has
-been noticed.
-
-Kieran Bingham (6):
-  v4l: vsp1: Ensure pipeline locking in resume path
-  v4l: vsp1: Repair race between frame end and qbuf handler
-  v4l: vsp1: Use DFE instead of FRE for frame end
-  v4l: vsp1: Support chained display lists
-  v4l: vsp1: Determine partition requirements for scaled images
-  v4l: vsp1: Support multiple partitions per frame
-
-Laurent Pinchart (7):
-  v4l: vsp1: Prevent pipelines from running when not streaming
-  v4l: vsp1: Protect against race conditions between get and set format
-  v4l: vsp1: Disable cropping on WPF sink pad
-  v4l: vsp1: Fix RPF cropping
-  v4l: vsp1: Pass parameter type to entity configuration operation
-  v4l: vsp1: Replace .set_memory() with VSP1_ENTITY_PARAMS_PARTITION
-  v4l: vsp1: wpf: Implement rotation support
-
- drivers/media/platform/vsp1/vsp1_bru.c    |  33 +++-
- drivers/media/platform/vsp1/vsp1_clu.c    |  61 ++++---
- drivers/media/platform/vsp1/vsp1_dl.c     | 119 ++++++++++---
- drivers/media/platform/vsp1/vsp1_dl.h     |   1 +
- drivers/media/platform/vsp1/vsp1_drm.c    |  15 +-
- drivers/media/platform/vsp1/vsp1_drv.c    |   2 +-
- drivers/media/platform/vsp1/vsp1_entity.c |  22 ++-
- drivers/media/platform/vsp1/vsp1_entity.h |  25 ++-
- drivers/media/platform/vsp1/vsp1_hsit.c   |  20 ++-
- drivers/media/platform/vsp1/vsp1_lif.c    |  20 ++-
- drivers/media/platform/vsp1/vsp1_lut.c    |  42 +++--
- drivers/media/platform/vsp1/vsp1_pipe.c   |   3 +
- drivers/media/platform/vsp1/vsp1_pipe.h   |   8 +
- drivers/media/platform/vsp1/vsp1_rpf.c    | 106 +++++++-----
- drivers/media/platform/vsp1/vsp1_rwpf.c   |  86 ++++++----
- drivers/media/platform/vsp1/vsp1_rwpf.h   |  16 +-
- drivers/media/platform/vsp1/vsp1_sru.c    |  50 +++++-
- drivers/media/platform/vsp1/vsp1_uds.c    |  71 ++++++--
- drivers/media/platform/vsp1/vsp1_video.c  | 188 ++++++++++++++++++--
- drivers/media/platform/vsp1/vsp1_wpf.c    | 274 ++++++++++++++++++++++--------
- 20 files changed, 880 insertions(+), 282 deletions(-)
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
 
 -- 
-Regards,
+Regards
 
-Laurent Pinchart
+Kieran Bingham
