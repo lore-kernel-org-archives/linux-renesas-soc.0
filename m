@@ -1,15 +1,10 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36132 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760054AbcISITW (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 04:19:22 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
 In-Reply-To: <1815255.1arMxK7TDL@wasted.cogentembedded.com>
 References: <3533019.Wim1Kuh1ic@wasted.cogentembedded.com> <1815255.1arMxK7TDL@wasted.cogentembedded.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 19 Sep 2016 10:19:20 +0200
-Message-ID: <CAMuHMdXz5K66AU7d-+NsPrAyc8V53mDxzggiUk-TrFRAwBFXOg@mail.gmail.com>
+Date: Mon, 19 Sep 2016 10:18:46 +0200
+Message-ID: <CAMuHMdXDFp_o8kgTuHyM_+kFhHL2NJxThNpoBz7=nv6FH3D0EQ@mail.gmail.com>
 Subject: Re: [PATCH RFC 6/8] ARM: dts: r8a7743: add SYS-DMAC support
 To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Simon Horman <horms@verge.net.au>,
@@ -22,21 +17,21 @@ Cc: Simon Horman <horms@verge.net.au>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 On Fri, Sep 16, 2016 at 3:36 PM, Sergei Shtylyov
 <sergei.shtylyov@cogentembedded.com> wrote:
-> --- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
-> +++ renesas/arch/arm/boot/dts/r8a7743.dtsi
-> @@ -90,6 +90,70 @@
->                         #power-domain-cells = <1>;
->                 };
+> Describe SYS-DMAC0/1 in the R8A7743 device tree.
 >
-> +               dmac0: dma-controller@e6700000 {
-> +                       compatible = "renesas,dmac-r8a7743",
+> Based on the original (and large) patch by Dmitry Shifrin
+> <dmitry.shifrin@cogentembedded.com>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-To be documented.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+(but the clocks properties will have to be changed due to CPG/MSSR)
 
 Gr{oetje,eeting}s,
 
