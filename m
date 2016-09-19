@@ -1,53 +1,103 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:20144 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932696AbcITPqs (ORCPT
+Received: from sauhun.de ([89.238.76.85]:37828 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932124AbcISU6N (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Sep 2016 11:46:48 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 1/3] ARM: dts: r7s72100: add mmcif to device tree
-Date: Tue, 20 Sep 2016 11:46:18 -0400
-Message-Id: <20160920154620.18653-2-chris.brandt@renesas.com>
-In-Reply-To: <20160920154620.18653-1-chris.brandt@renesas.com>
-References: <20160920154620.18653-1-chris.brandt@renesas.com>
+        Mon, 19 Sep 2016 16:58:13 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Dirk Behme <dirk.behme@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v3 6/6] arm64: dts: r8a7796: salvator: enable on board eMMC
+Date: Mon, 19 Sep 2016 22:57:50 +0200
+Message-Id: <20160919205750.4766-7-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20160919205750.4766-1-wsa+renesas@sang-engineering.com>
+References: <20160919205750.4766-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v2:
-* added card detect as 3rd interupt source
----
- arch/arm/boot/dts/r7s72100.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 44 +++++++++++++++++++++-
+ 1 file changed, 43 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index e18d4e6..50f9f3b 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -450,4 +450,16 @@
- 		#size-cells = <0>;
- 		status = "disabled";
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index 91440eb2237e72..8cda70db2745ae 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -31,6 +31,24 @@
+ 		reg = <0x0 0x48000000 0x0 0x78000000>;
  	};
-+
-+	mmcif: mmc@e804c800 {
-+		compatible = "renesas,mmcif-r7s72100", "renesas,sh-mmcif";
-+		reg = <0xe804c800 0x80>;
-+		interrupts = <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp8_clks R7S72100_CLK_MMCIF>;
-+		reg-io-width = <4>;
-+		bus-width = <8>;
-+		status = "disabled";
+ 
++	reg_1p8v: regulator0 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-1.8V";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-boot-on;
++		regulator-always-on;
 +	};
++
++	reg_3p3v: regulator1 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
+ 	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
+ 
+@@ -78,7 +96,6 @@
+ 		states = <3300000 1
+ 			  1800000 0>;
+ 	};
+-
  };
+ 
+ &pfc {
+@@ -106,6 +123,18 @@
+ 		power-source = <1800>;
+ 	};
+ 
++	sdhi2_pins: sd2 {
++		groups = "sdhi2_data8", "sdhi2_ctrl";
++		function = "sdhi2";
++		power-source = <3300>;
++	};
++
++	sdhi2_pins_uhs: sd2_uhs {
++		groups = "sdhi2_data8", "sdhi2_ctrl";
++		function = "sdhi2";
++		power-source = <1800>;
++	};
++
+ 	sdhi3_pins: sd3 {
+ 		groups = "sdhi3_data4", "sdhi3_ctrl";
+ 		function = "sdhi3";
+@@ -138,6 +167,19 @@
+ 	status = "okay";
+ };
+ 
++&sdhi2 {
++	/* used for on-board 8bit eMMC */
++	pinctrl-0 = <&sdhi2_pins>;
++	pinctrl-1 = <&sdhi2_pins_uhs>;
++	pinctrl-names = "default", "state_uhs";
++
++	vmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&reg_1p8v>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
++};
++
+ &sdhi3 {
+ 	pinctrl-0 = <&sdhi3_pins>;
+ 	pinctrl-1 = <&sdhi3_pins_uhs>;
 -- 
-2.9.2
+2.9.3
