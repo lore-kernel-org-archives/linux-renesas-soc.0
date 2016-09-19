@@ -1,48 +1,120 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms+renesas@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35091 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751902AbcISP0t (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 19 Sep 2016 11:26:49 -0400
+MIME-Version: 1.0
+In-Reply-To: <SG2PR06MB11655B678F23E16AB93C9B008AF30@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160915193405.26943-1-chris.brandt@renesas.com>
+ <20160915193405.26943-3-chris.brandt@renesas.com> <CAMuHMdU6DKuxYUKNV_-FyczV-pPFpTLso=5HruWgNiXNOenVRQ@mail.gmail.com>
+ <SG2PR06MB11655B678F23E16AB93C9B008AF30@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Sep 2016 17:26:47 +0200
+Message-ID: <CAMuHMdUqd4DCQsTLkZTQrxyabUH-Yj4Uroh=nKjPkccpd=B5BA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] ARM: dts: r7s72100: add mmcif to device tree
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: RE: [PATCH 2/4] ARM: dts: r7s72100: add mmcif to device tree
-Date: Mon, 19 Sep 2016 18:11:32 +0000
-Message-ID: <SG2PR06MB116588A3EAB9680F0A45BFAC8AF40@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20160915193405.26943-1-chris.brandt@renesas.com>
- <20160915193405.26943-3-chris.brandt@renesas.com>
- <CAMuHMdU6DKuxYUKNV_-FyczV-pPFpTLso=5HruWgNiXNOenVRQ@mail.gmail.com>
- <SG2PR06MB11655B678F23E16AB93C9B008AF30@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdUqd4DCQsTLkZTQrxyabUH-Yj4Uroh=nKjPkccpd=B5BA@mail.gmail.com>
-In-Reply-To: <CAMuHMdUqd4DCQsTLkZTQrxyabUH-Yj4Uroh=nKjPkccpd=B5BA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIDkvMTkvMjAxNiwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KPiA+
-PiBUaGUgYmluZGluZ3MgZG8gbm90IHNheSBhbnl0aGluZyBhYm91dCBpbnRlcnJ1cHRzIChoZW5j
-ZSB0aGF0IHNob3VsZA0KPiA+PiBiZSBhZGRlZCkuDQo+ID4NCj4gPiBJJ20gc29ycnksIEknbSBj
-b25mdXNlZC4uLg0KPiA+IEFyZSB5b3Ugc2F5aW5nOg0KPiA+ICBBKSBJIGZvcmdvdCB0byBhZGQg
-c29tZXRoaW5nPw0KPiA+ICBCKSBBcyBhIGdlbmVyYWwgc3RhdGVtZW50LCB0aGUgcmVuZXNhcyxt
-bWNpZi50eHQgZmlsZSBkb2Vzbid0IHNheQ0KPiBhbnl0aGluZyBhYm91dCBpbnRlcnJ1cHRzPw0K
-PiANCj4gQm90aCA7LSkNCg0KT0suDQoNCj4gPiBUaGUgSVAgaXRzZWxmIGhhcyAzIGludGVycnVw
-dHM6DQo+ID4gICMxLiBNTUMwLDI5OTogQ2FyZCBkZXRlY3QNCj4gPiAgIzIuIE1NQzEsMzAwOiBT
-dGF0dXMgQ2hhbmdlDQo+ID4gICMzLiBNTUMyLDMwMTogRXJyb3INCg0KQ29ycmVjdGlvbiEgSSBo
-YWQgdGhlIG9yZGVyIHdyb25nLg0KDQpGcm9tIHRoZSBSWi9BSDEgSGFyZHdhcmUgbWFudWFsICg1
-MS40IEludGVycnVwdCBSZXF1ZXN0cykNCg0KIzEuIE1NQzAsMjk5OiBDYXJkIGRldGVjdGlvbiBp
-bnRlcnJ1cHQNCiMyLiBNTUMxLDMwMDogRXJyb3IvdGltZW91dCBpbnRlcnJ1cHQNCiMzLiBNTUMy
-LDMwMTogTm9ybWFsIG9wZXJhdGlvbiBpbnRlcnJ1cHQNCg0KU28gaXQncyB0aGUgc2FtZSBhcyBh
-bGwgdGhlIG90aGVyIFNvQ3MuIFNvcnJ5IGZvciB0aGUgY29uZnVzaW9uLg0KDQoNCj4gICAzKSBZ
-b3UgbWF5IHdhbnQgdG8gYWRkIHRoZSBjYXJkIGRldGVjdCBpbnRlcnJ1cHQgdG8gRFQgYW55d2F5
-LCBhcyBEVA0KPiAgICAgIGRlc2NyaWJlcyB0aGUgaGFyZHdhcmUsIG5vdCBsaW1pdGF0aW9ucyBv
-ZiB0aGUgZHJpdmVyLiBJZiB5b3UgZG8gc28sDQo+ICAgICAgcmVuZXNhcyxtbWNpZi50eHQgc2hv
-dWxkIGRvY3VtZW50IHRoZSB0aGlyZCBpbnRlcnJ1cHQgdmFsdWUuDQoNCk9LLiBJIGhhdmUgbm8g
-b2JqZWN0aW9ucyB0byBhZGRpbmcgaXQgdG8gRFQgYW5kIHJlbmVzYXMsbW1jaWYudHh0IGFuZCBu
-b3QgdG91Y2hpbmcgc2hfbW1jaWYuYyAoanVzdCBsZXR0aW5nIGl0IGlnbm9yZSB0aGUgM3JkIHZh
-bHVlKS4NCklmIHNvbWVvbmUgaW4gdGhlIGZ1dHVyZSB3YW50cyB0byBjb2RlIHVwIGNhcmQgZGV0
-ZWN0Li4uLnRoZXkgYXJlIHdlbGNvbWUgdG8gaXQgOykNCg0KDQpDaHJpcw0K
+Hi Chris,
+
+On Fri, Sep 16, 2016 at 3:08 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On 9/15/2016, Geert Uytterhoeven wrote:
+>> > +               interrupts = <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH
+>> > +                             GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
+>>
+>> The bindings do not say anything about interrupts (hence that should be
+>> added).
+>
+> I'm sorry, I'm confused...
+> Are you saying:
+>  A) I forgot to add something?
+>  B) As a general statement, the renesas,mmcif.txt file doesn't say anything about interrupts?
+
+Both ;-)
+
+>> The driver handles either 1 combined or 2 separate interrupts.
+>> The datasheet says MMC has 3 interrupt requests, though?
+>
+> The IP itself has 3 interrupts:
+>  #1. MMC0,299: Card detect
+>  #2. MMC1,300: Status Change
+>  #3. MMC2,301: Error
+>
+> Many of the 'Linux' SoC devices that use this MMC (SH4, R-Car) are only ever going to use eMMC, so the card detection portion of the IP was irrelevant. I agree this is the same case for the RZ/A (who would ever use an MMC card now a days?????)
+> The 'smaller' SoCs kept it in (SH2A, RZ/A1) but the 'bigger' SoCs left it out (SH4A, R-Car).
+>
+> The only way to enable that interrupt is to write to the CE_DETECT register (offset 0x70) which the driver doesn't do.
+>
+> However....if you look in sh_mmcif.h, you'll see that same offset (0x70) is called CE_CLK_CTRL2
+>
+> #define MMCIF_CE_CLK_CTRL2      0x00000070
+>
+> Which it only writes to if 'clk_ctrl2_enable' is designated.
+>
+>         if (host->clk_ctrl2_enable)
+>                 sh_mmcif_writel(host->addr, MMCIF_CE_CLK_CTRL2, 0x0F0F0000);
+>
+> And, I see no Renesas SoC that ever sets that or would ever use it so I can't even tell you what SoC that was for (SH4, SH-Mobile, ARM)
+
+Google and Patchwork told me this was enabled in the old board code for Lager:
+
+  commit b77c6bcef2082a7cd96124daf15df8da5b670ebe
+  Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+  Date:   Wed Jul 10 21:21:17 2013 +0200
+
+    ARM: shmobile: lager: disable MMCIF Command Completion Signal, add CLK_CTRL2
+
+    MMCIF on r8a7790 doesn't support Command Completion Signal, but it does
+    implement a CE_CLK_CTRL2 register. Platform parameters have to be added to
+    account for these features on lager.
+
+    Signed-off-by: Guennadi Liakhovetski <g.liakhovetski+renesas@gmail.com>
+    Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
+But it was lost during the transition to DT. No idea if someone tried MMC
+(not SDHI) on Lager, or any other R-Car Gen2 board, recently...
+
+> So after all that ranting...I see no need to support card detect for MMC for the RZ/A (or any future RZ) so I'd like to just leave it as is.
+>
+> Do you agree?
+
+Let's summarize...
+
+  1) Documentation/devicetree/bindings/mmc/renesas,mmcif.txt should document
+     the "interrupts" property, for both single and multiple values.
+  2) If you specify 2 interrupts in DT, the driver names the first one
+     "sh_mmc:error", and the second one "sh_mmc:int", while you specified them
+     in reverse order (status first, error second).
+     I couldn't find which of the three interrupts on R-Mobile A1 is used for
+     what purpose in the datasheet, but the datasheet for SH-Mobile AG5 states
+     the first (140) is MMC_ERR, and the second (141) is MMC_NOR.
+     However, it still worked for you, as the driver uses the same interrupt
+     handler for all interrupts.
+  3) You may want to add the card detect interrupt to DT anyway, as DT
+     describes the hardware, not limitations of the driver. If you do so,
+     renesas,mmcif.txt should document the third interrupt value.
+
+Wolfram, do you have any comments?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
