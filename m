@@ -1,69 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:37708 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751501AbcISU0m (ORCPT
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:34543 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751966AbcISRb7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 16:26:42 -0400
-Date: Mon, 19 Sep 2016 22:26:32 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Dirk Behme <dirk.behme@gmail.com>
+        Mon, 19 Sep 2016 13:31:59 -0400
+Received: by mail-lf0-f49.google.com with SMTP id y6so44037647lff.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Sep 2016 10:31:59 -0700 (PDT)
 Subject: Re: [PATCH v2 4/6] mmc: tmio: add eMMC support
-Message-ID: <20160919202632.GA1425@katana>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org
 References: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
  <20160919124921.8172-5-wsa+renesas@sang-engineering.com>
- <ddb477a7-4b3c-e67a-22fc-93432c4c75cb@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Dirk Behme <dirk.behme@gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <ddb477a7-4b3c-e67a-22fc-93432c4c75cb@cogentembedded.com>
+Date: Mon, 19 Sep 2016 20:31:55 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
-Content-Disposition: inline
-In-Reply-To: <ddb477a7-4b3c-e67a-22fc-93432c4c75cb@cogentembedded.com>
+In-Reply-To: <20160919124921.8172-5-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hello.
 
---5vNYLRcllDrimb99
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 09/19/2016 03:49 PM, Wolfram Sang wrote:
 
+> We need to add R1 without CRC support, refactor the bus width routine a
+> little and extend a quirk check. To support "non-removable;" we need a
+> workaround which will be hopefully removed when reworking PM soon.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  drivers/mmc/host/tmio_mmc.h     |  3 +++
+>  drivers/mmc/host/tmio_mmc_pio.c | 38 ++++++++++++++++++++++++++------------
+>  2 files changed, 29 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+> index 4b501f2d529f6e..637581faf756b1 100644
+> --- a/drivers/mmc/host/tmio_mmc.h
+> +++ b/drivers/mmc/host/tmio_mmc.h
+> @@ -79,6 +79,9 @@
+>  #define	CLK_CTL_DIV_MASK	0xff
+>  #define	CLK_CTL_SCLKEN		BIT(8)
+>
+> +#define CARD_OPT_WIDTH8		BIT(13)
+> +#define CARD_OPT_WIDTH		BIT(15)
+> +
+>  #define TMIO_BBS		512		/* Boot block size */
+>
+>  /* Definitions for values the CTRL_SDIO_STATUS register can take. */
+> diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
+> index 46b5a456243b84..a0f05eb4f34490 100644
+> --- a/drivers/mmc/host/tmio_mmc_pio.c
+> +++ b/drivers/mmc/host/tmio_mmc_pio.c
+[...]
+> @@ -922,14 +925,16 @@ static void tmio_mmc_power_off(struct tmio_mmc_host *host)
+>  static void tmio_mmc_set_bus_width(struct tmio_mmc_host *host,
+>  				unsigned char bus_width)
+>  {
+> -	switch (bus_width) {
+> -	case MMC_BUS_WIDTH_1:
+> -		sd_ctrl_write16(host, CTL_SD_MEM_CARD_OPT, 0x80e0);
+> -		break;
+> -	case MMC_BUS_WIDTH_4:
+> -		sd_ctrl_write16(host, CTL_SD_MEM_CARD_OPT, 0x00e0);
+> -		break;
+> -	}
+> +	u16 reg = sd_ctrl_read16(host, CTL_SD_MEM_CARD_OPT)
+> +				& ~(CARD_OPT_WIDTH | CARD_OPT_WIDTH8);
+> +
+> +	/* reg now applies to MMC_BUS_WIDTH_4 */
+> +	if (bus_width == MMC_BUS_WIDTH_1)
+> +		reg |= CARD_OPT_WIDTH;
+> +	else if (bus_width == MMC_BUS_WIDTH_8)
+> +		reg |= CARD_OPT_WIDTH8;
 
-> >+	u16 reg =3D sd_ctrl_read16(host, CTL_SD_MEM_CARD_OPT)
-> >+				& ~(CARD_OPT_WIDTH | CARD_OPT_WIDTH8);
-> >+
-> >+	/* reg now applies to MMC_BUS_WIDTH_4 */
-> >+	if (bus_width =3D=3D MMC_BUS_WIDTH_1)
-> >+		reg |=3D CARD_OPT_WIDTH;
-> >+	else if (bus_width =3D=3D MMC_BUS_WIDTH_8)
-> >+		reg |=3D CARD_OPT_WIDTH8;
->=20
->    Why not *switch*?
+    Why not *switch*?
 
-Didn't look better to me.
+[...]
 
-
---5vNYLRcllDrimb99
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX4En4AAoJEBQN5MwUoCm2J6AP/i8n9B8pL6dkkf6DI8pEmn0m
-Rm+yQOYh135jp7QNG+eR5wK9U6KBqS0Esx2T8rGt5z2nFgHsRFktSRBv0Wjz6U+W
-43ixOBmdlqQW94nxCxmIWm4iyOwX3VD/KaIAFnppewHhcXtjzqK+CJEu0Iv92xmt
-pMck4pJOHhiffozuVKyIz5MmnTsmb7lLEjXfQ4fzAb0pbQqBc4yrTB4VRn6uQlAA
-2sREmqRMNqFKtVSKmFVGtaqN4i/mmAedBnHpAJV66DJ+wN16URvFE5V26zkVRRYG
-Rp0qqgr2lUApiUo7m/vgKnhXye4Qr/K5mIn6wSrYdzBaksoXbe4bggLECVtSqdpz
-8QIa3h/2DWN8zR9USOgqozb6Ro/mUsT/Mz/MUYR/+aoLapgL2m4MDcAocFxd5ROA
-ojzdOadlAP9f1In6FOx7MSiibHw4X4VdD6ViT7bLJcxPuJkoY122gLjuC+eAUDXW
-4Z+njiAdUjaJaQVBErBCI6aWoIK1OwLR/3xbTyqFZlbQnpKqohQUd/u1UNoyWERL
-TWRWoJSxMFofHPt5kHaRMIt8J7m2NYNv11ARPRxJ8RxtLn8a25MOteKyEZ+CxRqg
-XKXkI47EWfG5XM7S/gu9F75p8ezVqevPlwMisHSv202Qujoi7T/10cuAUCzYTpPb
-Q94lIukp8iVQoN0RxM+j
-=WOcL
------END PGP SIGNATURE-----
-
---5vNYLRcllDrimb99--
+MBR, Sergei
