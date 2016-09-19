@@ -1,40 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:46006 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1761905AbcINRGF (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:32790 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751033AbcISOS7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Sep 2016 13:06:05 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
+        Mon, 19 Sep 2016 10:18:59 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Dirk Behme <dirk.behme@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/4] mmc: rtsx_pci: use new macro for R1 without CRC
-Date: Wed, 14 Sep 2016 19:05:56 +0200
-Message-Id: <20160914170558.1561-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20160914170558.1561-1-wsa+renesas@sang-engineering.com>
-References: <20160914170558.1561-1-wsa+renesas@sang-engineering.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/4] ARM: dts: r8a7793: Correct SCIFB reg properties to cover all registers
+Date: Mon, 19 Sep 2016 16:18:55 +0200
+Message-Id: <1474294736-24339-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1474294736-24339-1-git-send-email-geert+renesas@glider.be>
+References: <1474294736-24339-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/rtsx_pci_sdmmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Several SCIFB registers reside outside the reported register ranges.
+Fortunately this works (on Linux), due to the PAGE_SIZE granularity of
+ioremap().
 
-diff --git a/drivers/mmc/host/rtsx_pci_sdmmc.c b/drivers/mmc/host/rtsx_pci_sdmmc.c
-index 396c9b7e4121b0..3ccaa1415f33b2 100644
---- a/drivers/mmc/host/rtsx_pci_sdmmc.c
-+++ b/drivers/mmc/host/rtsx_pci_sdmmc.c
-@@ -126,7 +126,7 @@ static int sd_response_type(struct mmc_command *cmd)
- 		return SD_RSP_TYPE_R0;
- 	case MMC_RSP_R1:
- 		return SD_RSP_TYPE_R1;
--	case MMC_RSP_R1 & ~MMC_RSP_CRC:
-+	case MMC_RSP_R1_NO_CRC:
- 		return SD_RSP_TYPE_R1 | SD_NO_CHECK_CRC7;
- 	case MMC_RSP_R1B:
- 		return SD_RSP_TYPE_R1b;
+Extend the sizes from 64 to 0x100 bytes to fix this, like is done on
+SH/R-Mobile SoCs.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7793.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index e4b385eccf74e95e..67db1f7025c54c77 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -666,7 +666,7 @@
+ 	scifb0: serial@e6c20000 {
+ 		compatible = "renesas,scifb-r8a7793",
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+-		reg = <0 0xe6c20000 0 64>;
++		reg = <0 0xe6c20000 0 0x100>;
+ 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB0>;
+ 		clock-names = "fck";
+@@ -680,7 +680,7 @@
+ 	scifb1: serial@e6c30000 {
+ 		compatible = "renesas,scifb-r8a7793",
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+-		reg = <0 0xe6c30000 0 64>;
++		reg = <0 0xe6c30000 0 0x100>;
+ 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB1>;
+ 		clock-names = "fck";
+@@ -694,7 +694,7 @@
+ 	scifb2: serial@e6ce0000 {
+ 		compatible = "renesas,scifb-r8a7793",
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+-		reg = <0 0xe6ce0000 0 64>;
++		reg = <0 0xe6ce0000 0 0x100>;
+ 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB2>;
+ 		clock-names = "fck";
 -- 
-2.9.3
+1.9.1
