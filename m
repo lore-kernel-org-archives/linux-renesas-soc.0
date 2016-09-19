@@ -1,57 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:40888 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753395AbcITJZj (ORCPT
+Received: from sauhun.de ([89.238.76.85]:37811 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751029AbcISU6J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Sep 2016 05:25:39 -0400
-Subject: Re: [PATCH v3 1/6] mmc: add define for R1 response without CRC
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org
-References: <20160919205750.4766-1-wsa+renesas@sang-engineering.com>
- <CGME20160919205932epcas1p3cec11c9dbe2589f7d50fee5932797933@epcas1p3.samsung.com>
- <20160919205750.4766-2-wsa+renesas@sang-engineering.com>
+        Mon, 19 Sep 2016 16:58:09 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-mmc@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
-        Dirk Behme <dirk.behme@gmail.com>
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Message-id: <ee4fe6b6-14bd-a0a5-9d6c-30c314ed83c3@samsung.com>
-Date: Tue, 20 Sep 2016 18:25:37 +0900
-MIME-version: 1.0
-In-reply-to: <20160919205750.4766-2-wsa+renesas@sang-engineering.com>
-Content-type: text/plain; charset=windows-1252
-Content-transfer-encoding: 7bit
+        Dirk Behme <dirk.behme@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v3 1/6] mmc: add define for R1 response without CRC
+Date: Mon, 19 Sep 2016 22:57:45 +0200
+Message-Id: <20160919205750.4766-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20160919205750.4766-1-wsa+renesas@sang-engineering.com>
+References: <20160919205750.4766-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Wolfram,
+The core uses it for polling. Give drivers a proper define handle this
+case like for other response types.
 
-On 09/20/2016 05:57 AM, Wolfram Sang wrote:
-> The core uses it for polling. Give drivers a proper define handle this
-> case like for other response types.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  include/linux/mmc/core.h | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
-> index b01e77de1a74de..4caee099b63a28 100644
-> --- a/include/linux/mmc/core.h
-> +++ b/include/linux/mmc/core.h
-> @@ -55,6 +55,9 @@ struct mmc_command {
->  #define MMC_RSP_R6	(MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE)
->  #define MMC_RSP_R7	(MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE)
->  
-> +/* Can be used by core to poll after switch to MMC HS mode */
-> +#define MMC_RSP_R1_NO_CRC	(MMC_RSP_PRESENT|MMC_RSP_OPCODE)
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ include/linux/mmc/core.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-MMC_RSP_RQ_NO_CRC is described at Specification?
-
-Best Regards,
-Jaehoon Chung
-
-> +
->  #define mmc_resp_type(cmd)	((cmd)->flags & (MMC_RSP_PRESENT|MMC_RSP_136|MMC_RSP_CRC|MMC_RSP_BUSY|MMC_RSP_OPCODE))
->  
->  /*
-> 
+diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
+index b01e77de1a74de..4caee099b63a28 100644
+--- a/include/linux/mmc/core.h
++++ b/include/linux/mmc/core.h
+@@ -55,6 +55,9 @@ struct mmc_command {
+ #define MMC_RSP_R6	(MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE)
+ #define MMC_RSP_R7	(MMC_RSP_PRESENT|MMC_RSP_CRC|MMC_RSP_OPCODE)
+ 
++/* Can be used by core to poll after switch to MMC HS mode */
++#define MMC_RSP_R1_NO_CRC	(MMC_RSP_PRESENT|MMC_RSP_OPCODE)
++
+ #define mmc_resp_type(cmd)	((cmd)->flags & (MMC_RSP_PRESENT|MMC_RSP_136|MMC_RSP_CRC|MMC_RSP_BUSY|MMC_RSP_OPCODE))
+ 
+ /*
+-- 
+2.9.3
