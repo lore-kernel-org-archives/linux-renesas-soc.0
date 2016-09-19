@@ -1,52 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:43977 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755301AbcIEJBM (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:33378 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751316AbcISHqh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Sep 2016 05:01:12 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@glider.be>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] v4l: rcar-fcp: Keep the coding style consistent
-Date: Mon,  5 Sep 2016 12:01:30 +0300
-Message-Id: <1473066090-19951-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 19 Sep 2016 03:46:37 -0400
+MIME-Version: 1.0
+In-Reply-To: <2361310.TQ5AHhpEmD@wasted.cogentembedded.com>
+References: <3533019.Wim1Kuh1ic@wasted.cogentembedded.com> <2361310.TQ5AHhpEmD@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Sep 2016 09:46:36 +0200
+Message-ID: <CAMuHMdUU5xKCZ6Jpo5grXbOWyTSgik1fUFjh_Q-XUbhLAOhQ=A@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/8] ARM: shmobile: r8a7743: add power domain index macros
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas multimedia drivers use ret to store return values, fix the
-only exception in the rcar-fcp driver to keep the coding style
-consistent.
+On Fri, Sep 16, 2016 at 3:29 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add macros usable by the device tree sources to reference R8A7743 SYSC power
+> domains by index.
+>
+> Based on the original (and large) patch by Dmitry Shifrin
+> <dmitry.shifrin@cogentembedded.com>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/platform/rcar-fcp.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/media/platform/rcar-fcp.c b/drivers/media/platform/rcar-fcp.c
-index bc50c69ee0c5..f7bcbf7677a0 100644
---- a/drivers/media/platform/rcar-fcp.c
-+++ b/drivers/media/platform/rcar-fcp.c
-@@ -99,14 +99,14 @@ EXPORT_SYMBOL_GPL(rcar_fcp_put);
-  */
- int rcar_fcp_enable(struct rcar_fcp_device *fcp)
- {
--	int error;
-+	int ret;
- 
- 	if (!fcp)
- 		return 0;
- 
--	error = pm_runtime_get_sync(fcp->dev);
--	if (error < 0)
--		return error;
-+	ret = pm_runtime_get_sync(fcp->dev);
-+	if (ret < 0)
-+		return ret;
- 
- 	return 0;
- }
--- 
-Regards,
+Gr{oetje,eeting}s,
 
-Laurent Pinchart
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
