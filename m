@@ -1,112 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39221 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752548AbcIBLRw (ORCPT
+Received: from sauhun.de ([89.238.76.85]:37722 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751207AbcISUaR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 07:17:52 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Ai Kyuse <ai.kyuse.uw@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v6 2/9] mmc: tmio: enhance illegal sequence handling
-Date: Fri,  2 Sep 2016 13:17:31 +0200
-Message-Id: <1472815058-11562-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
-References: <1472815058-11562-1-git-send-email-horms+renesas@verge.net.au>
+        Mon, 19 Sep 2016 16:30:17 -0400
+Date: Mon, 19 Sep 2016 22:30:12 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PULL REQUEST] renesas/topic/sdhi-8bit-emmc for renesas drivers
+Message-ID: <20160919203012.GC1425@katana>
+References: <20160915054839.GA2272@katana>
+ <CAMuHMdWW5+bYix4Rjh2o0NfUb8Vwg845zr_PHeGwhEot=0xKBg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="GPJrCs/72TxItFYR"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWW5+bYix4Rjh2o0NfUb8Vwg845zr_PHeGwhEot=0xKBg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ai Kyuse <ai.kyuse.uw@renesas.com>
 
-An illegal sequence command error may occur if there is a stopbit or
-cmd_index error as well as a CRC error. The correct course of action
-is to re-enable IRQs
+--GPJrCs/72TxItFYR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-An illegal sequence data error may occur if there is a CRC or stopbit
-error,  or underrun. In this case set data->error correctly.
 
-This is in preparation for enabling tuning support which relies on
-differentiating between illegal sequence and other errors.
+> In the mean time, this has been rebased?
+> I will only pull tomorrow anyway...
 
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-[simon: broken out of a larger patch]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v4
-* Added Ack from Wolfram Sang
+Yes, it now contains V2 (and I will fix the bug spotted by Sergei in a
+minute).
 
-v3
-* No change
 
-v2
-* Broken out of a larger patch (but forgot to post)
----
- drivers/mmc/host/tmio_mmc_pio.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+--GPJrCs/72TxItFYR
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 192817850dff..806308ac93e7 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -520,7 +520,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 	schedule_work(&host->done);
- }
- 
--static void tmio_mmc_data_irq(struct tmio_mmc_host *host)
-+static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
- {
- 	struct mmc_data *data;
- 	spin_lock(&host->lock);
-@@ -529,6 +529,9 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host)
- 	if (!data)
- 		goto out;
- 
-+	if (stat & TMIO_STAT_CRCFAIL || stat & TMIO_STAT_STOPBIT_ERR ||
-+	    stat & TMIO_STAT_TXUNDERRUN)
-+		data->error = -EILSEQ;
- 	if (host->chan_tx && (data->flags & MMC_DATA_WRITE) && !host->force_pio) {
- 		u32 status = sd_ctrl_read16_and_16_as_32(host, CTL_STATUS);
- 		bool done = false;
-@@ -577,8 +580,6 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host,
- 		goto out;
- 	}
- 
--	host->cmd = NULL;
--
- 	/* This controller is sicker than the PXA one. Not only do we need to
- 	 * drop the top 8 bits of the first response word, we also need to
- 	 * modify the order of the response for short response command types.
-@@ -598,14 +599,16 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host,
- 
- 	if (stat & TMIO_STAT_CMDTIMEOUT)
- 		cmd->error = -ETIMEDOUT;
--	else if (stat & TMIO_STAT_CRCFAIL && cmd->flags & MMC_RSP_CRC)
-+	else if ((stat & TMIO_STAT_CRCFAIL && cmd->flags & MMC_RSP_CRC) ||
-+		 stat & TMIO_STAT_STOPBIT_ERR ||
-+		 stat & TMIO_STAT_CMD_IDX_ERR)
- 		cmd->error = -EILSEQ;
- 
- 	/* If there is data to handle we enable data IRQs here, and
- 	 * we will ultimatley finish the request in the data_end handler.
- 	 * If theres no data or we encountered an error, finish now.
- 	 */
--	if (host->data && !cmd->error) {
-+	if (host->data && (!cmd->error || cmd->error == -EILSEQ)) {
- 		if (host->data->flags & MMC_DATA_READ) {
- 			if (host->force_pio || !host->chan_rx)
- 				tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_READOP);
-@@ -666,7 +669,7 @@ static bool __tmio_mmc_sdcard_irq(struct tmio_mmc_host *host,
- 	/* Data transfer completion */
- 	if (ireg & TMIO_STAT_DATAEND) {
- 		tmio_mmc_ack_mmc_irqs(host, TMIO_STAT_DATAEND);
--		tmio_mmc_data_irq(host);
-+		tmio_mmc_data_irq(host, status);
- 		return true;
- 	}
- 
--- 
-2.7.0.rc3.207.g0ac5344
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJX4ErUAAoJEBQN5MwUoCm2oIwP/0Ep8Ed+L+xkJUhUlUIT2cfa
+Snopu+E1BkVLtGBk28IvO2ClyKmgZvlXaRWpWD3I+DMv6Cmr9aBcQMUpPVFAWr94
+rqZw5DGPZRJphrm0PLNelthj6Ds9J91696P5nhI6zfxkl7rxz5CNI1LHobre1tyL
+snuVOl2Jmv+vH9nGHlEVOwKPkScIBI44pWv1ZJsWrhd816UNVlAjZt6iHGP0TCR5
+TSDKD2oLVLzIwos0vxonIJF4DnylHv97UG6bJRJlFgt4BPU8xgGIV7D+qwoPGSPw
+RUXHV9xOJzlF19kmL0XbDuCey3nPvtKe18aYcx1Sml8Sel2JZEeBqXm+RLWVTw7+
+U+GHvDOHfpcWJ2+LnSA4pYBJXxPzSzyrVxsaGotbX9Xeh85An5nGsqGSobdxY/UJ
+Yt1/GoBhrREHzZmGwgMnhWqrfV5kXMQbIsNZGr9GvRjSq7j2AER4tMmy1mXpNAi5
+9m3o5r/Gz8DB475uhW5bi6Je+ub7QJMkQTId2+ByJEVvBH3mv397oTe5bNhCUj+D
+WDlNzsu99rfCjPicwgn8DkKe5rZLFbOXYadm/Hv3EoJ6HL95TOjK6hyre2Gw/L+e
+/EpSKZQp2rI71dG29Ywk2fmxTWyw7J0IU8EwddDVpMy5Gnnqhb+gMgrg7grI9Tw+
+7HjymNYOZ0jk1LAzXgj7
+=VO6h
+-----END PGP SIGNATURE-----
+
+--GPJrCs/72TxItFYR--
