@@ -1,47 +1,57 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 0/3] ARM: dts: r7s72100: add sdhi DT
-Date: Thu, 22 Sep 2016 17:32:08 -0400
-Message-Id: <20160922213211.7988-1-chris.brandt@renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34455 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750745AbcISHtn (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 19 Sep 2016 03:49:43 -0400
+Received: by mail-it0-f66.google.com with SMTP id 186so3884814itf.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Sep 2016 00:49:42 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <2597193.HJgZ9VmMaF@wasted.cogentembedded.com>
+References: <3533019.Wim1Kuh1ic@wasted.cogentembedded.com> <2597193.HJgZ9VmMaF@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Sep 2016 09:49:41 +0200
+Message-ID: <CAMuHMdUXjqct0OkfqiEWxZESCAF_wS3hZXetEfYwSZ2gL9-r_w@mail.gmail.com>
+Subject: Re: [PATCH RFC 3/8] soc: renesas: rcar-sysc: add R8A7743 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SUMMARY:
-This series adds sdhi to the r7s72100 (RZ/A1) Device Tree.
+Hi Sergei,
 
-DEPENDECIES:
-This series is dependent on the tmio/sh_sdhi patches being
-applied to add r7s72100 support.
-  mmc: sh_mobile_sdhi: add ocr_mask option
-  mmc: tmio-mmc: add support for 32bit data port
-  mmc: sh_mobile_sdhi: Add r7s72100 support
+On Fri, Sep 16, 2016 at 3:31 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add support for RZ/G1M (R8A7743) SoC power areas to the SYSC driver.
+>
+> Based on the original (and large) patch by Dmitry Shifrin
+> <dmitry.shifrin@cogentembedded.com>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-MERGE CONFLICTS:
-There are also patches being reviewed for adding mmc so depending on how
-they get applied, there might be a line conflict.
-To resolve the merge conflict, simply put the MMC nodes before
-the SDHI nodes (just because that seems to be the order in other
-Renesas SoCs DTs)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+> --- renesas.orig/drivers/soc/renesas/rcar-sysc.c
+> +++ renesas/drivers/soc/renesas/rcar-sysc.c
+> @@ -275,6 +275,9 @@ finalize:
+>  }
+>
+>  static const struct of_device_id rcar_sysc_matches[] = {
+> +#ifdef CONFIG_ARCH_R8A7743
+> +       { .compatible = "renesas,r8a7743-sysc", .data = &r8a7743_sysc_info },
 
-Chris Brandt (3):
-  ARM: dts: r7s72100: add sdhi clock to device tree
-  ARM: dts: r7s72100: add sdhi to device tree
-  ARM: dts: rskrza1: add sdhi1 DT support
+This compatible value should be documented first.
 
- arch/arm/boot/dts/r7s72100-rskrza1.dts     |  4 ++++
- arch/arm/boot/dts/r7s72100.dtsi            | 36 ++++++++++++++++++++++++++++++
- include/dt-bindings/clock/r7s72100-clock.h |  4 ++++
- 3 files changed, 44 insertions(+)
+Gr{oetje,eeting}s,
 
--- 
-2.9.2
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
