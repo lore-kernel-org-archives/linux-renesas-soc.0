@@ -1,92 +1,64 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49439 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757839AbcIHLg4 (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:58801 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751449AbcISOTA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 07:36:56 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/3] pinctrl: sh-pfc: r8a7791: Implement voltage switching for SDHI
-Date: Thu,  8 Sep 2016 13:36:47 +0200
-Message-Id: <1473334608-24638-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1473334608-24638-1-git-send-email-horms+renesas@verge.net.au>
-References: <1473334608-24638-1-git-send-email-horms+renesas@verge.net.au>
+        Mon, 19 Sep 2016 10:19:00 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/4] ARM: dts: r8a7791: Correct SCIFB reg properties to cover all registers
+Date: Mon, 19 Sep 2016 16:18:54 +0200
+Message-Id: <1474294736-24339-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1474294736-24339-1-git-send-email-geert+renesas@glider.be>
+References: <1474294736-24339-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-All the SHDIs can operate with either 3.3V or 1.8V signals, depending
-on negotiation with the card.
+Several SCIFB registers reside outside the reported register ranges.
+Fortunately this works (on Linux), due to the PAGE_SIZE granularity of
+ioremap().
 
-Based on work by Wolfram Sang for the r8a7790.
+Extend the sizes from 64 to 0x100 bytes to fix this, like is done on
+SH/R-Mobile SoCs.
 
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r8a7791.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 0c1a60c9a844..b707fc96f208 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -13,6 +13,10 @@
- 
- #include "sh_pfc.h"
- 
-+/*
-+ * All pins assigned to GPIO bank 3 can be used for SD interfaces in
-+ * which case they support both 3.3V and 1.8V signalling.
-+ */
- #define CPU_ALL_PORT(fn, sfx)						\
- 	PORT_GP_32(0, fn, sfx),						\
- 	PORT_GP_26(1, fn, sfx),						\
-@@ -20,7 +24,15 @@
- 	PORT_GP_32(3, fn, sfx),						\
- 	PORT_GP_32(4, fn, sfx),						\
- 	PORT_GP_32(5, fn, sfx),						\
--	PORT_GP_32(6, fn, sfx),						\
-+	PORT_GP_CFG_24(6, fn, sfx, SH_PFC_PIN_CFG_IO_VOLTAGE),		\
-+	PORT_GP_1(6, 24, fn, sfx),					\
-+	PORT_GP_1(6, 25, fn, sfx),					\
-+	PORT_GP_1(6, 26, fn, sfx),					\
-+	PORT_GP_1(6, 27, fn, sfx),					\
-+	PORT_GP_1(6, 28, fn, sfx),					\
-+	PORT_GP_1(6, 29, fn, sfx),					\
-+	PORT_GP_1(6, 30, fn, sfx),					\
-+	PORT_GP_1(6, 31, fn, sfx),					\
- 	PORT_GP_26(7, fn, sfx)
- 
- enum {
-@@ -6404,9 +6416,24 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 	{ },
- };
- 
-+static int r8a7791_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *pocctrl)
-+{
-+	if (pin < RCAR_GP_PIN(6, 0) || pin > RCAR_GP_PIN(6, 23))
-+		return -EINVAL;
-+
-+	*pocctrl = 0xe606008c;
-+
-+	return 31 - (pin & 0x1f);
-+}
-+
-+static const struct sh_pfc_soc_operations r8a7791_pinmux_ops = {
-+	.pin_to_pocctrl = r8a7791_pin_to_pocctrl,
-+};
-+
- #ifdef CONFIG_PINCTRL_PFC_R8A7791
- const struct sh_pfc_soc_info r8a7791_pinmux_info = {
- 	.name = "r8a77910_pfc",
-+	.ops = &r8a7791_pinmux_ops,
- 	.unlock_reg = 0xe6060000, /* PMMR */
- 
- 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 4e64be751bf2dafa..5d81a2d1c88434f2 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -702,7 +702,7 @@
+ 	scifb0: serial@e6c20000 {
+ 		compatible = "renesas,scifb-r8a7791",
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+-		reg = <0 0xe6c20000 0 64>;
++		reg = <0 0xe6c20000 0 0x100>;
+ 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB0>;
+ 		clock-names = "fck";
+@@ -716,7 +716,7 @@
+ 	scifb1: serial@e6c30000 {
+ 		compatible = "renesas,scifb-r8a7791",
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+-		reg = <0 0xe6c30000 0 64>;
++		reg = <0 0xe6c30000 0 0x100>;
+ 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB1>;
+ 		clock-names = "fck";
+@@ -730,7 +730,7 @@
+ 	scifb2: serial@e6ce0000 {
+ 		compatible = "renesas,scifb-r8a7791",
+ 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
+-		reg = <0 0xe6ce0000 0 64>;
++		reg = <0 0xe6ce0000 0 0x100>;
+ 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp2_clks R8A7791_CLK_SCIFB2>;
+ 		clock-names = "fck";
 -- 
-2.7.0.rc3.207.g0ac5344
+1.9.1
