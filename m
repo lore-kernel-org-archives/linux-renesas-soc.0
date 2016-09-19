@@ -1,56 +1,69 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Tue, 20 Sep 2016 22:45:06 +0900
-Message-Id: <20160920134506.25470.77154.sendpatchset@little-apple>
-In-Reply-To: <20160920134355.25470.93701.sendpatchset@little-apple>
-References: <20160920134355.25470.93701.sendpatchset@little-apple>
-Subject: [PATCH v5 07/07] iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34146 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754196AbcISIOV (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 19 Sep 2016 04:14:21 -0400
+MIME-Version: 1.0
+In-Reply-To: <1679762.ECpvSkQAyM@wasted.cogentembedded.com>
+References: <3533019.Wim1Kuh1ic@wasted.cogentembedded.com> <1679762.ECpvSkQAyM@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Sep 2016 10:14:20 +0200
+Message-ID: <CAMuHMdUrPvboqZwNWahGbp3xV3YtzESpiBqYzh5Xtuw5kKQ=4Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 5/8] ARM: dts: r8a7743: initial SoC device tree
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Sergei,
 
-Neither the ARM page table code enabled by IOMMU_IO_PGTABLE_LPAE
-nor the IPMMU_VMSA driver actually depends on ARM_LPAE, so get
-rid of the dependency.
+On Fri, Sep 16, 2016 at 3:35 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> The initial R8A7743 SoC device tree including CPU cores, GIC, timer, SYSC,
+> and the required  clock descriptions.
+>
+> Based on the original (and large) patch by Dmitry Shifrin
+> <dmitry.shifrin@cogentembedded.com>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Tested with ipmmu-vmsa on r8a7794 ALT and a kernel config using:
- # CONFIG_ARM_LPAE is not set
+> --- /dev/null/
+> +++ renesas/arch/arm/boot/dts/r8a7743.dtsi
+> @@ -0,0 +1,210 @@
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
+> +/ {
 
- Changes since V4:
- - Rebased patch to fit on top of earlier Kconfig changes in series
+> +       soc {
+=
+> +               /* Special CPG clocks */
+> +               cpg_clocks: cpg_clocks@e6150000 {
+> +                       compatible = "renesas,r8a7743-cpg-clocks",
+> +                                    "renesas,rcar-gen2-cpg-clocks";
 
- Changes since V3:
- - None
+For a new SoC family, I would strongly suggest using a renesas,cpg-mssr
+based binding instead:
+  - No more mstp*_clocks nodes with array triplets to keep in sync,
+  - Support for MSSR reset can be added later,
+  - No need to add all those fixed-factor clocks to DT,
+  - Less DT churn when adding support for new devices.
 
- Changes since V2:
- - None
+Gr{oetje,eeting}s,
 
- Changes since V1:
- - Rebased on top of ARCH_RENESAS change
- - Added Acked-by from Laurent
+                        Geert
 
- drivers/iommu/Kconfig |    1 -
- 1 file changed, 1 deletion(-)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---- 0008/drivers/iommu/Kconfig
-+++ work/drivers/iommu/Kconfig	2016-09-20 22:13:03.500607110 +0900
-@@ -275,7 +275,6 @@ config EXYNOS_IOMMU_DEBUG
- config IPMMU_VMSA
- 	bool "Renesas VMSA-compatible IPMMU"
- 	depends on ARM || IOMMU_DMA
--	depends on ARM_LPAE
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	select IOMMU_API
- 	select IOMMU_IO_PGTABLE_LPAE
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
