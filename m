@@ -1,139 +1,105 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:32946 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1761904AbcINQqZ (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38725 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751539AbcITGiX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Sep 2016 12:46:25 -0400
-Received: by mail-wm0-f66.google.com with SMTP id b187so3352906wme.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Sep 2016 09:46:24 -0700 (PDT)
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
-Cc: horms@verge.net.au, magnus.damm@gmail.com, wsa@the-dreams.de,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH 4/6] arm64: renesas: r8a7796: add I2C support
-Date: Wed, 14 Sep 2016 18:46:09 +0200
-Message-Id: <20160914164611.31237-5-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <20160914164611.31237-1-ulrich.hecht+renesas@gmail.com>
-References: <20160914164611.31237-1-ulrich.hecht+renesas@gmail.com>
+        Tue, 20 Sep 2016 02:38:23 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] [media] vsp1: fix CodingStyle violations on multi-line comments
+Date: Tue, 20 Sep 2016 09:39:12 +0300
+Message-ID: <2537215.n0YiYcdu5K@avalon>
+In-Reply-To: <20160919161031.066ec318@vento.lan>
+References: <b61873922d2c0029411304e66f810f5133b32c4d.1474309567.git.mchehab@s-opensource.com> <81909867.ShMgWNknpr@avalon> <20160919161031.066ec318@vento.lan>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 94 ++++++++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
+Hi Mauro,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index d7590c3..a4d8b76 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -17,6 +17,16 @@
- 	#address-cells = <2>;
- 	#size-cells = <2>;
- 
-+	aliases {
-+		i2c0 = &i2c0;
-+		i2c1 = &i2c1;
-+		i2c2 = &i2c2;
-+		i2c3 = &i2c3;
-+		i2c4 = &i2c4;
-+		i2c5 = &i2c5;
-+		i2c6 = &i2c6;
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-0.2";
- 		method = "smc";
-@@ -239,6 +249,90 @@
- 			#power-domain-cells = <1>;
- 		};
- 
-+		i2c0: i2c@e6500000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7796";
-+			reg = <0 0xe6500000 0 0x40>;
-+			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 931>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
-+
-+		i2c1: i2c@e6508000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7796";
-+			reg = <0 0xe6508000 0 0x40>;
-+			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 930>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
-+		i2c2: i2c@e6510000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7796";
-+			reg = <0 0xe6510000 0 0x40>;
-+			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 929>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
-+		i2c3: i2c@e66d0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7796";
-+			reg = <0 0xe66d0000 0 0x40>;
-+			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 928>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
-+
-+		i2c4: i2c@e66d8000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7796";
-+			reg = <0 0xe66d8000 0 0x40>;
-+			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 927>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
-+
-+		i2c5: i2c@e66e0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7796";
-+			reg = <0 0xe66e0000 0 0x40>;
-+			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 919>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <110>;
-+			status = "disabled";
-+		};
-+
-+		i2c6: i2c@e66e8000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,i2c-r8a7796";
-+			reg = <0 0xe66e8000 0 0x40>;
-+			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 918>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			i2c-scl-internal-delay-ns = <6>;
-+			status = "disabled";
-+		};
-+
- 		scif2: serial@e6e88000 {
- 			compatible = "renesas,scif-r8a7796",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
+On Monday 19 Sep 2016 16:10:31 Mauro Carvalho Chehab wrote:
+> Em Mon, 19 Sep 2016 21:35:36 +0300 Laurent Pinchart escreveu:
+> > On Monday 19 Sep 2016 15:26:19 Mauro Carvalho Chehab wrote:
+> >> Several multi-line comments added at the vsp1 patch series
+> >> violate the Kernel CodingStyle. Fix them.
+> >> 
+> >> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+> > 
+> > I prefer the current style but that seems to be a hopeless battle :-) I
+> > have a small comment, please see below.
+> > 
+> >> ---
+> >> 
+> >>  drivers/media/platform/vsp1/vsp1_bru.c    |  3 ++-
+> >>  drivers/media/platform/vsp1/vsp1_clu.c    |  3 ++-
+> >>  drivers/media/platform/vsp1/vsp1_dl.c     | 21 ++++++++++++++-------
+> >>  drivers/media/platform/vsp1/vsp1_drm.c    |  3 ++-
+> >>  drivers/media/platform/vsp1/vsp1_entity.h |  2 +-
+> >>  drivers/media/platform/vsp1/vsp1_pipe.c   |  2 +-
+> >>  drivers/media/platform/vsp1/vsp1_rpf.c    |  9 ++++++---
+> >>  drivers/media/platform/vsp1/vsp1_rwpf.c   |  6 ++++--
+> >>  drivers/media/platform/vsp1/vsp1_video.c  | 20 +++++++++++++-------
+> >>  drivers/media/platform/vsp1/vsp1_wpf.c    |  9 ++++++---
+> >>  10 files changed, 51 insertions(+), 27 deletions(-)
+
+[snip]
+
+> >> diff --git a/drivers/media/platform/vsp1/vsp1_entity.h
+> >> b/drivers/media/platform/vsp1/vsp1_entity.h index
+> >> 90a4d95c0a50..901146f807b9 100644
+> >> --- a/drivers/media/platform/vsp1/vsp1_entity.h
+> >> +++ b/drivers/media/platform/vsp1/vsp1_entity.h
+> >> @@ -35,7 +35,7 @@ enum vsp1_entity_type {
+> >>  	VSP1_ENTITY_WPF,
+> >>  };
+> >> 
+> >> -/*
+> >> +/**
+> > 
+> > Quoting another mail I've sent:
+> > 
+> > I don't think those comments should become part of the kernel
+> > documentation. They're really about driver internals, and meant for the
+> > driver developers. In particular only a subset of the driver is
+> > documented that way, when I've considered that the code or structures
+> > were complex enough to need proper documentation. A generated doc would
+> > then be quite incomplete and not very useful, the comments are meant to
+> > be read while working on the code.
+>
+> Just doing the above won't make it part of the Kernel documentation.
+> 
+> It will only be part of it if you explicitly include the file with
+> the ".. kernel-doc::" directive.
+> 
+> Even if you don't add it at the Kernel documentation, I strongly
+> suggest to use the kernel-doc tags and format, due to two reasons:
+> 
+> 1) If you later want to add a book, there's no need to touch at the
+> function/struct documentation. Everything will there already;
+> 
+> 2) Markus Raiser is writing validation tool for those tags:
+> 	install: https://return42.github.io/linuxdoc/install.html
+> 	lint:    https://return42.github.io/linuxdoc/cmd-line.html#kernel-> 	lintdoc
+> 
+> By using his tool, you would be able to check if a patch is keeping
+> the documentation documented, as you modify it.
+
+Ah, I wasn't aware of that validation tool. That's a very good point. Given 
+that the documentation will not be generated by switching to /** only I agree 
+with you that using that tag is a good idea.
+
+Thanks for the patch again.
+
+> Btw, on several places inside the vsp1 documentation, you're using the
+> "/**" tag already for other function/struct descriptions.
+
 -- 
-2.9.3
+Regards,
+
+Laurent Pinchart
