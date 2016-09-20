@@ -1,64 +1,55 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:32790 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751033AbcISOS7 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 10:18:59 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/4] ARM: dts: r8a7793: Correct SCIFB reg properties to cover all registers
-Date: Mon, 19 Sep 2016 16:18:55 +0200
-Message-Id: <1474294736-24339-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1474294736-24339-1-git-send-email-geert+renesas@glider.be>
-References: <1474294736-24339-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        joro@8bytes.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Tue, 20 Sep 2016 22:44:05 +0900
+Message-Id: <20160920134405.25470.8692.sendpatchset@little-apple>
+In-Reply-To: <20160920134355.25470.93701.sendpatchset@little-apple>
+References: <20160920134355.25470.93701.sendpatchset@little-apple>
+Subject: [PATCH v5 01/07] iommu/ipmmu-vmsa: Remove platform data handling
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Several SCIFB registers reside outside the reported register ranges.
-Fortunately this works (on Linux), due to the PAGE_SIZE granularity of
-ioremap().
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Extend the sizes from 64 to 0x100 bytes to fix this, like is done on
-SH/R-Mobile SoCs.
+The IPMMU driver is using DT these days, and platform data is no longer
+used by the driver. Remove unused code.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7793.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index e4b385eccf74e95e..67db1f7025c54c77 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -666,7 +666,7 @@
- 	scifb0: serial@e6c20000 {
- 		compatible = "renesas,scifb-r8a7793",
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
--		reg = <0 0xe6c20000 0 64>;
-+		reg = <0 0xe6c20000 0 0x100>;
- 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB0>;
- 		clock-names = "fck";
-@@ -680,7 +680,7 @@
- 	scifb1: serial@e6c30000 {
- 		compatible = "renesas,scifb-r8a7793",
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
--		reg = <0 0xe6c30000 0 64>;
-+		reg = <0 0xe6c30000 0 0x100>;
- 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB1>;
- 		clock-names = "fck";
-@@ -694,7 +694,7 @@
- 	scifb2: serial@e6ce0000 {
- 		compatible = "renesas,scifb-r8a7793",
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
--		reg = <0 0xe6ce0000 0 64>;
-+		reg = <0 0xe6ce0000 0 0x100>;
- 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7793_CLK_SCIFB2>;
- 		clock-names = "fck";
--- 
-1.9.1
+ Changes since V4:
+ - None
+
+ Changes since V3:
+ - None
+
+ Changes since V2:
+ - None
+
+ Changes since V1:
+ - Added Reviewed-by from Laurent
+
+ drivers/iommu/ipmmu-vmsa.c |    5 -----
+ 1 file changed, 5 deletions(-)
+
+--- 0002/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-09-20 21:46:26.000000000 +0900
+@@ -766,11 +766,6 @@ static int ipmmu_probe(struct platform_d
+ 	int irq;
+ 	int ret;
+ 
+-	if (!IS_ENABLED(CONFIG_OF) && !pdev->dev.platform_data) {
+-		dev_err(&pdev->dev, "missing platform data\n");
+-		return -EINVAL;
+-	}
+-
+ 	mmu = devm_kzalloc(&pdev->dev, sizeof(*mmu), GFP_KERNEL);
+ 	if (!mmu) {
+ 		dev_err(&pdev->dev, "cannot allocate device data\n");
