@@ -1,41 +1,61 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 22 Sep 2016 16:47:24 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: iommu@lists.linux-foundation.org,
-        laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        horms+renesas@verge.net.au, robin.murphy@arm.com,
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        joro@8bytes.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
         m.szyprowski@samsung.com
-Subject: Re: [PATCH v5 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V5
-Message-ID: <20160922144724.GL3541@8bytes.org>
-References: <20160920134355.25470.93701.sendpatchset@little-apple>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20160920134355.25470.93701.sendpatchset@little-apple>
+Date: Tue, 20 Sep 2016 22:43:55 +0900
+Message-Id: <20160920134355.25470.93701.sendpatchset@little-apple>
+Subject: [PATCH v5 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Sep 20, 2016 at 10:43:55PM +0900, Magnus Damm wrote:
-> iommu/ipmmu-vmsa: IPMMU multi-arch update V5
-> 
-> [PATCH v5 01/07] iommu/ipmmu-vmsa: Remove platform data handling
-> [PATCH v5 02/07] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
-> [PATCH v5 03/07] iommu/ipmmu-vmsa: Break out utlb parsing code
-> [PATCH v5 04/07] iommu/ipmmu-vmsa: Break out domain allocation code
-> [PATCH v5 05/07] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
-> [PATCH v5 06/07] iommu/ipmmu-vmsa: ARM and ARM64 archdata access
-> [PATCH v5 07/07] iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
+iommu/ipmmu-vmsa: IPMMU multi-arch update V5
 
-So except for patch 5 this looks good to me. Please add
+[PATCH v5 01/07] iommu/ipmmu-vmsa: Remove platform data handling
+[PATCH v5 02/07] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
+[PATCH v5 03/07] iommu/ipmmu-vmsa: Break out utlb parsing code
+[PATCH v5 04/07] iommu/ipmmu-vmsa: Break out domain allocation code
+[PATCH v5 05/07] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
+[PATCH v5 06/07] iommu/ipmmu-vmsa: ARM and ARM64 archdata access
+[PATCH v5 07/07] iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
 
-Reviewed-by: Joerg Roedel <jroedel@suse.de>
+These patches update the IPMMU driver with a couple of changes
+to support build on multiple architectures. In the process of
+doing so the interrupt code gets reworked and the foundation
+for supporting multiple contexts are added.
 
-to all patches, except patch 5, when you resend.
+Changes since V4:
+ - Updated patch 3/7 to work on top on the following commit in next-20160920:
+   b1e2afc iommu/ipmmu-vmsa: Fix wrong error handle of ipmmu_add_device
+ - Add Kconfig hunk to patch 5/7 to avoid undeclared ipmmu_ops if COMPILE_TEST
+ - Rebased patch 7/7 to fit on top of new Kconfig bits in 5/7
 
+Changes since V3:
+ - Updated patch 3/7 to fix hang-on-boot issue on 32-bit ARM - thanks Geert!
+ - Reworked group parameter handling in patch 3/7 and 5/7.
+ - Added patch 6/7 to fix build of the driver on s390/tile/um architectures
 
-Thanks,
+Changes since V2:
+ - Got rid of patch 3 from the V2 however patch 1, 2 and 4 are kept.
+ - V3 patch 3, 4 and 5 come from
+   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
+ - Patch 5 has been reworked to include patch 3 of the V1 of this series 
 
-	Joerg
+Changes since V1:
+ - Got rid of patch 2 and 3 from initial series
+ - Updated bitmap code locking and also used lighter bitop functions
+ - Updated the Kconfig bits to apply on top of ARCH_RENESAS
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
+
+ Built on top next-20160920 as well as the optional fast-track patch
+ [PATCH/RFC] iommu/ipmmu-vmsa: Update ->add_device() return value
+
+ drivers/iommu/Kconfig      |    2 
+ drivers/iommu/ipmmu-vmsa.c |  300 +++++++++++++++++++++++++++++++++++---------
+ 2 files changed, 243 insertions(+), 59 deletions(-)
