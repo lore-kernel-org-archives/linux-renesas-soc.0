@@ -1,47 +1,70 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:38169 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932838AbcITPqk (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Sep 2016 11:46:40 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 0/3] r7s72100: dts: enable mmcif
-Date: Tue, 20 Sep 2016 11:46:17 -0400
-Message-Id: <20160920154620.18653-1-chris.brandt@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        joro@8bytes.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Tue, 20 Sep 2016 22:44:36 +0900
+Message-Id: <20160920134436.25470.94761.sendpatchset@little-apple>
+In-Reply-To: <20160920134355.25470.93701.sendpatchset@little-apple>
+References: <20160920134355.25470.93701.sendpatchset@little-apple>
+Subject: [PATCH v5 04/07] iommu/ipmmu-vmsa: Break out domain allocation code
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This series enables the mmc driver for the RZ/A1.
-Nothing needed to be changed with the actual sh_mmcif driver.
-It worked fine as-is.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-As you can see, the status in the rskrza1 dst was left
-as disabled because I wanted to leave that code in there
-for refernce for someone later that actually has a board with
-an actaul eMMC chip. I tested with an MMC Plus card.
+Break out the domain allocation code into a separate function.
+This is preparation for future code sharing.
 
-For version 2:
-* First first patch that adds the clock has already been accepted
-* Add in the 3rd "card detect" interrupt that no one uses, but it
-  is documented in the hardware manual so it is reflected in the
-  DT.
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-Chris Brandt (3):
-  ARM: dts: r7s72100: add mmcif to device tree
-  mmc: sh_mmcif: Document r7s72100 DT bindings
-  ARM: dts: rskrza1: add mmc DT support
+ Changes since V4:
+ - None
 
- Documentation/devicetree/bindings/mmc/renesas,mmcif.txt |  4 ++++
- arch/arm/boot/dts/r7s72100-rskrza1.dts                  | 17 +++++++++++++++++
- arch/arm/boot/dts/r7s72100.dtsi                         | 12 ++++++++++++
- 3 files changed, 33 insertions(+)
+ Changes since V3:
+ - None
 
--- 
-2.9.2
+ Changes since V2:
+ - Included this new patch as-is from the following series:
+   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
+
+ drivers/iommu/ipmmu-vmsa.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+--- 0008/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-09-20 21:56:59.220607110 +0900
+@@ -507,13 +507,10 @@ static irqreturn_t ipmmu_irq(int irq, vo
+  * IOMMU Operations
+  */
+ 
+-static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
++static struct iommu_domain *__ipmmu_domain_alloc(unsigned type)
+ {
+ 	struct ipmmu_vmsa_domain *domain;
+ 
+-	if (type != IOMMU_DOMAIN_UNMANAGED)
+-		return NULL;
+-
+ 	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
+ 	if (!domain)
+ 		return NULL;
+@@ -523,6 +520,14 @@ static struct iommu_domain *ipmmu_domain
+ 	return &domain->io_domain;
+ }
+ 
++static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
++{
++	if (type != IOMMU_DOMAIN_UNMANAGED)
++		return NULL;
++
++	return __ipmmu_domain_alloc(type);
++}
++
+ static void ipmmu_domain_free(struct iommu_domain *io_domain)
+ {
+ 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
