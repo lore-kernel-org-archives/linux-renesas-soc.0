@@ -1,140 +1,140 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:35334 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934691AbcI2WV6 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Sep 2016 18:21:58 -0400
-Received: by mail-lf0-f44.google.com with SMTP id l131so92269122lfl.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Sep 2016 15:21:57 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, sre@kernel.org, dbaryshkov@gmail.com,
-        dwmw2@infradead.org, linux-pm@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH RFC v2 3/12] soc: renesas: rcar-sysc: add R8A7743 support
-Date: Fri, 30 Sep 2016 01:21:54 +0300
-Message-ID: <1979633.oxsqSuXO5u@wasted.cogentembedded.com>
-In-Reply-To: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
-References: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        joro@8bytes.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Tue, 20 Sep 2016 22:44:56 +0900
+Message-Id: <20160920134456.25470.48971.sendpatchset@little-apple>
+In-Reply-To: <20160920134355.25470.93701.sendpatchset@little-apple>
+References: <20160920134355.25470.93701.sendpatchset@little-apple>
+Subject: [PATCH v5 06/07] iommu/ipmmu-vmsa: ARM and ARM64 archdata access
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for RZ/G1M (R8A7743) SoC power areas to the R-Car SYSC driver.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
+Not all architectures have an iommu member in their archdata, so
+use #ifdefs support build wit COMPILE_TEST on any architecture.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
-Changes in version 2:
-- documented the R8A7743 SYSC device tree binding;
-- added "R-Car" to the patch description;
-- added Geert's tag.
 
- Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt |    7 +-
- drivers/soc/renesas/Makefile                                  |    1 
- drivers/soc/renesas/r8a7743-sysc.c                            |   32 ++++++++++
- drivers/soc/renesas/rcar-sysc.c                               |    3 
- drivers/soc/renesas/rcar-sysc.h                               |    1 
- 5 files changed, 41 insertions(+), 3 deletions(-)
+ Changes since V4:
+ - None
 
-Index: renesas/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-===================================================================
---- renesas.orig/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-+++ renesas/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-@@ -1,12 +1,13 @@
--DT bindings for the Renesas R-Car System Controller
-+DT bindings for the Renesas R-Car (RZ/G) System Controller
- 
- == System Controller Node ==
- 
--The R-Car System Controller provides power management for the CPU cores and
--various coprocessors.
-+The R-Car (RZ/G) System Controller provides power management for the CPU cores
-+and various coprocessors.
- 
- Required properties:
-   - compatible: Must contain exactly one of the following:
-+      - "renesas,r8a7743-sysc" (RZ/G1M)
-       - "renesas,r8a7779-sysc" (R-Car H1)
-       - "renesas,r8a7790-sysc" (R-Car H2)
-       - "renesas,r8a7791-sysc" (R-Car M2-W)
-Index: renesas/drivers/soc/renesas/Makefile
-===================================================================
---- renesas.orig/drivers/soc/renesas/Makefile
-+++ renesas/drivers/soc/renesas/Makefile
-@@ -1,3 +1,4 @@
-+obj-$(CONFIG_ARCH_R8A7743)	+= rcar-sysc.o r8a7743-sysc.o
- obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
- obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
- obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
-Index: renesas/drivers/soc/renesas/r8a7743-sysc.c
-===================================================================
---- /dev/null
-+++ renesas/drivers/soc/renesas/r8a7743-sysc.c
-@@ -0,0 +1,32 @@
-+/*
-+ * Renesas RZ/G1M System Controller
-+ *
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation; of the License.
-+ */
-+
-+#include <linux/bug.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/power/r8a7743-sysc.h>
-+
-+#include "rcar-sysc.h"
-+
-+static const struct rcar_sysc_area r8a7743_areas[] __initconst = {
-+	{ "always-on",	    0, 0, R8A7743_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
-+	{ "ca15-scu",	0x180, 0, R8A7743_PD_CA15_SCU,	R8A7743_PD_ALWAYS_ON,
-+	  PD_SCU },
-+	{ "ca15-cpu0",	 0x40, 0, R8A7743_PD_CA15_CPU0,	R8A7743_PD_CA15_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca15-cpu1",	 0x40, 1, R8A7743_PD_CA15_CPU1,	R8A7743_PD_CA15_SCU,
-+	  PD_CPU_NOCR },
-+	{ "sgx",	 0xc0, 0, R8A7743_PD_SGX,	R8A7743_PD_ALWAYS_ON },
-+};
-+
-+const struct rcar_sysc_info r8a7743_sysc_info __initconst = {
-+	.areas = r8a7743_areas,
-+	.num_areas = ARRAY_SIZE(r8a7743_areas),
-+};
-Index: renesas/drivers/soc/renesas/rcar-sysc.c
-===================================================================
---- renesas.orig/drivers/soc/renesas/rcar-sysc.c
-+++ renesas/drivers/soc/renesas/rcar-sysc.c
-@@ -275,6 +275,9 @@ finalize:
+ Changes since V3:
+ - New patch
+
+ drivers/iommu/ipmmu-vmsa.c |   37 +++++++++++++++++++++++++++----------
+ 1 file changed, 27 insertions(+), 10 deletions(-)
+
+--- 0012/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-09-20 21:59:21.690607110 +0900
+@@ -70,6 +70,25 @@ static struct ipmmu_vmsa_domain *to_vmsa
+ 	return container_of(dom, struct ipmmu_vmsa_domain, io_domain);
  }
  
- static const struct of_device_id rcar_sysc_matches[] = {
-+#ifdef CONFIG_ARCH_R8A7743
-+	{ .compatible = "renesas,r8a7743-sysc", .data = &r8a7743_sysc_info },
++#if defined(CONFIG_ARM) || defined(CONFIG_ARM64)
++static struct ipmmu_vmsa_archdata *to_archdata(struct device *dev)
++{
++	return dev->archdata.iommu;
++}
++static void set_archdata(struct device *dev, struct ipmmu_vmsa_archdata *p)
++{
++	dev->archdata.iommu = p;
++}
++#else
++static struct ipmmu_vmsa_archdata *to_archdata(struct device *dev)
++{
++	return NULL;
++}
++static void set_archdata(struct device *dev, struct ipmmu_vmsa_archdata *p)
++{
++}
 +#endif
- #ifdef CONFIG_ARCH_R8A7779
- 	{ .compatible = "renesas,r8a7779-sysc", .data = &r8a7779_sysc_info },
- #endif
-Index: renesas/drivers/soc/renesas/rcar-sysc.h
-===================================================================
---- renesas.orig/drivers/soc/renesas/rcar-sysc.h
-+++ renesas/drivers/soc/renesas/rcar-sysc.h
-@@ -50,6 +50,7 @@ struct rcar_sysc_info {
- 	unsigned int num_areas;
- };
++
+ #define TLB_LOOP_TIMEOUT		100	/* 100us */
  
-+extern const struct rcar_sysc_info r8a7743_sysc_info;
- extern const struct rcar_sysc_info r8a7779_sysc_info;
- extern const struct rcar_sysc_info r8a7790_sysc_info;
- extern const struct rcar_sysc_info r8a7791_sysc_info;
+ /* -----------------------------------------------------------------------------
+@@ -539,7 +558,7 @@ static void ipmmu_domain_free(struct iom
+ static int ipmmu_attach_device(struct iommu_domain *io_domain,
+ 			       struct device *dev)
+ {
+-	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
++	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
+ 	struct ipmmu_vmsa_device *mmu = archdata->mmu;
+ 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+ 	unsigned long flags;
+@@ -581,7 +600,7 @@ static int ipmmu_attach_device(struct io
+ static void ipmmu_detach_device(struct iommu_domain *io_domain,
+ 				struct device *dev)
+ {
+-	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
++	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
+ 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+ 	unsigned int i;
+ 
+@@ -701,7 +720,7 @@ static int ipmmu_init_platform_device(st
+ 	archdata->mmu = mmu;
+ 	archdata->utlbs = utlbs;
+ 	archdata->num_utlbs = num_utlbs;
+-	dev->archdata.iommu = archdata;
++	set_archdata(dev, archdata);
+ 	return 0;
+ 
+ error:
+@@ -713,12 +732,11 @@ error:
+ 
+ static int ipmmu_add_device(struct device *dev)
+ {
+-	struct ipmmu_vmsa_archdata *archdata;
+ 	struct ipmmu_vmsa_device *mmu = NULL;
+ 	struct iommu_group *group;
+ 	int ret;
+ 
+-	if (dev->archdata.iommu) {
++	if (to_archdata(dev)) {
+ 		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
+ 			 dev_name(dev));
+ 		return -EINVAL;
+@@ -754,8 +772,7 @@ static int ipmmu_add_device(struct devic
+ 	 * - Make the mapping size configurable ? We currently use a 2GB mapping
+ 	 *   at a 1GB offset to ensure that NULL VAs will fault.
+ 	 */
+-	archdata = dev->archdata.iommu;
+-	mmu = archdata->mmu;
++	mmu = to_archdata(dev)->mmu;
+ 	if (!mmu->mapping) {
+ 		struct dma_iommu_mapping *mapping;
+ 
+@@ -783,7 +800,7 @@ error:
+ 	if (mmu)
+ 		arm_iommu_release_mapping(mmu->mapping);
+ 
+-	dev->archdata.iommu = NULL;
++	set_archdata(dev, NULL);
+ 
+ 	if (!IS_ERR_OR_NULL(group))
+ 		iommu_group_remove_device(dev);
+@@ -793,7 +810,7 @@ error:
+ 
+ static void ipmmu_remove_device(struct device *dev)
+ {
+-	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
++	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
+ 
+ 	arm_iommu_detach_device(dev);
+ 	iommu_group_remove_device(dev);
+@@ -801,7 +818,7 @@ static void ipmmu_remove_device(struct d
+ 	kfree(archdata->utlbs);
+ 	kfree(archdata);
+ 
+-	dev->archdata.iommu = NULL;
++	set_archdata(dev, NULL);
+ }
+ 
+ static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
