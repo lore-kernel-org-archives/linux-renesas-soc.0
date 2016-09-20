@@ -1,112 +1,198 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56795 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755459AbcIMK4h (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Sep 2016 06:56:37 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Ai Kyuse <ai.kyuse.uw@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v7 2/6] mmc: tmio: enhance illegal sequence handling
-Date: Tue, 13 Sep 2016 12:56:11 +0200
-Message-Id: <1473764175-24580-3-git-send-email-horms+renesas@verge.net.au>
-In-Reply-To: <1473764175-24580-1-git-send-email-horms+renesas@verge.net.au>
-References: <1473764175-24580-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        joro@8bytes.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Tue, 20 Sep 2016 22:44:16 +0900
+Message-Id: <20160920134416.25470.49173.sendpatchset@little-apple>
+In-Reply-To: <20160920134355.25470.93701.sendpatchset@little-apple>
+References: <20160920134355.25470.93701.sendpatchset@little-apple>
+Subject: [PATCH v5 02/07] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ai Kyuse <ai.kyuse.uw@renesas.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-An illegal sequence command error may occur if there is a stopbit or
-cmd_index error as well as a CRC error. The correct course of action
-is to re-enable IRQs
+Introduce a bitmap for context handing and convert the
+interrupt routine to handle all registered contexts.
 
-An illegal sequence data error may occur if there is a CRC or stopbit
-error,  or underrun. In this case set data->error correctly.
+At this point the number of contexts are still limited.
 
-This is in preparation for enabling tuning support which relies on
-differentiating between illegal sequence and other errors.
+Also remove the use of the ARM specific mapping variable
+from ipmmu_irq() to allow compile on ARM64.
 
-Signed-off-by: Ai Kyuse <ai.kyuse.uw@renesas.com>
-[simon: broken out of a larger patch]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
-v4
-* Added Ack from Wolfram Sang
 
-v3
-* No change
+ Changes since V4:
+ - None
 
-v2
-* Broken out of a larger patch (but forgot to post)
----
- drivers/mmc/host/tmio_mmc_pio.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ Changes since V3:
+ - None
 
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 192817850dff..806308ac93e7 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -520,7 +520,7 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host)
- 	schedule_work(&host->done);
+ Changes since V2: (Thanks again to Laurent!)
+ - Introduce a spinlock together with the bitmap and domain array.
+ - Break out code into separate functions for alloc and free.
+ - Perform free after (instead of before) configuring hardware registers.
+ - Use the spinlock to protect the domain array in the interrupt handler.
+
+ Changes since V1: (Thanks to Laurent for feedback!)
+ - Use simple find_first_zero()/set_bit()/clear_bit() for context management.
+ - For allocation rely on spinlock held when calling ipmmu_domain_init_context()
+ - For test/free use atomic bitops
+ - Return IRQ_HANDLED if any of the contexts generated interrupts
+
+ drivers/iommu/ipmmu-vmsa.c |   76 ++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 66 insertions(+), 10 deletions(-)
+
+--- 0004/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-09-20 21:48:23.770607110 +0900
+@@ -8,6 +8,7 @@
+  * the Free Software Foundation; version 2 of the License.
+  */
+ 
++#include <linux/bitmap.h>
+ #include <linux/delay.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/err.h>
+@@ -26,12 +27,17 @@
+ 
+ #include "io-pgtable.h"
+ 
++#define IPMMU_CTX_MAX 1
++
+ struct ipmmu_vmsa_device {
+ 	struct device *dev;
+ 	void __iomem *base;
+ 	struct list_head list;
+ 
+ 	unsigned int num_utlbs;
++	spinlock_t lock;			/* Protects ctx and domains[] */
++	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
++	struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
+ 
+ 	struct dma_iommu_mapping *mapping;
+ };
+@@ -293,9 +299,29 @@ static struct iommu_gather_ops ipmmu_gat
+  * Domain/Context Management
+  */
+ 
++static int ipmmu_domain_allocate_context(struct ipmmu_vmsa_device *mmu,
++					 struct ipmmu_vmsa_domain *domain)
++{
++	unsigned long flags;
++	int ret;
++
++	spin_lock_irqsave(&mmu->lock, flags);
++
++	ret = find_first_zero_bit(mmu->ctx, IPMMU_CTX_MAX);
++	if (ret != IPMMU_CTX_MAX) {
++		mmu->domains[ret] = domain;
++		set_bit(ret, mmu->ctx);
++	}
++
++	spin_unlock_irqrestore(&mmu->lock, flags);
++
++	return ret;
++}
++
+ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+ {
+ 	u64 ttbr;
++	int ret;
+ 
+ 	/*
+ 	 * Allocate the page table operations.
+@@ -325,10 +351,15 @@ static int ipmmu_domain_init_context(str
+ 		return -EINVAL;
+ 
+ 	/*
+-	 * TODO: When adding support for multiple contexts, find an unused
+-	 * context.
++	 * Find an unused context.
+ 	 */
+-	domain->context_id = 0;
++	ret = ipmmu_domain_allocate_context(domain->mmu, domain);
++	if (ret == IPMMU_CTX_MAX) {
++		free_io_pgtable_ops(domain->iop);
++		return -EBUSY;
++	}
++
++	domain->context_id = ret;
+ 
+ 	/* TTBR0 */
+ 	ttbr = domain->cfg.arm_lpae_s1_cfg.ttbr[0];
+@@ -370,6 +401,19 @@ static int ipmmu_domain_init_context(str
+ 	return 0;
  }
  
--static void tmio_mmc_data_irq(struct tmio_mmc_host *host)
-+static void tmio_mmc_data_irq(struct tmio_mmc_host *host, unsigned int stat)
++static void ipmmu_domain_free_context(struct ipmmu_vmsa_device *mmu,
++				      unsigned int context_id)
++{
++	unsigned long flags;
++
++	spin_lock_irqsave(&mmu->lock, flags);
++
++	clear_bit(context_id, mmu->ctx);
++	mmu->domains[context_id] = NULL;
++
++	spin_unlock_irqrestore(&mmu->lock, flags);
++}
++
+ static void ipmmu_domain_destroy_context(struct ipmmu_vmsa_domain *domain)
  {
- 	struct mmc_data *data;
- 	spin_lock(&host->lock);
-@@ -529,6 +529,9 @@ static void tmio_mmc_data_irq(struct tmio_mmc_host *host)
- 	if (!data)
- 		goto out;
- 
-+	if (stat & TMIO_STAT_CRCFAIL || stat & TMIO_STAT_STOPBIT_ERR ||
-+	    stat & TMIO_STAT_TXUNDERRUN)
-+		data->error = -EILSEQ;
- 	if (host->chan_tx && (data->flags & MMC_DATA_WRITE) && !host->force_pio) {
- 		u32 status = sd_ctrl_read16_and_16_as_32(host, CTL_STATUS);
- 		bool done = false;
-@@ -577,8 +580,6 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host,
- 		goto out;
- 	}
- 
--	host->cmd = NULL;
--
- 	/* This controller is sicker than the PXA one. Not only do we need to
- 	 * drop the top 8 bits of the first response word, we also need to
- 	 * modify the order of the response for short response command types.
-@@ -598,14 +599,16 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host,
- 
- 	if (stat & TMIO_STAT_CMDTIMEOUT)
- 		cmd->error = -ETIMEDOUT;
--	else if (stat & TMIO_STAT_CRCFAIL && cmd->flags & MMC_RSP_CRC)
-+	else if ((stat & TMIO_STAT_CRCFAIL && cmd->flags & MMC_RSP_CRC) ||
-+		 stat & TMIO_STAT_STOPBIT_ERR ||
-+		 stat & TMIO_STAT_CMD_IDX_ERR)
- 		cmd->error = -EILSEQ;
- 
- 	/* If there is data to handle we enable data IRQs here, and
- 	 * we will ultimatley finish the request in the data_end handler.
- 	 * If theres no data or we encountered an error, finish now.
+ 	/*
+@@ -380,6 +424,7 @@ static void ipmmu_domain_destroy_context
  	 */
--	if (host->data && !cmd->error) {
-+	if (host->data && (!cmd->error || cmd->error == -EILSEQ)) {
- 		if (host->data->flags & MMC_DATA_READ) {
- 			if (host->force_pio || !host->chan_rx)
- 				tmio_mmc_enable_mmc_irqs(host, TMIO_MASK_READOP);
-@@ -666,7 +669,7 @@ static bool __tmio_mmc_sdcard_irq(struct tmio_mmc_host *host,
- 	/* Data transfer completion */
- 	if (ireg & TMIO_STAT_DATAEND) {
- 		tmio_mmc_ack_mmc_irqs(host, TMIO_STAT_DATAEND);
--		tmio_mmc_data_irq(host);
-+		tmio_mmc_data_irq(host, status);
- 		return true;
- 	}
+ 	ipmmu_ctx_write(domain, IMCTR, IMCTR_FLUSH);
+ 	ipmmu_tlb_sync(domain);
++	ipmmu_domain_free_context(domain->mmu, domain->context_id);
+ }
  
--- 
-2.7.0.rc3.207.g0ac5344
+ /* -----------------------------------------------------------------------------
+@@ -437,16 +482,25 @@ static irqreturn_t ipmmu_domain_irq(stru
+ static irqreturn_t ipmmu_irq(int irq, void *dev)
+ {
+ 	struct ipmmu_vmsa_device *mmu = dev;
+-	struct iommu_domain *io_domain;
+-	struct ipmmu_vmsa_domain *domain;
++	irqreturn_t status = IRQ_NONE;
++	unsigned int i;
++	unsigned long flags;
+ 
+-	if (!mmu->mapping)
+-		return IRQ_NONE;
++	spin_lock_irqsave(&mmu->lock, flags);
++
++	/*
++	 * Check interrupts for all active contexts.
++	 */
++	for (i = 0; i < IPMMU_CTX_MAX; i++) {
++		if (!mmu->domains[i])
++			continue;
++		if (ipmmu_domain_irq(mmu->domains[i]) == IRQ_HANDLED)
++			status = IRQ_HANDLED;
++	}
+ 
+-	io_domain = mmu->mapping->domain;
+-	domain = to_vmsa_domain(io_domain);
++	spin_unlock_irqrestore(&mmu->lock, flags);
+ 
+-	return ipmmu_domain_irq(domain);
++	return status;
+ }
+ 
+ /* -----------------------------------------------------------------------------
+@@ -774,6 +828,8 @@ static int ipmmu_probe(struct platform_d
+ 
+ 	mmu->dev = &pdev->dev;
+ 	mmu->num_utlbs = 32;
++	spin_lock_init(&mmu->lock);
++	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
+ 
+ 	/* Map I/O memory and request IRQ. */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
