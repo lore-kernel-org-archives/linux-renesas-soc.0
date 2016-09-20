@@ -1,119 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:36551 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935280AbcISMtp (ORCPT
+Received: from mail-pa0-f67.google.com ([209.85.220.67]:33095 "EHLO
+        mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752731AbcITMPQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 08:49:45 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Dirk Behme <dirk.behme@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 4/6] mmc: tmio: add eMMC support
-Date: Mon, 19 Sep 2016 14:49:19 +0200
-Message-Id: <20160919124921.8172-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
-References: <20160919124921.8172-1-wsa+renesas@sang-engineering.com>
+        Tue, 20 Sep 2016 08:15:16 -0400
+Received: by mail-pa0-f67.google.com with SMTP id oz2so874848pac.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Sep 2016 05:15:16 -0700 (PDT)
+From: Magnus Damm <magnus.damm@gmail.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Tue, 20 Sep 2016 21:06:45 +0900
+Message-Id: <20160920120645.14819.80249.sendpatchset@little-apple>
+Subject: [PATCH/RFC] ARM: dts: r8a7790: IPMMU-MX DU prototype
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-We need to add R1 without CRC support, refactor the bus width routine a
-little and extend a quirk check. To support "non-removable;" we need a
-workaround which will be hopefully removed when reworking PM soon.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+These two hunks of code enable the r8a7790 IPMMU-MX instance together with
+the DU device on r8a7790. Depending on kernel version LPAE may need to
+be enabled before the IPMMU driver becomes available.
+
+Useful to test the IPMMU with the DU via the VGA port on r8a7790 Lager.
+
+# modetest -M rcar-du -s 60:800x600
+
+Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/mmc/host/tmio_mmc.h     |  3 +++
- drivers/mmc/host/tmio_mmc_pio.c | 38 ++++++++++++++++++++++++++------------
- 2 files changed, 29 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 4b501f2d529f6e..637581faf756b1 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -79,6 +79,9 @@
- #define	CLK_CTL_DIV_MASK	0xff
- #define	CLK_CTL_SCLKEN		BIT(8)
+ Tested with renesas-drivers-2016-09-13-v4.8-rc6
+
+ arch/arm/boot/dts/r8a7790.dtsi |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- 0001/arch/arm/boot/dts/r8a7790.dtsi
++++ work/arch/arm/boot/dts/r8a7790.dtsi	2016-09-20 20:17:26.000000000 +0900
+@@ -985,6 +985,7 @@
+ 			 <&mstp7_clks R8A7790_CLK_LVDS0>,
+ 			 <&mstp7_clks R8A7790_CLK_LVDS1>;
+ 		clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1";
++		iommus = <&ipmmu_mx 15>, <&ipmmu_mx 16>;
+ 		status = "disabled";
  
-+#define CARD_OPT_WIDTH8		BIT(13)
-+#define CARD_OPT_WIDTH		BIT(15)
-+
- #define TMIO_BBS		512		/* Boot block size */
+ 		ports {
+@@ -1893,7 +1894,7 @@
+ 		interrupts = <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
+ 		#iommu-cells = <1>;
+-		status = "disabled";
++		status = "okay";
+ 	};
  
- /* Definitions for values the CTRL_SDIO_STATUS register can take. */
-diff --git a/drivers/mmc/host/tmio_mmc_pio.c b/drivers/mmc/host/tmio_mmc_pio.c
-index 46b5a456243b84..a0f05eb4f34490 100644
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@ -340,7 +340,9 @@ static int tmio_mmc_start_command(struct tmio_mmc_host *host, struct mmc_command
- 
- 	switch (mmc_resp_type(cmd)) {
- 	case MMC_RSP_NONE: c |= RESP_NONE; break;
--	case MMC_RSP_R1:   c |= RESP_R1;   break;
-+	case MMC_RSP_R1:
-+	case MMC_RSP_R1_NO_CRC:
-+			   c |= RESP_R1;   break;
- 	case MMC_RSP_R1B:  c |= RESP_R1B;  break;
- 	case MMC_RSP_R2:   c |= RESP_R2;   break;
- 	case MMC_RSP_R3:   c |= RESP_R3;   break;
-@@ -737,12 +739,13 @@ static int tmio_mmc_start_data(struct tmio_mmc_host *host,
- 	pr_debug("setup data transfer: blocksize %08x  nr_blocks %d\n",
- 		 data->blksz, data->blocks);
- 
--	/* Some hardware cannot perform 2 byte requests in 4 bit mode */
--	if (host->mmc->ios.bus_width == MMC_BUS_WIDTH_4) {
-+	/* Some hardware cannot perform 2 byte requests in 4/8 bit mode */
-+	if (host->mmc->ios.bus_width == MMC_BUS_WIDTH_4 ||
-+	    host->mmc->ios.bus_width == MMC_BUS_WIDTH_8) {
- 		int blksz_2bytes = pdata->flags & TMIO_MMC_BLKSZ_2BYTES;
- 
- 		if (data->blksz < 2 || (data->blksz < 4 && !blksz_2bytes)) {
--			pr_err("%s: %d byte block unsupported in 4 bit mode\n",
-+			pr_err("%s: %d byte block unsupported in 4/8 bit mode\n",
- 			       mmc_hostname(host->mmc), data->blksz);
- 			return -EINVAL;
- 		}
-@@ -922,14 +925,16 @@ static void tmio_mmc_power_off(struct tmio_mmc_host *host)
- static void tmio_mmc_set_bus_width(struct tmio_mmc_host *host,
- 				unsigned char bus_width)
- {
--	switch (bus_width) {
--	case MMC_BUS_WIDTH_1:
--		sd_ctrl_write16(host, CTL_SD_MEM_CARD_OPT, 0x80e0);
--		break;
--	case MMC_BUS_WIDTH_4:
--		sd_ctrl_write16(host, CTL_SD_MEM_CARD_OPT, 0x00e0);
--		break;
--	}
-+	u16 reg = sd_ctrl_read16(host, CTL_SD_MEM_CARD_OPT)
-+				& ~(CARD_OPT_WIDTH | CARD_OPT_WIDTH8);
-+
-+	/* reg now applies to MMC_BUS_WIDTH_4 */
-+	if (bus_width == MMC_BUS_WIDTH_1)
-+		reg |= CARD_OPT_WIDTH;
-+	else if (bus_width == MMC_BUS_WIDTH_8)
-+		reg |= CARD_OPT_WIDTH8;
-+
-+	sd_ctrl_write16(host, CTL_SD_MEM_CARD_OPT, reg);
- }
- 
- /* Set MMC clock / power.
-@@ -1149,6 +1154,15 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 				  !mmc_card_is_removable(mmc) ||
- 				  mmc->slot.cd_irq >= 0);
- 
-+	/*
-+	 * On Gen2+, eMMC with NONREMOVABLE currently fails because native
-+	 * hotplug gets disabled. It seems RuntimePM related yet we need further
-+	 * research. Since we are planning a PM overhaul anyway, let's enforce
-+	 * for now the device being active by enabling native hotplug always.
-+	 */
-+	if (pdata->flags & TMIO_MMC_MIN_RCAR2)
-+		_host->native_hotplug = true;
-+
- 	if (tmio_mmc_clk_enable(_host) < 0) {
- 		mmc->f_max = pdata->hclk;
- 		mmc->f_min = mmc->f_max / 512;
--- 
-2.9.3
+ 	ipmmu_rt: mmu@ffc80000 {
