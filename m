@@ -1,140 +1,89 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f66.google.com ([209.85.220.66]:35458 "EHLO
+        mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750979AbcITMUn (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 20 Sep 2016 08:20:43 -0400
+Received: by mail-pa0-f66.google.com with SMTP id hi10so872995pac.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Sep 2016 05:20:43 -0700 (PDT)
 From: Magnus Damm <magnus.damm@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
-        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
-        m.szyprowski@samsung.com
-Date: Tue, 20 Sep 2016 22:44:56 +0900
-Message-Id: <20160920134456.25470.48971.sendpatchset@little-apple>
-In-Reply-To: <20160920134355.25470.93701.sendpatchset@little-apple>
-References: <20160920134355.25470.93701.sendpatchset@little-apple>
-Subject: [PATCH v5 06/07] iommu/ipmmu-vmsa: ARM and ARM64 archdata access
-Sender: linux-kernel-owner@vger.kernel.org
+To: linux-renesas-soc@vger.kernel.org
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Date: Tue, 20 Sep 2016 21:12:11 +0900
+Message-Id: <20160920121211.14870.27506.sendpatchset@little-apple>
+Subject: [PATCH/RFC] ARM: dts: r8a7790: IPMMU-DS SYS-DMAC prototype
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Magnus Damm <damm+renesas@opensource.se>
 
-Not all architectures have an iommu member in their archdata, so
-use #ifdefs support build wit COMPILE_TEST on any architecture.
+Hook up the SYS-DMAC devices to IPMMU-DS on r8a7790 and enable that
+particular IPMMU instance. Depending on kernel version LPAE may need
+to be enabled before the IPMMU driver becomes available.
+
+Useful to test the IPMMU with the devices hooked up to the SYS-DMAC
+via the DMA Engine framework together with the following workaround:
+[PATCH/RFC] iommu/ipmmu-vmsa: IPMMU SYS-DMAC iova mapping workaround
 
 Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
 
- Changes since V4:
- - None
+ Tested with renesas-drivers-2016-09-13-v4.8-rc6
 
- Changes since V3:
- - New patch
+ arch/arm/boot/dts/r8a7790.dtsi |   31 ++++++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
 
- drivers/iommu/ipmmu-vmsa.c |   37 +++++++++++++++++++++++++++----------
- 1 file changed, 27 insertions(+), 10 deletions(-)
-
---- 0012/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-09-20 21:59:21.690607110 +0900
-@@ -70,6 +70,25 @@ static struct ipmmu_vmsa_domain *to_vmsa
- 	return container_of(dom, struct ipmmu_vmsa_domain, io_domain);
- }
+--- 0003/arch/arm/boot/dts/r8a7790.dtsi
++++ work/arch/arm/boot/dts/r8a7790.dtsi	2016-09-20 20:23:34.420607110 +0900
+@@ -362,6 +362,21 @@
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		#dma-cells = <1>;
+ 		dma-channels = <15>;
++		iommus = <&ipmmu_ds 0>,
++		       <&ipmmu_ds 1>,
++		       <&ipmmu_ds 2>,
++		       <&ipmmu_ds 3>,
++		       <&ipmmu_ds 4>,
++		       <&ipmmu_ds 5>,
++		       <&ipmmu_ds 6>,
++		       <&ipmmu_ds 7>,
++		       <&ipmmu_ds 8>,
++		       <&ipmmu_ds 9>,
++		       <&ipmmu_ds 10>,
++		       <&ipmmu_ds 11>,
++		       <&ipmmu_ds 12>,
++		       <&ipmmu_ds 13>,
++		       <&ipmmu_ds 14>;
+ 	};
  
-+#if defined(CONFIG_ARM) || defined(CONFIG_ARM64)
-+static struct ipmmu_vmsa_archdata *to_archdata(struct device *dev)
-+{
-+	return dev->archdata.iommu;
-+}
-+static void set_archdata(struct device *dev, struct ipmmu_vmsa_archdata *p)
-+{
-+	dev->archdata.iommu = p;
-+}
-+#else
-+static struct ipmmu_vmsa_archdata *to_archdata(struct device *dev)
-+{
-+	return NULL;
-+}
-+static void set_archdata(struct device *dev, struct ipmmu_vmsa_archdata *p)
-+{
-+}
-+#endif
-+
- #define TLB_LOOP_TIMEOUT		100	/* 100us */
+ 	dmac1: dma-controller@e6720000 {
+@@ -393,6 +408,21 @@
+ 		power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
+ 		#dma-cells = <1>;
+ 		dma-channels = <15>;
++		iommus = <&ipmmu_ds 15>,
++		       <&ipmmu_ds 16>,
++		       <&ipmmu_ds 17>,
++		       <&ipmmu_ds 18>,
++		       <&ipmmu_ds 19>,
++		       <&ipmmu_ds 20>,
++		       <&ipmmu_ds 21>,
++		       <&ipmmu_ds 22>,
++		       <&ipmmu_ds 23>,
++		       <&ipmmu_ds 24>,
++		       <&ipmmu_ds 25>,
++		       <&ipmmu_ds 26>,
++		       <&ipmmu_ds 27>,
++		       <&ipmmu_ds 28>,
++		       <&ipmmu_ds 29>;
+ 	};
  
- /* -----------------------------------------------------------------------------
-@@ -539,7 +558,7 @@ static void ipmmu_domain_free(struct iom
- static int ipmmu_attach_device(struct iommu_domain *io_domain,
- 			       struct device *dev)
- {
--	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
-+	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
- 	struct ipmmu_vmsa_device *mmu = archdata->mmu;
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
- 	unsigned long flags;
-@@ -581,7 +600,7 @@ static int ipmmu_attach_device(struct io
- static void ipmmu_detach_device(struct iommu_domain *io_domain,
- 				struct device *dev)
- {
--	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
-+	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
- 	unsigned int i;
+ 	audma0: dma-controller@ec700000 {
+@@ -1877,7 +1907,6 @@
+ 		interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>;
+ 		#iommu-cells = <1>;
+-		status = "disabled";
+ 	};
  
-@@ -701,7 +720,7 @@ static int ipmmu_init_platform_device(st
- 	archdata->mmu = mmu;
- 	archdata->utlbs = utlbs;
- 	archdata->num_utlbs = num_utlbs;
--	dev->archdata.iommu = archdata;
-+	set_archdata(dev, archdata);
- 	return 0;
- 
- error:
-@@ -713,12 +732,11 @@ error:
- 
- static int ipmmu_add_device(struct device *dev)
- {
--	struct ipmmu_vmsa_archdata *archdata;
- 	struct ipmmu_vmsa_device *mmu = NULL;
- 	struct iommu_group *group;
- 	int ret;
- 
--	if (dev->archdata.iommu) {
-+	if (to_archdata(dev)) {
- 		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
- 			 dev_name(dev));
- 		return -EINVAL;
-@@ -754,8 +772,7 @@ static int ipmmu_add_device(struct devic
- 	 * - Make the mapping size configurable ? We currently use a 2GB mapping
- 	 *   at a 1GB offset to ensure that NULL VAs will fault.
- 	 */
--	archdata = dev->archdata.iommu;
--	mmu = archdata->mmu;
-+	mmu = to_archdata(dev)->mmu;
- 	if (!mmu->mapping) {
- 		struct dma_iommu_mapping *mapping;
- 
-@@ -783,7 +800,7 @@ error:
- 	if (mmu)
- 		arm_iommu_release_mapping(mmu->mapping);
- 
--	dev->archdata.iommu = NULL;
-+	set_archdata(dev, NULL);
- 
- 	if (!IS_ERR_OR_NULL(group))
- 		iommu_group_remove_device(dev);
-@@ -793,7 +810,7 @@ error:
- 
- static void ipmmu_remove_device(struct device *dev)
- {
--	struct ipmmu_vmsa_archdata *archdata = dev->archdata.iommu;
-+	struct ipmmu_vmsa_archdata *archdata = to_archdata(dev);
- 
- 	arm_iommu_detach_device(dev);
- 	iommu_group_remove_device(dev);
-@@ -801,7 +818,7 @@ static void ipmmu_remove_device(struct d
- 	kfree(archdata->utlbs);
- 	kfree(archdata);
- 
--	dev->archdata.iommu = NULL;
-+	set_archdata(dev, NULL);
- }
- 
- static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
+ 	ipmmu_mp: mmu@ec680000 {
