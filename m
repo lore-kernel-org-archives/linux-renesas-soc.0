@@ -14,8 +14,8 @@ CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         <linux-tegra@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <658004af-e4f4-8b0c-cdc1-43661d331d70@nvidia.com>
-Date: Wed, 21 Sep 2016 15:37:14 +0100
+Message-ID: <6723a9e3-eef7-489f-0eda-53ca76e89f6e@nvidia.com>
+Date: Wed, 21 Sep 2016 11:01:19 +0100
 MIME-Version: 1.0
 In-Reply-To: <CAMuHMdVc+EjkbcpPKyzbCfDjp65gF3xP3bhkjh6SKLt6KDTtXg@mail.gmail.com>
 Content-Type: text/plain; charset="utf-8"
@@ -44,10 +44,33 @@ On 21/09/16 09:53, Geert Uytterhoeven wrote:
 > This looks a suboptimal to me: if you have n devices sharing the same PM
 > domains, you would add n new subdomains?
 
-BTW, would this be the case today for some renesas devices or are you
-just pointing this out as something that could be optimised/improved?
+Yes you would and so in that case it would appear to be suboptimal, I
+agree. One option would be to name the new PM domain after its parents
+and then see if any PM domains exist that matches the name and verify it
+has the required parents. We could even add a prefix to the name to
+indicate that this is a PM domain added by the core. Only problem is we
+could get some long names!
 
-Cheers
+> Having a clean way to specify multiple PM domains is very useful, though.
+> 
+> E.g. on Renesas ARM SoCs, devices are usually part of two PM domains:
+>   1. A power area (can be "always-on",
+>   2. The clock domain.
+> 
+> As power areas and clock domains are fairly orthogonal (the former use the
+> .power_{off,on}() callbacks, the latter set GENPD_FLAG_PM_CLK and use the
+> {at,de}tach_dev() callbacks), we currently setup both in the same driver
+> (SYSC, for controlling power areas), which forwards the clock domain operations
+> to the clock driver (CPG/MSTP or CPG/MSSR).
+> Hence we have only single references in the power-domains properties, but
+> having two would allow to drop the hardcoded links between the two drivers.
+
+Glad to see others could benefit from this ...
+
+> (Oh no, more DT backwards compatibility issues if this is accepted ;-)
+
+... despite DT compat issues :-(
+
 Jon
 
 -- 
