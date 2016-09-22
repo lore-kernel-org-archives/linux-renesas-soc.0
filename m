@@ -1,39 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:35599 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752998AbcIWG7N (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:47277 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S941265AbcIVVdK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Sep 2016 02:59:13 -0400
-MIME-Version: 1.0
-In-Reply-To: <20160922213211.7988-2-chris.brandt@renesas.com>
-References: <20160922213211.7988-1-chris.brandt@renesas.com> <20160922213211.7988-2-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 Sep 2016 08:59:11 +0200
-Message-ID: <CAMuHMdX_7HbtaLPCeMHy1Knk6pfTazP+RKxzM7vdyzAof1Kh1Q@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ARM: dts: r7s72100: add sdhi clock to device tree
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Thu, 22 Sep 2016 17:33:10 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 1/3] ARM: dts: r7s72100: add sdhi clock to device tree
+Date: Thu, 22 Sep 2016 17:32:09 -0400
+Message-Id: <20160922213211.7988-2-chris.brandt@renesas.com>
+In-Reply-To: <20160922213211.7988-1-chris.brandt@renesas.com>
+References: <20160922213211.7988-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 22, 2016 at 11:32 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ arch/arm/boot/dts/r7s72100.dtsi            | 8 ++++++++
+ include/dt-bindings/clock/r7s72100-clock.h | 4 ++++
+ 2 files changed, 12 insertions(+)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index e18d4e6..e97d6d1 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -149,6 +149,14 @@
+ 			>;
+ 			clock-output-names = "spi0", "spi1", "spi2", "spi3", "spi4";
+ 		};
++		mstp12_clks: mstp12_clks@fcfe0444 {
++			#clock-cells = <1>;
++			compatible = "renesas,r7s72100-mstp-clocks", "renesas,cpg-mstp-clocks";
++			reg = <0xfcfe0444 4>;
++			clocks = <&p1_clk>, <&p1_clk>;
++			clock-indices = <R7S72100_CLK_SDHI1 R7S72100_CLK_SDHI0>;
++			clock-output-names = "sdhi1", "sdhi0";
++		};
+ 	};
+ 
+ 	cpus {
+diff --git a/include/dt-bindings/clock/r7s72100-clock.h b/include/dt-bindings/clock/r7s72100-clock.h
+index 5eaf0fb..29e01ed 100644
+--- a/include/dt-bindings/clock/r7s72100-clock.h
++++ b/include/dt-bindings/clock/r7s72100-clock.h
+@@ -44,4 +44,8 @@
+ #define R7S72100_CLK_SPI3	4
+ #define R7S72100_CLK_SPI4	3
+ 
++/* MSTP12 */
++#define R7S72100_CLK_SDHI0	3
++#define R7S72100_CLK_SDHI1	2
++
+ #endif /* __DT_BINDINGS_CLOCK_R7S72100_H__ */
+-- 
+2.9.2
