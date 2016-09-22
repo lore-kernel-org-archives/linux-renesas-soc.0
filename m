@@ -1,57 +1,41 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:40813 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752077AbcIPKFE (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Sep 2016 06:05:04 -0400
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] ARM: dts: gose: use generic pinctrl properties in SDHI nodes
-Date: Fri, 16 Sep 2016 12:04:54 +0200
-Message-Id: <1474020294-1544-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 22 Sep 2016 16:47:24 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: iommu@lists.linux-foundation.org,
+        laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        horms+renesas@verge.net.au, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Subject: Re: [PATCH v5 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V5
+Message-ID: <20160922144724.GL3541@8bytes.org>
+References: <20160920134355.25470.93701.sendpatchset@little-apple>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160920134355.25470.93701.sendpatchset@little-apple>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Since 16ccaf5bb5a5 ("pinctrl: sh-pfc: Accept standard function, pins and
-groups properties") renesas pfc drivers accept generic "function", "pins"
-and "groups" properties.
+On Tue, Sep 20, 2016 at 10:43:55PM +0900, Magnus Damm wrote:
+> iommu/ipmmu-vmsa: IPMMU multi-arch update V5
+> 
+> [PATCH v5 01/07] iommu/ipmmu-vmsa: Remove platform data handling
+> [PATCH v5 02/07] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
+> [PATCH v5 03/07] iommu/ipmmu-vmsa: Break out utlb parsing code
+> [PATCH v5 04/07] iommu/ipmmu-vmsa: Break out domain allocation code
+> [PATCH v5 05/07] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
+> [PATCH v5 06/07] iommu/ipmmu-vmsa: ARM and ARM64 archdata access
+> [PATCH v5 07/07] iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7793-gose.dts | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+So except for patch 5 this looks good to me. Please add
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 90af18600124..dc311eba4444 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -346,18 +346,18 @@
- 	};
- 
- 	sdhi0_pins: sd0 {
--		renesas,groups = "sdhi0_data4", "sdhi0_ctrl";
--		renesas,function = "sdhi0";
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
- 	};
- 
- 	sdhi1_pins: sd1 {
--		renesas,groups = "sdhi1_data4", "sdhi1_ctrl";
--		renesas,function = "sdhi1";
-+		groups = "sdhi1_data4", "sdhi1_ctrl";
-+		function = "sdhi1";
- 	};
- 
- 	sdhi2_pins: sd2 {
--		renesas,groups = "sdhi2_data4", "sdhi2_ctrl";
--		renesas,function = "sdhi2";
-+		groups = "sdhi2_data4", "sdhi2_ctrl";
-+		function = "sdhi2";
- 	};
- 
- 	qspi_pins: qspi {
--- 
-2.7.0.rc3.207.g0ac5344
+Reviewed-by: Joerg Roedel <jroedel@suse.de>
+
+to all patches, except patch 5, when you resend.
+
+
+Thanks,
+
+	Joerg
