@@ -1,55 +1,44 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20160922213211.7988-4-chris.brandt@renesas.com>
-References: <20160922213211.7988-1-chris.brandt@renesas.com> <20160922213211.7988-4-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 Sep 2016 09:09:07 +0200
-Message-ID: <CAMuHMdWckFaU__BM=WAOvJ+fVjEvNdLCFy0GNiKwU159aZTdhg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] ARM: dts: rskrza1: add sdhi1 DT support
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:43388 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933339AbcIVVdO (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 22 Sep 2016 17:33:14 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Sender: devicetree-owner@vger.kernel.org
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 3/3] ARM: dts: rskrza1: add sdhi1 DT support
+Date: Thu, 22 Sep 2016 17:32:11 -0400
+Message-Id: <20160922213211.7988-4-chris.brandt@renesas.com>
+In-Reply-To: <20160922213211.7988-1-chris.brandt@renesas.com>
+References: <20160922213211.7988-1-chris.brandt@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 22, 2016 at 11:32 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> ---
->  arch/arm/boot/dts/r7s72100-rskrza1.dts | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-> index e5dea5b..548b51f 100644
-> --- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-> +++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-> @@ -56,6 +56,10 @@
->         };
->  };
->
-> +&sdhi1 {
-> +       status = "okay";
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ arch/arm/boot/dts/r7s72100-rskrza1.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On all other boards, we have the bus-width property in the board-specific
-.dts instead of in the SoC-specific .dtsi.
-
-> +};
-> +
->  &scif2 {
->         status = "okay";
->  };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+index e5dea5b..548b51f 100644
+--- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
++++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+@@ -56,6 +56,10 @@
+ 	};
+ };
+ 
++&sdhi1 {
++	status = "okay";
++};
++
+ &scif2 {
+ 	status = "okay";
+ };
+-- 
+2.9.2
