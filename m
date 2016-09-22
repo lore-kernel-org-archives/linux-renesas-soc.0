@@ -1,60 +1,91 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <horms@penelope.isobedori.kobe.vergenet.net>
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Kieran Bingham <kieran@ksquared.org.uk>,
-	Kieran Bingham <kieran@bingham.xyz>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 01/30] arm64: dts: r8a7795: add FCPF device nodes
-Date: Thu,  8 Sep 2016 09:42:57 +0200
-Message-Id: <28fc813153a4702cdcad98a2a53b920eb7d66061.1473320411.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1473320411.git.horms+renesas@verge.net.au>
-References: <cover.1473320411.git.horms+renesas@verge.net.au>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:42340 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756415AbcIVP4x (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 22 Sep 2016 11:56:53 -0400
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH/RFC] iommu/ipmmu-vmsa: Update ->add_device() return value
+To: Magnus Damm <magnus.damm@gmail.com>
+References: <20160920124144.8629.22575.sendpatchset@little-apple>
+ <3759bb9c-c482-4fae-d588-7c946ebeecae@arm.com>
+ <CANqRtoQ_3PNobXuSd9hxMw2uZepErLoVadXbq6G4UZXnrPiEpA@mail.gmail.com>
+Cc: iommu@lists.linux-foundation.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Message-ID: <12f65b42-2113-9036-dfe7-c12ec28f172e@arm.com>
+Date: Thu, 22 Sep 2016 16:56:43 +0100
+MIME-Version: 1.0
+In-Reply-To: <CANqRtoQ_3PNobXuSd9hxMw2uZepErLoVadXbq6G4UZXnrPiEpA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran@ksquared.org.uk>
+On 20/09/16 16:03, Magnus Damm wrote:
+> Hi Robin,
+> 
+> Thanks for your feedback!!
+> 
+> On Tue, Sep 20, 2016 at 10:18 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+>> Hi Magnus,
+>>
+>> On 20/09/16 13:41, Magnus Damm wrote:
+>>> From: Magnus Damm <damm+renesas@opensource.se>
+>>>
+>>> Update the IPMMU driver to return -ENODEV when adding devices
+>>> not hooked up a particular IPMMU instance.
+>>>
+>>> Currently the ->add_device() callback implementation in the IPMMU
+>>> driver returns -ENODEV for devices with no "iommus" property,
+>>> however the function ipmmu_find_utlbs() may return -EINVAL.
+>>
+>> If there were no "iommus" property at all, of_parse_phandle_with_args()
+>> should return -ENOENT - that probably does want to be caught and passed
+>> back as -ENODEV to imply an untranslated device. On the other hand,
+>> -EINVAL would stem from the existence of the property, but in a somehow
+>> erroneous manner - other than the "args.np != mmu->dev->of_node" check
+>> (which could legitimately fail and be safely ignored if there are
+>> multiple IOMMUs in the system), any other reason implies a DT error
+>> which probably shouldn't be papered over.
+> 
+> Regarding -ENOENT to -ENODEV, I agree but I believe this case is
+> already handled. The ->add_device() callback seems to be using
+> of_count_phandle_with_args() to check for the presence of "iommus"
+> property before calling ipmmu_find_utlbs(). So for the case with no
+> "iommus" property at all it is returned as -ENODEV as you suggest.
 
-Provide nodes for the FCP devices dedicated to the FDP device channels.
+Ah, right you are, I missed that there was a separate check earlier.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Kieran Bingham <kieran@bingham.xyz>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+> The ->add_device() callback has the ret variable initialised to
+> -ENODEV by default. In case there is only one IPMMU device on the
+> ipmmu_device list and it matches the struct device passed to the
+> ipmmu_add_device() function then all is fine. However when there are
+> more than one IPMMU device on the ipmmu_device list then
+> ipmmu_find_utlbs() may return -EINVAL. Judging by the code this seems
+> to happen when the order of the IPMMU devices on the "iommus" property
+> does not match the IPMMU order on the ipmmu_device list.
+> 
+> Hm, I wonder if all this should be replaced with ->xlate() somehow?
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index b902356873c2..8c85b50d306b 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -1273,5 +1273,26 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
-+
-+		fcpf0: fcp@fe950000 {
-+			compatible = "renesas,r8a7795-fcpf", "renesas,fcpf";
-+			reg = <0 0xfe950000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 615>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+		};
-+
-+		fcpf1: fcp@fe951000 {
-+			compatible = "renesas,r8a7795-fcpf", "renesas,fcpf";
-+			reg = <0 0xfe951000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 614>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+		};
-+
-+		fcpf2: fcp@fe952000 {
-+			compatible = "renesas,r8a7795-fcpf", "renesas,fcpf";
-+			reg = <0 0xfe952000 0 0x200>;
-+			clocks = <&cpg CPG_MOD 613>;
-+			power-domains = <&sysc R8A7795_PD_A3VP>;
-+		};
- 	};
- };
--- 
-2.7.0.rc3.207.g0ac5344
+Ideally, yes - the core code already has most of this covered, so taking
+advantage of it would be good. I think the only slight hiccup is that
+the 32-bit DMA code is then going to call attach_dev() with a domain you
+probably don't want, before you get your add_device() call. Other than
+handling that vs. group-based default domains for 64-bit, though, there
+shouldn't be anything else to special-case, I don't think.
+
+I'm finally starting to have a look into converting the arch/arm code
+over to use groups and default domains sensibly, but I suspect that's
+ultimately going to have some dependency on the probe deferral stuff,
+rather than introduce the same bus notifier bodge we currently have on
+arm64.
+
+Robin.
+
+> 
+> Thanks,
+> 
+> / magnus
+> 
