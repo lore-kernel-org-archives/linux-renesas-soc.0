@@ -1,56 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:27055 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754160AbcILOVD (ORCPT
+Received: from 8bytes.org ([81.169.241.247]:53643 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755495AbcIVOpI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Sep 2016 10:21:03 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 1/3] mmc: sh_mobile_sdhi: add ocr_mask option
-Date: Mon, 12 Sep 2016 10:15:05 -0400
-Message-Id: <20160912141507.6837-2-chris.brandt@renesas.com>
-In-Reply-To: <20160912141507.6837-1-chris.brandt@renesas.com>
-References: <20160912141507.6837-1-chris.brandt@renesas.com>
+        Thu, 22 Sep 2016 10:45:08 -0400
+Date: Thu, 22 Sep 2016 16:45:06 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: iommu@lists.linux-foundation.org,
+        laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        horms+renesas@verge.net.au, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Subject: Re: [PATCH v5 05/07] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
+Message-ID: <20160922144506.GK3541@8bytes.org>
+References: <20160920134355.25470.93701.sendpatchset@little-apple>
+ <20160920134446.25470.22322.sendpatchset@little-apple>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160920134446.25470.22322.sendpatchset@little-apple>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-In moving platforms from board files to DT, there still needs to be a way
-to set the ocr_mask setting for the tmio driver during probe. Without this
-setting, the probe will fail because the supported voltages are not known.
+On Tue, Sep 20, 2016 at 10:44:46PM +0900, Magnus Damm wrote:
+> +#ifdef CONFIG_IOMMU_DMA
+> +
+> +static struct iommu_domain *ipmmu_domain_alloc_dma(unsigned type)
+> +{
+> +	struct iommu_domain *io_domain;
+> +
+> +	if (type != IOMMU_DOMAIN_DMA)
+> +		return NULL;
+> +
+> +	io_domain = __ipmmu_domain_alloc(type);
+> +	if (io_domain)
+> +		iommu_get_dma_cookie(io_domain);
+> +
+> +	return io_domain;
+> +}
+> +
+> +static void ipmmu_domain_free_dma(struct iommu_domain *io_domain)
+> +{
+> +	iommu_put_dma_cookie(io_domain);
+> +	ipmmu_domain_free(io_domain);
+> +}
 
-This patch will also traditional platform registration platforms to
-migrate to DT.
+> [...]
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- drivers/mmc/host/sh_mobile_sdhi.c | 2 ++
- 1 file changed, 2 insertions(+)
+> +static const struct iommu_ops ipmmu_ops = {
+> +	.domain_alloc = ipmmu_domain_alloc_dma,
+> +	.domain_free = ipmmu_domain_free_dma,
 
-diff --git a/drivers/mmc/host/sh_mobile_sdhi.c b/drivers/mmc/host/sh_mobile_sdhi.c
-index 5334f24..b033500 100644
---- a/drivers/mmc/host/sh_mobile_sdhi.c
-+++ b/drivers/mmc/host/sh_mobile_sdhi.c
-@@ -59,6 +59,7 @@ enum tmio_mmc_dmac_type {
- 
- struct sh_mobile_sdhi_of_data {
- 	unsigned long tmio_flags;
-+	u32	      tmio_ocr_mask;
- 	unsigned long capabilities;
- 	unsigned long capabilities2;
- 	enum dma_slave_buswidth dma_buswidth;
-@@ -630,6 +631,7 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
- 		const struct sh_mobile_sdhi_of_data *of_data = of_id->data;
- 
- 		mmc_data->flags |= of_data->tmio_flags;
-+		mmc_data->ocr_mask = of_data->tmio_ocr_mask;
- 		mmc_data->capabilities |= of_data->capabilities;
- 		mmc_data->capabilities2 |= of_data->capabilities2;
- 		mmc_data->dma_rx_offset = of_data->dma_rx_offset;
--- 
-2.9.2
+Okay, so when CONFIG_IOMMU_DMA is enabled, you only support allocation
+of DMA domains, not UNMANAGED domains anymore. Is there a reason for
+that?
+
+You can reduce the #ifdef'ed coded by supporting both types of domains
+and call into allocation-subfunctions for DMA and UNMANAGED domains. The
+#ifdef could then only let the dma-allocation function return NULL.
+
+This would be much more compatible to what other IOMMU drivers do and
+will allow VFIO usage in the future.
+
+
+
+	Joerg
