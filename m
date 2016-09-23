@@ -1,108 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:36777 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758357AbcIHW0X (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:52029 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935070AbcIWIcd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 18:26:23 -0400
-Received: by mail-lf0-f44.google.com with SMTP id g62so31549984lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 08 Sep 2016 15:26:22 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] pcie-rcar: fix some checkpatch warnings
-Date: Fri, 09 Sep 2016 01:26:18 +0300
-Message-ID: <4686727.8sYr70Tb6R@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 23 Sep 2016 04:32:33 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] clk: renesas: rcar-gen3-cpg: Always use readl()/writel()
+Date: Fri, 23 Sep 2016 10:32:32 +0200
+Message-Id: <1474619552-29703-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1474619552-29703-1-git-send-email-geert+renesas@glider.be>
+References: <1474619552-29703-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car PCIe driver causes 13 warnings from scripts/checkpatch.pl --
-let's fix at least 10 easier ones:
+The R-Car Gen3 CPG/MSSR driver uses a mix of clk_readl()/clk_writel()
+and readl()/writel() to access the clock registers. Settle on the
+generic readl()/writel().
 
-- line over 80 characters;
-
-- blank line missing after declarations;
-
-- statements not starting on a tabstop.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-The patch is against the 'next' branch of Bjorn Helgaas' 'pci.git' repo plus
-two patches  posted  earlier...
+ drivers/clk/renesas/rcar-gen3-cpg.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
- drivers/pci/host/pcie-rcar.c |   29 +++++++++++++++++++----------
- 1 file changed, 19 insertions(+), 10 deletions(-)
-
-Index: pci/drivers/pci/host/pcie-rcar.c
-===================================================================
---- pci.orig/drivers/pci/host/pcie-rcar.c
-+++ pci/drivers/pci/host/pcie-rcar.c
-@@ -1034,12 +1034,16 @@ static int rcar_pcie_inbound_ranges(stru
- 		 * Set up 64-bit inbound regions as the range parser doesn't
- 		 * distinguish between 32 and 64-bit types.
- 		 */
--		rcar_pci_write_reg(pcie, lower_32_bits(pci_addr), PCIEPRAR(idx));
-+		rcar_pci_write_reg(pcie, lower_32_bits(pci_addr),
-+				   PCIEPRAR(idx));
- 		rcar_pci_write_reg(pcie, lower_32_bits(cpu_addr), PCIELAR(idx));
--		rcar_pci_write_reg(pcie, lower_32_bits(mask) | flags, PCIELAMR(idx));
-+		rcar_pci_write_reg(pcie, lower_32_bits(mask) | flags,
-+				   PCIELAMR(idx));
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 9d76076da4948fc4..742f6dc7c15653ef 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -98,7 +98,7 @@ static int cpg_sd_clock_enable(struct clk_hw *hw)
+ 	u32 val, sd_fc;
+ 	unsigned int i;
  
--		rcar_pci_write_reg(pcie, upper_32_bits(pci_addr), PCIEPRAR(idx+1));
--		rcar_pci_write_reg(pcie, upper_32_bits(cpu_addr), PCIELAR(idx+1));
-+		rcar_pci_write_reg(pcie, upper_32_bits(pci_addr),
-+				   PCIEPRAR(idx + 1));
-+		rcar_pci_write_reg(pcie, upper_32_bits(cpu_addr),
-+				   PCIELAR(idx + 1));
- 		rcar_pci_write_reg(pcie, 0, PCIELAMR(idx + 1));
+-	val = clk_readl(clock->reg);
++	val = readl(clock->reg);
  
- 		pci_addr += size;
-@@ -1088,6 +1092,7 @@ static int rcar_pcie_parse_map_dma_range
- 	/* Get the dma-ranges from DT */
- 	for_each_of_pci_range(&parser, &range) {
- 		u64 end = range.cpu_addr + range.size - 1;
-+
- 		dev_dbg(pcie->dev, "0x%08x 0x%016llx..0x%016llx -> 0x%016llx\n",
- 			range.flags, range.cpu_addr, end, range.pci_addr);
+ 	sd_fc = val & CPG_SD_FC_MASK;
+ 	for (i = 0; i < clock->div_num; i++)
+@@ -111,7 +111,7 @@ static int cpg_sd_clock_enable(struct clk_hw *hw)
+ 	val &= ~(CPG_SD_STP_MASK);
+ 	val |= clock->div_table[i].val & CPG_SD_STP_MASK;
  
-@@ -1101,9 +1106,12 @@ static int rcar_pcie_parse_map_dma_range
+-	clk_writel(val, clock->reg);
++	writel(val, clock->reg);
  
- static const struct of_device_id rcar_pcie_of_match[] = {
- 	{ .compatible = "renesas,pcie-r8a7779", .data = rcar_pcie_hw_init_h1 },
--	{ .compatible = "renesas,pcie-rcar-gen2", .data = rcar_pcie_hw_init_gen2 },
--	{ .compatible = "renesas,pcie-r8a7790", .data = rcar_pcie_hw_init_gen2 },
--	{ .compatible = "renesas,pcie-r8a7791", .data = rcar_pcie_hw_init_gen2 },
-+	{ .compatible = "renesas,pcie-rcar-gen2",
-+	  .data = rcar_pcie_hw_init_gen2 },
-+	{ .compatible = "renesas,pcie-r8a7790",
-+	  .data = rcar_pcie_hw_init_gen2 },
-+	{ .compatible = "renesas,pcie-r8a7791",
-+	  .data = rcar_pcie_hw_init_gen2 },
- 	{ .compatible = "renesas,pcie-r8a7795", .data = rcar_pcie_hw_init },
- 	{},
- };
-@@ -1116,7 +1124,8 @@ static int rcar_pcie_parse_request_of_pc
- 	resource_size_t iobase;
- 	struct resource_entry *win;
+ 	return 0;
+ }
+@@ -120,14 +120,14 @@ static void cpg_sd_clock_disable(struct clk_hw *hw)
+ {
+ 	struct sd_clock *clock = to_sd_clock(hw);
  
--	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pci->resources, &iobase);
-+	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pci->resources,
-+					       &iobase);
- 	if (err)
- 		return err;
+-	clk_writel(clk_readl(clock->reg) | CPG_SD_STP_MASK, clock->reg);
++	writel(readl(clock->reg) | CPG_SD_STP_MASK, clock->reg);
+ }
  
-@@ -1167,8 +1176,8 @@ static int rcar_pcie_probe(struct platfo
- 		return err;
- 	}
+ static int cpg_sd_clock_is_enabled(struct clk_hw *hw)
+ {
+ 	struct sd_clock *clock = to_sd_clock(hw);
  
--	 err = rcar_pcie_parse_map_dma_ranges(pcie, pdev->dev.of_node);
--	 if (err)
-+	err = rcar_pcie_parse_map_dma_ranges(pcie, pdev->dev.of_node);
-+	if (err)
- 		return err;
+-	return !(clk_readl(clock->reg) & CPG_SD_STP_MASK);
++	return !(readl(clock->reg) & CPG_SD_STP_MASK);
+ }
  
- 	of_id = of_match_device(rcar_pcie_of_match, pcie->dev);
+ static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
+@@ -138,7 +138,7 @@ static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
+ 	u32 val, sd_fc;
+ 	unsigned int i;
+ 
+-	val = clk_readl(clock->reg);
++	val = readl(clock->reg);
+ 
+ 	sd_fc = val & CPG_SD_FC_MASK;
+ 	for (i = 0; i < clock->div_num; i++)
+@@ -189,10 +189,10 @@ static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (i >= clock->div_num)
+ 		return -EINVAL;
+ 
+-	val = clk_readl(clock->reg);
++	val = readl(clock->reg);
+ 	val &= ~(CPG_SD_STP_MASK | CPG_SD_FC_MASK);
+ 	val |= clock->div_table[i].val & (CPG_SD_STP_MASK | CPG_SD_FC_MASK);
+-	clk_writel(val, clock->reg);
++	writel(val, clock->reg);
+ 
+ 	return 0;
+ }
+-- 
+1.9.1
