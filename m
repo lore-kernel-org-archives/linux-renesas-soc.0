@@ -1,43 +1,88 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:33693 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934213AbcIWIc6 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Sep 2016 04:32:58 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <573166A8.1030101@rvc.renesas.com>
-References: <1462372543-31835-1-git-send-email-geert+renesas@glider.be> <573166A8.1030101@rvc.renesas.com>
+In-Reply-To: <SG2PR06MB1165C71A8C201614AC2463168AC80@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160922213211.7988-1-chris.brandt@renesas.com>
+ <20160922213211.7988-3-chris.brandt@renesas.com> <CAMuHMdU8PKGwJ+5JzMix_GHohdYdXPEXwDm4HwmQfSxDY4h95w@mail.gmail.com>
+ <SG2PR06MB1165C71A8C201614AC2463168AC80@SG2PR06MB1165.apcprd06.prod.outlook.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 23 Sep 2016 10:32:56 +0200
-Message-ID: <CAMuHMdVsPCBqx9aykJCMmedbHJJsg+te=HG=FwTwow4UPXXuLQ@mail.gmail.com>
-Subject: Re: [RFC 1/4] clk: renesas: rcar-gen3-cpg: Add Z clock
-To: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
+Date: Fri, 23 Sep 2016 16:32:19 +0200
+Message-ID: <CAMuHMdWkqE-wZE5gDHofO4j4UKg41eoU1i0f2VQyfKTujuR4ug@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: r7s72100: add sdhi to device tree
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Toru Oishi <toru.oishi.zj@rvc.renesas.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
 Content-Type: text/plain; charset=UTF-8
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Khiem,
+Hi Chris,
 
-On Tue, May 10, 2016 at 6:42 AM, Khiem Nguyen
-<khiem.nguyen.xt@rvc.renesas.com> wrote:
-> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
-> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-> @@ -28,6 +28,146 @@
+On Fri, Sep 23, 2016 at 4:20 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+>> (due to lack of documentation about SDHI, for the interrupt numbers only)
+>>
+>> > --- a/arch/arm/boot/dts/r7s72100.dtsi
+>> > +++ b/arch/arm/boot/dts/r7s72100.dtsi
+>> > @@ -458,4 +458,32 @@
+>> >                 #size-cells = <0>;
+>> >                 status = "disabled";
+>> >         };
+>> > +
+>> > +       sdhi0: sd@e804e000 {
+>> > +               compatible = "renesas,sdhi-r7s72100";
+>> > +               reg = <0xe804e000 0x100>;
+>> > +               interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH
+>> > +                             GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
+>> > +                             GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
+>> > +
+>>
+>> Cannot chcck the required order, but the interrupts are called SDHI0_3,
+>> SDHI0_0, and SDHI0_1 in the datasheet.
+>
+> From the hardware manual, "Table 7.3 List of Interrupt IDs":
+>
+> SD host Interface, Channel 0:
+> -----------------------------
+>   SDHI0_3 = ID 302   (302 - 32 = 270)
+>   SDHI0_0 = ID 303   (303 - 32 = 271)
+>   SDHI0_1 = ID 304   (304 - 32 = 272)
+>
+>
+> #NOTE: The new 3.0 version of the hardware manual that will be coming out will now have the SDHI chapter included.
+>
+> So, in reference to that 3.0 manual:
+>
+>  "50.3.3 Interrupt Request and DMA Transfer Request"
+>  "Table 50.4 Interrupt Request"
+>  -----------------------------
+>   Card detect interrupt = SDHI3
+>   Card access interrupt = SDHI0
+>   SDIO access interrupt = SDHI1
 
-> +       val = (clk_readl(zclk->reg) & CPG_FRQCRC_ZFC_MASK)
+Thanks for checking!
 
-Please use readl()/writel() instead of clk_readl/()/clk_writel().
+However, this is another driver that doesn't document anything about the
+interrupts in the DT bindings :-(
+
+> Regardless, in sh_mobile_sdhi.c, they all get mapped to the same ISR function anyway:
+>
+>         i = 0;
+>         while (1) {
+>                 irq = platform_get_irq(pdev, i);
+>                 if (irq < 0)
+>                         break;
+>                 i++;
+>                 ret = devm_request_irq(&pdev->dev, irq, tmio_mmc_irq, 0,
+>                                   dev_name(&pdev->dev), host);
+>                 if (ret)
+>                         goto eirq;
+>         }
+
+Uuh, then it doesn't matter much ;-)
 
 Gr{oetje,eeting}s,
 
