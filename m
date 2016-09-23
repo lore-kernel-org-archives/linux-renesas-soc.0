@@ -1,43 +1,35 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34502 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756670AbcIPNJj (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Sep 2016 09:09:39 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: horms@verge.net.au
-Cc: geert@linux-m68k.org, hans.verkuil@cisco.com,
-        niklas.soderlund@ragnatech.se, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com
-Subject: [PATCH 0/3] r8a7793 Gose video input support
-Date: Fri, 16 Sep 2016 15:09:32 +0200
-Message-Id: <20160916130935.21292-1-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 23 Sep 2016 09:39:52 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/2] Add R8A7792 MSIOF support
+Message-ID: <20160923073952.GC20129@verge.net.au>
+References: <2481458.x1iQg26kO7@wasted.cogentembedded.com>
+ <19842984-5776-0740-7552-f63ce30d4bdd@cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19842984-5776-0740-7552-f63ce30d4bdd@cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+On Fri, Sep 23, 2016 at 12:18:52AM +0300, Sergei Shtylyov wrote:
+> Hello.
+> 
+> On 09/05/2016 11:54 PM, Sergei Shtylyov wrote:
+> 
+> >   Here's the set of 2 patches against Simon Horman's 'renesas.git' repo,
+> >'renesas-devel-20160905-v4.8-rc5' tag. We're adding the R8A7792 MSIOF clocks
+> >and device nodes. I'm not posting the board patches because the MSIOF driver
+> >seems erratic ATM...
+> >
+> >[1/2] ARM: dts: r8a7792: add MSIOF clock
+> >[2/2] ARM: dts: r8a7792: add MSIOF support
+> 
+>    These seem stuck for no apparent reason. Simon?
 
-This is a by-the-datasheet implementation of analog and digital video input
-on the Gose board.
-
-I don't have that hardware, so if somebody could test this, I would
-appreciate it.  To get the digital part to work, use Hans's R-Car branch
-(https://git.linuxtv.org/hverkuil/media_tree.git/log/?h=rcar) plus the
-"media: adv7604: automatic "default-input" selection" patch.
-
-CU
-Uli
-
-
-Ulrich Hecht (3):
-  ARM: dts: r8a7793: Enable VIN0, VIN1
-  ARM: dts: gose: add HDMI input
-  ARM: dts: gose: add composite video input
-
- arch/arm/boot/dts/r8a7793-gose.dts | 77 ++++++++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/r8a7793.dtsi     | 20 ++++++++++
- 2 files changed, 97 insertions(+)
-
--- 
-2.9.3
+Thanks, I have queued these up.
