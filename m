@@ -1,54 +1,61 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms+renesas@verge.net.au>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f194.google.com ([209.85.223.194]:32801 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933405AbcIWHF5 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 23 Sep 2016 03:05:57 -0400
+MIME-Version: 1.0
+In-Reply-To: <20160922213211.7988-3-chris.brandt@renesas.com>
+References: <20160922213211.7988-1-chris.brandt@renesas.com> <20160922213211.7988-3-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 23 Sep 2016 09:05:56 +0200
+Message-ID: <CAMuHMdU8PKGwJ+5JzMix_GHohdYdXPEXwDm4HwmQfSxDY4h95w@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: r7s72100: add sdhi to device tree
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 2/3] ARM: dts: r7s72100: add sdhi to device tree
-Date: Fri, 23 Sep 2016 14:20:04 +0000
-Message-ID: <SG2PR06MB1165C71A8C201614AC2463168AC80@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20160922213211.7988-1-chris.brandt@renesas.com>
- <20160922213211.7988-3-chris.brandt@renesas.com>
- <CAMuHMdU8PKGwJ+5JzMix_GHohdYdXPEXwDm4HwmQfSxDY4h95w@mail.gmail.com>
-In-Reply-To: <CAMuHMdU8PKGwJ+5JzMix_GHohdYdXPEXwDm4HwmQfSxDY4h95w@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCj4gKGR1ZSB0byBsYWNrIG9mIGRvY3VtZW50YXRpb24gYWJvdXQgU0RISSwg
-Zm9yIHRoZSBpbnRlcnJ1cHQgbnVtYmVycyBvbmx5KQ0KPiANCj4gPiAtLS0gYS9hcmNoL2FybS9i
-b290L2R0cy9yN3M3MjEwMC5kdHNpDQo+ID4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvcjdzNzIx
-MDAuZHRzaQ0KPiA+IEBAIC00NTgsNCArNDU4LDMyIEBADQo+ID4gICAgICAgICAgICAgICAgICNz
-aXplLWNlbGxzID0gPDA+Ow0KPiA+ICAgICAgICAgICAgICAgICBzdGF0dXMgPSAiZGlzYWJsZWQi
-Ow0KPiA+ICAgICAgICAgfTsNCj4gPiArDQo+ID4gKyAgICAgICBzZGhpMDogc2RAZTgwNGUwMDAg
-ew0KPiA+ICsgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gInJlbmVzYXMsc2RoaS1yN3M3MjEw
-MCI7DQo+ID4gKyAgICAgICAgICAgICAgIHJlZyA9IDwweGU4MDRlMDAwIDB4MTAwPjsNCj4gPiAr
-ICAgICAgICAgICAgICAgaW50ZXJydXB0cyA9IDxHSUNfU1BJIDI3MCBJUlFfVFlQRV9MRVZFTF9I
-SUdIDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgR0lDX1NQSSAyNzEgSVJRX1RZ
-UEVfTEVWRUxfSElHSA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEdJQ19TUEkg
-MjcyIElSUV9UWVBFX0xFVkVMX0hJR0g+Ow0KPiA+ICsNCj4gDQo+IENhbm5vdCBjaGNjayB0aGUg
-cmVxdWlyZWQgb3JkZXIsIGJ1dCB0aGUgaW50ZXJydXB0cyBhcmUgY2FsbGVkIFNESEkwXzMsDQo+
-IFNESEkwXzAsIGFuZCBTREhJMF8xIGluIHRoZSBkYXRhc2hlZXQuDQoNCg0KRnJvbSB0aGUgaGFy
-ZHdhcmUgbWFudWFsLCAiVGFibGUgNy4zIExpc3Qgb2YgSW50ZXJydXB0IElEcyI6DQoNClNEIGhv
-c3QgSW50ZXJmYWNlLCBDaGFubmVsIDA6DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0K
-ICBTREhJMF8zID0gSUQgMzAyICAgKDMwMiAtIDMyID0gMjcwKQ0KICBTREhJMF8wID0gSUQgMzAz
-ICAgKDMwMyAtIDMyID0gMjcxKQ0KICBTREhJMF8xID0gSUQgMzA0ICAgKDMwNCAtIDMyID0gMjcy
-KQ0KDQoNCiNOT1RFOiBUaGUgbmV3IDMuMCB2ZXJzaW9uIG9mIHRoZSBoYXJkd2FyZSBtYW51YWwg
-dGhhdCB3aWxsIGJlIGNvbWluZyBvdXQgd2lsbCBub3cgaGF2ZSB0aGUgU0RISSBjaGFwdGVyIGlu
-Y2x1ZGVkLg0KDQpTbywgaW4gcmVmZXJlbmNlIHRvIHRoYXQgMy4wIG1hbnVhbDoNCg0KICI1MC4z
-LjMgSW50ZXJydXB0IFJlcXVlc3QgYW5kIERNQSBUcmFuc2ZlciBSZXF1ZXN0Ig0KICJUYWJsZSA1
-MC40IEludGVycnVwdCBSZXF1ZXN0Ig0KIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQog
-IENhcmQgZGV0ZWN0IGludGVycnVwdCA9IFNESEkzDQogIENhcmQgYWNjZXNzIGludGVycnVwdCA9
-IFNESEkwDQogIFNESU8gYWNjZXNzIGludGVycnVwdCA9IFNESEkxDQoNCg0KUmVnYXJkbGVzcywg
-aW4gc2hfbW9iaWxlX3NkaGkuYywgdGhleSBhbGwgZ2V0IG1hcHBlZCB0byB0aGUgc2FtZSBJU1Ig
-ZnVuY3Rpb24gYW55d2F5Og0KDQoJaSA9IDA7DQoJd2hpbGUgKDEpIHsNCgkJaXJxID0gcGxhdGZv
-cm1fZ2V0X2lycShwZGV2LCBpKTsNCgkJaWYgKGlycSA8IDApDQoJCQlicmVhazsNCgkJaSsrOw0K
-CQlyZXQgPSBkZXZtX3JlcXVlc3RfaXJxKCZwZGV2LT5kZXYsIGlycSwgdG1pb19tbWNfaXJxLCAw
-LA0KCQkJCSAgZGV2X25hbWUoJnBkZXYtPmRldiksIGhvc3QpOw0KCQlpZiAocmV0KQ0KCQkJZ290
-byBlaXJxOw0KCX0NCg0KDQpDaHJpcw0KDQo=
+Hi Chris,
+
+On Thu, Sep 22, 2016 at 11:32 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+(due to lack of documentation about SDHI, for the interrupt numbers only)
+
+> --- a/arch/arm/boot/dts/r7s72100.dtsi
+> +++ b/arch/arm/boot/dts/r7s72100.dtsi
+> @@ -458,4 +458,32 @@
+>                 #size-cells = <0>;
+>                 status = "disabled";
+>         };
+> +
+> +       sdhi0: sd@e804e000 {
+> +               compatible = "renesas,sdhi-r7s72100";
+> +               reg = <0xe804e000 0x100>;
+> +               interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH
+> +                             GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
+> +                             GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
+> +
+
+Cannot chcck the required order, but the interrupts are called SDHI0_3,
+SDHI0_0, and SDHI0_1 in the datasheet.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
