@@ -1,63 +1,70 @@
 Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Subject: [PATCH RFC v2 2/12] ARM: shmobile: r8a7743: add power domain index macros
-Date: Fri, 30 Sep 2016 01:17:47 +0300
-Message-ID: <10048005.ZebNI1l2xW@wasted.cogentembedded.com>
-In-Reply-To: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
-References: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Rob Herring <robh@kernel.org>
+CC: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2 2/3] mmc: sh_mmcif: Document r7s72100 DT bindings
+Date: Mon, 26 Sep 2016 20:58:41 +0000
+Message-ID: <SG2PR06MB11650CDC26D69220278ED4C78ACD0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160920154620.18653-1-chris.brandt@renesas.com>
+ <20160920154620.18653-3-chris.brandt@renesas.com>
+ <20160923191519.GA28901@rob-hp-laptop>
+In-Reply-To: <20160923191519.GA28901@rob-hp-laptop>
+Content-Language: en-US
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by the device tree sources to reference R8A7743 SYSC power
-domains by index.
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
+On 9/23/2016, Rob Herring wrote:
+> > diff --git a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+> > b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+> > index ff611fa..1443edb 100644
+> > --- a/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+> > +++ b/Documentation/devicetree/bindings/mmc/renesas,mmcif.txt
+> > @@ -8,12 +8,16 @@ Required properties:
+> >
+> >  - compatible: should be "renesas,mmcif-<soctype>", "renesas,sh-mmcif"
+> as a
+> >    fallback. Examples with <soctype> are:
+> > +	- "renesas,mmcif-r7s72100" for the MMCIF found in r7s72100 SoCs
+> >  	- "renesas,mmcif-r8a7740" for the MMCIF found in r8a7740 SoCs
+> >  	- "renesas,mmcif-r8a7790" for the MMCIF found in r8a7790 SoCs
+> >  	- "renesas,mmcif-r8a7791" for the MMCIF found in r8a7791 SoCs
+> >  	- "renesas,mmcif-r8a7793" for the MMCIF found in r8a7793 SoCs
+> >  	- "renesas,mmcif-r8a7794" for the MMCIF found in r8a7794 SoCs
+> >
+> > +- interrupts: either 1 shared interrupt, 2 separate interrupts (error
+> > +and int),
+> > +  or 3 separate interrupts (error, int, card detect)
+>=20
+> This should be based on the compatible strings. Surely, 1, 2, or 3 is not
+> valid for all compatibles.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
----
-Changes in version 2:
-- added Geert's tag.
+That is true. What is your suggestion? Add the specific number of interrupt=
+s for each SoC to the documentation so there is no confusion?
 
- include/dt-bindings/power/r8a7743-sysc.h |   25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+For example:
 
-Index: renesas/include/dt-bindings/power/r8a7743-sysc.h
-===================================================================
---- /dev/null
-+++ renesas/include/dt-bindings/power/r8a7743-sysc.h
-@@ -0,0 +1,25 @@
-+/*
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7743_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7743_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A7743_PD_CA15_CPU0		 0
-+#define R8A7743_PD_CA15_CPU1		 1
-+#define R8A7743_PD_CA15_SCU		12
-+#define R8A7743_PD_SGX			20
-+
-+/* Always-on power area */
-+#define R8A7743_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7743_SYSC_H__ */
+- interrupts: Some SoCs have only 1 shared interrupt, while others have eit=
+her
+  2 or 3 individual interrupts (error, int, card detect). Below is the numb=
+er
+  of interrupts for each SoC.
+    3: r7s72100 SoC
+    2: r8a7740 SoC
+    1: r8a7790 SoC
+    1: r8a7791 SoC
+    1: r8a7793 SoC
+    1: r8a7794 SoC
 
+
+Chris
