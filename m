@@ -1,115 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:33596 "EHLO
-        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934485AbcI2W0r (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54766 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752259AbcIZOov (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Sep 2016 18:26:47 -0400
-Received: by mail-lf0-f42.google.com with SMTP id t81so24718996lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Sep 2016 15:26:46 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH RFC v2 6/12] ARM: dts: r8a7743: add SYS-DMAC support
-Date: Fri, 30 Sep 2016 01:26:43 +0300
-Message-ID: <4442711.L2kXfQCuTM@wasted.cogentembedded.com>
-In-Reply-To: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
-References: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
+        Mon, 26 Sep 2016 10:44:51 -0400
+Date: Mon, 26 Sep 2016 16:44:32 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 3/3] ARM: dts: rskrza1: add sdhi1 DT support
+Message-ID: <20160926144432.GB5792@verge.net.au>
+References: <20160922213211.7988-1-chris.brandt@renesas.com>
+ <20160922213211.7988-4-chris.brandt@renesas.com>
+ <CAMuHMdWckFaU__BM=WAOvJ+fVjEvNdLCFy0GNiKwU159aZTdhg@mail.gmail.com>
+ <20160923074123.GD20129@verge.net.au>
+ <SG2PR06MB1165D28EC2B25A642B480F208AC80@SG2PR06MB1165.apcprd06.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB1165D28EC2B25A642B480F208AC80@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe SYS-DMAC0/1 in the R8A7743 device tree.
+On Fri, Sep 23, 2016 at 02:33:10PM +0000, Chris Brandt wrote:
+> > > On Thu, Sep 22, 2016 at 11:32 PM, Chris Brandt
+> > <chris.brandt@renesas.com> wrote:
+> > > > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> > > > ---
+> > > >  arch/arm/boot/dts/r7s72100-rskrza1.dts | 4 ++++
+> > > >  1 file changed, 4 insertions(+)
+> > > >
+> > > > diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts
+> > > > b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+> > > > index e5dea5b..548b51f 100644
+> > > > --- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
+> > > > +++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+> > > > @@ -56,6 +56,10 @@
+> > > >         };
+> > > >  };
+> > > >
+> > > > +&sdhi1 {
+> > > > +       status = "okay";
+> > >
+> > > On all other boards, we have the bus-width property in the
+> > > board-specific .dts instead of in the SoC-specific .dtsi.
+> 
+> I did see that.
+> But, in my opinion, using 4-bit SDHI is way more common that 1-bit SDHI.
+> So I figured I'd make 4-bit the 'default' by putting it in the dtsi, and if for some reason someone needed 1-bit, they could override it in the board .dts.
+> 
+> 
+> > I'd like us to be consistent as much as possible.
+> > But I do wonder why it has been added as a board property.
+> 
+> It doesn't really matter to me. If you want me to move it to the board dts it to keep it consistent, just let me know and I'll change it.
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
----
-Changes in version 2:
-- added Geert's tag.
-
- arch/arm/boot/dts/r8a7743.dtsi |   64 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7743.dtsi
-@@ -90,6 +90,70 @@
- 			#power-domain-cells = <1>;
- 		};
- 
-+		dmac0: dma-controller@e6700000 {
-+			compatible = "renesas,dmac-r8a7743",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6700000 0 0x20000>;
-+			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14";
-+			clocks = <&mstp2_clks R8A7743_CLK_SYS_DMAC0>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			#dma-cells = <1>;
-+			dma-channels = <15>;
-+		};
-+
-+		dmac1: dma-controller@e6720000 {
-+			compatible = "renesas,dmac-r8a7743",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6720000 0 0x20000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14";
-+			clocks = <&mstp2_clks R8A7743_CLK_SYS_DMAC1>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			#dma-cells = <1>;
-+			dma-channels = <15>;
-+		};
-+
- 		/* Special CPG clocks */
- 		cpg_clocks: cpg_clocks@e6150000 {
- 			compatible = "renesas,r8a7743-cpg-clocks",
+Please do.
