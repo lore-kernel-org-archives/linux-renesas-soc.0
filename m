@@ -1,44 +1,30 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:43388 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933339AbcIVVdO (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54915 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965716AbcIZOyh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Sep 2016 17:33:14 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 3/3] ARM: dts: rskrza1: add sdhi1 DT support
-Date: Thu, 22 Sep 2016 17:32:11 -0400
-Message-Id: <20160922213211.7988-4-chris.brandt@renesas.com>
-In-Reply-To: <20160922213211.7988-1-chris.brandt@renesas.com>
-References: <20160922213211.7988-1-chris.brandt@renesas.com>
+        Mon, 26 Sep 2016 10:54:37 -0400
+Date: Mon, 26 Sep 2016 16:54:15 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH] arm64: dts: r8a7796: salvator-x: Populate EXTALR
+Message-ID: <20160926145414.GE5792@verge.net.au>
+References: <1474374317-5475-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1474374317-5475-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+On Tue, Sep 20, 2016 at 02:25:17PM +0200, Geert Uytterhoeven wrote:
+> It can be used for the watchdog.
+> 
+> Based on similar work for r8a7795/salvator-x by Wolfram Sang.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-index e5dea5b..548b51f 100644
---- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -56,6 +56,10 @@
- 	};
- };
- 
-+&sdhi1 {
-+	status = "okay";
-+};
-+
- &scif2 {
- 	status = "okay";
- };
--- 
-2.9.2
+Thanks, I have queued this up.
