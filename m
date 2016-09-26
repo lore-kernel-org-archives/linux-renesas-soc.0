@@ -1,18 +1,16 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:35460 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752898AbcIZWXa (ORCPT
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:33175 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751088AbcIZWHJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Sep 2016 18:23:30 -0400
-Received: by mail-lf0-f41.google.com with SMTP id l131so162132171lfl.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Sep 2016 15:23:30 -0700 (PDT)
+        Mon, 26 Sep 2016 18:07:09 -0400
+Received: by mail-lf0-f45.google.com with SMTP id b71so135134495lfg.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Sep 2016 15:07:08 -0700 (PDT)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Subject: [PATCH resend] sh_eth: add R8A7743/5 support
-Date: Tue, 27 Sep 2016 01:23:26 +0300
-Message-ID: <1654835.SEcvPVx4OQ@wasted.cogentembedded.com>
+To: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] sh_eth: add R8A7743/5 support
+Date: Tue, 27 Sep 2016 01:07:01 +0300
+Message-ID: <1707101.iYqqKafBon@wasted.cogentembedded.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -27,8 +25,6 @@ Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
 ---
 The patch is against the DaveM's 'net-next.git' repo.
-
-Re-sending with the DT maintainers/list included this time...
 
  Documentation/devicetree/bindings/net/sh_eth.txt |    2 ++
  drivers/net/ethernet/renesas/Kconfig             |    2 +-
