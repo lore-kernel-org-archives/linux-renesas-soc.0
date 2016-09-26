@@ -1,36 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:33495 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753072AbcIBWEq (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:56291 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751059AbcIZIbI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Sep 2016 18:04:46 -0400
-Received: by mail-lf0-f51.google.com with SMTP id b199so92880223lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 02 Sep 2016 15:04:45 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/3] Add R8A7792/Wheat QSPI support
-Date: Sat, 03 Sep 2016 01:04:37 +0300
-Message-ID: <1648590.FPpmBRoQyh@wasted.cogentembedded.com>
+        Mon, 26 Sep 2016 04:31:08 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        magnus.damm@gmail.com, william.towle@codethink.co.uk,
+        devicetree@vger.kernel.org, radhey.shyam.pandey@xilinx.com
+Subject: Re: [PATCH v2 2/2] media: adv7604: automatic "default-input" selection
+Date: Mon, 26 Sep 2016 11:31:04 +0300
+Message-ID: <35118931.XClsGmnAtQ@avalon>
+In-Reply-To: <1474550340-31455-3-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1474550340-31455-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1474550340-31455-3-git-send-email-ulrich.hecht+renesas@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+Hi Ulrich,
 
-   Here's the set of 3 patches against Simon Horman's 'renesas.git' repo,
-'renesas-devel-20160902-v4.8-rc4' tag plus the Wheat board patches posted this
-week. We're adding the R8A7792/Wheat QSPI clocks and device nodes. The board
-patch depends on the PFC driver QSPI patch in order for the QSPI pins to be
-configured...
+Thank you for the patch.
 
-[1/3] ARM: dts: r8a7792: add QSPI clock
-[2/3] ARM: dts: r8a7792: add QSPI support
-[3/3] ARM: dts: wheat: add QSPI support
+On Thursday 22 Sep 2016 15:19:00 Ulrich Hecht wrote:
+> Documentation states that the "default-input" property should reside
+> directly in the node of the device.  This adjusts the parsing to make the
+> implementation consistent with the documentation.
+> 
+> Based on patch by William Towle <william.towle@codethink.co.uk>.
+> 
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-WBR, Sergei
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/i2c/adv7604.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
+> index 4003831..fa7046e 100644
+> --- a/drivers/media/i2c/adv7604.c
+> +++ b/drivers/media/i2c/adv7604.c
+> @@ -3074,13 +3074,13 @@ static int adv76xx_parse_dt(struct adv76xx_state
+> *state) return ret;
+>  	}
+> 
+> -	if (!of_property_read_u32(endpoint, "default-input", &v))
+> +	of_node_put(endpoint);
+> +
+> +	if (!of_property_read_u32(np, "default-input", &v))
+>  		state->pdata.default_input = v;
+>  	else
+>  		state->pdata.default_input = -1;
+> 
+> -	of_node_put(endpoint);
+> -
+>  	flags = bus_cfg.bus.parallel.flags;
+> 
+>  	if (flags & V4L2_MBUS_HSYNC_ACTIVE_HIGH)
+
+-- 
+Regards,
+
+Laurent Pinchart
