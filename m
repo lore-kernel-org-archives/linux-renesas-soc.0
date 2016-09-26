@@ -1,97 +1,67 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran@bingham.xyz>
-Subject: [PATCH] v4l: vsp1: Disable VYUY on Gen3
-Date: Fri, 16 Sep 2016 00:11:00 +0300
-Message-Id: <1473973860-19516-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:52433 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S941414AbcIZUl1 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 26 Sep 2016 16:41:27 -0400
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 1/2] ARM: dts: r7s72100: add sdhi to device tree
+Date: Mon, 26 Sep 2016 16:40:31 -0400
+Message-Id: <20160926204032.12260-2-chris.brandt@renesas.com>
+In-Reply-To: <20160926204032.12260-1-chris.brandt@renesas.com>
+References: <20160926204032.12260-1-chris.brandt@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The VYUY format isn't supported on Gen3 hardware, disable it.
-
-Gen2 hardware supports VYUY in practice even though the documentation
-doesn't advertise it, so keep it for Gen2 devices.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
- drivers/media/platform/vsp1/vsp1_drm.c   | 2 +-
- drivers/media/platform/vsp1/vsp1_pipe.c  | 8 +++++++-
- drivers/media/platform/vsp1/vsp1_pipe.h  | 3 ++-
- drivers/media/platform/vsp1/vsp1_video.c | 4 ++--
- 4 files changed, 12 insertions(+), 5 deletions(-)
+v2:
+ * removed bus-width
+---
+ arch/arm/boot/dts/r7s72100.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index 832286975e71..54795b5e5a8a 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -286,7 +286,7 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int rpf_index,
- 	/* Store the format, stride, memory buffer address, crop and compose
- 	 * rectangles and Z-order position and for the input.
- 	 */
--	fmtinfo = vsp1_get_format_info(cfg->pixelformat);
-+	fmtinfo = vsp1_get_format_info(vsp1, cfg->pixelformat);
- 	if (!fmtinfo) {
- 		dev_dbg(vsp1->dev, "Unsupport pixel format %08x for RPF\n",
- 			cfg->pixelformat);
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
-index 474de82165d8..78b6184f91ce 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.c
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.c
-@@ -138,15 +138,21 @@ static const struct vsp1_format_info vsp1_video_formats[] = {
- 
- /*
-  * vsp1_get_format_info - Retrieve format information for a 4CC
-+ * @vsp1: the VSP1 device
-  * @fourcc: the format 4CC
-  *
-  * Return a pointer to the format information structure corresponding to the
-  * given V4L2 format 4CC, or NULL if no corresponding format can be found.
-  */
--const struct vsp1_format_info *vsp1_get_format_info(u32 fourcc)
-+const struct vsp1_format_info *vsp1_get_format_info(struct vsp1_device *vsp1,
-+						    u32 fourcc)
- {
- 	unsigned int i;
- 
-+	/* Special case, the VYUY format is supported on Gen2 only. */
-+	if (vsp1->info->gen != 2 && fourcc == V4L2_PIX_FMT_VYUY)
-+		return NULL;
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index e97d6d1..53a38e3 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -458,4 +458,30 @@
+ 		#size-cells = <0>;
+ 		status = "disabled";
+ 	};
 +
- 	for (i = 0; i < ARRAY_SIZE(vsp1_video_formats); ++i) {
- 		const struct vsp1_format_info *info = &vsp1_video_formats[i];
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
-index f15b697ad999..ac4ad2655551 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.h
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.h
-@@ -130,6 +130,7 @@ void vsp1_pipeline_propagate_alpha(struct vsp1_pipeline *pipe,
- void vsp1_pipelines_suspend(struct vsp1_device *vsp1);
- void vsp1_pipelines_resume(struct vsp1_device *vsp1);
- 
--const struct vsp1_format_info *vsp1_get_format_info(u32 fourcc);
-+const struct vsp1_format_info *vsp1_get_format_info(struct vsp1_device *vsp1,
-+						    u32 fourcc);
- 
- #endif /* __VSP1_PIPE_H__ */
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index 15d08cb50bd1..e773d3d30df2 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -117,9 +117,9 @@ static int __vsp1_video_try_format(struct vsp1_video *video,
- 	/* Retrieve format information and select the default format if the
- 	 * requested format isn't supported.
- 	 */
--	info = vsp1_get_format_info(pix->pixelformat);
-+	info = vsp1_get_format_info(video->vsp1, pix->pixelformat);
- 	if (info == NULL)
--		info = vsp1_get_format_info(VSP1_VIDEO_DEF_FORMAT);
-+		info = vsp1_get_format_info(video->vsp1, VSP1_VIDEO_DEF_FORMAT);
- 
- 	pix->pixelformat = info->fourcc;
- 	pix->colorspace = V4L2_COLORSPACE_SRGB;
++	sdhi0: sd@e804e000 {
++		compatible = "renesas,sdhi-r7s72100";
++		reg = <0xe804e000 0x100>;
++		interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
++
++		clocks = <&mstp12_clks R7S72100_CLK_SDHI0>;
++		cap-sd-highspeed;
++		cap-sdio-irq;
++		status = "disabled";
++	};
++
++	sdhi1: sd@e804e800 {
++		compatible = "renesas,sdhi-r7s72100";
++		reg = <0xe804e800 0x100>;
++		interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH
++			      GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>;
++
++		clocks = <&mstp12_clks R7S72100_CLK_SDHI1>;
++		cap-sd-highspeed;
++		cap-sdio-irq;
++		status = "disabled";
++	};
+ };
 -- 
-Regards,
-
-Laurent Pinchart
+2.9.2
