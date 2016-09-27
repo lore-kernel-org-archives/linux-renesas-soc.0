@@ -1,64 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:51758 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751033AbcISOTA (ORCPT
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:36357 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755483AbcI0RQg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 10:19:00 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] ARM: dts: r8a7790: Correct SCIFB reg properties to cover all registers
-Date: Mon, 19 Sep 2016 16:18:53 +0200
-Message-Id: <1474294736-24339-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1474294736-24339-1-git-send-email-geert+renesas@glider.be>
-References: <1474294736-24339-1-git-send-email-geert+renesas@glider.be>
+        Tue, 27 Sep 2016 13:16:36 -0400
+Received: by mail-lf0-f50.google.com with SMTP id g62so30168261lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Sep 2016 10:16:35 -0700 (PDT)
+Date: Tue, 27 Sep 2016 19:16:33 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Rob Herring <robh@kernel.org>
+Cc: Vinod Koul <vinod.koul@intel.com>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Hurley <peter@hurleysoftware.com>
+Subject: Re: Problem with 761ed4a (tty: serial_core: convert uart_close to
+ use tty_port_close)
+Message-ID: <20160927171633.GH16263@bigcity.dyn.berto.se>
+References: <20160927110140.GG16263@bigcity.dyn.berto.se>
+ <CAL_JsqKWjJ3Qo44=gjqLVJK6utUtrJF5nB=EVEE1wOmFpqw-+A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqKWjJ3Qo44=gjqLVJK6utUtrJF5nB=EVEE1wOmFpqw-+A@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Several SCIFB registers reside outside the reported register ranges.
-Fortunately this works (on Linux), due to the PAGE_SIZE granularity of
-ioremap().
+Hi Rob,
 
-Extend the sizes from 64 to 0x100 bytes to fix this, like is done on
-SH/R-Mobile SoCs.
+Thanks for your reply.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7790.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On 2016-09-27 10:57:56 -0500, Rob Herring wrote:
+> On Tue, Sep 27, 2016 at 6:01 AM, Niklas S�derlund
+> <niklas.soderlund@ragnatech.se> wrote:
+> > Hi Rob and Vinod,
+> >
+> > While testing on Renesas Koelsch board Vinods 'next' branch at
+> >
+> > git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/slave-dma.git
+> >
+> > I ran into some problems with Robs patch 761ed4a (tty: serial_core:
+> > convert uart_close to use tty_port_close) and my systemd based init
+> > system. The kernel starts fine, mounts the NFS root and starts init but
+> > then the serial console go silent and I'm not able to communicate with
+> > the system.
+> 
+> There's a fix later in Greg's tree that's not in this tree. If that
+> doesn't fix it, can you try reverting the hunk that sets the
+> tty_port.console flag.
 
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 3f10b0bf1b08fa89..9f60b737ca297ce6 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -711,7 +711,7 @@
- 	scifb0: serial@e6c20000 {
- 		compatible = "renesas,scifb-r8a7790",
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
--		reg = <0 0xe6c20000 0 64>;
-+		reg = <0 0xe6c20000 0 0x100>;
- 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFB0>;
- 		clock-names = "fck";
-@@ -725,7 +725,7 @@
- 	scifb1: serial@e6c30000 {
- 		compatible = "renesas,scifb-r8a7790",
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
--		reg = <0 0xe6c30000 0 64>;
-+		reg = <0 0xe6c30000 0 0x100>;
- 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFB1>;
- 		clock-names = "fck";
-@@ -739,7 +739,7 @@
- 	scifb2: serial@e6ce0000 {
- 		compatible = "renesas,scifb-r8a7790",
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
--		reg = <0 0xe6ce0000 0 64>;
-+		reg = <0 0xe6ce0000 0 0x100>;
- 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7790_CLK_SCIFB2>;
- 		clock-names = "fck";
+I tried Greg's branch tty-next from 
+
+git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
+
+Which contains the commit I think you are referring to, a5a2b13 (serial: 
+core: fix potential NULL pointer dereference). Unfortunately it dose not 
+fix the problem I see.
+
+I also tried your other suggestion by reverting the chunk that sets the 
+tty_port.console flag (on top of tty-next branch), like this:
+
+@@ -2746,8 +2746,6 @@ int uart_add_one_port(struct uart_driver *drv, struct uart_port *uport)
+        uport->cons = drv->cons;
+        uport->minor = drv->tty_driver->minor_start + uport->line;
+ 
+-       port->console = uart_console(uport);
+-
+        /*
+         * If this port is a console, then the spinlock is already
+         * initialised.
+
+The problem still unfortunately persists :-(
+
+I can still revert the commits a5a2b13 (serial: core: fix potential NULL 
+pointer dereference) and 761ed4a (tty: serial_core: convert uart_close 
+to use tty_port_close) from the top of the tty-next branch and the 
+system boots fine.
+
+The configuration I'm using for all tests are shmobile_defconfig + 
+CONFIG_CGROUPS + CONFIG_SECCOMP. 
+
 -- 
-1.9.1
+Regards,
+Niklas S�derlund
