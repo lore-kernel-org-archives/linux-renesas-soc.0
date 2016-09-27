@@ -1,62 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:55092 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751750AbcI0ILZ (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34603 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751468AbcI0H2m (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Sep 2016 04:11:25 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms+renesas@verge.net.au>,
+        Tue, 27 Sep 2016 03:28:42 -0400
+MIME-Version: 1.0
+In-Reply-To: <20160920154620.18653-4-chris.brandt@renesas.com>
+References: <20160920154620.18653-1-chris.brandt@renesas.com> <20160920154620.18653-4-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 27 Sep 2016 09:28:41 +0200
+Message-ID: <CAMuHMdXQrO_brqrzZtp4iV8CnxER-yfTYT03YdDxud3Fp0bHAw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] ARM: dts: rskrza1: add mmc DT support
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2 3/3] ARM: dts: rskrza1: add mmc DT support
-Date: Tue, 27 Sep 2016 08:11:19 +0000
-Message-ID: <SG2PR06MB1165C87F37A43CEF998EA78B8ACC0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20160920154620.18653-1-chris.brandt@renesas.com>
- <20160920154620.18653-4-chris.brandt@renesas.com>
- <CAMuHMdXQrO_brqrzZtp4iV8CnxER-yfTYT03YdDxud3Fp0bHAw@mail.gmail.com>
-In-Reply-To: <CAMuHMdXQrO_brqrzZtp4iV8CnxER-yfTYT03YdDxud3Fp0bHAw@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCj4gPiBTaW5jZSB0aGUgTU1DIGFuZCBTREhJMSBvbiB0aGUgUlNLIHNoYXJl
-IHRoZSBzYW1lIHNvY2tldCBjb25uZWN0b3INCj4gPiAoQ04xKSwgeW91IGNhbm5vdCBlbmFibGUg
-TU1DIGFuZCBTREhJMSBhdCB0aGUgc2FtZSB0aW1lLiBUaGVyZWZvcmUgdGhlDQo+ID4gc3RhdHVz
-IGhhcyBiZWVuIHNldCB0byBkaXNhYmxlZCBiZWNhdXNlIFNESEkgaXMgbW9yZSBwb3B1bGFyIHdp
-dGggdGhpcw0KPiBib2FyZC4NCj4gPiBIb3dldmVyLCBrZWVwaW5nIHRoaXMgY29kZSBpbiBoZXJl
-IHNlcnZlcyBhcyBhIGdvb2Qgd2F5IHRvIGRvY3VtZW50DQo+ID4gaG93IHRoZSBNTUMgb24gdGhl
-IFJaL0ExIGhhcyBiZWVuIGtub3duIHRvIHdvcmsgZm9yIHNvbWVvbmUgdGhhdCBkb2VzDQo+ID4g
-d2FudCB0byB1c2UgTU1DIGluc3RlYWQgb2YgU0RISTEuDQo+ID4NCj4gPiBBIGZpeGVkIDMuMyBy
-ZWd1bGF0b3IgaXMgaW5jbHVkZWQgYmVjYXVzZSBpdCBpcyByZXF1aXJlZCBieSB0aGUgbW1jDQo+
-ID4gZHJpdmVyLg0KPiANCj4gSSBoYXZlIG1peGVkIGZlZWxpbmdzIGFib3V0IGFkZGluZyB0aGVz
-ZSAiZGlzYWJsZWQiIG5vZGVzLCBwdXJlbHkgZm9yDQo+IGRvY3VtZW50YXRpb24uDQo+IA0KPiBX
-aGF0IGRvIG90aGVyIHBlb3BsZSB0aGluaz8NCg0KRnJvbSB3aGF0IEkgZm91bmQsIHVzZXJzIGp1
-c3Qgd2FudCB0byAnY29weS9wYXN0ZScgd29ya2luZyBjb2RlIGFuZCBkZWxldGUgdGhlbiBwYXJ0
-cyB0aGV5IGRvbid0IG5lZWQuIERlbGV0aW5nIGNvZGUgaXMgZWFzaWVyIHRoYW4gYWRkaW5nIGNv
-ZGUuDQoNCkhvd2V2ZXIuLi4NCklmIHRoaXMga2luZCBvZiAnZGVhZCBzYW1wbGUgY29kZScgaW4g
-dGhlIERUIGlzIGNvbnNpZGVyZWQgdWdseSBmb3IgdXBzdHJlYW0sIEkgY2FuIHRha2UgaXQgb3V0
-IGFuZCBvbmx5IGluY2x1ZGUgaXQgaW4gdGhlIFJlbmVzYXMgQlNQIHBhY2thZ2VzLg0KTXkgbWFp
-biBmb2N1cyBpcyBmb3IgdGhlIGRyaXZlcnMgYW5kIHRoZSAuZHRzaSBmaWxlcyB0byBiZSB1cHN0
-cmVhbS4gSSB0aGluayBvZiB0aGUgYm9hcmQgZHRzIGZpbGVzIGFzIG1vcmUgbGlrZSAnc2FtcGxl
-IGNvbmZpZ3VyYXRpb25zJyBhbnl3YXksIHNvIHByb3ZpZGluZyB0aGVtIHNlcGFyYXRlbHkgaXMg
-bm90IGFuIGlzc3VlLg0KDQoNCg0KPiA+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3I3czcyMTAw
-LXJza3J6YTEuZHRzDQo+ID4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvcjdzNzIxMDAtcnNrcnph
-MS5kdHMNCj4gPiBAQCAtMzMsNiArMzMsMTUgQEANCj4gPiAgICAgICAgICAgICAgICAgI2FkZHJl
-c3MtY2VsbHMgPSA8MT47DQo+ID4gICAgICAgICAgICAgICAgICNzaXplLWNlbGxzID0gPDE+Ow0K
-PiA+ICAgICAgICAgfTsNCj4gPiArDQo+ID4gKyAgICAgICBkM18zdjogcmVndWxhdG9yLWQzLTN2
-IHsNCj4gPiArICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJyZWd1bGF0b3ItZml4ZWQiOw0K
-PiA+ICsgICAgICAgICAgICAgICByZWd1bGF0b3ItbmFtZSA9ICJEMy4zViI7DQo+ID4gKyAgICAg
-ICAgICAgICAgIHJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDMzMDAwMDA+Ow0KPiA+ICsgICAg
-ICAgICAgICAgICByZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwzMzAwMDAwPjsNCj4gPiArICAg
-ICAgICAgICAgICAgcmVndWxhdG9yLWJvb3Qtb247DQo+ID4gKyAgICAgICAgICAgICAgIHJlZ3Vs
-YXRvci1hbHdheXMtb247DQo+IA0KPiAnc3RhdHVzID0gImRpc2FibGVkIjsnLCB0b28/DQoNCkdv
-b2QgcG9pbnQuIFRoYXQgd291bGQgYmUgImRpc2FibGVkIiB0b28uDQpCdXQsIGFzIEkgbWVudGlv
-bmVkIGFib3ZlLCBpZiB5b3UgZGVjaWRlIHRvIGhhdmUgbWUgcmVtb3ZlIHRoZSBkaXNhYmxlZCBt
-bWNpZiBub2RlLCBJJ2xsIHJlbW92ZSB0aGlzIG5vZGUgdG9vLg0KDQoNCkNocmlzDQoNCg==
+Hi Chris,
+
+On Tue, Sep 20, 2016 at 5:46 PM, Chris Brandt <chris.brandt@renesas.com> wrote:
+> Since the MMC and SDHI1 on the RSK share the same socket connector (CN1),
+> you cannot enable MMC and SDHI1 at the same time. Therefore the status
+> has been set to disabled because SDHI is more popular with this board.
+> However, keeping this code in here serves as a good way to document how
+> the MMC on the RZ/A1 has been known to work for someone that does want
+> to use MMC instead of SDHI1.
+>
+> A fixed 3.3 regulator is included because it is required by the mmc
+> driver.
+
+I have mixed feelings about adding these "disabled" nodes, purely for
+documentation.
+
+What do other people think?
+
+> --- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
+> +++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+> @@ -33,6 +33,15 @@
+>                 #address-cells = <1>;
+>                 #size-cells = <1>;
+>         };
+> +
+> +       d3_3v: regulator-d3-3v {
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "D3.3V";
+> +               regulator-min-microvolt = <3300000>;
+> +               regulator-max-microvolt = <3300000>;
+> +               regulator-boot-on;
+> +               regulator-always-on;
+
+'status = "disabled";', too?
+
+> +       };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
