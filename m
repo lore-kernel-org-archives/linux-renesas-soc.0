@@ -1,142 +1,132 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:36544 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937926AbcIVUUY (ORCPT
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:34056 "EHLO
+        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753171AbcI0KLg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Sep 2016 16:20:24 -0400
-Received: by mail-lf0-f41.google.com with SMTP id g62so77397781lfe.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Sep 2016 13:20:21 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2] pcie-rcar: try setting PCIe speed to 5 GT/s at boot
-Date: Thu, 22 Sep 2016 23:20:18 +0300
-Message-ID: <3386780.3qrqUfW7i7@wasted.cogentembedded.com>
+        Tue, 27 Sep 2016 06:11:36 -0400
+Received: by mail-lf0-f48.google.com with SMTP id y6so17021823lff.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 27 Sep 2016 03:11:35 -0700 (PDT)
+Date: Tue, 27 Sep 2016 12:11:32 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH/RFC] iommu/ipmmu-vmsa: IPMMU SYS-DMAC iova mapping
+ workaround
+Message-ID: <20160927101132.GF16263@bigcity.dyn.berto.se>
+References: <20160920115433.14772.84308.sendpatchset@little-apple>
+ <20160927062018.GD16263@bigcity.dyn.berto.se>
+ <CANqRtoS_ZDzjz0qpKO0sep-gypvOVKkUFkB+8tsZeqphsMwwNQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANqRtoS_ZDzjz0qpKO0sep-gypvOVKkUFkB+8tsZeqphsMwwNQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Initially, the PCIe link speed is set up only  at 2.5 GT/s.
-For better performance,  we're trying to increase link speed to 5 GT/s.
+Hi Magnus,
 
-Based on the original patch by Grigory Kletsko
-<grigory.kletsko@cogentembedded.com>.
+On 2016-09-27 15:43:30 +0900, Magnus Damm wrote:
+> Hi Niklas,
+> 
+> On Tue, Sep 27, 2016 at 3:20 PM, Niklas S�derlund
+> <niklas.soderlund@ragnatech.se> wrote:
+> > Hi Magnus,
+> >
+> > On 2016-09-20 20:54:33 +0900, Magnus Damm wrote:
+> >> From: Magnus Damm <damm+renesas@opensource.se>
+> >>
+> >> Here's some prototype code that works around the lack of software
+> >> support for mapping I/O devices to the SYS-DMAC hardware via the
+> >> DMA Engine framework when using IOMMU.
+> >>
+> >> The code itself is one big layering violation that goes through
+> >> the DT and unconditionally maps I/O devices using DMACs via the
+> >> IPMMU device instance into iova space with a 1:1 mapping.
+> >>
+> >> This very short term prototype will for instance automatically make
+> >> the SCIF serial port function with the IPMMU hardware in case the
+> >> SYS-DMAC is hooked up to the IPMMU device.
+> >>
+> >> Not to be confused with the more long term solution to allow the
+> >> DMA Engine framework to map I/O device memory dynamically.
+> >
+> > Good news, Vinod queued the dma_{map,unmap}_resource API and rcar-dmac
+> > usage of it yesterday \o/.
+> 
+> Excellent. Are the DMA Engine slave devices supposed to work out of
+> the box with the IPMMU then, or is some other component missing?
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+The DT and shmobile_defconfig patches are missing. If you enable 
+CONFIG_IPMMU_VMSA and wire up DT (see bellow for Koelsch example) then 
+all devices I have tried works (MMC, I2C and serial consoles).
 
----
-The patch is against the 'next' branch of Bjorn Helgaas' 'pci.git' repo.
-
-Changes in version 2:
-- switched from the interrupt based speed change algorithm to polling with
-  1-second timeout, got rid  of the now unneeded register/bit #define's;
-- made rcar_pcie_force_speedup() *static*;
-- moved the speed capability check to the start of rcar_pcie_force_speedup();
-- adjusted the speed change in-progress check and the error message;
-- read MACSR ony once during the speed change setup;
-- print current link speed after any speed change outcome and when the speed
-  is already 5 GT/s;
-- removed the TODO comment;
-- moved rcar_pcie_force_speedup() call to the start of rcar_pcie_enable();
-- changed the patch authorship, updated the patch description accordingly.
-
- drivers/pci/host/pcie-rcar.c |   70 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
-
-Index: pci/drivers/pci/host/pcie-rcar.c
-===================================================================
---- pci.orig/drivers/pci/host/pcie-rcar.c
-+++ pci/drivers/pci/host/pcie-rcar.c
-@@ -84,8 +84,19 @@
- #define IDSETR1			0x011004
- #define TLCTLR			0x011048
- #define MACSR			0x011054
-+#define  SPCHG			(1 << 5)
-+#define  SPCHGFIN		(1 << 4)
-+#define  SPCHGSUC		(1 << 7)
-+#define  SPCHGFAIL		(1 << 6)
-+#define  LINK_SPEED		(0xf << 16)
-+#define  LINK_SPEED_2_5GTS	(1 << 16)
-+#define  LINK_SPEED_5_0GTS	(2 << 16)
- #define MACCTLR			0x011058
-+#define  SPEED_CHANGE		(1 << 24)
- #define  SCRAMBLE_DISABLE	(1 << 27)
-+#define MACS2R			0x011078
-+#define MACCGSPSETR		0x011084
-+#define  SPCNGRSN		(1 << 31)
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index 8f0086b..d19bffd 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -325,6 +325,21 @@
+                power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+                #dma-cells = <1>;
+                dma-channels = <15>;
++               iommus = <&ipmmu_ds 0>,
++                        <&ipmmu_ds 1>,
++                        <&ipmmu_ds 2>,
++                        <&ipmmu_ds 3>,
++                        <&ipmmu_ds 4>,
++                        <&ipmmu_ds 5>,
++                        <&ipmmu_ds 6>,
++                        <&ipmmu_ds 7>,
++                        <&ipmmu_ds 8>,
++                        <&ipmmu_ds 9>,
++                        <&ipmmu_ds 10>,
++                        <&ipmmu_ds 11>,
++                        <&ipmmu_ds 12>,
++                        <&ipmmu_ds 13>,
++                        <&ipmmu_ds 14>;
+        };
  
- /* R-Car H1 PHY */
- #define H1_PCIEPHYADRR		0x04000c
-@@ -385,11 +396,70 @@ static int rcar_pcie_setup(struct list_h
- 	return 1;
- }
+        dmac1: dma-controller@e6720000 {
+@@ -356,6 +371,21 @@
+                power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
+                #dma-cells = <1>;
+                dma-channels = <15>;
++               iommus = <&ipmmu_ds 15>,
++                        <&ipmmu_ds 16>,
++                        <&ipmmu_ds 17>,
++                        <&ipmmu_ds 18>,
++                        <&ipmmu_ds 19>,
++                        <&ipmmu_ds 20>,
++                        <&ipmmu_ds 21>,
++                        <&ipmmu_ds 22>,
++                        <&ipmmu_ds 23>,
++                        <&ipmmu_ds 24>,
++                        <&ipmmu_ds 25>,
++                        <&ipmmu_ds 26>,
++                        <&ipmmu_ds 27>,
++                        <&ipmmu_ds 28>,
++                        <&ipmmu_ds 29>;
+        };
  
-+static void rcar_pcie_force_speedup(struct rcar_pcie *pcie)
-+{
-+	unsigned int timeout = 1000;
-+	u32 macsr;
-+
-+	if ((rcar_pci_read_reg(pcie, MACS2R) & LINK_SPEED) != LINK_SPEED_5_0GTS)
-+		return;
-+
-+	dev_info(pcie->dev, "Trying speed up to 5 GT/s\n");
-+
-+	if (rcar_pci_read_reg(pcie, MACCTLR) & SPEED_CHANGE) {
-+		dev_err(pcie->dev, "Speed change is in progress\n");
-+		return;
-+	}
-+
-+	macsr = rcar_pci_read_reg(pcie, MACSR);
-+	if ((macsr & LINK_SPEED) == LINK_SPEED_5_0GTS)
-+		goto done;
-+
-+	/* Set target link speed to 5.0 GT/s */
-+	rcar_rmw32(pcie, EXPCAP(12), PCI_EXP_LNKSTA_CLS,
-+		   PCI_EXP_LNKSTA_CLS_5_0GB);
-+
-+	/* Set speed change reason as intentional factor */
-+	rcar_rmw32(pcie, MACCGSPSETR, SPCNGRSN, 0);
-+
-+	/* Clear SPCHGFIN, SPCHGSUC, and SPCHGFAIL */
-+	if (macsr & (SPCHGFIN | SPCHGSUC | SPCHGFAIL))
-+		rcar_pci_write_reg(pcie, macsr, MACSR);
-+
-+	/* Start link speed change */
-+	rcar_rmw32(pcie, MACCTLR, SPEED_CHANGE, SPEED_CHANGE);
-+
-+	while (timeout--) {
-+		macsr = rcar_pci_read_reg(pcie, MACSR);
-+		if (macsr & SPCHGFIN) {
-+			/* Clear the interrupt bits */
-+			rcar_pci_write_reg(pcie, macsr, MACSR);
-+
-+			if (macsr & SPCHGFAIL)
-+				dev_err(pcie->dev, "Speed change failed\n");
-+
-+			goto done;
-+		}
-+
-+		msleep(1);
-+	};
-+
-+	dev_err(pcie->dev, "Speed change timed out\n");
-+
-+done:
-+	/* Check speed */
-+	dev_info(pcie->dev, "Current link speed is %s GT/s\n",
-+		 (macsr & LINK_SPEED) == LINK_SPEED_5_0GTS ? "5" : "2.5");
-+}
-+
- static int rcar_pcie_enable(struct rcar_pcie *pcie)
- {
- 	struct pci_bus *bus, *child;
- 	LIST_HEAD(res);
+        audma0: dma-controller@ec700000 {
+@@ -1693,7 +1723,7 @@
+                interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
+                             <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>;
+                #iommu-cells = <1>;
+-               status = "disabled";
++               status = "okay";
+        };
  
-+	/* Try setting 5 GT/s link speed */
-+	rcar_pcie_force_speedup(pcie);
-+
- 	rcar_pcie_setup(&res, pcie);
- 
- 	pci_add_flags(PCI_REASSIGN_ALL_RSRC | PCI_REASSIGN_ALL_BUS);
+        ipmmu_mp: mmu@ec680000 {
+
+Also please note that I'm having problems with the next branch of 
+git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/slave-dma.git and 
+the commit 761ed4a (tty: serial_core: convert uart_close to use 
+tty_port_close) together with a systemd init system. I have to revert to 
+commit in order for the system to boot, but I will comment on that in a 
+separate e-mail.
+
+-- 
+Regards,
+Niklas S�derlund
