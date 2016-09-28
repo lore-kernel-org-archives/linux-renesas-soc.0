@@ -1,72 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:33175 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751088AbcIZWHJ (ORCPT
+Received: from mail-io0-f179.google.com ([209.85.223.179]:33112 "EHLO
+        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751888AbcI1JqO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Sep 2016 18:07:09 -0400
-Received: by mail-lf0-f45.google.com with SMTP id b71so135134495lfg.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Sep 2016 15:07:08 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] sh_eth: add R8A7743/5 support
-Date: Tue, 27 Sep 2016 01:07:01 +0300
-Message-ID: <1707101.iYqqKafBon@wasted.cogentembedded.com>
+        Wed, 28 Sep 2016 05:46:14 -0400
+Received: by mail-io0-f179.google.com with SMTP id r145so48441053ior.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Sep 2016 02:46:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <SG2PR0401MB12962EAB859663EE7DF71D8FD8CF0@SG2PR0401MB1296.apcprd04.prod.outlook.com>
+References: <SG2PR0401MB12962EAB859663EE7DF71D8FD8CF0@SG2PR0401MB1296.apcprd04.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 28 Sep 2016 11:46:13 +0200
+Message-ID: <CAMuHMdVidF0jSo1hVDUOtWfz55SM8ifssVOzqCRaQq98XMbPbA@mail.gmail.com>
+Subject: Re: Source tree v4.1.17-ltsi.
+To: Jithin T Raj <jithin.t@tataelxsi.co.in>
+Cc: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the first two members of the Renesas RZ/G family, RZ/G1M/E
-(also known as  R8A7743/5). The Ether core is the same as in the R-Car gen2
-SoCs, so will share the code/data with them...
+On Wed, Sep 28, 2016 at 11:43 AM, Jithin T Raj <jithin.t@tataelxsi.co.in> wrote:
+>    if you dont mind can you provide me some links that i get  v4.1.17-ltsi.because here i have no access to github
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+http://ltsi.linuxfoundation.org/downloads/releases
 
----
-The patch is against the DaveM's 'net-next.git' repo.
+Or just use v4.7.5. https://www.kernel.org/
 
- Documentation/devicetree/bindings/net/sh_eth.txt |    2 ++
- drivers/net/ethernet/renesas/Kconfig             |    2 +-
- drivers/net/ethernet/renesas/sh_eth.c            |    2 ++
- 3 files changed, 5 insertions(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-Index: net-next/Documentation/devicetree/bindings/net/sh_eth.txt
-===================================================================
---- net-next.orig/Documentation/devicetree/bindings/net/sh_eth.txt
-+++ net-next/Documentation/devicetree/bindings/net/sh_eth.txt
-@@ -5,6 +5,8 @@ interface contains.
- 
- Required properties:
- - compatible: "renesas,gether-r8a7740" if the device is a part of R8A7740 SoC.
-+	      "renesas,ether-r8a7743"  if the device is a part of R8A7743 SoC.
-+	      "renesas,ether-r8a7745"  if the device is a part of R8A7745 SoC.
- 	      "renesas,ether-r8a7778"  if the device is a part of R8A7778 SoC.
- 	      "renesas,ether-r8a7779"  if the device is a part of R8A7779 SoC.
- 	      "renesas,ether-r8a7790"  if the device is a part of R8A7790 SoC.
-Index: net-next/drivers/net/ethernet/renesas/Kconfig
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/Kconfig
-+++ net-next/drivers/net/ethernet/renesas/Kconfig
-@@ -27,7 +27,7 @@ config SH_ETH
- 	  Renesas SuperH Ethernet device driver.
- 	  This driver supporting CPUs are:
- 		- SH7619, SH7710, SH7712, SH7724, SH7734, SH7763, SH7757,
--		  R8A7740, R8A777x and R8A779x.
-+		  R8A7740, R8A774x, R8A777x and R8A779x.
- 
- config RAVB
- 	tristate "Renesas Ethernet AVB support"
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -2959,6 +2959,8 @@ static struct sh_eth_plat_data *sh_eth_p
- 
- static const struct of_device_id sh_eth_match_table[] = {
- 	{ .compatible = "renesas,gether-r8a7740", .data = &r8a7740_data },
-+	{ .compatible = "renesas,ether-r8a7743", .data = &r8a779x_data },
-+	{ .compatible = "renesas,ether-r8a7745", .data = &r8a779x_data },
- 	{ .compatible = "renesas,ether-r8a7778", .data = &r8a777x_data },
- 	{ .compatible = "renesas,ether-r8a7779", .data = &r8a777x_data },
- 	{ .compatible = "renesas,ether-r8a7790", .data = &r8a779x_data },
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
