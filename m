@@ -1,97 +1,57 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v2 1/7] spi: Document DT bindings for SPI controllers in slave mode
-Date: Mon, 12 Sep 2016 22:50:40 +0200
-Message-Id: <1473713446-30366-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1473713446-30366-1-git-send-email-geert+renesas@glider.be>
-References: <1473713446-30366-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:55163 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932557AbcI2KDj (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 29 Sep 2016 06:03:39 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
+        dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
+Cc: robin.murphy@arm.com, arnd@arndb.de,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/2] dma-mapping: fix ia64 build, use PHYS_PFN
+Date: Thu, 29 Sep 2016 12:02:39 +0200
+Message-Id: <20160929100240.7955-2-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20160929100240.7955-1-niklas.soderlund@ragnatech.se>
+References: <20160929100240.7955-1-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Do not create a child node in SPI slave mode. Instead, add an
-    "spi-slave" property, and put the mode properties in the controller
-    node.
----
- Documentation/devicetree/bindings/spi/spi-bus.txt | 34 ++++++++++++++---------
- 1 file changed, 21 insertions(+), 13 deletions(-)
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-bus.txt b/Documentation/devicetree/bindings/spi/spi-bus.txt
-index 17822860cb98c34d..1ae28d7cafb68dc5 100644
---- a/Documentation/devicetree/bindings/spi/spi-bus.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-bus.txt
-@@ -1,17 +1,23 @@
- SPI (Serial Peripheral Interface) busses
+kbuild test robot reports:
+
+   In file included from include/linux/skbuff.h:34:0,
+                    from include/linux/tcp.h:21,
+                    from drivers/net/ethernet/amd/xgbe/xgbe-drv.c:119:
+   include/linux/dma-mapping.h: In function 'dma_map_resource':
+>> include/linux/dma-mapping.h:274:22: error: implicit declaration of function '__phys_to_pfn' [-Werror=implicit-function-declaration]
+     unsigned long pfn = __phys_to_pfn(phys_addr);
+                         ^~~~~~~~~~~~~
+
+ia64 does not provide __phys_to_pfn(), use the PHYS_PFN() alias.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ include/linux/dma-mapping.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index 6e00c7f..ff7c87f 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -271,7 +271,7 @@ static inline dma_addr_t dma_map_resource(struct device *dev,
+ 					  unsigned long attrs)
+ {
+ 	struct dma_map_ops *ops = get_dma_ops(dev);
+-	unsigned long pfn = __phys_to_pfn(phys_addr);
++	unsigned long pfn = PHYS_PFN(phys_addr);
+ 	dma_addr_t addr;
  
--SPI busses can be described with a node for the SPI master device
--and a set of child nodes for each SPI slave on the bus.  For this
--discussion, it is assumed that the system's SPI controller is in
--SPI master mode.  This binding does not describe SPI controllers
--in slave mode.
-+SPI busses can be described with a node for the SPI controller device
-+and a set of child nodes for each SPI slave on the bus.  The system's SPI
-+controller may be described for use in SPI master mode or in SPI slave mode,
-+but not for both at the same time.
- 
--The SPI master node requires the following properties:
-+The SPI controller node requires the following properties:
-+- compatible      - name of SPI bus controller following generic names
-+		recommended practice.
-+
-+In master mode, the SPI controller node requires the following additional
-+properties:
- - #address-cells  - number of cells required to define a chip select
- 		address on the SPI bus.
- - #size-cells     - should be zero.
--- compatible      - name of SPI bus controller following generic names
--		recommended practice.
-+
-+In slave mode, the SPI controller node requires one additional property:
-+- spi-slave       - Empty property.
-+
- No other properties are required in the SPI bus node.  It is assumed
- that a driver for an SPI bus device will understand that it is an SPI bus.
- However, the binding does not attempt to define the specific method for
-@@ -21,7 +27,7 @@ assumption that board specific platform code will be used to manage
- chip selects.  Individual drivers can define additional properties to
- support describing the chip select layout.
- 
--Optional properties:
-+Optional properties (master mode only):
- - cs-gpios	  - gpios chip select.
- - num-cs	  - total number of chipselects.
- 
-@@ -41,12 +47,14 @@ cs1 : native
- cs2 : &gpio1 1 0
- cs3 : &gpio1 2 0
- 
--SPI slave nodes must be children of the SPI master node and can
--contain the following properties.
--- reg             - (required) chip select address of device.
-+In master mode, SPI slave nodes must be children of the SPI controller node.
-+In slave mode, the (single) slave device is represented by the controller node
-+itself. SPI slave nodes can contain the following properties.
-+- reg             - (required, master mode only) chip select address of device.
- - compatible      - (required) name of SPI device following generic names
- 		recommended practice.
--- spi-max-frequency - (required) Maximum SPI clocking speed of device in Hz.
-+- spi-max-frequency - (required, master mode only) Maximum SPI clocking speed
-+		of device in Hz.
- - spi-cpol        - (optional) Empty property indicating device requires
- 		inverse clock polarity (CPOL) mode.
- - spi-cpha        - (optional) Empty property indicating device requires
+ 	BUG_ON(!valid_dma_direction(dir));
 -- 
-1.9.1
+2.9.3
