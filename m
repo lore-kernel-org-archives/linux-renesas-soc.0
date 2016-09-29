@@ -1,140 +1,315 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-To: <linux@armlinux.org.uk>, <bcousson@baylibre.com>,
-        <tony@atomide.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>
-CC: <nicolas.ferre@atmel.com>, <alexandre.belloni@free-electrons.com>,
-        <plagnioj@jcrosoft.com>, <khalasa@piap.pl>, <kgene@kernel.org>,
-        <k.kozlowski@samsung.com>, <shawnguo@kernel.org>,
-        <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
-        <ssantosh@kernel.org>, <horms@verge.net.au>,
-        <magnus.damm@gmail.com>, <vireshk@kernel.org>,
-        <shiraz.linux.kernel@gmail.com>, <kishon@ti.com>, <nsekhar@ti.com>
-Subject: [PATCH v4 2/2] ARM: select PCI_DOMAINS config from ARCH_MULTIPLATFORM
-Date: Wed, 14 Sep 2016 15:49:06 +0530
-Message-ID: <1473848346-17905-3-git-send-email-kishon@ti.com>
-In-Reply-To: <1473848346-17905-1-git-send-email-kishon@ti.com>
-References: <1473848346-17905-1-git-send-email-kishon@ti.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:36650 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932813AbcI2W2e (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 29 Sep 2016 18:28:34 -0400
+Received: by mail-lf0-f51.google.com with SMTP id g62so91785219lfe.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Sep 2016 15:28:33 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH RFC v2 7/12] ARM: dts: r8a7743: add [H]SCIF[AB] support
+Date: Fri, 30 Sep 2016 01:28:30 +0300
+Message-ID: <4510241.8TZ1egobB9@wasted.cogentembedded.com>
+In-Reply-To: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
+References: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-PCI_DOMAINS config should be selected for any SoCs
-having more than a single PCIe controller. Without PCI_DOMAINS
-config, only one PCIe controller gets registered.
+Describe [H]SCIF[AB] ports in the R8A7743 device tree.
 
-Select PCI_DOMAINS in ARCH_MULTIPLATFORM if PCI is selected, since
-it doesn't harm even if a platform has a single PCIe port.
-Also remove PCI_DOMAINS being selected from other platform
-specific configs.
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- arch/arm/Kconfig               |    1 +
- arch/arm/mach-axxia/Kconfig    |    1 -
- arch/arm/mach-cns3xxx/Kconfig  |    1 -
- arch/arm/mach-exynos/Kconfig   |    1 -
- arch/arm/mach-imx/Kconfig      |    2 --
- arch/arm/mach-keystone/Kconfig |    1 -
- arch/arm/mach-shmobile/Kconfig |    1 -
- 7 files changed, 1 insertion(+), 7 deletions(-)
+Changes in version 2:
+- used  the new RZ/G family "compatible" prop values, reformatting where needed;
+- fixed the size cells of the SCIFB device nodes' "reg" properties;
+- changed the size cells of the "reg" properties to hexadecimal;
+- indented the SCIFA1 device node's closing brace correctly
+- adjusted the patch description, renamed the patch.
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index a9c4e48..fb1b867 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -337,6 +337,7 @@ config ARCH_MULTIPLATFORM
- 	select GENERIC_CLOCKEVENTS
- 	select MIGHT_HAVE_PCI
- 	select MULTI_IRQ_HANDLER
-+	select PCI_DOMAINS if PCI
- 	select SPARSE_IRQ
- 	select USE_OF
+ arch/arm/boot/dts/r8a7743.dtsi |  261 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 261 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
++++ renesas/arch/arm/boot/dts/r8a7743.dtsi
+@@ -154,6 +154,267 @@
+ 			dma-channels = <15>;
+ 		};
  
-diff --git a/arch/arm/mach-axxia/Kconfig b/arch/arm/mach-axxia/Kconfig
-index ee2e131..fe627cb 100644
---- a/arch/arm/mach-axxia/Kconfig
-+++ b/arch/arm/mach-axxia/Kconfig
-@@ -7,7 +7,6 @@ config ARCH_AXXIA
- 	select ARM_TIMER_SP804
- 	select HAVE_ARM_ARCH_TIMER
- 	select MFD_SYSCON
--	select PCI_DOMAINS if PCI
- 	select ZONE_DMA
- 	help
- 	  This enables support for the LSI Axxia devices.
-diff --git a/arch/arm/mach-cns3xxx/Kconfig b/arch/arm/mach-cns3xxx/Kconfig
-index eb14a0f..5fd836b 100644
---- a/arch/arm/mach-cns3xxx/Kconfig
-+++ b/arch/arm/mach-cns3xxx/Kconfig
-@@ -2,7 +2,6 @@ menuconfig ARCH_CNS3XXX
- 	bool "Cavium Networks CNS3XXX family"
- 	depends on ARCH_MULTI_V6
- 	select ARM_GIC
--	select PCI_DOMAINS if PCI
- 	help
- 	  Support for Cavium Networks CNS3XXX platform.
- 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index ee8a99c..18f0c85 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -126,7 +126,6 @@ config SOC_EXYNOS5440
- 	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
- 	select HAVE_ARM_ARCH_TIMER
- 	select AUTO_ZRELADDR
--	select PCI_DOMAINS if PCI
- 	select PINCTRL_EXYNOS5440
- 	select PM_OPP
- 	help
-diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
-index ee9a318..757cd11 100644
---- a/arch/arm/mach-imx/Kconfig
-+++ b/arch/arm/mach-imx/Kconfig
-@@ -523,7 +523,6 @@ config SOC_IMX6Q
- 	select ARM_ERRATA_764369 if SMP
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD
--	select PCI_DOMAINS if PCI
- 	select PINCTRL_IMX6Q
- 	select SOC_IMX6
- 
-@@ -569,7 +568,6 @@ config SOC_LS1021A
- 	bool "Freescale LS1021A support"
- 	select ARM_GIC
- 	select HAVE_ARM_ARCH_TIMER
--	select PCI_DOMAINS if PCI
- 	select ZONE_DMA if ARM_LPAE
- 	help
- 	  This enables support for Freescale LS1021A processor.
-diff --git a/arch/arm/mach-keystone/Kconfig b/arch/arm/mach-keystone/Kconfig
-index 1507287..24bd64d 100644
---- a/arch/arm/mach-keystone/Kconfig
-+++ b/arch/arm/mach-keystone/Kconfig
-@@ -8,7 +8,6 @@ config ARCH_KEYSTONE
- 	select COMMON_CLK_KEYSTONE
- 	select ARCH_SUPPORTS_BIG_ENDIAN
- 	select ZONE_DMA if ARM_LPAE
--	select PCI_DOMAINS if PCI
- 	select PINCTRL
- 	help
- 	  Support for boards based on the Texas Instruments Keystone family of
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 4a48c9f..09817ba 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -22,7 +22,6 @@ config ARCH_RCAR_GEN2
- 	select PM_GENERIC_DOMAINS
- 	select RENESAS_IRQC
- 	select SYS_SUPPORTS_SH_CMT
--	select PCI_DOMAINS if PCI
- 
- config ARCH_RMOBILE
- 	bool
--- 
-1.7.9.5
++		scifa0: serial@e6c40000 {
++			compatible = "renesas,scifa-r8a7743",
++				     "renesas,rzg-scifa", "renesas,scifa";
++			reg = <0 0xe6c40000 0 0x40>;
++			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp2_clks R8A7743_CLK_SCIFA0>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x21>, <&dmac0 0x22>,
++			       <&dmac1 0x21>, <&dmac1 0x22>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scifa1: serial@e6c50000 {
++			compatible = "renesas,scifa-r8a7743",
++				     "renesas,rzg-scifa", "renesas,scifa";
++			reg = <0 0xe6c50000 0 0x40>;
++			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp2_clks R8A7743_CLK_SCIFA1>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x25>, <&dmac0 0x26>,
++			       <&dmac1 0x25>, <&dmac1 0x26>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scifa2: serial@e6c60000 {
++			compatible = "renesas,scifa-r8a7743",
++				     "renesas,rzg-scifa", "renesas,scifa";
++			reg = <0 0xe6c60000 0 0x40>;
++			interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp2_clks R8A7743_CLK_SCIFA2>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x27>, <&dmac0 0x28>,
++			       <&dmac1 0x27>, <&dmac1 0x28>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scifa3: serial@e6c70000 {
++			compatible = "renesas,scifa-r8a7743",
++				     "renesas,rzg-scifa", "renesas,scifa";
++			reg = <0 0xe6c70000 0 0x40>;
++			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp11_clks R8A7743_CLK_SCIFA3>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x1b>, <&dmac0 0x1c>,
++			       <&dmac1 0x1b>, <&dmac1 0x1c>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scifa4: serial@e6c78000 {
++			compatible = "renesas,scifa-r8a7743",
++				     "renesas,rzg-scifa", "renesas,scifa";
++			reg = <0 0xe6c78000 0 0x40>;
++			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp11_clks R8A7743_CLK_SCIFA4>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x1f>, <&dmac0 0x20>,
++			       <&dmac1 0x1f>, <&dmac1 0x20>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scifa5: serial@e6c80000 {
++			compatible = "renesas,scifa-r8a7743",
++				     "renesas,rzg-scifa", "renesas,scifa";
++			reg = <0 0xe6c80000 0 0x40>;
++			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp11_clks R8A7743_CLK_SCIFA5>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x23>, <&dmac0 0x24>,
++			       <&dmac1 0x23>, <&dmac1 0x24>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scifb0: serial@e6c20000 {
++			compatible = "renesas,scifb-r8a7743",
++				     "renesas,rzg-scifb", "renesas,scifb";
++			reg = <0 0xe6c20000 0 0x100>;
++			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp2_clks R8A7743_CLK_SCIFB0>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x3d>, <&dmac0 0x3e>,
++		       <&dmac1 0x3d>, <&dmac1 0x3e>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scifb1: serial@e6c30000 {
++			compatible = "renesas,scifb-r8a7743",
++				     "renesas,rzg-scifb", "renesas,scifb";
++			reg = <0 0xe6c30000 0 0x100>;
++			interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp2_clks R8A7743_CLK_SCIFB1>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x19>, <&dmac0 0x1a>,
++			       <&dmac1 0x19>, <&dmac1 0x1a>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scifb2: serial@e6ce0000 {
++			compatible = "renesas,scifb-r8a7743",
++				     "renesas,rzg-scifb", "renesas,scifb";
++			reg = <0 0xe6ce0000 0 0x100>;
++			interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp2_clks R8A7743_CLK_SCIFB2>;
++			clock-names = "fck";
++			dmas = <&dmac0 0x1d>, <&dmac0 0x1e>,
++			       <&dmac1 0x1d>, <&dmac1 0x1e>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif0: serial@e6e60000 {
++			compatible = "renesas,scif-r8a7743", "renesas,rzg-scif",
++				     "renesas,scif";
++			reg = <0 0xe6e60000 0 0x40>;
++			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7743_CLK_SCIF0>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x29>, <&dmac0 0x2a>,
++			       <&dmac1 0x29>, <&dmac1 0x2a>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif1: serial@e6e68000 {
++			compatible = "renesas,scif-r8a7743", "renesas,rzg-scif",
++				     "renesas,scif";
++			reg = <0 0xe6e68000 0 0x40>;
++			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7743_CLK_SCIF1>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x2d>, <&dmac0 0x2e>,
++			       <&dmac1 0x2d>, <&dmac1 0x2e>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif2: serial@e6e58000 {
++			compatible = "renesas,scif-r8a7743", "renesas,rzg-scif",
++				     "renesas,scif";
++			reg = <0 0xe6e58000 0 0x40>;
++			interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7743_CLK_SCIF2>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x2b>, <&dmac0 0x2c>,
++			       <&dmac1 0x2b>, <&dmac1 0x2c>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif3: serial@e6ea8000 {
++			compatible = "renesas,scif-r8a7743", "renesas,rzg-scif",
++				     "renesas,scif";
++			reg = <0 0xe6ea8000 0 0x40>;
++			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7743_CLK_SCIF3>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x2f>, <&dmac0 0x30>,
++			       <&dmac1 0x2f>, <&dmac1 0x30>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif4: serial@e6ee0000 {
++			compatible = "renesas,scif-r8a7743", "renesas,rzg-scif",
++				     "renesas,scif";
++			reg = <0 0xe6ee0000 0 0x40>;
++			interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7743_CLK_SCIF4>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0xfb>, <&dmac0 0xfc>,
++			       <&dmac1 0xfb>, <&dmac1 0xfc>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		scif5: serial@e6ee8000 {
++			compatible = "renesas,scif-r8a7743", "renesas,rzg-scif",
++				     "renesas,scif";
++			reg = <0 0xe6ee8000 0 0x40>;
++			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7743_CLK_SCIF5>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0xfd>, <&dmac0 0xfe>,
++			       <&dmac1 0xfd>, <&dmac1 0xfe>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		hscif0: serial@e62c0000 {
++			compatible = "renesas,hscif-r8a7743",
++				     "renesas,rzg-hscif", "renesas,hscif";
++			reg = <0 0xe62c0000 0 0x60>;
++			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7743_CLK_HSCIF0>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
++			       <&dmac1 0x39>, <&dmac1 0x3a>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		hscif1: serial@e62c8000 {
++			compatible = "renesas,hscif-r8a7743",
++				     "renesas,rzg-hscif", "renesas,hscif";
++			reg = <0 0xe62c8000 0 0x60>;
++			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7743_CLK_HSCIF1>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
++			       <&dmac1 0x4d>, <&dmac1 0x4e>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		hscif2: serial@e62d0000 {
++			compatible = "renesas,hscif-r8a7743",
++				     "renesas,rzg-hscif", "renesas,hscif";
++			reg = <0 0xe62d0000 0 0x60>;
++			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp7_clks R8A7743_CLK_HSCIF2>, <&zs_clk>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x3b>, <&dmac0 0x3c>,
++			       <&dmac1 0x3b>, <&dmac1 0x3c>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
+ 		/* Special CPG clocks */
+ 		cpg_clocks: cpg_clocks@e6150000 {
+ 			compatible = "renesas,r8a7743-cpg-clocks",
