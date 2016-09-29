@@ -1,45 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:12052 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753364AbcI2MBb (ORCPT
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:55152 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932124AbcI2KDj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Sep 2016 08:01:31 -0400
-Date: Thu, 29 Sep 2016 17:40:04 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-Cc: linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
-        iommu@lists.linux-foundation.org, robin.murphy@arm.com,
-        arnd@arndb.de,
-        Niklas =?iso-8859-1?Q?S=F6derlund?=
+        Thu, 29 Sep 2016 06:03:39 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
+        dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
+Cc: robin.murphy@arm.com, arnd@arndb.de,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH 0/2] dma-mapping: fix ia64 and m32r build error and
- warnings
-Message-ID: <20160929121004.GT2467@localhost>
-References: <20160929100240.7955-1-niklas.soderlund@ragnatech.se>
+Subject: [PATCH 0/2] dma-mapping: fix ia64 and m32r build error and warnings
+Date: Thu, 29 Sep 2016 12:02:38 +0200
+Message-Id: <20160929100240.7955-1-niklas.soderlund@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20160929100240.7955-1-niklas.soderlund@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Sep 29, 2016 at 12:02:38PM +0200, Niklas S�derlund wrote:
-> From: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> 
-> Hi Vindo,
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-:(
+Hi Vindo,
 
-> 
-> This small series fixes the build error and warnings for ia64 and m32r 
-> which kbuild test robot found and where introduced in the series 
-> '[PATCHv9 0/6] dmaengine: rcar-dmac: add iommu support for slave 
-> transfers'.
+This small series fixes the build error and warnings for ia64 and m32r 
+which kbuild test robot found and where introduced in the series 
+'[PATCHv9 0/6] dmaengine: rcar-dmac: add iommu support for slave 
+transfers'.
 
-Applied both
+It is based ontop of:
 
-Thanks
+git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/slave-dma.git next
+
+The fixes are only compile tested for the ia64 and m32r architecture to 
+show that the error and warnings are fixed. It is tested on ARM to prove 
+that the intended functionality still works.
+
+Kbuild test robot found one more class of warnings for the patch series 
+mentioned above for the balackfin arch.
+
+   include/linux/dma-mapping.h: In function 'dma_map_resource':
+>> include/asm-generic/page.h:90:32: warning: comparison of unsigned expression >= 0 is always true [-Wtype-limits]
+    #define pfn_valid(pfn)  ((pfn) >= ARCH_PFN_OFFSET && ((pfn) - ARCH_PFN_OFFSET) < max_mapnr)
+                                   ^
+
+These warnings are not addressed in this series since they are not new 
+or unique to original patch. They come from how pfn_valid() is 
+implemented in include/asm-generic/page.h, if ARCH_PFN_OFFSET is 0 the 
+warning is triggered. On the kbuild blackfin build it is defined as 
+'(0x0 >> 12)' so any invocation of pfn_valid() will trigger it.
+
+I tried to fix it but was unable to find a good solution. There is a 
+MIPS specific fix for this in commit 95486e4 (MIPS: Fix flood of 
+warnings about comparsion being always true.), but a similar fix for 
+asm-generic seems to tricky for me to attempt since the macro needs to 
+be turned into a static inline function and that might be harmful.  I 
+also toyed with the solution of '#if ARCH_PFN_OFFSET == 0' to provided 
+an alternative pfn_valid() macro, but since ARCH_PFN_OFFSET is defined 
+as an expression and not a constant that wont work. If you can think of 
+another way I be happy to try that out and see if I can make it work.
+
+Niklas Söderlund (2):
+  dma-mapping: fix ia64 build, use PHYS_PFN
+  dma-mapping: fix m32r build warning
+
+ include/linux/dma-mapping.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
 -- 
-~Vinod
+2.9.3
