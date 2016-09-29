@@ -1,53 +1,70 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran+renesas@bingham.xyz>
-Subject: [PATCH 01/13] v4l: vsp1: Prevent pipelines from running when not streaming
-Date: Wed, 14 Sep 2016 02:16:54 +0300
-Message-Id: <1473808626-19488-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp-4.sys.kth.se ([130.237.48.193]:55170 "EHLO
+        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932949AbcI2KDj (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 29 Sep 2016 06:03:39 -0400
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: vinod.koul@intel.com, linux-renesas-soc@vger.kernel.org,
+        dmaengine@vger.kernel.org, iommu@lists.linux-foundation.org
+Cc: robin.murphy@arm.com, arnd@arndb.de,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/2] dma-mapping: fix m32r build warning
+Date: Thu, 29 Sep 2016 12:02:40 +0200
+Message-Id: <20160929100240.7955-3-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20160929100240.7955-1-niklas.soderlund@ragnatech.se>
+References: <20160929100240.7955-1-niklas.soderlund@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Pipelines can only be run if all their video nodes are streaming. Commit
-b4dfb9b35a19 ("[media] v4l: vsp1: Stop the pipeline upon the first
-STREAMOFF") fixed the pipeline stop sequence, but introduced a race
-condition that makes it possible to run a pipeline after stopping the
-stream on a video node by queuing a buffer on the other side of the
-pipeline.
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Fix this by clearing the buffers ready flag when stopping the stream,
-which will prevent the QBUF handler from running the pipeline.
+kbuild test robot reports:
 
-Fixes: b4dfb9b35a19 ("[media] v4l: vsp1: Stop the pipeline upon the first STREAMOFF")
-Reported-by: Kieran Bingham <kieran@bingham.xyz>
-Tested-by: Kieran Bingham <kieran@bingham.xyz>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+   In file included from include/linux/skbuff.h:34:0,
+                    from include/linux/icmpv6.h:4,
+                    from include/linux/ipv6.h:75,
+                    from include/net/ipv6.h:16,
+                    from include/linux/sunrpc/clnt.h:27,
+                    from include/linux/nfs_fs.h:30,
+                    from fs/lockd/clntlock.c:13:
+   include/linux/dma-mapping.h: In function 'dma_map_resource':
+>> include/linux/dma-mapping.h:274:16: warning: unused variable 'pfn' [-Wunused-variable]
+     unsigned long pfn = __phys_to_pfn(phys_addr);
+                   ^~~
+
+The pfn value is only used once in the call to pfn_valid(), remove the
+variable and calculate the pfn when it's needed. Note that the kbuild
+report is old and PHYS_PFN() is now used instead of __phys_to_pfn() to
+calculate the pfn.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/vsp1/vsp1_video.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ include/linux/dma-mapping.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index 9fb4fc26a359..ed9759e8a6fc 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -675,6 +675,13 @@ static void vsp1_video_stop_streaming(struct vb2_queue *vq)
- 	unsigned long flags;
- 	int ret;
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index ff7c87f..642cb4c 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -271,13 +271,12 @@ static inline dma_addr_t dma_map_resource(struct device *dev,
+ 					  unsigned long attrs)
+ {
+ 	struct dma_map_ops *ops = get_dma_ops(dev);
+-	unsigned long pfn = PHYS_PFN(phys_addr);
+ 	dma_addr_t addr;
  
-+	/* Clear the buffers ready flag to make sure the device won't be started
-+	 * by a QBUF on the video node on the other side of the pipeline.
-+	 */
-+	spin_lock_irqsave(&video->irqlock, flags);
-+	pipe->buffers_ready &= ~(1 << video->pipe_index);
-+	spin_unlock_irqrestore(&video->irqlock, flags);
-+
- 	mutex_lock(&pipe->lock);
- 	if (--pipe->stream_count == pipe->num_inputs) {
- 		/* Stop the pipeline. */
+ 	BUG_ON(!valid_dma_direction(dir));
+ 
+ 	/* Don't allow RAM to be mapped */
+-	BUG_ON(pfn_valid(pfn));
++	BUG_ON(pfn_valid(PHYS_PFN(phys_addr)));
+ 
+ 	addr = phys_addr;
+ 	if (ops->map_resource)
 -- 
-Regards,
-
-Laurent Pinchart
+2.9.3
