@@ -1,67 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:52433 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S941414AbcIZUl1 (ORCPT
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:35130 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932813AbcI2W32 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Sep 2016 16:41:27 -0400
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 1/2] ARM: dts: r7s72100: add sdhi to device tree
-Date: Mon, 26 Sep 2016 16:40:31 -0400
-Message-Id: <20160926204032.12260-2-chris.brandt@renesas.com>
-In-Reply-To: <20160926204032.12260-1-chris.brandt@renesas.com>
-References: <20160926204032.12260-1-chris.brandt@renesas.com>
+        Thu, 29 Sep 2016 18:29:28 -0400
+Received: by mail-lf0-f52.google.com with SMTP id l131so92362952lfl.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Sep 2016 15:29:27 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH RFC v2 8/12] ARM: dts: r8a7743: add Ether support
+Date: Fri, 30 Sep 2016 01:29:24 +0300
+Message-ID: <2838747.DQZcGTqldA@wasted.cogentembedded.com>
+In-Reply-To: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
+References: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
- * removed bus-width
----
- arch/arm/boot/dts/r7s72100.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Define the generic R8A7743 part of the Ether device node.
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index e97d6d1..53a38e3 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -458,4 +458,30 @@
- 		#size-cells = <0>;
- 		status = "disabled";
- 	};
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+---
+Changes in version 2:
+- new patch.
+
+ arch/arm/boot/dts/r8a7743.dtsi |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
++++ renesas/arch/arm/boot/dts/r8a7743.dtsi
+@@ -415,6 +415,18 @@
+ 			status = "disabled";
+ 		};
+ 
++		ether: ethernet@ee700000 {
++			compatible = "renesas,ether-r8a7743";
++			reg = <0 0xee700000 0 0x400>;
++			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&mstp8_clks R8A7743_CLK_ETHER>;
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			phy-mode = "rmii";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
 +
-+	sdhi0: sd@e804e000 {
-+		compatible = "renesas,sdhi-r7s72100";
-+		reg = <0xe804e000 0x100>;
-+		interrupts = <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		clocks = <&mstp12_clks R7S72100_CLK_SDHI0>;
-+		cap-sd-highspeed;
-+		cap-sdio-irq;
-+		status = "disabled";
-+	};
-+
-+	sdhi1: sd@e804e800 {
-+		compatible = "renesas,sdhi-r7s72100";
-+		reg = <0xe804e800 0x100>;
-+		interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		clocks = <&mstp12_clks R7S72100_CLK_SDHI1>;
-+		cap-sd-highspeed;
-+		cap-sdio-irq;
-+		status = "disabled";
-+	};
- };
--- 
-2.9.2
+ 		/* Special CPG clocks */
+ 		cpg_clocks: cpg_clocks@e6150000 {
+ 			compatible = "renesas,r8a7743-cpg-clocks",
