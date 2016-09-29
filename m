@@ -1,44 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:33540 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752156AbcI3Ice (ORCPT
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:34909 "EHLO
+        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934615AbcI2Wcm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Sep 2016 04:32:34 -0400
+        Thu, 29 Sep 2016 18:32:42 -0400
+Received: by mail-lf0-f42.google.com with SMTP id l131so92404463lfl.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Sep 2016 15:32:42 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org
+Cc: horms@verge.net.au
+Subject: [PATCH RFC v2 10/12] DT: arm: shmobile: document SK-RZG1M board
+Date: Fri, 30 Sep 2016 01:32:38 +0300
+Message-ID: <32082029.3R2IVcCXuY@wasted.cogentembedded.com>
+In-Reply-To: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
+References: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <32082029.3R2IVcCXuY@wasted.cogentembedded.com>
-References: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com> <32082029.3R2IVcCXuY@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 30 Sep 2016 10:32:33 +0200
-Message-ID: <CAMuHMdUuVMmmNrp6jaNBSua4afGZRDiSAK8F_4KD-Y0HQ76CQA@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 10/12] DT: arm: shmobile: document SK-RZG1M board
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 30, 2016 at 12:32 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Document the SK-RZG1M device tree bindings, listing it as a supported board.
->
-> This allows to use checkpatch.pl to validate .dts files referring to the
-> SK-RZG1M board.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Document the SK-RZG1M device tree bindings, listing it as a supported board.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This allows to use checkpatch.pl to validate .dts files referring to the
+SK-RZG1M board.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-                        Geert
+---
+Changes in version 2:
+- new patch.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
+ 1 file changed, 2 insertions(+)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: renesas/Documentation/devicetree/bindings/arm/shmobile.txt
+===================================================================
+--- renesas.orig/Documentation/devicetree/bindings/arm/shmobile.txt
++++ renesas/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -75,5 +75,7 @@ Boards:
+     compatible = "renesas,salvator-x", "renesas,r8a7796";
+   - SILK (RTP0RC7794LCB00011S)
+     compatible = "renesas,silk", "renesas,r8a7794"
++  - SK-RZG1M (YR8A77430S000BE)
++    compatible = "renesas,sk-rzg1m", "renesas,r8a7743"
+   - Wheat
+     compatible = "renesas,wheat", "renesas,r8a7792"
