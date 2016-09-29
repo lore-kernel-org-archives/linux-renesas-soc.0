@@ -1,252 +1,140 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:33671 "EHLO
-        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751520AbcIPNfM (ORCPT
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:35334 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934691AbcI2WV6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Sep 2016 09:35:12 -0400
-Received: by mail-lf0-f47.google.com with SMTP id h127so66398840lfh.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Sep 2016 06:35:11 -0700 (PDT)
+        Thu, 29 Sep 2016 18:21:58 -0400
+Received: by mail-lf0-f44.google.com with SMTP id l131so92269122lfl.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Sep 2016 15:21:57 -0700 (PDT)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
         robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
+        devicetree@vger.kernel.org, sre@kernel.org, dbaryshkov@gmail.com,
+        dwmw2@infradead.org, linux-pm@vger.kernel.org
 Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH RFC 5/8] ARM: dts: r8a7743: initial SoC device tree
-Date: Fri, 16 Sep 2016 16:35:08 +0300
-Message-ID: <1679762.ECpvSkQAyM@wasted.cogentembedded.com>
-In-Reply-To: <3533019.Wim1Kuh1ic@wasted.cogentembedded.com>
-References: <3533019.Wim1Kuh1ic@wasted.cogentembedded.com>
+Subject: [PATCH RFC v2 3/12] soc: renesas: rcar-sysc: add R8A7743 support
+Date: Fri, 30 Sep 2016 01:21:54 +0300
+Message-ID: <1979633.oxsqSuXO5u@wasted.cogentembedded.com>
+In-Reply-To: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
+References: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The initial R8A7743 SoC device tree including CPU cores, GIC, timer, SYSC,
-and the required  clock descriptions.
+Add support for RZ/G1M (R8A7743) SoC power areas to the R-Car SYSC driver.
 
 Based on the original (and large) patch by Dmitry Shifrin
 <dmitry.shifrin@cogentembedded.com>.
 
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 ---
- arch/arm/boot/dts/r8a7743.dtsi |  210 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 210 insertions(+)
+Changes in version 2:
+- documented the R8A7743 SYSC device tree binding;
+- added "R-Car" to the patch description;
+- added Geert's tag.
 
-Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
+ Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt |    7 +-
+ drivers/soc/renesas/Makefile                                  |    1 
+ drivers/soc/renesas/r8a7743-sysc.c                            |   32 ++++++++++
+ drivers/soc/renesas/rcar-sysc.c                               |    3 
+ drivers/soc/renesas/rcar-sysc.h                               |    1 
+ 5 files changed, 41 insertions(+), 3 deletions(-)
+
+Index: renesas/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+===================================================================
+--- renesas.orig/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
++++ renesas/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+@@ -1,12 +1,13 @@
+-DT bindings for the Renesas R-Car System Controller
++DT bindings for the Renesas R-Car (RZ/G) System Controller
+ 
+ == System Controller Node ==
+ 
+-The R-Car System Controller provides power management for the CPU cores and
+-various coprocessors.
++The R-Car (RZ/G) System Controller provides power management for the CPU cores
++and various coprocessors.
+ 
+ Required properties:
+   - compatible: Must contain exactly one of the following:
++      - "renesas,r8a7743-sysc" (RZ/G1M)
+       - "renesas,r8a7779-sysc" (R-Car H1)
+       - "renesas,r8a7790-sysc" (R-Car H2)
+       - "renesas,r8a7791-sysc" (R-Car M2-W)
+Index: renesas/drivers/soc/renesas/Makefile
+===================================================================
+--- renesas.orig/drivers/soc/renesas/Makefile
++++ renesas/drivers/soc/renesas/Makefile
+@@ -1,3 +1,4 @@
++obj-$(CONFIG_ARCH_R8A7743)	+= rcar-sysc.o r8a7743-sysc.o
+ obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
+ obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
+ obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
+Index: renesas/drivers/soc/renesas/r8a7743-sysc.c
 ===================================================================
 --- /dev/null
-+++ renesas/arch/arm/boot/dts/r8a7743.dtsi
-@@ -0,0 +1,210 @@
++++ renesas/drivers/soc/renesas/r8a7743-sysc.c
+@@ -0,0 +1,32 @@
 +/*
-+ * Device Tree Source for the r8a7743 SoC
++ * Renesas RZ/G1M System Controller
 + *
 + * Copyright (C) 2016 Cogent Embedded Inc.
 + *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2. This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation; of the License.
 + */
 +
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r8a7743-clock.h>
++#include <linux/bug.h>
++#include <linux/kernel.h>
++
 +#include <dt-bindings/power/r8a7743-sysc.h>
 +
-+/ {
-+	compatible = "renesas,r8a7743";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
++#include "rcar-sysc.h"
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <0>;
-+			clock-frequency = <1500000000>;
-+			clocks = <&cpg_clocks R8A7743_CLK_Z>;
-+			power-domains = <&sysc R8A7743_PD_CA15_CPU0>;
-+			next-level-cache = <&L2_CA15>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <1>;
-+			clock-frequency = <1500000000>;
-+			power-domains = <&sysc R8A7743_PD_CA15_CPU1>;
-+			next-level-cache = <&L2_CA15>;
-+		};
-+
-+		L2_CA15: cache-controller@0 {
-+			compatible = "cache";
-+			reg = <0>;
-+			cache-unified;
-+			cache-level = <2>;
-+			power-domains = <&sysc R8A7743_PD_CA15_SCU>;
-+		};
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gic: interrupt-controller@f1001000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0 0xf1001000 0 0x1000>,
-+			      <0 0xf1002000 0 0x1000>,
-+			      <0 0xf1004000 0 0x2000>,
-+			      <0 0xf1006000 0 0x2000>;
-+			interrupts = <GIC_PPI 9
-+				     (GIC_CPU_MASK_SIMPLE(2) |
-+				      IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+
-+		timer {
-+			compatible = "arm,armv7-timer";
-+			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
-+				      IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
-+				      IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) |
-+				      IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
-+				      IRQ_TYPE_LEVEL_LOW)>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a7743-sysc";
-+			reg = <0 0xe6180000 0 0x0200>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		/* Special CPG clocks */
-+		cpg_clocks: cpg_clocks@e6150000 {
-+			compatible = "renesas,r8a7743-cpg-clocks",
-+				     "renesas,rcar-gen2-cpg-clocks";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk &usb_extal_clk>;
-+			#clock-cells = <1>;
-+			clock-output-names = "main", "pll0", "pll1", "pll3",
-+					     "lb", "qspi", "sdh", "sd0", "z",
-+					     "rcan";
-+			#power-domain-cells = <0>;
-+		};
-+
-+		/* Fixed factor clocks */
-+		pll1_div2_clk: pll1_div2 {
-+			compatible = "fixed-factor-clock";
-+			clocks = <&cpg_clocks R8A7743_CLK_PLL1>;
-+			#clock-cells = <0>;
-+			clock-div = <2>;
-+			clock-mult = <1>;
-+		};
-+		zs_clk: zs {
-+			compatible = "fixed-factor-clock";
-+			clocks = <&cpg_clocks R8A7743_CLK_PLL1>;
-+			#clock-cells = <0>;
-+			clock-div = <6>;
-+			clock-mult = <1>;
-+		};
-+		p_clk: p {
-+			compatible = "fixed-factor-clock";
-+			clocks = <&cpg_clocks R8A7743_CLK_PLL1>;
-+			#clock-cells = <0>;
-+			clock-div = <24>;
-+			clock-mult = <1>;
-+		};
-+		mp_clk: mp {
-+			compatible = "fixed-factor-clock";
-+			clocks = <&pll1_div2_clk>;
-+			#clock-cells = <0>;
-+			clock-div = <15>;
-+			clock-mult = <1>;
-+		};
-+
-+		/* Gate clocks */
-+		mstp2_clks: mstp2_clks@e6150138 {
-+			compatible = "renesas,r8a7743-mstp-clocks",
-+				     "renesas,cpg-mstp-clocks";
-+			reg = <0 0xe6150138 0 4>, <0 0xe6150040 0 4>;
-+			clocks = <&mp_clk>, <&mp_clk>, <&mp_clk>, <&mp_clk>,
-+				 <&mp_clk>, <&mp_clk>, <&zs_clk>, <&zs_clk>;
-+			#clock-cells = <1>;
-+			clock-indices = <
-+				R8A7743_CLK_SCIFA2 R8A7743_CLK_SCIFA1
-+				R8A7743_CLK_SCIFA0 R8A7743_CLK_SCIFB0
-+				R8A7743_CLK_SCIFB1 R8A7743_CLK_SCIFB2
-+				R8A7743_CLK_SYS_DMAC1 R8A7743_CLK_SYS_DMAC0
-+			>;
-+			clock-output-names =
-+				"scifa2", "scifa1", "scifa0",
-+				"scifb0", "scifb1", "scifb2",
-+				"sys-dmac1", "sys-dmac0";
-+		};
-+		mstp7_clks: mstp7_clks@e615014c {
-+			compatible = "renesas,r8a7743-mstp-clocks",
-+				     "renesas,cpg-mstp-clocks";
-+			reg = <0 0xe615014c 0 4>, <0 0xe61501c4 0 4>;
-+			clocks = <&zs_clk>, <&p_clk>, <&p_clk>, <&zs_clk>,
-+				 <&zs_clk>, <&p_clk>, <&p_clk>, <&p_clk>,
-+				 <&p_clk>;
-+			#clock-cells = <1>;
-+			clock-indices = <
-+				R8A7743_CLK_HSCIF2 R8A7743_CLK_SCIF5
-+				R8A7743_CLK_SCIF4 R8A7743_CLK_HSCIF1
-+				R8A7743_CLK_HSCIF0 R8A7743_CLK_SCIF3
-+				R8A7743_CLK_SCIF2 R8A7743_CLK_SCIF1
-+				R8A7743_CLK_SCIF0
-+			>;
-+			clock-output-names =
-+				"hscif2", "scif5", "scif4", "hscif1", "hscif0",
-+				"scif3", "scif2", "scif1", "scif0";
-+		};
-+		mstp11_clks: mstp11_clks@e615099c {
-+			compatible = "renesas,r8a7743-mstp-clocks",
-+				     "renesas,cpg-mstp-clocks";
-+			reg = <0 0xe615099c 0 4>, <0 0xe61509ac 0 4>;
-+			clocks = <&mp_clk>, <&mp_clk>, <&mp_clk>;
-+			#clock-cells = <1>;
-+			clock-indices = <
-+				R8A7743_CLK_SCIFA3 R8A7743_CLK_SCIFA4
-+				R8A7743_CLK_SCIFA5
-+			>;
-+			clock-output-names = "scifa3", "scifa4", "scifa5";
-+		};
-+	};
-+
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overriden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
++static const struct rcar_sysc_area r8a7743_areas[] __initconst = {
++	{ "always-on",	    0, 0, R8A7743_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
++	{ "ca15-scu",	0x180, 0, R8A7743_PD_CA15_SCU,	R8A7743_PD_ALWAYS_ON,
++	  PD_SCU },
++	{ "ca15-cpu0",	 0x40, 0, R8A7743_PD_CA15_CPU0,	R8A7743_PD_CA15_SCU,
++	  PD_CPU_NOCR },
++	{ "ca15-cpu1",	 0x40, 1, R8A7743_PD_CA15_CPU1,	R8A7743_PD_CA15_SCU,
++	  PD_CPU_NOCR },
++	{ "sgx",	 0xc0, 0, R8A7743_PD_SGX,	R8A7743_PD_ALWAYS_ON },
 +};
++
++const struct rcar_sysc_info r8a7743_sysc_info __initconst = {
++	.areas = r8a7743_areas,
++	.num_areas = ARRAY_SIZE(r8a7743_areas),
++};
+Index: renesas/drivers/soc/renesas/rcar-sysc.c
+===================================================================
+--- renesas.orig/drivers/soc/renesas/rcar-sysc.c
++++ renesas/drivers/soc/renesas/rcar-sysc.c
+@@ -275,6 +275,9 @@ finalize:
+ }
+ 
+ static const struct of_device_id rcar_sysc_matches[] = {
++#ifdef CONFIG_ARCH_R8A7743
++	{ .compatible = "renesas,r8a7743-sysc", .data = &r8a7743_sysc_info },
++#endif
+ #ifdef CONFIG_ARCH_R8A7779
+ 	{ .compatible = "renesas,r8a7779-sysc", .data = &r8a7779_sysc_info },
+ #endif
+Index: renesas/drivers/soc/renesas/rcar-sysc.h
+===================================================================
+--- renesas.orig/drivers/soc/renesas/rcar-sysc.h
++++ renesas/drivers/soc/renesas/rcar-sysc.h
+@@ -50,6 +50,7 @@ struct rcar_sysc_info {
+ 	unsigned int num_areas;
+ };
+ 
++extern const struct rcar_sysc_info r8a7743_sysc_info;
+ extern const struct rcar_sysc_info r8a7779_sysc_info;
+ extern const struct rcar_sysc_info r8a7790_sysc_info;
+ extern const struct rcar_sysc_info r8a7791_sysc_info;
