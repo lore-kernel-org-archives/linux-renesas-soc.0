@@ -1,64 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:39535 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751396AbcISOS7 (ORCPT
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:35365 "EHLO
+        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934511AbcI2Wef (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Sep 2016 10:18:59 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] ARM: dts: r8a7794: Correct SCIFB reg properties to cover all registers
-Date: Mon, 19 Sep 2016 16:18:56 +0200
-Message-Id: <1474294736-24339-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1474294736-24339-1-git-send-email-geert+renesas@glider.be>
-References: <1474294736-24339-1-git-send-email-geert+renesas@glider.be>
+        Thu, 29 Sep 2016 18:34:35 -0400
+Received: by mail-lf0-f42.google.com with SMTP id l131so92428328lfl.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Sep 2016 15:34:34 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH RFC v2 11/12] ARM: dts: sk-rzg1m: initial device tree
+Date: Fri, 30 Sep 2016 01:34:32 +0300
+Message-ID: <2785627.2cnnnPXLS1@wasted.cogentembedded.com>
+In-Reply-To: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
+References: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Several SCIFB registers reside outside the reported register ranges.
-Fortunately this works (on Linux), due to the PAGE_SIZE granularity of
-ioremap().
+Add the initial device  tree for the R8A7743 SoC based SK-RZG1M board.
+The board has one debug serial port (SCIF0); include support for it, so
+that  the serial  console  can work.
 
-Extend the sizes from 64 to 0x100 bytes to fix this, like is done on
-SH/R-Mobile SoCs.
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- arch/arm/boot/dts/r8a7794.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/Makefile             |    1 
+ arch/arm/boot/dts/r8a7743-sk-rzg1m.dts |   44 +++++++++++++++++++++++++++++++++
+ 2 files changed, 45 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 73365894043659bb..1e7157da4e69a2af 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -411,7 +411,7 @@
- 	scifb0: serial@e6c20000 {
- 		compatible = "renesas,scifb-r8a7794",
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
--		reg = <0 0xe6c20000 0 64>;
-+		reg = <0 0xe6c20000 0 0x100>;
- 		interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFB0>;
- 		clock-names = "fck";
-@@ -425,7 +425,7 @@
- 	scifb1: serial@e6c30000 {
- 		compatible = "renesas,scifb-r8a7794",
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
--		reg = <0 0xe6c30000 0 64>;
-+		reg = <0 0xe6c30000 0 0x100>;
- 		interrupts = <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFB1>;
- 		clock-names = "fck";
-@@ -439,7 +439,7 @@
- 	scifb2: serial@e6ce0000 {
- 		compatible = "renesas,scifb-r8a7794",
- 			     "renesas,rcar-gen2-scifb", "renesas,scifb";
--		reg = <0 0xe6ce0000 0 64>;
-+		reg = <0 0xe6ce0000 0 0x100>;
- 		interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp2_clks R8A7794_CLK_SCIFB2>;
- 		clock-names = "fck";
--- 
-1.9.1
+Index: renesas/arch/arm/boot/dts/Makefile
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/Makefile
++++ renesas/arch/arm/boot/dts/Makefile
+@@ -654,6 +654,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
+ 	r7s72100-rskrza1.dtb \
+ 	r8a73a4-ape6evm.dtb \
+ 	r8a7740-armadillo800eva.dtb \
++	r8a7743-sk-rzg1m.dtb \
+ 	r8a7778-bockw.dtb \
+ 	r8a7779-marzen.dtb \
+ 	r8a7790-lager.dtb \
+Index: renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+===================================================================
+--- /dev/null
++++ renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+@@ -0,0 +1,44 @@
++/*
++ * Device Tree Source for the SK-RZG1M board
++ *
++ * Copyright (C) 2016 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2. This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r8a7743.dtsi"
++
++/ {
++	model = "SK-RZG1M";
++	compatible = "renesas,sk-rzg1m", "renesas,r8a7743";
++
++	aliases {
++		serial0 = &scif0;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0 0x40000000 0 0x40000000>;
++	};
++
++	memory@200000000 {
++		device_type = "memory";
++		reg = <2 0x00000000 0 0x40000000>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <20000000>;
++};
++
++&scif0 {
++	status = "okay";
++};
