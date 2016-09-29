@@ -1,92 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34545 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932698AbcIPNJn (ORCPT
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:34473 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750877AbcI2MnC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Sep 2016 09:09:43 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: horms@verge.net.au
-Cc: geert@linux-m68k.org, hans.verkuil@cisco.com,
-        niklas.soderlund@ragnatech.se, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
-        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com
-Subject: [PATCH 2/3] ARM: dts: gose: add HDMI input
-Date: Fri, 16 Sep 2016 15:09:34 +0200
-Message-Id: <20160916130935.21292-3-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <20160916130935.21292-1-ulrich.hecht+renesas@gmail.com>
-References: <20160916130935.21292-1-ulrich.hecht+renesas@gmail.com>
+        Thu, 29 Sep 2016 08:43:02 -0400
+Received: by mail-lf0-f51.google.com with SMTP id y6so78093862lff.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Sep 2016 05:43:00 -0700 (PDT)
+Date: Thu, 29 Sep 2016 14:42:57 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        iommu@lists.linux-foundation.org, robin.murphy@arm.com,
+        arnd@arndb.de
+Subject: Re: [PATCH 0/2] dma-mapping: fix ia64 and m32r build error and
+ warnings
+Message-ID: <20160929124257.GB8472@bigcity.dyn.berto.se>
+References: <20160929100240.7955-1-niklas.soderlund@ragnatech.se>
+ <20160929121004.GT2467@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20160929121004.GT2467@localhost>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Identical to the setup on Lager.
+On 2016-09-29 17:40:04 +0530, Vinod Koul wrote:
+> On Thu, Sep 29, 2016 at 12:02:38PM +0200, Niklas S�derlund wrote:
+> > From: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+> > 
+> > Hi Vindo,
+> 
+> :(
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm/boot/dts/r8a7793-gose.dts | 41 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+I'm sorry, my hands sometimes moves faster then my head.
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 90af186..e22d63c 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -374,6 +374,11 @@
- 		groups = "audio_clk_a";
- 		function = "audio_clk";
- 	};
-+
-+	vin0_pins: vin0 {
-+		groups = "vin0_data24", "vin0_sync", "vin0_clkenb", "vin0_clk";
-+		function = "vin0";
-+	};
- };
- 
- &ether {
-@@ -531,6 +536,21 @@
- 		};
- 	};
- 
-+	hdmi-in@4c {
-+		compatible = "adi,adv7612";
-+		reg = <0x4c>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-+		remote = <&vin0>;
-+		default-input = <0>;
-+
-+		port {
-+			adv7612: endpoint {
-+				remote-endpoint = <&vin0ep>;
-+			};
-+		};
-+	};
-+
- 	eeprom@50 {
- 		compatible = "renesas,r1ex24002", "atmel,24c02";
- 		reg = <0x50>;
-@@ -558,3 +578,24 @@
- &ssi1 {
- 	shared-pin;
- };
-+
-+/* HDMI video input */
-+&vin0 {
-+	status = "okay";
-+	pinctrl-0 = <&vin0_pins>;
-+	pinctrl-names = "default";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		vin0ep: endpoint {
-+			remote-endpoint = <&adv7612>;
-+			bus-width = <24>;
-+			hsync-active = <0>;
-+			vsync-active = <0>;
-+			pclk-sample = <1>;
-+			data-active = <1>;
-+		};
-+	};
-+};
+> 
+> > 
+> > This small series fixes the build error and warnings for ia64 and m32r 
+> > which kbuild test robot found and where introduced in the series 
+> > '[PATCHv9 0/6] dmaengine: rcar-dmac: add iommu support for slave 
+> > transfers'.
+> 
+> Applied both
+
+Thanks.
+
+> 
+> Thanks
+> -- 
+> ~Vinod
+
 -- 
-2.9.3
+Regards,
+Niklas S�derlund
