@@ -1,17 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:34983 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935100AbcI2WQm (ORCPT
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:33596 "EHLO
+        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934485AbcI2W0r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Sep 2016 18:16:42 -0400
-Received: by mail-lf0-f50.google.com with SMTP id l131so92196307lfl.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Sep 2016 15:16:40 -0700 (PDT)
+        Thu, 29 Sep 2016 18:26:47 -0400
+Received: by mail-lf0-f42.google.com with SMTP id t81so24718996lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Sep 2016 15:26:46 -0700 (PDT)
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org
-Subject: [PATCH RFC v2 1/12] ARM: shmobile: r8a7743: add clock index macros
-Date: Fri, 30 Sep 2016 01:16:37 +0300
-Message-ID: <2980900.By1HmtprOu@wasted.cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH RFC v2 6/12] ARM: dts: r8a7743: add SYS-DMAC support
+Date: Fri, 30 Sep 2016 01:26:43 +0300
+Message-ID: <4442711.L2kXfQCuTM@wasted.cogentembedded.com>
 In-Reply-To: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
 References: <1987532.PE2ex6PrJ5@wasted.cogentembedded.com>
 MIME-Version: 1.0
@@ -20,180 +23,93 @@ Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by the device tree sources to reference the R8A7743
-clocks  by index.
+Describe SYS-DMAC0/1 in the R8A7743 device tree.
 
 Based on the original (and large) patch by Dmitry Shifrin
 <dmitry.shifrin@cogentembedded.com>.
 
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 ---
 Changes in version 2:
-- fixed the file copyright.
+- added Geert's tag.
 
- include/dt-bindings/clock/r8a7743-clock.h |  157 ++++++++++++++++++++++++++++++
- 1 file changed, 157 insertions(+)
+ arch/arm/boot/dts/r8a7743.dtsi |   64 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-Index: renesas/include/dt-bindings/clock/r8a7743-clock.h
+Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
 ===================================================================
---- /dev/null
-+++ renesas/include/dt-bindings/clock/r8a7743-clock.h
-@@ -0,0 +1,157 @@
-+/*
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
+--- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
++++ renesas/arch/arm/boot/dts/r8a7743.dtsi
+@@ -90,6 +90,70 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		dmac0: dma-controller@e6700000 {
++			compatible = "renesas,dmac-r8a7743",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe6700000 0 0x20000>;
++			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7",
++					"ch8", "ch9", "ch10", "ch11",
++					"ch12", "ch13", "ch14";
++			clocks = <&mstp2_clks R8A7743_CLK_SYS_DMAC0>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			#dma-cells = <1>;
++			dma-channels = <15>;
++		};
 +
-+#ifndef __DT_BINDINGS_CLOCK_R8A7743_H__
-+#define __DT_BINDINGS_CLOCK_R8A7743_H__
++		dmac1: dma-controller@e6720000 {
++			compatible = "renesas,dmac-r8a7743",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe6720000 0 0x20000>;
++			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7",
++					"ch8", "ch9", "ch10", "ch11",
++					"ch12", "ch13", "ch14";
++			clocks = <&mstp2_clks R8A7743_CLK_SYS_DMAC1>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			#dma-cells = <1>;
++			dma-channels = <15>;
++		};
 +
-+/* CPG */
-+#define R8A7743_CLK_MAIN		0
-+#define R8A7743_CLK_PLL0		1
-+#define R8A7743_CLK_PLL1		2
-+#define R8A7743_CLK_PLL3		3
-+#define R8A7743_CLK_LB			4
-+#define R8A7743_CLK_QSPI		5
-+#define R8A7743_CLK_SDH			6
-+#define R8A7743_CLK_SD0			7
-+#define R8A7743_CLK_Z			8
-+#define R8A7743_CLK_RCAN		9
-+
-+/* MSTP0 */
-+#define R8A7743_CLK_MSIOF0		0
-+
-+/* MSTP1 */
-+#define R8A7743_CLK_VCP0		1
-+#define R8A7743_CLK_VPC0		3
-+#define R8A7743_CLK_TMU1		11
-+#define R8A7743_CLK_3DG			12
-+#define R8A7743_CLK_2DDMAC		15
-+#define R8A7743_CLK_FDP1_1		18
-+#define R8A7743_CLK_FDP1_0		19
-+#define R8A7743_CLK_TMU3		21
-+#define R8A7743_CLK_TMU2		22
-+#define R8A7743_CLK_CMT0		24
-+#define R8A7743_CLK_TMU0		25
-+#define R8A7743_CLK_VSP1_DU1		27
-+#define R8A7743_CLK_VSP1_DU0		28
-+#define R8A7743_CLK_VSP1_S		31
-+
-+/* MSTP2 */
-+#define R8A7743_CLK_SCIFA2		2
-+#define R8A7743_CLK_SCIFA1		3
-+#define R8A7743_CLK_SCIFA0		4
-+#define R8A7743_CLK_MSIOF2		5
-+#define R8A7743_CLK_SCIFB0		6
-+#define R8A7743_CLK_SCIFB1		7
-+#define R8A7743_CLK_MSIOF1		8
-+#define R8A7743_CLK_SCIFB2		16
-+#define R8A7743_CLK_SYS_DMAC1		18
-+#define R8A7743_CLK_SYS_DMAC0		19
-+
-+/* MSTP3 */
-+#define R8A7743_CLK_TPU0		4
-+#define R8A7743_CLK_SDHI2		11
-+#define R8A7743_CLK_SDHI1		12
-+#define R8A7743_CLK_SDHI0		14
-+#define R8A7743_CLK_MMCIF0		15
-+#define R8A7743_CLK_IIC0		18
-+#define R8A7743_CLK_PCIEC		19
-+#define R8A7743_CLK_IIC1		23
-+#define R8A7743_CLK_SSUSB		28
-+#define R8A7743_CLK_CMT1		29
-+#define R8A7743_CLK_USBDMAC0		30
-+#define R8A7743_CLK_USBDMAC1		31
-+
-+/* MSTP4 */
-+#define R8A7743_CLK_IRQC		7
-+
-+/* MSTP5 */
-+#define R8A7743_CLK_AUDIO_DMAC1		1
-+#define R8A7743_CLK_AUDIO_DMAC0		2
-+#define R8A7743_CLK_THERMAL		22
-+#define R8A7743_CLK_PWM			23
-+
-+/* MSTP7 */
-+#define R8A7743_CLK_EHCI		3
-+#define R8A7743_CLK_HSUSB		4
-+#define R8A7743_CLK_HSCIF2		13
-+#define R8A7743_CLK_SCIF5		14
-+#define R8A7743_CLK_SCIF4		15
-+#define R8A7743_CLK_HSCIF1		16
-+#define R8A7743_CLK_HSCIF0		17
-+#define R8A7743_CLK_SCIF3		18
-+#define R8A7743_CLK_SCIF2		19
-+#define R8A7743_CLK_SCIF1		20
-+#define R8A7743_CLK_SCIF0		21
-+#define R8A7743_CLK_DU1			23
-+#define R8A7743_CLK_DU0			24
-+#define R8A7743_CLK_LVDS0		26
-+
-+/* MSTP8 */
-+#define R8A7743_CLK_IPMMU_SGX		0
-+#define R8A7743_CLK_VIN2		9
-+#define R8A7743_CLK_VIN1		10
-+#define R8A7743_CLK_VIN0		11
-+#define R8A7743_CLK_ETHER		13
-+#define R8A7743_CLK_SATA1		14
-+#define R8A7743_CLK_SATA0		15
-+
-+/* MSTP9 */
-+#define R8A7743_CLK_GPIO7		4
-+#define R8A7743_CLK_GPIO6		5
-+#define R8A7743_CLK_GPIO5		7
-+#define R8A7743_CLK_GPIO4		8
-+#define R8A7743_CLK_GPIO3		9
-+#define R8A7743_CLK_GPIO2		10
-+#define R8A7743_CLK_GPIO1		11
-+#define R8A7743_CLK_GPIO0		12
-+#define R8A7743_CLK_RCAN1		15
-+#define R8A7743_CLK_RCAN0		16
-+#define R8A7743_CLK_QSPI_MOD		17
-+#define R8A7743_CLK_I2C5		25
-+#define R8A7743_CLK_IICDVFS		26
-+#define R8A7743_CLK_I2C4		27
-+#define R8A7743_CLK_I2C3		28
-+#define R8A7743_CLK_I2C2		29
-+#define R8A7743_CLK_I2C1		30
-+#define R8A7743_CLK_I2C0		31
-+
-+/* MSTP10 */
-+#define R8A7743_CLK_SSI_ALL		5
-+#define R8A7743_CLK_SSI9		6
-+#define R8A7743_CLK_SSI8		7
-+#define R8A7743_CLK_SSI7		8
-+#define R8A7743_CLK_SSI6		9
-+#define R8A7743_CLK_SSI5		10
-+#define R8A7743_CLK_SSI4		11
-+#define R8A7743_CLK_SSI3		12
-+#define R8A7743_CLK_SSI2		13
-+#define R8A7743_CLK_SSI1		14
-+#define R8A7743_CLK_SSI0		15
-+#define R8A7743_CLK_SCU_ALL		17
-+#define R8A7743_CLK_SCU_DVC1		18
-+#define R8A7743_CLK_SCU_DVC0		19
-+#define R8A7743_CLK_SCU_CTU1_MIX1	20
-+#define R8A7743_CLK_SCU_CTU0_MIX0	21
-+#define R8A7743_CLK_SCU_SRC9		22
-+#define R8A7743_CLK_SCU_SRC8		23
-+#define R8A7743_CLK_SCU_SRC7		24
-+#define R8A7743_CLK_SCU_SRC6		25
-+#define R8A7743_CLK_SCU_SRC5		26
-+#define R8A7743_CLK_SCU_SRC4		27
-+#define R8A7743_CLK_SCU_SRC3		28
-+#define R8A7743_CLK_SCU_SRC2		29
-+#define R8A7743_CLK_SCU_SRC1		30
-+#define R8A7743_CLK_SCU_SRC0		31
-+
-+/* MSTP11 */
-+#define R8A7743_CLK_SCIFA3		6
-+#define R8A7743_CLK_SCIFA4		7
-+#define R8A7743_CLK_SCIFA5		8
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7743_H__ */
+ 		/* Special CPG clocks */
+ 		cpg_clocks: cpg_clocks@e6150000 {
+ 			compatible = "renesas,r8a7743-cpg-clocks",
