@@ -1,55 +1,102 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran+renesas@bingham.xyz>
-Subject: [PATCH 05/13] v4l: vsp1: Use DFE instead of FRE for frame end
-Date: Wed, 14 Sep 2016 02:16:58 +0300
-Message-Id: <1473808626-19488-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1473808626-19488-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37498 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932707AbcI3MmS (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 30 Sep 2016 08:42:18 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: horms@verge.net.au, geert@linux-m68k.org, hans.verkuil@cisco.com,
+        niklas.soderlund@ragnatech.se, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com
+Subject: Re: [PATCH 3/3] ARM: dts: gose: add composite video input
+Date: Fri, 30 Sep 2016 15:42:13 +0300
+Message-ID: <1677956.ZyVUIhWy2M@avalon>
+In-Reply-To: <20160916130935.21292-4-ulrich.hecht+renesas@gmail.com>
+References: <20160916130935.21292-1-ulrich.hecht+renesas@gmail.com> <20160916130935.21292-4-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran+renesas@bingham.xyz>
+Hi Ulrich,
 
-The DFE and FRE interrupts are both fired at frame completion, as each
-display list processes a single frame. This won't be true anymore when
-using image partitioning, switch to DFE in preparation.
+Thank you for the patch.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Kieran Bingham <kieran+renesas@bingham.xyz>
----
- drivers/media/platform/vsp1/vsp1_drv.c | 2 +-
- drivers/media/platform/vsp1/vsp1_wpf.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+On Friday 16 Sep 2016 15:09:35 Ulrich Hecht wrote:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>  arch/arm/boot/dts/r8a7793-gose.dts | 36 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/r8a7793-gose.dts
+> b/arch/arm/boot/dts/r8a7793-gose.dts index e22d63c..981f0fe 100644
+> --- a/arch/arm/boot/dts/r8a7793-gose.dts
+> +++ b/arch/arm/boot/dts/r8a7793-gose.dts
+> @@ -379,6 +379,11 @@
+>  		groups = "vin0_data24", "vin0_sync", "vin0_clkenb", 
+"vin0_clk";
+>  		function = "vin0";
+>  	};
+> +
+> +	vin1_pins: vin1 {
+> +		groups = "vin1_data8", "vin1_clk";
+> +		function = "vin1";
+> +	};
+>  };
+> 
+>  &ether {
+> @@ -504,6 +509,19 @@
+>  		reg = <0x12>;
+>  	};
+> 
+> +	composite-in@20 {
+> +		compatible = "adi,adv7180";
+> +		reg = <0x20>;
+> +		remote = <&vin1>;
+> +
+> +		port {
+> +			adv7180: endpoint {
+> +				bus-width = <8>;
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index 92418fc09511..57c713a4e1df 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -60,7 +60,7 @@ static irqreturn_t vsp1_irq_handler(int irq, void *data)
- 		status = vsp1_read(vsp1, VI6_WPF_IRQ_STA(i));
- 		vsp1_write(vsp1, VI6_WPF_IRQ_STA(i), ~status & mask);
- 
--		if (status & VI6_WFP_IRQ_STA_FRE) {
-+		if (status & VI6_WFP_IRQ_STA_DFE) {
- 			vsp1_pipeline_frame_end(wpf->pipe);
- 			ret = IRQ_HANDLED;
- 		}
-diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
-index 31983169c24a..748f5af90b7e 100644
---- a/drivers/media/platform/vsp1/vsp1_wpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-@@ -318,7 +318,7 @@ static void wpf_configure(struct vsp1_entity *entity,
- 	/* Enable interrupts */
- 	vsp1_dl_list_write(dl, VI6_WPF_IRQ_STA(wpf->entity.index), 0);
- 	vsp1_dl_list_write(dl, VI6_WPF_IRQ_ENB(wpf->entity.index),
--			   VI6_WFP_IRQ_ENB_FREE);
-+			   VI6_WFP_IRQ_ENB_DFEE);
- }
- 
- static const struct vsp1_entity_operations wpf_entity_ops = {
+Is this needed ?
+
+> +				remote-endpoint = <&vin1ep>;
+> +			};
+> +		};
+
+The ADV7180 DT bindings need to be updated with port nodes (that will be quite 
+a challenge).
+
+> +	};
+> +
+>  	hdmi@39 {
+>  		compatible = "adi,adv7511w";
+>  		reg = <0x39>;
+> @@ -599,3 +617,21 @@
+>  		};
+>  	};
+>  };
+> +
+> +/* composite video input */
+> +&vin1 {
+> +	pinctrl-0 = <&vin1_pins>;
+> +	pinctrl-names = "default";
+> +
+> +	status = "okay";
+> +
+> +	port {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		vin1ep: endpoint {
+> +			remote-endpoint = <&adv7180>;
+> +			bus-width = <8>;
+> +		};
+> +	};
+> +};
+
 -- 
 Regards,
 
