@@ -1,66 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:49214 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965539AbcIHOud (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37353 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751099AbcI3LI5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Sep 2016 10:50:33 -0400
-Date: Thu, 8 Sep 2016 16:50:27 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-Subject: Re: [PATCH] i2c: mux: demux-pinctrl: run properly with multiple
- instances
-Message-ID: <20160908145027.GB1485@katana>
-References: <20160823152803.2051-1-wsa+renesas@sang-engineering.com>
+        Fri, 30 Sep 2016 07:08:57 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: horms@verge.net.au, geert@linux-m68k.org, hans.verkuil@cisco.com,
+        niklas.soderlund@ragnatech.se, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com
+Subject: Re: [PATCH 1/3] ARM: dts: r8a7793: Enable VIN0, VIN1
+Date: Fri, 30 Sep 2016 14:08:53 +0300
+Message-ID: <2139972.htm5G2lxOE@avalon>
+In-Reply-To: <1961479.Ly4IFObGfR@avalon>
+References: <20160916130935.21292-1-ulrich.hecht+renesas@gmail.com> <20160916130935.21292-2-ulrich.hecht+renesas@gmail.com> <1961479.Ly4IFObGfR@avalon>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="7iMSBzlTiPOCCT2k"
-Content-Disposition: inline
-In-Reply-To: <20160823152803.2051-1-wsa+renesas@sang-engineering.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Ulrich,
 
---7iMSBzlTiPOCCT2k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Friday 30 Sep 2016 13:55:50 Laurent Pinchart wrote:
+> On Friday 16 Sep 2016 15:09:33 Ulrich Hecht wrote:
+> > Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> > ---
+> > 
+> >  arch/arm/boot/dts/r8a7793.dtsi | 20 ++++++++++++++++++++
+> >  1 file changed, 20 insertions(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/r8a7793.dtsi
+> > b/arch/arm/boot/dts/r8a7793.dtsi index 8d02aac..0898668 100644
+> > --- a/arch/arm/boot/dts/r8a7793.dtsi
+> > +++ b/arch/arm/boot/dts/r8a7793.dtsi
+> > @@ -30,6 +30,8 @@
+> >  		i2c7 = &i2c7;
+> >  		i2c8 = &i2c8;
+> >  		spi0 = &qspi;
+> > +		vin0 = &vin0;
+> > +		vin1 = &vin1;
+> 
+> Why is this needed ?
+> 
+> >  	};
+> >  	
+> >  	cpus {
+> > @@ -852,6 +854,24 @@
+> >  		status = "disabled";
+> >  	};
+> > 
+> > +	vin0: video@e6ef0000 {
+> > +		compatible = "renesas,vin-r8a7793";
 
-On Tue, Aug 23, 2016 at 05:28:03PM +0200, Wolfram Sang wrote:
-> We can't use a static property for all the changesets, so we now create
-> dynamic ones for each changeset.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Fixes: 50a5ba87690814 ("i2c: mux: demux-pinctrl: add driver")
+Additionally, should this be
 
-Applied to for-current (and thus will be in 4.8), thanks!
+	compatiable = "renesas,vin-r8a7793", "renesas,rcar-gen2-vin";
 
-> Simon: I think you can retest your demuxer-dts-series now.
+?
 
-Simon: you think we can get that into 4.9? Would be awesome.
+> > +		reg = <0 0xe6ef0000 0 0x1000>;
+> > +		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
+> > +		clocks = <&mstp8_clks R8A7793_CLK_VIN0>;
+> > +		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+> > +		status = "disabled";
+> > +	};
+> > +
+> > +	vin1: video@e6ef1000 {
+> > +		compatible = "renesas,vin-r8a7793";
+> > +		reg = <0 0xe6ef1000 0 0x1000>;
+> > +		interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
+> > +		clocks = <&mstp8_clks R8A7793_CLK_VIN1>;
+> > +		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
+> > +		status = "disabled";
+> > +	};
+> > +
+> 
+> As Geert mentioned, you should add vin2 here.
+> 
+> >  	qspi: spi@e6b10000 {
+> >  	
+> >  		compatible = "renesas,qspi-r8a7793", "renesas,qspi";
+> >  		reg = <0 0xe6b10000 0 0x2c>;
 
+-- 
+Regards,
 
---7iMSBzlTiPOCCT2k
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJX0XqzAAoJEBQN5MwUoCm2QZ4QAIWpi5Jc6J0IkiTiDQVRJa/1
-lJTloqxvNXSewQgJozhOYCr5tQ0g65tDZhNVQRCCZKvfSc2BCd8iB90VizkdOMMk
-cHBomYpVAwsQ4C+AcxmbYoscU4Lk5HJ3eoLzst67eX5CBb8ivjfrCoT+uFIDsGUG
-BvB3G2MVekAA+paYg9hydoRifAOOS8AFrqHMLTEQaCVkIzvpgX3nT8xCzay2ewa3
-UVB0imVdoxPh2OLWshQNfkzqY0vcU06CBixtKnzObJ3Aui7ZWSwAm0ctimJ2WwYq
-BM2RkmLMiYMPV7YHKnoRtNZHL28bHcqs/GSZyeMFyPDrnamdXVOIGNESMG3rgbTs
-2xA0LuEv0mvWkuEnxGQ2HxI5TRfGm3s6wyNp5zuoF1qXkchofjGesI90iCQ7bNTH
-7V9N/mBWZfY06+XU3Ci8CItn3Mxp0VsRv/GT9JqL77UHrLILDLnzPoKC7QJ51jJa
-ehm9eSAVbam/yguWqTrvyHt1PGgKgSireeytYXznZsR4jL1A0ebFGtDWGtAM+ugk
-VVj1YsceQ/iKHU7P5UvQWYzwbGUI3Rix13FuJmsqZJCMK9I9qlQU9y2EkFQzPqZu
-NtXZJMPYqdPvtZf2eOLyNhhSfZv/zZgaCY/phiPv27gEGapERVCN9hsa/B3oTv0l
-6lRFs7YXxhSSc7BL85fM
-=oYFS
------END PGP SIGNATURE-----
-
---7iMSBzlTiPOCCT2k--
+Laurent Pinchart
