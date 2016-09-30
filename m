@@ -1,67 +1,115 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35150 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932707AbcI3NBB (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37485 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932865AbcI3MkY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Sep 2016 09:01:01 -0400
-MIME-Version: 1.0
-In-Reply-To: <1951325.PMIbTHqE2x@avalon>
-References: <20160916130935.21292-1-ulrich.hecht+renesas@gmail.com>
- <20160916130935.21292-3-ulrich.hecht+renesas@gmail.com> <1951325.PMIbTHqE2x@avalon>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 30 Sep 2016 15:00:59 +0200
-Message-ID: <CAMuHMdV3ZSfMeyCv3j8F3rUeT48nQc-03L5iDXYF-=wT7Ek2nw@mail.gmail.com>
+        Fri, 30 Sep 2016 08:40:24 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: horms@verge.net.au, geert@linux-m68k.org, hans.verkuil@cisco.com,
+        niklas.soderlund@ragnatech.se, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com
 Subject: Re: [PATCH 2/3] ARM: dts: gose: add HDMI input
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Date: Fri, 30 Sep 2016 15:40:17 +0300
+Message-ID: <1951325.PMIbTHqE2x@avalon>
+In-Reply-To: <20160916130935.21292-3-ulrich.hecht+renesas@gmail.com>
+References: <20160916130935.21292-1-ulrich.hecht+renesas@gmail.com> <20160916130935.21292-3-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 30, 2016 at 2:40 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->> --- a/arch/arm/boot/dts/r8a7793-gose.dts
->> +++ b/arch/arm/boot/dts/r8a7793-gose.dts
->> @@ -374,6 +374,11 @@
->>               groups = "audio_clk_a";
->>               function = "audio_clk";
->>       };
->> +
->> +     vin0_pins: vin0 {
->> +             groups = "vin0_data24", "vin0_sync", "vin0_clkenb",
-> "vin0_clk";
->> +             function = "vin0";
->> +     };
->>  };
->>
->>  &ether {
->> @@ -531,6 +536,21 @@
->>               };
->>       };
->>
->> +     hdmi-in@4c {
->> +             compatible = "adi,adv7612";
->> +             reg = <0x4c>;
->> +             interrupt-parent = <&gpio1>;
->> +             interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
->
-> Isn't the interrupt signal connected to GP4_2 ?
+Hi Ulrich,
 
-No idea about Gose, but on Koelsch it is (hence koelsch DTS is wrong??)
+Thank you for the patch.
 
-Gr{oetje,eeting}s,
+On Friday 16 Sep 2016 15:09:34 Ulrich Hecht wrote:
+> Identical to the setup on Lager.
+> 
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>  arch/arm/boot/dts/r8a7793-gose.dts | 41 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/r8a7793-gose.dts
+> b/arch/arm/boot/dts/r8a7793-gose.dts index 90af186..e22d63c 100644
+> --- a/arch/arm/boot/dts/r8a7793-gose.dts
+> +++ b/arch/arm/boot/dts/r8a7793-gose.dts
+> @@ -374,6 +374,11 @@
+>  		groups = "audio_clk_a";
+>  		function = "audio_clk";
+>  	};
+> +
+> +	vin0_pins: vin0 {
+> +		groups = "vin0_data24", "vin0_sync", "vin0_clkenb", 
+"vin0_clk";
+> +		function = "vin0";
+> +	};
+>  };
+> 
+>  &ether {
+> @@ -531,6 +536,21 @@
+>  		};
+>  	};
+> 
+> +	hdmi-in@4c {
+> +		compatible = "adi,adv7612";
+> +		reg = <0x4c>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
 
-                        Geert
+Isn't the interrupt signal connected to GP4_2 ?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> +		remote = <&vin0>;
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+What is this for ?
+
+> +		default-input = <0>;
+> +
+> +		port {
+> +			adv7612: endpoint {
+> +				remote-endpoint = <&vin0ep>;
+> +			};
+> +		};
+
+The ADV7612 has three ports. Ports 0 and 1 correspond to the HDMI inputs, and 
+port 2 to the digital output. You can leave port 1 out as it's not used on the 
+board, but you should specify both ports 0 and 2, and add an HDMI connector DT 
+node connected to port 0 of the ADV7612.
+
+> +	};
+> +
+>  	eeprom@50 {
+>  		compatible = "renesas,r1ex24002", "atmel,24c02";
+>  		reg = <0x50>;
+> @@ -558,3 +578,24 @@
+>  &ssi1 {
+>  	shared-pin;
+>  };
+> +
+> +/* HDMI video input */
+> +&vin0 {
+> +	status = "okay";
+> +	pinctrl-0 = <&vin0_pins>;
+> +	pinctrl-names = "default";
+> +
+> +	port {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		vin0ep: endpoint {
+> +			remote-endpoint = <&adv7612>;
+> +			bus-width = <24>;
+> +			hsync-active = <0>;
+> +			vsync-active = <0>;
+> +			pclk-sample = <1>;
+> +			data-active = <1>;
+> +		};
+> +	};
+> +};
+
+-- 
+Regards,
+
+Laurent Pinchart
