@@ -1,43 +1,138 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:37525 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932707AbcI3M4C (ORCPT
+Received: from mail-sg2apc01on0132.outbound.protection.outlook.com ([104.47.125.132]:1514
+        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932284AbcI3LiO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Sep 2016 08:56:02 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jithin T Raj <jithin.t@tataelxsi.co.in>
-Cc: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: RGB-LVDS BRIDGE  SUPPORT RCAR E2
-Date: Fri, 30 Sep 2016 15:55:58 +0300
-Message-ID: <1852980.R4oQfLab5H@avalon>
-In-Reply-To: <SG2PR0401MB1296AB21B1EB9B072EAF7B93D8C10@SG2PR0401MB1296.apcprd04.prod.outlook.com>
-References: <SG2PR0401MB1296AB21B1EB9B072EAF7B93D8C10@SG2PR0401MB1296.apcprd04.prod.outlook.com>
+        Fri, 30 Sep 2016 07:38:14 -0400
+From: Jithin T Raj <jithin.t@tataelxsi.co.in>
+To: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        "laurent.pinchart@ideasonboard.com"
+        <laurent.pinchart@ideasonboard.com>
+Subject: RGB-LVDS BRIDGE  SUPPORT RCAR E2
+Date: Fri, 30 Sep 2016 11:38:09 +0000
+Message-ID: <SG2PR0401MB1296AB21B1EB9B072EAF7B93D8C10@SG2PR0401MB1296.apcprd04.prod.outlook.com>
+Content-Language: en-US
+Content-Type: multipart/mixed;
+        boundary="_002_SG2PR0401MB1296AB21B1EB9B072EAF7B93D8C10SG2PR0401MB1296_"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Jithin,
+--_002_SG2PR0401MB1296AB21B1EB9B072EAF7B93D8C10SG2PR0401MB1296_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-On Friday 30 Sep 2016 11:38:09 Jithin T Raj wrote:
->      Thank you so much for the information.
-> 
-> Now i compared "arch/arm/boot/dts/r8a7779-marzen.dts" against 
-> "arch/arm/boot/dts/r8a7794-alt.dts" and modified r8a7794-alt.dts a little..
-> also added  "thc63lvdm87"in "drivers/gpu/drm/rcar-du/rcar_du_kms.c"..here i
-> am attaching the modified r8a7794-alt.dts file..I am a newby in this field
-> so that I am asking very basics..hope you don't feel bore.. I also build
-> image file and .dtb file successfully but don't deployed it.. if you don't
-> mind can you please give me a feedback of my work..My source tree is v4.7.5
 
-Could you please send your changes as an inline diff (which you can generate 
-with git diff) instead of as a source file attachment ? That will let us 
-reviewing it easily and replying inline.
+     Thank you so much for the information.
 
--- 
-Regards,
+Now i compared "arch/arm/boot/dts/r8a7779-marzen.dts" against=A0 "arch/arm/=
+boot/dts/r8a7794-alt.dts" and modified=A0r8a7794-alt.dts a little..
+also added  "thc63lvdm87"in "drivers/gpu/drm/rcar-du/rcar_du_kms.c"..here i=
+ am attaching the modified=20
+r8a7794-alt.dts file..I am a newby in this field so that I am asking very b=
+asics..hope you don't feel bore..
+I also build image file and .dtb file successfully but don't deployed it..
+if you don't mind can you please give me a feedback of my work..My source t=
+ree is v4.7.5
 
-Laurent Pinchart
+PFA
+
+Best Regards
+Jithin T Raj
+
+      =
+
+--_002_SG2PR0401MB1296AB21B1EB9B072EAF7B93D8C10SG2PR0401MB1296_
+Content-Type: application/octet-stream; name="r8a7794-alt.dts"
+Content-Description: r8a7794-alt.dts
+Content-Disposition: attachment; filename="r8a7794-alt.dts"; size=4609;
+	creation-date="Fri, 30 Sep 2016 11:37:36 GMT";
+	modification-date="Fri, 30 Sep 2016 11:37:36 GMT"
+Content-Transfer-Encoding: base64
+
+LyoKICogRGV2aWNlIFRyZWUgU291cmNlIGZvciB0aGUgQWx0IGJvYXJkCiAqCiAqIENvcHlyaWdo
+dCAoQykgMjAxNCBSZW5lc2FzIEVsZWN0cm9uaWNzIENvcnBvcmF0aW9uCiAqCiAqIFRoaXMgZmls
+ZSBpcyBsaWNlbnNlZCB1bmRlciB0aGUgdGVybXMgb2YgdGhlIEdOVSBHZW5lcmFsIFB1YmxpYyBM
+aWNlbnNlCiAqIHZlcnNpb24gMi4gIFRoaXMgcHJvZ3JhbSBpcyBsaWNlbnNlZCAiYXMgaXMiIHdp
+dGhvdXQgYW55IHdhcnJhbnR5IG9mIGFueQogKiBraW5kLCB3aGV0aGVyIGV4cHJlc3Mgb3IgaW1w
+bGllZC4KICovCgovZHRzLXYxLzsKI2luY2x1ZGUgInI4YTc3OTQuZHRzaSIKCi8gewoJbW9kZWwg
+PSAiQWx0IjsKCWNvbXBhdGlibGUgPSAicmVuZXNhcyxhbHQiLCAicmVuZXNhcyxyOGE3Nzk0IjsK
+CglhbGlhc2VzIHsKCQlzZXJpYWwwID0gJnNjaWYyOwoJfTsKCgljaG9zZW4gewoJCWJvb3Rhcmdz
+ID0gImlnbm9yZV9sb2dsZXZlbCBydyByb290PS9kZXYvbmZzIGlwPWRoY3AiOwoJCXN0ZG91dC1w
+YXRoID0gInNlcmlhbDA6MTE1MjAwbjgiOwoJfTsKCgltZW1vcnlANDAwMDAwMDAgewoJCWRldmlj
+ZV90eXBlID0gIm1lbW9yeSI7CgkJcmVnID0gPDAgMHg0MDAwMDAwMCAwIDB4NDAwMDAwMDA+OwoJ
+fTsKCglsYnNjIHsKCQkjYWRkcmVzcy1jZWxscyA9IDwxPjsKCQkjc2l6ZS1jZWxscyA9IDwxPjsK
+CX07CgoJdmdhLWVuY29kZXIgewoJCWNvbXBhdGlibGUgPSAiYWRpLGFkdjcxMjMiOwoKCQlwb3J0
+cyB7CgkJCSNhZGRyZXNzLWNlbGxzID0gPDE+OwoJCQkjc2l6ZS1jZWxscyA9IDwwPjsKCgkJCXBv
+cnRAMCB7CgkJCQlyZWcgPSA8MD47CgkJCQlhZHY3MTIzX2luOiBlbmRwb2ludCB7CgkJCQkJcmVt
+b3RlLWVuZHBvaW50ID0gPCZkdV9vdXRfcmdiMT47CgkJCQl9OwoJCQl9OwoJCQlwb3J0QDEgewoJ
+CQkJcmVnID0gPDE+OwoJCQkJYWR2NzEyM19vdXQ6IGVuZHBvaW50IHsKCQkJCQlyZW1vdGUtZW5k
+cG9pbnQgPSA8JnZnYV9pbj47CgkJCQl9OwoJCQl9OwoJCX07Cgl9OwoKCXZnYSB7CgkJY29tcGF0
+aWJsZSA9ICJ2Z2EtY29ubmVjdG9yIjsKCgkJcG9ydCB7CgkJCXZnYV9pbjogZW5kcG9pbnQgewoJ
+CQkJcmVtb3RlLWVuZHBvaW50ID0gPCZhZHY3MTIzX291dD47CgkJCX07CgkJfTsKCX07CglsdmRz
+LWVuY29kZXIgewoJCWNvbXBhdGlibGUgPSAidGhpbmUsdGhjNjNsdmRtODciOwoKCQlwb3J0cyB7
+CgkJCSNhZGRyZXNzLWNlbGxzID0gPDE+OwoJCQkjc2l6ZS1jZWxscyA9IDwwPjsKCgkJCXBvcnRA
+MCB7CgkJCQlyZWcgPSA8MD47CgkJCQlsdmRzX2VuY19pbjogZW5kcG9pbnQgewoJCQkJCXJlbW90
+ZS1lbmRwb2ludCA9IDwmZHVfb3V0X3JnYjE+OwoJCQkJfTsKCQkJfTsKCQkJcG9ydEAxIHsKCQkJ
+CXJlZyA9IDwxPjsKCQkJCWx2ZHNfY29ubmVjdG9yOiBlbmRwb2ludCB7CgkJCQl9OwoJCQl9OwoJ
+CX07Cgl9OwoKCgl4Ml9jbGs6IHgyLWNsb2NrIHsKCQljb21wYXRpYmxlID0gImZpeGVkLWNsb2Nr
+IjsKCQkjY2xvY2stY2VsbHMgPSA8MD47CgkJY2xvY2stZnJlcXVlbmN5ID0gPDc0MjUwMDAwPjsK
+CX07CgoJeDEzX2NsazogeDEzLWNsb2NrIHsKCQljb21wYXRpYmxlID0gImZpeGVkLWNsb2NrIjsK
+CQkjY2xvY2stY2VsbHMgPSA8MD47CgkJY2xvY2stZnJlcXVlbmN5ID0gPDE0ODUwMDAwMD47Cgl9
+Owp9OwoKJmR1IHsKCXBpbmN0cmwtMCA9IDwmZHVfcGlucz47CglwaW5jdHJsLW5hbWVzID0gImRl
+ZmF1bHQiOwoJc3RhdHVzID0gIm9rYXkiOwoKCWNsb2NrcyA9IDwmbXN0cDdfY2xrcyBSOEE3Nzk0
+X0NMS19EVTA+LAoJCSA8Jm1zdHA3X2Nsa3MgUjhBNzc5NF9DTEtfRFUwPiwKCQkgPCZ4MTNfY2xr
+PiwgPCZ4Ml9jbGs+OwoJY2xvY2stbmFtZXMgPSAiZHUuMCIsICJkdS4xIiwgImRjbGtpbi4wIiwg
+ImRjbGtpbi4xIjsKCglwb3J0cyB7CgkJcG9ydEAwIHsKCQkJZW5kcG9pbnQgewoJCQkJcmVtb3Rl
+LWVuZHBvaW50ID0gPCZhZHY3MTIzX2luPjsKCQkJfTsKCQl9OwoJCXBvcnRAMSB7CgkJCWVuZHBv
+aW50IHsKCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmbHZkc19lbmNfaW4+OwoJCQl9OwoJCX07Cgl9
+Owp9OwoKJmV4dGFsX2NsayB7CgljbG9jay1mcmVxdWVuY3kgPSA8MjAwMDAwMDA+Owp9OwoKJnBm
+YyB7CglwaW5jdHJsLTAgPSA8JnNjaWZfY2xrX3BpbnM+OwoJcGluY3RybC1uYW1lcyA9ICJkZWZh
+dWx0IjsKCglkdV9waW5zOiBkdSB7CgkJZHUwIHsKCQkJZ3JvdXBzID0gImR1MF9yZ2I4ODgiLCAi
+ZHUwX3N5bmNfMSIsICJkdTBfY2xrX291dF8wIjsKCQkJZnVuY3Rpb24gPSAiZHUwIjsKCQl9OwoJ
+CWR1MSB7CgkJCWdyb3VwcyA9ICJkdTFfcmdiNjY2IiwgImR1MV9zeW5jXzEiLCAiZHUxX2Nsa19v
+dXQiOwoJCQlmdW5jdGlvbiA9ICJkdTEiOwoJCX07Cgl9OwoKCXNjaWYyX3BpbnM6IHNlcmlhbDIg
+ewoJCWdyb3VwcyA9ICJzY2lmMl9kYXRhIjsKCQlmdW5jdGlvbiA9ICJzY2lmMiI7Cgl9OwoKCXNj
+aWZfY2xrX3BpbnM6IHNjaWZfY2xrIHsKCQlncm91cHMgPSAic2NpZl9jbGsiOwoJCWZ1bmN0aW9u
+ID0gInNjaWZfY2xrIjsKCX07CgoJZXRoZXJfcGluczogZXRoZXIgewoJCWdyb3VwcyA9ICJldGhf
+bGluayIsICJldGhfbWRpbyIsICJldGhfcm1paSI7CgkJZnVuY3Rpb24gPSAiZXRoIjsKCX07CgoJ
+cGh5MV9waW5zOiBwaHkxIHsKCQlncm91cHMgPSAiaW50Y19pcnE4IjsKCQlmdW5jdGlvbiA9ICJp
+bnRjIjsKCX07CgoJaTJjMV9waW5zOiBpMmMxIHsKCQlncm91cHMgPSAiaTJjMSI7CgkJZnVuY3Rp
+b24gPSAiaTJjMSI7Cgl9OwoKCXZpbjBfcGluczogdmluMCB7CgkJZ3JvdXBzID0gInZpbjBfZGF0
+YTgiLCAidmluMF9jbGsiOwoJCWZ1bmN0aW9uID0gInZpbjAiOwoJfTsKfTsKCiZjbXQwIHsKCXN0
+YXR1cyA9ICJva2F5IjsKfTsKCiZwZmMgewoJcXNwaV9waW5zOiBzcGkwIHsKCQlncm91cHMgPSAi
+cXNwaV9jdHJsIiwgInFzcGlfZGF0YTQiOwoJCWZ1bmN0aW9uID0gInFzcGkiOwoJfTsKfTsKCiZl
+dGhlciB7CglwaW5jdHJsLTAgPSA8JmV0aGVyX3BpbnMgJnBoeTFfcGlucz47CglwaW5jdHJsLW5h
+bWVzID0gImRlZmF1bHQiOwoKCXBoeS1oYW5kbGUgPSA8JnBoeTE+OwoJcmVuZXNhcyxldGhlci1s
+aW5rLWFjdGl2ZS1sb3c7CglzdGF0dXMgPSAib2theSI7CgoJcGh5MTogZXRoZXJuZXQtcGh5QDEg
+ewoJCXJlZyA9IDwxPjsKCQlpbnRlcnJ1cHQtcGFyZW50ID0gPCZpcnFjMD47CgkJaW50ZXJydXB0
+cyA9IDw4IElSUV9UWVBFX0xFVkVMX0xPVz47CgkJbWljcmVsLGxlZC1tb2RlID0gPDE+OwoJfTsK
+fTsKCiZpMmMxIHsKCXBpbmN0cmwtMCA9IDwmaTJjMV9waW5zPjsKCXBpbmN0cmwtbmFtZXMgPSAi
+ZGVmYXVsdCI7CgoJc3RhdHVzID0gIm9rYXkiOwoJY2xvY2stZnJlcXVlbmN5ID0gPDQwMDAwMD47
+CgoJY29tcG9zaXRlLWluQDIwIHsKCQljb21wYXRpYmxlID0gImFkaSxhZHY3MTgwIjsKCQlyZWcg
+PSA8MHgyMD47CgkJcmVtb3RlID0gPCZ2aW4wPjsKCgkJcG9ydCB7CgkJCWFkdjcxODA6IGVuZHBv
+aW50IHsKCQkJCWJ1cy13aWR0aCA9IDw4PjsKCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmdmluMGVw
+PjsKCQkJfTsKCQl9OwoJfTsKfTsKCiZ2aW4wIHsKCXN0YXR1cyA9ICJva2F5IjsKCXBpbmN0cmwt
+MCA9IDwmdmluMF9waW5zPjsKCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CgoJcG9ydCB7CgkJ
+I2FkZHJlc3MtY2VsbHMgPSA8MT47CgkJI3NpemUtY2VsbHMgPSA8MD47CgoJCXZpbjBlcDogZW5k
+cG9pbnQgewoJCQlyZW1vdGUtZW5kcG9pbnQgPSA8JmFkdjcxODA+OwoJCQlidXMtd2lkdGggPSA8
+OD47CgkJfTsKCX07Cn07Cgomc2NpZjIgewoJcGluY3RybC0wID0gPCZzY2lmMl9waW5zPjsKCXBp
+bmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CgoJc3RhdHVzID0gIm9rYXkiOwp9OwoKJnNjaWZfY2xr
+IHsKCWNsb2NrLWZyZXF1ZW5jeSA9IDwxNDc0NTYwMD47CglzdGF0dXMgPSAib2theSI7Cn07Cgom
+cXNwaSB7CglwaW5jdHJsLTAgPSA8JnFzcGlfcGlucz47CglwaW5jdHJsLW5hbWVzID0gImRlZmF1
+bHQiOwoKCXN0YXR1cyA9ICJva2F5IjsKCglmbGFzaEAwIHsKCQljb21wYXRpYmxlID0gInNwYW5z
+aW9uLHMyNWZsNTEycyIsICJqZWRlYyxzcGktbm9yIjsKCQlyZWcgPSA8MD47CgkJc3BpLW1heC1m
+cmVxdWVuY3kgPSA8MzAwMDAwMDA+OwoJCXNwaS10eC1idXMtd2lkdGggPSA8ND47CgkJc3BpLXJ4
+LWJ1cy13aWR0aCA9IDw0PjsKCQlzcGktY3BvbDsKCQlzcGktY3BoYTsKCQltMjVwLGZhc3QtcmVh
+ZDsKCgkJcGFydGl0aW9ucyB7CgkJCWNvbXBhdGlibGUgPSAiZml4ZWQtcGFydGl0aW9ucyI7CgkJ
+CSNhZGRyZXNzLWNlbGxzID0gPDE+OwoJCQkjc2l6ZS1jZWxscyA9IDwxPjsKCgkJCXBhcnRpdGlv
+bkAwIHsKCQkJCWxhYmVsID0gImxvYWRlciI7CgkJCQlyZWcgPSA8MHgwMDAwMDAwMCAweDAwMDQw
+MDAwPjsKCQkJCXJlYWQtb25seTsKCQkJfTsKCQkJcGFydGl0aW9uQDQwMDAwIHsKCQkJCWxhYmVs
+ID0gInN5c3RlbSI7CgkJCQlyZWcgPSA8MHgwMDA0MDAwMCAweDAwMDQwMDAwPjsKCQkJCXJlYWQt
+b25seTsKCQkJfTsKCQkJcGFydGl0aW9uQDgwMDAwIHsKCQkJCWxhYmVsID0gInVzZXIiOwoJCQkJ
+cmVnID0gPDB4MDAwODAwMDAgMHgwM2Y4MDAwMD47CgkJCX07CgkJfTsKCX07Cn07Cg==
+
+--_002_SG2PR0401MB1296AB21B1EB9B072EAF7B93D8C10SG2PR0401MB1296_--
