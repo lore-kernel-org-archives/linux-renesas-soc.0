@@ -1,62 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:34743 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932237AbcI3PGd (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:34414 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752328AbcI3Iiu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Sep 2016 11:06:33 -0400
-Received: by mail-lf0-f52.google.com with SMTP id y6so109266263lff.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Sep 2016 08:06:32 -0700 (PDT)
-Subject: Re: [PATCH] sh-sci: add R8A7743/5 support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+        Fri, 30 Sep 2016 04:38:50 -0400
+MIME-Version: 1.0
+In-Reply-To: <2017044.9fZNuWa2OZ@wasted.cogentembedded.com>
 References: <2017044.9fZNuWa2OZ@wasted.cogentembedded.com>
- <CAMuHMdWEg8V81w=MT4akCaV=VUGopyWLJtSQC+KeWSpTR5dR_w@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Sep 2016 10:38:48 +0200
+Message-ID: <CAMuHMdWEg8V81w=MT4akCaV=VUGopyWLJtSQC+KeWSpTR5dR_w@mail.gmail.com>
+Subject: Re: [PATCH] sh-sci: add R8A7743/5 support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Greg KH <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>,
         "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <de1717e2-d54b-d3a3-4a7c-4a501d7ccd3b@cogentembedded.com>
-Date: Fri, 30 Sep 2016 18:06:25 +0300
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWEg8V81w=MT4akCaV=VUGopyWLJtSQC+KeWSpTR5dR_w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 09/30/2016 11:38 AM, Geert Uytterhoeven wrote:
+Hi Sergei,
 
->> Renesas  RZ/G SoC also have the SCIF, SCIFA, SCIFB, and HSCIF ports.
->> Document RZ/G1[ME] (also known as R8A774[35]) SoC bindings along with
->> the RZ/G family bindings.  The driver itself also needs to recognize
->> the latter binding for the SCIF ports, so teach it...
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-[...]
-
->> ===================================================================
->> --- tty.orig/drivers/tty/serial/sh-sci.c
->> +++ tty/drivers/tty/serial/sh-sci.c
->> @@ -2950,6 +2950,9 @@ static const struct of_device_id of_sci_
->>         }, {
->>                 .compatible = "renesas,rcar-gen3-scif",
->>                 .data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE),
->> +       }, {
->> +               .compatible = "renesas,rzg-scif",
->> +               .data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE),
->>         },
->>         /* Generic types */
->>         {
+On Thu, Sep 29, 2016 at 11:37 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Renesas  RZ/G SoC also have the SCIF, SCIFA, SCIFB, and HSCIF ports.
+> Document RZ/G1[ME] (also known as R8A774[35]) SoC bindings along with
+> the RZ/G family bindings.  The driver itself also needs to recognize
+> the latter binding for the SCIF ports, so teach it...
 >
-> However, I wouldn't bother adding RZ/G family-specific DT bindings, as
-> RZ/G is a derivative of R-Car Gen2.
-
-    Then we shouldn't have added gen2/3 bindings too since they resolve to the 
-same register mapping as gen1. :-)
-
-> Gr{oetje,eeting}s,
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 >
->                         Geert
+> ---
+> This patch is against the 'tty-next' branch of GregKH's 'tty.git' repo.
+>
+>  Documentation/devicetree/bindings/serial/renesas,sci-serial.txt |   12 ++++++++++
+>  drivers/tty/serial/sh-sci.c                                     |    3 ++
+>  2 files changed, 15 insertions(+)
+>
+> Index: tty/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+> ===================================================================
+> --- tty.orig/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+> +++ tty/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+> @@ -9,6 +9,14 @@ Required properties:
+>      - "renesas,scifb-r8a73a4" for R8A73A4 (R-Mobile APE6) SCIFB compatible UART.
+>      - "renesas,scifa-r8a7740" for R8A7740 (R-Mobile A1) SCIFA compatible UART.
+>      - "renesas,scifb-r8a7740" for R8A7740 (R-Mobile A1) SCIFB compatible UART.
+> +    - "renesas,scif-r8a7743" for R8A7743 (RZ/G1M) SCIF compatible UART.
+> +    - "renesas,scifa-r8a7743" for R8A7743 (RZ/G1M) SCIFA compatible UART.
+> +    - "renesas,scifb-r8a7743" for R8A7743 (RZ/G1M) SCIFB compatible UART.
+> +    - "renesas,hscif-r8a7743" for R8A7743 (RZ/G1M) HSCIF compatible UART.
+> +    - "renesas,scif-r8a7745" for R8A7745 (RZ/G1E) SCIF compatible UART.
+> +    - "renesas,scifa-r8a7745" for R8A7745 (RZ/G1E) SCIFA compatible UART.
+> +    - "renesas,scifb-r8a7745" for R8A7745 (RZ/G1E) SCIFB compatible UART.
+> +    - "renesas,hscif-r8a7745" for R8A7745 (RZ/G1E) HSCIF compatible UART.
+>      - "renesas,scif-r8a7778" for R8A7778 (R-Car M1) SCIF compatible UART.
+>      - "renesas,scif-r8a7779" for R8A7779 (R-Car H1) SCIF compatible UART.
+>      - "renesas,scif-r8a7790" for R8A7790 (R-Car H2) SCIF compatible UART.
 
-MBR, Sergei
+For the part above:
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> @@ -38,11 +46,15 @@ Required properties:
+>      - "renesas,rcar-gen1-scif" for R-Car Gen1 SCIF compatible UART,
+>      - "renesas,rcar-gen2-scif" for R-Car Gen2 SCIF compatible UART,
+>      - "renesas,rcar-gen3-scif" for R-Car Gen3 SCIF compatible UART,
+> +    - "renesas,rzg-scif" for RZ/G SCIF compatible UART.
+>      - "renesas,rcar-gen2-scifa" for R-Car Gen2 SCIFA compatible UART,
+> +    - "renesas,rzg-scifa" for RZ/G SCIFA compatible UART.
+>      - "renesas,rcar-gen2-scifb" for R-Car Gen2 SCIFB compatible UART,
+> +    - "renesas,rzg-scifb" for RZ/G SCIFB compatible UART.
+>      - "renesas,rcar-gen1-hscif" for R-Car Gen1 HSCIF compatible UART,
+>      - "renesas,rcar-gen2-hscif" for R-Car Gen2 HSCIF compatible UART,
+>      - "renesas,rcar-gen3-hscif" for R-Car Gen3 HSCIF compatible UART,
+> +    - "renesas,rzg-hscif" for RZ/G HSCIF compatible UART.
+>      - "renesas,scif" for generic SCIF compatible UART.
+>      - "renesas,scifa" for generic SCIFA compatible UART.
+>      - "renesas,scifb" for generic SCIFB compatible UART.
+> Index: tty/drivers/tty/serial/sh-sci.c
+> ===================================================================
+> --- tty.orig/drivers/tty/serial/sh-sci.c
+> +++ tty/drivers/tty/serial/sh-sci.c
+> @@ -2950,6 +2950,9 @@ static const struct of_device_id of_sci_
+>         }, {
+>                 .compatible = "renesas,rcar-gen3-scif",
+>                 .data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE),
+> +       }, {
+> +               .compatible = "renesas,rzg-scif",
+> +               .data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE),
+>         },
+>         /* Generic types */
+>         {
+
+However, I wouldn't bother adding RZ/G family-specific DT bindings, as
+RZ/G is a derivative of R-Car Gen2.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
