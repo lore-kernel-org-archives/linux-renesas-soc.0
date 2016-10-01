@@ -1,12 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:43180 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752056AbcJCKQ0 (ORCPT
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:33899 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751092AbcJAJTf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Oct 2016 06:16:26 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        Sat, 1 Oct 2016 05:19:35 -0400
+Received: by mail-lf0-f51.google.com with SMTP id b81so4314482lfe.1
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 01 Oct 2016 02:19:34 -0700 (PDT)
+Date: Sat, 1 Oct 2016 11:19:31 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
         <niklas.soderlund@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
         Simon Horman <horms@verge.net.au>,
@@ -15,88 +18,78 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>
 Subject: Re: [PATCH 2/3] ARM: dts: gose: add HDMI input
-Date: Mon, 03 Oct 2016 13:16:22 +0300
-Message-ID: <2300679.2ngeeH3ECe@avalon>
-In-Reply-To: <20161001091931.GL8472@bigcity.dyn.berto.se>
-References: <20160916130935.21292-1-ulrich.hecht+renesas@gmail.com> <3186140.opQPlkUUe2@avalon> <20161001091931.GL8472@bigcity.dyn.berto.se>
+Message-ID: <20161001091931.GL8472@bigcity.dyn.berto.se>
+References: <20160916130935.21292-1-ulrich.hecht+renesas@gmail.com>
+ <1951325.PMIbTHqE2x@avalon>
+ <CAMuHMdV3ZSfMeyCv3j8F3rUeT48nQc-03L5iDXYF-=wT7Ek2nw@mail.gmail.com>
+ <3186140.opQPlkUUe2@avalon>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3186140.opQPlkUUe2@avalon>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+On 2016-09-30 16:32:52 +0300, Laurent Pinchart wrote:
+> On Friday 30 Sep 2016 15:00:59 Geert Uytterhoeven wrote:
+> > On Fri, Sep 30, 2016 at 2:40 PM, Laurent Pinchart wrote:
+> > >> --- a/arch/arm/boot/dts/r8a7793-gose.dts
+> > >> +++ b/arch/arm/boot/dts/r8a7793-gose.dts
+> > >> @@ -374,6 +374,11 @@
+> > >>               groups = "audio_clk_a";
+> > >>               function = "audio_clk";
+> > >>       };
+> > >> +
+> > >> +     vin0_pins: vin0 {
+> > >> +             groups = "vin0_data24", "vin0_sync", "vin0_clkenb",
+> > >> "vin0_clk";
+> > >> +             function = "vin0";
+> > >> +     };
+> > >>  };
+> > >>  
+> > >>  &ether {
+> > >> @@ -531,6 +536,21 @@
+> > >>               };
+> > >>       };
+> > >> 
+> > >> +     hdmi-in@4c {
+> > >> +             compatible = "adi,adv7612";
+> > >> +             reg = <0x4c>;
+> > >> +             interrupt-parent = <&gpio1>;
+> > >> +             interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
+> > > 
+> > > Isn't the interrupt signal connected to GP4_2 ?
+> > 
+> > No idea about Gose, but on Koelsch it is (hence koelsch DTS is wrong??)
+> 
+> I believe so. I don't have a Koelsch board anymore so I can't test that. 
+> Niklas, do you have a Koelsch on which you could confirm the IRQ number ?
 
-On Saturday 01 Oct 2016 11:19:31 Niklas S=F6derlund wrote:
-> On 2016-09-30 16:32:52 +0300, Laurent Pinchart wrote:
-> > On Friday 30 Sep 2016 15:00:59 Geert Uytterhoeven wrote:
-> >> On Fri, Sep 30, 2016 at 2:40 PM, Laurent Pinchart wrote:
-> >>>> --- a/arch/arm/boot/dts/r8a7793-gose.dts
-> >>>> +++ b/arch/arm/boot/dts/r8a7793-gose.dts
+I have done the best I can to prove the IRQ, it proved to be a bit 
+tricky or maybe I'm doing it the wrong way.
 
-[snip]
+I hooked up my oscilloscope to EXIO Connector D pin 7, which according 
+to the schematics should be GP4_2 and attached to a pull-up at 3.3v. I 
+can observe the pull-up and if I control the pin using the 
+/sys/class/gpio interface I do indeed control GP4_2, So the schematic is 
+correct at least this far.
 
-> >>>> @@ -531,6 +536,21 @@
-> >>>>               };
-> >>>>       };
-> >>>>=20
-> >>>> +     hdmi-in@4c {
-> >>>> +             compatible =3D "adi,adv7612";
-> >>>> +             reg =3D <0x4c>;
-> >>>> +             interrupt-parent =3D <&gpio1>;
-> >>>> +             interrupts =3D <20 IRQ_TYPE_LEVEL_LOW>;
-> >>>=20
-> >>> Isn't the interrupt signal connected to GP4_2 ?
-> >>=20
-> >> No idea about Gose, but on Koelsch it is (hence koelsch DTS is wro=
-ng??)
-> >=20
-> > I believe so. I don't have a Koelsch board anymore so I can't test =
-that.
-> > Niklas, do you have a Koelsch on which you could confirm the IRQ nu=
-mber ?
->=20
-> I have done the best I can to prove the IRQ, it proved to be a bit
-> tricky or maybe I'm doing it the wrong way.
->=20
-> I hooked up my oscilloscope to EXIO Connector D pin 7, which accordin=
-g
-> to the schematics should be GP4_2 and attached to a pull-up at 3.3v. =
-I
-> can observe the pull-up and if I control the pin using the
-> /sys/class/gpio interface I do indeed control GP4_2, So the schematic=
- is
-> correct at least this far.
->=20
-> The trouble I have is that the adv7612 driver do not currently consum=
-e
-> the interrupt so I can't see multiple field interrupts by observing t=
-he
-> pin. I do however see what I believe is the first field interrupt, if=
- I
-> observe the pin just as I turn on my HDMI video source the pin go fro=
-m 1
-> -> 0 but is never reset and a reset of the entire board is needed if =
-you
-> wish to see it again.
->=20
-> If I on the other hand observe pin GP1_20 on EXIO Connector A pin 66 =
-I
-> notice nothing on the oscilloscope from that it's set to 3.3V at powe=
-r
-> on, no mater how much HDMI input i run.
->=20
-> In conclusion, yes I do believe the DTS is wrong and that GP4_2 is th=
-e
-> correct interrupt signal on Koelsch. This adds up with the schematics=
+The trouble I have is that the adv7612 driver do not currently consume 
+the interrupt so I can't see multiple field interrupts by observing the 
+pin. I do however see what I believe is the first field interrupt, if I 
+observe the pin just as I turn on my HDMI video source the pin go from 1 
+-> 0 but is never reset and a reset of the entire board is needed if you 
+wish to see it again.
 
-> and my rudimentary measurements.
+If I on the other hand observe pin GP1_20 on EXIO Connector A pin 66 I 
+notice nothing on the oscilloscope from that it's set to 3.3V at power 
+on, no mater how much HDMI input i run.
 
-Thanks a lot for testing. Ulrich, could you please fix this patch accor=
-dingly=20
-?
+In conclusion, yes I do believe the DTS is wrong and that GP4_2 is the 
+correct interrupt signal on Koelsch. This adds up with the schematics 
+and my rudimentary measurements.
 
---=20
+-- 
 Regards,
-
-Laurent Pinchart
+Niklas S�derlund
