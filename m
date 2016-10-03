@@ -1,51 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:34993 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754613AbcJEHlD (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:46080 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751400AbcJCOve (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Oct 2016 03:41:03 -0400
+        Mon, 3 Oct 2016 10:51:34 -0400
+Subject: Re: Kernal version Issue
+To: Jithin T Raj <jithin.t@tataelxsi.co.in>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+References: <SG2PR0401MB1296E3088D1BF1BCDBB0E3C7D8C20@SG2PR0401MB1296.apcprd04.prod.outlook.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Message-ID: <e6a8cd21-e216-dbb4-8bbb-2bf9c79e59a1@ideasonboard.com>
+Date: Mon, 3 Oct 2016 15:51:22 +0100
 MIME-Version: 1.0
-In-Reply-To: <20160913140314.22035-4-niklas.soderlund+renesas@ragnatech.se>
-References: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se> <20160913140314.22035-4-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Oct 2016 09:41:02 +0200
-Message-ID: <CAMuHMdUUxeQUkOdMcZBUqnpYcLc68cA__p1wceJ9SK6Zi00QfA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] pinctrl: sh-pfc: r8a7795: Add group for AVB MDIO and
- MII pins
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <SG2PR0401MB1296E3088D1BF1BCDBB0E3C7D8C20@SG2PR0401MB1296.apcprd04.prod.outlook.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Sep 13, 2016 at 4:03 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> Group the AVB pins into similar groups found in other sh-pfc drivers.
-> The pins can not be muxed between functions other then AVB but there
+Hi Jithin,
 
-s/there/their/
+On 03/10/16 08:55, Jithin T Raj wrote:
 
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+> hi team, I have downloaded Source tree version 4.7.5 from
+> kernel.org..I have build image for RCAR E2  by using that..but the
+> board is not accepting the kernel..
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+We would need to know a bit more detail about 'not accepting the kernel'
+here.
 
-Gr{oetje,eeting}s,
+Has the kernel you built been configured correctly for your target board?
 
-                        Geert
+Were there any traces from the serial console at the point of failure?
+
+How are you building for your target, are you using Yocto?, Buildroot?,
+or are you cross compiling the kernel yourself?
+
+Looking through some of your other mail postings, I see you are typing
+'make -j4' but I can not see what environment you are building in.
+
+> i want to know "Is there any
+> special release of kernel for Renesas only?
+
+>From a community support perspective, you should really be looking to
+use the mainline. (An official release from kernel.org, or usage of
+torvalds/linux.git)
+
+If you are intending to make modifications to the sources, I would
+recommend that you use 'git', rather than downloading a specific version
+of source tree from kernel.org, as this will help you track the changes
+that you make.
+
+Are you familiar with git yet?
+
+You mention that you can not access github, but I see that you have been
+able to access kernel.org ...
+
+Are you able to 'clone' a git kernel using http? :
+
+git clone http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+
+> if yes can you please
+> provide me some links or kernel from www.kernel.org are suitable for
+> all Renesas Board? Hopping your reply
+
+To answer that question as carefully as I can:
+
+The mainline kernel is suitable for all *currently supported* Renesas
+boards.
+
+For anything else you would need to contact the vendor specifically, or
+a specialist consultant to support you.
+
+> Best Regards Jithin T Raj
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Regards
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Kieran Bingham
