@@ -1,101 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:39094 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752401AbcJPI2Z (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:48765 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752220AbcJDMbu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 16 Oct 2016 04:28:25 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 2/2] arm64: dts: r8a7796: salvator: enable on board eMMC
-Date: Sun, 16 Oct 2016 10:27:48 +0200
-Message-Id: <20161016082748.2850-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20161016082748.2850-1-wsa+renesas@sang-engineering.com>
-References: <20161016082748.2850-1-wsa+renesas@sang-engineering.com>
+        Tue, 4 Oct 2016 08:31:50 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 6/6] drm: rcar-du: Fix crash in encoder failure error path
+Date: Tue,  4 Oct 2016 15:31:39 +0300
+Message-Id: <1475584299-21236-7-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1475584299-21236-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1475584299-21236-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 44 +++++++++++++++++++++-
- 1 file changed, 43 insertions(+), 1 deletion(-)
+When an encoder fails to initialize the driver prints an error message
+to the kernel log. The message contains the name of the encoder's DT
+node, which is NULL for internal encoders. Use the of_node_full_name()
+macro to avoid dereferencing a NULL pointer, print the output number to
+add more context to the error, and make sure we still own a reference to
+the encoder's DT node by delaying the of_node_put() call.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index 91440eb2237e72..8cda70db2745ae 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -31,6 +31,24 @@
- 		reg = <0x0 0x48000000 0x0 0x78000000>;
- 	};
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index bd9c3bb9252c..d3ab10602e3e 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -445,13 +445,13 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
+ 	}
  
-+	reg_1p8v: regulator0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	reg_3p3v: regulator1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
- 
-@@ -78,7 +96,6 @@
- 		states = <3300000 1
- 			  1800000 0>;
- 	};
+ 	ret = rcar_du_encoder_init(rcdu, enc_type, output, encoder, connector);
+-	of_node_put(encoder);
+-	of_node_put(connector);
 -
- };
+ 	if (ret && ret != -EPROBE_DEFER)
+ 		dev_warn(rcdu->dev,
+-			 "failed to initialize encoder %s (%d), skipping\n",
+-			 encoder->full_name, ret);
++			 "failed to initialize encoder %s on output %u (%d), skipping\n",
++			 of_node_full_name(encoder), output, ret);
++
++	of_node_put(encoder);
++	of_node_put(connector);
  
- &pfc {
-@@ -106,6 +123,18 @@
- 		power-source = <1800>;
- 	};
- 
-+	sdhi2_pins: sd2 {
-+		groups = "sdhi2_data8", "sdhi2_ctrl";
-+		function = "sdhi2";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi2_pins_uhs: sd2_uhs {
-+		groups = "sdhi2_data8", "sdhi2_ctrl";
-+		function = "sdhi2";
-+		power-source = <1800>;
-+	};
-+
- 	sdhi3_pins: sd3 {
- 		groups = "sdhi3_data4", "sdhi3_ctrl";
- 		function = "sdhi3";
-@@ -138,6 +167,19 @@
- 	status = "okay";
- };
- 
-+&sdhi2 {
-+	/* used for on-board 8bit eMMC */
-+	pinctrl-0 = <&sdhi2_pins>;
-+	pinctrl-1 = <&sdhi2_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_1p8v>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
-+};
-+
- &sdhi3 {
- 	pinctrl-0 = <&sdhi3_pins>;
- 	pinctrl-1 = <&sdhi3_pins_uhs>;
+ 	return ret;
+ }
 -- 
-2.9.3
+Regards,
+
+Laurent Pinchart
