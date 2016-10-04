@@ -1,35 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-hk2apc01on0096.outbound.protection.outlook.com ([104.47.124.96]:27808
-        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752145AbcJEM5F (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:34490 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752248AbcJDNU4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Oct 2016 08:57:05 -0400
-From: Jithin T Raj <jithin.t@tataelxsi.co.in>
-To: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
-        "laurent.pinchart@ideasonboard.com"
-        <laurent.pinchart@ideasonboard.com>,
-        "Karl Auer" <kauer@biplane.com.au>
-Subject: HDMI support in Koelsch (RCAR M2)
-Date: Wed, 5 Oct 2016 12:57:01 +0000
-Message-ID: <SG2PR0401MB1296E3621F5584B45EF6BA92D8C40@SG2PR0401MB1296.apcprd04.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Tue, 4 Oct 2016 09:20:56 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] ARM: shmobile: r8a7794/alt: Add board part number to DT bindings
+Date: Tue,  4 Oct 2016 15:20:47 +0200
+Message-Id: <1475587248-13670-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1475587248-13670-1-git-send-email-geert+renesas@glider.be>
+References: <1475587248-13670-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi team,
-=A0=A0 sorry for my frequent  disturbance  ..I am not getting HDMI out in K=
-oelsche Board with source tree 4.7.5...but it does in 3.10.31-ltsi..if you =
-don't mind,please provide me the patch to support HDMI in=20
-4.7.5
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best Regards
- Jithin T Raj
-=20
-=20
-   =
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 19f0a9e4302b508c..6c3ffc2ebeaa346a 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -35,7 +35,7 @@ SoCs:
+ 
+ Boards:
+ 
+-  - Alt
++  - Alt (RTP0RC7794SEB00010S)
+     compatible = "renesas,alt", "renesas,r8a7794"
+   - APE6-EVM
+     compatible = "renesas,ape6evm", "renesas,r8a73a4"
+-- 
+1.9.1
