@@ -1,61 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:57277 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759384AbcJQU3M (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:51499 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751648AbcJDJZe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Oct 2016 16:29:12 -0400
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 60E112038D
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Oct 2016 22:28:21 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: media: renesas-fcp: Remove SoC-specific compatible strings
-Date: Mon, 17 Oct 2016 23:29:02 +0300
-Message-Id: <1476736143-29937-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1476736143-29937-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1476736143-29937-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 4 Oct 2016 05:25:34 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Yangbo Lu <yangbo.lu@nxp.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 0/4] arm64: renesas: r8a7795: R-Car H3 ES2.0 Prototype
+Date: Tue,  4 Oct 2016 11:25:23 +0200
+Message-Id: <1475573127-30054-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The FCP IP cores include a version register that identifies which SoC
-model the IP is integrated in. SoC-specific compatible strings are not
-needed.
+	Hi all,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- Documentation/devicetree/bindings/media/renesas,fcp.txt | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Some Renesas SoCs may exist in different revisions, providing slightly
+different functionalities. This needs to be catered for by drivers
+and/or platform code.  The recently proposed soc_device_match() API
+seems like a good fit to handle this.
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-index 27f9b8e459ac..3ec91803ba58 100644
---- a/Documentation/devicetree/bindings/media/renesas,fcp.txt
-+++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
-@@ -11,15 +11,9 @@ are paired with. These DT bindings currently support the FCPV and FCPF.
- 
-  - compatible: Must be one or more of the following
- 
--   - "renesas,r8a7795-fcpv" for R8A7795 (R-Car H3) compatible 'FCP for VSP'
--   - "renesas,r8a7795-fcpf" for R8A7795 (R-Car H3) compatible 'FCP for FDP'
-    - "renesas,fcpv" for generic compatible 'FCP for VSP'
-    - "renesas,fcpf" for generic compatible 'FCP for FDP'
- 
--   When compatible with the generic version, nodes must list the
--   SoC-specific version corresponding to the platform first, followed by the
--   family-specific and/or generic versions.
--
-  - reg: the register base and size for the device registers
-  - clocks: Reference to the functional clock
- 
-@@ -32,7 +26,7 @@ Device node example
- -------------------
- 
- 	fcpvd1: fcp@fea2f000 {
--		compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
-+		compatible = "renesas,fcpv";
- 		reg = <0 0xfea2f000 0 0x200>;
- 		clocks = <&cpg CPG_MOD 602>;
- 		power-domains = <&sysc R8A7795_PD_A3VP>;
+This patch series provides a prototype to handle the clock and pin
+control differences between R-Car H3 ES1.x and ES2.0 SoCs:
+  - The clock difference handling should be fully functional.
+    It is implemented by keeping all clock tables up-to-date for the
+    latest SoC (except for clocks removed in later revisions), and
+    fixing up the tables at runtime for the actual SoC detected.
+    I've also tried the alternative solution of keeping one set of clock
+    tables for each SoC revision, but this increases kernel size by ca.
+    3 KiB.
+  - The pinctrl difference handling is just a skeleton for now,
+    providing a Proof-of-Concept.
+
+This patch series depends on "[PATCH 0/4] soc: renesas: Identify SoC and
+register with the SoC bus".
+
+This has been tested on r8a7795/salvator-x, which has an R-Car H3 ES1.0
+SoC, and by faking the presence of an R-Car H3 ES1.1 or ES2.0 Soc.
+This has not been tested on actual R-Car H3 ES1.1 or ES2.0 SoCs, due to
+lack of hardware.
+
+For your convenience, this series (and its dependencies) is also available in
+the topic/r8a7795-es2-v1 branch of my renesas-drivers git repository at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
+
+Thanks for your comments!
+
+Geert Uytterhoeven (4):
+  [RFC] clk: renesas: cpg-mssr: Add support for fixing up clock tables
+  [RFC] clk: renesas: Add r8a7795 ES2.0 CPG Core Clock Definitions
+  [RFC] clk: renesas: r8a7795: Add support for R-Car H3 ES2.0
+  [RFC] pinctrl: sh-pfc: r8a7795: Add PoC support for R-Car H3 ES2.0
+
+ drivers/clk/renesas/r8a7795-cpg-mssr.c       | 151 +++++++++++++++++++++------
+ drivers/clk/renesas/renesas-cpg-mssr.c       |  50 +++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.h       |  22 ++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c         |  19 ++++
+ include/dt-bindings/clock/r8a7795-cpg-mssr.h |   7 ++
+ 5 files changed, 216 insertions(+), 33 deletions(-)
+
 -- 
-Regards,
+1.9.1
 
-Laurent Pinchart
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
