@@ -1,47 +1,43 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:48408 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752472AbcJDNLI (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 4 Oct 2016 09:11:08 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] swiotlb: Rate-limit printing when running out of SW-IOMMU space
-Date: Mon, 31 Oct 2016 16:45:03 +0100
-Message-Id: <1477928704-10611-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477928704-10611-1-git-send-email-geert+renesas@glider.be>
-References: <1477928704-10611-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH] clk: renesas: cpg-mssr: Fix inverted debug check
+Date: Tue,  4 Oct 2016 15:10:58 +0200
+Message-Id: <1475586658-13322-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If the system runs out of SW-IOMMU space, changes are high successive
-requests will fail, too, flooding the kernel log.  This is true
-especially for streaming DMA, which is typically used repeatedly outside
-the driver's initialization routine.  Add rate-limiting to fix this.
-
-While at it, get rid of the open-coded dev_name() handling by using the
-appropriate dev_err_*() variant.
+The intention was to enable the checks if debugging is enabled, not
+disabled.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- lib/swiotlb.c | 4 ++--
+ drivers/clk/renesas/renesas-cpg-mssr.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-index 22e13a0e19d76a2b..6ce764410ae475cc 100644
---- a/lib/swiotlb.c
-+++ b/lib/swiotlb.c
-@@ -714,8 +714,8 @@ void swiotlb_tbl_sync_single(struct device *hwdev, phys_addr_t tlb_addr,
- 	 * When the mapping is small enough return a static buffer to limit
- 	 * the damage, or panic when the transfer is too big.
- 	 */
--	printk(KERN_ERR "DMA: Out of SW-IOMMU space for %zu bytes at "
--	       "device %s\n", size, dev ? dev_name(dev) : "?");
-+	dev_err_ratelimited(dev, "DMA: Out of SW-IOMMU space for %zu bytes\n",
-+			    size);
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 6bc73d18517b2c82..937b09a70f2e0f43 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -33,9 +33,9 @@
+ #include "clk-div6.h"
  
- 	if (size <= io_tlb_overflow || !do_panic)
- 		return;
+ #ifdef DEBUG
+-#define WARN_DEBUG(x)	do { } while (0)
+-#else
+ #define WARN_DEBUG(x)	WARN_ON(x)
++#else
++#define WARN_DEBUG(x)	do { } while (0)
+ #endif
+ 
+ 
 -- 
 1.9.1
