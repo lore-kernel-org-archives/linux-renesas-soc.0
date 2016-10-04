@@ -1,120 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:60252 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932666AbcJNNTC (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:51500 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751789AbcJDJZd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Oct 2016 09:19:02 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Lee Jones <lee@kernel.org>
-CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v3 2/3] mmc: tmio-mmc: add support for 32bit data port
-Date: Fri, 14 Oct 2016 13:18:56 +0000
-Message-ID: <SG2PR06MB11656EAD9F036EC0FFEDFF7F8ADF0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20160912141507.6837-1-chris.brandt@renesas.com>
- <20160912141507.6837-3-chris.brandt@renesas.com>
- <CAPDyKFoeRggX-YMy2L+o6CBtwa46rT2YyJiXdPK_c3a1R1Nvgg@mail.gmail.com>
-In-Reply-To: <CAPDyKFoeRggX-YMy2L+o6CBtwa46rT2YyJiXdPK_c3a1R1Nvgg@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Tue, 4 Oct 2016 05:25:33 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Yangbo Lu <yangbo.lu@nxp.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 4/4] pinctrl: sh-pfc: r8a7795: Add PoC support for R-Car H3 ES2.0
+Date: Tue,  4 Oct 2016 11:25:27 +0200
+Message-Id: <1475573127-30054-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1475573127-30054-1-git-send-email-geert+renesas@glider.be>
+References: <1475573127-30054-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-T24gOS8yMi8yMDE2LCBVbGYgSGFuc3NvbiB3cm90ZToNCj4gVG86IENocmlzIEJyYW5kdCA8Q2hy
-aXMuQnJhbmR0QHJlbmVzYXMuY29tPg0KPiBDYzogV29sZnJhbSBTYW5nIDx3c2ErcmVuZXNhc0Bz
-YW5nLWVuZ2luZWVyaW5nLmNvbT47IFNlcmdlaSBTaHR5bHlvdg0KPiA8c2VyZ2VpLnNodHlseW92
-QGNvZ2VudGVtYmVkZGVkLmNvbT47IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnRAbGludXgtDQo+
-IG02OGsub3JnPjsgU2ltb24gSG9ybWFuIDxob3JtcytyZW5lc2FzQHZlcmdlLm5ldC5hdT47IGxp
-bnV4LW1tYyA8bGludXgtDQo+IG1tY0B2Z2VyLmtlcm5lbC5vcmc+OyBMaW51eC1SZW5lc2FzIDxs
-aW51eC1yZW5lc2FzLXNvY0B2Z2VyLmtlcm5lbC5vcmc+Ow0KPiBMZWUgSm9uZXMgPGxlZUBrZXJu
-ZWwub3JnPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYzIDIvM10gbW1jOiB0bWlvLW1tYzogYWRk
-IHN1cHBvcnQgZm9yIDMyYml0IGRhdGEgcG9ydA0KPiANCj4gKyBMZWUNCj4gDQo+IE9uIDEyIFNl
-cHRlbWJlciAyMDE2IGF0IDE2OjE1LCBDaHJpcyBCcmFuZHQgPGNocmlzLmJyYW5kdEByZW5lc2Fz
-LmNvbT4NCj4gd3JvdGU6DQo+ID4gRm9yIHRoZSByN3M3MjEwMCBTT0MsIHRoZSBEQVRBX1BPUlQg
-cmVnaXN0ZXIgd2FzIGNoYW5nZWQgdG8gMzItYml0cyB3aWRlLg0KPiA+IFRoZXJlZm9yZSBhIG5l
-dyBmbGFnIGhhcyBiZWVuIGNyZWF0ZWQgdGhhdCB3aWxsIGFsbG93IDMyLWJpdA0KPiA+IHJlYWRz
-L3dyaXRlcyB0byB0aGUgREFUQV9QT1JUIHJlZ2lzdGVyIGluc3RlYWQgb2YgMTYtYml0IChiZWNh
-dXNlDQo+ID4gMTYtYml0cyBhY2Nlc3NlcyBhcmUgbm90IHN1cHBvcnRlZCkuDQo+ID4NCj4gPiBT
-aWduZWQtb2ZmLWJ5OiBDaHJpcyBCcmFuZHQgPGNocmlzLmJyYW5kdEByZW5lc2FzLmNvbT4NCj4g
-PiAtLS0NCj4gPiB2MzoNCj4gPiAqIGNoYW5nZWQgbG9vcHMgdG8gbWVtY3B5DQo+ID4gdjI6DQo+
-ID4gKiBjaGFuZ2VkICdkYXRhICogMHhGRicgdG8gJ2RhdGEgJiAweEZGJw0KPiA+ICogYWRkZWQg
-J2NvbnN0JyBmb3Igc2RfY3RybF93cml0ZTMyX3JlcA0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL21t
-Yy9ob3N0L3RtaW9fbW1jLmggICAgIHwgMTIgKysrKysrKysrKysrDQo+ID4gIGRyaXZlcnMvbW1j
-L2hvc3QvdG1pb19tbWNfcGlvLmMgfCAzMCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysN
-Cj4gPiAgaW5jbHVkZS9saW51eC9tZmQvdG1pby5oICAgICAgICB8ICA1ICsrKysrDQo+IA0KPiBU
-aGlzIGhlYWRlciBmaWxlIG5lZWRzIHRvIGJlIHNwbGl0IHVwLiBUaGUgbW1jIHNwZWNpZmljIGJp
-dHMsIHNob3VsZCBiZQ0KPiBtb3ZlZCB0byBhIGxvY2FsIGhlYWRlciBmaWxlIHVuZGVyIGRyaXZl
-ci9tbWMvaG9zdC8qLg0KPiANCj4gU3VyZSwgd2UgZG9uJ3QgbmVlZCB0byBkbyB0aGF0IGFzIHBh
-cnQgb2YgJHN1YmplY3QgcGF0Y2gsIGJ1dCB0aGVuIEkgbmVlZA0KPiBhbiBhY2sgZnJvbSBMZWUg
-Sm9uZXMsIHRoZSBtZmQgbWFpbnRhaW5lci4gSSBoYXZlIGFkZGVkIGhpbSBvbiBjYy4NCg0KDQpJ
-cyB0aGlzIHN0aWxsIHdhaXRpbmcgb24gYW4gQUNLIGZyb20gTGVlIEpvbmVzIGJlY2F1c2UgaXQg
-dG91Y2hlcyB0aGUgdG1pby5oIGZpbGUgdW5kZXIgaW5jbHVkZS9saW51eC9tZmQvID8NCg0KDQoN
-Cg0KDQogDQo+ID4gIDMgZmlsZXMgY2hhbmdlZCwgNDcgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbW1jL2hvc3QvdG1pb19tbWMuaCBiL2RyaXZlcnMvbW1jL2hv
-c3QvdG1pb19tbWMuaA0KPiA+IGluZGV4IGVjYjk5ZmMuLmE5OWU2MzQgMTAwNjQ0DQo+ID4gLS0t
-IGEvZHJpdmVycy9tbWMvaG9zdC90bWlvX21tYy5oDQo+ID4gKysrIGIvZHJpdmVycy9tbWMvaG9z
-dC90bWlvX21tYy5oDQo+ID4gQEAgLTIzNyw2ICsyMzcsMTIgQEAgc3RhdGljIGlubGluZSB1MzIN
-Cj4gc2RfY3RybF9yZWFkMTZfYW5kXzE2X2FzXzMyKHN0cnVjdCB0bWlvX21tY19ob3N0ICpob3N0
-LCBpbnQgYWQNCj4gPiAgICAgICAgICAgICAgICByZWFkdyhob3N0LT5jdGwgKyAoKGFkZHIgKyAy
-KSA8PCBob3N0LT5idXNfc2hpZnQpKSA8PA0KPiA+IDE2OyAgfQ0KPiA+DQo+ID4gK3N0YXRpYyBp
-bmxpbmUgdm9pZCBzZF9jdHJsX3JlYWQzMl9yZXAoc3RydWN0IHRtaW9fbW1jX2hvc3QgKmhvc3Qs
-IGludA0KPiBhZGRyLA0KPiA+ICsgICAgICAgICAgICAgICB1MzIgKmJ1ZiwgaW50IGNvdW50KQ0K
-PiA+ICt7DQo+ID4gKyAgICAgICByZWFkc2woaG9zdC0+Y3RsICsgKGFkZHIgPDwgaG9zdC0+YnVz
-X3NoaWZ0KSwgYnVmLCBjb3VudCk7IH0NCj4gPiArDQo+ID4gIHN0YXRpYyBpbmxpbmUgdm9pZCBz
-ZF9jdHJsX3dyaXRlMTYoc3RydWN0IHRtaW9fbW1jX2hvc3QgKmhvc3QsIGludA0KPiA+IGFkZHIs
-IHUxNiB2YWwpICB7DQo+ID4gICAgICAgICAvKiBJZiB0aGVyZSBpcyBhIGhvb2sgYW5kIGl0IHJl
-dHVybnMgbm9uLXplcm8gdGhlbiB0aGVyZSBAQA0KPiA+IC0yNTksNCArMjY1LDEwIEBAIHN0YXRp
-YyBpbmxpbmUgdm9pZCBzZF9jdHJsX3dyaXRlMzJfYXNfMTZfYW5kXzE2KHN0cnVjdA0KPiB0bWlv
-X21tY19ob3N0ICpob3N0LCBpbnQNCj4gPiAgICAgICAgIHdyaXRldyh2YWwgPj4gMTYsIGhvc3Qt
-PmN0bCArICgoYWRkciArIDIpIDw8DQo+ID4gaG9zdC0+YnVzX3NoaWZ0KSk7ICB9DQo+ID4NCj4g
-PiArc3RhdGljIGlubGluZSB2b2lkIHNkX2N0cmxfd3JpdGUzMl9yZXAoc3RydWN0IHRtaW9fbW1j
-X2hvc3QgKmhvc3QsIGludA0KPiBhZGRyLA0KPiA+ICsgICAgICAgICAgICAgICBjb25zdCB1MzIg
-KmJ1ZiwgaW50IGNvdW50KSB7DQo+ID4gKyAgICAgICB3cml0ZXNsKGhvc3QtPmN0bCArIChhZGRy
-IDw8IGhvc3QtPmJ1c19zaGlmdCksIGJ1ZiwgY291bnQpOyB9DQo+ID4gKw0KPiA+ICAjZW5kaWYN
-Cj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tbWMvaG9zdC90bWlvX21tY19waW8uYw0KPiA+IGIv
-ZHJpdmVycy9tbWMvaG9zdC90bWlvX21tY19waW8uYyBpbmRleCAwMTdhNGRjLi41OWZhYzdkIDEw
-MDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvbW1jL2hvc3QvdG1pb19tbWNfcGlvLmMNCj4gPiArKysg
-Yi9kcml2ZXJzL21tYy9ob3N0L3RtaW9fbW1jX3Bpby5jDQo+ID4gQEAgLTQ0Myw2ICs0NDMsMzYg
-QEAgc3RhdGljIHZvaWQgdG1pb19tbWNfdHJhbnNmZXJfZGF0YShzdHJ1Y3QNCj4gdG1pb19tbWNf
-aG9zdCAqaG9zdCwNCj4gPiAgICAgICAgIC8qDQo+ID4gICAgICAgICAgKiBUcmFuc2ZlciB0aGUg
-ZGF0YQ0KPiA+ICAgICAgICAgICovDQo+ID4gKyAgICAgICBpZiAoaG9zdC0+cGRhdGEtPmZsYWdz
-ICYgVE1JT19NTUNfMzJCSVRfREFUQV9QT1JUKSB7DQo+ID4gKyAgICAgICAgICAgICAgIHU4IGRh
-dGFbNF0gPSB7IH07DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAgICBpZiAoaXNfcmVhZCkNCj4g
-PiArICAgICAgICAgICAgICAgICAgICAgICBzZF9jdHJsX3JlYWQzMl9yZXAoaG9zdCwgQ1RMX1NE
-X0RBVEFfUE9SVCwgKHUzMg0KPiAqKWJ1ZiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgY291bnQgPj4gMik7DQo+ID4gKyAgICAgICAgICAgICAgIGVsc2UN
-Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICBzZF9jdHJsX3dyaXRlMzJfcmVwKGhvc3QsIENU
-TF9TRF9EQVRBX1BPUlQsICh1MzINCj4gKilidWYsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBjb3VudCA+PiAyKTsNCj4gPiArDQo+ID4gKyAgICAgICAg
-ICAgICAgIC8qIGlmIGNvdW50IHdhcyBtdWx0aXBsZSBvZiA0ICovDQo+ID4gKyAgICAgICAgICAg
-ICAgIGlmICghKGNvdW50ICYgMHgzKSkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICByZXR1
-cm47DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAgICBidWY4ID0gKHU4ICopKGJ1ZiArIChjb3Vu
-dCA+PiAyKSk7DQo+ID4gKyAgICAgICAgICAgICAgIGNvdW50ICU9IDQ7DQo+ID4gKw0KPiA+ICsg
-ICAgICAgICAgICAgICBpZiAoaXNfcmVhZCkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
-IHNkX2N0cmxfcmVhZDMyX3JlcChob3N0LCBDVExfU0RfREFUQV9QT1JULA0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAodTMyICopZGF0YSwgMSk7DQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgICAgbWVtY3B5KGJ1ZjgsIGRhdGEsIGNvdW50KTsNCj4gPiAr
-ICAgICAgICAgICAgICAgfSBlbHNlIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBtZW1j
-cHkoZGF0YSwgYnVmOCwgY291bnQpOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHNkX2N0
-cmxfd3JpdGUzMl9yZXAoaG9zdCwgQ1RMX1NEX0RBVEFfUE9SVCwNCj4gPiArICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICh1MzIgKilkYXRhLCAxKTsNCj4gPiArICAg
-ICAgICAgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAgICAgICAgICAgcmV0dXJuOw0KPiA+ICsg
-ICAgICAgfQ0KPiA+ICsNCj4gPiAgICAgICAgIGlmIChpc19yZWFkKQ0KPiA+ICAgICAgICAgICAg
-ICAgICBzZF9jdHJsX3JlYWQxNl9yZXAoaG9zdCwgQ1RMX1NEX0RBVEFfUE9SVCwgYnVmLCBjb3Vu
-dCA+Pg0KPiAxKTsNCj4gPiAgICAgICAgIGVsc2UNCj4gPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9s
-aW51eC9tZmQvdG1pby5oIGIvaW5jbHVkZS9saW51eC9tZmQvdG1pby5oIGluZGV4DQo+ID4gM2I5
-NWRjNy4uMGRiY2I3ZSAxMDA2NDQNCj4gPiAtLS0gYS9pbmNsdWRlL2xpbnV4L21mZC90bWlvLmgN
-Cj4gPiArKysgYi9pbmNsdWRlL2xpbnV4L21mZC90bWlvLmgNCj4gPiBAQCAtMTAwLDYgKzEwMCwx
-MSBAQA0KPiA+ICAjZGVmaW5lIFRNSU9fTU1DX1NESU9fU1RBVFVTX1FVSVJLICAgICAoMSA8PCA4
-KQ0KPiA+DQo+ID4gIC8qDQo+ID4gKyAqIFNvbWUgY29udHJvbGxlcnMgaGF2ZSBhIDMyLWJpdCB3
-aWRlIGRhdGEgcG9ydCByZWdpc3RlciAgKi8NCj4gPiArI2RlZmluZSBUTUlPX01NQ18zMkJJVF9E
-QVRBX1BPUlQgICAgICAgKDEgPDwgOSkNCj4gPiArDQo+ID4gKy8qDQo+ID4gICAqIFNvbWUgY29u
-dHJvbGxlcnMgYWxsb3dzIHRvIHNldCBTRHggYWN0dWFsIGNsb2NrDQo+ID4gICAqLw0KPiA+ICAj
-ZGVmaW5lIFRNSU9fTU1DX0NMS19BQ1RVQUwgICAgICAgICAgICAoMSA8PCAxMCkNCj4gPiAtLQ0K
-PiA+IDIuOS4yDQo+ID4NCj4gPg0KPiANCj4gS2luZCByZWdhcmRzDQo+IFVmZmUNCg==
+The Pin Function Controller module in R-Car H3 ES2.0 differs from
+ES1.x.
+
+Add a Proof-of-Concept for detecting the SoC revision at the runtime
+using the new soc_device_match() API, and skeleton code for selecting
+the pinctrl tables for the actual SoC revision.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 2e8cc2adbed7e251..3f58bfd676ce94c2 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -9,6 +9,7 @@
+  */
+ 
+ #include <linux/kernel.h>
++#include <linux/sys_soc.h>
+ 
+ #include "core.h"
+ #include "sh_pfc.h"
+@@ -5401,7 +5402,25 @@ static void r8a7795_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+ 	sh_pfc_write_reg(pfc, PUEN + reg, 32, enable);
+ }
+ 
++static const struct soc_device_attribute r8a7795es1[] = {
++	{ .soc_id = "r8a7795", .revision = "ES1.*" },
++	{ /* sentinel */ }
++};
++
++static int r8a7795_pinmux_init(struct sh_pfc *pfc)
++{
++	if (soc_device_match(r8a7795es1)) {
++		pr_info("%s: R-Car H3 ES1.x detected\n", __func__);
++		// FIXME Fixup r8a7795_pinmux_info for ES1.x
++	} else {
++		pr_info("%s: R-Car H3 >= ES2.0\n", __func__);
++		// FIXME Fixup r8a7795_pinmux_info for ES2.0
++	}
++	return 0;
++}
++
+ static const struct sh_pfc_soc_operations r8a7795_pinmux_ops = {
++	.init = r8a7795_pinmux_init,
+ 	.pin_to_pocctrl = r8a7795_pin_to_pocctrl,
+ 	.get_bias = r8a7795_pinmux_get_bias,
+ 	.set_bias = r8a7795_pinmux_set_bias,
+-- 
+1.9.1
