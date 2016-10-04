@@ -1,74 +1,62 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yangbo Lu <yangbo.lu@nxp.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/7] base: soc: Early register bus when needed
-Date: Mon, 31 Oct 2016 12:30:49 +0100
-Message-Id: <1477913455-5314-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
-References: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <SG2PR0401MB12968BF4EE08B2461319813FD8C50@SG2PR0401MB1296.apcprd04.prod.outlook.com>
+References: <SG2PR0401MB12968BF4EE08B2461319813FD8C50@SG2PR0401MB1296.apcprd04.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 4 Oct 2016 08:55:43 +0200
+Message-ID: <CAMuHMdX4Y4mUizr7A10S-_jSr9ygrNMbunAgiBdwcOn5e8McjA@mail.gmail.com>
+Subject: Re: Kernel Configure R-Car ATL Board(E2)
+To: Jithin T Raj <jithin.t@tataelxsi.co.in>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If soc_device_register() is called before soc_bus_register(), it crashes
-with a NULL pointer dereference.
+Hi Jithin,
 
-soc_bus_register() is already a core_initcall(), but drivers/base/ is
-entered later than e.g. drivers/pinctrl/ and drivers/soc/. Hence there
-are several subsystems that may need to know SoC revision information,
-while it's not so easy to initialize the SoC bus even earlier using an
-initcall.
+On Tue, Oct 4, 2016 at 6:14 AM, Jithin T Raj <jithin.t@tataelxsi.co.in> wro=
+te:
+>    I have downloaded source tree 4.7.5..Now I am trying to build kernel f=
+or ALT Board(R-Car E2)..
+> Before that i would like to ask something..here I can't see configuration=
+ for ALT in /arch/arm/configs/..But multi_v7_defconfig and multi_v5_defconf=
+ig is there..I am a newbi in this filed..can you please tell me how I can c=
+onfigure this board using menuconfig or any other way is there?
+> I am doing cross compiling..If that board is configured then only I can p=
+roceed with building no?
 
-To fix this, let soc_device_register() register the bus early if that
-hasn't happened yet.
+multi_v5_defconfig is for ARM v5 processors, and not suitable for R-Car Gen=
+2.
+multi_v7_defconfig may work (the kernel image may be too big to boot on ALT=
+,
+it's been a while I tried it).
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
-v2:
-  - Add Acked-by.
----
- drivers/base/soc.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+However, there's also shmobile_defconfig, which has all needed options for =
+all
+supported Renesas ARM SoCs and boards.
+See also http://elinux.org/R-Car/Boards/Alt
 
-diff --git a/drivers/base/soc.c b/drivers/base/soc.c
-index b63f23e6ad61b647..028cef377fd49959 100644
---- a/drivers/base/soc.c
-+++ b/drivers/base/soc.c
-@@ -113,6 +113,12 @@ struct soc_device *soc_device_register(struct soc_device_attribute *soc_dev_attr
- 	struct soc_device *soc_dev;
- 	int ret;
- 
-+	if (!soc_bus_type.p) {
-+		ret = bus_register(&soc_bus_type);
-+		if (ret)
-+			goto out1;
-+	}
-+
- 	soc_dev = kzalloc(sizeof(*soc_dev), GFP_KERNEL);
- 	if (!soc_dev) {
- 		ret = -ENOMEM;
-@@ -156,6 +162,9 @@ void soc_device_unregister(struct soc_device *soc_dev)
- 
- static int __init soc_bus_register(void)
- {
-+	if (soc_bus_type.p)
-+		return 0;
-+
- 	return bus_register(&soc_bus_type);
- }
- core_initcall(soc_bus_register);
--- 
-1.9.1
+BTW, which config did you use for Koelsch? ALT and Koelsch are very similar=
+,
+just changing all R8A7791-related options to R8A7794 should give you a work=
+ing
+kernel.
+
+Good luck!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
