@@ -1,90 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([198.47.19.12]:49864 "EHLO arroyo.ext.ti.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933305AbcJUNcH (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:48760 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752220AbcJDMbr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Oct 2016 09:32:07 -0400
-Subject: Re: [PATCH 1/6] video: of: Constify node argument to display timing
- functions
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        <dri-devel@lists.freedesktop.org>
+        Tue, 4 Oct 2016 08:31:47 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: [PATCH 1/6] video: of: Constify node argument to display timing functions
+Date: Tue,  4 Oct 2016 15:31:34 +0300
+Message-Id: <1475584299-21236-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1475584299-21236-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 References: <1475584299-21236-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
- <1475584299-21236-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-CC: <linux-renesas-soc@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <4fe0f974-da8e-a5c7-c3e6-52c112ae871d@ti.com>
-Date: Fri, 21 Oct 2016 16:26:57 +0300
-MIME-Version: 1.0
-In-Reply-To: <1475584299-21236-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature";
-        boundary="F1bC0q9R6Hx1N5GxNwp3eNdASpKKdaQ1U"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
---F1bC0q9R6Hx1N5GxNwp3eNdASpKKdaQ1U
-Content-Type: multipart/mixed; boundary="n7tGPlDS899MbNV9lswA4eo51rSpeamJ1";
- protected-headers="v1"
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, David Airlie <airlied@linux.ie>
-Message-ID: <4fe0f974-da8e-a5c7-c3e6-52c112ae871d@ti.com>
-Subject: Re: [PATCH 1/6] video: of: Constify node argument to display timing
- functions
-References: <1475584299-21236-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
- <1475584299-21236-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1475584299-21236-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+The node pointer passed to the display timing functions is never
+modified, make it const.
 
---n7tGPlDS899MbNV9lswA4eo51rSpeamJ1
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/video/of_display_timing.c |  6 +++---
+ include/video/of_display_timing.h | 15 ++++++++-------
+ 2 files changed, 11 insertions(+), 10 deletions(-)
 
-On 04/10/16 15:31, Laurent Pinchart wrote:
-> The node pointer passed to the display timing functions is never
-> modified, make it const.
->=20
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.=
-com>
-> ---
->  drivers/video/of_display_timing.c |  6 +++---
->  include/video/of_display_timing.h | 15 ++++++++-------
->  2 files changed, 11 insertions(+), 10 deletions(-)
->=20
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+diff --git a/drivers/video/of_display_timing.c b/drivers/video/of_display_timing.c
+index 8a1076beecd3..26c88f7839d2 100644
+--- a/drivers/video/of_display_timing.c
++++ b/drivers/video/of_display_timing.c
+@@ -110,7 +110,7 @@ static int of_parse_display_timing(const struct device_node *np,
+  * @name: name of the timing node
+  * @dt: display_timing struct to fill
+  **/
+-int of_get_display_timing(struct device_node *np, const char *name,
++int of_get_display_timing(const struct device_node *np, const char *name,
+ 		struct display_timing *dt)
+ {
+ 	struct device_node *timing_np;
+@@ -133,7 +133,7 @@ EXPORT_SYMBOL_GPL(of_get_display_timing);
+  * of_get_display_timings - parse all display_timing entries from a device_node
+  * @np: device_node with the subnodes
+  **/
+-struct display_timings *of_get_display_timings(struct device_node *np)
++struct display_timings *of_get_display_timings(const struct device_node *np)
+ {
+ 	struct device_node *timings_np;
+ 	struct device_node *entry;
+@@ -249,7 +249,7 @@ EXPORT_SYMBOL_GPL(of_get_display_timings);
+  * of_display_timings_exist - check if a display-timings node is provided
+  * @np: device_node with the timing
+  **/
+-int of_display_timings_exist(struct device_node *np)
++int of_display_timings_exist(const struct device_node *np)
+ {
+ 	struct device_node *timings_np;
+ 
+diff --git a/include/video/of_display_timing.h b/include/video/of_display_timing.h
+index ea755b5616d8..956455fc9f9a 100644
+--- a/include/video/of_display_timing.h
++++ b/include/video/of_display_timing.h
+@@ -16,21 +16,22 @@ struct display_timings;
+ #define OF_USE_NATIVE_MODE -1
+ 
+ #ifdef CONFIG_OF
+-int of_get_display_timing(struct device_node *np, const char *name,
++int of_get_display_timing(const struct device_node *np, const char *name,
+ 		struct display_timing *dt);
+-struct display_timings *of_get_display_timings(struct device_node *np);
+-int of_display_timings_exist(struct device_node *np);
++struct display_timings *of_get_display_timings(const struct device_node *np);
++int of_display_timings_exist(const struct device_node *np);
+ #else
+-static inline int of_get_display_timing(struct device_node *np, const char *name,
+-		struct display_timing *dt)
++static inline int of_get_display_timing(const struct device_node *np,
++		const char *name, struct display_timing *dt)
+ {
+ 	return -ENOSYS;
+ }
+-static inline struct display_timings *of_get_display_timings(struct device_node *np)
++static inline struct display_timings *
++of_get_display_timings(const struct device_node *np)
+ {
+ 	return NULL;
+ }
+-static inline int of_display_timings_exist(struct device_node *np)
++static inline int of_display_timings_exist(const struct device_node *np)
+ {
+ 	return -ENOSYS;
+ }
+-- 
+Regards,
 
-And ack for merging via drm.
-
- Tomi
-
-
---n7tGPlDS899MbNV9lswA4eo51rSpeamJ1--
-
---F1bC0q9R6Hx1N5GxNwp3eNdASpKKdaQ1U
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJYChehAAoJEPo9qoy8lh71jRgP/jjLR6eMdus00MsPDHtqYw5n
-OGplNQYdfkrw03bhpfwhb73wHtLknvGOO7nygTorcRJYxLOh/7H9GzjXF0RpOGcU
-IaRHHwQyWCD3TrnAnhq89A1bLQ18W3Zk2xMUCDGORQ+SoqLE3xjLX37lDvTpSq4F
-OTKKUkF93KXF60V6ILZCCr3fgJWUD4UXty98JyPWkmYtX6/KBd0UCT6yv0hmww+e
-ICMuz7YVlP3Sy8y1EbBS/mZU6JePBMXG8vQTo2fOjDx7wUU3FgwhprLcxHEDrReW
-s395aRr0WRIGkZwhLdRyESlowP/rW35+wm2xTH3mvvQStI20fm2ZA1cXLCLKil5Z
-z2GZ+qAfLnd1pFuJnqGxDL4maaPg8J3BNU5yPf+SPQ4LrVbLeS3DpDImOIZs5EpL
-T3/vH/9Mc5VNlQpFqjQKXdf3Qxjl7m0FrXm0dxPMtyLrCNgdqgP6GmApwmgDDYyx
-IzoI1heD3KxUSGepPAcAM+AGW5yPRS7QZ+VQHbipt7LbJVM+I4KwftInlKmpECtQ
-g+lgni+wSRIokw/hDWnS0g6Bq6f5hKDMhjfQxaB3cLRxDBieILog3DOhAf9KjJEU
-o0R7N3WZK+QjFhgOval85EaO0ikjQ89/y1v+wzaFpv/k5N4Ry+3hf0zRzB7jEyzg
-iCvuqMcCmwIFbS44HFdb
-=oxCn
------END PGP SIGNATURE-----
-
---F1bC0q9R6Hx1N5GxNwp3eNdASpKKdaQ1U--
+Laurent Pinchart
