@@ -1,43 +1,54 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran@bingham.xyz>
-Subject: [PATCH v4 4/4] arm64: dts: renesas: r8a7796: Add FDP1 instance
-Date: Mon, 24 Oct 2016 12:03:38 +0300
-Message-Id: <1477299818-31935-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1477299818-31935-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1477299818-31935-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f65.google.com ([209.85.214.65]:35869 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754146AbcJDTId (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 4 Oct 2016 15:08:33 -0400
+MIME-Version: 1.0
+In-Reply-To: <20160913140314.22035-2-niklas.soderlund+renesas@ragnatech.se>
+References: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se> <20160913140314.22035-2-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 4 Oct 2016 21:08:31 +0200
+Message-ID: <CAMuHMdVJfBXrih_rXB2=nj11xV4aPwRte+FS+GmHW9OgiuZqaA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] pinctrl: sh-pfc: Support named pins with custom configuration
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The r8a7796 has a single FDP1 instance.
+On Tue, Sep 13, 2016 at 4:03 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Pins not associated with a GPIO port can still have other configuration
+> parameters. Add a new macro SH_PFC_PIN_NAMED_CFG which allows for named
+> pins to be declared with a set of configurations. The new macro is an
+> modification of SH_PFC_PIN_NAMED to allow for optional configuration to
+> be assigned.
+>
+> The flag SH_PFC_PIN_CFG_NO_GPIO is still enforced as this should only be
+> used to define pins not associated with a GPIO port.
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 9217da983525..fbec7a29121a 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -251,5 +251,14 @@
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
-+
-+		fdp1@fe940000 {
-+			compatible = "renesas,fdp1";
-+			reg = <0 0xfe940000 0 0x2400>;
-+			interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 119>;
-+			power-domains = <&sysc R8A7796_PD_A3VC>;
-+			renesas,fcp = <&fcpf0>;
-+		};
- 	};
- };
--- 
-Regards,
+Gr{oetje,eeting}s,
 
-Laurent Pinchart
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
