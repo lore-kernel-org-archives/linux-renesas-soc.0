@@ -1,72 +1,82 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 22/23] clk: renesas: r8a7779: Remove obsolete r8a7779_clocks_init()
-Date: Fri, 21 Oct 2016 15:17:36 +0200
-Message-Id: <1477055857-17936-23-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
-References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:49132 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752738AbcJDQXh (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 4 Oct 2016 12:23:37 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH 0/2] R-Car DU: Add support for LVDS mode selection
+Date: Tue,  4 Oct 2016 19:23:28 +0300
+Message-Id: <1475598210-26857-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car H1 board code no longer calls r8a7779_clocks_init().
+Hello,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
----
-v4:
-  - Add Acked-by,
+This patch series adds support for LVDS mode selection in the R-Car DU driver.
 
-v3:
-  - New.
----
- drivers/clk/renesas/clk-r8a7779.c | 9 ---------
- include/linux/clk/renesas.h       | 1 -
- 2 files changed, 10 deletions(-)
+Patch 1/2 defines a new DT binding for LVDS panel. Compared to the existing
+DPI panel bindings that are currently abused by the driver for LVDS panel,
+this new binding specifies the LVDS more explicitly. Patch 2/2 then adds
+support for the new bindings to the driver, retrieving the mode from DT and
+configuring the hardware accordingly.
 
-diff --git a/drivers/clk/renesas/clk-r8a7779.c b/drivers/clk/renesas/clk-r8a7779.c
-index ca7551bcb1153c3d..27fbfafaf2cd0353 100644
---- a/drivers/clk/renesas/clk-r8a7779.c
-+++ b/drivers/clk/renesas/clk-r8a7779.c
-@@ -89,8 +89,6 @@ struct cpg_clk_config {
-  * Initialization
-  */
- 
--static u32 cpg_mode __initdata;
--
- static struct clk * __init
- r8a7779_cpg_register_clock(struct device_node *np, struct r8a7779_cpg *cpg,
- 			   const struct cpg_clk_config *config,
-@@ -178,10 +176,3 @@ static void __init r8a7779_cpg_clocks_init(struct device_node *np)
- }
- CLK_OF_DECLARE(r8a7779_cpg_clks, "renesas,r8a7779-cpg-clocks",
- 	       r8a7779_cpg_clocks_init);
--
--void __init r8a7779_clocks_init(u32 mode)
--{
--	cpg_mode = mode;
--
--	of_clk_init(NULL);
--}
-diff --git a/include/linux/clk/renesas.h b/include/linux/clk/renesas.h
-index 2b663bba1adcc7c1..9e969941f3f62878 100644
---- a/include/linux/clk/renesas.h
-+++ b/include/linux/clk/renesas.h
-@@ -20,7 +20,6 @@
- struct device_node;
- struct generic_pm_domain;
- 
--void r8a7779_clocks_init(u32 mode);
- void rcar_gen2_clocks_init(u32 mode);
- 
- void cpg_mstp_add_clk_domain(struct device_node *np);
+The LVDS panel DT bindings are based on the relevant standards I have been
+able to find, as well as on existing LVDS-related code and DT bindings
+available in the mainline kernel. Those include
+
+- the LVDS formats MEDIA_BUS_FMT_RGB666_1X7X3_SPWG,
+  MEDIA_BUS_FMT_RGB888_1X7X4_SPWG and MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA
+  (Documentation/media/uapi/v4l/subdev-formats.rst)
+- iMX display DT bindings available in
+  (Documentation/devicetree/bindings/display/imx/ldb.txt)
+- the drivers/gpu/drm/imx/ driver
+
+In addition to the three modes specified in the LVDS panel DT bindings, the
+Renesas R-Car DU also supports the following two modes.
+
+Slot       0       1       2       3       4       5       6
+       ________________                         _________________
+Clock                  \_______________________/
+         ______  ______  ______  ______  ______  ______  ______
+DATA0  ><_CTL0_><__R7__><__R6__><__R5__><__R4__><__R3__><__R2__><
+DATA1  ><_CTL1_><__G7__><__G6__><__G5__><__G4__><__G3__><__G2__><
+DATA2  ><_CTL2_><__B7__><__B6__><__B5__><__B4__><__B3__><__B2__><
+DATA3  ><_CTL3_><__B1__><__B0__><__G1__><__G0__><__R1__><__R0__><
+         ______  ______  ______  ______  ______  ______  ______
+DATA0  ><_CTL0_><__R5__><__R4__><__R3__><__R2__><__R1__><__R0__><
+DATA1  ><_CTL1_><__G5__><__G4__><__G3__><__G2__><__G1__><__G0__><
+DATA2  ><_CTL2_><__B5__><__B4__><__B3__><__B2__><__B1__><__B0__><
+DATA3  ><_CTL3_><__B7__><__B6__><__G7__><__G6__><__R7__><__R6__><
+
+and their mirrored version.
+
+I haven't been able to find any standard defining those data mappings, nor any
+panel using them. The control signals positions correspond to DC-balanced LVDS
+(see figure 18 on page 19 of http://www.ti.com/lit/ds/symlink/ds90cf388.pdf),
+but the R-Car DU doesn't support DC-balanced LVDS as far as I can tell, so
+it's not a match. If anyone knows of other devices supporting these data
+mappings or of standards defining them I would appreciate the information and
+will update the bindings accordingly.
+
+
+Laurent Pinchart (2):
+  devicetree/bindings: display: Add bindings for LVDS panels
+  drm: rcar-du: Add support for LVDS mode selection
+
+ .../bindings/display/panel/panel-lvds.txt          | 119 +++++++++++++++++++++
+ drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c          |  29 +++++
+ drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c          |  11 +-
+ drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.h          |  13 +++
+ 4 files changed, 170 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/panel-lvds.txt
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
