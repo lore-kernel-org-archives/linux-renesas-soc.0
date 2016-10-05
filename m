@@ -1,81 +1,113 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:36433 "EHLO
-        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751947AbcJEUy1 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Oct 2016 16:54:27 -0400
-Received: by mail-lf0-f53.google.com with SMTP id b75so90907800lfg.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Oct 2016 13:54:26 -0700 (PDT)
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Subject: [PATCH 2/3] ARM: shmobile: r8a7743: add CPG clock index macros
-Date: Wed, 05 Oct 2016 23:54:23 +0300
-Message-ID: <4289081.UEHqeRI6YW@wasted.cogentembedded.com>
-In-Reply-To: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
-References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 05/11] ARM: dts: r8a7743: add SYS-DMAC support
+Date: Thu, 06 Oct 2016 00:39:23 +0300
+Message-ID: <7670182.9DCiKYVbtJ@wasted.cogentembedded.com>
+In-Reply-To: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com>
+References: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by the device tree sources to reference the R8A7743 CPG
-clocks  by index.
+Describe SYS-DMAC0/1 in the R8A7743 device tree.
+
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
 
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 ---
- include/dt-bindings/clock/r8a7743-cpg-mssr.h |   43 +++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+Changes in version 3:
+- resolved a reject;
+- updated the "clocks" properties for the CPG/MSSR driver.
 
-Index: renesas/include/dt-bindings/clock/r8a7743-cpg-mssr.h
+Changes in version 2:
+- added Geert's tag.
+
+ arch/arm/boot/dts/r8a7743.dtsi |   64 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
 ===================================================================
---- /dev/null
-+++ renesas/include/dt-bindings/clock/r8a7743-cpg-mssr.h
-@@ -0,0 +1,43 @@
-+/*
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
+--- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
++++ renesas/arch/arm/boot/dts/r8a7743.dtsi
+@@ -98,6 +98,70 @@
+ 			reg = <0 0xe6180000 0 0x0200>;
+ 			#power-domain-cells = <1>;
+ 		};
 +
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
++		dmac0: dma-controller@e6700000 {
++			compatible = "renesas,dmac-r8a7743",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe6700000 0 0x20000>;
++			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7",
++					"ch8", "ch9", "ch10", "ch11",
++					"ch12", "ch13", "ch14";
++			clocks = <&cpg CPG_MOD 219>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			#dma-cells = <1>;
++			dma-channels = <15>;
++		};
 +
-+/* r8a7743 CPG Core Clocks */
-+#define R8A7743_CLK_Z			0
-+#define R8A7743_CLK_ZG			1
-+#define R8A7743_CLK_ZTR			2
-+#define R8A7743_CLK_ZTRD2		3
-+#define R8A7743_CLK_ZT			4
-+#define R8A7743_CLK_ZX			5
-+#define R8A7743_CLK_ZS			6
-+#define R8A7743_CLK_HP			7
-+#define R8A7743_CLK_B			8
-+#define R8A7743_CLK_LB			9
-+#define R8A7743_CLK_P			10
-+#define R8A7743_CLK_CL			11
-+#define R8A7743_CLK_M2			12
-+#define R8A7743_CLK_ZB3			13
-+#define R8A7743_CLK_ZB3D2		14
-+#define R8A7743_CLK_DDR			15
-+#define R8A7743_CLK_SDH			16
-+#define R8A7743_CLK_SD0			17
-+#define R8A7743_CLK_SD2			18
-+#define R8A7743_CLK_SD3			19
-+#define R8A7743_CLK_MMC0		20
-+#define R8A7743_CLK_MP			21
-+#define R8A7743_CLK_QSPI		22
-+#define R8A7743_CLK_CP			23
-+#define R8A7743_CLK_RCAN		24
-+#define R8A7743_CLK_R			25
-+#define R8A7743_CLK_OSC			26
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__ */
++		dmac1: dma-controller@e6720000 {
++			compatible = "renesas,dmac-r8a7743",
++				     "renesas,rcar-dmac";
++			reg = <0 0xe6720000 0 0x20000>;
++			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "error",
++					"ch0", "ch1", "ch2", "ch3",
++					"ch4", "ch5", "ch6", "ch7",
++					"ch8", "ch9", "ch10", "ch11",
++					"ch12", "ch13", "ch14";
++			clocks = <&cpg CPG_MOD 218>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			#dma-cells = <1>;
++			dma-channels = <15>;
++		};
+ 	};
+ 
+ 	/* External root clock */
+
