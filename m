@@ -1,30 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:39144 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752342AbcJEN23 (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33445 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754787AbcJEKD0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Oct 2016 09:28:29 -0400
+        Wed, 5 Oct 2016 06:03:26 -0400
 MIME-Version: 1.0
 In-Reply-To: <2254757.qf3e5qBuAz@avalon>
 References: <2017044.9fZNuWa2OZ@wasted.cogentembedded.com> <CAMuHMdWEg8V81w=MT4akCaV=VUGopyWLJtSQC+KeWSpTR5dR_w@mail.gmail.com>
  <2254757.qf3e5qBuAz@avalon>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Wed, 5 Oct 2016 08:28:05 -0500
-Message-ID: <CAL_Jsq+p35REB_Lwm2vhGEKiTQHCawAXqYeJ1Yq5o3WEad9K8Q@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Oct 2016 12:03:24 +0200
+Message-ID: <CAMuHMdWG3R9FzFakx8eccYXXFMP_8_JH0Q0f8W8n1uZrOdygtg@mail.gmail.com>
 Subject: Re: [PATCH] sh-sci: add R8A7743/5 support
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Greg KH <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.cz>,
         "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 5, 2016 at 4:55 AM, Laurent Pinchart
+Hi Laurent,
+
+On Wed, Oct 5, 2016 at 11:55 AM, Laurent Pinchart
 <laurent.pinchart@ideasonboard.com> wrote:
 > On Friday 30 Sep 2016 10:38:48 Geert Uytterhoeven wrote:
 >> On Thu, Sep 29, 2016 at 11:37 PM, Sergei Shtylyov wrote:
@@ -65,6 +67,20 @@ On Wed, Oct 5, 2016 at 4:55 AM, Laurent Pinchart
 > Are we *really* going to add four compat string for each RZ/G* SoC ? We're
 > reaching the limit of sanity...
 
-Is it really 4 distinct UARTs on a chip? DT can't fix that insanity.
+Soon we can use soc_device_match(), if we ever need to handle r8a7743 or
+r8a7745 quirks?
 
-Rob
+Declaring it is compatible with renesas,rcar-gen2-scif is still good/needed for
+the BRG (Baud Rate Generator for External Clock), which is not present on e.g.
+RZ/A1H.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
