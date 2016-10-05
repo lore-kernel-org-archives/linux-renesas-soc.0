@@ -1,66 +1,111 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34474 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751664AbcJEHuc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 5 Oct 2016 03:50:32 -0400
+MIME-Version: 1.0
+In-Reply-To: <CAL_Jsq+g7xcaWA3ys9B0Ro-BuGHWFGi9g4BBj3mYyvz7oqxppw@mail.gmail.com>
+References: <1475163064-20399-1-git-send-email-geert+renesas@glider.be>
+ <CAL_JsqK9JL6UmCzi-szPSakVNp1Cv4-ZVrGnrQ6hdKt_8VJQSQ@mail.gmail.com>
+ <CAMuHMdXzqW2FfYKwBGevBCbA5f4m7+p+hGF7XJpppDz=VNMs1w@mail.gmail.com> <CAL_Jsq+g7xcaWA3ys9B0Ro-BuGHWFGi9g4BBj3mYyvz7oqxppw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Oct 2016 09:50:30 +0200
+Message-ID: <CAMuHMdXJpJQ8aAqgLneXT13kW1ZnF9gPKF9u9kJ61bVTJAF8Ow@mail.gmail.com>
+Subject: Re: [PATCH/RFC] tty: serial_core: Move uart_console() check after
+ console registration
+To: Rob Herring <robh@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Yangbo Lu <yangbo.lu@nxp.com>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] base: soc: Early register bus when needed
-Date: Tue,  4 Oct 2016 11:09:24 +0200
-Message-Id: <1475572167-29581-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1475572167-29581-1-git-send-email-geert+renesas@glider.be>
-References: <1475572167-29581-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+        Jiri Slaby <jslaby@suse.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If soc_device_register() is called before soc_bus_register(), it crashes
-with a NULL pointer dereference.
+Hi Rob,
 
-soc_bus_register() is already a core_initcall(), but drivers/base/ is
-entered later than e.g. drivers/pinctrl/ and drivers/soc/. Hence there
-are several subsystems that may need to know SoC revision information,
-while it's not so easy to initialize the SoC bus even earlier using an
-initcall.
+On Mon, Oct 3, 2016 at 10:30 PM, Rob Herring <robh@kernel.org> wrote:
+> On Mon, Oct 3, 2016 at 2:42 PM, Geert Uytterhoeven <geert@linux-m68k.org>=
+ wrote:
+>> On Mon, Oct 3, 2016 at 8:25 PM, Rob Herring <robh@kernel.org> wrote:
+>>> On Thu, Sep 29, 2016 at 10:31 AM, Geert Uytterhoeven
+>>> <geert+renesas@glider.be> wrote:
+>>>> The port->console flag is always false, as uart_console() is called
+>>>> before the serial console has been registered.
+>>>
+>>> I'm not seeing how that is. Everything uart_console() depends on
+>>> (port->cons, port->cons->index, and port->line) should be set already.
+>>> Maybe you pass in -1 for index which gets changed to 0 is the only
+>>> thing I can see. Is doing that valid if you have multiple ports?
+>>
+>> Isn't .index always initialized to -1, and set to the actual line number=
+ when
+>> the console is registered? That's how I remember it from when
+>> register_console() was introduced (in 2.1)...
+>
+> Okay, the index is also set and gets marked enabled when specified on
+> the command line (or DT).
 
-To fix this, let soc_device_register() register the bus early if that
-hasn't happened yet.
+I'm using DT and stdout-path. Where is the index set?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/base/soc.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+>>>> Hence for a serial port used as the console, uart_tty_port_shutdown()
+>>>> will still be called when userspace closes the port, powering it down.
+>>>> This will lead to a system lock up when the serial console driver writ=
+es
+>>>> to the serial port's registers.
+>>>>
+>>>> To fix this, move the setting of port->console after the call to
+>>>> uart_configure_port(), which registers the serial console.
+>>>>
+>>>> Fixes: 761ed4a94582ab29 ("tty: serial_core: convert uart_close to use =
+tty_port_close")
+>>>> Reported-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech=
+.se>
+>>>> Reported-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>> ---
+>>>> RFC because of the comment "If this port is a console, then the spinlo=
+ck
+>>>> is already initialised", and the pre-existing code calling
+>>>> uart_console() before uart_configure_port().
+>>>
+>>> So the spinlock is initialized twice which is probably harmless? If
+>>> the spinlock was initialized by the console, then the index would
+>>> probably not be -1.
+>>
+>> Shouldn't a double initialization cause a warning, with DEBUG_SPINLOCK=
+=3Dy
+>> (which I have enabled)?
+>
+> I though only missing init caused warnings.
+>
+> Anyway, we can't really re-order things as uart_configure_port uses
+> the spinlock. This has existed this way for some time and is all an
+> independent of my change and your fix. So for your fix:
+>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-diff --git a/drivers/base/soc.c b/drivers/base/soc.c
-index 75b98aad6fafd171..f612715d24754d27 100644
---- a/drivers/base/soc.c
-+++ b/drivers/base/soc.c
-@@ -114,6 +114,12 @@ struct soc_device *soc_device_register(struct soc_device_attribute *soc_dev_attr
- 	struct soc_device *soc_dev;
- 	int ret;
- 
-+	if (!soc_bus_type.p) {
-+		ret = bus_register(&soc_bus_type);
-+		if (ret)
-+			goto out1;
-+	}
-+
- 	soc_dev = kzalloc(sizeof(*soc_dev), GFP_KERNEL);
- 	if (!soc_dev) {
- 		ret = -ENOMEM;
-@@ -157,6 +163,9 @@ void soc_device_unregister(struct soc_device *soc_dev)
- 
- static int __init soc_bus_register(void)
- {
-+	if (soc_bus_type.p)
-+		return 0;
-+
- 	return bus_register(&soc_bus_type);
- }
- core_initcall(soc_bus_register);
--- 
-1.9.1
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
