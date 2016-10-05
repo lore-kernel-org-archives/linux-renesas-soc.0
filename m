@@ -1,34 +1,124 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:37642 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935898AbcJGDPm (ORCPT
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:34190 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750700AbcJEVhM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Oct 2016 23:15:42 -0400
-Date: Fri, 7 Oct 2016 12:15:37 +0900
-From: Simon Horman <horms@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        Wed, 5 Oct 2016 17:37:12 -0400
+Received: by mail-lf0-f43.google.com with SMTP id b81so516730lfe.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Oct 2016 14:37:11 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 03/11] ARM: shmobile: r8a7743: basic SoC support
-Message-ID: <20161007031537.GK13721@verge.net.au>
+Subject: [PATCH v3 03/11] ARM: shmobile: r8a7743: basic SoC support
+Date: Thu, 06 Oct 2016 00:37:08 +0300
+Message-ID: <15557770.lH5aPepOeZ@wasted.cogentembedded.com>
+In-Reply-To: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com>
 References: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com>
- <15557770.lH5aPepOeZ@wasted.cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <15557770.lH5aPepOeZ@wasted.cogentembedded.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Oct 06, 2016 at 12:37:08AM +0300, Sergei Shtylyov wrote:
-> Add minimal support for the RZ/G1M (R8A7743) SoC.
-> 
-> Based on the original (and large) patch by Dmitry Shifrin
-> <dmitry.shifrin@cogentembedded.com>.
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add minimal support for the RZ/G1M (R8A7743) SoC.
 
-Thanks, I have queued this up.
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+---
+Changes in version 2:
+- removed "select I2C" from the R8A7743 Kconfig entry;
+- documented the R8A7743 device tree binding;
+- added Geert's tag.
+
+ Documentation/devicetree/bindings/arm/shmobile.txt |    2 +
+ arch/arm/mach-shmobile/Kconfig                     |    4 ++
+ arch/arm/mach-shmobile/Makefile                    |    1 
+ arch/arm/mach-shmobile/setup-r8a7743.c             |   34 +++++++++++++++++++++
+ 4 files changed, 41 insertions(+)
+
+Index: renesas/Documentation/devicetree/bindings/arm/shmobile.txt
+===================================================================
+--- renesas.orig/Documentation/devicetree/bindings/arm/shmobile.txt
++++ renesas/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -13,6 +13,8 @@ SoCs:
+     compatible = "renesas,r8a73a4"
+   - R-Mobile A1 (R8A77400)
+     compatible = "renesas,r8a7740"
++  - RZ/G1M (R8A77430)
++    compatible = "renesas,r8a7743"
+   - R-Car M1A (R8A77781)
+     compatible = "renesas,r8a7778"
+   - R-Car H1 (R8A77790)
+Index: renesas/arch/arm/mach-shmobile/Kconfig
+===================================================================
+--- renesas.orig/arch/arm/mach-shmobile/Kconfig
++++ renesas/arch/arm/mach-shmobile/Kconfig
+@@ -68,6 +68,10 @@ config ARCH_R8A7740
+ 	select ARCH_RMOBILE
+ 	select RENESAS_INTC_IRQPIN
+ 
++config ARCH_R8A7743
++	bool "RZ/G1M (R8A77430)"
++	select ARCH_RCAR_GEN2
++
+ config ARCH_R8A7778
+ 	bool "R-Car M1A (R8A77781)"
+ 	select ARCH_RCAR_GEN1
+Index: renesas/arch/arm/mach-shmobile/Makefile
+===================================================================
+--- renesas.orig/arch/arm/mach-shmobile/Makefile
++++ renesas/arch/arm/mach-shmobile/Makefile
+@@ -9,6 +9,7 @@ obj-y				:= timer.o
+ obj-$(CONFIG_ARCH_SH73A0)	+= setup-sh73a0.o
+ obj-$(CONFIG_ARCH_R8A73A4)	+= setup-r8a73a4.o
+ obj-$(CONFIG_ARCH_R8A7740)	+= setup-r8a7740.o
++obj-$(CONFIG_ARCH_R8A7743)	+= setup-r8a7743.o
+ obj-$(CONFIG_ARCH_R8A7778)	+= setup-r8a7778.o
+ obj-$(CONFIG_ARCH_R8A7779)	+= setup-r8a7779.o pm-r8a7779.o
+ obj-$(CONFIG_ARCH_R8A7790)	+= setup-r8a7790.o
+Index: renesas/arch/arm/mach-shmobile/setup-r8a7743.c
+===================================================================
+--- /dev/null
++++ renesas/arch/arm/mach-shmobile/setup-r8a7743.c
+@@ -0,0 +1,34 @@
++/*
++ * r8a7743 processor support
++ *
++ * Copyright (C) 2016 Cogent Embedded, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ *  published by the Free Software Foundation; of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/init.h>
++
++#include <asm/mach/arch.h>
++
++#include "common.h"
++#include "rcar-gen2.h"
++
++static const char * const r8a7743_boards_compat_dt[] __initconst = {
++	"renesas,r8a7743",
++	NULL,
++};
++
++DT_MACHINE_START(R8A7743_DT, "Generic R8A7743 (Flattened Device Tree)")
++	.init_early	= shmobile_init_delay,
++	.init_time	= rcar_gen2_timer_init,
++	.init_late	= shmobile_init_late,
++	.reserve	= rcar_gen2_reserve,
++	.dt_compat	= r8a7743_boards_compat_dt,
++MACHINE_END
