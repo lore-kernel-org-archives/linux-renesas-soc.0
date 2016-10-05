@@ -1,39 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:34817 "EHLO
-        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752666AbcJGTGU (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:36433 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751947AbcJEUy1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Oct 2016 15:06:20 -0400
-Received: by mail-lf0-f42.google.com with SMTP id l131so48074632lfl.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 07 Oct 2016 12:06:19 -0700 (PDT)
-Subject: Re: [PATCH 2/3] ARM: shmobile: r8a7743: add CPG clock index macros
+        Wed, 5 Oct 2016 16:54:27 -0400
+Received: by mail-lf0-f53.google.com with SMTP id b75so90907800lfg.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Oct 2016 13:54:26 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 To: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
         mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
- <4289081.UEHqeRI6YW@wasted.cogentembedded.com>
+        linux-renesas-soc@vger.kernel.org
 Cc: linux-clk@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <8677b11a-64d7-23af-48ef-bc58c9d4b3f3@cogentembedded.com>
-Date: Fri, 7 Oct 2016 22:06:16 +0300
+Subject: [PATCH 2/3] ARM: shmobile: r8a7743: add CPG clock index macros
+Date: Wed, 05 Oct 2016 23:54:23 +0300
+Message-ID: <4289081.UEHqeRI6YW@wasted.cogentembedded.com>
+In-Reply-To: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
+References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <4289081.UEHqeRI6YW@wasted.cogentembedded.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+Add macros usable by the device tree sources to reference the R8A7743 CPG
+clocks  by index.
 
-On 10/05/2016 11:54 PM, Sergei Shtylyov wrote:
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-> Add macros usable by the device tree sources to reference the R8A7743 CPG
-> clocks  by index.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+---
+ include/dt-bindings/clock/r8a7743-cpg-mssr.h |   43 +++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-    Probably makes sense to merge this patch to both the clk and renesas trees 
-in order to satisfy the dependencies both ways... what do you think, Simon?
-
-MBR, Sergei
+Index: renesas/include/dt-bindings/clock/r8a7743-cpg-mssr.h
+===================================================================
+--- /dev/null
++++ renesas/include/dt-bindings/clock/r8a7743-cpg-mssr.h
+@@ -0,0 +1,43 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7743 CPG Core Clocks */
++#define R8A7743_CLK_Z			0
++#define R8A7743_CLK_ZG			1
++#define R8A7743_CLK_ZTR			2
++#define R8A7743_CLK_ZTRD2		3
++#define R8A7743_CLK_ZT			4
++#define R8A7743_CLK_ZX			5
++#define R8A7743_CLK_ZS			6
++#define R8A7743_CLK_HP			7
++#define R8A7743_CLK_B			8
++#define R8A7743_CLK_LB			9
++#define R8A7743_CLK_P			10
++#define R8A7743_CLK_CL			11
++#define R8A7743_CLK_M2			12
++#define R8A7743_CLK_ZB3			13
++#define R8A7743_CLK_ZB3D2		14
++#define R8A7743_CLK_DDR			15
++#define R8A7743_CLK_SDH			16
++#define R8A7743_CLK_SD0			17
++#define R8A7743_CLK_SD2			18
++#define R8A7743_CLK_SD3			19
++#define R8A7743_CLK_MMC0		20
++#define R8A7743_CLK_MP			21
++#define R8A7743_CLK_QSPI		22
++#define R8A7743_CLK_CP			23
++#define R8A7743_CLK_RCAN		24
++#define R8A7743_CLK_R			25
++#define R8A7743_CLK_OSC			26
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__ */
