@@ -1,57 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:36824 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933401AbcJFU4B (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:53557 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753455AbcJEOKW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Oct 2016 16:56:01 -0400
-MIME-Version: 1.0
-In-Reply-To: <7496008.sErWcihIz4@avalon>
-References: <2017044.9fZNuWa2OZ@wasted.cogentembedded.com> <2254757.qf3e5qBuAz@avalon>
- <CAL_Jsq+p35REB_Lwm2vhGEKiTQHCawAXqYeJ1Yq5o3WEad9K8Q@mail.gmail.com> <7496008.sErWcihIz4@avalon>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Oct 2016 22:55:59 +0200
-Message-ID: <CAMuHMdUVj485ok3UoTSixGU_dYaRr8QJrAnOO56_TDPWT=seCA@mail.gmail.com>
-Subject: Re: [PATCH] sh-sci: add R8A7743/5 support
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Wed, 5 Oct 2016 10:10:22 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Chris Brandt <Chris.Brandt@renesas.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Greg KH <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.cz>,
         "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] sh-sci: add R8A7743/5 support
+Date: Wed, 05 Oct 2016 17:10:16 +0300
+Message-ID: <3079600.pjxVqDtBI9@avalon>
+In-Reply-To: <SG2PR06MB1165204F1566A4B3B920F05B8AC40@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <2017044.9fZNuWa2OZ@wasted.cogentembedded.com> <7496008.sErWcihIz4@avalon> <SG2PR06MB1165204F1566A4B3B920F05B8AC40@SG2PR06MB1165.apcprd06.prod.outlook.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 5, 2016 at 3:37 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Wednesday 05 Oct 2016 08:28:05 Rob Herring wrote:
->> Is it really 4 distinct UARTs on a chip? DT can't fix that insanity.
->
-> It's really 4 different UART types on a chip, yes. We have actually 5
-> different UART types, named SCI, SCIF, SCIFA, SCIFB and HSCIF. Only the last 4
-> are used on R-Car SoCs.
+Hi Chris,
 
-And even that is a simplification ;-)
+On Wednesday 05 Oct 2016 13:50:18 Chris Brandt wrote:
+> > There are 34 compatible strings defined, one per UART + SoC combination,
+> > plus a set of more generic ones. So far, the driver handles the r7s72100
+> > compatible string separately as the UART on that chip is quite peculiar,
+> > but for all other SoCs we only need to match against
+> 
+> Just FYI...
+> There are 2 different types of UARTS (SCI) on r7s72100: SCIF and SCI
+> 
+> Getting  the "SCI" ones to work takes some 'tweaking' of some registers in
+> the interrupt controller that are outside of the scope of the SCI driver.
+> Basically, the power on reset values for some IRQ signaling is wrong but
+> can be adjusted with a register. At the moment, I've been fixing that in
+> u-boot.
+> 
+> So in reality, a "renesas,sci-r7s72100" is probably needed too if you want
+> to throw that one on the pile....
 
-AFAIU, evolution seems to have been
+I'm totally fine adding compatible strings when it makes sense, what bothers 
+me is a pile of compat strings to describe IP cores that are identical :-)
 
-    SCI --> SCIF ---> SCIF + BRG ---> HSCIF
-              |
-              +---> SCIFA ---> SCIFB
+-- 
+Regards,
 
-Now, that's a simplication, too ;-) There are many intermediate variants
-with slightly different features and register bits,esp. on SuperH.
-They're all handled by the same sh-sci.c driver.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
