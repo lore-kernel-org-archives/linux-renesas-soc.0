@@ -1,48 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35162 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933390AbcJQOse (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:36460 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754345AbcJEVmc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Oct 2016 10:48:34 -0400
+        Wed, 5 Oct 2016 17:42:32 -0400
+Received: by mail-lf0-f53.google.com with SMTP id b75so536519lfg.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Oct 2016 14:42:31 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 07/11] ARM: dts: r8a7743: add Ether support
+Date: Thu, 06 Oct 2016 00:42:28 +0300
+Message-ID: <1823688.my1YjA2iHn@wasted.cogentembedded.com>
+In-Reply-To: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com>
+References: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <1823688.my1YjA2iHn@wasted.cogentembedded.com>
-References: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com> <1823688.my1YjA2iHn@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 17 Oct 2016 16:48:32 +0200
-Message-ID: <CAMuHMdU-mwi7pbudspkjzzazaP+0qADVC9hg34x1gwVnBc+FaA@mail.gmail.com>
-Subject: Re: [PATCH v3 07/11] ARM: dts: r8a7743: add Ether support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 5, 2016 at 11:42 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Define the generic R8A7743 part of the Ether device node.
->
-> Based on the original (and large) patch by Dmitry Shifrin
-> <dmitry.shifrin@cogentembedded.com>.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Define the generic R8A7743 part of the Ether device node.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-                        Geert
+---
+Changes in version 3:
+- resoled a reject;
+- updated the "clocks" property for the CPG/MSSR driver.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Changes in version 2:
+- new patch.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ arch/arm/boot/dts/r8a7743.dtsi |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
++++ renesas/arch/arm/boot/dts/r8a7743.dtsi
+@@ -423,6 +423,18 @@
+ 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
+ 			status = "disabled";
+ 		};
++
++		ether: ethernet@ee700000 {
++			compatible = "renesas,ether-r8a7743";
++			reg = <0 0xee700000 0 0x400>;
++			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 813>;
++			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
++			phy-mode = "rmii";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
+ 	};
+ 
+ 	/* External root clock */
