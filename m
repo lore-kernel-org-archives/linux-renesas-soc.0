@@ -1,31 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:53409 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:53337 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752164AbcJENhO (ORCPT
+        with ESMTP id S1752342AbcJEN2p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Oct 2016 09:37:14 -0400
+        Wed, 5 Oct 2016 09:28:45 -0400
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Greg KH <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.cz>,
         "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Subject: Re: [PATCH] sh-sci: add R8A7743/5 support
-Date: Wed, 05 Oct 2016 16:37:09 +0300
-Message-ID: <7496008.sErWcihIz4@avalon>
-In-Reply-To: <CAL_Jsq+p35REB_Lwm2vhGEKiTQHCawAXqYeJ1Yq5o3WEad9K8Q@mail.gmail.com>
-References: <2017044.9fZNuWa2OZ@wasted.cogentembedded.com> <2254757.qf3e5qBuAz@avalon> <CAL_Jsq+p35REB_Lwm2vhGEKiTQHCawAXqYeJ1Yq5o3WEad9K8Q@mail.gmail.com>
+Date: Wed, 05 Oct 2016 16:28:40 +0300
+Message-ID: <1699503.eD0xpWbr2B@avalon>
+In-Reply-To: <CAMuHMdWG3R9FzFakx8eccYXXFMP_8_JH0Q0f8W8n1uZrOdygtg@mail.gmail.com>
+References: <2017044.9fZNuWa2OZ@wasted.cogentembedded.com> <2254757.qf3e5qBuAz@avalon> <CAMuHMdWG3R9FzFakx8eccYXXFMP_8_JH0Q0f8W8n1uZrOdygtg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wednesday 05 Oct 2016 08:28:05 Rob Herring wrote:
-> On Wed, Oct 5, 2016 at 4:55 AM, Laurent Pinchart
+On Wednesday 05 Oct 2016 12:03:24 Geert Uytterhoeven wrote:
+> Hi Laurent,
+> 
+> On Wed, Oct 5, 2016 at 11:55 AM, Laurent Pinchart
 > 
 > <laurent.pinchart@ideasonboard.com> wrote:
 > > On Friday 30 Sep 2016 10:38:48 Geert Uytterhoeven wrote:
@@ -82,28 +84,21 @@ On Wednesday 05 Oct 2016 08:28:05 Rob Herring wrote:
 > > Are we *really* going to add four compat string for each RZ/G* SoC ? We're
 > > reaching the limit of sanity...
 > 
-> Is it really 4 distinct UARTs on a chip? DT can't fix that insanity.
+> Soon we can use soc_device_match(), if we ever need to handle r8a7743 or
+> r8a7745 quirks?
 
-It's really 4 different UART types on a chip, yes. We have actually 5 
-different UART types, named SCI, SCIF, SCIFA, SCIFB and HSCIF. Only the last 4 
-are used on R-Car SoCs.
+We could, but I believe usage of soc_device_match() should be kept minimal, 
+otherwise we could remove all compat strings but one and handle all 
+differences in the driver with soc_device_match(). That's a topic I'd like to 
+discuss face to face in Berlin. The recent new compatible strings show we have 
+a problem, and we need to agree on how to address it.
 
-There are 34 compatible strings defined, one per UART + SoC combination, plus 
-a set of more generic ones. So far, the driver handles the r7s72100 compatible 
-string separately as the UART on that chip is quite peculiar, but for all 
-other SoCs we only need to match against
+> Declaring it is compatible with renesas,rcar-gen2-scif is still good/needed
+> for the BRG (Baud Rate Generator for External Clock), which is not present
+> on e.g. RZ/A1H.
 
-- the five generic renesas,(h)sci(f|fa|fb)? types
-- the per-family renesas,rcar-gen[123]-scif types for the SCIF only
-
-This means that there's a high level of compatibility between UARTs instances 
-in different SoCs (we might need a few more per-family compatible strings to 
-tell models apart that could present have family-dependent features currently 
-not supported in the driver, but I believe my argument still remains largely 
-true). However, due to the combination of the "DT is an ABI" and "IPs that 
-appear identical in the datasheet could actually have differences that we 
-haven't found yet" dogmas, the proliferation of per-SoC compatible strings is 
-getting out of hands.
+Given that the RZ/G1[ME] SCIFs seem to be compatible with the Gen2 SCIFs using 
+the renesas,rcar-gen2-scif compat string seems fine to me.
 
 -- 
 Regards,
