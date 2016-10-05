@@ -1,66 +1,50 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Yangbo Lu <yangbo.lu@nxp.com>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/4] base: soc: Check for NULL SoC device attributes
-Date: Tue,  4 Oct 2016 11:09:26 +0200
-Message-Id: <1475572167-29581-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1475572167-29581-1-git-send-email-geert+renesas@glider.be>
-References: <1475572167-29581-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:36749 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754521AbcJEHdc (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 5 Oct 2016 03:33:32 -0400
+MIME-Version: 1.0
+In-Reply-To: <20160913140314.22035-5-niklas.soderlund+renesas@ragnatech.se>
+References: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se> <20160913140314.22035-5-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Oct 2016 09:33:29 +0200
+Message-ID: <CAMuHMdWKHiHUL14GdAHbmLnYR1Dv51JVnODV5dOS-+VnB6qYZA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] pinctrl: sh-pfc: r8a7795: Add group for QSPI0 and
+ QSPI1 pins
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If soc_device_match() is used to check the value of a specific
-attribute that is not present for the current SoC, the kernel crashes
-with a NULL pointer dereference.
+On Tue, Sep 13, 2016 at 4:03 PM, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Group the QSPI0 and QSPI1 pins into similar groups found in other sh-pfc
+> drivers.  The pins can not be muxed between functions other then QSPI
+> but there drive strength can be controlled.
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-Fix this by explicitly checking for the absence of a needed property,
-and considering this a non-match.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/base/soc.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/base/soc.c b/drivers/base/soc.c
-index 37c087096b1c5675..545cc9cf2789fe07 100644
---- a/drivers/base/soc.c
-+++ b/drivers/base/soc.c
-@@ -185,19 +185,23 @@ static int soc_device_match_one(struct device *dev, void *arg)
- 	const struct soc_device_attribute *match = arg;
- 
- 	if (match->machine &&
--	    !glob_match(match->machine, soc_dev->attr->machine))
-+	    (!soc_dev->attr->machine ||
-+	     !glob_match(match->machine, soc_dev->attr->machine)))
- 		return 0;
- 
- 	if (match->family &&
--	    !glob_match(match->family, soc_dev->attr->family))
-+	    (!soc_dev->attr->family ||
-+	     !glob_match(match->family, soc_dev->attr->family)))
- 		return 0;
- 
- 	if (match->revision &&
--	    !glob_match(match->revision, soc_dev->attr->revision))
-+	    (!soc_dev->attr->revision ||
-+	     !glob_match(match->revision, soc_dev->attr->revision)))
- 		return 0;
- 
- 	if (match->soc_id &&
--	    !glob_match(match->soc_id, soc_dev->attr->soc_id))
-+	    (!soc_dev->attr->soc_id ||
-+	     !glob_match(match->soc_id, soc_dev->attr->soc_id)))
- 		return 0;
- 
- 	return 1;
--- 
-1.9.1
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
