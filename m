@@ -1,37 +1,55 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from smtp6-v.fe.bosch.de ([139.15.237.11]:63824 "EHLO
+        smtp6-v.fe.bosch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752414AbcJEMSA (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 5 Oct 2016 08:18:00 -0400
+Subject: Re: [PATCH/RFC 4/4] soc: renesas: Identify SoC and register with the
+ SoC bus
 To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>,
+References: <1475572167-29581-1-git-send-email-geert+renesas@glider.be>
+ <1475572167-29581-5-git-send-email-geert+renesas@glider.be>
+CC: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yangbo Lu <yangbo.lu@nxp.com>,
+        Arnd Bergmann <arnd@arndb.de>, Yangbo Lu <yangbo.lu@nxp.com>,
         Lee Jones <lee.jones@linaro.org>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH/RFC 4/4] soc: renesas: Identify SoC and register with the SoC bus
-Date: Mon, 10 Oct 2016 16:23:19 +0200
-Message-ID: <1560471.cOCZ4VcGTh@wuerfel>
-In-Reply-To: <1475572167-29581-5-git-send-email-geert+renesas@glider.be>
-References: <1475572167-29581-1-git-send-email-geert+renesas@glider.be> <1475572167-29581-5-git-send-email-geert+renesas@glider.be>
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Message-ID: <36af9b87-dfbf-4e34-78d4-c09b04100604@de.bosch.com>
+Date: Wed, 5 Oct 2016 14:17:55 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1475572167-29581-5-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tuesday, October 4, 2016 11:09:27 AM CEST Geert Uytterhoeven wrote:
+Hi Geert,
+
+I've been offline some weeks, so sorry if I'm not completely up to date, 
+yet, or miss anything.
+
+Overall, having a quick look, the proposal in this patch series and your 
+second series "arm64: renesas: r8a7795: R-Car H3 ES2.0 Prototype" looks 
+nice to me. At least much better than encoding the ESx.x in the device 
+tree as discussed some month ago ;)
+
+Two minor comments below:
+
+
+On 04.10.2016 11:09, Geert Uytterhoeven wrote:
 > Identify the SoC type and revision, and register this information with
 > the SoC bus, so it is available under /sys/devices/soc0/, and can be
 > checked where needed using soc_device_match().
-> 
+>
 > In addition, on SoCs that support it, the product ID is read from a
 > hardware register and validated, to catch accidental use of a DTB for a
 > different SoC.
-> 
+>
 > Example:
-> 
+>
 >     Detected Renesas r8a7791 ES1.0
 >     ...
 >     # cat /sys/devices/soc0/{family,machine,soc_id,revision}
@@ -39,26 +57,60 @@ On Tuesday, October 4, 2016 11:09:27 AM CEST Geert Uytterhoeven wrote:
 >     Koelsch
 >     r8a7791
 >     ES1.0
-> 
-
-Seems all reasonable.
-
+>
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
 > This patch does NOT add a call to
-> 
+>
 >         of_platform_default_populate(NULL, NULL,
 >                                      soc_device_to_device(soc_dev));
-> 
+>
 > Contrary to suggested by commit 74d1d82cdaaec727 ("drivers/base: add bus
 > for System-on-Chip devices), doing so would not only move on-SoC devices
 > from /sys/devices/platform/ to /sys/devices/soc0/, but also all other
 > board (off-SoC) devices specified in the DTB.
-
-Right, we have moved away from that a while ago, and now just
-use the device for identification, not to model the device
-hierarchy.
-
+> ---
+>  arch/arm/mach-shmobile/Kconfig    |   1 +
+>  arch/arm64/Kconfig.platforms      |   1 +
+>  drivers/soc/renesas/Makefile      |   2 +
+>  drivers/soc/renesas/renesas-soc.c | 266 ++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 270 insertions(+)
+>  create mode 100644 drivers/soc/renesas/renesas-soc.c
+>
+> diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+> index b5a3cbe81dd1d1f0..e41d2cbb2c825981 100644
+> --- a/arch/arm/mach-shmobile/Kconfig
+> +++ b/arch/arm/mach-shmobile/Kconfig
+> @@ -42,6 +42,7 @@ menuconfig ARCH_RENESAS
+>  	select HAVE_ARM_TWD if SMP
+>  	select NO_IOPORT_MAP
+>  	select PINCTRL
+> +	select SOC_BUS
+>  	select ZONE_DMA if ARM_LPAE
+>
+>  if ARCH_RENESAS
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index be5d824ebdba2dab..a2675afc61baba8d 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -131,6 +131,7 @@ config ARCH_RENESAS
+>  	select PM
+>  	select PM_GENERIC_DOMAINS
+>  	select RENESAS_IRQC
+> +	select SOC_BUS
+>  	help
+>  	  This enables support for the ARMv8 based Renesas SoCs.
+>
+> diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+> index 623039c3514cdc34..ae6ae8a11f98aba1 100644
+> --- a/drivers/soc/renesas/Makefile
+> +++ b/drivers/soc/renesas/Makefile
+> @@ -1,3 +1,5 @@
+> +obj-y				+= renesas-soc.o
+> +
+>  obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
+>  obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
+>  obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
 > diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
 > new file mode 100644
 > index 0000000000000000..74b72e4112b8889e
@@ -90,24 +142,29 @@ hierarchy.
 > +struct renesas_family {
 > +	const char name[16];
 > +	u32 reg;			/* CCCR, PVR, or PRR */
+
+
+I'm wondering if we want to encode this information in the device tree?
+
+ From the structs below it looks like this is information would be 
+typically given in the device tree, and not hard coded in this C code?
+
+On the other hand, above you mention
+
+"catch accidental use of a DTB for a different SoC"
+
+which is a nice feature, too.
+
+So I just want to talk about the pros & cons, most probably both ways 
+are fine.
+
+
 > +};
 > +
 > +static const struct renesas_family fam_emev2 __initconst = {
 > +	.name	= "Emma Mobile EV2",
 > +};
-
-As this is not related to the others and doesn't have the respective
-register, I'd leave the platform out of this, and possibly have
-a separate driver for it.
-
-> +static const struct renesas_family fam_rza __initconst = {
-> +	.name	= "RZ/A",
-> +};
-
-I'm not sure about the relationship between this one and the others,
-maybe it should be treated in the same way as emev2 and left out from
-this driver?
-
+> +
 > +static const struct renesas_family fam_rmobile __initconst = {
 > +	.name	= "R-Mobile",
 > +	.reg	= 0xe600101c,		/* CCCR (Common Chip Code Register) */
@@ -128,6 +185,10 @@ this driver?
 > +	.reg	= 0xfff00044,		/* PRR (Product Register) */
 > +};
 > +
+> +static const struct renesas_family fam_rza __initconst = {
+> +	.name	= "RZ/A",
+> +};
+> +
 > +static const struct renesas_family fam_rzg __initconst = {
 > +	.name	= "RZ/G",
 > +	.reg	= 0xff000044,		/* PRR (Product Register) */
@@ -137,15 +198,90 @@ this driver?
 > +	.name	= "SH-Mobile",
 > +	.reg	= 0xe600101c,		/* CCCR (Common Chip Code Register) */
 > +};
-
-These seem to fall into two distinct categories, maybe there is a
-better way to group them. What device contain the two kinds of
-registers (PRR, CCCR)?
-
-Hardcoding the register address seems rather ugly here, so maybe
-there is a way to have two separate probe methods based on the
-surrounding register range, and then bind to that?
-
+> +
+> +
+> +struct renesas_soc {
+> +	const struct renesas_family *family;
+> +	u8 id;
+> +};
+> +
+> +static const struct renesas_soc soc_emev2 __initconst = {
+> +	.family	= &fam_emev2,
+> +};
+> +
+> +static const struct renesas_soc soc_rz_a1h __initconst = {
+> +	.family	= &fam_rza,
+> +};
+> +
+> +static const struct renesas_soc soc_rmobile_ape6 __initconst = {
+> +	.family	= &fam_rmobile,
+> +	.id	= 0x3f,
+> +};
+> +
+> +static const struct renesas_soc soc_rmobile_a1 __initconst = {
+> +	.family	= &fam_rmobile,
+> +	.id	= 0x40,
+> +};
+> +
+> +static const struct renesas_soc soc_rz_g1m __initconst = {
+> +	.family	= &fam_rzg,
+> +	.id	= 0x47,
+> +};
+> +
+> +static const struct renesas_soc soc_rz_g1e __initconst = {
+> +	.family	= &fam_rzg,
+> +	.id	= 0x4c,
+> +};
+> +
+> +static const struct renesas_soc soc_rcar_m1a __initconst = {
+> +	.family	= &fam_rcar_gen1,
+> +};
+> +
+> +static const struct renesas_soc soc_rcar_h1 __initconst = {
+> +	.family	= &fam_rcar_gen1,
+> +	.id	= 0x3b,
+> +};
+> +
+> +static const struct renesas_soc soc_rcar_h2 __initconst = {
+> +	.family	= &fam_rcar_gen2,
+> +	.id	= 0x45,
+> +};
+> +
+> +static const struct renesas_soc soc_rcar_m2_w __initconst = {
+> +	.family	= &fam_rcar_gen2,
+> +	.id	= 0x47,
+> +};
+> +
+> +static const struct renesas_soc soc_rcar_v2h __initconst = {
+> +	.family	= &fam_rcar_gen2,
+> +	.id	= 0x4a,
+> +};
+> +
+> +static const struct renesas_soc soc_rcar_m2_n __initconst = {
+> +	.family	= &fam_rcar_gen2,
+> +	.id	= 0x4b,
+> +};
+> +
+> +static const struct renesas_soc soc_rcar_e2 __initconst = {
+> +	.family	= &fam_rcar_gen2,
+> +	.id	= 0x4c,
+> +};
+> +
+> +static const struct renesas_soc soc_rcar_h3 __initconst = {
+> +	.family	= &fam_rcar_gen3,
+> +	.id	= 0x4f,
+> +};
+> +
+> +static const struct renesas_soc soc_rcar_m3_w __initconst = {
+> +	.family	= &fam_rcar_gen3,
+> +	.id	= 0x52,
+> +};
+> +
+> +static const struct renesas_soc soc_shmobile_ag5 __initconst = {
+> +	.family	= &fam_shmobile,
+> +	.id	= 0x37,
+> +};
+> +
 > +static const struct of_device_id renesas_socs[] __initconst = {
 > +#ifdef CONFIG_ARCH_EMEV2
 > +	{ .compatible = "renesas,emev2",	.data = &soc_emev2 },
@@ -154,8 +290,91 @@ surrounding register range, and then bind to that?
 > +	{ .compatible = "renesas,r7s72100",	.data = &soc_rz_a1h },
 > +#endif
 > +#ifdef CONFIG_ARCH_R8A73A4
+> +	{ .compatible = "renesas,r8a73a4",	.data = &soc_rmobile_ape6 },
+> +#endif
+> +#ifdef CONFIG_ARCH_R8A7740
+> +	{ .compatible = "renesas,r8a7740",	.data = &soc_rmobile_a1 },
+> +#endif
+> +#ifdef CONFIG_ARCH_R8A7743
+> +	{ .compatible = "renesas,r8a7743",	.data = &soc_rz_g1m },
+> +#endif
+> +#ifdef CONFIG_ARCH_R8A7745
+> +	{ .compatible = "renesas,r8a7745",	.data = &soc_rz_g1e },
+> +#endif
+> +#ifdef CONFIG_ARCH_R8A7778
+> +	{ .compatible = "renesas,r8a7778",	.data = &soc_rcar_m1a },
+> +#endif
+> +#ifdef CONFIG_ARCH_R8A7779
+> +	{ .compatible = "renesas,r8a7779",	.data = &soc_rcar_h1 },
+> +#endif
+> +#ifdef CONFIG_ARCH_R8A7790
+> +	{ .compatible = "renesas,r8a7790",	.data = &soc_rcar_h2 },
+> +#endif
+> +#ifdef CONFIG_ARCH_R8A7791
+> +	{ .compatible = "renesas,r8a7791",	.data = &soc_rcar_m2_w },
+> +#endif
+> +#ifdef CONFIG_ARCH_R8A7792
+> +	{ .compatible = "renesas,r8a7792",	.data = &soc_rcar_v2h },
+> +#endif
+> +#ifdef CONFIG_ARCH_R8A7793
+> +	{ .compatible = "renesas,r8a7793",	.data = &soc_rcar_m2_n },
+> +#endif
+> +#ifdef CONFIG_ARCH_R8A7794
+> +	{ .compatible = "renesas,r8a7794",	.data = &soc_rcar_e2 },
+> +#endif
+> +#ifdef CONFIG_ARCH_R8A7795
+> +	{ .compatible = "renesas,r8a7795",	.data = &soc_rcar_h3 },
+> +#endif
+> +#ifdef CONFIG_ARCH_R8A7796
+> +	{ .compatible = "renesas,r8a7796",	.data = &soc_rcar_m3_w },
+> +#endif
+> +#ifdef CONFIG_ARCH_SH73A0
+> +	{ .compatible = "renesas,sh73a0",	.data = &soc_shmobile_ag5 },
+> +#endif
+> +	{ /* sentinel */ }
+> +};
+> +
+> +static int __init renesas_soc_init(void)
+> +{
+> +	struct soc_device_attribute *soc_dev_attr;
+> +	const struct renesas_family *family;
+> +	unsigned int product, esi = 0, esf;
+> +	const struct of_device_id *match;
+> +	const struct renesas_soc *soc;
+> +	struct soc_device *soc_dev;
+> +	struct device_node *np;
+> +	void __iomem *mapped;
+> +
+> +	np = of_find_matching_node_and_match(NULL, renesas_socs, &match);
+> +	if (!np)
+> +		return -ENODEV;
+> +
+> +	of_node_put(np);
+> +	soc = match->data;
+> +	family = soc->family;
+> +
+> +	if (soc->id) {
+> +		mapped = ioremap(family->reg, 4);
+> +		if (!mapped)
+> +			return -ENOMEM;
+> +
+> +		product = readl(mapped);
+> +		iounmap(mapped);
+> +
+> +		if (((product >> 8) & 0xff) != soc->id) {
+> +			pr_crit("SoC mismatch (product = 0x%x)\n", product);
+> +			return -ENODEV;
+> +		}
+> +
+> +		esi = ((product >> 4) & 0x0f) + 1;
+> +		esf = product & 0xf;
 
-I think the #ifdefs here will result in warnings for unused symbols 
-when the Kconfig symbols are disabled.
 
-	Arnd
+I'm somehow surprised to see that all SoCs covered here use the same way 
+to encode esi and esf? I would have expected that we need different 
+decoding for different SoCs. But if this isn't the case, even better :)
+
+
+Best regards
+
+Dirk
