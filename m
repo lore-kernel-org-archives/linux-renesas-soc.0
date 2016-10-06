@@ -1,66 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:33852 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934294AbcJRPCa (ORCPT
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36824 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933401AbcJFU4B (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Oct 2016 11:02:30 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: horms@verge.net.au
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se,
-        geert@linux-m68k.org, sergei.shtylyov@cogentembedded.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 1/3] ARM: dts: r8a7793: Enable VIN0-VIN2
-Date: Tue, 18 Oct 2016 17:02:21 +0200
-Message-Id: <1476802943-5189-2-git-send-email-ulrich.hecht+renesas@gmail.com>
-In-Reply-To: <1476802943-5189-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-References: <1476802943-5189-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+        Thu, 6 Oct 2016 16:56:01 -0400
+MIME-Version: 1.0
+In-Reply-To: <7496008.sErWcihIz4@avalon>
+References: <2017044.9fZNuWa2OZ@wasted.cogentembedded.com> <2254757.qf3e5qBuAz@avalon>
+ <CAL_Jsq+p35REB_Lwm2vhGEKiTQHCawAXqYeJ1Yq5o3WEad9K8Q@mail.gmail.com> <7496008.sErWcihIz4@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Oct 2016 22:55:59 +0200
+Message-ID: <CAMuHMdUVj485ok3UoTSixGU_dYaRr8QJrAnOO56_TDPWT=seCA@mail.gmail.com>
+Subject: Re: [PATCH] sh-sci: add R8A7743/5 support
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.cz>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
----
- arch/arm/boot/dts/r8a7793.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+On Wed, Oct 5, 2016 at 3:37 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Wednesday 05 Oct 2016 08:28:05 Rob Herring wrote:
+>> Is it really 4 distinct UARTs on a chip? DT can't fix that insanity.
+>
+> It's really 4 different UART types on a chip, yes. We have actually 5
+> different UART types, named SCI, SCIF, SCIFA, SCIFB and HSCIF. Only the last 4
+> are used on R-Car SoCs.
 
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index a7d11b9..629d3d6 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -852,6 +852,33 @@
- 		status = "disabled";
- 	};
- 
-+	vin0: video@e6ef0000 {
-+		compatible = "renesas,vin-r8a7793", "renesas,rcar-gen2-vin";
-+		reg = <0 0xe6ef0000 0 0x1000>;
-+		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp8_clks R8A7793_CLK_VIN0>;
-+		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		status = "disabled";
-+	};
-+
-+	vin1: video@e6ef1000 {
-+		compatible = "renesas,vin-r8a7793", "renesas,rcar-gen2-vin";
-+		reg = <0 0xe6ef1000 0 0x1000>;
-+		interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp8_clks R8A7793_CLK_VIN1>;
-+		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		status = "disabled";
-+	};
-+
-+	vin2: video@e6ef2000 {
-+		compatible = "renesas,vin-r8a7793", "renesas,rcar-gen2-vin";
-+		reg = <0 0xe6ef2000 0 0x1000>;
-+		interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp8_clks R8A7793_CLK_VIN2>;
-+		power-domains = <&sysc R8A7793_PD_ALWAYS_ON>;
-+		status = "disabled";
-+	};
-+
- 	qspi: spi@e6b10000 {
- 		compatible = "renesas,qspi-r8a7793", "renesas,qspi";
- 		reg = <0 0xe6b10000 0 0x2c>;
--- 
-2.7.4
+And even that is a simplification ;-)
+
+AFAIU, evolution seems to have been
+
+    SCI --> SCIF ---> SCIF + BRG ---> HSCIF
+              |
+              +---> SCIFA ---> SCIFB
+
+Now, that's a simplication, too ;-) There are many intermediate variants
+with slightly different features and register bits,esp. on SuperH.
+They're all handled by the same sh-sci.c driver.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
