@@ -1,43 +1,32 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:57345 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964894AbcJQVMm (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37700 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934989AbcJGDWB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Oct 2016 17:12:42 -0400
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id D671A207B6
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Oct 2016 23:11:51 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/3] clk: renesas: r8a7796: Add DU and LVDS clocks
-Date: Tue, 18 Oct 2016 00:12:33 +0300
-Message-Id: <1476738753-24304-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1476738753-24304-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1476738753-24304-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 6 Oct 2016 23:22:01 -0400
+Date: Fri, 7 Oct 2016 12:21:56 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 09/11] DT: arm: shmobile: document SK-RZG1M board
+Message-ID: <20161007032155.GL13721@verge.net.au>
+References: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com>
+ <1619405.o5fA0fLKdG@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1619405.o5fA0fLKdG@wasted.cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 4 ++++
- 1 file changed, 4 insertions(+)
+On Thu, Oct 06, 2016 at 12:45:18AM +0300, Sergei Shtylyov wrote:
+> Document the SK-RZG1M device tree bindings, listing it as a supported board.
+> 
+> This allows to use checkpatch.pl to validate .dts files referring to the
+> SK-RZG1M board.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 679054658f99..20bd0643b238 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -134,6 +134,10 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
- 	DEF_MOD("vspd0",		 623,	R8A7796_CLK_S0D2),
- 	DEF_MOD("vspb",			 626,	R8A7796_CLK_S0D1),
- 	DEF_MOD("vspi0",		 631,	R8A7796_CLK_S0D1),
-+	DEF_MOD("du2",			 722,	R8A7796_CLK_S0D2),
-+	DEF_MOD("du1",			 723,	R8A7796_CLK_S0D2),
-+	DEF_MOD("du0",			 724,	R8A7796_CLK_S0D2),
-+	DEF_MOD("lvds",			 727,	R8A7796_CLK_S0D4),
- 	DEF_MOD("etheravb",		 812,	R8A7796_CLK_S0D6),
- 	DEF_MOD("gpio7",		 905,	R8A7796_CLK_S3D4),
- 	DEF_MOD("gpio6",		 906,	R8A7796_CLK_S3D4),
--- 
-Regards,
-
-Laurent Pinchart
+Thanks, I have queued this up as "ARM: shmobile: document SK-RZG1M board"
