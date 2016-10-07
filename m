@@ -1,57 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:35368 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753873AbcJGTfv (ORCPT
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:33327 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752666AbcJGTGO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Oct 2016 15:35:51 -0400
-MIME-Version: 1.0
-In-Reply-To: <8677b11a-64d7-23af-48ef-bc58c9d4b3f3@cogentembedded.com>
-References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
- <4289081.UEHqeRI6YW@wasted.cogentembedded.com> <8677b11a-64d7-23af-48ef-bc58c9d4b3f3@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 7 Oct 2016 21:35:24 +0200
-Message-ID: <CAMuHMdU9Mw_sDWv=zQApixpLcxnVMzpwUyyDqfbBNrTiTbaaBg@mail.gmail.com>
+        Fri, 7 Oct 2016 15:06:14 -0400
+Received: by mail-lf0-f54.google.com with SMTP id x79so48349797lff.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 07 Oct 2016 12:06:14 -0700 (PDT)
 Subject: Re: [PATCH 2/3] ARM: shmobile: r8a7743: add CPG clock index macros
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To: mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
+ <4289081.UEHqeRI6YW@wasted.cogentembedded.com>
+Cc: linux-clk@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <8b978817-017a-bd68-b4af-1dcbdd6a49b6@cogentembedded.com>
+Date: Fri, 7 Oct 2016 22:06:10 +0300
+MIME-Version: 1.0
+In-Reply-To: <4289081.UEHqeRI6YW@wasted.cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+Hello.
 
-On Fri, Oct 7, 2016 at 9:06 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 10/05/2016 11:54 PM, Sergei Shtylyov wrote:
->> Add macros usable by the device tree sources to reference the R8A7743 CPG
->> clocks  by index.
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On 10/05/2016 11:54 PM, Sergei Shtylyov wrote:
+
+> Add macros usable by the device tree sources to reference the R8A7743 CPG
+> clocks  by index.
 >
->    Probably makes sense to merge this patch to both the clk and renesas
-> trees in order to satisfy the dependencies both ways... what do you think,
-> Simon?
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Yes, this is another case where both the clock maintainers and Simon
-should merge my clk-renesas-for-v4.10 tree, when It has received (a future
-version of) this series.
+    Probably makes ense to merge this patch to both the clk and renesas trees 
+in order to satisfy the dependencies both ways... what do you think, Simon?
 
-But that's to be handled after v4.9-rc1...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MBR, Sergei
