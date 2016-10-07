@@ -1,107 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:34744 "EHLO
-        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933979AbcJUUrw (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37844 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751233AbcJGDcU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Oct 2016 16:47:52 -0400
-Received: by mail-lf0-f46.google.com with SMTP id b81so147146789lfe.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Oct 2016 13:47:51 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 6/7] ARM: dts: sk-rzg1m: initial device tree
-Date: Fri, 21 Oct 2016 23:47:48 +0300
-Message-ID: <6067818.PNWHquUYTU@wasted.cogentembedded.com>
-In-Reply-To: <2719479.geOc9vqcRS@wasted.cogentembedded.com>
-References: <2719479.geOc9vqcRS@wasted.cogentembedded.com>
+        Thu, 6 Oct 2016 23:32:20 -0400
+Date: Fri, 7 Oct 2016 12:32:15 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/2] ARM: shmobile: alt/gose: Add board part number to DT
+ bindings
+Message-ID: <20161007033214.GO13721@verge.net.au>
+References: <1475587248-13670-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1475587248-13670-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the initial device  tree for the R8A7743 SoC based SK-RZG1M board.
-The board has one debug serial port (SCIF0); include support for it, so
-that  the serial  console  can work.
+On Tue, Oct 04, 2016 at 03:20:46PM +0200, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This series at the missing board part numbers for r8a7794/alt and
+> r8a7793/gose to the DT binding documentation, like is done for the other
+> boards.
+> 
+> Thanks for applying!
+> 
+> Geert Uytterhoeven (2):
+>   ARM: shmobile: r8a7794/alt: Add board part number to DT bindings
+>   ARM: shmobile: r8a7793/gose: Add board part number to DT bindings
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
----
-Changes in version 4:
-- refreshed the patch.
-
-Changes in version 3:
-- added Geert's tag.
-
- arch/arm/boot/dts/Makefile             |    1 
- arch/arm/boot/dts/r8a7743-sk-rzg1m.dts |   44 +++++++++++++++++++++++++++++++++
- 2 files changed, 45 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/Makefile
-===================================================================
---- renesas.orig/arch/arm/boot/dts/Makefile
-+++ renesas/arch/arm/boot/dts/Makefile
-@@ -677,6 +677,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
- 	r7s72100-rskrza1.dtb \
- 	r8a73a4-ape6evm.dtb \
- 	r8a7740-armadillo800eva.dtb \
-+	r8a7743-sk-rzg1m.dtb \
- 	r8a7778-bockw.dtb \
- 	r8a7779-marzen.dtb \
- 	r8a7790-lager.dtb \
-Index: renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
-===================================================================
---- /dev/null
-+++ renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
-@@ -0,0 +1,44 @@
-+/*
-+ * Device Tree Source for the SK-RZG1M board
-+ *
-+ * Copyright (C) 2016 Cogent Embedded, Inc.
-+ *
-+ * This file is licensed under the terms of the GNU General Public License
-+ * version 2. This program is licensed "as is" without any warranty of any
-+ * kind, whether express or implied.
-+ */
-+
-+/dts-v1/;
-+#include "r8a7743.dtsi"
-+
-+/ {
-+	model = "SK-RZG1M";
-+	compatible = "renesas,sk-rzg1m", "renesas,r8a7743";
-+
-+	aliases {
-+		serial0 = &scif0;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x40000000>;
-+	};
-+
-+	memory@200000000 {
-+		device_type = "memory";
-+		reg = <2 0x00000000 0 0x40000000>;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
-+
-+&scif0 {
-+	status = "okay";
-+};
+Thanks, I have queued these up.
