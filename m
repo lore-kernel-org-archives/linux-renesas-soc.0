@@ -1,44 +1,28 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:46294 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751830AbcJCRMk (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Oct 2016 13:12:40 -0400
-Received: from avalon.ideasonboard.com (unknown [90.63.244.31])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 229A92006D
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  3 Oct 2016 19:11:56 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] arm64: dts: r8a7795: salvator-x: Add DU LVDS output endpoint
-Date: Mon,  3 Oct 2016 20:12:31 +0300
-Message-Id: <1475514751-3602-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 7 Oct 2016 12:15:07 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, dwmw2@infradead.org,
+        magnus.damm@gmail.com
+Subject: Re: [PATCH v3 02/11] soc: renesas: rcar-sysc: add R8A7743 support
+Message-ID: <20161007031507.GJ13721@verge.net.au>
+References: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com>
+ <1691511.DcOcZO89eZ@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1691511.DcOcZO89eZ@wasted.cogentembedded.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Declaring the endpoint makes LVDS enablement easier by just including
-the corresponding panel's dtsi file.
+On Wed, Oct 05, 2016 at 02:35:01PM -0700, Sergei Shtylyov wrote:
+> Add support for RZ/G1M (R8A7743) SoC power areas to the R-Car SYSC driver.
+> 
+> Based on the original (and large) patch by Dmitry Shifrin
+> <dmitry.shifrin@cogentembedded.com>.
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index ff4e4fe843ed..c8f6023c4667 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -191,6 +191,10 @@
- 				remote-endpoint = <&adv7123_in>;
- 			};
- 		};
-+		port@3 {
-+			lvds_connector: endpoint {
-+			};
-+		};
- 	};
- };
- 
--- 
-Regards,
-
-Laurent Pinchart
+Thanks, I have queued this up.
