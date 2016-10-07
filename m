@@ -1,34 +1,38 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:35793 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757097AbcJGUp2 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Oct 2016 16:45:28 -0400
-Received: by mail-lf0-f49.google.com with SMTP id l131so49616239lfl.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 07 Oct 2016 13:45:27 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH 0/3] Renesas R8A7743 CPG/MSSR clock support
 To: mturquette@baylibre.com, linux-clk@vger.kernel.org,
         sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
-Subject: [PATCH v2 0/2] Renesas R8A7743 CPG/MSSR clock support
-Date: Fri, 07 Oct 2016 23:45:23 +0300
-Message-ID: <9246696.7P1aOyyQt4@wasted.cogentembedded.com>
+References: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
+Cc: linux-renesas-soc@vger.kernel.org
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <7c5715a6-0a29-1055-7b6a-6fe13e4ee96b@cogentembedded.com>
+Date: Fri, 7 Oct 2016 23:35:43 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+In-Reply-To: <19700058.YBgRO3SXUI@wasted.cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hello.
 
-   Here's the set of 2 patches against the 'clk-next' branch of CLK group's
-'linux.git' repo. I'm splitting this from the R-Car gen2 common support patch.
-As the DT patches in the R8A7743/SK-RZG1M board support series depend on the
-patch #2 of this series, so it might make sense to merge this patch to the
-'renesas.git' repo as well...
+On 10/05/2016 11:50 PM, Sergei Shtylyov wrote:
 
-[1/2] ARM: shmobile: r8a7743: add CPG clock index macros
-[2/2] clk: renesas: cpg-mssr: add R8A7743 support
+>    Here's the set of 3 patches against the 'clk-next' branch of CLK group's
+> 'linux.git' repo. The R8A7743 SoC support will be posted separately later --
+> this series depend on the Kconfig variable introduced there, however, the DTs
+> in that series will depend on the patch #2 of this series...
+>
+> [1/3] clk: renesas: cpg-mssr: add common R-Car Gen2 support
+
+    This will probably have to be fixed up to handle the absence of the PLL0CR 
+register oin the low end SoC (like RZ/G1E)...
+
+> [2/3] ARM: shmobile: r8a7743: add CPG clock index macros
+> [3/3] clk: renesas: cpg-mssr: add R8A7743 support
+
+    I'm splitting the above 2 patches into a new series and will repost it RSN.
 
 MBR, Sergei
+
