@@ -1,41 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:52617 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751126AbcJEK2T (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37778 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933698AbcJGD3y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Oct 2016 06:28:19 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH] ARM: shmobile: Remove unneeded check in SMP initialization
-Date: Wed,  5 Oct 2016 13:28:11 +0300
-Message-Id: <1475663291-4502-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 6 Oct 2016 23:29:54 -0400
+Date: Fri, 7 Oct 2016 12:29:16 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH][RESEND] dt-bindings: net: renesas-ravb: Add support for
+ R8A7796 RAVB
+Message-ID: <20161007032915.GN13721@verge.net.au>
+References: <1475599546-29209-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1475599546-29209-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The SMP initialization function is only called if CONFIG_SMP is defined.
-Remove the duplicate check.
+On Tue, Oct 04, 2016 at 07:45:46PM +0300, Laurent Pinchart wrote:
+> Add a new compatible string for the R8A7796 (M3-W) RAVB.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm/mach-shmobile/platsmp.c | 4 ----
- 1 file changed, 4 deletions(-)
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-diff --git a/arch/arm/mach-shmobile/platsmp.c b/arch/arm/mach-shmobile/platsmp.c
-index 02e21bceb085..48595a397220 100644
---- a/arch/arm/mach-shmobile/platsmp.c
-+++ b/arch/arm/mach-shmobile/platsmp.c
-@@ -39,9 +39,5 @@ bool shmobile_smp_cpu_can_disable(unsigned int cpu)
- 
- bool __init shmobile_smp_init_fallback_ops(void)
- {
--	/* fallback on PSCI/smp_ops if no other DT based method is detected */
--	if (!IS_ENABLED(CONFIG_SMP))
--		return false;
--
- 	return platform_can_secondary_boot() ? true : false;
- }
--- 
-Regards,
-
-Laurent Pinchart
+> ---
+>  Documentation/devicetree/bindings/net/renesas,ravb.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> The patch has been posted to the linux-renesas-soc mailing list only, adding
+> the netdev mailing list to get it upstreamed.
+> 
+> diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> index c8ac222eac67..b519503be51a 100644
+> --- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> +++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> @@ -10,6 +10,7 @@ Required properties:
+>  	      "renesas,etheravb-r8a7793" if the device is a part of R8A7793 SoC.
+>  	      "renesas,etheravb-r8a7794" if the device is a part of R8A7794 SoC.
+>  	      "renesas,etheravb-r8a7795" if the device is a part of R8A7795 SoC.
+> +	      "renesas,etheravb-r8a7796" if the device is a part of R8A7796 SoC.
+>  	      "renesas,etheravb-rcar-gen2" for generic R-Car Gen 2 compatible interface.
+>  	      "renesas,etheravb-rcar-gen3" for generic R-Car Gen 3 compatible interface.
+>  
+> @@ -33,7 +34,7 @@ Optional properties:
+>  - interrupt-parent: the phandle for the interrupt controller that services
+>  		    interrupts for this device.
+>  - interrupt-names: A list of interrupt names.
+> -		   For the R8A7795 SoC this property is mandatory;
+> +		   For the R8A779[56] SoCs this property is mandatory;
+>  		   it should include one entry per channel, named "ch%u",
+>  		   where %u is the channel number ranging from 0 to 24.
+>  		   For other SoCs this property is optional; if present
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
