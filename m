@@ -1,48 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:28485 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755117AbcJLOV3 (ORCPT
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:35793 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757097AbcJGUp2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Oct 2016 10:21:29 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi
-Cc: chris.paterson2@renesas.com, laurent.pinchart@ideasonboard.com,
-        geert@linux-m68k.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [RFC 2/5] media: v4l2-ctrls: Reserve controls for MAX217X
-Date: Wed, 12 Oct 2016 15:10:26 +0100
-Message-Id: <1476281429-27603-3-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1476281429-27603-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1476281429-27603-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+        Fri, 7 Oct 2016 16:45:28 -0400
+Received: by mail-lf0-f49.google.com with SMTP id l131so49616239lfl.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 07 Oct 2016 13:45:27 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+Subject: [PATCH v2 0/2] Renesas R8A7743 CPG/MSSR clock support
+Date: Fri, 07 Oct 2016 23:45:23 +0300
+Message-ID: <9246696.7P1aOyyQt4@wasted.cogentembedded.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Reserve controls for MAX217X RF to Bits tuner (family) chips. These hybrid
-radio receiver chips are highly programmable and hence reserving 32
-controls.
+Hello.
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- include/uapi/linux/v4l2-controls.h | 5 +++++
- 1 file changed, 5 insertions(+)
+   Here's the set of 2 patches against the 'clk-next' branch of CLK group's
+'linux.git' repo. I'm splitting this from the R-Car gen2 common support patch.
+As the DT patches in the R8A7743/SK-RZG1M board support series depend on the
+patch #2 of this series, so it might make sense to merge this patch to the
+'renesas.git' repo as well...
 
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index b6a357a..b7404c9 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -180,6 +180,11 @@ enum v4l2_colorfx {
-  * We reserve 16 controls for this driver. */
- #define V4L2_CID_USER_TC358743_BASE		(V4L2_CID_USER_BASE + 0x1080)
- 
-+/* The base for the max217x driver controls.
-+ * We reserve 32 controls for this driver
-+ */
-+#define V4L2_CID_USER_MAX217X_BASE		(V4L2_CID_USER_BASE + 0x1090)
-+
- /* MPEG-class control IDs */
- /* The MPEG controls are applicable to all codec controls
-  * and the 'MPEG' part of the define is historical */
--- 
-1.9.1
+[1/2] ARM: shmobile: r8a7743: add CPG clock index macros
+[2/2] clk: renesas: cpg-mssr: add R8A7743 support
+
+MBR, Sergei
