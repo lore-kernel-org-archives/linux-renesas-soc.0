@@ -1,44 +1,33 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44948 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:37867 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932739AbcJTJTc (ORCPT
+        with ESMTP id S935171AbcJGDd4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Oct 2016 05:19:32 -0400
-Date: Thu, 20 Oct 2016 11:19:27 +0200
+        Thu, 6 Oct 2016 23:33:56 -0400
+Date: Fri, 7 Oct 2016 12:33:52 +0900
 From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v7 08/11] arm64: dts: r8a7796: add SDHI nodes
-Message-ID: <20161020091926.GB28107@verge.net.au>
-References: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
- <1473764228-24768-9-git-send-email-horms+renesas@verge.net.au>
- <20160916103048.GL1411@katana>
- <20160916105321.GB7566@verge.net.au>
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: r8a7794: Fix W=1 dtc warnings
+Message-ID: <20161007033352.GP13721@verge.net.au>
+References: <1475587908-22151-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20160916105321.GB7566@verge.net.au>
+In-Reply-To: <1475587908-22151-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 16, 2016 at 12:53:22PM +0200, Simon Horman wrote:
-> On Fri, Sep 16, 2016 at 12:30:48PM +0200, Wolfram Sang wrote:
-> > On Tue, Sep 13, 2016 at 12:57:05PM +0200, Simon Horman wrote:
-> > > Add SDHI nodes to the DT of the r8a7796 SoC.
-> > > 
-> > > Based on the DT of the r8a7795 SoC.
-> > > 
-> > > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > 
-> > If you remove the two lines you removed from H3 already:
-> 
-> Thanks, done.
-> 
-> > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Tue, Oct 04, 2016 at 03:31:48PM +0200, Geert Uytterhoeven wrote:
+> Warning (unit_address_vs_reg): Node /sound@ec500000/rcar_sound,dvc/dvc@0 has a unit name, but no reg property
 
-I have queued this up for v4.10.
+...
+
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  arch/arm/boot/dts/r8a7794.dtsi | 58 +++++++++++++++++++++---------------------
+>  1 file changed, 29 insertions(+), 29 deletions(-)
+
+Thanks, I have queued this up.
