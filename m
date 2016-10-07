@@ -1,35 +1,28 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 0/7] Add R8A7743/SK-RZG1M board support
-Date: Fri, 28 Oct 2016 00:33:26 +0300
-Message-ID: <1580369.yToZzJza1l@wasted.cogentembedded.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:37913 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751055AbcJGDgl (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 6 Oct 2016 23:36:41 -0400
+Date: Fri, 7 Oct 2016 12:36:38 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: r8a7795: salvator-x: Add DU LVDS output
+ endpoint
+Message-ID: <20161007033637.GQ13721@verge.net.au>
+References: <1475514751-3602-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1475514751-3602-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+On Mon, Oct 03, 2016 at 08:12:31PM +0300, Laurent Pinchart wrote:
+> Declaring the endpoint makes LVDS enablement easier by just including
+> the corresponding panel's dtsi file.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-   Here's the set of 7 patches against Simon Horman's 'renesas.git' repo's
-'renesas-devel-20161024-v4.9-rc2' tag. I'm adding the device tree support for
-the R8A7743-based SK-RZG1M board. The SoC is close to R8A7791 and the board
-seems identical to the R8A7791/Porter board. The device tree patches depend on
-the R8A7743 CPG/MSSR driver series just re-posted in order to compile and work.
-Already merged patches from this series won't be re-posted.
-
-[1/7] ARM: dts: r8a7743: initial SoC device tree
-[2/7] ARM: dts: r8a7743: add SYS-DMAC support
-[3/7] ARM: dts: r8a7743: add [H]SCIF{A|B} support
-[4/7] ARM: dts: r8a7743: add Ether support
-[5/7] ARM: dts: r8a7743: add IRQC support
-[6/7] ARM: dts: sk-rzg1m: initial device tree
-[7/7] ARM: dts: sk-rzg1m: add Ether support
-
-WBR, Sergei
-
+Thanks, I have queued this up.
