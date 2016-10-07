@@ -1,59 +1,62 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: mattw@codeaurora.org, mitchelh@codeaurora.org, broonie@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, chris.paterson2@renesas.com,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH 1/2] iopoll: Avoid namespace collision within macros
-Date: Thu, 27 Oct 2016 10:33:18 +0100
-Message-Id: <1477560799-58896-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-In-Reply-To: <1477560799-58896-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1477560799-58896-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:39293 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753004AbcJGFlE (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 7 Oct 2016 01:41:04 -0400
+Date: Fri, 7 Oct 2016 14:40:58 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Jithin T Raj <jithin.t@tataelxsi.co.in>
+Cc: "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "laurent.pinchart@ideasonboard.com"
+        <laurent.pinchart@ideasonboard.com>
+Subject: Re: HDMI No signal for koelsch Board
+Message-ID: <20161007054058.GB5855@verge.net.au>
+References: <SG2PR0401MB1296D6828F14FE3C6D844327D8C60@SG2PR0401MB1296.apcprd04.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SG2PR0401MB1296D6828F14FE3C6D844327D8C60@SG2PR0401MB1296.apcprd04.prod.outlook.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Renamed variable "timeout" to "__timeout" to avoid namespace collision.
+Hi,
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
- include/linux/iopoll.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+On Fri, Oct 07, 2016 at 05:11:21AM +0000, Jithin T Raj wrote:
+> hi,
+>     I have a trouble in getting HDMI OUT in koelsche Board  
+> 
+> 
+> 
+> I am using source tree v4.1.17-ltsi..also i have applied the below patch to shmobile_defconfig
+> 
+> diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+> index 0bdeb4925be4..3aef019c0de7 100644
+> --- a/arch/arm/configs/shmobile_defconfig
+> +++ b/arch/arm/configs/shmobile_defconfig
+> @@ -140,7 +140,10 @@ CONFIG_VIDEO_RENESAS_VSP1=y
+>  CONFIG_VIDEO_ADV7180=y
+>  CONFIG_VIDEO_ML86V7667=y
+>  CONFIG_DRM=y
+> +CONFIG_DRM_I2C_ADV7511=y
+>  CONFIG_DRM_RCAR_DU=y
+> +CONFIG_DRM_RCAR_HDMI=y
+> +CONFIG_DRM_RCAR_LVDS=y
+>  CONFIG_FB_SH_MOBILE_LCDC=y
+>  CONFIG_FB_SH_MOBILE_MERAM=y
+>  # CONFIG_LCD_CLASS_DEVICE is not set
+> 
+> and when I checked the pinmux it is like
+> 
+> du_pins: du {
+>         renesas,groups = "du_rgb666", "du_sync", "du_disp", "du_clk_out_0";
+>         renesas,function = "du";
+>     };
+> 
+> do I need to change it to   24 bit (du_rgb888)? my UBoot is gb653737..
 
-diff --git a/include/linux/iopoll.h b/include/linux/iopoll.h
-index 1c30014..e237d01 100644
---- a/include/linux/iopoll.h
-+++ b/include/linux/iopoll.h
-@@ -42,13 +42,13 @@
-  */
- #define readx_poll_timeout(op, addr, val, cond, sleep_us, timeout_us)	\
- ({ \
--	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us); \
-+	ktime_t __timeout = ktime_add_us(ktime_get(), timeout_us); \
- 	might_sleep_if(sleep_us); \
- 	for (;;) { \
- 		(val) = op(addr); \
- 		if (cond) \
- 			break; \
--		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
-+		if (timeout_us && ktime_compare(ktime_get(), __timeout) > 0) { \
- 			(val) = op(addr); \
- 			break; \
- 		} \
-@@ -77,12 +77,12 @@
-  */
- #define readx_poll_timeout_atomic(op, addr, val, cond, delay_us, timeout_us) \
- ({ \
--	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us); \
-+	ktime_t __timeout = ktime_add_us(ktime_get(), timeout_us); \
- 	for (;;) { \
- 		(val) = op(addr); \
- 		if (cond) \
- 			break; \
--		if (timeout_us && ktime_compare(ktime_get(), timeout) > 0) { \
-+		if (timeout_us && ktime_compare(ktime_get(), __timeout) > 0) { \
- 			(val) = op(addr); \
- 			break; \
- 		} \
--- 
-1.9.1
+I would recommend looking at the latest mainline code.
+e.g. Do you get HDMI output on v4.8?
