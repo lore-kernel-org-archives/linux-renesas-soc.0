@@ -1,67 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:33618 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752327AbcJ1WbT (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:54821 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751280AbcJHUqF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Oct 2016 18:31:19 -0400
-Received: by mail-lf0-f45.google.com with SMTP id x79so66918766lff.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Oct 2016 15:31:18 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 11/12] ARM: dts: sk-rzg1e: add Ether support
-Date: Sat, 29 Oct 2016 01:31:16 +0300
-Message-ID: <1653044.nY120UqMZW@wasted.cogentembedded.com>
-In-Reply-To: <4121805.SRTmqJtRfv@wasted.cogentembedded.com>
-References: <4121805.SRTmqJtRfv@wasted.cogentembedded.com>
+        Sat, 8 Oct 2016 16:46:05 -0400
+Date: Sat, 8 Oct 2016 11:37:52 +0900
+From: Simon Horman <horms@verge.net.au>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH 01/10] PCI: rcar: Rename accessors
+Message-ID: <20161008023752.GC14617@verge.net.au>
+References: <20161007162446.23279.48813.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20161007162446.23279.48813.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the SK-RZG1E board dependent part of the Ether device node.
-Enable DHCP and NFS root  for the kernel booting.
+On Fri, Oct 07, 2016 at 11:24:46AM -0500, Bjorn Helgaas wrote:
+> Rename rcar_pci_read_reg() to rcar_readl() and rcar_pci_write_reg() to
+> rcar_writel() for consistency with other drivers.  No functional change
+> intended.
+> 
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
+I am fine with this entire series.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
----
- arch/arm/boot/dts/r8a7745-sk-rzg1e.dts |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+> ---
+>  drivers/pci/host/pcie-rcar.c |  142 ++++++++++++++++++++----------------------
+>  1 file changed, 68 insertions(+), 74 deletions(-)
+> 
+> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+> index e06b1d3..b6899c8 100644
+> --- a/drivers/pci/host/pcie-rcar.c
+> +++ b/drivers/pci/host/pcie-rcar.c
+> @@ -152,16 +152,15 @@ struct rcar_pcie {
+>  	struct			rcar_msi msi;
+>  };
+>  
+> -static void rcar_pci_write_reg(struct rcar_pcie *pcie, unsigned long val,
+> -			       unsigned long reg)
+> +static unsigned long rcar_readl(struct rcar_pcie *pcie, unsigned long reg)
+>  {
+> -	writel(val, pcie->base + reg);
+> +	return readl(pcie->base + reg);
+>  }
+>  
+> -static unsigned long rcar_pci_read_reg(struct rcar_pcie *pcie,
+> -				       unsigned long reg)
+> +static void rcar_writel(struct rcar_pcie *pcie, unsigned long val,
+> +			unsigned long reg)
+>  {
+> -	return readl(pcie->base + reg);
+> +	writel(val, pcie->base + reg);
+>  }
 
-Index: renesas/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-+++ renesas/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-@@ -20,7 +20,7 @@
- 	};
- 
- 	chosen {
--		bootargs = "ignore_loglevel";
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-@@ -37,3 +37,16 @@
- &scif2 {
- 	status = "okay";
- };
-+
-+&ether {
-+	phy-handle = <&phy1>;
-+	renesas,ether-link-active-low;
-+	status = "okay";
-+
-+	phy1: ethernet-phy@1 {
-+		reg = <1>;
-+		interrupt-parent = <&irqc>;
-+		interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
-+		micrel,led-mode = <1>;
-+	};
-+};
+The diff might have been a bit easier on the eyes if rcar_pci_write_reg()
+was after rcar_pci_read_reg()
