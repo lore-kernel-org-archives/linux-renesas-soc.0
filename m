@@ -1,9 +1,5 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.135]:60604 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752648AbcJJO3M (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Oct 2016 10:29:12 -0400
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Arnd Bergmann <arnd@arndb.de>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Simon Horman <horms@verge.net.au>,
@@ -14,62 +10,152 @@ Cc: Simon Horman <horms@verge.net.au>,
         Dirk Behme <dirk.behme@de.bosch.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] soc: renesas: Identify SoC and register with the SoC bus
-Date: Mon, 10 Oct 2016 16:28:28 +0200
-Message-ID: <6327808.hNezbnImkk@wuerfel>
-In-Reply-To: <1475572167-29581-1-git-send-email-geert+renesas@glider.be>
-References: <1475572167-29581-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH/RFC 4/4] soc: renesas: Identify SoC and register with the SoC bus
+Date: Mon, 10 Oct 2016 16:23:19 +0200
+Message-ID: <1560471.cOCZ4VcGTh@wuerfel>
+In-Reply-To: <1475572167-29581-5-git-send-email-geert+renesas@glider.be>
+References: <1475572167-29581-1-git-send-email-geert+renesas@glider.be> <1475572167-29581-5-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tuesday, October 4, 2016 11:09:23 AM CEST Geert Uytterhoeven wrote:
-> 	Hi all,
+On Tuesday, October 4, 2016 11:09:27 AM CEST Geert Uytterhoeven wrote:
+> Identify the SoC type and revision, and register this information with
+> the SoC bus, so it is available under /sys/devices/soc0/, and can be
+> checked where needed using soc_device_match().
 > 
-> Some Renesas SoCs may exist in different revisions, providing slightly
-> different functionalities (e.g. R-Car H3 ES1.x and ES2.0). This needs to
-> be catered for by drivers and/or platform code.  The recently proposed
-> soc_device_match() API seems like a good fit to handle this.
+> In addition, on SoCs that support it, the product ID is read from a
+> hardware register and validated, to catch accidental use of a DTB for a
+> different SoC.
 > 
-> This patch series implements the core infrastructure to provide SoC and
-> revision information through the SoC bus for Renesas ARM SoCs. It
-> consists of 4 patches:
->   - Patch 1 avoids a crash when SoC revision information is needed and
->     provided early,
->   - Patch 2 (from Arnd) introduces the soc_device_match() API.
->     I don't know if, when, and through which channel this patch is
->     planned to go upstream,
->   - Patch 3 fixes a bug in soc_device_match(), causing a crash when
->     trying to match on an SoC attribute that is not provided (seen on
->     EMEV2, RZ/A, and R-Car M1A, which lack revision information),
->   - Patch 4 identifies Renesas SoCs and registers them with the SoC bus.
+> Example:
 > 
-> Tested on (family, machine, soc_id, optional revision):
+>     Detected Renesas r8a7791 ES1.0
+>     ...
+>     # cat /sys/devices/soc0/{family,machine,soc_id,revision}
+>     R-Car Gen2
+>     Koelsch
+>     r8a7791
+>     ES1.0
 > 
->     Emma Mobile EV2, EMEV2 KZM9D Board, emev2
->     RZ/A, Genmai, r7s72100
->     R-Mobile, APE6EVM, r8a73a4, ES1.0
->     R-Mobile, armadillo 800 eva, r8a7740, ES2.0
->     R-Car Gen1, bockw, r8a7778
->     R-Car Gen1, marzen, r8a7779, ES1.0
->     R-Car Gen2, Lager, r8a7790, ES1.0
->     R-Car Gen2, Koelsch, r8a7791, ES1.0
->     R-Car Gen2, Gose, r8a7793, ES1.0
->     R-Car Gen2, Alt, r8a7794, ES1.0
->     R-Car Gen3, Renesas Salvator-X board based on r8a7795, r8a7795, ES1.0
->     R-Car Gen3, Renesas Salvator-X board based on r8a7796, r8a7796, ES1.0
->     SH-Mobile, KZM-A9-GT, sh73a0, ES2.0
 
-As mentioned in the comment for the driver patch, I think this makes
-a lot of sense for the machines that have a revision register, in
-particular when the interpretation of that register is always done
-the same way, but I'm a bit skeptical about doing it in the same driver
-for machines that don't have the register.
+Seems all reasonable.
 
-Matching by a device rather than the SoC platform also has the advantage
-that there is no need to maintain a list of compatible numbers in the
-driver.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> This patch does NOT add a call to
+> 
+>         of_platform_default_populate(NULL, NULL,
+>                                      soc_device_to_device(soc_dev));
+> 
+> Contrary to suggested by commit 74d1d82cdaaec727 ("drivers/base: add bus
+> for System-on-Chip devices), doing so would not only move on-SoC devices
+> from /sys/devices/platform/ to /sys/devices/soc0/, but also all other
+> board (off-SoC) devices specified in the DTB.
+
+Right, we have moved away from that a while ago, and now just
+use the device for identification, not to model the device
+hierarchy.
+
+> diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+> new file mode 100644
+> index 0000000000000000..74b72e4112b8889e
+> --- /dev/null
+> +++ b/drivers/soc/renesas/renesas-soc.c
+> @@ -0,0 +1,266 @@
+> +/*
+> + * Renesas SoC Identification
+> + *
+> + * Copyright (C) 2014-2016 Glider bvba
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; version 2 of the License.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/slab.h>
+> +#include <linux/string.h>
+> +#include <linux/sys_soc.h>
+> +
+> +
+> +struct renesas_family {
+> +	const char name[16];
+> +	u32 reg;			/* CCCR, PVR, or PRR */
+> +};
+> +
+> +static const struct renesas_family fam_emev2 __initconst = {
+> +	.name	= "Emma Mobile EV2",
+> +};
+
+As this is not related to the others and doesn't have the respective
+register, I'd leave the platform out of this, and possibly have
+a separate driver for it.
+
+> +static const struct renesas_family fam_rza __initconst = {
+> +	.name	= "RZ/A",
+> +};
+
+I'm not sure about the relationship between this one and the others,
+maybe it should be treated in the same way as emev2 and left out from
+this driver?
+
+> +static const struct renesas_family fam_rmobile __initconst = {
+> +	.name	= "R-Mobile",
+> +	.reg	= 0xe600101c,		/* CCCR (Common Chip Code Register) */
+> +};
+> +
+> +static const struct renesas_family fam_rcar_gen1 __initconst = {
+> +	.name	= "R-Car Gen1",
+> +	.reg	= 0xff000044,		/* PRR (Product Register) */
+> +};
+> +
+> +static const struct renesas_family fam_rcar_gen2 __initconst = {
+> +	.name	= "R-Car Gen2",
+> +	.reg	= 0xff000044,		/* PRR (Product Register) */
+> +};
+> +
+> +static const struct renesas_family fam_rcar_gen3 __initconst = {
+> +	.name	= "R-Car Gen3",
+> +	.reg	= 0xfff00044,		/* PRR (Product Register) */
+> +};
+> +
+> +static const struct renesas_family fam_rzg __initconst = {
+> +	.name	= "RZ/G",
+> +	.reg	= 0xff000044,		/* PRR (Product Register) */
+> +};
+> +
+> +static const struct renesas_family fam_shmobile __initconst = {
+> +	.name	= "SH-Mobile",
+> +	.reg	= 0xe600101c,		/* CCCR (Common Chip Code Register) */
+> +};
+
+These seem to fall into two distinct categories, maybe there is a
+better way to group them. What device contain the two kinds of
+registers (PRR, CCCR)?
+
+Hardcoding the register address seems rather ugly here, so maybe
+there is a way to have two separate probe methods based on the
+surrounding register range, and then bind to that?
+
+> +static const struct of_device_id renesas_socs[] __initconst = {
+> +#ifdef CONFIG_ARCH_EMEV2
+> +	{ .compatible = "renesas,emev2",	.data = &soc_emev2 },
+> +#endif
+> +#ifdef CONFIG_ARCH_R7S72100
+> +	{ .compatible = "renesas,r7s72100",	.data = &soc_rz_a1h },
+> +#endif
+> +#ifdef CONFIG_ARCH_R8A73A4
+
+I think the #ifdefs here will result in warnings for unused symbols 
+when the Kconfig symbols are disabled.
 
 	Arnd
