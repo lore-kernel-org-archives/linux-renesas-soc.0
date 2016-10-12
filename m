@@ -1,122 +1,196 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:33740 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754853AbcJUUlt (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:53588 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932845AbcJLM7U (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Oct 2016 16:41:49 -0400
-Received: by mail-lf0-f45.google.com with SMTP id x79so162868965lff.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Oct 2016 13:41:48 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 2/7] ARM: dts: r8a7743: add SYS-DMAC support
-Date: Fri, 21 Oct 2016 23:41:46 +0300
-Message-ID: <1879203.QtE76WFv9N@wasted.cogentembedded.com>
-In-Reply-To: <2719479.geOc9vqcRS@wasted.cogentembedded.com>
-References: <2719479.geOc9vqcRS@wasted.cogentembedded.com>
+        Wed, 12 Oct 2016 08:59:20 -0400
+Subject: [PATCH v2 5/5] PCI: rcar-gen2: Add local struct device pointers
+To: Simon Horman <horms@verge.net.au>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-pci@vger.kernel.org
+Date: Wed, 12 Oct 2016 07:59:15 -0500
+Message-ID: <20161012125915.24785.8161.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+In-Reply-To: <20161012125631.24785.91272.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20161012125631.24785.91272.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe SYS-DMAC0/1 in the R8A7743 device tree.
+Use a local "struct device *dev" for brevity and consistency with other
+drivers.  No functional change intended.
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes in version 4:
-- refreshed the patch.
+ drivers/pci/host/pci-rcar-gen2.c |   46 +++++++++++++++++++++-----------------
+ 1 file changed, 25 insertions(+), 21 deletions(-)
 
-Changes in version 3:
-- resolved a reject;
-- updated the "clocks" properties for the CPG/MSSR driver.
-
-Changes in version 2:
-- added Geert's tag.
-
- arch/arm/boot/dts/r8a7743.dtsi |   64 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7743.dtsi
-@@ -88,6 +88,70 @@
- 			reg = <0 0xe6180000 0 0x0200>;
- 			#power-domain-cells = <1>;
- 		};
-+
-+		dmac0: dma-controller@e6700000 {
-+			compatible = "renesas,dmac-r8a7743",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6700000 0 0x20000>;
-+			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14";
-+			clocks = <&cpg CPG_MOD 219>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			#dma-cells = <1>;
-+			dma-channels = <15>;
-+		};
-+
-+		dmac1: dma-controller@e6720000 {
-+			compatible = "renesas,dmac-r8a7743",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6720000 0 0x20000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					"ch0", "ch1", "ch2", "ch3",
-+					"ch4", "ch5", "ch6", "ch7",
-+					"ch8", "ch9", "ch10", "ch11",
-+					"ch12", "ch13", "ch14";
-+			clocks = <&cpg CPG_MOD 218>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			#dma-cells = <1>;
-+			dma-channels = <15>;
-+		};
- 	};
+diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
+index 597566f..1eeefa4 100644
+--- a/drivers/pci/host/pci-rcar-gen2.c
++++ b/drivers/pci/host/pci-rcar-gen2.c
+@@ -154,10 +154,11 @@ static int rcar_pci_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+ static irqreturn_t rcar_pci_err_irq(int irq, void *pw)
+ {
+ 	struct rcar_pci_priv *priv = pw;
++	struct device *dev = priv->dev;
+ 	u32 status = ioread32(priv->reg + RCAR_PCI_INT_STATUS_REG);
  
- 	/* External root clock */
+ 	if (status & RCAR_PCI_INT_ALLERRORS) {
+-		dev_err(priv->dev, "error irq: status %08x\n", status);
++		dev_err(dev, "error irq: status %08x\n", status);
+ 
+ 		/* clear the error(s) */
+ 		iowrite32(status & RCAR_PCI_INT_ALLERRORS,
+@@ -170,13 +171,14 @@ static irqreturn_t rcar_pci_err_irq(int irq, void *pw)
+ 
+ static void rcar_pci_setup_errirq(struct rcar_pci_priv *priv)
+ {
++	struct device *dev = priv->dev;
+ 	int ret;
+ 	u32 val;
+ 
+-	ret = devm_request_irq(priv->dev, priv->irq, rcar_pci_err_irq,
++	ret = devm_request_irq(dev, priv->irq, rcar_pci_err_irq,
+ 			       IRQF_SHARED, "error irq", priv);
+ 	if (ret) {
+-		dev_err(priv->dev, "cannot claim IRQ for error handling\n");
++		dev_err(dev, "cannot claim IRQ for error handling\n");
+ 		return;
+ 	}
+ 
+@@ -192,15 +194,16 @@ static inline void rcar_pci_setup_errirq(struct rcar_pci_priv *priv) { }
+ static int rcar_pci_setup(int nr, struct pci_sys_data *sys)
+ {
+ 	struct rcar_pci_priv *priv = sys->private_data;
++	struct device *dev = priv->dev;
+ 	void __iomem *reg = priv->reg;
+ 	u32 val;
+ 	int ret;
+ 
+-	pm_runtime_enable(priv->dev);
+-	pm_runtime_get_sync(priv->dev);
++	pm_runtime_enable(dev);
++	pm_runtime_get_sync(dev);
+ 
+ 	val = ioread32(reg + RCAR_PCI_UNIT_REV_REG);
+-	dev_info(priv->dev, "PCI: bus%u revision %x\n", sys->busnr, val);
++	dev_info(dev, "PCI: bus%u revision %x\n", sys->busnr, val);
+ 
+ 	/* Disable Direct Power Down State and assert reset */
+ 	val = ioread32(reg + RCAR_USBCTR_REG) & ~RCAR_USBCTR_DIRPD;
+@@ -275,7 +278,7 @@ static int rcar_pci_setup(int nr, struct pci_sys_data *sys)
+ 
+ 	/* Add PCI resources */
+ 	pci_add_resource(&sys->resources, &priv->mem_res);
+-	ret = devm_request_pci_bus_resources(priv->dev, &sys->resources);
++	ret = devm_request_pci_bus_resources(dev, &sys->resources);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -311,6 +314,7 @@ static int pci_dma_range_parser_init(struct of_pci_range_parser *parser,
+ static int rcar_pci_parse_map_dma_ranges(struct rcar_pci_priv *pci,
+ 					 struct device_node *np)
+ {
++	struct device *dev = pci->dev;
+ 	struct of_pci_range range;
+ 	struct of_pci_range_parser parser;
+ 	int index = 0;
+@@ -331,14 +335,14 @@ static int rcar_pci_parse_map_dma_ranges(struct rcar_pci_priv *pci,
+ 
+ 		/* Catch HW limitations */
+ 		if (!(range.flags & IORESOURCE_PREFETCH)) {
+-			dev_err(pci->dev, "window must be prefetchable\n");
++			dev_err(dev, "window must be prefetchable\n");
+ 			return -EINVAL;
+ 		}
+ 		if (pci->window_addr) {
+ 			u32 lowaddr = 1 << (ffs(pci->window_addr) - 1);
+ 
+ 			if (lowaddr < pci->window_size) {
+-				dev_err(pci->dev, "invalid window size/addr\n");
++				dev_err(dev, "invalid window size/addr\n");
+ 				return -EINVAL;
+ 			}
+ 		}
+@@ -350,6 +354,7 @@ static int rcar_pci_parse_map_dma_ranges(struct rcar_pci_priv *pci,
+ 
+ static int rcar_pci_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
+ 	struct resource *cfg_res, *mem_res;
+ 	struct rcar_pci_priv *priv;
+ 	void __iomem *reg;
+@@ -357,7 +362,7 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ 	void *hw_private[1];
+ 
+ 	cfg_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(&pdev->dev, cfg_res);
++	reg = devm_ioremap_resource(dev, cfg_res);
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+@@ -368,8 +373,7 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ 	if (mem_res->start & 0xFFFF)
+ 		return -EINVAL;
+ 
+-	priv = devm_kzalloc(&pdev->dev,
+-			    sizeof(struct rcar_pci_priv), GFP_KERNEL);
++	priv = devm_kzalloc(dev, sizeof(struct rcar_pci_priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+@@ -378,10 +382,10 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ 
+ 	priv->irq = platform_get_irq(pdev, 0);
+ 	priv->reg = reg;
+-	priv->dev = &pdev->dev;
++	priv->dev = dev;
+ 
+ 	if (priv->irq < 0) {
+-		dev_err(&pdev->dev, "no valid irq found\n");
++		dev_err(dev, "no valid irq found\n");
+ 		return priv->irq;
+ 	}
+ 
+@@ -390,23 +394,23 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ 	priv->window_pci = 0x40000000;
+ 	priv->window_size = SZ_1G;
+ 
+-	if (pdev->dev.of_node) {
++	if (dev->of_node) {
+ 		struct resource busnr;
+ 		int ret;
+ 
+-		ret = of_pci_parse_bus_range(pdev->dev.of_node, &busnr);
++		ret = of_pci_parse_bus_range(dev->of_node, &busnr);
+ 		if (ret < 0) {
+-			dev_err(&pdev->dev, "failed to parse bus-range\n");
++			dev_err(dev, "failed to parse bus-range\n");
+ 			return ret;
+ 		}
+ 
+ 		priv->busnr = busnr.start;
+ 		if (busnr.end != busnr.start)
+-			dev_warn(&pdev->dev, "only one bus number supported\n");
++			dev_warn(dev, "only one bus number supported\n");
+ 
+-		ret = rcar_pci_parse_map_dma_ranges(priv, pdev->dev.of_node);
++		ret = rcar_pci_parse_map_dma_ranges(priv, dev->of_node);
+ 		if (ret < 0) {
+-			dev_err(&pdev->dev, "failed to parse dma-range\n");
++			dev_err(dev, "failed to parse dma-range\n");
+ 			return ret;
+ 		}
+ 	} else {
+@@ -421,7 +425,7 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ 	hw.map_irq = rcar_pci_map_irq;
+ 	hw.ops = &rcar_pci_ops;
+ 	hw.setup = rcar_pci_setup;
+-	pci_common_init_dev(&pdev->dev, &hw);
++	pci_common_init_dev(dev, &hw);
+ 	return 0;
+ }
+ 
