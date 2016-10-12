@@ -1,9 +1,17 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35938 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751847AbcJLLcX (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 12 Oct 2016 07:32:23 -0400
+MIME-Version: 1.0
+In-Reply-To: <2357731.SxJodxn1PJ@wasted.cogentembedded.com>
+References: <9246696.7P1aOyyQt4@wasted.cogentembedded.com> <2357731.SxJodxn1PJ@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 12 Oct 2016 13:31:33 +0200
+Message-ID: <CAMuHMdXNawoU5U+G296fxe_AKPGW=71Fcz9Kj932QYESDX+smw@mail.gmail.com>
 Subject: Re: [PATCH v2 2/2] clk: renesas: cpg-mssr: add R8A7743 support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <9246696.7P1aOyyQt4@wasted.cogentembedded.com>
- <2357731.SxJodxn1PJ@wasted.cogentembedded.com>
- <CAMuHMdW_XSCfy+Kv6uz1pX7q-XFPp=nkaXSehbZJYAeOt6Rf4w@mail.gmail.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
         linux-clk <linux-clk@vger.kernel.org>,
         Stephen Boyd <sboyd@codeaurora.org>,
@@ -12,97 +20,45 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <e8461bb6-6136-f589-4475-37c690ca4704@cogentembedded.com>
-Date: Thu, 20 Oct 2016 22:47:23 +0300
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdW_XSCfy+Kv6uz1pX7q-XFPp=nkaXSehbZJYAeOt6Rf4w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+Hi Sergei,
 
-On 10/19/2016 12:06 PM, Geert Uytterhoeven wrote:
-
->> Add RZ/G1M (R8A7743) Clock  Pulse Generator / Module Standby and Software
->> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
->> (and RZ/G) code.
->>
->> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
->> <geert+renesas@glider.be>.
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Fri, Oct 7, 2016 at 10:47 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add RZ/G1M (R8A7743) Clock  Pulse Generator / Module Standby and Software
+> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
+> (and RZ/G) code.
 >
-> Thanks a lot!
+> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+> <geert+renesas@glider.be>.
 >
-> With the few minor nits below fixed:
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
->> --- /dev/null
->> +++ renesas/drivers/clk/renesas/r8a7743-cpg-mssr.c
->
->> +static const struct mssr_mod_clk r8a7743_mod_clks[] __initconst = {
->
->> +       DEF_MOD("mmcif0",         315,  R8A7743_CLK_MMC0),
->
-> "mmc0"
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-    There's also "mmc0" CPG clock, so I thought I'd rename this one.
+Thanks for your patch!
 
->> +       DEF_MOD("audio-dmac0",    502,  R8A7743_CLK_HP),
->> +       DEF_MOD("audio-dmac1",    501,  R8A7743_CLK_HP),
->
-> Please sort by numerical clock ID.
+> --- /dev/null
+> +++ renesas/drivers/clk/renesas/r8a7743-cpg-mssr.c
 
-    Oops, will do.
+> +static const unsigned int r8a7743_crit_mod_clks[] __initconst = {
+> +       MOD_CLK_ID(408),        /* INTC-AP (GIC) */
 
->> +       DEF_MOD("i2c6",           926,  R8A7743_CLK_CP),
->
-> "iicdvfs"
+This clock is actually called "INTC-SYS" on the RZ/G series, like on most other
+Renesas SoCs.
 
-    Not sure how I missed that...
+> +};
 
->> +static const unsigned int r8a7743_crit_mod_clks[] __initconst = {
->> +       MOD_CLK_ID(408),        /* INTC-AP (GIC) */
->
-> INTC-SYS
+The rest looks good at first sight. I'll have a closer look after ELC-E.
 
-    OK.
+Gr{oetje,eeting}s,
 
-[...]
->> +static const struct rcar_gen2_cpg_pll_config cpg_pll_configs[8] __initconst = {
->> +       /* EXTAL div    PLL1 mult       PLL3 mult */
->> +       { 1,            208,            106,    },
->> +       { 1,            208,            88,     },
->> +       { 1,            156,            80,     },
->> +       { 1,            156,            66,     },
->> +       { 2,            240,            122,    },
->> +       { 2,            240,            102,    },
->> +       { 2,            208,            106,    },
->> +       { 2,            208,            88,     },
->> +};
->> +
->> +static int __init r8a7743_cpg_mssr_init(struct device *dev)
->> +{
->> +       const struct rcar_gen2_cpg_pll_config *cpg_pll_config;
->> +       u32 cpg_mode = rcar_gen2_read_modemr();
->> +
->> +       cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
->> +       if (!cpg_pll_config->extal_div) {
->
-> This check is not needed, as extal_div is never zero in the above table.
+                        Geert
 
-    Indeed, will fix.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
->> +               dev_err(dev, "Prohibited setting (cpg_mode=0x%x)\n", cpg_mode);
->> +               return -EINVAL;
->> +       }
->
-> Gr{oetje,eeting}s,
->
->                         Geert
-
-WBR, Sergei
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
