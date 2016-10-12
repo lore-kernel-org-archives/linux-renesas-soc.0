@@ -1,53 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:33368 "EHLO
-        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754874AbcJEVpW (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33581 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753981AbcJLLjZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Oct 2016 17:45:22 -0400
-Received: by mail-lf0-f53.google.com with SMTP id x79so680129lff.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Oct 2016 14:45:21 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 09/11] DT: arm: shmobile: document SK-RZG1M board
-Date: Thu, 06 Oct 2016 00:45:18 +0300
-Message-ID: <1619405.o5fA0fLKdG@wasted.cogentembedded.com>
-In-Reply-To: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com>
-References: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com>
+        Wed, 12 Oct 2016 07:39:25 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <5042465.lGNbhCeBLl@wasted.cogentembedded.com>
+References: <9246696.7P1aOyyQt4@wasted.cogentembedded.com> <5042465.lGNbhCeBLl@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 12 Oct 2016 13:39:23 +0200
+Message-ID: <CAMuHMdWrowTK8KxthrEO0DNHsBn-_PyY0GcRCc38wY6iynshiA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] ARM: shmobile: r8a7743: add CPG clock index macros
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the SK-RZG1M device tree bindings, listing it as a supported board.
+Hi Sergei,
 
-This allows to use checkpatch.pl to validate .dts files referring to the
-SK-RZG1M board.
+On Fri, Oct 7, 2016 at 10:46 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add macros usable by the device tree sources to reference the R8A7743 CPG
+> clocks  by index.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks for your patch!
 
----
-Changes in version 3:
-- added Geert's tag.
+It would be good to refer to the table and version of the datasheet
+(i.e. Table 7.2b, I have Rev. 0.50 of the RZ/G series User's Manual).
 
-Changes in version 2:
-- new patch.
+> --- /dev/null
+> +++ renesas/include/dt-bindings/clock/r8a7743-cpg-mssr.h
+> @@ -0,0 +1,43 @@
+> +/*
+> + * Copyright (C) 2016 Cogent Embedded Inc.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +#ifndef __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
+> +#define __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
+> +
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +
+> +/* r8a7743 CPG Core Clocks */
+> +#define R8A7743_CLK_Z          0
+> +#define R8A7743_CLK_ZG         1
+> +#define R8A7743_CLK_ZTR                2
+> +#define R8A7743_CLK_ZTRD2      3
+> +#define R8A7743_CLK_ZT         4
+> +#define R8A7743_CLK_ZX         5
+> +#define R8A7743_CLK_ZS         6
+> +#define R8A7743_CLK_HP         7
 
- Documentation/devicetree/bindings/arm/shmobile.txt |    2 ++
- 1 file changed, 2 insertions(+)
+In this particular case, I think we should leave holes in the numbering for
+clocks that exist on r8a7791. That way we can easily reuse the driver on
+r8a7791 later, and NULLify the entries for clocks that do not exist on r8a7743.
 
-Index: renesas/Documentation/devicetree/bindings/arm/shmobile.txt
-===================================================================
---- renesas.orig/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ renesas/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -75,5 +75,7 @@ Boards:
-     compatible = "renesas,salvator-x", "renesas,r8a7796";
-   - SILK (RTP0RC7794LCB00011S)
-     compatible = "renesas,silk", "renesas,r8a7794"
-+  - SK-RZG1M (YR8A77430S000BE)
-+    compatible = "renesas,sk-rzg1m", "renesas,r8a7743"
-   - Wheat
-     compatible = "renesas,wheat", "renesas,r8a7792"
+I.e. a one entry hole here, ...
+
+> +#define R8A7743_CLK_B          8
+> +#define R8A7743_CLK_LB         9
+> +#define R8A7743_CLK_P          10
+> +#define R8A7743_CLK_CL         11
+> +#define R8A7743_CLK_M2         12
+
+... a one entry hole here, ...
+
+> +#define R8A7743_CLK_ZB3                13
+> +#define R8A7743_CLK_ZB3D2      14
+> +#define R8A7743_CLK_DDR                15
+> +#define R8A7743_CLK_SDH                16
+> +#define R8A7743_CLK_SD0                17
+> +#define R8A7743_CLK_SD2                18
+> +#define R8A7743_CLK_SD3                19
+> +#define R8A7743_CLK_MMC0       20
+> +#define R8A7743_CLK_MP         21
+
+... and a two entry hole here.
+
+> +#define R8A7743_CLK_QSPI       22
+> +#define R8A7743_CLK_CP         23
+> +#define R8A7743_CLK_RCAN       24
+> +#define R8A7743_CLK_R          25
+> +#define R8A7743_CLK_OSC                26
+> +
+> +#endif /* __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__ */
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
