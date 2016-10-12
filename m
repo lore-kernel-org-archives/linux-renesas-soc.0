@@ -1,62 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:53769 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933325AbcJUNRo (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:53486 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932845AbcJLM7L (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Oct 2016 09:17:44 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 09/23] ARM: dts: r8a7794: Add device node for RST module
-Date: Fri, 21 Oct 2016 15:17:23 +0200
-Message-Id: <1477055857-17936-10-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
-References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+        Wed, 12 Oct 2016 08:59:11 -0400
+Subject: [PATCH v2 4/5] PCI: rcar: Remove DRV_NAME macro
+To: Simon Horman <horms@verge.net.au>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-pci@vger.kernel.org
+Date: Wed, 12 Oct 2016 07:59:07 -0500
+Message-ID: <20161012125907.24785.44288.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+In-Reply-To: <20161012125631.24785.91272.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20161012125631.24785.91272.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the RST module, which provides a.o. reset control
-and mode pin monitoring.
+The DRV_NAME macro is only used once, so there's no real advantage to
+having the macro at all.  Remove it and use the "rcar-pcie" name directly
+in the struct platform_driver.  No functional change intended.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v4:
-  - Add Acked-by,
+ drivers/pci/host/pcie-rcar.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-v3:
-  - Use "renesas,<soctype>-rst" instead of "renesas,rst-<soctype>",
-  - Drop "syscon" compatible value,
-
-v2:
-  - Correct unit address,
-  - Drop RFC status and TODO,
-  - Change one-line summary prefix to match current arm-soc practices.
----
- arch/arm/boot/dts/r8a7794.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 9365580a194facc7..69e4f4fad89b2323 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -1375,6 +1375,11 @@
- 		};
- 	};
+diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+index 800a86d..62700d1 100644
+--- a/drivers/pci/host/pcie-rcar.c
++++ b/drivers/pci/host/pcie-rcar.c
+@@ -31,8 +31,6 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
  
-+	rst: reset-controller@e6160000 {
-+		compatible = "renesas,r8a7794-rst";
-+		reg = <0 0xe6160000 0 0x0100>;
-+	};
-+
- 	sysc: system-controller@e6180000 {
- 		compatible = "renesas,r8a7794-sysc";
- 		reg = <0 0xe6180000 0 0x0200>;
--- 
-1.9.1
+-#define DRV_NAME "rcar-pcie"
+-
+ #define PCIECAR			0x000010
+ #define PCIECCTLR		0x000018
+ #define  CONFIG_SEND_ENABLE	(1 << 31)
+@@ -1199,7 +1197,7 @@ err_pm_disable:
+ 
+ static struct platform_driver rcar_pcie_driver = {
+ 	.driver = {
+-		.name = DRV_NAME,
++		.name = "rcar-pcie",
+ 		.of_match_table = rcar_pcie_of_match,
+ 		.suppress_bind_attrs = true,
+ 	},
