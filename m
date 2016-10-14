@@ -1,94 +1,75 @@
-Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
-Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Kieran Bingham <kieran@bingham.xyz>
-Subject: [PATCH v4 1/4] v4l: ctrls: Add deinterlacing mode control
-Date: Mon, 24 Oct 2016 12:03:35 +0300
-Message-Id: <1477299818-31935-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1477299818-31935-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1477299818-31935-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:50772 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754336AbcJNNO2 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 14 Oct 2016 09:14:28 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms+renesas@verge.net.au>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v3 0/3] mmc: sh_mobile_sdhi: Add r7s72100 support
+Date: Fri, 14 Oct 2016 13:14:22 +0000
+Message-ID: <SG2PR06MB1165883EDC27C3C7994121EF8ADF0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160912141507.6837-1-chris.brandt@renesas.com>
+In-Reply-To: <20160912141507.6837-1-chris.brandt@renesas.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The menu control selects the operation mode of a video deinterlacer. The
-menu entries are driver specific.
+Hello.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran@bingham.xyz>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
----
-Changes since v3:
+What ever happened to this series of patches?
 
-- Link the deinterlacing mode control to driver-specific documentation
----
- Documentation/media/uapi/v4l/extended-controls.rst | 4 ++++
- Documentation/media/v4l-drivers/index.rst          | 2 ++
- drivers/media/v4l2-core/v4l2-ctrls.c               | 2 ++
- include/uapi/linux/v4l2-controls.h                 | 1 +
- 4 files changed, 9 insertions(+)
+They didn't seem too outrageous, but they never got applied.
 
-diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documentation/media/uapi/v4l/extended-controls.rst
-index 7725c33d8b69..40071ea5d90e 100644
---- a/Documentation/media/uapi/v4l/extended-controls.rst
-+++ b/Documentation/media/uapi/v4l/extended-controls.rst
-@@ -3017,6 +3017,10 @@ Image Process Control IDs
-     test pattern images. These hardware specific test patterns can be
-     used to test if a device is working properly.
- 
-+``V4L2_CID_DEINTERLACING_MODE (menu)``
-+    The video deinterlacing mode (such as Bob, Weave, ...). The menu items are
-+    driver specific and are documented in :ref:`v4l-drivers`.
-+
- 
- .. _dv-controls:
- 
-diff --git a/Documentation/media/v4l-drivers/index.rst b/Documentation/media/v4l-drivers/index.rst
-index aac566f88833..acde3ed7860f 100644
---- a/Documentation/media/v4l-drivers/index.rst
-+++ b/Documentation/media/v4l-drivers/index.rst
-@@ -2,6 +2,8 @@
- 
- .. include:: <isonum.txt>
- 
-+.. _v4l-drivers:
-+
- ################################################
- Video4Linux (V4L)  driver-specific documentation
- ################################################
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index adc2147fcff7..47001e25fd9e 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -885,6 +885,7 @@ const char *v4l2_ctrl_get_name(u32 id)
- 	case V4L2_CID_LINK_FREQ:		return "Link Frequency";
- 	case V4L2_CID_PIXEL_RATE:		return "Pixel Rate";
- 	case V4L2_CID_TEST_PATTERN:		return "Test Pattern";
-+	case V4L2_CID_DEINTERLACING_MODE:	return "Deinterlacing Mode";
- 
- 	/* DV controls */
- 	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
-@@ -1058,6 +1059,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
- 	case V4L2_CID_DV_RX_RGB_RANGE:
- 	case V4L2_CID_DV_RX_IT_CONTENT_TYPE:
- 	case V4L2_CID_TEST_PATTERN:
-+	case V4L2_CID_DEINTERLACING_MODE:
- 	case V4L2_CID_TUNE_DEEMPHASIS:
- 	case V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_SEL:
- 	case V4L2_CID_DETECT_MD_MODE:
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index b6a357a5f053..0d2e1e01fbd5 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -892,6 +892,7 @@ enum v4l2_jpeg_chroma_subsampling {
- #define V4L2_CID_LINK_FREQ			(V4L2_CID_IMAGE_PROC_CLASS_BASE + 1)
- #define V4L2_CID_PIXEL_RATE			(V4L2_CID_IMAGE_PROC_CLASS_BASE + 2)
- #define V4L2_CID_TEST_PATTERN			(V4L2_CID_IMAGE_PROC_CLASS_BASE + 3)
-+#define V4L2_CID_DEINTERLACING_MODE		(V4L2_CID_IMAGE_PROC_CLASS_BASE + 4)
- 
- 
- /*  DV-class control IDs defined by V4L2 */
--- 
-Regards,
+Thank you.
 
-Laurent Pinchart
+Chris
+
+
+
+On 9/12/2016, Chris Brandt wrote:
+> To: Ulf Hansson <ulf.hansson@linaro.org>; Wolfram Sang <wsa+renesas@sang-
+> engineering.com>; Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>;
+> Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Simon Horman <horms+renesas@verge.net.au>; linux-mmc@vger.kernel.org;
+> linux-renesas-soc@vger.kernel.org; Chris Brandt <Chris.Brandt@renesas.com=
+>
+> Subject: [PATCH v3 0/3] mmc: sh_mobile_sdhi: Add r7s72100 support
+>=20
+> For the most part, the SDHI controller in the RZ/A1 (r7s72100) is the sam=
+e
+> as other Renesas SoC...except for the fact that the data port register wa=
+s
+> widened to 32-bits and the 16-bit accesses in the current tmio driver
+> aren't going to cut it.
+>=20
+> Also, the tmio driver allows you to pass in what voltages you support via
+> the ocr_mask. For the RZ/A1, it's just simple 3.3v.
+> So, I added the ability to pass that when using DT.
+>=20
+> Chris Brandt (3):
+>   mmc: sh_mobile_sdhi: add ocr_mask option
+>   mmc: tmio-mmc: add support for 32bit data port
+>   mmc: sh_mobile_sdhi: Add r7s72100 support
+>=20
+>  Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  1 +
+>  drivers/mmc/host/sh_mobile_sdhi.c                  |  9 +++++++
+>  drivers/mmc/host/tmio_mmc.h                        | 12 +++++++++
+>  drivers/mmc/host/tmio_mmc_pio.c                    | 30
+> ++++++++++++++++++++++
+>  include/linux/mfd/tmio.h                           |  5 ++++
+>  5 files changed, 57 insertions(+)
+>=20
+> --
+> 2.9.2
+>=20
