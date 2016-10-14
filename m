@@ -1,75 +1,120 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-qt0-f170.google.com ([209.85.216.170]:34524 "EHLO
-        mail-qt0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752869AbcJQNgG (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:60252 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932666AbcJNNTC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Oct 2016 09:36:06 -0400
-Received: by mail-qt0-f170.google.com with SMTP id q7so121361977qtq.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Oct 2016 06:36:06 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <SG2PR06MB11656EAD9F036EC0FFEDFF7F8ADF0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20160912141507.6837-1-chris.brandt@renesas.com>
- <20160912141507.6837-3-chris.brandt@renesas.com> <CAPDyKFoeRggX-YMy2L+o6CBtwa46rT2YyJiXdPK_c3a1R1Nvgg@mail.gmail.com>
- <SG2PR06MB11656EAD9F036EC0FFEDFF7F8ADF0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 17 Oct 2016 15:36:00 +0200
-Message-ID: <CAPDyKFrXYQPEfh8YMAFb4+0dr=WMyo8D-VCjd9KY5hpPxTv7PQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] mmc: tmio-mmc: add support for 32bit data port
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Lee Jones <lee@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Fri, 14 Oct 2016 09:19:02 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Lee Jones <lee@kernel.org>
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Simon Horman <horms+renesas@verge.net.au>,
         linux-mmc <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: RE: [PATCH v3 2/3] mmc: tmio-mmc: add support for 32bit data port
+Date: Fri, 14 Oct 2016 13:18:56 +0000
+Message-ID: <SG2PR06MB11656EAD9F036EC0FFEDFF7F8ADF0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20160912141507.6837-1-chris.brandt@renesas.com>
+ <20160912141507.6837-3-chris.brandt@renesas.com>
+ <CAPDyKFoeRggX-YMy2L+o6CBtwa46rT2YyJiXdPK_c3a1R1Nvgg@mail.gmail.com>
+In-Reply-To: <CAPDyKFoeRggX-YMy2L+o6CBtwa46rT2YyJiXdPK_c3a1R1Nvgg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 14 October 2016 at 15:18, Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> On 9/22/2016, Ulf Hansson wrote:
->> To: Chris Brandt <Chris.Brandt@renesas.com>
->> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>; Sergei Shtylyov
->> <sergei.shtylyov@cogentembedded.com>; Geert Uytterhoeven <geert@linux-
->> m68k.org>; Simon Horman <horms+renesas@verge.net.au>; linux-mmc <linux-
->> mmc@vger.kernel.org>; Linux-Renesas <linux-renesas-soc@vger.kernel.org>;
->> Lee Jones <lee@kernel.org>
->> Subject: Re: [PATCH v3 2/3] mmc: tmio-mmc: add support for 32bit data port
->>
->> + Lee
->>
->> On 12 September 2016 at 16:15, Chris Brandt <chris.brandt@renesas.com>
->> wrote:
->> > For the r7s72100 SOC, the DATA_PORT register was changed to 32-bits wide.
->> > Therefore a new flag has been created that will allow 32-bit
->> > reads/writes to the DATA_PORT register instead of 16-bit (because
->> > 16-bits accesses are not supported).
->> >
->> > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
->> > ---
->> > v3:
->> > * changed loops to memcpy
->> > v2:
->> > * changed 'data * 0xFF' to 'data & 0xFF'
->> > * added 'const' for sd_ctrl_write32_rep
->> > ---
->> >  drivers/mmc/host/tmio_mmc.h     | 12 ++++++++++++
->> >  drivers/mmc/host/tmio_mmc_pio.c | 30 ++++++++++++++++++++++++++++++
->> >  include/linux/mfd/tmio.h        |  5 +++++
->>
->> This header file needs to be split up. The mmc specific bits, should be
->> moved to a local header file under driver/mmc/host/*.
->>
->> Sure, we don't need to do that as part of $subject patch, but then I need
->> an ack from Lee Jones, the mfd maintainer. I have added him on cc.
->
->
-> Is this still waiting on an ACK from Lee Jones because it touches the tmio.h file under include/linux/mfd/ ?
->
-
-Yes, but more important is Wolfram's ack as he maintains
-drivers/mmc/host/tmio_mmc*
-
-Kind regards
-Uffe
+T24gOS8yMi8yMDE2LCBVbGYgSGFuc3NvbiB3cm90ZToNCj4gVG86IENocmlzIEJyYW5kdCA8Q2hy
+aXMuQnJhbmR0QHJlbmVzYXMuY29tPg0KPiBDYzogV29sZnJhbSBTYW5nIDx3c2ErcmVuZXNhc0Bz
+YW5nLWVuZ2luZWVyaW5nLmNvbT47IFNlcmdlaSBTaHR5bHlvdg0KPiA8c2VyZ2VpLnNodHlseW92
+QGNvZ2VudGVtYmVkZGVkLmNvbT47IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnRAbGludXgtDQo+
+IG02OGsub3JnPjsgU2ltb24gSG9ybWFuIDxob3JtcytyZW5lc2FzQHZlcmdlLm5ldC5hdT47IGxp
+bnV4LW1tYyA8bGludXgtDQo+IG1tY0B2Z2VyLmtlcm5lbC5vcmc+OyBMaW51eC1SZW5lc2FzIDxs
+aW51eC1yZW5lc2FzLXNvY0B2Z2VyLmtlcm5lbC5vcmc+Ow0KPiBMZWUgSm9uZXMgPGxlZUBrZXJu
+ZWwub3JnPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYzIDIvM10gbW1jOiB0bWlvLW1tYzogYWRk
+IHN1cHBvcnQgZm9yIDMyYml0IGRhdGEgcG9ydA0KPiANCj4gKyBMZWUNCj4gDQo+IE9uIDEyIFNl
+cHRlbWJlciAyMDE2IGF0IDE2OjE1LCBDaHJpcyBCcmFuZHQgPGNocmlzLmJyYW5kdEByZW5lc2Fz
+LmNvbT4NCj4gd3JvdGU6DQo+ID4gRm9yIHRoZSByN3M3MjEwMCBTT0MsIHRoZSBEQVRBX1BPUlQg
+cmVnaXN0ZXIgd2FzIGNoYW5nZWQgdG8gMzItYml0cyB3aWRlLg0KPiA+IFRoZXJlZm9yZSBhIG5l
+dyBmbGFnIGhhcyBiZWVuIGNyZWF0ZWQgdGhhdCB3aWxsIGFsbG93IDMyLWJpdA0KPiA+IHJlYWRz
+L3dyaXRlcyB0byB0aGUgREFUQV9QT1JUIHJlZ2lzdGVyIGluc3RlYWQgb2YgMTYtYml0IChiZWNh
+dXNlDQo+ID4gMTYtYml0cyBhY2Nlc3NlcyBhcmUgbm90IHN1cHBvcnRlZCkuDQo+ID4NCj4gPiBT
+aWduZWQtb2ZmLWJ5OiBDaHJpcyBCcmFuZHQgPGNocmlzLmJyYW5kdEByZW5lc2FzLmNvbT4NCj4g
+PiAtLS0NCj4gPiB2MzoNCj4gPiAqIGNoYW5nZWQgbG9vcHMgdG8gbWVtY3B5DQo+ID4gdjI6DQo+
+ID4gKiBjaGFuZ2VkICdkYXRhICogMHhGRicgdG8gJ2RhdGEgJiAweEZGJw0KPiA+ICogYWRkZWQg
+J2NvbnN0JyBmb3Igc2RfY3RybF93cml0ZTMyX3JlcA0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL21t
+Yy9ob3N0L3RtaW9fbW1jLmggICAgIHwgMTIgKysrKysrKysrKysrDQo+ID4gIGRyaXZlcnMvbW1j
+L2hvc3QvdG1pb19tbWNfcGlvLmMgfCAzMCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysN
+Cj4gPiAgaW5jbHVkZS9saW51eC9tZmQvdG1pby5oICAgICAgICB8ICA1ICsrKysrDQo+IA0KPiBU
+aGlzIGhlYWRlciBmaWxlIG5lZWRzIHRvIGJlIHNwbGl0IHVwLiBUaGUgbW1jIHNwZWNpZmljIGJp
+dHMsIHNob3VsZCBiZQ0KPiBtb3ZlZCB0byBhIGxvY2FsIGhlYWRlciBmaWxlIHVuZGVyIGRyaXZl
+ci9tbWMvaG9zdC8qLg0KPiANCj4gU3VyZSwgd2UgZG9uJ3QgbmVlZCB0byBkbyB0aGF0IGFzIHBh
+cnQgb2YgJHN1YmplY3QgcGF0Y2gsIGJ1dCB0aGVuIEkgbmVlZA0KPiBhbiBhY2sgZnJvbSBMZWUg
+Sm9uZXMsIHRoZSBtZmQgbWFpbnRhaW5lci4gSSBoYXZlIGFkZGVkIGhpbSBvbiBjYy4NCg0KDQpJ
+cyB0aGlzIHN0aWxsIHdhaXRpbmcgb24gYW4gQUNLIGZyb20gTGVlIEpvbmVzIGJlY2F1c2UgaXQg
+dG91Y2hlcyB0aGUgdG1pby5oIGZpbGUgdW5kZXIgaW5jbHVkZS9saW51eC9tZmQvID8NCg0KDQoN
+Cg0KDQogDQo+ID4gIDMgZmlsZXMgY2hhbmdlZCwgNDcgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbW1jL2hvc3QvdG1pb19tbWMuaCBiL2RyaXZlcnMvbW1jL2hv
+c3QvdG1pb19tbWMuaA0KPiA+IGluZGV4IGVjYjk5ZmMuLmE5OWU2MzQgMTAwNjQ0DQo+ID4gLS0t
+IGEvZHJpdmVycy9tbWMvaG9zdC90bWlvX21tYy5oDQo+ID4gKysrIGIvZHJpdmVycy9tbWMvaG9z
+dC90bWlvX21tYy5oDQo+ID4gQEAgLTIzNyw2ICsyMzcsMTIgQEAgc3RhdGljIGlubGluZSB1MzIN
+Cj4gc2RfY3RybF9yZWFkMTZfYW5kXzE2X2FzXzMyKHN0cnVjdCB0bWlvX21tY19ob3N0ICpob3N0
+LCBpbnQgYWQNCj4gPiAgICAgICAgICAgICAgICByZWFkdyhob3N0LT5jdGwgKyAoKGFkZHIgKyAy
+KSA8PCBob3N0LT5idXNfc2hpZnQpKSA8PA0KPiA+IDE2OyAgfQ0KPiA+DQo+ID4gK3N0YXRpYyBp
+bmxpbmUgdm9pZCBzZF9jdHJsX3JlYWQzMl9yZXAoc3RydWN0IHRtaW9fbW1jX2hvc3QgKmhvc3Qs
+IGludA0KPiBhZGRyLA0KPiA+ICsgICAgICAgICAgICAgICB1MzIgKmJ1ZiwgaW50IGNvdW50KQ0K
+PiA+ICt7DQo+ID4gKyAgICAgICByZWFkc2woaG9zdC0+Y3RsICsgKGFkZHIgPDwgaG9zdC0+YnVz
+X3NoaWZ0KSwgYnVmLCBjb3VudCk7IH0NCj4gPiArDQo+ID4gIHN0YXRpYyBpbmxpbmUgdm9pZCBz
+ZF9jdHJsX3dyaXRlMTYoc3RydWN0IHRtaW9fbW1jX2hvc3QgKmhvc3QsIGludA0KPiA+IGFkZHIs
+IHUxNiB2YWwpICB7DQo+ID4gICAgICAgICAvKiBJZiB0aGVyZSBpcyBhIGhvb2sgYW5kIGl0IHJl
+dHVybnMgbm9uLXplcm8gdGhlbiB0aGVyZSBAQA0KPiA+IC0yNTksNCArMjY1LDEwIEBAIHN0YXRp
+YyBpbmxpbmUgdm9pZCBzZF9jdHJsX3dyaXRlMzJfYXNfMTZfYW5kXzE2KHN0cnVjdA0KPiB0bWlv
+X21tY19ob3N0ICpob3N0LCBpbnQNCj4gPiAgICAgICAgIHdyaXRldyh2YWwgPj4gMTYsIGhvc3Qt
+PmN0bCArICgoYWRkciArIDIpIDw8DQo+ID4gaG9zdC0+YnVzX3NoaWZ0KSk7ICB9DQo+ID4NCj4g
+PiArc3RhdGljIGlubGluZSB2b2lkIHNkX2N0cmxfd3JpdGUzMl9yZXAoc3RydWN0IHRtaW9fbW1j
+X2hvc3QgKmhvc3QsIGludA0KPiBhZGRyLA0KPiA+ICsgICAgICAgICAgICAgICBjb25zdCB1MzIg
+KmJ1ZiwgaW50IGNvdW50KSB7DQo+ID4gKyAgICAgICB3cml0ZXNsKGhvc3QtPmN0bCArIChhZGRy
+IDw8IGhvc3QtPmJ1c19zaGlmdCksIGJ1ZiwgY291bnQpOyB9DQo+ID4gKw0KPiA+ICAjZW5kaWYN
+Cj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tbWMvaG9zdC90bWlvX21tY19waW8uYw0KPiA+IGIv
+ZHJpdmVycy9tbWMvaG9zdC90bWlvX21tY19waW8uYyBpbmRleCAwMTdhNGRjLi41OWZhYzdkIDEw
+MDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvbW1jL2hvc3QvdG1pb19tbWNfcGlvLmMNCj4gPiArKysg
+Yi9kcml2ZXJzL21tYy9ob3N0L3RtaW9fbW1jX3Bpby5jDQo+ID4gQEAgLTQ0Myw2ICs0NDMsMzYg
+QEAgc3RhdGljIHZvaWQgdG1pb19tbWNfdHJhbnNmZXJfZGF0YShzdHJ1Y3QNCj4gdG1pb19tbWNf
+aG9zdCAqaG9zdCwNCj4gPiAgICAgICAgIC8qDQo+ID4gICAgICAgICAgKiBUcmFuc2ZlciB0aGUg
+ZGF0YQ0KPiA+ICAgICAgICAgICovDQo+ID4gKyAgICAgICBpZiAoaG9zdC0+cGRhdGEtPmZsYWdz
+ICYgVE1JT19NTUNfMzJCSVRfREFUQV9QT1JUKSB7DQo+ID4gKyAgICAgICAgICAgICAgIHU4IGRh
+dGFbNF0gPSB7IH07DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAgICBpZiAoaXNfcmVhZCkNCj4g
+PiArICAgICAgICAgICAgICAgICAgICAgICBzZF9jdHJsX3JlYWQzMl9yZXAoaG9zdCwgQ1RMX1NE
+X0RBVEFfUE9SVCwgKHUzMg0KPiAqKWJ1ZiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgY291bnQgPj4gMik7DQo+ID4gKyAgICAgICAgICAgICAgIGVsc2UN
+Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICBzZF9jdHJsX3dyaXRlMzJfcmVwKGhvc3QsIENU
+TF9TRF9EQVRBX1BPUlQsICh1MzINCj4gKilidWYsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBjb3VudCA+PiAyKTsNCj4gPiArDQo+ID4gKyAgICAgICAg
+ICAgICAgIC8qIGlmIGNvdW50IHdhcyBtdWx0aXBsZSBvZiA0ICovDQo+ID4gKyAgICAgICAgICAg
+ICAgIGlmICghKGNvdW50ICYgMHgzKSkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICByZXR1
+cm47DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAgICBidWY4ID0gKHU4ICopKGJ1ZiArIChjb3Vu
+dCA+PiAyKSk7DQo+ID4gKyAgICAgICAgICAgICAgIGNvdW50ICU9IDQ7DQo+ID4gKw0KPiA+ICsg
+ICAgICAgICAgICAgICBpZiAoaXNfcmVhZCkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
+IHNkX2N0cmxfcmVhZDMyX3JlcChob3N0LCBDVExfU0RfREFUQV9QT1JULA0KPiA+ICsgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAodTMyICopZGF0YSwgMSk7DQo+ID4g
+KyAgICAgICAgICAgICAgICAgICAgICAgbWVtY3B5KGJ1ZjgsIGRhdGEsIGNvdW50KTsNCj4gPiAr
+ICAgICAgICAgICAgICAgfSBlbHNlIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBtZW1j
+cHkoZGF0YSwgYnVmOCwgY291bnQpOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHNkX2N0
+cmxfd3JpdGUzMl9yZXAoaG9zdCwgQ1RMX1NEX0RBVEFfUE9SVCwNCj4gPiArICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICh1MzIgKilkYXRhLCAxKTsNCj4gPiArICAg
+ICAgICAgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAgICAgICAgICAgcmV0dXJuOw0KPiA+ICsg
+ICAgICAgfQ0KPiA+ICsNCj4gPiAgICAgICAgIGlmIChpc19yZWFkKQ0KPiA+ICAgICAgICAgICAg
+ICAgICBzZF9jdHJsX3JlYWQxNl9yZXAoaG9zdCwgQ1RMX1NEX0RBVEFfUE9SVCwgYnVmLCBjb3Vu
+dCA+Pg0KPiAxKTsNCj4gPiAgICAgICAgIGVsc2UNCj4gPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9s
+aW51eC9tZmQvdG1pby5oIGIvaW5jbHVkZS9saW51eC9tZmQvdG1pby5oIGluZGV4DQo+ID4gM2I5
+NWRjNy4uMGRiY2I3ZSAxMDA2NDQNCj4gPiAtLS0gYS9pbmNsdWRlL2xpbnV4L21mZC90bWlvLmgN
+Cj4gPiArKysgYi9pbmNsdWRlL2xpbnV4L21mZC90bWlvLmgNCj4gPiBAQCAtMTAwLDYgKzEwMCwx
+MSBAQA0KPiA+ICAjZGVmaW5lIFRNSU9fTU1DX1NESU9fU1RBVFVTX1FVSVJLICAgICAoMSA8PCA4
+KQ0KPiA+DQo+ID4gIC8qDQo+ID4gKyAqIFNvbWUgY29udHJvbGxlcnMgaGF2ZSBhIDMyLWJpdCB3
+aWRlIGRhdGEgcG9ydCByZWdpc3RlciAgKi8NCj4gPiArI2RlZmluZSBUTUlPX01NQ18zMkJJVF9E
+QVRBX1BPUlQgICAgICAgKDEgPDwgOSkNCj4gPiArDQo+ID4gKy8qDQo+ID4gICAqIFNvbWUgY29u
+dHJvbGxlcnMgYWxsb3dzIHRvIHNldCBTRHggYWN0dWFsIGNsb2NrDQo+ID4gICAqLw0KPiA+ICAj
+ZGVmaW5lIFRNSU9fTU1DX0NMS19BQ1RVQUwgICAgICAgICAgICAoMSA8PCAxMCkNCj4gPiAtLQ0K
+PiA+IDIuOS4yDQo+ID4NCj4gPg0KPiANCj4gS2luZCByZWdhcmRzDQo+IFVmZmUNCg==
