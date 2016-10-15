@@ -1,394 +1,542 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:64065 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932230AbcJRPEe (ORCPT
+Received: from mail-io0-f194.google.com ([209.85.223.194]:33912 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752447AbcJOMmU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Oct 2016 11:04:34 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Rob Herring <robh+dt@kernel.org>,
+        Sat, 15 Oct 2016 08:42:20 -0400
+MIME-Version: 1.0
+In-Reply-To: <1476281429-27603-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+References: <1476281429-27603-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1476281429-27603-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sat, 15 Oct 2016 14:42:18 +0200
+Message-ID: <CAMuHMdUYQoJL4h8prEpontF4YH8Ha+SWDdeZHYEV3_uMZ-SBXw@mail.gmail.com>
+Subject: Re: [RFC 1/5] media: i2c: max2175: Add MAX2175 support
+To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
-        "Antti Palosaari" <crope@iki.fi>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Antti Palosaari <crope@iki.fi>,
+        Chris Paterson <chris.paterson2@renesas.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "Linux Media Mailing List" <linux-media@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [RFC 1/5] media: i2c: max2175: Add MAX2175 support
-Date: Tue, 18 Oct 2016 15:04:27 +0000
-Message-ID: <SG2PR06MB1038A64096062C426A5CFDFAC3D30@SG2PR06MB1038.apcprd06.prod.outlook.com>
-References: <1476281429-27603-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <1476281429-27603-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
- <CAMuHMdUYQoJL4h8prEpontF4YH8Ha+SWDdeZHYEV3_uMZ-SBXw@mail.gmail.com>
-In-Reply-To: <CAMuHMdUYQoJL4h8prEpontF4YH8Ha+SWDdeZHYEV3_uMZ-SBXw@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgdGhlIHJldmlldy4gDQoNCj4gU3ViamVjdDogUmU6
-IFtSRkMgMS81XSBtZWRpYTogaTJjOiBtYXgyMTc1OiBBZGQgTUFYMjE3NSBzdXBwb3J0DQo+IA0K
-Wy4uLl0NCj4gDQo+ID4gLS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9pMmMvbWF4MjE3NS50eHQNCj4gPiBAQCAtMCwwICsxLDYw
-IEBADQo+ID4gK01heGltIEludGVncmF0ZWQgTUFYMjE3NSBSRiB0byBCaXRzIHR1bmVyDQo+ID4g
-Ky0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gKw0KPiA+ICtU
-aGUgTUFYMjE3NSBJQyBpcyBhbiBhZHZhbmNlZCBhbmFsb2cvZGlnaXRhbCBoeWJyaWQtcmFkaW8g
-cmVjZWl2ZXINCj4gPiArd2l0aCBSRiB0byBCaXRzwq4gZnJvbnQtZW5kIGRlc2lnbmVkIGZvciBz
-b2Z0d2FyZS1kZWZpbmVkIHJhZGlvDQo+IHNvbHV0aW9ucy4NCj4gPiArDQo+ID4gK1JlcXVpcmVk
-IHByb3BlcnRpZXM6DQo+ID4gKy0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gKy0gY29tcGF0aWJs
-ZTogIm1heGltLG1heDIxNzUiIGZvciBNQVgyMTc1IFJGLXRvLWJpdHMgdHVuZXIuDQo+ID4gKy0g
-Y2xvY2tzOiBwaGFuZGxlIHRvIHRoZSBmaXhlZCB4dGFsIGNsb2NrLg0KPiA+ICstIGNsb2NrLW5h
-bWVzOiBuYW1lIG9mIHRoZSBmaXhlZCB4dGFsIGNsb2NrLg0KPiA+ICstIHBvcnQ6IHZpZGVvIGlu
-dGVyZmFjZSBjaGlsZCBwb3J0IG5vZGUgb2YgYSB0dW5lciB0aGF0IGRlZmluZXMgdGhlDQo+ID4g
-K2xvY2FsDQo+ID4gKyAgYW5kIHJlbW90ZSBlbmRwb2ludHMuIFRoZSByZW1vdGUgZW5kcG9pbnQg
-aXMgYXNzdW1lZCB0byBiZSBhbiBTRFINCj4gPiArZGV2aWNlDQo+ID4gKyAgdGhhdCBpcyBjYXBh
-YmxlIG9mIHJlY2VpdmluZyB0aGUgZGlnaXRhbCBzYW1wbGVzIGZyb20gdGhlIHR1bmVyLg0KPiA+
-ICsNCj4gPiArT3B0aW9uYWwgcHJvcGVydGllczoNCj4gPiArLS0tLS0tLS0tLS0tLS0tLS0tLS0N
-Cj4gPiArLSBtYXhpbSxzbGF2ZSAgICAgOiBlbXB0eSBwcm9wZXJ0eSBpbmRpY2F0ZXMgdGhpcyBp
-cyBhIHNsYXZlIG9mIGFub3RoZXINCj4gPiArICAgICAgICAgICAgICAgICAgICBtYXN0ZXIgdHVu
-ZXIuIFRoaXMgaXMgdXNlZCB0byBkZWZpbmUgdHdvIHR1bmVycyBpbg0KPiA+ICsgICAgICAgICAg
-ICAgICAgICAgIGRpdmVyc2l0eSBtb2RlICgxIG1hc3RlciwgMSBzbGF2ZSkuIEJ5IGRlZmF1bHQg
-ZWFjaA0KPiA+ICsgICAgICAgICAgICAgICAgICAgIHR1bmVyIGlzIGFuIGluZGl2aWR1YWwgbWFz
-dGVyLg0KPiA+ICstIG1heGltLHJlZm91dC1sb2FkOiBsb2FkIGNhcGFjaXRhbmNlIHZhbHVlIChp
-biBwRikgb24gcmVmZXJlbmNlIG91dHB1dA0KPiA+ICsgICAgICAgICAgICAgICAgICAgIGRyaXZl
-IGxldmVsLiBUaGUgbWFwcGluZyBvZiB0aGVzZSBsb2FkIHZhbHVlcyB0bw0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgIHJlc3BlY3RpdmUgYml0IHZhbHVlcyBhcmUgZ2l2ZW4gYmVsb3cuDQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgMCAtIFJlZmVyZW5jZSBvdXRwdXQgZGlzYWJsZWQNCj4gPiAr
-ICAgICAgICAgICAgICAgICAgICAxIC0gMTBwRiBsb2FkDQo+ID4gKyAgICAgICAgICAgICAgICAg
-ICAgMiAtIDIwcEYgbG9hZA0KPiA+ICsgICAgICAgICAgICAgICAgICAgIDMgLSAzMHBGIGxvYWQN
-Cj4gPiArICAgICAgICAgICAgICAgICAgICA0IC0gNDBwRiBsb2FkDQo+ID4gKyAgICAgICAgICAg
-ICAgICAgICAgNSAtIDYwcEYgbG9hZA0KPiA+ICsgICAgICAgICAgICAgICAgICAgIDYgLSA3MHBG
-IGxvYWQNCj4gDQo+IEZvciBwcm9wZXJ0aWVzIGludm9sdmluZyB1bml0cywgdXN1YWxseSB0aGUg
-dW5pdCBpcyBtYWRlIHBhcnQgb2YgdGhlDQo+IHByb3BlcnR5IG5hbWUsIGUuZy4gbWF4aW0scmVm
-b3V0LWxvYWQtcEYgPSA0MC4NCj4gVGhpcyBhdm9pZHMgY29uZnVzaW9uLCBhbmQgYWxsb3dzIGZv
-ciBleHRlbnNpb24gbGF0ZXIuDQoNCkFncmVlZC4gSSBoYXZlIG1vZGlmaWVkIGl0IGFzDQoNCi0g
-bWF4aW0scmVmb3V0LWxvYWQtcEY6IGxvYWQgY2FwYWNpdGFuY2UgdmFsdWUgKGluIHBGKSBvbiBy
-ZWZlcmVuY2UNCiAgICAgICAgICAgICAgICAgICAgICAgIG91dHB1dCBkcml2ZSBsZXZlbC4gVGhl
-IGRlZmF1bHQgaXMgcmVmb3V0IGRpc2FibGVkDQogICAgICAgICAgICAgICAgICAgICAgICBvciBu
-byBsb2FkLiBUaGUgcG9zc2libGUgbG9hZCB2YWx1ZXMgYXJlIA0KICAgICAgICAgICAgICAgICAg
-ICAgICAgMTBwRg0KICAgICAgICAgICAgICAgICAgICAgICAgMjBwRg0KICAgICAgICAgICAgICAg
-ICAgICAgICAgMzBwRg0KICAgICAgICAgICAgICAgICAgICAgICAgNDBwRg0KICAgICAgICAgICAg
-ICAgICAgICAgICAgNjBwRg0KICAgICAgICAgICAgICAgICAgICAgICAgNzBwRg0KDQo+IA0KPiA+
-ICsvKiBBIHR1bmVyIGRldmljZSBpbnN0YW5jZSB1bmRlciBpMmMgYnVzICovDQo+ID4gK21heDIx
-NzVfMDogdHVuZXJANjAgew0KPiA+ICsgICAgICAgI2Nsb2NrLWNlbGxzID0gPDA+Ow0KPiA+ICsg
-ICAgICAgY29tcGF0aWJsZSA9ICJtYXhpbSxtYXgyMTc1IjsNCj4gPiArICAgICAgIHJlZyA9IDww
-eDYwPjsNCj4gPiArICAgICAgIGNsb2NrcyA9IDwmbWF4aW1feHRhbD47DQo+ID4gKyAgICAgICBj
-bG9jay1uYW1lcyA9ICJ4dGFsIjsNCj4gPiArICAgICAgIG1heGltLHJlZm91dC1sb2FkID0gPDEw
-PjsNCj4gDQo+IDEwIGlzIG5vdCBsaXN0ZWQgYWJvdmUuIFBlcmhhcHMgeW91IG1lYW50IDEwIHBG
-Pw0KDQpZZXMuDQoNCj4gDQo+ID4gLS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBiL2RyaXZlcnMvbWVk
-aWEvaTJjL21heDIxNzUvbWF4MjE3NS5jDQo+ID4gQEAgLTAsMCArMSwxNjI0IEBADQo+IA0KPiA+
-ICsvKiBOT1RFOiBBbnkgYWRkaXRpb24vZGVsZXRpb24gaW4gdGhlIGJlbG93IGxpc3Qgc2hvdWxk
-IGJlIHJlZmxlY3RlZA0KPiA+ICtpbg0KPiA+ICsgKiBtYXgyMTc1X21vZGV0YWcgZW51bQ0KPiA+
-ICsgKi8NCj4gDQo+IFlvdSBjYW4gZHJvcCB0aGUgYWJvdmUgY29tbWVudCBpZiB5b3UgbWFrZSB0
-aGlzIGV4cGxpY2l0IHVzaW5nIEM5OQ0KPiBkZXNpZ25hdGVkIGluaXRpYWxpemVycywgY2ZyLiBi
-ZWxvdy4NCj4gDQo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgbWF4MjE3NV9yeG1vZGUgZXVfcnhf
-bW9kZXNbXSA9IHsgLyogSW5kZXhlZCBieSBFVQ0KPiBtb2RldGFnICovDQo+ID4gKyAgICAgICAv
-KiBFVSBtb2RlcyAqLw0KPiA+ICsgICAgICAgeyBNQVgyMTc1X0JBTkRfVkhGLCAxODI2NDAwMDAs
-IDAsIHsgMCwgMCwgMCwgMCB9IH0sDQo+IA0KPiBbTUFYMjE3NV9EQUJfMV8yXSA9IHsgTUFYMjE3
-NV9CQU5EX1ZIRiwgMTgyNjQwMDAwLCAwLCB7IDAsIDAsIDAsIDAgfSB9LA0KPiANCj4gPiArfTsN
-Cj4gPiArDQo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgbWF4MjE3NV9yeG1vZGUgbmFfcnhfbW9k
-ZXNbXSA9IHsgLyogSW5kZXhlZCBieSBOQQ0KPiBtb2RldGFnICovDQo+ID4gKyAgICAgICAvKiBO
-QSBtb2RlcyAqLw0KPiA+ICsgICAgICAgeyBNQVgyMTc1X0JBTkRfRk0sIDk4MjU1NTIwLCAxLCB7
-IDAsIDAsIDAsIDAgfSB9LA0KPiANCj4gW01BWDIxNzVfTkFfRk1fMV8wXSA9IHsgTUFYMjE3NV9C
-QU5EX0ZNLCA5ODI1NTUyMCwgMSwgeyAwLCAwLCAwLCAwIH0gfSwNCj4gDQoNClRoYW5rIHlvdS4g
-VXNpbmcgZGVzaWduYXRlZCBpbml0aWFsaXplcnMgbm93Lg0KDQo+ID4gK3N0cnVjdCBtYXgyMTc1
-X2N0eCB7DQo+ID4gKyAgICAgICBzdHJ1Y3QgdjRsMl9zdWJkZXYgc2Q7DQo+ID4gKyAgICAgICBz
-dHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50Ow0KPiA+ICsgICAgICAgc3RydWN0IGRldmljZSAqZGV2
-Ow0KPiA+ICsNCj4gPiArICAgICAgIC8qIENhY2hlZCBjb25maWd1cmF0aW9uICovDQo+ID4gKyAg
-ICAgICB1OCByZWdzWzI1Nl07DQo+ID4gKyAgICAgICBlbnVtIG1heDIxNzVfbW9kZXRhZyBtb2Rl
-OyAgICAgIC8qIFJlY2VpdmUgbW9kZSB0YWcgKi8NCj4gPiArICAgICAgIHUzMiBmcmVxOyAgICAg
-ICAgICAgICAgICAgICAgICAgLyogSW4gSHogKi8NCj4gPiArICAgICAgIHN0cnVjdCBtYXgyMTc1
-X3J4bW9kZSAqcnhfbW9kZXM7DQo+ID4gKw0KPiA+ICsgICAgICAgLyogRGV2aWNlIHNldHRpbmdz
-ICovDQo+ID4gKyAgICAgICBib29sIG1hc3RlcjsNCj4gPiArICAgICAgIHUzMiBkZWNpbV9yYXRp
-bzsNCj4gPiArICAgICAgIHU2NCB4dGFsX2ZyZXE7DQo+ID4gKw0KPiA+ICsgICAgICAgLyogUk9N
-IHZhbHVlcyAqLw0KPiA+ICsgICAgICAgdTggcm9tX2JiZl9id19hbTsNCj4gPiArICAgICAgIHU4
-IHJvbV9iYmZfYndfZm07DQo+ID4gKyAgICAgICB1OCByb21fYmJmX2J3X2RhYjsNCj4gPiArDQo+
-ID4gKyAgICAgICAvKiBMb2NhbCBjb3B5IG9mIG9sZCBzZXR0aW5ncyAqLw0KPiA+ICsgICAgICAg
-dTggaTJzX3Rlc3Q7DQo+ID4gKw0KPiA+ICsgICAgICAgdTggbmJkX2dhaW47DQo+ID4gKyAgICAg
-ICB1OCBuYmRfdGhyZXNob2xkOw0KPiA+ICsgICAgICAgdTggd2JkX2dhaW47DQo+ID4gKyAgICAg
-ICB1OCB3YmRfdGhyZXNob2xkOw0KPiA+ICsgICAgICAgdTggYmJkX3RocmVzaG9sZDsNCj4gPiAr
-ICAgICAgIHU4IGJiZGNsaXBfdGhyZXNob2xkOw0KPiA+ICsgICAgICAgdTggbHRfd2JkX3RocmVz
-aG9sZDsNCj4gPiArICAgICAgIHU4IGx0X3diZF9nYWluOw0KPiA+ICsNCj4gPiArICAgICAgIC8q
-IENvbnRyb2xzICovDQo+ID4gKyAgICAgICBzdHJ1Y3QgdjRsMl9jdHJsX2hhbmRsZXIgY3RybF9o
-ZGw7DQo+ID4gKyAgICAgICBzdHJ1Y3QgdjRsMl9jdHJsICpsbmFfZ2FpbjsgICAgIC8qIExOQSBn
-YWluIHZhbHVlICovDQo+ID4gKyAgICAgICBzdHJ1Y3QgdjRsMl9jdHJsICppZl9nYWluOyAgICAg
-IC8qIEkvRiBnYWluIHZhbHVlICovDQo+ID4gKyAgICAgICBzdHJ1Y3QgdjRsMl9jdHJsICpwbGxf
-bG9jazsgICAgIC8qIFBMTCBsb2NrICovDQo+ID4gKyAgICAgICBzdHJ1Y3QgdjRsMl9jdHJsICpp
-MnNfZW47ICAgICAgIC8qIEkyUyBvdXRwdXQgZW5hYmxlICovDQo+ID4gKyAgICAgICBzdHJ1Y3Qg
-djRsMl9jdHJsICppMnNfbW9kZTsgICAgIC8qIEkyUyBtb2RlIHZhbHVlICovDQo+ID4gKyAgICAg
-ICBzdHJ1Y3QgdjRsMl9jdHJsICphbV9oaXo7ICAgICAgIC8qIEFNIEhpZ2ggaW1wbGVkYW5jZSBp
-bnB1dCAqLw0KPiA+ICsgICAgICAgc3RydWN0IHY0bDJfY3RybCAqaHNsczsgICAgICAgICAvKiBI
-aWdoLXNpZGUvTG93LXNpZGUgcG9sYXJpdHkNCj4gKi8NCj4gPiArICAgICAgIHN0cnVjdCB2NGwy
-X2N0cmwgKnJ4X21vZGU7ICAgICAgLyogUmVjZWl2ZSBtb2RlICovDQo+ID4gKw0KPiA+ICsgICAg
-ICAgLyogRHJpdmVyIHByaXZhdGUgdmFyaWFibGVzICovDQo+ID4gKyAgICAgICBib29sIG1vZGVf
-cmVzb2x2ZWQ7ICAgICAgICAgICAgIC8qIEZsYWcgdG8gc2FuaXR5IGNoZWNrIHNldHRpbmdzDQo+
-ICovDQo+ID4gK307DQo+IA0KPiBTb3J0aW5nIHRoZSBzdHJ1Y3QgbWVtYmVycyBieSBkZWNyZWFz
-aW5nIHNpemUgaGVscHMgdG8gYXZvaWQgZ2FwcyBkdWUgdG8NCj4gYWxpZ25tZW50IHJlc3RyaWN0
-aW9ucywgYW5kIG1heSByZWR1Y2UgbWVtb3J5IGNvbnN1bXB0aW9uLg0KDQpPSy4gSSBoYXZlIGNv
-cnJlY3RlZCBpdCB0byBjZXJ0YWluIGV4dGVudCBidXQgc3RpbGwgaGF2aW5nIGdyb3VwcyAobm90
-IHN0cmljdCBkZWNyZWFzaW5nIG9yZGVyIC0gZm9yIGJldHRlciByZWFkYWJpbGl0eSkuIEkgaGF2
-ZSBwdXNoZWQgdGhlIHU4IGdyb3VwIG1lbWJlcnMgdG8gdGhlIGVuZCB0aG91Z2guDQoNCj4gDQo+
-ID4gKy8qIEZsdXNoIGxvY2FsIGNvcHkgdG8gZGV2aWNlIGZyb20gaWR4IHRvIGlkeCtsZW4gKGlu
-Y2x1c2l2ZSkgKi8NCj4gPiArc3RhdGljIHZvaWQgbWF4MjE3NV9mbHVzaF9yZWdzdG9yZShzdHJ1
-Y3QgbWF4MjE3NV9jdHggKmN0eCwgdTggaWR4LA0KPiA+ICt1OCBsZW4pIHsNCj4gPiArICAgICAg
-IHU4IGk7DQo+IA0KPiBJJ2QganVzdCB1c2UgdW5zaWduZWQgaW50IGZvciBsb29wIGNvdW50ZXJz
-Lg0KPiANCg0KQWdyZWVkLg0KDQo+ID4gKw0KPiA+ICsgICAgICAgZm9yIChpID0gaWR4OyBpIDw9
-IGxlbjsgaSsrKQ0KPiA+ICsgICAgICAgICAgICAgICBtYXgyMTc1X3JlZ193cml0ZShjdHgsIGks
-IGN0eC0+cmVnc1tpXSk7IH0NCj4gDQo+ID4gK3N0YXRpYyBpbnQgbWF4MjE3NV91cGRhdGVfaTJz
-X21vZGUoc3RydWN0IG1heDIxNzVfY3R4ICpjdHgsIHUzMg0KPiA+ICtpMnNfbW9kZSkgew0KPiA+
-ICsgICAgICAgLyogT25seSBjaGFuZ2UgaWYgaXQncyBuZXcgKi8NCj4gPiArICAgICAgIGlmICht
-YXgyMTc1X3JlYWRfYml0cyhjdHgsIDI5LCAyLCAwKSA9PSBpMnNfbW9kZSkNCj4gDQo+IE1hbnkg
-bWFnaWMgbnVtYmVycywgbm90IG9ubHkgaGVyZSAoMjksIDIpLCBidXQgZXZlcnl3aGVyZS4NCj4g
-Q2FuIHlvdSBwbGVhc2UgYWRkICNkZWZpbmVzIGZvciB0aGVzZT8NCg0KVGhlIFR1bmVyIHByb3Zp
-ZGVyIGlzIHVud2lsbGluZyB0byBkaXNjbG9zZSBhbGwgcmVnaXN0ZXIgZGV0YWlscy4gSSBhZ3Jl
-ZSBvbiB0aGUgcmVhZGFiaWxpdHkgaXNzdWUgd2l0aCB0aGlzIHJlc3RyaWN0aW9uIGJ1dCB0aGlz
-IGlzIHNvbWV3aGF0IHRydWUgZm9yIHNvbWUgc2Vuc2l0aXZlIElQcyBpbiB0aGUgbWVkaWEgc3Vi
-c3lzdGVtLg0KDQo+IA0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gMDsNCj4gPiArDQo+ID4g
-KyAgICAgICBtYXgyMTc1X3dyaXRlX2JpdHMoY3R4LCAyOSwgMiwgMCwgaTJzX21vZGUpOw0KPiA+
-ICsNCj4gPiArICAgICAgIC8qIEJhc2VkIG9uIEkyUyBtb2RlIHZhbHVlIEkyU19XT1JEX0NOVCB2
-YWx1ZXMgY2hhbmdlICovDQo+ID4gKyAgICAgICBpZiAoaTJzX21vZGUgPT0gTUFYMjE3NV9JMlNf
-TU9ERTMpIHsNCj4gPiArICAgICAgICAgICAgICAgbWF4MjE3NV93cml0ZV9iaXRzKGN0eCwgMzAs
-IDYsIDAsIDEpOw0KPiA+ICsgICAgICAgfSBlbHNlIGlmIChpMnNfbW9kZSA9PSBNQVgyMTc1X0ky
-U19NT0RFMiB8fA0KPiA+ICsgICAgICAgICAgICAgICAgICBpMnNfbW9kZSA9PSBNQVgyMTc1X0ky
-U19NT0RFNCkgew0KPiA+ICsgICAgICAgICAgICAgICBtYXgyMTc1X3dyaXRlX2JpdHMoY3R4LCAz
-MCwgNiwgMCwgMCk7DQo+ID4gKyAgICAgICB9IGVsc2UgaWYgKGkyc19tb2RlID09IE1BWDIxNzVf
-STJTX01PREUwKSB7DQo+ID4gKyAgICAgICAgICAgICAgIG1heDIxNzVfd3JpdGVfYml0cyhjdHgs
-IDMwLCA2LCAwLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY3R4LT5y
-eF9tb2Rlc1tjdHgtDQo+ID5tb2RlXS5pMnNfd29yZF9zaXplKTsNCj4gPiArICAgICAgIH0gZWxz
-ZSB7DQo+ID4gKyAgICAgICAgICAgICAgIHY0bDJfZXJyKGN0eC0+Y2xpZW50LA0KPiA+ICsgICAg
-ICAgICAgICAgICAgICAgICAgICAiZmFpbGVkOiBpMnNfbW9kZSAldSB1bnN1cHBvcnRlZFxuIiwg
-aTJzX21vZGUpOw0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gMTsNCj4gPiArICAgICAgIH0N
-Cj4gDQo+IHN3aXRjaCAoaTJzX21vZGUpIHsgLi4uIH0NCg0KQWdyZWVkLg0KDQo+IA0KPiA+ICsg
-ICAgICAgbXhtX2RiZyhjdHgsICJ1cGRhdGVkIGkyc19tb2RlICV1XG4iLCBpMnNfbW9kZSk7DQo+
-ID4gKyAgICAgICByZXR1cm4gMDsNCj4gPiArfQ0KPiANCj4gPiArc3RhdGljIHZvaWQgbWF4MjE3
-NV9zZXRfZmlsdGVyX2NvZWZmcyhzdHJ1Y3QgbWF4MjE3NV9jdHggKmN0eCwgdTgNCj4gbV9zZWws
-DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1OCBiYW5rLCBjb25z
-dCB1MTYgKmNvZWZmcykgew0KPiA+ICsgICAgICAgdTggaSwgY29lZmZfYWRkciwgdXBwZXJfYWRk
-cmVzczsNCj4gDQo+IEknZCBqdXN0IHVzZSB1bnNpZ25lZCBpbnQgZm9yIHRoZXNlLg0KPiANCg0K
-QWdyZWVkLg0KDQo+ID4gKw0KPiA+ICsgICAgICAgbXhtX2RiZyhjdHgsICJzdGFydDogbV9zZWwg
-JWQgYmFuayAlZFxuIiwgbV9zZWwsIGJhbmspOw0KPiA+ICsgICAgICAgbWF4MjE3NV93cml0ZV9i
-aXRzKGN0eCwgMTE0LCA1LCA0LCBtX3NlbCk7DQo+ID4gKw0KPiA+ICsgICAgICAgaWYgKG1fc2Vs
-ID09IDIpDQo+ID4gKyAgICAgICAgICAgICAgIHVwcGVyX2FkZHJlc3MgPSAxMjsNCj4gPiArICAg
-ICAgIGVsc2UNCj4gPiArICAgICAgICAgICAgICAgdXBwZXJfYWRkcmVzcyA9IDI0Ow0KPiA+ICsN
-Cj4gPiArICAgICAgIG1heDIxNzVfc2V0X2JpdChjdHgsIDExNywgNywgMSk7DQo+ID4gKyAgICAg
-ICBmb3IgKGkgPSAwOyBpIDwgdXBwZXJfYWRkcmVzczsgaSsrKSB7DQo+ID4gKyAgICAgICAgICAg
-ICAgIGNvZWZmX2FkZHIgPSBpICsgKGJhbmsgKiAyNCk7DQo+ID4gKyAgICAgICAgICAgICAgIG1h
-eDIxNzVfc2V0X2JpdHMoY3R4LCAxMTUsIDcsIDAsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgKHU4KSgoY29lZmZzW2ldID4+IDgpICYgMHhmZikpOw0KPiA+ICsgICAgICAg
-ICAgICAgICBtYXgyMTc1X3NldF9iaXRzKGN0eCwgMTE2LCA3LCAwLCAodTgpKGNvZWZmc1tpXSAm
-DQo+ID4gKyAweGZmKSk7DQo+IA0KPiBJIGRvbid0IHRoaW5rIHlvdSBuZWVkIHRoZSBjYXN0cyB0
-byB1OCwgb3IgdGhlIG1hc2tpbmcgd2l0aCAweGZmLg0KDQpZZXMuIENvcnJlY3RlZC4NCg0KPiAN
-Cj4gPiArICAgICAgICAgICAgICAgbWF4MjE3NV9zZXRfYml0cyhjdHgsIDExNywgNiwgMCwgY29l
-ZmZfYWRkcik7DQo+ID4gKyAgICAgICAgICAgICAgIG1heDIxNzVfZmx1c2hfcmVnc3RvcmUoY3R4
-LCAxMTUsIDMpOw0KPiA+ICsgICAgICAgfQ0KPiA+ICsgICAgICAgbWF4MjE3NV93cml0ZV9iaXQo
-Y3R4LCAxMTcsIDcsIDApOyB9DQo+ID4gKw0KPiA+ICtzdGF0aWMgdm9pZCBtYXgyMTc1X2xvYWRf
-ZGFiXzFwMihzdHJ1Y3QgbWF4MjE3NV9jdHggKmN0eCkgew0KPiA+ICsgICAgICAgdTMyIGk7DQo+
-IA0KPiB1bnNpZ25lZCBpbnQ/DQoNCkFncmVlZC4NCg0KPiANCj4gPiArc3RhdGljIGludCBtYXgy
-MTc1X3NldF9sb19mcmVxKHN0cnVjdCBtYXgyMTc1X2N0eCAqY3R4LCB1NjQgbG9fZnJlcSkNCj4g
-PiArew0KPiA+ICsgICAgICAgaW50IHJldDsNCj4gPiArICAgICAgIHUzMiBsb19tdWx0Ow0KPiA+
-ICsgICAgICAgdTY0IHNjYWxlZF9sb19mcmVxOw0KPiA+ICsgICAgICAgY29uc3QgdTY0IHNjYWxl
-X2ZhY3RvciA9IDEwMDAwMDBVTEw7DQo+ID4gKyAgICAgICB1NjQgc2NhbGVkX25wZiwgc2NhbGVk
-X2ludGVnZXIsIHNjYWxlZF9mcmFjdGlvbjsNCj4gPiArICAgICAgIHUzMiBmcmFjX2Rlc2lyZWQs
-IGludF9kZXNpcmVkOw0KPiA+ICsgICAgICAgdTggbG9iYW5kX2JpdHMsIHZjb2Rpdl9iaXRzOw0K
-PiA+ICsNCj4gPiArICAgICAgIHNjYWxlZF9sb19mcmVxID0gbG9fZnJlcTsNCj4gPiArICAgICAg
-IC8qIFNjYWxlIHRvIGxhcmdlciBudW1iZXIgZm9yIHByZWNpc2lvbiAqLw0KPiA+ICsgICAgICAg
-c2NhbGVkX2xvX2ZyZXEgPSBzY2FsZWRfbG9fZnJlcSAqIHNjYWxlX2ZhY3RvciAqIDEwMDsNCj4g
-PiArDQo+ID4gKyAgICAgICBteG1fZGJnKGN0eCwgInNjYWxlZCBsb19mcmVxICVsbHUgbG9fZnJl
-cSAlbGx1XG4iLA0KPiA+ICsgICAgICAgICAgICAgICBzY2FsZWRfbG9fZnJlcSwgbG9fZnJlcSk7
-DQo+ID4gKw0KPiA+ICsgICAgICAgaWYgKE1BWDIxNzVfSVNfQkFORF9BTShjdHgpKSB7DQo+ID4g
-KyAgICAgICAgICAgICAgIGlmIChtYXgyMTc1X2dldF9iaXQoY3R4LCA1LCA3KSA9PSAwKQ0KPiA+
-ICsgICAgICAgICAgICAgICAgICAgICAgIGxvYmFuZF9iaXRzID0gMDsNCj4gPiArICAgICAgICAg
-ICAgICAgICAgICAgICB2Y29kaXZfYml0cyA9IDA7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgbG9fbXVsdCA9IDE2Ow0KPiA+ICsgICAgICAgfSBlbHNlIGlmIChtYXgyMTc1X2dldF9iaXRz
-KGN0eCwgNSwgMSwgMCkgPT0gTUFYMjE3NV9CQU5EX0ZNKSB7DQo+ID4gKyAgICAgICAgICAgICAg
-IGlmIChsb19mcmVxIDw9IDc0NzAwMDAwKSB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
-bG9iYW5kX2JpdHMgPSAwOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHZjb2Rpdl9iaXRz
-ID0gMDsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBsb19tdWx0ID0gMTY7DQo+ID4gKyAg
-ICAgICAgICAgICAgIH0gZWxzZSBpZiAoKGxvX2ZyZXEgPiA3NDcwMDAwMCkgJiYgKGxvX2ZyZXEg
-PD0NCj4gMTEwMDAwMDAwKSkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGxvYmFuZF9i
-aXRzID0gMTsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICB2Y29kaXZfYml0cyA9IDA7DQo+
-ID4gKyAgICAgICAgICAgICAgIH0gZWxzZSB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
-bG9iYW5kX2JpdHMgPSAxOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHZjb2Rpdl9iaXRz
-ID0gMzsNCj4gPiArICAgICAgICAgICAgICAgfQ0KPiA+ICsgICAgICAgICAgICAgICBsb19tdWx0
-ID0gODsNCj4gPiArICAgICAgIH0gZWxzZSBpZiAobWF4MjE3NV9nZXRfYml0cyhjdHgsIDUsIDEs
-IDApID09IE1BWDIxNzVfQkFORF9WSEYpIHsNCj4gPiArICAgICAgICAgICAgICAgaWYgKGxvX2Zy
-ZXEgPD0gMjEwMDAwMDAwKSB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgbG9iYW5kX2Jp
-dHMgPSAyOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHZjb2Rpdl9iaXRzID0gMjsNCj4g
-PiArICAgICAgICAgICAgICAgfSBlbHNlIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBs
-b2JhbmRfYml0cyA9IDI7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgdmNvZGl2X2JpdHMg
-PSAxOw0KPiA+ICsgICAgICAgICAgICAgICB9DQo+ID4gKyAgICAgICAgICAgICAgIGxvX211bHQg
-PSA0Ow0KPiA+ICsgICAgICAgfSBlbHNlIHsNCj4gPiArICAgICAgICAgICAgICAgbG9iYW5kX2Jp
-dHMgPSAzOw0KPiA+ICsgICAgICAgICAgICAgICB2Y29kaXZfYml0cyA9IDI7DQo+ID4gKyAgICAg
-ICAgICAgICAgIGxvX211bHQgPSAyOw0KPiA+ICsgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAg
-IGlmIChtYXgyMTc1X2dldF9iaXRzKGN0eCwgNSwgMSwgMCkgPT0gTUFYMjE3NV9CQU5EX0wpDQo+
-ID4gKyAgICAgICAgICAgICAgIHNjYWxlZF9ucGYgPSAoc2NhbGVkX2xvX2ZyZXEgLyBjdHgtPnh0
-YWxfZnJlcSAvIGxvX211bHQpDQo+IC8gMTAwOw0KPiA+ICsgICAgICAgZWxzZQ0KPiA+ICsgICAg
-ICAgICAgICAgICBzY2FsZWRfbnBmID0gKHNjYWxlZF9sb19mcmVxIC8gY3R4LT54dGFsX2ZyZXEg
-Kg0KPiA+ICsgbG9fbXVsdCkgLyAxMDA7DQo+IA0KPiBQbGVhc2UgdXNlIG9uZSBvZiB0aGUgZGl2
-NjQqKCkgZnVuY3Rpb25zIGZvciBkaXZpc2lvbnMgaW52b2x2aW5nIDY0LWJpdA0KPiBxdWFudGl0
-aWVzICh0cnkgdG8gYnVpbGQgZm9yIDMyLWJpdCBhbmQgc2VlKS4gTW9yZSBvZiB0aGVzZSBiZWxv
-dy4uLg0KDQpUaGFua3MuIEFsbCA2NGJpdCBkaXZpc2lvbnMgYXJlIGNvcnJlY3RlZCB0byBkaXZf
-eDY0IHZhcmlhbnRzLiBZb3UgYXJlIHJpZ2h0IC0ga2J1aWxkIHJlcG9ydGVkIE1JUFMgYnVpbGQg
-ZmFpbHVyZSBiZWNhdXNlIG9mIHRoaXMuIEkgdHJpZWQgb25seSB4ODYgZm9yIDMyLWJpdC4NCg0K
-PiANCj4gPiArICAgICAgIHNjYWxlZF9pbnRlZ2VyID0gc2NhbGVkX25wZiAvIHNjYWxlX2ZhY3Rv
-ciAqIHNjYWxlX2ZhY3RvcjsNCj4gPiArICAgICAgIGludF9kZXNpcmVkID0gKHUzMikoc2NhbGVk
-X25wZiAvIHNjYWxlX2ZhY3Rvcik7DQo+ID4gKyAgICAgICBzY2FsZWRfZnJhY3Rpb24gPSBzY2Fs
-ZWRfbnBmIC0gc2NhbGVkX2ludGVnZXI7DQo+ID4gKyAgICAgICBmcmFjX2Rlc2lyZWQgPSAodTMy
-KShzY2FsZWRfZnJhY3Rpb24gKiAxMDQ4NTc2IC8NCj4gPiArIHNjYWxlX2ZhY3Rvcik7DQo+IA0K
-PiA+ICsgICAgICAgLyogV3JpdGUgdGhlIGNhbGN1bGF0ZWQgdmFsdWVzIHRvIHRoZSBhcHByb3By
-aWF0ZSByZWdpc3RlcnMgKi8NCj4gPiArICAgICAgIG1heDIxNzVfc2V0X2JpdHMoY3R4LCA1LCAz
-LCAyLCBsb2JhbmRfYml0cyk7DQo+ID4gKyAgICAgICBtYXgyMTc1X3NldF9iaXRzKGN0eCwgNiwg
-NywgNiwgdmNvZGl2X2JpdHMpOw0KPiA+ICsgICAgICAgbWF4MjE3NV9zZXRfYml0cyhjdHgsIDEs
-IDcsIDAsICh1OCkoaW50X2Rlc2lyZWQgJiAweGZmKSk7DQo+ID4gKyAgICAgICBtYXgyMTc1X3Nl
-dF9iaXRzKGN0eCwgMiwgMywgMCwgKHU4KSgoZnJhY19kZXNpcmVkID4+IDE2KSAmDQo+IDB4MWYp
-KTsNCj4gPiArICAgICAgIG1heDIxNzVfc2V0X2JpdHMoY3R4LCAzLCA3LCAwLCAodTgpKChmcmFj
-X2Rlc2lyZWQgPj4gOCkgJg0KPiAweGZmKSk7DQo+ID4gKyAgICAgICBtYXgyMTc1X3NldF9iaXRz
-KGN0eCwgNCwgNywgMCwgKHU4KShmcmFjX2Rlc2lyZWQgJiAweGZmKSk7DQo+IA0KPiBObyBuZWVk
-IGZvciBjYXN0cyBldGMuDQoNClllcywgY29ycmVjdGVkLg0KDQo+IA0KPiA+ICsgICAgICAgLyog
-Rmx1c2ggdGhlIGFib3ZlIHJlZ2lzdGVycyB0byBkZXZpY2UgKi8NCj4gPiArICAgICAgIG1heDIx
-NzVfZmx1c2hfcmVnc3RvcmUoY3R4LCAxLCA2KTsNCj4gPiArICAgICAgIHJldHVybiByZXQ7DQo+
-ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBpbnQgbWF4MjE3NV9zZXRfbmNvX2ZyZXEoc3RydWN0
-IG1heDIxNzVfY3R4ICpjdHgsIHM2NA0KPiA+ICtuY29fZnJlcV9kZXNpcmVkKSB7DQo+ID4gKyAg
-ICAgICBpbnQgcmV0Ow0KPiA+ICsgICAgICAgdTY0IGNsb2NrX3JhdGUsIGFic19uY29fZnJlcTsN
-Cj4gPiArICAgICAgIHM2NCAgbmNvX2ZyZXEsIG5jb192YWxfZGVzaXJlZDsNCj4gPiArICAgICAg
-IHUzMiBuY29fcmVnOw0KPiA+ICsgICAgICAgY29uc3QgdTY0IHNjYWxlX2ZhY3RvciA9IDEwMDAw
-MDBVTEw7DQo+ID4gKw0KPiA+ICsgICAgICAgbXhtX2RiZyhjdHgsICJuY29fZnJlcTogZnJlcSA9
-ICVsbGRcbiIsIG5jb19mcmVxX2Rlc2lyZWQpOw0KPiA+ICsgICAgICAgY2xvY2tfcmF0ZSA9IGN0
-eC0+eHRhbF9mcmVxIC8gY3R4LT5kZWNpbV9yYXRpbzsNCj4gPiArICAgICAgIG5jb19mcmVxID0g
-LW5jb19mcmVxX2Rlc2lyZWQ7DQo+ID4gKw0KPiA+ICsgICAgICAgaWYgKG5jb19mcmVxIDwgMCkN
-Cj4gPiArICAgICAgICAgICAgICAgYWJzX25jb19mcmVxID0gLW5jb19mcmVxOw0KPiA+ICsgICAg
-ICAgZWxzZQ0KPiA+ICsgICAgICAgICAgICAgICBhYnNfbmNvX2ZyZXEgPSBuY29fZnJlcTsNCj4g
-PiArDQo+ID4gKyAgICAgICAvKiBTY2FsZSB1cCB0aGUgdmFsdWVzIGZvciBwcmVjaXNpb24gKi8N
-Cj4gPiArICAgICAgIGlmIChhYnNfbmNvX2ZyZXEgPCAoY2xvY2tfcmF0ZSAvIDIpKSB7DQo+ID4g
-KyAgICAgICAgICAgICAgIG5jb192YWxfZGVzaXJlZCA9ICgyICogbmNvX2ZyZXEgKiBzY2FsZV9m
-YWN0b3IpIC8NCj4gY2xvY2tfcmF0ZTsNCj4gPiArICAgICAgIH0gZWxzZSB7DQo+ID4gKyAgICAg
-ICAgICAgICAgIGlmIChuY29fZnJlcSA8IDApDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
-bmNvX3ZhbF9kZXNpcmVkID0gKC0yICogKGNsb2NrX3JhdGUgLQ0KPiBhYnNfbmNvX2ZyZXEpICoN
-Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNjYWxlX2ZhY3RvcikgLyBjbG9j
-a19yYXRlOw0KPiA+ICsgICAgICAgICAgICAgICBlbHNlDQo+ID4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgbmNvX3ZhbF9kZXNpcmVkID0gKDIgKiAoY2xvY2tfcmF0ZSAtDQo+IGFic19uY29fZnJl
-cSkgKg0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2NhbGVfZmFjdG9yKSAv
-IGNsb2NrX3JhdGU7DQo+ID4gKyAgICAgICB9DQo+ID4gKw0KPiA+ICsgICAgICAgLyogU2NhbGUg
-ZG93biB0byBnZXQgdGhlIGZyYWN0aW9uICovDQo+ID4gKyAgICAgICBpZiAobmNvX2ZyZXEgPCAw
-KQ0KPiA+ICsgICAgICAgICAgICAgICBuY29fcmVnID0gMHgyMDAwMDAgKyAoKG5jb192YWxfZGVz
-aXJlZCAqIDEwNDg1NzYpIC8NCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHNjYWxlX2ZhY3Rvcik7DQo+ID4gKyAgICAgICBlbHNlDQo+ID4gKyAgICAgICAgICAgICAg
-IG5jb19yZWcgPSAobmNvX3ZhbF9kZXNpcmVkICogMTA0ODU3NikgLyBzY2FsZV9mYWN0b3I7DQo+
-IA0KPiBNb3JlIDY0LWJpdCBkaXZpc2lvbnMuIEluIGFkZGl0aW9uLCB0aGUgZGl2aWRlcnMgYXJl
-IDY0LWJpdCB0b28uDQo+IENhbid0IHRoZXkgYmUgMzItYml0Pw0KPiANCg0KQWdyZWVkLiBUaGUg
-ZGl2aWRlcnMgbmVlZCBub3QgYmUgMzItYml0LiBDb3JyZWN0ZWQgZXZlcnl3aGVyZS4NCg0KPiA+
-ICtzdGF0aWMgaW50IG1heDIxNzVfcHJvYmUoc3RydWN0IGkyY19jbGllbnQgKmNsaWVudCwNCj4g
-PiArICAgICAgICAgICAgICAgICAgICAgICBjb25zdCBzdHJ1Y3QgaTJjX2RldmljZV9pZCAqaWQp
-IHsNCj4gPiArICAgICAgIHN0cnVjdCBtYXgyMTc1X2N0eCAqY3R4Ow0KPiA+ICsgICAgICAgc3Ry
-dWN0IGRldmljZSAqZGV2ID0gJmNsaWVudC0+ZGV2Ow0KPiA+ICsgICAgICAgc3RydWN0IHY0bDJf
-c3ViZGV2ICpzZDsNCj4gPiArICAgICAgIHN0cnVjdCB2NGwyX2N0cmxfaGFuZGxlciAqaGRsOw0K
-PiA+ICsgICAgICAgc3RydWN0IGNsayAqY2xrOw0KPiA+ICsgICAgICAgYm9vbCBtYXN0ZXIgPSB0
-cnVlOw0KPiA+ICsgICAgICAgdTMyIHJlZm91dF9sb2FkLCByZWZvdXRfYml0cyA9IDA7ICAgICAg
-IC8qIFJFRk9VVCBkaXNhYmxlZCAqLw0KPiA+ICsgICAgICAgaW50IHJldDsNCj4gPiArDQo+ID4g
-KyAgICAgICAvKiBDaGVjayBpZiB0aGUgYWRhcHRlciBzdXBwb3J0cyB0aGUgbmVlZGVkIGZlYXR1
-cmVzICovDQo+ID4gKyAgICAgICBpZiAoIWkyY19jaGVja19mdW5jdGlvbmFsaXR5KGNsaWVudC0+
-YWRhcHRlciwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgSTJDX0ZV
-TkNfU01CVVNfQllURV9EQVRBKSkgew0KPiA+ICsgICAgICAgICAgICAgICBkZXZfZXJyKCZjbGll
-bnQtPmRldiwgImkyYyBjaGVjayBmYWlsZWRcbiIpOw0KPiA+ICsgICAgICAgICAgICAgICByZXR1
-cm4gLUVJTzsNCj4gPiArICAgICAgIH0NCj4gPiArDQo+ID4gKyAgICAgICBpZiAob2ZfZmluZF9w
-cm9wZXJ0eShjbGllbnQtPmRldi5vZl9ub2RlLCAibWF4aW0sc2xhdmUiLCBOVUxMKSkNCj4gPiAr
-ICAgICAgICAgICAgICAgbWFzdGVyID0gZmFsc2U7DQo+ID4gKw0KPiA+ICsgICAgICAgaWYgKCFv
-Zl9wcm9wZXJ0eV9yZWFkX3UzMihjbGllbnQtPmRldi5vZl9ub2RlLCAibWF4aW0scmVmb3V0LQ0K
-PiBsb2FkIiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAmcmVmb3V0X2xv
-YWQpKQ0KPiA+ICsgICAgICAgICAgICAgICByZWZvdXRfYml0cyA9IG1heDIxNzVfcmVmb3V0X2xv
-YWRfdG9fYml0cyhjbGllbnQsDQo+ID4gKyByZWZvdXRfbG9hZCk7DQo+ID4gKw0KPiA+ICsgICAg
-ICAgY2xrID0gZGV2bV9jbGtfZ2V0KCZjbGllbnQtPmRldiwgInh0YWwiKTsNCj4gPiArICAgICAg
-IGlmIChJU19FUlIoY2xrKSkgew0KPiA+ICsgICAgICAgICAgICAgICByZXQgPSBQVFJfRVJSKGNs
-ayk7DQo+ID4gKyAgICAgICAgICAgICAgIGRldl9lcnIoJmNsaWVudC0+ZGV2LCAiY2Fubm90IGdl
-dCB4dGFsIGNsb2NrICVkXG4iLA0KPiByZXQpOw0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4g
-LUVOT0RFVjsNCj4gPiArICAgICAgIH0NCj4gPiArDQo+ID4gKyAgICAgICBjdHggPSBremFsbG9j
-KHNpemVvZihzdHJ1Y3QgbWF4MjE3NV9jdHgpLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgR0ZQX0tFUk5FTCk7DQo+IA0KPiBkZXZtX2t6YWxsb2MoKT8NCg0KQWdyZWVkICYgY29y
-cmVjdGVkLiANCg0KPiANCj4gPiArICAgICAgIGlmIChjdHggPT0gTlVMTCkNCj4gPiArICAgICAg
-ICAgICAgICAgcmV0dXJuIC1FTk9NRU07DQo+ID4gKw0KPiA+ICsgICAgICAgc2QgPSAmY3R4LT5z
-ZDsNCj4gPiArICAgICAgIGN0eC0+bWFzdGVyID0gbWFzdGVyOw0KPiA+ICsgICAgICAgY3R4LT5t
-b2RlX3Jlc29sdmVkID0gZmFsc2U7DQo+ID4gKw0KPiA+ICsgICAgICAgLyogU2V0IHRoZSBkZWZh
-dWx0cyAqLw0KPiA+ICsgICAgICAgY3R4LT5mcmVxID0gYmFuZHNfcmYucmFuZ2Vsb3c7DQo+ID4g
-Kw0KPiA+ICsgICAgICAgY3R4LT54dGFsX2ZyZXEgPSBjbGtfZ2V0X3JhdGUoY2xrKTsNCj4gPiAr
-ICAgICAgIGRldl9pbmZvKCZjbGllbnQtPmRldiwgInh0YWwgZnJlcSAlbGx1SHpcbiIsIGN0eC0+
-eHRhbF9mcmVxKTsNCj4gPiArDQo+ID4gKyAgICAgICB2NGwyX2kyY19zdWJkZXZfaW5pdChzZCwg
-Y2xpZW50LCAmbWF4MjE3NV9vcHMpOw0KPiA+ICsgICAgICAgY3R4LT5jbGllbnQgPSBjbGllbnQ7
-DQo+ID4gKw0KPiA+ICsgICAgICAgc2QtPmZsYWdzID0gVjRMMl9TVUJERVZfRkxfSEFTX0RFVk5P
-REU7DQo+ID4gKyAgICAgICBjdHgtPmRldiA9IGRldjsNCj4gPiArDQo+ID4gKyAgICAgICAvKiBD
-b250cm9scyAqLw0KPiA+ICsgICAgICAgaGRsID0gJmN0eC0+Y3RybF9oZGw7DQo+ID4gKyAgICAg
-ICByZXQgPSB2NGwyX2N0cmxfaGFuZGxlcl9pbml0KGhkbCwgOCk7DQo+ID4gKyAgICAgICBpZiAo
-cmV0KSB7DQo+ID4gKyAgICAgICAgICAgICAgIGRldl9lcnIoJmNsaWVudC0+ZGV2LCAiY3RybCBo
-YW5kbGVyIGluaXQgZmFpbGVkXG4iKTsNCj4gPiArICAgICAgICAgICAgICAgZ290byBlcnI7DQo+
-ID4gKyAgICAgICB9DQo+ID4gKw0KPiA+ICsgICAgICAgY3R4LT5sbmFfZ2FpbiA9IHY0bDJfY3Ry
-bF9uZXdfc3RkKGhkbCwgJm1heDIxNzVfY3RybF9vcHMsDQo+ID4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgVjRMMl9DSURfUkZfVFVORVJfTE5BX0dBSU4sDQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMCwgMTUsIDEsIDIpOw0K
-PiA+ICsgICAgICAgY3R4LT5sbmFfZ2Fpbi0+ZmxhZ3MgfD0gKFY0TDJfQ1RSTF9GTEFHX1ZPTEFU
-SUxFIHwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBWNEwyX0NUUkxfRkxB
-R19SRUFEX09OTFkpOw0KPiA+ICsgICAgICAgY3R4LT5pZl9nYWluID0gdjRsMl9jdHJsX25ld19z
-dGQoaGRsLCAmbWF4MjE3NV9jdHJsX29wcywNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIFY0TDJfQ0lEX1JGX1RVTkVSX0lGX0dBSU4sDQo+ID4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAwLCAzMSwgMSwgMCk7DQo+ID4gKyAgICAg
-ICBjdHgtPmlmX2dhaW4tPmZsYWdzIHw9IChWNEwyX0NUUkxfRkxBR19WT0xBVElMRSB8DQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBWNEwyX0NUUkxfRkxBR19SRUFEX09OTFkp
-Ow0KPiA+ICsgICAgICAgY3R4LT5wbGxfbG9jayA9IHY0bDJfY3RybF9uZXdfc3RkKGhkbCwgJm1h
-eDIxNzVfY3RybF9vcHMsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgVjRMMl9DSURfUkZfVFVORVJfUExMX0xPQ0ssDQo+ID4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgMCwgMSwgMSwgMCk7DQo+ID4gKyAgICAgICBjdHgtPnBs
-bF9sb2NrLT5mbGFncyB8PSAoVjRMMl9DVFJMX0ZMQUdfVk9MQVRJTEUgfA0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIFY0TDJfQ1RSTF9GTEFHX1JFQURfT05MWSk7DQo+ID4g
-KyAgICAgICBjdHgtPmkyc19lbiA9IHY0bDJfY3RybF9uZXdfY3VzdG9tKGhkbCwgJm1heDIxNzVf
-aTJzX2VuLCBOVUxMKTsNCj4gPiArICAgICAgIGN0eC0+aTJzX21vZGUgPSB2NGwyX2N0cmxfbmV3
-X2N1c3RvbShoZGwsICZtYXgyMTc1X2kyc19tb2RlLA0KPiBOVUxMKTsNCj4gPiArICAgICAgIGN0
-eC0+YW1faGl6ID0gdjRsMl9jdHJsX25ld19jdXN0b20oaGRsLCAmbWF4MjE3NV9hbV9oaXosIE5V
-TEwpOw0KPiA+ICsgICAgICAgY3R4LT5oc2xzID0gdjRsMl9jdHJsX25ld19jdXN0b20oaGRsLCAm
-bWF4MjE3NV9oc2xzLCBOVUxMKTsNCj4gPiArDQo+ID4gKyAgICAgICBpZiAoY3R4LT54dGFsX2Zy
-ZXEgPT0gTUFYMjE3NV9FVV9YVEFMX0ZSRVEpIHsNCj4gPiArICAgICAgICAgICAgICAgY3R4LT5y
-eF9tb2RlID0gdjRsMl9jdHJsX25ld19jdXN0b20oaGRsLA0KPiA+ICsgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAmbWF4MjE3NV9ldV9yeF9tb2RlLA0K
-PiBOVUxMKTsNCj4gPiArICAgICAgICAgICAgICAgY3R4LT5yeF9tb2RlcyA9IChzdHJ1Y3QgbWF4
-MjE3NV9yeG1vZGUgKilldV9yeF9tb2RlczsNCj4gPiArICAgICAgIH0gZWxzZSB7DQo+ID4gKyAg
-ICAgICAgICAgICAgIGN0eC0+cnhfbW9kZSA9IHY0bDJfY3RybF9uZXdfY3VzdG9tKGhkbCwNCj4g
-PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgJm1h
-eDIxNzVfbmFfcnhfbW9kZSwNCj4gTlVMTCk7DQo+ID4gKyAgICAgICAgICAgICAgIGN0eC0+cnhf
-bW9kZXMgPSAoc3RydWN0IG1heDIxNzVfcnhtb2RlICopbmFfcnhfbW9kZXM7DQo+ID4gKyAgICAg
-ICB9DQo+IA0KPiBUaGUgY2FzdHMgYXJlIG1lYW50IHRvIGNhc3QgYXdheSBjb25zdG5lc3MuIENh
-biB0aGF0IGJlIGF2b2lkZWQ/DQoNCkFncmVlZC4gTWFkZSBjdHgtPnJ4X21vZGVzIG1lbWJlciBh
-cyBjb25zdCBhbmQgYXZvaWRlZCB0aGUgY2FzdCBoZXJlLg0KPiANCj4gPiAtLS0gL2Rldi9udWxs
-DQo+ID4gKysrIGIvZHJpdmVycy9tZWRpYS9pMmMvbWF4MjE3NS9tYXgyMTc1LmgNCj4gDQo+ID4g
-Ky8qIE5PVEU6IEFueSBhZGRpdGlvbi9kZWxldGlvbiBpbiB0aGUgYmVsb3cgZW51bSBzaG91bGQg
-YmUgcmVmbGVjdGVkDQo+ID4gK2luDQo+ID4gKyAqIFY0TDJfQ0lEX01BWDIxNzVfUlhfTU9ERSBj
-dHJsIHN0cmluZ3MNCj4gDQo+IFdoaWNoIHN0cmluZ3MgZXhhY3RseT8NCg0KSXQgaXMgc3VwcG9z
-ZWQgdG8gYmUgdGhlc2UgdHdvDQoNCisgKi8NCitzdGF0aWMgY29uc3QgY2hhciAqIGNvbnN0IG1h
-eDIxNzVfY3RybF9ldV9yeF9tb2RlX3N0cmluZ3NbXSA9IHsNCisJIkRBQiAxLjIiLA0KKwkiTlVM
-TCIsDQorfTsNCisNCitzdGF0aWMgY29uc3QgY2hhciAqIGNvbnN0IG1heDIxNzVfY3RybF9uYV9y
-eF9tb2RlX3N0cmluZ3NbXSA9IHsNCisJIk5BIEZNIDEuMCIsDQorCSJOVUxMIiwNCit9Ow0KKw0K
-DQpJIGhhdmUgY29ycmVjdGVkIHRoZW0gbm93IHRvIHVzZSBkZXNpZ25hdGVkIGluaXRpYWxpemVy
-cy4gVGhhbmtzLg0KDQo+IA0KPiA+ICsgKi8NCj4gPiArZW51bSBtYXgyMTc1X21vZGV0YWcgew0K
-PiA+ICsgICAgICAgLyogRVUgbW9kZXMgKi8NCj4gPiArICAgICAgIE1BWDIxNzVfREFCXzFfMiA9
-IDAsDQo+ID4gKw0KPiA+ICsgICAgICAgLyogT3RoZXIgcG9zc2libGUgbW9kZXMgdG8gYWRkIGlu
-IGZ1dHVyZQ0KPiA+ICsgICAgICAgICogTUFYMjE3NV9EQUJfMV8wLA0KPiA+ICsgICAgICAgICog
-TUFYMjE3NV9EQUJfMV8zLA0KPiA+ICsgICAgICAgICogTUFYMjE3NV9FVV9GTV8yXzIsDQo+ID4g
-KyAgICAgICAgKiBNQVgyMTc1X0VVX0ZNXzFfMCwNCj4gPiArICAgICAgICAqIE1BWDIxNzVfRVVf
-Rk1IRF80XzAsDQo+ID4gKyAgICAgICAgKiBNQVgyMTc1X0VVX0FNXzFfMCwNCj4gPiArICAgICAg
-ICAqIE1BWDIxNzVfRVVfQU1fMl8yLA0KPiA+ICsgICAgICAgICovDQo+ID4gKw0KPiA+ICsgICAg
-ICAgLyogTkEgbW9kZXMgKi8NCj4gPiArICAgICAgIE1BWDIxNzVfTkFfRk1fMV8wID0gMCwNCj4g
-PiArDQo+ID4gKyAgICAgICAvKiBPdGhlciBwb3NzaWJsZSBtb2RlcyB0byBhZGQgaW4gZnV0dXJl
-DQo+ID4gKyAgICAgICAgKiBNQVgyMTc1X05BX0ZNXzFfMiwNCj4gPiArICAgICAgICAqIE1BWDIx
-NzVfTkFfRk1IRF8xXzAsDQo+ID4gKyAgICAgICAgKiBNQVgyMTc1X05BX0ZNSERfMV8yLA0KPiA+
-ICsgICAgICAgICogTUFYMjE3NV9OQV9BTV8xXzAsDQo+ID4gKyAgICAgICAgKiBNQVgyMTc1X05B
-X0FNXzFfMiwNCj4gPiArICAgICAgICAqLw0KPiANCj4gVGhlIE1BWDIxNzVfTkFfKiBkZWZpbml0
-aW9ucyBzaGFyZSB0aGVpciB2YWx1ZXMgd2l0aCB0aGUgTUFYMjE3NV9EQUJfKiBhbmQNCj4gZnV0
-dXJlIE1BWDIxNzVfRVVfKiB2YWx1ZXMuIERvIHlvdSBoYXZlIHRvIHVzZSBhIHNpbmdsZSBlbnVt
-IGZvciBib3RoPw0KPiANCg0KSSBoYXZlIG1hZGUgdGhlbSBzZXBhcmF0ZSBlbnVtcyBub3cuIE5B
-XyBtb2RlcyB3ZXJlIG5vdCB0ZXN0ZWQgeWV0Lg0KDQpJIGhhdmUgYWxzbyBmaXhlZCBmZXcgYnVn
-cyBpbiB0aGUgbWVhbnRpbWUuIEknbGwgd2FpdCBmb3IgdGhpcyB3ZWVrIGZvciBvdGhlciBtZWRp
-YSBtYWludGFpbmVycyAmIGV4cGVydHMgdG8gY29tbWVudCBvbiB0aGUgZHJpdmVyIG1vZGVsICYg
-dGhlIG5ldyBTRFIgZm9ybWF0IG9wZW4gaXRlbS4gQmFzZWQgb24gdGhlIHJlc3BvbnNlLCBJIHdp
-bGwgcG9zdCBhIG5ldyBbUEFUQ0hdIG9yIFtSRkMgdjJdIHdpdGggdGhlc2UgY29tbWVudHMgdXBk
-YXRlZC4NCg0KVGhhbmtzLA0KUmFtZXNoDQo=
+Hi Ramesh,
+
+On Wed, Oct 12, 2016 at 4:10 PM, Ramesh Shanmugasundaram
+<ramesh.shanmugasundaram@bp.renesas.com> wrote:
+> This patch adds driver support for MAX2175 chip. This is Maxim
+> Integrated's RF to Bits tuner front end chip designed for software-define=
+d
+> radio solutions. This driver exposes the tuner as a sub-device instance
+> with standard and custom controls to configure the device.
+>
+> Signed-off-by: Ramesh Shanmugasundaram < for your patch!amesh.shanmugasun=
+daram@bp.renesas.com>
+
+Thanks for your patch!
+
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/i2c/max2175.txt
+> @@ -0,0 +1,60 @@
+> +Maxim Integrated MAX2175 RF to Bits tuner
+> +-----------------------------------------
+> +
+> +The MAX2175 IC is an advanced analog/digital hybrid-radio receiver with
+> +RF to Bits=C2=AE front-end designed for software-defined radio solutions=
+.
+> +
+> +Required properties:
+> +--------------------
+> +- compatible: "maxim,max2175" for MAX2175 RF-to-bits tuner.
+> +- clocks: phandle to the fixed xtal clock.
+> +- clock-names: name of the fixed xtal clock.
+> +- port: video interface child port node of a tuner that defines the loca=
+l
+> +  and remote endpoints. The remote endpoint is assumed to be an SDR devi=
+ce
+> +  that is capable of receiving the digital samples from the tuner.
+> +
+> +Optional properties:
+> +--------------------
+> +- maxim,slave     : empty property indicates this is a slave of another
+> +                    master tuner. This is used to define two tuners in
+> +                    diversity mode (1 master, 1 slave). By default each
+> +                    tuner is an individual master.
+> +- maxim,refout-load: load capacitance value (in pF) on reference output
+> +                    drive level. The mapping of these load values to
+> +                    respective bit values are given below.
+> +                    0 - Reference output disabled
+> +                    1 - 10pF load
+> +                    2 - 20pF load
+> +                    3 - 30pF load
+> +                    4 - 40pF load
+> +                    5 - 60pF load
+> +                    6 - 70pF load
+
+For properties involving units, usually the unit is made part of the
+property name, e.g. maxim,refout-load-pF =3D 40.
+This avoids confusion, and allows for extension later.
+
+> +/* A tuner device instance under i2c bus */
+> +max2175_0: tuner@60 {
+> +       #clock-cells =3D <0>;
+> +       compatible =3D "maxim,max2175";
+> +       reg =3D <0x60>;
+> +       clocks =3D <&maxim_xtal>;
+> +       clock-names =3D "xtal";
+> +       maxim,refout-load =3D <10>;
+
+10 is not listed above. Perhaps you meant 10 pF?
+
+> --- /dev/null
+> +++ b/drivers/media/i2c/max2175/max2175.c
+> @@ -0,0 +1,1624 @@
+
+> +/* NOTE: Any addition/deletion in the below list should be reflected in
+> + * max2175_modetag enum
+> + */
+
+You can drop the above comment if you make this explicit using C99
+designated initializers, cfr. below.
+
+> +static const struct max2175_rxmode eu_rx_modes[] =3D { /* Indexed by EU =
+modetag */
+> +       /* EU modes */
+> +       { MAX2175_BAND_VHF, 182640000, 0, { 0, 0, 0, 0 } },
+
+[MAX2175_DAB_1_2] =3D { MAX2175_BAND_VHF, 182640000, 0, { 0, 0, 0, 0 } },
+
+> +};
+> +
+> +static const struct max2175_rxmode na_rx_modes[] =3D { /* Indexed by NA =
+modetag */
+> +       /* NA modes */
+> +       { MAX2175_BAND_FM, 98255520, 1, { 0, 0, 0, 0 } },
+
+[MAX2175_NA_FM_1_0] =3D { MAX2175_BAND_FM, 98255520, 1, { 0, 0, 0, 0 } },
+
+> +struct max2175_ctx {
+> +       struct v4l2_subdev sd;
+> +       struct i2c_client *client;
+> +       struct device *dev;
+> +
+> +       /* Cached configuration */
+> +       u8 regs[256];
+> +       enum max2175_modetag mode;      /* Receive mode tag */
+> +       u32 freq;                       /* In Hz */
+> +       struct max2175_rxmode *rx_modes;
+> +
+> +       /* Device settings */
+> +       bool master;
+> +       u32 decim_ratio;
+> +       u64 xtal_freq;
+> +
+> +       /* ROM values */
+> +       u8 rom_bbf_bw_am;
+> +       u8 rom_bbf_bw_fm;
+> +       u8 rom_bbf_bw_dab;
+> +
+> +       /* Local copy of old settings */
+> +       u8 i2s_test;
+> +
+> +       u8 nbd_gain;
+> +       u8 nbd_threshold;
+> +       u8 wbd_gain;
+> +       u8 wbd_threshold;
+> +       u8 bbd_threshold;
+> +       u8 bbdclip_threshold;
+> +       u8 lt_wbd_threshold;
+> +       u8 lt_wbd_gain;
+> +
+> +       /* Controls */
+> +       struct v4l2_ctrl_handler ctrl_hdl;
+> +       struct v4l2_ctrl *lna_gain;     /* LNA gain value */
+> +       struct v4l2_ctrl *if_gain;      /* I/F gain value */
+> +       struct v4l2_ctrl *pll_lock;     /* PLL lock */
+> +       struct v4l2_ctrl *i2s_en;       /* I2S output enable */
+> +       struct v4l2_ctrl *i2s_mode;     /* I2S mode value */
+> +       struct v4l2_ctrl *am_hiz;       /* AM High impledance input */
+> +       struct v4l2_ctrl *hsls;         /* High-side/Low-side polarity */
+> +       struct v4l2_ctrl *rx_mode;      /* Receive mode */
+> +
+> +       /* Driver private variables */
+> +       bool mode_resolved;             /* Flag to sanity check settings =
+*/
+> +};
+
+Sorting the struct members by decreasing size helps to avoid gaps due to
+alignment restrictions, and may reduce memory consumption.
+
+> +/* Flush local copy to device from idx to idx+len (inclusive) */
+> +static void max2175_flush_regstore(struct max2175_ctx *ctx, u8 idx, u8 l=
+en)
+> +{
+> +       u8 i;
+
+I'd just use unsigned int for loop counters.
+
+> +
+> +       for (i =3D idx; i <=3D len; i++)
+> +               max2175_reg_write(ctx, i, ctx->regs[i]);
+> +}
+
+> +static int max2175_update_i2s_mode(struct max2175_ctx *ctx, u32 i2s_mode=
+)
+> +{
+> +       /* Only change if it's new */
+> +       if (max2175_read_bits(ctx, 29, 2, 0) =3D=3D i2s_mode)
+
+Many magic numbers, not only here (29, 2), but everywhere.
+Can you please add #defines for these?
+
+> +               return 0;
+> +
+> +       max2175_write_bits(ctx, 29, 2, 0, i2s_mode);
+> +
+> +       /* Based on I2S mode value I2S_WORD_CNT values change */
+> +       if (i2s_mode =3D=3D MAX2175_I2S_MODE3) {
+> +               max2175_write_bits(ctx, 30, 6, 0, 1);
+> +       } else if (i2s_mode =3D=3D MAX2175_I2S_MODE2 ||
+> +                  i2s_mode =3D=3D MAX2175_I2S_MODE4) {
+> +               max2175_write_bits(ctx, 30, 6, 0, 0);
+> +       } else if (i2s_mode =3D=3D MAX2175_I2S_MODE0) {
+> +               max2175_write_bits(ctx, 30, 6, 0,
+> +                                  ctx->rx_modes[ctx->mode].i2s_word_size=
+);
+> +       } else {
+> +               v4l2_err(ctx->client,
+> +                        "failed: i2s_mode %u unsupported\n", i2s_mode);
+> +               return 1;
+> +       }
+
+switch (i2s_mode) { ... }
+
+> +       mxm_dbg(ctx, "updated i2s_mode %u\n", i2s_mode);
+> +       return 0;
+> +}
+
+> +static void max2175_set_filter_coeffs(struct max2175_ctx *ctx, u8 m_sel,
+> +                                     u8 bank, const u16 *coeffs)
+> +{
+> +       u8 i, coeff_addr, upper_address;
+
+I'd just use unsigned int for these.
+
+> +
+> +       mxm_dbg(ctx, "start: m_sel %d bank %d\n", m_sel, bank);
+> +       max2175_write_bits(ctx, 114, 5, 4, m_sel);
+> +
+> +       if (m_sel =3D=3D 2)
+> +               upper_address =3D 12;
+> +       else
+> +               upper_address =3D 24;
+> +
+> +       max2175_set_bit(ctx, 117, 7, 1);
+> +       for (i =3D 0; i < upper_address; i++) {
+> +               coeff_addr =3D i + (bank * 24);
+> +               max2175_set_bits(ctx, 115, 7, 0,
+> +                                (u8)((coeffs[i] >> 8) & 0xff));
+> +               max2175_set_bits(ctx, 116, 7, 0, (u8)(coeffs[i] & 0xff));
+
+I don't think you need the casts to u8, or the masking with 0xff.
+
+> +               max2175_set_bits(ctx, 117, 6, 0, coeff_addr);
+> +               max2175_flush_regstore(ctx, 115, 3);
+> +       }
+> +       max2175_write_bit(ctx, 117, 7, 0);
+> +}
+> +
+> +static void max2175_load_dab_1p2(struct max2175_ctx *ctx)
+> +{
+> +       u32 i;
+
+unsigned int?
+
+> +static int max2175_set_lo_freq(struct max2175_ctx *ctx, u64 lo_freq)
+> +{
+> +       int ret;
+> +       u32 lo_mult;
+> +       u64 scaled_lo_freq;
+> +       const u64 scale_factor =3D 1000000ULL;
+> +       u64 scaled_npf, scaled_integer, scaled_fraction;
+> +       u32 frac_desired, int_desired;
+> +       u8 loband_bits, vcodiv_bits;
+> +
+> +       scaled_lo_freq =3D lo_freq;
+> +       /* Scale to larger number for precision */
+> +       scaled_lo_freq =3D scaled_lo_freq * scale_factor * 100;
+> +
+> +       mxm_dbg(ctx, "scaled lo_freq %llu lo_freq %llu\n",
+> +               scaled_lo_freq, lo_freq);
+> +
+> +       if (MAX2175_IS_BAND_AM(ctx)) {
+> +               if (max2175_get_bit(ctx, 5, 7) =3D=3D 0)
+> +                       loband_bits =3D 0;
+> +                       vcodiv_bits =3D 0;
+> +                       lo_mult =3D 16;
+> +       } else if (max2175_get_bits(ctx, 5, 1, 0) =3D=3D MAX2175_BAND_FM)=
+ {
+> +               if (lo_freq <=3D 74700000) {
+> +                       loband_bits =3D 0;
+> +                       vcodiv_bits =3D 0;
+> +                       lo_mult =3D 16;
+> +               } else if ((lo_freq > 74700000) && (lo_freq <=3D 11000000=
+0)) {
+> +                       loband_bits =3D 1;
+> +                       vcodiv_bits =3D 0;
+> +               } else {
+> +                       loband_bits =3D 1;
+> +                       vcodiv_bits =3D 3;
+> +               }
+> +               lo_mult =3D 8;
+> +       } else if (max2175_get_bits(ctx, 5, 1, 0) =3D=3D MAX2175_BAND_VHF=
+) {
+> +               if (lo_freq <=3D 210000000) {
+> +                       loband_bits =3D 2;
+> +                       vcodiv_bits =3D 2;
+> +               } else {
+> +                       loband_bits =3D 2;
+> +                       vcodiv_bits =3D 1;
+> +               }
+> +               lo_mult =3D 4;
+> +       } else {
+> +               loband_bits =3D 3;
+> +               vcodiv_bits =3D 2;
+> +               lo_mult =3D 2;
+> +       }
+> +
+> +       if (max2175_get_bits(ctx, 5, 1, 0) =3D=3D MAX2175_BAND_L)
+> +               scaled_npf =3D (scaled_lo_freq / ctx->xtal_freq / lo_mult=
+) / 100;
+> +       else
+> +               scaled_npf =3D (scaled_lo_freq / ctx->xtal_freq * lo_mult=
+) / 100;
+
+Please use one of the div64*() functions for divisions involving 64-bit
+quantities (try to build for 32-bit and see). More of these below...
+
+> +       scaled_integer =3D scaled_npf / scale_factor * scale_factor;
+> +       int_desired =3D (u32)(scaled_npf / scale_factor);
+> +       scaled_fraction =3D scaled_npf - scaled_integer;
+> +       frac_desired =3D (u32)(scaled_fraction * 1048576 / scale_factor);
+
+> +       /* Write the calculated values to the appropriate registers */
+> +       max2175_set_bits(ctx, 5, 3, 2, loband_bits);
+> +       max2175_set_bits(ctx, 6, 7, 6, vcodiv_bits);
+> +       max2175_set_bits(ctx, 1, 7, 0, (u8)(int_desired & 0xff));
+> +       max2175_set_bits(ctx, 2, 3, 0, (u8)((frac_desired >> 16) & 0x1f))=
+;
+> +       max2175_set_bits(ctx, 3, 7, 0, (u8)((frac_desired >> 8) & 0xff));
+> +       max2175_set_bits(ctx, 4, 7, 0, (u8)(frac_desired & 0xff));
+
+No need for casts etc.
+
+> +       /* Flush the above registers to device */
+> +       max2175_flush_regstore(ctx, 1, 6);
+> +       return ret;
+> +}
+> +
+> +static int max2175_set_nco_freq(struct max2175_ctx *ctx, s64 nco_freq_de=
+sired)
+> +{
+> +       int ret;
+> +       u64 clock_rate, abs_nco_freq;
+> +       s64  nco_freq, nco_val_desired;
+> +       u32 nco_reg;
+> +       const u64 scale_factor =3D 1000000ULL;
+> +
+> +       mxm_dbg(ctx, "nco_freq: freq =3D %lld\n", nco_freq_desired);
+> +       clock_rate =3D ctx->xtal_freq / ctx->decim_ratio;
+> +       nco_freq =3D -nco_freq_desired;
+> +
+> +       if (nco_freq < 0)
+> +               abs_nco_freq =3D -nco_freq;
+> +       else
+> +               abs_nco_freq =3D nco_freq;
+> +
+> +       /* Scale up the values for precision */
+> +       if (abs_nco_freq < (clock_rate / 2)) {
+> +               nco_val_desired =3D (2 * nco_freq * scale_factor) / clock=
+_rate;
+> +       } else {
+> +               if (nco_freq < 0)
+> +                       nco_val_desired =3D (-2 * (clock_rate - abs_nco_f=
+req) *
+> +                               scale_factor) / clock_rate;
+> +               else
+> +                       nco_val_desired =3D (2 * (clock_rate - abs_nco_fr=
+eq) *
+> +                               scale_factor) / clock_rate;
+> +       }
+> +
+> +       /* Scale down to get the fraction */
+> +       if (nco_freq < 0)
+> +               nco_reg =3D 0x200000 + ((nco_val_desired * 1048576) /
+> +                                     scale_factor);
+> +       else
+> +               nco_reg =3D (nco_val_desired * 1048576) / scale_factor;
+
+More 64-bit divisions. In addition, the dividers are 64-bit too.
+Can't they be 32-bit?
+
+> +static int max2175_probe(struct i2c_client *client,
+> +                       const struct i2c_device_id *id)
+> +{
+> +       struct max2175_ctx *ctx;
+> +       struct device *dev =3D &client->dev;
+> +       struct v4l2_subdev *sd;
+> +       struct v4l2_ctrl_handler *hdl;
+> +       struct clk *clk;
+> +       bool master =3D true;
+> +       u32 refout_load, refout_bits =3D 0;       /* REFOUT disabled */
+> +       int ret;
+> +
+> +       /* Check if the adapter supports the needed features */
+> +       if (!i2c_check_functionality(client->adapter,
+> +                                    I2C_FUNC_SMBUS_BYTE_DATA)) {
+> +               dev_err(&client->dev, "i2c check failed\n");
+> +               return -EIO;
+> +       }
+> +
+> +       if (of_find_property(client->dev.of_node, "maxim,slave", NULL))
+> +               master =3D false;
+> +
+> +       if (!of_property_read_u32(client->dev.of_node, "maxim,refout-load=
+",
+> +                                &refout_load))
+> +               refout_bits =3D max2175_refout_load_to_bits(client, refou=
+t_load);
+> +
+> +       clk =3D devm_clk_get(&client->dev, "xtal");
+> +       if (IS_ERR(clk)) {
+> +               ret =3D PTR_ERR(clk);
+> +               dev_err(&client->dev, "cannot get xtal clock %d\n", ret);
+> +               return -ENODEV;
+> +       }
+> +
+> +       ctx =3D kzalloc(sizeof(struct max2175_ctx),
+> +                            GFP_KERNEL);
+
+devm_kzalloc()?
+
+> +       if (ctx =3D=3D NULL)
+> +               return -ENOMEM;
+> +
+> +       sd =3D &ctx->sd;
+> +       ctx->master =3D master;
+> +       ctx->mode_resolved =3D false;
+> +
+> +       /* Set the defaults */
+> +       ctx->freq =3D bands_rf.rangelow;
+> +
+> +       ctx->xtal_freq =3D clk_get_rate(clk);
+> +       dev_info(&client->dev, "xtal freq %lluHz\n", ctx->xtal_freq);
+> +
+> +       v4l2_i2c_subdev_init(sd, client, &max2175_ops);
+> +       ctx->client =3D client;
+> +
+> +       sd->flags =3D V4L2_SUBDEV_FL_HAS_DEVNODE;
+> +       ctx->dev =3D dev;
+> +
+> +       /* Controls */
+> +       hdl =3D &ctx->ctrl_hdl;
+> +       ret =3D v4l2_ctrl_handler_init(hdl, 8);
+> +       if (ret) {
+> +               dev_err(&client->dev, "ctrl handler init failed\n");
+> +               goto err;
+> +       }
+> +
+> +       ctx->lna_gain =3D v4l2_ctrl_new_std(hdl, &max2175_ctrl_ops,
+> +                                         V4L2_CID_RF_TUNER_LNA_GAIN,
+> +                                         0, 15, 1, 2);
+> +       ctx->lna_gain->flags |=3D (V4L2_CTRL_FLAG_VOLATILE |
+> +                                V4L2_CTRL_FLAG_READ_ONLY);
+> +       ctx->if_gain =3D v4l2_ctrl_new_std(hdl, &max2175_ctrl_ops,
+> +                                        V4L2_CID_RF_TUNER_IF_GAIN,
+> +                                        0, 31, 1, 0);
+> +       ctx->if_gain->flags |=3D (V4L2_CTRL_FLAG_VOLATILE |
+> +                               V4L2_CTRL_FLAG_READ_ONLY);
+> +       ctx->pll_lock =3D v4l2_ctrl_new_std(hdl, &max2175_ctrl_ops,
+> +                                         V4L2_CID_RF_TUNER_PLL_LOCK,
+> +                                         0, 1, 1, 0);
+> +       ctx->pll_lock->flags |=3D (V4L2_CTRL_FLAG_VOLATILE |
+> +                                V4L2_CTRL_FLAG_READ_ONLY);
+> +       ctx->i2s_en =3D v4l2_ctrl_new_custom(hdl, &max2175_i2s_en, NULL);
+> +       ctx->i2s_mode =3D v4l2_ctrl_new_custom(hdl, &max2175_i2s_mode, NU=
+LL);
+> +       ctx->am_hiz =3D v4l2_ctrl_new_custom(hdl, &max2175_am_hiz, NULL);
+> +       ctx->hsls =3D v4l2_ctrl_new_custom(hdl, &max2175_hsls, NULL);
+> +
+> +       if (ctx->xtal_freq =3D=3D MAX2175_EU_XTAL_FREQ) {
+> +               ctx->rx_mode =3D v4l2_ctrl_new_custom(hdl,
+> +                                                   &max2175_eu_rx_mode, =
+NULL);
+> +               ctx->rx_modes =3D (struct max2175_rxmode *)eu_rx_modes;
+> +       } else {
+> +               ctx->rx_mode =3D v4l2_ctrl_new_custom(hdl,
+> +                                                   &max2175_na_rx_mode, =
+NULL);
+> +               ctx->rx_modes =3D (struct max2175_rxmode *)na_rx_modes;
+> +       }
+
+The casts are meant to cast away constness. Can that be avoided?
+
+> --- /dev/null
+> +++ b/drivers/media/i2c/max2175/max2175.h
+
+> +/* NOTE: Any addition/deletion in the below enum should be reflected in
+> + * V4L2_CID_MAX2175_RX_MODE ctrl strings
+
+Which strings exactly?
+
+> + */
+> +enum max2175_modetag {
+> +       /* EU modes */
+> +       MAX2175_DAB_1_2 =3D 0,
+> +
+> +       /* Other possible modes to add in future
+> +        * MAX2175_DAB_1_0,
+> +        * MAX2175_DAB_1_3,
+> +        * MAX2175_EU_FM_2_2,
+> +        * MAX2175_EU_FM_1_0,
+> +        * MAX2175_EU_FMHD_4_0,
+> +        * MAX2175_EU_AM_1_0,
+> +        * MAX2175_EU_AM_2_2,
+> +        */
+> +
+> +       /* NA modes */
+> +       MAX2175_NA_FM_1_0 =3D 0,
+> +
+> +       /* Other possible modes to add in future
+> +        * MAX2175_NA_FM_1_2,
+> +        * MAX2175_NA_FMHD_1_0,
+> +        * MAX2175_NA_FMHD_1_2,
+> +        * MAX2175_NA_AM_1_0,
+> +        * MAX2175_NA_AM_1_2,
+> +        */
+
+The MAX2175_NA_* definitions share their values with the MAX2175_DAB_* and
+future MAX2175_EU_* values. Do you have to use a single enum for both?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
