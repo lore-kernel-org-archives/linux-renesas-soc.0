@@ -1,52 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:54243 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751222AbcJGRiB (ORCPT
+Received: from sauhun.de ([89.238.76.85]:39007 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750861AbcJPICN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Oct 2016 13:38:01 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+        Sun, 16 Oct 2016 04:02:13 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: dri-devel@lists.freedesktop.org
 Cc: linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] [RFC] irqchip/renesas-irqc: Postpone driver initialization
-Date: Fri,  7 Oct 2016 19:37:56 +0200
-Message-Id: <1475861876-1187-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH RESEND] gpu: drm: rcar-du: rcar_du_drv: don't open code of_device_get_match_data()
+Date: Sun, 16 Oct 2016 10:01:47 +0200
+Message-Id: <20161016080147.2215-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently the renesas-irqc driver uses postcore_initcall().
+This change will also make Coverity happy by avoiding a theoretical NULL
+pointer dereference; yet another reason is to use the above helper function
+to tighten the code and make it more readable.
 
-However, the new CPG/MSSR driver uses subsys_initcall(). Hence the
-IRQC's probe will be deferred, which causes the Micrel phy to not find
-its interrupt on R-Car Gen2, as the of_mdio subsystem doesn't support
-deferred probe yet.
-
-Replace postcore_initcall() by device_initcall() to work around this.
-
-This does cause a few extra probe deferrals on R-Mobile APE6, where the
-PFC/GPIO combo uses the IRQC as its parent interrupt controller.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Sergei: Does this fix the regression with the sh_eth driver?
 
-I've been running with this applied for almost one year.
+Found this in one of my old branches. Plain resend, only ack from Geert added.
 
- drivers/irqchip/irq-renesas-irqc.c | 2 +-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
-index 52304b139aa46a60..992849e54d00ea77 100644
---- a/drivers/irqchip/irq-renesas-irqc.c
-+++ b/drivers/irqchip/irq-renesas-irqc.c
-@@ -295,7 +295,7 @@ static int __init irqc_init(void)
- {
- 	return platform_driver_register(&irqc_device_driver);
- }
--postcore_initcall(irqc_init);
-+device_initcall(irqc_init);
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index 73c971e39b1c72..50755f2f2bd3e4 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -313,7 +313,7 @@ static int rcar_du_probe(struct platform_device *pdev)
+ 	init_waitqueue_head(&rcdu->commit.wait);
  
- static void __exit irqc_exit(void)
- {
+ 	rcdu->dev = &pdev->dev;
+-	rcdu->info = of_match_device(rcar_du_of_table, rcdu->dev)->data;
++	rcdu->info = of_device_get_match_data(rcdu->dev);
+ 
+ 	ddev = drm_dev_alloc(&rcar_du_driver, &pdev->dev);
+ 	if (IS_ERR(ddev))
 -- 
-1.9.1
+2.9.3
