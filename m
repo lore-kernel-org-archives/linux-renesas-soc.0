@@ -1,68 +1,46 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v6 4/7] ARM: dts: r8a7743: add Ether support
-Date: Mon, 31 Oct 2016 22:56:36 +0300
-Message-ID: <1507182.SPSiN92QcM@wasted.cogentembedded.com>
-In-Reply-To: <1746536.qobnGdHRfV@wasted.cogentembedded.com>
-References: <1746536.qobnGdHRfV@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:57385 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934571AbcJQVe7 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 17 Oct 2016 17:34:59 -0400
+Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 023802003E
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Oct 2016 23:34:08 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/4] R-Car Salvator-X M3-W: Enable DU support
+Date: Tue, 18 Oct 2016 00:34:47 +0300
+Message-Id: <1476740091-7011-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A7743 part of the Ether device node.
+Hello,
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
+This patch series enables DU support for the M3-W-based Salvator-X board. It
+depends on the previously posted "[PATCH 0/3] R-Car M3-W: Add FCP, VSP and DU
+clocks", "[PATCH] drm: rcar-du: Add R8A7796 device support" and "[PATCH 0/2]
+R-Car FDP: Remove SoC-specific compatible strings" patch series.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+For convenience I've pushed all patches to
 
----
-Changes in version 5:
-- refreshed the patch.
+	git://linuxtv.org/pinchartl/media.git drm/r8a7796/next
 
-Changes in version 4:
-- refreshed the patch;
-- added Geert's tag.
+Patch 4/4 enables the DU and should not be merged at this time as it would
+block support of memory above the 32bit 4GB boundary. All other patches are
+candidates for v4.10.
 
-Changes in version 3:
-- resolved a reject;
-- updated the "clocks" property for the CPG/MSSR driver.
+Laurent Pinchart (4):
+  arm64: dts: renesas: r8a7796: Add FCPF and FCPV instances
+  arm64: dts: renesas: r8a7796: Add VSP instances
+  arm64: dts: renesas: r8a7796: Add DU device to DT
+  arm64: dts: renesas: r8a7796-salvator-x: Enable DU
 
-Changes in version 2:
-- new patch.
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |  48 ++++++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           | 131 +++++++++++++++++++++
+ 2 files changed, 179 insertions(+)
 
- arch/arm/boot/dts/r8a7743.dtsi |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+-- 
+Regards,
 
-Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7743.dtsi
-@@ -418,6 +418,18 @@
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
-+
-+		ether: ethernet@ee700000 {
-+			compatible = "renesas,ether-r8a7743";
-+			reg = <0 0xee700000 0 0x400>;
-+			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 813>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			phy-mode = "rmii";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
- 	};
- 
- 	/* External root clock */
-
+Laurent Pinchart
