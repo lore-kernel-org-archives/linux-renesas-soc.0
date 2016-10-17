@@ -1,19 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58256 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:57344 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752092AbcJRI03 (ORCPT
+        with ESMTP id S936237AbcJQVMk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Oct 2016 04:26:29 -0400
+        Mon, 17 Oct 2016 17:12:40 -0400
 Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 1FEF72038D
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Oct 2016 10:25:39 +0200 (CEST)
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 4258F2038D
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Oct 2016 23:11:51 +0200 (CEST)
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 1/3] clk: renesas: r8a7796: Add FCP clocks
-Date: Tue, 18 Oct 2016 11:26:19 +0300
-Message-Id: <1476779181-31798-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1476779181-31798-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1476779181-31798-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH 1/3] clk: renesas: r8a7796: Add FCP clocks
+Date: Tue, 18 Oct 2016 00:12:31 +0300
+Message-Id: <1476738753-24304-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1476738753-24304-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1476738753-24304-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
