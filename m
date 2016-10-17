@@ -1,46 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:48894 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756391AbcJGNtl (ORCPT
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:36008
+        "EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932930AbcJQPob (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Oct 2016 09:49:41 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jithin T Raj <jithin.t@tataelxsi.co.in>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: Re: About Git Branch
-Date: Fri, 07 Oct 2016 16:49:36 +0300
-Message-ID: <3954256.fQG34braHX@avalon>
-In-Reply-To: <SG2PR0401MB129670EE744A7854C40DD2FED8C60@SG2PR0401MB1296.apcprd04.prod.outlook.com>
-References: <SG2PR0401MB129670EE744A7854C40DD2FED8C60@SG2PR0401MB1296.apcprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Mon, 17 Oct 2016 11:44:31 -0400
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        kernel@stlinux.com,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        devel@driverdev.osuosl.org, Kevin Hilman <khilman@baylibre.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Kamil Debski <kamil@wypas.org>,
+        Carlo Caione <carlo@caione.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-amlogic@lists.infradead.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Subject: [PATCH 0/5] [media] Fix module autoload for media platform drivers
+Date: Mon, 17 Oct 2016 12:44:07 -0300
+Message-Id: <1476719053-17600-1-git-send-email-javier@osg.samsung.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Jithin,
+Hello Mauro,
 
-On Friday 07 Oct 2016 09:15:09 Jithin T Raj wrote:
-> hi Laurent,
->    I am sending this mail personal to you because I don't know  whether it
-> is a stupid question that can be asked in to linux-renesas..
+I noticed that module autoload won't be working in a bunch of media
+platform drivers because the module alias information is not filled
+in the modules. This patch series contains the fixes for them.
 
-Regardless of whether the question is stupid or not, it should be sent to the 
-mailing list. I've CC'ed it on this e-mail.
+Best regards,
+Javier
 
-> I have seen your git branch  git://linuxtv.org/pinchartl/fbdev.git
-> drm/du/adv7511..to make hdmi support  in koelsch..now I  am working v4.8 ..I
-> have build image but I don't deployed it to koelsche. I have to check 
-> whether it will  set hdmi out or not..before that i would like to ask one
-> thing .can I use git://linuxtv.org/pinchartl/fbdev.git drm/du/adv7511
 
-That branch is outdated, you shouldn't use it (I'm not even sure where you 
-found it, as it doesn't exist in 
-https://git.linuxtv.org/pinchartl/fbdev.git/).
+Javier Martinez Canillas (5):
+  [media] v4l: vsp1: Fix module autoload for OF registration
+  [media] v4l: rcar-fcp: Fix module autoload for OF registration
+  [media] rc: meson-ir: Fix module autoload
+  [media] s5p-cec: Fix module autoload
+  [media] st-cec: Fix module autoload
 
-Please use the mainline kernel, it should support HDMI output.
+ drivers/media/platform/rcar-fcp.c       | 1 +
+ drivers/media/platform/vsp1/vsp1_drv.c  | 1 +
+ drivers/media/rc/meson-ir.c             | 1 +
+ drivers/staging/media/s5p-cec/s5p_cec.c | 1 +
+ drivers/staging/media/st-cec/stih-cec.c | 1 +
+ 5 files changed, 5 insertions(+)
 
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
