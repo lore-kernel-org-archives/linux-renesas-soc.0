@@ -1,103 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:58459 "EHLO pokefinder.org"
+Received: from sauhun.de ([89.238.76.85]:44468 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933643AbcJTN3D (ORCPT
+        id S934895AbcJQPQI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Oct 2016 09:29:03 -0400
-Date: Thu, 20 Oct 2016 15:28:53 +0200
+        Mon, 17 Oct 2016 11:16:08 -0400
+Date: Mon, 17 Oct 2016 17:15:50 +0200
 From: Wolfram Sang <wsa@the-dreams.de>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Chris Brandt <Chris.Brandt@renesas.com>,
+        Lee Jones <lee@kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Simon Horman <horms+renesas@verge.net.au>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Subject: Re: [PATCH v3 2/3] mmc: tmio-mmc: add support for 32bit data port
-Message-ID: <20161020132852.GB4177@katana>
+Message-ID: <20161017151550.GA1415@katana>
 References: <20160912141507.6837-1-chris.brandt@renesas.com>
  <20160912141507.6837-3-chris.brandt@renesas.com>
+ <CAPDyKFoeRggX-YMy2L+o6CBtwa46rT2YyJiXdPK_c3a1R1Nvgg@mail.gmail.com>
+ <SG2PR06MB11656EAD9F036EC0FFEDFF7F8ADF0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAPDyKFrXYQPEfh8YMAFb4+0dr=WMyo8D-VCjd9KY5hpPxTv7PQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="cmJC7u66zC7hs+87"
+        protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
 Content-Disposition: inline
-In-Reply-To: <20160912141507.6837-3-chris.brandt@renesas.com>
+In-Reply-To: <CAPDyKFrXYQPEfh8YMAFb4+0dr=WMyo8D-VCjd9KY5hpPxTv7PQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 
---cmJC7u66zC7hs+87
+--ew6BAiZeqk4r7MaW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 12, 2016 at 10:15:06AM -0400, Chris Brandt wrote:
-> For the r7s72100 SOC, the DATA_PORT register was changed to 32-bits wide.
-> Therefore a new flag has been created that will allow 32-bit reads/writes
-> to the DATA_PORT register instead of 16-bit (because 16-bits accesses are
-> not supported).
+
+> > Is this still waiting on an ACK from Lee Jones because it touches the t=
+mio.h file under include/linux/mfd/ ?
+> >
 >=20
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> ---
-> v3:
-> * changed loops to memcpy
-> v2:
-> * changed 'data * 0xFF' to 'data & 0xFF'
-> * added 'const' for sd_ctrl_write32_rep
+> Yes, but more important is Wolfram's ack as he maintains
+> drivers/mmc/host/tmio_mmc*
 
-Sadly, I don't have SDHI documentation for this SoC.
-
-* Does it have a version register (CTL_VERSION)? If so, what does it
-  say?
-* Does it have SD_BUF0 width setting (named either EXT_ACC or HOST_MODE,
-  so far always comes after the version register)? If so, what is its
-  layout?
-
-Unrelated to this patch but nice to know:
-
-* Does it support DMA? Is it compatible to the current implementation?
-
-That being asked, R-Car SoCs can have SDBUF0 32-bit wide as well (Gen3
-even 64-bit). So far, this is only used for DMA, though.
-
-Thanks,
-
-   Wolfram
-
-> +		/* if count was multiple of 4 */
-> +		if (!(count & 0x3))
-> +			return;
-> +		buf8 =3D (u8 *)(buf + (count >> 2));
-> +		count %=3D 4;
-
-To skip the same operation done on 'count' twice, maybe?
-
-		buf8 =3D (u8 *)(buf + (count >> 2));
-		count &=3D 3;
-
-		if (!count)
-			return;
+Sorry, LinuxCon and ELC Europe kept me very busy. Will do this week.
 
 
---cmJC7u66zC7hs+87
+--ew6BAiZeqk4r7MaW
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJYCMaUAAoJEBQN5MwUoCm2UIQQAKtuj+1jHRcqKFXAeALkK0U+
-tXKUVAVOAfPT0/HaxcR7LeR1UxRnHCcdEZxjZArLrN9MGraUH7+XSsG7efbDDunN
-xZYlkdeXJ3lsfV7XVPkhI+cajC7lrfNUOfqo6pO4EqOdmYQEd6wRD+2ITVwcUB1u
-Wif/GPSl4wld2e5Rh3XbLm1JlDRZHOMVF+CxbactqenV+1vbQbLaft6WR7jiFZ/u
-IWvrPE5Mif7U+hsI1/HJ/3lZXk6QXgrpPGOdAh4rrkmaJg9BdLAS27spYGXHUPxF
-sG82ByXm88jzCYcW6EJP968xo/vOacWljmKVbZhqo3bjDTySHJoCmGzEdJrqcCKQ
-3v9FbQdZCYdpmUkSh2QZLeaXTjqy5v3fHUEaWWqSuaYIM0H/cmYi15GSC9quB2+X
-ruzF63xRrt9fEelBzbB1gzbcskRNIRo+9Os+H82kUCN9lFBYdGWj4FoNBJsH58NX
-Wf55aRmps1+siXHyso1LPPJWxTGVli5NUiG/MIgr3OpJwJLpK8dKuVegxPX05Ebj
-oOSvafyrdbGMhO0Bv7xnc6aYygqITAF0ltqI6UFu6THnmTuYblUWskfALvVMrGwu
-Sni7LOXGztn4sS1+R7JFr3Q8lQq5TIHbnTCwgWOO/ONZufZpEyX1mdiEMahzUu+A
-LHR28X99oh5XDKHe+n53
-=EK4X
+iQIcBAEBAgAGBQJYBOsmAAoJEBQN5MwUoCm21csP/064+gQwNViz/MEA+GpTbI1X
+7lla4Nm99hptzd86cUabJvxpdquzU/zmU3AGinMvUPcMS2/TptFlW5RgnqOY8cAc
+4tY+24ACluqAWwEq3AwRHbNlS8Qu9+4sQbLkJ+3AMAdIlf+IjyQd5TndyC0e+dEL
+JoAEERNhlc7G+s3oV0BiMZvDSL7Pm/s18g4Pv7k0Qb9i/MORCCzOd2tubZxG0Sws
+JAAV6LTuN2dnl1SK32/MEfP9NXs9TJFiJIl3aeKLK/1Tfb1Cb7yikFRTb9lJC4DH
+TS+ZJXq2iklGnG/em85xSQtB1kepVpbw5vg2RvWT/RT3+bChnn1VqJ8KuUVw6QFe
+LAZecr7jwSbI05b1FMqD2z2hXUxr9m0BQPmZ/XOuXUh5A2K++PzyX5AvTWtJbYia
+N41UCRvu0rjYr3KY7Ei1uPlHmVo8nNNGbuPF7/LncOsOBYzWIcdkcvQ+gZmIGiV9
+UO6QdCuX/54liLjrOVS+1l4ICcQ15Mu9cGbEvMaXlU1Knr4e+VTE4cJvogwnKL6N
+wDNq+Lz+G2KOjeXswS0fLsGv3bKba1mpQNDOTGyLT4G30O+ClVHKSCpp9eLnmpKy
+cN0ohabqt1zimzhScU4h1de8k+QpxQc59hIAa0d3CmkytyTxhTc81YaCm0c9SHjY
+u1vWRj4cCu+C4xLLh+e1
+=HYBZ
 -----END PGP SIGNATURE-----
 
---cmJC7u66zC7hs+87--
+--ew6BAiZeqk4r7MaW--
