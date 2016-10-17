@@ -1,74 +1,96 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:35487 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935747AbcJ0Vin (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:57387 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030465AbcJQVfC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Oct 2016 17:38:43 -0400
-Received: by mail-lf0-f52.google.com with SMTP id f134so37722189lfg.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Oct 2016 14:38:43 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 4/7] ARM: dts: r8a7743: add Ether support
-Date: Fri, 28 Oct 2016 00:38:40 +0300
-Message-ID: <2378987.c5J5iVeYae@wasted.cogentembedded.com>
-In-Reply-To: <1580369.yToZzJza1l@wasted.cogentembedded.com>
-References: <1580369.yToZzJza1l@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Mon, 17 Oct 2016 17:35:02 -0400
+Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 1F68F207B9
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Oct 2016 23:34:10 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 4/4] arm64: dts: renesas: r8a7796-salvator-x: Enable DU
+Date: Tue, 18 Oct 2016 00:34:51 +0300
+Message-Id: <1476740091-7011-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1476740091-7011-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1476740091-7011-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A7743 part of the Ether device node.
+Only the VGA output is supported for now.
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
-Changes in version 5:
-- refreshed the patch.
+ arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 48 ++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-Changes in version 4:
-- refreshed the patch;
-- added Geert's tag.
-
-Changes in version 3:
-- resolved a reject;
-- updated the "clocks" property for the CPG/MSSR driver.
-
-Changes in version 2:
-- new patch.
-
- arch/arm/boot/dts/r8a7743.dtsi |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7743.dtsi
-@@ -418,6 +418,18 @@
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+index 90e9a76c8b30..5bb25f2e3c51 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
+@@ -29,6 +29,38 @@
+ 		/* first 128MB is reserved for secure area. */
+ 		reg = <0x0 0x48000000 0x0 0x78000000>;
+ 	};
 +
-+		ether: ethernet@ee700000 {
-+			compatible = "renesas,ether-r8a7743";
-+			reg = <0 0xee700000 0 0x400>;
-+			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 813>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			phy-mode = "rmii";
++	vga-encoder {
++		compatible = "adi,adv7123";
++
++		ports {
 +			#address-cells = <1>;
 +			#size-cells = <0>;
-+			status = "disabled";
++
++			port@0 {
++				reg = <0>;
++				adv7123_in: endpoint {
++					remote-endpoint = <&du_out_rgb>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				adv7123_out: endpoint {
++					remote-endpoint = <&vga_in>;
++				};
++			};
 +		};
- 	};
++	};
++
++	vga {
++		compatible = "vga-connector";
++
++		port {
++			vga_in: endpoint {
++				remote-endpoint = <&adv7123_out>;
++			};
++		};
++	};
+ };
  
- 	/* External root clock */
+ &pfc {
+@@ -45,6 +77,22 @@
+ 	};
+ };
+ 
++&du {
++	status = "okay";
++
++	ports {
++		port@0 {
++			endpoint {
++				remote-endpoint = <&adv7123_in>;
++			};
++		};
++		port@2 {
++			lvds_connector: endpoint {
++			};
++		};
++	};
++};
++
+ &extal_clk {
+ 	clock-frequency = <16666666>;
+ };
+-- 
+Regards,
+
+Laurent Pinchart
