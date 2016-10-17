@@ -1,43 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34979 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933889AbcJRIGK (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:57277 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759384AbcJQU3M (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Oct 2016 04:06:10 -0400
-Received: by mail-io0-f195.google.com with SMTP id p26so12205314ioo.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Oct 2016 01:06:09 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1476736143-29937-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 17 Oct 2016 16:29:12 -0400
+Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 60E112038D
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Oct 2016 22:28:21 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: media: renesas-fcp: Remove SoC-specific compatible strings
+Date: Mon, 17 Oct 2016 23:29:02 +0300
+Message-Id: <1476736143-29937-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1476736143-29937-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 References: <1476736143-29937-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
- <1476736143-29937-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 18 Oct 2016 10:06:08 +0200
-Message-ID: <CAMuHMdXZ3nK-+ZSHWDGMZwVG_t3GF=kDQ6cBsi5Qhpdw1+ys9w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: media: renesas-fcp: Remove SoC-specific
- compatible strings
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, Oct 17, 2016 at 10:29 PM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> The FCP IP cores include a version register that identifies which SoC
-> model the IP is integrated in. SoC-specific compatible strings are not
-> needed.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+The FCP IP cores include a version register that identifies which SoC
+model the IP is integrated in. SoC-specific compatible strings are not
+needed.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ Documentation/devicetree/bindings/media/renesas,fcp.txt | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-Gr{oetje,eeting}s,
+diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.txt b/Documentation/devicetree/bindings/media/renesas,fcp.txt
+index 27f9b8e459ac..3ec91803ba58 100644
+--- a/Documentation/devicetree/bindings/media/renesas,fcp.txt
++++ b/Documentation/devicetree/bindings/media/renesas,fcp.txt
+@@ -11,15 +11,9 @@ are paired with. These DT bindings currently support the FCPV and FCPF.
+ 
+  - compatible: Must be one or more of the following
+ 
+-   - "renesas,r8a7795-fcpv" for R8A7795 (R-Car H3) compatible 'FCP for VSP'
+-   - "renesas,r8a7795-fcpf" for R8A7795 (R-Car H3) compatible 'FCP for FDP'
+    - "renesas,fcpv" for generic compatible 'FCP for VSP'
+    - "renesas,fcpf" for generic compatible 'FCP for FDP'
+ 
+-   When compatible with the generic version, nodes must list the
+-   SoC-specific version corresponding to the platform first, followed by the
+-   family-specific and/or generic versions.
+-
+  - reg: the register base and size for the device registers
+  - clocks: Reference to the functional clock
+ 
+@@ -32,7 +26,7 @@ Device node example
+ -------------------
+ 
+ 	fcpvd1: fcp@fea2f000 {
+-		compatible = "renesas,r8a7795-fcpv", "renesas,fcpv";
++		compatible = "renesas,fcpv";
+ 		reg = <0 0xfea2f000 0 0x200>;
+ 		clocks = <&cpg CPG_MOD 602>;
+ 		power-domains = <&sysc R8A7795_PD_A3VP>;
+-- 
+Regards,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
