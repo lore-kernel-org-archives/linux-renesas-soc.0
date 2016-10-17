@@ -1,82 +1,76 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Kishon Vijay Abraham I <kishon@ti.com>,
+MIME-Version: 1.0
+In-Reply-To: <1476688248-983-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1476688248-983-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Oct 2016 14:27:39 +0200
+Message-ID: <CAMuHMdV8-pJ4+DRGTFJpD+QAVioP6a1aCOMWYuBe2T-vo1+8TQ@mail.gmail.com>
+Subject: Re: [PATCH] phy: rcar-gen3-usb2: add sysfs for usb role swap
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] phy: rcar-gen3-usb2: add sysfs for usb role swap
-Date: Tue, 18 Oct 2016 06:19:04 +0000
-Message-ID: <HK2PR06MB05485C89CDD20CA8FBA0DD85D8D30@HK2PR06MB0548.apcprd06.prod.outlook.com>
-References: <1476688248-983-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdV8-pJ4+DRGTFJpD+QAVioP6a1aCOMWYuBe2T-vo1+8TQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdV8-pJ4+DRGTFJpD+QAVioP6a1aCOMWYuBe2T-vo1+8TQ@mail.gmail.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IGdlZXJ0LnV5dHRlcmhvZXZlbkBnbWFpbC5jb20NCj4g
-U2VudDogTW9uZGF5LCBPY3RvYmVyIDE3LCAyMDE2IDk6MjggUE0NCj4gDQo+IEhpIFNoaW1vZGEt
-c2FuLA0KPiANCj4gT24gTW9uLCBPY3QgMTcsIDIwMTYgYXQgOToxMCBBTSwgWW9zaGloaXJvIFNo
-aW1vZGENCj4gPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBU
-aGlzIHBhdGNoIGFkZHMgc3lzZnMgIm90Z19pbnB1dHMiIGZvciB1c2Igcm9sZSBzd2FwLiBUaGlz
-IHBhcmFtZXRlcg0KPiA+IGlzIHdyaXRlLW9ubHkgYW5kIGlmIHlvdSB1c2UgdGhlbSBhcyB0aGUg
-Zm9sbG93aW5nLCB5b3UgY2FuIHN3YXANCj4gPiB0aGUgdXNiIHJvbGUuDQo+IA0KPiBUaGFuayB5
-b3UgZm9yIHlvdXIgcGF0Y2ghDQoNClRoYW5rIHlvdSBmb3IgdGhlIHJldmlldyENCg0KPiA+IEZv
-ciBleGFtcGxlOg0KPiA+ICAxKSBjb25uZWN0IGEgdXNiIGNhYmxlIHVzaW5nIDIgc2FsdmF0b3It
-eCBib2FyZHMNCj4gPiAgMikgT24gQS1kZXZpY2UgKGFzIGhvc3QpLCB5b3UgaW5wdXQgdGhlIGZv
-bGxvd2luZyBjb21tYW5kOg0KPiA+ICAgICMgZWNobyBhX2J1c19yZXEvID4gL3N5cy9kZXZpY2Vz
-L3BsYXRmb3JtL3NvYy9lZTA4MDIwMC51c2ItcGh5L290Z19pbnB1dHMNCj4gPiAgMykgT24gQi1k
-ZXZpY2UgKGFzIHBlcmlwaGVyYWwpLCB5b3UgaW5wdXQgdGhlIGZvbGxvd2luZyBjb21tYW5kOg0K
-PiA+ICAgICMgZWNobyBiX2J1c19yZXEgPiAvc3lzL2RldmljZXMvcGxhdGZvcm0vc29jL2VlMDgw
-MjAwLnVzYi1waHkvb3RnX2lucHV0cw0KPiANCj4gQXQgZmlyc3QsIEkgdGhvdWdodCB0aGUgdHJh
-aWxpbmcgIi8iIHdhcyBhIHR5cG8uLi4NCj4gDQo+ID4gLS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBi
-L0RvY3VtZW50YXRpb24vQUJJL3Rlc3Rpbmcvc3lzZnMtcGxhdGZvcm0tcGh5LXJjYXItZ2VuMy11
-c2IyDQo+ID4gQEAgLTAsMCArMSwxMSBAQA0KPiA+ICtXaGF0OiAgICAgICAgICAvc3lzL2Rldmlj
-ZXMvcGxhdGZvcm0vPHBoeS1uYW1lPi9vdGctaW5wdXRzDQo+ID4gK0RhdGU6ICAgICAgICAgIE9j
-dG9iZXIgMjAxNg0KPiA+ICtLZXJuZWxWZXJzaW9uOiA0LjEwDQo+ID4gK0NvbnRhY3Q6ICAgICAg
-IFlvc2hpaGlybyBTaGltb2RhIDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4NCj4g
-PiArRGVzY3JpcHRpb246DQo+ID4gKyAgICAgICAgICAgICAgIFRoaXMgd3JpdGUtb25seSBmaWxl
-IGNoYW5nZXMgdGhlIHBoeSBtb2RlIGZvciByb2xlIHN3YXAgb2YgdXNiLg0KPiA+ICsgICAgICAg
-ICAgICAgICBUaGlzIGZpbGUgYWNjZXB0cyB0aGUgZm9sbG93aW5nIHN0cmluZ3M6DQo+ID4gKyAg
-ICAgICAgICAgICAgICAiYV9idXNfcmVxLyIgLSBzd2l0Y2hpbmcgZnJvbSBBLUhvc3QgdG8gQS1Q
-ZXJpcGhlcmFsDQo+ID4gKyAgICAgICAgICAgICAgICAiYV9idXNfZHJvcCIgLSBzd2l0Y2hpbmcg
-ZnJvbSBBLVBlcmlwaGVyYWwgdG8gQS1Ib3N0DQo+ID4gKyAgICAgICAgICAgICAgICAiYl9idXNf
-cmVxIiAgLSBzd2l0Y2hpbmcgZnJvbSBCLVBlcmlwaGVyYWwgdG8gQi1Ib3N0DQo+ID4gKyAgICAg
-ICAgICAgICAgICAiYl9idXNfcmVxLyIgLSBzd2l0Y2hpbmcgZnJvbSBCLUhvc3QgdG8gQi1QZXJp
-cGhlcmFsDQo+IA0KPiAuLi4gdW50aWwgSSByZWFkIHRoZSBhYm92ZS4NCj4gDQo+IFdoYXQncyB0
-aGUgcmF0aW9uYWxlIG9mIGRvaW5nIGl0IGxpa2UgdGhpcz8gSS5lLg0KPiAgIDEuIFdoeSBkaWZm
-ZXJlbnRpYXRlIGJ5IHRyYWlsaW5nICIvIj8NCg0KVGhpcyB1c2Igcm9sZSBzd2FwIGZlYXR1cmUg
-aXMgbm90IGNvbXBhdGlibGUgd2l0aCBVU0IgT1RHIHRob3VnaCwNCmJ1dCB0aGlzIHN0cmluZ3Mg
-YXJlIGZyb20gdGhlIG1hbnVhbCB0aGF0IHVzYi5vcmcgcmVsZWFzZWQ6DQpodHRwOi8vd3d3LnVz
-Yi5vcmcvZGV2ZWxvcGVycy9kb2NzL3VzYjIwX2RvY3MvDQogLS0+IHVzYl8yMF8wOTEyMTYuemlw
-DQogIC0tPiBVU0IgT1RHIGFuZCBFbWJlZGRlZCBIb3N0L1VTQl9PVEdfYW5kX0VIXzItMC12ZXJz
-aW9uIDFfMWEucGRmDQogICBQbGVhc2UgcmVmZXIgdG8gdGhlIGZvbGxvd2luZyBmaWd1cmVzOg0K
-ICAgIC0gRmlndXJlIDctMTogT1RHIEEtZGV2aWNlIHdpdGggSE5QIFN0YXRlIERpYWdyYW0NCiAg
-ICAtIEZpZ3VyZSA3LTQ6IE9URyBCLWRldmljZSB3aXRoIEhOUCBTdGF0ZSBEaWFncmFtDQoNClNv
-LCBpdCBzZWVtcyB0aGUgIi8iIG1lYW5zIEZBTFNFLg0KDQo+ICAgMi4gV2h5IHRoZSBhc3ltbWV0
-cnkgKCJhX2J1c19kcm9wIiB2cy4gImFfYnVzX3JlcSIpPw0KDQpUaGlzIGlzIGFsc28gcmVsYXRl
-ZCB0aGUgZG9jdW1lbnQuDQogLSBGcm9tICJhX2hvc3QiIHRvICJhX3N1c3BlbmQiIHN0YXRlIGlm
-ICJhX2J1c19yZXEvIiBldmVudCBoYXBwZW5zLg0KIC0gRnJvbSAiYV9zdXNwZW5kIiB0byAiYV9o
-b3N0IiBzdGF0ZSBpZiAiYV9idXNfcmVxIiBldmVudCBoYXBwZW5zLg0KICAoQnV0IHRoZSBkcml2
-ZXIgZG9lc24ndCBzdXBwb3J0IGl0IGFuZCB3ZSBjYW4gdXNlICJhX2J1c19kcm9wIi4pDQogLSBG
-cm9tICJhX3BlcmlwaGVyYWwiIHRvICJhX3dhaXRfdmZhbGwiIHN0YXRlIGlmICJhX2J1c19kcm9w
-IiBldmVudCBoYXBwZW5zLg0KDQo+IEkgZG8gbm90IHJlYWxseSBmb2xsb3cgVVNCIGRldmVsb3Bt
-ZW50LCBzbyBJIHBsZWFzZSBhY2NlcHR5IG15IGFwb2xvZ2llcyBpZg0KPiBJIG1pc3NlZCB0aGUg
-ZGlzY3Vzc2lvbiBhbmQgdmFsaWQgYXJndW1lbnRzIHRoYXQgbGVhZCB0byB0aGlzLg0KPiANCj4g
-SSBkaWQgZmluZCBEb2N1bWVudGF0aW9uL0FCSS90ZXN0aW5nL3N5c2ZzLXBsYXRmb3JtLWNoaXBp
-ZGVhLXVzYi1vdGcsDQo+IHdoaWNoIHVzZXMgc2ltaWxhciBuYW1pbmcsIGJ1dCBhIHNsaWdodGx5
-IGRpZmZlcmVudCBtZWNoYW5pc20gKG11bHRpcGxlDQo+IHN5c2ZzIHZpcnR1YWwgZmlsZXMgd2l0
-aCAwLzEgc3RhdGVzKS4NCg0KSSBhbHNvIGRpZCBsb29rIGF0IHRoZSBkb2N1bWVudC4gQnV0LCBJ
-IHByZWZlciBvbmUgcGFyYW1ldGVyIHRvIGNvbnRyb2wgaXQuDQoNCkJlc3QgcmVnYXJkcywNCllv
-c2hpaGlybyBTaGltb2RhDQoNCj4gVGhhbmtzIQ0KPiANCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+
-IA0KPiAgICAgICAgICAgICAgICAgICAgICAgICBHZWVydA0KPiANCj4gLS0NCj4gR2VlcnQgVXl0
-dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBnZWVydEBs
-aW51eC1tNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2hu
-aWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxr
-aW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBs
-aWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9y
-dmFsZHMNCg==
+Hi Shimoda-san,
+
+On Mon, Oct 17, 2016 at 9:10 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> This patch adds sysfs "otg_inputs" for usb role swap. This parameter
+> is write-only and if you use them as the following, you can swap
+> the usb role.
+
+Thank you for your patch!
+
+> For example:
+>  1) connect a usb cable using 2 salvator-x boards
+>  2) On A-device (as host), you input the following command:
+>    # echo a_bus_req/ > /sys/devices/platform/soc/ee080200.usb-phy/otg_inputs
+>  3) On B-device (as peripheral), you input the following command:
+>    # echo b_bus_req > /sys/devices/platform/soc/ee080200.usb-phy/otg_inputs
+
+At first, I thought the trailing "/" was a typo...
+
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-platform-phy-rcar-gen3-usb2
+> @@ -0,0 +1,11 @@
+> +What:          /sys/devices/platform/<phy-name>/otg-inputs
+> +Date:          October 2016
+> +KernelVersion: 4.10
+> +Contact:       Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> +Description:
+> +               This write-only file changes the phy mode for role swap of usb.
+> +               This file accepts the following strings:
+> +                "a_bus_req/" - switching from A-Host to A-Peripheral
+> +                "a_bus_drop" - switching from A-Peripheral to A-Host
+> +                "b_bus_req"  - switching from B-Peripheral to B-Host
+> +                "b_bus_req/" - switching from B-Host to B-Peripheral
+
+... until I read the above.
+
+What's the rationale of doing it like this? I.e.
+  1. Why differentiate by trailing "/"?
+  2. Why the asymmetry ("a_bus_drop" vs. "a_bus_req")?
+
+I do not really follow USB development, so I please accepty my apologies if
+I missed the discussion and valid arguments that lead to this.
+
+I did find Documentation/ABI/testing/sysfs-platform-chipidea-usb-otg,
+which uses similar naming, but a slightly different mechanism (multiple
+sysfs virtual files with 0/1 states).
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
