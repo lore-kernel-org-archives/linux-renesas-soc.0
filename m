@@ -1,51 +1,97 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:49186 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752636AbcJDQpx (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Oct 2016 12:45:53 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: netdev@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH][RESEND] dt-bindings: net: renesas-ravb: Add support for R8A7796 RAVB
-Date: Tue,  4 Oct 2016 19:45:46 +0300
-Message-Id: <1475599546-29209-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <HK2PR06MB05485C89CDD20CA8FBA0DD85D8D30@HK2PR06MB0548.apcprd06.prod.outlook.com>
+References: <1476688248-983-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdV8-pJ4+DRGTFJpD+QAVioP6a1aCOMWYuBe2T-vo1+8TQ@mail.gmail.com> <HK2PR06MB05485C89CDD20CA8FBA0DD85D8D30@HK2PR06MB0548.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Oct 2016 09:47:44 +0200
+Message-ID: <CAMuHMdWEZawr0MPDBUccQR=SPdvE1Pe5WYyQwFYL5zsmYS9aFQ@mail.gmail.com>
+Subject: Re: [PATCH] phy: rcar-gen3-usb2: add sysfs for usb role swap
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a new compatible string for the R8A7796 (M3-W) RAVB.
+Hi Shimoda-san,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/net/renesas,ravb.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Tue, Oct 18, 2016 at 8:19 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+>> From: geert.uytterhoeven@gmail.com
+>> Sent: Monday, October 17, 2016 9:28 PM
+>> On Mon, Oct 17, 2016 at 9:10 AM, Yoshihiro Shimoda
+>> <yoshihiro.shimoda.uh@renesas.com> wrote:
+>> > This patch adds sysfs "otg_inputs" for usb role swap. This parameter
+>> > is write-only and if you use them as the following, you can swap
+>> > the usb role.
+>>
+>> Thank you for your patch!
+>
+> Thank you for the review!
+>
+>> > For example:
+>> >  1) connect a usb cable using 2 salvator-x boards
+>> >  2) On A-device (as host), you input the following command:
+>> >    # echo a_bus_req/ > /sys/devices/platform/soc/ee080200.usb-phy/otg_inputs
+>> >  3) On B-device (as peripheral), you input the following command:
+>> >    # echo b_bus_req > /sys/devices/platform/soc/ee080200.usb-phy/otg_inputs
+>>
+>> At first, I thought the trailing "/" was a typo...
+>>
+>> > --- /dev/null
+>> > +++ b/Documentation/ABI/testing/sysfs-platform-phy-rcar-gen3-usb2
+>> > @@ -0,0 +1,11 @@
+>> > +What:          /sys/devices/platform/<phy-name>/otg-inputs
+>> > +Date:          October 2016
+>> > +KernelVersion: 4.10
+>> > +Contact:       Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>> > +Description:
+>> > +               This write-only file changes the phy mode for role swap of usb.
+>> > +               This file accepts the following strings:
+>> > +                "a_bus_req/" - switching from A-Host to A-Peripheral
+>> > +                "a_bus_drop" - switching from A-Peripheral to A-Host
+>> > +                "b_bus_req"  - switching from B-Peripheral to B-Host
+>> > +                "b_bus_req/" - switching from B-Host to B-Peripheral
+>>
+>> ... until I read the above.
+>>
+>> What's the rationale of doing it like this? I.e.
+>>   1. Why differentiate by trailing "/"?
+>
+> This usb role swap feature is not compatible with USB OTG though,
+> but this strings are from the manual that usb.org released:
+> http://www.usb.org/developers/docs/usb20_docs/
+>  --> usb_20_091216.zip
+>   --> USB OTG and Embedded Host/USB_OTG_and_EH_2-0-version 1_1a.pdf
+>    Please refer to the following figures:
+>     - Figure 7-1: OTG A-device with HNP State Diagram
+>     - Figure 7-4: OTG B-device with HNP State Diagram
+>
+> So, it seems the "/" means FALSE.
+>
+>>   2. Why the asymmetry ("a_bus_drop" vs. "a_bus_req")?
+>
+> This is also related the document.
+>  - From "a_host" to "a_suspend" state if "a_bus_req/" event happens.
+>  - From "a_suspend" to "a_host" state if "a_bus_req" event happens.
+>   (But the driver doesn't support it and we can use "a_bus_drop".)
+>  - From "a_peripheral" to "a_wait_vfall" state if "a_bus_drop" event happens.
 
-The patch has been posted to the linux-renesas-soc mailing list only, adding
-the netdev mailing list to get it upstreamed.
+Thanks for the explanation!
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-index c8ac222eac67..b519503be51a 100644
---- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
-+++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
-@@ -10,6 +10,7 @@ Required properties:
- 	      "renesas,etheravb-r8a7793" if the device is a part of R8A7793 SoC.
- 	      "renesas,etheravb-r8a7794" if the device is a part of R8A7794 SoC.
- 	      "renesas,etheravb-r8a7795" if the device is a part of R8A7795 SoC.
-+	      "renesas,etheravb-r8a7796" if the device is a part of R8A7796 SoC.
- 	      "renesas,etheravb-rcar-gen2" for generic R-Car Gen 2 compatible interface.
- 	      "renesas,etheravb-rcar-gen3" for generic R-Car Gen 3 compatible interface.
- 
-@@ -33,7 +34,7 @@ Optional properties:
- - interrupt-parent: the phandle for the interrupt controller that services
- 		    interrupts for this device.
- - interrupt-names: A list of interrupt names.
--		   For the R8A7795 SoC this property is mandatory;
-+		   For the R8A779[56] SoCs this property is mandatory;
- 		   it should include one entry per channel, named "ch%u",
- 		   where %u is the channel number ranging from 0 to 24.
- 		   For other SoCs this property is optional; if present
--- 
-Regards,
+Regardless, I think it would be good to CC the USB maintainer and mailing
+list on next submission.
 
-Laurent Pinchart
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
