@@ -1,1335 +1,394 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        hverkuil@xs4all.nl, sakari.ailus@linux.intel.com, crope@iki.fi,
-        chris.paterson2@renesas.com, geert@linux-m68k.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [RFC 1/5] media: i2c: max2175: Add MAX2175 support
-Date: Tue, 18 Oct 2016 22:25:45 +0300
-Message-ID: <2034831.3otZHvJ6bZ@avalon>
-In-Reply-To: <1476281429-27603-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
-References: <1476281429-27603-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com> <1476281429-27603-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:64065 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932230AbcJRPEe (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 18 Oct 2016 11:04:34 -0400
+From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        "Antti Palosaari" <crope@iki.fi>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "Linux Media Mailing List" <linux-media@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [RFC 1/5] media: i2c: max2175: Add MAX2175 support
+Date: Tue, 18 Oct 2016 15:04:27 +0000
+Message-ID: <SG2PR06MB1038A64096062C426A5CFDFAC3D30@SG2PR06MB1038.apcprd06.prod.outlook.com>
+References: <1476281429-27603-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <1476281429-27603-2-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+ <CAMuHMdUYQoJL4h8prEpontF4YH8Ha+SWDdeZHYEV3_uMZ-SBXw@mail.gmail.com>
+In-Reply-To: <CAMuHMdUYQoJL4h8prEpontF4YH8Ha+SWDdeZHYEV3_uMZ-SBXw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Ramesh,
-
-Thank you for the patch.
-
-On Wednesday 12 Oct 2016 15:10:25 Ramesh Shanmugasundaram wrote:
-> This patch adds driver support for MAX2175 chip. This is Maxim
-> Integrated's RF to Bits tuner front end chip designed for software-de=
-fined
-> radio solutions. This driver exposes the tuner as a sub-device instan=
-ce
-> with standard and custom controls to configure the device.
->=20
-> Signed-off-by: Ramesh Shanmugasundaram
-> <ramesh.shanmugasundaram@bp.renesas.com> ---
->  .../devicetree/bindings/media/i2c/max2175.txt      |   60 +
->  drivers/media/i2c/Kconfig                          |    4 +
->  drivers/media/i2c/Makefile                         |    2 +
->  drivers/media/i2c/max2175/Kconfig                  |    8 +
->  drivers/media/i2c/max2175/Makefile                 |    4 +
->  drivers/media/i2c/max2175/max2175.c                | 1624 ++++++++++=
-+++++++
->  drivers/media/i2c/max2175/max2175.h                |  124 ++
->  7 files changed, 1826 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/max21=
-75.txt
->  create mode 100644 drivers/media/i2c/max2175/Kconfig
->  create mode 100644 drivers/media/i2c/max2175/Makefile
->  create mode 100644 drivers/media/i2c/max2175/max2175.c
->  create mode 100644 drivers/media/i2c/max2175/max2175.h
->=20
-> diff --git a/Documentation/devicetree/bindings/media/i2c/max2175.txt
-> b/Documentation/devicetree/bindings/media/i2c/max2175.txt new file mo=
-de
-> 100644
-> index 0000000..2250d5f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/max2175.txt
-> @@ -0,0 +1,60 @@
-> +Maxim Integrated MAX2175 RF to Bits tuner
-> +-----------------------------------------
-> +
-> +The MAX2175 IC is an advanced analog/digital hybrid-radio receiver w=
-ith
-> +RF to Bits=AE front-end designed for software-defined radio solution=
-s.
-> +
-> +Required properties:
-> +--------------------
-> +- compatible: "maxim,max2175" for MAX2175 RF-to-bits tuner.
-> +- clocks: phandle to the fixed xtal clock.
-> +- clock-names: name of the fixed xtal clock.
-> +- port: video interface child port node of a tuner that defines the =
-local
-
-As Rob pointed out in his review of patch 3/5, this isn't video.
-
-> +  and remote endpoints. The remote endpoint is assumed to be an SDR =
-device
-> +  that is capable of receiving the digital samples from the tuner.
-> +
-> +Optional properties:
-> +--------------------
-> +- maxim,slave=09   : empty property indicates this is a slave of=20
-another
-> +=09=09     master tuner. This is used to define two tuners in
-> +=09=09     diversity mode (1 master, 1 slave). By default each
-> +=09=09     tuner is an individual master.
-
-Would it be useful to make that property a phandle to the master tuner,=
- to=20
-give drivers a way to access the master ? I haven't checked whether the=
-re=20
-could be use cases for that.
-
-> +- maxim,refout-load: load capacitance value (in pF) on reference out=
-put
-> +=09=09     drive level. The mapping of these load values to
-> +=09=09     respective bit values are given below.
-> +=09=09     0 - Reference output disabled
-> +=09=09     1 - 10pF load
-> +=09=09     2 - 20pF load
-> +=09=09     3 - 30pF load
-> +=09=09     4 - 40pF load
-> +=09=09     5 - 60pF load
-> +=09=09     6 - 70pF load
-
-As Geert pointed out, you can simply specify the value in pF.
-
-> +
-> +Example:
-> +--------
-> +
-> +Board specific DTS file
-> +
-> +/* Fixed XTAL clock node */
-> +maxim_xtal: maximextal {
-> +=09compatible =3D "fixed-clock";
-> +=09#clock-cells =3D <0>;
-> +=09clock-frequency =3D <36864000>;
-> +};
-> +
-> +/* A tuner device instance under i2c bus */
-> +max2175_0: tuner@60 {
-> +=09#clock-cells =3D <0>;
-
-Is the tuner a clock provider ? If it isn't you don't need this propert=
-y.
-
-> +=09compatible =3D "maxim,max2175";
-> +=09reg =3D <0x60>;
-> +=09clocks =3D <&maxim_xtal>;
-> +=09clock-names =3D "xtal";
-> +=09maxim,refout-load =3D <10>;
-> +
-> +=09port {
-> +=09=09max2175_0_ep: endpoint {
-> +=09=09=09remote-endpoint =3D <&slave_rx_v4l2_sdr_device>;
-> +=09=09};
-> +=09};
-> +
-> +};
-
-[snip]
-
-> diff --git a/drivers/media/i2c/max2175/Makefile
-> b/drivers/media/i2c/max2175/Makefile new file mode 100644
-> index 0000000..9bb46ac
-> --- /dev/null
-> +++ b/drivers/media/i2c/max2175/Makefile
-> @@ -0,0 +1,4 @@
-> +#
-> +# Makefile for Maxim RF to Bits tuner device
-> +#
-> +obj-$(CONFIG_SDR_MAX2175) +=3D max2175.o
-
-If there's a single source file you might want to move it to=20
-drivers/media/i2c/.
-
-> diff --git a/drivers/media/i2c/max2175/max2175.c
-> b/drivers/media/i2c/max2175/max2175.c new file mode 100644
-> index 0000000..71b60c2
-> --- /dev/null
-> +++ b/drivers/media/i2c/max2175/max2175.c
-> @@ -0,0 +1,1624 @@
-> +/*
-> + * Maxim Integrated MAX2175 RF to Bits tuner driver
-> + *
-> + * This driver & most of the hard coded values are based on the refe=
-rence
-> + * application delivered by Maxim for this chip.
-> + *
-> + * Copyright (C) 2016 Maxim Integrated Products
-> + * Copyright (C) 2016 Renesas Electronics Corporation
-> + *
-> + * This program is free software; you can redistribute it and/or mod=
-ify
-> + * it under the terms of the GNU General Public License version 2
-> + * as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/errno.h>
-> +#include <linux/i2c.h>
-> +#include <linux/init.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/slab.h>
-> +#include <linux/delay.h>
-
-You can move delay.h right below clk.h and everything will be in alphab=
-etical=20
-order :-)
-
-> +#include <media/v4l2-ctrls.h>
-> +#include <media/v4l2-device.h>
-> +#include <media/v4l2-of.h>
-> +
-> +#include "max2175.h"
-> +
-> +#define DRIVER_NAME "max2175"
-> +
-> +static unsigned int max2175_debug;
-> +module_param(max2175_debug, uint, 0644);
-> +MODULE_PARM_DESC(max2175_debug, "activate debug info");
-
-You can name the parameter "debug".
-
-> +#define mxm_dbg(ctx, fmt, arg...) \
-> +=09v4l2_dbg(1, max2175_debug, &ctx->sd, fmt, ## arg)
-
-[snip]
-
-> +/* Preset values:
-> + * Based on Maxim MAX2175 Register Table revision: 130p10
-> + */
-
-The preferred multi-line comment style is
-
-/*
- * foo
- * bar
- */
-
-[snip]
-
-> +struct max2175_ctx {
-
-Nitpicking, such a structure would usually be named max2175 or max2175_=
-device.=20
-Context seems to imply that you can have multiple of them per device.
-
-> +=09struct v4l2_subdev sd;
-> +=09struct i2c_client *client;
-> +=09struct device *dev;
-> +
-> +=09/* Cached configuration */
-> +=09u8 regs[256];
-
-If you want to cache register values you should use regmap.
-
-> +=09enum max2175_modetag mode;=09/* Receive mode tag */
-> +=09u32 freq;=09=09=09/* In Hz */
-> +=09struct max2175_rxmode *rx_modes;
-> +
-> +=09/* Device settings */
-> +=09bool master;
-> +=09u32 decim_ratio;
-> +=09u64 xtal_freq;
-> +
-> +=09/* ROM values */
-> +=09u8 rom_bbf_bw_am;
-> +=09u8 rom_bbf_bw_fm;
-> +=09u8 rom_bbf_bw_dab;
-> +
-> +=09/* Local copy of old settings */
-> +=09u8 i2s_test;
-> +
-> +=09u8 nbd_gain;
-> +=09u8 nbd_threshold;
-> +=09u8 wbd_gain;
-> +=09u8 wbd_threshold;
-> +=09u8 bbd_threshold;
-> +=09u8 bbdclip_threshold;
-> +=09u8 lt_wbd_threshold;
-> +=09u8 lt_wbd_gain;
-> +
-> +=09/* Controls */
-> +=09struct v4l2_ctrl_handler ctrl_hdl;
-> +=09struct v4l2_ctrl *lna_gain;=09/* LNA gain value */
-> +=09struct v4l2_ctrl *if_gain;=09/* I/F gain value */
-> +=09struct v4l2_ctrl *pll_lock;=09/* PLL lock */
-> +=09struct v4l2_ctrl *i2s_en;=09/* I2S output enable */
-> +=09struct v4l2_ctrl *i2s_mode;=09/* I2S mode value */
-> +=09struct v4l2_ctrl *am_hiz;=09/* AM High impledance input */
-> +=09struct v4l2_ctrl *hsls;=09=09/* High-side/Low-side polarity */
-> +=09struct v4l2_ctrl *rx_mode;=09/* Receive mode */
-> +
-> +=09/* Driver private variables */
-> +=09bool mode_resolved;=09=09/* Flag to sanity check settings */
-> +};
-
-[snip]
-
-> +/* Local store bitops helpers */
-> +static u8 max2175_get_bits(struct max2175_ctx *ctx, u8 idx, u8 msb, =
-u8 lsb)
-> +{
-> +=09if (max2175_debug >=3D 2)
-> +=09=09mxm_dbg(ctx, "get_bits: idx:%u msb:%u lsb:%u\n",
-> +=09=09=09idx, msb, lsb);
-
-Do we really need such detailed debugging ?
-
-> +=09return __max2175_get_bits(ctx->regs[idx], msb, lsb);
-> +}
-> +
-> +static bool max2175_get_bit(struct max2175_ctx *ctx, u8 idx, u8 bit)=
-
-> +{
-> +=09return !!max2175_get_bits(ctx, idx, bit, bit);
-> +}
-> +
-> +static void max2175_set_bits(struct max2175_ctx *ctx, u8 idx,
-> +=09=09      u8 msb, u8 lsb, u8 newval)
-> +{
-> +=09if (max2175_debug >=3D 2)
-> +=09=09mxm_dbg(ctx, "set_bits: idx:%u msb:%u lsb:%u newval:%u\n",
-> +=09=09=09idx, msb, lsb, newval);
-> +=09ctx->regs[idx] =3D __max2175_set_bits(ctx->regs[idx], msb, lsb,
-> +=09=09=09=09=09      newval);
-> +}
-> +
-> +static void max2175_set_bit(struct max2175_ctx *ctx, u8 idx, u8 bit,=
- u8
-> newval)
-> +{
-> +=09max2175_set_bits(ctx, idx, bit, bit, newval);
-> +}
-> +
-> +/* Device register bitops helpers */
-> +static u8 max2175_read_bits(struct max2175_ctx *ctx, u8 idx, u8 msb,=
- u8
-> lsb)
-> +{
-> +=09return __max2175_get_bits(max2175_reg_read(ctx, idx), msb, lsb);
-> +}
-> +
-> +static void max2175_write_bits(struct max2175_ctx *ctx, u8 idx, u8 m=
-sb,
-> +=09=09=09u8 lsb, u8 newval)
-> +{
-> +=09/* Update local copy & write to device */
-> +=09max2175_set_bits(ctx, idx, msb, lsb, newval);
-> +=09max2175_reg_write(ctx, idx, ctx->regs[idx]);
-> +}
-> +
-> +static void max2175_write_bit(struct max2175_ctx *ctx, u8 idx, u8 bi=
-t,
-> +=09=09=09      u8 newval)
-> +{
-> +=09if (max2175_debug >=3D 2)
-> +=09=09mxm_dbg(ctx, "idx %u, bit %u, newval %u\n", idx, bit, newval);=
-
-> +=09max2175_write_bits(ctx, idx, bit, bit, newval);
-> +}
-
-Really, please use regmap :-)
-
-> +static int max2175_poll_timeout(struct max2175_ctx *ctx, u8 idx, u8 =
-msb, u8
-> lsb,
-> +=09=09=09=09u8 exp_val, u32 timeout)
-> +{
-> +=09unsigned long end =3D jiffies + msecs_to_jiffies(timeout);
-> +=09int ret;
-> +
-> +=09do {
-> +=09=09ret =3D max2175_read_bits(ctx, idx, msb, lsb);
-> +=09=09if (ret < 0)
-> +=09=09=09return ret;
-> +=09=09if (ret =3D=3D exp_val)
-> +=09=09=09return 0;
-> +
-> +=09=09usleep_range(1000, 1500);
-> +=09} while (time_is_after_jiffies(end));
-> +
-> +=09return -EBUSY;
-> +}
-> +
-> +static int max2175_poll_csm_ready(struct max2175_ctx *ctx)
-> +{
-> +=09return max2175_poll_timeout(ctx, 69, 1, 1, 0, 50);
-
-Please define macros for register addresses and values, this is just=20=
-
-unreadable.
-
-> +}
-
-[snip]
-
-> +
-> +#define MAX2175_IS_BAND_AM(ctx)=09=09\
-> +=09(max2175_get_bits(ctx, 5, 1, 0) =3D=3D MAX2175_BAND_AM)
-> +
-> +#define MAX2175_IS_FM_MODE(ctx)=09=09\
-> +=09(max2175_get_bits(ctx, 12, 5, 4) =3D=3D 0)
-> +
-> +#define MAX2175_IS_FMHD_MODE(ctx)=09\
-> +=09(max2175_get_bits(ctx, 12, 5, 4) =3D=3D 1)
-> +
-> +#define MAX2175_IS_DAB_MODE(ctx)=09\
-> +=09(max2175_get_bits(ctx, 12, 5, 4) =3D=3D 2)
-> +
-> +static int max2175_band_from_freq(u64 freq)
-> +{
-> +=09if (freq >=3D 144000 && freq <=3D 26100000)
-> +=09=09return MAX2175_BAND_AM;
-> +=09else if (freq >=3D 65000000 && freq <=3D 108000000)
-> +=09=09return MAX2175_BAND_FM;
-> +=09else if (freq >=3D 160000000 && freq <=3D 240000000)
-> +=09=09return MAX2175_BAND_VHF;
-> +
-> +=09/* Add other bands on need basis */
-> +=09return -ENOTSUPP;
-> +}
-> +
-> +static int max2175_update_i2s_mode(struct max2175_ctx *ctx, u32 i2s_=
-mode)
-> +{
-> +=09/* Only change if it's new */
-> +=09if (max2175_read_bits(ctx, 29, 2, 0) =3D=3D i2s_mode)
-> +=09=09return 0;
-> +
-> +=09max2175_write_bits(ctx, 29, 2, 0, i2s_mode);
-> +
-> +=09/* Based on I2S mode value I2S_WORD_CNT values change */
-> +=09if (i2s_mode =3D=3D MAX2175_I2S_MODE3) {
-> +=09=09max2175_write_bits(ctx, 30, 6, 0, 1);
-> +=09} else if (i2s_mode =3D=3D MAX2175_I2S_MODE2 ||
-> +=09=09   i2s_mode =3D=3D MAX2175_I2S_MODE4) {
-> +=09=09max2175_write_bits(ctx, 30, 6, 0, 0);
-> +=09} else if (i2s_mode =3D=3D MAX2175_I2S_MODE0) {
-> +=09=09max2175_write_bits(ctx, 30, 6, 0,
-> +=09=09=09=09   ctx->rx_modes[ctx->mode].i2s_word_size);
-> +=09} else {
-> +=09=09v4l2_err(ctx->client,
-> +=09=09=09 "failed: i2s_mode %u unsupported\n", i2s_mode);
-
-This should never happen as the control framework will validate control=
-=20
-values.
-
-> +=09=09return 1;
-
-Error codes should be negative.
-
-> +=09}
-> +=09mxm_dbg(ctx, "updated i2s_mode %u\n", i2s_mode);
-> +=09return 0;
-> +}
-
-[snip]
-
-> +static void max2175_load_dab_1p2(struct max2175_ctx *ctx)
-> +{
-> +=09u32 i;
-
-unsigned int will do, no need for an explicitly sized type.
-
-> +
-> +=09/* Master is already set on init */
-> +=09for (i =3D 0; i < ARRAY_SIZE(dab12_map); i++)
-> +=09=09max2175_reg_write(ctx, dab12_map[i].idx, dab12_map[i].val);
-> +
-> +=09/* The default settings assume master */
-> +=09if (!ctx->master)
-> +=09=09max2175_write_bit(ctx, 30, 7, 1);
-> +
-> +=09/* Cache i2s_test value at this point */
-> +=09ctx->i2s_test =3D max2175_get_bits(ctx, 104, 3, 0);
-> +=09ctx->decim_ratio =3D 1;
-> +
-> +=09/* Load the Channel Filter Coefficients into channel filter bank =
-#2 */
-> +=09max2175_set_filter_coeffs(ctx, MAX2175_CH_MSEL, 2, ch_coeff_dab1)=
-;
-> +}
-
-[snip]
-
-> +static bool max2175_set_csm_mode(struct max2175_ctx *ctx,
-> +=09=09=09  enum max2175_csm_mode new_mode)
-> +{
-> +=09int ret =3D max2175_poll_csm_ready(ctx);
-> +
-> +=09if (ret) {
-> +=09=09v4l2_err(ctx->client, "csm not ready: new mode %d\n",=20
-new_mode);
-> +=09=09return ret;
-> +=09}
-> +
-> +=09mxm_dbg(ctx, "set csm mode: new mode %d\n", new_mode);
-> +
-> +=09max2175_write_bits(ctx, 0, 2, 0, new_mode);
-> +
-> +=09/* Wait for a fixed settle down time depending on new mode and ba=
-nd */
-> +=09switch (new_mode) {
-> +=09case MAX2175_CSM_MODE_JUMP_FAST_TUNE:
-> +=09=09if (MAX2175_IS_BAND_AM(ctx)) {
-> +=09=09=09usleep_range(1250, 1500);=09/* 1.25ms */
-> +=09=09} else {
-> +=09=09=09if (MAX2175_IS_DAB_MODE(ctx))
-> +=09=09=09=09usleep_range(3000, 3500);=09/* 3ms */
-> +=09=09=09else
-> +=09=09=09=09usleep_range(1250, 1500);=09/* 1.25ms */
-> +=09=09}
-
-You can write this as
-
-=09=09if (MAX2175_IS_BAND_AM(ctx))
-=09=09=09usleep_range(1250, 1500);=09/* 1.25ms */
-=09=09else if (MAX2175_IS_DAB_MODE(ctx))
-=09=09=09usleep_range(3000, 3500);=09/* 3ms */
-=09=09else
-=09=09=09usleep_range(1250, 1500);=09/* 1.25ms */
-
-
-> +=09=09break;
-> +
-> +=09/* Other mode switches can be added in the future if needed */
-> +=09default:
-> +=09=09break;
-> +=09}
-> +
-> +=09ret =3D max2175_poll_csm_ready(ctx);
-> +=09if (ret) {
-> +=09=09v4l2_err(ctx->client, "csm did not settle: new mode %d\n",
-> +=09=09=09 new_mode);
-> +=09=09return ret;
-> +=09}
-> +=09return ret;
-> +}
-
-[snip]
-
-> +
-> +static int max2175_csm_action(struct max2175_ctx *ctx,
-> +=09=09=09      enum max2175_csm_mode action)
-> +{
-> +=09int ret;
-> +=09int load_buffer =3D MAX2175_CSM_MODE_LOAD_TO_BUFFER;
-> +
-> +=09mxm_dbg(ctx, "csm action: %d\n", action);
-> +
-> +=09/* Perform one or two CSM mode commands. */
-> +=09switch (action)=09{
-> +=09case MAX2175_CSM_MODE_NO_ACTION:
-> +=09=09/* Take no FSM Action. */
-> +=09=09return 0;
-> +=09case MAX2175_CSM_MODE_LOAD_TO_BUFFER:
-> +=09case MAX2175_CSM_MODE_PRESET_TUNE:
-> +=09case MAX2175_CSM_MODE_SEARCH:
-> +=09case MAX2175_CSM_MODE_AF_UPDATE:
-> +=09case MAX2175_CSM_MODE_JUMP_FAST_TUNE:
-> +=09case MAX2175_CSM_MODE_CHECK:
-> +=09case MAX2175_CSM_MODE_LOAD_AND_SWAP:
-> +=09case MAX2175_CSM_MODE_END:
-> +=09=09ret =3D max2175_set_csm_mode(ctx, action);
-> +=09=09break;
-> +=09case MAX2175_CSM_MODE_BUFFER_PLUS_PRESET_TUNE:
-> +=09=09ret =3D max2175_set_csm_mode(ctx, load_buffer);
-> +=09=09if (ret) {
-> +=09=09=09v4l2_err(ctx->client, "csm action %d load buf=20
-failed\n",
-> +=09=09=09=09 action);
-> +=09=09=09break;
-> +=09=09}
-> +=09=09ret =3D max2175_set_csm_mode(ctx, MAX2175_CSM_MODE_PRESET_TUNE=
-);
-> +=09=09break;
-> +=09case MAX2175_CSM_MODE_BUFFER_PLUS_SEARCH:
-> +=09=09ret =3D max2175_set_csm_mode(ctx, load_buffer);
-> +=09=09if (ret) {
-> +=09=09=09v4l2_err(ctx->client, "csm action %d load buf=20
-failed\n",
-> +=09=09=09=09 action);
-> +=09=09=09break;
-> +=09=09}
-
-Don't duplicate the error messages, move them after the switch statemen=
-t.
-
-> +=09=09ret =3D max2175_set_csm_mode(ctx, MAX2175_CSM_MODE_SEARCH);
-> +=09=09break;
-> +=09case MAX2175_CSM_MODE_BUFFER_PLUS_AF_UPDATE:
-> +=09=09ret =3D max2175_set_csm_mode(ctx, load_buffer);
-> +=09=09if (ret) {
-> +=09=09=09v4l2_err(ctx->client, "csm action %d load buf=20
-failed\n",
-> +=09=09=09=09 action);
-> +=09=09=09break;
-> +=09=09}
-> +=09=09ret =3D max2175_set_csm_mode(ctx, MAX2175_CSM_MODE_AF_UPDATE);=
-
-> +=09=09break;
-> +=09case MAX2175_CSM_MODE_BUFFER_PLUS_JUMP_FAST_TUNE:
-
-This function is only called with action set to=20
-MAX2175_CSM_MODE_BUFFER_PLUS_JUMP_FAST_TUNE. I'd remove the rest of the=
- code=20
-for now, unless you have a plan to use it soon.
-
-> +=09=09ret =3D max2175_set_csm_mode(ctx, load_buffer);
-> +=09=09if (ret) {
-> +=09=09=09v4l2_err(ctx->client, "csm action %d load buf=20
-failed\n",
-> +=09=09=09=09 action);
-> +=09=09=09break;
-> +=09=09}
-> +=09=09ret =3D max2175_set_csm_mode(ctx,
-> +=09=09=09=09=09   MAX2175_CSM_MODE_JUMP_FAST_TUNE);
-> +=09=09break;
-> +=09case MAX2175_CSM_MODE_BUFFER_PLUS_CHECK:
-> +=09=09ret =3D max2175_set_csm_mode(ctx, load_buffer);
-> +=09=09if (ret) {
-> +=09=09=09v4l2_err(ctx->client, "csm action %d load buf=20
-failed\n",
-> +=09=09=09=09 action);
-> +=09=09=09break;
-> +=09=09}
-> +=09=09ret =3D max2175_set_csm_mode(ctx, MAX2175_CSM_MODE_CHECK);
-> +=09=09break;
-> +=09case MAX2175_CSM_MODE_BUFFER_PLUS_LOAD_AND_SWAP:
-> +=09=09ret =3D max2175_set_csm_mode(ctx, load_buffer);
-> +=09=09if (ret) {
-> +=09=09=09v4l2_err(ctx->client, "csm action %d load buf=20
-failed\n",
-> +=09=09=09=09 action);
-> +=09=09=09break;
-> +=09=09}
-> +=09=09ret =3D max2175_set_csm_mode(ctx,=20
-MAX2175_CSM_MODE_LOAD_AND_SWAP);
-> +=09=09break;
-> +=09default:
-> +=09=09ret =3D max2175_set_csm_mode(ctx, MAX2175_CSM_MODE_NO_ACTION);=
-
-> +=09=09break;
-> +=09}
-> +=09return ret;
-> +}
-> +
-> +static int max2175_set_lo_freq(struct max2175_ctx *ctx, u64 lo_freq)=
-
-> +{
-> +=09int ret;
-> +=09u32 lo_mult;
-> +=09u64 scaled_lo_freq;
-> +=09const u64 scale_factor =3D 1000000ULL;
-> +=09u64 scaled_npf, scaled_integer, scaled_fraction;
-> +=09u32 frac_desired, int_desired;
-> +=09u8 loband_bits, vcodiv_bits;
-
-Do you really support frequencies above 4GHz ? If not most of the 64-bi=
-t=20
-values could be stored in 32 bits.
-
-> +
-> +=09scaled_lo_freq =3D lo_freq;
-> +=09/* Scale to larger number for precision */
-> +=09scaled_lo_freq =3D scaled_lo_freq * scale_factor * 100;
-> +
-> +=09mxm_dbg(ctx, "scaled lo_freq %llu lo_freq %llu\n",
-> +=09=09scaled_lo_freq, lo_freq);
-> +
-> +=09if (MAX2175_IS_BAND_AM(ctx)) {
-> +=09=09if (max2175_get_bit(ctx, 5, 7) =3D=3D 0)
-> +=09=09=09loband_bits =3D 0;
-> +=09=09=09vcodiv_bits =3D 0;
-> +=09=09=09lo_mult =3D 16;
-> +=09} else if (max2175_get_bits(ctx, 5, 1, 0) =3D=3D MAX2175_BAND_FM)=
- {
-> +=09=09if (lo_freq <=3D 74700000) {
-> +=09=09=09loband_bits =3D 0;
-> +=09=09=09vcodiv_bits =3D 0;
-> +=09=09=09lo_mult =3D 16;
-> +=09=09} else if ((lo_freq > 74700000) && (lo_freq <=3D 110000000)) {=
-
-
-No need for the inner parentheses.
-
-> +=09=09=09loband_bits =3D 1;
-> +=09=09=09vcodiv_bits =3D 0;
-> +=09=09} else {
-> +=09=09=09loband_bits =3D 1;
-> +=09=09=09vcodiv_bits =3D 3;
-> +=09=09}
-> +=09=09lo_mult =3D 8;
-> +=09} else if (max2175_get_bits(ctx, 5, 1, 0) =3D=3D MAX2175_BAND_VHF=
-) {
-> +=09=09if (lo_freq <=3D 210000000) {
-> +=09=09=09loband_bits =3D 2;
-> +=09=09=09vcodiv_bits =3D 2;
-> +=09=09} else {
-> +=09=09=09loband_bits =3D 2;
-> +=09=09=09vcodiv_bits =3D 1;
-> +=09=09}
-> +=09=09lo_mult =3D 4;
-> +=09} else {
-> +=09=09loband_bits =3D 3;
-> +=09=09vcodiv_bits =3D 2;
-> +=09=09lo_mult =3D 2;
-> +=09}
-> +
-> +=09if (max2175_get_bits(ctx, 5, 1, 0) =3D=3D MAX2175_BAND_L)
-> +=09=09scaled_npf =3D (scaled_lo_freq / ctx->xtal_freq / lo_mult) /=20=
-
-100;
-> +=09else
-> +=09=09scaled_npf =3D (scaled_lo_freq / ctx->xtal_freq * lo_mult) /=20=
-
-100;
-> +
-> +=09scaled_integer =3D scaled_npf / scale_factor * scale_factor;
-> +=09int_desired =3D (u32)(scaled_npf / scale_factor);
-> +=09scaled_fraction =3D scaled_npf - scaled_integer;
-> +=09frac_desired =3D (u32)(scaled_fraction * 1048576 / scale_factor);=
-
-> +
-> +=09/* Check CSM is not busy */
-> +=09ret =3D max2175_poll_csm_ready(ctx);
-> +=09if (ret) {
-> +=09=09v4l2_err(ctx->client, "lo_freq: csm busy. freq %llu\n",
-> +=09=09=09 lo_freq);
-> +=09=09return ret;
-> +=09}
-> +
-> +=09mxm_dbg(ctx, "loband %u vcodiv %u lo_mult %u scaled_npf %llu\n",
-> +=09=09loband_bits, vcodiv_bits, lo_mult, scaled_npf);
-> +=09mxm_dbg(ctx, "scaled int %llu frac %llu desired int %u frac %u\n"=
-,
-> +=09=09scaled_integer, scaled_fraction, int_desired, frac_desired);
-> +
-> +=09/* Write the calculated values to the appropriate registers */
-> +=09max2175_set_bits(ctx, 5, 3, 2, loband_bits);
-> +=09max2175_set_bits(ctx, 6, 7, 6, vcodiv_bits);
-> +=09max2175_set_bits(ctx, 1, 7, 0, (u8)(int_desired & 0xff));
-> +=09max2175_set_bits(ctx, 2, 3, 0, (u8)((frac_desired >> 16) & 0x1f))=
-;
-> +=09max2175_set_bits(ctx, 3, 7, 0, (u8)((frac_desired >> 8) & 0xff));=
-
-> +=09max2175_set_bits(ctx, 4, 7, 0, (u8)(frac_desired & 0xff));
-> +=09/* Flush the above registers to device */
-> +=09max2175_flush_regstore(ctx, 1, 6);
-> +=09return ret;
-> +}
-
-[snip]
-
-> +static int max2175_set_rf_freq_non_am_bands(struct max2175_ctx *ctx,=
- u64
-> freq,
-> +=09=09=09=09=09    u32 lo_pos)
-> +{
-> +=09int ret;
-> +=09s64 adj_freq;
-> +=09u64 low_if_freq;
-> +
-> +=09mxm_dbg(ctx, "rf_freq: non AM bands\n");
-> +
-> +=09if (MAX2175_IS_FM_MODE(ctx))
-> +=09=09low_if_freq =3D 128000;
-> +=09else if (MAX2175_IS_FMHD_MODE(ctx))
-> +=09=09low_if_freq =3D 228000;
-> +=09else
-> +=09=09return max2175_set_lo_freq(ctx, freq);
-> +
-> +=09if (max2175_get_bits(ctx, 5, 1, 0) =3D=3D MAX2175_BAND_VHF) {
-
-You perform this check in multiple places, you could create a helper fu=
-nction.
-
-> +=09=09if (lo_pos =3D=3D MAX2175_LO_ABOVE_DESIRED)
-> +=09=09=09adj_freq =3D freq + low_if_freq;
-> +=09=09else
-> +=09=09=09adj_freq =3D freq - low_if_freq;
-> +=09} else {
-> +=09=09if (lo_pos =3D=3D MAX2175_LO_ABOVE_DESIRED)
-> +=09=09=09adj_freq =3D freq - low_if_freq;
-> +=09=09else
-> +=09=09=09adj_freq =3D freq + low_if_freq;
-> +=09}
-
-This could be written
-
-=09if ((max2175_get_bits(ctx, 5, 1, 0) =3D=3D MAX2175_BAND_VHF) =3D=3D
-=09    (lo_pos =3D=3D MAX2175_LO_ABOVE_DESIRED))
-=09=09adj_freq =3D freq + low_if_freq;
-=09else
-=09=09adj_freq =3D freq - low_if_freq;
-
-Same for the other similar constructs in the driver. Up to you.
-
-> +
-> +=09ret =3D max2175_set_lo_freq(ctx, adj_freq);
-> +=09if (ret)
-> +=09=09return ret;
-> +
-> +=09return max2175_set_nco_freq(ctx, low_if_freq);
-> +}
-
-[snip]
-
-> +#define max2175_ctx_from_sd(x)=09\
-> +=09container_of(x, struct max2175_ctx, sd)
-> +#define max2175_ctx_from_ctrl(x)=09\
-> +=09container_of(x, struct max2175_ctx, ctrl_hdl)
-
-I'd move it right after the structure definition, and turn them into st=
-atic=20
-inline functions.
-
-> +static int max2175_s_ctrl(struct v4l2_ctrl *ctrl)
-> +{
-> +=09struct max2175_ctx *ctx =3D max2175_ctx_from_ctrl(ctrl->handler);=
-
-> +=09int ret =3D 0;
-> +
-> +=09mxm_dbg(ctx, "s_ctrl: id 0x%x, val %u\n", ctrl->id, ctrl->val);
-> +=09switch (ctrl->id) {
-> +=09case V4L2_CID_MAX2175_I2S_EN:
-> +=09=09max2175_i2s_enable(ctx, ctrl->val =3D=3D 1);
-> +=09=09break;
-> +=09case V4L2_CID_MAX2175_I2S_MODE:
-> +=09=09max2175_s_ctrl_i2s_mode(ctx, ctrl->val);
-> +=09=09break;
-> +=09case V4L2_CID_MAX2175_AM_HIZ:
-> +=09=09v4l2_ctrl_activate(ctx->am_hiz, false);
-> +=09=09break;
-> +=09case V4L2_CID_MAX2175_HSLS:
-> +=09=09v4l2_ctrl_activate(ctx->hsls, false);
-> +=09=09break;
-> +=09case V4L2_CID_MAX2175_RX_MODE:
-> +=09=09mxm_dbg(ctx, "rx mode %u\n", ctrl->val);
-> +=09=09max2175_s_ctrl_rx_mode(ctx, ctrl->val);
-> +=09=09break;
-> +=09default:
-> +=09=09v4l2_err(ctx->client, "s:invalid ctrl id 0x%x\n", ctrl->id);
-> +=09=09ret =3D -EINVAL;
-
-This should never happen. The driver has too many error and debug messa=
-ges=20
-overall.
-
-> +=09}
-> +
-> +=09return ret;
-> +}
-> +
-> +static int max2175_get_lna_gain(struct max2175_ctx *ctx)
-> +{
-> +=09int gain =3D 0;
-> +=09enum max2175_band band =3D max2175_get_bits(ctx, 5, 1, 0);
-> +
-> +=09switch (band) {
-> +=09case MAX2175_BAND_AM:
-> +=09=09gain =3D max2175_read_bits(ctx, 51, 3, 1);
-> +=09=09break;
-> +=09case MAX2175_BAND_FM:
-> +=09=09gain =3D max2175_read_bits(ctx, 50, 3, 1);
-> +=09=09break;
-> +=09case MAX2175_BAND_VHF:
-> +=09=09gain =3D max2175_read_bits(ctx, 52, 3, 0);
-> +=09=09break;
-> +=09default:
-> +=09=09v4l2_err(ctx->client, "invalid band %d to get rf gain\n",=20
-band);
-
-Can this happen ?
-
-> +=09=09break;
-> +=09}
-> +=09return gain;
-> +}
-> +
-> +static int max2175_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
-> +{
-> +=09struct max2175_ctx *ctx =3D max2175_ctx_from_ctrl(ctrl->handler);=
-
-> +
-> +=09/* Only the dynamically changing values need to be in g_volatile_=
-ctrl=20
-*/
-> +=09mxm_dbg(ctx, "g_volatile_ctrl: id 0x%x\n", ctrl->id);
-> +=09switch (ctrl->id) {
-> +=09case V4L2_CID_RF_TUNER_LNA_GAIN:
-> +=09=09ctrl->val =3D max2175_get_lna_gain(ctx);
-> +=09=09break;
-> +=09case V4L2_CID_RF_TUNER_IF_GAIN:
-> +=09=09ctrl->val =3D max2175_read_bits(ctx, 49, 4, 0);
-> +=09=09break;
-> +=09case V4L2_CID_RF_TUNER_PLL_LOCK:
-> +=09=09ctrl->val =3D (max2175_read_bits(ctx, 60, 7, 6) =3D=3D 3);
-> +=09=09break;
-> +=09default:
-> +=09=09v4l2_err(ctx->client, "g:invalid ctrl id 0x%x\n", ctrl->id);
-
-This should never happen either.
-
-> +=09=09return -EINVAL;
-> +=09}
-> +=09mxm_dbg(ctx, "g_volatile_ctrl: id 0x%x val %d\n", ctrl->id, ctrl-=
-
->val);
-> +=09return 0;
-> +};
-
-[snip]
-
-> +static const struct v4l2_ctrl_config max2175_i2s_en =3D {
-> +=09.ops =3D &max2175_ctrl_ops,
-> +=09.id =3D V4L2_CID_MAX2175_I2S_EN,
-
-V4L2_CID_MAX2175_I2S_ENABLE ?
-
-> +=09.name =3D "I2S Enable",
-> +=09.type =3D V4L2_CTRL_TYPE_BOOLEAN,
-> +=09.min =3D 0,
-> +=09.max =3D 1,
-> +=09.step =3D 1,
-> +=09.def =3D 1,
-> +};
-> +
-> +static const struct v4l2_ctrl_config max2175_i2s_mode =3D {
-> +=09.ops =3D &max2175_ctrl_ops,
-> +=09.id =3D V4L2_CID_MAX2175_I2S_MODE,
-> +=09.name =3D "I2S_MODE value",
-> +=09.type =3D V4L2_CTRL_TYPE_INTEGER,
-
-Should this be a menu control ?
-
-> +=09.min =3D 0,
-> +=09.max =3D 4,
-> +=09.step =3D 1,
-> +=09.def =3D 0,
-> +};
-> +
-> +static const struct v4l2_ctrl_config max2175_am_hiz =3D {
-> +=09.ops =3D &max2175_ctrl_ops,
-> +=09.id =3D V4L2_CID_MAX2175_AM_HIZ,
-> +=09.name =3D "AM High impedance input",
-> +=09.type =3D V4L2_CTRL_TYPE_BOOLEAN,
-> +=09.min =3D 0,
-> +=09.max =3D 1,
-> +=09.step =3D 1,
-> +=09.def =3D 0,
-> +};
-> +
-> +static const struct v4l2_ctrl_config max2175_hsls =3D {
-> +=09.ops =3D &max2175_ctrl_ops,
-> +=09.id =3D V4L2_CID_MAX2175_HSLS,
-> +=09.name =3D "HSLS above/below desired",
-> +=09.type =3D V4L2_CTRL_TYPE_INTEGER,
-> +=09.min =3D 0,
-> +=09.max =3D 1,
-> +=09.step =3D 1,
-> +=09.def =3D 1,
-> +};
-> +
-> +
-> +/* NOTE: Any addition/deletion in the below list should be reflected=
- in
-> + * max2175_modetag enum
-> + */
-> +static const char * const max2175_ctrl_eu_rx_mode_strings[] =3D {
-> +=09"DAB 1.2",
-> +=09"NULL",
-
-Do you really mean "NULL", not NULL ?
-
-> +};
-> +
-> +static const char * const max2175_ctrl_na_rx_mode_strings[] =3D {
-> +=09"NA FM 1.0",
-> +=09"NULL",
-> +};
-> +
-> +static const struct v4l2_ctrl_config max2175_eu_rx_mode =3D {
-> +=09.ops =3D &max2175_ctrl_ops,
-> +=09.id =3D V4L2_CID_MAX2175_RX_MODE,
-> +=09.name =3D "RX MODE",
-> +=09.type =3D V4L2_CTRL_TYPE_MENU,
-> +=09.max =3D ARRAY_SIZE(max2175_ctrl_eu_rx_mode_strings) - 2,
-
-If there's a single mode supported I'd skip adding those controls for n=
-ow.
-
-> +=09.def =3D 0,
-> +=09.qmenu =3D max2175_ctrl_eu_rx_mode_strings,
-> +};
-> +
-> +static const struct v4l2_ctrl_config max2175_na_rx_mode =3D {
-> +=09.ops =3D &max2175_ctrl_ops,
-> +=09.id =3D V4L2_CID_MAX2175_RX_MODE,
-> +=09.name =3D "RX MODE",
-> +=09.type =3D V4L2_CTRL_TYPE_MENU,
-> +=09.max =3D ARRAY_SIZE(max2175_ctrl_na_rx_mode_strings) - 2,
-> +=09.def =3D 0,
-> +=09.qmenu =3D max2175_ctrl_na_rx_mode_strings,
-> +};
-> +
-> +static u32 max2175_refout_load_to_bits(struct i2c_client *client, u3=
-2 load)
-> +{
-> +=09u32 bits =3D 0;=09/* REFOUT disabled */
-> +
-> +=09if (load >=3D 0 && load <=3D 40)
-> +=09=09bits =3D load / 10;
-> +=09else if (load >=3D 60 && load <=3D 70)
-> +=09=09bits =3D load / 10 - 1;
-> +=09else
-> +=09=09dev_warn(&client->dev, "invalid refout_load %u\n", load);
-
-Your DT bindings specify 0 as a valid value.
-
-An invalid value specified in DT should be a fatal error.
-
-> +
-> +=09return bits;
-> +}
-> +
-> +static int max2175_probe(struct i2c_client *client,
-> +=09=09=09const struct i2c_device_id *id)
-> +{
-> +=09struct max2175_ctx *ctx;
-> +=09struct device *dev =3D &client->dev;
-> +=09struct v4l2_subdev *sd;
-> +=09struct v4l2_ctrl_handler *hdl;
-> +=09struct clk *clk;
-> +=09bool master =3D true;
-> +=09u32 refout_load, refout_bits =3D 0;=09/* REFOUT disabled */
-> +=09int ret;
-> +
-> +=09/* Check if the adapter supports the needed features */
-> +=09if (!i2c_check_functionality(client->adapter,
-> +=09=09=09=09     I2C_FUNC_SMBUS_BYTE_DATA)) {
-> +=09=09dev_err(&client->dev, "i2c check failed\n");
-> +=09=09return -EIO;
-> +=09}
-> +
-> +=09if (of_find_property(client->dev.of_node, "maxim,slave", NULL))
-> +=09=09master =3D false;
-> +
-> +=09if (!of_property_read_u32(client->dev.of_node, "maxim,refout-load=
-",
-> +=09=09=09=09 &refout_load))
-> +=09=09refout_bits =3D max2175_refout_load_to_bits(client,=20
-refout_load);
-> +
-> +=09clk =3D devm_clk_get(&client->dev, "xtal");
-> +=09if (IS_ERR(clk)) {
-> +=09=09ret =3D PTR_ERR(clk);
-> +=09=09dev_err(&client->dev, "cannot get xtal clock %d\n", ret);
-> +=09=09return -ENODEV;
-> +=09}
-> +
-> +=09ctx =3D kzalloc(sizeof(struct max2175_ctx),
-
-sizeof(*ctx)
-
-> +=09=09=09     GFP_KERNEL);
-
-This fits on one line.
-
-> +=09if (ctx =3D=3D NULL)
-> +=09=09return -ENOMEM;
-> +
-> +=09sd =3D &ctx->sd;
-> +=09ctx->master =3D master;
-> +=09ctx->mode_resolved =3D false;
-> +
-> +=09/* Set the defaults */
-> +=09ctx->freq =3D bands_rf.rangelow;
-> +
-> +=09ctx->xtal_freq =3D clk_get_rate(clk);
-> +=09dev_info(&client->dev, "xtal freq %lluHz\n", ctx->xtal_freq);
-> +
-> +=09v4l2_i2c_subdev_init(sd, client, &max2175_ops);
-> +=09ctx->client =3D client;
-> +
-> +=09sd->flags =3D V4L2_SUBDEV_FL_HAS_DEVNODE;
-> +=09ctx->dev =3D dev;
-> +
-> +=09/* Controls */
-> +=09hdl =3D &ctx->ctrl_hdl;
-> +=09ret =3D v4l2_ctrl_handler_init(hdl, 8);
-> +=09if (ret) {
-> +=09=09dev_err(&client->dev, "ctrl handler init failed\n");
-> +=09=09goto err;
-> +=09}
-> +
-> +=09ctx->lna_gain =3D v4l2_ctrl_new_std(hdl, &max2175_ctrl_ops,
-> +=09=09=09=09=09  V4L2_CID_RF_TUNER_LNA_GAIN,
-> +=09=09=09=09=09  0, 15, 1, 2);
-> +=09ctx->lna_gain->flags |=3D (V4L2_CTRL_FLAG_VOLATILE |
-> +=09=09=09=09 V4L2_CTRL_FLAG_READ_ONLY);
-> +=09ctx->if_gain =3D v4l2_ctrl_new_std(hdl, &max2175_ctrl_ops,
-> +=09=09=09=09=09 V4L2_CID_RF_TUNER_IF_GAIN,
-> +=09=09=09=09=09 0, 31, 1, 0);
-> +=09ctx->if_gain->flags |=3D (V4L2_CTRL_FLAG_VOLATILE |
-> +=09=09=09=09V4L2_CTRL_FLAG_READ_ONLY);
-> +=09ctx->pll_lock =3D v4l2_ctrl_new_std(hdl, &max2175_ctrl_ops,
-> +=09=09=09=09=09  V4L2_CID_RF_TUNER_PLL_LOCK,
-> +=09=09=09=09=09  0, 1, 1, 0);
-> +=09ctx->pll_lock->flags |=3D (V4L2_CTRL_FLAG_VOLATILE |
-> +=09=09=09=09 V4L2_CTRL_FLAG_READ_ONLY);
-> +=09ctx->i2s_en =3D v4l2_ctrl_new_custom(hdl, &max2175_i2s_en, NULL);=
-
-> +=09ctx->i2s_mode =3D v4l2_ctrl_new_custom(hdl, &max2175_i2s_mode, NU=
-LL);
-> +=09ctx->am_hiz =3D v4l2_ctrl_new_custom(hdl, &max2175_am_hiz, NULL);=
-
-> +=09ctx->hsls =3D v4l2_ctrl_new_custom(hdl, &max2175_hsls, NULL);
-> +
-> +=09if (ctx->xtal_freq =3D=3D MAX2175_EU_XTAL_FREQ) {
-> +=09=09ctx->rx_mode =3D v4l2_ctrl_new_custom(hdl,
-> +=09=09=09=09=09=09    &max2175_eu_rx_mode,=20
-NULL);
-> +=09=09ctx->rx_modes =3D (struct max2175_rxmode *)eu_rx_modes;
-> +=09} else {
-> +=09=09ctx->rx_mode =3D v4l2_ctrl_new_custom(hdl,
-> +=09=09=09=09=09=09    &max2175_na_rx_mode,=20
-NULL);
-> +=09=09ctx->rx_modes =3D (struct max2175_rxmode *)na_rx_modes;
-> +=09}
-> +=09ctx->sd.ctrl_handler =3D &ctx->ctrl_hdl;
-> +
-> +=09ret =3D v4l2_async_register_subdev(sd);
-> +=09if (ret) {
-> +=09=09dev_err(&client->dev, "register subdev failed\n");
-> +=09=09goto err_reg;
-> +=09}
-> +=09dev_info(&client->dev, "subdev registered\n");
-> +
-> +=09/* Initialize device */
-> +=09ret =3D max2175_core_init(ctx, refout_bits);
-> +=09if (ret)
-> +=09=09goto err_init;
-> +
-> +=09mxm_dbg(ctx, "probed\n");
-> +=09return 0;
-> +
-> +err_init:
-> +=09v4l2_async_unregister_subdev(sd);
-> +err_reg:
-> +=09v4l2_ctrl_handler_free(&ctx->ctrl_hdl);
-> +err:
-> +=09kfree(ctx);
-> +=09return ret;
-> +}
-> +
-> +static int max2175_remove(struct i2c_client *client)
-> +{
-> +=09struct v4l2_subdev *sd =3D i2c_get_clientdata(client);
-> +=09struct max2175_ctx *ctx =3D max2175_ctx_from_sd(sd);
-> +
-> +=09v4l2_ctrl_handler_free(&ctx->ctrl_hdl);
-> +=09v4l2_async_unregister_subdev(sd);
-> +=09mxm_dbg(ctx, "removed\n");
-> +=09kfree(ctx);
-> +=09return 0;
-> +}
-> +
-> +static const struct i2c_device_id max2175_id[] =3D {
-> +=09{ DRIVER_NAME, 0},
-> +=09{},
-> +};
-> +
-
-No need for a blank line here.
-
-> +MODULE_DEVICE_TABLE(i2c, max2175_id);
-> +
-> +static const struct of_device_id max2175_of_ids[] =3D {
-> +=09{ .compatible =3D "maxim, max2175", },
-> +=09{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, max2175_of_ids);
-> +
-> +static struct i2c_driver max2175_driver =3D {
-> +=09.driver =3D {
-> +=09=09.name=09=3D DRIVER_NAME,
-> +=09=09.of_match_table =3D max2175_of_ids,
-> +=09},
-> +=09.probe=09=09=3D max2175_probe,
-> +=09.remove=09=09=3D max2175_remove,
-> +=09.id_table=09=3D max2175_id,
-> +};
-> +
-> +module_i2c_driver(max2175_driver);
-> +
-> +MODULE_DESCRIPTION("Maxim MAX2175 RF to Bits tuner driver");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_AUTHOR("Ramesh Shanmugasundaram
-> <ramesh.shanmugasundaram@bp.renesas.com>"); diff --git
-> a/drivers/media/i2c/max2175/max2175.h b/drivers/media/i2c/max2175/max=
-2175.h
-> new file mode 100644
-> index 0000000..61a508b
-> --- /dev/null
-> +++ b/drivers/media/i2c/max2175/max2175.h
-> @@ -0,0 +1,124 @@
-> +/*
-> + * Maxim Integrated MAX2175 RF to Bits tuner driver
-> + *
-> + * This driver & most of the hard coded values are based on the refe=
-rence
-> + * application delivered by Maxim for this chip.
-> + *
-> + * Copyright (C) 2016 Maxim Integrated Products
-> + * Copyright (C) 2016 Renesas Electronics Corporation
-> + *
-> + * This program is free software; you can redistribute it and/or mod=
-ify
-> + * it under the terms of the GNU General Public License version 2
-> + * as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#ifndef __MAX2175_H__
-> +#define __MAX2175_H__
-> +
-> +#include <linux/types.h>
-> +
-> +enum max2175_region {
-> +=09MAX2175_REGION_EU =3D 0,=09/* Europe */
-> +=09MAX2175_REGION_NA,=09/* North America */
-> +};
-> +
-> +#define MAX2175_EU_XTAL_FREQ=09(36864000)=09/* In Hz */
-> +#define MAX2175_NA_XTAL_FREQ=09(40186125)=09/* In Hz */
-> +
-> +enum max2175_band {
-> +=09MAX2175_BAND_AM =3D 0,
-> +=09MAX2175_BAND_FM,
-> +=09MAX2175_BAND_VHF,
-> +=09MAX2175_BAND_L,
-> +};
-> +
-> +/* NOTE: Any addition/deletion in the below enum should be reflected=
- in
-> + * V4L2_CID_MAX2175_RX_MODE ctrl strings
-> + */
-> +enum max2175_modetag {
-> +=09/* EU modes */
-> +=09MAX2175_DAB_1_2 =3D 0,
-> +
-> +=09/* Other possible modes to add in future
-> +=09 * MAX2175_DAB_1_0,
-> +=09 * MAX2175_DAB_1_3,
-> +=09 * MAX2175_EU_FM_2_2,
-> +=09 * MAX2175_EU_FM_1_0,
-> +=09 * MAX2175_EU_FMHD_4_0,
-> +=09 * MAX2175_EU_AM_1_0,
-> +=09 * MAX2175_EU_AM_2_2,
-> +=09 */
-> +
-> +=09/* NA modes */
-> +=09MAX2175_NA_FM_1_0 =3D 0,
-> +
-> +=09/* Other possible modes to add in future
-> +=09 * MAX2175_NA_FM_1_2,
-> +=09 * MAX2175_NA_FMHD_1_0,
-> +=09 * MAX2175_NA_FMHD_1_2,
-> +=09 * MAX2175_NA_AM_1_0,
-> +=09 * MAX2175_NA_AM_1_2,
-> +=09 */
-> +};
-> +
-> +/* Supported I2S modes */
-> +enum {
-> +=09MAX2175_I2S_MODE0 =3D 0,
-> +=09MAX2175_I2S_MODE1,
-> +=09MAX2175_I2S_MODE2,
-> +=09MAX2175_I2S_MODE3,
-> +=09MAX2175_I2S_MODE4,
-> +};
-> +
-> +/* Coefficient table groups */
-> +enum {
-> +=09MAX2175_CH_MSEL =3D 0,
-> +=09MAX2175_EQ_MSEL,
-> +=09MAX2175_AA_MSEL,
-> +};
-> +
-> +/* HSLS LO injection polarity */
-> +enum {
-> +=09MAX2175_LO_BELOW_DESIRED =3D 0,
-> +=09MAX2175_LO_ABOVE_DESIRED,
-> +};
-> +
-> +/* Channel FSM modes */
-> +enum max2175_csm_mode {
-> +=09MAX2175_CSM_MODE_LOAD_TO_BUFFER =3D 0,
-> +=09MAX2175_CSM_MODE_PRESET_TUNE,
-> +=09MAX2175_CSM_MODE_SEARCH,
-> +=09MAX2175_CSM_MODE_AF_UPDATE,
-> +=09MAX2175_CSM_MODE_JUMP_FAST_TUNE,
-> +=09MAX2175_CSM_MODE_CHECK,
-> +=09MAX2175_CSM_MODE_LOAD_AND_SWAP,
-> +=09MAX2175_CSM_MODE_END,
-> +=09MAX2175_CSM_MODE_BUFFER_PLUS_PRESET_TUNE,
-> +=09MAX2175_CSM_MODE_BUFFER_PLUS_SEARCH,
-> +=09MAX2175_CSM_MODE_BUFFER_PLUS_AF_UPDATE,
-> +=09MAX2175_CSM_MODE_BUFFER_PLUS_JUMP_FAST_TUNE,
-> +=09MAX2175_CSM_MODE_BUFFER_PLUS_CHECK,
-> +=09MAX2175_CSM_MODE_BUFFER_PLUS_LOAD_AND_SWAP,
-> +=09MAX2175_CSM_MODE_NO_ACTION
-> +};
-> +
-> +/* Rx mode */
-> +struct max2175_rxmode {
-> +=09enum max2175_band band;=09=09/* Associated band */
-> +=09u32 freq;=09=09=09/* Default freq in Hz */
-> +=09u8 i2s_word_size;=09=09/* Bit value */
-> +=09u8 i2s_modes[4];=09=09/* Supported modes */
-> +};
-> +
-> +/* Register map */
-> +struct max2175_regmap {
-> +=09u8 idx;=09=09=09=09/* Register index */
-> +=09u8 val;=09=09=09=09/* Register value */
-> +};
-
-As no other file than max2175.c includes this, I would move at least th=
-e=20
-structure definitions to the .c file.
-
-> +#endif /* __MAX2175_H__ */
-
---=20
-Regards,
-
-Laurent Pinchart
-
+SGkgR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgdGhlIHJldmlldy4gDQoNCj4gU3ViamVjdDogUmU6
+IFtSRkMgMS81XSBtZWRpYTogaTJjOiBtYXgyMTc1OiBBZGQgTUFYMjE3NSBzdXBwb3J0DQo+IA0K
+Wy4uLl0NCj4gDQo+ID4gLS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9pMmMvbWF4MjE3NS50eHQNCj4gPiBAQCAtMCwwICsxLDYw
+IEBADQo+ID4gK01heGltIEludGVncmF0ZWQgTUFYMjE3NSBSRiB0byBCaXRzIHR1bmVyDQo+ID4g
+Ky0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gKw0KPiA+ICtU
+aGUgTUFYMjE3NSBJQyBpcyBhbiBhZHZhbmNlZCBhbmFsb2cvZGlnaXRhbCBoeWJyaWQtcmFkaW8g
+cmVjZWl2ZXINCj4gPiArd2l0aCBSRiB0byBCaXRzwq4gZnJvbnQtZW5kIGRlc2lnbmVkIGZvciBz
+b2Z0d2FyZS1kZWZpbmVkIHJhZGlvDQo+IHNvbHV0aW9ucy4NCj4gPiArDQo+ID4gK1JlcXVpcmVk
+IHByb3BlcnRpZXM6DQo+ID4gKy0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gKy0gY29tcGF0aWJs
+ZTogIm1heGltLG1heDIxNzUiIGZvciBNQVgyMTc1IFJGLXRvLWJpdHMgdHVuZXIuDQo+ID4gKy0g
+Y2xvY2tzOiBwaGFuZGxlIHRvIHRoZSBmaXhlZCB4dGFsIGNsb2NrLg0KPiA+ICstIGNsb2NrLW5h
+bWVzOiBuYW1lIG9mIHRoZSBmaXhlZCB4dGFsIGNsb2NrLg0KPiA+ICstIHBvcnQ6IHZpZGVvIGlu
+dGVyZmFjZSBjaGlsZCBwb3J0IG5vZGUgb2YgYSB0dW5lciB0aGF0IGRlZmluZXMgdGhlDQo+ID4g
+K2xvY2FsDQo+ID4gKyAgYW5kIHJlbW90ZSBlbmRwb2ludHMuIFRoZSByZW1vdGUgZW5kcG9pbnQg
+aXMgYXNzdW1lZCB0byBiZSBhbiBTRFINCj4gPiArZGV2aWNlDQo+ID4gKyAgdGhhdCBpcyBjYXBh
+YmxlIG9mIHJlY2VpdmluZyB0aGUgZGlnaXRhbCBzYW1wbGVzIGZyb20gdGhlIHR1bmVyLg0KPiA+
+ICsNCj4gPiArT3B0aW9uYWwgcHJvcGVydGllczoNCj4gPiArLS0tLS0tLS0tLS0tLS0tLS0tLS0N
+Cj4gPiArLSBtYXhpbSxzbGF2ZSAgICAgOiBlbXB0eSBwcm9wZXJ0eSBpbmRpY2F0ZXMgdGhpcyBp
+cyBhIHNsYXZlIG9mIGFub3RoZXINCj4gPiArICAgICAgICAgICAgICAgICAgICBtYXN0ZXIgdHVu
+ZXIuIFRoaXMgaXMgdXNlZCB0byBkZWZpbmUgdHdvIHR1bmVycyBpbg0KPiA+ICsgICAgICAgICAg
+ICAgICAgICAgIGRpdmVyc2l0eSBtb2RlICgxIG1hc3RlciwgMSBzbGF2ZSkuIEJ5IGRlZmF1bHQg
+ZWFjaA0KPiA+ICsgICAgICAgICAgICAgICAgICAgIHR1bmVyIGlzIGFuIGluZGl2aWR1YWwgbWFz
+dGVyLg0KPiA+ICstIG1heGltLHJlZm91dC1sb2FkOiBsb2FkIGNhcGFjaXRhbmNlIHZhbHVlIChp
+biBwRikgb24gcmVmZXJlbmNlIG91dHB1dA0KPiA+ICsgICAgICAgICAgICAgICAgICAgIGRyaXZl
+IGxldmVsLiBUaGUgbWFwcGluZyBvZiB0aGVzZSBsb2FkIHZhbHVlcyB0bw0KPiA+ICsgICAgICAg
+ICAgICAgICAgICAgIHJlc3BlY3RpdmUgYml0IHZhbHVlcyBhcmUgZ2l2ZW4gYmVsb3cuDQo+ID4g
+KyAgICAgICAgICAgICAgICAgICAgMCAtIFJlZmVyZW5jZSBvdXRwdXQgZGlzYWJsZWQNCj4gPiAr
+ICAgICAgICAgICAgICAgICAgICAxIC0gMTBwRiBsb2FkDQo+ID4gKyAgICAgICAgICAgICAgICAg
+ICAgMiAtIDIwcEYgbG9hZA0KPiA+ICsgICAgICAgICAgICAgICAgICAgIDMgLSAzMHBGIGxvYWQN
+Cj4gPiArICAgICAgICAgICAgICAgICAgICA0IC0gNDBwRiBsb2FkDQo+ID4gKyAgICAgICAgICAg
+ICAgICAgICAgNSAtIDYwcEYgbG9hZA0KPiA+ICsgICAgICAgICAgICAgICAgICAgIDYgLSA3MHBG
+IGxvYWQNCj4gDQo+IEZvciBwcm9wZXJ0aWVzIGludm9sdmluZyB1bml0cywgdXN1YWxseSB0aGUg
+dW5pdCBpcyBtYWRlIHBhcnQgb2YgdGhlDQo+IHByb3BlcnR5IG5hbWUsIGUuZy4gbWF4aW0scmVm
+b3V0LWxvYWQtcEYgPSA0MC4NCj4gVGhpcyBhdm9pZHMgY29uZnVzaW9uLCBhbmQgYWxsb3dzIGZv
+ciBleHRlbnNpb24gbGF0ZXIuDQoNCkFncmVlZC4gSSBoYXZlIG1vZGlmaWVkIGl0IGFzDQoNCi0g
+bWF4aW0scmVmb3V0LWxvYWQtcEY6IGxvYWQgY2FwYWNpdGFuY2UgdmFsdWUgKGluIHBGKSBvbiBy
+ZWZlcmVuY2UNCiAgICAgICAgICAgICAgICAgICAgICAgIG91dHB1dCBkcml2ZSBsZXZlbC4gVGhl
+IGRlZmF1bHQgaXMgcmVmb3V0IGRpc2FibGVkDQogICAgICAgICAgICAgICAgICAgICAgICBvciBu
+byBsb2FkLiBUaGUgcG9zc2libGUgbG9hZCB2YWx1ZXMgYXJlIA0KICAgICAgICAgICAgICAgICAg
+ICAgICAgMTBwRg0KICAgICAgICAgICAgICAgICAgICAgICAgMjBwRg0KICAgICAgICAgICAgICAg
+ICAgICAgICAgMzBwRg0KICAgICAgICAgICAgICAgICAgICAgICAgNDBwRg0KICAgICAgICAgICAg
+ICAgICAgICAgICAgNjBwRg0KICAgICAgICAgICAgICAgICAgICAgICAgNzBwRg0KDQo+IA0KPiA+
+ICsvKiBBIHR1bmVyIGRldmljZSBpbnN0YW5jZSB1bmRlciBpMmMgYnVzICovDQo+ID4gK21heDIx
+NzVfMDogdHVuZXJANjAgew0KPiA+ICsgICAgICAgI2Nsb2NrLWNlbGxzID0gPDA+Ow0KPiA+ICsg
+ICAgICAgY29tcGF0aWJsZSA9ICJtYXhpbSxtYXgyMTc1IjsNCj4gPiArICAgICAgIHJlZyA9IDww
+eDYwPjsNCj4gPiArICAgICAgIGNsb2NrcyA9IDwmbWF4aW1feHRhbD47DQo+ID4gKyAgICAgICBj
+bG9jay1uYW1lcyA9ICJ4dGFsIjsNCj4gPiArICAgICAgIG1heGltLHJlZm91dC1sb2FkID0gPDEw
+PjsNCj4gDQo+IDEwIGlzIG5vdCBsaXN0ZWQgYWJvdmUuIFBlcmhhcHMgeW91IG1lYW50IDEwIHBG
+Pw0KDQpZZXMuDQoNCj4gDQo+ID4gLS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBiL2RyaXZlcnMvbWVk
+aWEvaTJjL21heDIxNzUvbWF4MjE3NS5jDQo+ID4gQEAgLTAsMCArMSwxNjI0IEBADQo+IA0KPiA+
+ICsvKiBOT1RFOiBBbnkgYWRkaXRpb24vZGVsZXRpb24gaW4gdGhlIGJlbG93IGxpc3Qgc2hvdWxk
+IGJlIHJlZmxlY3RlZA0KPiA+ICtpbg0KPiA+ICsgKiBtYXgyMTc1X21vZGV0YWcgZW51bQ0KPiA+
+ICsgKi8NCj4gDQo+IFlvdSBjYW4gZHJvcCB0aGUgYWJvdmUgY29tbWVudCBpZiB5b3UgbWFrZSB0
+aGlzIGV4cGxpY2l0IHVzaW5nIEM5OQ0KPiBkZXNpZ25hdGVkIGluaXRpYWxpemVycywgY2ZyLiBi
+ZWxvdy4NCj4gDQo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgbWF4MjE3NV9yeG1vZGUgZXVfcnhf
+bW9kZXNbXSA9IHsgLyogSW5kZXhlZCBieSBFVQ0KPiBtb2RldGFnICovDQo+ID4gKyAgICAgICAv
+KiBFVSBtb2RlcyAqLw0KPiA+ICsgICAgICAgeyBNQVgyMTc1X0JBTkRfVkhGLCAxODI2NDAwMDAs
+IDAsIHsgMCwgMCwgMCwgMCB9IH0sDQo+IA0KPiBbTUFYMjE3NV9EQUJfMV8yXSA9IHsgTUFYMjE3
+NV9CQU5EX1ZIRiwgMTgyNjQwMDAwLCAwLCB7IDAsIDAsIDAsIDAgfSB9LA0KPiANCj4gPiArfTsN
+Cj4gPiArDQo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgbWF4MjE3NV9yeG1vZGUgbmFfcnhfbW9k
+ZXNbXSA9IHsgLyogSW5kZXhlZCBieSBOQQ0KPiBtb2RldGFnICovDQo+ID4gKyAgICAgICAvKiBO
+QSBtb2RlcyAqLw0KPiA+ICsgICAgICAgeyBNQVgyMTc1X0JBTkRfRk0sIDk4MjU1NTIwLCAxLCB7
+IDAsIDAsIDAsIDAgfSB9LA0KPiANCj4gW01BWDIxNzVfTkFfRk1fMV8wXSA9IHsgTUFYMjE3NV9C
+QU5EX0ZNLCA5ODI1NTUyMCwgMSwgeyAwLCAwLCAwLCAwIH0gfSwNCj4gDQoNClRoYW5rIHlvdS4g
+VXNpbmcgZGVzaWduYXRlZCBpbml0aWFsaXplcnMgbm93Lg0KDQo+ID4gK3N0cnVjdCBtYXgyMTc1
+X2N0eCB7DQo+ID4gKyAgICAgICBzdHJ1Y3QgdjRsMl9zdWJkZXYgc2Q7DQo+ID4gKyAgICAgICBz
+dHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50Ow0KPiA+ICsgICAgICAgc3RydWN0IGRldmljZSAqZGV2
+Ow0KPiA+ICsNCj4gPiArICAgICAgIC8qIENhY2hlZCBjb25maWd1cmF0aW9uICovDQo+ID4gKyAg
+ICAgICB1OCByZWdzWzI1Nl07DQo+ID4gKyAgICAgICBlbnVtIG1heDIxNzVfbW9kZXRhZyBtb2Rl
+OyAgICAgIC8qIFJlY2VpdmUgbW9kZSB0YWcgKi8NCj4gPiArICAgICAgIHUzMiBmcmVxOyAgICAg
+ICAgICAgICAgICAgICAgICAgLyogSW4gSHogKi8NCj4gPiArICAgICAgIHN0cnVjdCBtYXgyMTc1
+X3J4bW9kZSAqcnhfbW9kZXM7DQo+ID4gKw0KPiA+ICsgICAgICAgLyogRGV2aWNlIHNldHRpbmdz
+ICovDQo+ID4gKyAgICAgICBib29sIG1hc3RlcjsNCj4gPiArICAgICAgIHUzMiBkZWNpbV9yYXRp
+bzsNCj4gPiArICAgICAgIHU2NCB4dGFsX2ZyZXE7DQo+ID4gKw0KPiA+ICsgICAgICAgLyogUk9N
+IHZhbHVlcyAqLw0KPiA+ICsgICAgICAgdTggcm9tX2JiZl9id19hbTsNCj4gPiArICAgICAgIHU4
+IHJvbV9iYmZfYndfZm07DQo+ID4gKyAgICAgICB1OCByb21fYmJmX2J3X2RhYjsNCj4gPiArDQo+
+ID4gKyAgICAgICAvKiBMb2NhbCBjb3B5IG9mIG9sZCBzZXR0aW5ncyAqLw0KPiA+ICsgICAgICAg
+dTggaTJzX3Rlc3Q7DQo+ID4gKw0KPiA+ICsgICAgICAgdTggbmJkX2dhaW47DQo+ID4gKyAgICAg
+ICB1OCBuYmRfdGhyZXNob2xkOw0KPiA+ICsgICAgICAgdTggd2JkX2dhaW47DQo+ID4gKyAgICAg
+ICB1OCB3YmRfdGhyZXNob2xkOw0KPiA+ICsgICAgICAgdTggYmJkX3RocmVzaG9sZDsNCj4gPiAr
+ICAgICAgIHU4IGJiZGNsaXBfdGhyZXNob2xkOw0KPiA+ICsgICAgICAgdTggbHRfd2JkX3RocmVz
+aG9sZDsNCj4gPiArICAgICAgIHU4IGx0X3diZF9nYWluOw0KPiA+ICsNCj4gPiArICAgICAgIC8q
+IENvbnRyb2xzICovDQo+ID4gKyAgICAgICBzdHJ1Y3QgdjRsMl9jdHJsX2hhbmRsZXIgY3RybF9o
+ZGw7DQo+ID4gKyAgICAgICBzdHJ1Y3QgdjRsMl9jdHJsICpsbmFfZ2FpbjsgICAgIC8qIExOQSBn
+YWluIHZhbHVlICovDQo+ID4gKyAgICAgICBzdHJ1Y3QgdjRsMl9jdHJsICppZl9nYWluOyAgICAg
+IC8qIEkvRiBnYWluIHZhbHVlICovDQo+ID4gKyAgICAgICBzdHJ1Y3QgdjRsMl9jdHJsICpwbGxf
+bG9jazsgICAgIC8qIFBMTCBsb2NrICovDQo+ID4gKyAgICAgICBzdHJ1Y3QgdjRsMl9jdHJsICpp
+MnNfZW47ICAgICAgIC8qIEkyUyBvdXRwdXQgZW5hYmxlICovDQo+ID4gKyAgICAgICBzdHJ1Y3Qg
+djRsMl9jdHJsICppMnNfbW9kZTsgICAgIC8qIEkyUyBtb2RlIHZhbHVlICovDQo+ID4gKyAgICAg
+ICBzdHJ1Y3QgdjRsMl9jdHJsICphbV9oaXo7ICAgICAgIC8qIEFNIEhpZ2ggaW1wbGVkYW5jZSBp
+bnB1dCAqLw0KPiA+ICsgICAgICAgc3RydWN0IHY0bDJfY3RybCAqaHNsczsgICAgICAgICAvKiBI
+aWdoLXNpZGUvTG93LXNpZGUgcG9sYXJpdHkNCj4gKi8NCj4gPiArICAgICAgIHN0cnVjdCB2NGwy
+X2N0cmwgKnJ4X21vZGU7ICAgICAgLyogUmVjZWl2ZSBtb2RlICovDQo+ID4gKw0KPiA+ICsgICAg
+ICAgLyogRHJpdmVyIHByaXZhdGUgdmFyaWFibGVzICovDQo+ID4gKyAgICAgICBib29sIG1vZGVf
+cmVzb2x2ZWQ7ICAgICAgICAgICAgIC8qIEZsYWcgdG8gc2FuaXR5IGNoZWNrIHNldHRpbmdzDQo+
+ICovDQo+ID4gK307DQo+IA0KPiBTb3J0aW5nIHRoZSBzdHJ1Y3QgbWVtYmVycyBieSBkZWNyZWFz
+aW5nIHNpemUgaGVscHMgdG8gYXZvaWQgZ2FwcyBkdWUgdG8NCj4gYWxpZ25tZW50IHJlc3RyaWN0
+aW9ucywgYW5kIG1heSByZWR1Y2UgbWVtb3J5IGNvbnN1bXB0aW9uLg0KDQpPSy4gSSBoYXZlIGNv
+cnJlY3RlZCBpdCB0byBjZXJ0YWluIGV4dGVudCBidXQgc3RpbGwgaGF2aW5nIGdyb3VwcyAobm90
+IHN0cmljdCBkZWNyZWFzaW5nIG9yZGVyIC0gZm9yIGJldHRlciByZWFkYWJpbGl0eSkuIEkgaGF2
+ZSBwdXNoZWQgdGhlIHU4IGdyb3VwIG1lbWJlcnMgdG8gdGhlIGVuZCB0aG91Z2guDQoNCj4gDQo+
+ID4gKy8qIEZsdXNoIGxvY2FsIGNvcHkgdG8gZGV2aWNlIGZyb20gaWR4IHRvIGlkeCtsZW4gKGlu
+Y2x1c2l2ZSkgKi8NCj4gPiArc3RhdGljIHZvaWQgbWF4MjE3NV9mbHVzaF9yZWdzdG9yZShzdHJ1
+Y3QgbWF4MjE3NV9jdHggKmN0eCwgdTggaWR4LA0KPiA+ICt1OCBsZW4pIHsNCj4gPiArICAgICAg
+IHU4IGk7DQo+IA0KPiBJJ2QganVzdCB1c2UgdW5zaWduZWQgaW50IGZvciBsb29wIGNvdW50ZXJz
+Lg0KPiANCg0KQWdyZWVkLg0KDQo+ID4gKw0KPiA+ICsgICAgICAgZm9yIChpID0gaWR4OyBpIDw9
+IGxlbjsgaSsrKQ0KPiA+ICsgICAgICAgICAgICAgICBtYXgyMTc1X3JlZ193cml0ZShjdHgsIGks
+IGN0eC0+cmVnc1tpXSk7IH0NCj4gDQo+ID4gK3N0YXRpYyBpbnQgbWF4MjE3NV91cGRhdGVfaTJz
+X21vZGUoc3RydWN0IG1heDIxNzVfY3R4ICpjdHgsIHUzMg0KPiA+ICtpMnNfbW9kZSkgew0KPiA+
+ICsgICAgICAgLyogT25seSBjaGFuZ2UgaWYgaXQncyBuZXcgKi8NCj4gPiArICAgICAgIGlmICht
+YXgyMTc1X3JlYWRfYml0cyhjdHgsIDI5LCAyLCAwKSA9PSBpMnNfbW9kZSkNCj4gDQo+IE1hbnkg
+bWFnaWMgbnVtYmVycywgbm90IG9ubHkgaGVyZSAoMjksIDIpLCBidXQgZXZlcnl3aGVyZS4NCj4g
+Q2FuIHlvdSBwbGVhc2UgYWRkICNkZWZpbmVzIGZvciB0aGVzZT8NCg0KVGhlIFR1bmVyIHByb3Zp
+ZGVyIGlzIHVud2lsbGluZyB0byBkaXNjbG9zZSBhbGwgcmVnaXN0ZXIgZGV0YWlscy4gSSBhZ3Jl
+ZSBvbiB0aGUgcmVhZGFiaWxpdHkgaXNzdWUgd2l0aCB0aGlzIHJlc3RyaWN0aW9uIGJ1dCB0aGlz
+IGlzIHNvbWV3aGF0IHRydWUgZm9yIHNvbWUgc2Vuc2l0aXZlIElQcyBpbiB0aGUgbWVkaWEgc3Vi
+c3lzdGVtLg0KDQo+IA0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gMDsNCj4gPiArDQo+ID4g
+KyAgICAgICBtYXgyMTc1X3dyaXRlX2JpdHMoY3R4LCAyOSwgMiwgMCwgaTJzX21vZGUpOw0KPiA+
+ICsNCj4gPiArICAgICAgIC8qIEJhc2VkIG9uIEkyUyBtb2RlIHZhbHVlIEkyU19XT1JEX0NOVCB2
+YWx1ZXMgY2hhbmdlICovDQo+ID4gKyAgICAgICBpZiAoaTJzX21vZGUgPT0gTUFYMjE3NV9JMlNf
+TU9ERTMpIHsNCj4gPiArICAgICAgICAgICAgICAgbWF4MjE3NV93cml0ZV9iaXRzKGN0eCwgMzAs
+IDYsIDAsIDEpOw0KPiA+ICsgICAgICAgfSBlbHNlIGlmIChpMnNfbW9kZSA9PSBNQVgyMTc1X0ky
+U19NT0RFMiB8fA0KPiA+ICsgICAgICAgICAgICAgICAgICBpMnNfbW9kZSA9PSBNQVgyMTc1X0ky
+U19NT0RFNCkgew0KPiA+ICsgICAgICAgICAgICAgICBtYXgyMTc1X3dyaXRlX2JpdHMoY3R4LCAz
+MCwgNiwgMCwgMCk7DQo+ID4gKyAgICAgICB9IGVsc2UgaWYgKGkyc19tb2RlID09IE1BWDIxNzVf
+STJTX01PREUwKSB7DQo+ID4gKyAgICAgICAgICAgICAgIG1heDIxNzVfd3JpdGVfYml0cyhjdHgs
+IDMwLCA2LCAwLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY3R4LT5y
+eF9tb2Rlc1tjdHgtDQo+ID5tb2RlXS5pMnNfd29yZF9zaXplKTsNCj4gPiArICAgICAgIH0gZWxz
+ZSB7DQo+ID4gKyAgICAgICAgICAgICAgIHY0bDJfZXJyKGN0eC0+Y2xpZW50LA0KPiA+ICsgICAg
+ICAgICAgICAgICAgICAgICAgICAiZmFpbGVkOiBpMnNfbW9kZSAldSB1bnN1cHBvcnRlZFxuIiwg
+aTJzX21vZGUpOw0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gMTsNCj4gPiArICAgICAgIH0N
+Cj4gDQo+IHN3aXRjaCAoaTJzX21vZGUpIHsgLi4uIH0NCg0KQWdyZWVkLg0KDQo+IA0KPiA+ICsg
+ICAgICAgbXhtX2RiZyhjdHgsICJ1cGRhdGVkIGkyc19tb2RlICV1XG4iLCBpMnNfbW9kZSk7DQo+
+ID4gKyAgICAgICByZXR1cm4gMDsNCj4gPiArfQ0KPiANCj4gPiArc3RhdGljIHZvaWQgbWF4MjE3
+NV9zZXRfZmlsdGVyX2NvZWZmcyhzdHJ1Y3QgbWF4MjE3NV9jdHggKmN0eCwgdTgNCj4gbV9zZWws
+DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1OCBiYW5rLCBjb25z
+dCB1MTYgKmNvZWZmcykgew0KPiA+ICsgICAgICAgdTggaSwgY29lZmZfYWRkciwgdXBwZXJfYWRk
+cmVzczsNCj4gDQo+IEknZCBqdXN0IHVzZSB1bnNpZ25lZCBpbnQgZm9yIHRoZXNlLg0KPiANCg0K
+QWdyZWVkLg0KDQo+ID4gKw0KPiA+ICsgICAgICAgbXhtX2RiZyhjdHgsICJzdGFydDogbV9zZWwg
+JWQgYmFuayAlZFxuIiwgbV9zZWwsIGJhbmspOw0KPiA+ICsgICAgICAgbWF4MjE3NV93cml0ZV9i
+aXRzKGN0eCwgMTE0LCA1LCA0LCBtX3NlbCk7DQo+ID4gKw0KPiA+ICsgICAgICAgaWYgKG1fc2Vs
+ID09IDIpDQo+ID4gKyAgICAgICAgICAgICAgIHVwcGVyX2FkZHJlc3MgPSAxMjsNCj4gPiArICAg
+ICAgIGVsc2UNCj4gPiArICAgICAgICAgICAgICAgdXBwZXJfYWRkcmVzcyA9IDI0Ow0KPiA+ICsN
+Cj4gPiArICAgICAgIG1heDIxNzVfc2V0X2JpdChjdHgsIDExNywgNywgMSk7DQo+ID4gKyAgICAg
+ICBmb3IgKGkgPSAwOyBpIDwgdXBwZXJfYWRkcmVzczsgaSsrKSB7DQo+ID4gKyAgICAgICAgICAg
+ICAgIGNvZWZmX2FkZHIgPSBpICsgKGJhbmsgKiAyNCk7DQo+ID4gKyAgICAgICAgICAgICAgIG1h
+eDIxNzVfc2V0X2JpdHMoY3R4LCAxMTUsIDcsIDAsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgKHU4KSgoY29lZmZzW2ldID4+IDgpICYgMHhmZikpOw0KPiA+ICsgICAgICAg
+ICAgICAgICBtYXgyMTc1X3NldF9iaXRzKGN0eCwgMTE2LCA3LCAwLCAodTgpKGNvZWZmc1tpXSAm
+DQo+ID4gKyAweGZmKSk7DQo+IA0KPiBJIGRvbid0IHRoaW5rIHlvdSBuZWVkIHRoZSBjYXN0cyB0
+byB1OCwgb3IgdGhlIG1hc2tpbmcgd2l0aCAweGZmLg0KDQpZZXMuIENvcnJlY3RlZC4NCg0KPiAN
+Cj4gPiArICAgICAgICAgICAgICAgbWF4MjE3NV9zZXRfYml0cyhjdHgsIDExNywgNiwgMCwgY29l
+ZmZfYWRkcik7DQo+ID4gKyAgICAgICAgICAgICAgIG1heDIxNzVfZmx1c2hfcmVnc3RvcmUoY3R4
+LCAxMTUsIDMpOw0KPiA+ICsgICAgICAgfQ0KPiA+ICsgICAgICAgbWF4MjE3NV93cml0ZV9iaXQo
+Y3R4LCAxMTcsIDcsIDApOyB9DQo+ID4gKw0KPiA+ICtzdGF0aWMgdm9pZCBtYXgyMTc1X2xvYWRf
+ZGFiXzFwMihzdHJ1Y3QgbWF4MjE3NV9jdHggKmN0eCkgew0KPiA+ICsgICAgICAgdTMyIGk7DQo+
+IA0KPiB1bnNpZ25lZCBpbnQ/DQoNCkFncmVlZC4NCg0KPiANCj4gPiArc3RhdGljIGludCBtYXgy
+MTc1X3NldF9sb19mcmVxKHN0cnVjdCBtYXgyMTc1X2N0eCAqY3R4LCB1NjQgbG9fZnJlcSkNCj4g
+PiArew0KPiA+ICsgICAgICAgaW50IHJldDsNCj4gPiArICAgICAgIHUzMiBsb19tdWx0Ow0KPiA+
+ICsgICAgICAgdTY0IHNjYWxlZF9sb19mcmVxOw0KPiA+ICsgICAgICAgY29uc3QgdTY0IHNjYWxl
+X2ZhY3RvciA9IDEwMDAwMDBVTEw7DQo+ID4gKyAgICAgICB1NjQgc2NhbGVkX25wZiwgc2NhbGVk
+X2ludGVnZXIsIHNjYWxlZF9mcmFjdGlvbjsNCj4gPiArICAgICAgIHUzMiBmcmFjX2Rlc2lyZWQs
+IGludF9kZXNpcmVkOw0KPiA+ICsgICAgICAgdTggbG9iYW5kX2JpdHMsIHZjb2Rpdl9iaXRzOw0K
+PiA+ICsNCj4gPiArICAgICAgIHNjYWxlZF9sb19mcmVxID0gbG9fZnJlcTsNCj4gPiArICAgICAg
+IC8qIFNjYWxlIHRvIGxhcmdlciBudW1iZXIgZm9yIHByZWNpc2lvbiAqLw0KPiA+ICsgICAgICAg
+c2NhbGVkX2xvX2ZyZXEgPSBzY2FsZWRfbG9fZnJlcSAqIHNjYWxlX2ZhY3RvciAqIDEwMDsNCj4g
+PiArDQo+ID4gKyAgICAgICBteG1fZGJnKGN0eCwgInNjYWxlZCBsb19mcmVxICVsbHUgbG9fZnJl
+cSAlbGx1XG4iLA0KPiA+ICsgICAgICAgICAgICAgICBzY2FsZWRfbG9fZnJlcSwgbG9fZnJlcSk7
+DQo+ID4gKw0KPiA+ICsgICAgICAgaWYgKE1BWDIxNzVfSVNfQkFORF9BTShjdHgpKSB7DQo+ID4g
+KyAgICAgICAgICAgICAgIGlmIChtYXgyMTc1X2dldF9iaXQoY3R4LCA1LCA3KSA9PSAwKQ0KPiA+
+ICsgICAgICAgICAgICAgICAgICAgICAgIGxvYmFuZF9iaXRzID0gMDsNCj4gPiArICAgICAgICAg
+ICAgICAgICAgICAgICB2Y29kaXZfYml0cyA9IDA7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
+ICAgbG9fbXVsdCA9IDE2Ow0KPiA+ICsgICAgICAgfSBlbHNlIGlmIChtYXgyMTc1X2dldF9iaXRz
+KGN0eCwgNSwgMSwgMCkgPT0gTUFYMjE3NV9CQU5EX0ZNKSB7DQo+ID4gKyAgICAgICAgICAgICAg
+IGlmIChsb19mcmVxIDw9IDc0NzAwMDAwKSB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
+bG9iYW5kX2JpdHMgPSAwOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHZjb2Rpdl9iaXRz
+ID0gMDsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBsb19tdWx0ID0gMTY7DQo+ID4gKyAg
+ICAgICAgICAgICAgIH0gZWxzZSBpZiAoKGxvX2ZyZXEgPiA3NDcwMDAwMCkgJiYgKGxvX2ZyZXEg
+PD0NCj4gMTEwMDAwMDAwKSkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGxvYmFuZF9i
+aXRzID0gMTsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICB2Y29kaXZfYml0cyA9IDA7DQo+
+ID4gKyAgICAgICAgICAgICAgIH0gZWxzZSB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
+bG9iYW5kX2JpdHMgPSAxOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHZjb2Rpdl9iaXRz
+ID0gMzsNCj4gPiArICAgICAgICAgICAgICAgfQ0KPiA+ICsgICAgICAgICAgICAgICBsb19tdWx0
+ID0gODsNCj4gPiArICAgICAgIH0gZWxzZSBpZiAobWF4MjE3NV9nZXRfYml0cyhjdHgsIDUsIDEs
+IDApID09IE1BWDIxNzVfQkFORF9WSEYpIHsNCj4gPiArICAgICAgICAgICAgICAgaWYgKGxvX2Zy
+ZXEgPD0gMjEwMDAwMDAwKSB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgbG9iYW5kX2Jp
+dHMgPSAyOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHZjb2Rpdl9iaXRzID0gMjsNCj4g
+PiArICAgICAgICAgICAgICAgfSBlbHNlIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBs
+b2JhbmRfYml0cyA9IDI7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgdmNvZGl2X2JpdHMg
+PSAxOw0KPiA+ICsgICAgICAgICAgICAgICB9DQo+ID4gKyAgICAgICAgICAgICAgIGxvX211bHQg
+PSA0Ow0KPiA+ICsgICAgICAgfSBlbHNlIHsNCj4gPiArICAgICAgICAgICAgICAgbG9iYW5kX2Jp
+dHMgPSAzOw0KPiA+ICsgICAgICAgICAgICAgICB2Y29kaXZfYml0cyA9IDI7DQo+ID4gKyAgICAg
+ICAgICAgICAgIGxvX211bHQgPSAyOw0KPiA+ICsgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAg
+IGlmIChtYXgyMTc1X2dldF9iaXRzKGN0eCwgNSwgMSwgMCkgPT0gTUFYMjE3NV9CQU5EX0wpDQo+
+ID4gKyAgICAgICAgICAgICAgIHNjYWxlZF9ucGYgPSAoc2NhbGVkX2xvX2ZyZXEgLyBjdHgtPnh0
+YWxfZnJlcSAvIGxvX211bHQpDQo+IC8gMTAwOw0KPiA+ICsgICAgICAgZWxzZQ0KPiA+ICsgICAg
+ICAgICAgICAgICBzY2FsZWRfbnBmID0gKHNjYWxlZF9sb19mcmVxIC8gY3R4LT54dGFsX2ZyZXEg
+Kg0KPiA+ICsgbG9fbXVsdCkgLyAxMDA7DQo+IA0KPiBQbGVhc2UgdXNlIG9uZSBvZiB0aGUgZGl2
+NjQqKCkgZnVuY3Rpb25zIGZvciBkaXZpc2lvbnMgaW52b2x2aW5nIDY0LWJpdA0KPiBxdWFudGl0
+aWVzICh0cnkgdG8gYnVpbGQgZm9yIDMyLWJpdCBhbmQgc2VlKS4gTW9yZSBvZiB0aGVzZSBiZWxv
+dy4uLg0KDQpUaGFua3MuIEFsbCA2NGJpdCBkaXZpc2lvbnMgYXJlIGNvcnJlY3RlZCB0byBkaXZf
+eDY0IHZhcmlhbnRzLiBZb3UgYXJlIHJpZ2h0IC0ga2J1aWxkIHJlcG9ydGVkIE1JUFMgYnVpbGQg
+ZmFpbHVyZSBiZWNhdXNlIG9mIHRoaXMuIEkgdHJpZWQgb25seSB4ODYgZm9yIDMyLWJpdC4NCg0K
+PiANCj4gPiArICAgICAgIHNjYWxlZF9pbnRlZ2VyID0gc2NhbGVkX25wZiAvIHNjYWxlX2ZhY3Rv
+ciAqIHNjYWxlX2ZhY3RvcjsNCj4gPiArICAgICAgIGludF9kZXNpcmVkID0gKHUzMikoc2NhbGVk
+X25wZiAvIHNjYWxlX2ZhY3Rvcik7DQo+ID4gKyAgICAgICBzY2FsZWRfZnJhY3Rpb24gPSBzY2Fs
+ZWRfbnBmIC0gc2NhbGVkX2ludGVnZXI7DQo+ID4gKyAgICAgICBmcmFjX2Rlc2lyZWQgPSAodTMy
+KShzY2FsZWRfZnJhY3Rpb24gKiAxMDQ4NTc2IC8NCj4gPiArIHNjYWxlX2ZhY3Rvcik7DQo+IA0K
+PiA+ICsgICAgICAgLyogV3JpdGUgdGhlIGNhbGN1bGF0ZWQgdmFsdWVzIHRvIHRoZSBhcHByb3By
+aWF0ZSByZWdpc3RlcnMgKi8NCj4gPiArICAgICAgIG1heDIxNzVfc2V0X2JpdHMoY3R4LCA1LCAz
+LCAyLCBsb2JhbmRfYml0cyk7DQo+ID4gKyAgICAgICBtYXgyMTc1X3NldF9iaXRzKGN0eCwgNiwg
+NywgNiwgdmNvZGl2X2JpdHMpOw0KPiA+ICsgICAgICAgbWF4MjE3NV9zZXRfYml0cyhjdHgsIDEs
+IDcsIDAsICh1OCkoaW50X2Rlc2lyZWQgJiAweGZmKSk7DQo+ID4gKyAgICAgICBtYXgyMTc1X3Nl
+dF9iaXRzKGN0eCwgMiwgMywgMCwgKHU4KSgoZnJhY19kZXNpcmVkID4+IDE2KSAmDQo+IDB4MWYp
+KTsNCj4gPiArICAgICAgIG1heDIxNzVfc2V0X2JpdHMoY3R4LCAzLCA3LCAwLCAodTgpKChmcmFj
+X2Rlc2lyZWQgPj4gOCkgJg0KPiAweGZmKSk7DQo+ID4gKyAgICAgICBtYXgyMTc1X3NldF9iaXRz
+KGN0eCwgNCwgNywgMCwgKHU4KShmcmFjX2Rlc2lyZWQgJiAweGZmKSk7DQo+IA0KPiBObyBuZWVk
+IGZvciBjYXN0cyBldGMuDQoNClllcywgY29ycmVjdGVkLg0KDQo+IA0KPiA+ICsgICAgICAgLyog
+Rmx1c2ggdGhlIGFib3ZlIHJlZ2lzdGVycyB0byBkZXZpY2UgKi8NCj4gPiArICAgICAgIG1heDIx
+NzVfZmx1c2hfcmVnc3RvcmUoY3R4LCAxLCA2KTsNCj4gPiArICAgICAgIHJldHVybiByZXQ7DQo+
+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBpbnQgbWF4MjE3NV9zZXRfbmNvX2ZyZXEoc3RydWN0
+IG1heDIxNzVfY3R4ICpjdHgsIHM2NA0KPiA+ICtuY29fZnJlcV9kZXNpcmVkKSB7DQo+ID4gKyAg
+ICAgICBpbnQgcmV0Ow0KPiA+ICsgICAgICAgdTY0IGNsb2NrX3JhdGUsIGFic19uY29fZnJlcTsN
+Cj4gPiArICAgICAgIHM2NCAgbmNvX2ZyZXEsIG5jb192YWxfZGVzaXJlZDsNCj4gPiArICAgICAg
+IHUzMiBuY29fcmVnOw0KPiA+ICsgICAgICAgY29uc3QgdTY0IHNjYWxlX2ZhY3RvciA9IDEwMDAw
+MDBVTEw7DQo+ID4gKw0KPiA+ICsgICAgICAgbXhtX2RiZyhjdHgsICJuY29fZnJlcTogZnJlcSA9
+ICVsbGRcbiIsIG5jb19mcmVxX2Rlc2lyZWQpOw0KPiA+ICsgICAgICAgY2xvY2tfcmF0ZSA9IGN0
+eC0+eHRhbF9mcmVxIC8gY3R4LT5kZWNpbV9yYXRpbzsNCj4gPiArICAgICAgIG5jb19mcmVxID0g
+LW5jb19mcmVxX2Rlc2lyZWQ7DQo+ID4gKw0KPiA+ICsgICAgICAgaWYgKG5jb19mcmVxIDwgMCkN
+Cj4gPiArICAgICAgICAgICAgICAgYWJzX25jb19mcmVxID0gLW5jb19mcmVxOw0KPiA+ICsgICAg
+ICAgZWxzZQ0KPiA+ICsgICAgICAgICAgICAgICBhYnNfbmNvX2ZyZXEgPSBuY29fZnJlcTsNCj4g
+PiArDQo+ID4gKyAgICAgICAvKiBTY2FsZSB1cCB0aGUgdmFsdWVzIGZvciBwcmVjaXNpb24gKi8N
+Cj4gPiArICAgICAgIGlmIChhYnNfbmNvX2ZyZXEgPCAoY2xvY2tfcmF0ZSAvIDIpKSB7DQo+ID4g
+KyAgICAgICAgICAgICAgIG5jb192YWxfZGVzaXJlZCA9ICgyICogbmNvX2ZyZXEgKiBzY2FsZV9m
+YWN0b3IpIC8NCj4gY2xvY2tfcmF0ZTsNCj4gPiArICAgICAgIH0gZWxzZSB7DQo+ID4gKyAgICAg
+ICAgICAgICAgIGlmIChuY29fZnJlcSA8IDApDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
+bmNvX3ZhbF9kZXNpcmVkID0gKC0yICogKGNsb2NrX3JhdGUgLQ0KPiBhYnNfbmNvX2ZyZXEpICoN
+Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNjYWxlX2ZhY3RvcikgLyBjbG9j
+a19yYXRlOw0KPiA+ICsgICAgICAgICAgICAgICBlbHNlDQo+ID4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgbmNvX3ZhbF9kZXNpcmVkID0gKDIgKiAoY2xvY2tfcmF0ZSAtDQo+IGFic19uY29fZnJl
+cSkgKg0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2NhbGVfZmFjdG9yKSAv
+IGNsb2NrX3JhdGU7DQo+ID4gKyAgICAgICB9DQo+ID4gKw0KPiA+ICsgICAgICAgLyogU2NhbGUg
+ZG93biB0byBnZXQgdGhlIGZyYWN0aW9uICovDQo+ID4gKyAgICAgICBpZiAobmNvX2ZyZXEgPCAw
+KQ0KPiA+ICsgICAgICAgICAgICAgICBuY29fcmVnID0gMHgyMDAwMDAgKyAoKG5jb192YWxfZGVz
+aXJlZCAqIDEwNDg1NzYpIC8NCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIHNjYWxlX2ZhY3Rvcik7DQo+ID4gKyAgICAgICBlbHNlDQo+ID4gKyAgICAgICAgICAgICAg
+IG5jb19yZWcgPSAobmNvX3ZhbF9kZXNpcmVkICogMTA0ODU3NikgLyBzY2FsZV9mYWN0b3I7DQo+
+IA0KPiBNb3JlIDY0LWJpdCBkaXZpc2lvbnMuIEluIGFkZGl0aW9uLCB0aGUgZGl2aWRlcnMgYXJl
+IDY0LWJpdCB0b28uDQo+IENhbid0IHRoZXkgYmUgMzItYml0Pw0KPiANCg0KQWdyZWVkLiBUaGUg
+ZGl2aWRlcnMgbmVlZCBub3QgYmUgMzItYml0LiBDb3JyZWN0ZWQgZXZlcnl3aGVyZS4NCg0KPiA+
+ICtzdGF0aWMgaW50IG1heDIxNzVfcHJvYmUoc3RydWN0IGkyY19jbGllbnQgKmNsaWVudCwNCj4g
+PiArICAgICAgICAgICAgICAgICAgICAgICBjb25zdCBzdHJ1Y3QgaTJjX2RldmljZV9pZCAqaWQp
+IHsNCj4gPiArICAgICAgIHN0cnVjdCBtYXgyMTc1X2N0eCAqY3R4Ow0KPiA+ICsgICAgICAgc3Ry
+dWN0IGRldmljZSAqZGV2ID0gJmNsaWVudC0+ZGV2Ow0KPiA+ICsgICAgICAgc3RydWN0IHY0bDJf
+c3ViZGV2ICpzZDsNCj4gPiArICAgICAgIHN0cnVjdCB2NGwyX2N0cmxfaGFuZGxlciAqaGRsOw0K
+PiA+ICsgICAgICAgc3RydWN0IGNsayAqY2xrOw0KPiA+ICsgICAgICAgYm9vbCBtYXN0ZXIgPSB0
+cnVlOw0KPiA+ICsgICAgICAgdTMyIHJlZm91dF9sb2FkLCByZWZvdXRfYml0cyA9IDA7ICAgICAg
+IC8qIFJFRk9VVCBkaXNhYmxlZCAqLw0KPiA+ICsgICAgICAgaW50IHJldDsNCj4gPiArDQo+ID4g
+KyAgICAgICAvKiBDaGVjayBpZiB0aGUgYWRhcHRlciBzdXBwb3J0cyB0aGUgbmVlZGVkIGZlYXR1
+cmVzICovDQo+ID4gKyAgICAgICBpZiAoIWkyY19jaGVja19mdW5jdGlvbmFsaXR5KGNsaWVudC0+
+YWRhcHRlciwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgSTJDX0ZV
+TkNfU01CVVNfQllURV9EQVRBKSkgew0KPiA+ICsgICAgICAgICAgICAgICBkZXZfZXJyKCZjbGll
+bnQtPmRldiwgImkyYyBjaGVjayBmYWlsZWRcbiIpOw0KPiA+ICsgICAgICAgICAgICAgICByZXR1
+cm4gLUVJTzsNCj4gPiArICAgICAgIH0NCj4gPiArDQo+ID4gKyAgICAgICBpZiAob2ZfZmluZF9w
+cm9wZXJ0eShjbGllbnQtPmRldi5vZl9ub2RlLCAibWF4aW0sc2xhdmUiLCBOVUxMKSkNCj4gPiAr
+ICAgICAgICAgICAgICAgbWFzdGVyID0gZmFsc2U7DQo+ID4gKw0KPiA+ICsgICAgICAgaWYgKCFv
+Zl9wcm9wZXJ0eV9yZWFkX3UzMihjbGllbnQtPmRldi5vZl9ub2RlLCAibWF4aW0scmVmb3V0LQ0K
+PiBsb2FkIiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAmcmVmb3V0X2xv
+YWQpKQ0KPiA+ICsgICAgICAgICAgICAgICByZWZvdXRfYml0cyA9IG1heDIxNzVfcmVmb3V0X2xv
+YWRfdG9fYml0cyhjbGllbnQsDQo+ID4gKyByZWZvdXRfbG9hZCk7DQo+ID4gKw0KPiA+ICsgICAg
+ICAgY2xrID0gZGV2bV9jbGtfZ2V0KCZjbGllbnQtPmRldiwgInh0YWwiKTsNCj4gPiArICAgICAg
+IGlmIChJU19FUlIoY2xrKSkgew0KPiA+ICsgICAgICAgICAgICAgICByZXQgPSBQVFJfRVJSKGNs
+ayk7DQo+ID4gKyAgICAgICAgICAgICAgIGRldl9lcnIoJmNsaWVudC0+ZGV2LCAiY2Fubm90IGdl
+dCB4dGFsIGNsb2NrICVkXG4iLA0KPiByZXQpOw0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4g
+LUVOT0RFVjsNCj4gPiArICAgICAgIH0NCj4gPiArDQo+ID4gKyAgICAgICBjdHggPSBremFsbG9j
+KHNpemVvZihzdHJ1Y3QgbWF4MjE3NV9jdHgpLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgR0ZQX0tFUk5FTCk7DQo+IA0KPiBkZXZtX2t6YWxsb2MoKT8NCg0KQWdyZWVkICYgY29y
+cmVjdGVkLiANCg0KPiANCj4gPiArICAgICAgIGlmIChjdHggPT0gTlVMTCkNCj4gPiArICAgICAg
+ICAgICAgICAgcmV0dXJuIC1FTk9NRU07DQo+ID4gKw0KPiA+ICsgICAgICAgc2QgPSAmY3R4LT5z
+ZDsNCj4gPiArICAgICAgIGN0eC0+bWFzdGVyID0gbWFzdGVyOw0KPiA+ICsgICAgICAgY3R4LT5t
+b2RlX3Jlc29sdmVkID0gZmFsc2U7DQo+ID4gKw0KPiA+ICsgICAgICAgLyogU2V0IHRoZSBkZWZh
+dWx0cyAqLw0KPiA+ICsgICAgICAgY3R4LT5mcmVxID0gYmFuZHNfcmYucmFuZ2Vsb3c7DQo+ID4g
+Kw0KPiA+ICsgICAgICAgY3R4LT54dGFsX2ZyZXEgPSBjbGtfZ2V0X3JhdGUoY2xrKTsNCj4gPiAr
+ICAgICAgIGRldl9pbmZvKCZjbGllbnQtPmRldiwgInh0YWwgZnJlcSAlbGx1SHpcbiIsIGN0eC0+
+eHRhbF9mcmVxKTsNCj4gPiArDQo+ID4gKyAgICAgICB2NGwyX2kyY19zdWJkZXZfaW5pdChzZCwg
+Y2xpZW50LCAmbWF4MjE3NV9vcHMpOw0KPiA+ICsgICAgICAgY3R4LT5jbGllbnQgPSBjbGllbnQ7
+DQo+ID4gKw0KPiA+ICsgICAgICAgc2QtPmZsYWdzID0gVjRMMl9TVUJERVZfRkxfSEFTX0RFVk5P
+REU7DQo+ID4gKyAgICAgICBjdHgtPmRldiA9IGRldjsNCj4gPiArDQo+ID4gKyAgICAgICAvKiBD
+b250cm9scyAqLw0KPiA+ICsgICAgICAgaGRsID0gJmN0eC0+Y3RybF9oZGw7DQo+ID4gKyAgICAg
+ICByZXQgPSB2NGwyX2N0cmxfaGFuZGxlcl9pbml0KGhkbCwgOCk7DQo+ID4gKyAgICAgICBpZiAo
+cmV0KSB7DQo+ID4gKyAgICAgICAgICAgICAgIGRldl9lcnIoJmNsaWVudC0+ZGV2LCAiY3RybCBo
+YW5kbGVyIGluaXQgZmFpbGVkXG4iKTsNCj4gPiArICAgICAgICAgICAgICAgZ290byBlcnI7DQo+
+ID4gKyAgICAgICB9DQo+ID4gKw0KPiA+ICsgICAgICAgY3R4LT5sbmFfZ2FpbiA9IHY0bDJfY3Ry
+bF9uZXdfc3RkKGhkbCwgJm1heDIxNzVfY3RybF9vcHMsDQo+ID4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgVjRMMl9DSURfUkZfVFVORVJfTE5BX0dBSU4sDQo+ID4g
+KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMCwgMTUsIDEsIDIpOw0K
+PiA+ICsgICAgICAgY3R4LT5sbmFfZ2Fpbi0+ZmxhZ3MgfD0gKFY0TDJfQ1RSTF9GTEFHX1ZPTEFU
+SUxFIHwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBWNEwyX0NUUkxfRkxB
+R19SRUFEX09OTFkpOw0KPiA+ICsgICAgICAgY3R4LT5pZl9nYWluID0gdjRsMl9jdHJsX25ld19z
+dGQoaGRsLCAmbWF4MjE3NV9jdHJsX29wcywNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIFY0TDJfQ0lEX1JGX1RVTkVSX0lGX0dBSU4sDQo+ID4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAwLCAzMSwgMSwgMCk7DQo+ID4gKyAgICAg
+ICBjdHgtPmlmX2dhaW4tPmZsYWdzIHw9IChWNEwyX0NUUkxfRkxBR19WT0xBVElMRSB8DQo+ID4g
+KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBWNEwyX0NUUkxfRkxBR19SRUFEX09OTFkp
+Ow0KPiA+ICsgICAgICAgY3R4LT5wbGxfbG9jayA9IHY0bDJfY3RybF9uZXdfc3RkKGhkbCwgJm1h
+eDIxNzVfY3RybF9vcHMsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgVjRMMl9DSURfUkZfVFVORVJfUExMX0xPQ0ssDQo+ID4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgMCwgMSwgMSwgMCk7DQo+ID4gKyAgICAgICBjdHgtPnBs
+bF9sb2NrLT5mbGFncyB8PSAoVjRMMl9DVFJMX0ZMQUdfVk9MQVRJTEUgfA0KPiA+ICsgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIFY0TDJfQ1RSTF9GTEFHX1JFQURfT05MWSk7DQo+ID4g
+KyAgICAgICBjdHgtPmkyc19lbiA9IHY0bDJfY3RybF9uZXdfY3VzdG9tKGhkbCwgJm1heDIxNzVf
+aTJzX2VuLCBOVUxMKTsNCj4gPiArICAgICAgIGN0eC0+aTJzX21vZGUgPSB2NGwyX2N0cmxfbmV3
+X2N1c3RvbShoZGwsICZtYXgyMTc1X2kyc19tb2RlLA0KPiBOVUxMKTsNCj4gPiArICAgICAgIGN0
+eC0+YW1faGl6ID0gdjRsMl9jdHJsX25ld19jdXN0b20oaGRsLCAmbWF4MjE3NV9hbV9oaXosIE5V
+TEwpOw0KPiA+ICsgICAgICAgY3R4LT5oc2xzID0gdjRsMl9jdHJsX25ld19jdXN0b20oaGRsLCAm
+bWF4MjE3NV9oc2xzLCBOVUxMKTsNCj4gPiArDQo+ID4gKyAgICAgICBpZiAoY3R4LT54dGFsX2Zy
+ZXEgPT0gTUFYMjE3NV9FVV9YVEFMX0ZSRVEpIHsNCj4gPiArICAgICAgICAgICAgICAgY3R4LT5y
+eF9tb2RlID0gdjRsMl9jdHJsX25ld19jdXN0b20oaGRsLA0KPiA+ICsgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAmbWF4MjE3NV9ldV9yeF9tb2RlLA0K
+PiBOVUxMKTsNCj4gPiArICAgICAgICAgICAgICAgY3R4LT5yeF9tb2RlcyA9IChzdHJ1Y3QgbWF4
+MjE3NV9yeG1vZGUgKilldV9yeF9tb2RlczsNCj4gPiArICAgICAgIH0gZWxzZSB7DQo+ID4gKyAg
+ICAgICAgICAgICAgIGN0eC0+cnhfbW9kZSA9IHY0bDJfY3RybF9uZXdfY3VzdG9tKGhkbCwNCj4g
+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgJm1h
+eDIxNzVfbmFfcnhfbW9kZSwNCj4gTlVMTCk7DQo+ID4gKyAgICAgICAgICAgICAgIGN0eC0+cnhf
+bW9kZXMgPSAoc3RydWN0IG1heDIxNzVfcnhtb2RlICopbmFfcnhfbW9kZXM7DQo+ID4gKyAgICAg
+ICB9DQo+IA0KPiBUaGUgY2FzdHMgYXJlIG1lYW50IHRvIGNhc3QgYXdheSBjb25zdG5lc3MuIENh
+biB0aGF0IGJlIGF2b2lkZWQ/DQoNCkFncmVlZC4gTWFkZSBjdHgtPnJ4X21vZGVzIG1lbWJlciBh
+cyBjb25zdCBhbmQgYXZvaWRlZCB0aGUgY2FzdCBoZXJlLg0KPiANCj4gPiAtLS0gL2Rldi9udWxs
+DQo+ID4gKysrIGIvZHJpdmVycy9tZWRpYS9pMmMvbWF4MjE3NS9tYXgyMTc1LmgNCj4gDQo+ID4g
+Ky8qIE5PVEU6IEFueSBhZGRpdGlvbi9kZWxldGlvbiBpbiB0aGUgYmVsb3cgZW51bSBzaG91bGQg
+YmUgcmVmbGVjdGVkDQo+ID4gK2luDQo+ID4gKyAqIFY0TDJfQ0lEX01BWDIxNzVfUlhfTU9ERSBj
+dHJsIHN0cmluZ3MNCj4gDQo+IFdoaWNoIHN0cmluZ3MgZXhhY3RseT8NCg0KSXQgaXMgc3VwcG9z
+ZWQgdG8gYmUgdGhlc2UgdHdvDQoNCisgKi8NCitzdGF0aWMgY29uc3QgY2hhciAqIGNvbnN0IG1h
+eDIxNzVfY3RybF9ldV9yeF9tb2RlX3N0cmluZ3NbXSA9IHsNCisJIkRBQiAxLjIiLA0KKwkiTlVM
+TCIsDQorfTsNCisNCitzdGF0aWMgY29uc3QgY2hhciAqIGNvbnN0IG1heDIxNzVfY3RybF9uYV9y
+eF9tb2RlX3N0cmluZ3NbXSA9IHsNCisJIk5BIEZNIDEuMCIsDQorCSJOVUxMIiwNCit9Ow0KKw0K
+DQpJIGhhdmUgY29ycmVjdGVkIHRoZW0gbm93IHRvIHVzZSBkZXNpZ25hdGVkIGluaXRpYWxpemVy
+cy4gVGhhbmtzLg0KDQo+IA0KPiA+ICsgKi8NCj4gPiArZW51bSBtYXgyMTc1X21vZGV0YWcgew0K
+PiA+ICsgICAgICAgLyogRVUgbW9kZXMgKi8NCj4gPiArICAgICAgIE1BWDIxNzVfREFCXzFfMiA9
+IDAsDQo+ID4gKw0KPiA+ICsgICAgICAgLyogT3RoZXIgcG9zc2libGUgbW9kZXMgdG8gYWRkIGlu
+IGZ1dHVyZQ0KPiA+ICsgICAgICAgICogTUFYMjE3NV9EQUJfMV8wLA0KPiA+ICsgICAgICAgICog
+TUFYMjE3NV9EQUJfMV8zLA0KPiA+ICsgICAgICAgICogTUFYMjE3NV9FVV9GTV8yXzIsDQo+ID4g
+KyAgICAgICAgKiBNQVgyMTc1X0VVX0ZNXzFfMCwNCj4gPiArICAgICAgICAqIE1BWDIxNzVfRVVf
+Rk1IRF80XzAsDQo+ID4gKyAgICAgICAgKiBNQVgyMTc1X0VVX0FNXzFfMCwNCj4gPiArICAgICAg
+ICAqIE1BWDIxNzVfRVVfQU1fMl8yLA0KPiA+ICsgICAgICAgICovDQo+ID4gKw0KPiA+ICsgICAg
+ICAgLyogTkEgbW9kZXMgKi8NCj4gPiArICAgICAgIE1BWDIxNzVfTkFfRk1fMV8wID0gMCwNCj4g
+PiArDQo+ID4gKyAgICAgICAvKiBPdGhlciBwb3NzaWJsZSBtb2RlcyB0byBhZGQgaW4gZnV0dXJl
+DQo+ID4gKyAgICAgICAgKiBNQVgyMTc1X05BX0ZNXzFfMiwNCj4gPiArICAgICAgICAqIE1BWDIx
+NzVfTkFfRk1IRF8xXzAsDQo+ID4gKyAgICAgICAgKiBNQVgyMTc1X05BX0ZNSERfMV8yLA0KPiA+
+ICsgICAgICAgICogTUFYMjE3NV9OQV9BTV8xXzAsDQo+ID4gKyAgICAgICAgKiBNQVgyMTc1X05B
+X0FNXzFfMiwNCj4gPiArICAgICAgICAqLw0KPiANCj4gVGhlIE1BWDIxNzVfTkFfKiBkZWZpbml0
+aW9ucyBzaGFyZSB0aGVpciB2YWx1ZXMgd2l0aCB0aGUgTUFYMjE3NV9EQUJfKiBhbmQNCj4gZnV0
+dXJlIE1BWDIxNzVfRVVfKiB2YWx1ZXMuIERvIHlvdSBoYXZlIHRvIHVzZSBhIHNpbmdsZSBlbnVt
+IGZvciBib3RoPw0KPiANCg0KSSBoYXZlIG1hZGUgdGhlbSBzZXBhcmF0ZSBlbnVtcyBub3cuIE5B
+XyBtb2RlcyB3ZXJlIG5vdCB0ZXN0ZWQgeWV0Lg0KDQpJIGhhdmUgYWxzbyBmaXhlZCBmZXcgYnVn
+cyBpbiB0aGUgbWVhbnRpbWUuIEknbGwgd2FpdCBmb3IgdGhpcyB3ZWVrIGZvciBvdGhlciBtZWRp
+YSBtYWludGFpbmVycyAmIGV4cGVydHMgdG8gY29tbWVudCBvbiB0aGUgZHJpdmVyIG1vZGVsICYg
+dGhlIG5ldyBTRFIgZm9ybWF0IG9wZW4gaXRlbS4gQmFzZWQgb24gdGhlIHJlc3BvbnNlLCBJIHdp
+bGwgcG9zdCBhIG5ldyBbUEFUQ0hdIG9yIFtSRkMgdjJdIHdpdGggdGhlc2UgY29tbWVudHMgdXBk
+YXRlZC4NCg0KVGhhbmtzLA0KUmFtZXNoDQo=
