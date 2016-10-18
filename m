@@ -1,58 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:36008
-        "EHLO s-opensource.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932930AbcJQPob (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:60180 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754743AbcJRQlR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Oct 2016 11:44:31 -0400
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        kernel@stlinux.com,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        devel@driverdev.osuosl.org, Kevin Hilman <khilman@baylibre.com>,
+        Tue, 18 Oct 2016 12:41:17 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: dri-devel@lists.freedesktop.org
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Kamil Debski <kamil@wypas.org>,
-        Carlo Caione <carlo@caione.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-amlogic@lists.infradead.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-Subject: [PATCH 0/5] [media] Fix module autoload for media platform drivers
-Date: Mon, 17 Oct 2016 12:44:07 -0300
-Message-Id: <1476719053-17600-1-git-send-email-javier@osg.samsung.com>
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH 0/6] R-Car DU fixes and cleanups
+Date: Tue, 18 Oct 2016 19:41:13 +0300
+Message-ID: <19204890.kfk8Ss2ebE@avalon>
+In-Reply-To: <1475584299-21236-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1475584299-21236-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Mauro,
+Hi Tomi and Dave,
 
-I noticed that module autoload won't be working in a bunch of media
-platform drivers because the module alias information is not filled
-in the modules. This patch series contains the fixes for them.
+On Tuesday 04 Oct 2016 15:31:33 Laurent Pinchart wrote:
+> Hello,
+> 
+> This patch series contains five simple cleanups and fixes for the
+> rcar-du-drm driver, as well as an argument constification patch for
+> video/of.
+> 
+> The patches themselves are straightforward, see individual commit messages
+> for details. Patch 2/6 (normally merged through the DRM tree) depends on
+> patch 1/6 (normally merged through the fbdev tree). As they don't conflict
+> with patches 3/6 to 6/6, we can either merge the whole series through the
+> DRM tree, or merge patches 1/6 and 2/6 through the fbdev tree and the rest
+> through the DRM tree.
+> 
+> My preference would go for merging the whole series through the DRM tree to
+> avoid potential conflicts with the other patches I'm working on for v4.10.
+> There is no foreseen conflict at the moment, but I might rework encoder
+> handling in the driver that could possibly result in a conflict. Dave, Tomi,
+> any preference ? If you're fine with patches not going through your tree,
+> could you please ack them ?
 
-Best regards,
-Javier
+Ping ? Tomi, would you be fine with merging 1/6 through the DRM tree ? If so, 
+could you please ack it ?
 
-
-Javier Martinez Canillas (5):
-  [media] v4l: vsp1: Fix module autoload for OF registration
-  [media] v4l: rcar-fcp: Fix module autoload for OF registration
-  [media] rc: meson-ir: Fix module autoload
-  [media] s5p-cec: Fix module autoload
-  [media] st-cec: Fix module autoload
-
- drivers/media/platform/rcar-fcp.c       | 1 +
- drivers/media/platform/vsp1/vsp1_drv.c  | 1 +
- drivers/media/rc/meson-ir.c             | 1 +
- drivers/staging/media/s5p-cec/s5p_cec.c | 1 +
- drivers/staging/media/st-cec/stih-cec.c | 1 +
- 5 files changed, 5 insertions(+)
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> 
+> Laurent Pinchart (6):
+>   video: of: Constify node argument to display timing functions
+>   drm: rcar-du: Constify node argument to rcar_du_lvds_connector_init()
+>   drm: rcar-du: Bring HDMI encoder comments in line with the driver
+>   drm: rcar-du: Remove test for impossible error condition
+>   drm: rcar-du: Remove memory allocation error message
+>   drm: rcar-du: Fix crash in encoder failure error path
+> 
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c     |  6 ------
+>  drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c |  4 ++--
+>  drivers/gpu/drm/rcar-du/rcar_du_kms.c     | 10 +++++-----
+>  drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c |  2 +-
+>  drivers/gpu/drm/rcar-du/rcar_du_lvdscon.h |  2 +-
+>  drivers/gpu/drm/rcar-du/rcar_du_lvdsenc.c |  4 +---
+>  drivers/video/of_display_timing.c         |  6 +++---
+>  include/video/of_display_timing.h         | 15 ++++++++-------
+>  8 files changed, 21 insertions(+), 28 deletions(-)
 
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
