@@ -1,78 +1,148 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:57388 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:59959 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030310AbcJQVfH (ORCPT
+        with ESMTP id S934237AbcJRPun (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Oct 2016 17:35:07 -0400
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id D0964207B6
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Oct 2016 23:34:09 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/4] arm64: dts: renesas: r8a7796: Add DU device to DT
-Date: Tue, 18 Oct 2016 00:34:50 +0300
-Message-Id: <1476740091-7011-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1476740091-7011-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1476740091-7011-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 18 Oct 2016 11:50:43 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: horms@verge.net.au, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
+        hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se,
+        geert@linux-m68k.org, sergei.shtylyov@cogentembedded.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] ARM: dts: gose: add composite video input
+Date: Tue, 18 Oct 2016 18:50:39 +0300
+Message-ID: <2343930.U8AiEBNJBl@avalon>
+In-Reply-To: <1476802943-5189-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1476802943-5189-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1476802943-5189-4-git-send-email-ulrich.hecht+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the DU device to r8a7796.dtsi in a disabled state.
+Hi Ulrich,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 39 ++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+(CC'ing the device tree mailing list - for real this time)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 15ab8f22b397..0a869f491dbc 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -343,5 +343,44 @@
- 			clocks = <&cpg CPG_MOD 601>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 		};
-+
-+		du: display@feb00000 {
-+			compatible = "renesas,du-r8a7796";
-+			reg = <0 0xfeb00000 0 0x70000>,
-+			      <0 0xfeb90000 0 0x14>;
-+			reg-names = "du", "lvds.0";
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>,
-+				 <&cpg CPG_MOD 723>,
-+				 <&cpg CPG_MOD 722>,
-+				 <&cpg CPG_MOD 727>;
-+			clock-names = "du.0", "du.1", "du.2", "lvds.0";
-+			status = "disabled";
-+
-+			vsps = <&vspd0 &vspd1 &vspd2>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					du_out_hdmi0: endpoint {
-+					};
-+				};
-+				port@2 {
-+					reg = <2>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
-+			};
-+		};
- 	};
- };
+Thank you for the patch.
+
+On Tuesday 18 Oct 2016 17:02:23 Ulrich Hecht wrote:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> ---
+>  arch/arm/boot/dts/r8a7793-gose.dts | 36 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/r8a7793-gose.dts
+> b/arch/arm/boot/dts/r8a7793-gose.dts index a47ea4b..2606021 100644
+> --- a/arch/arm/boot/dts/r8a7793-gose.dts
+> +++ b/arch/arm/boot/dts/r8a7793-gose.dts
+> @@ -390,6 +390,11 @@
+>  		groups = "vin0_data24", "vin0_sync", "vin0_clkenb", 
+"vin0_clk";
+>  		function = "vin0";
+>  	};
+> +
+> +	vin1_pins: vin1 {
+> +		groups = "vin1_data8", "vin1_clk";
+> +		function = "vin1";
+> +	};
+>  };
+> 
+>  &ether {
+> @@ -515,6 +520,19 @@
+>  		reg = <0x12>;
+>  	};
+> 
+> +	composite-in@20 {
+> +		compatible = "adi,adv7180";
+> +		reg = <0x20>;
+> +		remote = <&vin1>;
+> +
+> +		port {
+> +			adv7180: endpoint {
+> +				bus-width = <8>;
+> +				remote-endpoint = <&vin1ep>;
+> +			};
+> +		};
+
+As explained before, you need to update the ADV7180 DT bindings first to 
+document ports. I've discussed this with Hans last week, and we agreed that DT 
+should model physical ports. Unfortunately the ADV7180 comes in four different 
+packages with different feature sets that affect ports.
+
+ADV7180  K CP32 Z               32-Lead Lead Frame Chip Scale Package
+ADV7180  B CP32 Z               32-Lead Lead Frame Chip Scale Package
+ADV7180 WB CP32 Z               32-Lead Lead Frame Chip Scale Package
+
+ADV7180  B CP   Z               40-Lead Lead Frame Chip Scale Package
+ADV7180 WB CP   Z               40-Lead Lead Frame Chip Scale Package
+
+ADV7180  K ST48 Z               48-Lead Low Profile Quad Flat Package
+ADV7180  B ST48 Z               48-Lead Low Profile Quad Flat Package
+ADV7180 WB ST48 Z               48-Lead Low Profile Quad Flat Package
+
+ADV7180  B ST   Z               64-Lead Low Profile Quad Flat Package
+ADV7180 WB ST   Z               64-Lead Low Profile Quad Flat Package
+
+W tells whether the part is qualified for automotive applications. It has no 
+impact from a software point of view. K and B indicate the temperature range, 
+and also have no software impact. The Z suffix indicates that the part is RoHS 
+compliant (they all are) and also has no impact.
+
+Unfortunately the W and K/B qualifiers come before the package qualifier. I'm 
+not sure whether we could simply drop W, K/B and W and specify the following 
+compatible strings
+
+- adv7180cp32
+- adv7180cp
+- adv7180st48
+- adv7180st
+
+or if we need more compatible strings that would match the full chip name. 
+Feedback on that from the device tree maintainers would be appreciated.
+
+Regardless of what compatible strings end up being used, the bindings should 
+document 3 or 6 input ports depending on the model, and one output port. You 
+can number the input ports from 0 to 2 or 0 to 5 depending on the model and 
+the output port 3 or 6. Another option would be to number the output port 0 
+and the input ports 1 to 3 or 1 to 6 depending on the model. That would give a 
+fixed number for the output port across all models, but might be a bit 
+consuming as most bindings number input ports before output ports.
+
+For the Gose board you should then add one composite connector to the device 
+tree ("composite-video-connector") and connect it to port 0 of the 
+ADV7180WBCP32.
+
+> +	};
+> +
+>  	hdmi@39 {
+>  		compatible = "adi,adv7511w";
+>  		reg = <0x39>;
+> @@ -622,3 +640,21 @@
+>  		};
+>  	};
+>  };
+> +
+> +/* composite video input */
+> +&vin1 {
+> +	pinctrl-0 = <&vin1_pins>;
+> +	pinctrl-names = "default";
+> +
+> +	status = "okay";
+> +
+> +	port {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		vin1ep: endpoint {
+> +			remote-endpoint = <&adv7180>;
+> +			bus-width = <8>;
+> +		};
+> +	};
+> +};
+
 -- 
 Regards,
 
