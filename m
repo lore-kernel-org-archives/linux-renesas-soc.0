@@ -1,95 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:33899 "EHLO
-        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751092AbcJAJTf (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:46232 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758512AbcJROOZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 1 Oct 2016 05:19:35 -0400
-Received: by mail-lf0-f51.google.com with SMTP id b81so4314482lfe.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 01 Oct 2016 02:19:34 -0700 (PDT)
-Date: Sat, 1 Oct 2016 11:19:31 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH 2/3] ARM: dts: gose: add HDMI input
-Message-ID: <20161001091931.GL8472@bigcity.dyn.berto.se>
-References: <20160916130935.21292-1-ulrich.hecht+renesas@gmail.com>
- <1951325.PMIbTHqE2x@avalon>
- <CAMuHMdV3ZSfMeyCv3j8F3rUeT48nQc-03L5iDXYF-=wT7Ek2nw@mail.gmail.com>
- <3186140.opQPlkUUe2@avalon>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3186140.opQPlkUUe2@avalon>
+        Tue, 18 Oct 2016 10:14:25 -0400
+Received: from ramsan.of.borg ([192.168.97.29] helo=ramsan)
+        by ayla.of.borg with esmtp (Exim 4.82)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1bwV9r-0001io-2k
+        for linux-renesas-soc@vger.kernel.org; Tue, 18 Oct 2016 16:14:23 +0200
+Received: from geert by ramsan with local (Exim 4.82)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1bwV9u-0008O3-U1
+        for linux-renesas-soc@vger.kernel.org; Tue, 18 Oct 2016 16:14:26 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2016-10-18-v4.9-rc1
+Date: Tue, 18 Oct 2016 16:14:26 +0200
+Message-Id: <1476800066-32202-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 2016-09-30 16:32:52 +0300, Laurent Pinchart wrote:
-> On Friday 30 Sep 2016 15:00:59 Geert Uytterhoeven wrote:
-> > On Fri, Sep 30, 2016 at 2:40 PM, Laurent Pinchart wrote:
-> > >> --- a/arch/arm/boot/dts/r8a7793-gose.dts
-> > >> +++ b/arch/arm/boot/dts/r8a7793-gose.dts
-> > >> @@ -374,6 +374,11 @@
-> > >>               groups = "audio_clk_a";
-> > >>               function = "audio_clk";
-> > >>       };
-> > >> +
-> > >> +     vin0_pins: vin0 {
-> > >> +             groups = "vin0_data24", "vin0_sync", "vin0_clkenb",
-> > >> "vin0_clk";
-> > >> +             function = "vin0";
-> > >> +     };
-> > >>  };
-> > >>  
-> > >>  &ether {
-> > >> @@ -531,6 +536,21 @@
-> > >>               };
-> > >>       };
-> > >> 
-> > >> +     hdmi-in@4c {
-> > >> +             compatible = "adi,adv7612";
-> > >> +             reg = <0x4c>;
-> > >> +             interrupt-parent = <&gpio1>;
-> > >> +             interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-> > > 
-> > > Isn't the interrupt signal connected to GP4_2 ?
-> > 
-> > No idea about Gose, but on Koelsch it is (hence koelsch DTS is wrong??)
-> 
-> I believe so. I don't have a Koelsch board anymore so I can't test that. 
-> Niklas, do you have a Koelsch on which you could confirm the IRQ number ?
+I have pushed renesas-drivers-2016-10-18-v4.9-rc1 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-I have done the best I can to prove the IRQ, it proved to be a bit 
-tricky or maybe I'm doing it the wrong way.
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging branches with driver code
+submitted or planned for submission to maintainers into the development
+branch of Simon Horman's renesas.git tree.
 
-I hooked up my oscilloscope to EXIO Connector D pin 7, which according 
-to the schematics should be GP4_2 and attached to a pull-up at 3.3v. I 
-can observe the pull-up and if I control the pin using the 
-/sys/class/gpio interface I do indeed control GP4_2, So the schematic is 
-correct at least this far.
+As we are currently focusing on a stable v4.9, no for-next branches
+of various subsystem trees have been included.
 
-The trouble I have is that the adv7612 driver do not currently consume 
-the interrupt so I can't see multiple field interrupts by observing the 
-pin. I do however see what I believe is the first field interrupt, if I 
-observe the pin just as I turn on my HDMI video source the pin go from 1 
--> 0 but is never reset and a reset of the entire board is needed if you 
-wish to see it again.
+Today's version is based on renesas-devel-20161017-v4.9-rc1.
 
-If I on the other hand observe pin GP1_20 on EXIO Connector A pin 66 I 
-notice nothing on the oscilloscope from that it's set to 3.3V at power 
-on, no mater how much HDMI input i run.
+Included branches with driver code:
+  - clk-renesas-for-v4.10
+  - sh-pfc-for-v4.10
+  - topic/rcar-secondary-booting-in-debug-mode-v1-rebased1
+  - topic/renesas-soc-id-v1-rebased1
+  - topic/r8a7796-ravb-v1-rebased1
+  - topic/r8a7796-dmac-driver-v1-rebased2
+  - topic/r8a7796-dmac-dts-v1-rebased2~3
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-driver-v7
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-integration-v7
+  - git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git#topic/sdr104-v7
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/topic/sdhi-8bit-emmc
+  - topic/vin-gen2-driver-v1-rebased2
+  - topic/rcar-du-lvds-mode-selection-v1
+  - topic/rcar-gen3-usb2-role-swap-v1
+  - https://git.ragnatech.se/linux#histogram
+  - git://linuxtv.org/pinchartl/media.git#iommu/devel/du
+  - topic/ipmmu-multi-arch-v5-rebased1
+  - topic/r8a7795-ipmmu-v2-rebased3
+  - topic/r8a7796-ipmmu-v1-rebased3
+  - topic/salvator-x-ipmmu-rfc-v3-rebased4~1
+  - topic/vin-gen2-dts-v1-rebased2
+  - topic/r8a7795-es2-v1-rebased1
 
-In conclusion, yes I do believe the DTS is wrong and that GP4_2 is the 
-correct interrupt signal on Koelsch. This adds up with the schematics 
-and my rudimentary measurements.
+Included fixes:
+  - tty: serial_core: Move uart_console() check after console registration
 
--- 
-Regards,
-Niklas S�derlund
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
