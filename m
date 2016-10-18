@@ -1,40 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-io0-f172.google.com ([209.85.223.172]:33687 "EHLO
-        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S942016AbcJSOkp (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:60826 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936313AbcJRWXM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Oct 2016 10:40:45 -0400
-Received: by mail-io0-f172.google.com with SMTP id q192so33876587iod.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Oct 2016 07:40:44 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <1476829382-14785-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1476829382-14785-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 19 Oct 2016 09:09:09 +0200
-Message-ID: <CAMuHMdVDnqzcThuiF+7ztaY9CTiAK-6YDq1+PhH1hrHFLoJAyQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: r8a7779: Fix DU reg property
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
+        Tue, 18 Oct 2016 18:23:12 -0400
+Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 5453520010
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Oct 2016 00:22:20 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] ARM: dts: r8a7779: Fix DU reg property
+Date: Wed, 19 Oct 2016 01:23:02 +0300
+Message-Id: <1476829382-14785-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Oct 19, 2016 at 12:23 AM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> The system uses one address cell and one size cell, not two. Fix the DU
-> DT node.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+The system uses one address cell and one size cell, not two. Fix the DU
+DT node.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ arch/arm/boot/dts/r8a7779.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index b9bbcce69dfb..9d5b8fa3da8b 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -420,7 +420,7 @@
+ 
+ 	du: display@fff80000 {
+ 		compatible = "renesas,du-r8a7779";
+-		reg = <0 0xfff80000 0 0x40000>;
++		reg = <0xfff80000 0x40000>;
+ 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7779_CLK_DU>;
+ 		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
+-- 
+Regards,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
