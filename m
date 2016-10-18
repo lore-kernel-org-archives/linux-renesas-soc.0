@@ -1,71 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:53772 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933003AbcJUNRj (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:59500 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755573AbcJROOH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Oct 2016 09:17:39 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 12/23] clk: renesas: r8a7778: Obtain mode pin values using R-Car RST driver
-Date: Fri, 21 Oct 2016 15:17:26 +0200
-Message-Id: <1477055857-17936-13-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
-References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+        Tue, 18 Oct 2016 10:14:07 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Greg KH <greg@kroah.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        stable@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH] [media] v4l: rcar-fcp: Don't force users to check for disabled FCP support
+Date: Tue, 18 Oct 2016 17:14:03 +0300
+Message-ID: <3662992.dtXaQ41t4g@avalon>
+In-Reply-To: <20161018140521.GA5102@kroah.com>
+References: <1476797060-8535-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <20161018140521.GA5102@kroah.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Obtain the values of the mode pins from the R-Car RST driver, which
-relies on the presence in DT of a device node for the RESET/WDT module.
+Hi Greg,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
----
-v4:
-  - Add Acked-by,
+On Tuesday 18 Oct 2016 16:05:21 Greg KH wrote:
+> On Tue, Oct 18, 2016 at 04:24:20PM +0300, Laurent Pinchart wrote:
+> > commit fd44aa9a254b18176ec3792a18e7de6977030ca8 upstream.
+> > 
+> > The rcar_fcp_enable() function immediately returns successfully when the
+> > FCP device pointer is NULL to avoid forcing the users to check the FCP
+> > device manually before every call. However, the stub version of the
+> > function used when the FCP driver is disabled returns -ENOSYS
+> > unconditionally, resulting in a different API contract for the two
+> > versions of the function.
+> > 
+> > As a user that requires FCP support will fail at probe time when calling
+> > rcar_fcp_get() if the FCP driver is disabled, the stub version of the
+> > rcar_fcp_enable() function will only be called with a NULL FCP device.
+> > We can thus return 0 unconditionally to align the behaviour with the
+> > normal version of the function.
+> > 
+> > Fixes: 94fcdf829793 ("[media] v4l: vsp1: Add FCP support")
+> > Reported-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > Signed-off-by: Laurent Pinchart
+> > <laurent.pinchart+renesas@ideasonboard.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+> > ---
+> > 
+> >  include/media/rcar-fcp.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> What stable kernel(s) do you want this applied to?
 
-v3:
-  - New.
----
- drivers/clk/renesas/clk-r8a7778.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+That's for v4.8, sorry for not having mentioned it.
 
-diff --git a/drivers/clk/renesas/clk-r8a7778.c b/drivers/clk/renesas/clk-r8a7778.c
-index 40e3a501a50e200f..07ea411098a75ad1 100644
---- a/drivers/clk/renesas/clk-r8a7778.c
-+++ b/drivers/clk/renesas/clk-r8a7778.c
-@@ -12,6 +12,7 @@
- #include <linux/clk/renesas.h>
- #include <linux/of_address.h>
- #include <linux/slab.h>
-+#include <linux/soc/renesas/rcar-rst.h>
- 
- struct r8a7778_cpg {
- 	struct clk_onecell_data data;
-@@ -83,6 +84,18 @@ static void __init r8a7778_cpg_clocks_init(struct device_node *np)
- 	struct clk **clks;
- 	unsigned int i;
- 	int num_clks;
-+	u32 mode;
-+
-+	if (rcar_rst_read_mode_pins(&mode))
-+		return;
-+
-+	BUG_ON(!(mode & BIT(19)));
-+
-+	cpg_mode_rates = (!!(mode & BIT(18)) << 2) |
-+			 (!!(mode & BIT(12)) << 1) |
-+			 (!!(mode & BIT(11)));
-+	cpg_mode_divs = (!!(mode & BIT(2)) << 1) |
-+			(!!(mode & BIT(1)));
- 
- 	num_clks = of_property_count_strings(np, "clock-output-names");
- 	if (num_clks < 0) {
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
