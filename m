@@ -1,40 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:47378 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938860AbcJGQZc (ORCPT
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33753 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752299AbcJRIGr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Oct 2016 12:25:32 -0400
-Subject: [PATCH 06/10] PCI: rcar: Remove unused platform data
-To: Simon Horman <horms@verge.net.au>
-From: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-pci@vger.kernel.org
-Date: Fri, 07 Oct 2016 11:25:28 -0500
-Message-ID: <20161007162528.23279.37638.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-In-Reply-To: <20161007162446.23279.48813.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20161007162446.23279.48813.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+        Tue, 18 Oct 2016 04:06:47 -0400
+Received: by mail-io0-f195.google.com with SMTP id q192so12225506iod.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Oct 2016 01:06:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1476736143-29937-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1476736143-29937-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1476736143-29937-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Oct 2016 10:06:45 +0200
+Message-ID: <CAMuHMdXvzt1QisdhToTFMwS0dUtrCbXQAnKU+j=jLU3iwpd8rQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: r8a7795: Remove FCP SoC-specific
+ compatible strings
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The rcar driver never uses the platform drvdata pointer, so don't bother
-setting it.  No functional change intended.
+On Mon, Oct 17, 2016 at 10:29 PM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> The SoC-specific compatible strings have been removed from the FCP DT
+> bindings, removed them from the device tree.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/host/pcie-rcar.c |    1 -
- 1 file changed, 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 5a8969f..02a90f4 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -1126,7 +1126,6 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	rcar->dev = dev;
--	platform_set_drvdata(pdev, rcar);
- 
- 	INIT_LIST_HEAD(&rcar->resources);
- 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
