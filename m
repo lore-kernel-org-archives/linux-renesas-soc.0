@@ -1,19 +1,19 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:59959 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:59951 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934237AbcJRPun (ORCPT
+        with ESMTP id S936005AbcJRPts (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Oct 2016 11:50:43 -0400
+        Tue, 18 Oct 2016 11:49:48 -0400
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 Cc: horms@verge.net.au, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, magnus.damm@gmail.com,
         hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se,
         geert@linux-m68k.org, sergei.shtylyov@cogentembedded.com,
-        devicetree@vger.kernel.org
+        devicetree@kernel.org
 Subject: Re: [PATCH v2 3/3] ARM: dts: gose: add composite video input
-Date: Tue, 18 Oct 2016 18:50:39 +0300
-Message-ID: <2343930.U8AiEBNJBl@avalon>
+Date: Tue, 18 Oct 2016 18:49:44 +0300
+Message-ID: <2915584.0t40ytsv7y@avalon>
 In-Reply-To: <1476802943-5189-4-git-send-email-ulrich.hecht+renesas@gmail.com>
 References: <1476802943-5189-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1476802943-5189-4-git-send-email-ulrich.hecht+renesas@gmail.com>
 MIME-Version: 1.0
@@ -24,7 +24,7 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hi Ulrich,
 
-(CC'ing the device tree mailing list - for real this time)
+(CC'ing the device tree mailing list)
 
 Thank you for the patch.
 
