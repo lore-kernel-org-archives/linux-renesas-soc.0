@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35121 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35070 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S941629AbcJSOZv (ORCPT
+        with ESMTP id S938661AbcJSOOJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Oct 2016 10:25:51 -0400
+        Wed, 19 Oct 2016 10:14:09 -0400
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+To: dri-devel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
 Subject: [PATCH 1/8] drm: bridge: Add LVDS encoder driver
-Date: Wed, 19 Oct 2016 17:25:36 +0300
-Message-Id: <1476887143-24831-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1476887143-24831-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1476887143-24831-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Date: Wed, 19 Oct 2016 17:07:49 +0300
+Message-Id: <1476886076-24178-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1476886076-24178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1476886076-24178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -21,7 +21,6 @@ driver thus doesn't interact with the device, but creates an LVDS
 connector for the panel and exposes its size and timing based on
 information retrieved from DT.
 
-Cc: devicetree@vger.kernel.org
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
  .../bindings/display/bridge/lvds-transmitter.txt   |  64 +++++++
