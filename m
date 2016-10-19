@@ -1,64 +1,149 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com
-Subject: [PATCH v3 01/11] ARM: shmobile: r8a7743: add power domain index macros
-Date: Thu, 06 Oct 2016 00:31:30 +0300
-Message-ID: <5183851.NpIWVzMZV9@wasted.cogentembedded.com>
-In-Reply-To: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com>
-References: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        joro@8bytes.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Thu, 20 Oct 2016 08:36:03 +0900
+Message-Id: <20161019233603.10506.93030.sendpatchset@little-apple>
+In-Reply-To: <20161019233533.10506.16810.sendpatchset@little-apple>
+References: <20161019233533.10506.16810.sendpatchset@little-apple>
+Subject: [PATCH v6 03/07] iommu/ipmmu-vmsa: Break out utlb parsing code
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by the device tree sources to reference R8A7743 SYSC power
-domains by index.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
+Break out the utlb parsing code and dev_data allocation into a
+separate function. This is preparation for future code sharing.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Joerg Roedel <jroedel@suse.de>
 ---
-Changes in version 2:
-- added Geert's tag.
 
- include/dt-bindings/power/r8a7743-sysc.h |   25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ Changes since V5:
+ - None
 
-Index: renesas/include/dt-bindings/power/r8a7743-sysc.h
-===================================================================
---- /dev/null
-+++ renesas/include/dt-bindings/power/r8a7743-sysc.h
-@@ -0,0 +1,25 @@
-+/*
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#ifndef __DT_BINDINGS_POWER_R8A7743_SYSC_H__
-+#define __DT_BINDINGS_POWER_R8A7743_SYSC_H__
-+
-+/*
-+ * These power domain indices match the numbers of the interrupt bits
-+ * representing the power areas in the various Interrupt Registers
-+ * (e.g. SYSCISR, Interrupt Status Register)
-+ */
-+
-+#define R8A7743_PD_CA15_CPU0		 0
-+#define R8A7743_PD_CA15_CPU1		 1
-+#define R8A7743_PD_CA15_SCU		12
-+#define R8A7743_PD_SGX			20
-+
-+/* Always-on power area */
-+#define R8A7743_PD_ALWAYS_ON		32
-+
-+#endif /* __DT_BINDINGS_POWER_R8A7743_SYSC_H__ */
+ Changes since V4:
+ - Dropped hunk with fix to apply on top of:
+   b1e2afc iommu/ipmmu-vmsa: Fix wrong error handle of ipmmu_add_device
+ 
+ Changes since V3:
+ - Initialize "mmu" to NULL, check before accessing
+ - Removed group parameter from ipmmu_init_platform_device()
 
+ Changes since V2:
+ - Included this new patch from the following series:
+   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
+ - Reworked code to fit on top on previous two patches in current series.
+
+ drivers/iommu/ipmmu-vmsa.c |   58 ++++++++++++++++++++++++++++----------------
+ 1 file changed, 37 insertions(+), 21 deletions(-)
+
+--- 0006/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-09-20 21:49:34.580607110 +0900
+@@ -647,22 +647,15 @@ static int ipmmu_find_utlbs(struct ipmmu
+ 	return 0;
+ }
+ 
+-static int ipmmu_add_device(struct device *dev)
++static int ipmmu_init_platform_device(struct device *dev)
+ {
+ 	struct ipmmu_vmsa_archdata *archdata;
+ 	struct ipmmu_vmsa_device *mmu;
+-	struct iommu_group *group = NULL;
+ 	unsigned int *utlbs;
+ 	unsigned int i;
+ 	int num_utlbs;
+ 	int ret = -ENODEV;
+ 
+-	if (dev->archdata.iommu) {
+-		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
+-			 dev_name(dev));
+-		return -EINVAL;
+-	}
+-
+ 	/* Find the master corresponding to the device. */
+ 
+ 	num_utlbs = of_count_phandle_with_args(dev->of_node, "iommus",
+@@ -699,6 +692,36 @@ static int ipmmu_add_device(struct devic
+ 		}
+ 	}
+ 
++	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
++	if (!archdata) {
++		ret = -ENOMEM;
++		goto error;
++	}
++
++	archdata->mmu = mmu;
++	archdata->utlbs = utlbs;
++	archdata->num_utlbs = num_utlbs;
++	dev->archdata.iommu = archdata;
++	return 0;
++
++error:
++	kfree(utlbs);
++	return ret;
++}
++
++static int ipmmu_add_device(struct device *dev)
++{
++	struct ipmmu_vmsa_archdata *archdata;
++	struct ipmmu_vmsa_device *mmu = NULL;
++	struct iommu_group *group;
++	int ret;
++
++	if (dev->archdata.iommu) {
++		dev_warn(dev, "IOMMU driver already assigned to device %s\n",
++			 dev_name(dev));
++		return -EINVAL;
++	}
++
+ 	/* Create a device group and add the device to it. */
+ 	group = iommu_group_alloc();
+ 	if (IS_ERR(group)) {
+@@ -716,16 +739,9 @@ static int ipmmu_add_device(struct devic
+ 		goto error;
+ 	}
+ 
+-	archdata = kzalloc(sizeof(*archdata), GFP_KERNEL);
+-	if (!archdata) {
+-		ret = -ENOMEM;
++	ret = ipmmu_init_platform_device(dev);
++	if (ret < 0)
+ 		goto error;
+-	}
+-
+-	archdata->mmu = mmu;
+-	archdata->utlbs = utlbs;
+-	archdata->num_utlbs = num_utlbs;
+-	dev->archdata.iommu = archdata;
+ 
+ 	/*
+ 	 * Create the ARM mapping, used by the ARM DMA mapping core to allocate
+@@ -736,6 +752,8 @@ static int ipmmu_add_device(struct devic
+ 	 * - Make the mapping size configurable ? We currently use a 2GB mapping
+ 	 *   at a 1GB offset to ensure that NULL VAs will fault.
+ 	 */
++	archdata = dev->archdata.iommu;
++	mmu = archdata->mmu;
+ 	if (!mmu->mapping) {
+ 		struct dma_iommu_mapping *mapping;
+ 
+@@ -760,10 +778,8 @@ static int ipmmu_add_device(struct devic
+ 	return 0;
+ 
+ error:
+-	arm_iommu_release_mapping(mmu->mapping);
+-
+-	kfree(dev->archdata.iommu);
+-	kfree(utlbs);
++	if (mmu)
++		arm_iommu_release_mapping(mmu->mapping);
+ 
+ 	dev->archdata.iommu = NULL;
+ 
