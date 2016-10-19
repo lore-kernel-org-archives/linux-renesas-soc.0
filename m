@@ -1,31 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:35104 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751634AbcJENKt (ORCPT
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33634 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932863AbcJSOMh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Oct 2016 09:10:49 -0400
-Date: Wed, 5 Oct 2016 08:10:47 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
-        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] DT: irqchip: renesas-irqc: document R8A7743/5 support
-Message-ID: <20161005131046.GA10946@rob-hp-laptop>
-References: <19681841.MzyqfDfWny@wasted.cogentembedded.com>
+        Wed, 19 Oct 2016 10:12:37 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <19681841.MzyqfDfWny@wasted.cogentembedded.com>
+In-Reply-To: <2883940.Oo8sg10L7m@wasted.cogentembedded.com>
+References: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com> <2883940.Oo8sg10L7m@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 19 Oct 2016 10:16:05 +0200
+Message-ID: <CAMuHMdUjqagddSnhGOTGRYUwtF=-g+j3Kydu+iJKtV23RrPKWQ@mail.gmail.com>
+Subject: Re: [PATCH v3 04/11] ARM: dts: r8a7743: initial SoC device tree
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Sep 30, 2016 at 12:25:29AM +0300, Sergei Shtylyov wrote:
-> Renesas  RZ/G SoC have the R-Car gen2 compatible IRQC interrupt controllers.
-> Document RZ/G1[ME] (also known as R8A774[35]) SoC bindings.
-> 
+On Wed, Oct 5, 2016 at 11:38 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> The  initial R8A7743 SoC device tree including CPU cores, GIC, timer, SYSC,
+> CPG, and the required clock descriptions.
+>
+> Based on the original (and large) patch by Dmitry Shifrin
+> <dmitry.shifrin@cogentembedded.com>.
+>
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Applied, thanks.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Rob
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
