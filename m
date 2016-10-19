@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35126 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35070 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932119AbcJSOZz (ORCPT
+        with ESMTP id S938712AbcJSOON (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Oct 2016 10:25:55 -0400
+        Wed, 19 Oct 2016 10:14:13 -0400
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+To: dri-devel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
 Subject: [PATCH 2/8] drm: bridge: vga-dac: Add adi,adv7123 compatible string
-Date: Wed, 19 Oct 2016 17:25:37 +0300
-Message-Id: <1476887143-24831-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1476887143-24831-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1476887143-24831-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Date: Wed, 19 Oct 2016 17:07:50 +0300
+Message-Id: <1476886076-24178-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1476886076-24178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1476886076-24178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -26,7 +26,6 @@ allow supporting most ADV7123-based boards easily, while allowing future
 development of an adv7123 driver when needed without breaking backward
 compatibility.
 
-Cc: devicetree@vger.kernel.org
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
  drivers/gpu/drm/bridge/dumb-vga-dac.c | 1 +
