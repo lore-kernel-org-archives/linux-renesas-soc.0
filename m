@@ -1,19 +1,17 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35068 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936549AbcJSOOD (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Oct 2016 10:14:03 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
 Subject: [PATCH 0/8] R-Car DU: Use drm bridge API
-Date: Wed, 19 Oct 2016 17:07:48 +0300
-Message-Id: <1476886076-24178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Date: Wed, 19 Oct 2016 17:25:35 +0300
+Message-Id: <1476887143-24831-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Hello,
+
+(This time with the proper dri-devel mailing list address, sorry for the
+noise)
 
 This patch series replaces the custom external encoders support implementation
 in the R-Car DU driver with code based on the DRM bridge API.
@@ -21,7 +19,7 @@ in the R-Car DU driver with code based on the DRM bridge API.
 While the overall diffstat isn't impressive, the rcar-du-drm driver gets
 notably thinner in the process:
 
-	9 files changed, 38 insertions(+), 358 deletions(-)
+        9 files changed, 38 insertions(+), 358 deletions(-)
 
 This is offset by a reusable driver for LVDS encoders along with the
 corresponding DT bindings (+ 277 lines).
@@ -60,6 +58,8 @@ the appropriate value.
 Patches 7/8 and 8/8 finally migrate the rcar-du-drm driver to the DRM bridge
 API, removing the custom VGA DAC implementation in patch 7/8 and the table of
 bridge compatible strings used to find the encoder type in patch 8/8.
+
+Cc: devicetree@vger.kernel.org
 
 Laurent Pinchart (8):
   drm: bridge: Add LVDS encoder driver
@@ -109,3 +109,4 @@ Laurent Pinchart (8):
 Regards,
 
 Laurent Pinchart
+
