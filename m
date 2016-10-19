@@ -1,17 +1,17 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35067 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35128 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936500AbcJSOOD (ORCPT
+        with ESMTP id S941629AbcJSOZ5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Oct 2016 10:14:03 -0400
+        Wed, 19 Oct 2016 10:25:57 -0400
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
 Cc: linux-renesas-soc@vger.kernel.org
 Subject: [PATCH 5/8] drm: bridge: Set bridges' encoder type
-Date: Wed, 19 Oct 2016 17:07:53 +0300
-Message-Id: <1476886076-24178-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1476886076-24178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1476886076-24178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Date: Wed, 19 Oct 2016 17:25:40 +0300
+Message-Id: <1476887143-24831-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1476887143-24831-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1476887143-24831-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
