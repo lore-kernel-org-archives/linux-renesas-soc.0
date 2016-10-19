@@ -1,53 +1,59 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yangbo Lu <yangbo.lu@nxp.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 6/7] arm64: dts: r8a7795: Add device node for PRR
-Date: Mon, 31 Oct 2016 12:30:54 +0100
-Message-Id: <1477913455-5314-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
-References: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
+From: Magnus Damm <magnus.damm@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
+        joro@8bytes.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+        Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
+        m.szyprowski@samsung.com
+Date: Thu, 20 Oct 2016 08:35:43 +0900
+Message-Id: <20161019233543.10506.52916.sendpatchset@little-apple>
+In-Reply-To: <20161019233533.10506.16810.sendpatchset@little-apple>
+References: <20161019233533.10506.16810.sendpatchset@little-apple>
+Subject: [PATCH v6 01/07] iommu/ipmmu-vmsa: Remove platform data handling
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the Product Register, which provides SoC product
-and revision information.
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+The IPMMU driver is using DT these days, and platform data is no longer
+used by the driver. Remove unused code.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 681f54422375f4f7..a39a702b904da73c 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -321,6 +321,11 @@
- 			#power-domain-cells = <0>;
- 		};
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Joerg Roedel <jroedel@suse.de>
+---
+
+ Changes since V5:
+ - None
+
+ Changes since V4:
+ - None
+
+ Changes since V3:
+ - None
+
+ Changes since V2:
+ - None
+
+ Changes since V1:
+ - Added Reviewed-by from Laurent
+
+ drivers/iommu/ipmmu-vmsa.c |    5 -----
+ 1 file changed, 5 deletions(-)
+
+--- 0002/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2016-09-20 21:46:26.000000000 +0900
+@@ -766,11 +766,6 @@ static int ipmmu_probe(struct platform_d
+ 	int irq;
+ 	int ret;
  
-+		prr: chipid@fff00044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xfff00044 0 4>;
-+		};
-+
- 		sysc: system-controller@e6180000 {
- 			compatible = "renesas,r8a7795-sysc";
- 			reg = <0 0xe6180000 0 0x0400>;
--- 
-1.9.1
+-	if (!IS_ENABLED(CONFIG_OF) && !pdev->dev.platform_data) {
+-		dev_err(&pdev->dev, "missing platform data\n");
+-		return -EINVAL;
+-	}
+-
+ 	mmu = devm_kzalloc(&pdev->dev, sizeof(*mmu), GFP_KERNEL);
+ 	if (!mmu) {
+ 		dev_err(&pdev->dev, "cannot allocate device data\n");
