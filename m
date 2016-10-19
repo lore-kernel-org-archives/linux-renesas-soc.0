@@ -1,276 +1,495 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:47214 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938862AbcJGQZJ (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35069 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938531AbcJSOOG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Oct 2016 12:25:09 -0400
-Subject: [PATCH 03/10] PCI: rcar: Swap order of rcar_writel() reg/val
- arguments
-To: Simon Horman <horms@verge.net.au>
-From: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-pci@vger.kernel.org
-Date: Fri, 07 Oct 2016 11:25:04 -0500
-Message-ID: <20161007162503.23279.93059.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-In-Reply-To: <20161007162446.23279.48813.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20161007162446.23279.48813.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Wed, 19 Oct 2016 10:14:06 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 7/8] drm: rcar-du: Replace manual VGA DAC implementation with DRM bridge
+Date: Wed, 19 Oct 2016 17:07:55 +0300
+Message-Id: <1476886076-24178-8-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1476886076-24178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1476886076-24178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Swap order of rcar_writel() arguments to match the "dev, pos, val" order
-used by pci_write_config_word() and other drivers.  No functional change
-intended.
-
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/pci/host/pcie-rcar.c |   90 +++++++++++++++++++++---------------------
- 1 file changed, 45 insertions(+), 45 deletions(-)
+ drivers/gpu/drm/rcar-du/Kconfig           |   6 --
+ drivers/gpu/drm/rcar-du/Makefile          |   5 +-
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c |  52 ++++++++----
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.h |   2 -
+ drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c | 137 ------------------------------
+ drivers/gpu/drm/rcar-du/rcar_du_hdmienc.h |  35 --------
+ drivers/gpu/drm/rcar-du/rcar_du_vgacon.c  |  82 ------------------
+ drivers/gpu/drm/rcar-du/rcar_du_vgacon.h  |  23 -----
+ 8 files changed, 35 insertions(+), 307 deletions(-)
+ delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
+ delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_hdmienc.h
+ delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
+ delete mode 100644 drivers/gpu/drm/rcar-du/rcar_du_vgacon.h
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 145b54d..cd777e8 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -157,8 +157,8 @@ static unsigned long rcar_readl(struct rcar_pcie *rcar, unsigned long reg)
- 	return readl(rcar->base + reg);
- }
+diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
+index 4c2fd056dd6d..c222dc157494 100644
+--- a/drivers/gpu/drm/rcar-du/Kconfig
++++ b/drivers/gpu/drm/rcar-du/Kconfig
+@@ -11,12 +11,6 @@ config DRM_RCAR_DU
+ 	  Choose this option if you have an R-Car chipset.
+ 	  If M is selected the module will be called rcar-du-drm.
  
--static void rcar_writel(struct rcar_pcie *rcar, unsigned long val,
--			unsigned long reg)
-+static void rcar_writel(struct rcar_pcie *rcar, unsigned long reg,
-+			unsigned long val)
+-config DRM_RCAR_HDMI
+-	bool "R-Car DU HDMI Encoder Support"
+-	depends on DRM_RCAR_DU
+-	help
+-	  Enable support for external HDMI encoders.
+-
+ config DRM_RCAR_LVDS
+ 	bool "R-Car DU LVDS Encoder Support"
+ 	depends on DRM_RCAR_DU
+diff --git a/drivers/gpu/drm/rcar-du/Makefile b/drivers/gpu/drm/rcar-du/Makefile
+index d3b44651061a..a492e6858691 100644
+--- a/drivers/gpu/drm/rcar-du/Makefile
++++ b/drivers/gpu/drm/rcar-du/Makefile
+@@ -4,10 +4,7 @@ rcar-du-drm-y := rcar_du_crtc.o \
+ 		 rcar_du_group.o \
+ 		 rcar_du_kms.o \
+ 		 rcar_du_lvdscon.o \
+-		 rcar_du_plane.o \
+-		 rcar_du_vgacon.o
+-
+-rcar-du-drm-$(CONFIG_DRM_RCAR_HDMI)	+= rcar_du_hdmienc.o
++		 rcar_du_plane.o
+ 
+ rcar-du-drm-$(CONFIG_DRM_RCAR_LVDS)	+= rcar_du_lvdsenc.o
+ 
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+index ab8645c57e2d..61aaf746b2d6 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+@@ -19,11 +19,9 @@
+ 
+ #include "rcar_du_drv.h"
+ #include "rcar_du_encoder.h"
+-#include "rcar_du_hdmienc.h"
+ #include "rcar_du_kms.h"
+ #include "rcar_du_lvdscon.h"
+ #include "rcar_du_lvdsenc.h"
+-#include "rcar_du_vgacon.h"
+ 
+ /* -----------------------------------------------------------------------------
+  * Encoder
+@@ -56,8 +54,12 @@ static int rcar_du_encoder_atomic_check(struct drm_encoder *encoder,
+ 	struct drm_connector *connector = conn_state->connector;
+ 	struct drm_device *dev = encoder->dev;
+ 
+-	/* DAC encoders have currently no restriction on the mode. */
+-	if (encoder->encoder_type == DRM_MODE_ENCODER_DAC)
++	/*
++	 * Only panel-related encoder types require validation here, everything
++	 * else is handled by the bridge drivers.
++	 */
++	if (encoder->encoder_type != DRM_MODE_ENCODER_NONE &&
++	    encoder->encoder_type != DRM_MODE_ENCODER_LVDS)
+ 		return 0;
+ 
+ 	if (list_empty(&connector->modes)) {
+@@ -110,6 +112,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
  {
- 	writel(val, rcar->base + reg);
- }
-@@ -175,7 +175,7 @@ static void rcar_rmw32(struct rcar_pcie *rcar, int where, u32 mask, u32 data)
+ 	struct rcar_du_encoder *renc;
+ 	struct drm_encoder *encoder;
++	struct drm_bridge *bridge = NULL;
+ 	unsigned int encoder_type;
+ 	int ret;
  
- 	val &= ~(mask << shift);
- 	val |= data << shift;
--	rcar_writel(rcar, val, where & ~3);
-+	rcar_writel(rcar, where & ~3, val);
- }
+@@ -133,6 +136,15 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 		break;
+ 	}
  
- static u32 rcar_read_conf(struct rcar_pcie *rcar, int where)
-@@ -224,7 +224,7 @@ static int rcar_pcie_config_access(struct rcar_pcie *rcar,
- 			if (pci_is_root_bus(bus) && (reg == PCI_PRIMARY_BUS))
- 				rcar->root_bus_nr = *data & 0xff;
++	if (enc_node) {
++		/* Locate the DRM bridge from the encoder DT node. */
++		bridge = of_drm_find_bridge(enc_node);
++		if (!bridge) {
++			ret = -EPROBE_DEFER;
++			goto done;
++		}
++	}
++
+ 	switch (type) {
+ 	case RCAR_DU_ENCODER_VGA:
+ 		encoder_type = DRM_MODE_ENCODER_DAC;
+@@ -150,30 +162,34 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 		break;
+ 	}
  
--			rcar_writel(rcar, *data, PCICONF(index));
-+			rcar_writel(rcar, PCICONF(index), *data);
- 		}
+-	if (type == RCAR_DU_ENCODER_HDMI) {
+-		ret = rcar_du_hdmienc_init(rcdu, renc, enc_node);
+-		if (ret < 0)
+-			goto done;
+-	} else {
+-		ret = drm_encoder_init(rcdu->ddev, encoder, &encoder_funcs,
+-				       encoder_type, NULL);
+-		if (ret < 0)
+-			goto done;
++	ret = drm_encoder_init(rcdu->ddev, encoder, &encoder_funcs,
++			       encoder_type, NULL);
++	if (ret < 0)
++		goto done;
  
- 		return PCIBIOS_SUCCESSFUL;
-@@ -234,17 +234,17 @@ static int rcar_pcie_config_access(struct rcar_pcie *rcar,
- 		return PCIBIOS_DEVICE_NOT_FOUND;
+-		drm_encoder_helper_add(encoder, &encoder_helper_funcs);
++	drm_encoder_helper_add(encoder, &encoder_helper_funcs);
++
++	/* Link the bridge to the encoder. */
++	if (bridge) {
++		bridge->encoder = encoder;
++		encoder->bridge = bridge;
++
++		ret = drm_bridge_attach(rcdu->ddev, bridge);
++		if (ret) {
++			drm_encoder_cleanup(encoder);
++			return ret;
++		}
+ 	}
  
- 	/* Clear errors */
--	rcar_writel(rcar, rcar_readl(rcar, PCIEERRFR), PCIEERRFR);
-+	rcar_writel(rcar, PCIEERRFR, rcar_readl(rcar, PCIEERRFR));
++	/* Create the connector. */
+ 	switch (encoder_type) {
+ 	case DRM_MODE_ENCODER_LVDS:
+ 		ret = rcar_du_lvds_connector_init(rcdu, renc, con_node);
+ 		break;
  
- 	/* Set the PIO address */
--	rcar_writel(rcar, PCIE_CONF_BUS(bus->number) |
--		    PCIE_CONF_DEV(dev) | PCIE_CONF_FUNC(func) | reg, PCIECAR);
-+	rcar_writel(rcar, PCIECAR, PCIE_CONF_BUS(bus->number) |
-+		    PCIE_CONF_DEV(dev) | PCIE_CONF_FUNC(func) | reg);
+ 	case DRM_MODE_ENCODER_DAC:
+-		ret = rcar_du_vga_connector_init(rcdu, renc);
+-		break;
+-
+ 	case DRM_MODE_ENCODER_TMDS:
+-		/* connector managed by the bridge driver */
++		/* Connector managed by the bridge driver. */
+ 		break;
  
- 	/* Enable the configuration access */
- 	if (bus->parent->number == rcar->root_bus_nr)
--		rcar_writel(rcar, CONFIG_SEND_ENABLE | TYPE0, PCIECCTLR);
-+		rcar_writel(rcar, PCIECCTLR, CONFIG_SEND_ENABLE | TYPE0);
- 	else
--		rcar_writel(rcar, CONFIG_SEND_ENABLE | TYPE1, PCIECCTLR);
-+		rcar_writel(rcar, PCIECCTLR, CONFIG_SEND_ENABLE | TYPE1);
+ 	default:
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+index 7fc10a9c34c3..5609a0b8d7e6 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+@@ -17,7 +17,6 @@
+ #include <drm/drm_crtc.h>
  
- 	/* Check for errors */
- 	if (rcar_readl(rcar, PCIEERRFR) & UNSUPPORTED_REQUEST)
-@@ -258,10 +258,10 @@ static int rcar_pcie_config_access(struct rcar_pcie *rcar,
- 	if (access_type == RCAR_PCI_ACCESS_READ)
- 		*data = rcar_readl(rcar, PCIECDR);
- 	else
--		rcar_writel(rcar, *data, PCIECDR);
-+		rcar_writel(rcar, PCIECDR, *data);
+ struct rcar_du_device;
+-struct rcar_du_hdmienc;
+ struct rcar_du_lvdsenc;
  
- 	/* Disable the configuration access */
--	rcar_writel(rcar, 0, PCIECCTLR);
-+	rcar_writel(rcar, PCIECCTLR, 0);
+ enum rcar_du_encoder_type {
+@@ -31,7 +30,6 @@ enum rcar_du_encoder_type {
+ struct rcar_du_encoder {
+ 	struct drm_encoder base;
+ 	enum rcar_du_output output;
+-	struct rcar_du_hdmienc *hdmi;
+ 	struct rcar_du_lvdsenc *lvds;
+ };
  
- 	return PCIBIOS_SUCCESSFUL;
- }
-@@ -336,7 +336,7 @@ static void rcar_pcie_setup_window(int win, struct rcar_pcie *rcar,
- 	resource_size_t res_start;
- 	u32 mask;
- 
--	rcar_writel(rcar, 0x00000000, PCIEPTCTLR(win));
-+	rcar_writel(rcar, PCIEPTCTLR(win), 0x00000000);
- 
- 	/*
- 	 * The PAMR mask is calculated in units of 128Bytes, which
-@@ -344,22 +344,22 @@ static void rcar_pcie_setup_window(int win, struct rcar_pcie *rcar,
- 	 */
- 	size = resource_size(res);
- 	mask = (roundup_pow_of_two(size) / SZ_128) - 1;
--	rcar_writel(rcar, mask << 7, PCIEPAMR(win));
-+	rcar_writel(rcar, PCIEPAMR(win), mask << 7);
- 
- 	if (res->flags & IORESOURCE_IO)
- 		res_start = pci_pio_to_address(res->start);
- 	else
- 		res_start = res->start;
- 
--	rcar_writel(rcar, upper_32_bits(res_start), PCIEPAUR(win));
--	rcar_writel(rcar, lower_32_bits(res_start) & ~0x7F, PCIEPALR(win));
-+	rcar_writel(rcar, PCIEPAUR(win), upper_32_bits(res_start));
-+	rcar_writel(rcar, PCIEPALR(win), lower_32_bits(res_start) & ~0x7F);
- 
- 	/* First resource is for IO */
- 	mask = PAR_ENABLE;
- 	if (res->flags & IORESOURCE_IO)
- 		mask |= IO_SPACE;
- 
--	rcar_writel(rcar, mask, PCIEPTCTLR(win));
-+	rcar_writel(rcar, PCIEPTCTLR(win), mask);
- }
- 
- static int rcar_pcie_setup(struct list_head *resource, struct rcar_pcie *pci)
-@@ -419,7 +419,7 @@ static void rcar_pcie_force_speedup(struct rcar_pcie *rcar)
- 
- 	/* Clear SPCHGFIN, SPCHGSUC, and SPCHGFAIL */
- 	if (macsr & (SPCHGFIN | SPCHGSUC | SPCHGFAIL))
--		rcar_writel(rcar, macsr, MACSR);
-+		rcar_writel(rcar, MACSR, macsr);
- 
- 	/* Start link speed change */
- 	rcar_rmw32(rcar, MACCTLR, SPEED_CHANGE, SPEED_CHANGE);
-@@ -428,7 +428,7 @@ static void rcar_pcie_force_speedup(struct rcar_pcie *rcar)
- 		macsr = rcar_readl(rcar, MACSR);
- 		if (macsr & SPCHGFIN) {
- 			/* Clear the interrupt bits */
--			rcar_writel(rcar, macsr, MACSR);
-+			rcar_writel(rcar, MACSR, macsr);
- 
- 			if (macsr & SPCHGFAIL)
- 				dev_err(rcar->dev, "Speed change failed\n");
-@@ -511,15 +511,15 @@ static void phy_write_reg(struct rcar_pcie *rcar,
- 		((addr & 0xff) << ADR_POS);
- 
- 	/* Set write data */
--	rcar_writel(rcar, data, H1_PCIEPHYDOUTR);
--	rcar_writel(rcar, phyaddr, H1_PCIEPHYADRR);
-+	rcar_writel(rcar, H1_PCIEPHYDOUTR, data);
-+	rcar_writel(rcar, H1_PCIEPHYADRR, phyaddr);
- 
- 	/* Ignore errors as they will be dealt with if the data link is down */
- 	phy_wait_for_ack(rcar);
- 
- 	/* Clear command */
--	rcar_writel(rcar, 0, H1_PCIEPHYDOUTR);
--	rcar_writel(rcar, 0, H1_PCIEPHYADRR);
-+	rcar_writel(rcar, H1_PCIEPHYDOUTR, 0);
-+	rcar_writel(rcar, H1_PCIEPHYADRR, 0);
- 
- 	/* Ignore errors as they will be dealt with if the data link is down */
- 	phy_wait_for_ack(rcar);
-@@ -544,17 +544,17 @@ static int rcar_pcie_hw_init(struct rcar_pcie *rcar)
- 	int err;
- 
- 	/* Begin initialization */
--	rcar_writel(rcar, 0, PCIETCTLR);
-+	rcar_writel(rcar, PCIETCTLR, 0);
- 
- 	/* Set mode */
--	rcar_writel(rcar, 1, PCIEMSR);
-+	rcar_writel(rcar, PCIEMSR, 1);
- 
- 	/*
- 	 * Initial header for port config space is type 1, set the device
- 	 * class to match. Hardware takes care of propagating the IDSETR
- 	 * settings, so there is no need to bother with a quirk.
- 	 */
--	rcar_writel(rcar, PCI_CLASS_BRIDGE_PCI << 16, IDSETR1);
-+	rcar_writel(rcar, IDSETR1, PCI_CLASS_BRIDGE_PCI << 16);
- 
- 	/*
- 	 * Setup Secondary Bus Number & Subordinate Bus Number, even though
-@@ -585,10 +585,10 @@ static int rcar_pcie_hw_init(struct rcar_pcie *rcar)
- 
- 	/* Enable MSI */
- 	if (IS_ENABLED(CONFIG_PCI_MSI))
--		rcar_writel(rcar, 0x801f0000, PCIEMSITXR);
-+		rcar_writel(rcar, PCIEMSITXR, 0x801f0000);
- 
- 	/* Finish initialization - establish a PCI Express link */
--	rcar_writel(rcar, CFINIT, PCIETCTLR);
-+	rcar_writel(rcar, PCIETCTLR, CFINIT);
- 
- 	/* This will timeout if we don't have a link. */
- 	err = rcar_pcie_wait_for_dl(rcar);
-@@ -641,16 +641,16 @@ static int rcar_pcie_hw_init_gen2(struct rcar_pcie *rcar)
- 	 * These settings come from the R-Car Series, 2nd Generation User's
- 	 * Manual, section 50.3.1 (2) Initialization of the physical layer.
- 	 */
--	rcar_writel(rcar, 0x000f0030, GEN2_PCIEPHYADDR);
--	rcar_writel(rcar, 0x00381203, GEN2_PCIEPHYDATA);
--	rcar_writel(rcar, 0x00000001, GEN2_PCIEPHYCTRL);
--	rcar_writel(rcar, 0x00000006, GEN2_PCIEPHYCTRL);
-+	rcar_writel(rcar, GEN2_PCIEPHYADDR, 0x000f0030);
-+	rcar_writel(rcar, GEN2_PCIEPHYDATA, 0x00381203);
-+	rcar_writel(rcar, GEN2_PCIEPHYCTRL, 0x00000001);
-+	rcar_writel(rcar, GEN2_PCIEPHYCTRL, 0x00000006);
- 
--	rcar_writel(rcar, 0x000f0054, GEN2_PCIEPHYADDR);
-+	rcar_writel(rcar, GEN2_PCIEPHYADDR, 0x000f0054);
- 	/* The following value is for DC connection, no termination resistor */
--	rcar_writel(rcar, 0x13802007, GEN2_PCIEPHYDATA);
--	rcar_writel(rcar, 0x00000001, GEN2_PCIEPHYCTRL);
--	rcar_writel(rcar, 0x00000006, GEN2_PCIEPHYCTRL);
-+	rcar_writel(rcar, GEN2_PCIEPHYDATA, 0x13802007);
-+	rcar_writel(rcar, GEN2_PCIEPHYCTRL, 0x00000001);
-+	rcar_writel(rcar, GEN2_PCIEPHYCTRL, 0x00000006);
- 
- 	return rcar_pcie_hw_init(rcar);
- }
-@@ -708,7 +708,7 @@ static irqreturn_t rcar_pcie_msi_irq(int irq, void *data)
- 		unsigned int irq;
- 
- 		/* clear the interrupt */
--		rcar_writel(rcar, 1 << index, PCIEMSIFR);
-+		rcar_writel(rcar, PCIEMSIFR, 1 << index);
- 
- 		irq = irq_find_mapping(msi->domain, index);
- 		if (irq) {
-@@ -884,11 +884,11 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *rcar)
- 	msi->pages = __get_free_pages(GFP_KERNEL, 0);
- 	base = virt_to_phys((void *)msi->pages);
- 
--	rcar_writel(rcar, base | MSIFE, PCIEMSIALR);
--	rcar_writel(rcar, 0, PCIEMSIAUR);
-+	rcar_writel(rcar, PCIEMSIALR, base | MSIFE);
-+	rcar_writel(rcar, PCIEMSIAUR, 0);
- 
- 	/* enable all MSI interrupts */
--	rcar_writel(rcar, 0xffffffff, PCIEMSIIER);
-+	rcar_writel(rcar, PCIEMSIIER, 0xffffffff);
- 
- 	return 0;
- 
-@@ -995,13 +995,13 @@ static int rcar_pcie_inbound_ranges(struct rcar_pcie *rcar,
- 		 * Set up 64-bit inbound regions as the range parser doesn't
- 		 * distinguish between 32 and 64-bit types.
- 		 */
--		rcar_writel(rcar, lower_32_bits(pci_addr), PCIEPRAR(idx));
--		rcar_writel(rcar, lower_32_bits(cpu_addr), PCIELAR(idx));
--		rcar_writel(rcar, lower_32_bits(mask) | flags, PCIELAMR(idx));
-+		rcar_writel(rcar, PCIEPRAR(idx), lower_32_bits(pci_addr));
-+		rcar_writel(rcar, PCIELAR(idx), lower_32_bits(cpu_addr));
-+		rcar_writel(rcar, PCIELAMR(idx), lower_32_bits(mask) | flags);
- 
--		rcar_writel(rcar, upper_32_bits(pci_addr), PCIEPRAR(idx + 1));
--		rcar_writel(rcar, upper_32_bits(cpu_addr), PCIELAR(idx + 1));
--		rcar_writel(rcar, 0, PCIELAMR(idx + 1));
-+		rcar_writel(rcar, PCIEPRAR(idx + 1), upper_32_bits(pci_addr));
-+		rcar_writel(rcar, PCIELAR(idx + 1), upper_32_bits(cpu_addr));
-+		rcar_writel(rcar, PCIELAMR(idx + 1), 0);
- 
- 		pci_addr += size;
- 		cpu_addr += size;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c b/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
+deleted file mode 100644
+index f9515f53cc5b..000000000000
+--- a/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
++++ /dev/null
+@@ -1,137 +0,0 @@
+-/*
+- * R-Car Display Unit HDMI Encoder
+- *
+- * Copyright (C) 2014 Renesas Electronics Corporation
+- *
+- * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
+-
+-#include <linux/slab.h>
+-
+-#include <drm/drmP.h>
+-#include <drm/drm_crtc.h>
+-#include <drm/drm_crtc_helper.h>
+-
+-#include "rcar_du_drv.h"
+-#include "rcar_du_encoder.h"
+-#include "rcar_du_hdmienc.h"
+-#include "rcar_du_lvdsenc.h"
+-
+-struct rcar_du_hdmienc {
+-	struct rcar_du_encoder *renc;
+-	bool enabled;
+-};
+-
+-#define to_rcar_hdmienc(e)	(to_rcar_encoder(e)->hdmi)
+-
+-static void rcar_du_hdmienc_disable(struct drm_encoder *encoder)
+-{
+-	struct rcar_du_hdmienc *hdmienc = to_rcar_hdmienc(encoder);
+-
+-	if (hdmienc->renc->lvds)
+-		rcar_du_lvdsenc_enable(hdmienc->renc->lvds, encoder->crtc,
+-				       false);
+-
+-	hdmienc->enabled = false;
+-}
+-
+-static void rcar_du_hdmienc_enable(struct drm_encoder *encoder)
+-{
+-	struct rcar_du_hdmienc *hdmienc = to_rcar_hdmienc(encoder);
+-
+-	if (hdmienc->renc->lvds)
+-		rcar_du_lvdsenc_enable(hdmienc->renc->lvds, encoder->crtc,
+-				       true);
+-
+-	hdmienc->enabled = true;
+-}
+-
+-static int rcar_du_hdmienc_atomic_check(struct drm_encoder *encoder,
+-					struct drm_crtc_state *crtc_state,
+-					struct drm_connector_state *conn_state)
+-{
+-	struct rcar_du_hdmienc *hdmienc = to_rcar_hdmienc(encoder);
+-	struct drm_display_mode *adjusted_mode = &crtc_state->adjusted_mode;
+-
+-	if (hdmienc->renc->lvds)
+-		rcar_du_lvdsenc_atomic_check(hdmienc->renc->lvds,
+-					     adjusted_mode);
+-
+-	return 0;
+-}
+-
+-
+-static void rcar_du_hdmienc_mode_set(struct drm_encoder *encoder,
+-				     struct drm_display_mode *mode,
+-				     struct drm_display_mode *adjusted_mode)
+-{
+-	struct rcar_du_hdmienc *hdmienc = to_rcar_hdmienc(encoder);
+-
+-	rcar_du_crtc_route_output(encoder->crtc, hdmienc->renc->output);
+-}
+-
+-static const struct drm_encoder_helper_funcs encoder_helper_funcs = {
+-	.mode_set = rcar_du_hdmienc_mode_set,
+-	.disable = rcar_du_hdmienc_disable,
+-	.enable = rcar_du_hdmienc_enable,
+-	.atomic_check = rcar_du_hdmienc_atomic_check,
+-};
+-
+-static void rcar_du_hdmienc_cleanup(struct drm_encoder *encoder)
+-{
+-	struct rcar_du_hdmienc *hdmienc = to_rcar_hdmienc(encoder);
+-
+-	if (hdmienc->enabled)
+-		rcar_du_hdmienc_disable(encoder);
+-
+-	drm_encoder_cleanup(encoder);
+-}
+-
+-static const struct drm_encoder_funcs encoder_funcs = {
+-	.destroy = rcar_du_hdmienc_cleanup,
+-};
+-
+-int rcar_du_hdmienc_init(struct rcar_du_device *rcdu,
+-			 struct rcar_du_encoder *renc, struct device_node *np)
+-{
+-	struct drm_encoder *encoder = rcar_encoder_to_drm_encoder(renc);
+-	struct drm_bridge *bridge;
+-	struct rcar_du_hdmienc *hdmienc;
+-	int ret;
+-
+-	hdmienc = devm_kzalloc(rcdu->dev, sizeof(*hdmienc), GFP_KERNEL);
+-	if (hdmienc == NULL)
+-		return -ENOMEM;
+-
+-	/* Locate the DRM bridge from the HDMI encoder DT node. */
+-	bridge = of_drm_find_bridge(np);
+-	if (!bridge)
+-		return -EPROBE_DEFER;
+-
+-	ret = drm_encoder_init(rcdu->ddev, encoder, &encoder_funcs,
+-			       DRM_MODE_ENCODER_TMDS, NULL);
+-	if (ret < 0)
+-		return ret;
+-
+-	drm_encoder_helper_add(encoder, &encoder_helper_funcs);
+-
+-	renc->hdmi = hdmienc;
+-	hdmienc->renc = renc;
+-
+-	/* Link the bridge to the encoder. */
+-	bridge->encoder = encoder;
+-	encoder->bridge = bridge;
+-
+-	ret = drm_bridge_attach(rcdu->ddev, bridge);
+-	if (ret) {
+-		drm_encoder_cleanup(encoder);
+-		return ret;
+-	}
+-
+-	return 0;
+-}
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.h b/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.h
+deleted file mode 100644
+index 2ff0128ac8e1..000000000000
+--- a/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.h
++++ /dev/null
+@@ -1,35 +0,0 @@
+-/*
+- * R-Car Display Unit HDMI Encoder
+- *
+- * Copyright (C) 2014 Renesas Electronics Corporation
+- *
+- * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
+-
+-#ifndef __RCAR_DU_HDMIENC_H__
+-#define __RCAR_DU_HDMIENC_H__
+-
+-#include <linux/module.h>
+-
+-struct device_node;
+-struct rcar_du_device;
+-struct rcar_du_encoder;
+-
+-#if IS_ENABLED(CONFIG_DRM_RCAR_HDMI)
+-int rcar_du_hdmienc_init(struct rcar_du_device *rcdu,
+-			 struct rcar_du_encoder *renc, struct device_node *np);
+-#else
+-static inline int rcar_du_hdmienc_init(struct rcar_du_device *rcdu,
+-				       struct rcar_du_encoder *renc,
+-				       struct device_node *np)
+-{
+-	return -ENOSYS;
+-}
+-#endif
+-
+-#endif /* __RCAR_DU_HDMIENC_H__ */
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c b/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
+deleted file mode 100644
+index 63d0df7f8487..000000000000
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
++++ /dev/null
+@@ -1,82 +0,0 @@
+-/*
+- * rcar_du_vgacon.c  --  R-Car Display Unit VGA Connector
+- *
+- * Copyright (C) 2013-2014 Renesas Electronics Corporation
+- *
+- * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
+-
+-#include <drm/drmP.h>
+-#include <drm/drm_atomic_helper.h>
+-#include <drm/drm_crtc.h>
+-#include <drm/drm_crtc_helper.h>
+-
+-#include "rcar_du_drv.h"
+-#include "rcar_du_encoder.h"
+-#include "rcar_du_kms.h"
+-#include "rcar_du_vgacon.h"
+-
+-static int rcar_du_vga_connector_get_modes(struct drm_connector *connector)
+-{
+-	return drm_add_modes_noedid(connector, 1280, 768);
+-}
+-
+-static const struct drm_connector_helper_funcs connector_helper_funcs = {
+-	.get_modes = rcar_du_vga_connector_get_modes,
+-};
+-
+-static enum drm_connector_status
+-rcar_du_vga_connector_detect(struct drm_connector *connector, bool force)
+-{
+-	return connector_status_connected;
+-}
+-
+-static const struct drm_connector_funcs connector_funcs = {
+-	.dpms = drm_atomic_helper_connector_dpms,
+-	.reset = drm_atomic_helper_connector_reset,
+-	.detect = rcar_du_vga_connector_detect,
+-	.fill_modes = drm_helper_probe_single_connector_modes,
+-	.destroy = drm_connector_cleanup,
+-	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+-	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+-};
+-
+-int rcar_du_vga_connector_init(struct rcar_du_device *rcdu,
+-			       struct rcar_du_encoder *renc)
+-{
+-	struct drm_encoder *encoder = rcar_encoder_to_drm_encoder(renc);
+-	struct rcar_du_connector *rcon;
+-	struct drm_connector *connector;
+-	int ret;
+-
+-	rcon = devm_kzalloc(rcdu->dev, sizeof(*rcon), GFP_KERNEL);
+-	if (rcon == NULL)
+-		return -ENOMEM;
+-
+-	connector = &rcon->connector;
+-	connector->display_info.width_mm = 0;
+-	connector->display_info.height_mm = 0;
+-	connector->interlace_allowed = true;
+-
+-	ret = drm_connector_init(rcdu->ddev, connector, &connector_funcs,
+-				 DRM_MODE_CONNECTOR_VGA);
+-	if (ret < 0)
+-		return ret;
+-
+-	drm_connector_helper_add(connector, &connector_helper_funcs);
+-
+-	connector->dpms = DRM_MODE_DPMS_OFF;
+-	drm_object_property_set_value(&connector->base,
+-		rcdu->ddev->mode_config.dpms_property, DRM_MODE_DPMS_OFF);
+-
+-	ret = drm_mode_connector_attach_encoder(connector, encoder);
+-	if (ret < 0)
+-		return ret;
+-
+-	return 0;
+-}
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.h b/drivers/gpu/drm/rcar-du/rcar_du_vgacon.h
+deleted file mode 100644
+index 112f50316e01..000000000000
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.h
++++ /dev/null
+@@ -1,23 +0,0 @@
+-/*
+- * rcar_du_vgacon.h  --  R-Car Display Unit VGA Connector
+- *
+- * Copyright (C) 2013-2014 Renesas Electronics Corporation
+- *
+- * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
+-
+-#ifndef __RCAR_DU_VGACON_H__
+-#define __RCAR_DU_VGACON_H__
+-
+-struct rcar_du_device;
+-struct rcar_du_encoder;
+-
+-int rcar_du_vga_connector_init(struct rcar_du_device *rcdu,
+-			       struct rcar_du_encoder *renc);
+-
+-#endif /* __RCAR_DU_VGACON_H__ */
+-- 
+Regards,
+
+Laurent Pinchart
