@@ -1,357 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:23619 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751799AbcJMJhg (ORCPT
+Received: from mail-it0-f67.google.com ([209.85.214.67]:32864 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935184AbcJSONf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Oct 2016 05:37:36 -0400
-From: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be,
-        linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        chris.paterson2@renesas.com,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7796: Add DRIF support
-Date: Thu, 13 Oct 2016 10:29:14 +0100
-Message-Id: <1476350954-51002-1-git-send-email-ramesh.shanmugasundaram@bp.renesas.com>
+        Wed, 19 Oct 2016 10:13:35 -0400
+MIME-Version: 1.0
+In-Reply-To: <1764267.cmIUehPqzi@wasted.cogentembedded.com>
+References: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com> <1764267.cmIUehPqzi@wasted.cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 19 Oct 2016 10:17:26 +0200
+Message-ID: <CAMuHMdWizcwvThbOih=C=TqTMReCAhSkWsNNeYPp5c4k9ypkLw@mail.gmail.com>
+Subject: Re: [PATCH v3 11/11] ARM: dts: sk-rzg1m: add Ether support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds DRIF[0-3] pinmux support for r8a7796 SoC.
+On Wed, Oct 5, 2016 at 11:48 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Define the SK-RZG1M board dependent part of the Ether device node.
+> Enable DHCP and NFS root  for the kernel booting.
+>
+> Based on the original (and large) patch by Dmitry Shifrin
+> <dmitry.shifrin@cogentembedded.com>.
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
----
-Hi Geert, All,
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-   This patch is based on renesas-drivers repo (tag:renesas-drivers-2016-10-04-v4.8)
+Gr{oetje,eeting}s,
 
-Thanks,
-Ramesh
----
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 291 +++++++++++++++++++++++++++++++++++
- 1 file changed, 291 insertions(+)
+                        Geert
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 607adf7..f3984ef 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -1490,6 +1490,221 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	PINMUX_GPIO_GP_ALL(),
- };
- 
-+/* - DRIF0 --------------------------------------------------------------- */
-+static const unsigned int drif0_ctrl_a_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
-+};
-+static const unsigned int drif0_ctrl_a_mux[] = {
-+	RIF0_CLK_A_MARK, RIF0_SYNC_A_MARK,
-+};
-+static const unsigned int drif0_data0_a_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 10),
-+};
-+static const unsigned int drif0_data0_a_mux[] = {
-+	RIF0_D0_A_MARK,
-+};
-+static const unsigned int drif0_data1_a_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 7),
-+};
-+static const unsigned int drif0_data1_a_mux[] = {
-+	RIF0_D1_A_MARK,
-+};
-+static const unsigned int drif0_ctrl_b_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 4),
-+};
-+static const unsigned int drif0_ctrl_b_mux[] = {
-+	RIF0_CLK_B_MARK, RIF0_SYNC_B_MARK,
-+};
-+static const unsigned int drif0_data0_b_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(5, 1),
-+};
-+static const unsigned int drif0_data0_b_mux[] = {
-+	RIF0_D0_B_MARK,
-+};
-+static const unsigned int drif0_data1_b_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(5, 2),
-+};
-+static const unsigned int drif0_data1_b_mux[] = {
-+	RIF0_D1_B_MARK,
-+};
-+static const unsigned int drif0_ctrl_c_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 15),
-+};
-+static const unsigned int drif0_ctrl_c_mux[] = {
-+	RIF0_CLK_C_MARK, RIF0_SYNC_C_MARK,
-+};
-+static const unsigned int drif0_data0_c_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(5, 13),
-+};
-+static const unsigned int drif0_data0_c_mux[] = {
-+	RIF0_D0_C_MARK,
-+};
-+static const unsigned int drif0_data1_c_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(5, 14),
-+};
-+static const unsigned int drif0_data1_c_mux[] = {
-+	RIF0_D1_C_MARK,
-+};
-+/* - DRIF1 --------------------------------------------------------------- */
-+static const unsigned int drif1_ctrl_a_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 17), RCAR_GP_PIN(6, 18),
-+};
-+static const unsigned int drif1_ctrl_a_mux[] = {
-+	RIF1_CLK_A_MARK, RIF1_SYNC_A_MARK,
-+};
-+static const unsigned int drif1_data0_a_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 19),
-+};
-+static const unsigned int drif1_data0_a_mux[] = {
-+	RIF1_D0_A_MARK,
-+};
-+static const unsigned int drif1_data1_a_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 20),
-+};
-+static const unsigned int drif1_data1_a_mux[] = {
-+	RIF1_D1_A_MARK,
-+};
-+static const unsigned int drif1_ctrl_b_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(5, 9), RCAR_GP_PIN(5, 3),
-+};
-+static const unsigned int drif1_ctrl_b_mux[] = {
-+	RIF1_CLK_B_MARK, RIF1_SYNC_B_MARK,
-+};
-+static const unsigned int drif1_data0_b_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(5, 7),
-+};
-+static const unsigned int drif1_data0_b_mux[] = {
-+	RIF1_D0_B_MARK,
-+};
-+static const unsigned int drif1_data1_b_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(5, 8),
-+};
-+static const unsigned int drif1_data1_b_mux[] = {
-+	RIF1_D1_B_MARK,
-+};
-+static const unsigned int drif1_ctrl_c_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(5, 5), RCAR_GP_PIN(5, 11),
-+};
-+static const unsigned int drif1_ctrl_c_mux[] = {
-+	RIF1_CLK_C_MARK, RIF1_SYNC_C_MARK,
-+};
-+static const unsigned int drif1_data0_c_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(5, 6),
-+};
-+static const unsigned int drif1_data0_c_mux[] = {
-+	RIF1_D0_C_MARK,
-+};
-+static const unsigned int drif1_data1_c_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(5, 10),
-+};
-+static const unsigned int drif1_data1_c_mux[] = {
-+	RIF1_D1_C_MARK,
-+};
-+/* - DRIF2 --------------------------------------------------------------- */
-+static const unsigned int drif2_ctrl_a_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
-+};
-+static const unsigned int drif2_ctrl_a_mux[] = {
-+	RIF2_CLK_A_MARK, RIF2_SYNC_A_MARK,
-+};
-+static const unsigned int drif2_data0_a_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 7),
-+};
-+static const unsigned int drif2_data0_a_mux[] = {
-+	RIF2_D0_A_MARK,
-+};
-+static const unsigned int drif2_data1_a_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 10),
-+};
-+static const unsigned int drif2_data1_a_mux[] = {
-+	RIF2_D1_A_MARK,
-+};
-+static const unsigned int drif2_ctrl_b_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 26), RCAR_GP_PIN(6, 27),
-+};
-+static const unsigned int drif2_ctrl_b_mux[] = {
-+	RIF2_CLK_B_MARK, RIF2_SYNC_B_MARK,
-+};
-+static const unsigned int drif2_data0_b_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 30),
-+};
-+static const unsigned int drif2_data0_b_mux[] = {
-+	RIF2_D0_B_MARK,
-+};
-+static const unsigned int drif2_data1_b_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 31),
-+};
-+static const unsigned int drif2_data1_b_mux[] = {
-+	RIF2_D1_B_MARK,
-+};
-+/* - DRIF3 --------------------------------------------------------------- */
-+static const unsigned int drif3_ctrl_a_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 17), RCAR_GP_PIN(6, 18),
-+};
-+static const unsigned int drif3_ctrl_a_mux[] = {
-+	RIF3_CLK_A_MARK, RIF3_SYNC_A_MARK,
-+};
-+static const unsigned int drif3_data0_a_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 19),
-+};
-+static const unsigned int drif3_data0_a_mux[] = {
-+	RIF3_D0_A_MARK,
-+};
-+static const unsigned int drif3_data1_a_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 20),
-+};
-+static const unsigned int drif3_data1_a_mux[] = {
-+	RIF3_D1_A_MARK,
-+};
-+static const unsigned int drif3_ctrl_b_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25),
-+};
-+static const unsigned int drif3_ctrl_b_mux[] = {
-+	RIF3_CLK_B_MARK, RIF3_SYNC_B_MARK,
-+};
-+static const unsigned int drif3_data0_b_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 28),
-+};
-+static const unsigned int drif3_data0_b_mux[] = {
-+	RIF3_D0_B_MARK,
-+};
-+static const unsigned int drif3_data1_b_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 29),
-+};
-+static const unsigned int drif3_data1_b_mux[] = {
-+	RIF3_D1_B_MARK,
-+};
-+
- /* - HSCIF0 ----------------------------------------------------------------- */
- static const unsigned int hscif0_data_pins[] = {
- 	/* RX, TX */
-@@ -2148,6 +2363,36 @@ static const unsigned int sdhi3_ds_mux[] = {
- };
- 
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(drif0_ctrl_a),
-+	SH_PFC_PIN_GROUP(drif0_data0_a),
-+	SH_PFC_PIN_GROUP(drif0_data1_a),
-+	SH_PFC_PIN_GROUP(drif0_ctrl_b),
-+	SH_PFC_PIN_GROUP(drif0_data0_b),
-+	SH_PFC_PIN_GROUP(drif0_data1_b),
-+	SH_PFC_PIN_GROUP(drif0_ctrl_c),
-+	SH_PFC_PIN_GROUP(drif0_data0_c),
-+	SH_PFC_PIN_GROUP(drif0_data1_c),
-+	SH_PFC_PIN_GROUP(drif1_ctrl_a),
-+	SH_PFC_PIN_GROUP(drif1_data0_a),
-+	SH_PFC_PIN_GROUP(drif1_data1_a),
-+	SH_PFC_PIN_GROUP(drif1_ctrl_b),
-+	SH_PFC_PIN_GROUP(drif1_data0_b),
-+	SH_PFC_PIN_GROUP(drif1_data1_b),
-+	SH_PFC_PIN_GROUP(drif1_ctrl_c),
-+	SH_PFC_PIN_GROUP(drif1_data0_c),
-+	SH_PFC_PIN_GROUP(drif1_data1_c),
-+	SH_PFC_PIN_GROUP(drif2_ctrl_a),
-+	SH_PFC_PIN_GROUP(drif2_data0_a),
-+	SH_PFC_PIN_GROUP(drif2_data1_a),
-+	SH_PFC_PIN_GROUP(drif2_ctrl_b),
-+	SH_PFC_PIN_GROUP(drif2_data0_b),
-+	SH_PFC_PIN_GROUP(drif2_data1_b),
-+	SH_PFC_PIN_GROUP(drif3_ctrl_a),
-+	SH_PFC_PIN_GROUP(drif3_data0_a),
-+	SH_PFC_PIN_GROUP(drif3_data1_a),
-+	SH_PFC_PIN_GROUP(drif3_ctrl_b),
-+	SH_PFC_PIN_GROUP(drif3_data0_b),
-+	SH_PFC_PIN_GROUP(drif3_data1_b),
- 	SH_PFC_PIN_GROUP(hscif0_data),
- 	SH_PFC_PIN_GROUP(hscif0_clk),
- 	SH_PFC_PIN_GROUP(hscif0_ctrl),
-@@ -2237,6 +2482,48 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(sdhi3_ds),
- };
- 
-+static const char * const drif0_groups[] = {
-+	"drif0_ctrl_a",
-+	"drif0_data0_a",
-+	"drif0_data1_a",
-+	"drif0_ctrl_b",
-+	"drif0_data0_b",
-+	"drif0_data1_b",
-+	"drif0_ctrl_c",
-+	"drif0_data0_c",
-+	"drif0_data1_c",
-+};
-+
-+static const char * const drif1_groups[] = {
-+	"drif1_ctrl_a",
-+	"drif1_data0_a",
-+	"drif1_data1_a",
-+	"drif1_ctrl_b",
-+	"drif1_data0_b",
-+	"drif1_data1_b",
-+	"drif1_ctrl_c",
-+	"drif1_data0_c",
-+	"drif1_data1_c",
-+};
-+
-+static const char * const drif2_groups[] = {
-+	"drif2_ctrl_a",
-+	"drif2_data0_a",
-+	"drif2_data1_a",
-+	"drif2_ctrl_b",
-+	"drif2_data0_b",
-+	"drif2_data1_b",
-+};
-+
-+static const char * const drif3_groups[] = {
-+	"drif3_ctrl_a",
-+	"drif3_data0_a",
-+	"drif3_data1_a",
-+	"drif3_ctrl_b",
-+	"drif3_data0_b",
-+	"drif3_data1_b",
-+};
-+
- static const char * const hscif0_groups[] = {
- 	"hscif0_data",
- 	"hscif0_clk",
-@@ -2382,6 +2669,10 @@ static const char * const sdhi3_groups[] = {
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(drif0),
-+	SH_PFC_FUNCTION(drif1),
-+	SH_PFC_FUNCTION(drif2),
-+	SH_PFC_FUNCTION(drif3),
- 	SH_PFC_FUNCTION(hscif0),
- 	SH_PFC_FUNCTION(hscif1),
- 	SH_PFC_FUNCTION(hscif2),
--- 
-1.9.1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
