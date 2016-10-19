@@ -1,63 +1,56 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pu1apc01on0094.outbound.protection.outlook.com ([104.47.126.94]:32192
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751798AbcJGFL0 (ORCPT
+Received: from sauhun.de ([89.238.76.85]:53620 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S941180AbcJSQ6x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Oct 2016 01:11:26 -0400
-From: Jithin T Raj <jithin.t@tataelxsi.co.in>
-To: "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
-        "laurent.pinchart@ideasonboard.com"
-        <laurent.pinchart@ideasonboard.com>
-Subject: HDMI No signal for koelsch Board
-Date: Fri, 7 Oct 2016 05:11:21 +0000
-Message-ID: <SG2PR0401MB1296D6828F14FE3C6D844327D8C60@SG2PR0401MB1296.apcprd04.prod.outlook.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 19 Oct 2016 12:58:53 -0400
+Date: Wed, 19 Oct 2016 18:58:49 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [HACK] sh-pfc: hardcode TDSEL to maximum value for 1.8V
+Message-ID: <20161019165848.GB10690@katana>
+References: <20161019164406.24684-1-wsa@the-dreams.de>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="f2QGlHpHGjS2mn6Y"
+Content-Disposition: inline
+In-Reply-To: <20161019164406.24684-1-wsa@the-dreams.de>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-hi,
-=A0 =A0 I have a trouble in getting HDMI OUT in koelsche Board=A0=20
+
+--f2QGlHpHGjS2mn6Y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
+> SanDisk card still has issues, needs further debugging.
 
-I am using source tree v4.1.17-ltsi..also i have applied the below patch to=
- shmobile_defconfig
-
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobil=
-e_defconfig
-index 0bdeb4925be4..3aef019c0de7 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -140,7 +140,10 @@ CONFIG_VIDEO_RENESAS_VSP1=3Dy
-=A0CONFIG_VIDEO_ADV7180=3Dy
-=A0CONFIG_VIDEO_ML86V7667=3Dy
-=A0CONFIG_DRM=3Dy
-+CONFIG_DRM_I2C_ADV7511=3Dy
-=A0CONFIG_DRM_RCAR_DU=3Dy
-+CONFIG_DRM_RCAR_HDMI=3Dy
-+CONFIG_DRM_RCAR_LVDS=3Dy
-=A0CONFIG_FB_SH_MOBILE_LCDC=3Dy
-=A0CONFIG_FB_SH_MOBILE_MERAM=3Dy
-=A0# CONFIG_LCD_CLASS_DEVICE is not set
-
-and when I checked the pinmux it is like
-
-du_pins: du {
-=A0=A0 =A0=A0=A0 =A0renesas,groups =3D "du_rgb666", "du_sync", "du_disp", "=
-du_clk_out_0";
-=A0=A0 =A0=A0=A0 =A0renesas,function =3D "du";
-=A0=A0 =A0};
-
-do I need to change it to =A0 24 bit (du_rgb888)? my UBoot is gb653737..
+Works fine on H3, both slots.
 
 
-Best Regards
- Jithin T Raj
-=20
-   =
+--f2QGlHpHGjS2mn6Y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJYB6ZIAAoJEBQN5MwUoCm2+/oP/ig6tK3hq1z4QPSMY2uhA95H
+/4dfpfsZ/fpoEsUkUGC9nWSuofI5roxpaU95FLPQ3r0aoXEBU3uHoRDN2DDetgLu
+rXu9euYyOkX8d339fNoN7QGanitEeIgkiuF5vzRAKVR06gkAtnfSFp59KbuD6CXr
+mWNR75WB72uV6FjYO/RJBJ6HLNShZPVIUQwkdH6TDmT++UEfE5s1eAXROoMqfFBz
+YfaAGkwUHpIWiGBZkP8YxvFhMI04O+SocODiDfeLrbpuP1r7nmwiJHvmw04Ba04P
+sSCfng73wQtP38s6HePahX40f25kqW0+HBnAZRFPYRCeGsymWdXIWdpMSasUHwhc
+VD1knJwPx6/dXrxaGPLnFEy118sz7YFbD4E2mnOsFyq6f7ssG0osnZkmLK+zeEEB
+INAZSVKc+Ludl++t95xBjTyl+eJ912SmBTAJRXKngiWzBa+I6JvWt28wFTSZ/1je
+nyROi4evlZhswEFeGwd4Mrx7CvvaK6FbS8BwBsrwqp29dRTyTq7nMvEcHMW6KKI2
+e02SJAlkz+3wsE/yPfpuQLdNQVUDLjaeYlUztk4C94wh9oxf75GChQqdRU1OukVs
+5W7p7D1UkYE8bV4zV1W1TqO5JuRUcMEOhYVml7kuWKrWIvOACAQlSkLY20QB86Sx
+fIQCnDtp5mZoM0D3yBRX
+=1d59
+-----END PGP SIGNATURE-----
+
+--f2QGlHpHGjS2mn6Y--
