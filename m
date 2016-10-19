@@ -1,53 +1,34 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:36333 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933941AbcJXIJ6 (ORCPT
+Received: from mail-io0-f171.google.com ([209.85.223.171]:36729 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S943361AbcJSO7i (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Oct 2016 04:09:58 -0400
-Received: by mail-yw0-f196.google.com with SMTP id e5so7958198ywc.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Oct 2016 01:09:57 -0700 (PDT)
+        Wed, 19 Oct 2016 10:59:38 -0400
 MIME-Version: 1.0
-In-Reply-To: <2e2dedf4-192f-8657-10b1-24b426af5f00@arm.com>
-References: <20160921143905.36197-1-kevin.brodsky@arm.com> <e57565e8-bec9-0460-32d5-fb9f868cc4f8@arm.com>
- <613e4387-0ed5-ad58-7b74-a31b648f81e7@arm.com> <2e2dedf4-192f-8657-10b1-24b426af5f00@arm.com>
+In-Reply-To: <1476802943-5189-2-git-send-email-ulrich.hecht+renesas@gmail.com>
+References: <1476802943-5189-1-git-send-email-ulrich.hecht+renesas@gmail.com> <1476802943-5189-2-git-send-email-ulrich.hecht+renesas@gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Oct 2016 10:09:56 +0200
-Message-ID: <CAMuHMdVgccJ0A2d_-uU+8r0h-NBeet3eGkKq14eaFo34ydqtzQ@mail.gmail.com>
-Subject: Re: [PATCH v2] drivers: psci: PSCI checker module
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Kevin Brodsky <kevin.brodsky@arm.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-pm@lists.linux-foundation.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Date: Wed, 19 Oct 2016 09:36:08 +0200
+Message-ID: <CAMuHMdUUsMfoZOWvt=4aDEZYO=pJ=_VRnUFgeYGXdStAtr5kmg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] ARM: dts: r8a7793: Enable VIN0-VIN2
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Oct 20, 2016 at 4:21 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> On 20/10/16 14:38, Kevin Brodsky wrote:
->
-> [...]
->
->>
->> Thanks for the heads-up! I'll rebase on 4.9-rc1 and see what needs to be
->> done.
->>
->
-> Just be aware that v4.9-rc1 doesn't have commit 9cfb38a7ba5a
-> ("sched/fair: Fix sched domains NULL dereference in
-> select_idle_sibling()") which fixes the cpuhotplug issue you would
-> observe.
+On Tue, Oct 18, 2016 at 5:02 PM, Ulrich Hecht
+<ulrich.hecht+renesas@gmail.com> wrote:
+> Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
 
-Good to know. I saw that issue during resume from s2ram on r8a7795/Salvator-X
-once, but couldn't reproduce it.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
