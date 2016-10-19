@@ -1,15 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35152 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35110 "EHLO
         galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752030AbcJSO07 (ORCPT
+        with ESMTP id S942017AbcJSOYD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Oct 2016 10:26:59 -0400
+        Wed, 19 Oct 2016 10:24:03 -0400
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
+To: dri-devel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
 Subject: [PATCH] drm: rcar-du: Simplify and fix probe error handling
-Date: Wed, 19 Oct 2016 17:26:53 +0300
-Message-Id: <1476887213-24901-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Date: Wed, 19 Oct 2016 16:44:21 +0300
+Message-Id: <1476884661-21946-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
@@ -31,8 +31,6 @@ Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 30 ++++++++++--------------------
  drivers/gpu/drm/rcar-du/rcar_du_kms.c |  7 +++++++
  2 files changed, 17 insertions(+), 20 deletions(-)
-
-(Resent with the proper dri-devel mailing list address, sorry for the noise)
 
 I wonder whether it's safe to call drm_dev_unregister() without a previous
 call to drm_dev_register(), or if it only works at the time being by chance.
