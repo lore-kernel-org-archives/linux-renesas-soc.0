@@ -1,57 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44859 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932739AbcJTJSV (ORCPT
+Received: from mail-io0-f172.google.com ([209.85.223.172]:33687 "EHLO
+        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S942016AbcJSOkp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Oct 2016 05:18:21 -0400
-Date: Thu, 20 Oct 2016 10:42:30 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: r8a7779: Fix DU reg property
-Message-ID: <20161020084229.GE4612@verge.net.au>
-References: <1476829382-14785-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Wed, 19 Oct 2016 10:40:45 -0400
+Received: by mail-io0-f172.google.com with SMTP id q192so33876587iod.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Oct 2016 07:40:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <1476829382-14785-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1476829382-14785-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 19 Oct 2016 09:09:09 +0200
+Message-ID: <CAMuHMdVDnqzcThuiF+7ztaY9CTiAK-6YDq1+PhH1hrHFLoJAyQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: r8a7779: Fix DU reg property
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
-
-On Wed, Oct 19, 2016 at 01:23:02AM +0300, Laurent Pinchart wrote:
+On Wed, Oct 19, 2016 at 12:23 AM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
 > The system uses one address cell and one size cell, not two. Fix the DU
 > DT node.
-
-Do you want to handle this as a fix for v4.9? If so shall we add the
-following?
-
-Fixes: 1f08bbe8ac73 ("ARM: shmobile: r8a7779: Add DU node to device tree")
-
-Else I'll just queue it up for v4.10.
-
-> 
+>
 > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
->  arch/arm/boot/dts/r8a7779.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-> index b9bbcce69dfb..9d5b8fa3da8b 100644
-> --- a/arch/arm/boot/dts/r8a7779.dtsi
-> +++ b/arch/arm/boot/dts/r8a7779.dtsi
-> @@ -420,7 +420,7 @@
->  
->  	du: display@fff80000 {
->  		compatible = "renesas,du-r8a7779";
-> -		reg = <0 0xfff80000 0 0x40000>;
-> +		reg = <0xfff80000 0x40000>;
->  		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
->  		clocks = <&mstp1_clks R8A7779_CLK_DU>;
->  		power-domains = <&sysc R8A7779_PD_ALWAYS_ON>;
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
