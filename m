@@ -3,146 +3,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Arnd Bergmann <arnd@arndb.de>
 To: linux-arm-kernel@lists.infradead.org
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Dirk Behme <dirk.behme@de.bosch.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Magnus Damm <magnus.damm@gmail.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Yangbo Lu <yangbo.lu@nxp.com>, Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH/RFC 4/4] soc: renesas: Identify SoC and register with the SoC bus
-Date: Wed, 19 Oct 2016 12:59:01 +0200
-Message-ID: <7196231.EBkNfFgrcH@wuerfel>
-In-Reply-To: <CAMuHMdU=iTps+YfyeUyhPQkgSYHuG1hCLMFUTVOcPsHgbiPgSw@mail.gmail.com>
-References: <1475572167-29581-1-git-send-email-geert+renesas@glider.be> <1560471.cOCZ4VcGTh@wuerfel> <CAMuHMdU=iTps+YfyeUyhPQkgSYHuG1hCLMFUTVOcPsHgbiPgSw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] soc: renesas: Identify SoC and register with the SoC bus
+Date: Wed, 19 Oct 2016 12:32:10 +0200
+Message-ID: <10118183.uIvzIgbW3f@wuerfel>
+In-Reply-To: <CAMuHMdXb=t39+qt6te59G827c_Be-_kmuS-D1B-D5zD1CsuOAw@mail.gmail.com>
+References: <1475572167-29581-1-git-send-email-geert+renesas@glider.be> <6327808.hNezbnImkk@wuerfel> <CAMuHMdXb=t39+qt6te59G827c_Be-_kmuS-D1B-D5zD1CsuOAw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wednesday, October 19, 2016 10:02:57 AM CEST Geert Uytterhoeven wrote:
-> On Mon, Oct 10, 2016 at 4:23 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Tuesday, October 4, 2016 11:09:27 AM CEST Geert Uytterhoeven wrote:
-
-> >> +static const struct renesas_family fam_rza __initconst = {
-> >> +     .name   = "RZ/A",
-> >> +};
+On Wednesday, October 19, 2016 10:10:38 AM CEST Geert Uytterhoeven wrote:
+> Hi Arnd,
+> 
+> On Mon, Oct 10, 2016 at 4:28 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Tuesday, October 4, 2016 11:09:23 AM CEST Geert Uytterhoeven wrote:
+> >> Some Renesas SoCs may exist in different revisions, providing slightly
+> >> different functionalities (e.g. R-Car H3 ES1.x and ES2.0). This needs to
+> >> be catered for by drivers and/or platform code.  The recently proposed
+> >> soc_device_match() API seems like a good fit to handle this.
+> >>
+> >> This patch series implements the core infrastructure to provide SoC and
+> >> revision information through the SoC bus for Renesas ARM SoCs. It
+> >> consists of 4 patches:
+> >>   - Patch 1 avoids a crash when SoC revision information is needed and
+> >>     provided early,
+> >>   - Patch 2 (from Arnd) introduces the soc_device_match() API.
+> >>     I don't know if, when, and through which channel this patch is
+> >>     planned to go upstream,
+> >>   - Patch 3 fixes a bug in soc_device_match(), causing a crash when
+> >>     trying to match on an SoC attribute that is not provided (seen on
+> >>     EMEV2, RZ/A, and R-Car M1A, which lack revision information),
+> >>   - Patch 4 identifies Renesas SoCs and registers them with the SoC bus.
+> >>
+> >> Tested on (family, machine, soc_id, optional revision):
+> >>
+> >>     Emma Mobile EV2, EMEV2 KZM9D Board, emev2
+> >>     RZ/A, Genmai, r7s72100
+> >>     R-Mobile, APE6EVM, r8a73a4, ES1.0
+> >>     R-Mobile, armadillo 800 eva, r8a7740, ES2.0
+> >>     R-Car Gen1, bockw, r8a7778
+> >>     R-Car Gen1, marzen, r8a7779, ES1.0
+> >>     R-Car Gen2, Lager, r8a7790, ES1.0
+> >>     R-Car Gen2, Koelsch, r8a7791, ES1.0
+> >>     R-Car Gen2, Gose, r8a7793, ES1.0
+> >>     R-Car Gen2, Alt, r8a7794, ES1.0
+> >>     R-Car Gen3, Renesas Salvator-X board based on r8a7795, r8a7795, ES1.0
+> >>     R-Car Gen3, Renesas Salvator-X board based on r8a7796, r8a7796, ES1.0
+> >>     SH-Mobile, KZM-A9-GT, sh73a0, ES2.0
 > >
-> > I'm not sure about the relationship between this one and the others,
-> > maybe it should be treated in the same way as emev2 and left out from
-> > this driver?
-> 
-> While RZ/A doesn't have a version registers (AFAIK), it shares several
-> drivers with the other SoCs (SH/R-Mobile, R-Car).
-> Hence I'd like to keep it, so we can match for it in these drivers when
-> needed. It has e.g. a different variant of the serial port (SCIF), more
-> closely to the one on SH2 rather than SH4.
-
-I'd prefer seeing a separate soc driver for that one.
-
-> >> +static const struct renesas_family fam_rmobile __initconst = {
-> >> +     .name   = "R-Mobile",
-> >> +     .reg    = 0xe600101c,           /* CCCR (Common Chip Code Register) */
-> >> +};
-> >> +
-> >> +static const struct renesas_family fam_rcar_gen1 __initconst = {
-> >> +     .name   = "R-Car Gen1",
-> >> +     .reg    = 0xff000044,           /* PRR (Product Register) */
-> >> +};
-> >> +
-> >> +static const struct renesas_family fam_rcar_gen2 __initconst = {
-> >> +     .name   = "R-Car Gen2",
-> >> +     .reg    = 0xff000044,           /* PRR (Product Register) */
-> >> +};
-> >> +
-> >> +static const struct renesas_family fam_rcar_gen3 __initconst = {
-> >> +     .name   = "R-Car Gen3",
-> >> +     .reg    = 0xfff00044,           /* PRR (Product Register) */
-> >> +};
-> >> +
-> >> +static const struct renesas_family fam_rzg __initconst = {
-> >> +     .name   = "RZ/G",
-> >> +     .reg    = 0xff000044,           /* PRR (Product Register) */
-> >> +};
-> >> +
-> >> +static const struct renesas_family fam_shmobile __initconst = {
-> >> +     .name   = "SH-Mobile",
-> >> +     .reg    = 0xe600101c,           /* CCCR (Common Chip Code Register) */
-> >> +};
+> > As mentioned in the comment for the driver patch, I think this makes
+> > a lot of sense for the machines that have a revision register, in
+> > particular when the interpretation of that register is always done
+> > the same way, but I'm a bit skeptical about doing it in the same driver
+> > for machines that don't have the register.
 > >
-> > These seem to fall into two distinct categories, maybe there is a
-> > better way to group them. What device contain the two kinds of
-> > registers (PRR, CCCR)?
+> > Matching by a device rather than the SoC platform also has the advantage
+> > that there is no need to maintain a list of compatible numbers in the
+> > driver.
 > 
-> Actually there are three (notice the extra "f" on R-Car Gen3 ;-)
-
-I see. Hopefully this is just the same register block at a different
-location though.
-
-> Some SoCs have only CCCR, others have only PRR, some have both.
-> On some SoCs one of them can be accessed from the RealTime CPU
-> core (SH) only.
-> On some SoCs the register is not documented, but present.
-> If the PRR exists, it's a better choice, as it contains additional information
-> in the high order bits (representing the presence of each big (CA15/CA57),
-> little (CA7/CA53), and RT (CR7) CPU core). Currently we don't use that
-> information, though.
+> Currently we (usually) use:
+>   - SoC-specific compatible values, to handle known differences within the
+>     same family now, and handle future unknown differences,
+>   - Family-specific compatible values, which we define ourselves.
 > 
-> Grouping them in some other way means we would loose the family name,
-> which is exposed through soc_dev_attr->family.
-> The usefulness of family names is debatable though, as this is more an
-> issue of marketing business.
-
-How about having a table to look up the family name by the value
-of the PRR or CCCR then?
-
-> > Hardcoding the register address seems rather ugly here, so maybe
-> > there is a way to have two separate probe methods based on the
-> > surrounding register range, and then bind to that?
+> Usually drivers match on the latter.
 > 
-> There's no simple relation between CCCR/PRR and other register blocks.
-> I prefer not to add these to DT, as that would add one more worm to the
-> backwards compatibility can.
+> Every time a new SoC is introduced, we have to update lots of DT binding
+> docs, to add the new SoC-specific compatible values.
+>
+> Two-phase matching (driver code matches against "renesas,<foo>",
+> driver matches against SoC using soc_device_match()) would allow to
+> remove the burden of updating DT documentation all the time.
+> The drivers would need updates, though.
+> Another advantage would be that we can reuse .dtsi snippets for SoCs in
+> the same family, which we currently can't easily do due to the SoC-specific
+> compatible values.
 
-Hmm, I understand the concern about compatibility with existing DT files,
-but I also really hate to see hardcoded register addresses.
-
-Any reason against requiring the DT node for future chips though?
-How about this:
-
-The driver could report the hardcoded strings for the SoCs it already
-knows about (you have the table anyway) and not report the revision
-unless there is a regmap containing the CCCR or the PRR, in which
-case you use that. Future SoCs will provide the PRR (I assume
-CCCR is only used on the older ones) through a syscon regmap
-that we can use to find out the exact revision as well.
-
-The existing DT files can gain the syscon device so you can report
-the revision on those machines as well, unless you use an old DTB.
-
-> >> +static const struct of_device_id renesas_socs[] __initconst = {
-> >> +#ifdef CONFIG_ARCH_EMEV2
-> >> +     { .compatible = "renesas,emev2",        .data = &soc_emev2 },
-> >> +#endif
-> >> +#ifdef CONFIG_ARCH_R7S72100
-> >> +     { .compatible = "renesas,r7s72100",     .data = &soc_rz_a1h },
-> >> +#endif
-> >> +#ifdef CONFIG_ARCH_R8A73A4
-> >
-> > I think the #ifdefs here will result in warnings for unused symbols
-> > when the Kconfig symbols are disabled.
-> 
-> Originally I had __maybe_unused, but it didn't seem to be needed.
-> Do you know which compiler needs it, so I can check?
-
-Ah, I remember now: gcc doesn't warn for 'static const' variables
-unless we pass -Wunused-const, which should be enabled with "make W=1",
-and we might make that the default in the future (after fixing the
-handful of drivers currently relying on this).
-
-Why not just drop all the #ifdef here? There should be very little
-overhead in size, especially if all the data is __initconst.
+Interesting idea, but unrelated to my comment above, which was about
+the soc driver in particular, rather the drivers using it.
 
 	Arnd
