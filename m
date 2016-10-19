@@ -1,67 +1,74 @@
 Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 23/23] clk: renesas: rcar-gen2: Remove obsolete rcar_gen2_clocks_init()
-Date: Fri, 21 Oct 2016 15:17:37 +0200
-Message-Id: <1477055857-17936-24-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
-References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+In-Reply-To: <20160922144506.GK3541@8bytes.org>
+References: <20160920134355.25470.93701.sendpatchset@little-apple>
+ <20160920134446.25470.22322.sendpatchset@little-apple> <20160922144506.GK3541@8bytes.org>
+From: Magnus Damm <magnus.damm@gmail.com>
+Date: Thu, 20 Oct 2016 08:45:18 +0900
+Message-ID: <CANqRtoTcqF=vq6iGkpdF3DA++auOND0JFNOk6SctC077=mRA7A@mail.gmail.com>
+Subject: Re: [PATCH v5 05/07] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
+To: Joerg Roedel <joro@8bytes.org>
+Cc: iommu@lists.linux-foundation.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car Gen2 board code no longer calls rcar_gen2_clocks_init().
+Hi Joerg,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
----
-v4:
-  - Add Acked-by,
+On Thu, Sep 22, 2016 at 11:45 PM, Joerg Roedel <joro@8bytes.org> wrote:
+> On Tue, Sep 20, 2016 at 10:44:46PM +0900, Magnus Damm wrote:
+>> +#ifdef CONFIG_IOMMU_DMA
+>> +
+>> +static struct iommu_domain *ipmmu_domain_alloc_dma(unsigned type)
+>> +{
+>> +     struct iommu_domain *io_domain;
+>> +
+>> +     if (type != IOMMU_DOMAIN_DMA)
+>> +             return NULL;
+>> +
+>> +     io_domain = __ipmmu_domain_alloc(type);
+>> +     if (io_domain)
+>> +             iommu_get_dma_cookie(io_domain);
+>> +
+>> +     return io_domain;
+>> +}
+>> +
+>> +static void ipmmu_domain_free_dma(struct iommu_domain *io_domain)
+>> +{
+>> +     iommu_put_dma_cookie(io_domain);
+>> +     ipmmu_domain_free(io_domain);
+>> +}
+>
+>> [...]
+>
+>> +static const struct iommu_ops ipmmu_ops = {
+>> +     .domain_alloc = ipmmu_domain_alloc_dma,
+>> +     .domain_free = ipmmu_domain_free_dma,
+>
+> Okay, so when CONFIG_IOMMU_DMA is enabled, you only support allocation
+> of DMA domains, not UNMANAGED domains anymore. Is there a reason for
+> that?
 
-v3:
-  - Rebased,
+Just historical reason migrating from UNMANAGED only to DMA only.
 
-v2:
-  - No changes.
----
- drivers/clk/renesas/clk-rcar-gen2.c | 7 -------
- include/linux/clk/renesas.h         | 2 --
- 2 files changed, 9 deletions(-)
+> You can reduce the #ifdef'ed coded by supporting both types of domains
+> and call into allocation-subfunctions for DMA and UNMANAGED domains. The
+> #ifdef could then only let the dma-allocation function return NULL.
+>
+> This would be much more compatible to what other IOMMU drivers do and
+> will allow VFIO usage in the future.
 
-diff --git a/drivers/clk/renesas/clk-rcar-gen2.c b/drivers/clk/renesas/clk-rcar-gen2.c
-index 3291fd430ad4e215..f39519edc645ca87 100644
---- a/drivers/clk/renesas/clk-rcar-gen2.c
-+++ b/drivers/clk/renesas/clk-rcar-gen2.c
-@@ -445,10 +445,3 @@ static void __init rcar_gen2_cpg_clocks_init(struct device_node *np)
- }
- CLK_OF_DECLARE(rcar_gen2_cpg_clks, "renesas,rcar-gen2-cpg-clocks",
- 	       rcar_gen2_cpg_clocks_init);
--
--void __init rcar_gen2_clocks_init(u32 mode)
--{
--	cpg_mode = mode;
--
--	of_clk_init(NULL);
--}
-diff --git a/include/linux/clk/renesas.h b/include/linux/clk/renesas.h
-index 9e969941f3f62878..9ebf1f8243bb57af 100644
---- a/include/linux/clk/renesas.h
-+++ b/include/linux/clk/renesas.h
-@@ -20,8 +20,6 @@
- struct device_node;
- struct generic_pm_domain;
- 
--void rcar_gen2_clocks_init(u32 mode);
--
- void cpg_mstp_add_clk_domain(struct device_node *np);
- #ifdef CONFIG_CLK_RENESAS_CPG_MSTP
- int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev);
--- 
-1.9.1
+Thanks for your suggestion. I've now updated the code in V6, hopefully
+it would match your expectation better.
+
+Cheers,
+
+/ magnus
