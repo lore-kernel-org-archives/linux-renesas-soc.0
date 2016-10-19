@@ -7,68 +7,59 @@ Cc: laurent.pinchart+renesas@ideasonboard.com, geert+renesas@glider.be,
         linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
         Magnus Damm <magnus.damm@gmail.com>, robin.murphy@arm.com,
         m.szyprowski@samsung.com
-Date: Thu, 20 Oct 2016 08:36:13 +0900
-Message-Id: <20161019233613.10506.60821.sendpatchset@little-apple>
-In-Reply-To: <20161019233533.10506.16810.sendpatchset@little-apple>
-References: <20161019233533.10506.16810.sendpatchset@little-apple>
-Subject: [PATCH v6 04/07] iommu/ipmmu-vmsa: Break out domain allocation code
+Date: Thu, 20 Oct 2016 08:35:33 +0900
+Message-Id: <20161019233533.10506.16810.sendpatchset@little-apple>
+Subject: [PATCH v6 00/07] iommu/ipmmu-vmsa: IPMMU multi-arch update V6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+iommu/ipmmu-vmsa: IPMMU multi-arch update V6
 
-Break out the domain allocation code into a separate function.
-This is preparation for future code sharing.
+[PATCH v6 01/07] iommu/ipmmu-vmsa: Remove platform data handling
+[PATCH v6 02/07] iommu/ipmmu-vmsa: Rework interrupt code and use bitmap for context
+[PATCH v6 03/07] iommu/ipmmu-vmsa: Break out utlb parsing code
+[PATCH v6 04/07] iommu/ipmmu-vmsa: Break out domain allocation code
+[PATCH v6 05/07] iommu/ipmmu-vmsa: Add new IOMMU_DOMAIN_DMA ops
+[PATCH v6 06/07] iommu/ipmmu-vmsa: ARM and ARM64 archdata access
+[PATCH v6 07/07] iommu/ipmmu-vmsa: Drop LPAE Kconfig dependency
+
+These patches update the IPMMU driver with a couple of changes
+to support build on multiple architectures. In the process of
+doing so the interrupt code gets reworked and the foundation
+for supporting multiple contexts are added.
+
+Changes since V5:
+ - Rebased series on top of next-20161019
+ - Updated patch 5/7 to simplify domain allocation/free code - thanks Joerg!
+ - Added reviewed-by tag from Joerg for patch 1-4 and 6-7.
+ 
+Changes since V4:
+ - Updated patch 3/7 to work on top on the following commit in next-20160920:
+   b1e2afc iommu/ipmmu-vmsa: Fix wrong error handle of ipmmu_add_device
+ - Add Kconfig hunk to patch 5/7 to avoid undeclared ipmmu_ops if COMPILE_TEST
+ - Rebased patch 7/7 to fit on top of new Kconfig bits in 5/7
+
+Changes since V3:
+ - Updated patch 3/7 to fix hang-on-boot issue on 32-bit ARM - thanks Geert!
+ - Reworked group parameter handling in patch 3/7 and 5/7.
+ - Added patch 6/7 to fix build of the driver on s390/tile/um architectures
+
+Changes since V2:
+ - Got rid of patch 3 from the V2 however patch 1, 2 and 4 are kept.
+ - V3 patch 3, 4 and 5 come from
+   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
+ - Patch 5 has been reworked to include patch 3 of the V1 of this series 
+
+Changes since V1:
+ - Got rid of patch 2 and 3 from initial series
+ - Updated bitmap code locking and also used lighter bitop functions
+ - Updated the Kconfig bits to apply on top of ARCH_RENESAS
 
 Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Joerg Roedel <jroedel@suse.de>
 ---
 
- Changes since V5:
- - None
+ Built on top next-20161019:
 
- Changes since V4:
- - None
-
- Changes since V3:
- - None
-
- Changes since V2:
- - Included this new patch as-is from the following series:
-   [PATCH 00/04] iommu/ipmmu-vmsa: IPMMU CONFIG_IOMMU_DMA update
-
- drivers/iommu/ipmmu-vmsa.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
---- 0008/drivers/iommu/ipmmu-vmsa.c
-+++ work/drivers/iommu/ipmmu-vmsa.c	2016-09-20 21:56:59.220607110 +0900
-@@ -507,13 +507,10 @@ static irqreturn_t ipmmu_irq(int irq, vo
-  * IOMMU Operations
-  */
- 
--static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
-+static struct iommu_domain *__ipmmu_domain_alloc(unsigned type)
- {
- 	struct ipmmu_vmsa_domain *domain;
- 
--	if (type != IOMMU_DOMAIN_UNMANAGED)
--		return NULL;
--
- 	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
- 	if (!domain)
- 		return NULL;
-@@ -523,6 +520,14 @@ static struct iommu_domain *ipmmu_domain
- 	return &domain->io_domain;
- }
- 
-+static struct iommu_domain *ipmmu_domain_alloc(unsigned type)
-+{
-+	if (type != IOMMU_DOMAIN_UNMANAGED)
-+		return NULL;
-+
-+	return __ipmmu_domain_alloc(type);
-+}
-+
- static void ipmmu_domain_free(struct iommu_domain *io_domain)
- {
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+ drivers/iommu/Kconfig      |    2 
+ drivers/iommu/ipmmu-vmsa.c |  311 +++++++++++++++++++++++++++++++++++---------
+ 2 files changed, 254 insertions(+), 59 deletions(-)
