@@ -1,40 +1,150 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:42010 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753734AbcJDNUy (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35067 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936500AbcJSOOD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Oct 2016 09:20:54 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] ARM: shmobile: r8a7793/gose: Add board part number to DT bindings
-Date: Tue,  4 Oct 2016 15:20:48 +0200
-Message-Id: <1475587248-13670-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1475587248-13670-1-git-send-email-geert+renesas@glider.be>
-References: <1475587248-13670-1-git-send-email-geert+renesas@glider.be>
+        Wed, 19 Oct 2016 10:14:03 -0400
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: dri-devel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 5/8] drm: bridge: Set bridges' encoder type
+Date: Wed, 19 Oct 2016 17:07:53 +0300
+Message-Id: <1476886076-24178-6-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1476886076-24178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1476886076-24178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Initialize the new drm_bridge::encoder_type field to the right value for
+all external bridge drivers.
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index 6c3ffc2ebeaa346a..18a20a7689c52342 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -47,7 +47,7 @@ Boards:
-     compatible = "renesas,bockw", "renesas,r8a7778"
-   - Genmai (RTK772100BC00000BR)
-     compatible = "renesas,genmai", "renesas,r7s72100"
--  - Gose
-+  - Gose (RTP0RC7793SEB00010S)
-     compatible = "renesas,gose", "renesas,r8a7793"
-   - H3ULCB (RTP0RC7795SKB00010S)
-     compatible = "renesas,h3ulcb", "renesas,r8a7795";
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       | 1 +
+ drivers/gpu/drm/bridge/analogix-anx78xx.c          | 1 +
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 1 +
+ drivers/gpu/drm/bridge/dumb-vga-dac.c              | 1 +
+ drivers/gpu/drm/bridge/dw-hdmi.c                   | 2 ++
+ drivers/gpu/drm/bridge/nxp-ptn3460.c               | 2 ++
+ drivers/gpu/drm/bridge/parade-ps8622.c             | 2 ++
+ drivers/gpu/drm/bridge/sii902x.c                   | 2 ++
+ drivers/gpu/drm/bridge/tc358767.c                  | 2 ++
+ 9 files changed, 14 insertions(+)
+
+diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+index 8ed3906dd411..66bbd2073529 100644
+--- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
++++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+@@ -1030,6 +1030,7 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
+ 
+ 	adv7511->bridge.funcs = &adv7511_bridge_funcs;
+ 	adv7511->bridge.of_node = dev->of_node;
++	adv7511->bridge.encoder_type = DRM_MODE_ENCODER_TMDS;
+ 
+ 	ret = drm_bridge_add(&adv7511->bridge);
+ 	if (ret) {
+diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix-anx78xx.c
+index a2a82366a771..62be93f7ffaa 100644
+--- a/drivers/gpu/drm/bridge/analogix-anx78xx.c
++++ b/drivers/gpu/drm/bridge/analogix-anx78xx.c
+@@ -1437,6 +1437,7 @@ static int anx78xx_i2c_probe(struct i2c_client *client,
+ 	}
+ 
+ 	anx78xx->bridge.funcs = &anx78xx_bridge_funcs;
++	anx78xx->bridge.encoder_type = DRM_MODE_ENCODER_TMDS;
+ 
+ 	err = drm_bridge_add(&anx78xx->bridge);
+ 	if (err < 0) {
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index 6e0447f329a2..d7eda99e5b8a 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1231,6 +1231,7 @@ static int analogix_dp_create_bridge(struct drm_device *drm_dev,
+ 	bridge->driver_private = dp;
+ 	bridge->encoder = dp->encoder;
+ 	bridge->funcs = &analogix_dp_bridge_funcs;
++	bridge->encoder_type = DRM_MODE_ENCODER_TMDS;
+ 
+ 	ret = drm_bridge_attach(drm_dev, bridge);
+ 	if (ret) {
+diff --git a/drivers/gpu/drm/bridge/dumb-vga-dac.c b/drivers/gpu/drm/bridge/dumb-vga-dac.c
+index b33e3f829e4f..036c54c849e6 100644
+--- a/drivers/gpu/drm/bridge/dumb-vga-dac.c
++++ b/drivers/gpu/drm/bridge/dumb-vga-dac.c
+@@ -182,6 +182,7 @@ static int dumb_vga_probe(struct platform_device *pdev)
+ 
+ 	vga->bridge.funcs = &dumb_vga_bridge_funcs;
+ 	vga->bridge.of_node = pdev->dev.of_node;
++	vga->bridge.encoder_type = DRM_MODE_ENCODER_DAC;
+ 
+ 	ret = drm_bridge_add(&vga->bridge);
+ 	if (ret && !IS_ERR(vga->ddc))
+diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
+index ab7023e5dfde..f6485885c4ff 100644
+--- a/drivers/gpu/drm/bridge/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/dw-hdmi.c
+@@ -1609,6 +1609,8 @@ static int dw_hdmi_register(struct drm_device *drm, struct dw_hdmi *hdmi)
+ 	hdmi->bridge = bridge;
+ 	bridge->driver_private = hdmi;
+ 	bridge->funcs = &dw_hdmi_bridge_funcs;
++	bridge->encoder_type = DRM_MODE_ENCODER_TMDS;
++
+ 	ret = drm_bridge_attach(drm, bridge);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to initialize bridge with drm\n");
+diff --git a/drivers/gpu/drm/bridge/nxp-ptn3460.c b/drivers/gpu/drm/bridge/nxp-ptn3460.c
+index f1a99938e924..8be117cc024f 100644
+--- a/drivers/gpu/drm/bridge/nxp-ptn3460.c
++++ b/drivers/gpu/drm/bridge/nxp-ptn3460.c
+@@ -349,6 +349,8 @@ static int ptn3460_probe(struct i2c_client *client,
+ 
+ 	ptn_bridge->bridge.funcs = &ptn3460_bridge_funcs;
+ 	ptn_bridge->bridge.of_node = dev->of_node;
++	ptn_bridge->bridge.encoder_type = DRM_MODE_ENCODER_LVDS;
++
+ 	ret = drm_bridge_add(&ptn_bridge->bridge);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to add bridge\n");
+diff --git a/drivers/gpu/drm/bridge/parade-ps8622.c b/drivers/gpu/drm/bridge/parade-ps8622.c
+index 6f7c2f9860d2..37ac7211139a 100644
+--- a/drivers/gpu/drm/bridge/parade-ps8622.c
++++ b/drivers/gpu/drm/bridge/parade-ps8622.c
+@@ -615,6 +615,8 @@ static int ps8622_probe(struct i2c_client *client,
+ 
+ 	ps8622->bridge.funcs = &ps8622_bridge_funcs;
+ 	ps8622->bridge.of_node = dev->of_node;
++	ps8622->bridge.encoder_type = DRM_MODE_ENCODER_LVDS;
++
+ 	ret = drm_bridge_add(&ps8622->bridge);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to add bridge\n");
+diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
+index 9126d0306ab5..ad4663dea333 100644
+--- a/drivers/gpu/drm/bridge/sii902x.c
++++ b/drivers/gpu/drm/bridge/sii902x.c
+@@ -418,6 +418,8 @@ static int sii902x_probe(struct i2c_client *client,
+ 
+ 	sii902x->bridge.funcs = &sii902x_bridge_funcs;
+ 	sii902x->bridge.of_node = dev->of_node;
++	sii902x->bridge.encoder_type = DRM_MODE_ENCODER_TMDS;
++
+ 	ret = drm_bridge_add(&sii902x->bridge);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to add drm_bridge\n");
+diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
+index 44d476ea6d2e..934333cb647b 100644
+--- a/drivers/gpu/drm/bridge/tc358767.c
++++ b/drivers/gpu/drm/bridge/tc358767.c
+@@ -1353,6 +1353,8 @@ static int tc_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 
+ 	tc->bridge.funcs = &tc_bridge_funcs;
+ 	tc->bridge.of_node = dev->of_node;
++	tc->bridge.encoder_type = DRM_MODE_ENCODER_TMDS;
++
+ 	ret = drm_bridge_add(&tc->bridge);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to add drm_bridge: %d\n", ret);
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
