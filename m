@@ -1,132 +1,78 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-Date: Wed, 05 Oct 2016 14:35:01 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, dwmw2@infradead.org
-Cc: magnus.damm@gmail.com
-Subject: [PATCH v3 02/11] soc: renesas: rcar-sysc: add R8A7743 support
-Message-ID: <1691511.DcOcZO89eZ@wasted.cogentembedded.com>
-In-Reply-To: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com>
-References: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33513 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756079AbcJTJ47 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 20 Oct 2016 05:56:59 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: devicetree-owner@vger.kernel.org
+In-Reply-To: <20161020092459.GM4612@verge.net.au>
+References: <2056698.ncAHq8vRQ3@wasted.cogentembedded.com> <5be99d76-a082-129b-1aa6-b6f7402ae79b@cogentembedded.com>
+ <20161012080905.GD31183@verge.net.au> <cea44556-a578-fb54-11b8-f21f5b991caa@cogentembedded.com>
+ <20161020092459.GM4612@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Oct 2016 11:56:57 +0200
+Message-ID: <CAMuHMdW7fwhwKejne6p7E8FNjhSFCPui0T7qLqMCs4DZ4BaxZg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/11] Add R8A7743/SK-RZG1M board support
+To: Simon Horman <horms@verge.net.au>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for RZ/G1M (R8A7743) SoC power areas to the R-Car SYSC driver.
+Hi Simon,
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
+On Thu, Oct 20, 2016 at 11:24 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Wed, Oct 12, 2016 at 11:29:56AM +0300, Sergei Shtylyov wrote:
+>> On 10/12/2016 11:09 AM, Simon Horman wrote:
+>> >>>  Here's the set of 11 patches against Simon Horman's 'renesas.git' repo's
+>> >>>'renesas-devel-20161003-v4.8' tag. I'm adding the device tree support for
+>> >>>the R8A7743-based SK-RZG1M board. The SoC is close to R8A7791 and the board
+>> >>>seems identical to the R8A7791/Porter board. The device tree patches depend on
+>> >>>the R8A7743 CPG/MSSR driver series just posted in order to compile and work.
+>> >>
+>> >>   Forgot to mention that this version causes a regression with the sh_eth
+>> >>driver (well, actually with phylib): since IRQC now gets a deferred probing,
+>> >>PHY IRQ doesn't work anymore -- phylib falls back to polling.
+>> >
+>> >Is there a resolution to that problem?
+>>
+>>    Geert has posted his IRQC driver patch recently. Not sure if it was
+>> intended for merging but it solves the issue.
+>
+> Ok. I think it is ok to merge support for a new board even if there are
+> problems as its not regressing (can't break something that previously
+> didn't exist imho). But of course it would be best if things did work.
+>
+> Geert, do you have any comments on the relevance of your IRQC driver patch?
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+That patch is relevant, until the MDIO framework is fixed.
+It will start to matter more when migrating more (R-Car Gen2) SoCs to the new
+CPG/MSSR driver.
 
----
-Changes in version 2:
-- documented the R8A7743 SYSC device tree binding;
-- added "R-Car" to the patch description;
-- added Geert's tag.
+It would be good to give that patch some testing on more R-Car Gen2 boards
+with NFS root (difficult for me with remote access and network latencies).
 
- Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt |    7 +-
- drivers/soc/renesas/Makefile                                  |    1 
- drivers/soc/renesas/r8a7743-sysc.c                            |   32 ++++++++++
- drivers/soc/renesas/rcar-sysc.c                               |    3 
- drivers/soc/renesas/rcar-sysc.h                               |    1 
- 5 files changed, 41 insertions(+), 3 deletions(-)
+After that I can submit it to the irqchip maintainers, as I don't believe MDIO
+will be fixed soonish...
 
-Index: renesas/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-===================================================================
---- renesas.orig/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-+++ renesas/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
-@@ -1,12 +1,13 @@
--DT bindings for the Renesas R-Car System Controller
-+DT bindings for the Renesas R-Car (RZ/G) System Controller
- 
- == System Controller Node ==
- 
--The R-Car System Controller provides power management for the CPU cores and
--various coprocessors.
-+The R-Car (RZ/G) System Controller provides power management for the CPU cores
-+and various coprocessors.
- 
- Required properties:
-   - compatible: Must contain exactly one of the following:
-+      - "renesas,r8a7743-sysc" (RZ/G1M)
-       - "renesas,r8a7779-sysc" (R-Car H1)
-       - "renesas,r8a7790-sysc" (R-Car H2)
-       - "renesas,r8a7791-sysc" (R-Car M2-W)
-Index: renesas/drivers/soc/renesas/Makefile
-===================================================================
---- renesas.orig/drivers/soc/renesas/Makefile
-+++ renesas/drivers/soc/renesas/Makefile
-@@ -1,3 +1,4 @@
-+obj-$(CONFIG_ARCH_R8A7743)	+= rcar-sysc.o r8a7743-sysc.o
- obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
- obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
- obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
-Index: renesas/drivers/soc/renesas/r8a7743-sysc.c
-===================================================================
---- /dev/null
-+++ renesas/drivers/soc/renesas/r8a7743-sysc.c
-@@ -0,0 +1,32 @@
-+/*
-+ * Renesas RZ/G1M System Controller
-+ *
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation; of the License.
-+ */
-+
-+#include <linux/bug.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/power/r8a7743-sysc.h>
-+
-+#include "rcar-sysc.h"
-+
-+static const struct rcar_sysc_area r8a7743_areas[] __initconst = {
-+	{ "always-on",	    0, 0, R8A7743_PD_ALWAYS_ON,	-1, PD_ALWAYS_ON },
-+	{ "ca15-scu",	0x180, 0, R8A7743_PD_CA15_SCU,	R8A7743_PD_ALWAYS_ON,
-+	  PD_SCU },
-+	{ "ca15-cpu0",	 0x40, 0, R8A7743_PD_CA15_CPU0,	R8A7743_PD_CA15_SCU,
-+	  PD_CPU_NOCR },
-+	{ "ca15-cpu1",	 0x40, 1, R8A7743_PD_CA15_CPU1,	R8A7743_PD_CA15_SCU,
-+	  PD_CPU_NOCR },
-+	{ "sgx",	 0xc0, 0, R8A7743_PD_SGX,	R8A7743_PD_ALWAYS_ON },
-+};
-+
-+const struct rcar_sysc_info r8a7743_sysc_info __initconst = {
-+	.areas = r8a7743_areas,
-+	.num_areas = ARRAY_SIZE(r8a7743_areas),
-+};
-Index: renesas/drivers/soc/renesas/rcar-sysc.c
-===================================================================
---- renesas.orig/drivers/soc/renesas/rcar-sysc.c
-+++ renesas/drivers/soc/renesas/rcar-sysc.c
-@@ -275,6 +275,9 @@ finalize:
- }
- 
- static const struct of_device_id rcar_sysc_matches[] = {
-+#ifdef CONFIG_ARCH_R8A7743
-+	{ .compatible = "renesas,r8a7743-sysc", .data = &r8a7743_sysc_info },
-+#endif
- #ifdef CONFIG_ARCH_R8A7779
- 	{ .compatible = "renesas,r8a7779-sysc", .data = &r8a7779_sysc_info },
- #endif
-Index: renesas/drivers/soc/renesas/rcar-sysc.h
-===================================================================
---- renesas.orig/drivers/soc/renesas/rcar-sysc.h
-+++ renesas/drivers/soc/renesas/rcar-sysc.h
-@@ -50,6 +50,7 @@ struct rcar_sysc_info {
- 	unsigned int num_areas;
- };
- 
-+extern const struct rcar_sysc_info r8a7743_sysc_info;
- extern const struct rcar_sysc_info r8a7779_sysc_info;
- extern const struct rcar_sysc_info r8a7790_sysc_info;
- extern const struct rcar_sysc_info r8a7791_sysc_info;
+Thanks for testing ;-)
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
