@@ -1,13 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:60888 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757846AbcJTXMx (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:12782 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753865AbcJTTq0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Oct 2016 19:12:53 -0400
-Date: Fri, 21 Oct 2016 01:12:46 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Thu, 20 Oct 2016 15:46:26 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -15,70 +14,32 @@ Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v3 2/3] mmc: tmio-mmc: add support for 32bit data port
-Message-ID: <20161020231245.GB2199@katana>
+Subject: RE: [PATCH v3 2/3] mmc: tmio-mmc: add support for 32bit data port
+Date: Thu, 20 Oct 2016 19:46:22 +0000
+Message-ID: <SG2PR06MB1165B756B67D1D101E91A7B38AD50@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20160912141507.6837-1-chris.brandt@renesas.com>
  <20160912141507.6837-3-chris.brandt@renesas.com>
  <20161020132852.GB4177@katana>
- <SG2PR06MB11652EB5B1A40583636F8FB28AD50@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="VrqPEDrXMn8OVzN4"
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB11652EB5B1A40583636F8FB28AD50@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---VrqPEDrXMn8OVzN4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-
-> However, for version 3.0 that will be posted shortly, it will start to in=
-clude the SDHI section.
-
-Nice. Could you ping me when this comes out?
-
-> > * Does it have a version register (CTL_VERSION)? If so, what does it
-> >   say?
->=20
-> 0x820B
-
-Okay, this is a version I have not seen before.
-
-> > * Does it have SD_BUF0 width setting (named either EXT_ACC or HOST_MODE,
-> >   so far always comes after the version register)? If so, what is its
-> >   layout?
->=20
-> There is a "EXT_SWAP" register. It is the only thing after VERSION.
->    VERSION =3D 0xE804E0E2
->   EXT_SWAP =3D 0xE804E0F0
-
-This SWAP register exists on R-Car as well. Out of curiosity, what is the
-register value of 0xE804E0E4?
-
-
---VrqPEDrXMn8OVzN4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJYCU9tAAoJEBQN5MwUoCm20k8P/023NSqqQ5DFGeyXfO66XixY
-/G4XdfqDpGiqRbWmSWdTGg3+ddOwDvssOP2EFlHDbDUfl5bwNiBsKlbHqyvQSJ30
-1ojNIDKk/k7tLN7YdtcTr6V1CqBBhKGiNHi7N3HUJfJYAkXfs6iCmLGh8z/mCKyF
-dM+089oW/0knzcvz/jwoleS1PXmI5i+qRECVKyo/6LKJmgzxlT/cMs5/IzPqpxvh
-k7TeW46JvI3Q3OrxR/S6hUs90n+6/C3bMvNiKWQCQ2AP188gACrEuTxhtlvVpqsh
-TO0nOFOz9h5HIVvPi2+zWo0RyEz+aZbbF1mmkAOCfjawsPvAW3ImKAP8jzooaw4C
-IyIhwBFHlH1YDoOqWtHqTSBGbKVjX9SzzyREMhJb4BqEKaeLnW9AEFY7Q0XexF0L
-F3MCg5MqHIHVvatNwx6kkXWJlLdotLajZb6C2ExggDVD+x4GSqcjHLTx8+4ucCUP
-go0AChM9dsldMSfu4gKZdb5Xf1tmeOujlwrRB8TC5flsVBKhRKV2qBY56FiaicJI
-6/D9+cmzZQXik/LIWUBaLpjTexKgM4+cdgF5UKmFqGllIRB/BoACR6DRrS/ny/j0
-/wnaQOzMrCBkVkVmPraI9kmWTHQleJhwE5bz8WSZ8f1wFW+uGTOnXmtYxy2FcVAm
-RObc8Ofb32RautAlRWqj
-=bZkT
------END PGP SIGNATURE-----
-
---VrqPEDrXMn8OVzN4--
+SGVsbG8gV29sZnJhbSwNCg0KPiA+ID4gKwkJLyogaWYgY291bnQgd2FzIG11bHRpcGxlIG9mIDQg
+Ki8NCj4gPiA+ICsJCWlmICghKGNvdW50ICYgMHgzKSkNCj4gPiA+ICsJCQlyZXR1cm47DQo+ID4g
+PiArCQlidWY4ID0gKHU4ICopKGJ1ZiArIChjb3VudCA+PiAyKSk7DQo+ID4gPiArCQljb3VudCAl
+PSA0Ow0KPiA+DQo+ID4gVG8gc2tpcCB0aGUgc2FtZSBvcGVyYXRpb24gZG9uZSBvbiAnY291bnQn
+IHR3aWNlLCBtYXliZT8NCj4gPg0KPiA+IAkJYnVmOCA9ICh1OCAqKShidWYgKyAoY291bnQgPj4g
+MikpOw0KPiA+IAkJY291bnQgJj0gMzsNCj4gPg0KPiA+IAkJaWYgKCFjb3VudCkNCj4gPiAJCQly
+ZXR1cm47DQo+IA0KPiANCj4gVGhhdCBsb29rcyBsaWtlIGl0IHNob3VsZCB3b3JrLg0KPiBJIGNh
+biB0cnkgaXQgb3V0IGFuZCBzZWUgaWYgdGhlcmUgaXMgc29tZXRoaW5nIHdlIGFyZSBtaXNzaW5n
+Lg0KDQpTZWVtcyB0byB3b3JrIGZpbmUuIEFsdGhvdWdoIEkgYWRtaXQgdGhhdCBiZWNhdXNlIHRo
+ZSBkcml2ZXIgaXMgbW9zdGx5IGJlaW5nIHVzZWQgYXMgYSBibG9jayBkZXZpY2UgKFNEIGNhcmQp
+LCBhbGwgdGhlIGRhdGEgcmVxdWVzdHMgYXJlIGFuIGV2ZW4gbXVsdGlwbGUgb2YgNCAoSSBwdXQg
+YSBwcmludGsgYWZ0ZXIgImlmICghY291bnQpIHJldHVybjsiICkuIE5vdCBzdXJlIGlmIHRoYXQg
+d2lsbCBiZSB0aGUgY2FzZSB3aGVuIEkgdGVzdCBTRElPIGRldmljZXMsIGJ1dCBJJ2xsIGZpbmQg
+b3V0IG9uY2UgSSBzdGFydCBwb3J0aW5nIFNESU8gZGV2aWNlIGRyaXZlcnMgdG8gNC45Ky4NCg0K
+DQpJJ2xsIHN1Ym1pdCBhIHY0IG9mIHRoaXMgcGF0Y2ggc2VyaWVzIHRvbW9ycm93Lg0KDQpUaGFu
+ayB5b3UuDQoNCkNocmlzDQoNCg==
