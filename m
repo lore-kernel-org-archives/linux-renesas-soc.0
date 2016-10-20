@@ -1,34 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:33541 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937573AbcJ0UmE (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:44960 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932739AbcJTJTg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Oct 2016 16:42:04 -0400
-Received: by mail-lf0-f50.google.com with SMTP id x79so41765711lff.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Oct 2016 13:42:03 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
-Subject: [PATCH 0/2] Renesas R8A7745 CPG/MSSR clock support
-Date: Thu, 27 Oct 2016 23:41:55 +0300
-Message-ID: <13079532.zQoaX56ouR@wasted.cogentembedded.com>
+        Thu, 20 Oct 2016 05:19:36 -0400
+Date: Thu, 20 Oct 2016 11:19:30 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 09/11] arm64: dts: r8a7796: salvator-x: enable SDHI0 &
+ 3
+Message-ID: <20161020091930.GC28107@verge.net.au>
+References: <1473764228-24768-1-git-send-email-horms+renesas@verge.net.au>
+ <1473764228-24768-10-git-send-email-horms+renesas@verge.net.au>
+ <20160916103218.GM1411@katana>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160916103218.GM1411@katana>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+On Fri, Sep 16, 2016 at 12:32:18PM +0200, Wolfram Sang wrote:
+> On Tue, Sep 13, 2016 at 12:57:06PM +0200, Simon Horman wrote:
+> > Enable the exposed SD card slots in the DT of the r8a7796/salvator-x.
+> > 
+> > Based on work for the r8a7795/salvator-x by Ai Kyuse.
+> > 
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-   Here's the set of 2 patches against the 'clk-next' branch of CLK group's
-'linux.git' repo plus the R8A7743 CPG/MSSR patches just re-posted. They also
-depend on the common R-Car Gen2 support patch. As the DT patches in the
-R8A7745/SK-RZG1E board support series depend on the patch #1 of this series,
-it might make sense to merge this patch to the 'renesas.git' repo as well...
-
-[1/2] ARM: shmobile: r8a7745: add CPG clock index macros
-[2/2] clk: renesas: cpg-mssr: add R8A7745 support
-
-MBR, Sergei
+Thanks, I have queued this up.
