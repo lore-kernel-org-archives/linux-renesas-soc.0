@@ -1,51 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from smtp-4.sys.kth.se ([130.237.48.193]:57215 "EHLO
-        smtp-4.sys.kth.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933940AbcIOMS5 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:44773 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933229AbcJTJQV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Sep 2016 08:18:57 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: linux-media@vger.kernel.org, hans.verkuil@cisco.com
-Cc: linux-renesas-soc@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] [media] MAINTAINERS: Add entry for the Renesas VIN driver
-Date: Thu, 15 Sep 2016 14:18:36 +0200
-Message-Id: <20160915121836.23637-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 20 Oct 2016 05:16:21 -0400
+Date: Thu, 20 Oct 2016 10:49:11 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
+        hans.verkuil@cisco.com, niklas.soderlund@ragnatech.se,
+        geert@linux-m68k.org, sergei.shtylyov@cogentembedded.com
+Subject: Re: [PATCH v2 0/3] r8a7793 Gose video input support
+Message-ID: <20161020084911.GH4612@verge.net.au>
+References: <1476802943-5189-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1476802943-5189-1-git-send-email-ulrich.hecht+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The driver is maintained and supported, document it as such.
+Hi Ulrich,
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+On Tue, Oct 18, 2016 at 05:02:20PM +0200, Ulrich Hecht wrote:
+> Hi!
+> 
+> This is a by-the-datasheet implementation of analog and digital video input
+> on the Gose board.
+> 
+> I have tried to address all concerns raised by reviewers, with the exception
+> of the composite input patch, which has been left as is for now.
+> 
+> CU
+> Uli
+> 
+> 
+> Changes since v1:
+> - r8a7793.dtsi: added VIN2
+> - modeled HDMI decoder input/output and connector
+> - added "renesas,rcar-gen2-vin" compat strings
+> - removed unnecessary "remote" node and aliases
+> - set ADV7612 interrupt to GP4_2
+> 
+> 
+> Ulrich Hecht (3):
+>   ARM: dts: r8a7793: Enable VIN0-VIN2
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a12cd60..a4b5283 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7523,6 +7523,15 @@ F:	Documentation/devicetree/bindings/media/renesas,fcp.txt
- F:	drivers/media/platform/rcar-fcp.c
- F:	include/media/rcar-fcp.h
- 
-+MEDIA DRIVERS FOR RENESAS - VIN
-+M:	Niklas Söderlund <niklas.soderlund@ragnatech.se>
-+L:	linux-media@vger.kernel.org
-+L:	linux-renesas-soc@vger.kernel.org
-+T:	git git://linuxtv.org/media_tree.git
-+S:	Supported
-+F:	Documentation/devicetree/bindings/media/rcar_vin.txt
-+F:	drivers/media/platform/rcar-vin/
-+
- MEDIA DRIVERS FOR RENESAS - VSP1
- M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
- L:	linux-media@vger.kernel.org
--- 
-2.9.3
+I have queued up the above patch with Laurent and Geert's tags.
+
+>   ARM: dts: gose: add HDMI input
+>   ARM: dts: gose: add composite video input
+
+Please address the review of the above two patches and repost.
+
+Thanks!
+
+> 
+>  arch/arm/boot/dts/r8a7793-gose.dts | 100 +++++++++++++++++++++++++++++++++++++
+>  arch/arm/boot/dts/r8a7793.dtsi     |  27 ++++++++++
+>  2 files changed, 127 insertions(+)
+> 
+> -- 
+> 2.7.4
+> 
