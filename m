@@ -1,43 +1,108 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Magnus Damm <magnus.damm@gmail.com>
-To: devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>
-Cc: mark.rutland@arm.com, laurent.pinchart+renesas@ideasonboard.com,
-        geert+renesas@glider.be, joro@8bytes.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org, robh+dt@kernel.org,
-        horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>
-Date: Thu, 27 Oct 2016 19:45:10 +0900
-Message-Id: <20161027104510.27104.53523.sendpatchset@little-apple>
-Subject: [PATCH v2] iommu/ipmmu-vmsa: Add r8a7796 DT binding
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] clk: renesas: cpg-mssr: add R8A7743 support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <9246696.7P1aOyyQt4@wasted.cogentembedded.com>
+ <2357731.SxJodxn1PJ@wasted.cogentembedded.com>
+ <CAMuHMdW_XSCfy+Kv6uz1pX7q-XFPp=nkaXSehbZJYAeOt6Rf4w@mail.gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <e8461bb6-6136-f589-4475-37c690ca4704@cogentembedded.com>
+Date: Thu, 20 Oct 2016 22:47:23 +0300
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdW_XSCfy+Kv6uz1pX7q-XFPp=nkaXSehbZJYAeOt6Rf4w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hello.
 
-Update the IPMMU DT binding documentation to include the r8a7796 compat
-string for R-Car M3-W.
+On 10/19/2016 12:06 PM, Geert Uytterhoeven wrote:
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
+>> Add RZ/G1M (R8A7743) Clock  Pulse Generator / Module Standby and Software
+>> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
+>> (and RZ/G) code.
+>>
+>> Based on the proof-of-concept R8A7791 CPG/MSSR patch by Geert Uytterhoeven
+>> <geert+renesas@glider.be>.
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> Thanks a lot!
+>
+> With the few minor nits below fixed:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+>> --- /dev/null
+>> +++ renesas/drivers/clk/renesas/r8a7743-cpg-mssr.c
+>
+>> +static const struct mssr_mod_clk r8a7743_mod_clks[] __initconst = {
+>
+>> +       DEF_MOD("mmcif0",         315,  R8A7743_CLK_MMC0),
+>
+> "mmc0"
 
- Changes since V1:
- - Added Acked-by from Laurent - thanks!
+    There's also "mmc0" CPG clock, so I thought I'd rename this one.
 
- Now broken out, however earlier V1 posted as part of:
- [PATCH 0/3] iommu/ipmmu-vmsa: Initial r8a7796 support
+>> +       DEF_MOD("audio-dmac0",    502,  R8A7743_CLK_HP),
+>> +       DEF_MOD("audio-dmac1",    501,  R8A7743_CLK_HP),
+>
+> Please sort by numerical clock ID.
 
- Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt |    1 +
- 1 file changed, 1 insertion(+)
+    Oops, will do.
 
---- 0001/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt
-+++ work/Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt	2016-06-06 11:27:37.560607110 +0900
-@@ -16,6 +16,7 @@ Required Properties:
-     - "renesas,ipmmu-r8a7793" for the R8A7793 (R-Car M2-N) IPMMU.
-     - "renesas,ipmmu-r8a7794" for the R8A7794 (R-Car E2) IPMMU.
-     - "renesas,ipmmu-r8a7795" for the R8A7795 (R-Car H3) IPMMU.
-+    - "renesas,ipmmu-r8a7796" for the R8A7796 (R-Car M3-W) IPMMU.
-     - "renesas,ipmmu-vmsa" for generic R-Car Gen2 VMSA-compatible IPMMU.
- 
-   - reg: Base address and size of the IPMMU registers.
+>> +       DEF_MOD("i2c6",           926,  R8A7743_CLK_CP),
+>
+> "iicdvfs"
+
+    Not sure how I missed that...
+
+>> +static const unsigned int r8a7743_crit_mod_clks[] __initconst = {
+>> +       MOD_CLK_ID(408),        /* INTC-AP (GIC) */
+>
+> INTC-SYS
+
+    OK.
+
+[...]
+>> +static const struct rcar_gen2_cpg_pll_config cpg_pll_configs[8] __initconst = {
+>> +       /* EXTAL div    PLL1 mult       PLL3 mult */
+>> +       { 1,            208,            106,    },
+>> +       { 1,            208,            88,     },
+>> +       { 1,            156,            80,     },
+>> +       { 1,            156,            66,     },
+>> +       { 2,            240,            122,    },
+>> +       { 2,            240,            102,    },
+>> +       { 2,            208,            106,    },
+>> +       { 2,            208,            88,     },
+>> +};
+>> +
+>> +static int __init r8a7743_cpg_mssr_init(struct device *dev)
+>> +{
+>> +       const struct rcar_gen2_cpg_pll_config *cpg_pll_config;
+>> +       u32 cpg_mode = rcar_gen2_read_modemr();
+>> +
+>> +       cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
+>> +       if (!cpg_pll_config->extal_div) {
+>
+> This check is not needed, as extal_div is never zero in the above table.
+
+    Indeed, will fix.
+
+>> +               dev_err(dev, "Prohibited setting (cpg_mode=0x%x)\n", cpg_mode);
+>> +               return -EINVAL;
+>> +       }
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+
+WBR, Sergei
+
