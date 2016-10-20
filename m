@@ -1,12 +1,13 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:15918 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755455AbcJUNnQ (ORCPT
+Received: from sauhun.de ([89.238.76.85]:60846 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752376AbcJTXFF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Oct 2016 09:43:16 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: Ulf Hansson <ulf.hansson@linaro.org>,
+        Thu, 20 Oct 2016 19:05:05 -0400
+Date: Fri, 21 Oct 2016 01:04:51 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -14,46 +15,51 @@ CC: Ulf Hansson <ulf.hansson@linaro.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v3 2/3] mmc: tmio-mmc: add support for 32bit data port
-Date: Fri, 21 Oct 2016 13:43:05 +0000
-Message-ID: <SG2PR06MB1165F5878C8417068E7364628AD40@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH v3 2/3] mmc: tmio-mmc: add support for 32bit data port
+Message-ID: <20161020230451.GA2199@katana>
 References: <20160912141507.6837-1-chris.brandt@renesas.com>
  <20160912141507.6837-3-chris.brandt@renesas.com>
  <20161020132852.GB4177@katana>
- <SG2PR06MB11652EB5B1A40583636F8FB28AD50@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <20161020231245.GB2199@katana>
-In-Reply-To: <20161020231245.GB2199@katana>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ <SG2PR06MB1165B756B67D1D101E91A7B38AD50@SG2PR06MB1165.apcprd06.prod.outlook.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="AqsLC8rIMeq19msA"
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB1165B756B67D1D101E91A7B38AD50@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-> > > * Does it have a version register (CTL_VERSION)? If so, what does it
-> > >   say?
-> >
-> > 0x820B
->=20
-> Okay, this is a version I have not seen before.
 
-The SDHI IP came from the SH7269 (SH-2A device).
-
-For the VERSION register, the low byte is the version of the IP, but the up=
-per byte is a number that the design group that made the part gives it any =
-time they make a change. So, since this IP was from a SH2A team, the number=
-ing might look different than what the SH4A or R-Car teams have used in the=
- past.
+--AqsLC8rIMeq19msA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
+> I'll submit a v4 of this patch series tomorrow.
 
-> This SWAP register exists on R-Car as well. Out of curiosity, what is the
-> register value of 0xE804E0E4?
-
-0xE804E0E4 =3D 0x0001
-
-So...something is there!
+Please wait a little. I'd like to use that feature on R-Car, too, so I
+wonder if the additional feature flag is the proper path.
 
 
+--AqsLC8rIMeq19msA
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Chris
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJYCU2TAAoJEBQN5MwUoCm2QFYQALV8bG2ZHNlLycHbJWvgsyRw
+v27RUODZ5fQ5iL3C8IjX/um+kiSpik9Hzv5NriVoXi3vuCXhmKASaqM+atcM12Pw
+fXZvQVYSTNwVcPIjbhTOWt0BGfOacT/2WJxm4MGZ9P+k3qvHSooaddpdFdmA0MWQ
+P2dB3EuLMt2hKiODcypaI6z51myhID+LYHtvC8tBBbIHcSzpQXHj4LmUF02BHCrm
+qRJTnKY49hWWvCv1TZntNDdJ1/YYFCj6CvwE3vpqY7ruGlVOoD48LI/Imv6iO0sQ
++Ayr8FeWL6AGdJT0dScfky5NYueAaTurlAv+kUMrwKfrYOmJ521ZtJ7boeK/edZN
+Lcdf/6GEA74ZIaYSPbj2v0N8APOAH0Jw/5/VXLwgq2Dk2lzZ51h/6B+y/6paevSD
+uEn0E0eWzgXclnNegJh8dGDcsnNDaolTAHnMeihUdit8KTiT/ToUQMSbyQDaLPgG
+r5Lh6iJDVtyk4HKMQaCqRpN06mNW1M+Gh53OBoyfXMDpJf6cI0aMUr5jAbsYP2ja
+UuJPKMCjpZ2V6YBr4xEaQ33duSunC7ZnO56ZdIGg4GQEpXm1J9jvxlMxni1Lxr/i
+iLsgSiUCURebD3biey/cYHN57VvQsJKzps7DNLD9jyQuFXkGgM24vX+IZGuDoQcK
+TUqerMKeoETPOb3wAjPW
+=NECn
+-----END PGP SIGNATURE-----
+
+--AqsLC8rIMeq19msA--
