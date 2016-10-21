@@ -1,56 +1,54 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:35350 "EHLO
-        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753374AbcJUQmq (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Oct 2016 12:42:46 -0400
-Received: by mail-lf0-f46.google.com with SMTP id l131so144717888lfl.2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Oct 2016 09:42:45 -0700 (PDT)
-Subject: Re: [PATCH] clk: fix link error for rcar-gen2
-To: Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>
-References: <20161021154737.3803065-1-arnd@arndb.de>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Magnus Damm <damm+renesas@opensource.se>,
         Simon Horman <horms+renesas@verge.net.au>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <9f16dc0d-fe5e-dff8-e461-9e0dfdd23da7@cogentembedded.com>
-Date: Fri, 21 Oct 2016 19:42:42 +0300
-MIME-Version: 1.0
-In-Reply-To: <20161021154737.3803065-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH] clk: fix link error for rcar-gen2
+Date: Fri, 21 Oct 2016 17:47:06 +0200
+Message-Id: <20161021154737.3803065-1-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+The addition of one more rcar-gen2 based SoC caused a build error (again)
+in my randconfig builds:
 
-On 10/21/2016 06:47 PM, Arnd Bergmann wrote:
+arch/arm/mach-shmobile/setup-rcar-gen2.o: In function `rcar_gen2_timer_init':
+setup-rcar-gen2.c:(.init.text+0x200): undefined reference to `rcar_gen2_clocks_init'
 
-> The addition of one more rcar-gen2 based SoC caused a build error (again)
-> in my randconfig builds:
->
-> arch/arm/mach-shmobile/setup-rcar-gen2.o: In function `rcar_gen2_timer_init':
-> setup-rcar-gen2.c:(.init.text+0x200): undefined reference to `rcar_gen2_clocks_init'
+I think this has happened twice in the past. Instead of adding each SoC
+one at a time, this changes the existing list to always build the
+rcar-gen2 related clk files whenever the generic symbol is selected.
 
-    OK, seeing how you got this -- I should have tested the kernel build with 
-only R8A7743 enabled... sorry about that. :-<
-    I probably shouldn't have used rcar_gen2_timer_init() in the 1st place...
+Fixes: 1254f607fc3d ("ARM: shmobile: r8a7743: basic SoC support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/clk/renesas/Makefile | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-> I think this has happened twice in the past. Instead of adding each SoC
-> one at a time, this changes the existing list to always build the
-> rcar-gen2 related clk files whenever the generic symbol is selected.
-
-    The problem is we're not going to use this driver on RZ/G SoCs... The 
-newer rcar2-cpg-mssr.c will be used instead -- I submitted the patches for 
-that before ELC-E...
-
-> Fixes: 1254f607fc3d ("ARM: shmobile: r8a7743: basic SoC support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-[...]
-
-MBR, Sergei
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index 90dd0db7d9c6..762d122eddec 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -4,11 +4,7 @@ obj-$(CONFIG_ARCH_R8A73A4)		+= clk-r8a73a4.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7740)		+= clk-r8a7740.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7778)		+= clk-r8a7778.o
+ obj-$(CONFIG_ARCH_R8A7779)		+= clk-r8a7779.o
+-obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7792)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7793)		+= clk-rcar-gen2.o clk-div6.o
+-obj-$(CONFIG_ARCH_R8A7794)		+= clk-rcar-gen2.o clk-div6.o
++obj-$(CONFIG_ARCH_RCAR_GEN2)		+= clk-rcar-gen2.o clk-div6.o
+ obj-$(CONFIG_ARCH_R8A7795)		+= r8a7795-cpg-mssr.o rcar-gen3-cpg.o
+ obj-$(CONFIG_ARCH_R8A7796)		+= r8a7796-cpg-mssr.o rcar-gen3-cpg.o
+ obj-$(CONFIG_ARCH_SH73A0)		+= clk-sh73a0.o clk-div6.o
+-- 
+2.9.0
