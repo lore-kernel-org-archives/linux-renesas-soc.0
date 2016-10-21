@@ -1,59 +1,91 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:52614 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932467AbcJUJQN (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Oct 2016 05:16:13 -0400
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/5] ARM: dts: r8a7740: Remove skeleton.dtsi inclusion
-Date: Fri, 21 Oct 2016 11:16:09 +0200
-Message-Id: <1477041370-22778-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477041370-22778-1-git-send-email-geert+renesas@glider.be>
-References: <1477041370-22778-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH v4 19/23] ARM: shmobile: r8a7779: Stop passing mode pins state to clock driver
+Date: Fri, 21 Oct 2016 15:17:33 +0200
+Message-Id: <1477055857-17936-20-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As of commit 9c0da3cc61f1233c ("ARM: dts: explicitly mark skeleton.dtsi
-as deprecated"), including skeleton.dtsi is deprecated.
-
-This fixes the following warning with W=1:
-
-    Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
+Now the R-Car H1 CPG clock driver obtains the state of the mode pins
+from the R-Car RST driver, there's no longer a need to pass this state
+explicitly. Hence we can just remove the .init_time() callback, the
+generic ARM code will take care of calling of_clk_init() and
+clocksource_probe().
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
 ---
- arch/arm/boot/dts/r8a7740.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v4:
+  - Add Acked-by,
 
-diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
-index 159e04eb1b9e55da..34159a8349def81e 100644
---- a/arch/arm/boot/dts/r8a7740.dtsi
-+++ b/arch/arm/boot/dts/r8a7740.dtsi
-@@ -8,8 +8,6 @@
-  * kind, whether express or implied.
+v3:
+  - New.
+---
+ arch/arm/mach-shmobile/setup-r8a7779.c | 27 ---------------------------
+ 1 file changed, 27 deletions(-)
+
+diff --git a/arch/arm/mach-shmobile/setup-r8a7779.c b/arch/arm/mach-shmobile/setup-r8a7779.c
+index 0007ff51d180379f..0686112f243525b6 100644
+--- a/arch/arm/mach-shmobile/setup-r8a7779.c
++++ b/arch/arm/mach-shmobile/setup-r8a7779.c
+@@ -14,8 +14,6 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
   */
+-#include <linux/clk/renesas.h>
+-#include <linux/clocksource.h>
+ #include <linux/init.h>
+ #include <linux/irq.h>
+ #include <linux/irqchip.h>
+@@ -76,30 +74,6 @@ static void __init r8a7779_init_irq_dt(void)
+ 	__raw_writel(0x003fee3f, INT2SMSKCR4);
+ }
  
--/include/ "skeleton.dtsi"
+-#define MODEMR		0xffcc0020
 -
- #include <dt-bindings/clock/r8a7740-clock.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-@@ -17,6 +15,8 @@
- / {
- 	compatible = "renesas,r8a7740";
- 	interrupt-parent = <&gic>;
-+	#address-cells = <1>;
-+	#size-cells = <1>;
- 
- 	cpus {
- 		#address-cells = <1>;
+-static u32 __init r8a7779_read_mode_pins(void)
+-{
+-	static u32 mode;
+-	static bool mode_valid;
+-
+-	if (!mode_valid) {
+-		void __iomem *modemr = ioremap_nocache(MODEMR, PAGE_SIZE);
+-		BUG_ON(!modemr);
+-		mode = ioread32(modemr);
+-		iounmap(modemr);
+-		mode_valid = true;
+-	}
+-
+-	return mode;
+-}
+-
+-static void __init r8a7779_init_time(void)
+-{
+-	r8a7779_clocks_init(r8a7779_read_mode_pins());
+-	clocksource_probe();
+-}
+-
+ static const char *const r8a7779_compat_dt[] __initconst = {
+ 	"renesas,r8a7779",
+ 	NULL,
+@@ -109,7 +83,6 @@ static void __init r8a7779_init_time(void)
+ 	.smp		= smp_ops(r8a7779_smp_ops),
+ 	.map_io		= r8a7779_map_io,
+ 	.init_early	= shmobile_init_delay,
+-	.init_time	= r8a7779_init_time,
+ 	.init_irq	= r8a7779_init_irq_dt,
+ 	.init_late	= shmobile_init_late,
+ 	.dt_compat	= r8a7779_compat_dt,
 -- 
 1.9.1
