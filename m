@@ -1,52 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:53486 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932845AbcJLM7L (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:52614 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932467AbcJUJQN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Oct 2016 08:59:11 -0400
-Subject: [PATCH v2 4/5] PCI: rcar: Remove DRV_NAME macro
-To: Simon Horman <horms@verge.net.au>
-From: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-pci@vger.kernel.org
-Date: Wed, 12 Oct 2016 07:59:07 -0500
-Message-ID: <20161012125907.24785.44288.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-In-Reply-To: <20161012125631.24785.91272.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20161012125631.24785.91272.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Fri, 21 Oct 2016 05:16:13 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/5] ARM: dts: r8a7740: Remove skeleton.dtsi inclusion
+Date: Fri, 21 Oct 2016 11:16:09 +0200
+Message-Id: <1477041370-22778-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477041370-22778-1-git-send-email-geert+renesas@glider.be>
+References: <1477041370-22778-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The DRV_NAME macro is only used once, so there's no real advantage to
-having the macro at all.  Remove it and use the "rcar-pcie" name directly
-in the struct platform_driver.  No functional change intended.
+As of commit 9c0da3cc61f1233c ("ARM: dts: explicitly mark skeleton.dtsi
+as deprecated"), including skeleton.dtsi is deprecated.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+This fixes the following warning with W=1:
+
+    Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pci/host/pcie-rcar.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/arm/boot/dts/r8a7740.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 800a86d..62700d1 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -31,8 +31,6 @@
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
+diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
+index 159e04eb1b9e55da..34159a8349def81e 100644
+--- a/arch/arm/boot/dts/r8a7740.dtsi
++++ b/arch/arm/boot/dts/r8a7740.dtsi
+@@ -8,8 +8,6 @@
+  * kind, whether express or implied.
+  */
  
--#define DRV_NAME "rcar-pcie"
+-/include/ "skeleton.dtsi"
 -
- #define PCIECAR			0x000010
- #define PCIECCTLR		0x000018
- #define  CONFIG_SEND_ENABLE	(1 << 31)
-@@ -1199,7 +1197,7 @@ err_pm_disable:
+ #include <dt-bindings/clock/r8a7740-clock.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+@@ -17,6 +15,8 @@
+ / {
+ 	compatible = "renesas,r8a7740";
+ 	interrupt-parent = <&gic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
  
- static struct platform_driver rcar_pcie_driver = {
- 	.driver = {
--		.name = DRV_NAME,
-+		.name = "rcar-pcie",
- 		.of_match_table = rcar_pcie_of_match,
- 		.suppress_bind_attrs = true,
- 	},
+ 	cpus {
+ 		#address-cells = <1>;
+-- 
+1.9.1
