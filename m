@@ -1,54 +1,107 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35869 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754146AbcJDTId (ORCPT
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:34744 "EHLO
+        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933979AbcJUUrw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Oct 2016 15:08:33 -0400
+        Fri, 21 Oct 2016 16:47:52 -0400
+Received: by mail-lf0-f46.google.com with SMTP id b81so147146789lfe.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Oct 2016 13:47:51 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 6/7] ARM: dts: sk-rzg1m: initial device tree
+Date: Fri, 21 Oct 2016 23:47:48 +0300
+Message-ID: <6067818.PNWHquUYTU@wasted.cogentembedded.com>
+In-Reply-To: <2719479.geOc9vqcRS@wasted.cogentembedded.com>
+References: <2719479.geOc9vqcRS@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <20160913140314.22035-2-niklas.soderlund+renesas@ragnatech.se>
-References: <20160913140314.22035-1-niklas.soderlund+renesas@ragnatech.se> <20160913140314.22035-2-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 4 Oct 2016 21:08:31 +0200
-Message-ID: <CAMuHMdVJfBXrih_rXB2=nj11xV4aPwRte+FS+GmHW9OgiuZqaA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] pinctrl: sh-pfc: Support named pins with custom configuration
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Sep 13, 2016 at 4:03 PM, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> Pins not associated with a GPIO port can still have other configuration
-> parameters. Add a new macro SH_PFC_PIN_NAMED_CFG which allows for named
-> pins to be declared with a set of configurations. The new macro is an
-> modification of SH_PFC_PIN_NAMED to allow for optional configuration to
-> be assigned.
->
-> The flag SH_PFC_PIN_CFG_NO_GPIO is still enforced as this should only be
-> used to define pins not associated with a GPIO port.
->
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
+Add the initial device  tree for the R8A7743 SoC based SK-RZG1M board.
+The board has one debug serial port (SCIF0); include support for it, so
+that  the serial  console  can work.
 
+Based on the original (and large) patch by Dmitry Shifrin
+<dmitry.shifrin@cogentembedded.com>.
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Gr{oetje,eeting}s,
+---
+Changes in version 4:
+- refreshed the patch.
 
-                        Geert
+Changes in version 3:
+- added Geert's tag.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+ arch/arm/boot/dts/Makefile             |    1 
+ arch/arm/boot/dts/r8a7743-sk-rzg1m.dts |   44 +++++++++++++++++++++++++++++++++
+ 2 files changed, 45 insertions(+)
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Index: renesas/arch/arm/boot/dts/Makefile
+===================================================================
+--- renesas.orig/arch/arm/boot/dts/Makefile
++++ renesas/arch/arm/boot/dts/Makefile
+@@ -677,6 +677,7 @@ dtb-$(CONFIG_ARCH_SHMOBILE_MULTI) += \
+ 	r7s72100-rskrza1.dtb \
+ 	r8a73a4-ape6evm.dtb \
+ 	r8a7740-armadillo800eva.dtb \
++	r8a7743-sk-rzg1m.dtb \
+ 	r8a7778-bockw.dtb \
+ 	r8a7779-marzen.dtb \
+ 	r8a7790-lager.dtb \
+Index: renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+===================================================================
+--- /dev/null
++++ renesas/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
+@@ -0,0 +1,44 @@
++/*
++ * Device Tree Source for the SK-RZG1M board
++ *
++ * Copyright (C) 2016 Cogent Embedded, Inc.
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2. This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++/dts-v1/;
++#include "r8a7743.dtsi"
++
++/ {
++	model = "SK-RZG1M";
++	compatible = "renesas,sk-rzg1m", "renesas,r8a7743";
++
++	aliases {
++		serial0 = &scif0;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0 0x40000000 0 0x40000000>;
++	};
++
++	memory@200000000 {
++		device_type = "memory";
++		reg = <2 0x00000000 0 0x40000000>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <20000000>;
++};
++
++&scif0 {
++	status = "okay";
++};
