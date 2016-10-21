@@ -1,13 +1,12 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:36856 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753953AbcJUV4w (ORCPT
+Received: from relmlor4.renesas.com ([210.160.252.174]:15918 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755455AbcJUNnQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Oct 2016 17:56:52 -0400
-Date: Fri, 21 Oct 2016 23:56:39 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Fri, 21 Oct 2016 09:43:16 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -15,66 +14,46 @@ Cc: Ulf Hansson <ulf.hansson@linaro.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v3 2/3] mmc: tmio-mmc: add support for 32bit data port
-Message-ID: <20161021215639.GB1450@katana>
+Subject: RE: [PATCH v3 2/3] mmc: tmio-mmc: add support for 32bit data port
+Date: Fri, 21 Oct 2016 13:43:05 +0000
+Message-ID: <SG2PR06MB1165F5878C8417068E7364628AD40@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <20160912141507.6837-1-chris.brandt@renesas.com>
  <20160912141507.6837-3-chris.brandt@renesas.com>
  <20161020132852.GB4177@katana>
  <SG2PR06MB11652EB5B1A40583636F8FB28AD50@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <20161020231245.GB2199@katana>
- <SG2PR06MB1165F5878C8417068E7364628AD40@SG2PR06MB1165.apcprd06.prod.outlook.com>
+In-Reply-To: <20161020231245.GB2199@katana>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="uQr8t48UFsdbeI+V"
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB1165F5878C8417068E7364628AD40@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
---uQr8t48UFsdbeI+V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-
-> For the VERSION register, the low byte is the version of the IP, but
-> the upper byte is a number that the design group that made the part
-
-I know. It is just that I haven't seen this one "in the wild" so far.
-
-> > This SWAP register exists on R-Car as well. Out of curiosity, what is t=
-he
-> > register value of 0xE804E0E4?
+> > > * Does it have a version register (CTL_VERSION)? If so, what does it
+> > >   say?
+> >
+> > 0x820B
 >=20
-> 0xE804E0E4 =3D 0x0001
->=20
-> So...something is there!
+> Okay, this is a version I have not seen before.
 
-I am quite convinced there is this BUSWIDTH register. If you are
-interested, try setting this to 0 and see if it works without the 32 bit
-register patches.
+The SDHI IP came from the SH7269 (SH-2A device).
+
+For the VERSION register, the low byte is the version of the IP, but the up=
+per byte is a number that the design group that made the part gives it any =
+time they make a change. So, since this IP was from a SH2A team, the number=
+ing might look different than what the SH4A or R-Car teams have used in the=
+ past.
 
 
---uQr8t48UFsdbeI+V
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> This SWAP register exists on R-Car as well. Out of curiosity, what is the
+> register value of 0xE804E0E4?
 
-iQIcBAEBAgAGBQJYCo8WAAoJEBQN5MwUoCm2wKoP/ip8Ye4fbRIFOaUChGtwUFMU
-KVWtAg2Y9U27YNtuZnVTutSZXnspaleWVYAp+YsDb/yEL+aXqIHB5bdiR4ALcxUI
-cmHJcOP24APF4NgL8YpcAm6OKUmzvBJDInNki7YOpGXXrvQ4IWV/EnnpG4FFE3RM
-d76ORctFW1bwHiAnhBJ4St4pq0GYOTJN9LTKy7XB2RjRZiej2MzIipmduDyF+zqJ
-/BZpvTrX+Ekq3f3RoH50QIXBp0B2FiLE6jUPgDXy+LnbgnjaJqJ/1C66Gf+PNQKS
-tWumbUWGvhwKRNOZzg8mu1znu0b7KTi03TwLvp6W1gfos1yxZ70ecxHBaRiBwOYx
-Y6BB07sOk9dH8SseO5DoJoY3Qu2DppocB04w7sVkyus03QIxfVMK2Zo6721INesX
-7sgFm7drA7QdEeA0eVuhrJb5o2GkMQQ25KEPxw5w6YI1oQJcWO1jv0zMzJqVvWbJ
-9Y9YaNhDGSGmH+wUDEUnalzTB0qkMtULGMzfvUVjwH4zVh4msXNHqbvGwtOcZhmz
-Uyb3YG+XJ18H0G8vzffdsFlMZKUox+yw15ffunvJ5ZAbN38Ay24SXWuMtPF9KQA1
-I/ucYE4q3b40CE0B9bAqVhF6vZxkivhkShIQsEU8/MylbSe2ICdp+oBd0jctKZiZ
-fsizRoZz+cnRuL9HXAyb
-=oVOr
------END PGP SIGNATURE-----
+0xE804E0E4 =3D 0x0001
 
---uQr8t48UFsdbeI+V--
+So...something is there!
+
+
+
+Chris
