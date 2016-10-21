@@ -1,5 +1,4 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Philipp Zabel <p.zabel@pengutronix.de>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -9,55 +8,89 @@ To: Philipp Zabel <p.zabel@pengutronix.de>,
 Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 16/23] clk: renesas: r8a7796: Obtain mode pin values from R-Car RST driver
-Date: Fri, 21 Oct 2016 15:17:30 +0200
-Message-Id: <1477055857-17936-17-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4 14/23] clk: renesas: rcar-gen2: Obtain mode pin values using RST driver
+Date: Fri, 21 Oct 2016 15:17:28 +0200
+Message-Id: <1477055857-17936-15-git-send-email-geert+renesas@glider.be>
 In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
 References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 Obtain the values of the mode pins from the R-Car RST driver, which
 relies on the presence in DT of a device node for the RST module.
 
+Fall back to our own private copy of rcar_gen2_read_mode_pins() for
+backward-compatibility with old DTs.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
 v4:
-  - Add Acked-by, Reviewed-by,
+  - Add Acked-by,
+  - Use our own private copy of rcar_gen2_read_mode_pins() instead of
+    the one in the R-Car Gen2 platform code, as the latter is planned to
+    be removed,
 
 v3:
-  - New.
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+  -  Use the R-Car RST driver instead of syscon/regmap and the
+     "renesas,modemr" property in DT,
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index eb347ed265f2adfa..1c144b21869df39c 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -16,6 +16,7 @@
- #include <linux/device.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
+v2:
+  - drivers/clk/shmobile/ was renamed to drivers/clk/renesas/.
+---
+ drivers/clk/renesas/clk-rcar-gen2.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/drivers/clk/renesas/clk-rcar-gen2.c b/drivers/clk/renesas/clk-rcar-gen2.c
+index 00e6aba4b9c09596..3291fd430ad4e215 100644
+--- a/drivers/clk/renesas/clk-rcar-gen2.c
++++ b/drivers/clk/renesas/clk-rcar-gen2.c
+@@ -19,6 +19,7 @@
+ #include <linux/of_address.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
 +#include <linux/soc/renesas/rcar-rst.h>
  
- #include <dt-bindings/clock/r8a7796-cpg-mssr.h>
+ struct rcar_gen2_cpg {
+ 	struct clk_onecell_data data;
+@@ -364,6 +365,23 @@ struct cpg_pll_config {
+ 						 4, 0, table, &cpg->lock);
+ }
  
-@@ -190,7 +191,12 @@ enum clk_ids {
- static int __init r8a7796_cpg_mssr_init(struct device *dev)
- {
- 	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
--	u32 cpg_mode = rcar_gen3_read_mode_pins();
-+	u32 cpg_mode;
-+	int error;
++/*
++ * Reset register definitions.
++ */
++#define MODEMR	0xe6160060
 +
-+	error = rcar_rst_read_mode_pins(&cpg_mode);
-+	if (error)
-+		return error;
++static u32 __init rcar_gen2_read_mode_pins(void)
++{
++	void __iomem *modemr = ioremap_nocache(MODEMR, 4);
++	u32 mode;
++
++	BUG_ON(!modemr);
++	mode = ioread32(modemr);
++	iounmap(modemr);
++
++	return mode;
++}
++
+ static void __init rcar_gen2_cpg_clocks_init(struct device_node *np)
+ {
+ 	const struct cpg_pll_config *config;
+@@ -372,6 +390,13 @@ static void __init rcar_gen2_cpg_clocks_init(struct device_node *np)
+ 	unsigned int i;
+ 	int num_clks;
  
- 	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
- 	if (!cpg_pll_config->extal_div) {
++	if (rcar_rst_read_mode_pins(&cpg_mode)) {
++		/* Backward-compatibility with old DT */
++		pr_warn("%s: failed to obtain mode pins from RST\n",
++			np->full_name);
++		cpg_mode = rcar_gen2_read_mode_pins();
++	}
++
+ 	num_clks = of_property_count_strings(np, "clock-output-names");
+ 	if (num_clks < 0) {
+ 		pr_err("%s: failed to count clocks\n", __func__);
 -- 
 1.9.1
+
