@@ -1,7 +1,20 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:35082 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753620AbcJUSQD (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 21 Oct 2016 14:16:03 -0400
+MIME-Version: 1.0
+In-Reply-To: <7196231.EBkNfFgrcH@wuerfel>
+References: <1475572167-29581-1-git-send-email-geert+renesas@glider.be>
+ <1560471.cOCZ4VcGTh@wuerfel> <CAMuHMdU=iTps+YfyeUyhPQkgSYHuG1hCLMFUTVOcPsHgbiPgSw@mail.gmail.com>
+ <7196231.EBkNfFgrcH@wuerfel>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 21 Oct 2016 20:16:00 +0200
+Message-ID: <CAMuHMdVv+K=NVpmn-H72m159sDXnsAydMT-FQHq1is67_Nw3mQ@mail.gmail.com>
+Subject: Re: [PATCH/RFC 4/4] soc: renesas: Identify SoC and register with the
+ SoC bus
+To: Arnd Bergmann <arnd@arndb.de>
 Cc: "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
         Dirk Behme <dirk.behme@de.bosch.com>,
@@ -12,80 +25,176 @@ Cc: "linux-arm-kernel@lists.infradead.org"
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Yangbo Lu <yangbo.lu@nxp.com>, Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH/RFC 4/4] soc: renesas: Identify SoC and register with the SoC bus
-Date: Fri, 21 Oct 2016 23:16:19 +0200
-Message-ID: <12094567.68HcWl4d5O@wuerfel>
-In-Reply-To: <CAMuHMdVv+K=NVpmn-H72m159sDXnsAydMT-FQHq1is67_Nw3mQ@mail.gmail.com>
-References: <1475572167-29581-1-git-send-email-geert+renesas@glider.be> <7196231.EBkNfFgrcH@wuerfel> <CAMuHMdVv+K=NVpmn-H72m159sDXnsAydMT-FQHq1is67_Nw3mQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Friday, October 21, 2016 8:16:00 PM CEST Geert Uytterhoeven wrote:
-> On Wed, Oct 19, 2016 at 12:59 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Wednesday, October 19, 2016 10:02:57 AM CEST Geert Uytterhoeven wrote:
-> >> On Mon, Oct 10, 2016 at 4:23 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> > I'd prefer seeing a separate soc driver for that one.
-> >> Some SoCs have only CCCR, others have only PRR, some have both.
-> >> On some SoCs one of them can be accessed from the RealTime CPU
-> >> core (SH) only.
-> >> On some SoCs the register is not documented, but present.
-> >> If the PRR exists, it's a better choice, as it contains additional information
-> >> in the high order bits (representing the presence of each big (CA15/CA57),
-> >> little (CA7/CA53), and RT (CR7) CPU core). Currently we don't use that
-> >> information, though.
-> >>
-> >> Grouping them in some other way means we would loose the family name,
-> >> which is exposed through soc_dev_attr->family.
-> >> The usefulness of family names is debatable though, as this is more an
-> >> issue of marketing business.
-> >
-> > How about having a table to look up the family name by the value
-> > of the PRR or CCCR then?
-> 
-> Unfortunately there exist SoCs from different families using the same
-> product ID.
-> 
-> And different SoCs from the same family may have a revision register
-> or not (e.g. R-Car H1 has, M1A hasn't).
+Hi Arnd,
 
-Is this something we expect to see more of in the future, or can
-we expect future chips to handle this more consistently?
+On Wed, Oct 19, 2016 at 12:59 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wednesday, October 19, 2016 10:02:57 AM CEST Geert Uytterhoeven wrote:
+>> On Mon, Oct 10, 2016 at 4:23 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> > On Tuesday, October 4, 2016 11:09:27 AM CEST Geert Uytterhoeven wrote:
+>> >> +static const struct renesas_family fam_rza __initconst = {
+>> >> +     .name   = "RZ/A",
+>> >> +};
+>> >
+>> > I'm not sure about the relationship between this one and the others,
+>> > maybe it should be treated in the same way as emev2 and left out from
+>> > this driver?
+>>
+>> While RZ/A doesn't have a version registers (AFAIK), it shares several
+>> drivers with the other SoCs (SH/R-Mobile, R-Car).
+>> Hence I'd like to keep it, so we can match for it in these drivers when
+>> needed. It has e.g. a different variant of the serial port (SCIF), more
+>> closely to the one on SH2 rather than SH4.
+>
+> I'd prefer seeing a separate soc driver for that one.
 
-> > How about this:
-> >
-> > The driver could report the hardcoded strings for the SoCs it already
-> > knows about (you have the table anyway) and not report the revision
-> > unless there is a regmap containing the CCCR or the PRR, in which
-> > case you use that. Future SoCs will provide the PRR (I assume
-> > CCCR is only used on the older ones) through a syscon regmap
-> > that we can use to find out the exact revision as well.
-> >
-> > The existing DT files can gain the syscon device so you can report
-> > the revision on those machines as well, unless you use an old DTB.
-> 
-> Hmm... That means that if we have to add a driver quirk to distinguish
-> between different revisions of the same SoC, we have to update the
-> DTB anyway, to add the CCCR/PRR device node.
-> We might as well just change the compatible value in that DTB for the
-> device that needs the quirk. Which is what we'd like to avoid in the
-> first place.
+OK, that can be done.
 
-Do you have a specific example in mind? If this is only a theoretical
-problem, we can worry about it when we get there, and then decide
-if we add a hardcoded register after all.
+>> >> +static const struct renesas_family fam_rmobile __initconst = {
+>> >> +     .name   = "R-Mobile",
+>> >> +     .reg    = 0xe600101c,           /* CCCR (Common Chip Code Register) */
+>> >> +};
+>> >> +
+>> >> +static const struct renesas_family fam_rcar_gen1 __initconst = {
+>> >> +     .name   = "R-Car Gen1",
+>> >> +     .reg    = 0xff000044,           /* PRR (Product Register) */
+>> >> +};
+>> >> +
+>> >> +static const struct renesas_family fam_rcar_gen2 __initconst = {
+>> >> +     .name   = "R-Car Gen2",
+>> >> +     .reg    = 0xff000044,           /* PRR (Product Register) */
+>> >> +};
+>> >> +
+>> >> +static const struct renesas_family fam_rcar_gen3 __initconst = {
+>> >> +     .name   = "R-Car Gen3",
+>> >> +     .reg    = 0xfff00044,           /* PRR (Product Register) */
+>> >> +};
+>> >> +
+>> >> +static const struct renesas_family fam_rzg __initconst = {
+>> >> +     .name   = "RZ/G",
+>> >> +     .reg    = 0xff000044,           /* PRR (Product Register) */
+>> >> +};
+>> >> +
+>> >> +static const struct renesas_family fam_shmobile __initconst = {
+>> >> +     .name   = "SH-Mobile",
+>> >> +     .reg    = 0xe600101c,           /* CCCR (Common Chip Code Register) */
+>> >> +};
+>> >
+>> > These seem to fall into two distinct categories, maybe there is a
+>> > better way to group them. What device contain the two kinds of
+>> > registers (PRR, CCCR)?
+>>
+>> Actually there are three (notice the extra "f" on R-Car Gen3 ;-)
+>
+> I see. Hopefully this is just the same register block at a different
+> location though.
 
-> > Why not just drop all the #ifdef here? There should be very little
-> > overhead in size, especially if all the data is __initconst.
-> 
-> It still saves ca. 3 KiB for a kernel for a single SoC.
+More or less.
 
-Fair enough, that is more than I was expecting from looking at the
-source. It's probably the of_device_id structures for the most part.
+>> Some SoCs have only CCCR, others have only PRR, some have both.
+>> On some SoCs one of them can be accessed from the RealTime CPU
+>> core (SH) only.
+>> On some SoCs the register is not documented, but present.
+>> If the PRR exists, it's a better choice, as it contains additional information
+>> in the high order bits (representing the presence of each big (CA15/CA57),
+>> little (CA7/CA53), and RT (CR7) CPU core). Currently we don't use that
+>> information, though.
+>>
+>> Grouping them in some other way means we would loose the family name,
+>> which is exposed through soc_dev_attr->family.
+>> The usefulness of family names is debatable though, as this is more an
+>> issue of marketing business.
+>
+> How about having a table to look up the family name by the value
+> of the PRR or CCCR then?
 
-Please just add the __maybe_unused then, to save us a patch in case
-we make -Wunused-const the default in the future.
+Unfortunately there exist SoCs from different families using the same
+product ID.
 
-	Arnd
+And different SoCs from the same family may have a revision register
+or not (e.g. R-Car H1 has, M1A hasn't).
+
+>> > Hardcoding the register address seems rather ugly here, so maybe
+>> > there is a way to have two separate probe methods based on the
+>> > surrounding register range, and then bind to that?
+>>
+>> There's no simple relation between CCCR/PRR and other register blocks.
+>> I prefer not to add these to DT, as that would add one more worm to the
+>> backwards compatibility can.
+>
+> Hmm, I understand the concern about compatibility with existing DT files,
+> but I also really hate to see hardcoded register addresses.
+>
+> Any reason against requiring the DT node for future chips though?
+
+For future SoCs, we  can easily make it mandatory.
+
+> How about this:
+>
+> The driver could report the hardcoded strings for the SoCs it already
+> knows about (you have the table anyway) and not report the revision
+> unless there is a regmap containing the CCCR or the PRR, in which
+> case you use that. Future SoCs will provide the PRR (I assume
+> CCCR is only used on the older ones) through a syscon regmap
+> that we can use to find out the exact revision as well.
+>
+> The existing DT files can gain the syscon device so you can report
+> the revision on those machines as well, unless you use an old DTB.
+
+Hmm... That means that if we have to add a driver quirk to distinguish
+between different revisions of the same SoC, we have to update the
+DTB anyway, to add the CCCR/PRR device node.
+We might as well just change the compatible value in that DTB for the
+device that needs the quirk. Which is what we'd like to avoid in the
+first place.
+
+>> >> +static const struct of_device_id renesas_socs[] __initconst = {
+>> >> +#ifdef CONFIG_ARCH_EMEV2
+>> >> +     { .compatible = "renesas,emev2",        .data = &soc_emev2 },
+>> >> +#endif
+>> >> +#ifdef CONFIG_ARCH_R7S72100
+>> >> +     { .compatible = "renesas,r7s72100",     .data = &soc_rz_a1h },
+>> >> +#endif
+>> >> +#ifdef CONFIG_ARCH_R8A73A4
+>> >
+>> > I think the #ifdefs here will result in warnings for unused symbols
+>> > when the Kconfig symbols are disabled.
+>>
+>> Originally I had __maybe_unused, but it didn't seem to be needed.
+>> Do you know which compiler needs it, so I can check?
+>
+> Ah, I remember now: gcc doesn't warn for 'static const' variables
+> unless we pass -Wunused-const, which should be enabled with "make W=1",
+> and we might make that the default in the future (after fixing the
+> handful of drivers currently relying on this).
+
+OK.
+
+> Why not just drop all the #ifdef here? There should be very little
+> overhead in size, especially if all the data is __initconst.
+
+It still saves ca. 3 KiB for a kernel for a single SoC.
+
+It's been a while I've tried multi_v7_defconfig, but I'm afraid there's no
+Renesas SoC left that can boot it, due to sheer size.
+We're facing the same issue with arm64_defconfig soon (it already
+fails now if you add a small (1.5 MiB) initrd).
+
+Not to mention RZ/A1H, which is used on some boards running with
+its 10 MiB of internal SRAM only.
+
+Kernel size does matter, despite no progress on linux-tiny.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
