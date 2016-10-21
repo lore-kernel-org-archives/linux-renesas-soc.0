@@ -1,67 +1,73 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:53537 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S944929AbcJaRIX (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Oct 2016 13:08:23 -0400
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Magnus Damm <magnus.damm@gmail.com>,
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 1/5] arm64: dts: r8a7796: salvator-x: Update memory node to 4 GiB map
-Date: Mon, 31 Oct 2016 18:08:18 +0100
-Message-Id: <1477933702-13423-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477933702-13423-1-git-send-email-geert+renesas@glider.be>
-References: <1477933702-13423-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH v4 20/23] ARM: shmobile: rcar-gen2: Stop passing mode pins state to clock driver
+Date: Fri, 21 Oct 2016 15:17:34 +0200
+Message-Id: <1477055857-17936-21-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Now the R-Car Gen2 CPG clock driver obtains the state of the mode pins
+from the R-Car RST driver, there's no longer a need to pass this state
+explicitly. Hence we can just call of_clk_init() instead.
 
-This patch updates memory region:
-
-  - After changes, the new map of the Salvator-X board on R8A7796 SoC
-    Bank0: 2GiB RAM : 0x000048000000 -> 0x000bfffffff
-    Bank1: 2GiB RAM : 0x000600000000 -> 0x0067fffffff
-
-  - Before changes, the old map looked like this:
-    Bank0: 2GiB RAM : 0x000048000000 -> 0x000bfffffff
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Correct size of old map]
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
 ---
-Note: Depending on firmware version, this patch may not make a
-difference at all!
+v4:
+  - Add Acked-by,
+  - Rebase on top of "ARM: shmobile: rcar-gen2: Obtain extal frequency
+    from DT",
+  - Remove the call to rcar_gen2_read_mode_pins(),
 
-Indeed, U-Boot may already add the second memory region to the "reg"
-property of the first memory node in DT, regardless of the presence of a
-second memory node. Fortunately Linux handles duplicate memory regions
-just fine...
+v3:
+  - Drop "select MFD_SYSCON", as the clock driver no longer uses syscon,
+
+v2:
+  - Kill compiler warning if CONFIG_ARM_ARCH_TIMER is not enabled.
 ---
- arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/mach-shmobile/setup-rcar-gen2.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-index f7c0ec47af7660b1..2fe75b06288c608e 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts
-@@ -32,6 +32,11 @@
- 		reg = <0x0 0x48000000 0x0 0x78000000>;
- 	};
+diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+index afb9fdcd3d9084e2..b527258e0a62e806 100644
+--- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+@@ -15,7 +15,7 @@
+  * GNU General Public License for more details.
+  */
  
-+	memory@600000000 {
-+		device_type = "memory";
-+		reg = <0x6 0x00000000 0x0 0x80000000>;
-+	};
-+
- 	reg_1p8v: regulator0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
+-#include <linux/clk/renesas.h>
++#include <linux/clk-provider.h>
+ #include <linux/clocksource.h>
+ #include <linux/device.h>
+ #include <linux/dma-contiguous.h>
+@@ -71,7 +71,6 @@ static unsigned int __init get_extal_freq(void)
+ 
+ void __init rcar_gen2_timer_init(void)
+ {
+-	u32 mode = rcar_gen2_read_mode_pins();
+ #ifdef CONFIG_ARM_ARCH_TIMER
+ 	void __iomem *base;
+ 	u32 freq;
+@@ -130,7 +129,7 @@ void __init rcar_gen2_timer_init(void)
+ 	iounmap(base);
+ #endif /* CONFIG_ARM_ARCH_TIMER */
+ 
+-	rcar_gen2_clocks_init(mode);
++	of_clk_init(NULL);
+ 	clocksource_probe();
+ }
+ 
 -- 
 1.9.1
+
