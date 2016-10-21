@@ -1,27 +1,30 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Sun, 30 Oct 2016 15:41:22 -0500
-From: Rob Herring <robh@kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:41045 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934797AbcJUPsp (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 21 Oct 2016 11:48:45 -0400
+Message-ID: <1477064920.2508.27.camel@pengutronix.de>
+Subject: Re: [PATCH v4 01/23] reset: Add renesas,rst DT bindings
+From: Philipp Zabel <p.zabel@pengutronix.de>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
+Cc: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 01/23] reset: Add renesas,rst DT bindings
-Message-ID: <20161030204122.zejypdnpu3h3um7x@rob-hp-laptop>
-References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
- <1477055857-17936-2-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Date: Fri, 21 Oct 2016 17:48:40 +0200
 In-Reply-To: <1477055857-17936-2-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+         <1477055857-17936-2-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Oct 21, 2016 at 03:17:15PM +0200, Geert Uytterhoeven wrote:
+Am Freitag, den 21.10.2016, 15:17 +0200 schrieb Geert Uytterhoeven:
 > Add DT bindings for the Renesas R-Car Reset Controller (R-Car Gen1
 > RESET/WDT and R-Car Gen2/Gen3 and RZ/G RST).
 > 
@@ -55,5 +58,53 @@ On Fri, Oct 21, 2016 at 03:17:15PM +0200, Geert Uytterhoeven wrote:
 >  .../devicetree/bindings/reset/renesas,rst.txt      | 37 ++++++++++++++++++++++
 >  1 file changed, 37 insertions(+)
 >  create mode 100644 Documentation/devicetree/bindings/reset/renesas,rst.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+> new file mode 100644
+> index 0000000000000000..fe5e0f37b3c93579
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+> @@ -0,0 +1,37 @@
+> +DT bindings for the Renesas R-Car and RZ/G Reset Controllers
+> +
+> +The R-Car and RZ/G Reset Controllers provide reset control, and implement the
+> +following functions:
+> +  - Latching of the levels on mode pins when PRESET# is negated,
+> +  - Mode monitoring register,
+> +  - Reset control of peripheral devices (on R-Car Gen1),
+> +  - Watchdog timer (on R-Car Gen1),
+> +  - Register-based reset control and boot address registers for the various CPU
+> +    cores (on R-Car Gen2 and Gen3, and on RZ/G).
+> +
+> +
+> +Required properties:
+> +  - compatible: Should be
+> +		  - "renesas,<soctype>-reset-wdt" for R-Car Gen1,
+> +		  - "renesas,<soctype>-rst" for R-Car Gen2 and Gen3, and RZ/G
+> +		Examples with soctypes are:
+> +		  - "renesas,r8a7743-rst" (RZ/G1M)
+> +		  - "renesas,r8a7745-rst" (RZ/G1E)
+> +		  - "renesas,r8a7778-reset-wdt" (R-Car M1A)
+> +		  - "renesas,r8a7779-reset-wdt" (R-Car H1)
+> +		  - "renesas,r8a7790-rst" (R-Car H2)
+> +		  - "renesas,r8a7791-rst" (R-Car M2-W)
+> +		  - "renesas,r8a7792-rst" (R-Car V2H
+> +		  - "renesas,r8a7793-rst" (R-Car M2-N)
+> +		  - "renesas,r8a7794-rst" (R-Car E2)
+> +		  - "renesas,r8a7795-rst" (R-Car H3)
+> +		  - "renesas,r8a7796-rst" (R-Car M3-W)
+> +  - reg: Address start and address range for the device.
+> +
+> +
+> +Example:
+> +
+> +	rst: reset-controller@e6160000 {
+> +		compatible = "renesas,r8a7795-rst";
+> +		reg = <0 0xe6160000 0 0x0200>;
+> +	};
 
-Acked-by: Rob Herring <robh@kernel.org>
+
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+regards
+Philipp
