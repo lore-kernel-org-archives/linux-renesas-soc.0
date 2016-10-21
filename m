@@ -1,52 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:48765 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752220AbcJDMbt (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:60718 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932481AbcJUJQO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Oct 2016 08:31:49 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 4/6] drm: rcar-du: Remove test for impossible error condition
-Date: Tue,  4 Oct 2016 15:31:37 +0300
-Message-Id: <1475584299-21236-5-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1475584299-21236-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1475584299-21236-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 21 Oct 2016 05:16:14 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/5] ARM: dts: r8a7778: Remove skeleton.dtsi inclusion
+Date: Fri, 21 Oct 2016 11:16:07 +0200
+Message-Id: <1477041370-22778-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477041370-22778-1-git-send-email-geert+renesas@glider.be>
+References: <1477041370-22778-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The driver has lost platform data support a long time ago. R-Car DU
-devices can only be instantiated through DT now, making it impossible to
-have a NULL DT node pointer. Remove the error check.
+As of commit 9c0da3cc61f1233c ("ARM: dts: explicitly mark skeleton.dtsi
+as deprecated"), including skeleton.dtsi is deprecated.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This fixes the following warning with W=1:
+
+    Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 6 ------
- 1 file changed, 6 deletions(-)
+ arch/arm/boot/dts/r8a7778.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 73c971e39b1c..b619a8024ec9 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -294,17 +294,11 @@ static int rcar_du_remove(struct platform_device *pdev)
+diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
+index e571d66ea0fe1721..f3ffe1d315443e7e 100644
+--- a/arch/arm/boot/dts/r8a7778.dtsi
++++ b/arch/arm/boot/dts/r8a7778.dtsi
+@@ -14,8 +14,6 @@
+  * kind, whether express or implied.
+  */
  
- static int rcar_du_probe(struct platform_device *pdev)
- {
--	struct device_node *np = pdev->dev.of_node;
- 	struct rcar_du_device *rcdu;
- 	struct drm_device *ddev;
- 	struct resource *mem;
- 	int ret;
- 
--	if (np == NULL) {
--		dev_err(&pdev->dev, "no device tree node\n");
--		return -ENODEV;
--	}
+-/include/ "skeleton.dtsi"
 -
- 	/* Allocate and initialize the DRM and R-Car device structures. */
- 	rcdu = devm_kzalloc(&pdev->dev, sizeof(*rcdu), GFP_KERNEL);
- 	if (rcdu == NULL)
+ #include <dt-bindings/clock/r8a7778-clock.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+@@ -23,6 +21,8 @@
+ / {
+ 	compatible = "renesas,r8a7778";
+ 	interrupt-parent = <&gic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
+ 
+ 	cpus {
+ 		#address-cells = <1>;
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
