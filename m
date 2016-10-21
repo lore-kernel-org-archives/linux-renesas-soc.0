@@ -1,15 +1,11 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www1246.sakura.ne.jp ([219.94.162.56]:48683 "EHLO
-        www1246.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750849AbcJXFvd (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:40466 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754148AbcJULU3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Oct 2016 01:51:33 -0400
-From: Xuan Truong Nguyen <nx-truong@jinso.co.jp>
-Subject: Re: The failure summary report of GEN2 for linux stable v4.8
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <57A46D20.7040106@jinso.co.jp> <1557504.I3EyWl6QE0@avalon>
- <a101cec4-c9ee-48fa-4f16-5e4cb2b8fab7@jinso.co.jp>
- <5754513.jIbGsJMV7d@avalon>
+        Fri, 21 Oct 2016 07:20:29 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Xuan Truong Nguyen <nx-truong@jinso.co.jp>
 Cc: duclm <lm-duc@jinso.co.jp>, ryusuke.sakato.bx@renesas.com,
         kuninori.morimoto.gx@renesas.com, magnus.damm@gmail.com,
         geert+renesas@glider.be, h-inayoshi@jinso.co.jp,
@@ -17,52 +13,54 @@ Cc: duclm <lm-duc@jinso.co.jp>, ryusuke.sakato.bx@renesas.com,
         cm-hiep@jinso.co.jp, laurent.pinchart+renesas@ideasonboard.com,
         horms+renesas@verge.net.au, linux-renesas-soc@vger.kernel.org,
         wsa@sang-engineering.com
-Message-ID: <50d78e81-1e89-c34f-4dcb-c128902b2e1a@jinso.co.jp>
-Date: Mon, 24 Oct 2016 14:51:28 +0900
+Subject: Re: The failure summary report of GEN2 for linux stable v4.8
+Date: Fri, 21 Oct 2016 14:20:24 +0300
+Message-ID: <5754513.jIbGsJMV7d@avalon>
+In-Reply-To: <a101cec4-c9ee-48fa-4f16-5e4cb2b8fab7@jinso.co.jp>
+References: <57A46D20.7040106@jinso.co.jp> <1557504.I3EyWl6QE0@avalon> <a101cec4-c9ee-48fa-4f16-5e4cb2b8fab7@jinso.co.jp>
 MIME-Version: 1.0
-In-Reply-To: <5754513.jIbGsJMV7d@avalon>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi laurent.
+Hi Truong,
 
-> Could you please tell me what you're using to test the display ?
-Sorry if I misunderstand what you wanted to know.
-I'm using the LG 23MP48HQ-P and VIERA TH-L19C3-P - Panasonic (White)
-http://www.lg.com/ca_en/desktop-monitors/lg-23MP48HQ-P
-http://panasonic.jp/viera/p-db/TH-L19C3.html
+On Friday 21 Oct 2016 19:53:47 Xuan Truong Nguyen wrote:
+> Hello Laurent.
+> 
+> > The document mentions that you have used shmobile_defconfig. However, that
+> > configuration in v4.8 doesn't enable CONFIG_CMA, which causes at least the
+> > DU driver to fail probing the device. I thus assume you have modified the
+> > configuration to enable CMA. The fact that shmobile_defconfig doesn't
+> > include the uvcvideo driver used by test 14 seems to confirm local
+> > modifications to the configuration.
+> > Issue 8 ("Lager: bad image quality when shown on HDMI display") can't be
+> > reproduced on my system when displaying a test pattern with the modetest
+> > application. Could you please share more information on how to reproduce
+> > the problem ?
+> 
+> We retested this issue No 8 again with the CONFIG_CMA enabled but the
+> result is the same. you could see it by the error.jpg image in attachments.
+> the display device used is Panasonic TH-L19C3 (refer the device.jpg). we
+> also send you my configs file, too (lager_du.config).
 
-I tested using the command:  bmap /dev/fb0 picture.bmp
-on M2 board (Koelsch) the image is displayed clearly.
-but on H2 board (Lager) the image is displayed not clearly.
+Thank you for the information, I'll try to reproduce the problem here with 
+your kernel configuration.
 
-I also retested on V4.9-rc2 and something weird happened.
-for VIERA TH-L19C3-P:
-- if I boot the board before inserting the cable, the display is not 
-working.
-- but if I inserted the cable before booting, it works, but the image is 
-not displayed clearly.
+> just one more thing, with CONFIG_CMA enabled, the driver fails on
+> probing if we boot the board without the HDMI cable inserted in advance.
+> we have to insert the cable before booting the board. and not all the
+> display work with current HDMI driver (as our LG display will not work)
+> we are using the mainline upstream version 4.8
 
-for LG 23MP48HQ-P:
-- if I boot the board before inserting the cable, the driver probes 
-successfully.
-but after inserting the cable, the display almost does not work (no signal).
-- if I boot the board with the cable inserted in advance, the driver 
-fails on probe.
-I checked with dmesg:
-root@linaro-nano:~# dmesg | grep rcar-du
-[    5.749231] rcar-du feb00000.display: failed to allocate buffer with 
-size 8294400
-[    5.771675] rcar-du feb00000.display: Failed to set initial hw 
-configuration.
-[    5.793075] rcar-du fdmesg | grep rcar-dueb00000.display: failed to 
-initialize DRM/KMS (-12)
-[    5.813564] rcar-du: probe of feb00000.display failed with error -12
-root@linaro-nano:~#
+Interesting, I'll check that too.
 
-The cables are ok, two screens work normally on Ubuntu.
+> if you need any information to debug, please lets us know.
 
-thanks and best regards
-JINSO/Truong
+Could you please tell me what you're using to test the display ?
+
+-- 
+Regards,
+
+Laurent Pinchart
