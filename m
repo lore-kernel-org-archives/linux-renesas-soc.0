@@ -1,75 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:50772 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754336AbcJNNO2 (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:53775 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933325AbcJUNRj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Oct 2016 09:14:28 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms+renesas@verge.net.au>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v3 0/3] mmc: sh_mobile_sdhi: Add r7s72100 support
-Date: Fri, 14 Oct 2016 13:14:22 +0000
-Message-ID: <SG2PR06MB1165883EDC27C3C7994121EF8ADF0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20160912141507.6837-1-chris.brandt@renesas.com>
-In-Reply-To: <20160912141507.6837-1-chris.brandt@renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Fri, 21 Oct 2016 09:17:39 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 05/23] ARM: dts: r8a7790: Add device node for RST module
+Date: Fri, 21 Oct 2016 15:17:19 +0200
+Message-Id: <1477055857-17936-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello.
+Add a device node for the RST module, which provides a.o. reset control
+and mode pin monitoring.
 
-What ever happened to this series of patches?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
+---
+v4:
+  - Add Acked-by,
 
-They didn't seem too outrageous, but they never got applied.
+v3:
+  - Use "renesas,<soctype>-rst" instead of "renesas,rst-<soctype>",
+  - Drop "syscon" compatible value,
 
-Thank you.
+v2:
+  - Correct unit address,
+  - Drop RFC status and TODO,
+  - Change one-line summary prefix to match current arm-soc practices.
+---
+ arch/arm/boot/dts/r8a7790.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Chris
-
-
-
-On 9/12/2016, Chris Brandt wrote:
-> To: Ulf Hansson <ulf.hansson@linaro.org>; Wolfram Sang <wsa+renesas@sang-
-> engineering.com>; Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>;
-> Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Simon Horman <horms+renesas@verge.net.au>; linux-mmc@vger.kernel.org;
-> linux-renesas-soc@vger.kernel.org; Chris Brandt <Chris.Brandt@renesas.com=
->
-> Subject: [PATCH v3 0/3] mmc: sh_mobile_sdhi: Add r7s72100 support
->=20
-> For the most part, the SDHI controller in the RZ/A1 (r7s72100) is the sam=
-e
-> as other Renesas SoC...except for the fact that the data port register wa=
-s
-> widened to 32-bits and the 16-bit accesses in the current tmio driver
-> aren't going to cut it.
->=20
-> Also, the tmio driver allows you to pass in what voltages you support via
-> the ocr_mask. For the RZ/A1, it's just simple 3.3v.
-> So, I added the ability to pass that when using DT.
->=20
-> Chris Brandt (3):
->   mmc: sh_mobile_sdhi: add ocr_mask option
->   mmc: tmio-mmc: add support for 32bit data port
->   mmc: sh_mobile_sdhi: Add r7s72100 support
->=20
->  Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  1 +
->  drivers/mmc/host/sh_mobile_sdhi.c                  |  9 +++++++
->  drivers/mmc/host/tmio_mmc.h                        | 12 +++++++++
->  drivers/mmc/host/tmio_mmc_pio.c                    | 30
-> ++++++++++++++++++++++
->  include/linux/mfd/tmio.h                           |  5 ++++
->  5 files changed, 57 insertions(+)
->=20
-> --
-> 2.9.2
->=20
+diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
+index 351fcc2f87df6b28..3f10b0bf1b08fa89 100644
+--- a/arch/arm/boot/dts/r8a7790.dtsi
++++ b/arch/arm/boot/dts/r8a7790.dtsi
+@@ -1471,6 +1471,11 @@
+ 		};
+ 	};
+ 
++	rst: reset-controller@e6160000 {
++		compatible = "renesas,r8a7790-rst";
++		reg = <0 0xe6160000 0 0x0100>;
++	};
++
+ 	sysc: system-controller@e6180000 {
+ 		compatible = "renesas,r8a7790-sysc";
+ 		reg = <0 0xe6180000 0 0x0200>;
+-- 
+1.9.1
