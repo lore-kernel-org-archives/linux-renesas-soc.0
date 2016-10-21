@@ -1,54 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:36134 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754244AbcJZMIp (ORCPT
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:32868 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753173AbcJUUjR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Oct 2016 08:08:45 -0400
+        Fri, 21 Oct 2016 16:39:17 -0400
+Received: by mail-lf0-f53.google.com with SMTP id x79so162828508lff.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Oct 2016 13:39:17 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 0/7] Add R8A7743/SK-RZG1M board support
+Date: Fri, 21 Oct 2016 23:39:14 +0300
+Message-ID: <2719479.geOc9vqcRS@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <2719479.geOc9vqcRS@wasted.cogentembedded.com>
-References: <2719479.geOc9vqcRS@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 26 Oct 2016 14:08:44 +0200
-Message-ID: <CAMuHMdUNgnYc1O7DATNH1r9SQ72eqtxwFvqcen08Tq+Er3LuvQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] Add R8A7743/SK-RZG1M board support
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Sergei,
+Hello.
 
-On Fri, Oct 21, 2016 at 10:39 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
->    Here's the set of 8 patches against Simon Horman's 'renesas.git' repo's
-> 'renesas-devel-20161021-v4.9-rc1' tag. I'm adding the device tree support for
-> the R8A7743-based SK-RZG1M board. The SoC is close to R8A7791 and the board
-> seems identical to the R8A7791/Porter board. The device tree patches depend on
-> the R8A7743 CPG/MSSR driver series just posted in order to compile and work.
+   Here's the set of 8 patches against Simon Horman's 'renesas.git' repo's
+'renesas-devel-20161021-v4.9-rc1' tag. I'm adding the device tree support for
+the R8A7743-based SK-RZG1M board. The SoC is close to R8A7791 and the board
+seems identical to the R8A7791/Porter board. The device tree patches depend on
+the R8A7743 CPG/MSSR driver series just posted in order to compile and work.
+Already merged patches from this series won't be re-posted.
 
-They depend only on "[PATCH v3 1/2] ARM: shmobile: r8a7743: add CPG clock
-index macros" of that series, right?
+[1/7] ARM: dts: r8a7743: initial SoC device tree
+[2/7] ARM: dts: r8a7743: add SYS-DMAC support
+[3/7] ARM: dts: r8a7743: add [H]SCIF{A|B} support
+[4/7] ARM: dts: r8a7743: add Ether support
+[5/7] ARM: dts: r8a7743: add IRQC support
+[6/7] ARM: dts: sk-rzg1m: initial device tree
+[7/7] ARM: dts: sk-rzg1m: add Ether support
 
-"[PATCH v3 2/2] clk: renesas: cpg-mssr: add R8A7743 support" is not needed,
-and introduces an additional dependency on "[PATCH 1/3] clk: renesas:
-cpg-mssr: add common R-Car Gen2 support".
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+WBR, Sergei
