@@ -1,58 +1,59 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:49613 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932632AbcJUJQS (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 21 Oct 2016 05:16:18 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
+To: Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 06/23] ARM: dts: r8a7791: Add device node for RST module
-Date: Fri, 21 Oct 2016 15:17:20 +0200
-Message-Id: <1477055857-17936-7-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
-References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 5/5] ARM: dts: sh73a0: Remove skeleton.dtsi inclusion
+Date: Fri, 21 Oct 2016 11:16:10 +0200
+Message-Id: <1477041370-22778-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477041370-22778-1-git-send-email-geert+renesas@glider.be>
+References: <1477041370-22778-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a device node for the RST module, which provides a.o. reset control
-and mode pin monitoring.
+As of commit 9c0da3cc61f1233c ("ARM: dts: explicitly mark skeleton.dtsi
+as deprecated"), including skeleton.dtsi is deprecated.
+
+This fixes the following warning with W=1:
+
+    Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
 ---
-v4:
-  - Add Acked-by,
+ arch/arm/boot/dts/sh73a0.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-v3:
-  - Use "renesas,<soctype>-rst" instead of "renesas,rst-<soctype>",
-  - Drop "syscon" compatible value,
-
-v2:
-  - Correct unit address,
-  - Drop RFC status and TODO,
-  - Change one-line summary prefix to match current arm-soc practices.
----
- arch/arm/boot/dts/r8a7791.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 162b55c665a3519e..c465c79bcca6e8f3 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1482,6 +1482,11 @@
- 		};
- 	};
+diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
+index 032fe2f14b16998f..e1267590b57570e5 100644
+--- a/arch/arm/boot/dts/sh73a0.dtsi
++++ b/arch/arm/boot/dts/sh73a0.dtsi
+@@ -8,8 +8,6 @@
+  * kind, whether express or implied.
+  */
  
-+	rst: reset-controller@e6160000 {
-+		compatible = "renesas,r8a7791-rst";
-+		reg = <0 0xe6160000 0 0x0100>;
-+	};
-+
- 	sysc: system-controller@e6180000 {
- 		compatible = "renesas,r8a7791-sysc";
- 		reg = <0 0xe6180000 0 0x0200>;
+-/include/ "skeleton.dtsi"
+-
+ #include <dt-bindings/clock/sh73a0-clock.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+@@ -17,6 +15,8 @@
+ / {
+ 	compatible = "renesas,sh73a0";
+ 	interrupt-parent = <&gic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
+ 
+ 	cpus {
+ 		#address-cells = <1>;
 -- 
 1.9.1
