@@ -1,41 +1,89 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:36851 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755619AbcJUUPL (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 21 Oct 2016 16:15:11 -0400
+Received: by mail-lf0-f49.google.com with SMTP id b75so153628993lfg.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Oct 2016 13:15:10 -0700 (PDT)
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
+Subject: [PATCH v3 1/2] ARM: shmobile: r8a7743: add CPG clock index macros
+Date: Fri, 21 Oct 2016 23:15:07 +0300
+Message-ID: <21115355.YTPdgcs0id@wasted.cogentembedded.com>
+In-Reply-To: <1582226.1VeLLfmmeJ@wasted.cogentembedded.com>
+References: <1582226.1VeLLfmmeJ@wasted.cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <21115355.YTPdgcs0id@wasted.cogentembedded.com>
-References: <1582226.1VeLLfmmeJ@wasted.cogentembedded.com> <21115355.YTPdgcs0id@wasted.cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 26 Oct 2016 14:12:22 +0200
-Message-ID: <CAMuHMdUW-UpLN89MXf76Ju0HgNUaykWCzhpDofwx50sYTnOGWQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] ARM: shmobile: r8a7743: add CPG clock index macros
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=UTF-8
-Sender: devicetree-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Oct 21, 2016 at 10:15 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add macros usable by  the device tree sources to reference the R8A7743 CPG
-> clocks  by index. The data comes from the  table 7.2b in the revision 0.50
-> of the RZ/G Series User's Manual.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Add macros usable by  the device tree sources to reference the R8A7743 CPG
+clocks  by index. The data comes from the  table 7.2b in the revision 0.50
+of the RZ/G Series User's Manual.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Gr{oetje,eeting}s,
+---
+Changes in version 3:
+- renumbered the #define's in order to match the R8A7791 CPG clocks;
+- added the reference to  the manaual to the patch description.
 
-                        Geert
+Changes in version 2:
+- reduced the macro value indentation.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ include/dt-bindings/clock/r8a7743-cpg-mssr.h |   43 +++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Index: linux/include/dt-bindings/clock/r8a7743-cpg-mssr.h
+===================================================================
+--- /dev/null
++++ linux/include/dt-bindings/clock/r8a7743-cpg-mssr.h
+@@ -0,0 +1,43 @@
++/*
++ * Copyright (C) 2016 Cogent Embedded Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a7743 CPG Core Clocks */
++#define R8A7743_CLK_Z		0
++#define R8A7743_CLK_ZG		1
++#define R8A7743_CLK_ZTR		2
++#define R8A7743_CLK_ZTRD2	3
++#define R8A7743_CLK_ZT		4
++#define R8A7743_CLK_ZX		5
++#define R8A7743_CLK_ZS		6
++#define R8A7743_CLK_HP		7
++#define R8A7743_CLK_B		9
++#define R8A7743_CLK_LB		10
++#define R8A7743_CLK_P		11
++#define R8A7743_CLK_CL		12
++#define R8A7743_CLK_M2		13
++#define R8A7743_CLK_ZB3		15
++#define R8A7743_CLK_ZB3D2	16
++#define R8A7743_CLK_DDR		17
++#define R8A7743_CLK_SDH		18
++#define R8A7743_CLK_SD0		19
++#define R8A7743_CLK_SD2		20
++#define R8A7743_CLK_SD3		21
++#define R8A7743_CLK_MMC0	22
++#define R8A7743_CLK_MP		23
++#define R8A7743_CLK_QSPI	26
++#define R8A7743_CLK_CP		27
++#define R8A7743_CLK_RCAN	28
++#define R8A7743_CLK_R		29
++#define R8A7743_CLK_OSC		30
++
++#endif /* __DT_BINDINGS_CLOCK_R8A7743_CPG_MSSR_H__ */
