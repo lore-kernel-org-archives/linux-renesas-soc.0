@@ -1,45 +1,50 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:45176 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938383AbcJVL3O (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 22 Oct 2016 07:29:14 -0400
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id A1C8820095
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 22 Oct 2016 13:28:19 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 2/3] clk: renesas: r8a7796: Add VSP clocks
-Date: Sat, 22 Oct 2016 14:29:05 +0300
-Message-Id: <1477135746-7144-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1477135746-7144-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1477135746-7144-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 03/23] ARM: dts: r8a7778: Add device node for RESET/WDT module
+Date: Fri, 21 Oct 2016 15:17:17 +0200
+Message-Id: <1477055857-17936-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add a device node for the RESET/WDT module, which provides a.o. reset
+control, mode pin monitoring, and watchdog control.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
 ---
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 5 +++++
+v4:
+  - Add Acked-by,
+
+v3:
+  - New.
+---
+ arch/arm/boot/dts/r8a7778.dtsi | 5 +++++
  1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index a02525143eb8..c25806d9ce73 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -129,6 +129,11 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
- 	DEF_MOD("fcpf0",		 615,	R8A7796_CLK_S0D1),
- 	DEF_MOD("fcpci0",		 617,	R8A7796_CLK_S0D2),
- 	DEF_MOD("fcpcs",		 619,	R8A7796_CLK_S0D2),
-+	DEF_MOD("vspd2",		 621,	R8A7796_CLK_S0D2),
-+	DEF_MOD("vspd1",		 622,	R8A7796_CLK_S0D2),
-+	DEF_MOD("vspd0",		 623,	R8A7796_CLK_S0D2),
-+	DEF_MOD("vspb",			 626,	R8A7796_CLK_S0D1),
-+	DEF_MOD("vspi0",		 631,	R8A7796_CLK_S0D1),
- 	DEF_MOD("etheravb",		 812,	R8A7796_CLK_S0D6),
- 	DEF_MOD("gpio7",		 905,	R8A7796_CLK_S3D4),
- 	DEF_MOD("gpio6",		 906,	R8A7796_CLK_S3D4),
+diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
+index e571d66ea0fe1721..3d0a18abd408c76d 100644
+--- a/arch/arm/boot/dts/r8a7778.dtsi
++++ b/arch/arm/boot/dts/r8a7778.dtsi
+@@ -626,4 +626,9 @@
+ 				"sru-src6", "sru-src7", "sru-src8";
+ 		};
+ 	};
++
++	rst: reset-controller@ffcc0000 {
++		compatible = "renesas,r8a7778-reset-wdt";
++		reg = <0xffcc0000 0x40>;
++	};
+ };
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
