@@ -1,60 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:55989 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932685AbcJUJQX (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:49764 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933860AbcJUNRq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Oct 2016 05:16:23 -0400
+        Fri, 21 Oct 2016 09:17:46 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/5] ARM: dts: renesas: Remove skeleton.dtsi inclusion
-Date: Fri, 21 Oct 2016 11:16:05 +0200
-Message-Id: <1477041370-22778-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4 04/23] ARM: dts: r8a7779: Add device node for RESET/WDT module
+Date: Fri, 21 Oct 2016 15:17:18 +0200
+Message-Id: <1477055857-17936-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+Add a device node for the RESET/WDT module, which provides a.o. reset
+control, mode pin monitoring, and watchdog control.
 
-As of commit 9c0da3cc61f1233c ("ARM: dts: explicitly mark skeleton.dtsi
-as deprecated"), including skeleton.dtsi is deprecated.
-Hence this series removes its use for all Renesas 32-bit ARM SoCs.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
+---
+v4:
+  - Add Acked-by,
 
-This fixes the following warning seen with W=1:
+v3:
+  - New.
+---
+ arch/arm/boot/dts/r8a7779.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-    Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
-
-Thanks for applying!
-
-Geert Uytterhoeven (5):
-  ARM: dts: emev2: Remove skeleton.dtsi inclusion
-  ARM: dts: r8a7778: Remove skeleton.dtsi inclusion
-  ARM: dts: r8a7779: Remove skeleton.dtsi inclusion
-  ARM: dts: r8a7740: Remove skeleton.dtsi inclusion
-  ARM: dts: sh73a0: Remove skeleton.dtsi inclusion
-
- arch/arm/boot/dts/emev2.dtsi   | 3 ++-
- arch/arm/boot/dts/r8a7740.dtsi | 4 ++--
- arch/arm/boot/dts/r8a7778.dtsi | 4 ++--
- arch/arm/boot/dts/r8a7779.dtsi | 4 ++--
- arch/arm/boot/dts/sh73a0.dtsi  | 4 ++--
- 5 files changed, 10 insertions(+), 9 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index b9bbcce69dfbd5b9..4a30b232624e1d24 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -595,4 +595,9 @@
+ 		reg = <0xffd85000 0x0200>;
+ 		#power-domain-cells = <1>;
+ 	};
++
++	rst: reset-controller@ffcc0000 {
++		compatible = "renesas,r8a7779-reset-wdt";
++		reg = <0xffcc0000 0x48>;
++	};
+ };
 -- 
 1.9.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
