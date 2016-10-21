@@ -1,50 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:48767 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753626AbcJDMbs (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:53769 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933325AbcJUNRo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Oct 2016 08:31:48 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/6] drm: rcar-du: Bring HDMI encoder comments in line with the driver
-Date: Tue,  4 Oct 2016 15:31:36 +0300
-Message-Id: <1475584299-21236-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1475584299-21236-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1475584299-21236-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 21 Oct 2016 09:17:44 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 09/23] ARM: dts: r8a7794: Add device node for RST module
+Date: Fri, 21 Oct 2016 15:17:23 +0200
+Message-Id: <1477055857-17936-10-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Capitalize acronyms and use determiners and punctuation.
+Add a device node for the RST module, which provides a.o. reset control
+and mode pin monitoring.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v4:
+  - Add Acked-by,
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c b/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
-index e03004f4588d..f9515f53cc5b 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_hdmienc.c
-@@ -108,7 +108,7 @@ int rcar_du_hdmienc_init(struct rcar_du_device *rcdu,
- 	if (hdmienc == NULL)
- 		return -ENOMEM;
+v3:
+  - Use "renesas,<soctype>-rst" instead of "renesas,rst-<soctype>",
+  - Drop "syscon" compatible value,
+
+v2:
+  - Correct unit address,
+  - Drop RFC status and TODO,
+  - Change one-line summary prefix to match current arm-soc practices.
+---
+ arch/arm/boot/dts/r8a7794.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
+index 9365580a194facc7..69e4f4fad89b2323 100644
+--- a/arch/arm/boot/dts/r8a7794.dtsi
++++ b/arch/arm/boot/dts/r8a7794.dtsi
+@@ -1375,6 +1375,11 @@
+ 		};
+ 	};
  
--	/* Locate drm bridge from the hdmi encoder DT node */
-+	/* Locate the DRM bridge from the HDMI encoder DT node. */
- 	bridge = of_drm_find_bridge(np);
- 	if (!bridge)
- 		return -EPROBE_DEFER;
-@@ -123,7 +123,7 @@ int rcar_du_hdmienc_init(struct rcar_du_device *rcdu,
- 	renc->hdmi = hdmienc;
- 	hdmienc->renc = renc;
- 
--	/* Link drm_bridge to encoder */
-+	/* Link the bridge to the encoder. */
- 	bridge->encoder = encoder;
- 	encoder->bridge = bridge;
- 
++	rst: reset-controller@e6160000 {
++		compatible = "renesas,r8a7794-rst";
++		reg = <0 0xe6160000 0 0x0100>;
++	};
++
+ 	sysc: system-controller@e6180000 {
+ 		compatible = "renesas,r8a7794-sysc";
+ 		reg = <0 0xe6180000 0 0x0200>;
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
