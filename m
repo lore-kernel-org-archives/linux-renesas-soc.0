@@ -1,64 +1,63 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:34414 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750947AbcJSGNi (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Oct 2016 02:13:38 -0400
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-CC: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 0/4] usb: host: xhci: plat: add support for Renesas
- r8a7796 SoC
-Date: Wed, 19 Oct 2016 06:13:32 +0000
-Message-ID: <SIXPR06MB05599768043BB3A95EFAD5FDD8D20@SIXPR06MB0559.apcprd06.prod.outlook.com>
-References: <1472028762-6640-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1472028762-6640-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 16/23] clk: renesas: r8a7796: Obtain mode pin values from R-Car RST driver
+Date: Fri, 21 Oct 2016 15:17:30 +0200
+Message-Id: <1477055857-17936-17-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi,
+Obtain the values of the mode pins from the R-Car RST driver, which
+relies on the presence in DT of a device node for the RST module.
 
-> -----Original Message-----
-> From: Yoshihiro Shimoda
-> Sent: Wednesday, August 24, 2016 5:53 PM
-> To: mathias.nyman@intel.com; gregkh@linuxfoundation.org; robh+dt@kernel.o=
-rg; mark.rutland@arm.com
-> Cc: linux-usb@vger.kernel.org; linux-renesas-soc@vger.kernel.org; Yoshihi=
-ro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Subject: [PATCH 0/4] usb: host: xhci: plat: add support for Renesas r8a77=
-96 SoC
->=20
-> This patch is based on the latest Greg's usb.git / usb-next branch.
-> (commit id =3D 1aaaa9acaea1dd2878d6c92b45e4c117ef425baf)
->=20
-> Yoshihiro Shimoda (4):
->   usb: host: xhci: rcar: add a new firmware version for r8a7796
->   usb: host: xhci: rcar: add a macro XHCI_PLAT_RENESAS_RCAR_PRIV
->   usb: host: xhci: plat: use XHCI_PLAT_RENESAS_RCAR_PRIV macro for R-Car
->   usb: host: xhci: plat: add support for Renesas r8a7796 SoC
->=20
->  Documentation/devicetree/bindings/usb/usb-xhci.txt |  1 +
->  drivers/usb/host/xhci-plat.c                       | 17 ++++++----------=
--
->  drivers/usb/host/xhci-rcar.c                       | 18 +++++++++++++---=
---
->  drivers/usb/host/xhci-rcar.h                       |  9 +++++++++
->  4 files changed, 29 insertions(+), 16 deletions(-)
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+v4:
+  - Add Acked-by, Reviewed-by,
 
-I found a problem this patch set, so please ignore this.
-I will modify this and submit v2 patch set later.
+v3:
+  - New.
+---
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Best regards,
-Yoshihiro Shimoda
-
-> --
-> 1.9.1
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index eb347ed265f2adfa..1c144b21869df39c 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -16,6 +16,7 @@
+ #include <linux/device.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
++#include <linux/soc/renesas/rcar-rst.h>
+ 
+ #include <dt-bindings/clock/r8a7796-cpg-mssr.h>
+ 
+@@ -190,7 +191,12 @@ enum clk_ids {
+ static int __init r8a7796_cpg_mssr_init(struct device *dev)
+ {
+ 	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
+-	u32 cpg_mode = rcar_gen3_read_mode_pins();
++	u32 cpg_mode;
++	int error;
++
++	error = rcar_rst_read_mode_pins(&cpg_mode);
++	if (error)
++		return error;
+ 
+ 	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
+ 	if (!cpg_pll_config->extal_div) {
+-- 
+1.9.1
