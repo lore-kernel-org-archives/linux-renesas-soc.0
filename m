@@ -1,71 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:35926 "EHLO
-        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753620AbcJUUpj (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:49611 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932638AbcJUJQS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Oct 2016 16:45:39 -0400
-Received: by mail-lf0-f42.google.com with SMTP id b75so154135774lfg.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Oct 2016 13:45:38 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: horms@verge.net.au, linux-renesas-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: magnus.damm@gmail.com, linux@arm.linux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 4/7] ARM: dts: r8a7743: add Ether support
-Date: Fri, 21 Oct 2016 23:45:36 +0300
-Message-ID: <3177118.XYEgMqnqG8@wasted.cogentembedded.com>
-In-Reply-To: <2719479.geOc9vqcRS@wasted.cogentembedded.com>
-References: <2719479.geOc9vqcRS@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 21 Oct 2016 05:16:18 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/5] ARM: dts: emev2: Remove skeleton.dtsi inclusion
+Date: Fri, 21 Oct 2016 11:16:06 +0200
+Message-Id: <1477041370-22778-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477041370-22778-1-git-send-email-geert+renesas@glider.be>
+References: <1477041370-22778-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Define the generic R8A7743 part of the Ether device node.
+As of commit 9c0da3cc61f1233c ("ARM: dts: explicitly mark skeleton.dtsi
+as deprecated"), including skeleton.dtsi is deprecated.
 
-Based on the original (and large) patch by Dmitry Shifrin
-<dmitry.shifrin@cogentembedded.com>.
+This fixes the following warning with W=1:
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+    Warning (unit_address_vs_reg): Node /memory has a reg or ranges property, but no unit name
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Changes in version 4:
-- refreshed the patch;
-- added Geert's tag.
+ arch/arm/boot/dts/emev2.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Changes in version 3:
-- resolved a reject;
-- updated the "clocks" property for the CPG/MSSR driver.
-
-Changes in version 2:
-- new patch.
-
- arch/arm/boot/dts/r8a7743.dtsi |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-Index: renesas/arch/arm/boot/dts/r8a7743.dtsi
-===================================================================
---- renesas.orig/arch/arm/boot/dts/r8a7743.dtsi
-+++ renesas/arch/arm/boot/dts/r8a7743.dtsi
-@@ -413,6 +413,18 @@
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
- 			status = "disabled";
- 		};
-+
-+		ether: ethernet@ee700000 {
-+			compatible = "renesas,ether-r8a7743";
-+			reg = <0 0xee700000 0 0x400>;
-+			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 813>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			phy-mode = "rmii";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
- 	};
+diff --git a/arch/arm/boot/dts/emev2.dtsi b/arch/arm/boot/dts/emev2.dtsi
+index cd119400f440bb5a..0124faf175c8612b 100644
+--- a/arch/arm/boot/dts/emev2.dtsi
++++ b/arch/arm/boot/dts/emev2.dtsi
+@@ -8,13 +8,14 @@
+  * kind, whether express or implied.
+  */
  
- 	/* External root clock */
+-#include "skeleton.dtsi"
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ 
+ / {
+ 	compatible = "renesas,emev2";
+ 	interrupt-parent = <&gic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
+ 
+ 	aliases {
+ 		gpio0 = &gpio0;
+-- 
+1.9.1
