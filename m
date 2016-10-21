@@ -1,102 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:49760 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933733AbcJUNRl (ORCPT
+Received: from arroyo.ext.ti.com ([198.47.19.12]:49864 "EHLO arroyo.ext.ti.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933305AbcJUNcH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Oct 2016 09:17:41 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 01/23] reset: Add renesas,rst DT bindings
-Date: Fri, 21 Oct 2016 15:17:15 +0200
-Message-Id: <1477055857-17936-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
-References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+        Fri, 21 Oct 2016 09:32:07 -0400
+Subject: Re: [PATCH 1/6] video: of: Constify node argument to display timing
+ functions
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        <dri-devel@lists.freedesktop.org>
+References: <1475584299-21236-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1475584299-21236-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+CC: <linux-renesas-soc@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <4fe0f974-da8e-a5c7-c3e6-52c112ae871d@ti.com>
+Date: Fri, 21 Oct 2016 16:26:57 +0300
+MIME-Version: 1.0
+In-Reply-To: <1475584299-21236-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature";
+        boundary="F1bC0q9R6Hx1N5GxNwp3eNdASpKKdaQ1U"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add DT bindings for the Renesas R-Car Reset Controller (R-Car Gen1
-RESET/WDT and R-Car Gen2/Gen3 and RZ/G RST).
+--F1bC0q9R6Hx1N5GxNwp3eNdASpKKdaQ1U
+Content-Type: multipart/mixed; boundary="n7tGPlDS899MbNV9lswA4eo51rSpeamJ1";
+ protected-headers="v1"
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org, David Airlie <airlied@linux.ie>
+Message-ID: <4fe0f974-da8e-a5c7-c3e6-52c112ae871d@ti.com>
+Subject: Re: [PATCH 1/6] video: of: Constify node argument to display timing
+ functions
+References: <1475584299-21236-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1475584299-21236-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1475584299-21236-2-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 
-As the features provided by the hardware module differ a lot across the
-various SoC families and members, only SoC-specific compatible values
-are defined.
+--n7tGPlDS899MbNV9lswA4eo51rSpeamJ1
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-For now we use the RST only for providing access to the state of the
-mode pins, which is needed by the clock driver.
+On 04/10/16 15:31, Laurent Pinchart wrote:
+> The node pointer passed to the display timing functions is never
+> modified, make it const.
+>=20
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.=
+com>
+> ---
+>  drivers/video/of_display_timing.c |  6 +++---
+>  include/video/of_display_timing.h | 15 ++++++++-------
+>  2 files changed, 11 insertions(+), 10 deletions(-)
+>=20
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Magnus Damm <damm+renesas@opensource.se>
-Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-v4:
-  - Add Acked-by,
-  - Fix comma and period in list,
-  - Add RZ/G1M and RZ/G1E,
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-v3:
-  - Clarify current usage,
-  - Use "renesas,<soctype>-rst" instead of "renesas,rst-<soctype>",
-  - Drop "syscon" compatible value,
-  - Add R-Car M3-W,
-  - Add R-Car Gen1,
+And ack for merging via drm.
 
-v2:
-  - Add Acked-by.
----
- .../devicetree/bindings/reset/renesas,rst.txt      | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/renesas,rst.txt
+ Tomi
 
-diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-new file mode 100644
-index 0000000000000000..fe5e0f37b3c93579
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
-@@ -0,0 +1,37 @@
-+DT bindings for the Renesas R-Car and RZ/G Reset Controllers
-+
-+The R-Car and RZ/G Reset Controllers provide reset control, and implement the
-+following functions:
-+  - Latching of the levels on mode pins when PRESET# is negated,
-+  - Mode monitoring register,
-+  - Reset control of peripheral devices (on R-Car Gen1),
-+  - Watchdog timer (on R-Car Gen1),
-+  - Register-based reset control and boot address registers for the various CPU
-+    cores (on R-Car Gen2 and Gen3, and on RZ/G).
-+
-+
-+Required properties:
-+  - compatible: Should be
-+		  - "renesas,<soctype>-reset-wdt" for R-Car Gen1,
-+		  - "renesas,<soctype>-rst" for R-Car Gen2 and Gen3, and RZ/G
-+		Examples with soctypes are:
-+		  - "renesas,r8a7743-rst" (RZ/G1M)
-+		  - "renesas,r8a7745-rst" (RZ/G1E)
-+		  - "renesas,r8a7778-reset-wdt" (R-Car M1A)
-+		  - "renesas,r8a7779-reset-wdt" (R-Car H1)
-+		  - "renesas,r8a7790-rst" (R-Car H2)
-+		  - "renesas,r8a7791-rst" (R-Car M2-W)
-+		  - "renesas,r8a7792-rst" (R-Car V2H
-+		  - "renesas,r8a7793-rst" (R-Car M2-N)
-+		  - "renesas,r8a7794-rst" (R-Car E2)
-+		  - "renesas,r8a7795-rst" (R-Car H3)
-+		  - "renesas,r8a7796-rst" (R-Car M3-W)
-+  - reg: Address start and address range for the device.
-+
-+
-+Example:
-+
-+	rst: reset-controller@e6160000 {
-+		compatible = "renesas,r8a7795-rst";
-+		reg = <0 0xe6160000 0 0x0200>;
-+	};
--- 
-1.9.1
+
+--n7tGPlDS899MbNV9lswA4eo51rSpeamJ1--
+
+--F1bC0q9R6Hx1N5GxNwp3eNdASpKKdaQ1U
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJYChehAAoJEPo9qoy8lh71jRgP/jjLR6eMdus00MsPDHtqYw5n
+OGplNQYdfkrw03bhpfwhb73wHtLknvGOO7nygTorcRJYxLOh/7H9GzjXF0RpOGcU
+IaRHHwQyWCD3TrnAnhq89A1bLQ18W3Zk2xMUCDGORQ+SoqLE3xjLX37lDvTpSq4F
+OTKKUkF93KXF60V6ILZCCr3fgJWUD4UXty98JyPWkmYtX6/KBd0UCT6yv0hmww+e
+ICMuz7YVlP3Sy8y1EbBS/mZU6JePBMXG8vQTo2fOjDx7wUU3FgwhprLcxHEDrReW
+s395aRr0WRIGkZwhLdRyESlowP/rW35+wm2xTH3mvvQStI20fm2ZA1cXLCLKil5Z
+z2GZ+qAfLnd1pFuJnqGxDL4maaPg8J3BNU5yPf+SPQ4LrVbLeS3DpDImOIZs5EpL
+T3/vH/9Mc5VNlQpFqjQKXdf3Qxjl7m0FrXm0dxPMtyLrCNgdqgP6GmApwmgDDYyx
+IzoI1heD3KxUSGepPAcAM+AGW5yPRS7QZ+VQHbipt7LbJVM+I4KwftInlKmpECtQ
+g+lgni+wSRIokw/hDWnS0g6Bq6f5hKDMhjfQxaB3cLRxDBieILog3DOhAf9KjJEU
+o0R7N3WZK+QjFhgOval85EaO0ikjQ89/y1v+wzaFpv/k5N4Ry+3hf0zRzB7jEyzg
+iCvuqMcCmwIFbS44HFdb
+=oxCn
+-----END PGP SIGNATURE-----
+
+--F1bC0q9R6Hx1N5GxNwp3eNdASpKKdaQ1U--
