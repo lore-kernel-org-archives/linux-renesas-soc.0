@@ -1,51 +1,78 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:35280 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932186AbcJRPBm (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Oct 2016 11:01:42 -0400
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-To: horms@verge.net.au
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com,
-        hans.verkuil@cisco.com, william.towle@codethink.co.uk,
-        niklas.soderlund@ragnatech.se, geert@linux-m68k.org,
-        sergei.shtylyov@cogentembedded.com,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v2 0/2] Renesas Lager/Koelsch HDMI input
-Date: Tue, 18 Oct 2016 17:01:32 +0200
-Message-Id: <1476802894-5105-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 17/23] clk: renesas: rcar-gen3-cpg: Remove obsolete rcar_gen3_read_mode_pins()
+Date: Fri, 21 Oct 2016 15:17:31 +0200
+Message-Id: <1477055857-17936-18-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi!
+All R-Car Gen3 clock drivers now obtain the values of the mode pins from
+the R-Car RST driver.
 
-This series enables HDMI input on the Lager and Koelsch boards.
-It sits on renesas-next-20161017-v4.9-rc1.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+v4:
+  - Add Acked-by, Reviewed-by,
 
-I have tried to address all concerns raised by reviewers (correctly, I hope),
-see below for details.
+v3:
+  - New.
+---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 17 -----------------
+ drivers/clk/renesas/rcar-gen3-cpg.h |  1 -
+ 2 files changed, 18 deletions(-)
 
-CU
-Uli
-
-
-Changes since v1:
-- modeled decoder inputs/outputs and connectors
-- removed unnecessary "remote" nodes
-- r8a7790-lager.dts: "ok" -> "okay"
-- r8a7791-koelsch.dts: set ADV7612 interrupt to GP4_2
-
-
-Hans Verkuil (1):
-  ARM: dts: koelsch: add HDMI input
-
-William Towle (1):
-  ARM: dts: lager: Add entries for VIN HDMI input support
-
- arch/arm/boot/dts/r8a7790-lager.dts   | 66 ++++++++++++++++++++++++++++++++--
- arch/arm/boot/dts/r8a7791-koelsch.dts | 68 +++++++++++++++++++++++++++++++++--
- 2 files changed, 130 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index bb4f2f9a8c2f5ba8..9d76076da4948fc4 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -333,23 +333,6 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 					 __clk_get_name(parent), 0, mult, div);
+ }
+ 
+-/*
+- * Reset register definitions.
+- */
+-#define MODEMR	0xe6160060
+-
+-u32 __init rcar_gen3_read_mode_pins(void)
+-{
+-	void __iomem *modemr = ioremap_nocache(MODEMR, 4);
+-	u32 mode;
+-
+-	BUG_ON(!modemr);
+-	mode = ioread32(modemr);
+-	iounmap(modemr);
+-
+-	return mode;
+-}
+-
+ int __init rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
+ 			      unsigned int clk_extalr)
+ {
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index f699085147d1aece..f788f481dd42cdf6 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -33,7 +33,6 @@ struct rcar_gen3_cpg_pll_config {
+ 
+ #define CPG_RCKCR	0x240
+ 
+-u32 rcar_gen3_read_mode_pins(void);
+ struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
+ 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+ 	struct clk **clks, void __iomem *base);
 -- 
-2.7.4
+1.9.1
