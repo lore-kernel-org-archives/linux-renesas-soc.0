@@ -1,59 +1,81 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:49233 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940996AbcJaLbC (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:49531 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933736AbcJUNRl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 31 Oct 2016 07:31:02 -0400
+        Fri, 21 Oct 2016 09:17:41 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yangbo Lu <yangbo.lu@nxp.com>,
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 4/7] base: soc: Provide a dummy implementation of soc_device_match()
-Date: Mon, 31 Oct 2016 12:30:52 +0100
-Message-Id: <1477913455-5314-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
-References: <1477913455-5314-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v4 18/23] ARM: shmobile: r8a7778: Stop passing mode pins state to clock driver
+Date: Fri, 21 Oct 2016 15:17:32 +0200
+Message-Id: <1477055857-17936-19-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Provide a dummy implementation of soc_device_match(), to allow compiling
-drivers that may be used on SoCs both with and without CONFIG_SOC_BUS,
-and for compile testing.
+Now the R-Car M1A CPG clock driver obtains the state of the mode pins
+from the R-Car RST driver, there's no longer a need to pass this state
+explicitly. Hence we can just remove the .init_time() callback, the
+generic ARM code will take care of calling of_clk_init().
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
 ---
-v2:
+v4:
+  - Add Acked-by,
+
+v3:
   - New.
 ---
- include/linux/sys_soc.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/mach-shmobile/setup-r8a7778.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-diff --git a/include/linux/sys_soc.h b/include/linux/sys_soc.h
-index 9f5eb06f9fd87565..bed223b70217fd2d 100644
---- a/include/linux/sys_soc.h
-+++ b/include/linux/sys_soc.h
-@@ -35,6 +35,12 @@ struct soc_device *soc_device_register(
+diff --git a/arch/arm/mach-shmobile/setup-r8a7778.c b/arch/arm/mach-shmobile/setup-r8a7778.c
+index cf236db686a9dd47..7fa4a0b5f6549287 100644
+--- a/arch/arm/mach-shmobile/setup-r8a7778.c
++++ b/arch/arm/mach-shmobile/setup-r8a7778.c
+@@ -15,7 +15,6 @@
+  * GNU General Public License for more details.
   */
- struct device *soc_device_to_device(struct soc_device *soc);
  
-+#ifdef CONFIG_SOC_BUS
- const struct soc_device_attribute *soc_device_match(
- 	const struct soc_device_attribute *matches);
-+#else
-+static inline const struct soc_device_attribute *soc_device_match(
-+	const struct soc_device_attribute *matches) { return NULL; }
-+#endif
-+
- #endif /* __SOC_BUS_H */
+-#include <linux/clk/renesas.h>
+ #include <linux/io.h>
+ #include <linux/irqchip.h>
+ 
+@@ -23,19 +22,6 @@
+ 
+ #include "common.h"
+ 
+-#define MODEMR 0xffcc0020
+-
+-static void __init r8a7778_timer_init(void)
+-{
+-	u32 mode;
+-	void __iomem *modemr = ioremap_nocache(MODEMR, 4);
+-
+-	BUG_ON(!modemr);
+-	mode = ioread32(modemr);
+-	iounmap(modemr);
+-	r8a7778_clocks_init(mode);
+-}
+-
+ #define INT2SMSKCR0	0x82288 /* 0xfe782288 */
+ #define INT2SMSKCR1	0x8228c /* 0xfe78228c */
+ 
+@@ -70,6 +56,5 @@ static void __init r8a7778_init_irq_dt(void)
+ 	.init_early	= shmobile_init_delay,
+ 	.init_irq	= r8a7778_init_irq_dt,
+ 	.init_late	= shmobile_init_late,
+-	.init_time	= r8a7778_timer_init,
+ 	.dt_compat	= r8a7778_compat_dt,
+ MACHINE_END
 -- 
 1.9.1
