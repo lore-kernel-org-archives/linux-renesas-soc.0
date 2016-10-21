@@ -1,40 +1,86 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:57276 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759389AbcJQU3M (ORCPT
+Received: from smtp.codeaurora.org ([198.145.29.96]:55450 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752203AbcJUKn3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Oct 2016 16:29:12 -0400
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id 200802003E
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Oct 2016 22:28:21 +0200 (CEST)
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/2] R-Car FDP: Remove SoC-specific compatible strings
-Date: Mon, 17 Oct 2016 23:29:01 +0300
-Message-Id: <1476736143-29937-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 21 Oct 2016 06:43:29 -0400
+Subject: Re: [PATCH 2/8] drm: bridge: vga-dac: Add adi,adv7123 compatible
+ string
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <1476887143-24831-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1476887143-24831-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <2e22947f-1c8c-710a-cb60-bd6b52f219eb@codeaurora.org>
+ <295438587.dQSmbaFSXR@avalon>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+From: Archit Taneja <architt@codeaurora.org>
+Message-ID: <99996136-cb5b-d39a-2dc1-9ee06762cae3@codeaurora.org>
+Date: Fri, 21 Oct 2016 16:13:23 +0530
+MIME-Version: 1.0
+In-Reply-To: <295438587.dQSmbaFSXR@avalon>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello,
 
-Now that the Gen3 documentation mentions the FCP version register, it's clear
-that the SoC instance in which the FCP is integrated can be identified at
-runtime without requiring SoC-specific compatible strings.
 
-I've tested R-Car H3 ES1.x and R-Car M3 and the results match the
-documentation, so it should be safe to use the generic compatible strings
-only.
+On 10/21/2016 03:52 PM, Laurent Pinchart wrote:
+> Hi Archit,
+>
+> On Friday 21 Oct 2016 10:43:34 Archit Taneja wrote:
+>> On 10/19/2016 07:55 PM, Laurent Pinchart wrote:
+>>> The ADV7123 is a transparent VGA DAC. Unlike dumb VGA DACs it can be
+>>> controlled through a power save pin, and requires a power supply.
+>>> However, on most boards where the device is used neither the power save
+>>> signal nor the power supply are controllable.
+>>>
+>>> To avoid developing a separate device-specific driver add an
+>>> "adi,adv7123" compatible entry to the dumb-vga-dac driver. This will
+>>> allow supporting most ADV7123-based boards easily, while allowing future
+>>> development of an adv7123 driver when needed without breaking backward
+>>> compatibility.
+>>
+>> Shouldn't we have a DT binding doc for ADV7123, even if it's sharing
+>> the dumb vga driver for now?
+>
+> Documentation/devicetree/bindings/display/bridge/adi,adv7123.txt
+>
+>> Same query for the Thine LVDS encoder.
+>
+> Documentation/devicetree/bindings/display/bridge/thine,thc63lvdm83d.txt
 
-Laurent Pinchart (2):
-  dt-bindings: media: renesas-fcp: Remove SoC-specific compatible
-    strings
-  arm64: dts: r8a7795: Remove FCP SoC-specific compatible strings
+Cool, didn't know these already existed :)
 
- .../devicetree/bindings/media/renesas,fcp.txt      |  8 +-------
- arch/arm64/boot/dts/renesas/r8a7795.dtsi           | 24 +++++++++++-----------
- 2 files changed, 13 insertions(+), 19 deletions(-)
+Thanks,
+Archit
+
+>
+>>> Cc: devicetree@vger.kernel.org
+>>> Signed-off-by: Laurent Pinchart
+>>> <laurent.pinchart+renesas@ideasonboard.com>
+>>> ---
+>>>
+>>>  drivers/gpu/drm/bridge/dumb-vga-dac.c | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/bridge/dumb-vga-dac.c
+>>> b/drivers/gpu/drm/bridge/dumb-vga-dac.c index afec232185a7..b33e3f829e4f
+>>> 100644
+>>> --- a/drivers/gpu/drm/bridge/dumb-vga-dac.c
+>>> +++ b/drivers/gpu/drm/bridge/dumb-vga-dac.c
+>>> @@ -204,6 +204,7 @@ static int dumb_vga_remove(struct platform_device
+>>> *pdev)>
+>>>  static const struct of_device_id dumb_vga_match[] = {
+>>>
+>>>  	{ .compatible = "dumb-vga-dac" },
+>>> +	{ .compatible = "adi,adv7123" },
+>>>  	{},
+>>>  };
+>>>  MODULE_DEVICE_TABLE(of, dumb_vga_match);
+>
 
 -- 
-Regards,
-
-Laurent Pinchart
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
