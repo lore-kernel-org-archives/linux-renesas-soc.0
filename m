@@ -1,83 +1,70 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:32843 "EHLO
-        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034096AbcJ0Umy (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Oct 2016 16:42:54 -0400
-Received: by mail-lf0-f48.google.com with SMTP id x79so41781432lff.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Oct 2016 13:42:54 -0700 (PDT)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au
-Subject: [PATCH 1/2] ARM: shmobile: r8a7745: add CPG clock index macros
-Date: Thu, 27 Oct 2016 23:42:51 +0300
-Message-ID: <2946846.zhWOBzBeGa@wasted.cogentembedded.com>
-In-Reply-To: <13079532.zQoaX56ouR@wasted.cogentembedded.com>
-References: <13079532.zQoaX56ouR@wasted.cogentembedded.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 13/23] clk: renesas: r8a7779: Obtain mode pin values from R-Car RST driver
+Date: Fri, 21 Oct 2016 15:17:27 +0200
+Message-Id: <1477055857-17936-14-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add macros usable by  the device tree sources to reference the R8A7745 CPG
-clocks  by index. The data comes from the  table 7.2c in the revision 0.50
-of the RZ/G Series User's Manual.
+Obtain the values of the mode pins from the R-Car RST driver, which
+relies on the presence in DT of a device node for the RESET/WDT module.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
 ---
- include/dt-bindings/clock/r8a7745-cpg-mssr.h |   44 +++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+v4:
+  - Add Acked-by,
 
-Index: linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
-===================================================================
---- /dev/null
-+++ linux/include/dt-bindings/clock/r8a7745-cpg-mssr.h
-@@ -0,0 +1,44 @@
-+/*
-+ * Copyright (C) 2016 Cogent Embedded Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__
+v3:
+  - New.
+---
+ drivers/clk/renesas/clk-r8a7779.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/renesas/clk-r8a7779.c b/drivers/clk/renesas/clk-r8a7779.c
+index cf2a37df03b15e60..ca7551bcb1153c3d 100644
+--- a/drivers/clk/renesas/clk-r8a7779.c
++++ b/drivers/clk/renesas/clk-r8a7779.c
+@@ -18,6 +18,7 @@
+ #include <linux/of_address.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
++#include <linux/soc/renesas/rcar-rst.h>
+ 
+ #include <dt-bindings/clock/r8a7779-clock.h>
+ 
+@@ -127,6 +128,10 @@ static void __init r8a7779_cpg_clocks_init(struct device_node *np)
+ 	struct clk **clks;
+ 	unsigned int i, plla_mult;
+ 	int num_clks;
++	u32 mode;
 +
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a7745 CPG Core Clocks */
-+#define R8A7745_CLK_Z2		0
-+#define R8A7745_CLK_ZG		1
-+#define R8A7745_CLK_ZTR		2
-+#define R8A7745_CLK_ZTRD2	3
-+#define R8A7745_CLK_ZT		4
-+#define R8A7745_CLK_ZX		5
-+#define R8A7745_CLK_ZS		6
-+#define R8A7745_CLK_HP		7
-+#define R8A7745_CLK_B		9
-+#define R8A7745_CLK_LB		10
-+#define R8A7745_CLK_P		11
-+#define R8A7745_CLK_CL		12
-+#define R8A7745_CLK_CP		13
-+#define R8A7745_CLK_M2		14
-+#define R8A7745_CLK_ZB3		16
-+#define R8A7745_CLK_ZB3D2	17
-+#define R8A7745_CLK_DDR		18
-+#define R8A7745_CLK_SDH		19
-+#define R8A7745_CLK_SD0		20
-+#define R8A7745_CLK_SD2		21
-+#define R8A7745_CLK_SD3		22
-+#define R8A7745_CLK_MMC0	23
-+#define R8A7745_CLK_MP		24
-+#define R8A7745_CLK_QSPI	25
-+#define R8A7745_CLK_ACP		26
-+#define R8A7745_CLK_RCAN	27
-+#define R8A7745_CLK_R		28
-+#define R8A7745_CLK_OSC		29
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A7745_CPG_MSSR_H__ */
++	if (rcar_rst_read_mode_pins(&mode))
++		return;
+ 
+ 	num_clks = of_property_count_strings(np, "clock-output-names");
+ 	if (num_clks < 0) {
+@@ -148,8 +153,8 @@ static void __init r8a7779_cpg_clocks_init(struct device_node *np)
+ 	cpg->data.clks = clks;
+ 	cpg->data.clk_num = num_clks;
+ 
+-	config = &cpg_clk_configs[CPG_CLK_CONFIG_INDEX(cpg_mode)];
+-	plla_mult = cpg_plla_mult[CPG_PLLA_MULT_INDEX(cpg_mode)];
++	config = &cpg_clk_configs[CPG_CLK_CONFIG_INDEX(mode)];
++	plla_mult = cpg_plla_mult[CPG_PLLA_MULT_INDEX(mode)];
+ 
+ 	for (i = 0; i < num_clks; ++i) {
+ 		const char *name;
+-- 
+1.9.1
+
