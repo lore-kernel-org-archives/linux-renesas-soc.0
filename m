@@ -1,49 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:35070 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938712AbcJSOON (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:53772 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933003AbcJUNRj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Oct 2016 10:14:13 -0400
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/8] drm: bridge: vga-dac: Add adi,adv7123 compatible string
-Date: Wed, 19 Oct 2016 17:07:50 +0300
-Message-Id: <1476886076-24178-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1476886076-24178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1476886076-24178-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 21 Oct 2016 09:17:39 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 12/23] clk: renesas: r8a7778: Obtain mode pin values using R-Car RST driver
+Date: Fri, 21 Oct 2016 15:17:26 +0200
+Message-Id: <1477055857-17936-13-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
+References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The ADV7123 is a transparent VGA DAC. Unlike dumb VGA DACs it can be
-controlled through a power save pin, and requires a power supply.
-However, on most boards where the device is used neither the power save
-signal nor the power supply are controllable.
+Obtain the values of the mode pins from the R-Car RST driver, which
+relies on the presence in DT of a device node for the RESET/WDT module.
 
-To avoid developing a separate device-specific driver add an
-"adi,adv7123" compatible entry to the dumb-vga-dac driver. This will
-allow supporting most ADV7123-based boards easily, while allowing future
-development of an adv7123 driver when needed without breaking backward
-compatibility.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
 ---
- drivers/gpu/drm/bridge/dumb-vga-dac.c | 1 +
- 1 file changed, 1 insertion(+)
+v4:
+  - Add Acked-by,
 
-diff --git a/drivers/gpu/drm/bridge/dumb-vga-dac.c b/drivers/gpu/drm/bridge/dumb-vga-dac.c
-index afec232185a7..b33e3f829e4f 100644
---- a/drivers/gpu/drm/bridge/dumb-vga-dac.c
-+++ b/drivers/gpu/drm/bridge/dumb-vga-dac.c
-@@ -204,6 +204,7 @@ static int dumb_vga_remove(struct platform_device *pdev)
+v3:
+  - New.
+---
+ drivers/clk/renesas/clk-r8a7778.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/clk/renesas/clk-r8a7778.c b/drivers/clk/renesas/clk-r8a7778.c
+index 40e3a501a50e200f..07ea411098a75ad1 100644
+--- a/drivers/clk/renesas/clk-r8a7778.c
++++ b/drivers/clk/renesas/clk-r8a7778.c
+@@ -12,6 +12,7 @@
+ #include <linux/clk/renesas.h>
+ #include <linux/of_address.h>
+ #include <linux/slab.h>
++#include <linux/soc/renesas/rcar-rst.h>
  
- static const struct of_device_id dumb_vga_match[] = {
- 	{ .compatible = "dumb-vga-dac" },
-+	{ .compatible = "adi,adv7123" },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, dumb_vga_match);
+ struct r8a7778_cpg {
+ 	struct clk_onecell_data data;
+@@ -83,6 +84,18 @@ static void __init r8a7778_cpg_clocks_init(struct device_node *np)
+ 	struct clk **clks;
+ 	unsigned int i;
+ 	int num_clks;
++	u32 mode;
++
++	if (rcar_rst_read_mode_pins(&mode))
++		return;
++
++	BUG_ON(!(mode & BIT(19)));
++
++	cpg_mode_rates = (!!(mode & BIT(18)) << 2) |
++			 (!!(mode & BIT(12)) << 1) |
++			 (!!(mode & BIT(11)));
++	cpg_mode_divs = (!!(mode & BIT(2)) << 1) |
++			(!!(mode & BIT(1)));
+ 
+ 	num_clks = of_property_count_strings(np, "clock-output-names");
+ 	if (num_clks < 0) {
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
