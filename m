@@ -1,180 +1,52 @@
-Return-Path: <kieranbingham.mailinglists+caf_=kieranbingham=gmail.com@gmail.com>
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 02/23] soc: renesas: Add R-Car RST driver
-Date: Fri, 21 Oct 2016 15:17:16 +0200
-Message-Id: <1477055857-17936-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
-References: <1477055857-17936-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:45177 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S938442AbcJVL3O (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Sat, 22 Oct 2016 07:29:14 -0400
+Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by galahad.ideasonboard.com (Postfix) with ESMTPSA id EB74D201E3
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 22 Oct 2016 13:28:19 +0200 (CEST)
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v3 3/3] clk: renesas: r8a7796: Add DU and LVDS clocks
+Date: Sat, 22 Oct 2016 14:29:06 +0300
+Message-Id: <1477135746-7144-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <1477135746-7144-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+References: <1477135746-7144-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a driver for the Renesas R-Car Gen1 RESET/WDT and R-Car Gen2/Gen3
-and RZ/G RST module.
-
-For now this driver just provides an API to obtain the state of the mode
-pins, as latched at reset time.  As this is typically called from the
-probe function of a clock driver, which can run much earlier than any
-initcall, calling rcar_rst_read_mode_pins() just forces an early
-initialization of the driver.
-
-Despite the current simple and almost identical handling for all
-supported SoCs, the driver matches against SoC-specific compatible
-values, as the features provided by the hardware module differ a lot
-across the various SoC families and members.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v4:
-  - Add Acked-by,
-  - Remove the initcall and the rcar_rst_base check in rcar_rst_init(),
-    as rcar_rst_init() is only used as a support function for
-    rcar_rst_read_mode_pins(),
-  - Refer to rcar_rst_gen2 for R-Car Gen3 instead of providing an
-    identical copy,
-  - Add RZ/G1M and RZ/G1E,
+Changes since v1:
 
-v3:
-  - New.
+- Updated the LVDS parent clocks to S2D1
+
+Changes since v1:
+
+- Updated the DU* parent clocks to S2D1
 ---
- drivers/soc/renesas/Makefile         |  5 ++
- drivers/soc/renesas/rcar-rst.c       | 92 ++++++++++++++++++++++++++++++++++++
- include/linux/soc/renesas/rcar-rst.h |  6 +++
- 3 files changed, 103 insertions(+)
- create mode 100644 drivers/soc/renesas/rcar-rst.c
- create mode 100644 include/linux/soc/renesas/rcar-rst.h
+ drivers/clk/renesas/r8a7796-cpg-mssr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index 623039c3514cdc34..86cc78cd1962701a 100644
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@ -1,3 +1,8 @@
-+obj-$(CONFIG_ARCH_RCAR_GEN1)	+= rcar-rst.o
-+obj-$(CONFIG_ARCH_RCAR_GEN2)	+= rcar-rst.o
-+obj-$(CONFIG_ARCH_R8A7795)	+= rcar-rst.o
-+obj-$(CONFIG_ARCH_R8A7796)	+= rcar-rst.o
-+
- obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
- obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
- obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-new file mode 100644
-index 0000000000000000..a6d1c26d31675cf3
---- /dev/null
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -0,0 +1,92 @@
-+/*
-+ * R-Car Gen1 RESET/WDT, R-Car Gen2, Gen3, and RZ/G RST Driver
-+ *
-+ * Copyright (C) 2016 Glider bvba
-+ *
-+ * This file is subject to the terms and conditions of the GNU General Public
-+ * License.  See the file "COPYING" in the main directory of this archive
-+ * for more details.
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/of_address.h>
-+#include <linux/soc/renesas/rcar-rst.h>
-+
-+struct rst_config {
-+	unsigned int modemr;	/* Mode Monitoring Register Offset */
-+};
-+
-+static const struct rst_config rcar_rst_gen1 __initconst = {
-+	.modemr = 0x20,
-+};
-+
-+static const struct rst_config rcar_rst_gen2 __initconst = {
-+	.modemr = 0x60,
-+};
-+
-+static const struct of_device_id rcar_rst_matches[] __initconst = {
-+	/* RZ/G is handled like R-Car Gen2 */
-+	{ .compatible = "renesas,r8a7743-rst", .data = &rcar_rst_gen2 },
-+	{ .compatible = "renesas,r8a7745-rst", .data = &rcar_rst_gen2 },
-+	/* R-Car Gen1 */
-+	{ .compatible = "renesas,r8a7778-reset-wdt", .data = &rcar_rst_gen1 },
-+	{ .compatible = "renesas,r8a7779-reset-wdt", .data = &rcar_rst_gen1 },
-+	/* R-Car Gen2 */
-+	{ .compatible = "renesas,r8a7790-rst", .data = &rcar_rst_gen2 },
-+	{ .compatible = "renesas,r8a7791-rst", .data = &rcar_rst_gen2 },
-+	{ .compatible = "renesas,r8a7792-rst", .data = &rcar_rst_gen2 },
-+	{ .compatible = "renesas,r8a7793-rst", .data = &rcar_rst_gen2 },
-+	{ .compatible = "renesas,r8a7794-rst", .data = &rcar_rst_gen2 },
-+	/* R-Car Gen3 is handled like R-Car Gen2 */
-+	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen2 },
-+	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen2 },
-+	{ /* sentinel */ }
-+};
-+
-+static void __iomem *rcar_rst_base __initdata;
-+static u32 saved_mode __initdata;
-+
-+static int __init rcar_rst_init(void)
-+{
-+	const struct of_device_id *match;
-+	const struct rst_config *cfg;
-+	struct device_node *np;
-+	void __iomem *base;
-+	int error = 0;
-+
-+	np = of_find_matching_node_and_match(NULL, rcar_rst_matches, &match);
-+	if (!np)
-+		return -ENODEV;
-+
-+	base = of_iomap(np, 0);
-+	if (!base) {
-+		pr_warn("%s: Cannot map regs\n", np->full_name);
-+		error = -ENOMEM;
-+		goto out_put;
-+	}
-+
-+	rcar_rst_base = base;
-+	cfg = match->data;
-+	saved_mode = ioread32(base + cfg->modemr);
-+
-+	pr_debug("%s: MODE = 0x%08x\n", np->full_name, saved_mode);
-+
-+out_put:
-+	of_node_put(np);
-+	return error;
-+}
-+
-+int __init rcar_rst_read_mode_pins(u32 *mode)
-+{
-+	int error;
-+
-+	if (!rcar_rst_base) {
-+		error = rcar_rst_init();
-+		if (error)
-+			return error;
-+	}
-+
-+	*mode = saved_mode;
-+	return 0;
-+}
-diff --git a/include/linux/soc/renesas/rcar-rst.h b/include/linux/soc/renesas/rcar-rst.h
-new file mode 100644
-index 0000000000000000..a18e0783946b66ec
---- /dev/null
-+++ b/include/linux/soc/renesas/rcar-rst.h
-@@ -0,0 +1,6 @@
-+#ifndef __LINUX_SOC_RENESAS_RCAR_RST_H__
-+#define __LINUX_SOC_RENESAS_RCAR_RST_H__
-+
-+int rcar_rst_read_mode_pins(u32 *mode);
-+
-+#endif /* __LINUX_SOC_RENESAS_RCAR_RST_H__ */
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index c25806d9ce73..c683fa16fca4 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -134,6 +134,10 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+ 	DEF_MOD("vspd0",		 623,	R8A7796_CLK_S0D2),
+ 	DEF_MOD("vspb",			 626,	R8A7796_CLK_S0D1),
+ 	DEF_MOD("vspi0",		 631,	R8A7796_CLK_S0D1),
++	DEF_MOD("du2",			 722,	R8A7796_CLK_S2D1),
++	DEF_MOD("du1",			 723,	R8A7796_CLK_S2D1),
++	DEF_MOD("du0",			 724,	R8A7796_CLK_S2D1),
++	DEF_MOD("lvds",			 727,	R8A7796_CLK_S2D1),
+ 	DEF_MOD("etheravb",		 812,	R8A7796_CLK_S0D6),
+ 	DEF_MOD("gpio7",		 905,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("gpio6",		 906,	R8A7796_CLK_S3D4),
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
