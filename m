@@ -1,81 +1,55 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v4.1 2/4] dt-bindings: Add Renesas R-Car FDP1 bindings
-Date: Mon, 24 Oct 2016 14:47:21 +0300
-Message-Id: <1477309641-14369-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1477299818-31935-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1477299818-31935-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1923730.zaykC4sXJR@avalon>
+References: <1477299818-31935-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <1477299818-31935-3-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdUGy0+bv-t=8HXeQf0BpoMJMNP85cd2tubQzD4Zj8X9Gw@mail.gmail.com> <1923730.zaykC4sXJR@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 24 Oct 2016 12:01:06 +0200
+Message-ID: <CAMuHMdW9RhsvR8cDLWgGjqw+KzHC8A2L0S2JO1ymksaosv-iqg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: Add Renesas R-Car FDP1 bindings
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Kieran Bingham <kieran@ksquared.org.uk>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Kieran Bingham <kieran+renesas@bingham.xyz>
+Hi Laurent,
 
-The FDP1 is a de-interlacing module which converts interlaced video to
-progressive video. It is also capable of performing pixel format conversion
-between YCbCr/YUV formats and RGB formats.
+On Mon, Oct 24, 2016 at 11:46 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Monday 24 Oct 2016 11:14:11 Geert Uytterhoeven wrote:
+>> On Mon, Oct 24, 2016 at 11:03 AM, Laurent Pinchart wrote:
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/media/renesas,fdp1.txt
 
-Signed-off-by: Kieran Bingham <kieran+renesas@bingham.xyz>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
-Changes since v4:
+>> > +Optional properties:
+>> > + - power-domains : power-domain property defined with a power domain
+>> > specifier
+>>                       "power domain"?
+>>
+>> > +                            to respective power domain.
+>>
+>> Still, too many power domains in one sentence?
+>
+> How about
+>
+>  - power-domains : reference to the power domain that the FDP1 belongs to, if
+>    any.
 
-- Rewrote the power-domains property documentation
-- Added a reference to the clocks and power domains providers
-- Made the renesas,fcp property optional on Gen2
----
- .../devicetree/bindings/media/renesas,fdp1.txt     | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,fdp1.txt
+Much better. Thanks!
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,fdp1.txt b/Documentation/devicetree/bindings/media/renesas,fdp1.txt
-new file mode 100644
-index 000000000000..8dd1007bb573
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/renesas,fdp1.txt
-@@ -0,0 +1,37 @@
-+Renesas R-Car Fine Display Processor (FDP1)
-+-------------------------------------------
-+
-+The FDP1 is a de-interlacing module which converts interlaced video to
-+progressive video. It is capable of performing pixel format conversion between
-+YCbCr/YUV formats and RGB formats. Only YCbCr/YUV formats are supported as
-+an input to the module.
-+
-+Required properties:
-+
-+ - compatible: must be "renesas,fdp1"
-+ - reg: the register base and size for the device registers
-+ - interrupts : interrupt specifier for the FDP1 instance
-+ - clocks: reference to the functional clock
-+
-+Optional properties:
-+
-+ - power-domains: reference to the power domain that the FDP1 belongs to, if
-+                  any.
-+ - renesas,fcp: a phandle referencing the FCP that handles memory accesses
-+                for the FDP1. Not needed on Gen2, mandatory on Gen3.
-+
-+Please refer to the binding documentation for the clock and/or power domain
-+providers for more details.
-+
-+
-+Device node example
-+-------------------
-+
-+	fdp1@fe940000 {
-+		compatible = "renesas,fdp1";
-+		reg = <0 0xfe940000 0 0x2400>;
-+		interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cpg CPG_MOD 119>;
-+		power-domains = <&sysc R8A7795_PD_A3VP>;
-+		renesas,fcp = <&fcpf0>;
-+	};
--- 
-Regards,
+Gr{oetje,eeting}s,
 
-Laurent Pinchart
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
