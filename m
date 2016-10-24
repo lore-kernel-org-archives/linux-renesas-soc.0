@@ -1,51 +1,59 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:45177 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S938442AbcJVL3O (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 22 Oct 2016 07:29:14 -0400
-Received: from avalon.bb.dnainternet.fi (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by galahad.ideasonboard.com (Postfix) with ESMTPSA id EB74D201E3
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 22 Oct 2016 13:28:19 +0200 (CEST)
+Return-Path: <kieran+caf_=kieranbingham=gmail.com@ksquared.org.uk>
+Return-Path: <laurent.pinchart+renesas@ideasonboard.com>
 From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 3/3] clk: renesas: r8a7796: Add DU and LVDS clocks
-Date: Sat, 22 Oct 2016 14:29:06 +0300
-Message-Id: <1477135746-7144-4-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <1477135746-7144-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-References: <1477135746-7144-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Kieran Bingham <kieran@bingham.xyz>
+Subject: [PATCH v4 0/4] v4l: platform: Add Renesas R-Car FDP1 Driver
+Date: Mon, 24 Oct 2016 12:03:34 +0300
+Message-Id: <1477299818-31935-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Changes since v1:
+Hello,
 
-- Updated the LVDS parent clocks to S2D1
+Here's the fourth version of the Renesas R-Car FDP1 driver.
 
-Changes since v1:
+The FDP1 (Fine Display Processor) is a hardware memory-to-memory de-interlacer
+device, with capability to convert from various YCbCr/YUV formats to both
+YCbCr/YUV and RGB formats at the same time as converting interlaced content to
+progressive.
 
-- Updated the DU* parent clocks to S2D1
----
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Patch 01/04 adds a new standard V4L2 menu control for the deinterlacing mode.
+The menu items are driver specific.
 
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index c25806d9ce73..c683fa16fca4 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -134,6 +134,10 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
- 	DEF_MOD("vspd0",		 623,	R8A7796_CLK_S0D2),
- 	DEF_MOD("vspb",			 626,	R8A7796_CLK_S0D1),
- 	DEF_MOD("vspi0",		 631,	R8A7796_CLK_S0D1),
-+	DEF_MOD("du2",			 722,	R8A7796_CLK_S2D1),
-+	DEF_MOD("du1",			 723,	R8A7796_CLK_S2D1),
-+	DEF_MOD("du0",			 724,	R8A7796_CLK_S2D1),
-+	DEF_MOD("lvds",			 727,	R8A7796_CLK_S2D1),
- 	DEF_MOD("etheravb",		 812,	R8A7796_CLK_S0D6),
- 	DEF_MOD("gpio7",		 905,	R8A7796_CLK_S3D4),
- 	DEF_MOD("gpio6",		 906,	R8A7796_CLK_S3D4),
+Patches 02/04 and 03/04 add DT bindings and a new driver for the FDP1.
+Compared to v3, all FDP1 patches have been squashed together after being
+reviewed by Kieran, and Kieran's e-mail address has been updated to
+'kieran+renesas@bingham.xyz' in all Signed-off-by and authorship lines.
+
+Patch 04/04 then adds an FDP1 instance to the R-Car M3-W SoC DT. It will be
+merged separately through the ARM-SoC tree and depends on patch "arm64: dts:
+renesas: r8a7796: Add FCPF and FCPV instances" scheduled for merge in v4.10.
+
+Kieran Bingham (2):
+  dt-bindings: Add Renesas R-Car FDP1 bindings
+  v4l: Add Renesas R-Car FDP1 Driver
+
+Laurent Pinchart (2):
+  v4l: ctrls: Add deinterlacing mode control
+  arm64: dts: renesas: r8a7796: Add FDP1 instance
+
+ .../devicetree/bindings/media/renesas,fdp1.txt     |   33 +
+ Documentation/media/uapi/v4l/extended-controls.rst |    4 +
+ Documentation/media/v4l-drivers/index.rst          |    3 +
+ Documentation/media/v4l-drivers/rcar-fdp1.rst      |   37 +
+ MAINTAINERS                                        |    9 +
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi           |    9 +
+ drivers/media/platform/Kconfig                     |   13 +
+ drivers/media/platform/Makefile                    |    1 +
+ drivers/media/platform/rcar_fdp1.c                 | 2446 ++++++++++++++++++++
+ drivers/media/v4l2-core/v4l2-ctrls.c               |    2 +
+ include/uapi/linux/v4l2-controls.h                 |    1 +
+ 11 files changed, 2558 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/renesas,fdp1.txt
+ create mode 100644 Documentation/media/v4l-drivers/rcar-fdp1.rst
+ create mode 100644 drivers/media/platform/rcar_fdp1.c
+
 -- 
 Regards,
 
